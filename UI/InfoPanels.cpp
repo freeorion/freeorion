@@ -232,31 +232,29 @@ void PopulationPanel::Update()
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
 
-    if ((owner = OS_SELF)) {
-        // mousover text
-        m_pop_stat->SetValue(pop->PopPoints());
-        std::string text = StatisticIcon::DoubleToString(pop->PopPoints(), 3, false, false) +
-                           "/" +
-                           StatisticIcon::DoubleToString(pop->MaxPop(), 3, false, false) +
-                           " (" +
-                           StatisticIcon::DoubleToString(pop->FuturePopGrowth(), 3, false, true) +
-                           ")";
-        m_pop_stat->SetBrowseText(text);
+    // mousover text - actual population and health is just the corresponding meter values
+    m_pop_stat->SetValue(pop->PopPoints());
+    m_pop_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    std::string text = UserString("SP_POPULATION") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(pop->PopPoints(), 3, false, false) + "\n" +
+                       UserString("SP_MAX") + ": " + StatisticIcon::DoubleToString(pop->MaxPop(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(pop->FuturePopGrowth(), 3, false, true);
+    m_pop_stat->SetBrowseText(text);
 
-        m_health_stat->SetValue(pop->Health());
-        text =             StatisticIcon::DoubleToString(pop->Health(), 3, false, false) +
-                           "/" +
-                           StatisticIcon::DoubleToString(pop->MaxHealth(), 3, false, false) +
-                           " (" +
-                           StatisticIcon::DoubleToString(pop->FutureHealthGrowth(), 3, false, true) +
-                           ")";
-        m_health_stat->SetBrowseText(text);
+    m_health_stat->SetValue(pop->Health());
+    m_health_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text =             UserString("SP_HEALTH") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(pop->Health(), 3, false, false) + "\n" +
+                       UserString("SP_MAX") + ": " + StatisticIcon::DoubleToString(pop->MaxHealth(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(pop->FutureHealthGrowth(), 3, false, true);
+    m_health_stat->SetBrowseText(text);
 
-        m_pop_meter_bar->SetProjectedCurrent(pop->PopPoints() + pop->FuturePopGrowth());
-        m_pop_meter_bar->SetProjectedMax(pop->MaxPop());
-        m_health_meter_bar->SetProjectedCurrent(pop->Health() + pop->FutureHealthGrowth());
-        m_health_meter_bar->SetProjectedMax(pop->MaxHealth());
-    }
+    // meter bar display
+    m_pop_meter_bar->SetProjectedCurrent(pop->PopPoints() + pop->FuturePopGrowth());
+    m_pop_meter_bar->SetProjectedMax(pop->MaxPop());
+
+    m_health_meter_bar->SetProjectedCurrent(pop->Health() + pop->FutureHealthGrowth());
+    m_health_meter_bar->SetProjectedMax(pop->MaxHealth());
 }
 
 void PopulationPanel::Refresh()
@@ -682,31 +680,72 @@ void ResourcePanel::Update()
         m_secondary_focus_drop->Disable(true);
     }
 
+    // mousover text - resource production not equal to meter value
     m_farming_stat->SetValue(res->FarmingPoints());
+    m_farming_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    std::string text = UserString("SP_FOOD_PRODUCTION") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->FarmingPoints(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedFarmingPoints() - res->FarmingPoints(), 3, false, true);
+    m_farming_stat->SetBrowseText(text);
+
+    m_mining_stat->SetValue(res->MiningPoints());
+    m_mining_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text =             UserString("SP_MINERALS_PRODUCTION") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->MiningPoints(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedMiningPoints() - res->MiningPoints(), 3, false, true);
+    m_mining_stat->SetBrowseText(text);
+
+    m_industry_stat->SetValue(res->IndustryPoints());
+    m_industry_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text =             UserString("SP_INDUSTRIAL_OUTPUT") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->IndustryPoints(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedIndustryPoints() - res->IndustryPoints(), 3, false, true);
+    m_industry_stat->SetBrowseText(text);
+
+    m_research_stat->SetValue(res->ResearchPoints());
+    m_research_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text =             UserString("SP_RESEARCH_OUTPUT") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->ResearchPoints(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedResearchPoints() - res->ResearchPoints(), 3, false, true);
+    m_research_stat->SetBrowseText(text);
+
+    m_trade_stat->SetValue(res->TradePoints());
+    m_trade_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text =             UserString("SP_TRADE_LEVEL") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->TradePoints(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedTradePoints() - res->TradePoints(), 3, false, true);
+    m_trade_stat->SetBrowseText(text);
+
+    m_construction_stat->SetValue(res->ConstructionMeter().Current());
+    m_construction_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text =             UserString("SP_CONSTRUCTION_INFRASTRUCTURE") + "\n" +
+                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->ConstructionMeter().Current(), 3, false, false) + "\n" +
+                       UserString("SP_MAX") + ": " + StatisticIcon::DoubleToString(res->ConstructionMeter().Max(), 3, false, false) + "\n" +
+                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedCurrent(METER_CONSTRUCTION) - res->ConstructionMeter().Current(), 3, false, true);
+    m_construction_stat->SetBrowseText(text);
+
+    // meter bar display
     m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
     m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
     
-    m_mining_stat->SetValue(res->MiningPoints());
     m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
     m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
 
-    m_industry_stat->SetValue(res->IndustryPoints());
     m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
     m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
 
-    m_research_stat->SetValue(res->ResearchPoints());
     m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
     m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
     
-    m_trade_stat->SetValue(res->TradePoints());
     m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
     m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
 
-    m_construction_stat->SetValue(res->ConstructionMeter().Current());
     m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
     m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
 
 
+    m_primary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_primary_focus_drop->SetBrowseText(UserString("PL_PRIMARY_FOCUS"));
     switch (res->PrimaryFocus())
     {
     case FOCUS_BALANCED:
@@ -724,7 +763,9 @@ void ResourcePanel::Update()
     default:
         m_primary_focus_drop->Select(-1);
     }
-    
+
+    m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_secondary_focus_drop->SetBrowseText(UserString("PL_SECONDARY_FOCUS"));
     switch (res->SecondaryFocus())
     {
     case FOCUS_BALANCED:
