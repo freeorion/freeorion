@@ -1179,7 +1179,10 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     m_graphic(0),
     m_progress_bar(0)
 {
-    SetText("BuildingIndicator");
+    SetText(UserString(type.Name()) + " BuildingIndicator");
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseText(UserString(type.Name()) + "\n\n" + UserString(type.Description()));
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
@@ -1193,7 +1196,10 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     m_graphic(0),
     m_progress_bar(0)
 {
-    SetText("BuildingIndicator");
+    SetText(UserString(type.Name()) + " BuildingIndicator");
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseText(UserString(type.Name()) + " (" + UserString("TECH_WND_TECH_INCOMPLETE") + ")");
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
@@ -1278,8 +1284,6 @@ SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) :
     SetText("SpecialsPanel");
 
     Update();
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText("??????????");
 }
 
 SpecialsPanel::~SpecialsPanel()
@@ -1331,7 +1335,7 @@ void SpecialsPanel::Update()
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
         GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        graphic->SetBrowseText("!!!!!!!!!!");
+        graphic->SetBrowseText(UserString(special->Name()) + "\n\n" + UserString(special->Description()));
         graphic->SetText(UserString(special->Name()) + " Special graphic");
         m_icons.push_back(graphic);
     }
