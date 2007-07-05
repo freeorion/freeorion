@@ -79,6 +79,7 @@ private:
     CUIListBox*                m_players_lb;
     CUIButton*                 m_start_game_bn;
     CUIButton*                 m_cancel_bn;
+    GG::TextControl*           m_start_conditions_text;
 };
 
 #endif // _MultiplayerLobbyWnd_h_

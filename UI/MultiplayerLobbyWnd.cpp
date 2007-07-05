@@ -160,7 +160,8 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     m_preview_image(0),
     m_players_lb(0),
     m_start_game_bn(0),
-    m_cancel_bn(0)
+    m_cancel_bn(0),
+    m_start_conditions_text(0)
 {
     TempUISoundDisabler sound_disabler;
 
@@ -203,6 +204,12 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
     if (m_host)
         m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(),
                                        ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
+
+    m_start_conditions_text = new GG::TextControl(x, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN,
+                                                  m_cancel_bn->UpperLeft().x - x, ClientUI::Pts()*3/2,
+                                                  UserString("MULTIPLAYER_GAME_START_CONDITIONS"),
+                                                  GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                                  ClientUI::TextColor(), GG::TF_LEFT);
 
     Init();
 
@@ -337,6 +344,7 @@ void MultiplayerLobbyWnd::Init()
     AttachChild(m_players_lb);
     AttachChild(m_start_game_bn);
     AttachChild(m_cancel_bn);
+    AttachChild(m_start_conditions_text);
 
     if (m_host) {
         Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);

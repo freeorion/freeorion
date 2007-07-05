@@ -566,6 +566,9 @@ Load game
 START_GAME_BN
 Start game
 
+MULTIPLAYER_GAME_START_CONDITIONS
+Unique empire names and colours required
+
 
 ########################
 # Galaxy Setup Screen  #
