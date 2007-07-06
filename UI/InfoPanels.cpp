@@ -743,46 +743,73 @@ void ResourcePanel::Update()
     m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
     m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
 
-
-    m_primary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_primary_focus_drop->SetBrowseText(UserString("PL_PRIMARY_FOCUS"));
     switch (res->PrimaryFocus())
     {
     case FOCUS_BALANCED:
-        m_primary_focus_drop->Select(0);  break;
+        m_primary_focus_drop->Select(0);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_BALANCED");
+        break;
     case FOCUS_FARMING:
-        m_primary_focus_drop->Select(1);  break;
+        m_primary_focus_drop->Select(1);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_FARMING");
+        break;
     case FOCUS_MINING:
-        m_primary_focus_drop->Select(2);  break;
+        m_primary_focus_drop->Select(2);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_MINING");
+        break;
     case FOCUS_INDUSTRY:
-        m_primary_focus_drop->Select(3);  break;
+        m_primary_focus_drop->Select(3);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_INDUSTRY");
+        break;
     case FOCUS_RESEARCH:
-        m_primary_focus_drop->Select(4);  break;
+        m_primary_focus_drop->Select(4);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_RESEARCH");
+        break;
     case FOCUS_TRADE:
-        m_primary_focus_drop->Select(5);  break;
+        m_primary_focus_drop->Select(5);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_TRADE");
+        break;
     default:
         m_primary_focus_drop->Select(-1);
+        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_UNKNOWN");
+        break;
     }
+    m_primary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_primary_focus_drop->SetBrowseText(text);
 
-    m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_secondary_focus_drop->SetBrowseText(UserString("PL_SECONDARY_FOCUS"));
     switch (res->SecondaryFocus())
     {
     case FOCUS_BALANCED:
-        m_secondary_focus_drop->Select(0);  break;
+        m_secondary_focus_drop->Select(0);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_BALANCED");
+        break;
     case FOCUS_FARMING:
-        m_secondary_focus_drop->Select(1);  break;
+        m_secondary_focus_drop->Select(1);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_FARMING");
+        break;
     case FOCUS_MINING:
-        m_secondary_focus_drop->Select(2);  break;
+        m_secondary_focus_drop->Select(2);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_MINING");
+        break;
     case FOCUS_INDUSTRY:
-        m_secondary_focus_drop->Select(3);  break;
+        m_secondary_focus_drop->Select(3);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_INDUSTRY");
+        break;
     case FOCUS_RESEARCH:
-        m_secondary_focus_drop->Select(4);  break;
+        m_secondary_focus_drop->Select(4);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_RESEARCH");
+        break;
     case FOCUS_TRADE:
-        m_secondary_focus_drop->Select(5);  break;
+        m_secondary_focus_drop->Select(5);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_TRADE");
+        break;
     default:
         m_secondary_focus_drop->Select(-1);
+        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_UNKNOWN");
+        break;
     }
+    m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_secondary_focus_drop->SetBrowseText(text);
 }
 
 
