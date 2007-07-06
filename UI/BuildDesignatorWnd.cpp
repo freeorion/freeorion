@@ -64,7 +64,6 @@ class BuildDesignatorWnd::BuildDetailPanel : public CUIWnd
 {
 public:
     BuildDetailPanel(int w, int h);
-    ~BuildDetailPanel();
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void Render();
@@ -95,8 +94,6 @@ private:
     GG::TextControl*    m_summary_text;
     CUIMultiEdit*       m_description_box;
     GG::StaticGraphic*  m_item_graphic;
-
-    std::set<boost::signals::connection> m_misc_connections;
 };
 
 BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
@@ -124,15 +121,6 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     AttachChild(m_description_box);
 
     DoLayout();
-}
-
-BuildDesignatorWnd::BuildDetailPanel::~BuildDetailPanel()
-{
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::DoLayout()
@@ -403,7 +391,6 @@ class BuildDesignatorWnd::BuildSelector : public CUIWnd
 {
 public:
     BuildSelector(int w, int h);
-    ~BuildSelector();
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
@@ -455,8 +442,6 @@ private:
     std::map<GG::ListBox::Row*, BuildType>  m_build_types;
     GG::Pt                                  m_original_ul;
 
-    std::set<boost::signals::connection>    m_misc_connections;
-
     int m_build_location;
 
     int row_height;
@@ -487,8 +472,8 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     // selectable list of buildable items
     m_buildable_items = new BuildableItemsListBox(0, 0, 1, 1);
     AttachChild(m_buildable_items);
-    m_misc_connections.insert(GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this));
-    m_misc_connections.insert(GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this));
+    GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
+    GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
     m_buildable_items->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
 
     row_height = ClientUI::Pts()*3/2;
@@ -504,15 +489,6 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     }
 
     DoLayout();
-}
-
-BuildDesignatorWnd::BuildSelector::~BuildSelector()
-{
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::BuildSelector::GetBuildTypesShown() const
@@ -990,13 +966,13 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     m_build_selector->MoveTo(GG::Pt(0, h - BUILD_SELECTOR_HEIGHT));
 
 
-    m_misc_connections.insert(GG::Connect(m_build_selector->DisplayNamedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel));
-    m_misc_connections.insert(GG::Connect(m_build_selector->DisplayIDedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel));
-    m_misc_connections.insert(GG::Connect(m_build_selector->RequestNamedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this));
-    m_misc_connections.insert(GG::Connect(m_build_selector->RequestIDedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this));
+    GG::Connect(m_build_selector->DisplayNamedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
+    GG::Connect(m_build_selector->DisplayIDedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
+    GG::Connect(m_build_selector->RequestNamedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
+    GG::Connect(m_build_selector->RequestIDedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
 
-    m_misc_connections.insert(GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this));
-    m_misc_connections.insert(GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal));
+    GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this);
+    GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
 
 
     // connect build type button clicks to update display
@@ -1019,15 +995,6 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     ShowAllTypes(false);            // without populating the list
     ShowAvailability(false, false); // ...
     ShowAvailability(true, false);  // ...
-}
-
-BuildDesignatorWnd::~BuildDesignatorWnd()
-{
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const

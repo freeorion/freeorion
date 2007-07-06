@@ -432,8 +432,6 @@ private:
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
-
-    std::set<boost::signals::connection> m_misc_connections;
 };
 
 class SidePanel::PlanetPanelContainer : public GG::Wnd
@@ -751,22 +749,22 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                       ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
                                       ClientUI::TextColor(), GG::CLICKABLE);
-    m_misc_connections.insert(GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this));
+    GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
     AttachChild(m_button_colonize);
 
     m_population_panel = new PopulationPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_population_panel);
-    m_misc_connections.insert(GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this));
+    GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
     m_resource_panel = new ResourcePanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_resource_panel);
-    m_misc_connections.insert(GG::Connect(m_resource_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this));
-    m_misc_connections.insert(GG::Connect(m_resource_panel->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this));
-    m_misc_connections.insert(GG::Connect(m_resource_panel->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this));
+    GG::Connect(m_resource_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_resource_panel->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
+    GG::Connect(m_resource_panel->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
     m_buildings_panel = new BuildingsPanel(w - MAX_PLANET_DIAMETER, 4, planet);
     AttachChild(m_buildings_panel);
-    m_misc_connections.insert(GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this));
+    GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
     m_specials_panel = new SpecialsPanel(MAX_PLANET_DIAMETER, planet);
     AttachChild(m_specials_panel);
@@ -778,20 +776,14 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
     if (System* system = plt->GetSystem())
-        m_misc_connections.insert(GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this));
-    m_misc_connections.insert(GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this));
+        GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+    GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 
     Refresh();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
-
     delete m_button_colonize;
     delete m_env_size;
 

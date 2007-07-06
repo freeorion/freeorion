@@ -46,7 +46,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
-    m_misc_connections.insert(GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this));
+    GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
     int icon_size = ClientUI::Pts()*4/3;
 
@@ -308,7 +308,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
-    m_misc_connections.insert(GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this));
+    GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
     
     int icon_size = ClientUI::Pts()*4/3;
@@ -345,8 +345,8 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     }
     AttachChild(m_secondary_focus_drop);
 
-    m_misc_connections.insert(GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this));
-    m_misc_connections.insert(GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this));
+    GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
+    GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
     
     // resource indicators
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(), GG::CLR_WHITE,
@@ -959,7 +959,7 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
-    m_misc_connections.insert(GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this));
+    GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
     // get owners, connect their production queue changed signals to update this panel
     const std::set<int>& owners = plt.Owners();
@@ -967,7 +967,7 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
         const Empire* empire = Empires().Lookup(*it);
         if (!empire) continue;  // shouldn't be a problem... maybe put check for it later
         const ProductionQueue& queue = empire->GetProductionQueue();
-        m_misc_connections.insert(GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this));
+        GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
     }
 
     Refresh();

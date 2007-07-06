@@ -41,8 +41,6 @@ public:
 private:
     std::string TitleText() const;
 
-    boost::signals::connection m_panel_empty_connection;
-
     FleetDetailPanel* m_fleet_panel;
 };
 
@@ -113,7 +111,6 @@ private:
 
     std::map<Fleet*, FleetDetailWnd*> m_open_fleet_detail_wnds;
 
-    std::multimap<FleetDetailWnd*, boost::signals::connection>  m_open_fleet_detail_wnd_connections;
     std::set<boost::signals::connection>                        m_misc_connections;
 
     FleetsListBox*      m_fleets_lb;

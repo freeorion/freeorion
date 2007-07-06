@@ -291,13 +291,13 @@ ProductionWnd::ProductionWnd(int w, int h) :
 
     EnableChildClipping(true);
 
-    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this));
-    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this));
-    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this));
-    m_misc_connections.insert(GG::Connect(m_build_designator_wnd->SystemSelectedSignal, SystemSelectedSignal));
-    m_misc_connections.insert(GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this));
-    m_misc_connections.insert(GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this));
-    m_misc_connections.insert(GG::Connect(m_queue_lb->DoubleClickedSignal, &ProductionWnd::QueueItemDoubleClickedSlot, this));
+    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
+    GG::Connect(m_build_designator_wnd->SystemSelectedSignal, SystemSelectedSignal);
+    GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this);
+    GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal, &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_lb);

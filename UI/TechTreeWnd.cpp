@@ -931,8 +931,6 @@ private:
 
     void DoLayout();
 
-    std::set<boost::signals::connection> m_row_connections;
-
     const Tech* m_current_tech;
     GG::ListBox* m_lb;
 };
@@ -956,7 +954,7 @@ GG::ListBox::Row* TechTreeWnd::TechNavigator::NewSectionHeaderRow(const std::str
 GG::ListBox::Row* TechTreeWnd::TechNavigator::NewTechRow(const Tech* tech)
 {
     TechControl* control = new TechControl(tech);
-    m_row_connections.insert(GG::Connect(control->ClickedSignal, &TechTreeWnd::TechNavigator::TechClickedSlot, this));
+    GG::Connect(control->ClickedSignal, &TechTreeWnd::TechNavigator::TechClickedSlot, this);
     GG::ListBox::Row* retval = new GG::ListBox::Row(m_lb->Width(), 3*ClientUI::Pts()/2 + 4, "");
     retval->push_back(control);
     return retval;
@@ -964,12 +962,6 @@ GG::ListBox::Row* TechTreeWnd::TechNavigator::NewTechRow(const Tech* tech)
 
 void TechTreeWnd::TechNavigator::Reset()
 {
-    // disconnect all signals
-    while (!m_row_connections.empty()) {
-        m_row_connections.begin()->disconnect();
-        m_row_connections.erase(m_row_connections.begin());
-    }
-
     m_lb->Clear();
     if (!m_current_tech)
         return;
@@ -1267,8 +1259,6 @@ private:
 
     std::map<const Tech*, TechPanel*> m_techs;
     DependencyArcsMapsByArcType m_dependency_arcs;
-
-    std::set<boost::signals::connection> m_tech_connections;
 
     LayoutSurface* m_layout_surface;
     CUIScroll*     m_vscroll;
@@ -1714,11 +1704,6 @@ void TechTreeWnd::LayoutPanel::Clear()
     for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
         delete it->second;
     }
-    // disconnect all tech signals
-    while (!m_tech_connections.empty()) {
-        m_tech_connections.begin()->disconnect();
-        m_tech_connections.erase(m_tech_connections.begin());
-    }
     m_techs.clear();
     m_dependency_arcs.clear();
     m_selected_tech = 0;
@@ -1887,10 +1872,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN_X),
                                      static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN_Y)));
         m_layout_surface->AttachChild(m_techs[tech]);
-        m_tech_connections.insert(GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this));
-        m_tech_connections.insert(GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this));
-        m_tech_connections.insert(GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this));
-        m_tech_connections.insert(GG::Connect(m_techs[tech]->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this));
+        GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this);
+        GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this);
+        GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this);
+        GG::Connect(m_techs[tech]->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this);
 
         for (Agedge_t* edge = agfstout(graph, node); edge; edge = agnxtout(graph, edge)) {
             const Tech* from = tech;
