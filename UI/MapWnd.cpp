@@ -201,6 +201,11 @@ MapWnd::MapWnd() :
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     const int BUTTON_TOTAL_MARGIN = 8;
 
+    // FPS indicator
+    m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
+    m_toolbar->AttachChild(m_FPS);
+
+    // Subscreen / Menu buttons
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
     m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, 0, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
@@ -222,7 +227,7 @@ MapWnd::MapWnd() :
     GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SitRepBtnClicked, this);
 
     // resources
-    const int ICON_DUAL_WIDTH = 110;
+    const int ICON_DUAL_WIDTH = 100;
     const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
     m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
                                      (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(),
@@ -733,6 +738,7 @@ void MapWnd::InitTurn(int turn_number)
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
     m_toolbar->Show();
+    m_FPS->Show();
     m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
     DetachChild(m_side_panel);
     SelectSystem(m_side_panel->SystemID());
@@ -1614,6 +1620,7 @@ void MapWnd::Cleanup()
     m_production_wnd->Hide();
     m_in_production_view_mode = false;
     m_toolbar->Hide();
+    m_FPS->Hide();
 }
 
 void MapWnd::Sanitize()

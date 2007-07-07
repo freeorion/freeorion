@@ -59,7 +59,9 @@ FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::v
 
 bool FleetButton::InWindow(const GG::Pt& pt) const
 {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt ul = UpperLeft(), lr = LowerRight(), size = lr - ul;
+    ul -= GG::Pt(size.x / 2, size.y / 2);
+    lr += GG::Pt(size.x / 2, size.y / 2);
     return InFleetMarker(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
 }
 

@@ -118,7 +118,6 @@ HumanClientApp::HumanClientApp() :
     Logger().setAdditivity(true);   // ...but allow the addition of others later
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
-    SetMaxFPS(60.0);
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
@@ -399,6 +398,10 @@ void HumanClientApp::Initialize()
     SetMusicVolume(GetOptionsDB().Get<int>("music-volume"));
     SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
 
+    EnableFPS();
+    UpdateFPSLimit();
+    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
+
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
@@ -651,7 +654,8 @@ void HumanClientApp::HandleMessageImpl(const Message& msg)
         }
         std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + msg.GetText() + "</rgba>\n";
 
-        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(wrapped_text);
+        MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd(); // make sure MapWnd exists - might receive chat message before it's created
+        if (map_wnd) map_wnd->HandlePlayerChatMessage(wrapped_text);
         break;
     }
 
@@ -775,6 +779,18 @@ void HumanClientApp::Autosave(bool new_game)
             NetworkCore().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), (save_dir / save_filename).native_file_string()), response);
         if (!save_succeeded && m_game_started && NetworkCore().Connected())
             Logger().errorStream() << "HumanClientApp::Autosave : An error occured while attempting to save the autosave file \"" << save_filename << "\"";
+    }
+}
+
+void HumanClientApp::UpdateFPSLimit()
+{
+    if (GetOptionsDB().Get<bool>("limit-fps")) {
+        double fps = GetOptionsDB().Get<double>("max-fps");
+        SetMaxFPS(fps);
+        Logger().debugStream() << "Limited FPS to " << fps;
+    } else {
+        SetMaxFPS(0.0); // disable fps limit
+        Logger().debugStream() << "Disabled FPS limit";
     }
 }
 

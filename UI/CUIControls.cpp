@@ -992,10 +992,7 @@ std::string StatisticIcon::DoubleToString(double val, int digits, bool integeriz
 
     // default result for sentinel value
     if (val == UNKNOWN_VALUE)
-    {
-        text = UserString("UNKNOWN_VALUE_SYMBOL");
-        return text;
-    }
+        return UserString("UNKNOWN_VALUE_SYMBOL");
 
     double mag = std::abs(val);
 
@@ -1515,4 +1512,27 @@ void MultiTurnProgressBar::RightEndVertices(double x1, double y1, double x2, dou
     glVertex2d(x2, y1 + 4);
     glVertex2d(x2 - 5, y1);
     glVertex2d(x1, y1);
+}
+
+//////////////////////////////////////////////////
+// FPSIndicator
+//////////////////////////////////////////////////
+FPSIndicator::FPSIndicator(int x, int y) :
+GG::TextControl(x, y, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), 0, GG::ONTOP)
+{
+    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
+    UpdateEnabled();
+}
+
+void FPSIndicator::Render()
+{
+    if (m_enabled) {
+        SetText(boost::io::str(boost::format(UserString("MAP_INDICATOR_FPS")) % static_cast<int>(GG::GUI::GetGUI()->FPS())));
+        TextControl::Render();
+    }
+}
+
+void FPSIndicator::UpdateEnabled()
+{
+    m_enabled = GetOptionsDB().Get<bool>("show-fps");
 }

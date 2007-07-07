@@ -149,6 +149,15 @@ Sets vertical app resolution.
 OPTIONS_DB_COLOR_DEPTH
 Sets screen color depth, in bits per pixel.
 
+OPTIONS_DB_SHOW_FPS
+Toggles FPS display on or off.
+
+OPTIONS_DB_LIMIT_FPS
+Toggles FPS limiting on or off.  Limit is set with with max-fps option.
+
+OPTIONS_DB_MAX_FPS
+Toggles FPS limit, if enabled.  Limiting is toggled with limit-fps.
+
 OPTIONS_DB_UI_SOUND_ENABLED
 Toggles UI sound effects on or off.
 
@@ -211,6 +220,9 @@ The sound file played when a research focus button is clicked.
 
 OPTIONS_DB_UI_SOUND_MINING_FOCUS
 The sound file played when a mining focus button is clicked.
+
+OPTIONS_DB_UI_SOUND_TRADE_FOCUS
+The sound file played when a trade focus button is clicked.
 
 OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
 The sound file played when a balanced focus button is clicked.
@@ -799,6 +811,15 @@ Color bit-depth
 OPTIONS_FULLSCREEN
 Fullscreen
 
+OPTIONS_SHOW_FPS
+Show FPS
+
+OPTIONS_LIMIT_FPS
+Limit FPS
+
+OPTIONS_MAX_FPS
+Max FPS
+
 OPTIONS_CHAT
 Chat
 
@@ -997,7 +1018,10 @@ Sound files
 #################
 
 MAP_BTN_TURN_UPDATE
-Turn 
+Turn
+
+MAP_INDICATOR_FPS
+%1% FPS
 
 MAP_BTN_MENU
 Menu
@@ -1084,6 +1108,9 @@ Construction Infrastructure
 
 SP_CURRENT
 Current
+
+SP_NEXT
+Next
 
 SP_MAX
 Maximum

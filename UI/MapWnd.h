@@ -24,6 +24,7 @@ class SystemIcon;
 class StatisticIcon;
 class CUIToolBar;
 class UniverseObject;
+class FPSIndicator;
 
 namespace GG {
     class Texture;
@@ -229,6 +230,8 @@ private:
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
 
     CUIButton                   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_menu;
+
+    FPSIndicator*               m_FPS;
 
     static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;

@@ -111,6 +111,8 @@ private:
 
     void Autosave(bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
 
+    void UpdateFPSLimit();      ///< polls options database to find if FPS should be limited, and if so, to what rate
+
     Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
     std::string                       m_save_filename;      ///< the name under which the current game has been saved

@@ -204,6 +204,9 @@ namespace {
         db.Add("app-width", "OPTIONS_DB_APP_WIDTH", 1024, RangedValidator<int>(800, 2048));
         db.Add("app-height", "OPTIONS_DB_APP_HEIGHT", 768, RangedValidator<int>(600, 1536));
         db.Add('c', "color-depth", "OPTIONS_DB_COLOR_DEPTH", 32, RangedStepValidator<int>(8, 16, 32));
+        db.Add("show-fps", "OPTIONS_DB_SHOW_FPS", false);
+        db.Add("limit-fps", "OPTIONS_DB_LIMIT_FPS", true);
+        db.Add("max-fps", "OPTIONS_DB_MAX_FPS", 60.0, RangedValidator<double>(10.0, 200.0));
 
         // sound
         db.Add("UI.sound.enabled", "OPTIONS_DB_UI_SOUND_ENABLED", true, Validator<bool>());
@@ -227,8 +230,7 @@ namespace {
         db.Add<std::string>("UI.sound.industry-focus", "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS", "industry_select.wav");
         db.Add<std::string>("UI.sound.research-focus", "OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS", "research_select.wav");
         db.Add<std::string>("UI.sound.mining-focus", "OPTIONS_DB_UI_SOUND_MINING_FOCUS", "mining_select.wav");
-        // TODO: uncomment when trade is added to side panel
-        //db.Add<std::string>("UI.sound.trade-focus", "The sound file played when a trade focus button is clicked.", "trade_select.wav");
+        db.Add<std::string>("UI.sound.trade-focus", "OPTIONS_DB_UI_SOUND_TRADE_FOCUS", "trade_select.wav");
         db.Add<std::string>("UI.sound.balanced-focus", "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS", "balanced_select.wav");
 
         // fonts

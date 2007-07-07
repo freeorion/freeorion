@@ -524,4 +524,14 @@ private:
     GG::Clr m_outline_color;
 };
 
+/** Displays current rendering frames per second. */
+class FPSIndicator : public GG::TextControl
+{
+public:
+    FPSIndicator(int x, int y);
+    virtual void Render();
+private:
+    void UpdateEnabled();
+    bool m_enabled;
+};
 #endif // _CUIControls_h_
