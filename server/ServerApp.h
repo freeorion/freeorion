@@ -47,7 +47,7 @@ class ServerApp
 {
 public:                   
     /** \name Structors */ //@{   
-    ServerApp(int argc, char* argv[]);
+    ServerApp();
     ~ServerApp();
     //@}
 

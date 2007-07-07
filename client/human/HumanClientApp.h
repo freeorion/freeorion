@@ -42,6 +42,7 @@ public:
     void FreeServer();  ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void KillServer();  ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
 
+    void SaveGame(const std::string& filename); ///< saves the current game; blocks until all save-related network traffic is resolved.
     void EndGame();     ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
 
     void SetLobby(MultiplayerLobbyWnd* lobby); ///< registers a lobby dialog so that Messages can reach it; passing 0 unsets the lobby dialog
@@ -86,7 +87,7 @@ private:
     virtual void GLInit();
     virtual void Initialize();
 
-    virtual void HandleSystemEvents(int& last_mouse_event_time);
+    virtual void HandleSystemEvents();
     virtual void HandleNonGGEvent(const SDL_Event& event);
 
     virtual void RenderBegin();
@@ -99,12 +100,13 @@ private:
     void HandleServerDisconnect();
     void Autosave(bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
 
-    Process                           m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-    boost::shared_ptr<ClientUI>       m_ui;                 ///< the one and only ClientUI object!
-    std::string                       m_save_filename;      ///< the name under which the current game has been saved
-    bool                              m_single_player_game; ///< true when this game is a single-player game
-    bool                              m_game_started;       ///< true when a game is currently in progress
-    int                               m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
+    Process                     m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
+    boost::shared_ptr<ClientUI> m_ui;                 ///< the one and only ClientUI object!
+    std::string                 m_save_filename;      ///< the name under which the current game has been saved
+    bool                        m_single_player_game; ///< true when this game is a single-player game
+    bool                        m_game_started;       ///< true when a game is currently in progress
+    int                         m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
+    bool                        m_in_save_game_cycle; ///< true during SaveGame()'s send-request, receive-save-game-data-request, send-save-game-data cycle
 };
 
 #endif // _HumanClientApp_h_

@@ -1,6 +1,7 @@
 #include "ServerNetworking.h"
 
 #include "Networking.h"
+#include "../util/AppInterface.h"
 
 #include <boost/bind.hpp>
 #include <boost/iterator/filter_iterator.hpp>
@@ -9,6 +10,10 @@
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
 using namespace Networking;
+
+namespace {
+    const bool TRACE_EXECUTION = false;
+}
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams on the local network and sends out
     responses to them. */
@@ -44,6 +49,13 @@ namespace {
             { return player_connection->ID(); }
     private:
         int m_id;
+    };
+
+    struct PlayerIDLess
+    {
+        typedef bool result_type;
+        bool operator()(const PlayerConnectionPtr& lhs, const PlayerConnectionPtr& rhs)
+            { return lhs->ID() < rhs->ID(); }
     };
 }
 
@@ -84,10 +96,14 @@ void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
 void PlayerConnection::SendMessage(const Message& message)
-{ WriteMessage(m_socket, message); }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "PlayerConnection(@ " << this << ")::SendMessage(): sending message " << MessageTypeStr(message.Type()) << " " << message.SendingPlayer() << " --> " << message.ReceivingPlayer();
+    WriteMessage(m_socket, message);
+}
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, bool host)
 {
+    if (TRACE_EXECUTION) Logger().debugStream() << "PlayerConnection(@ " << this << ")::EstablishPlayer(" << id << ", " << player_name << ", " << host << ")";
     assert(m_ID == INVALID_PLAYER_ID && m_player_name == "");
     assert(0 <= id);
     assert(player_name != "");
@@ -96,10 +112,11 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, b
     m_host = host;
 }
 
-PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_service& io_service,
-                                                          boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                                          boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
-                                                          boost::function<void (PlayerConnectionPtr)> disconnected_callback)
+PlayerConnectionPtr
+PlayerConnection::NewConnection(boost::asio::io_service& io_service,
+                                boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                                boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                                boost::function<void (PlayerConnectionPtr)> disconnected_callback)
 { return PlayerConnectionPtr(new PlayerConnection(io_service, nonplayer_message_callback, player_message_callback, disconnected_callback)); }
 
 void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred)
@@ -109,10 +126,11 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error, st
             error == boost::asio::error::connection_reset)
             m_disconnected_callback(shared_from_this());
         else
-            std::cout << "PlayerConnection::HandleMessageBodyRead(): error \"" << error << "\"" << std::endl;
+            Logger().errorStream() << "PlayerConnection::HandleMessageBodyRead(): error \"" << error << "\"";
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
+            if (TRACE_EXECUTION) Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): received message " << m_incoming_message;
             if (EstablishedPlayer())
                 m_player_message_callback(m_incoming_message, shared_from_this());
             else
@@ -129,7 +147,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error, 
             error == boost::asio::error::connection_reset)
             m_disconnected_callback(shared_from_this());
         else
-            std::cout << "PlayerConnection::HandleMessageHeaderRead(): error \"" << error << "\"" << std::endl;
+            Logger().errorStream() << "PlayerConnection::HandleMessageHeaderRead(): error \"" << error << "\"";
     } else {
         assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
         if (static_cast<int>(bytes_transferred) == HEADER_SIZE) {
@@ -193,41 +211,59 @@ ServerNetworking::ServerNetworking(boost::asio::io_service& io_service,
 ServerNetworking::~ServerNetworking()
 { delete m_discovery_server; }
 
-ServerNetworking::const_iterator ServerNetworking::GetPlayer(int id) const
-{ return std::find_if(begin(), end(), PlayerID(id)); }
-
 bool ServerNetworking::empty() const
 { return m_player_connections.empty(); }
 
 std::size_t ServerNetworking::size() const
 { return m_player_connections.size(); }
 
-ServerNetworking::const_iterator ServerNetworking::begin() const
+std::size_t ServerNetworking::NumPlayers() const
+{ return std::distance(established_begin(), established_end()); }
+
+ServerNetworking::const_iterator ServerNetworking::GetPlayer(int id) const
+{ return std::find_if(established_begin(), established_end(), PlayerID(id)); }
+
+ServerNetworking::const_iterator ServerNetworking::established_begin() const
 { return const_iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
 
-ServerNetworking::const_iterator ServerNetworking::end() const
+ServerNetworking::const_iterator ServerNetworking::established_end() const
 { return const_iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
 
-ServerNetworking::const_reverse_iterator ServerNetworking::rbegin() const
+ServerNetworking::const_reverse_iterator ServerNetworking::established_rbegin() const
 { return const_reverse_iterator(EstablishedPlayer(), m_player_connections.rbegin(), m_player_connections.rend()); }
 
-ServerNetworking::const_reverse_iterator ServerNetworking::rend() const
+ServerNetworking::const_reverse_iterator ServerNetworking::established_rend() const
 { return const_reverse_iterator(EstablishedPlayer(), m_player_connections.rend(), m_player_connections.rend()); }
 
+int ServerNetworking::GreatestPlayerID() const
+{
+    // Return the max ID, but be careful not to return INVALID_PLAYER_ID -- the implicit max ID when none are defined is
+    // the predefined host id.
+    PlayerConnections::const_iterator it = std::max_element(m_player_connections.begin(), m_player_connections.end(), PlayerIDLess());
+    int retval = it == m_player_connections.end() ? HOST_PLAYER_ID : (*it)->ID();
+    if (retval == PlayerConnection::INVALID_PLAYER_ID)
+        retval = HOST_PLAYER_ID;
+    return retval;
+}
+
 void ServerNetworking::SendMessage(const Message& message, PlayerConnectionPtr player_connection)
-{ player_connection->SendMessage(message); }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "ServerNetworking::SendMessage : sending message " << message;
+    player_connection->SendMessage(message);
+}
 
 void ServerNetworking::SendMessage(const Message& message)
 {
     iterator it = GetPlayer(message.ReceivingPlayer());
-    assert(it != end());
+    assert(it != established_end());
+    if (TRACE_EXECUTION) Logger().debugStream() << "ServerNetworking::SendMessage : sending message " << message;
     (*it)->SendMessage(message);
 }
 
 void ServerNetworking::Disconnect(int id)
 {
     iterator it = GetPlayer(id);
-    assert(it != end());
+    assert(it != established_end());
     Disconnect(*it);
 }
 
@@ -238,18 +274,18 @@ void ServerNetworking::DisconnectAll()
 { std::for_each(m_player_connections.begin(), m_player_connections.end(), boost::bind(&ServerNetworking::DisconnectImpl, this, _1)); }
 
 ServerNetworking::iterator ServerNetworking::GetPlayer(int id)
-{ return std::find_if(begin(), end(), PlayerID(id)); }
+{ return std::find_if(established_begin(), established_end(), PlayerID(id)); }
 
-ServerNetworking::iterator ServerNetworking::begin()
+ServerNetworking::iterator ServerNetworking::established_begin()
 { return iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
 
-ServerNetworking::iterator ServerNetworking::end()
+ServerNetworking::iterator ServerNetworking::established_end()
 { return iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
 
-ServerNetworking::reverse_iterator ServerNetworking::rbegin()
+ServerNetworking::reverse_iterator ServerNetworking::established_rbegin()
 { return reverse_iterator(EstablishedPlayer(), m_player_connections.rbegin(), m_player_connections.rend()); }
 
-ServerNetworking::reverse_iterator ServerNetworking::rend()
+ServerNetworking::reverse_iterator ServerNetworking::established_rend()
 { return reverse_iterator(EstablishedPlayer(), m_player_connections.rend(), m_player_connections.rend()); }
 
 void ServerNetworking::Init()
@@ -277,6 +313,7 @@ void ServerNetworking::AcceptNextConnection()
 void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection, const boost::system::error_code& error)
 {
     if (!error) {
+        if (TRACE_EXECUTION) Logger().debugStream() << "ServerNetworking::AcceptConnection : connected to new player";
         m_player_connections.insert(player_connection);
         player_connection->Start();
         AcceptNextConnection();
@@ -287,6 +324,8 @@ void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection, c
 
 void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection)
 {
+    if (TRACE_EXECUTION)
+        Logger().debugStream() << "ServerNetworking::DisconnectImpl : disconnecting player " << player_connection->ID();
     m_player_connections.erase(player_connection);
     m_disconnected_callback(player_connection);
 }

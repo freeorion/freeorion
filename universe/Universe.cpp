@@ -2219,9 +2219,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #ifdef FREEORION_BUILD_SERVER
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
-    unsigned int i = 0;
+    std::size_t i = 0;
     std::vector<GG::Clr> colors = EmpireColors();
-    for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().begin(); it != ServerApp::GetApp()->Networking().end(); ++it, ++i) {
+    for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
 
         GG::Clr color;

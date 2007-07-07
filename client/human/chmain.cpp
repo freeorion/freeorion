@@ -1,4 +1,4 @@
-#include "HumanClientAppSoundFMOD.h"
+#include "HumanClientApp.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    HumanClientAppSoundFMOD app;
+    HumanClientApp app;
 
     try {
         app(); // run app (intialization and main process loop)

@@ -46,13 +46,15 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const_iterator GetPlayer(int id) const; ///< Returns an iterator to the established PlayerConnection object with ID \a id, or end() if none is found.
     bool empty() const;                     ///< Returns true if size() == 0.
     std::size_t size() const;               ///< Returns the \a total number of PlayerConnections (not just established ones).
-    const_iterator begin() const;           ///< Returns an iterator to the first \a established PlayerConnection object.
-    const_iterator end() const;             ///< Returns an iterator to the one-past-the-last \a established PlayerConnection object.
-    const_reverse_iterator rbegin() const;  ///< Returns a reverse iterator to the first \a established PlayerConnection object.
-    const_reverse_iterator rend() const;    ///< Returns a reverse iterator to the one-past-the-last \a established PlayerConnection object.
+    std::size_t NumPlayers() const;         ///< Returns the number of established-player PlayerConnections.
+    const_iterator GetPlayer(int id) const; ///< Returns an iterator to the established PlayerConnection object with ID \a id, or end() if none is found.
+    const_iterator established_begin() const;           ///< Returns an iterator to the first \a established PlayerConnection object.
+    const_iterator established_end() const;             ///< Returns an iterator to the one-past-the-last \a established PlayerConnection object.
+    const_reverse_iterator established_rbegin() const;  ///< Returns a reverse iterator to the first \a established PlayerConnection object.
+    const_reverse_iterator established_rend() const;    ///< Returns a reverse iterator to the one-past-the-last \a established PlayerConnection object.
+    int GreatestPlayerID() const;           ///< Returns the highest player ID of all the established players.
     //@}
 
     /** \name Mutators */ //@{
@@ -72,10 +74,10 @@ public:
     void DisconnectAll();
 
     iterator GetPlayer(int id); ///< Returns an iterator to the established PlayerConnection object with ID \a id, or end() if none is found.
-    iterator begin();           ///< Returns an iterator to the first established PlayerConnection object.
-    iterator end();             ///< Returns an iterator to the one-past-the-last established PlayerConnection object.
-    reverse_iterator rbegin();  ///< Returns an iterator to the first established PlayerConnection object.
-    reverse_iterator rend();    ///< Returns an iterator to the one-past-the-last established PlayerConnection object.
+    iterator established_begin();           ///< Returns an iterator to the first established PlayerConnection object.
+    iterator established_end();             ///< Returns an iterator to the one-past-the-last established PlayerConnection object.
+    reverse_iterator established_rbegin();  ///< Returns an iterator to the first established PlayerConnection object.
+    reverse_iterator established_rend();    ///< Returns an iterator to the one-past-the-last established PlayerConnection object.
     //@}
 
 private:

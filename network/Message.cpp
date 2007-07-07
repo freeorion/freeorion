@@ -396,9 +396,9 @@ Message HostLoadGameMessage(int sender, const std::string& filename)
     return Message(Message::LOAD_GAME, sender, -1, Message::CORE, filename);
 }
 
-Message ServerSaveGameMessage(int receiver, bool done/* = false*/)
+Message ServerSaveGameMessage(int receiver)
 {
-    return Message(Message::SAVE_GAME, -1, receiver, done ? Message::CLIENT_SYNCHRONOUS_RESPONSE : Message::CORE, "");
+    return Message(Message::SAVE_GAME, -1, receiver, Message::CORE, "");
 }
 
 Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data)

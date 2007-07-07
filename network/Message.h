@@ -209,7 +209,7 @@ Message HostSaveGameMessage(int sender, const std::string& filename);
 Message HostLoadGameMessage(int sender, const std::string& filename);
 
 /** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
-Message ServerSaveGameMessage(int receiver, bool done = false);
+Message ServerSaveGameMessage(int receiver);
 
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
 Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data);

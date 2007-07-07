@@ -14,6 +14,8 @@
 
 
 namespace {
+    const bool TRACE_EXECUTION = false;
+
     void RebuildSaveGameEmpireData(std::vector<SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
     {
         save_game_empire_data.clear();
@@ -73,7 +75,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     if (player_connection->Host()) {
         // if the host dies, there's really nothing else we can do -- the game's over
         std::string message = player_connection->PlayerName();
-        for (ServerNetworking::const_iterator it = m_server.m_networking.begin(); it != m_server.m_networking.end(); ++it) {
+        for (ServerNetworking::const_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
                 (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
                 (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
@@ -86,7 +88,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
                                << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
         std::string message = player_connection->PlayerName();
-        for (ServerNetworking::const_iterator it = m_server.m_networking.begin(); it != m_server.m_networking.end(); ++it) {
+        for (ServerNetworking::const_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
                 (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
                 // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
@@ -107,15 +109,16 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
 ////////////////////////////////////////////////////////////
 // Idle
 ////////////////////////////////////////////////////////////
-Idle::Idle()
-{ std::cout << "Idle" << std::endl; }
+Idle::Idle() :
+    Base()
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle"; }
 
 Idle::~Idle()
-{ std::cout << "~Idle" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~Idle"; }
 
 boost::statechart::result Idle::react(const HostMPGame& msg)
 {
-    std::cout << "Idle.HostMPGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostMPGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -132,12 +135,12 @@ boost::statechart::result Idle::react(const HostMPGame& msg)
 
 boost::statechart::result Idle::react(const HostSPGame& msg)
 {
-    std::cout << "Idle.HostSPGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostSPGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    boost::shared_ptr<SinglePlayerSetupData> setup_data;
+    boost::shared_ptr<SinglePlayerSetupData> setup_data(new SinglePlayerSetupData);
     ExtractMessageData(message, *setup_data);
 
     int player_id = Networking::HOST_PLAYER_ID;
@@ -154,10 +157,11 @@ boost::statechart::result Idle::react(const HostSPGame& msg)
 ////////////////////////////////////////////////////////////
 // MPLobby
 ////////////////////////////////////////////////////////////
-MPLobby::MPLobby() :
+MPLobby::MPLobby(my_context c) :
+    Base(c),
     m_lobby_data (new MultiplayerLobbyData(true))
 {
-    std::cout << "MPLobby" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
     ServerApp& server = context<ServerFSM>().Server();
     int player_id = Networking::HOST_PLAYER_ID;
     const PlayerConnectionPtr& player_connection = *server.m_networking.GetPlayer(player_id);
@@ -169,18 +173,18 @@ MPLobby::MPLobby() :
 }
 
 MPLobby::~MPLobby()
-{ std::cout << "~MPLobby" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~MPLobby"; }
 
 boost::statechart::result MPLobby::react(const Disconnection& d)
 {
-    std::cout << "MPLobby.Disconnection" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.Disconnection";
     ServerApp& server = context<ServerFSM>().Server();
     PlayerConnectionPtr& player_connection = d.m_player_connection;
 
     int id = player_connection->ID();
     // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
     if (player_connection->Host()) {
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
                 (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
                 server.m_networking.Disconnect((*it)->ID());
@@ -192,7 +196,7 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
         server.Exit(1);
     } else {
         unsigned int i = 0;
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it, ++i) {
+        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it, ++i) {
             if ((*it)->ID() == id) {
                 if (i < m_lobby_data->m_players.size())
                     m_lobby_data->m_players.erase(m_lobby_data->m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
@@ -215,20 +219,20 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
 
 boost::statechart::result MPLobby::react(const JoinGame& msg)
 {
-    std::cout << "MPLobby.JoinGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.JoinGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name = message.Text();
-    int player_id = (*server.m_networking.rbegin())->ID() + 1;
+    int player_id = server.m_networking.GreatestPlayerID() + 1;
     player_connection->EstablishPlayer(player_id, player_name, false);
     player_connection->SendMessage(JoinAckMessage(player_id));
     m_lobby_data->m_players.push_back(PlayerSetupData());
     m_lobby_data->m_players.back().m_player_id = player_id;
     m_lobby_data->m_players.back().m_player_name = player_name;
     m_lobby_data->m_players.back().m_empire_color = EmpireColors().at(0);
-    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
     }
 
@@ -237,11 +241,11 @@ boost::statechart::result MPLobby::react(const JoinGame& msg)
 
 boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
 {
-    std::cout << "MPLobby.LobbyUpdate" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
-    MultiplayerLobbyData incoming_lobby_data;
+    MultiplayerLobbyData incoming_lobby_data(new MultiplayerLobbyData);
     ExtractMessageData(message, incoming_lobby_data);
 
     // NOTE: The client is only allowed to update certain of these, so those are the only ones we'll copy into m_lobby_data.
@@ -266,7 +270,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
     }
     m_lobby_data->m_players = incoming_lobby_data.m_players;
 
-    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if ((*it)->ID() != message.SendingPlayer() || new_save_file_selected)
             (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
     }
@@ -276,12 +280,12 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
 
 boost::statechart::result MPLobby::react(const LobbyChat& msg)
 {
-    std::cout << "MPLobby.LobbyChat" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyChat";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
     if (message.ReceivingPlayer() == -1) { // the receiver is everyone (except the sender)
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != message.SendingPlayer())
                 (*it)->SendMessage(ServerLobbyChatMessage(message.SendingPlayer(), (*it)->ID(), message.Text()));
         }
@@ -294,11 +298,11 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg)
 
 boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
 {
-    std::cout << "MPLobby.LobbyHostAbort" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyHostAbort";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
-    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if ((*it)->ID() != message.SendingPlayer()) {
             (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
             server.m_networking.Disconnect((*it)->ID());
@@ -310,12 +314,12 @@ boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
 
 boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
 {
-    std::cout << "MPLobby.LobbyNonHostExit" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyNonHostExit";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
     unsigned int i = 0;
-    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it, ++i) {
+    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it, ++i) {
         if ((*it)->ID() == message.SendingPlayer()) {
             if (i < m_lobby_data->m_players.size())
                 m_lobby_data->m_players.erase(m_lobby_data->m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
@@ -330,7 +334,7 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
 
 boost::statechart::result MPLobby::react(const StartMPGame& msg)
 {
-    std::cout << "MPLobby.StartMPGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.StartMPGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -338,7 +342,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
     if (player_connection->Host()) {
         if (m_lobby_data->m_new_game) {
             int expected_players = server.m_networking.size() + m_lobby_data->m_AIs.size();
-            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+            for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
                 if ((*it)->ID() != Networking::HOST_PLAYER_ID)
                     (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
             }
@@ -355,7 +359,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
                     assert(m_player_save_game_data[i].m_empire);
                     if (m_lobby_data->m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
                         ServerNetworking::const_iterator player_it = server.m_networking.GetPlayer(m_lobby_data->m_players[j].m_player_id);
-                        assert(player_it != server.m_networking.end());
+                        assert(player_it != server.m_networking.established_end());
                         m_player_save_game_data[i].m_name = (*player_it)->PlayerName();
                         m_player_save_game_data[i].m_empire->SetPlayerName((*player_it)->PlayerName());
                     }
@@ -363,7 +367,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
                 Empires().InsertEmpire(m_player_save_game_data[i].m_empire);
             }
 
-            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+            for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
                 if ((*it)->ID() != player_connection->ID())
                     (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
             }
@@ -375,7 +379,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
             }
         }
     } else {
-        Logger().errorStream() << "MPLobby.StartMPGame : Player #" << message.SendingPlayer()
+        Logger().errorStream() << "(ServerFSM) MPLobby.StartMPGame : Player #" << message.SendingPlayer()
                                << " attempted to initiate a game load, but is not the host.  Terminating connection.";
         server.m_networking.Disconnect(player_connection);
         return discard_event();
@@ -391,11 +395,12 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
 ////////////////////////////////////////////////////////////
 // WaitingForSPGameJoiners
 ////////////////////////////////////////////////////////////
-WaitingForSPGameJoiners::WaitingForSPGameJoiners() :
+WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
+    Base(c),
     m_setup_data(context<ServerFSM>().m_setup_data),
     m_num_expected_players(0)
 {
-    std::cout << "WaitingForSPGameJoiners" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners";
 
     context<ServerFSM>().m_setup_data.reset();
     ServerApp& server = context<ServerFSM>().Server();
@@ -411,17 +416,17 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners() :
 }
 
 WaitingForSPGameJoiners::~WaitingForSPGameJoiners()
-{ std::cout << "~WaitingForSPGameJoiners" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSPGameJoiners"; }
 
 boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 {
-    std::cout << "WaitingForSPGameJoiners.JoinGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name = message.Text();
-    int player_id = (*server.m_networking.rbegin())->ID() + 1;
+    int player_id = server.m_networking.GreatestPlayerID() + 1;
     std::set<std::string>::iterator it = m_expected_ai_player_names.find(player_name);
     if (it != m_expected_ai_player_names.end()) { // incoming AI player connection
         // let the networking system know what socket this player is on
@@ -430,7 +435,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         m_expected_ai_player_names.erase(player_name); // only allow one connection per AI
         server.m_ai_IDs.insert(player_id);
     } else { // non-AI player connection
-        if (static_cast<int>(m_expected_ai_player_names.size() + server.m_networking.size()) < m_num_expected_players) {
+        if (static_cast<int>(m_expected_ai_player_names.size() + server.m_networking.NumPlayers()) < m_num_expected_players) {
             player_connection->EstablishPlayer(player_id, player_name, false);
             player_connection->SendMessage(JoinAckMessage(player_id));
         } else {
@@ -440,7 +445,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         }
     }
 
-    if (static_cast<int>(server.m_networking.size()) == m_num_expected_players) {
+    if (static_cast<int>(server.m_networking.NumPlayers()) == m_num_expected_players) {
         if (m_setup_data->m_new_game)
             server.NewGameInit(m_setup_data);
         else
@@ -455,12 +460,13 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 ////////////////////////////////////////////////////////////
 // WaitingForMPGameJoiners
 ////////////////////////////////////////////////////////////
-WaitingForMPGameJoiners::WaitingForMPGameJoiners() :
+WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
+    Base(c),
     m_lobby_data(context<ServerFSM>().m_lobby_data),
     m_player_save_game_data(context<ServerFSM>().m_player_save_game_data.begin(), context<ServerFSM>().m_player_save_game_data.end()),
     m_num_expected_players(0)
 {
-    std::cout << "WaitingForMPGameJoiners" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
     context<ServerFSM>().m_lobby_data.reset();
     context<ServerFSM>().m_player_save_game_data.clear();
     ServerApp& server = context<ServerFSM>().Server();
@@ -475,17 +481,17 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners() :
 }
 
 WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
-{ std::cout << "~WaitingForMPGameJoiners" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForMPGameJoiners"; }
 
 boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
 {
-    std::cout << "WaitingForMPGameJoiners.JoinGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string player_name = message.Text();
-    int player_id = (*server.m_networking.rbegin())->ID() + 1;
+    int player_id = server.m_networking.GreatestPlayerID() + 1;
     std::set<std::string>::iterator it = m_expected_ai_player_names.find(player_name);
     if (it != m_expected_ai_player_names.end()) { // incoming AI player connection
         // let the networking system know what socket this player is on
@@ -494,7 +500,7 @@ boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
         m_expected_ai_player_names.erase(player_name); // only allow one connection per AI
         server.m_ai_IDs.insert(player_id);
     } else { // non-AI player connection
-        if (static_cast<int>(m_expected_ai_player_names.size() + server.m_networking.size()) < m_num_expected_players) {
+        if (static_cast<int>(m_expected_ai_player_names.size() + server.m_networking.NumPlayers()) < m_num_expected_players) {
             player_connection->EstablishPlayer(player_id, player_name, false);
             player_connection->SendMessage(JoinAckMessage(player_id));
         } else {
@@ -504,7 +510,7 @@ boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
         }
     }
 
-    if (static_cast<int>(server.m_networking.size()) == m_num_expected_players) {
+    if (static_cast<int>(server.m_networking.NumPlayers()) == m_num_expected_players) {
         if (m_player_save_game_data.empty())
             server.NewGameInit(m_lobby_data);
         else
@@ -519,25 +525,27 @@ boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
 ////////////////////////////////////////////////////////////
 // PlayingGame
 ////////////////////////////////////////////////////////////
-PlayingGame::PlayingGame()
-{ std::cout << "PlayingGame" << std::endl; }
+PlayingGame::PlayingGame() :
+    Base()
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame"; }
 
 PlayingGame::~PlayingGame()
-{ std::cout << "~PlayingGame" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~PlayingGame"; }
 
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd
 ////////////////////////////////////////////////////////////
-WaitingForTurnEnd::WaitingForTurnEnd()
-{ std::cout << "WaitingForTurnEnd" << std::endl; }
+WaitingForTurnEnd::WaitingForTurnEnd() :
+    Base()
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd"; }
 
 WaitingForTurnEnd::~WaitingForTurnEnd()
-{ std::cout << "~WaitingForTurnEnd" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd"; }
 
 boost::statechart::result WaitingForTurnEnd::react(const LoadSPGame& msg)
 {
-    std::cout << "WaitingForTurnEnd.LoadSPGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.LoadSPGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -561,7 +569,7 @@ boost::statechart::result WaitingForTurnEnd::react(const LoadSPGame& msg)
 
 boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
 {
-    std::cout << "WaitingForTurnEnd.TurnOrders" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
@@ -599,14 +607,14 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
 
 boost::statechart::result WaitingForTurnEnd::react(const RequestObjectID& msg)
 {
-    std::cout << "WaitingForTurnEnd.RequestObjectID" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
     context<ServerFSM>().Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
 boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
 {
-    std::cout << "WaitingForTurnEnd.PlayerChat" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.PlayerChat";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
@@ -623,7 +631,7 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
         std::vector<std::string> tokens = Tokenize(text.substr(0, colon_position));
         for (unsigned int i = 0; i < tokens.size(); ++i) {
             bool token_is_name = false;
-            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+            for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
                 if (tokens[i] == (*it)->PlayerName()) {
                     token_is_name = true;
                     break;
@@ -643,7 +651,7 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
     Empire* sender_empire = server.GetPlayerEmpire(message.SendingPlayer());
     std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + (*server.m_networking.GetPlayer(message.SendingPlayer()))->PlayerName() +
         (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n"; // TODO: "whisper" should be a translated string
-    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if (target_player_names.empty() || target_player_names.find((*it)->PlayerName()) != target_player_names.end())
             (*it)->SendMessage(ChatMessage(message.SendingPlayer(), (*it)->ID(), final_text));
     }
@@ -653,13 +661,13 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
 
 boost::statechart::result WaitingForTurnEnd::react(const EndGame& msg)
 {
-    std::cout << "WaitingForTurnEnd.EndGame" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.EndGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (player_connection->Host()) {
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != player_connection->ID())
                 (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
         }
@@ -676,15 +684,16 @@ boost::statechart::result WaitingForTurnEnd::react(const EndGame& msg)
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEndIdle
 ////////////////////////////////////////////////////////////
-WaitingForTurnEndIdle::WaitingForTurnEndIdle()
-{ std::cout << "WaitingForTurnEndIdle" << std::endl; }
+WaitingForTurnEndIdle::WaitingForTurnEndIdle() :
+    Base()
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle"; }
 
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
-{ std::cout << "~WaitingForTurnEndIdle" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
 
 boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
 {
-    std::cout << "WaitingForTurnEnd.SaveGameRequest" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.SaveGameRequest";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -695,6 +704,8 @@ boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& ms
         server.m_networking.Disconnect(player_connection);
     }
 
+    context<WaitingForTurnEnd>().m_save_filename = message.Text();
+
     return transit<WaitingForSaveData>();
 }
 
@@ -702,23 +713,24 @@ boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& ms
 ////////////////////////////////////////////////////////////
 // WaitingForSaveData
 ////////////////////////////////////////////////////////////
-WaitingForSaveData::WaitingForSaveData()
+WaitingForSaveData::WaitingForSaveData(my_context c) :
+    Base(c)
 {
-    std::cout << "WaitingForSaveData" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData";
 
     ServerApp& server = context<ServerFSM>().Server();
-    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerSaveGameMessage((*it)->ID()));
         m_needed_reponses.insert((*it)->ID());
     }
 }
 
 WaitingForSaveData::~WaitingForSaveData()
-{ std::cout << "~WaitingForSaveData" << std::endl; }
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSaveData"; }
 
 boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
 {
-    std::cout << "WaitingForSaveData.ClientSaveData" << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
@@ -731,8 +743,8 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
     m_players_responded.insert(message.SendingPlayer());
 
     if (m_players_responded == m_needed_reponses) {
-        SaveGame(message.Text(), server.m_current_turn, m_player_save_game_data, GetUniverse());
-        server.m_networking.SendMessage(ServerSaveGameMessage(Networking::HOST_PLAYER_ID, true));
+        SaveGame(context<WaitingForTurnEnd>().m_save_filename, server.m_current_turn, m_player_save_game_data, GetUniverse());
+        context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();
     }
 

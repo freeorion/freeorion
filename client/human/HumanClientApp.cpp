@@ -94,7 +94,8 @@ HumanClientApp::HumanClientApp() :
            false, "freeorion"),
     m_single_player_game(true),
     m_game_started(false),
-    m_turns_since_autosave(0)
+    m_turns_since_autosave(0),
+    m_in_save_game_cycle(false)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -175,6 +176,25 @@ void HumanClientApp::KillServer()
     SetPlayerID(-1);
     SetEmpireID(-1);
     SetPlayerName("");
+}
+
+void HumanClientApp::SaveGame(const std::string& filename)
+{
+    // Note that SendSynchronousMessage() will not work in this situation, since the save game cycle is send request,
+    // receive request for save game data, then send save game data.  Synchronous messages are designed to be send one
+    // message, immediately get a response back.  So, we effectively block here by polling the networking message queue
+    // until we get the final message (at which point m_in_save_game_cycle == false).
+    m_in_save_game_cycle = true;
+    Networking().SendMessage(HostSaveGameMessage(PlayerID(), filename));
+    while (m_in_save_game_cycle) {
+        if (!Networking().Connected()) {
+            HandleServerDisconnect();
+        } else if (Networking().MessageAvailable()) {
+            Message msg;
+            Networking().GetMessage(msg);
+            HandleMessage(msg);
+        }
+    }
 }
 
 void HumanClientApp::EndGame()
@@ -396,14 +416,11 @@ void HumanClientApp::Initialize()
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 }
 
-void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
+void HumanClientApp::HandleSystemEvents()
 {
     // handle events
     SDL_Event event;
     while (0 < FE_PollEvent(&event)) {
-        if (event.type  == SDL_MOUSEBUTTONDOWN || event.type  == SDL_MOUSEBUTTONUP || event.type == SDL_MOUSEMOTION)
-            last_mouse_event_time = Ticks();
-
         bool send_to_gg = false;
         EventType gg_event = MOUSEMOVE;
         GG::Key key = GGKeyFromSDLKey(event.key.keysym);
@@ -447,15 +464,21 @@ void HumanClientApp::HandleSystemEvents(int& last_mouse_event_time)
             HandleGGEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
         else
             HandleNonGGEvent(event);
+    }
 
-        // now check for a single network message
-        if (!Networking().Connected()) {
-            HandleServerDisconnect();
-        } else if (Networking().MessageAvailable()) {
-            Message msg;
-            Networking().GetMessage(msg);
-            HandleMessage(msg);
-        }
+    // now check for a single network message
+    if (!Networking().Connected()) {
+        HandleServerDisconnect();
+    } else if (Networking().MessageAvailable()) {
+        Logger().debugStream() << "Message available.  Retrieving ...";
+        Message msg;
+        Networking().GetMessage(msg);
+        Logger().debugStream() << "Message Received.  Handling ...";
+        HandleMessage(msg);
+#if 0
+    } else if (!Networking().MessageAvailable()) {
+        Logger().debugStream() << "No message available ...";
+#endif
     }
 }
 
@@ -548,6 +571,7 @@ void HumanClientApp::HandleMessage(const Message& msg)
         SaveGameUIData ui_data;
         ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
         Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
+        m_in_save_game_cycle = false;
         break;
     }
 
@@ -572,10 +596,12 @@ void HumanClientApp::HandleMessage(const Message& msg)
 
         Autosave(false);
 
+#if 0 // TODO: re-evaluate whether this break is necessary now
         // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
         // processed an end-of-game message, in which case we need *not* to execute these last two lines below
         if (!m_game_started || !Networking().Connected())
             break;
+#endif
 
         m_ui->ScreenMap(); 
         m_ui->InitTurn(CurrentTurn());
@@ -732,8 +758,7 @@ void HumanClientApp::Autosave(bool new_game)
             fs::remove(save_dir / *rit);
         }
 
-        Message response;
-        Networking().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), (save_dir / save_filename).native_file_string()), response);
+        SaveGame((save_dir / save_filename).native_file_string());
     }
 }
 

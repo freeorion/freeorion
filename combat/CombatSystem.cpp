@@ -36,7 +36,7 @@ namespace
     {
         std::ostringstream stream;
         doc.WriteDoc(stream);
-        for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().begin(); it != ServerApp::GetApp()->Networking().end(); ++it) {
+        for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it) {
             (*it)->SendMessage(Message(msg_type, -1, (*it)->ID(), module, stream.str()));
         }
     }

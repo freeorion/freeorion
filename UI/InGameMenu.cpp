@@ -100,11 +100,8 @@ void InGameMenu::Save()
     try {
         FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", true, false, save_file_types);
         dlg.Run();
-        std::string filename;
         if (!dlg.Result().empty()) {
-            filename = *dlg.Result().begin();
-            Message response;
-            HumanClientApp::GetApp()->Networking().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
+            HumanClientApp::GetApp()->SaveGame(*dlg.Result().begin());
             CloseClicked();
         }
     } catch (const FileDlg::BadInitialDirectory& e) {

@@ -1,6 +1,7 @@
 #include "ClientNetworking.h"
 
 #include "Networking.h"
+#include "../util/AppInterface.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -14,6 +15,8 @@ using boost::asio::ip::tcp;
 using namespace Networking;
 
 namespace {
+    const bool TRACE_EXECUTION = false;
+
     /** A simple client that broadcasts UDP datagrams on the local network for FreeOrion servers, and reports any it
         finds. */
     class ServerDiscoverer
@@ -136,6 +139,7 @@ bool ClientNetworking::ConnectToServer(const std::string& ip_address, boost::pos
     for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
         m_socket.close();
         boost::asio::deadline_timer timer(m_io_service);
+        if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
         m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                 &it,
                                                 &timer,
@@ -147,6 +151,7 @@ bool ClientNetworking::ConnectToServer(const std::string& ip_address, boost::pos
         m_io_service.reset();
         if (Connected()) {
             m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+            if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::ConnectToServer : starting networking thread";
             boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
             break;
         }
@@ -163,6 +168,7 @@ void ClientNetworking::DisconnectFromServer()
 void ClientNetworking::SendMessage(const Message& message)
 {
     assert(Connected());
+    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::SendMessage() : sending message " << message;
     m_io_service.post(boost::bind(&ClientNetworking::SendMessageImpl, this, message));
 }
 
@@ -170,12 +176,15 @@ void ClientNetworking::GetMessage(Message& message)
 {
     assert(MessageAvailable());
     m_incoming_messages.PopFront(message);
+    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::GetMessage() : received message " << message;
 }
 
 void ClientNetworking::SendSynchronousMessage(const Message& message, Message& response_message)
 {
+    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::SendSynchronousMessage : sending message " << message;
     SendMessage(message);
     m_incoming_messages.EraseFirstSynchronousResponse(response_message); // note that this is a blocking operation
+    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::SendSynchronousMessage : received response message " << response_message;
 }
 
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it, boost::asio::deadline_timer* timer, const boost::system::error_code& error)
@@ -183,12 +192,14 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it, boost::asio
     if (error) {
         // TODO: Log connection error.
         if (!m_cancel_retries) {
+            if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::HandleConnection : connection error ... retrying";
             m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                      it,
                                                      timer,
                                                      boost::asio::placeholders::error));
         }
     } else {
+        if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::HandleConnection : connected";
         timer->cancel();
         boost::mutex::scoped_lock lock(m_mutex);
         m_connected = true;
@@ -203,9 +214,9 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
     if (error.code() == boost::asio::error::eof ||
         error.code() == boost::asio::error::connection_reset ||
         error.code() == boost::asio::error::operation_aborted) {
-        std::cout << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to disconnect exception \"" << error.what() << "\"" << std::endl; // TODO: log the closing of this thread
+        Logger().errorStream() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to disconnect exception \"" << error.what() << "\"";
     } else {
-        std::cout << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to unhandled exception \"" << error.what() << "\"" << std::endl; // TODO: log the closing of this thread
+        Logger().errorStream() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to unhandled exception \"" << error.what() << "\"";
     }
 }
 
@@ -226,7 +237,7 @@ void ClientNetworking::NetworkingThread()
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    std::cout << "ClientNetworking::NetworkingThread() : Networking thread terminated." << std::endl;
+    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
     m_incoming_messages.Clear();
     m_outgoing_messages.clear();
     m_io_service.reset();
