@@ -1058,14 +1058,52 @@ Uninhabited
 PL_SIZE
 Size
 
-PL_PRIMARY_FOCUS
-Primary Focus
-
-PL_SECONDARY_FOCUS
-Secondary Focus
-
 PL_COLONIZE
 Colonize
+
+##Population Panel#########
+
+PP_POPULATION_TOOLTIP
+Population\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+
+PP_HEALTH_TOOLTIP
+Health\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+
+##Resources Panel##########
+
+RP_PRIMARY_FOCUS_TOOLTIP
+Primary Focus: %1%
+
+RP_SECONDARY_FOCUS_TOOLTIP
+Secondary Focus: %1%
+
+RP_FOOD_TOOLTIP
+Food Production\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_MINERALS_TOOLTIP
+Minerals Production\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_INDUSTRY_TOOLTIP
+Industrial Output\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_RESEARCH_TOOLTIP
+Research Output\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_TRADE_TOOLTIP
+Trade Level\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_CONSTRUCTION_TOOLTIP
+Construction Infrastructure\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+
+## Buildings Panel##########
+
+BP_INCOMPLETE_BUILDING_TOOLTIP
+%1% (Incomplete)\n\n%2%
+
+BP_COMPLETE_BUILDING_TOOLTIP
+%1%\n\n%2%
+
+## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
 Unknown System
@@ -1081,42 +1119,6 @@ Enter new planet name
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
 All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?
-
-SP_POPULATION
-Population
-
-SP_HEALTH
-Health
-
-SP_FOOD_PRODUCTION
-Food Production
-
-SP_MINERALS_PRODUCTION
-Minerals Production
-
-SP_INDUSTRIAL_OUTPUT
-Industrial Output
-
-SP_RESEARCH_OUTPUT
-Research Output
-
-SP_TRADE_LEVEL
-Trade Level
-
-SP_CONSTRUCTION_INFRASTRUCTURE
-Construction Infrastructure
-
-SP_CURRENT
-Current
-
-SP_NEXT
-Next
-
-SP_MAX
-Maximum
-
-SP_CHANGE
-Change
 
 #################
 # Fleet Window  #

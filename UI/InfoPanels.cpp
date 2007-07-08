@@ -20,6 +20,7 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/format.hpp>
 
 using boost::lexical_cast;
 
@@ -233,20 +234,25 @@ void PopulationPanel::Update()
     }
 
     // mousover text - actual population and health is just the corresponding meter values
+    double current, next, change, max;
+    std::string text;
+
     m_pop_stat->SetValue(pop->PopPoints());
     m_pop_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    std::string text = UserString("SP_POPULATION") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(pop->PopPoints(), 3, false, false) + "\n" +
-                       UserString("SP_MAX") + ": " + StatisticIcon::DoubleToString(pop->MaxPop(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(pop->FuturePopGrowth(), 3, false, true);
+    current = pop->PopPoints();
+    change = pop->FuturePopGrowth();
+    next = current + change;
+    max = pop->MaxPop();
+    text = boost::io::str(boost::format(UserString("PP_POPULATION_TOOLTIP")) % current % next % change % max);
     m_pop_stat->SetBrowseText(text);
 
     m_health_stat->SetValue(pop->Health());
     m_health_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text =             UserString("SP_HEALTH") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(pop->Health(), 3, false, false) + "\n" +
-                       UserString("SP_MAX") + ": " + StatisticIcon::DoubleToString(pop->MaxHealth(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(pop->FutureHealthGrowth(), 3, false, true);
+    current = pop->Health();
+    change = pop->FutureHealthGrowth();
+    next = current + change;
+    max = pop->MaxHealth();
+    text = boost::io::str(boost::format(UserString("PP_HEALTH_TOOLTIP")) % current % next % change % max);
     m_health_stat->SetBrowseText(text);
 
     // meter bar display
@@ -352,38 +358,26 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(), GG::CLR_WHITE,
                                        0, 3, false, false);
     AttachChild(m_farming_stat);
-    m_farming_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_farming_stat->SetBrowseText("Food Production");
 
     m_mining_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "mining.png").native_file_string(), GG::CLR_WHITE,
                                       0, 3, false, false);
     AttachChild(m_mining_stat);
-    m_mining_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_mining_stat->SetBrowseText("Minerals Production");
 
     m_industry_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "industry.png").native_file_string(), GG::CLR_WHITE,
                                         0, 3, false, false);
     AttachChild(m_industry_stat);
-    m_industry_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_industry_stat->SetBrowseText("Industrial Output");
 
     m_research_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "research.png").native_file_string(), GG::CLR_WHITE,
                                         0, 3, false, false);
     AttachChild(m_research_stat);
-    m_research_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_research_stat->SetBrowseText("Research Output");
 
     m_trade_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "trade.png").native_file_string(), GG::CLR_WHITE,
                                      0, 3, false, false);
     AttachChild(m_trade_stat);
-    m_trade_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_trade_stat->SetBrowseText("Trade Level");
 
     m_construction_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "construction.png").native_file_string(), GG::CLR_WHITE,
                                             0, 3, false, false);
     AttachChild(m_construction_stat);
-    m_construction_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_construction_stat->SetBrowseText("Infrastructure Construction Level");
 
     // meter bars
     int top = UpperLeft().y;
@@ -681,47 +675,56 @@ void ResourcePanel::Update()
     }
 
     // mousover text - resource production not equal to meter value
+    double current, next, change, max;
+    std::string text;
+
     m_farming_stat->SetValue(res->FarmingPoints());
     m_farming_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    std::string text = UserString("SP_FOOD_PRODUCTION") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->FarmingPoints(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedFarmingPoints() - res->FarmingPoints(), 3, false, true);
+    current = res->FarmingPoints();
+    next = res->ProjectedFarmingPoints();
+    change = next - current;
+    text = boost::io::str(boost::format(UserString("RP_FOOD_TOOLTIP")) % current % next % change);
     m_farming_stat->SetBrowseText(text);
 
     m_mining_stat->SetValue(res->MiningPoints());
     m_mining_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text =             UserString("SP_MINERALS_PRODUCTION") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->MiningPoints(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedMiningPoints() - res->MiningPoints(), 3, false, true);
+    current = res->MiningPoints();
+    next = res->ProjectedMiningPoints();
+    change = next - current;
+    text = boost::io::str(boost::format(UserString("RP_MINERALS_TOOLTIP")) % current % next % change);
     m_mining_stat->SetBrowseText(text);
 
     m_industry_stat->SetValue(res->IndustryPoints());
     m_industry_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text =             UserString("SP_INDUSTRIAL_OUTPUT") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->IndustryPoints(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedIndustryPoints() - res->IndustryPoints(), 3, false, true);
+    current = res->IndustryPoints();
+    next = res->ProjectedIndustryPoints();
+    change = next - current;
+    text = boost::io::str(boost::format(UserString("RP_INDUSTRY_TOOLTIP")) % current % next % change);
     m_industry_stat->SetBrowseText(text);
 
     m_research_stat->SetValue(res->ResearchPoints());
     m_research_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text =             UserString("SP_RESEARCH_OUTPUT") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->ResearchPoints(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedResearchPoints() - res->ResearchPoints(), 3, false, true);
+    current = res->ResearchPoints();
+    next = res->ProjectedResearchPoints();
+    change = next - current;
+    text = boost::io::str(boost::format(UserString("RP_RESEARCH_TOOLTIP")) % current % next % change);
     m_research_stat->SetBrowseText(text);
 
     m_trade_stat->SetValue(res->TradePoints());
     m_trade_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text =             UserString("SP_TRADE_LEVEL") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->TradePoints(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedTradePoints() - res->TradePoints(), 3, false, true);
+    current = res->TradePoints();
+    next = res->ProjectedTradePoints();
+    change = next - current;
+    text = boost::io::str(boost::format(UserString("RP_TRADE_TOOLTIP")) % current % next % change);
     m_trade_stat->SetBrowseText(text);
 
     m_construction_stat->SetValue(res->ConstructionMeter().Current());
     m_construction_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text =             UserString("SP_CONSTRUCTION_INFRASTRUCTURE") + "\n" +
-                       UserString("SP_CURRENT") + ": " + StatisticIcon::DoubleToString(res->ConstructionMeter().Current(), 3, false, false) + "\n" +
-                       UserString("SP_MAX") + ": " + StatisticIcon::DoubleToString(res->ConstructionMeter().Max(), 3, false, false) + "\n" +
-                       UserString("SP_CHANGE") + ": " + StatisticIcon::DoubleToString(res->ProjectedCurrent(METER_CONSTRUCTION) - res->ConstructionMeter().Current(), 3, false, true);
+    current = res->ConstructionMeter().Current();
+    next = res->ProjectedCurrent(METER_CONSTRUCTION);
+    change = next - current;
+    max = res->ConstructionMeter().Max();
+    text = boost::io::str(boost::format(UserString("RP_CONSTRUCTION_TOOLTIP")) % current % next % change % max);
     m_construction_stat->SetBrowseText(text);
 
     // meter bar display
@@ -747,31 +750,31 @@ void ResourcePanel::Update()
     {
     case FOCUS_BALANCED:
         m_primary_focus_drop->Select(0);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_BALANCED");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
         break;
     case FOCUS_FARMING:
         m_primary_focus_drop->Select(1);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_FARMING");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
         break;
     case FOCUS_MINING:
         m_primary_focus_drop->Select(2);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_MINING");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
         break;
     case FOCUS_INDUSTRY:
         m_primary_focus_drop->Select(3);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_INDUSTRY");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
         break;
     case FOCUS_RESEARCH:
         m_primary_focus_drop->Select(4);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_RESEARCH");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
         break;
     case FOCUS_TRADE:
         m_primary_focus_drop->Select(5);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_TRADE");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
         break;
     default:
         m_primary_focus_drop->Select(-1);
-        text = UserString("PL_PRIMARY_FOCUS") + " : " + UserString("FOCUS_UNKNOWN");
+        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
     m_primary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -781,31 +784,31 @@ void ResourcePanel::Update()
     {
     case FOCUS_BALANCED:
         m_secondary_focus_drop->Select(0);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_BALANCED");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
         break;
     case FOCUS_FARMING:
         m_secondary_focus_drop->Select(1);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_FARMING");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
         break;
     case FOCUS_MINING:
         m_secondary_focus_drop->Select(2);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_MINING");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
         break;
     case FOCUS_INDUSTRY:
         m_secondary_focus_drop->Select(3);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_INDUSTRY");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
         break;
     case FOCUS_RESEARCH:
         m_secondary_focus_drop->Select(4);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_RESEARCH");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
         break;
     case FOCUS_TRADE:
         m_secondary_focus_drop->Select(5);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_TRADE");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
         break;
     default:
         m_secondary_focus_drop->Select(-1);
-        text = UserString("PL_SECONDARY_FOCUS") + " : " + UserString("FOCUS_UNKNOWN");
+        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
     m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -1250,8 +1253,9 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     SetText(UserString(type.Name()) + " BuildingIndicator");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText(UserString(type.Name()) + "\n\n" + UserString(type.Description()));
-
+    SetBrowseText(boost::io::str(boost::format(UserString("BP_COMPLETE_BUILDING_TOOLTIP")) %
+                                               UserString(type.Name()) % UserString(type.Description())));
+        
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     AttachChild(m_graphic);
@@ -1267,7 +1271,8 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     SetText(UserString(type.Name()) + " BuildingIndicator");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText(UserString(type.Name()) + " (" + UserString("TECH_WND_TECH_INCOMPLETE") + ")");
+    SetBrowseText(boost::io::str(boost::format(UserString("BP_INCOMPLETE_BUILDING_TOOLTIP")) %
+                                               UserString(type.Name()) % UserString(type.Description())));
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
