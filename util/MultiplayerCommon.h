@@ -30,6 +30,9 @@ const std::string& UserString(const std::string& str);
 /** Returns the language of the StringTable currently in use */
 const std::string& Language();
 
+/** Returns the canonical name of the only human player in a single player game. */
+const std::string& SinglePlayerName();
+
 /** The data that represent the galaxy setup for a new game. */
 struct GalaxySetupData
 {

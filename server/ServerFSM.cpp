@@ -410,6 +410,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         server.CreateAIClients(std::vector<PlayerSetupData>(m_setup_data->m_AIs), m_expected_ai_player_names);
     } else {
         LoadGame(m_setup_data->m_filename, server.m_current_turn, m_player_save_game_data, GetUniverse());
+        assert(!m_player_save_game_data.empty());
         m_num_expected_players = m_player_save_game_data.size();
         server.CreateAIClients(std::vector<PlayerSetupData>(m_num_expected_players - 1), m_expected_ai_player_names);
     }
@@ -449,7 +450,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         if (m_setup_data->m_new_game)
             server.NewGameInit(m_setup_data);
         else
-            server.LoadGameInit(m_setup_data, m_player_save_game_data);
+            server.LoadGameInit(m_player_save_game_data);
         return transit<PlayingGame>();
     }
 

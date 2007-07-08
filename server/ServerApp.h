@@ -80,7 +80,7 @@ public:
     void ProcessTurns();
 
     void NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data);     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
-    void LoadGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data, const std::vector<PlayerSaveGameData>& player_save_game_data);    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
+    void LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data);    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
 
     void NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data);     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
     void LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data);    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn

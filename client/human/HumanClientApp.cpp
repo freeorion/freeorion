@@ -249,11 +249,12 @@ bool HumanClientApp::LoadSinglePlayerGame()
             m_game_started = false;
             SetPlayerID(Networking::HOST_PLAYER_ID);
             SetEmpireID(-1);
-            SetPlayerName("Happy_Player");
+            SetPlayerName(SinglePlayerName());
 
             SinglePlayerSetupData setup_data;
             setup_data.m_new_game = false;
             setup_data.m_filename = filename;
+            setup_data.m_host_player_name = SinglePlayerName();
             Networking().SendMessage(HostSPGameMessage(Networking::HOST_PLAYER_ID, setup_data));
 
             return true;
@@ -344,11 +345,6 @@ void HumanClientApp::SDLInit()
 
     SDL_WM_SetCaption(("FreeOrion " + FreeOrionVersionString()).c_str(), "FreeOrion");
 
-    if (FE_Init() < 0) {
-        Logger().errorStream() << "FastEvents initialization failed: " << FE_GetError();
-        Exit(1);
-    }
-
     vid_info = SDL_GetVideoInfo();
 
     if (!vid_info) {
@@ -420,7 +416,7 @@ void HumanClientApp::HandleSystemEvents()
 {
     // handle events
     SDL_Event event;
-    while (0 < FE_PollEvent(&event)) {
+    while (0 < SDL_PollEvent(&event)) {
         bool send_to_gg = false;
         EventType gg_event = MOUSEMOVE;
         GG::Key key = GGKeyFromSDLKey(event.key.keysym);
@@ -504,7 +500,6 @@ void HumanClientApp::FinalCleanup()
 void HumanClientApp::SDLQuit()
 {
     FinalCleanup();
-    FE_Quit();
     SDL_Quit();
     Logger().debugStream() << "SDLQuit() complete.";
 }

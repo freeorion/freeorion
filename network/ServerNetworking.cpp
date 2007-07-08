@@ -46,7 +46,7 @@ namespace {
     {
         PlayerID(int id) : m_id(id) {}
         bool operator()(const PlayerConnectionPtr& player_connection)
-            { return player_connection->ID(); }
+            { return player_connection->ID() == m_id; }
     private:
         int m_id;
     };
@@ -256,6 +256,7 @@ void ServerNetworking::SendMessage(const Message& message)
 {
     iterator it = GetPlayer(message.ReceivingPlayer());
     assert(it != established_end());
+    assert((*it)->ID() == message.ReceivingPlayer());
     if (TRACE_EXECUTION) Logger().debugStream() << "ServerNetworking::SendMessage : sending message " << message;
     (*it)->SendMessage(message);
 }
@@ -264,6 +265,7 @@ void ServerNetworking::Disconnect(int id)
 {
     iterator it = GetPlayer(id);
     assert(it != established_end());
+    assert((*it)->ID() == id);
     Disconnect(*it);
 }
 

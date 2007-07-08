@@ -209,7 +209,7 @@ void IntroScreen::OnSinglePlayer()
                 failed = true;
                 break;
             } else {
-                FE_PumpEvents();
+                SDL_PumpEvents();
             }
         }
 
@@ -220,7 +220,7 @@ void IntroScreen::OnSinglePlayer()
             SinglePlayerSetupData setup_data;
             galaxy_wnd.Panel().GetSetupData(setup_data);
             setup_data.m_new_game = true;
-            setup_data.m_host_player_name = "Happy_Player";
+            setup_data.m_host_player_name = SinglePlayerName();
             setup_data.m_empire_name = galaxy_wnd.EmpireName();
             setup_data.m_empire_color = galaxy_wnd.EmpireColor();
             setup_data.m_AIs = 4;
@@ -269,7 +269,7 @@ void IntroScreen::OnMultiPlayer()
                     failed = true;
                     break;
                 } else {
-                    FE_PumpEvents();
+                    SDL_PumpEvents();
                 }
             }
         }

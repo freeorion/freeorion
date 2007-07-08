@@ -19,7 +19,6 @@
 #include "../util/SitRepEntry.h"
 
 #include <GG/Font.h>
-#include <GG/net/fastevents.h>
 
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -31,8 +30,9 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#include <SDL/SDL_timer.h>
 // for dummy video driver setenv-hack
-#include "SDL/SDL_getenv.h"
+#include <SDL/SDL_getenv.h>
 
 #include <ctime>
 
@@ -260,9 +260,52 @@ void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
     m_losers.clear();
 }
 
-void ServerApp::LoadGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
+void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data)
 {
-    // TODO
+    m_turn_sequence.clear();
+
+    std::set<int> unused_save_game_data;
+    int index_of_human_player = 0;
+    for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
+        assert(player_save_game_data[i].m_empire);
+        // This works because the empire ID is always the same as the player ID in single player games, at least for the
+        // host (human) player.
+        if (player_save_game_data[i].m_empire->EmpireID() == Networking::HOST_PLAYER_ID)
+            index_of_human_player = i;
+        else
+            unused_save_game_data.insert(i);
+    }
+
+    assert(m_networking.NumPlayers() == player_save_game_data.size());
+
+    std::map<Empire*, const PlayerSaveGameData*> player_data_by_empire;
+    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        int save_game_data_index = -1;
+        if ((*it)->ID() == Networking::HOST_PLAYER_ID) {
+            save_game_data_index = index_of_human_player;
+        } else {
+            save_game_data_index = *unused_save_game_data.begin();
+            unused_save_game_data.erase(save_game_data_index);
+        }
+        const PlayerSaveGameData& save_game_data = player_save_game_data[save_game_data_index];
+        save_game_data.m_empire->SetPlayerName((*it)->PlayerName());
+        Empires().InsertEmpire(save_game_data.m_empire);
+        AddEmpireTurn(save_game_data.m_empire->EmpireID());
+        player_data_by_empire[save_game_data.m_empire] = &save_game_data;
+    }
+
+    // This is a bit odd, but since Empires() is built from the data stored in m_player_save_game_data, and the universe
+    // is loaded long before that, the universe's empire-specific views of the systems is not properly initialized when
+    // the universe is loaded.  That means we must do it here.
+    m_universe.RebuildEmpireViewSystemGraphs();
+
+    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        Empire* empire = GetPlayerEmpire((*it)->ID());
+        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe));
+        (*it)->SendMessage(ServerLoadGameMessage((*it)->ID(), *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
+    }
+
+    m_losers.clear();
 }
 
 void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)

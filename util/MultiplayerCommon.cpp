@@ -115,14 +115,18 @@ int PriorityValue(const std::string& name)
 
 const std::string& UserString(const std::string& str)
 {
-    static std::string retval("ERROR");
     return GetStringTable()->String(str);
 }
 
 const std::string& Language() 
 {
-    static std::string retval("ERROR");
     return GetStringTable()->Language();
+}
+
+const std::string& SinglePlayerName()
+{
+    static const std::string RETVAL("Happy_Player");
+    return RETVAL;
 }
 
 

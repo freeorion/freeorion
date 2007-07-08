@@ -38,7 +38,7 @@ void MessageQueue::PushBack(Message& message)
     boost::mutex::scoped_lock lock(m_monitor);
     m_queue.push_back(Message());
     swap(m_queue.back(), message);
-    if (message.ReceivingModule() == Message::CLIENT_SYNCHRONOUS_RESPONSE)
+    if (m_queue.back().ReceivingModule() == Message::CLIENT_SYNCHRONOUS_RESPONSE)
         m_have_synchronous_response.notify_one();
 }
 

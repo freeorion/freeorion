@@ -237,12 +237,12 @@ void ClientNetworking::NetworkingThread()
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
     m_incoming_messages.Clear();
     m_outgoing_messages.clear();
     m_io_service.reset();
     boost::mutex::scoped_lock lock(m_mutex);
     m_connected = false;
+    if (TRACE_EXECUTION) Logger().debugStream() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
 
 void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred)

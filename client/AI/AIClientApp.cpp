@@ -6,9 +6,6 @@
 #include "../../util/Serialize.h"
 #include "../../network/Message.h"
 
-#include <GG/net/fastevents.h>
-#include <GG/net/net2.h>
-
 #include <boost/lexical_cast.hpp>
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
