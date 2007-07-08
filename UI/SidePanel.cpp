@@ -1111,13 +1111,21 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout()
         panel->MoveTo(GG::Pt(0, y));
         y += panel->Height();   // may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
-    int sidepanel_height = ClientUI::GetClientUI()->GetMapWnd()->GetSidePanel()->Height();
-    int container_height = sidepanel_height - UpperLeft().y;    // height of visible "page" of panels
-    Resize(GG::Pt(Width(), std::max(y, container_height)));
-    int line_size = MAX_PLANET_DIAMETER;
-    m_vscroll->SizeScroll(0, y, line_size, container_height);   // adjust size of scrollbar
+    
+    int available_height = 99999;   // impossibly large number
+    GG::Wnd* parent = Parent();
+    if (parent) {
+        int containing_height = parent->Height();
+        available_height = containing_height - (UpperLeft() - parent->UpperLeft()).y;   // height of visible "page" of panels
+    }
+
+    int vscroll_size = std::max(y, available_height);
+    Resize(GG::Pt(Width(), vscroll_size));
+
+    m_vscroll->SizeScroll(0, y, MAX_PLANET_DIAMETER, vscroll_size);   // adjust size of scrollbar
     m_vscroll->ScrolledSignal(m_vscroll->PosnRange().first, m_vscroll->PosnRange().second, 0, 0);   // fake a scroll event in order to update scrollbar and panel container position
-    if (y < container_height) {
+
+    if (y < available_height + 1) {
         DetachChild(m_vscroll);
     }
     else {
@@ -1290,7 +1298,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_button_next(new GG::Button(w-SystemNameFontSize()-4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_star_graphic(0),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
-    m_planet_panel_container(new PlanetPanelContainer(0,140,w,h-100-30)),
+    m_planet_panel_container(new PlanetPanelContainer(0,140,w,h-140)),
     m_system_resource_summary(new SystemResourceSummary(MAX_PLANET_DIAMETER,140-20,w-MAX_PLANET_DIAMETER,20))
 {
     TempUISoundDisabler sound_disabler;
