@@ -10,8 +10,6 @@
 
 #include <GG/Font.h>
 
-#include <iostream>
-
 
 namespace {
     const bool TRACE_EXECUTION = false;
@@ -61,7 +59,19 @@ ServerFSM::ServerFSM(ServerApp &server) :
 {}
 
 void ServerFSM::unconsumed_event(const boost::statechart::event_base &event)
-{ Logger().errorStream() << "ServerFSM : An illegal message or other event was passed to the ServerFSM.  It is being ignored."; }
+{
+    std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
+    const boost::statechart::event_base* event_ptr = &event;
+    if (dynamic_cast<const Disconnection*>(event_ptr))
+        most_derived_message_type_str = "Disconnection";
+#define MESSAGE_EVENT_CASE(r, data, name)                               \
+    else if (dynamic_cast<const name*>(event_ptr))                      \
+        most_derived_message_type_str = BOOST_PP_STRINGIZE(name);
+    BOOST_PP_SEQ_FOR_EACH(MESSAGE_EVENT_CASE, _, MESSAGE_EVENTS);
+#undef MESSAGE_EVENT_CASE
+    Logger().errorStream() << "ServerFSM : A " << most_derived_message_type_str << " event was passed to "
+        "the ServerFSM.  This event is illegal in the FSM's current state.  It is being ignored.";
+}
 
 ServerApp& ServerFSM::Server()
 { return m_server; }
@@ -544,24 +554,34 @@ WaitingForTurnEnd::WaitingForTurnEnd() :
 WaitingForTurnEnd::~WaitingForTurnEnd()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd"; }
 
-boost::statechart::result WaitingForTurnEnd::react(const LoadSPGame& msg)
+boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.LoadSPGame";
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.HostSPGame";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    if (player_connection->Host()) {
+    boost::shared_ptr<SinglePlayerSetupData> setup_data(new SinglePlayerSetupData);
+    ExtractMessageData(message, *setup_data);
+
+    if (player_connection->Host() && !setup_data->m_new_game) {
         Empires().RemoveAllEmpires();
+        player_connection->SendMessage(HostSPAckMessage(player_connection->ID()));
+        player_connection->SendMessage(JoinAckMessage(player_connection->ID()));
         server.m_single_player_game = true;
-        boost::shared_ptr<SinglePlayerSetupData> setup_data(new SinglePlayerSetupData);
-        setup_data->m_new_game = false;
-        setup_data->m_filename = message.Text();
         context<ServerFSM>().m_setup_data = setup_data;
         return transit<WaitingForSPGameJoiners>();
     } else {
-        Logger().errorStream() << "WaitingForTurnEnd.LoadSPGame : Player #" << message.SendingPlayer()
-                               << " attempted to initiate a game save, but is not the host. Terminating connection.";
+        if (!player_connection->Host()) {
+            Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
+                                   << " attempted to initiate a new game or game load, but is not the host. "
+                                   << "Terminating connection.";
+        }
+        if (setup_data->m_new_game) {
+            Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
+                                   << " attempted to start a new game without ending the current one. "
+                                   << "Terminating connection.";
+        }
         server.m_networking.Disconnect(player_connection);
     }
 
@@ -694,7 +714,7 @@ WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 
 boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.SaveGameRequest";
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;

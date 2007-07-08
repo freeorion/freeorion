@@ -57,7 +57,6 @@ struct MessageEventBase
         (LobbyNonHostExit)                      \
         (JoinGame)                              \
         (SaveGameRequest)                       \
-        (LoadSPGame)                            \
         (TurnOrders)                            \
         (ClientSaveData)                        \
         (EndGame)                               \
@@ -209,7 +208,7 @@ struct WaitingForMPGameJoiners : boost::statechart::state<WaitingForMPGameJoiner
 };
 
 
-/** The server state in which a game has been startes, and is actually being played. */
+/** The server state in which a game has been starts, and is actually being played. */
 struct PlayingGame : boost::statechart::simple_state<PlayingGame, ServerFSM, WaitingForTurnEnd>
 {
     typedef boost::statechart::simple_state<PlayingGame, ServerFSM, WaitingForTurnEnd> Base;
@@ -230,7 +229,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     typedef boost::statechart::simple_state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<LoadSPGame>,
+        boost::statechart::custom_reaction<HostSPGame>,
         boost::statechart::custom_reaction<TurnOrders>,
         boost::statechart::custom_reaction<RequestObjectID>,
         boost::statechart::custom_reaction<PlayerChat>,
@@ -240,7 +239,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     WaitingForTurnEnd();
     ~WaitingForTurnEnd();
 
-    boost::statechart::result react(const LoadSPGame& msg);
+    boost::statechart::result react(const HostSPGame& msg);
     boost::statechart::result react(const TurnOrders& msg);
     boost::statechart::result react(const RequestObjectID& msg);
     boost::statechart::result react(const PlayerChat& msg);
@@ -250,7 +249,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
 };
 
 
-/** The default substate of WaitingForTurnEndIdle. */
+/** The default substate of WaitingForTurnEnd. */
 struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEndIdle, WaitingForTurnEnd>
 {
     typedef boost::statechart::simple_state<WaitingForTurnEndIdle, WaitingForTurnEnd> Base;
@@ -266,8 +265,8 @@ struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEnd
 };
 
 
-/** The default substate of WaitingForTurnEndIdle in which a player has initiated a save and the server is waiting for
-    all players to send their save data, after which the server will save the data. */
+/** The default substate of WaitingForTurnEnd in which a player has initiated a save and the server is waiting for all
+    players to send their save data, after which the server will actually preform the save. */
 struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, WaitingForTurnEnd>
 {
     typedef boost::statechart::state<WaitingForSaveData, WaitingForTurnEnd> Base;
@@ -275,7 +274,7 @@ struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, Waiting
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<ClientSaveData>,
         boost::statechart::deferral<SaveGameRequest>,
-        boost::statechart::deferral<LoadSPGame>,
+        boost::statechart::deferral<HostSPGame>,
         boost::statechart::deferral<TurnOrders>,
         boost::statechart::deferral<PlayerChat>,
         boost::statechart::deferral<EndGame>

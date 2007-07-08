@@ -205,9 +205,6 @@ Message DispatchObjectIDMessage(int player_id, int new_id);
 /** creates a SAVE_GAME request message.  This message should only be sent by the host player.*/
 Message HostSaveGameMessage(int sender, const std::string& filename);
 
-/** creates a LOAD_GAME request message.  This message should only be sent by the the host player.*/
-Message HostLoadGameMessage(int sender, const std::string& filename);
-
 /** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
 Message ServerSaveGameMessage(int receiver);
 

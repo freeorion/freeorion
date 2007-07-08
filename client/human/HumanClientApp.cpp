@@ -591,13 +591,6 @@ void HumanClientApp::HandleMessage(const Message& msg)
 
         Autosave(false);
 
-#if 0 // TODO: re-evaluate whether this break is necessary now
-        // if this is the last turn, the TCP message handling inherent in Autosave()'s synchronous message may have
-        // processed an end-of-game message, in which case we need *not* to execute these last two lines below
-        if (!m_game_started || !Networking().Connected())
-            break;
-#endif
-
         m_ui->ScreenMap(); 
         m_ui->InitTurn(CurrentTurn());
         break;

@@ -123,8 +123,6 @@ void InGameMenu::Options()
 
 void InGameMenu::Exit()
 {
-    if (HumanClientApp::GetApp()->Networking().Connected())
-        HumanClientApp::GetApp()->Networking().DisconnectFromServer();
     HumanClientApp::GetApp()->EndGame();
     CloseClicked();
 }

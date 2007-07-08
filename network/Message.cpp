@@ -391,11 +391,6 @@ Message HostSaveGameMessage(int sender, const std::string& filename)
     return Message(Message::SAVE_GAME, sender, -1, Message::CORE, filename);
 }
 
-Message HostLoadGameMessage(int sender, const std::string& filename)
-{
-    return Message(Message::LOAD_GAME, sender, -1, Message::CORE, filename);
-}
-
 Message ServerSaveGameMessage(int receiver)
 {
     return Message(Message::SAVE_GAME, -1, receiver, Message::CORE, "");

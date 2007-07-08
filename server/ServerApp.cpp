@@ -202,13 +202,13 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     }
 
     switch (msg.Type()) {
+    case Message::HOST_SP_GAME:          m_fsm.process_event(HostSPGame(msg, player_connection)); break;
     case Message::START_MP_GAME:         m_fsm.process_event(StartMPGame(msg, player_connection)); break;
     case Message::LOBBY_UPDATE:          m_fsm.process_event(LobbyUpdate(msg, player_connection)); break;
     case Message::LOBBY_CHAT:            m_fsm.process_event(LobbyChat(msg, player_connection)); break;
     case Message::LOBBY_HOST_ABORT:      m_fsm.process_event(LobbyHostAbort(msg, player_connection)); break;
     case Message::LOBBY_EXIT:            m_fsm.process_event(LobbyNonHostExit(msg, player_connection)); break;
     case Message::SAVE_GAME:             m_fsm.process_event(SaveGameRequest(msg, player_connection)); break;
-    case Message::LOAD_GAME:             m_fsm.process_event(LoadSPGame(msg, player_connection)); break;
     case Message::TURN_ORDERS:           m_fsm.process_event(TurnOrders(msg, player_connection)); break;
     case Message::CLIENT_SAVE_DATA:      m_fsm.process_event(ClientSaveData(msg, player_connection)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
