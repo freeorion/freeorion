@@ -243,7 +243,7 @@ void PopulationPanel::Update()
     change = pop->FuturePopGrowth();
     next = current + change;
     max = pop->MaxPop();
-    text = boost::io::str(boost::format(UserString("PP_POPULATION_TOOLTIP")) % current % next % change % max);
+    text = boost::io::str(FlexibleFormat(UserString("PP_POPULATION_TOOLTIP")) % current % next % change % max);
     m_pop_stat->SetBrowseText(text);
 
     m_health_stat->SetValue(pop->Health());
@@ -252,7 +252,7 @@ void PopulationPanel::Update()
     change = pop->FutureHealthGrowth();
     next = current + change;
     max = pop->MaxHealth();
-    text = boost::io::str(boost::format(UserString("PP_HEALTH_TOOLTIP")) % current % next % change % max);
+    text = boost::io::str(FlexibleFormat(UserString("PP_HEALTH_TOOLTIP")) % current % next % change % max);
     m_health_stat->SetBrowseText(text);
 
     // meter bar display
@@ -683,7 +683,7 @@ void ResourcePanel::Update()
     current = res->FarmingPoints();
     next = res->ProjectedFarmingPoints();
     change = next - current;
-    text = boost::io::str(boost::format(UserString("RP_FOOD_TOOLTIP")) % current % next % change);
+    text = boost::io::str(FlexibleFormat(UserString("RP_FOOD_TOOLTIP")) % current % next % change);
     m_farming_stat->SetBrowseText(text);
 
     m_mining_stat->SetValue(res->MiningPoints());
@@ -691,7 +691,7 @@ void ResourcePanel::Update()
     current = res->MiningPoints();
     next = res->ProjectedMiningPoints();
     change = next - current;
-    text = boost::io::str(boost::format(UserString("RP_MINERALS_TOOLTIP")) % current % next % change);
+    text = boost::io::str(FlexibleFormat(UserString("RP_MINERALS_TOOLTIP")) % current % next % change);
     m_mining_stat->SetBrowseText(text);
 
     m_industry_stat->SetValue(res->IndustryPoints());
@@ -699,7 +699,7 @@ void ResourcePanel::Update()
     current = res->IndustryPoints();
     next = res->ProjectedIndustryPoints();
     change = next - current;
-    text = boost::io::str(boost::format(UserString("RP_INDUSTRY_TOOLTIP")) % current % next % change);
+    text = boost::io::str(FlexibleFormat(UserString("RP_INDUSTRY_TOOLTIP")) % current % next % change);
     m_industry_stat->SetBrowseText(text);
 
     m_research_stat->SetValue(res->ResearchPoints());
@@ -707,7 +707,7 @@ void ResourcePanel::Update()
     current = res->ResearchPoints();
     next = res->ProjectedResearchPoints();
     change = next - current;
-    text = boost::io::str(boost::format(UserString("RP_RESEARCH_TOOLTIP")) % current % next % change);
+    text = boost::io::str(FlexibleFormat(UserString("RP_RESEARCH_TOOLTIP")) % current % next % change);
     m_research_stat->SetBrowseText(text);
 
     m_trade_stat->SetValue(res->TradePoints());
@@ -715,7 +715,7 @@ void ResourcePanel::Update()
     current = res->TradePoints();
     next = res->ProjectedTradePoints();
     change = next - current;
-    text = boost::io::str(boost::format(UserString("RP_TRADE_TOOLTIP")) % current % next % change);
+    text = boost::io::str(FlexibleFormat(UserString("RP_TRADE_TOOLTIP")) % current % next % change);
     m_trade_stat->SetBrowseText(text);
 
     m_construction_stat->SetValue(res->ConstructionMeter().Current());
@@ -724,7 +724,7 @@ void ResourcePanel::Update()
     next = res->ProjectedCurrent(METER_CONSTRUCTION);
     change = next - current;
     max = res->ConstructionMeter().Max();
-    text = boost::io::str(boost::format(UserString("RP_CONSTRUCTION_TOOLTIP")) % current % next % change % max);
+    text = boost::io::str(FlexibleFormat(UserString("RP_CONSTRUCTION_TOOLTIP")) % current % next % change % max);
     m_construction_stat->SetBrowseText(text);
 
     // meter bar display
@@ -750,31 +750,31 @@ void ResourcePanel::Update()
     {
     case FOCUS_BALANCED:
         m_primary_focus_drop->Select(0);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
         break;
     case FOCUS_FARMING:
         m_primary_focus_drop->Select(1);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
         break;
     case FOCUS_MINING:
         m_primary_focus_drop->Select(2);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
         break;
     case FOCUS_INDUSTRY:
         m_primary_focus_drop->Select(3);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
         break;
     case FOCUS_RESEARCH:
         m_primary_focus_drop->Select(4);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
         break;
     case FOCUS_TRADE:
         m_primary_focus_drop->Select(5);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
         break;
     default:
         m_primary_focus_drop->Select(-1);
-        text = boost::io::str(boost::format(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
     m_primary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -784,31 +784,31 @@ void ResourcePanel::Update()
     {
     case FOCUS_BALANCED:
         m_secondary_focus_drop->Select(0);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
         break;
     case FOCUS_FARMING:
         m_secondary_focus_drop->Select(1);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
         break;
     case FOCUS_MINING:
         m_secondary_focus_drop->Select(2);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
         break;
     case FOCUS_INDUSTRY:
         m_secondary_focus_drop->Select(3);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
         break;
     case FOCUS_RESEARCH:
         m_secondary_focus_drop->Select(4);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
         break;
     case FOCUS_TRADE:
         m_secondary_focus_drop->Select(5);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
         break;
     default:
         m_secondary_focus_drop->Select(-1);
-        text = boost::io::str(boost::format(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
     m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -1253,7 +1253,7 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     SetText(UserString(type.Name()) + " BuildingIndicator");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText(boost::io::str(boost::format(UserString("BP_COMPLETE_BUILDING_TOOLTIP")) %
+    SetBrowseText(boost::io::str(FlexibleFormat(UserString("BP_COMPLETE_BUILDING_TOOLTIP")) %
                                                UserString(type.Name()) % UserString(type.Description())));
         
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
@@ -1271,7 +1271,7 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     SetText(UserString(type.Name()) + " BuildingIndicator");
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText(boost::io::str(boost::format(UserString("BP_INCOMPLETE_BUILDING_TOOLTIP")) %
+    SetBrowseText(boost::io::str(FlexibleFormat(UserString("BP_INCOMPLETE_BUILDING_TOOLTIP")) %
                                                UserString(type.Name()) % UserString(type.Description())));
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());

@@ -15,7 +15,7 @@
 #endif
 
 #include <boost/filesystem/path.hpp>
-
+#include <boost/format.hpp>
 
 class ClientNetworkCore;
 class Combat;
@@ -260,5 +260,7 @@ struct StreamableColor
 std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
+/** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
+boost::format FlexibleFormat(const std::string &string_to_format);
 
 #endif // _ClientUI_h_

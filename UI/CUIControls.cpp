@@ -1527,7 +1527,7 @@ GG::TextControl(x, y, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI:
 void FPSIndicator::Render()
 {
     if (m_enabled) {
-        SetText(boost::io::str(boost::format(UserString("MAP_INDICATOR_FPS")) % static_cast<int>(GG::GUI::GetGUI()->FPS())));
+        SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % static_cast<int>(GG::GUI::GetGUI()->FPS())));
         TextControl::Render();
     }
 }

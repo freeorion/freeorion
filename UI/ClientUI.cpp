@@ -752,3 +752,8 @@ std::istream& operator>>(std::istream& is, StreamableColor& clr)
     return is;
 }
 
+boost::format FlexibleFormat(const std::string &string_to_format) {
+    boost::format retval(string_to_format);
+    retval.exceptions(boost::io::all_error_bits ^ (boost::io::too_many_args_bit | boost::io::too_few_args_bit));
+    return retval;
+}
