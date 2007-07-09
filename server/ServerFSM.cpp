@@ -12,7 +12,7 @@
 
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 
     void RebuildSaveGameEmpireData(std::vector<SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
     {
@@ -85,20 +85,19 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     if (player_connection->Host()) {
         // if the host dies, there's really nothing else we can do -- the game's over
         std::string message = player_connection->PlayerName();
-        for (ServerNetworking::const_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
+        for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
                 (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
                 (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
             }
         }
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Host player disconnected; server terminating.";
-        m_server.m_networking.DisconnectAll();
         m_server.Exit(1);
     } else if (m_server.m_losers.find(id) == m_server.m_losers.end()) { // player abnormally disconnected during a regular game
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
                                << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
         std::string message = player_connection->PlayerName();
-        for (ServerNetworking::const_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
+        for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
                 (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
                 // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
@@ -110,7 +109,6 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.size()) {
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
-        m_server.m_networking.DisconnectAll();
         m_server.Exit(1);
     }
 }
@@ -194,33 +192,30 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
     int id = player_connection->ID();
     // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
     if (player_connection->Host()) {
-        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            if ((*it)->ID() != id) {
+        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+            if (*it != player_connection)
                 (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
-                server.m_networking.Disconnect((*it)->ID());
-            }
         }
-        server.m_networking.Disconnect(id);
         Logger().debugStream() << "MPLobby.Disconnection : Host player disconnected; server terminating.";
-        server.m_networking.DisconnectAll();
         server.Exit(1);
     } else {
         unsigned int i = 0;
-        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it, ++i) {
-            if ((*it)->ID() == id) {
+        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it, ++i) {
+            if (*it == player_connection) {
+                // TODO: This needs to be totally rewritten; the order of the player ID's no longer has any bearing on
+                // the order of server.m_networking's player connections.  So the m_players vector in m_lobby_data needs
+                // to store players as searchable by some key (player name?).
                 if (i < m_lobby_data->m_players.size())
                     m_lobby_data->m_players.erase(m_lobby_data->m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
             } else {
                 (*it)->SendMessage(ServerLobbyExitMessage(id, (*it)->ID()));
             }
         }
-        server.m_networking.Disconnect(id);
     }
 
     // independently of everything else, if there are no humans left, it's time to terminate
     if (server.m_networking.empty() || server.m_ai_clients.size() == server.m_networking.size()) {
         Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
-        server.m_networking.DisconnectAll();
         server.Exit(1);
     }
 
@@ -242,7 +237,7 @@ boost::statechart::result MPLobby::react(const JoinGame& msg)
     m_lobby_data->m_players.back().m_player_id = player_id;
     m_lobby_data->m_players.back().m_player_name = player_name;
     m_lobby_data->m_players.back().m_empire_color = EmpireColors().at(0);
-    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
     }
 
@@ -280,7 +275,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
     }
     m_lobby_data->m_players = incoming_lobby_data.m_players;
 
-    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if ((*it)->ID() != message.SendingPlayer() || new_save_file_selected)
             (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
     }
@@ -295,7 +290,7 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg)
     const Message& message = msg.m_message;
 
     if (message.ReceivingPlayer() == -1) { // the receiver is everyone (except the sender)
-        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != message.SendingPlayer())
                 (*it)->SendMessage(ServerLobbyChatMessage(message.SendingPlayer(), (*it)->ID(), message.Text()));
         }
@@ -312,7 +307,7 @@ boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
-    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if ((*it)->ID() != message.SendingPlayer()) {
             (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
             server.m_networking.Disconnect((*it)->ID());
@@ -329,7 +324,7 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
     const Message& message = msg.m_message;
 
     unsigned int i = 0;
-    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it, ++i) {
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it, ++i) {
         if ((*it)->ID() == message.SendingPlayer()) {
             if (i < m_lobby_data->m_players.size())
                 m_lobby_data->m_players.erase(m_lobby_data->m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
@@ -351,14 +346,14 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
 
     if (player_connection->Host()) {
         if (m_lobby_data->m_new_game) {
-            int expected_players = server.m_networking.size() + m_lobby_data->m_AIs.size();
-            for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-                if ((*it)->ID() != Networking::HOST_PLAYER_ID)
+            int expected_players = server.m_networking.NumPlayers() + m_lobby_data->m_AIs.size();
+            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+                if (*it != player_connection)
                     (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
             }
             if (expected_players == static_cast<int>(server.m_networking.size())) {
                 server.NewGameInit(m_lobby_data);
-                return discard_event();
+                return transit<PlayingGame>();
             }
         } else {
             LoadGame((GetLocalDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).native_file_string(),
@@ -368,16 +363,17 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
                 for (unsigned int j = 0; j < m_lobby_data->m_players.size(); ++j) {
                     assert(m_player_save_game_data[i].m_empire);
                     if (m_lobby_data->m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
-                        ServerNetworking::const_iterator player_it = server.m_networking.GetPlayer(m_lobby_data->m_players[j].m_player_id);
+                        ServerNetworking::const_established_iterator player_it = server.m_networking.GetPlayer(m_lobby_data->m_players[j].m_player_id);
                         assert(player_it != server.m_networking.established_end());
                         m_player_save_game_data[i].m_name = (*player_it)->PlayerName();
                         m_player_save_game_data[i].m_empire->SetPlayerName((*player_it)->PlayerName());
                     }
                 }
+                // TODO: Is it right to do this here?
                 Empires().InsertEmpire(m_player_save_game_data[i].m_empire);
             }
 
-            for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
                 if ((*it)->ID() != player_connection->ID())
                     (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
             }
@@ -385,7 +381,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
             int AI_clients = expected_players - server.m_networking.size();
             if (!AI_clients) {
                 server.LoadGameInit(m_lobby_data, m_player_save_game_data);
-                return discard_event();
+                return transit<PlayingGame>();
             }
         }
     } else {
@@ -396,7 +392,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
     }
 
     context<ServerFSM>().m_lobby_data = m_lobby_data;
-    std::copy(m_player_save_game_data.begin(), m_player_save_game_data.end(), std::back_inserter(context<ServerFSM>().m_player_save_game_data));
+    context<ServerFSM>().m_player_save_game_data = m_player_save_game_data;
 
     return transit<WaitingForMPGameJoiners>();
 }
@@ -474,7 +470,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     Base(c),
     m_lobby_data(context<ServerFSM>().m_lobby_data),
-    m_player_save_game_data(context<ServerFSM>().m_player_save_game_data.begin(), context<ServerFSM>().m_player_save_game_data.end()),
+    m_player_save_game_data(context<ServerFSM>().m_player_save_game_data),
     m_num_expected_players(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
@@ -571,19 +567,19 @@ boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
         server.m_single_player_game = true;
         context<ServerFSM>().m_setup_data = setup_data;
         return transit<WaitingForSPGameJoiners>();
-    } else {
-        if (!player_connection->Host()) {
-            Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
-                                   << " attempted to initiate a new game or game load, but is not the host. "
-                                   << "Terminating connection.";
-        }
-        if (setup_data->m_new_game) {
-            Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
-                                   << " attempted to start a new game without ending the current one. "
-                                   << "Terminating connection.";
-        }
-        server.m_networking.Disconnect(player_connection);
     }
+
+    if (!player_connection->Host()) {
+        Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
+                               << " attempted to initiate a new game or game load, but is not the host. "
+                               << "Terminating connection.";
+    }
+    if (setup_data->m_new_game) {
+        Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
+                               << " attempted to start a new game without ending the current one. "
+                               << "Terminating connection.";
+    }
+    server.m_networking.Disconnect(player_connection);
 
     return discard_event();
 }
@@ -652,7 +648,7 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
         std::vector<std::string> tokens = Tokenize(text.substr(0, colon_position));
         for (unsigned int i = 0; i < tokens.size(); ++i) {
             bool token_is_name = false;
-            for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
                 if (tokens[i] == (*it)->PlayerName()) {
                     token_is_name = true;
                     break;
@@ -672,7 +668,7 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
     Empire* sender_empire = server.GetPlayerEmpire(message.SendingPlayer());
     std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + (*server.m_networking.GetPlayer(message.SendingPlayer()))->PlayerName() +
         (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n"; // TODO: "whisper" should be a translated string
-    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if (target_player_names.empty() || target_player_names.find((*it)->PlayerName()) != target_player_names.end())
             (*it)->SendMessage(ChatMessage(message.SendingPlayer(), (*it)->ID(), final_text));
     }
@@ -688,7 +684,7 @@ boost::statechart::result WaitingForTurnEnd::react(const EndGame& msg)
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (player_connection->Host()) {
-        for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != player_connection->ID())
                 (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
         }
@@ -740,7 +736,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData";
 
     ServerApp& server = context<ServerFSM>().Server();
-    for (ServerNetworking::const_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerSaveGameMessage((*it)->ID()));
         m_needed_reponses.insert((*it)->ID());
     }

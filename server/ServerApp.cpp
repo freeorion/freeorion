@@ -242,16 +242,19 @@ void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
 {
     m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
+    std::vector<PlayerSetupData> player_setup_data(1);
+    player_setup_data.back().m_empire_name = setup_data->m_empire_name;
+    player_setup_data.back().m_empire_color = setup_data->m_empire_color;
     m_universe.CreateUniverse(setup_data->m_size, setup_data->m_shape, setup_data->m_age, setup_data->m_starlane_freq, setup_data->m_planet_density, setup_data->m_specials_freq, 
-                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size());
+                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
 
     // TODO: here we add empires to turn sequence map -- according to spec this should be done randomly; for now, it's not
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         AddEmpireTurn((*it)->ID());
     }
 
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int player_id = (*it)->ID();
         int empire_id = GetPlayerEmpire(player_id)->EmpireID();
         (*it)->SendMessage(GameStartMessage(player_id, true, empire_id, m_current_turn, m_empires, m_universe));
@@ -279,7 +282,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     assert(m_networking.NumPlayers() == player_save_game_data.size());
 
     std::map<Empire*, const PlayerSaveGameData*> player_data_by_empire;
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int save_game_data_index = -1;
         if ((*it)->ID() == Networking::HOST_PLAYER_ID) {
             save_game_data_index = index_of_human_player;
@@ -299,7 +302,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // the universe is loaded.  That means we must do it here.
     m_universe.RebuildEmpireViewSystemGraphs();
 
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         Empire* empire = GetPlayerEmpire((*it)->ID());
         (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe));
         (*it)->SendMessage(ServerLoadGameMessage((*it)->ID(), *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
@@ -317,12 +320,12 @@ void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
     m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
 
     // add empires to turn sequence map according to spec this should be done randomly for now it's not
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         AddEmpireTurn((*it)->ID());
     }
 
     // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, (*it)->ID(), m_current_turn, m_empires, m_universe));
     }
 
@@ -350,12 +353,12 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
     std::map<int, int> player_to_empire_ids;
     std::set<int> already_chosen_empire_ids;
     unsigned int i = 0;
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it, ++i) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it, ++i) {
         player_to_empire_ids[(*it)->ID()] = lobby_data->m_players[i].m_save_game_empire_id;
         already_chosen_empire_ids.insert(lobby_data->m_players[i].m_save_game_empire_id);
     }
 
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         const int INVALID_EMPIRE_ID = -5000;
         int empire_id = INVALID_EMPIRE_ID;
         if (player_to_empire_ids[(*it)->ID()] != -1) {
@@ -382,7 +385,7 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
     // the universe is loaded.  That means we must do it here.
     m_universe.RebuildEmpireViewSystemGraphs();
 
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int empire_id = player_to_empire_ids[(*it)->ID()];
         (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
         (*it)->SendMessage(ServerLoadGameMessage((*it)->ID(), *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
@@ -394,7 +397,7 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
 Empire* ServerApp::GetPlayerEmpire(int player_id) const
 {
     Empire* retval = 0;
-    ServerNetworking::const_iterator player_it = m_networking.GetPlayer(player_id);
+    ServerNetworking::const_established_iterator player_it = m_networking.GetPlayer(player_id);
     if (player_it != m_networking.established_end()) {
         std::string player_name = (*player_it)->PlayerName();
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
@@ -411,7 +414,7 @@ int ServerApp::GetEmpirePlayerID(int empire_id) const
 {
     int retval = -1;
     std::string player_name = Empires().Lookup(empire_id)->PlayerName();
-    for (ServerNetworking::const_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         if ((*it)->PlayerName() == player_name) {
             retval = (*it)->ID();
             break;
@@ -457,7 +460,7 @@ void ServerApp::ProcessTurns()
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         // broadcast UI message to all players
-        for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
         }
 
@@ -556,7 +559,7 @@ void ServerApp::ProcessTurns()
     }
 
     // process movement phase
-    for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
     }
         
@@ -593,7 +596,7 @@ void ServerApp::ProcessTurns()
         }
 
     // check for combats, and resolve them.
-    for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
     }
 
@@ -658,7 +661,7 @@ void ServerApp::ProcessTurns()
         SDL_Delay(1500); // TODO: Put this delay client-side.
 
     // process production and growth phase
-    for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::EMPIRE_PRODUCTION, -1));
     }
 
@@ -706,7 +709,7 @@ void ServerApp::ProcessTurns()
     ++m_current_turn;
 
     // indicate that the clients are waiting for their new Universes
-    for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::DOWNLOADING, -1));
     }
 
@@ -715,7 +718,7 @@ void ServerApp::ProcessTurns()
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         if (GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->first)).empty()) { // when you're out of planets, your game is over
             std::string player_name = it->second->PlayerName();
-            for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+            for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
                 if ((*player_it)->PlayerName() == player_name) {
                     // record this player/empire so we can send out messages about it
                     eliminations[(*player_it)->ID()] = it->first;
@@ -734,14 +737,14 @@ void ServerApp::ProcessTurns()
     }
 
     // send new-turn updates to all players
-    for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         pEmpire = GetPlayerEmpire((*player_it)->ID());
         (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), pEmpire->EmpireID(), m_current_turn, m_empires, m_universe));
     }
 
     // notify all players of the eliminated players
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-        for (ServerNetworking::const_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
             (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), Empires().Lookup(it->second)->Name()));
         }
     }

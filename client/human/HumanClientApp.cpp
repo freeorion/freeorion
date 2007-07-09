@@ -471,10 +471,6 @@ void HumanClientApp::HandleSystemEvents()
         Networking().GetMessage(msg);
         Logger().debugStream() << "Message Received.  Handling ...";
         HandleMessage(msg);
-#if 0
-    } else if (!Networking().MessageAvailable()) {
-        Logger().debugStream() << "No message available ...";
-#endif
     }
 }
 
@@ -506,171 +502,180 @@ void HumanClientApp::SDLQuit()
 
 void HumanClientApp::HandleMessage(const Message& msg)
 {
-    switch (msg.Type()) {
-    case Message::SERVER_DYING: {
-        KillServer();
-        break;
-    } 
+    if (msg.ReceivingModule() == Message::CLIENT_LOBBY_MODULE) {
+        if (MultiplayerLobby())
+            MultiplayerLobby()->HandleMessage(msg);
+        else
+            Logger().errorStream() << "HumanClientApp::HandleMessage : Received a message for the CLIENT_LOBBY_MODULE, but there is no lobby currently set.";
+    } else if (msg.ReceivingModule() == Message::CLIENT_COMBAT_MODULE) {
+        Logger().errorStream() << "HumanClientApp::HandleMessage : Received a message for the CLIENT_COMBAT_MODULE, but that module is not yet implemented.";
+    } else {
+        switch (msg.Type()) {
+        case Message::SERVER_DYING: {
+            KillServer();
+            break;
+        } 
 
-    case Message::HOST_SP_GAME:
-    case Message::HOST_MP_GAME: {
-        if (msg.SendingPlayer() == -1 && msg.Text() == "ACK")
-            Logger().debugStream() << "HumanClientApp::HandleMessage : Received " << (msg.Type() == Message::HOST_SP_GAME ? "HOST_SP_GAME" : "HOST_MP_GAME") << " acknowledgement";
-        break;
-    } 
+        case Message::HOST_SP_GAME:
+        case Message::HOST_MP_GAME: {
+            if (msg.SendingPlayer() == -1 && msg.Text() == "ACK")
+                Logger().debugStream() << "HumanClientApp::HandleMessage : Received " << (msg.Type() == Message::HOST_SP_GAME ? "HOST_SP_GAME" : "HOST_MP_GAME") << " acknowledgement";
+            break;
+        } 
 
-    case Message::JOIN_GAME: {
-        if (msg.SendingPlayer() == -1) {
-            if (PlayerID() == -1) {
-                SetPlayerID(boost::lexical_cast<int>(msg.Text()));
-                Logger().debugStream() << "HumanClientApp::HandleMessage : Received JOIN_GAME acknowledgement "
-                    "(joined as player " << PlayerID() << ")";
-            } else if (PlayerID() != Networking::HOST_PLAYER_ID) {
-                Logger().errorStream() << "HumanClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when "
-                    "already in a game";
+        case Message::JOIN_GAME: {
+            if (msg.SendingPlayer() == -1) {
+                if (PlayerID() == -1) {
+                    SetPlayerID(boost::lexical_cast<int>(msg.Text()));
+                    Logger().debugStream() << "HumanClientApp::HandleMessage : Received JOIN_GAME acknowledgement "
+                        "(joined as player " << PlayerID() << ")";
+                } else if (PlayerID() != Networking::HOST_PLAYER_ID) {
+                    Logger().errorStream() << "HumanClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when "
+                        "already in a game";
+                }
             }
+            break;
         }
-        break;
-    }
 
-    case Message::RENAME_PLAYER: {
-        SetPlayerName(msg.Text());
-        Logger().debugStream() << "HumanClientApp::HandleMessage : Received RENAME_PLAYER -- Server has renamed this player \"" << 
-            PlayerName()  << "\"";
-        break;
-    }
+        case Message::RENAME_PLAYER: {
+            SetPlayerName(msg.Text());
+            Logger().debugStream() << "HumanClientApp::HandleMessage : Received RENAME_PLAYER -- Server has renamed this player \"" << 
+                PlayerName()  << "\"";
+            break;
+        }
 
-    case Message::GAME_START: {
-        if (msg.SendingPlayer() == -1) {
-            Logger().debugStream() << "HumanClientApp::HandleMessage : Received GAME_START message; "
-                "starting player turn...";
-            m_game_started = true;
-            ExtractMessageData(msg, m_single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
+        case Message::GAME_START: {
+            if (msg.SendingPlayer() == -1) {
+                Logger().debugStream() << "HumanClientApp::HandleMessage : Received GAME_START message; "
+                    "starting player turn...";
+                m_game_started = true;
+                ExtractMessageData(msg, m_single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
 
-            Orders().Reset();
+                Orders().Reset();
 
-            Logger().debugStream() << "HumanClientApp::HandleMessage : Universe setup complete.";
+                Logger().debugStream() << "HumanClientApp::HandleMessage : Universe setup complete.";
 
-            for (Empire::SitRepItr it = Empires().Lookup(EmpireID())->SitRepBegin(); it != Empires().Lookup(EmpireID())->SitRepEnd(); ++it) {
-                m_ui->GenerateSitRepText(*it);
+                for (Empire::SitRepItr it = Empires().Lookup(EmpireID())->SitRepBegin(); it != Empires().Lookup(EmpireID())->SitRepEnd(); ++it) {
+                    m_ui->GenerateSitRepText(*it);
+                }
+
+                Autosave(true);
+                m_ui->ScreenMap();
+                m_ui->InitTurn(CurrentTurn()); // init the new turn
+            }
+            break;
+        }
+
+        case Message::SAVE_GAME: {
+            SaveGameUIData ui_data;
+            ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
+            Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
+            m_in_save_game_cycle = false;
+            break;
+        }
+
+        case Message::LOAD_GAME: {
+            SaveGameUIData ui_data;
+            if (ExtractMessageData(msg, Orders(), ui_data))
+                ClientUI::GetClientUI()->RestoreFromSaveData(ui_data);
+            Orders().ApplyOrders();
+            break;
+        }
+
+        case Message::TURN_UPDATE: {
+            ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
+
+            // Now decode sitreps
+            // Empire sitreps need UI in order to generate text, since it needs string resources
+            // generate textr for all sitreps
+            for (Empire::SitRepItr sitrep_it = Empires().Lookup(EmpireID())->SitRepBegin(); sitrep_it != Empires().Lookup( EmpireID() )->SitRepEnd(); ++sitrep_it) {
+                SitRepEntry *pEntry = *sitrep_it;
+                m_ui->GenerateSitRepText(pEntry);
             }
 
-            Autosave(true);
-            m_ui->ScreenMap();
-            m_ui->InitTurn(CurrentTurn()); // init the new turn
-        }
-        break;
-    }
+            Autosave(false);
 
-    case Message::SAVE_GAME: {
-        SaveGameUIData ui_data;
-        ClientUI::GetClientUI()->GetSaveGameUIData(ui_data);
-        Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
-        m_in_save_game_cycle = false;
-        break;
-    }
-
-    case Message::LOAD_GAME: {
-        SaveGameUIData ui_data;
-        if (ExtractMessageData(msg, Orders(), ui_data))
-            ClientUI::GetClientUI()->RestoreFromSaveData(ui_data);
-        Orders().ApplyOrders();
-        break;
-    }
-
-    case Message::TURN_UPDATE: {
-        ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
-
-        // Now decode sitreps
-        // Empire sitreps need UI in order to generate text, since it needs string resources
-        // generate textr for all sitreps
-        for (Empire::SitRepItr sitrep_it = Empires().Lookup(EmpireID())->SitRepBegin(); sitrep_it != Empires().Lookup( EmpireID() )->SitRepEnd(); ++sitrep_it) {
-            SitRepEntry *pEntry = *sitrep_it;
-            m_ui->GenerateSitRepText(pEntry);
+            m_ui->ScreenMap(); 
+            m_ui->InitTurn(CurrentTurn());
+            break;
         }
 
-        Autosave(false);
+        case Message::TURN_PROGRESS: {
+            Message::TurnProgressPhase phase_id;
+            int empire_id;
+            ExtractMessageData(msg, phase_id, empire_id);
 
-        m_ui->ScreenMap(); 
-        m_ui->InitTurn(CurrentTurn());
-        break;
-    }
+            // given IDs, build message
+            std::string phase_str;
+            if (phase_id == Message::FLEET_MOVEMENT)
+                phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
+            else if (phase_id == Message::COMBAT)
+                phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
+            else if (phase_id == Message::EMPIRE_PRODUCTION)
+                phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
+            else if (phase_id == Message::WAITING_FOR_PLAYERS)
+                phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
+            else if (phase_id == Message::PROCESSING_ORDERS)
+                phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
+            else if (phase_id == Message::DOWNLOADING)
+                phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
 
-    case Message::TURN_PROGRESS: {
-        Message::TurnProgressPhase phase_id;
-        int empire_id;
-        ExtractMessageData(msg, phase_id, empire_id);
-
-        // given IDs, build message
-        std::string phase_str;
-        if (phase_id == Message::FLEET_MOVEMENT)
-            phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
-        else if (phase_id == Message::COMBAT)
-            phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
-        else if (phase_id == Message::EMPIRE_PRODUCTION)
-            phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
-        else if (phase_id == Message::WAITING_FOR_PLAYERS)
-            phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
-        else if (phase_id == Message::PROCESSING_ORDERS)
-            phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
-        else if (phase_id == Message::DOWNLOADING)
-            phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
-
-        m_ui->UpdateTurnProgress(phase_str, empire_id);
-        break;
-    }
-
-    case Message::COMBAT_START:
-    case Message::COMBAT_ROUND_UPDATE:
-    case Message::COMBAT_END: {
-        m_ui->UpdateCombatTurnProgress(msg.Text());
-        break;
-    }
-
-    case Message::HUMAN_PLAYER_CHAT: {
-        ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.Text());
-        break;
-    }
-
-    case Message::PLAYER_ELIMINATED: {
-        Logger().debugStream() << "HumanClientApp::HandleMessage : PLAYER_ELIMINATED : EmpireID()=" << EmpireID() << " Empires().Lookup(EmpireID())=" << Empires().Lookup(EmpireID());
-        Empire* empire = Empires().Lookup(EmpireID());
-        if (!empire) break;
-        if (empire->Name() == msg.Text()) {
-            // TODO: replace this with something better
-            ClientUI::MessageBox(UserString("PLAYER_DEFEATED"));
-            EndGame();
-        } else {
-            // TODO: replace this with something better
-            ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.Text()));
+            m_ui->UpdateTurnProgress(phase_str, empire_id);
+            break;
         }
-        break;
-    }
 
-    case Message::PLAYER_EXIT: {
-        std::string message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % msg.Text());
-        ClientUI::MessageBox(message, true);
-        break;
-    }
+        case Message::COMBAT_START:
+        case Message::COMBAT_ROUND_UPDATE:
+        case Message::COMBAT_END: {
+            m_ui->UpdateCombatTurnProgress(msg.Text());
+            break;
+        }
 
-    case Message::END_GAME: {
-        if (m_game_started) {
-            if (msg.Text() == "VICTORY") {
-                EndGame();
+        case Message::HUMAN_PLAYER_CHAT: {
+            ClientUI::GetClientUI()->GetMapWnd()->HandlePlayerChatMessage(msg.Text());
+            break;
+        }
+
+        case Message::PLAYER_ELIMINATED: {
+            Logger().debugStream() << "HumanClientApp::HandleMessage : PLAYER_ELIMINATED : EmpireID()=" << EmpireID() << " Empires().Lookup(EmpireID())=" << Empires().Lookup(EmpireID());
+            Empire* empire = Empires().Lookup(EmpireID());
+            if (!empire) break;
+            if (empire->Name() == msg.Text()) {
                 // TODO: replace this with something better
-                ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
-            } else {
+                ClientUI::MessageBox(UserString("PLAYER_DEFEATED"));
                 EndGame();
-                ClientUI::MessageBox(UserString("SERVER_GAME_END"));
+            } else {
+                // TODO: replace this with something better
+                ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.Text()));
             }
+            break;
         }
-        break;
-    }
 
-    default: {
-        Logger().errorStream() << "HumanClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
-        break;
-    }
+        case Message::PLAYER_EXIT: {
+            std::string message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % msg.Text());
+            ClientUI::MessageBox(message, true);
+            break;
+        }
+
+        case Message::END_GAME: {
+            if (m_game_started) {
+                if (msg.Text() == "VICTORY") {
+                    EndGame();
+                    // TODO: replace this with something better
+                    ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
+                } else {
+                    EndGame();
+                    ClientUI::MessageBox(UserString("SERVER_GAME_END"));
+                }
+            }
+            break;
+        }
+
+        default: {
+            Logger().errorStream() << "HumanClientApp::HandleMessage : Received unknown Message type " << MessageTypeStr(msg.Type());
+            break;
+        }
+        }
     }
 }
 

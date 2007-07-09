@@ -217,23 +217,23 @@ bool ServerNetworking::empty() const
 std::size_t ServerNetworking::size() const
 { return m_player_connections.size(); }
 
+ServerNetworking::const_iterator ServerNetworking::begin() const
+{ return m_player_connections.begin(); }
+
+ServerNetworking::const_iterator ServerNetworking::end() const 
+{ return m_player_connections.end(); }
+
 std::size_t ServerNetworking::NumPlayers() const
 { return std::distance(established_begin(), established_end()); }
 
-ServerNetworking::const_iterator ServerNetworking::GetPlayer(int id) const
+ServerNetworking::const_established_iterator ServerNetworking::GetPlayer(int id) const
 { return std::find_if(established_begin(), established_end(), PlayerID(id)); }
 
-ServerNetworking::const_iterator ServerNetworking::established_begin() const
-{ return const_iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
+ServerNetworking::const_established_iterator ServerNetworking::established_begin() const
+{ return const_established_iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
 
-ServerNetworking::const_iterator ServerNetworking::established_end() const
-{ return const_iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
-
-ServerNetworking::const_reverse_iterator ServerNetworking::established_rbegin() const
-{ return const_reverse_iterator(EstablishedPlayer(), m_player_connections.rbegin(), m_player_connections.rend()); }
-
-ServerNetworking::const_reverse_iterator ServerNetworking::established_rend() const
-{ return const_reverse_iterator(EstablishedPlayer(), m_player_connections.rend(), m_player_connections.rend()); }
+ServerNetworking::const_established_iterator ServerNetworking::established_end() const
+{ return const_established_iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
 
 int ServerNetworking::GreatestPlayerID() const
 {
@@ -254,7 +254,7 @@ void ServerNetworking::SendMessage(const Message& message, PlayerConnectionPtr p
 
 void ServerNetworking::SendMessage(const Message& message)
 {
-    iterator it = GetPlayer(message.ReceivingPlayer());
+    established_iterator it = GetPlayer(message.ReceivingPlayer());
     assert(it != established_end());
     assert((*it)->ID() == message.ReceivingPlayer());
     if (TRACE_EXECUTION) Logger().debugStream() << "ServerNetworking::SendMessage : sending message " << message;
@@ -263,7 +263,7 @@ void ServerNetworking::SendMessage(const Message& message)
 
 void ServerNetworking::Disconnect(int id)
 {
-    iterator it = GetPlayer(id);
+    established_iterator it = GetPlayer(id);
     assert(it != established_end());
     assert((*it)->ID() == id);
     Disconnect(*it);
@@ -275,20 +275,20 @@ void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
 void ServerNetworking::DisconnectAll()
 { std::for_each(m_player_connections.begin(), m_player_connections.end(), boost::bind(&ServerNetworking::DisconnectImpl, this, _1)); }
 
-ServerNetworking::iterator ServerNetworking::GetPlayer(int id)
+ServerNetworking::iterator ServerNetworking::begin()
+{ return m_player_connections.begin(); }
+
+ServerNetworking::iterator ServerNetworking::end()
+{ return m_player_connections.end(); }
+
+ServerNetworking::established_iterator ServerNetworking::GetPlayer(int id)
 { return std::find_if(established_begin(), established_end(), PlayerID(id)); }
 
-ServerNetworking::iterator ServerNetworking::established_begin()
-{ return iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
+ServerNetworking::established_iterator ServerNetworking::established_begin()
+{ return established_iterator(EstablishedPlayer(), m_player_connections.begin(), m_player_connections.end()); }
 
-ServerNetworking::iterator ServerNetworking::established_end()
-{ return iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
-
-ServerNetworking::reverse_iterator ServerNetworking::established_rbegin()
-{ return reverse_iterator(EstablishedPlayer(), m_player_connections.rbegin(), m_player_connections.rend()); }
-
-ServerNetworking::reverse_iterator ServerNetworking::established_rend()
-{ return reverse_iterator(EstablishedPlayer(), m_player_connections.rend(), m_player_connections.rend()); }
+ServerNetworking::established_iterator ServerNetworking::established_end()
+{ return established_iterator(EstablishedPlayer(), m_player_connections.end(), m_player_connections.end()); }
 
 void ServerNetworking::Init()
 {

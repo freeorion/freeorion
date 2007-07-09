@@ -2221,7 +2221,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
     std::size_t i = 0;
     std::vector<GG::Clr> colors = EmpireColors();
-    for (ServerNetworking::const_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
+    for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
 
         GG::Clr color;
