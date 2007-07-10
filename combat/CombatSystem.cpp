@@ -32,12 +32,12 @@ bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const
 
 namespace
 {
-    void SendMessageToAllPlayer(Message::MessageType msg_type,Message::ModuleType module, const XMLDoc& doc)
+    void SendMessageToAllPlayers(Message::MessageType msg_type, const XMLDoc& doc)
     {
         std::ostringstream stream;
         doc.WriteDoc(stream);
         for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it) {
-            (*it)->SendMessage(Message(msg_type, -1, (*it)->ID(), module, stream.str()));
+            (*it)->SendMessage(Message(msg_type, -1, (*it)->ID(), stream.str()));
         }
     }
 
@@ -235,7 +235,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 
     XMLDoc msg;
     msg.root_node.AppendChild(GenerateCombatUpdateMessage(-1,system_id,empire_combat_forces).XMLEncode());
-    SendMessageToAllPlayer(Message::COMBAT_START,Message::CORE,msg);
+    SendMessageToAllPlayers(Message::COMBAT_START, msg);
 
     while(combat_assets.size()>1)
     {
@@ -359,7 +359,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
             }
         msg = XMLDoc();
         msg.root_node.AppendChild(GenerateCombatUpdateMessage(-1,system_id,empire_combat_forces).XMLEncode());
-        SendMessageToAllPlayer(Message::COMBAT_ROUND_UPDATE,Message::CORE,msg);
+        SendMessageToAllPlayers(Message::COMBAT_ROUND_UPDATE, msg);
         //SDL_Delay(1000); maybe we add an delay to illustrate players a ongoing combat
     }
 
@@ -449,5 +449,5 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 
     msg = XMLDoc();
     msg.root_node.AppendChild(GenerateCombatUpdateMessage(victor,system_id,empire_combat_forces).XMLEncode());
-    SendMessageToAllPlayer(Message::COMBAT_END,Message::CORE,msg);
+    SendMessageToAllPlayers(Message::COMBAT_END, msg);
 }

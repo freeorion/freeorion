@@ -416,6 +416,7 @@ void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 
 void ClientUI::SwitchState(State state)
 {
+    // TODO: Replace all this crap with a proper FSM!
     HideAllWindows();
     // clean up previous windows, based on previous state
     switch (m_state) {

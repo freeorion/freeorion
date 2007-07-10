@@ -38,7 +38,6 @@ namespace GG {
     GG_ENUM_MAP_BEGIN(Message::MessageType)
     GG_ENUM_MAP_INSERT(Message::UNDEFINED)
     GG_ENUM_MAP_INSERT(Message::DEBUG)
-    GG_ENUM_MAP_INSERT(Message::SERVER_DYING)
     GG_ENUM_MAP_INSERT(Message::HOST_SP_GAME)
     GG_ENUM_MAP_INSERT(Message::HOST_MP_GAME)
     GG_ENUM_MAP_INSERT(Message::JOIN_GAME)
@@ -69,20 +68,6 @@ namespace GG {
 std::string MessageTypeStr(Message::MessageType type)
 {
     return StripMessageScoping(GG::GetEnumMap<Message::MessageType>().FromEnum(type));
-}
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(Message::ModuleType)
-    GG_ENUM_MAP_INSERT(Message::CORE)
-    GG_ENUM_MAP_INSERT(Message::CLIENT_LOBBY_MODULE)
-    GG_ENUM_MAP_INSERT(Message::CLIENT_COMBAT_MODULE)
-    GG_ENUM_MAP_INSERT(Message::CLIENT_SYNCHRONOUS_RESPONSE)
-    GG_ENUM_MAP_END
-}
-
-std::string ModuleTypeStr(Message::ModuleType type)
-{
-    return StripMessageScoping(GG::GetEnumMap<Message::ModuleType>().FromEnum(type));
 }
 
 namespace GG {
@@ -117,14 +102,11 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
     os << msg.ReceivingPlayer();
 
     if (msg.ReceivingPlayer() == -1)
-        os << "(server/unknown).";
+        os << "(server/unknown)";
     else if (msg.ReceivingPlayer() == 0)
-        os << "(host).";
-    else
-        os << ".";
+        os << "(host)";
 
-    os << ModuleTypeStr(msg.ReceivingModule()) << " "
-       << "\"" << msg.Text() << "\"\n";
+    os << " \"" << msg.Text() << "\"\n";
 
     return os;
 }
@@ -136,7 +118,6 @@ Message::Message() :
     m_type(UNDEFINED),
     m_sending_player(0),
     m_receiving_player(0),
-    m_receiving_module(CORE),
     m_message_size(0),
     m_message_text(0)
 {}
@@ -144,12 +125,12 @@ Message::Message() :
 Message::Message(MessageType type,
                  int sending_player,
                  int receiving_player,
-                 ModuleType receiving_module,
-                 const std::string& text) :
+                 const std::string& text,
+                 bool synchronous_response/* = false*/) :
     m_type(type),
     m_sending_player(sending_player),
     m_receiving_player(receiving_player),
-    m_receiving_module(receiving_module),
+    m_synchronous_response(synchronous_response),
     m_message_size(text.size()),
     m_message_text(new char[text.size()])
 { std::copy(text.begin(), text.end(), m_message_text); }
@@ -158,7 +139,7 @@ Message::Message(const Message& rhs) :
     m_type(rhs.m_type),
     m_sending_player(rhs.m_sending_player),
     m_receiving_player(rhs.m_receiving_player),
-    m_receiving_module(rhs.m_receiving_module),
+    m_synchronous_response(rhs.m_synchronous_response),
     m_message_size(rhs.m_message_size),
     m_message_text(new char[rhs.m_message_size])
 { std::copy(rhs.m_message_text, rhs.m_message_text + rhs.m_message_size, const_cast<char*>(m_message_text)); }
@@ -182,8 +163,8 @@ int Message::SendingPlayer() const
 int Message::ReceivingPlayer() const
 { return m_receiving_player; }
 
-Message::ModuleType Message::ReceivingModule() const
-{ return m_receiving_module; }
+bool Message::SynchronousResponse() const
+{ return m_synchronous_response; }
 
 std::size_t Message::Size() const
 { return m_message_size; }
@@ -208,7 +189,6 @@ void Message::Swap(Message& rhs)
     std::swap(m_type, rhs.m_type);
     std::swap(m_sending_player, rhs.m_sending_player);
     std::swap(m_receiving_player, rhs.m_receiving_player);
-    std::swap(m_receiving_module, rhs.m_receiving_module);
     std::swap(m_message_size, rhs.m_message_size);
     std::swap(m_message_text, rhs.m_message_text);
 }
@@ -219,7 +199,6 @@ bool operator==(const Message& lhs, const Message& rhs)
         lhs.Type() == rhs.Type() &&
         lhs.SendingPlayer() == rhs.SendingPlayer() &&
         lhs.ReceivingPlayer() == rhs.ReceivingPlayer() &&
-        lhs.ReceivingModule() == rhs.ReceivingModule() &&
         lhs.Text() == rhs.Text();
 }
 
@@ -234,7 +213,7 @@ void BufferToHeader(const int* header_buf, Message& message)
     message.m_type = static_cast<Message::MessageType>(header_buf[0]);
     message.m_sending_player = header_buf[1];
     message.m_receiving_player = header_buf[2];
-    message.m_receiving_module = static_cast<Message::ModuleType>(header_buf[3]);
+    message.m_synchronous_response = header_buf[3];
     message.m_message_size = header_buf[4];
 }
 
@@ -243,7 +222,7 @@ void HeaderToBuffer(const Message& message, int* header_buf)
     header_buf[0] = message.Type();
     header_buf[1] = message.SendingPlayer();
     header_buf[2] = message.ReceivingPlayer();
-    header_buf[3] = message.ReceivingModule();
+    header_buf[3] = message.SynchronousResponse();
     header_buf[4] = message.Size();
 }
 
@@ -259,17 +238,17 @@ Message HostSPGameMessage(int player_id, const SinglePlayerSetupData& setup_data
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(setup_data);
     }
-    return Message(Message::HOST_SP_GAME, player_id, -1, Message::CORE, os.str());
+    return Message(Message::HOST_SP_GAME, player_id, -1, os.str());
 }
 
 Message HostMPGameMessage(int player_id, const std::string& host_player_name)
 {
-    return Message(Message::HOST_MP_GAME, player_id, -1, Message::CORE, host_player_name);
+    return Message(Message::HOST_MP_GAME, player_id, -1, host_player_name);
 }
 
 Message JoinGameMessage(const std::string& player_name)
 {
-    return Message(Message::JOIN_GAME, -1, -1, Message::CORE, player_name);
+    return Message(Message::JOIN_GAME, -1, -1, player_name);
 }
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe)
@@ -284,37 +263,32 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
         Serialize(oa, empires);
         Serialize(oa, universe);
     }
-    return Message(Message::GAME_START, -1, player_id, Message::CORE, os.str());
+    return Message(Message::GAME_START, -1, player_id, os.str());
 }
 
 Message HostSPAckMessage(int player_id)
 {
-    return Message(Message::HOST_SP_GAME, -1, player_id, Message::CORE, "ACK");
+    return Message(Message::HOST_SP_GAME, -1, player_id, "ACK");
 }
 
 Message HostMPAckMessage(int player_id)
 {
-    return Message(Message::HOST_MP_GAME, -1, player_id, Message::CORE, "ACK");
+    return Message(Message::HOST_MP_GAME, -1, player_id, "ACK");
 }
 
 Message JoinAckMessage(int player_id)
 {
-    return Message(Message::JOIN_GAME, -1, player_id, Message::CORE, boost::lexical_cast<std::string>(player_id));
-}
-
-Message RenameMessage(int player_id, const std::string& new_name)
-{
-    return Message(Message::RENAME_PLAYER, -1, player_id, Message::CORE, new_name);
+    return Message(Message::JOIN_GAME, -1, player_id, boost::lexical_cast<std::string>(player_id));
 }
 
 Message EndGameMessage(int sender, int receiver)
 {
-    return Message(Message::END_GAME, sender, receiver, Message::CORE, "");
+    return Message(Message::END_GAME, sender, receiver, "");
 }
 
 Message VictoryMessage(int receiver)
 {
-    return Message(Message::END_GAME, -1, receiver, Message::CORE, "VICTORY");
+    return Message(Message::END_GAME, -1, receiver, "VICTORY");
 }
 
 Message TurnOrdersMessage(int sender, const OrderSet& orders)
@@ -324,7 +298,7 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders)
         FREEORION_OARCHIVE_TYPE oa(os);
         Serialize(oa, orders);
     }
-    return Message(Message::TURN_ORDERS, sender, -1, Message::CORE, os.str());
+    return Message(Message::TURN_ORDERS, sender, -1, os.str());
 }
 
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
@@ -335,7 +309,7 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
         oa << BOOST_SERIALIZATION_NVP(phase_id)
            << BOOST_SERIALIZATION_NVP(empire_id);
     }
-    return Message(Message::TURN_PROGRESS, -1, player_id, Message::CORE, os.str());
+    return Message(Message::TURN_PROGRESS, -1, player_id, os.str());
 }
 
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe)
@@ -348,7 +322,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const 
         Serialize(oa, empires);
         Serialize(oa, universe);
     }
-    return Message(Message::TURN_UPDATE, -1, player_id, Message::CORE, os.str());
+    return Message(Message::TURN_UPDATE, -1, player_id, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data)
@@ -361,7 +335,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGame
         oa << BOOST_SERIALIZATION_NVP(ui_data_available)
            << BOOST_SERIALIZATION_NVP(ui_data);
     }
-    return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, os.str());
+    return Message(Message::CLIENT_SAVE_DATA, sender, -1, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders)
@@ -373,27 +347,27 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders)
         bool ui_data_available = false;
         oa << BOOST_SERIALIZATION_NVP(ui_data_available);
     }
-    return Message(Message::CLIENT_SAVE_DATA, sender, -1, Message::CORE, os.str());
+    return Message(Message::CLIENT_SAVE_DATA, sender, -1, os.str());
 }
 
 Message RequestNewObjectIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, Message::CORE, "");
+    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, "");
 }
 
 Message DispatchObjectIDMessage(int player_id, int new_id)
 {
-    return Message(Message::DISPATCH_NEW_OBJECT_ID, -1, player_id, Message::CLIENT_SYNCHRONOUS_RESPONSE, boost::lexical_cast<std::string>(new_id));
+    return Message(Message::DISPATCH_NEW_OBJECT_ID, -1, player_id, boost::lexical_cast<std::string>(new_id), true);
 }
 
 Message HostSaveGameMessage(int sender, const std::string& filename)
 {
-    return Message(Message::SAVE_GAME, sender, -1, Message::CORE, filename);
+    return Message(Message::SAVE_GAME, sender, -1, filename);
 }
 
 Message ServerSaveGameMessage(int receiver)
 {
-    return Message(Message::SAVE_GAME, -1, receiver, Message::CORE, "");
+    return Message(Message::SAVE_GAME, -1, receiver, "");
 }
 
 Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data)
@@ -407,27 +381,27 @@ Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGa
         if (ui_data_available)
             oa << boost::serialization::make_nvp("ui_data", *ui_data);
     }
-    return Message(Message::LOAD_GAME, -1, receiver, Message::CORE, os.str());
+    return Message(Message::LOAD_GAME, -1, receiver, os.str());
 }
 
 Message ChatMessage(int sender, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_CHAT, sender, -1, Message::CORE, msg);
+    return Message(Message::HUMAN_PLAYER_CHAT, sender, -1, msg);
 }
 
 Message ChatMessage(int sender, int receiver, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, Message::CORE, msg);
+    return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, msg);
 }
 
 Message PlayerDisconnectedMessage(int receiver, const std::string& player_name)
 {
-    return Message(Message::PLAYER_EXIT, -1, receiver, Message::CORE, player_name);
+    return Message(Message::PLAYER_EXIT, -1, receiver, player_name);
 }
 
 Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
 {
-    return Message(Message::PLAYER_ELIMINATED, -1, receiver, Message::CORE, empire_name);
+    return Message(Message::PLAYER_ELIMINATED, -1, receiver, empire_name);
 }
 
 
@@ -442,7 +416,7 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data)
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
-    return Message(Message::LOBBY_UPDATE, sender, -1, Message::CORE, os.str());
+    return Message(Message::LOBBY_UPDATE, sender, -1, os.str());
 }
 
 Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data)
@@ -452,42 +426,42 @@ Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
-    return Message(Message::LOBBY_UPDATE, -1, receiver, Message::CLIENT_LOBBY_MODULE, os.str());
+    return Message(Message::LOBBY_UPDATE, -1, receiver, os.str());
 }
 
 Message LobbyChatMessage(int sender, int receiver, const std::string& data)
 {
-    return Message(Message::LOBBY_CHAT, sender, receiver, Message::CORE, data);
+    return Message(Message::LOBBY_CHAT, sender, receiver, data);
 }
 
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data)
 {
-    return Message(Message::LOBBY_CHAT, sender, receiver, Message::CLIENT_LOBBY_MODULE, data);
+    return Message(Message::LOBBY_CHAT, sender, receiver, data);
 }
 
 Message LobbyHostAbortMessage(int sender)
 {
-    return Message(Message::LOBBY_HOST_ABORT, sender, -1, Message::CORE, "");
+    return Message(Message::LOBBY_HOST_ABORT, sender, -1, "");
 }
 
 Message ServerLobbyHostAbortMessage(int receiver)
 {
-    return Message(Message::LOBBY_HOST_ABORT, -1, receiver, Message::CLIENT_LOBBY_MODULE, "");
+    return Message(Message::LOBBY_HOST_ABORT, -1, receiver, "");
 }
 
 Message LobbyExitMessage(int sender)
 {
-    return Message(Message::LOBBY_EXIT, sender, -1, Message::CORE, "");
+    return Message(Message::LOBBY_EXIT, sender, -1, "");
 }
 
 Message ServerLobbyExitMessage(int sender, int receiver)
 {
-    return Message(Message::LOBBY_EXIT, sender, receiver, Message::CLIENT_LOBBY_MODULE, "");
+    return Message(Message::LOBBY_EXIT, sender, receiver, "");
 }
 
 Message StartMPGameMessage(int player_id)
 {
-    return Message(Message::START_MP_GAME, player_id, -1, Message::CORE, "");
+    return Message(Message::START_MP_GAME, player_id, -1, "");
 }
 
 

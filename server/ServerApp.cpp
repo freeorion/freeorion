@@ -192,7 +192,7 @@ void ServerApp::CleanupAIs()
     }
 }
 
-void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection)
+void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connection)
 {
     if (msg.SendingPlayer() != player_connection->ID()) {
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs "
@@ -222,7 +222,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     }
 }
 
-void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection)
+void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection)
 {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: m_fsm.process_event(HostSPGame(msg, player_connection)); break;
@@ -241,26 +241,13 @@ void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 
 void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
 {
-    m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
-    std::vector<PlayerSetupData> player_setup_data(1);
-    player_setup_data.back().m_empire_name = setup_data->m_empire_name;
-    player_setup_data.back().m_empire_color = setup_data->m_empire_color;
-    m_universe.CreateUniverse(setup_data->m_size, setup_data->m_shape, setup_data->m_age, setup_data->m_starlane_freq, setup_data->m_planet_density, setup_data->m_specials_freq, 
-                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
-    m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
-
-    // TODO: here we add empires to turn sequence map -- according to spec this should be done randomly; for now, it's not
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        AddEmpireTurn((*it)->ID());
-    }
-
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        int player_id = (*it)->ID();
-        int empire_id = GetPlayerEmpire(player_id)->EmpireID();
-        (*it)->SendMessage(GameStartMessage(player_id, true, empire_id, m_current_turn, m_empires, m_universe));
-    }
-
-    m_losers.clear();
+    std::map<int, PlayerSetupData> player_setup_data;
+    PlayerSetupData& data = player_setup_data[Networking::HOST_PLAYER_ID];
+    data.m_player_id = Networking::HOST_PLAYER_ID;
+    data.m_player_name = setup_data->m_host_player_name;
+    data.m_empire_name = setup_data->m_empire_name;
+    data.m_empire_color = setup_data->m_empire_color;
+    NewGameInit(setup_data->m_size, setup_data->m_shape, setup_data->m_age, setup_data->m_starlane_freq, setup_data->m_planet_density, setup_data->m_specials_freq, player_setup_data);
 }
 
 void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data)
@@ -313,23 +300,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
 {
-    m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
-    m_universe.CreateUniverse(lobby_data->m_size, lobby_data->m_shape, lobby_data->m_age, lobby_data->m_starlane_freq, lobby_data->m_planet_density, lobby_data->m_specials_freq, 
-                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), lobby_data->m_players);
-    m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
-    m_log_category.debugStream() << "ServerApp::GameInit : Created universe " << " (SERVER_GAME_SETUP).";
-
-    // add empires to turn sequence map according to spec this should be done randomly for now it's not
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        AddEmpireTurn((*it)->ID());
-    }
-
-    // the universe creation caused the creation of empires.  But now we need to assign the empires to players.
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, (*it)->ID(), m_current_turn, m_empires, m_universe));
-    }
-
-    m_losers.clear();
+    NewGameInit(lobby_data->m_size, lobby_data->m_shape, lobby_data->m_age, lobby_data->m_starlane_freq, lobby_data->m_planet_density, lobby_data->m_specials_freq, lobby_data->m_players);
 }
 
 void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
@@ -338,6 +309,8 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
 
     m_turn_sequence.clear();
 
+#if 1
+#else
     std::map<int, PlayerSaveGameData> player_data_by_empire;
     for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
         assert(player_save_game_data[i].m_empire);
@@ -389,6 +362,31 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
         int empire_id = player_to_empire_ids[(*it)->ID()];
         (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
         (*it)->SendMessage(ServerLoadGameMessage((*it)->ID(), *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
+    }
+#endif
+
+    m_losers.clear();
+}
+
+void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
+                            const std::map<int, PlayerSetupData>& player_setup_data)
+{
+    m_turn_sequence.clear();
+
+    m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
+    m_universe.CreateUniverse(size, shape, age, starlane_freq, planet_density, specials_freq,
+                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
+    m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
+
+    // TODO: here we add empires to turn sequence map -- according to spec this should be done randomly; for now, it's not
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        AddEmpireTurn((*it)->ID());
+    }
+
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        int player_id = (*it)->ID();
+        int empire_id = GetPlayerEmpire(player_id)->EmpireID();
+        (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
     }
 
     m_losers.clear();

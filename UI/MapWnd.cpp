@@ -72,7 +72,7 @@ namespace {
     bool RequestRegressionTestDump()
     {
         ClientNetworking& networking = HumanClientApp::GetApp()->Networking();
-        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, Message::CORE, "EffectsRegressionTest");
+        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, "EffectsRegressionTest");
         networking.SendMessage(msg);
         return true;
     }

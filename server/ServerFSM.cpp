@@ -14,7 +14,7 @@
 namespace {
     const bool TRACE_EXECUTION = true;
 
-    void RebuildSaveGameEmpireData(std::vector<SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
+    void RebuildSaveGameEmpireData(std::map<int, SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
     {
         save_game_empire_data.clear();
         std::vector<PlayerSaveGameData> player_save_game_data;
@@ -23,13 +23,12 @@ namespace {
         LoadGame((GetLocalDir() / "save" / save_game_filename).native_file_string().c_str(),
                  current_turn, player_save_game_data, universe);
         for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
-            SaveGameEmpireData data;
             Empire* empire = player_save_game_data[i].m_empire;
+            SaveGameEmpireData& data = save_game_empire_data[empire->EmpireID()];
             data.m_id = empire->EmpireID();
             data.m_name = empire->Name();
             data.m_player_name = empire->PlayerName();
             data.m_color = empire->Color();
-            save_game_empire_data.push_back(data);
             delete empire;
         }
     }
@@ -45,10 +44,10 @@ Disconnection::Disconnection(PlayerConnectionPtr& player_connection) :
 ////////////////////////////////////////////////////////////
 // MessageEventBase
 ////////////////////////////////////////////////////////////
-MessageEventBase::MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection) :
-    m_message(message),
+MessageEventBase::MessageEventBase(Message& message, PlayerConnectionPtr& player_connection) :
+    m_message(),
     m_player_connection(player_connection)
-{}
+{ swap(m_message, message); }
 
 
 ////////////////////////////////////////////////////////////
@@ -107,7 +106,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     }
 
     // independently of everything else, if there are no humans left, it's time to terminate
-    if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.size()) {
+    if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.NumPlayers()) {
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
         m_server.Exit(1);
     }
@@ -173,10 +172,10 @@ MPLobby::MPLobby(my_context c) :
     ServerApp& server = context<ServerFSM>().Server();
     int player_id = Networking::HOST_PLAYER_ID;
     const PlayerConnectionPtr& player_connection = *server.m_networking.GetPlayer(player_id);
-    m_lobby_data->m_players.push_back(PlayerSetupData());
-    m_lobby_data->m_players.back().m_player_id = player_id;
-    m_lobby_data->m_players.back().m_player_name = player_connection->PlayerName();
-    m_lobby_data->m_players.back().m_empire_color = EmpireColors().at(0);
+    PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
+    player_setup_data.m_player_id = player_id;
+    player_setup_data.m_player_name = player_connection->PlayerName();
+    player_setup_data.m_empire_color = EmpireColors().at(0);
     server.m_networking.SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
 }
 
@@ -199,22 +198,15 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
         Logger().debugStream() << "MPLobby.Disconnection : Host player disconnected; server terminating.";
         server.Exit(1);
     } else {
-        unsigned int i = 0;
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it, ++i) {
-            if (*it == player_connection) {
-                // TODO: This needs to be totally rewritten; the order of the player ID's no longer has any bearing on
-                // the order of server.m_networking's player connections.  So the m_players vector in m_lobby_data needs
-                // to store players as searchable by some key (player name?).
-                if (i < m_lobby_data->m_players.size())
-                    m_lobby_data->m_players.erase(m_lobby_data->m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
-            } else {
+        m_lobby_data->m_players.erase(player_connection->ID());
+        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+            if (*it != player_connection)
                 (*it)->SendMessage(ServerLobbyExitMessage(id, (*it)->ID()));
-            }
         }
     }
 
     // independently of everything else, if there are no humans left, it's time to terminate
-    if (server.m_networking.empty() || server.m_ai_clients.size() == server.m_networking.size()) {
+    if (server.m_networking.empty() || server.m_ai_clients.size() == server.m_networking.NumPlayers()) {
         Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
         server.Exit(1);
     }
@@ -233,10 +225,10 @@ boost::statechart::result MPLobby::react(const JoinGame& msg)
     int player_id = server.m_networking.GreatestPlayerID() + 1;
     player_connection->EstablishPlayer(player_id, player_name, false);
     player_connection->SendMessage(JoinAckMessage(player_id));
-    m_lobby_data->m_players.push_back(PlayerSetupData());
-    m_lobby_data->m_players.back().m_player_id = player_id;
-    m_lobby_data->m_players.back().m_player_name = player_name;
-    m_lobby_data->m_players.back().m_empire_color = EmpireColors().at(0);
+    PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
+    player_setup_data.m_player_id = player_id;
+    player_setup_data.m_player_name = player_name;
+    player_setup_data.m_empire_color = EmpireColors().at(0);
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
     }
@@ -250,7 +242,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
-    MultiplayerLobbyData incoming_lobby_data(new MultiplayerLobbyData);
+    MultiplayerLobbyData incoming_lobby_data;
     ExtractMessageData(message, incoming_lobby_data);
 
     // NOTE: The client is only allowed to update certain of these, so those are the only ones we'll copy into m_lobby_data.
@@ -264,7 +256,8 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
 
     bool new_save_file_selected = false;
     if (incoming_lobby_data.m_save_file_index != m_lobby_data->m_save_file_index &&
-        0 <= incoming_lobby_data.m_save_file_index && incoming_lobby_data.m_save_file_index < static_cast<int>(m_lobby_data->m_save_games.size())) {
+        0 <= incoming_lobby_data.m_save_file_index &&
+        incoming_lobby_data.m_save_file_index < static_cast<int>(m_lobby_data->m_save_games.size())) {
         m_lobby_data->m_save_file_index = incoming_lobby_data.m_save_file_index;
         RebuildSaveGameEmpireData(m_lobby_data->m_save_game_empire_data, m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]);
         // reset the current choice of empire for each player, since the new save game's empires may not have the same IDs
@@ -323,16 +316,11 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
     ServerApp& server = context<ServerFSM>().Server();
     const Message& message = msg.m_message;
 
-    unsigned int i = 0;
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it, ++i) {
-        if ((*it)->ID() == message.SendingPlayer()) {
-            if (i < m_lobby_data->m_players.size())
-                m_lobby_data->m_players.erase(m_lobby_data->m_players.begin() + i); // remove the exiting player's PlayerSetupData struct
-        } else {
+    m_lobby_data->m_players.erase(message.SendingPlayer());
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
+        if ((*it)->ID() != message.SendingPlayer())
             (*it)->SendMessage(ServerLobbyExitMessage(message.SendingPlayer(), (*it)->ID()));
-        }
     }
-    server.m_networking.Disconnect(message.SendingPlayer());
 
     return discard_event();
 }
@@ -346,12 +334,8 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
 
     if (player_connection->Host()) {
         if (m_lobby_data->m_new_game) {
-            int expected_players = server.m_networking.NumPlayers() + m_lobby_data->m_AIs.size();
-            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-                if (*it != player_connection)
-                    (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
-            }
-            if (expected_players == static_cast<int>(server.m_networking.size())) {
+            int expected_players = m_lobby_data->m_players.size();
+            if (expected_players == static_cast<int>(server.m_networking.NumPlayers())) {
                 server.NewGameInit(m_lobby_data);
                 return transit<PlayingGame>();
             }
@@ -359,6 +343,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
             LoadGame((GetLocalDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).native_file_string(),
                      server.m_current_turn, m_player_save_game_data, GetUniverse());
             int expected_players = m_player_save_game_data.size();
+#if 0
             for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
                 for (unsigned int j = 0; j < m_lobby_data->m_players.size(); ++j) {
                     assert(m_player_save_game_data[i].m_empire);
@@ -377,9 +362,9 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
                 if ((*it)->ID() != player_connection->ID())
                     (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
             }
-
-            int AI_clients = expected_players - server.m_networking.size();
-            if (!AI_clients) {
+#endif
+            int needed_AI_clients = expected_players - server.m_networking.NumPlayers();
+            if (!needed_AI_clients) {
                 server.LoadGameInit(m_lobby_data, m_player_save_game_data);
                 return transit<PlayingGame>();
             }
@@ -478,12 +463,17 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     context<ServerFSM>().m_player_save_game_data.clear();
     ServerApp& server = context<ServerFSM>().Server();
     if (m_lobby_data->m_new_game) {
-        m_num_expected_players = server.m_networking.size() + m_lobby_data->m_AIs.size();
-        server.CreateAIClients(m_lobby_data->m_AIs, m_expected_ai_player_names);
+        m_num_expected_players = m_lobby_data->m_players.size();
+        std::vector<PlayerSetupData> AI_clients;
+        for (std::set<int>::const_iterator it = m_lobby_data->m_AI_player_ids.begin(); it != m_lobby_data->m_AI_player_ids.end(); ++it) {
+            assert(m_lobby_data->m_players.find(*it) != m_lobby_data->m_players.end());
+            AI_clients.push_back(m_lobby_data->m_players[*it]);
+        }
+        server.CreateAIClients(AI_clients, m_expected_ai_player_names);
     } else {
         m_num_expected_players = m_player_save_game_data.size();
-        int AI_clients = m_num_expected_players - server.m_networking.size();
-        server.CreateAIClients(std::vector<PlayerSetupData>(AI_clients), m_expected_ai_player_names);
+        int num_AI_clients = m_num_expected_players - server.m_networking.NumPlayers();
+        server.CreateAIClients(std::vector<PlayerSetupData>(num_AI_clients), m_expected_ai_player_names);
     }
 }
 
@@ -689,7 +679,6 @@ boost::statechart::result WaitingForTurnEnd::react(const EndGame& msg)
                 (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
         }
         Logger().debugStream() << "WaitingForTurnEnd.EndGame : Server terminating.";
-        server.m_networking.SendMessage(Message(Message::SERVER_DYING, -1, message.SendingPlayer(), Message::CORE, ""));
         server.m_networking.DisconnectAll();
         server.Exit(0);
     }

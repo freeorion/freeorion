@@ -43,11 +43,11 @@ namespace {
 
     struct NewGamePlayerRow : PlayerRow
     {
-        NewGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data, bool disabled) : 
+        NewGamePlayerRow(const PlayerSetupData& player_data, bool disabled) : 
             PlayerRow(player_data)
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
-            push_back(player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
             CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
@@ -78,58 +78,58 @@ namespace {
 
     struct LoadGamePlayerRow : PlayerRow
     {
-        LoadGamePlayerRow(const std::string& player_name, const PlayerSetupData& player_data, const std::vector<SaveGameEmpireData>& save_game_empire_data, bool host, bool disabled) : 
+        LoadGamePlayerRow(const PlayerSetupData& player_data, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool host, bool disabled) : 
             PlayerRow(player_data),
             m_save_game_empire_data(save_game_empire_data)
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
-            push_back(player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
             CUIDropDownList* empire_list = new CUIDropDownList(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
             empire_list->SetStyle(GG::LB_NOSORT);
-            int save_game_empire_data_index = -1;
-            for (unsigned int i = 0; i < m_save_game_empire_data.size(); ++i) {
-                empire_list->Insert(new CUISimpleDropDownListRow(m_save_game_empire_data[i].m_name));
+            std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
+            for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
+                empire_list->Insert(new CUISimpleDropDownListRow(it->second.m_name));
                 // Note that this logic will select based on empire id first.  Only when such a match fails does it
                 // attempt to match the current player name to the one in the save game.  Note also that only the host
                 // attempts a name match; the other clients just take whatever they're given.
-                if (m_save_game_empire_data[i].m_id == m_player_data.m_save_game_empire_id ||
-                    (host && m_save_game_empire_data[i].m_player_name == m_player_data.m_player_name)) {
-                    empire_list->Select(i);
-                    m_player_data.m_empire_name = m_save_game_empire_data[i].m_name;
-                    m_player_data.m_empire_color = m_save_game_empire_data[i].m_color;
-                    m_player_data.m_save_game_empire_id = m_save_game_empire_data[i].m_id;
-                    save_game_empire_data_index = i;
+                if (it->first == m_player_data.m_save_game_empire_id || (host && it->second.m_player_name == m_player_data.m_player_name)) {
+                    empire_list->Select(empire_list->NumRows() - 1);
+                    m_player_data.m_empire_name = it->second.m_name;
+                    m_player_data.m_empire_color = it->second.m_color;
+                    m_player_data.m_save_game_empire_id = it->second.m_id;
+                    save_game_empire_it = it;
                 }
             }
             push_back(empire_list);
             m_color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             m_color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(m_color_selector);
-            push_back(0 <= save_game_empire_data_index ? m_save_game_empire_data[save_game_empire_data_index].m_player_name : "",
+            push_back(save_game_empire_it != m_save_game_empire_data.end() ? save_game_empire_it->second.m_player_name : "",
                       ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
             m_color_selector->Disable();
 
-            if (disabled) {
+            if (disabled)
                 empire_list->Disable();
-            } else {
+            else
                 Connect(empire_list->SelChangedSignal, &LoadGamePlayerRow::EmpireChanged, this);
-            }
         }
 
     private:
         void EmpireChanged(int i)
         {
-            m_player_data.m_empire_name = m_save_game_empire_data[i].m_name;
-            m_player_data.m_empire_color = m_save_game_empire_data[i].m_color;
-            m_player_data.m_save_game_empire_id = m_save_game_empire_data[i].m_id;
+            std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
+            std::advance(it, i);
+            m_player_data.m_empire_name = it->second.m_name;
+            m_player_data.m_empire_color = it->second.m_color;
+            m_player_data.m_save_game_empire_id = it->second.m_id;
             m_color_selector->SelectColor(m_player_data.m_empire_color);
-            operator[](3)->SetText(m_save_game_empire_data[i].m_player_name);
+            operator[](3)->SetText(it->second.m_player_name);
             DataChangedSignal();
         }
 
-        EmpireColorSelector*                   m_color_selector;
-        const std::vector<SaveGameEmpireData>& m_save_game_empire_data;
+        EmpireColorSelector*                     m_color_selector;
+        const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
     };
 
     const int    LOBBY_WND_WIDTH = 800;
@@ -242,7 +242,7 @@ void MultiplayerLobbyWnd::KeyPress(GG::Key key, Uint32 key_mods)
         std::string text = m_chat_input_edit->WindowText();
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
-        *m_chat_box += m_player_names[HumanClientApp::GetApp()->PlayerID()] + ": " + text + "\n";
+        *m_chat_box += m_lobby_data.m_players[HumanClientApp::GetApp()->PlayerID()].m_player_name + ": " + text + "\n";
     } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         StartGameClicked();
     } else if (key == GG::GGK_ESCAPE) {
@@ -267,13 +267,6 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
                 m_saved_games_list->Select(m_lobby_data.m_save_file_index);
         }
 
-        m_player_IDs.clear();
-        m_player_names.clear();
-        for (unsigned int i = 0; i < m_lobby_data.m_players.size(); ++i) {
-            m_player_IDs[m_lobby_data.m_players[i].m_player_name] = m_lobby_data.m_players[i].m_player_id;
-            m_player_names[m_lobby_data.m_players[i].m_player_id] = m_lobby_data.m_players[i].m_player_name;
-        }
-
         bool send_update_back = PopulatePlayerList();
 
         m_handling_lobby_update = false;
@@ -285,8 +278,8 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
     }
 
     case Message::LOBBY_CHAT: {
-        std::map<int, std::string>::iterator it = m_player_names.find(msg.SendingPlayer());
-        *m_chat_box += (it != m_player_names.end() ? (it->second + ": ") : "[unknown]: ") + msg.Text() + '\n';
+        std::map<int, PlayerSetupData>::iterator it = m_lobby_data.m_players.find(msg.SendingPlayer());
+        *m_chat_box += (it != m_lobby_data.m_players.end() ? (it->second.m_player_name + ": ") : "[unknown]: ") + msg.Text() + '\n';
         break;
     }
 
@@ -299,16 +292,14 @@ void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
 
     case Message::LOBBY_EXIT: {
         int player_id = msg.SendingPlayer();
-        std::string player_name = m_player_names[player_id];
+        std::string player_name = m_lobby_data.m_players[player_id].m_player_name;
+        m_lobby_data.m_players.erase(player_id);
         for (int i = 0; i < m_players_lb->NumRows(); ++i) {
             if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
                 delete m_players_lb->Erase(i);
-                m_lobby_data.m_players.erase(m_lobby_data.m_players.begin() + i);
                 break;
             }
         }
-        m_player_IDs.erase(player_name);
-        m_player_names.erase(player_id);
         if (m_host)
             m_start_game_bn->Disable(!CanStart());
         break;
@@ -400,7 +391,7 @@ void MultiplayerLobbyWnd::PlayerDataChanged()
     for (int i = 0; i < m_players_lb->NumRows(); ++i) {
         const PlayerRow* row = dynamic_cast<const PlayerRow*>(&m_players_lb->GetRow(i));
         assert(row);
-        m_lobby_data.m_players.push_back(row->m_player_data);
+        m_lobby_data.m_players[row->m_player_data.m_player_id] = row->m_player_data;
     }
     if (m_host)
         m_start_game_bn->Disable(!CanStart());
@@ -435,22 +426,20 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
         int id = m_lobby_data.m_players[i].m_player_id;
         if (m_lobby_data.m_new_game) {
             NewGamePlayerRow* row =
-                new NewGamePlayerRow(m_player_names[id],
-                                     m_lobby_data.m_players[i],
+                new NewGamePlayerRow(m_lobby_data.m_players[id],
                                      !m_host && id != HumanClientApp::GetApp()->PlayerID());
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiplayerLobbyWnd::PlayerDataChanged, this);
         } else {
             LoadGamePlayerRow* row =
-                new LoadGamePlayerRow(m_player_names[i],
-                                      m_lobby_data.m_players[i],
+                new LoadGamePlayerRow(m_lobby_data.m_players[id],
                                       m_lobby_data.m_save_game_empire_data,
                                       m_host,
                                       !m_host && id != HumanClientApp::GetApp()->PlayerID());
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiplayerLobbyWnd::PlayerDataChanged, this);
-            if (row->m_player_data.m_save_game_empire_id != m_lobby_data.m_players[i].m_save_game_empire_id) {
-                m_lobby_data.m_players[i] = row->m_player_data;
+            if (row->m_player_data.m_save_game_empire_id != m_lobby_data.m_players[id].m_save_game_empire_id) {
+                m_lobby_data.m_players[id] = row->m_player_data;
                 retval = true;
             }
         }

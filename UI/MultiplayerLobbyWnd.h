@@ -67,8 +67,6 @@ private:
     bool                       m_handling_lobby_update;
 
     bool                       m_host;
-    std::map<std::string, int> m_player_IDs;
-    std::map<int, std::string> m_player_names;
 
     CUIMultiEdit*              m_chat_box;
     CUIEdit*                   m_chat_input_edit;

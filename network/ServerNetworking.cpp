@@ -66,8 +66,8 @@ namespace {
 const int PlayerConnection::INVALID_PLAYER_ID = -1;
 
 PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
-                                   boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                   boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                                   boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                                   boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                                    boost::function<void (PlayerConnectionPtr)> disconnected_callback) :
     m_socket(io_service),
     m_ID(INVALID_PLAYER_ID),
@@ -114,8 +114,8 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, b
 
 PlayerConnectionPtr
 PlayerConnection::NewConnection(boost::asio::io_service& io_service,
-                                boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                                boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                                boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                                 boost::function<void (PlayerConnectionPtr)> disconnected_callback)
 { return PlayerConnectionPtr(new PlayerConnection(io_service, nonplayer_message_callback, player_message_callback, disconnected_callback)); }
 
@@ -198,8 +198,8 @@ bool ServerNetworking::EstablishedPlayer::operator()(const PlayerConnectionPtr& 
 { return player_connection->EstablishedPlayer(); }
 
 ServerNetworking::ServerNetworking(boost::asio::io_service& io_service,
-                                   boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                   boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                                   boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                                   boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                                    boost::function<void (PlayerConnectionPtr)> disconnected_callback) :
     m_discovery_server(new DiscoveryServer(io_service)),
     m_player_connection_acceptor(io_service),

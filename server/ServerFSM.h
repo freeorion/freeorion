@@ -2,11 +2,12 @@
 #ifndef _ServerFSM_h_
 #define _ServerFSM_h_
 
+#include "../network/Message.h"
+
 #include <boost/mpl/list.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/seq/elem.hpp>
 #include <boost/preprocessor/seq/for_each.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/statechart/custom_reaction.hpp>
 #include <boost/statechart/deferral.hpp>
 #include <boost/statechart/event.hpp>
@@ -19,7 +20,6 @@
 #include <vector>
 
 
-class Message;
 class MultiplayerLobbyData;
 class ServerApp;
 class SinglePlayerSetupData;
@@ -40,9 +40,9 @@ struct Disconnection : boost::statechart::event<Disconnection>
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase
 {
-    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection); ///< Basic ctor.
+    MessageEventBase(Message& message, PlayerConnectionPtr& player_connection); ///< Basic ctor.
 
-    const Message&       m_message;
+    Message              m_message;
     PlayerConnectionPtr& m_player_connection;
 };
 
@@ -69,7 +69,7 @@ struct MessageEventBase
         boost::statechart::event<name>,                                 \
         MessageEventBase                                                \
     {                                                                   \
-        name(const Message& message, PlayerConnectionPtr& player_connection) : \
+        name(Message& message, PlayerConnectionPtr& player_connection) : \
             MessageEventBase(message, player_connection)                \
             {}                                                          \
     };

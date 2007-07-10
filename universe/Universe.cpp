@@ -1018,7 +1018,7 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system, int empire_id
 
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
                               SpecialsFrequency specials_freq, int players, int ai_players, 
-                              const std::vector<PlayerSetupData>& player_setup_data/* = std::vector<PlayerSetupData>()*/)
+                              const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_RELEASE
     ClockSeed();
@@ -1041,7 +1041,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     s_universe_width = std::sqrt(static_cast<double>(size)) * AVG_UNIVERSE_WIDTH;
 
-    std::vector<std::pair<double,double> > positions;
+    std::vector<std::pair<double, double> > positions;
 
     // generate the stars
     switch (shape) {
@@ -2214,7 +2214,7 @@ void Universe::NamePlanets()
     }
 }
 
-void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data)
+void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
@@ -2225,13 +2225,13 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
 
         GG::Clr color;
-        if (i < player_setup_data.size()) { // first try to use user-assigned colors
-            empire_name = player_setup_data[i].m_empire_name;
-            color = player_setup_data[i].m_empire_color;
+        std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.find((*it)->ID());
+        if (setup_data_it != player_setup_data.end()) { // first try to use user-assigned colors
+            empire_name = setup_data_it->second.m_empire_name;
+            color = setup_data_it->second.m_empire_color;
             std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
-            if (color_it != colors.end()) {
+            if (color_it != colors.end())
                 colors.erase(color_it);
-            }
         } else if (!colors.empty()) { // failing that, use other built-in colors
             int color_idx = RandInt(0, colors.size() - 1);
             color = colors[color_idx];
@@ -2248,8 +2248,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // set ownership of home planet
         int empire_id = empire->EmpireID();
         Planet* home_planet = Object<Planet>(homeworlds[i]);
-        Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID() <<
-            ") to be home system for Empire " << empire_id;
+        Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID()
+                               << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
 
         System* home_system = home_planet->GetSystem();

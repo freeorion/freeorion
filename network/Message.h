@@ -32,11 +32,9 @@ public:
     enum MessageType {
         UNDEFINED,
         DEBUG,                   ///< used to send special messages used for debugging purposes
-        SERVER_DYING,            ///< sent to the client when the server is about to terminate
         HOST_SP_GAME,            ///< sent when a client wishes to establish a single player game at the server
         HOST_MP_GAME,            ///< sent when a client wishes to establish a multiplayer game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
-        RENAME_PLAYER,           ///< sent when the server must assign a new name to a player, because another player already has her desired name
         LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
         LOBBY_CHAT,              ///< used to send chat messages in the multiplayer lobby
         LOBBY_HOST_ABORT,        ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
@@ -47,7 +45,7 @@ public:
         GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,             ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
         TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn
-        TURN_PROGRESS,           ///< sent to clients to display a turn progress message. To make messages short, IDs are used
+        TURN_PROGRESS,           ///< sent to clients to display a turn progress message
         CLIENT_SAVE_DATA,        ///< sent to the server in response to a server request for the data needed to create a save file
         COMBAT_START,            ///< sent to clients when a combat is about to start
         COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
@@ -57,15 +55,7 @@ public:
         PLAYER_EXIT,             ///< sent to the "host" client when another player leaves the game
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
-        END_GAME,                ///< sent to the server by the host client when the current game is to end
-    };
-
-    /** Represents the module which is the destination for the message */
-    enum ModuleType {
-        CORE,                           ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
-        CLIENT_LOBBY_MODULE,            ///< the human-only multiplayer lobby dialog
-        CLIENT_COMBAT_MODULE,           ///< the client Combat module
-        CLIENT_SYNCHRONOUS_RESPONSE     ///< client-only - the response to a synchronous message
+        END_GAME                 ///< sent to the server by the host client when the current game is to end
     };
 
     enum TurnProgressPhase {
@@ -84,8 +74,8 @@ public:
     Message(MessageType message_type,
             int sending_player,
             int receiving_player,
-            ModuleType receiving_module,
-            const std::string& text);
+            const std::string& text,
+            bool synchronous_response = false);
 
     Message(const Message& rhs);            ///< Copy ctor.
     ~Message();                             ///< Dtor.
@@ -96,7 +86,7 @@ public:
     MessageType Type() const;               ///< Returns the type of the message.
     int         SendingPlayer() const;      ///< Returns the ID of the sending player.
     int         ReceivingPlayer() const;    ///< Returns the ID of the receiving player.
-    ModuleType  ReceivingModule() const;    ///< Returns the module to which this message should be sent when it reaches its destination.
+    bool        SynchronousResponse() const;///< Returns true if this message is in reponse to a synchronous message
     std::size_t Size() const;               ///< Returns the size of the underlying buffer.
     const char* Data() const;               ///< Returns the underlying buffer.
     std::string Text() const;               ///< Returns the underlying buffer as a std::string.
@@ -112,7 +102,7 @@ private:
     MessageType   m_type;
     int           m_sending_player;
     int           m_receiving_player;
-    ModuleType    m_receiving_module;
+    bool          m_synchronous_response;
     int           m_message_size;
     char*         m_message_text;
 
@@ -131,9 +121,6 @@ void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a 
 
 /** Returns a string representation of \a type. */
 std::string MessageTypeStr(Message::MessageType type);
-
-/** Returns a string representation of \a type. */
-std::string ModuleTypeStr(Message::ModuleType type);
 
 /** Returns a string representation of \a phase. */
 std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
@@ -169,10 +156,6 @@ Message HostMPAckMessage(int player_id);
 /** creates a JOIN_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
-
-/** creates a RENAME_PLAYER message that renames a player that has just joined a game with a name already in use.  The
-    \a player_id is the ID of the receiving player.  This message should only be sent by the server.*/
-Message RenameMessage(int player_id, const std::string& new_name);
 
 /** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the host client 
     and the server are considered valid.*/

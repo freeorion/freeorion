@@ -38,8 +38,8 @@ public:
     /** \name Structors */ //@{
     /** Basic ctor. */
     ServerNetworking(boost::asio::io_service& io_service,
-                     boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                     boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                     boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                     boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                      boost::function<void (PlayerConnectionPtr)> disconnected_callback);
 
     ~ServerNetworking(); //< Dtor.
@@ -90,9 +90,9 @@ private:
     boost::asio::ip::tcp::acceptor m_player_connection_acceptor;
     PlayerConnections              m_player_connections;
 
-    boost::function<void (const Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
-    boost::function<void (const Message&, PlayerConnectionPtr)> m_player_message_callback;
-    boost::function<void (PlayerConnectionPtr)>                 m_disconnected_callback;
+    boost::function<void (Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
+    boost::function<void (Message&, PlayerConnectionPtr)> m_player_message_callback;
+    boost::function<void (PlayerConnectionPtr)>           m_disconnected_callback;
 };
 
 /** Encapsulates the connection to a single player.  This object should have nearly the same lifetime as the socket it
@@ -125,8 +125,8 @@ public:
 
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
     static PlayerConnectionPtr NewConnection(boost::asio::io_service& io_service,
-                                             boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                             boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                                             boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                                             boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                                              boost::function<void (PlayerConnectionPtr)> disconnected_callback);
 
     static const int INVALID_PLAYER_ID;
@@ -135,8 +135,8 @@ private:
     typedef boost::array<int, 5> MessageHeaderBuffer;
 
     PlayerConnection(boost::asio::io_service& io_service,
-                     boost::function<void (const Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                     boost::function<void (const Message&, PlayerConnectionPtr)> player_message_callback,
+                     boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
+                     boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                      boost::function<void (PlayerConnectionPtr)> disconnected_callback);
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
@@ -149,9 +149,9 @@ private:
     std::string                  m_player_name;
     bool                         m_host;
 
-    boost::function<void (const Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
-    boost::function<void (const Message&, PlayerConnectionPtr)> m_player_message_callback;
-    boost::function<void (PlayerConnectionPtr)>                 m_disconnected_callback;
+    boost::function<void (Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
+    boost::function<void (Message&, PlayerConnectionPtr)> m_player_message_callback;
+    boost::function<void (PlayerConnectionPtr)>           m_disconnected_callback;
 
     enum { HEADER_SIZE = MessageHeaderBuffer::static_size * sizeof(MessageHeaderBuffer::value_type) };
 

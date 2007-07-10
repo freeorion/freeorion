@@ -10,7 +10,9 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include <set>
 #include <vector>
+
 
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
@@ -147,14 +149,14 @@ struct MultiplayerLobbyData : public GalaxySetupData
     void RebuildSaveGameEmpireData(); ///< Rebuilds m_save_game_empire_data by reading player/Empire data from the current save file.
     //@}
 
-    bool                            m_new_game;
-    int                             m_save_file_index;
-    std::vector<PlayerSetupData>    m_players;
-    std::vector<PlayerSetupData>    m_AIs;
+    bool                              m_new_game;
+    int                               m_save_file_index;
+    std::map<int, PlayerSetupData>    m_players; // indexed by player_id
+    std::set<int>                     m_AI_player_ids;
 
-    std::vector<std::string>        m_save_games;
-    std::vector<GG::Clr>            m_empire_colors;
-    std::vector<SaveGameEmpireData> m_save_game_empire_data;
+    std::vector<std::string>          m_save_games;
+    std::vector<GG::Clr>              m_empire_colors;
+    std::map<int, SaveGameEmpireData> m_save_game_empire_data; // indexed by empire_id
 
     static const std::string MP_SAVE_FILE_EXTENSION;
 

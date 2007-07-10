@@ -502,20 +502,10 @@ void HumanClientApp::SDLQuit()
 
 void HumanClientApp::HandleMessage(const Message& msg)
 {
-    if (msg.ReceivingModule() == Message::CLIENT_LOBBY_MODULE) {
-        if (MultiplayerLobby())
-            MultiplayerLobby()->HandleMessage(msg);
-        else
-            Logger().errorStream() << "HumanClientApp::HandleMessage : Received a message for the CLIENT_LOBBY_MODULE, but there is no lobby currently set.";
-    } else if (msg.ReceivingModule() == Message::CLIENT_COMBAT_MODULE) {
-        Logger().errorStream() << "HumanClientApp::HandleMessage : Received a message for the CLIENT_COMBAT_MODULE, but that module is not yet implemented.";
+    if (MultiplayerLobby()) {
+        MultiplayerLobby()->HandleMessage(msg);
     } else {
         switch (msg.Type()) {
-        case Message::SERVER_DYING: {
-            KillServer();
-            break;
-        } 
-
         case Message::HOST_SP_GAME:
         case Message::HOST_MP_GAME: {
             if (msg.SendingPlayer() == -1 && msg.Text() == "ACK")
@@ -537,13 +527,6 @@ void HumanClientApp::HandleMessage(const Message& msg)
             break;
         }
 
-        case Message::RENAME_PLAYER: {
-            SetPlayerName(msg.Text());
-            Logger().debugStream() << "HumanClientApp::HandleMessage : Received RENAME_PLAYER -- Server has renamed this player \"" << 
-                PlayerName()  << "\"";
-            break;
-        }
-
         case Message::GAME_START: {
             if (msg.SendingPlayer() == -1) {
                 Logger().debugStream() << "HumanClientApp::HandleMessage : Received GAME_START message; "
@@ -553,13 +536,13 @@ void HumanClientApp::HandleMessage(const Message& msg)
 
                 Orders().Reset();
 
-                Logger().debugStream() << "HumanClientApp::HandleMessage : Universe setup complete.";
-
                 for (Empire::SitRepItr it = Empires().Lookup(EmpireID())->SitRepBegin(); it != Empires().Lookup(EmpireID())->SitRepEnd(); ++it) {
                     m_ui->GenerateSitRepText(*it);
                 }
 
-                Autosave(true);
+                if (PlayerID() == Networking::HOST_PLAYER_ID)
+                    Autosave(true);
+
                 m_ui->ScreenMap();
                 m_ui->InitTurn(CurrentTurn()); // init the new turn
             }
@@ -593,7 +576,8 @@ void HumanClientApp::HandleMessage(const Message& msg)
                 m_ui->GenerateSitRepText(pEntry);
             }
 
-            Autosave(false);
+            if (PlayerID() == Networking::HOST_PLAYER_ID)
+                Autosave(false);
 
             m_ui->ScreenMap(); 
             m_ui->InitTurn(CurrentTurn());

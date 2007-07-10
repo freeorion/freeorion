@@ -7,7 +7,7 @@ namespace {
     struct SynchronousResponseMessage
     {
         bool operator()(const Message& message) const
-            { return message.ReceivingModule() == Message::CLIENT_SYNCHRONOUS_RESPONSE; }
+            { return message.SynchronousResponse(); }
     };
 }
 
@@ -38,7 +38,7 @@ void MessageQueue::PushBack(Message& message)
     boost::mutex::scoped_lock lock(m_monitor);
     m_queue.push_back(Message());
     swap(m_queue.back(), message);
-    if (m_queue.back().ReceivingModule() == Message::CLIENT_SYNCHRONOUS_RESPONSE)
+    if (m_queue.back().SynchronousResponse())
         m_have_synchronous_response.notify_one();
 }
 

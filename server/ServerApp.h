@@ -52,7 +52,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int             CurrentTurn() const {return m_current_turn;}                ///< returns current turn of the server
+    int                  CurrentTurn() const {return m_current_turn;}                ///< returns current turn of the server
     //@}
 
     /** \name Mutators */ //@{
@@ -96,14 +96,17 @@ private:
     const ServerApp& operator=(const ServerApp&); // disabled
     ServerApp(const ServerApp&); // disabled
 
+    void NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
+                     const std::map<int, PlayerSetupData>& player_setup_data);
+
     void Run();             ///< initializes app state, then executes main event handler/render loop (Poll())
     void CleanupAIs();      ///< cleans up AI processes
 
     /** handles an incoming message from the server with the appropriate action or response */
-    void HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void HandleMessage(Message& msg, PlayerConnectionPtr player_connection);
 
     /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
-    void HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection);
 
     /** called by ServerNetworking when a player's TCP connection is closed*/
     void PlayerDisconnected(PlayerConnectionPtr player_connection);

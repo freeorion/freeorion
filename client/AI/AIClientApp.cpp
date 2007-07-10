@@ -118,13 +118,6 @@ void AIClientApp::HandleMessage(const Message& msg)
         break;
     }
 
-    case Message::RENAME_PLAYER: {
-        SetPlayerName(msg.Text());
-        Logger().debugStream() << "AIClientApp::HandleMessage : Received RENAME_PLAYER -- server has renamed this player \"" << 
-            PlayerName()  << "\"";
-        break;
-    }
-
     case Message::GAME_START: {
         if (msg.SendingPlayer() == -1) {
             Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; "

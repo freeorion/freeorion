@@ -284,6 +284,7 @@ void IntroScreen::OnMultiPlayer()
         MultiplayerLobbyWnd multiplayer_lobby_wnd(server_connect_wnd.Result().second == "HOST GAME SELECTED");
         multiplayer_lobby_wnd.Run();
         if (!multiplayer_lobby_wnd.Result()) {
+            HumanClientApp::GetApp()->Networking().DisconnectFromServer();
             HumanClientApp::GetApp()->KillServer();
             ClientUI::GetClientUI()->ScreenIntro();
         } else {
