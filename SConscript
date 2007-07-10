@@ -69,6 +69,7 @@ if env['target_define'] == 'FREEORION_BUILD_SERVER':
 if env['target_define'] == 'FREEORION_BUILD_AI':
     target_sources = [
         'client/ClientApp.cpp',
+        'client/ClientFSMEvents.cpp',
         'client/AI/AIClientApp.cpp',
         'client/AI/camain.cpp',
         'universe/Universe.cpp',
@@ -79,6 +80,7 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
 if env['target_define'] == 'FREEORION_BUILD_HUMAN':
     target_sources = [
         'client/ClientApp.cpp',
+        'client/ClientFSMEvents.cpp',
         'client/human/HumanClientApp.cpp',
         'client/human/HumanClientAppSoundFMOD.cpp',
 #        'client/human/HumanClientAppSoundOpenAL.cpp',
