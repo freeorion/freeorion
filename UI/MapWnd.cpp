@@ -109,11 +109,9 @@ private:
     const System* dst;
 };
 
-
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-
 MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags ):
     CUIWnd( t, x, y, h, w, flags )
 {
@@ -178,7 +176,7 @@ MapWnd::MapWnd() :
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
-    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateEmpireResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update amounts
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
 
@@ -656,6 +654,11 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+
+
+    // update effect accounting and meter estimates
+    universe.InitMeterEstimatesAndDiscrepancies();
+
 
     // determine level of supply each empire can provide to each system
     m_system_supply.clear();
@@ -1860,6 +1863,17 @@ void MapWnd::RefreshPopulationIndicator()
     
     m_population->SetValue(empire->GetPopulationPool().Population());
     m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
+}
+
+void MapWnd::UpdateMetersAndResourcePools()
+{
+    UpdateMeterEstimates();
+    UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateMeterEstimates()
+{
+    GetUniverse().UpdateMeterEstimates();
 }
 
 void MapWnd::UpdateEmpireResourcePools()

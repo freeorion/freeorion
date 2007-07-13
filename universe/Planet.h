@@ -61,7 +61,7 @@ public:
     virtual Meter* GetMeter(MeterType type);
 
     virtual void MovementPhase( );
-    virtual void AdjustMaxMeters( );
+    virtual void ApplyUniverseTableMaxMeterAdjustments( );
     virtual void PopGrowthProductionResearchPhase( );
 
     /////////////////////////////////////////////////////////////////////////////

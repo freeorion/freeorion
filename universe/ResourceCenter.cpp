@@ -209,47 +209,17 @@ Meter* ResourceCenter::GetMeter(MeterType type)
 
 void ResourceCenter::SetPrimaryFocus(FocusType focus)
 {
-    for (MeterType i = METER_FARMING; i <= METER_MINING; i = MeterType(i + 1)) {
-        double old_max_mods = 0.0;
-        if (m_primary == MeterToFocus(i))
-            old_max_mods = ProductionDataTables()["FocusMods"][0][0];
-        else if (m_primary == FOCUS_BALANCED)
-            old_max_mods = ProductionDataTables()["FocusMods"][2][0];
-        double new_max_mods = 0.0;
-        if (focus == MeterToFocus(i))
-            new_max_mods = ProductionDataTables()["FocusMods"][0][0];
-        else if (focus == FOCUS_BALANCED)
-            new_max_mods = ProductionDataTables()["FocusMods"][2][0];
-        Meter* meter = GetMeter(i);
-        assert(meter);
-        meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
-    }
     m_primary = focus;
     ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::SetSecondaryFocus(FocusType focus)
 {
-    for (MeterType i = METER_FARMING; i <= METER_MINING; i = MeterType(i + 1)) {
-        double old_max_mods = 0.0;
-        if (m_secondary == MeterToFocus(i))
-            old_max_mods = ProductionDataTables()["FocusMods"][1][0];
-        else if (m_secondary == FOCUS_BALANCED)
-            old_max_mods = ProductionDataTables()["FocusMods"][3][0];
-        double new_max_mods = 0.0;
-        if (focus == MeterToFocus(i))
-            new_max_mods = ProductionDataTables()["FocusMods"][1][0];
-        else if (focus == FOCUS_BALANCED)
-            new_max_mods = ProductionDataTables()["FocusMods"][3][0];
-        Meter* meter = GetMeter(i);
-        assert(meter);
-        meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
-    }
     m_secondary = focus;
     ResourceCenterChangedSignal();
 }
 
-void ResourceCenter::AdjustMaxMeters()
+void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments()
 {
     // determine meter maxes; they should have been previously reset to 0
     double primary_specialized_factor = ProductionDataTables()["FocusMods"][0][0];

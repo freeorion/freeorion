@@ -112,7 +112,7 @@ double PopCenter::FutureHealthGrowth() const
     return std::min(MaxHealth() - Health(), m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
 }
 
-void PopCenter::AdjustMaxMeters()
+void PopCenter::ApplyUniverseTableMaxMeterAdjustments()
 {
     UniverseObject* object = GetObjectSignal();
     assert(object);

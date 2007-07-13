@@ -485,4 +485,14 @@ enum CaptureResult {
     CR_SHARE       // object has ownership by conquering empire added, while still retaining ownership by original empire(s)
 };
 
+/** Types of in-game things that might contain an EffectsGroup, or "cause" effects to occur */
+enum EffectsCauseType {
+    ECT_UNIVERSE_TABLE_ADJUSTMENT = -2,  // not an actual effect, but a meter alteration due to universe tables
+    INVALID_EFFECTS_GROUP_CAUSE_TYPE = -1,
+    ECT_UNKNOWN_CAUSE,
+    ECT_TECH,
+    ECT_BUILDING,
+    ECT_SPECIAL
+};
+
 #endif // _Enums_h_

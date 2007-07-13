@@ -339,7 +339,7 @@ void FleetColonizeOrder::ServerExecute() const
     planet->SetPrimaryFocus(FOCUS_BALANCED);
     planet->SetSecondaryFocus(FOCUS_BALANCED);
     planet->ResetMaxMeters();
-    planet->AdjustMaxMeters();
+    planet->ApplyUniverseTableMaxMeterAdjustments();
     planet->AdjustPop(INITIAL_COLONY_POP);
     planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());

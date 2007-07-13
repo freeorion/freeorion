@@ -70,7 +70,7 @@ public:
     Meter&   ConstructionMeter()             {return m_construction;} ///< returns the construction Meter for this center
     Meter*   GetMeter(MeterType type);
 
-    virtual void AdjustMaxMeters();
+    virtual void ApplyUniverseTableMaxMeterAdjustments();
     virtual void PopGrowthProductionResearchPhase();
 
     /// Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.

@@ -68,7 +68,7 @@ public:
     void SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
     void SetAvailableFood(double available_food) {m_available_food = available_food;}   ///< sets the amount of food which is currently available
 
-    virtual void AdjustMaxMeters();
+    virtual void ApplyUniverseTableMaxMeterAdjustments();
     virtual void PopGrowthProductionResearchPhase();
 
     /// Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.

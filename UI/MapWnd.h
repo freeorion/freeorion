@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "CUIWnd.h"
+#include "../universe/Enums.h"
 
 class CUIButton;
 class CUIEdit;
@@ -65,7 +66,6 @@ public:
     typedef std::set<FleetWnd*>::const_iterator FleetWndIter;
     FleetWndIter    FleetWndBegin() {return m_fleet_wnds.begin();}
     FleetWndIter    FleetWndEnd() {return m_fleet_wnds.end();}
-
     //!@}
 
     //! \name Mutators //!@{
@@ -78,7 +78,7 @@ public:
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
-    void           InitTurn( int turn_number );                     //!< called at the start of each turn
+    void           InitTurn(int turn_number);                       //!< called at the start of each turn
     void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     bool           CloseAllFleetWnds();                             //!< closes all open FleetWnds.  returns true if there was at least one open FleetWnd, otherwise false
     void           ShowSystemNames();                               //!< enables the system name text
@@ -109,7 +109,7 @@ public:
     void Cleanup();                            //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
     void Sanitize();                           //!< sanitizes the MapWnd after a game
     //!@}
-        
+
     static const int    SIDE_PANEL_WIDTH;
 
 protected:
@@ -121,9 +121,10 @@ private:
     void RefreshTradeResourceIndicator();
     void RefreshResearchResourceIndicator();
     void RefreshIndustryResourceIndicator();
-
     void RefreshPopulationIndicator();
 
+    void UpdateMetersAndResourcePools();
+    void UpdateMeterEstimates();            ///< re-estimates meter values based on orders given
     void UpdateEmpireResourcePools();       ///< recalculates production and predicted changes of player's empire's resource and population pools
 
     void TurnBtnClicked() {EndTurn();}
@@ -211,12 +212,15 @@ private:
     CUIEdit*                    m_chat_edit;        //! MP-chat input edit box
     std::vector<FleetButton*>   m_moving_fleet_buttons; //! moving fleets in the main map (SystemIcons contain stationary fleet buttons)
     std::set<StarlaneData>      m_starlanes;        //! starlanes between systems
-    std::map<Fleet*, 
-             MovementLineData>  m_fleet_lines;      //! lines used for moving fleets in the main map
-    MovementLineData            m_projected_fleet_lines; //! lines that show the projected path of the active fleet in the FleetWnd
-    std::map<int, 
-             std::map<int, int>
-            >                   m_system_supply;    //! map from system id to ( map from empire id to level of supply that empire can provide to ships in system )
+
+    std::map<Fleet*, MovementLineData>
+                                m_fleet_lines;              //! lines used for moving fleets in the main map
+
+    MovementLineData            m_projected_fleet_lines;    //! lines that show the projected path of the active fleet in the FleetWnd
+
+    std::map<int, std::map<int, int> >
+                                m_system_supply;            //! map from system id to ( map from empire id to level of supply that empire can provide to ships in system )
+
     GG::Pt                      m_drag_offset;      //! distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //! tracks whether or not a drag occurs during a left button down sequence of events
     CUITurnButton*              m_turn_update;      //!< button that updates player's turn

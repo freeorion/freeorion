@@ -330,10 +330,10 @@ void Planet::MovementPhase()
 {
 }
 
-void Planet::AdjustMaxMeters()
+void Planet::ApplyUniverseTableMaxMeterAdjustments()
 {
-    ResourceCenter::AdjustMaxMeters();
-    PopCenter::AdjustMaxMeters();
+    ResourceCenter::ApplyUniverseTableMaxMeterAdjustments();
+    PopCenter::ApplyUniverseTableMaxMeterAdjustments();
 }
 
 void Planet::PopGrowthProductionResearchPhase( )

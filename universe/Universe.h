@@ -12,6 +12,7 @@
 
 #include "Enums.h"
 #include "Predicates.h"
+#include "Effect.h"
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
@@ -84,6 +85,21 @@ public:
     typedef std::vector<const UniverseObject*>   ConstObjectVec;   ///< the return type of FindObjects()
     typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
     typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
+
+    //!< contains info about a single effect's alterations to a meter
+    struct EffectAccountingInfo
+    {
+        EffectAccountingInfo();         // default ctor
+        int source_id;                  // source object of effect
+        int caused_by_empire_id;        // empire that causes effect to occur, if applicable.  Tech effects are caused by the empire that researched them
+        EffectsCauseType cause_type;    // is the effect due to a tech, building, special, or unknown cause?
+        std::string specific_cause;     // what tech, building or special was the cause?
+        double meter_change;            // net change on meter due to this effect, as best known by client's empire
+        double running_meter_total; 
+    };
+    typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;    //!< Effect accounting info for all meters
+    typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;   //!< Discrepancy between meter's value at start of turn, and the value that this client calculate that the meter should have with the knowledge available -> the unknown factor affecting the meter
+
 
     /** \name Signal Types */ //@{
     typedef boost::signal<void (const UniverseObject *)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
@@ -174,6 +190,14 @@ public:
         system ID is out of range. */
     std::map<double, System*> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
+    /** returns map, indexed by object id, to map, indexed by MeterType, to vector of EffectAccountInfo for the meter,
+        in order effects were applied to the meter. */
+    const EffectAccountingMap& GetEffectAccountingMap() {return m_effect_accounting_map;}
+
+    /** returns map, indexed by object id, to map, indexed by MeterType, to the discrepancy between the actual and the
+        explainable value that the meter had at the start of the turn */
+    const EffectDiscrepancyMap& GetEffectDiscrepancyMap() {return m_effect_discrepancy_map;}
+
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
@@ -204,6 +228,10 @@ public:
 
     /** Applies all Effects from Buildings, Specials, Techs, etc. */
     void              ApplyEffects();
+
+    void              InitMeterEstimatesAndDiscrepancies();  ///< determines discrepancies and stores in m_effect_discrepancy_map, using UpdateMeterEstimates() in process
+
+    void              UpdateMeterEstimates();    ///< based on orders given up to this point, and known universe, estimates what meter maxes will be next turn, and updates them accordingly
 
     /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
     void              RebuildEmpireViewSystemGraphs();
@@ -271,6 +299,15 @@ protected:
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
 
+    // effects processing stuff
+    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
+    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
+
+    void GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map);   // populates \a effects_targets_map with all EffectsGroups and their targets in the known universe
+    void ExecuteEffects(EffectsAndTargetsMap& effects_targets_map);         // executes all effects
+    void ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bool do_effect_accounting = false); // executes meter-altering effects; ignores other effects.  If \a do_effect_acounting == true, records effect details in m_effect_accounting_map
+
+
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
@@ -297,6 +334,10 @@ protected:
     DistanceMatrix m_system_distances;                      ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
     SystemGraph m_system_graph;                             ///< a graph in which the systems are vertices and the starlanes are edges
     EmpireViewSystemGraphMap m_empire_system_graph_views;   ///< a map of empire IDs to the views of the system graph by those empires
+
+    EffectAccountingMap m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
+    EffectDiscrepancyMap m_effect_discrepancy_map;          ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
+
 
     int m_last_allocated_object_id;
     int m_last_allocated_design_id;

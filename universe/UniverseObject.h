@@ -131,7 +131,7 @@ public:
 
     /** adjusts the max meter values for all meters in this UniverseObject, based on its own properties.  This does not include
         Effects acting on the object, which should already have been executed before this function is called. */
-    virtual void AdjustMaxMeters();
+    virtual void ApplyUniverseTableMaxMeterAdjustments();
 
     /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Current() value exceed its Max() value. */
     void ClampMeters();

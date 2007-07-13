@@ -116,6 +116,19 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
     }
 }
 
+void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_index) const
+{
+    UniverseObject* source = GetUniverse().Object(source_id);
+    assert(source);
+
+    assert(effect_index < m_effects.size() && effect_index >= 0);
+
+    // execute effect on targets
+    for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+        m_effects[effect_index]->Execute(source, *it);
+    }
+}
+
 const std::string& EffectsGroup::StackingGroup() const
 {
     return m_stacking_group;

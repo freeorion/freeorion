@@ -1180,7 +1180,7 @@ void ServerApp::ProcessTurns()
     // Update meters, do other effects stuff
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->ResetMaxMeters();   // zero all meters
-        it->second->AdjustMaxMeters();  // apply non-effects max meter modifications, including focus mods
+        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
     }
     GetUniverse().ApplyEffects();       // apply effects, futher altering meters (and also non-meter effects)
 
