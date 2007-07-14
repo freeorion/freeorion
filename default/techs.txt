@@ -22,7 +22,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = "tech_icons/Algorithmic_Elegance.png"
+    graphic = "icons/tech/algorithmic_elegance.png"
 
 Tech
     name = "LRN_GAL_EXPLO"
@@ -391,7 +391,7 @@ Tech
     researchturns = 5
     prerequisites = "LRN_GAL_EXPLO"
     unlock = Item type = Building name = "BLD_MONUMENT_EXODUS"
-    graphic = ""
+    graphic = "icons/tech/monument_to_exodus.png"
 
 Tech
     name = "LRN_PSICORP"
@@ -935,7 +935,7 @@ Tech
         "PRO_SINGULAR_GEN"
     ]
     unlock = []
-    graphic = ""
+    graphic = "icons/tech/zero_point_energy.png"
 
 Tech
     name = "PRO_AUTOFACTORY_I"
@@ -1121,7 +1121,7 @@ Tech
     researchturns = 10
     prerequisites = "PRO_SINGULAR_GEN"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
-    graphic = "tech_icons/Artificial_Black_Hole.png"
+    graphic = "icons/tech/Artificial_black_hole.png"
 
 Tech
     name = "PRO_MINING_ENGINEERING"
@@ -1310,7 +1310,7 @@ Tech
     researchturns = 5
     prerequisites = []
     unlock = []
-    graphic = "tech_icons/Architecture_Psychology.png"
+    graphic = "icons/tech/architecture_psychology.png"
 
 Tech
     name = "CON_INFRA_ECOL"
@@ -1377,7 +1377,7 @@ Tech
     researchturns = 10
     prerequisites = "PRO_NANOTECH_PROD"
     unlock = []
-    graphic = "tech_icons/Architectural_Monofilaments.png"
+    graphic = "icons/tech/architectural_monofilaments.png"
 
 Tech
     name = "CON_SELFGRAV_STRC"
