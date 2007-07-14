@@ -3,6 +3,8 @@
 #include "Networking.h"
 #include "../util/AppInterface.h"
 
+#include <SDL/SDL_timer.h>
+
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
@@ -15,7 +17,7 @@ using boost::asio::ip::tcp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 
     /** A simple client that broadcasts UDP datagrams on the local network for FreeOrion servers, and reports any it
         finds. */
@@ -163,7 +165,10 @@ bool ClientNetworking::ConnectToLocalHostServer(boost::posix_time::seconds timeo
 { return ConnectToServer("127.0.0.1", timeout); }
 
 void ClientNetworking::DisconnectFromServer()
-{ m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this)); }
+{
+    m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
+    SDL_Delay(1000); // wait a bit for the disconnect to occur
+}
 
 void ClientNetworking::SendMessage(const Message& message)
 {
