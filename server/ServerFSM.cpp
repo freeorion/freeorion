@@ -126,7 +126,7 @@ Idle::~Idle()
 boost::statechart::result Idle::react(const HostMPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostMPGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -134,7 +134,6 @@ boost::statechart::result Idle::react(const HostMPGame& msg)
     int player_id = Networking::HOST_PLAYER_ID;
     player_connection->EstablishPlayer(player_id, host_player_name, true);
     player_connection->SendMessage(HostMPAckMessage(player_id));
-    player_connection->SendMessage(JoinAckMessage(player_id));
     server.m_single_player_game = false;
 
     return transit<MPLobby>();
@@ -143,7 +142,7 @@ boost::statechart::result Idle::react(const HostMPGame& msg)
 boost::statechart::result Idle::react(const HostSPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostSPGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -153,7 +152,6 @@ boost::statechart::result Idle::react(const HostSPGame& msg)
     int player_id = Networking::HOST_PLAYER_ID;
     player_connection->EstablishPlayer(player_id, setup_data->m_host_player_name, true);
     player_connection->SendMessage(HostSPAckMessage(player_id));
-    player_connection->SendMessage(JoinAckMessage(player_id));
     server.m_single_player_game = true;
     context<ServerFSM>().m_setup_data = setup_data;
 
@@ -169,7 +167,7 @@ MPLobby::MPLobby(my_context c) :
     m_lobby_data (new MultiplayerLobbyData(true))
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     int player_id = Networking::HOST_PLAYER_ID;
     const PlayerConnectionPtr& player_connection = *server.m_networking.GetPlayer(player_id);
     PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
@@ -185,7 +183,7 @@ MPLobby::~MPLobby()
 boost::statechart::result MPLobby::react(const Disconnection& d)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.Disconnection";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     PlayerConnectionPtr& player_connection = d.m_player_connection;
 
     int id = player_connection->ID();
@@ -217,7 +215,7 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
 boost::statechart::result MPLobby::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.JoinGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -239,7 +237,7 @@ boost::statechart::result MPLobby::react(const JoinGame& msg)
 boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyUpdate";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
 
     MultiplayerLobbyData incoming_lobby_data;
@@ -279,7 +277,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
 boost::statechart::result MPLobby::react(const LobbyChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyChat";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
 
     if (message.ReceivingPlayer() == -1) { // the receiver is everyone (except the sender)
@@ -297,7 +295,7 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg)
 boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyHostAbort";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
@@ -313,7 +311,7 @@ boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
 boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyNonHostExit";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
 
     m_lobby_data->m_players.erase(message.SendingPlayer());
@@ -328,7 +326,7 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
 boost::statechart::result MPLobby::react(const StartMPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.StartMPGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -394,7 +392,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners";
 
     context<ServerFSM>().m_setup_data.reset();
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
 
     if (m_setup_data->m_new_game) {
         m_num_expected_players = m_setup_data->m_AIs + 1;
@@ -413,7 +411,7 @@ WaitingForSPGameJoiners::~WaitingForSPGameJoiners()
 boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -461,7 +459,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
     context<ServerFSM>().m_lobby_data.reset();
     context<ServerFSM>().m_player_save_game_data.clear();
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     if (m_lobby_data->m_new_game) {
         m_num_expected_players = m_lobby_data->m_players.size();
         std::vector<PlayerSetupData> AI_clients;
@@ -483,7 +481,7 @@ WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
 boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -543,7 +541,7 @@ WaitingForTurnEnd::~WaitingForTurnEnd()
 boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.HostSPGame";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -577,7 +575,7 @@ boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
 boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
 
     OrderSet* order_set = new OrderSet;
@@ -615,14 +613,14 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
 boost::statechart::result WaitingForTurnEnd::react(const RequestObjectID& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
-    context<ServerFSM>().Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
+    Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
 boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.PlayerChat";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
 
     std::string text = message.Text();
@@ -669,8 +667,7 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
 boost::statechart::result WaitingForTurnEnd::react(const EndGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.EndGame";
-    ServerApp& server = context<ServerFSM>().Server();
-    const Message& message = msg.m_message;
+    ServerApp& server = Server();
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (player_connection->Host()) {
@@ -700,7 +697,7 @@ WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -724,9 +721,9 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData";
 
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        (*it)->SendMessage(ServerSaveGameMessage((*it)->ID()));
+        (*it)->SendMessage(ServerSaveGameMessage((*it)->ID(), (*it)->ID() == Networking::HOST_PLAYER_ID));
         m_needed_reponses.insert((*it)->ID());
     }
 }
@@ -737,7 +734,7 @@ WaitingForSaveData::~WaitingForSaveData()
 boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
-    ServerApp& server = context<ServerFSM>().Server();
+    ServerApp& server = Server();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 

@@ -93,6 +93,8 @@ struct WaitingForTurnEndIdle;
 struct WaitingForSaveData;
 
 
+#define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
+
 /** The finite state machine that represents the server's operation. */
 struct ServerFSM : boost::statechart::state_machine<ServerFSM, Idle>
 {
@@ -128,6 +130,8 @@ struct Idle : boost::statechart::simple_state<Idle, ServerFSM>
 
     boost::statechart::result react(const HostMPGame& msg);
     boost::statechart::result react(const HostSPGame& msg);
+
+    SERVER_ACCESSOR
 };
 
 
@@ -159,6 +163,8 @@ struct MPLobby : boost::statechart::state<MPLobby, ServerFSM>
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
+
+    SERVER_ACCESSOR
 };
 
 
@@ -182,6 +188,8 @@ struct WaitingForSPGameJoiners : boost::statechart::state<WaitingForSPGameJoiner
     std::vector<PlayerSaveGameData>          m_player_save_game_data;
     std::set<std::string>                    m_expected_ai_player_names;
     int                                      m_num_expected_players;
+
+    SERVER_ACCESSOR
 };
 
 
@@ -205,6 +213,8 @@ struct WaitingForMPGameJoiners : boost::statechart::state<WaitingForMPGameJoiner
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
     std::set<std::string>                   m_expected_ai_player_names;
     int                                     m_num_expected_players;
+
+    SERVER_ACCESSOR
 };
 
 
@@ -219,6 +229,8 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, ServerFSM, Wai
 
     PlayingGame();
     ~PlayingGame();
+
+    SERVER_ACCESSOR
 };
 
 
@@ -246,6 +258,8 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     boost::statechart::result react(const EndGame& msg);
 
     std::string m_save_filename;
+
+    SERVER_ACCESSOR
 };
 
 
@@ -262,6 +276,8 @@ struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEnd
     ~WaitingForTurnEndIdle();
 
     boost::statechart::result react(const SaveGameRequest& msg);
+
+    SERVER_ACCESSOR
 };
 
 
@@ -288,6 +304,10 @@ struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, Waiting
     std::set<int>                   m_needed_reponses;
     std::set<int>                   m_players_responded;
     std::vector<PlayerSaveGameData> m_player_save_game_data;
+
+    SERVER_ACCESSOR
 };
+
+#undef SERVER_ACCESSOR
 
 #endif

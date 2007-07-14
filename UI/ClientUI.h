@@ -3,16 +3,8 @@
 #define _ClientUI_h_
 
 #include "../universe/Enums.h"
-#include "../util/SitRepEntry.h"
 #include "../util/Random.h"
-
-#ifndef _GG_Wnd_h_
-#include <GG/Wnd.h>
-#endif
-
-#ifndef _GG_SDLGUI_h_
-#include <GG/SDL/SDLGUI.h>
-#endif
+#include "../util/SitRepEntry.h"
 
 #include <boost/filesystem/path.hpp>
 
@@ -31,6 +23,7 @@ class TurnProgressWnd;
 namespace GG {
     class Clr;
     class SubTexture;
+    class Texture;
 }
 namespace log4cpp {
     class Category;
@@ -43,67 +36,22 @@ namespace log4cpp {
 class ClientUI
 {
 public:
-    //!Internal States
-    //!These determine what screen is currently being displayed
-    enum State {
-        STATE_STARTUP,
-        STATE_INTRO,
-        STATE_TURNSTART,
-        STATE_MAP,
-        STATE_COMBAT,
-        STATE_NEW_GAME,
-        STATE_LOAD
-    };
-
     //! \name Structors //!@{
     ClientUI();     //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
-
-    bool Initialize();    //!< provided to setup initial variables. 
-    bool Cleanup();       //!< provided to clean up ClientUI's memory space. 
     //!@}
     
     //! \name Accessors //!@{
-    const log4cpp::Category& Logger() {return s_logger;}    //!< Returns the logger associated with ClientUI
-
-    const std::string&  Language() const;                   //!< 
-
-    MapWnd* GetMapWnd() {return m_map_wnd;}                 //!< Returns the main map window (may be null).
-
-    const GG::SubTexture& SitRepIcon(SitRepEntry::EntryType type) const; //!< returns the icon for this sitrep entry type; returns the default icon if \a type has no associated icon
-
+    MapWnd* GetMapWnd();                                //!< Returns the main map window (may be null).
     void GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
 
     //! \name Mutators //!@{
-    // GameCore Interface functions
-    // calling these changes internal state to display the proper screen
-    // and initializes and displays the screen
-    // see Interface Doc for details
-    // takes as a paramter the new turn number
-    //!@{
-    void InitTurn( int turn_number );      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
-
+    void InitTurn(int turn_number);      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
     void RestoreFromSaveData(const SaveGameUIData& elem); ///< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
-    
-    void ScreenIntro();                        //!< Intro Screen
-    void ScreenProcessTurn();                  //!< Turn Star Progress Splash Screen
 
-    void ScreenMap();     //!< Universe Map Screen
+    void ShowMap();       //!< Makes the Map Screen visible
 
-    //!< Updates turn progress window
-    void UpdateTurnProgress( const std::string& phase_str, const int empire_id );
-    
-    //!< Updates combat turn progress window
-    void UpdateCombatTurnProgress( const std::string& msg);
-
-    //! @param events vector containing all the events to be listed
-    void ScreenSitrep(const std::vector<SitRepEntry>& events);    //!< Sitrep Screen
-
-    void ScreenNewGame();    //!< New Game Screen
-    void ScreenLoad();       //!< Loading Screen
-
-    // Zooming Functions
     bool ZoomToPlanet(int id);  //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
     bool ZoomToSystem(int id);  //!< Zooms to a particular system on the galaxy map
     bool ZoomToFleet(int id);   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
@@ -122,13 +70,11 @@ public:
     boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n);
     //!@}
     
-    static ClientUI*    GetClientUI() {return s_the_UI;}   //!< returns a pointer to the singleton ClientUI class
+    static ClientUI*    GetClientUI();   //!< returns a pointer to the singleton ClientUI class
 
     /** shows a message dialog box with the given message; if \a play_alert_sound is true, and UI sound effects are
         currently enabled, the default alert sound will be played as the message box opens */
     static void MessageBox(const std::string& message, bool play_alert_sound = false);
-
-    static void LogMessage(const std::string& msg); //!<sends a message to the logger
 
     static void GenerateSitRepText(SitRepEntry *sit_rep); ///< generates a SitRep string from \a sit_rep.
 
@@ -199,26 +145,15 @@ public:
     //!@}
 
 private:
-    void HideAllWindows();              //!< hides all the UI windows from view
-    
-    void SwitchState(State state);      //!< switch current state to \a state, free's last state window and create the one for the new state
-
     typedef std::pair<std::vector<boost::shared_ptr<GG::Texture> >, boost::shared_ptr<SmallIntDistType> > TexturesAndDist;
     typedef std::map<std::string, TexturesAndDist> PrefixedTextures;
     TexturesAndDist PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix);
 
-    State m_state;                      //!< represents the screen currently being displayed
+    MapWnd*           m_map_wnd;           //!< the galaxy map
+    PythonConsoleWnd* m_python_console;    //!< the python console
 
-    IntroScreen*     m_intro_screen;      //!< the intro (and main menu) screen first showed when the game starts up
-    MapWnd*          m_map_wnd;           //!< the galaxy map
-    PythonConsoleWnd*m_python_console;    //!< the python console
-    TurnProgressWnd* m_turn_progress_wnd; //!< the turn progress window
+    PrefixedTextures  m_prefixed_textures;
 
-    int              m_previously_shown_system; //!< the ID of the system that was shown in the sidepanel before the last call to HideAllWindows()
-
-    PrefixedTextures m_prefixed_textures;
-
-    static log4cpp::Category& s_logger; //!< log4cpp logging category
     static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object
 };
 

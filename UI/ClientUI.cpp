@@ -1,6 +1,7 @@
 #include "ClientUI.h"
 
 #include "../util/AppInterface.h"
+#include "../util/Random.h"
 #include "../universe/Building.h"
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
@@ -11,11 +12,10 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
-#include "TurnProgressWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 
 #include <GG/GUI.h>
 #include <GG/Clr.h>
@@ -125,7 +125,6 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 }
 
 // private static members
-log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::s_the_UI = 0;
 
 namespace {
@@ -249,58 +248,25 @@ namespace {
 ////////////////////////////////////////////////
 //Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI() :
-    m_state(STATE_STARTUP),
-    m_intro_screen(0),
-    m_map_wnd(0),
-    m_turn_progress_wnd(0),
-    m_previously_shown_system(UniverseObject::INVALID_OBJECT_ID)
+    m_map_wnd(new MapWnd)
 {
     s_the_UI = this;
-    Initialize();
-}
-
-bool ClientUI::Initialize()
-{
-    //initialize UI state & window
-    m_state = STATE_STARTUP;
-
-    m_map_wnd = new MapWnd();
     GG::GUI::GetGUI()->Register(m_map_wnd);
     m_map_wnd->Hide();
-
-    return true;
 }
 
 ClientUI::~ClientUI() 
 {
-    Cleanup();
-}
-
-bool ClientUI::Cleanup()
-{
-    delete m_intro_screen;
-    m_intro_screen = 0;
-
     delete m_map_wnd;
-    m_map_wnd = 0;
-
-    delete m_turn_progress_wnd;
-    m_turn_progress_wnd = 0;
-
     s_the_UI = 0;
-
-    return true; 
 }
+
+MapWnd* ClientUI::GetMapWnd()
+{ return m_map_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
-{
-    m_map_wnd->GetSaveGameUIData(data);
-}
+{ m_map_wnd->GetSaveGameUIData(data); }
 
-
-///////////////////////////////////////////////////
-
-//Zoom Functions///////////////////////////////////
 bool ClientUI::ZoomToPlanet(int id)
 {
     // this just zooms to the appropriate system, until we create a planet window of some kind
@@ -401,139 +367,17 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 
-/////////////////////////////////////////////////////
-
-//Screen Functions///////////////////////////////////
 void ClientUI::InitTurn(int turn_number)
-{
-    m_map_wnd->InitTurn(turn_number);
-}
+{ m_map_wnd->InitTurn(turn_number); }
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
-{
-    m_map_wnd->RestoreFromSaveData(ui_data);
-}
+{ m_map_wnd->RestoreFromSaveData(ui_data); }
 
-void ClientUI::SwitchState(State state)
-{
-    // TODO: Replace all this crap with a proper FSM!
-    HideAllWindows();
-    // clean up previous windows, based on previous state
-    switch (m_state) {
-    case STATE_STARTUP:
-        break;
-    case STATE_INTRO:
-        // when loading a game or starting a new game, defer removal of the intro screen until the new game has actually
-        // started, since either operation may fail due to the server
-        if (state != STATE_NEW_GAME && state != STATE_LOAD) {
-            delete m_intro_screen;
-            m_intro_screen = 0;
-        }
-        break;
-    case STATE_TURNSTART:
-        delete m_turn_progress_wnd;
-        m_turn_progress_wnd = 0;
-        break;
-    case STATE_MAP:
-        if (state != STATE_LOAD)
-            m_previously_shown_system = m_map_wnd->GetSidePanel()->SystemID();
-        //hide sidepanel
-        m_map_wnd->SelectSystem(UniverseObject::INVALID_OBJECT_ID);
-        break;
-    case STATE_COMBAT:
-        break;
-    case STATE_NEW_GAME:
-    case STATE_LOAD:
-        if (m_intro_screen) {
-            delete m_intro_screen;
-            m_intro_screen = 0;
-        }
-        delete m_turn_progress_wnd;
-        m_turn_progress_wnd = 0;
-        break;
-    default:
-        break;
-    }
+void ClientUI::ShowMap()
+{ m_map_wnd->Show(); }
 
-    switch (m_state = state) {
-    case STATE_STARTUP:
-        m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
-        break;
-    case STATE_INTRO:
-        m_previously_shown_system = UniverseObject::INVALID_OBJECT_ID;
-        if (!m_intro_screen) {
-            m_intro_screen = new IntroScreen();
-            GG::GUI::GetGUI()->Register(m_intro_screen);
-        }
-        m_intro_screen->Show();
-        break;
-    case STATE_TURNSTART:
-        if (!m_turn_progress_wnd) {
-            m_turn_progress_wnd = new TurnProgressWnd();
-            GG::GUI::GetGUI()->Register(m_turn_progress_wnd);
-        }
-        m_turn_progress_wnd->Show();
-        break;
-    case STATE_MAP:
-        m_map_wnd->Show();
-        m_map_wnd->SelectSystem(m_previously_shown_system);
-        break;
-    case STATE_COMBAT:
-        break;
-    case STATE_NEW_GAME:
-    case STATE_LOAD:
-        m_map_wnd->Sanitize();
-        if (!m_turn_progress_wnd) {
-            m_turn_progress_wnd = new TurnProgressWnd();
-            GG::GUI::GetGUI()->Register(m_turn_progress_wnd);
-        }
-        m_turn_progress_wnd->UpdateTurnProgress(UserString(m_state == STATE_NEW_GAME ? "NEW_GAME" : "LOADING"), -1);
-        m_turn_progress_wnd->Show();
-        break;
-    default:
-        break;
-    }
-}
-
-void ClientUI::ScreenIntro()
-{
-    SwitchState(STATE_INTRO); // set to intro screen state
-}
-
-void ClientUI::ScreenProcessTurn()
-{
-    SwitchState(STATE_TURNSTART); // set to turn start
-}
-
-void ClientUI::ScreenMap()
-{
-    SwitchState(STATE_MAP);
-}
-
-void ClientUI::UpdateTurnProgress(const std::string& phase_str, const int empire_id)
-{
-    m_turn_progress_wnd->UpdateTurnProgress(phase_str, empire_id);
-}
-
-void ClientUI::UpdateCombatTurnProgress(const std::string& msg)
-{
-    m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
-}
-
-void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
-{
-    ScreenMap();
-}
-
-void ClientUI::ScreenNewGame()
-{
-    SwitchState(STATE_NEW_GAME);
-}
-
-void ClientUI::ScreenLoad()
-{
-    SwitchState(STATE_LOAD);
-}
+ClientUI* ClientUI::GetClientUI()
+{ return s_the_UI; }
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
@@ -542,11 +386,6 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");
     dlg.Run();
-}
-
-void ClientUI::LogMessage(const std::string& msg)
-{
-    s_logger.debug(msg);
 }
 
 void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
@@ -562,17 +401,6 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     } catch(...) {
         return HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
     }
-}
-
-////////////////////////////////////////////////////
-void ClientUI::HideAllWindows()
-{
-    if (m_intro_screen)
-        m_intro_screen->Hide();
-    if (m_map_wnd)
-        m_map_wnd->Hide();
-    if (m_turn_progress_wnd)
-        m_turn_progress_wnd->Hide();
 }
 
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)

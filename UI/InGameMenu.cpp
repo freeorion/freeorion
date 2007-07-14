@@ -48,18 +48,13 @@ InGameMenu::InGameMenu():
 }
 
 InGameMenu::~InGameMenu()
-{
-}
+{}
 
 int InGameMenu::MinimizedLength() const
-{ 
-    return 135;
-}
+{ return 135; }
 
 void InGameMenu::Render()
-{
-    CUIWnd::Render();
-}
+{ CUIWnd::Render(); }
 
 void InGameMenu::KeyPress (GG::Key key, Uint32 key_mods)
 {
@@ -110,10 +105,7 @@ void InGameMenu::Save()
 }
 
 void InGameMenu::Load()
-{
-    if (HumanClientApp::GetApp()->LoadSinglePlayerGame())
-        CloseClicked();
-}
+{ HumanClientApp::GetApp()->LoadSinglePlayerGame(); }
 
 void InGameMenu::Options()
 {
@@ -128,6 +120,4 @@ void InGameMenu::Exit()
 }
 
 void InGameMenu::Done()
-{
-    m_done = true;
-}
+{ m_done = true; }

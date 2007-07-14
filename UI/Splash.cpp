@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "../util/MultiplayerCommon.h"
 
+#include <GG/GUI.h>
 #include <GG/StaticGraphic.h>
 
 

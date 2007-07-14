@@ -1,18 +1,42 @@
 #include "HumanClientFSM.h"
 
+#include "HumanClientApp.h"
+#include "../../Empire/Empire.h"
+#include "../../network/Networking.h"
 #include "../../util/AppInterface.h"
 #include "../../util/MultiplayerCommon.h"
+#include "../../UI/CombatWnd.h"
+#include "../../UI/IntroScreen.h"
+#include "../../UI/TurnProgressWnd.h"
+#include "../../UI/MultiplayerLobbyWnd.h"
+#include "../../UI/MapWnd.h"
+
+#include <boost/format.hpp>
 
 
 namespace {
     const bool TRACE_EXECUTION = true;
+
+    struct MPLobbyCancelForwarder
+    {
+        MPLobbyCancelForwarder(HumanClientFSM& fsm) : m_fsm(&fsm) {}
+        void operator()() { m_fsm->process_event(CancelMPGameClicked()); }
+        HumanClientFSM* m_fsm;
+    };
+
+    struct MPLobbyStartGameForwarder
+    {
+        MPLobbyStartGameForwarder(HumanClientFSM& fsm) : m_fsm(&fsm) {}
+        void operator()() { m_fsm->process_event(StartMPGameClicked()); }
+        HumanClientFSM* m_fsm;
+    };
 }
 
 ////////////////////////////////////////////////////////////
 // HumanClientFSM
 ////////////////////////////////////////////////////////////
 HumanClientFSM::HumanClientFSM(HumanClientApp &human_client) :
-    m_human_client(human_client)
+    m_client(human_client)
 {}
 
 void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event)
@@ -30,26 +54,48 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
         "the HumanClientFSM.  This event is illegal in the FSM's current state.  It is being ignored.";
 }
 
-HumanClientApp& HumanClientFSM::HumanClient()
-{ return m_human_client; }
-
 
 ////////////////////////////////////////////////////////////
 // IntroMenu
 ////////////////////////////////////////////////////////////
-IntroMenu::IntroMenu() :
-    Base ()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu"; }
+IntroMenu::IntroMenu(my_context ctx) :
+    Base(ctx),
+    m_intro_screen(new IntroScreen)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
+    Client().Register(m_intro_screen);
+}
 
 IntroMenu::~IntroMenu()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
+    delete m_intro_screen;
+}
+
+boost::statechart::result IntroMenu::react(const HostSPGameRequested& a)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
+    return transit<WaitingForSPHostAck>();
+}
+
+boost::statechart::result IntroMenu::react(const HostMPGameRequested& a)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostMPGameRequested";
+    return transit<WaitingForMPHostAck>();
+}
+
+boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.JoinMPGameRequested";
+    return transit<WaitingForMPJoinAck>();
+}
 
 
 ////////////////////////////////////////////////////////////
 // WaitingForSPHostAck
 ////////////////////////////////////////////////////////////
 WaitingForSPHostAck::WaitingForSPHostAck() :
-    Base ()
+    Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck"; }
 
 WaitingForSPHostAck::~WaitingForSPHostAck()
@@ -58,7 +104,8 @@ WaitingForSPHostAck::~WaitingForSPHostAck()
 boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck.HostSPGame";
-    // TODO: Record player ID
+    Client().SetPlayerID(msg.m_message.ReceivingPlayer());
+    Client().m_ui->GetMapWnd()->Sanitize();
     return transit<PlayingGame>();
 }
 
@@ -67,7 +114,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
 // WaitingForMPHostAck
 ////////////////////////////////////////////////////////////
 WaitingForMPHostAck::WaitingForMPHostAck() :
-    Base ()
+    Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPHostAck"; }
 
 WaitingForMPHostAck::~WaitingForMPHostAck()
@@ -76,7 +123,7 @@ WaitingForMPHostAck::~WaitingForMPHostAck()
 boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPHostAck.HostMPGame";
-    // TODO: Record player ID
+    Client().SetPlayerID(msg.m_message.ReceivingPlayer());
     return transit<HostMPLobby>();
 }
 
@@ -85,7 +132,7 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg)
 // WaitingForMPJoinAck
 ////////////////////////////////////////////////////////////
 WaitingForMPJoinAck::WaitingForMPJoinAck() :
-    Base ()
+    Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPJoinAck"; }
 
 WaitingForMPJoinAck::~WaitingForMPJoinAck()
@@ -94,7 +141,7 @@ WaitingForMPJoinAck::~WaitingForMPJoinAck()
 boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPJoinAck.JoinGame";
-    // TODO: Record player ID
+    Client().SetPlayerID(msg.m_message.ReceivingPlayer());
     return transit<NonHostMPLobby>();
 }
 
@@ -103,51 +150,60 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg)
 // MPLobby
 ////////////////////////////////////////////////////////////
 MPLobby::MPLobby() :
-    Base ()
+    Base(),
+    m_lobby_wnd(0)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby"; }
 
 MPLobby::~MPLobby()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
+    delete m_lobby_wnd;
+}
 
 boost::statechart::result MPLobby::react(const Disconnection& d)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.Disconnection";
-    // TODO
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return transit<IntroMenu>();
 }
 
 boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyUpdate";
-    // TODO
+    MultiplayerLobbyData lobby_data;
+    ExtractMessageData(msg.m_message, lobby_data);
+    m_lobby_wnd-> LobbyUpdate(lobby_data);
     return discard_event();
 }
 
 boost::statechart::result MPLobby::react(const LobbyChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyChat";
-    // TODO
+    m_lobby_wnd->ChatMessage(msg.m_message.SendingPlayer(), msg.m_message.Text());
     return discard_event();
 }
 
 boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyHostAbort";
-    // TODO
+    ClientUI::MessageBox(UserString("MPLOBBY_HOST_ABORTED_GAME"), true);
     return transit<IntroMenu>();
 }
 
 boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyNonHostExit";
-    // TODO
+    m_lobby_wnd->LobbyExit(msg.m_message.SendingPlayer());
     return discard_event();
 }
 
 boost::statechart::result MPLobby::react(const GameStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.GameStart";
-    // TODO
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse());
+    Client().StartGame();
+    if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
+        Client().Autosave(true);
     return transit<PlayingGame>();
 }
 
@@ -156,7 +212,7 @@ boost::statechart::result MPLobby::react(const GameStart& msg)
 // MPLobbyIdle
 ////////////////////////////////////////////////////////////
 MPLobbyIdle::MPLobbyIdle() :
-    Base ()
+    Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobbyIdle"; }
 
 MPLobbyIdle::~MPLobbyIdle()
@@ -166,9 +222,15 @@ MPLobbyIdle::~MPLobbyIdle()
 ////////////////////////////////////////////////////////////
 // HostMPLobby
 ////////////////////////////////////////////////////////////
-HostMPLobby::HostMPLobby() :
-    Base ()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby"; }
+HostMPLobby::HostMPLobby(my_context ctx) :
+    Base(ctx)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby";
+    context<MPLobby>().m_lobby_wnd = new MultiplayerLobbyWnd(true,
+                                                             MPLobbyStartGameForwarder(context<HumanClientFSM>()),
+                                                             MPLobbyCancelForwarder(context<HumanClientFSM>()));
+    Client().Register(context<MPLobby>().m_lobby_wnd);
+}
 
 HostMPLobby::~HostMPLobby()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~HostMPLobby"; }
@@ -176,26 +238,44 @@ HostMPLobby::~HostMPLobby()
 boost::statechart::result HostMPLobby::react(const StartMPGameClicked& a)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby.StartMPGameClicked";
-    // TODO
+    Client().Networking().SendMessage(StartMPGameMessage(Client().PlayerID()));
     return transit<PlayingGame>();
+}
+
+boost::statechart::result HostMPLobby::react(const CancelMPGameClicked& a)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby.CancelMPGameClicked";
+    Client().Networking().SendMessage(LobbyHostAbortMessage(Client().PlayerID()));
+    // TODO: Add a delay here so the message can propagate?
+    Client().Networking().DisconnectFromServer();
+    Client().KillServer();
+    return transit<IntroMenu>();
 }
 
 
 ////////////////////////////////////////////////////////////
 // NonHostMPLobby
 ////////////////////////////////////////////////////////////
-NonHostMPLobby::NonHostMPLobby() :
-    Base ()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby"; }
+NonHostMPLobby::NonHostMPLobby(my_context ctx) :
+    Base(ctx)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby";
+    context<MPLobby>().m_lobby_wnd = new MultiplayerLobbyWnd(false,
+                                                             MPLobbyStartGameForwarder(context<HumanClientFSM>()),
+                                                             MPLobbyCancelForwarder(context<HumanClientFSM>()));
+    Client().Register(context<MPLobby>().m_lobby_wnd);
+}
 
 NonHostMPLobby::~NonHostMPLobby()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~NonHostMPLobby"; }
 
-boost::statechart::result NonHostMPLobby::react(const GameStart& msg)
+boost::statechart::result NonHostMPLobby::react(const CancelMPGameClicked& a)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby.GameStart";
-    // TODO
-    return transit<PlayingGame>();
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby.CancelMPGameClicked";
+    Client().Networking().SendMessage(LobbyExitMessage(Client().PlayerID()));
+    // TODO: Add a delay here so the message can propagate?
+    HumanClientApp::GetApp()->Networking().DisconnectFromServer();
+    return transit<IntroMenu>();
 }
 
 
@@ -203,7 +283,7 @@ boost::statechart::result NonHostMPLobby::react(const GameStart& msg)
 // PlayingGame
 ////////////////////////////////////////////////////////////
 PlayingGame::PlayingGame() :
-    Base ()
+    Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame"; }
 
 PlayingGame::~PlayingGame()
@@ -212,28 +292,47 @@ PlayingGame::~PlayingGame()
 boost::statechart::result PlayingGame::react(const Disconnection& d)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // TODO
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    Client().EndGame();
     return transit<IntroMenu>();
 }
 
 boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerEliminated";
-    // TODO
+    Empire* empire = Empires().Lookup(Client().EmpireID());
+    if (empire) {
+        if (empire->Name() == msg.m_message.Text()) {
+            // TODO: replace this with something better
+            ClientUI::MessageBox(UserString("PLAYER_DEFEATED"));
+            Client().EndGame();
+        } else {
+            // TODO: replace this with something better
+            ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.m_message.Text()));
+        }
+    }
     return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const PlayerExit& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerExit";
-    // TODO
+    std::string message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % msg.m_message.Text());
+    ClientUI::MessageBox(message, true);
     return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const EndGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.EndGame";
-    // TODO
+    if (msg.m_message.Text() == "VICTORY") {
+        Client().EndGame();
+        // TODO: replace this with something better
+        ClientUI::MessageBox(UserString("PLAYER_VICTORIOUS"));
+    } else {
+        Client().EndGame();
+        ClientUI::MessageBox(UserString("SERVER_GAME_END"));
+    }
     return transit<IntroMenu>();
 }
 
@@ -241,39 +340,80 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
 ////////////////////////////////////////////////////////////
 // WaitingForTurnData
 ////////////////////////////////////////////////////////////
-WaitingForTurnData::WaitingForTurnData() :
-    Base ()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData"; }
+WaitingForTurnData::WaitingForTurnData(my_context ctx) :
+    Base(ctx),
+    m_turn_progress_wnd(new TurnProgressWnd)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
+    Client().Register(m_turn_progress_wnd);
+}
 
 WaitingForTurnData::~WaitingForTurnData()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnData"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnData";
+    delete m_turn_progress_wnd;
+}
 
 boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnProgress";
-    // TODO
+    Message::TurnProgressPhase phase_id;
+    int empire_id;
+    ExtractMessageData(msg.m_message, phase_id, empire_id);
+    std::string phase_str;
+    if (phase_id == Message::FLEET_MOVEMENT)
+        phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
+    else if (phase_id == Message::COMBAT)
+        phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
+    else if (phase_id == Message::EMPIRE_PRODUCTION)
+        phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
+    else if (phase_id == Message::WAITING_FOR_PLAYERS)
+        phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
+    else if (phase_id == Message::PROCESSING_ORDERS)
+        phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
+    else if (phase_id == Message::DOWNLOADING)
+        phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
+    m_turn_progress_wnd->UpdateTurnProgress(phase_str, empire_id);
     return discard_event();
 }
 
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnUpdate";
-    // TODO
-    return terminate();
+    ExtractMessageData(msg.m_message, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse());
+    for (Empire::SitRepItr sitrep_it = Empires().Lookup(Client().EmpireID())->SitRepBegin(); sitrep_it != Empires().Lookup(Client().EmpireID())->SitRepEnd(); ++sitrep_it) {
+        Client().m_ui->GenerateSitRepText(*sitrep_it);
+    }
+    if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
+        Client().Autosave(false);
+    return transit<PlayingTurn>();
 }
 
 boost::statechart::result WaitingForTurnData::react(const LoadGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.LoadGame";
-    // TODO
-    return terminate();
+    SaveGameUIData ui_data;
+    if (ExtractMessageData(msg.m_message, Client().Orders(), ui_data))
+        Client().m_ui->RestoreFromSaveData(ui_data);
+    Client().Orders().ApplyOrders();
+    return transit<PlayingTurn>();
 }
 
 boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.CombatStart";
-    // TODO
+    post_event(msg); // Re-post this event, so that it is the first thing the ResolvingCombat state sees.
     return transit<ResolvingCombat>();
+}
+
+boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.GameStart";
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse());
+    Client().StartGame();
+    if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
+        Client().Autosave(true);
+    return transit<PlayingTurn>();
 }
 
 
@@ -281,7 +421,7 @@ boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 // WaitingForTurnDataIdle
 ////////////////////////////////////////////////////////////
 WaitingForTurnDataIdle::WaitingForTurnDataIdle() :
-    Base ()
+    Base()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnDataIdle"; }
 
 WaitingForTurnDataIdle::~WaitingForTurnDataIdle()
@@ -291,9 +431,14 @@ WaitingForTurnDataIdle::~WaitingForTurnDataIdle()
 ////////////////////////////////////////////////////////////
 // PlayingTurn
 ////////////////////////////////////////////////////////////
-PlayingTurn::PlayingTurn() :
-    Base ()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn"; }
+PlayingTurn::PlayingTurn(my_context ctx) :
+    Base(ctx)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn";
+    Client().m_ui->ShowMap();
+    Client().m_ui->InitTurn(Client().CurrentTurn());
+    Client().m_ui->GetMapWnd()->ReselectLastSystem();
+}
 
 PlayingTurn::~PlayingTurn()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingTurn"; }
@@ -301,14 +446,20 @@ PlayingTurn::~PlayingTurn()
 boost::statechart::result PlayingTurn::react(const SaveGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.SaveGame";
-    // TODO
+    Client().HandleSaveGameDataRequest();
     return discard_event();
+}
+
+boost::statechart::result PlayingTurn::react(const TurnEnded& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.TurnEnded";
+    return transit<WaitingForTurnData>();
 }
 
 boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.PlayerChat";
-    // TODO
+    Client().m_ui->GetMapWnd()->HandlePlayerChatMessage(msg.m_message.Text());
     return discard_event();
 }
 
@@ -316,23 +467,37 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 ////////////////////////////////////////////////////////////
 // ResolvingCombat
 ////////////////////////////////////////////////////////////
-ResolvingCombat::ResolvingCombat() :
-    Base ()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat"; }
+ResolvingCombat::ResolvingCombat(my_context ctx) :
+    Base(ctx),
+    m_combat_wnd(new CombatWnd((Client().AppWidth() - CombatWnd::WIDTH) / 2, Client().AppHeight()))
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
+    Client().Register(m_combat_wnd);
+}
 
 ResolvingCombat::~ResolvingCombat()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
+    delete m_combat_wnd;
+}
+
+boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
+    m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
+    return discard_event();
+}
 
 boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
-    // TODO
+    m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return discard_event();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatEnd& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
-    // TODO
+    m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return transit<WaitingForTurnDataIdle>();
 }

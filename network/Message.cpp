@@ -231,19 +231,19 @@ void HeaderToBuffer(const Message& message, int* header_buf)
 // Message named ctors
 ////////////////////////////////////////////////
 
-Message HostSPGameMessage(int player_id, const SinglePlayerSetupData& setup_data)
+Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
 {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(setup_data);
     }
-    return Message(Message::HOST_SP_GAME, player_id, -1, os.str());
+    return Message(Message::HOST_SP_GAME, -1, -1, os.str());
 }
 
-Message HostMPGameMessage(int player_id, const std::string& host_player_name)
+Message HostMPGameMessage(const std::string& host_player_name)
 {
-    return Message(Message::HOST_MP_GAME, player_id, -1, host_player_name);
+    return Message(Message::HOST_MP_GAME, -1, -1, host_player_name);
 }
 
 Message JoinGameMessage(const std::string& player_name)
@@ -278,7 +278,7 @@ Message HostMPAckMessage(int player_id)
 
 Message JoinAckMessage(int player_id)
 {
-    return Message(Message::JOIN_GAME, -1, player_id, boost::lexical_cast<std::string>(player_id));
+    return Message(Message::JOIN_GAME, -1, player_id, "ACK");
 }
 
 Message EndGameMessage(int sender, int receiver)
@@ -365,9 +365,9 @@ Message HostSaveGameMessage(int sender, const std::string& filename)
     return Message(Message::SAVE_GAME, sender, -1, filename);
 }
 
-Message ServerSaveGameMessage(int receiver)
+Message ServerSaveGameMessage(int receiver, bool synchronous_response)
 {
-    return Message(Message::SAVE_GAME, -1, receiver, "");
+    return Message(Message::SAVE_GAME, -1, receiver, "", synchronous_response);
 }
 
 Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data)

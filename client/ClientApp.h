@@ -13,9 +13,6 @@
 
 namespace log4cpp {class Category;};
 
-class CombatModule;
-class MultiplayerLobbyWnd;
-
 /** the abstract base class for the application framework classes AIClientApp and HumanClientApp.  The static functions
     are designed to give both types of client (which are very different) a unified interface.  This allows code in either
     type of client app to handle Messages and gain access to the data structures common to both apps, without worrying 
@@ -47,11 +44,6 @@ public:
     EmpireManager&          Empires();           ///< returns the set of known Empires
     OrderSet&               Orders();            ///< returns Order set for this client's player
     ClientNetworking&       Networking();        ///< returns the networking object for this client's player
-    MultiplayerLobbyWnd*    MultiplayerLobby();  ///< returns the multiplayer lobby window, or 0 if none exists
-    CombatModule*           CurrentCombat();     ///< returns this client's currently executing Combat; may be 0
-
-    /** handles an incoming message from the server with the appropriate action or response */
-    virtual void            HandleMessage(const Message& msg) = 0;
 
     /** returns a universe object ID which can be used for new objects created by the client.
         Can return UniverseObject::INVALID_OBJECT_ID if an ID cannot be created. */
@@ -66,8 +58,6 @@ protected:
     void SetPlayerID(int id);                           ///< sets the player ID of this client
     void SetEmpireID(int id);                           ///< sets the empire ID of this client
     void SetCurrentTurn(int turn);                      ///< sets the current game turn
-    void SetMultiplayerLobby(MultiplayerLobbyWnd* wnd); ///< sets the multiplayer lobby window, or 0 if none exists
-    void SetCurrentCombat(CombatModule* combat);        ///< sets this client's currently executing Combat; may be 0
     int& EmpireIDRef();                                 ///< returns the empire ID of this client
     int& CurrentTurnRef();                              ///< returns the current game turn
     //@}
@@ -76,10 +66,8 @@ private:
     const ClientApp& operator=(const ClientApp&); // disabled
     ClientApp(const ClientApp&); // disabled
 
-    MultiplayerLobbyWnd*    m_multiplayer_lobby_wnd;
     Universe                m_universe;
     EmpireManager           m_empires;
-    CombatModule*           m_current_combat;
     OrderSet                m_orders;
     ClientNetworking        m_networking;
     std::string             m_player_name;

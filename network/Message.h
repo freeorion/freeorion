@@ -134,10 +134,10 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 ////////////////////////////////////////////////
 
 /** creates a HOST_SP_GAME message*/
-Message HostSPGameMessage(int player_id, const SinglePlayerSetupData& setup_data);
+Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
-Message HostMPGameMessage(int player_id, const std::string& host_player_name);
+Message HostMPGameMessage(const std::string& host_player_name);
 
 /** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
@@ -189,7 +189,7 @@ Message DispatchObjectIDMessage(int player_id, int new_id);
 Message HostSaveGameMessage(int sender, const std::string& filename);
 
 /** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
-Message ServerSaveGameMessage(int receiver);
+Message ServerSaveGameMessage(int receiver, bool synchronous_response);
 
 /** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
 Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data);

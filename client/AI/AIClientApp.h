@@ -30,7 +30,7 @@ public:
 private:
    void Run();             ///< initializes app state, then executes main event handler/render loop (PollAndRender())
 
-   virtual void HandleMessage(const Message& msg);
+   void HandleMessage(const Message& msg);
 
    log4cpp::Category&   m_log_category; ///< reference to the log4cpp object used to log events to file
 

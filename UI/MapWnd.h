@@ -54,8 +54,8 @@ public:
     //! \name Accessors //!@{
     virtual GG::Pt ClientUpperLeft() const;
 
-    double         ZoomFactor() const    {return m_zoom_factor;}
-    SidePanel*     GetSidePanel() const  {return m_side_panel;}
+    double         ZoomFactor() const;
+    SidePanel*     GetSidePanel() const;
     void           GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
     bool           InProductionViewMode() const; //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
     //!@}
@@ -70,7 +70,7 @@ public:
     virtual void   RClick(const GG::Pt& pt, Uint32 keys);
     virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
 
-    void           InitTurn( int turn_number );                     //!< called at the start of each turn
+    void           InitTurn(int turn_number);                       //!< called at the start of each turn
     void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
@@ -87,6 +87,7 @@ public:
     void CenterOnFleet(Fleet* fleet);          //!< centers the map on fleet \a fleet
     void ShowTech(const std::string& tech_name);//!< brings up the research screen and centers the tech tree on \a tech_name
     void SelectSystem(int systemID);           //!< catches emitted signals from the system icons, and allows programmatic selection of planets
+    void ReselectLastSystem();                 //!< re-selects the most recently selected system, if a valid one exists
     void SelectFleet(int fleetID);             //!< allows programmatic selection of fleets
     void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets
 
@@ -94,13 +95,13 @@ public:
     void SetFleetMovement(Fleet* fleet);       //!< creates fleet movement lines for a single fleet that are already moving
     void SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route); //!< creates projected fleet movement lines for a fleet that the user has selected
 
-    void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
-    void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
+    void RegisterPopup(MapWndPopup* popup);    //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void RemovePopup(MapWndPopup* popup);      //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Cleanup();                            //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
     void Sanitize();                           //!< sanitizes the MapWnd after a game
     //!@}
         
-    static const int    SIDE_PANEL_WIDTH;
+    static const int SIDE_PANEL_WIDTH;
 
 protected:
     virtual bool   EventFilter(GG::Wnd* w, const GG::WndEvent& event);
@@ -113,12 +114,6 @@ private:
     void RefreshIndustryResourceIndicator();
 
     void RefreshPopulationIndicator();
-
-    void TurnBtnClicked() {EndTurn();}
-    void MenuBtnClicked() {ShowMenu();}
-    void ProductionBtnClicked() {ToggleProduction();}
-    void ResearchBtnClicked() {ToggleResearch();}
-    void SitRepBtnClicked() {ToggleSitRep();}
 
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
 
@@ -188,7 +183,7 @@ private:
     std::map<int, SystemIcon*>      m_system_icons;  //! the system icons in the main map, indexed by system id
     SitRepPanel*                    m_sitrep_panel;  //! the sitrep panel
     ResearchWnd*                    m_research_wnd;  //! the research screen
-    ProductionWnd*                      m_production_wnd;  //! the production screen
+    ProductionWnd*                  m_production_wnd;//! the production screen
     GG::MultiEdit*                  m_chat_display;  //! the (read-only) MP-chat output multi-line edit box
     CUIEdit*                        m_chat_edit;     //! the MP-chat input edit box
     std::vector<FleetButton*>       m_moving_fleet_buttons; //! the moving fleets in the main map
@@ -204,6 +199,7 @@ private:
     int                             m_current_owned_system;
     int                             m_current_fleet;
     bool                            m_in_production_view_mode;
+    int                             m_previously_selected_system;
 
     CUIToolBar                      *m_toolbar;
     StatisticIcon                   *m_food,*m_mineral,*m_trade,*m_population,*m_research,*m_industry;
@@ -222,12 +218,10 @@ private:
 class MapWndPopup : public CUIWnd
 {
 public:
-    MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
+    MapWndPopup(const std::string& t, int x, int y, int h, int w, Uint32 flags);
     virtual ~MapWndPopup();
-
     void CloseClicked();
-
-    void Close();      //!< closes the MapWndPopup   
+    void Close();
 };
 
 #endif // _MapWnd_h_

@@ -145,11 +145,12 @@ namespace {
 
 }
 
-MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) : 
+MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
+                                         const CUIButton::ClickedSlotType& start_game_callback,
+                                         const CUIButton::ClickedSlotType& cancel_callback) : 
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
            (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
-           GG::CLICKABLE | GG::MODAL),
-    m_result(false),
+           GG::CLICKABLE),
     m_handling_lobby_update(false),
     m_host(host),
     m_chat_box(0),
@@ -204,7 +205,28 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
         m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(),
                                        ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
-    Init();
+    AttachChild(m_chat_box);
+    AttachChild(m_chat_input_edit);
+    AttachChild(m_new_load_game_buttons);
+    AttachChild(m_galaxy_setup_panel);
+    AttachChild(m_saved_games_list);
+    AttachChild(m_preview_image);
+    AttachChild(m_players_lb);
+    AttachChild(m_start_game_bn);
+    AttachChild(m_cancel_bn);
+
+    if (m_host) {
+        Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);
+        Connect(m_galaxy_setup_panel->SettingsChangedSignal, &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
+        Connect(m_saved_games_list->SelChangedSignal, &MultiplayerLobbyWnd::SaveGameChanged, this);
+        GG::Connect(m_start_game_bn->ClickedSignal, start_game_callback);
+    }
+    Connect(m_galaxy_setup_panel->ImageChangedSignal, &MultiplayerLobbyWnd::PreviewImageChanged, this);
+    GG::Connect(m_cancel_bn->ClickedSignal, cancel_callback);
+
+    // default settings (new game)
+    m_new_load_game_buttons->SetCheck(0);
+    PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 
     if (!m_host) {
         for (int i = 0; i < m_new_load_game_buttons->NumButtons(); ++i) {
@@ -213,18 +235,6 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host) :
         m_galaxy_setup_panel->Disable();
         m_saved_games_list->Disable();
     }
-
-    HumanClientApp::GetApp()->SetLobby(this);
-}
-
-MultiplayerLobbyWnd::~MultiplayerLobbyWnd()
-{
-    HumanClientApp::GetApp()->SetLobby(0);
-}
-
-bool MultiplayerLobbyWnd::LoadSelected() const
-{
-    return m_new_load_game_buttons->CheckedButton() == 1;
 }
 
 void MultiplayerLobbyWnd::Render()
@@ -244,103 +254,53 @@ void MultiplayerLobbyWnd::KeyPress(GG::Key key, Uint32 key_mods)
         m_chat_input_edit->SetText("");
         *m_chat_box += m_lobby_data.m_players[HumanClientApp::GetApp()->PlayerID()].m_player_name + ": " + text + "\n";
     } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
-        StartGameClicked();
+        m_start_game_bn->ClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
-        CancelClicked();
+       m_cancel_bn->ClickedSignal();
     }
 }
 
-void MultiplayerLobbyWnd::HandleMessage(const Message& msg)
+void MultiplayerLobbyWnd::ChatMessage(int player_id, const std::string& msg)
 {
-    switch (msg.Type()) {
-    case Message::LOBBY_UPDATE: {
-        m_handling_lobby_update = true;
-        ExtractMessageData(msg, m_lobby_data);
-
-        m_new_load_game_buttons->SetCheck(!m_lobby_data.m_new_game);
-        m_galaxy_setup_panel->SetFromSetupData(m_lobby_data);
-
-        m_saved_games_list->Clear();
-        for (unsigned int i = 0; i < m_lobby_data.m_save_games.size(); ++i) {
-            m_saved_games_list->Insert(new CUISimpleDropDownListRow(m_lobby_data.m_save_games[i]));
-            if (static_cast<int>(i) == m_lobby_data.m_save_file_index)
-                m_saved_games_list->Select(m_lobby_data.m_save_file_index);
-        }
-
-        bool send_update_back = PopulatePlayerList();
-
-        m_handling_lobby_update = false;
-
-        if (m_host && send_update_back)
-            SendUpdate();
-
-        break;
-    }
-
-    case Message::LOBBY_CHAT: {
-        std::map<int, PlayerSetupData>::iterator it = m_lobby_data.m_players.find(msg.SendingPlayer());
-        *m_chat_box += (it != m_lobby_data.m_players.end() ? (it->second.m_player_name + ": ") : "[unknown]: ") + msg.Text() + '\n';
-        break;
-    }
-
-    case Message::LOBBY_HOST_ABORT: {
-        ClientUI::MessageBox(UserString("MPLOBBY_HOST_ABORTED_GAME"), true);
-        m_result = false;
-        CUIWnd::CloseClicked();
-        break;
-    }
-
-    case Message::LOBBY_EXIT: {
-        int player_id = msg.SendingPlayer();
-        std::string player_name = m_lobby_data.m_players[player_id].m_player_name;
-        m_lobby_data.m_players.erase(player_id);
-        for (int i = 0; i < m_players_lb->NumRows(); ++i) {
-            if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
-                delete m_players_lb->Erase(i);
-                break;
-            }
-        }
-        if (m_host)
-            m_start_game_bn->Disable(!CanStart());
-        break;
-    }
-
-    case Message::GAME_START: {
-        m_result = true;
-        CUIWnd::CloseClicked();
-        break;
-    }
-
-    default:
-        HumanClientApp::GetApp()->Logger().errorStream() << "MultiplayerLobbyWnd::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
-        break;
-    }
+    std::map<int, PlayerSetupData>::iterator it = m_lobby_data.m_players.find(player_id);
+    *m_chat_box += (it != m_lobby_data.m_players.end() ? (it->second.m_player_name + ": ") : "[unknown]: ") + msg + '\n';
 }
 
-void MultiplayerLobbyWnd::Init()
+void MultiplayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
 {
-    AttachChild(m_chat_box);
-    AttachChild(m_chat_input_edit);
-    AttachChild(m_new_load_game_buttons);
-    AttachChild(m_galaxy_setup_panel);
-    AttachChild(m_saved_games_list);
-    AttachChild(m_preview_image);
-    AttachChild(m_players_lb);
-    AttachChild(m_start_game_bn);
-    AttachChild(m_cancel_bn);
+    m_handling_lobby_update = true;
+    m_lobby_data = lobby_data;
 
-    if (m_host) {
-        Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);
-        Connect(m_galaxy_setup_panel->SettingsChangedSignal, &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
-        Connect(m_saved_games_list->SelChangedSignal, &MultiplayerLobbyWnd::SaveGameChanged, this);
-        Connect(m_start_game_bn->ClickedSignal, &MultiplayerLobbyWnd::StartGameClicked, this);
+    m_new_load_game_buttons->SetCheck(!m_lobby_data.m_new_game);
+    m_galaxy_setup_panel->SetFromSetupData(m_lobby_data);
+
+    m_saved_games_list->Clear();
+    for (unsigned int i = 0; i < m_lobby_data.m_save_games.size(); ++i) {
+        m_saved_games_list->Insert(new CUISimpleDropDownListRow(m_lobby_data.m_save_games[i]));
+        if (static_cast<int>(i) == m_lobby_data.m_save_file_index)
+            m_saved_games_list->Select(m_lobby_data.m_save_file_index);
     }
-    Connect(m_galaxy_setup_panel->ImageChangedSignal, &MultiplayerLobbyWnd::PreviewImageChanged, this);
-    Connect(m_cancel_bn->ClickedSignal, &MultiplayerLobbyWnd::CancelClicked, this);
 
-    // default settings (new game)
-    m_new_load_game_buttons->SetCheck(0);
-    PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
+    bool send_update_back = PopulatePlayerList();
+
+    m_handling_lobby_update = false;
+
+    if (m_host && send_update_back)
+        SendUpdate();
+}
+
+void MultiplayerLobbyWnd::LobbyExit(int player_id)
+{
+    std::string player_name = m_lobby_data.m_players[player_id].m_player_name;
+    m_lobby_data.m_players.erase(player_id);
+    for (int i = 0; i < m_players_lb->NumRows(); ++i) {
+        if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
+            delete m_players_lb->Erase(i);
+            break;
+        }
+    }
+    if (m_host)
+        m_start_game_bn->Disable(!CanStart());
 }
 
 void MultiplayerLobbyWnd::NewLoadClicked(int idx)
@@ -396,24 +356,6 @@ void MultiplayerLobbyWnd::PlayerDataChanged()
     if (m_host)
         m_start_game_bn->Disable(!CanStart());
     SendUpdate();
-}
-
-void MultiplayerLobbyWnd::StartGameClicked()
-{
-    HumanClientApp::GetApp()->Networking().SendMessage(StartMPGameMessage(HumanClientApp::GetApp()->PlayerID()));
-    m_result = true;
-    CUIWnd::CloseClicked();
-}
-
-void MultiplayerLobbyWnd::CancelClicked()
-{
-    int player_id = HumanClientApp::GetApp()->PlayerID();
-    if (m_host)
-        HumanClientApp::GetApp()->Networking().SendMessage(LobbyHostAbortMessage(player_id));
-    else
-        HumanClientApp::GetApp()->Networking().SendMessage(LobbyExitMessage(player_id));
-    m_result = false;
-    CUIWnd::CloseClicked();
 }
 
 bool MultiplayerLobbyWnd::PopulatePlayerList()

@@ -109,7 +109,7 @@ void AIClientApp::HandleMessage(const Message& msg)
     case Message::JOIN_GAME: {
         if (msg.SendingPlayer() == -1) {
             if (PlayerID() == -1) {
-                SetPlayerID(boost::lexical_cast<int>(msg.Text()));
+                SetPlayerID(msg.ReceivingPlayer());
                 Logger().debugStream() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
             } else {
                 Logger().errorStream() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";

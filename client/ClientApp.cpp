@@ -11,8 +11,6 @@
 ClientApp* ClientApp::s_app = 0;
 
 ClientApp::ClientApp() : 
-    m_multiplayer_lobby_wnd(0),
-    m_current_combat(0), 
     m_player_id(-1),
     m_empire_id(-1),
     m_current_turn(INVALID_GAME_TURN)
@@ -67,12 +65,6 @@ OrderSet& ClientApp::Orders()
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }
 
-MultiplayerLobbyWnd* ClientApp::MultiplayerLobby()
-{ return m_multiplayer_lobby_wnd; }
-
-CombatModule* ClientApp::CurrentCombat()
-{ return m_current_combat; }
-
 int ClientApp::GetNewObjectID()
 {
     Message msg;
@@ -94,12 +86,6 @@ void ClientApp::SetEmpireID(int id)
 
 void ClientApp::SetCurrentTurn(int turn)
 { m_current_turn = turn; }
-
-void ClientApp::SetMultiplayerLobby(MultiplayerLobbyWnd* wnd)
-{ m_multiplayer_lobby_wnd = wnd; }
-
-void ClientApp::SetCurrentCombat(CombatModule* combat)
-{ m_current_combat = combat; }
 
 int& ClientApp::EmpireIDRef()
 { return m_empire_id; }
