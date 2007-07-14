@@ -54,14 +54,10 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_pop_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(), GG::CLR_WHITE,
                                    0, 3, false, false);
     AttachChild(m_pop_stat);
-    m_pop_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_pop_stat->SetBrowseText("Population!");
 
     m_health_stat = new StatisticIcon(w/2, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "health.png").native_file_string() , GG::CLR_WHITE,
                                       0, 3, false, false);
     AttachChild(m_health_stat);
-    m_health_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_health_stat->SetBrowseText("Health!");
 
     m_pop_meter_bar = new MeterStatusBar2(w - m_pop_stat->Width() - icon_size*5/2 - m_expand_button->Width(), m_pop_stat->Height(), pop->PopulationMeter());
     m_pop_meter_bar->MoveTo(GG::Pt(m_pop_stat->Width() + icon_size*5/2, 0));
@@ -650,7 +646,8 @@ void ResourcePanel::Render()
 void ResourcePanel::Update()
 {
     const ResourceCenter* res = GetResourceCenter();
-    const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
+    const Universe& universe = GetUniverse();
+    const UniverseObject* obj = universe.Object(m_rescenter_id);
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
@@ -727,6 +724,14 @@ void ResourcePanel::Update()
     text = boost::io::str(FlexibleFormat(UserString("RP_CONSTRUCTION_TOOLTIP")) % current % next % change % max);
     m_construction_stat->SetBrowseText(text);
 
+    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
+    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it;
+    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_rescenter_id);
+    if (map_it != effect_accounting_map.end())
+        meter_map = &(map_it->second);
+
+
     // meter bar display
     m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
     m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
@@ -736,6 +741,22 @@ void ResourcePanel::Update()
 
     m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
     m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
+    if (meter_map) {
+        meter_it = meter_map->find(METER_INDUSTRY);
+        if (meter_it != meter_map->end()) {
+            const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
+            text = "";
+            for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
+                if (info_it != info_vec.begin()) text += "\n";
+                text += "change: " + lexical_cast<std::string>(info_it->meter_change)
+                     +  " total: " + lexical_cast<std::string>(info_it->running_meter_total)
+                     + " source: " + lexical_cast<std::string>(info_it->source_id)
+                     +   " type: " + lexical_cast<std::string>(info_it->cause_type);
+            }
+            m_industry_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            m_industry_meter_bar->SetBrowseText(text);
+        }
+    }
 
     m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
     m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
@@ -901,7 +922,7 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 //         MeterStatusBar          //
 /////////////////////////////////////
 MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
-    GG::Wnd(0, 0, w, h, 0),
+    GG::Wnd(0, 0, w, h, GG::CLICKABLE),
     m_meter(meter),
     m_initial_max(m_meter.Max()),
     m_initial_current(m_meter.Current()),
@@ -1399,7 +1420,7 @@ void SpecialsPanel::Update()
     const UniverseObject* obj = GetObject();
     const std::set<std::string>& specials = obj->Specials();
 
-    const int icon_size = ClientUI::Pts()*4/3;
+    const int icon_size = 24;
 
     // get specials and use them to create specials icons
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {

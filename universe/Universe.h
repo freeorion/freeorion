@@ -192,11 +192,11 @@ public:
 
     /** returns map, indexed by object id, to map, indexed by MeterType, to vector of EffectAccountInfo for the meter,
         in order effects were applied to the meter. */
-    const EffectAccountingMap& GetEffectAccountingMap() {return m_effect_accounting_map;}
+    const EffectAccountingMap& GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
     /** returns map, indexed by object id, to map, indexed by MeterType, to the discrepancy between the actual and the
         explainable value that the meter had at the start of the turn */
-    const EffectDiscrepancyMap& GetEffectDiscrepancyMap() {return m_effect_discrepancy_map;}
+    const EffectDiscrepancyMap& GetEffectDiscrepancyMap() const {return m_effect_discrepancy_map;}
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}

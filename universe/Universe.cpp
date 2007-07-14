@@ -571,10 +571,10 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     // clear old discrepancies
     m_effect_discrepancy_map.clear();
 
-    // generate new estimates (normally uses discrepancies, but in this case will find none, so will assume 0 discrepancy)
+    // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
 
-    // every object that has meters...
+    // determine meter max discrepancies
     for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
         UniverseObject* obj = Object(obj_it->first);    // object that has some meters
         std::map<MeterType, std::vector<EffectAccountingInfo> > meters_map = obj_it->second;
@@ -583,13 +583,25 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
         for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = meters_map.begin(); meter_type_it != meters_map.end(); ++meter_type_it) {
             MeterType type = meter_type_it->first;
             Meter* meter = obj->GetMeter(type);
+            assert(meter);  // all objects should only have accounting info for a meter if that meter exists
+            int object_id = obj->ID();
 
             // discrepancy is the difference between expected and actual meter values at start of turn
             double discrepancy = meter->InitialMax() - meter->Max();
-            m_effect_discrepancy_map[obj->ID()][type] = discrepancy;
 
-            // correct current max meter estimate
-            meter->SetMax(meter->Max() + discrepancy);
+            // add to discrepancy map
+            m_effect_discrepancy_map[object_id][type] = discrepancy;
+
+            // correct current max meter estimate for discrepancy
+            meter->AdjustMax(discrepancy);
+
+            // add discrepancy adjustment to meter accounting
+            EffectAccountingInfo info;
+            info.cause_type = ECT_UNKNOWN_CAUSE;
+            info.meter_change = discrepancy;
+            info.running_meter_total = meter->Max();
+            
+            m_effect_accounting_map[object_id][type].push_back(info);
         }
     }
 }
@@ -613,6 +625,8 @@ void Universe::UpdateMeterEstimates()
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
             Meter* meter = obj->GetMeter(type);
             if (meter) {
+                Logger().debugStream() << "object " << object_id << " has meter " << type << " with starting max: " << meter->Max();
+
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
                 info.caused_by_empire_id = -1;
@@ -632,6 +646,39 @@ void Universe::UpdateMeterEstimates()
 
     // Apply and record effect meter adjustments
     ExecuteMeterEffects(effects_targets_map, true);
+
+    // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
+    // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
+    // max at the start of the turn
+    if (!m_effect_discrepancy_map.empty()) {
+        for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
+            UniverseObject* obj = obj_it->second;
+            int object_id = obj_it->first;
+
+            // check if this object has any discrepancies
+            EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(object_id);
+            if (dis_it == m_effect_discrepancy_map.end()) continue;
+
+            // apply all meters' discrapancies
+            std::map<MeterType, double>& meter_map = dis_it->second;
+            for(std::map<MeterType, double>::iterator meter_it = meter_map.begin(); meter_it != meter_map.end(); ++meter_it) {
+                MeterType type = meter_it->first;
+                double discrepancy = meter_it->second;
+                Meter* meter = obj->GetMeter(type);
+
+                if (meter) {
+                    meter->AdjustMax(discrepancy);
+
+                    EffectAccountingInfo info;
+                    info.cause_type = ECT_UNKNOWN_CAUSE;
+                    info.meter_change = discrepancy;
+                    info.running_meter_total = meter->Max();
+                    
+                    m_effect_accounting_map[object_id][type].push_back(info);
+                }
+            }
+        }
+    }
 
     ///////////////////////////
     // do current meter growth
@@ -746,7 +793,9 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bo
                 for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
                     UniverseObject* target = *target_it;
                     const Meter* meter = target->GetMeter(meter_type);
-                    assert(meter);
+                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                    Logger().debugStream() << "object " << target->ID() << " has meter " << meter_type << " with pre-effect max: " << meter->Max();
 
                     // create new accounting info for this effect on this target/meter
                     EffectAccountingInfo info;
@@ -766,7 +815,9 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bo
                 for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
                     UniverseObject* target = *target_it;
                     const Meter* meter = target->GetMeter(meter_type);
-                    assert(meter);
+                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                    Logger().debugStream() << "object " << target->ID() << " has meter " << meter_type << " with post-effect max: " << meter->Max();
 
                     // retreive info for this effect
                     EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
@@ -774,6 +825,7 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bo
                     // update accounting info with meter change and new total
                     info.meter_change = meter->Max() - info.running_meter_total;    // change is new max minus old max (stored in temp value with misleading name)
                     info.running_meter_total = meter->Max();        // replacing temp stored value with new meter total
+                    info.cause_type = ECT_SPECIAL;    // need to get this somehow ...
                 }
 
             } else {                
