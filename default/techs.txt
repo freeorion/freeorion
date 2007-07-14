@@ -50,7 +50,7 @@ Tech
         "LRN_PHYS_BRAIN"
     ]
     unlock = []
-    graphic = "tech_icons/Translingustic_Thought.png"
+    graphic = "icons/tech/translingustic_thought.png"
 
 Tech
     name = "LRN_PSIONICS"
@@ -62,7 +62,7 @@ Tech
     researchturns = 10
     prerequisites = "LRN_PHYS_BRAIN"
     unlock = []
-    graphic = "tech_icons/Psionics.png"
+    graphic = "icons/tech/psionics.png"
 
 Tech
     name = "LRN_ARTIF_MINDS"
@@ -77,7 +77,7 @@ Tech
         "LRN_PHYS_BRAIN"
     ]
     unlock = []
-    graphic = "tech_icons/Artificial_Minds.png"
+    graphic = "icons/tech/artificial_minds.png"
 
 Tech
     name = "LRN_XENOARCH"
@@ -89,7 +89,7 @@ Tech
     researchturns = 10
     prerequisites = "LRN_GAL_EXPLO"
     unlock = []
-    graphic = "tech_icons/Xenoarchaeology.png"
+    graphic = "icons/tech/xenoarchaeology.png"
 
 Tech
     name = "LRN_GRAVITONICS"
@@ -101,7 +101,7 @@ Tech
     researchturns = 15
     prerequisites = "LRN_TRANSLING_THT"
     unlock = []
-    graphic = "tech_icons/Gravitonics.png"
+    graphic = "icons/tech/gravitonics.png"
 
 Tech
     name = "LRN_EVERYTHING"
@@ -146,7 +146,7 @@ Tech
         "LRN_XENOARCH"
     ]
     unlock = []
-    graphic = "tech_icons/Mind_of_the_Void.png"
+    graphic = "icons/mind_of_the_void.png"
 
 Tech
     name = "LRN_TIME_MECH"
@@ -161,7 +161,7 @@ Tech
         "LRN_GRAVITONICS"
     ]
     unlock = []
-    graphic = "tech_icons/Temporal_Mechanics.png"
+    graphic = "icons/tech/temporal_mechanics.png"
 
 Tech
     name = "LRN_NDIM_SUBSPACE"
@@ -191,7 +191,7 @@ Tech
         "LRN_MIND_VOID"
     ]
     unlock = []
-    graphic = "tech_icons/Unified_Conscious.png"
+    graphic = "icons/tech/unified_conscious.png"
 
 Tech
     name = "LRN_TRANSCEND"
@@ -265,7 +265,7 @@ Tech
             activation = Source
             effects = SetMaxResearch Target.MaxResearch + 1
     ]
-    graphic = "tech_icons/Stellar_Tomography.png"
+    graphic = "icons/tech/stellar_tomography.png"
         
 Tech
     name = "LRN_AUTOLAB_I"
@@ -441,7 +441,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = "tech_icons/Medical_Pathology.png"
+    graphic = "icons/tech/medical_pathology.png"
 
 Tech
     name = "GRO_ENV_ENCAPSUL"
@@ -468,7 +468,7 @@ Tech
         "GRO_PLANET_ECOL"
     ]
     unlock = []
-    graphic = "tech_icons/Symbiosis_Biology.png"
+    graphic = "icons/tech/symbiosis_biology.png"
 
 Tech
     name = "GRO_GENETIC_MED"
@@ -495,7 +495,7 @@ Tech
     researchturns = 15
     prerequisites = "GRO_SYMBIOTIC_BIO"
     unlock = []
-    graphic = "tech_icons/Lifecycle_Manipulation.png"
+    graphic = "icons/tech/lifecycle_manipulation.png"
 
 Tech
     name = "GRO_XENO_GENETICS"
@@ -569,7 +569,7 @@ Tech
         "PRO_FUSION_GEN"
     ]
     unlock = []
-    graphic = "tech_icons/Pure-Energy_Metabolism.png"
+    graphic = "icons/tech/pure-energy_metabolism.png"
 
 Tech
     name = "GRO_INDUSTY_FARM"
@@ -666,7 +666,7 @@ Tech
     researchturns = 10
     prerequisites = "GRO_GENETIC_MED"
     unlock = Item type = Building name = "BLD_GENOME_BANK"
-    graphic = "tech_icons/Genome_Bank.png"
+    graphic = "icons/tech/genome_bank.png"
 
 Tech
     name = "GRO_LIVING_PLANET"
@@ -715,7 +715,7 @@ Tech
                 Source
             effects =
                 SetMaxFarming value = Target.MaxFarming + 2
-    graphic = "tech_icons/Urban_Farming.png"
+    graphic = "icons/tech/urban_farming.png"
 
 Tech
     name = "GRO_ORBIT_FARMING"
@@ -807,7 +807,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = "tech_icons/Robotic_Production.png"
+    graphic = "icons/tech/robotic_production.png"
 
 Tech
     name = "PRO_FUSION_GEN"
@@ -819,7 +819,7 @@ Tech
     researchturns = 5
     prerequisites = []
     unlock = []
-    graphic = "tech_icons/Fusion_Generation.png"
+    graphic = "icons/tech/fusion_generation.png"
 
 Tech
     name = "PRO_NANOTECH_PROD"
@@ -862,7 +862,7 @@ Tech
         "PRO_NANOTECH_PROD"
     ]
     unlock = []
-    graphic = "tech_icons/Sentient_Autofactories.png"
+    graphic = "icons/tech/sentient_autofactories.png"
 
 Tech
     name = "PRO_FRC_FLD_ASSMB"
@@ -1070,7 +1070,7 @@ Tech
         "PRO_ROBOTIC_PROD"
     ]
     unlock = []
-    graphic = "tech_icons/Deep_Core_Mining.png"
+    graphic = "icons/tech/deep_core_mining.png"
 
 Tech
     name = "PRO_INDUSTRY_CENTRE_I"
@@ -1284,7 +1284,7 @@ Tech
     researchturns = 5
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_MINI_SUN"
-    graphic = "tech_icons/Miniature_Suns.png"
+    graphic = "icons/tech/miniature_suns.png"
 
 TechCategory "CONSTRUCTION_CATEGORY"
 
@@ -1322,7 +1322,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = "tech_icons/Infrastructure_Ecology.png"
+    graphic = "icons/tech/infrastructure_ecology.png"
 
 Tech
     name = "CON_ORGANIC_STRC"
@@ -1350,7 +1350,7 @@ Tech
         "CON_INFRA_ECOL"
     ]
     unlock = []
-    graphic = "tech_icons/Metroplex_Infrastructure.png"
+    graphic = "icons/tech/metroplex_infrastructure.png"
 
 Tech
     name = "CON_TRANS_STRC"
@@ -1408,7 +1408,7 @@ Tech
         "CON_TRANS_STRC"
     ]
     unlock = []
-    graphic = "tech_icons/Asymptotic_Materials.png"
+    graphic = "icons/tech/asymptotic_materials.png"
 
 Tech
     name = "CON_STRC_INT_FLDS"
@@ -1481,7 +1481,7 @@ Tech
         "CON_GAL_INFRA"
     ]
     unlock = []
-    graphic = "tech_icons/Artificial_Heavenly_Bodies.png"
+    graphic = "icons/tech/artificial_heavenly_bodies.png"
 
 Tech
     name = "CON_TRANS_ARCH"
