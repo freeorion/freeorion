@@ -173,7 +173,6 @@ IntroScreen::IntroScreen() :
 
 IntroScreen::~IntroScreen()
 {
-    std::cout << "~IntroScreen()" << std::endl;
     for (unsigned int y = 0; y < m_bg_graphics.size(); ++y) {
         for (unsigned int x = 0; x < m_bg_graphics[y].size(); ++x) {
             delete m_bg_graphics[y][x];
@@ -238,7 +237,7 @@ void IntroScreen::OnCredits()
 
     XMLElement credits = doc.root_node.Child("CREDITS");
     // only the area between the upper and lower line of the splash screen should be darkend
-    // if we use another splash screen we have the chenge the following values
+    // if we use another splash screen we have the change the following values
     int nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768,
         nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 

@@ -282,6 +282,7 @@ void HumanClientApp::SaveGame(const std::string& filename)
 
 void HumanClientApp::EndGame()
 {
+    m_fsm->process_event(ResetToIntroMenu());
     m_game_started = false;
     Networking().DisconnectFromServer();
     m_server_process.RequestTermination();
@@ -303,22 +304,21 @@ void HumanClientApp::LoadSinglePlayerGame()
         if (!dlg.Result().empty()) {
             filename = *dlg.Result().begin();
 
-            if (!Networking().Connected()) {
-                if (!GetOptionsDB().Get<bool>("force-external-server"))
-                    StartServer();
+            if (m_game_started)
+                EndGame();
 
-                int start_time = Ticks();
-                const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
-                while (!Networking().ConnectToLocalHostServer()) {
-                    if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                        KillServer();
-                        return;
-                    }
+            if (!GetOptionsDB().Get<bool>("force-external-server"))
+                StartServer();
+            int start_time = Ticks();
+            const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+            while (!Networking().ConnectToLocalHostServer()) {
+                if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+                    ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+                    KillServer();
+                    return;
                 }
             }
 
-            m_game_started = false;
             m_connected = true;
             SetPlayerID(Networking::HOST_PLAYER_ID);
             SetEmpireID(-1);

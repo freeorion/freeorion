@@ -44,26 +44,7 @@ InGameMenu::InGameMenu():
 
     // call to InGameMenu::MinimizedLength() because MinimizedLength is virtual
     SetMinSize(GG::Pt(InGameMenu::MinimizedLength(), MinSize().y));
-    Init(); //attaches children and connects signals to slots
-}
 
-InGameMenu::~InGameMenu()
-{}
-
-int InGameMenu::MinimizedLength() const
-{ return 135; }
-
-void InGameMenu::Render()
-{ CUIWnd::Render(); }
-
-void InGameMenu::KeyPress (GG::Key key, Uint32 key_mods)
-{
-    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
-        Done();
-}
-
-void InGameMenu::Init()
-{
     //add children
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
@@ -83,6 +64,21 @@ void InGameMenu::Init()
             m_save_btn->Disable();
         m_load_btn->Disable();
     }
+}
+
+InGameMenu::~InGameMenu()
+{}
+
+int InGameMenu::MinimizedLength() const
+{ return 135; }
+
+void InGameMenu::Render()
+{ CUIWnd::Render(); }
+
+void InGameMenu::KeyPress (GG::Key key, Uint32 key_mods)
+{
+    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
+        Done();
 }
 
 void InGameMenu::Save()
@@ -105,7 +101,11 @@ void InGameMenu::Save()
 }
 
 void InGameMenu::Load()
-{ HumanClientApp::GetApp()->LoadSinglePlayerGame(); }
+{
+    Hide();
+    HumanClientApp::GetApp()->LoadSinglePlayerGame();
+    CloseClicked();
+}
 
 void InGameMenu::Options()
 {

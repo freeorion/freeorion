@@ -46,11 +46,12 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
     const boost::statechart::event_base* event_ptr = &event;
     if (dynamic_cast<const Disconnection*>(event_ptr))
         most_derived_message_type_str = "Disconnection";
-#define MESSAGE_EVENT_CASE(r, data, name)                               \
+#define EVENT_CASE(r, data, name)                                       \
     else if (dynamic_cast<const name*>(event_ptr))                      \
         most_derived_message_type_str = BOOST_PP_STRINGIZE(name);
-    BOOST_PP_SEQ_FOR_EACH(MESSAGE_EVENT_CASE, _, MESSAGE_EVENTS);
-#undef MESSAGE_EVENT_CASE
+    BOOST_PP_SEQ_FOR_EACH(EVENT_CASE, _, HUMAN_CLIENT_FSM_EVENTS)
+    BOOST_PP_SEQ_FOR_EACH(EVENT_CASE, _, MESSAGE_EVENTS)
+#undef EVENT_CASE
     Logger().errorStream() << "HumanClientFSM : A " << most_derived_message_type_str << " event was passed to "
         "the HumanClientFSM.  This event is illegal in the FSM's current state.  It is being ignored.";
 }
@@ -349,6 +350,12 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
         Client().EndGame();
         ClientUI::MessageBox(UserString("SERVER_GAME_END"));
     }
+    return transit<IntroMenu>();
+}
+
+boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
     return transit<IntroMenu>();
 }
 

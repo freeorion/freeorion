@@ -47,6 +47,19 @@ struct JoinMPGameRequested : boost::statechart::event<JoinMPGameRequested> {};
 // Indicates that the player's turn has been sent to the server.
 struct TurnEnded : boost::statechart::event<TurnEnded> {};
 
+// Indicates that a game has ended and that the state should be reset to IntroMenu.
+struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
+
+// This is a Boost.Preprocessor list of all the events above.  As new events are added above, they should be added to
+// this list as well.
+#define HUMAN_CLIENT_FSM_EVENTS                                    \
+    (StartMPGameClicked)                                           \
+        (CancelMPGameClicked)                                      \
+        (HostSPGameRequested)                                      \
+        (HostMPGameRequested)                                      \
+        (JoinMPGameRequested)                                      \
+        (TurnEnded)                                                \
+        (ResetToIntroMenu)
 
 // Top-level human client states
 struct IntroMenu;
@@ -261,7 +274,8 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<PlayerExit>,
-        boost::statechart::custom_reaction<EndGame>
+        boost::statechart::custom_reaction<EndGame>,
+        boost::statechart::custom_reaction<ResetToIntroMenu>
     > reactions;
 
     PlayingGame();
@@ -271,6 +285,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     boost::statechart::result react(const PlayerEliminated& msg);
     boost::statechart::result react(const PlayerExit& msg);
     boost::statechart::result react(const EndGame& msg);
+    boost::statechart::result react(const ResetToIntroMenu& msg);
 
     CLIENT_ACCESSOR
 };
