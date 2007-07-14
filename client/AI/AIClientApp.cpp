@@ -123,7 +123,12 @@ void AIClientApp::HandleMessage(const Message& msg)
             Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; "
                 "starting AI turn...";
             bool single_player_game; // note that this is ignored
-            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
+            SaveGameUIData ui_data; // note that this is ignored
+            bool loaded_game_data;
+            bool ui_data_available;
+            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), Orders(), ui_data, loaded_game_data, ui_data_available);
+            if (loaded_game_data)
+                Orders().ApplyOrders();
             StartTurn();
         }
         break;
@@ -131,13 +136,6 @@ void AIClientApp::HandleMessage(const Message& msg)
 
     case Message::SAVE_GAME: {
         Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders()));
-        break;
-    }
-
-    case Message::LOAD_GAME: {
-        // HACK! We're just ignoring the rest of the message, since we only care about the orders
-        ExtractMessageData(msg, Orders());
-        Orders().ApplyOrders();
         break;
     }
 

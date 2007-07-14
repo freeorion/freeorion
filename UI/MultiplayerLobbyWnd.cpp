@@ -237,6 +237,9 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     }
 }
 
+bool MultiplayerLobbyWnd::LoadGameSelected() const
+{ return m_new_load_game_buttons->CheckedButton() == 1; }
+
 void MultiplayerLobbyWnd::Render()
 {
     CUIWnd::Render();

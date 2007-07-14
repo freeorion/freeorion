@@ -31,7 +31,6 @@ struct MessageEventBase
         (LobbyHostAbort)                           \
         (LobbyNonHostExit)                         \
         (SaveGame)                                 \
-        (LoadGame)                                 \
         (GameStart)                                \
         (TurnUpdate)                               \
         (TurnProgress)                             \

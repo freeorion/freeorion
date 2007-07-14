@@ -36,7 +36,8 @@ namespace {
 // HumanClientFSM
 ////////////////////////////////////////////////////////////
 HumanClientFSM::HumanClientFSM(HumanClientApp &human_client) :
-    m_client(human_client)
+    m_client(human_client),
+    m_next_waiting_for_data_mode(WAITING_FOR_NEW_TURN)
 {}
 
 void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event)
@@ -75,6 +76,7 @@ IntroMenu::~IntroMenu()
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu.HostSPGameRequested";
+    context<HumanClientFSM>().m_next_waiting_for_data_mode = a.m_waiting_for_data_mode;
     return transit<WaitingForSPHostAck>();
 }
 
@@ -200,10 +202,21 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
 boost::statechart::result MPLobby::react(const GameStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.GameStart";
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse());
+    SaveGameUIData ui_data;
+    bool loaded_game_data;
+    bool ui_data_available;
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().Orders(), ui_data, loaded_game_data, ui_data_available);
     Client().StartGame();
+    if (loaded_game_data) {
+        if (ui_data_available)
+            Client().m_ui->RestoreFromSaveData(ui_data);
+        Client().Orders().ApplyOrders();
+    }
     if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
         Client().Autosave(true);
+    context<HumanClientFSM>().m_next_waiting_for_data_mode =
+        context<MPLobby>().m_lobby_wnd->LoadGameSelected() ?
+        WAITING_FOR_LOADED_GAME : WAITING_FOR_NEW_GAME;
     return transit<PlayingGame>();
 }
 
@@ -239,6 +252,9 @@ boost::statechart::result HostMPLobby::react(const StartMPGameClicked& a)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby.StartMPGameClicked";
     Client().Networking().SendMessage(StartMPGameMessage(Client().PlayerID()));
+    context<HumanClientFSM>().m_next_waiting_for_data_mode =
+        context<MPLobby>().m_lobby_wnd->LoadGameSelected() ?
+        WAITING_FOR_LOADED_GAME : WAITING_FOR_NEW_GAME;
     return transit<PlayingGame>();
 }
 
@@ -346,12 +362,17 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
     Client().Register(m_turn_progress_wnd);
+    if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
+        m_turn_progress_wnd->UpdateTurnProgress(UserString("NEW_GAME"), -1);
+    else if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_LOADED_GAME)
+        m_turn_progress_wnd->UpdateTurnProgress(UserString("LOADING"), -1);
 }
 
 WaitingForTurnData::~WaitingForTurnData()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnData";
     delete m_turn_progress_wnd;
+    context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN;
 }
 
 boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
@@ -389,16 +410,6 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
     return transit<PlayingTurn>();
 }
 
-boost::statechart::result WaitingForTurnData::react(const LoadGame& msg)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.LoadGame";
-    SaveGameUIData ui_data;
-    if (ExtractMessageData(msg.m_message, Client().Orders(), ui_data))
-        Client().m_ui->RestoreFromSaveData(ui_data);
-    Client().Orders().ApplyOrders();
-    return transit<PlayingTurn>();
-}
-
 boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.CombatStart";
@@ -409,8 +420,16 @@ boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.GameStart";
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse());
+    SaveGameUIData ui_data;
+    bool loaded_game_data;
+    bool ui_data_available;
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().Orders(), ui_data, loaded_game_data, ui_data_available);
     Client().StartGame();
+    if (loaded_game_data) {
+        if (ui_data_available)
+            Client().m_ui->RestoreFromSaveData(ui_data);
+        Client().Orders().ApplyOrders();
+    }
     if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
         Client().Autosave(true);
     return transit<PlayingTurn>();

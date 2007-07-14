@@ -41,7 +41,7 @@ public:
         LOBBY_EXIT,              ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
         START_MP_GAME,           ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
         SAVE_GAME,               ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
-        LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
+        LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,             ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
         TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn
@@ -145,6 +145,9 @@ Message JoinGameMessage(const std::string& player_name);
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe);
 
+/** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes data loaded from a saved game. */
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const OrderSet& orders, const SaveGameUIData* ui_data);
+
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
 Message HostSPAckMessage(int player_id);
@@ -190,9 +193,6 @@ Message HostSaveGameMessage(int sender, const std::string& filename);
 
 /** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
 Message ServerSaveGameMessage(int receiver, bool synchronous_response);
-
-/** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
-Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data);
 
 /** creates a HUMAN_PLAYER_MSG, which is sent to the server, and then from the server to all human players, including the 
     originating player.  This is used for MP chat.*/
@@ -253,7 +253,7 @@ Message StartMPGameMessage(int player_id);
 
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe);
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, OrderSet& orders, SaveGameUIData& ui_data, bool& loaded_game_data, bool& ui_data_available);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 

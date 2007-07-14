@@ -215,7 +215,7 @@ void HumanClientApp::NewSinglePlayerGame()
             setup_data.m_empire_color = galaxy_wnd.EmpireColor();
             setup_data.m_AIs = 4;
             Networking().SendMessage(HostSPGameMessage(setup_data));
-            m_fsm->process_event(HostSPGameRequested());
+            m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
         }
     } else {
         failed = true;
@@ -329,7 +329,7 @@ void HumanClientApp::LoadSinglePlayerGame()
             setup_data.m_filename = filename;
             setup_data.m_host_player_name = SinglePlayerName();
             Networking().SendMessage(HostSPGameMessage(setup_data));
-            m_fsm->process_event(HostSPGameRequested());
+            m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
         }
     } catch (const FileDlg::BadInitialDirectory& e) {
         ClientUI::MessageBox(e.what(), true);
@@ -583,7 +583,6 @@ void HumanClientApp::HandleMessage(Message& msg)
     case Message::LOBBY_HOST_ABORT:      m_fsm->process_event(LobbyHostAbort(msg)); break;
     case Message::LOBBY_EXIT:            m_fsm->process_event(LobbyNonHostExit(msg)); break;
     case Message::SAVE_GAME:             m_fsm->process_event(::SaveGame(msg)); break;
-    case Message::LOAD_GAME:             m_fsm->process_event(LoadGame(msg)); break;
     case Message::GAME_START:            m_fsm->process_event(GameStart(msg)); break;
     case Message::TURN_UPDATE:           m_fsm->process_event(TurnUpdate(msg)); break;
     case Message::TURN_PROGRESS:         m_fsm->process_event(TurnProgress(msg)); break;

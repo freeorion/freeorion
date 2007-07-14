@@ -17,7 +17,14 @@
 #include <vector>
 
 
+enum WaitingForDataMode {
+    WAITING_FOR_NEW_GAME,
+    WAITING_FOR_LOADED_GAME,
+    WAITING_FOR_NEW_TURN
+};
+
 // Human client-specific events not already defined in ClientFSMEvents.h
+
 // Indicates that the "Start Game" button was clicked in the MP Lobby UI, in host player mode.
 struct StartMPGameClicked : boost::statechart::event<StartMPGameClicked> {};
 
@@ -25,7 +32,11 @@ struct StartMPGameClicked : boost::statechart::event<StartMPGameClicked> {};
 struct CancelMPGameClicked : boost::statechart::event<CancelMPGameClicked> {};
 
 // Indicates that an SP-host request was sent to the server.
-struct HostSPGameRequested : boost::statechart::event<HostSPGameRequested> {};
+struct HostSPGameRequested : boost::statechart::event<HostSPGameRequested>
+{
+    HostSPGameRequested(WaitingForDataMode waiting_for_data_mode) : m_waiting_for_data_mode(waiting_for_data_mode) {}
+    WaitingForDataMode m_waiting_for_data_mode;
+};
 
 // Indicates that a MP-host request was sent to the server.
 struct HostMPGameRequested : boost::statechart::event<HostMPGameRequested> {};
@@ -76,7 +87,8 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
     void unconsumed_event(const boost::statechart::event_base &event);
 
-    HumanClientApp& m_client;
+    HumanClientApp&    m_client;
+    WaitingForDataMode m_next_waiting_for_data_mode;
 };
 
 
@@ -273,7 +285,6 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<TurnProgress>,
         boost::statechart::custom_reaction<TurnUpdate>,
-        boost::statechart::custom_reaction<LoadGame>,
         boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::deferral<PlayerEliminated>,
@@ -286,7 +297,6 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
 
     boost::statechart::result react(const TurnProgress& msg);
     boost::statechart::result react(const TurnUpdate& msg);
-    boost::statechart::result react(const LoadGame& msg);
     boost::statechart::result react(const CombatStart& msg);
     boost::statechart::result react(const GameStart& msg);
 

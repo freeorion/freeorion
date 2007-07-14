@@ -262,6 +262,30 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
         Universe::s_encoding_empire = empire_id;
         Serialize(oa, empires);
         Serialize(oa, universe);
+        bool loaded_game_data = false;
+        oa << BOOST_SERIALIZATION_NVP(loaded_game_data);
+    }
+    return Message(Message::GAME_START, -1, player_id, os.str());
+}
+
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const OrderSet& orders, const SaveGameUIData* ui_data)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(single_player_game)
+           << BOOST_SERIALIZATION_NVP(empire_id)
+           << BOOST_SERIALIZATION_NVP(current_turn);
+        Universe::s_encoding_empire = empire_id;
+        Serialize(oa, empires);
+        Serialize(oa, universe);
+        bool loaded_game_data = true;
+        oa << BOOST_SERIALIZATION_NVP(loaded_game_data);
+        Serialize(oa, orders);
+        bool ui_data_available = ui_data;
+        oa << BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available)
+            oa << boost::serialization::make_nvp("ui_data", *ui_data);
     }
     return Message(Message::GAME_START, -1, player_id, os.str());
 }
@@ -370,20 +394,6 @@ Message ServerSaveGameMessage(int receiver, bool synchronous_response)
     return Message(Message::SAVE_GAME, -1, receiver, "", synchronous_response);
 }
 
-Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data)
-{
-    std::ostringstream os;
-    {
-        FREEORION_OARCHIVE_TYPE oa(os);
-        Serialize(oa, orders);
-        bool ui_data_available = ui_data;
-        oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-        if (ui_data_available)
-            oa << boost::serialization::make_nvp("ui_data", *ui_data);
-    }
-    return Message(Message::LOAD_GAME, -1, receiver, os.str());
-}
-
 Message ChatMessage(int sender, const std::string& msg)
 {
     return Message(Message::HUMAN_PLAYER_CHAT, sender, -1, msg);
@@ -476,7 +486,7 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
     ia >> BOOST_SERIALIZATION_NVP(lobby_data);
 }
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe)
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, OrderSet& orders, SaveGameUIData& ui_data, bool& loaded_game_data, bool& ui_data_available)
 {
     std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
@@ -486,6 +496,13 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
     Universe::s_encoding_empire = empire_id;
     Deserialize(ia, empires);
     Deserialize(ia, universe);
+    ia >> BOOST_SERIALIZATION_NVP(loaded_game_data);
+    if (loaded_game_data) {
+        Deserialize(ia, orders);
+        ia >> BOOST_SERIALIZATION_NVP(ui_data_available);
+        if (ui_data_available)
+            ia >> BOOST_SERIALIZATION_NVP(ui_data);
+    }
 }
 
 void ExtractMessageData(const Message& msg, OrderSet& orders)

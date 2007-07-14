@@ -34,6 +34,10 @@ public:
                         const CUIButton::ClickedSlotType& start_game_callback,
                         const CUIButton::ClickedSlotType& cancel_callback);
     //@}
+
+    /** \name Accessors */ //@{
+    bool LoadGameSelected() const;
+    //@}
     
     /** \name Mutators */ //@{
     virtual void Render();

@@ -291,8 +291,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         Empire* empire = GetPlayerEmpire((*it)->ID());
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe));
-        (*it)->SendMessage(ServerLoadGameMessage((*it)->ID(), *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
+        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
+                                            *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
     }
 
     m_losers.clear();
@@ -360,8 +360,8 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
 
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int empire_id = player_to_empire_ids[(*it)->ID()];
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
-        (*it)->SendMessage(ServerLoadGameMessage((*it)->ID(), *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
+        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
+                                            *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
     }
 #endif
 
