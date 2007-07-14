@@ -934,12 +934,12 @@ MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
 
 void MeterStatusBar2::SetProjectedCurrent(double current)
 {
-    assert(Meter::METER_MIN <= current && current <= Meter::METER_MAX);
+    //assert(Meter::METER_MIN <= current && current <= Meter::METER_MAX);
     m_projected_current = current;
 }
 void MeterStatusBar2::SetProjectedMax(double max)
 {
-    assert(Meter::METER_MIN <= max && max <= Meter::METER_MAX);
+    //assert(Meter::METER_MIN <= max && max <= Meter::METER_MAX);
     m_projected_max = max;
 }
 
