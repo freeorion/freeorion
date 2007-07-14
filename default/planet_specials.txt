@@ -95,4 +95,3 @@ Special
         activation = Source
         effects = SetMaxPopulation value = Source.MaxPopulation + 3
     graphic = "icons/specials_tiny/tunnels.png"
-
