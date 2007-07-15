@@ -6,7 +6,6 @@ common_sources = [
     'Empire/Empire.cpp',
     'Empire/EmpireManager.cpp',
     'Empire/ResourcePool.cpp',
-    'network/ClientNetworking.cpp',
     'network/Message.cpp',
     'network/MessageQueue.cpp',
     'network/Networking.cpp',
@@ -72,6 +71,7 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
         'client/ClientFSMEvents.cpp',
         'client/AI/AIClientApp.cpp',
         'client/AI/camain.cpp',
+        'network/ClientNetworking.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp'
         ]
@@ -86,6 +86,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'client/human/HumanClientAppSoundFMOD.cpp',
 #        'client/human/HumanClientAppSoundOpenAL.cpp',
         'client/human/chmain.cpp',
+        'network/ClientNetworking.cpp',
         'UI/About.cpp',
         'UI/BuildDesignatorWnd.cpp',
         'UI/ClientUI.cpp',
