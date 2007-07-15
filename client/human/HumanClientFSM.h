@@ -222,8 +222,7 @@ struct MPLobby : boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle>
         boost::statechart::custom_reaction<LobbyUpdate>,
         boost::statechart::custom_reaction<LobbyChat>,
         boost::statechart::custom_reaction<LobbyHostAbort>,
-        boost::statechart::custom_reaction<LobbyNonHostExit>,
-        boost::statechart::custom_reaction<GameStart>
+        boost::statechart::custom_reaction<LobbyNonHostExit>
     > reactions;
 
     MPLobby(my_context ctx);
@@ -234,7 +233,6 @@ struct MPLobby : boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle>
     boost::statechart::result react(const LobbyChat& msg);
     boost::statechart::result react(const LobbyHostAbort& msg);
     boost::statechart::result react(const LobbyNonHostExit& msg);
-    boost::statechart::result react(const GameStart& msg);
 
     MultiplayerLobbyWnd* m_lobby_wnd;
 
@@ -272,12 +270,14 @@ struct NonHostMPLobby : boost::statechart::state<NonHostMPLobby, MPLobby>
     typedef boost::statechart::state<NonHostMPLobby, MPLobby> Base;
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<CancelMPGameClicked>
     > reactions;
 
     NonHostMPLobby(my_context ctx);
     ~NonHostMPLobby();
 
+    boost::statechart::result react(const GameStart& msg);
     boost::statechart::result react(const CancelMPGameClicked& a);
 
     CLIENT_ACCESSOR

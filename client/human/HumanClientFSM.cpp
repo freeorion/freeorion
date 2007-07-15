@@ -208,27 +208,6 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const GameStart& msg)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.GameStart";
-    SaveGameUIData ui_data;
-    bool loaded_game_data;
-    bool ui_data_available;
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().Orders(), ui_data, loaded_game_data, ui_data_available);
-    Client().StartGame();
-    if (loaded_game_data) {
-        if (ui_data_available)
-            Client().m_ui->RestoreFromSaveData(ui_data);
-        Client().Orders().ApplyOrders();
-    }
-    if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
-        Client().Autosave(true);
-    context<HumanClientFSM>().m_next_waiting_for_data_mode =
-        context<MPLobby>().m_lobby_wnd->LoadGameSelected() ?
-        WAITING_FOR_LOADED_GAME : WAITING_FOR_NEW_GAME;
-    return transit<PlayingGame>();
-}
-
 
 ////////////////////////////////////////////////////////////
 // HostMPLobby
@@ -284,6 +263,16 @@ NonHostMPLobby::NonHostMPLobby(my_context ctx) :
 
 NonHostMPLobby::~NonHostMPLobby()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~NonHostMPLobby"; }
+
+boost::statechart::result NonHostMPLobby::react(const GameStart& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby.GameStart";
+    post_event(msg);
+    context<HumanClientFSM>().m_next_waiting_for_data_mode =
+        context<MPLobby>().m_lobby_wnd->LoadGameSelected() ?
+        WAITING_FOR_LOADED_GAME : WAITING_FOR_NEW_GAME;
+    return transit<PlayingGame>();
+}
 
 boost::statechart::result NonHostMPLobby::react(const CancelMPGameClicked& a)
 {
