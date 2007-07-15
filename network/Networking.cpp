@@ -6,6 +6,6 @@ namespace Networking {
     const std::string DISCOVERY_ANSWER = "Word!";
     const int DISCOVERY_PORT = 12345;
     const int MESSAGE_PORT = 12346;
-    const int SOCKET_LINGER_TIME = 5;
+    const int SOCKET_LINGER_TIME = 1 << (sizeof(unsigned short) * 8 - 1);
     const int HOST_PLAYER_ID = 0;
 }

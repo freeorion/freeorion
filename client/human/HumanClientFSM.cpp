@@ -261,7 +261,7 @@ boost::statechart::result HostMPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby.CancelMPGameClicked";
     Client().Networking().SendMessage(LobbyHostAbortMessage(Client().PlayerID()));
-    // TODO: Add a delay here so the message can propagate?
+    SDL_Delay(1000); // HACK! Add a delay here so the message can propagate
     Client().Networking().DisconnectFromServer();
     Client().KillServer();
     return transit<IntroMenu>();
@@ -289,7 +289,7 @@ boost::statechart::result NonHostMPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby.CancelMPGameClicked";
     Client().Networking().SendMessage(LobbyExitMessage(Client().PlayerID()));
-    // TODO: Add a delay here so the message can propagate?
+    SDL_Delay(1000); // HACK! Add a delay here so the message can propagate
     HumanClientApp::GetApp()->Networking().DisconnectFromServer();
     return transit<IntroMenu>();
 }

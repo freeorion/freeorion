@@ -282,6 +282,7 @@ void ServerNetworking::Disconnect(int id)
 void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
 { DisconnectImpl(player_connection); }
 
+// TODO: Are these iterators invalidated in this loop?  Why does this work?
 void ServerNetworking::DisconnectAll()
 { std::for_each(m_player_connections.begin(), m_player_connections.end(), boost::bind(&ServerNetworking::DisconnectImpl, this, _1)); }
 

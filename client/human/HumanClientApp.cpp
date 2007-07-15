@@ -533,7 +533,11 @@ void HumanClientApp::HandleSystemEvents()
     // now check for a single network message
     if (m_connected && !Networking().Connected()) {
         m_connected = false;
-        m_fsm->process_event(Disconnection());
+        // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
+        // Disconnection inherently precipitates a transition out of any state A that handles it, and if another event
+        // that also causes a transition out of S is currently active (e.g. MPLobby), a double-destruction of S will
+        // occur.
+        m_fsm->post_event(Disconnection());
     } else if (Networking().MessageAvailable()) {
         Message msg;
         Networking().GetMessage(msg);
