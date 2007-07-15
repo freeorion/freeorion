@@ -3,6 +3,8 @@
 #include "Networking.h"
 #include "../util/AppInterface.h"
 
+#include <SDL/SDL_timer.h>
+
 #include <boost/bind.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
@@ -12,7 +14,7 @@ using boost::asio::ip::udp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 }
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams on the local network and sends out
@@ -72,6 +74,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
     m_socket(io_service),
     m_ID(INVALID_PLAYER_ID),
     m_host(false),
+    m_new_connection(true),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
@@ -143,12 +146,22 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error, st
 void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred)
 {
     if (error) {
-        if (error == boost::asio::error::eof ||
-            error == boost::asio::error::connection_reset)
-            m_disconnected_callback(shared_from_this());
-        else
-            Logger().errorStream() << "PlayerConnection::HandleMessageHeaderRead(): error \"" << error << "\"";
+        // HACK! This entire m_new_connection case should not be needed as far as I can see.  It is here because without
+        // it, there are intermittent problems, like the server gets a disconnect event for each connection, just after
+        // the connection.  I cannot figure out whay this is so, but putting a pause in place seems to at least mask the
+        // problem.  For now, this is sufficient, since rapid connects and disconnects are not a priority.
+        if (m_new_connection) {
+            // wait half a second if the first data read is an error; we probably just need more setup time
+            SDL_Delay(500);
+        } else {
+            if (error == boost::asio::error::eof ||
+                error == boost::asio::error::connection_reset)
+                m_disconnected_callback(shared_from_this());
+            else
+                Logger().errorStream() << "PlayerConnection::HandleMessageHeaderRead(): error \"" << error << "\"";
+        }
     } else {
+        m_new_connection = false;
         assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
         if (static_cast<int>(bytes_transferred) == HEADER_SIZE) {
             BufferToHeader(m_incoming_header_buffer.c_array(), m_incoming_message);

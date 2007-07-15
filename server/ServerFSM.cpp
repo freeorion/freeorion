@@ -187,26 +187,28 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
     PlayerConnectionPtr& player_connection = d.m_player_connection;
 
     int id = player_connection->ID();
-    // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
-    if (player_connection->Host()) {
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
-            if (*it != player_connection)
-                (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
+    if (m_lobby_data->m_players.find(id) != m_lobby_data->m_players.end()) {
+        // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
+        if (player_connection->Host()) {
+            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+                if (*it != player_connection)
+                    (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->ID()));
+            }
+            Logger().debugStream() << "MPLobby.Disconnection : Host player disconnected; server terminating.";
+            server.Exit(1);
+        } else {
+            m_lobby_data->m_players.erase(id);
+            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+                if (*it != player_connection)
+                    (*it)->SendMessage(ServerLobbyExitMessage(id, (*it)->ID()));
+            }
         }
-        Logger().debugStream() << "MPLobby.Disconnection : Host player disconnected; server terminating.";
-        server.Exit(1);
-    } else {
-        m_lobby_data->m_players.erase(player_connection->ID());
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
-            if (*it != player_connection)
-                (*it)->SendMessage(ServerLobbyExitMessage(id, (*it)->ID()));
-        }
-    }
 
-    // independently of everything else, if there are no humans left, it's time to terminate
-    if (server.m_networking.empty() || server.m_ai_clients.size() == server.m_networking.NumPlayers()) {
-        Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
-        server.Exit(1);
+        // independently of everything else, if there are no humans left, it's time to terminate
+        if (server.m_networking.empty() || server.m_ai_clients.size() == server.m_networking.NumPlayers()) {
+            Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
+            server.Exit(1);
+        }
     }
 
     return discard_event();

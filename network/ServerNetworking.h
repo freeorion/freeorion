@@ -148,6 +148,7 @@ private:
     int                          m_ID;
     std::string                  m_player_name;
     bool                         m_host;
+    bool                         m_new_connection;
 
     boost::function<void (Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
     boost::function<void (Message&, PlayerConnectionPtr)> m_player_message_callback;
