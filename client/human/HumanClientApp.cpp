@@ -300,10 +300,7 @@ void HumanClientApp::LoadSinglePlayerGame()
     try {
         FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
         dlg.Run();
-        std::string filename;
         if (!dlg.Result().empty()) {
-            filename = *dlg.Result().begin();
-
             if (m_game_started)
                 EndGame();
 
@@ -326,7 +323,7 @@ void HumanClientApp::LoadSinglePlayerGame()
 
             SinglePlayerSetupData setup_data;
             setup_data.m_new_game = false;
-            setup_data.m_filename = filename;
+            setup_data.m_filename = *dlg.Result().begin();
             setup_data.m_host_player_name = SinglePlayerName();
             Networking().SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));

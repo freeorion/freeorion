@@ -3,7 +3,6 @@
 #include "HumanClientApp.h"
 #include "../../Empire/Empire.h"
 #include "../../network/Networking.h"
-#include "../../util/AppInterface.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../UI/CombatWnd.h"
 #include "../../UI/IntroScreen.h"
@@ -31,6 +30,11 @@ namespace {
         HumanClientFSM* m_fsm;
     };
 }
+
+////////////////////////////////////////////////////////////
+bool TraceHumanClientFSMExecution()
+{ return TRACE_EXECUTION; }
+
 
 ////////////////////////////////////////////////////////////
 // HumanClientFSM
@@ -152,15 +156,19 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg)
 ////////////////////////////////////////////////////////////
 // MPLobby
 ////////////////////////////////////////////////////////////
-MPLobby::MPLobby() :
-    Base(),
+MPLobby::MPLobby(my_context ctx) :
+    Base(ctx),
     m_lobby_wnd(0)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby";
+    context<IntroMenu>().m_intro_screen->Hide();
+}
 
 MPLobby::~MPLobby()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
     delete m_lobby_wnd;
+    context<IntroMenu>().m_intro_screen->Show();
 }
 
 boost::statechart::result MPLobby::react(const Disconnection& d)
@@ -175,7 +183,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.LobbyUpdate";
     MultiplayerLobbyData lobby_data;
     ExtractMessageData(msg.m_message, lobby_data);
-    m_lobby_wnd-> LobbyUpdate(lobby_data);
+    m_lobby_wnd->LobbyUpdate(lobby_data);
     return discard_event();
 }
 
@@ -223,26 +231,16 @@ boost::statechart::result MPLobby::react(const GameStart& msg)
 
 
 ////////////////////////////////////////////////////////////
-// MPLobbyIdle
-////////////////////////////////////////////////////////////
-MPLobbyIdle::MPLobbyIdle() :
-    Base()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobbyIdle"; }
-
-MPLobbyIdle::~MPLobbyIdle()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobbyIdle"; }
-
-
-////////////////////////////////////////////////////////////
 // HostMPLobby
 ////////////////////////////////////////////////////////////
 HostMPLobby::HostMPLobby(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby";
-    context<MPLobby>().m_lobby_wnd = new MultiplayerLobbyWnd(true,
-                                                             MPLobbyStartGameForwarder(context<HumanClientFSM>()),
-                                                             MPLobbyCancelForwarder(context<HumanClientFSM>()));
+    context<MPLobby>().m_lobby_wnd =
+        new MultiplayerLobbyWnd(true,
+                                MPLobbyStartGameForwarder(context<HumanClientFSM>()),
+                                MPLobbyCancelForwarder(context<HumanClientFSM>()));
     Client().Register(context<MPLobby>().m_lobby_wnd);
 }
 
@@ -277,9 +275,10 @@ NonHostMPLobby::NonHostMPLobby(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby";
-    context<MPLobby>().m_lobby_wnd = new MultiplayerLobbyWnd(false,
-                                                             MPLobbyStartGameForwarder(context<HumanClientFSM>()),
-                                                             MPLobbyCancelForwarder(context<HumanClientFSM>()));
+    context<MPLobby>().m_lobby_wnd =
+        new MultiplayerLobbyWnd(false,
+                                MPLobbyStartGameForwarder(context<HumanClientFSM>()),
+                                MPLobbyCancelForwarder(context<HumanClientFSM>()));
     Client().Register(context<MPLobby>().m_lobby_wnd);
 }
 
@@ -441,17 +440,6 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
         Client().Autosave(true);
     return transit<PlayingTurn>();
 }
-
-
-////////////////////////////////////////////////////////////
-// WaitingForTurnDataIdle
-////////////////////////////////////////////////////////////
-WaitingForTurnDataIdle::WaitingForTurnDataIdle() :
-    Base()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnDataIdle"; }
-
-WaitingForTurnDataIdle::~WaitingForTurnDataIdle()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnDataIdle"; }
 
 
 ////////////////////////////////////////////////////////////

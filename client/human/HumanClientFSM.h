@@ -3,6 +3,7 @@
 #define _HumanClientFSM_h_
 
 #include "../ClientFSMEvents.h"
+#include "../../util/AppInterface.h"
 
 #include <boost/mpl/list.hpp>
 #include <boost/shared_ptr.hpp>
@@ -22,6 +23,9 @@ enum WaitingForDataMode {
     WAITING_FOR_LOADED_GAME,
     WAITING_FOR_NEW_TURN
 };
+
+// This function returns true iff the FSM's state instrumentation should be output to the logger's debug stream.
+bool TraceHumanClientFSMExecution();
 
 // Human client-specific events not already defined in ClientFSMEvents.h
 
@@ -63,11 +67,14 @@ struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
 
 // Top-level human client states
 struct IntroMenu;
-struct MPLobby;
 struct PlayingGame;
 struct WaitingForSPHostAck;
 struct WaitingForMPHostAck;
 struct WaitingForMPJoinAck;
+
+// Substates of IntroMenu
+struct IntroMenuIdle;
+struct MPLobby;
 
 // Substates of MPLobby
 struct MPLobbyIdle;
@@ -91,6 +98,21 @@ class MultiplayerLobbyWnd;
 
 #define CLIENT_ACCESSOR private: HumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
 
+// Note that empty idle states are needed for several states.  They are needed when a state has internal states (and so
+// because of the requirements of Boost.StateChart, must have an initial internal state), but the state does not
+// logically have an initial state that is always correct to use.  for instance, MPLobby must always be in one of its
+// internal substates HostMPLobby, or NonHostMPLobby, but it is inappropriate to make either of these be the "default"
+// (initial) internal state.  For this reason, a do-nothing internal state MPLobbyIdle is created instead.
+#define EMPTY_IDLE_STATE(name)                                          \
+    struct name##Idle : boost::statechart::simple_state<name##Idle, name> \
+    {                                                                   \
+        typedef boost::statechart::simple_state<name##Idle, name> Base; \
+        name##Idle() {if (TraceHumanClientFSMExecution()) Logger().debugStream() << "(HumanClientFSM) " #name "Idle"; } \
+        ~name##Idle() {if (TraceHumanClientFSMExecution()) Logger().debugStream() << "(HumanClientFSM) ~" #name "Idle";} \
+        CLIENT_ACCESSOR                                                 \
+    }
+
+
 /** The finite state machine that represents the human client's operation. */
 struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMenu>
 {
@@ -106,9 +128,9 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
 
 /** The human client's initial state. */
-struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM>
+struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle>
 {
-    typedef boost::statechart::state<IntroMenu, HumanClientFSM> Base;
+    typedef boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenuIdle> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<HostSPGameRequested>,
@@ -127,6 +149,10 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM>
 
     CLIENT_ACCESSOR
 };
+
+
+/** The IntroMenu's initial state. */
+EMPTY_IDLE_STATE(IntroMenu);
 
 
 /** The human client state in which the player has requested to host a single player game and is waiting for the server
@@ -187,9 +213,9 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
 
 
 /** The human client state in which the multiplayer lobby is active. */
-struct MPLobby : boost::statechart::simple_state<MPLobby, HumanClientFSM, MPLobbyIdle>
+struct MPLobby : boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle>
 {
-    typedef boost::statechart::simple_state<MPLobby, HumanClientFSM, MPLobbyIdle> Base;
+    typedef boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<Disconnection>,
@@ -200,7 +226,7 @@ struct MPLobby : boost::statechart::simple_state<MPLobby, HumanClientFSM, MPLobb
         boost::statechart::custom_reaction<GameStart>
     > reactions;
 
-    MPLobby();
+    MPLobby(my_context ctx);
     ~MPLobby();
 
     boost::statechart::result react(const Disconnection& d);
@@ -217,14 +243,7 @@ struct MPLobby : boost::statechart::simple_state<MPLobby, HumanClientFSM, MPLobb
 
 
 /** The initial substate of MPLobby. */
-struct MPLobbyIdle : boost::statechart::simple_state<MPLobbyIdle, MPLobby>
-{
-    typedef boost::statechart::simple_state<MPLobbyIdle, MPLobby> Base;
-    MPLobbyIdle();
-    ~MPLobbyIdle();
-
-    CLIENT_ACCESSOR
-};
+EMPTY_IDLE_STATE(MPLobby);
 
 
 /** The multiplayer lobby substate for host player mode. */
@@ -322,14 +341,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
 
 
 /** The initial substate of WaitingForTurnData. */
-struct WaitingForTurnDataIdle : boost::statechart::simple_state<WaitingForTurnDataIdle, WaitingForTurnData>
-{
-    typedef boost::statechart::simple_state<WaitingForTurnDataIdle, WaitingForTurnData> Base;
-    WaitingForTurnDataIdle();
-    ~WaitingForTurnDataIdle();
-
-    CLIENT_ACCESSOR
-};
+EMPTY_IDLE_STATE(WaitingForTurnData);
 
 
 /** The substate of PlayingGame in which the player is actively playing a turn. */
@@ -379,5 +391,6 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
 };
 
 #undef CLIENT_ACCESSOR
+#undef EMPTY_IDLE_STATE
 
 #endif

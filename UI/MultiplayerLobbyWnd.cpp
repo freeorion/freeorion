@@ -435,6 +435,4 @@ bool MultiplayerLobbyWnd::PlayerDataAcceptable() const
 }
 
 bool MultiplayerLobbyWnd::CanStart() const
-{
-    return PlayerDataAcceptable() && 1 < m_players_lb->NumRows();
-}
+{ return PlayerDataAcceptable() && 1 < m_players_lb->NumRows(); }
