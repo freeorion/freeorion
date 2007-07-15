@@ -213,7 +213,6 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     case Message::CLIENT_SAVE_DATA:      m_fsm.process_event(ClientSaveData(msg, player_connection)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
     case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
-    case Message::END_GAME:              m_fsm.process_event(EndGame(msg, player_connection)); break;
     default:
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \""
                                      << msg.Type() << "\".  Terminating connection.";
@@ -743,7 +742,10 @@ void ServerApp::ProcessTurns()
     // notify all players of the eliminated players
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-            (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), Empires().Lookup(it->second)->Name()));
+            if ((*player_it)->ID() == it->first)
+                (*player_it)->SendMessage(EndGameMessage((*player_it)->ID(), Message::YOU_ARE_DEFEATED));
+            else
+                (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), Empires().Lookup(it->second)->Name()));
         }
     }
 
@@ -761,7 +763,7 @@ void ServerApp::ProcessTurns()
     if (m_networking.NumPlayers() == 1) { // if there is only one player left, that player is the winner
         m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
         while (m_networking.NumPlayers() == 1) {
-            m_networking.SendMessage(VictoryMessage((*m_networking.established_begin())->ID()));
+            m_networking.SendMessage(EndGameMessage((*m_networking.established_begin())->ID(), Message::LAST_OPPONENT_DEFEATED));
             SDL_Delay(100); // TODO: It should be possible to eliminate this by using linger.
         }
         m_networking.DisconnectAll();

@@ -64,9 +64,6 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 // PlayerConnection
 ////////////////////////////////////////////////////////////////////////////////
-// static(s)
-const int PlayerConnection::INVALID_PLAYER_ID = -1;
-
 PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
                                    boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
                                    boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
@@ -251,7 +248,7 @@ int ServerNetworking::GreatestPlayerID() const
     // the predefined host id.
     PlayerConnections::const_iterator it = std::max_element(m_player_connections.begin(), m_player_connections.end(), PlayerIDLess());
     int retval = it == m_player_connections.end() ? HOST_PLAYER_ID : (*it)->ID();
-    if (retval == PlayerConnection::INVALID_PLAYER_ID)
+    if (retval == INVALID_PLAYER_ID)
         retval = HOST_PLAYER_ID;
     return retval;
 }

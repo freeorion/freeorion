@@ -88,11 +88,11 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
         std::string message = player_connection->PlayerName();
         for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
-                (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
-                (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
+                (*it)->SendMessage(EndGameMessage((*it)->ID(), Message::HOST_DISCONNECTED, player_connection->PlayerName()));
             }
         }
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Host player disconnected; server terminating.";
+        SDL_Delay(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         m_server.Exit(1);
     } else if (m_server.m_losers.find(id) == m_server.m_losers.end()) { // player abnormally disconnected during a regular game
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
@@ -100,9 +100,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
         std::string message = player_connection->PlayerName();
         for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->ID() != id) {
-                (*it)->SendMessage(PlayerDisconnectedMessage((*it)->ID(), message));
                 // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
-                (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
+                (*it)->SendMessage(EndGameMessage((*it)->ID(), Message::NONHOST_DISCONNECTED, player_connection->PlayerName()));
             }
         }
     }
@@ -110,6 +109,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.NumPlayers()) {
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
+        SDL_Delay(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         m_server.Exit(1);
     }
 }
@@ -671,25 +671,6 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if (target_player_names.empty() || target_player_names.find((*it)->PlayerName()) != target_player_names.end())
             (*it)->SendMessage(ChatMessage(message.SendingPlayer(), (*it)->ID(), final_text));
-    }
-
-    return discard_event();
-}
-
-boost::statechart::result WaitingForTurnEnd::react(const EndGame& msg)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.EndGame";
-    ServerApp& server = Server();
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
-
-    if (player_connection->Host()) {
-        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            if ((*it)->ID() != player_connection->ID())
-                (*it)->SendMessage(EndGameMessage(-1, (*it)->ID()));
-        }
-        Logger().debugStream() << "WaitingForTurnEnd.EndGame : Server terminating.";
-        server.m_networking.DisconnectAll();
-        server.Exit(0);
     }
 
     return discard_event();

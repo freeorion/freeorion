@@ -292,7 +292,6 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<PlayerEliminated>,
-        boost::statechart::custom_reaction<PlayerExit>,
         boost::statechart::custom_reaction<EndGame>,
         boost::statechart::custom_reaction<ResetToIntroMenu>
     > reactions;
@@ -302,7 +301,6 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
 
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const PlayerEliminated& msg);
-    boost::statechart::result react(const PlayerExit& msg);
     boost::statechart::result react(const EndGame& msg);
     boost::statechart::result react(const ResetToIntroMenu& msg);
 

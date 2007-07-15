@@ -45,7 +45,7 @@ public:
     void NewSinglePlayerGame();
     void MulitplayerGame();
     void SaveGame(const std::string& filename); ///< saves the current game; blocks until all save-related network traffic is resolved.
-    void EndGame();     ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
+    void EndGame(); ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
     void LoadSinglePlayerGame(); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void SetSaveFileName(const std::string& filename); ///< records the current game's filename
 
@@ -96,6 +96,7 @@ private:
     void HandleSaveGameDataRequest();
     void StartGame();
     void Autosave(bool new_game); ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
+    void EndGame(bool suppress_FSM_reset);
 
     HumanClientFSM*             m_fsm;
     Process                     m_server_process;     ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player

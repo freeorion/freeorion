@@ -58,7 +58,6 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
     GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_CHAT)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
-    GG_ENUM_MAP_INSERT(Message::PLAYER_EXIT)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
     GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
     GG_ENUM_MAP_INSERT(Message::END_GAME)
@@ -305,9 +304,15 @@ Message JoinAckMessage(int player_id)
     return Message(Message::JOIN_GAME, -1, player_id, "ACK");
 }
 
-Message EndGameMessage(int sender, int receiver)
+Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name/* = ""*/)
 {
-    return Message(Message::END_GAME, sender, receiver, "");
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(reason)
+           << BOOST_SERIALIZATION_NVP(reason_player_name);
+    }
+    return Message(Message::END_GAME, -1, receiver, os.str());
 }
 
 Message VictoryMessage(int receiver)
@@ -402,11 +407,6 @@ Message ChatMessage(int sender, const std::string& msg)
 Message ChatMessage(int sender, int receiver, const std::string& msg)
 {
     return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, msg);
-}
-
-Message PlayerDisconnectedMessage(int receiver, const std::string& player_name)
-{
-    return Message(Message::PLAYER_EXIT, -1, receiver, player_name);
 }
 
 Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
@@ -547,4 +547,12 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data)
     std::istringstream is(msg.Text());
     FREEORION_IARCHIVE_TYPE ia(is);
     ia >> BOOST_SERIALIZATION_NVP(setup_data);
+}
+
+void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name)
+{
+    std::istringstream is(msg.Text());
+    FREEORION_IARCHIVE_TYPE ia(is);
+    ia >> BOOST_SERIALIZATION_NVP(reason)
+       >> BOOST_SERIALIZATION_NVP(reason_player_name);
 }

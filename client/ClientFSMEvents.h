@@ -39,7 +39,6 @@ struct MessageEventBase
         (CombatEnd)                                \
         (PlayerChat)                               \
         (PlayerEliminated)                         \
-        (PlayerExit)                               \
         (EndGame)
 
 

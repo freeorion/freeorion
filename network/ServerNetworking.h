@@ -129,8 +129,6 @@ public:
                                              boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
                                              boost::function<void (PlayerConnectionPtr)> disconnected_callback);
 
-    static const int INVALID_PLAYER_ID;
-
 private:
     typedef boost::array<int, 5> MessageHeaderBuffer;
 

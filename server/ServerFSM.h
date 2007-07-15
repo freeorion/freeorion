@@ -59,7 +59,6 @@ struct MessageEventBase
         (SaveGameRequest)                       \
         (TurnOrders)                            \
         (ClientSaveData)                        \
-        (EndGame)                               \
         (RequestObjectID)                       \
         (PlayerChat)
 
@@ -244,8 +243,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
         boost::statechart::custom_reaction<HostSPGame>,
         boost::statechart::custom_reaction<TurnOrders>,
         boost::statechart::custom_reaction<RequestObjectID>,
-        boost::statechart::custom_reaction<PlayerChat>,
-        boost::statechart::custom_reaction<EndGame>
+        boost::statechart::custom_reaction<PlayerChat>
     > reactions;
 
     WaitingForTurnEnd();
@@ -255,7 +253,6 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     boost::statechart::result react(const TurnOrders& msg);
     boost::statechart::result react(const RequestObjectID& msg);
     boost::statechart::result react(const PlayerChat& msg);
-    boost::statechart::result react(const EndGame& msg);
 
     std::string m_save_filename;
 
@@ -292,8 +289,7 @@ struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, Waiting
         boost::statechart::deferral<SaveGameRequest>,
         boost::statechart::deferral<HostSPGame>,
         boost::statechart::deferral<TurnOrders>,
-        boost::statechart::deferral<PlayerChat>,
-        boost::statechart::deferral<EndGame>
+        boost::statechart::deferral<PlayerChat>
     > reactions;
 
     WaitingForSaveData(my_context c);

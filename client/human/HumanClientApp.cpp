@@ -281,16 +281,7 @@ void HumanClientApp::SaveGame(const std::string& filename)
 }
 
 void HumanClientApp::EndGame()
-{
-    m_fsm->process_event(ResetToIntroMenu());
-    m_game_started = false;
-    Networking().DisconnectFromServer();
-    m_server_process.RequestTermination();
-    SetPlayerID(-1);
-    SetEmpireID(-1);
-    SetPlayerName("");
-    m_ui->GetMapWnd()->Sanitize();
-}
+{ EndGame(false); }
 
 void HumanClientApp::LoadSinglePlayerGame()
 {
@@ -592,7 +583,6 @@ void HumanClientApp::HandleMessage(Message& msg)
     case Message::COMBAT_END:            m_fsm->process_event(CombatEnd(msg)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm->process_event(PlayerChat(msg)); break;
     case Message::PLAYER_ELIMINATED:     m_fsm->process_event(PlayerEliminated(msg)); break;
-    case Message::PLAYER_EXIT:           m_fsm->process_event(PlayerExit(msg)); break;
     case Message::END_GAME:              m_fsm->process_event(::EndGame(msg)); break;
     default:
         Logger().errorStream() << "HumanClientApp::HandleMessage : Received an unknown message type \""
@@ -680,6 +670,19 @@ void HumanClientApp::Autosave(bool new_game)
 
         SaveGame((save_dir / save_filename).native_file_string());
     }
+}
+
+void HumanClientApp::EndGame(bool suppress_FSM_reset)
+{
+    if (!suppress_FSM_reset)
+        m_fsm->process_event(ResetToIntroMenu());
+    m_game_started = false;
+    Networking().DisconnectFromServer();
+    m_server_process.RequestTermination();
+    SetPlayerID(-1);
+    SetEmpireID(-1);
+    SetPlayerName("");
+    m_ui->GetMapWnd()->Sanitize();
 }
 
 /* Default sound implementation, do nothing */
