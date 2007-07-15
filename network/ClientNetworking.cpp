@@ -167,7 +167,7 @@ bool ClientNetworking::ConnectToLocalHostServer(boost::posix_time::seconds timeo
 void ClientNetworking::DisconnectFromServer()
 {
     m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-    SDL_Delay(1000); // wait a bit for the disconnect to occur
+    SDL_Delay(1000); // HACK! wait a bit for the disconnect to occur
 }
 
 void ClientNetworking::SendMessage(const Message& message)

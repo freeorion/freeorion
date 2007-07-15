@@ -99,10 +99,7 @@ void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
 void PlayerConnection::SendMessage(const Message& message)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "PlayerConnection(@ " << this << ")::SendMessage(): sending message " << MessageTypeStr(message.Type()) << " " << message.SendingPlayer() << " --> " << message.ReceivingPlayer();
-    WriteMessage(m_socket, message);
-}
+{ WriteMessage(m_socket, message); }
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, bool host)
 {

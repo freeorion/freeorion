@@ -215,15 +215,6 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     AttachChild(m_start_game_bn);
     AttachChild(m_cancel_bn);
 
-    if (m_host) {
-        Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);
-        Connect(m_galaxy_setup_panel->SettingsChangedSignal, &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
-        Connect(m_saved_games_list->SelChangedSignal, &MultiplayerLobbyWnd::SaveGameChanged, this);
-        GG::Connect(m_start_game_bn->ClickedSignal, start_game_callback);
-    }
-    Connect(m_galaxy_setup_panel->ImageChangedSignal, &MultiplayerLobbyWnd::PreviewImageChanged, this);
-    GG::Connect(m_cancel_bn->ClickedSignal, cancel_callback);
-
     // default settings (new game)
     m_new_load_game_buttons->SetCheck(0);
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
@@ -235,6 +226,15 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
         m_galaxy_setup_panel->Disable();
         m_saved_games_list->Disable();
     }
+
+    if (m_host) {
+        Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);
+        Connect(m_galaxy_setup_panel->SettingsChangedSignal, &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
+        Connect(m_saved_games_list->SelChangedSignal, &MultiplayerLobbyWnd::SaveGameChanged, this);
+        GG::Connect(m_start_game_bn->ClickedSignal, start_game_callback);
+    }
+    Connect(m_galaxy_setup_panel->ImageChangedSignal, &MultiplayerLobbyWnd::PreviewImageChanged, this);
+    GG::Connect(m_cancel_bn->ClickedSignal, cancel_callback);
 }
 
 bool MultiplayerLobbyWnd::LoadGameSelected() const
