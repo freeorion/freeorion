@@ -16,6 +16,8 @@ class Meter
 public:
     Meter(); ///< default ctor.
     Meter(double current, double max); ///< basic ctor
+    Meter(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max); ///< basic ctor
+
 
     double    Current() const; ///< returns the current value of the meter, which will be in [METER_MIN, Max()]
     double    Max() const;     ///< returns the maximum value of the meter, which will be in [METER_MIN, METER_MAX]

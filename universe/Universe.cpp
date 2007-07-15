@@ -589,6 +589,8 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             // discrepancy is the difference between expected and actual meter values at start of turn
             double discrepancy = meter->InitialMax() - meter->Max();
 
+            Logger().debugStream() << "object " << object_id << " has meter " << type << " initial max: " << meter->InitialMax() << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+
             // add to discrepancy map
             m_effect_discrepancy_map[object_id][type] = discrepancy;
 
@@ -625,7 +627,7 @@ void Universe::UpdateMeterEstimates()
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
             Meter* meter = obj->GetMeter(type);
             if (meter) {
-                Logger().debugStream() << "object " << object_id << " has meter " << type << " with starting max: " << meter->Max();
+                Logger().debugStream() << "object " << object_id << " has meter " << type << " with table-only max: " << meter->Max();
 
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
@@ -667,6 +669,8 @@ void Universe::UpdateMeterEstimates()
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
+                    Logger().debugStream() << "object " << object_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+
                     meter->AdjustMax(discrepancy);
 
                     EffectAccountingInfo info;
@@ -1908,7 +1912,28 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
+    // Apply non-effect meter adjustments
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ResetMaxMeters();   // zero all meters
+        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
+    }
+
+    // Apply effects for 1st turn
     ApplyEffects();
+
+    // update initial and previous meter values
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ClampMeters();  // limit current meters by max meters
+        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
+            if (Meter* meter = it->second->GetMeter(i)) {
+                meter->m_previous_current = meter->m_current;
+                meter->m_previous_max = meter->m_max;
+                meter->m_initial_current = meter->m_current;
+                meter->m_initial_max = meter->m_max;
+            }
+        }
+    }
+
 #else
         throw std::runtime_error("Non-server called Universe::CreateUniverse; only server should call this while creating the universe");
 #endif
