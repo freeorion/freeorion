@@ -745,13 +745,15 @@ void ResourcePanel::Update()
         meter_it = meter_map->find(METER_INDUSTRY);
         if (meter_it != meter_map->end()) {
             const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
-            text = "";
+            const Meter* meter = obj->GetMeter(meter_it->first);  // METER_INDUSTRY in this case
+            text = "Meter Max: " + lexical_cast<std::string>(meter->Max()) + "\n\nEffects:";
             for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-                if (info_it != info_vec.begin()) text += "\n";
-                text += "change: " + lexical_cast<std::string>(info_it->meter_change)
-                     +  " total: " + lexical_cast<std::string>(info_it->running_meter_total)
-                     + " source: " + lexical_cast<std::string>(info_it->source_id)
-                     +   " type: " + lexical_cast<std::string>(info_it->cause_type);
+                const UniverseObject* source = universe.Object(info_it->source_id);
+
+                text += "\n"       + lexical_cast<std::string>(info_it->meter_change)
+                     + " type: "   + lexical_cast<std::string>(info_it->cause_type);
+                if (source)
+                    text += " source: " + source->Name();
             }
             m_industry_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
             m_industry_meter_bar->SetBrowseText(text);
@@ -934,12 +936,12 @@ MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
 
 void MeterStatusBar2::SetProjectedCurrent(double current)
 {
-    //assert(Meter::METER_MIN <= current && current <= Meter::METER_MAX);
+    assert(Meter::METER_MIN <= current && current <= Meter::METER_MAX);
     m_projected_current = current;
 }
 void MeterStatusBar2::SetProjectedMax(double max)
 {
-    //assert(Meter::METER_MIN <= max && max <= Meter::METER_MAX);
+    assert(Meter::METER_MIN <= max && max <= Meter::METER_MAX);
     m_projected_max = max;
 }
 

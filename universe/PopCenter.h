@@ -101,7 +101,6 @@ void PopCenter::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_growth)
         & BOOST_SERIALIZATION_NVP(m_race)
         & BOOST_SERIALIZATION_NVP(m_available_food);
-    Logger().debugStream() << "PopCenter::serialize: m_pop.InitialMax(): " << m_pop.InitialMax();
 }
 
 #endif // _PopCenter_h_

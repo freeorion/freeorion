@@ -104,9 +104,6 @@ double PopCenter::AdjustPop(double pop)
 
 double PopCenter::FuturePopGrowth() const
 {
-    Logger().debugStream() << "PopCenter::FuturePopGrowth(): id: " << dynamic_cast<const UniverseObject* const>(this)->ID();
-    Logger().debugStream() << "FuturePopGrowthMax(): " << FuturePopGrowthMax();
-    Logger().debugStream() << "std::min(AvailableFood(), m_pop.Max()) - m_pop.Current(): " << std::min(AvailableFood(), m_pop.Max()) - m_pop.Current();
     return std::max(-m_pop.Current(), std::min(FuturePopGrowthMax(), std::min(AvailableFood(), m_pop.Max()) - m_pop.Current()));
 }
 
@@ -114,16 +111,10 @@ double PopCenter::FuturePopGrowthMax() const
 {
     Logger().debugStream() << "PopCenter::FuturePopGrowthMax(): id: " << dynamic_cast<const UniverseObject* const>(this)->ID();
     if (20.0 < m_health.Current()) {
-        Logger().debugStream() << "health " << m_health.Current() <<" > 20";
-        Logger().debugStream() << "m_pop.Max(): " << m_pop.Max();
-        Logger().debugStream() << "m_pop.Current(): " << m_pop.Current();
         return std::min(m_pop.Max() - m_pop.Current(), m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01);
     } else if (m_health.Current() == 20.0) {
         return 0.0;
     } else { // m_health.Current() < 20.0
-        Logger().debugStream() << "health " << m_health.Current() << " < 20";
-        Logger().debugStream() << "m_pop.Max(): " << m_pop.Max();
-        Logger().debugStream() << "m_pop.Current(): " << m_pop.Current();
         return std::max(-m_pop.Current(), -m_pop.Current()*(  exp( (m_health.Current()-20)*(m_health.Current()-20) / (400/log(2.0)) ) - 1  ));
     }
 }
