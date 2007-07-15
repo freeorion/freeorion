@@ -1121,7 +1121,7 @@ Tech
     researchturns = 10
     prerequisites = "PRO_SINGULAR_GEN"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
-    graphic = "icons/tech/Artificial_black_hole.png"
+    graphic = "icons/tech/artificial_black_hole.png"
 
 Tech
     name = "PRO_MINING_ENGINEERING"
