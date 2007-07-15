@@ -218,6 +218,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     // default settings (new game)
     m_new_load_game_buttons->SetCheck(0);
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
+    m_saved_games_list->Disable();
 
     if (!m_host) {
         for (int i = 0; i < m_new_load_game_buttons->NumButtons(); ++i) {

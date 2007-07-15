@@ -56,16 +56,18 @@ namespace {
 
                     m_socket.send_to(boost::asio::buffer(DISCOVERY_QUESTION), receiver_endpoint);
 
-                    udp::endpoint sender_endpoint;
-                    m_socket.async_receive_from(boost::asio::buffer(m_recv_buf), sender_endpoint,
+                    m_socket.async_receive_from(boost::asio::buffer(m_recv_buf), m_sender_endpoint,
                                                 boost::bind(&ServerDiscoverer::HandleReceive, this,
                                                             boost::asio::placeholders::error,
                                                             boost::asio::placeholders::bytes_transferred));
-                    m_timer.expires_from_now(boost::posix_time::seconds(3));
+                    m_timer.expires_from_now(boost::posix_time::seconds(2));
                     m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                     m_io_service->run();
+                    m_io_service->reset();
                     if (m_receive_successful) {
-                        boost::asio::ip::address address = m_server_name == "localhost" ? boost::asio::ip::address::from_string("127.0.0.1") : sender_endpoint.address();
+                        boost::asio::ip::address address = m_server_name == "localhost" ?
+                            boost::asio::ip::address::from_string("127.0.0.1") :
+                            m_sender_endpoint.address();
                         m_servers.push_back(std::make_pair(address, m_server_name));
                     }
                     m_receive_successful = false;
@@ -76,27 +78,35 @@ namespace {
     private:
         void HandleReceive(const boost::system::error_code& error, std::size_t length)
             {
-                std::string buffer_string(m_recv_buf.begin(), m_recv_buf.begin() + length);
-                if ((!error || error == boost::asio::error::message_size) && boost::algorithm::starts_with(buffer_string, DISCOVERY_ANSWER)) {
-                    m_receive_successful = true;
-                    m_server_name = boost::algorithm::erase_first_copy(buffer_string, DISCOVERY_ANSWER);
-                    if (m_server_name == boost::asio::ip::host_name())
-                        m_server_name = "localhost";
-                    m_timer.cancel();
-                    m_socket.close();
+                if (error == boost::asio::error::message_size) {
+                    m_socket.async_receive_from(boost::asio::buffer(m_recv_buf), m_sender_endpoint,
+                                                boost::bind(&ServerDiscoverer::HandleReceive, this,
+                                                            boost::asio::placeholders::error,
+                                                            boost::asio::placeholders::bytes_transferred));
+                } else if (!error) {
+                    std::string buffer_string(m_recv_buf.begin(), m_recv_buf.begin() + length);
+                    if (boost::algorithm::starts_with(buffer_string, DISCOVERY_ANSWER)) {
+                        m_receive_successful = true;
+                        m_server_name = boost::algorithm::erase_first_copy(buffer_string, DISCOVERY_ANSWER);
+                        if (m_server_name == boost::asio::ip::host_name())
+                            m_server_name = "localhost";
+                        m_timer.cancel();
+                        m_socket.close();
+                    }
                 }
             }
 
         void CloseSocket()
             { m_socket.close(); }
 
-        boost::asio::io_service*     m_io_service;
-        boost::asio::deadline_timer  m_timer;
-        boost::asio::ip::udp::socket m_socket;
-        boost::array<char, 1024>     m_recv_buf;
-        bool                         m_receive_successful;
-        std::string                  m_server_name;
-        ServerList                   m_servers;
+        boost::asio::io_service*       m_io_service;
+        boost::asio::deadline_timer    m_timer;
+        boost::asio::ip::udp::socket   m_socket;
+        boost::array<char, 1024>       m_recv_buf;
+        boost::asio::ip::udp::endpoint m_sender_endpoint;
+        bool                           m_receive_successful;
+        std::string                    m_server_name;
+        ServerList                     m_servers;
     };
 }
 
