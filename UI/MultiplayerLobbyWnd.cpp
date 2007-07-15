@@ -273,17 +273,18 @@ void MultiplayerLobbyWnd::ChatMessage(int player_id, const std::string& msg)
 void MultiplayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
 {
     m_handling_lobby_update = true;
-    m_lobby_data = lobby_data;
 
-    m_new_load_game_buttons->SetCheck(!m_lobby_data.m_new_game);
-    m_galaxy_setup_panel->SetFromSetupData(m_lobby_data);
+    m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
+    m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
     m_saved_games_list->Clear();
-    for (unsigned int i = 0; i < m_lobby_data.m_save_games.size(); ++i) {
-        m_saved_games_list->Insert(new CUISimpleDropDownListRow(m_lobby_data.m_save_games[i]));
-        if (static_cast<int>(i) == m_lobby_data.m_save_file_index)
-            m_saved_games_list->Select(m_lobby_data.m_save_file_index);
+    for (unsigned int i = 0; i < lobby_data.m_save_games.size(); ++i) {
+        m_saved_games_list->Insert(new CUISimpleDropDownListRow(lobby_data.m_save_games[i]));
+        if (static_cast<int>(i) == lobby_data.m_save_file_index)
+            m_saved_games_list->Select(lobby_data.m_save_file_index);
     }
+
+    m_lobby_data = lobby_data;
 
     bool send_update_back = PopulatePlayerList();
 
@@ -336,6 +337,8 @@ void MultiplayerLobbyWnd::GalaxySetupPanelChanged()
 void MultiplayerLobbyWnd::SaveGameChanged(int idx)
 {
     m_lobby_data.m_save_file_index = idx;
+    m_lobby_data.m_save_game_empire_data.clear();
+    PopulatePlayerList();
     SendUpdate();
 }
 
@@ -377,11 +380,12 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiplayerLobbyWnd::PlayerDataChanged, this);
         } else {
+            bool disable = !m_host && id != HumanClientApp::GetApp()->PlayerID() ||
+                m_lobby_data.m_save_game_empire_data.empty();
             LoadGamePlayerRow* row =
                 new LoadGamePlayerRow(m_lobby_data.m_players[id],
                                       m_lobby_data.m_save_game_empire_data,
-                                      m_host,
-                                      !m_host && id != HumanClientApp::GetApp()->PlayerID());
+                                      m_host, disable);
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiplayerLobbyWnd::PlayerDataChanged, this);
             if (row->m_player_data.m_save_game_empire_id != m_lobby_data.m_players[id].m_save_game_empire_id) {
