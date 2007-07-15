@@ -266,6 +266,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     }
 
     assert(m_networking.NumPlayers() == player_save_game_data.size());
+    assert(unused_save_game_data.size() == player_save_game_data.size() - 1);
 
     std::map<Empire*, const PlayerSaveGameData*> player_data_by_empire;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
@@ -308,48 +309,43 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
 
     m_turn_sequence.clear();
 
-#if 1
-#else
-    std::map<int, PlayerSaveGameData> player_data_by_empire;
-    for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
-        assert(player_save_game_data[i].m_empire);
-        player_data_by_empire[player_save_game_data[i].m_empire->EmpireID()] = player_save_game_data[i];
-    }
-
-    if (m_single_player_game) {
-        while (lobby_data->m_players.size() < m_networking.size()) {
-            lobby_data->m_players.push_back(PlayerSetupData());
-        }
-    }
-
-    std::map<int, int> player_to_empire_ids;
-    std::set<int> already_chosen_empire_ids;
-    unsigned int i = 0;
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it, ++i) {
-        player_to_empire_ids[(*it)->ID()] = lobby_data->m_players[i].m_save_game_empire_id;
-        already_chosen_empire_ids.insert(lobby_data->m_players[i].m_save_game_empire_id);
-    }
-
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        const int INVALID_EMPIRE_ID = -5000;
-        int empire_id = INVALID_EMPIRE_ID;
-        if (player_to_empire_ids[(*it)->ID()] != -1) {
-            empire_id = player_to_empire_ids[(*it)->ID()];
-        } else {
-            for (std::map<int, PlayerSaveGameData>::iterator player_data_it = player_data_by_empire.begin(); player_data_it != player_data_by_empire.end(); ++player_data_it) {
-                if (already_chosen_empire_ids.find(player_data_it->first) == already_chosen_empire_ids.end()) {
-                    empire_id = player_data_it->first;
-                    already_chosen_empire_ids.insert(empire_id);
-                    player_to_empire_ids[(*it)->ID()] = empire_id;
-                    // since this must be an AI player, it does not have the correct player name set in its Empire yet, so we need to do so now
-                    player_data_it->second.m_empire->SetPlayerName((*it)->PlayerName());
-                    Empires().InsertEmpire(player_data_it->second.m_empire);
-                    break;
-                }
+    std::set<int> used_save_game_data;
+    std::map<int, int> player_id_to_save_game_data_index;
+    for (std::map<int, PlayerSetupData>::const_iterator it = lobby_data->m_players.begin(); it != lobby_data->m_players.end(); ++it) {
+        int save_game_empire_id = it->second.m_save_game_empire_id;
+        for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
+            assert(player_save_game_data[i].m_empire);
+            if (player_save_game_data[i].m_empire->EmpireID() == save_game_empire_id) {
+                player_id_to_save_game_data_index[it->first] = i;
+                used_save_game_data.insert(i);
             }
         }
-        assert(empire_id != INVALID_EMPIRE_ID);
-        m_turn_sequence[empire_id] = 0;
+    }
+
+    std::set<int> unused_save_game_data;
+    for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
+        if (used_save_game_data.find(i) == used_save_game_data.end())
+            unused_save_game_data.insert(i);
+    }
+
+    assert(m_networking.NumPlayers() == player_save_game_data.size());
+    assert(player_id_to_save_game_data_index.size() + unused_save_game_data.size() == player_save_game_data.size());
+
+    std::map<Empire*, const PlayerSaveGameData*> player_data_by_empire;
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        int save_game_data_index = -1;
+        std::map<int, int>::const_iterator id_to_index_it = player_id_to_save_game_data_index.find((*it)->ID());
+        if (id_to_index_it == player_id_to_save_game_data_index.end()) {
+            save_game_data_index = *unused_save_game_data.begin();
+            unused_save_game_data.erase(save_game_data_index);
+        } else {
+            save_game_data_index = id_to_index_it->second;
+        }
+        const PlayerSaveGameData& save_game_data = player_save_game_data[save_game_data_index];
+        save_game_data.m_empire->SetPlayerName((*it)->PlayerName());
+        Empires().InsertEmpire(save_game_data.m_empire);
+        AddEmpireTurn(save_game_data.m_empire->EmpireID());
+        player_data_by_empire[save_game_data.m_empire] = &save_game_data;
     }
 
     // This is a bit odd, but since Empires() is built from the data stored in player_save_game_data, and the universe
@@ -358,11 +354,10 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
     m_universe.RebuildEmpireViewSystemGraphs();
 
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        int empire_id = player_to_empire_ids[(*it)->ID()];
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
-                                            *player_data_by_empire[empire_id].m_orders, player_data_by_empire[empire_id].m_ui_data.get()));
+        Empire* empire = GetPlayerEmpire((*it)->ID());
+        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
+                                            *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
     }
-#endif
 
     m_losers.clear();
 }
