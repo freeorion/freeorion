@@ -304,8 +304,10 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
                               m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
 
-    // TODO: here we add empires to turn sequence map -- according to spec this should be done randomly; for now, it's not
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+    std::vector<PlayerConnectionPtr> shuffled_players;
+    std::copy(m_networking.established_begin(), m_networking.established_end(), std::back_inserter(shuffled_players));
+    std::random_shuffle(shuffled_players.begin(), shuffled_players.end());
+    for (std::vector<PlayerConnectionPtr>::const_iterator it = shuffled_players.begin(); it != shuffled_players.end(); ++it) {
         AddEmpireTurn((*it)->ID());
     }
 
@@ -436,7 +438,6 @@ void ServerApp::ProcessTurns()
      
         // execute order set
         for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
-            // TODO: Consider adding exeption handling here 
             order_it->second->Execute();
         }
     }    
@@ -624,7 +625,7 @@ void ServerApp::ProcessTurns()
 
     // if a combat happened, give the human user a chance to look at the results
     if (combat_happend)
-        SDL_Delay(1500); // TODO: Put this delay client-side.
+        SDL_Delay(1500);
 
     // process production and growth phase
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
@@ -733,13 +734,11 @@ void ServerApp::ProcessTurns()
         m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
         while (m_networking.NumPlayers() == 1) {
             m_networking.SendMessage(EndGameMessage((*m_networking.established_begin())->ID(), Message::LAST_OPPONENT_DEFEATED));
-            SDL_Delay(100); // TODO: It should be possible to eliminate this by using linger.
         }
-        m_networking.DisconnectAll();
+        SDL_Delay(2000);
         Exit(0);
     } else if (m_ai_IDs.size() == m_networking.NumPlayers()) { // if there are none but AI players left, we're done
         m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
-        m_networking.DisconnectAll();
         Exit(0);
     }
 }

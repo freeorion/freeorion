@@ -14,7 +14,7 @@
 
 
 namespace {
-    const bool TRACE_EXECUTION = true;
+    const bool TRACE_EXECUTION = false;
 
     void RebuildSaveGameEmpireData(std::map<int, SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
     {
@@ -353,26 +353,6 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
             LoadGame((GetLocalDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).native_file_string(),
                      server.m_current_turn, m_player_save_game_data, GetUniverse());
             int expected_players = m_player_save_game_data.size();
-#if 0
-            for (unsigned int i = 0; i < m_player_save_game_data.size(); ++i) {
-                for (unsigned int j = 0; j < m_lobby_data->m_players.size(); ++j) {
-                    assert(m_player_save_game_data[i].m_empire);
-                    if (m_lobby_data->m_players[j].m_save_game_empire_id == m_player_save_game_data[i].m_empire->EmpireID()) {
-                        ServerNetworking::const_established_iterator player_it = server.m_networking.GetPlayer(m_lobby_data->m_players[j].m_player_id);
-                        assert(player_it != server.m_networking.established_end());
-                        m_player_save_game_data[i].m_name = (*player_it)->PlayerName();
-                        m_player_save_game_data[i].m_empire->SetPlayerName((*player_it)->PlayerName());
-                    }
-                }
-                // TODO: Is it right to do this here?
-                Empires().InsertEmpire(m_player_save_game_data[i].m_empire);
-            }
-
-            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-                if ((*it)->ID() != player_connection->ID())
-                    (*it)->SendMessage(Message(Message::GAME_START, -1, (*it)->ID(), Message::CLIENT_LOBBY_MODULE, ""));
-            }
-#endif
             int needed_AI_clients = expected_players - server.m_networking.NumPlayers();
             if (!needed_AI_clients) {
                 server.LoadGameInit(m_lobby_data, m_player_save_game_data);
@@ -667,7 +647,7 @@ boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
     }
     Empire* sender_empire = server.GetPlayerEmpire(message.SendingPlayer());
     std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + (*server.m_networking.GetPlayer(message.SendingPlayer()))->PlayerName() +
-        (target_player_names.empty() ? ": " : " (whisper):") + text + "</rgba>\n"; // TODO: "whisper" should be a translated string
+        (target_player_names.empty() ? ": " : " (" + UserString("CHAT_WHISPER") + "):") + text + "</rgba>\n";
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         if (target_player_names.empty() || target_player_names.find((*it)->PlayerName()) != target_player_names.end())
             (*it)->SendMessage(ChatMessage(message.SendingPlayer(), (*it)->ID(), final_text));

@@ -14,7 +14,7 @@ using boost::asio::ip::udp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = true;
+    const bool TRACE_EXECUTION = false;
 }
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams on the local network and sends out

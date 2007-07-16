@@ -99,6 +99,9 @@ Defense Base
 DEFENSE_BASE_DESCRIPTION
 An orbital defense platform that aids in the defense of the planet at which it is located.\n\nAttack: 1\nDefense: 3
 
+CHAT_WHISPER
+whisper
+
 
 ######################################
 # Command Line and OptionsDB Options #
