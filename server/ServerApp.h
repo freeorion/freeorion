@@ -98,6 +98,9 @@ private:
 
     void NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
                      const std::map<int, PlayerSetupData>& player_setup_data);
+    void LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
+                      const std::map<int, int>& player_id_to_save_game_data_index,
+                      std::set<int>& unused_save_game_data);
 
     void Run();             ///< initializes app state, then executes main event handler/render loop (Poll())
     void CleanupAIs();      ///< cleans up AI processes

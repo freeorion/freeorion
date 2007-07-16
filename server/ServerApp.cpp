@@ -251,51 +251,18 @@ void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
 
 void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data)
 {
-    m_turn_sequence.clear();
-
     std::set<int> unused_save_game_data;
-    int index_of_human_player = 0;
+    std::map<int, int> player_id_to_save_game_data_index;
     for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
         assert(player_save_game_data[i].m_empire);
         // This works because the empire ID is always the same as the player ID in single player games, at least for the
         // host (human) player.
         if (player_save_game_data[i].m_empire->EmpireID() == Networking::HOST_PLAYER_ID)
-            index_of_human_player = i;
+            player_id_to_save_game_data_index[Networking::HOST_PLAYER_ID] = i;
         else
             unused_save_game_data.insert(i);
     }
-
-    assert(m_networking.NumPlayers() == player_save_game_data.size());
-    assert(unused_save_game_data.size() == player_save_game_data.size() - 1);
-
-    std::map<Empire*, const PlayerSaveGameData*> player_data_by_empire;
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        int save_game_data_index = -1;
-        if ((*it)->ID() == Networking::HOST_PLAYER_ID) {
-            save_game_data_index = index_of_human_player;
-        } else {
-            save_game_data_index = *unused_save_game_data.begin();
-            unused_save_game_data.erase(save_game_data_index);
-        }
-        const PlayerSaveGameData& save_game_data = player_save_game_data[save_game_data_index];
-        save_game_data.m_empire->SetPlayerName((*it)->PlayerName());
-        Empires().InsertEmpire(save_game_data.m_empire);
-        AddEmpireTurn(save_game_data.m_empire->EmpireID());
-        player_data_by_empire[save_game_data.m_empire] = &save_game_data;
-    }
-
-    // This is a bit odd, but since Empires() is built from the data stored in m_player_save_game_data, and the universe
-    // is loaded long before that, the universe's empire-specific views of the systems is not properly initialized when
-    // the universe is loaded.  That means we must do it here.
-    m_universe.RebuildEmpireViewSystemGraphs();
-
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        Empire* empire = GetPlayerEmpire((*it)->ID());
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
-                                            *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
-    }
-
-    m_losers.clear();
+    LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, unused_save_game_data);
 }
 
 void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
@@ -305,10 +272,6 @@ void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
 
 void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
 {
-    assert(!player_save_game_data.empty());
-
-    m_turn_sequence.clear();
-
     std::set<int> used_save_game_data;
     std::map<int, int> player_id_to_save_game_data_index;
     for (std::map<int, PlayerSetupData>::const_iterator it = lobby_data->m_players.begin(); it != lobby_data->m_players.end(); ++it) {
@@ -327,6 +290,41 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
         if (used_save_game_data.find(i) == used_save_game_data.end())
             unused_save_game_data.insert(i);
     }
+
+    LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, unused_save_game_data);
+}
+
+void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
+                            const std::map<int, PlayerSetupData>& player_setup_data)
+{
+    m_turn_sequence.clear();
+
+    m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
+    m_universe.CreateUniverse(size, shape, age, starlane_freq, planet_density, specials_freq,
+                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
+    m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
+
+    // TODO: here we add empires to turn sequence map -- according to spec this should be done randomly; for now, it's not
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        AddEmpireTurn((*it)->ID());
+    }
+
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        int player_id = (*it)->ID();
+        int empire_id = GetPlayerEmpire(player_id)->EmpireID();
+        (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
+    }
+
+    m_losers.clear();
+}
+
+void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
+                             const std::map<int, int>& player_id_to_save_game_data_index,
+                             std::set<int>& unused_save_game_data)
+{
+    assert(!player_save_game_data.empty());
+
+    m_turn_sequence.clear();
 
     assert(m_networking.NumPlayers() == player_save_game_data.size());
     assert(player_id_to_save_game_data_index.size() + unused_save_game_data.size() == player_save_game_data.size());
@@ -357,30 +355,6 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
         Empire* empire = GetPlayerEmpire((*it)->ID());
         (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
                                             *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
-    }
-
-    m_losers.clear();
-}
-
-void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
-                            const std::map<int, PlayerSetupData>& player_setup_data)
-{
-    m_turn_sequence.clear();
-
-    m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
-    m_universe.CreateUniverse(size, shape, age, starlane_freq, planet_density, specials_freq,
-                              m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
-    m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
-
-    // TODO: here we add empires to turn sequence map -- according to spec this should be done randomly; for now, it's not
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        AddEmpireTurn((*it)->ID());
-    }
-
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        int player_id = (*it)->ID();
-        int empire_id = GetPlayerEmpire(player_id)->EmpireID();
-        (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
     }
 
     m_losers.clear();
