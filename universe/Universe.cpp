@@ -617,13 +617,13 @@ void Universe::UpdateMeterEstimates()
         UniverseObject* obj = obj_it->second;
         int object_id = obj_it->first;
 
-        // Reset meters to METER_MIN
+        // Reset max meters to METER_MIN
         obj->ResetMaxMeters();
 
         // Apply non-effect focus mods from tables
         obj->ApplyUniverseTableMaxMeterAdjustments();
 
-        // record value of meters after applying universe table adjustments
+        // record value of max meters after applying universe table adjustments
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
             Meter* meter = obj->GetMeter(type);
             if (meter) {
@@ -639,15 +639,18 @@ void Universe::UpdateMeterEstimates()
                 m_effect_accounting_map[object_id][type].push_back(info);
             }
         }
+
+        // reset current meters to value at star of turn (before growth or effects changes)
     }
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     EffectsAndTargetsMap effects_targets_map;
-    GetEffectsAndTargets(effects_targets_map);
+    EffectsAndCausesMap effects_causes_map;
+    GetEffectsAndTargets(effects_targets_map, &effects_causes_map);
 
     // Apply and record effect meter adjustments
-    ExecuteMeterEffects(effects_targets_map, true);
+    ExecuteMeterEffects(effects_targets_map, &effects_causes_map);
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -666,6 +669,9 @@ void Universe::UpdateMeterEstimates()
             for(std::map<MeterType, double>::iterator meter_it = meter_map.begin(); meter_it != meter_map.end(); ++meter_it) {
                 MeterType type = meter_it->first;
                 double discrepancy = meter_it->second;
+
+                //if (discrepancy == 0.0) continue;
+
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
@@ -685,12 +691,16 @@ void Universe::UpdateMeterEstimates()
     }
 
     ///////////////////////////
-    // do current meter growth
+    // do current meter growth ?
     ///////////////////////////
 }
 
-void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map)
+void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
 {
+    effects_targets_map.clear();
+    if (effects_causes_map)
+        effects_causes_map->clear();
+
     // get effects groups from specials
     for (Universe::const_iterator it = begin(); it != end(); ++it) {
         for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
@@ -703,6 +713,8 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map)
                 EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
                 special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
                 effects_targets_map.insert(map_elem);
+                if (effects_causes_map)
+                    effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(it->first, std::make_pair(ECT_SPECIAL, special->Name()))));
             }
         }
     }
@@ -717,6 +729,8 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map)
                 EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->second->CapitolID(), Effect::EffectsGroup::TargetSet()));
                 tech->Effects()[i]->GetTargetSet(it->second->CapitolID(), map_elem.second.second);
                 effects_targets_map.insert(map_elem);
+                if (effects_causes_map)
+                    effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(it->second->CapitolID(), std::make_pair(ECT_TECH, tech->Name()))));
             }
         }
     }
@@ -731,6 +745,8 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map)
             EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
             building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
             effects_targets_map.insert(map_elem);
+            if (effects_causes_map)
+                effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(buildings[i]->ID(), std::make_pair(ECT_BUILDING, building_type->Name()))));
         }
     }
 }
@@ -766,30 +782,45 @@ void Universe::ExecuteEffects(EffectsAndTargetsMap& effects_targets_map)
     }
 }
 
-void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bool do_effect_accounting)
+void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
 {
+    if (effects_causes_map)
+        assert(effects_targets_map.size() == effects_causes_map->size());
+
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
-    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
+    EffectsAndCausesMap::const_iterator causes_it;
+    if (effects_causes_map)
+         causes_it = effects_causes_map->begin();
+
+    for (EffectsAndTargetsMap::const_iterator targets_it = effects_targets_map.begin(); targets_it != effects_targets_map.end(); ++targets_it) {
         // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
-        Effect::EffectsGroup::TargetSet targets(it->second.second);
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(targets_it->first->StackingGroup());
+        Effect::EffectsGroup::TargetSet targets(targets_it->second.second);
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
 
+        // if doing effect accounting, get cause of effect
+        EffectsCauseType cause_type = INVALID_EFFECTS_GROUP_CAUSE_TYPE;
+        std::string specific_cause = "";
+        if (effects_causes_map) {
+            cause_type = causes_it->second.second.first;        // see definition of Universe::EffectsAndCausesMapElem
+            specific_cause = causes_it->second.second.second;
+        }
+
         // execute only the SetMeter effects in the EffectsGroup
-        boost::shared_ptr<const Effect::EffectsGroup> effects_group = it->first;
-        int source = it->second.first;
+        boost::shared_ptr<const Effect::EffectsGroup> effects_group = targets_it->first;
+        int source = targets_it->second.first;
         const std::vector<Effect::EffectBase*>& effects = effects_group->EffectsList();
         for (unsigned int i = 0; i < effects.size(); ++i) {
             const Effect::SetMeter* meter_effect = dynamic_cast<Effect::SetMeter*>(effects[i]);
             if (!meter_effect) continue;
 
-            if (do_effect_accounting) {
-
+            // do effect accounting
+            if (effects_causes_map) {
                 // determine meter to be altered by this effect
                 MeterType meter_type = meter_effect->GetMeterType();
                 
@@ -829,7 +860,8 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bo
                     // update accounting info with meter change and new total
                     info.meter_change = meter->Max() - info.running_meter_total;    // change is new max minus old max (stored in temp value with misleading name)
                     info.running_meter_total = meter->Max();        // replacing temp stored value with new meter total
-                    info.cause_type = ECT_SPECIAL;    // need to get this somehow ...
+                    info.cause_type = cause_type;
+                    info.specific_cause = specific_cause;
                 }
 
             } else {                
@@ -839,12 +871,15 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bo
         }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (it->first->StackingGroup() != "") {
-            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
+        if (targets_it->first->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[targets_it->first->StackingGroup()];
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
                 affected_targets.insert(*object_it);
             }
         }
+
+        if (effects_causes_map)
+            ++causes_it;
     }
 }
 

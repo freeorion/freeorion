@@ -24,6 +24,84 @@
 
 using boost::lexical_cast;
 
+// Free Function
+std::string EffectAccountingToolTip(MeterType meter_type, const UniverseObject* obj, 
+                                                 const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map)
+{
+    std::string text = "";
+
+    const Meter* meter = obj->GetMeter(meter_type);
+    if (!meter) return text;
+    
+    // determine if meter_map contains info about the specified meter
+    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = meter_map.find(meter_type);
+    if (meter_it == meter_map.end() || meter_it->second.empty()) {
+        // no info about specified meter -> no tooltip
+        text = "Meter Max: " + lexical_cast<std::string>(meter->Max());
+        return text;
+    }
+
+    text = "Meter Max: " + lexical_cast<std::string>(meter->Max()) + "\n\nAccounting:";
+    
+    // append lines to tooltip for each alteration to the meter
+    const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
+    for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
+        const UniverseObject* source = GetUniverse().Object(info_it->source_id);
+
+        int empire_id = info_it->caused_by_empire_id;
+        const Empire* empire = 0;
+        const Building* building = 0;
+        const Planet* planet = 0;
+
+        switch (info_it->cause_type) {
+        case ECT_UNIVERSE_TABLE_ADJUSTMENT:
+            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
+                 +  " from Basic Focus and Universe Adjustments";
+            break;
+
+        case ECT_TECH:
+            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
+                 +  " due to: " + UserString(info_it->specific_cause) + " [Tech]";
+            
+            if (empire_id != -1) {
+                empire = EmpireManager().Lookup(empire_id);   
+                if (empire) {
+                    text += " of empire: " + empire->Name() + " with id: " + boost::lexical_cast<std::string>(empire_id);
+                    break;
+                }
+            } 
+            // else...
+            text += " of unknown empire";   // I think this should never come up, as if it's known the effect is due to a tech, the source empire should also be known
+            break;
+
+        case ECT_BUILDING:
+            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
+                 +  " due to: " + UserString(info_it->specific_cause) + " [Building]";
+            
+            building = dynamic_cast<const Building*>(source);
+            if (!building) break;
+            planet = building->GetPlanet();
+            if (!planet) break;
+           
+            text += " at: " + planet->Name();
+            break;
+
+        case ECT_SPECIAL:
+            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
+                 +  " due to: " + UserString(info_it->specific_cause) + " [Special]";
+            break;
+
+        case ECT_UNKNOWN_CAUSE:
+        default:
+            if (info_it->meter_change != 0.0) {
+                text += "\n" + lexical_cast<std::string>(info_it->meter_change)
+                     +  " [Cause Unknown]";
+            }
+        }
+    }
+    return text;
+}
+
 /////////////////////////////////////
 //        PopulationPanel          //
 /////////////////////////////////////
@@ -726,7 +804,6 @@ void ResourcePanel::Update()
 
     const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
     const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it;
     Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_rescenter_id);
     if (map_it != effect_accounting_map.end())
         meter_map = &(map_it->second);
@@ -735,39 +812,45 @@ void ResourcePanel::Update()
     // meter bar display
     m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
     m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
-    
+    if (meter_map) {
+        m_farming_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_farming_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_FARMING, obj, *meter_map));
+    }
+
     m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
     m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
+    if (meter_map) {
+        m_mining_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_mining_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_MINING, obj, *meter_map));
+    }
 
     m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
     m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
     if (meter_map) {
-        meter_it = meter_map->find(METER_INDUSTRY);
-        if (meter_it != meter_map->end()) {
-            const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
-            const Meter* meter = obj->GetMeter(meter_it->first);  // METER_INDUSTRY in this case
-            text = "Meter Max: " + lexical_cast<std::string>(meter->Max()) + "\n\nEffects:";
-            for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-                const UniverseObject* source = universe.Object(info_it->source_id);
-
-                text += "\n"       + lexical_cast<std::string>(info_it->meter_change)
-                     + " type: "   + lexical_cast<std::string>(info_it->cause_type);
-                if (source)
-                    text += " source: " + source->Name();
-            }
-            m_industry_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            m_industry_meter_bar->SetBrowseText(text);
-        }
+        m_industry_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_industry_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_INDUSTRY, obj, *meter_map));
     }
 
     m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
     m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
-    
+    if (meter_map) {
+        m_research_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_research_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_RESEARCH, obj, *meter_map));
+    }
+
     m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
     m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
+    if (meter_map) {
+        m_trade_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_trade_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_TRADE, obj, *meter_map));
+    }
 
     m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
     m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
+    if (meter_map) {
+        m_construction_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_construction_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_CONSTRUCTION, obj, *meter_map));
+    }
 
     switch (res->PrimaryFocus())
     {

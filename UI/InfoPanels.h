@@ -61,15 +61,15 @@ private:
     PopCenter*          GetPopCenter();         ///< returns the planet with ID m_planet_id
     const PopCenter*    GetPopCenter() const;
 
-    int                     m_popcenter_id;     ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
+    int                 m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
-    StatisticIcon*          m_pop_stat;         ///< icon and number of population
-    StatisticIcon*          m_health_stat;      ///< icon and number of health
+    StatisticIcon*      m_pop_stat;             ///< icon and number of population
+    StatisticIcon*      m_health_stat;          ///< icon and number of health
 
-    MeterStatusBar2*         m_pop_meter_bar;    ///< graphically indicates status of population
-    MeterStatusBar2*         m_health_meter_bar; ///< graphically indicates health
+    MeterStatusBar2*    m_pop_meter_bar;        ///< graphically indicates status of population
+    MeterStatusBar2*    m_health_meter_bar;     ///< graphically indicates health
     
-    GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*         m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     std::set<boost::signals::connection> m_misc_connections;
 
@@ -94,13 +94,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void ExpandCollapse(bool expanded);         ///< expands or collapses panel to show details or just summary info
+    void ExpandCollapse(bool expanded); ///< expands or collapses panel to show details or just summary info
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
-    void Update();          ///< updates indicators with values of associated object.  Does not do layout and resizing.
-    void Refresh();         ///< updates, redoes layout, resizes indicator
+    void Update();  ///< updates indicators with values of associated object.  Does not do layout and resizing.
+    void Refresh(); ///< updates, redoes layout, resizes indicator
 
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
     mutable FocusChangedSignalType PrimaryFocusChangedSignal;
