@@ -3,6 +3,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
 #include "../universe/UniverseObject.h"
+#include "../Empire/Empire.h"
 
 #include <stdexcept>
 
@@ -11,6 +12,7 @@
 ClientApp* ClientApp::s_app = 0;
 
 ClientApp::ClientApp() : 
+    m_universe(),
     m_player_id(-1),
     m_empire_id(-1),
     m_current_turn(INVALID_GAME_TURN)
@@ -46,6 +48,27 @@ const OrderSet& ClientApp::Orders() const
 
 const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
+
+Empire* ClientApp::GetPlayerEmpire(int player_id)
+{
+    std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
+    if (it != m_player_info.end())
+        return m_empires.Lookup(it->second.empire_id);
+    return 0;
+}
+
+int ClientApp::GetEmpirePlayerID(int empire_id) const
+{
+    for (std::map<int, PlayerInfo>::const_iterator it = m_player_info.begin(); it != m_player_info.end(); ++it)
+        if (it->second.empire_id == empire_id)
+            return it->first;
+    return -1;
+}
+
+const std::map<int, PlayerInfo>& ClientApp::Players() const
+{
+    return m_player_info;
+}
 
 void ClientApp::StartTurn()
 {
@@ -92,3 +115,10 @@ int& ClientApp::EmpireIDRef()
 
 int& ClientApp::CurrentTurnRef()
 { return m_current_turn; }
+
+int ClientApp::GetNewDesignID()
+{
+    Message msg;
+    m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_player_id), msg);
+    return boost::lexical_cast<int>(msg.Text());
+}

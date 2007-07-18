@@ -15,7 +15,7 @@ extern ParamLabel empire_label;
 extern ParamLabel affiliation_label;
 extern ParamLabel name_label;
 extern ParamLabel type_label;
-extern ParamLabel size_label;
+extern ParamLabel planetsize_label;
 extern ParamLabel environment_label;
 extern ParamLabel probability_label;
 extern ParamLabel distance_label;

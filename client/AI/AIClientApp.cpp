@@ -12,14 +12,24 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#include "../../universe/Universe.h"
+#include "../../universe/System.h"
+#include "../../universe/Fleet.h"
+#include "../../universe/Ship.h"
+#include "../../universe/ShipDesign.h"
+#include "../../util/OrderSet.h"
+#include "../../util/Order.h"
+#include "../../Empire/Empire.h"
+
 #include <boost/filesystem/fstream.hpp>
 
+#include "../../AI/PythonAI.h"
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
 
 AIClientApp::AIClientApp(int argc, char* argv[]) : 
-   m_log_category(log4cpp::Category::getRoot())
+    m_AI(0)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class AIClientApp");
@@ -27,7 +37,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     s_app = this;
 
     if (argc < 2) {
-        m_log_category.fatal("The AI client should not be called directly!");
+        Logger().fatal("The AI client should not be executed directly!");
         Exit(1);
     }
         
@@ -45,17 +55,17 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
     layout->setConversionPattern("%d %p AI : %m%n");
     appender->setLayout(layout);
-    m_log_category.setAdditivity(false);  // make appender the only appender used...
-    m_log_category.setAppender(appender);
-    m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
-    m_log_category.debug(PlayerName() + " logger initialized.");
+    Logger().setAdditivity(false);  // make appender the only appender used...
+    Logger().setAppender(appender);
+    Logger().setAdditivity(true);   // ...but allow the addition of others later
+    Logger().setPriority(log4cpp::Priority::DEBUG);
+    Logger().debug(PlayerName() + " logger initialized.");
 }
 
 AIClientApp::~AIClientApp()
 {
-    m_log_category.debug("Shutting down " + PlayerName() + " logger...");
-    log4cpp::Category::shutdown();
+    delete m_AI;
+    Logger().debug("Shutting down " + PlayerName() + " logger...");
 }
 
 void AIClientApp::operator()()
@@ -67,14 +77,13 @@ void AIClientApp::Exit(int code)
     exit(code);
 }
 
-log4cpp::Category& AIClientApp::Logger()
-{ return m_log_category; }
-
 AIClientApp* AIClientApp::GetApp()
 { return s_app; }
 
 void AIClientApp::Run()
 {
+    m_AI = new PythonAI();
+
     // connect
     const int MAX_TRIES = 5;
     int tries = 0;
@@ -126,10 +135,10 @@ void AIClientApp::HandleMessage(const Message& msg)
             SaveGameUIData ui_data; // note that this is ignored
             bool loaded_game_data;
             bool ui_data_available;
-            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), Orders(), ui_data, loaded_game_data, ui_data_available);
+            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info, Orders(), ui_data, loaded_game_data, ui_data_available);
             if (loaded_game_data)
                 Orders().ApplyOrders();
-            StartTurn();
+            m_AI->GenerateOrders();
         }
         break;
     }
@@ -141,8 +150,8 @@ void AIClientApp::HandleMessage(const Message& msg)
 
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == -1) {
-            ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse());
-            StartTurn();
+            ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info);
+            m_AI->GenerateOrders();
         }
         break;
     }
@@ -154,6 +163,9 @@ void AIClientApp::HandleMessage(const Message& msg)
         Exit(0);
         break;
     }
+
+    case Message::HUMAN_PLAYER_CHAT:
+        break;
        
     default: {
         Logger().errorStream() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();

@@ -1,4 +1,4 @@
-#include "HumanClientApp.h"
+#include "HumanClientAppSoundOpenAL.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
@@ -23,7 +23,7 @@ int main(int argc, char* argv[])
         GetOptionsDB().AddFlag('g', "generate-config-xml", "OPTIONS_DB_GENERATE_CONFIG_XML");
         GetOptionsDB().AddFlag('m', "music-off", "OPTIONS_DB_MUSIC_OFF");
         GetOptionsDB().Add<std::string>("bg-music", "OPTIONS_DB_BG_MUSIC", "artificial_intelligence_v3.ogg");
-        GetOptionsDB().Add('f', "fullscreen", "OPTIONS_DB_FULLSCREEN", false);
+        GetOptionsDB().AddFlag('f', "fullscreen", "OPTIONS_DB_FULLSCREEN", false);
         XMLDoc doc;
         boost::filesystem::ifstream ifs(GetConfigPath());
         doc.ReadDoc(ifs);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    HumanClientApp app;
+    HumanClientAppSoundOpenAL app;
 
     try {
         app(); // run app (intialization and main process loop)

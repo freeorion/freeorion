@@ -44,6 +44,13 @@ public:
 
     /** \name Mutators */ //@{
     virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
+
+    void SetBorderColor(GG::Clr clr);   ///< sets the color used to render the border of the button
+    void SetBorderThick(int thick);     ///< sets the thickness of the rendered the border of the button
+
+    void MarkNotSelected();             ///< sets button colours to standard UI colours
+    void MarkSelectedGray();            ///< sets button colours to lighter grey background and border to indicate selection or activation
+    void MarkSelectedTechCategoryColor(std::string category);   ///< sets button background and border colours to variants of the colour of the tech category specified
     //@}
 
 protected:
@@ -57,7 +64,6 @@ private:
     GG::Clr m_border_color;
     int     m_border_thick;
 };
-
 
 /** a FreeOrion next-turn button control */
 class CUITurnButton : public CUIButton
@@ -190,6 +196,27 @@ public:
     //@}
 };
 
+/** a ListBox with user-sortable columns */
+class CUISortListBox : public GG::ListBox
+{
+public:
+    /** \name Structors */ //@{
+    CUISortListBox(int x, int y, int w, int h, GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr interior = GG::CLR_ZERO,
+                   Uint32 flags = GG::CLICKABLE);
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void Render();
+
+    void SetSortCol(int n);                 ///< sets column used to sort rows, updates sort-button appearance
+    void SetSortDirecion(bool ascending);   ///< sets whether to sort ascending (true) or descending (false), updates sort-button appearance
+    void SetColHeaders(std::map<int, boost::shared_ptr<GG::Texture> > textures_map);    ///< indexed by column number, provides texture with which to label column
+    void SetColHeaders(std::map<int, std::string> label_text_map);    ///< indexed by column number, provides text with which to label column
+    //@}
+
+private:
+    Row* m_header_row;  ///< need to keep own pointer to header row, since ListBox doesn't provide non-const access to its header row pointer
+};
 
 /** a FreeOrion DropDownList control */
 class CUIDropDownList : public GG::DropDownList
@@ -497,4 +524,14 @@ private:
     GG::Clr m_outline_color;
 };
 
+/** Displays current rendering frames per second. */
+class FPSIndicator : public GG::TextControl
+{
+public:
+    FPSIndicator(int x, int y);
+    virtual void Render();
+private:
+    void UpdateEnabled();
+    bool m_enabled;
+};
 #endif // _CUIControls_h_

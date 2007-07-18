@@ -53,9 +53,15 @@ options.Add('with_devil_libdir', 'Specify exact library dir for DevIL library')
 options.Add('with_log4cpp', 'Root directory of Log4cpp installation')
 options.Add('with_log4cpp_include', 'Specify exact include dir for Log4cpp headers')
 options.Add('with_log4cpp_libdir', 'Specify exact library dir for Log4cpp library')
-options.Add('with_fmod', 'Root directory of FMOD installation')
-options.Add('with_fmod_include', 'Specify exact include dir for FMOD headers')
-options.Add('with_fmod_libdir', 'Specify exact library dir for FMOD library')
+options.Add('with_openal', 'Root directory of OpenAL installation')
+options.Add('with_openal_include', 'Specify exact include dir for OpenAL headers')
+options.Add('with_openal_libdir', 'Specify exact library dir for OpenAL library')
+options.Add('with_alut', 'Root directory of ALUT/FreeALUT installation')
+options.Add('with_alut_include', 'Specify exact include dir for ALUT/FreeALUT headers')
+options.Add('with_alut_libdir', 'Specify exact library dir for ALUT/FreeALUT library')
+options.Add('with_vorbis', 'Root directory of Vorbis installation')
+options.Add('with_vorbis_include', 'Specify exact include dir for Vorbis headers')
+options.Add('with_vorbis_libdir', 'Specify exact library dir for Vorbis library')
 options.Add('with_graphviz', 'Root directory of GraphViz installation')
 options.Add('with_graphviz_include', 'Specify exact include dir for GraphViz headers')
 options.Add('with_graphviz_libdir', 'Specify exact library dir for GraphViz library')
@@ -180,6 +186,31 @@ if not env.GetOption('clean'):
         else:
             print 'Configuring unknown system (assuming the system is POSIX-like) ...'
 
+        # Python
+        import distutils.sysconfig
+        if str(Platform()) == 'win32':
+            env['with_python'] = distutils.sysconfig.PREFIX
+            env['with_python_include'] = os.path.join(env['with_python'], 'include')
+            env['with_python_libdir'] = os.path.join(env['with_python'], 'libs')
+            AppendPackagePaths('python', env)
+            env.AppendUnique(LIBS = [
+                python_win32_libname
+                ])
+        else:
+            env['with_python'] = ''
+            env['with_python_include'] = distutils.sysconfig.get_python_inc()
+            env['with_python_libdir'] = distutils.sysconfig.get_config_var('LIBDIR')
+            AppendPackagePaths('python', env)
+            regex = re.compile(r'lib(.+)\.so.*')
+            matches = regex.findall(distutils.sysconfig.get_config_var('LDLIBRARY'))
+            if len(matches):
+                python_libname = matches[0]
+            else:
+                print 'Unable to determine the name of the Python runtime library.  Terminating....'
+                Exit(1)
+            if not conf.CheckLibWithHeader(python_libname, 'Python.h', 'C', 'Py_Initialize();'):
+                Exit(1)
+
         ####################################################################
         # Configure GG requirements; use GG pkg-config first, if available #
         ####################################################################
@@ -195,7 +226,8 @@ if not env.GetOption('clean'):
         freeorion_boost_libs = [
             ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
             ('boost_thread', 'boost/thread/thread.hpp', 'boost::thread::thread();'),
-            ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', '')
+            ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', ''),
+            ('boost_python', 'boost/python.hpp', 'boost::python::throw_error_already_set();')
             ]
 
         if found_gg_pkg_config:
@@ -215,6 +247,10 @@ if not env.GetOption('clean'):
                 ]
             if not conf.CheckBoost(boost_version_string, boost_libs, conf, not ms_linker):
                 Exit(1)
+            if str(Platform()) == 'win32' and ms_linker:
+                env.AppendUnique(LIBS = [
+                    BoostLibWin32Name('python', env)
+                    ])
 
             # pthreads
             if str(Platform()) == 'posix':
@@ -309,27 +345,63 @@ int main() {
         # End of GG requirements #
         ##########################
 
-        # FMOD
-        AppendPackagePaths('fmod', env)
+        found_it_with_pkg_config = False
+
+        # OpenAL & ALUT/FreeALUT
+        AppendPackagePaths('openal', env)
         found_it_with_pkg_config = False
         if pkg_config:
-            if conf.CheckPkg('fmod', fmod_version):
-                env.ParseConfig('pkg-config --cflags --libs fmod')
+            if conf.CheckPkg('openal', openal_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs openal')
                 found_it_with_pkg_config = True
         if not found_it_with_pkg_config:
-            version_regex = re.compile(r'FMOD_VERSION\s*(\d+\.\d+)', re.DOTALL)
-            if not conf.CheckVersionHeader('fmod', 'fmod.h', version_regex, fmod_version, True):
-                Exit(1)
-        if not conf.CheckCHeader('fmod.h'):
-            Exit(1)
-        if str(Platform()) != 'win32':
-            if not conf.CheckLib('fmod-' + fmod_version, 'FSOUND_GetVersion', header = '#include <fmod.h>'):
-                Exit(1)
-        else:
-            env.AppendUnique(LIBS = [fmod_win32_lib_name])
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'OpenAL32.lib'
+                    ])
+            else:
+                if not conf.CheckLibWithHeader('openal', 'AL/alc.h', 'C', 'alcGetCurrentContext();'):
+                    Exit(1)
+        AppendPackagePaths('alut', env)
+        found_it_with_pkg_config = False
+        if pkg_config:
+            if conf.CheckPkg('freealut', alut_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs freealut')
+                found_it_with_pkg_config = True
+            elif conf.CheckPkg('alut', alut_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs alut')
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'ALut.lib'
+                    ])
+            else:
+                if not conf.CheckLibWithHeader('freealut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);') \
+                       and not conf.CheckLibWithHeader('alut', 'AL/alut.h', 'C', 'alutInitWithoutContext(0,0);'):
+                    Exit(1)
+
+        # Vorbis
+        AppendPackagePaths('vorbisfile', env)
+        found_it_with_pkg_config = False
+        if pkg_config:
+            if conf.CheckPkg('vorbisfile', vorbis_pkgconfig_version):
+                env.ParseConfig('pkg-config --cflags --libs vorbisfile')
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'libogg.lib',
+                    'libvorbis.lib',
+                    'libvorbisfile.lib'
+                    ])
+            else:
+                if not conf.CheckLibWithHeader('vorbisfile', 'vorbis/vorbisfile.h', 'C', 'ov_clear(0);'):
+                    Exit(1)
 
         # GraphViz
         AppendPackagePaths('graphviz', env)
+        found_it_with_pkg_config = False
         if pkg_config:
             if conf.CheckPkg('libgraph', graphviz_pkgconfig_version) and conf.CheckPkg('libgvc', graphviz_pkgconfig_version):
                 env.ParseConfig('pkg-config --cflags --libs libgraph')
@@ -496,6 +568,13 @@ version_cpp_in.close()
 # This is necessary until Boost 1.35 is released, which will include Boost.Asio.  For now, we have a local copy of
 # Boost.Asio in the network directory.
 env.AppendUnique(CPPPATH = ['network'])
+
+# On Win32, assume we're using the SDK, and copy the installed GG DLLs to the FreeOrion directory.
+if str(Platform()) == 'win32':
+    import shutil
+    shutil.copy(os.path.join('..', 'lib', 'GiGi.dll'), '.')
+    shutil.copy(os.path.join('..', 'lib', 'GiGiNet.dll'), '.')
+    shutil.copy(os.path.join('..', 'lib', 'GiGiSDL.dll'), '.')
 
 Export('env')
 

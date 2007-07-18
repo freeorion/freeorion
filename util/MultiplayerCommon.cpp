@@ -210,3 +210,21 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
         }
     }
 }
+
+
+////////////////////////////////////////////////
+// PlayerInfo
+////////////////////////////////////////////////
+PlayerInfo::PlayerInfo() :
+    name(""),
+    empire_id(-1),
+    AI(false),
+    host(false)
+{}
+
+PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_, bool host_) :
+    name(player_name_),
+    empire_id(empire_id_),
+    AI(AI_),
+    host(host_)
+{}

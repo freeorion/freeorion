@@ -152,6 +152,15 @@ Sets vertical app resolution.
 OPTIONS_DB_COLOR_DEPTH
 Sets screen color depth, in bits per pixel.
 
+OPTIONS_DB_SHOW_FPS
+Toggles FPS display on or off.
+
+OPTIONS_DB_LIMIT_FPS
+Toggles FPS limiting on or off.  Limit is set with with max-fps option.
+
+OPTIONS_DB_MAX_FPS
+Toggles FPS limit, if enabled.  Limiting is toggled with limit-fps.
+
 OPTIONS_DB_UI_SOUND_ENABLED
 Toggles UI sound effects on or off.
 
@@ -214,6 +223,9 @@ The sound file played when a research focus button is clicked.
 
 OPTIONS_DB_UI_SOUND_MINING_FOCUS
 The sound file played when a mining focus button is clicked.
+
+OPTIONS_DB_UI_SOUND_TRADE_FOCUS
+The sound file played when a trade focus button is clicked.
 
 OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
 The sound file played when a balanced focus button is clicked.
@@ -569,6 +581,9 @@ Load game
 START_GAME_BN
 Start game
 
+MULTIPLAYER_GAME_START_CONDITIONS
+Unique empire names and colours required
+
 
 ########################
 # Galaxy Setup Screen  #
@@ -799,6 +814,15 @@ Color bit-depth
 OPTIONS_FULLSCREEN
 Fullscreen
 
+OPTIONS_SHOW_FPS
+Show FPS
+
+OPTIONS_LIMIT_FPS
+Limit FPS
+
+OPTIONS_MAX_FPS
+Max FPS
+
 OPTIONS_CHAT
 Chat
 
@@ -997,7 +1021,10 @@ Sound files
 #################
 
 MAP_BTN_TURN_UPDATE
-Turn 
+Turn
+
+MAP_INDICATOR_FPS
+%1% FPS
 
 MAP_BTN_MENU
 Menu
@@ -1034,14 +1061,52 @@ Uninhabited
 PL_SIZE
 Size
 
-PL_PRIMARY_FOCUS
-Primary 
-
-PL_SECONDARY_FOCUS
-Secondary
-
 PL_COLONIZE
 Colonize
+
+##Population Panel#########
+
+PP_POPULATION_TOOLTIP
+Population\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+
+PP_HEALTH_TOOLTIP
+Health\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+
+##Resources Panel##########
+
+RP_PRIMARY_FOCUS_TOOLTIP
+Primary Focus: %1%
+
+RP_SECONDARY_FOCUS_TOOLTIP
+Secondary Focus: %1%
+
+RP_FOOD_TOOLTIP
+Food Production\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_MINERALS_TOOLTIP
+Minerals Production\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_INDUSTRY_TOOLTIP
+Industrial Output\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_RESEARCH_TOOLTIP
+Research Output\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_TRADE_TOOLTIP
+Trade Level\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+
+RP_CONSTRUCTION_TOOLTIP
+Construction Infrastructure\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+
+## Buildings Panel##########
+
+BP_INCOMPLETE_BUILDING_TOOLTIP
+%1% (Incomplete)\n\n%2%
+
+BP_COMPLETE_BUILDING_TOOLTIP
+%1%\n\n%2%
+
+## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
 Unknown System
@@ -1057,7 +1122,6 @@ Enter new planet name
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
 All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?
-
 
 #################
 # Fleet Window  #
@@ -1107,6 +1171,12 @@ Foreign ship
 # TechTreeWnd #
 ###############
 
+TECH_DISPLAY
+Display
+
+TECH_NAVIGATION
+Navigation
+
 TECH_TOTAL_COST_STR
 %1% RP / %2% Turns
 
@@ -1114,7 +1184,7 @@ TECH_TURN_COST_STR
 %1% RP / %2% Turns
 
 TECH_TURNS_LEFT_STR
-%1% Turns left
+%1% Turns
 
 TECH_TURNS_LEFT_NEVER
 Never
@@ -1134,12 +1204,6 @@ TECH_DETAIL_UNLOCKS_SECTION_STR
 TECH_DETAIL_UNLOCKED_ITEM_STR
 %1%: %2%\n
 
-TECH_DETAIL_CENTER_ON_TECH
-Center on Tech
-
-TECH_DETAIL_ADD_TO_QUEUE
-Add to Queue
-
 TECH_WND_TECH_COMPLETED
 COMPLETED
 
@@ -1149,32 +1213,23 @@ Queued
 TECH_WND_TECH_INCOMPLETE
 Incomplete
 
-TECH_WND_TECH_TYPES_TO_SHOW
-Tech types to show:
+TECH_WND_TYPE_THEORIES
+Theories
 
-TECH_WND_TECH_TYPES_ALL
-All Types
+TECH_WND_TYPE_APPLICATIONS
+Applications
 
-TECH_WND_TECH_TYPES_THEORIES_AND_APPS
-Theories and Apps
+TECH_WND_TYPE_REFINEMENTS
+Refinements
 
-TECH_WND_TECH_TYPES_THEORIES_ONLY
-Theories Only
+TECH_WND_STATUS_COMPLETED
+Completed
 
-TECH_WND_TECH_STATUSES_TO_SHOW
-Tech statuses to show:
+TECH_WND_STATUS_RESEARCHABLE
+Researchable
 
-TECH_WND_TECH_STATUS_ALL
-All Statuses
-
-TECH_WND_TECH_STATUS_AVAILABLE_AND_COMPLETE
-Researchable or Complete
-
-TECH_WND_TECH_STATUS_AVAILABLE_ONLY
-Researchable Only
-
-TECH_WND_UNCOLLAPSE_TECHS
-Uncollapse all
+TECH_WND_STATUS_UNRESEARCHABLE
+Unresearchable
 
 TECH_WND_REQUIRES
 Requires
@@ -1232,6 +1287,12 @@ Ships
 
 PRODUCTION_WND_CATEGORY_BT_ORBITAL
 Orbitals
+
+PRODUCTION_WND_AVAILABILITY_AVAILABLE
+Available
+
+PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
+Unavailable
 
 PRODUCTION_TOTAL_COST_STR
 %1% PP / %2% Turns
@@ -2092,9 +2153,12 @@ Growth
 ECONOMICS_CATEGORY
 Economics
 
-#############################
-# Tech Names & Descriptions #
-#############################
+####################################
+# Theory Tech Names & Descriptions #
+####################################
+
+THEORY_SHORT_DESC
+Theoretical Prerequisite
 
 LRN_PHYS_BRAIN
 The Physical Brain
@@ -2115,7 +2179,7 @@ LRN_GAL_EXPLO_DESC
 The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
 
 LRN_TRANSLING_THT
-Translinguistic Thought
+Translinguistics
 
 LRN_TRANSLING_THT_DESC
 Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
@@ -2173,12 +2237,6 @@ N-Dimensional Subspace
 
 LRN_NDIM_SUBSPACE_DESC
 Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
-
-LRN_MATTER_ENERGY
-Matter-Energy Conversion
-
-LRN_MATTER_ENERGY_DESC
-At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
 
 LRN_UNIF_CONC
 Unified Consciousness
@@ -2306,18 +2364,6 @@ Fusion Generation
 PRO_FUSION_GEN_DESC
 Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
 
-PRO_ASTEROID_MINE
-Asteroid Mining
-
-PRO_ASTEROID_MINE_DESC
-Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
-
-PRO_CORE_MINE
-Deep Core Mining
-
-PRO_CORE_MINE_DESC
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
-
 PRO_NANOTECH_PROD
 Nanotech Production
 
@@ -2329,12 +2375,6 @@ Orbital Generation
 
 PRO_ORBITAL_GEN_DESC
 Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.
-
-PRO_ORBITAL_MINE
-Orbital Mining
-
-PRO_ORBITAL_MINE_DESC
-On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
 
 PRO_SENTIENT_AUTOMATION
 Sentient Automation
@@ -2367,7 +2407,7 @@ PRO_SINGULAR_GEN_DESC
 As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation do to annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than that with the accretion disk method, but can produce even greater output as well.
 
 PRO_MATENG_REPLIC
-Matter-Energy Replication
+Replication
 
 PRO_MATENG_REPLIC_DESC
 Previous iterations of assembly techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of smaller parts, be they prefabricated subsections, or individual atoms.  By converting pure energy directly into the desired material object, eliminating the need for precursor parts or supplied materials, the ultimate level of flexible and efficient assembly is achieved.
@@ -2550,6 +2590,33 @@ An economy in optimal form represents a great variety of financial, cultural and
 # Tech Application Names & Descriptions #
 #########################################
 
+DOES_NOTHING_SHORT_DESC
+Useless: Does Nothing
+
+BUILDING_UNLOCK_SHORT_DESC
+Unlocks Building
+
+RESEARCH_SHORT_DESC
+Improves Research
+
+FARMING_SHORT_DESC
+Improves Farming
+
+MINING_SHORT_DESC
+Improves Mining
+
+INDUSTRY_SHORT_DESC
+Improves Industry
+
+TRADE_SHORT_DESC
+Improves Trade
+
+CONSTRUCTION_SHORT_DESC
+Improves Infrastructure
+
+POPULATION_SHORT_DESC
+Increases Planet Population
+
 CON_GRAVITY_WELLS
 Controlled gravity wells
 
@@ -2578,7 +2645,7 @@ CON_SPACE_ELEVATOR
 Space Elevator
 
 CON_SPACE_ELEVATOR_DESC
-The materials and methods of nano-construction open up the possibility of building a cable strong enough to reach into low orbit. Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
+Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit.  Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
 
 CON_SUBTER_CONST
 Subterranean Construction
@@ -2596,7 +2663,7 @@ ECO_COLONIAL_ECO
 Colonial Economic Blueprinting
 
 ECO_COLONIAL_ECO_DESC
-With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the same precision as a physical building. Upstart markets can now tap into their raw potential for growth, without getting mired in the traditionally immature "wild frontier" mentality.
+With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the precision of a physical building.  Upstart markets tap their raw potential for growth, without risk of being mired in traditionally immature "wild frontier" mentalities.
 
 ECO_COMM_UNION
 Commercial Union of the Colonies
@@ -2704,7 +2771,7 @@ LRN_NAVIGATION
 Intersetaller Navigation
 
 LRN_NAVIGATION_DESC
-Abstractly, starlanes form a relatively restrictive network of possible pathes.  However, in practice the process of interstellar travel along starlanes is somewhat more complicated and risky without proper navigation techniques.\n\nDoes nothing.  In future, might do something related to starlanes or ship speed or range...
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
 
 LRN_COLLECTIVE_NET
 Collective Thought Network
@@ -2760,11 +2827,23 @@ Environmentally-Conscious Mining
 PRO_ENVIRO_MINING_I_DESC
 Many mining methods are incompatiable with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionaly, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.\n\nIncreases minerals production by +2 per 10 population on primary mining focused worlds.\nIncreases minreals production by +1 per 10 population on primary balanced and secondary mining focused worlds.\nMultiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.
 
-PRO_ASTEROID_MINE_I
-Basic Asteroid Mines
+PRO_ASTEROID_MINE
+Asteroid Mining
 
-PRO_ASTEROID_MINE_I_DESC
-The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
+PRO_ASTEROID_MINE_DESC
+Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.  The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
+
+PRO_ORBITAL_MINE
+Orbital Mining
+
+PRO_ORBITAL_MINE_DESC
+On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
+
+PRO_CORE_MINE
+Deep Core Mining
+
+PRO_CORE_MINE_DESC
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 PRO_ART_BLACK_HOLE
 Artificial Black Hole
@@ -2803,14 +2882,24 @@ PRO_MINING_ENGINEERING_DESC
 Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.\n\nBonuses depend on planet type:\nBarren and Inferno recive +4 per 10 population of planet at mining focused worlds.\nDesert, Radiated and Toxic recive +2.\nTundra and Terran recive +1.\nOcean and Swap receive no bonus.\n\nLarge research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the popluations of these planet types.
 
 PRO_INDUSTRY_CENTRE_I
-Regional Industrial Centres
+Industrial Centres
 
 PRO_INDUSTRY_CENTRE_I_DESC
 Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.\n\nFacility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility.  Large industrial benefits come with large up-front cost, in both production resources and time, but with minimal research prerequisites, making facility useful for high-production strategies, but unattractive for research-focused empires.
 
+PRO_ENERGY_CONV
+Energy Conversion
+
+PRO_ENERGY_CONV_DESC
+At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
+
+
 ########################################
 # Tech Refinement Names & Descriptions #
 ########################################
+
+BUILDING_REFINE_SHORT_DESC
+Refines Building
 
 PRO_ASTEROID_MINE_II
 Advanced Asteroid Mines
@@ -2819,13 +2908,13 @@ PRO_ASTEROID_MINE_II_DESC
 Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
 
 PRO_INDUSTRY_CENTRE_II
-Greater Regional Industrial Centre
+Greater Industrial Centre
 
 PRO_INDUSTRY_CENTRE_II_DESC
 Improved centralized management of dispersed industrial activities increases the range and size of increased industiral output provided.
 
 PRO_INDUSTRY_CENTRE_III
-Supreme Regional Industrial Centre
+Supreme Industrial Centre
 
 PRO_INDUSTRY_CENTRE_III_DESC
 Additional experience and facilities improvements further extend the range and size of industrial output improvement.
@@ -2877,7 +2966,7 @@ BLD_HEAVY_MINE_PROCESSOR_DESC
 Available with Heavy Mining Processors.\n\nProvides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
 
 BLD_INDUSTRY_CENTRE
-Regional Industrial Centre
+Industrial Centre
 
 BLD_INDUSTRY_CENTRE_DESC
 Available with Regional Industrial Centres.\n\nInitially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\nGreater Regional Industrial Centre refinement increases bonus to +6 and increases distance to 200.\n\nSupreme Regional Industrial Centre refinement further increases bonus to +7 and range to 300.

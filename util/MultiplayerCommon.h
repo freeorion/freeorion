@@ -166,6 +166,22 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Information about one player that other players are informed of.  Assembled by server and sent to players. */
+struct PlayerInfo
+{
+    PlayerInfo();   ///< default ctor
+    PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_, bool host_);
+
+    std::string name;       ///< name of this player (not the same as the empire name)
+    int         empire_id;  ///< id of the player's empire
+    bool        AI;         ///< true iff this is an AI (not a human player)
+    bool        host;       ///< true iff this is the host player
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 
 // template implementations
 template <class Archive>
@@ -238,4 +254,12 @@ void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_save_game_empire_data);
 }
 
+template <class Archive>
+void PlayerInfo::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(name)
+        & BOOST_SERIALIZATION_NVP(empire_id)
+        & BOOST_SERIALIZATION_NVP(AI)
+        & BOOST_SERIALIZATION_NVP(host);
+}
 #endif // _MultiplayerCommon_h_

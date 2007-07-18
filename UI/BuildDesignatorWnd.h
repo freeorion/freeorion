@@ -13,14 +13,10 @@ class BuildDesignatorWnd : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (BuildType, const std::string&, int, int)> AddBuildToQueueSignalType; ///< emitted when the indicated build is indicated by the user
+    typedef boost::signal<void (BuildType, const std::string&, int, int)> AddNamedBuildToQueueSignalType; ///< emitted when the indicated named build is indicated by the user
+    typedef boost::signal<void (BuildType, int, int, int)> AddIDedBuildToQueueSignalType; ///< emitted when the indicated id'd build is indicated by the user
     typedef boost::signal<void (int, int)> BuildQuantityChangedSignalType; ///< emitted when the quantity of items in a single build queue item is changed by the user
     typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when system selection is required.
-    //@}
-
-    /** \name Slot Types */ //@{
-    typedef AddBuildToQueueSignalType::slot_type AddBuildToQueueSlotType; ///< type of functor(s) invoked on a BuildPickedSignalType
-    typedef BuildQuantityChangedSignalType::slot_type BuildQuantityChangedSlotType; ///< type of functor(s) invoked on a BuildQuantityChangedSignalType
     //@}
 
     /** \name Structors */ //@{
@@ -28,11 +24,13 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    const std::set<BuildType>& GetBuildTypesShown() const;
+    const std::pair<bool, bool>& GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual bool InClient(const GG::Pt& pt) const;
 
     GG::Rect MapViewHole() const;
-    int QueueIndexShown() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -41,9 +39,21 @@ public:
     void SelectPlanet(int planet);
     void Reset();
     void Clear();
+
+    void ShowType(BuildType type, bool refresh_list = true);
+    void ShowAllTypes(bool refresh_list = true);
+    void HideType(BuildType type, bool refresh_list = true);
+    void HideAllTypes(bool refresh_list = true);
+    void ToggleType(BuildType type, bool refresh_list = true);
+    void ToggleAllTypes(bool refresh_list = true);
+    
+    void ShowAvailability(bool available, bool refresh_list = true);
+    void HideAvailability(bool available, bool refresh_list = true);
+    void ToggleAvailabilitly(bool available, bool refresh_list = true);
     //@}
 
-    mutable AddBuildToQueueSignalType AddBuildToQueueSignal;
+    mutable AddNamedBuildToQueueSignalType AddNamedBuildToQueueSignal;
+    mutable AddIDedBuildToQueueSignalType AddIDedBuildToQueueSignal;
     mutable BuildQuantityChangedSignalType BuildQuantityChangedSignal;
     mutable SystemSelectedSignalType SystemSelectedSignal;
 
@@ -52,6 +62,7 @@ private:
     class BuildSelector;
 
     void BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build);
+    void BuildItemRequested(BuildType build_type, int design_id, int num_to_build);
     void BuildQuantityChanged(int queue_idx, int quantity);
     void SelectDefaultPlanet(int system);
 

@@ -14,7 +14,8 @@ public:
     /** \name Structors */ //@{
     /** basic ctor */
     Special(const std::string& name, const std::string& description,
-            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects);
+            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
+            const std::string& graphic);
     //@}
 
     /** \name Accessors */ //@{
@@ -23,6 +24,7 @@ public:
     std::string                 Dump() const;               ///< returns a data file format representation of this object
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                 Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
+    const std::string&          Graphic() const;            ///< returns the name of the grapic file for this special
     //@}
 
 private:
@@ -30,6 +32,7 @@ private:
     std::string          m_description;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                          m_effects;
+    std::string          m_graphic;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -50,7 +53,8 @@ void Special::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_effects);
+        & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_graphic);
 }
 
 #endif // _Special_h_

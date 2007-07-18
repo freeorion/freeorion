@@ -67,23 +67,23 @@ void ResourcePool::Update()
     {
     case RE_FOOD:
         for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->FarmingPoints();
+            m_production += (*it)->ProjectedFarmingPoints();
         break;
     case RE_INDUSTRY:
         for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->IndustryPoints();
+            m_production += (*it)->ProjectedIndustryPoints();
         break;
     case RE_MINERALS:
         for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->MiningPoints();
+            m_production += (*it)->ProjectedMiningPoints();
         break;
     case RE_RESEARCH:
         for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->ResearchPoints();
+            m_production += (*it)->ProjectedResearchPoints();
         break;
     case RE_TRADE:
         for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->TradePoints();
+            m_production += (*it)->ProjectedTradePoints();
         break;
     default:
         throw std::runtime_error("ResourceCenterChanged was called without a valid m_type.");

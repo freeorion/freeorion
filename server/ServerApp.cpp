@@ -48,7 +48,6 @@ namespace {
 #endif
 }
 
-
 ////////////////////////////////////////////////
 // PlayerSaveGameData
 ////////////////////////////////////////////////
@@ -98,7 +97,7 @@ ServerApp::ServerApp() :
     m_log_category.setAdditivity(false);  // make appender the only appender used...
     m_log_category.setAppender(appender);
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
-    m_log_category.setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
+    m_log_category.setPriority(log4cpp::Priority::DEBUG);
 
     m_fsm.initiate();
 }
@@ -107,9 +106,7 @@ ServerApp::~ServerApp()
 { log4cpp::Category::shutdown(); }
 
 void ServerApp::operator()()
-{
-    Run();
-}
+{ Run(); }
 
 void ServerApp::Exit(int code)
 {
@@ -118,9 +115,7 @@ void ServerApp::Exit(int code)
 }
 
 log4cpp::Category& ServerApp::Logger()
-{
-    return m_log_category;
-}
+{ return m_log_category; }
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::set<std::string>& expected_ai_player_names)
 {
@@ -150,29 +145,19 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
 }
 
 ServerApp* ServerApp::GetApp()
-{
-    return s_app;
-}
+{ return s_app; }
 
 Universe& ServerApp::GetUniverse()
-{
-    return ServerApp::GetApp()->m_universe;
-}
+{ return s_app->m_universe; }
 
 EmpireManager& ServerApp::Empires()
-{
-    return ServerApp::GetApp()->m_empires;
-}
+{ return ServerApp::GetApp()->m_empires; }
 
 CombatModule* ServerApp::CurrentCombat()
-{
-    return ServerApp::GetApp()->m_current_combat;
-}
+{ return ServerApp::GetApp()->m_current_combat; }
 
 ServerNetworking& ServerApp::Networking()
-{
-    return ServerApp::GetApp()->m_networking;
-}
+{ return ServerApp::GetApp()->m_networking; }
 
 void ServerApp::Run()
 {
@@ -311,10 +296,19 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
         AddEmpireTurn((*it)->ID());
     }
 
+    // compile map of PlayerInfo for each player, indexed by player ID
+    std::map<int, PlayerInfo> players;
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
+                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
+                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
+                                          (*it)->Host());
+    }
+
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int player_id = (*it)->ID();
         int empire_id = GetPlayerEmpire(player_id)->EmpireID();
-        (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe));
+        (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe, players));
     }
 
     m_losers.clear();
@@ -353,10 +347,19 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // the universe is loaded.  That means we must do it here.
     m_universe.RebuildEmpireViewSystemGraphs();
 
+    // compile map of PlayerInfo for each player, indexed by player ID
+    std::map<int, PlayerInfo> players;
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
+                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
+                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
+                                          (*it)->Host());
+    }
+
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         Empire* empire = GetPlayerEmpire((*it)->ID());
         (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
-                                            *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
+                                            players, *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
     }
 
     m_losers.clear();
@@ -392,20 +395,13 @@ int ServerApp::GetEmpirePlayerID(int empire_id) const
 }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{
-    m_turn_sequence[empire_id] = 0;
-}
+{ m_turn_sequence[empire_id] = 0; }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
-{
-    m_turn_sequence.erase(empire_id);
-}
+{ m_turn_sequence.erase(empire_id); }
 
 void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
-{
-    m_turn_sequence[empire_id] = order_set;
-}
-
+{ m_turn_sequence[empire_id] = order_set; }
 
 bool ServerApp::AllOrdersReceived()
 {
@@ -416,7 +412,6 @@ bool ServerApp::AllOrdersReceived()
     } 
     return true;
 }
-
 
 void ServerApp::ProcessTurns()
 {
@@ -551,17 +546,6 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // find planets which have starved to death
-    std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
-    for (std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
-        if ((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
-        {
-            // add some information to sitrep
-            Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
-            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
-            (*it)->Reset();
-        }
-
     // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
@@ -632,19 +616,36 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::EMPIRE_PRODUCTION, -1));
     }
 
+
+    // Update meters, do other effects stuff
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ResetMaxMeters();   // zero all meters
+        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
+    }
+    GetUniverse().ApplyEffects();       // apply effects, futher altering meters (and also non-meter effects)
+
+
+    // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
         it->second->UpdateResourcePool();
-    
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->AdjustMaxMeters();
+
+    // consume distributed resources on queues
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        Empire* empire = Empires().Lookup(it->first);
+        empire->CheckResearchProgress();
+        empire->CheckProductionProgress();
+        empire->CheckTradeSocialProgress();
+        empire->CheckGrowthFoodProgress();
     }
 
-    GetUniverse().ApplyEffects();
+
+    // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
     GetUniverse().RebuildEmpireViewSystemGraphs();
 
+
+    // Population growth or loss, health meter growth, resource current meter growth
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->PopGrowthProductionResearchPhase(); // Population growth / starvation, health meter growth, resource current meter growth
+        it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // limit current meters by max meters
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
@@ -656,23 +657,26 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // check for completed research, production or social projects, pay maintenance.  Update stockpiles.
-    // doesn't do actual population growth, which occurs above when PopGrowthProductionResearchPhase() is called
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        Empire* empire = Empires().Lookup(it->first);
-        empire->CheckResearchProgress();
-        empire->CheckProductionProgress();
-        empire->CheckTradeSocialProgress();
-        empire->CheckGrowthFoodProgress();
-    }
 
+    // find planets which have starved to death
+    std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
+    for (std::vector<Planet*>::iterator it = plt_vec.begin();it!=plt_vec.end();++it)
+        if ((*it)->Owners().size()>0 && (*it)->PopPoints()==0.0)
+        {
+            // add some information to sitrep
+            Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
+            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(),(*it)->ID()));
+            (*it)->Reset();
+        }
+
+    
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         delete it->second;
         it->second = NULL;
     }   
-    
+
     ++m_current_turn;
 
     // indicate that the clients are waiting for their new Universes
@@ -703,10 +707,19 @@ void ServerApp::ProcessTurns()
             object_vec[j]->RemoveOwner(it->second);
     }
 
+    // compile map of PlayerInfo for each player, indexed by player ID
+    std::map<int, PlayerInfo> players;
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
+                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
+                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
+                                          (*it)->Host());
+    }
+
     // send new-turn updates to all players
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        pEmpire = GetPlayerEmpire((*player_it)->ID());
-        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), pEmpire->EmpireID(), m_current_turn, m_empires, m_universe));
+        int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
+        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
     }
 
     // notify all players of the eliminated players

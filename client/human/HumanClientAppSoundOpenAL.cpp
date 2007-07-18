@@ -1,20 +1,12 @@
-/* THIS IS UNTESTED CODE! Please give feedback if it works. */
 #include "HumanClientAppSoundOpenAL.h"
 #include "../../util/OptionsDB.h"
 
-#ifdef FREEORION_WIN32
-//#include <al.h> // already included in HumanClientAppSoundOpenAL.h
-#include <alc.h>
-#else
-//#include <AL/al.h> // already included in HumanClientAppSoundOpenAL.h
 #include <AL/alc.h>
-
-#endif
-
 #include <AL/alut.h>
-//#include <vorbis/vorbisfile.h> // already included in HumanClientAppSoundOpenAL.h
 
 namespace {
+    const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
+
     void InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers)
     {
         ALCcontext *m_context;
@@ -33,7 +25,7 @@ namespace {
             alListenerf(AL_GAIN,1.0);
             alGenSources(num_sources, sources);
             alGenBuffers(2, music_buffers);
-            for (int i=0; i<num_sources; i++) {
+            for (int i = 0; i < num_sources; ++i) {
                 alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
             }
             logger.debugStream() << "OpenAL initialized. Version "
@@ -47,22 +39,21 @@ namespace {
                                  << "\n";
         }
     }
-}
 
 #ifdef FREEORION_WIN32
-static int _fseek64_wrap(FILE *f,ogg_int64_t off,int whence){
-
-    if(f==NULL)return(-1);
-
-    return fseek(f,off,whence);
-
-}
+    int _fseek64_wrap(FILE *f,ogg_int64_t off,int whence)
+    {
+        if (!f)
+            return -1;
+        return fseek(f,off,whence);
+    }
 #endif
+}
 
-HumanClientAppSoundOpenAL::HumanClientAppSoundOpenAL()
-    : HumanClientApp()
+HumanClientAppSoundOpenAL::HumanClientAppSoundOpenAL() :
+    HumanClientApp()
 {
-    InitOpenAL(M_SOURCES_NUM, m_sources, m_music_buffers);
+    InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
 }
 
 HumanClientAppSoundOpenAL::~HumanClientAppSoundOpenAL()
@@ -77,7 +68,7 @@ int HumanClientAppSoundOpenAL::RefillBuffer(ALuint *bufferName)
     int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
     int bitStream,bytes,bytes_new;
     char array[BUFFER_SIZE];
-    bytes=0;
+    bytes = 0;
    
     if (alcGetCurrentContext() != NULL)
     {
@@ -190,9 +181,6 @@ void HumanClientAppSoundOpenAL::PlayMusic(const boost::filesystem::path& path, i
 
 void HumanClientAppSoundOpenAL::StopMusic()
 {
-    int num_buffers_processed;
-    ALuint buffer_name_yay;
-   
     if (alcGetCurrentContext() != NULL)
     {
         alSourceStop(m_sources[0]);
@@ -220,7 +208,7 @@ void HumanClientAppSoundOpenAL::PlaySound(const boost::filesystem::path& path)
         /* First check if the sound data of the file we want to play is already buffered somewhere */
         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
         if (it != m_buffers.end())
-            m_current_buffer=it->second;
+            m_current_buffer = it->second;
         else
         {
             /* We buffer the file if it wasn't previously */
@@ -235,7 +223,7 @@ void HumanClientAppSoundOpenAL::PlaySound(const boost::filesystem::path& path)
         if (m_found_buffer)
         {
             /* Now that we have the buffer, we need to find a source to send it to */
-            for (m_i=1;m_i<M_SOURCES_NUM;m_i++) // as we're playing sounds we start at 1. 0 is reserved for music
+            for (m_i = 1; m_i < NUM_SOURCES; ++m_i) // as we're playing sounds we start at 1. 0 is reserved for music
             {
                 alGetSourcei(m_sources[m_i],AL_SOURCE_STATE,&m_source_state);
                 if ((m_source_state != AL_PLAYING) && (m_source_state != AL_PAUSED))
@@ -319,7 +307,7 @@ void HumanClientAppSoundOpenAL::SetUISoundsVolume(int vol)
     GetOptionsDB().Set<int>("UI.sound.volume", vol);
     if (alcGetCurrentContext() != NULL)
     {
-        for (int it=1; it < M_SOURCES_NUM; it++)
+        for (int it = 1; it < NUM_SOURCES; ++it)
             alSourcef(m_sources[it],AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();

@@ -346,13 +346,41 @@
       <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
-  </GLPlanets>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant07.png</filename>
+      <RPM>1.1</RPM>
+      <axis_angle>21.0</axis_angle>
+      <shininess>0.0</shininess>
+    </RotatingPlanetData>
+    <RotatingPlanetData>
+      <planet_type>PT_GASGIANT</planet_type>
+      <filename>planets/GasGiant08.png</filename>
       <RPM>1.0</RPM>
+      <axis_angle>26.0</axis_angle>
+      <shininess>0.0</shininess>
+    </RotatingPlanetData>
+    <RotatingPlanetData>
+      <planet_type>PT_GASGIANT</planet_type>
+      <filename>planets/GasGiant09.png</filename>
+      <RPM>1.1</RPM>
       <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
+    <RotatingPlanetData>
+      <planet_type>PT_GASGIANT</planet_type>
+      <filename>planets/GasGiant10.png</filename>
+      <RPM>1.0</RPM>
+      <axis_angle>29.0</axis_angle>
+      <shininess>0.0</shininess>
+    </RotatingPlanetData>
+    <RotatingPlanetData>
+      <planet_type>PT_GASGIANT</planet_type>
+      <filename>planets/GasGiant11.png</filename>
+      <RPM>1.2</RPM>
+      <axis_angle>20.0</axis_angle>
+      <shininess>0.0</shininess>
+    </RotatingPlanetData>
+    
   </GLPlanets>
 </GG::XMLDoc>

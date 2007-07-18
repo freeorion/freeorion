@@ -1160,7 +1160,7 @@ bool Condition::OwnerHasTech::Match(const UniverseObject* source, const Universe
     if (target->Owners().size() != 1)
         return false;
     Empire* empire = Empires().Lookup(*target->Owners().begin());
-    return empire->TechAvailable(m_name);
+    return empire->TechResearched(m_name);
 }
 
 ///////////////////////////////////////////////////////////

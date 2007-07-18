@@ -95,12 +95,12 @@ public:
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
+    int CreationTurn() const; ///< returns game turn on which object was created
+    int AgeInTurns() const; ///< returns elapsed number of turns between turn object was created and current game turn.
+
     mutable StateChangedSignalType StateChangedSignal; ///< returns the state changed signal object for this UniverseObject
     //@}
 
-    int CreationTurn() const; ///< returns game turn on which object was created
-    int AgeInTurns() const; ///< returns elapsed number of turns between turn object was created and current game turn.
-   
     /** \name Mutators */ //@{
     void SetID(int id);                   ///< sets the ID number of the object to \a id
     void Rename(const std::string& name); ///< renames this object to \a name
@@ -131,7 +131,7 @@ public:
 
     /** adjusts the max meter values for all meters in this UniverseObject, based on its own properties.  This does not include
         Effects acting on the object, which should already have been executed before this function is called. */
-    virtual void AdjustMaxMeters();
+    virtual void ApplyUniverseTableMaxMeterAdjustments();
 
     /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Current() value exceed its Max() value. */
     void ClampMeters();

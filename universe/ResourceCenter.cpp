@@ -65,18 +65,31 @@ namespace {
     void Growth(Meter& construction, Meter& farming, Meter& industry, Meter& mining, Meter& research, Meter& trade, const Meter& pop)
     {
         // update the construction meter
-        double construction_delta =
-            (construction.Current() + 1) * ((construction.Max() - construction.Current()) / (construction.Max() + 1)) * (pop.Current() * 10.0) * 0.01;
-        construction.AdjustCurrent(construction_delta);
+        double delta = (construction.Current() + 1) * ((construction.Max() - construction.Current()) / (construction.Max() + 1)) * (pop.Current() * 10.0) * 0.01;
+        double new_cur = std::min(construction.Max(), construction.Current() + delta);
+        construction.SetCurrent(new_cur);
 
         // update the resource meters
-        farming.AdjustCurrent(construction.Current() / (10.0 + farming.Current()));
-        industry.AdjustCurrent(construction.Current() / (10.0 + industry.Current()));
-        mining.AdjustCurrent(construction.Current() / (10.0 + mining.Current()));
-        research.AdjustCurrent(construction.Current() / (10.0 + research.Current()));
-        trade.AdjustCurrent(construction.Current() / (10.0 + trade.Current()));
-    }
+        delta = construction.Current() / (10.0 + farming.Current());
+        new_cur = std::min(farming.Max(), farming.Current() + delta);
+        farming.SetCurrent(new_cur);
 
+        delta = construction.Current() / (10.0 + industry.Current());
+        new_cur = std::min(industry.Max(), industry.Current() + delta);
+        industry.SetCurrent(new_cur);
+
+        delta = construction.Current() / (10.0 + mining.Current());
+        new_cur = std::min(mining.Max(), mining.Current() + delta);
+        mining.SetCurrent(new_cur);
+
+        delta = construction.Current() / (10.0 + research.Current());
+        new_cur = std::min(research.Max(), research.Current() + delta);
+        research.SetCurrent(new_cur);
+
+        delta = construction.Current() / (10.0 + trade.Current());
+        new_cur = std::min(trade.Max(), trade.Current() + delta);
+        trade.SetCurrent(new_cur);
+    }
 }
 
 ResourceCenter::ResourceCenter() : 
@@ -135,7 +148,13 @@ double ResourceCenter::TradePoints() const
 
 double ResourceCenter::ProjectedCurrent(MeterType type) const
 {
-    Meter construction = m_construction, farming = m_farming, industry = m_industry, mining = m_mining, research = m_research, trade = m_trade;
+    Meter construction = m_construction;
+    Meter farming = Meter(m_farming.Current(), m_farming.Max());
+    Meter mining = Meter(m_mining.Current(), m_mining.Max());
+    Meter industry = Meter(m_industry.Current(), m_industry.Max());
+    Meter research = Meter(m_research.Current(), m_research.Max());
+    Meter trade = Meter(m_trade.Current(), m_trade.Max());
+
     Growth(construction, farming, industry, mining, research, trade, *m_pop);
     switch (type) {
     case METER_FARMING: return farming.Current();
@@ -148,6 +167,31 @@ double ResourceCenter::ProjectedCurrent(MeterType type) const
         assert(0);
         return 0.0;
     }
+}
+
+double ResourceCenter::ProjectedFarmingPoints() const
+{
+    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_FARMING);
+}
+
+double ResourceCenter::ProjectedIndustryPoints() const
+{
+    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_INDUSTRY);
+}
+
+double ResourceCenter::ProjectedMiningPoints() const
+{
+    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_MINING);
+}
+
+double ResourceCenter::ProjectedResearchPoints() const
+{
+    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_RESEARCH);
+}
+
+double ResourceCenter::ProjectedTradePoints() const
+{
+    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_TRADE);
 }
 
 Meter* ResourceCenter::GetMeter(MeterType type)
@@ -165,47 +209,17 @@ Meter* ResourceCenter::GetMeter(MeterType type)
 
 void ResourceCenter::SetPrimaryFocus(FocusType focus)
 {
-    for (MeterType i = METER_FARMING; i <= METER_MINING; i = MeterType(i + 1)) {
-        double old_max_mods = 0.0;
-        if (m_primary == MeterToFocus(i))
-            old_max_mods = ProductionDataTables()["FocusMods"][0][0];
-        else if (m_primary == FOCUS_BALANCED)
-            old_max_mods = ProductionDataTables()["FocusMods"][2][0];
-        double new_max_mods = 0.0;
-        if (focus == MeterToFocus(i))
-            new_max_mods = ProductionDataTables()["FocusMods"][0][0];
-        else if (focus == FOCUS_BALANCED)
-            new_max_mods = ProductionDataTables()["FocusMods"][2][0];
-        Meter* meter = GetMeter(i);
-        assert(meter);
-        meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
-    }
     m_primary = focus;
     ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::SetSecondaryFocus(FocusType focus)
 {
-    for (MeterType i = METER_FARMING; i <= METER_MINING; i = MeterType(i + 1)) {
-        double old_max_mods = 0.0;
-        if (m_secondary == MeterToFocus(i))
-            old_max_mods = ProductionDataTables()["FocusMods"][1][0];
-        else if (m_secondary == FOCUS_BALANCED)
-            old_max_mods = ProductionDataTables()["FocusMods"][3][0];
-        double new_max_mods = 0.0;
-        if (focus == MeterToFocus(i))
-            new_max_mods = ProductionDataTables()["FocusMods"][1][0];
-        else if (focus == FOCUS_BALANCED)
-            new_max_mods = ProductionDataTables()["FocusMods"][3][0];
-        Meter* meter = GetMeter(i);
-        assert(meter);
-        meter->SetMax(meter->Max() + new_max_mods - old_max_mods);
-    }
     m_secondary = focus;
     ResourceCenterChangedSignal();
 }
 
-void ResourceCenter::AdjustMaxMeters()
+void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments()
 {
     // determine meter maxes; they should have been previously reset to 0
     double primary_specialized_factor = ProductionDataTables()["FocusMods"][0][0];

@@ -95,7 +95,7 @@ namespace {
 
         ParamLabel value_label;
         ParamLabel type_label;
-        ParamLabel size_label;
+        ParamLabel planetsize_label;
         ParamLabel empire_label;
         ParamLabel name_label;
     };
@@ -103,7 +103,7 @@ namespace {
     EffectParserDefinition::EffectParserDefinition() :
         value_label("value"),
         type_label("type"),
-        size_label("size"),
+        planetsize_label("size"),
         empire_label("empire"),
         name_label("name")
     {
@@ -135,7 +135,7 @@ namespace {
 
         set_planet_size =
             (str_p("setplanetsize")
-             >> size_label >> planetsize_expr_p[set_planet_size.size = arg1])
+             >> planetsize_label >> planetsize_expr_p[set_planet_size.size = arg1])
             [set_planet_size.this_ = new_<Effect::SetPlanetSize>(set_planet_size.size)];
 
         add_owner =

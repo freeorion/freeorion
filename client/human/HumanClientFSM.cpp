@@ -396,7 +396,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnUpdate";
-    ExtractMessageData(msg.m_message, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse());
+    ExtractMessageData(msg.m_message, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info);
     for (Empire::SitRepItr sitrep_it = Empires().Lookup(Client().EmpireID())->SitRepBegin(); sitrep_it != Empires().Lookup(Client().EmpireID())->SitRepEnd(); ++sitrep_it) {
         Client().m_ui->GenerateSitRepText(*sitrep_it);
     }
@@ -418,7 +418,7 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
     SaveGameUIData ui_data;
     bool loaded_game_data;
     bool ui_data_available;
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().Orders(), ui_data, loaded_game_data, ui_data_available);
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, Client().Orders(), ui_data, loaded_game_data, ui_data_available);
     Client().StartGame();
     if (loaded_game_data) {
         if (ui_data_available)
@@ -462,7 +462,17 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg)
 boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.PlayerChat";
-    Client().m_ui->GetMapWnd()->HandlePlayerChatMessage(msg.m_message.Text());
+    std::map<int, PlayerInfo>::const_iterator it = Client().Players().find(msg.m_message.SendingPlayer());
+    assert(it != Client().Players().end());
+    std::string sender_name = it->second.name;
+    Empire* sender_empire = Client().GetPlayerEmpire(msg.m_message.SendingPlayer());
+    GG::Clr sender_colour;
+    if (sender_empire)
+        sender_colour = sender_empire->Color();
+    else
+        sender_colour = GG::CLR_WHITE;
+    std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + msg.m_message.Text() + "</rgba>\n";
+    Client().m_ui->GetMapWnd()->HandlePlayerChatMessage(wrapped_text);
     return discard_event();
 }
 

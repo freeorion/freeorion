@@ -2,7 +2,9 @@
 
 #include "../universe/ResourceCenter.h"
 #include "../util/OptionsDB.h"
-#include "../UI/ClientUI.h"
+#include "ClientUI.h"
+#include "../client/human/HumanClientApp.h"
+
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
@@ -163,6 +165,7 @@ void FocusSelector::FocusClickFunctor::operator()()
 
 FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
     Control(0, 0, w, w / (FOCUS_SELECTOR_LAST_FOCUS - FOCUS_SELECTOR_FIRST_FOCUS) + FOCUS_SELECTOR_METER_BAR_HEIGHT + FOCUS_SELECTOR_TEXT_HEIGHT),
+    m_res_center(resource_center),
     m_primary_focus(resource_center.PrimaryFocus()),
     m_secondary_focus(resource_center.SecondaryFocus()),
     m_first_button_focus(FOCUS_SELECTOR_FIRST_FOCUS),
@@ -260,12 +263,12 @@ void FocusSelector::MouseLeave()
     m_mouse_here = false;
 }
 
-void FocusSelector::Update(const ResourceCenter& resource_center)
+void FocusSelector::Update()
 {
-    m_primary_focus = resource_center.PrimaryFocus();
-    m_secondary_focus = resource_center.SecondaryFocus();
+    m_primary_focus = m_res_center.PrimaryFocus();
+    m_secondary_focus = m_res_center.SecondaryFocus();
     AdjustButtonImages();
-    AdjustMeterStatusBars(resource_center);
+    AdjustMeterStatusBars(m_res_center);
 }
 
 FocusType FocusSelector::ButtonFocus(int button) const

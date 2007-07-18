@@ -2,22 +2,10 @@
 #ifndef _CUISpin_h_
 #define _CUISpin_h_
 
-#ifndef _CUIControls_h_
 #include "CUIControls.h"
-#endif
-
-#ifndef _GG_Spin_h_
 #include <GG/Spin.h>
-#endif
-
-#ifndef _HumanClientApp_h_
 #include "../client/human/HumanClientApp.h"
-#endif
-
-#ifndef _OptionsDB_h_
 #include "../util/OptionsDB.h"
-#endif
-
 
 namespace detail {
     struct PlayValueChangedSound

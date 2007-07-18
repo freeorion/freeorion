@@ -73,7 +73,9 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
         'client/AI/camain.cpp',
         'network/ClientNetworking.cpp',
         'universe/Universe.cpp',
-        'util/AppInterface.cpp'
+        'util/AppInterface.cpp',
+        'AI/AIInterface.cpp',
+        'AI/PythonAI.cpp'
         ]
     target = 'ai'
 
@@ -83,8 +85,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'client/ClientFSMEvents.cpp',
         'client/human/HumanClientFSM.cpp',
         'client/human/HumanClientApp.cpp',
-        'client/human/HumanClientAppSoundFMOD.cpp',
-#        'client/human/HumanClientAppSoundOpenAL.cpp',
+        'client/human/HumanClientAppSoundOpenAL.cpp',
         'client/human/chmain.cpp',
         'network/ClientNetworking.cpp',
         'UI/About.cpp',
@@ -100,6 +101,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/FocusSelector.cpp',
         'UI/GalaxySetupWnd.cpp',
         'UI/InGameMenu.cpp',
+        'UI/InfoPanels.cpp',
         'UI/IntroScreen.cpp',
         'UI/LinkText.cpp',
         'UI/MapWnd.cpp',

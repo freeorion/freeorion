@@ -60,6 +60,7 @@ struct MessageEventBase
         (TurnOrders)                            \
         (ClientSaveData)                        \
         (RequestObjectID)                       \
+        (RequestDesignID)                       \
         (PlayerChat)
 
 
@@ -243,6 +244,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
         boost::statechart::custom_reaction<HostSPGame>,
         boost::statechart::custom_reaction<TurnOrders>,
         boost::statechart::custom_reaction<RequestObjectID>,
+        boost::statechart::custom_reaction<RequestDesignID>,
         boost::statechart::custom_reaction<PlayerChat>
     > reactions;
 
@@ -252,6 +254,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     boost::statechart::result react(const HostSPGame& msg);
     boost::statechart::result react(const TurnOrders& msg);
     boost::statechart::result react(const RequestObjectID& msg);
+    boost::statechart::result react(const RequestDesignID& msg);
     boost::statechart::result react(const PlayerChat& msg);
 
     std::string m_save_filename;

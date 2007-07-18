@@ -377,12 +377,12 @@ namespace GG {
 GG_ENUM_STREAM_IN(UnlockableItemType)
 GG_ENUM_STREAM_OUT(UnlockableItemType)
 
-/** the types of Techs in FreeOrion */
+/** General classification for purpose and function of techs, and allowed place in tech prerequisite tree */
 enum TechType {
     INVALID_TECH_TYPE = -1,
-    TT_THEORY,           ///< a Theory Tech
-    TT_APPLICATION,      ///< an Application Tech
-    TT_REFINEMENT,       ///< a Refinment Tech
+    TT_THEORY,      // Theory: does nothing itself, but is prerequisite for applications and refinements
+    TT_APPLICATION, // Application: has effects that do things, or may unlock something such as a building that does things
+    TT_REFINEMENT,  // Refinement: does nothing itself, but if researched, may alter the effects of something else
     NUM_TECH_TYPES
 };
 
@@ -396,6 +396,26 @@ namespace GG {
 }
 GG_ENUM_STREAM_IN(TechType)
 GG_ENUM_STREAM_OUT(TechType)
+
+/** Research status of techs, relating to whether they have been or can be researched */
+enum TechStatus {
+    INVALID_TECH_STATUS = -1,
+    TS_UNRESEARCHABLE,
+    TS_RESEARCHABLE,
+    TS_COMPLETE,
+    NUM_TECH_STATUSES
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(TechStatus)
+    GG_ENUM_MAP_INSERT(INVALID_TECH_STATUS)
+    GG_ENUM_MAP_INSERT(TS_UNRESEARCHABLE)
+    GG_ENUM_MAP_INSERT(TS_RESEARCHABLE)
+    GG_ENUM_MAP_INSERT(TS_COMPLETE)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(TechStatus)
+GG_ENUM_STREAM_OUT(TechStatus)
 
 /** The general type of construction being done at a ProdCenter.  Within each valid type, a specific kind 
     of item is being built, e.g. under BUILDING a kind of building called "SuperFarm" might be built. */
@@ -420,7 +440,6 @@ namespace GG {
 GG_ENUM_STREAM_IN(BuildType)
 GG_ENUM_STREAM_OUT(BuildType)
 
-/** The types of resources. */
 enum ResourceType {
     INVALID_RESOURCE_TYPE = -1,
     RE_FOOD,
@@ -460,10 +479,20 @@ enum EncodingVisbility {
     or the result of other future events, such as spy activity... */
 enum CaptureResult {
     INVALID_CAPTURE_RESULT = -1,
-    CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
-    DESTROY,    // object is destroyed
-    RETAIN,     // object ownership unchanged: original empire(s) still own object
-    SHARE       // object has ownership by conquering empire added, while still retaining ownership by original empire(s)
+    CR_CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
+    CR_DESTROY,    // object is destroyed
+    CR_RETAIN,     // object ownership unchanged: original empire(s) still own object
+    CR_SHARE       // object has ownership by conquering empire added, while still retaining ownership by original empire(s)
+};
+
+/** Types of in-game things that might contain an EffectsGroup, or "cause" effects to occur */
+enum EffectsCauseType {
+    ECT_UNIVERSE_TABLE_ADJUSTMENT = -2,  // not an actual effect, but a meter alteration due to universe tables
+    INVALID_EFFECTS_GROUP_CAUSE_TYPE = -1,
+    ECT_UNKNOWN_CAUSE,
+    ECT_TECH,
+    ECT_BUILDING,
+    ECT_SPECIAL
 };
 
 #endif // _Enums_h_

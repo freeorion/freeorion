@@ -6,6 +6,8 @@
 #include "../util/OptionsDB.h"
 #include "Planet.h"
 
+#include <algorithm>
+
 #include <boost/lexical_cast.hpp>
 
 #include <stdexcept>
@@ -42,20 +44,31 @@ namespace {
 }
 
 PopCenter::PopCenter() :
+    m_pop(),
+    m_health(),
     m_growth(0),
     m_race(0),
     m_available_food(0)
 {}
 
-PopCenter::PopCenter(double max_pop_mod, double max_health_mod)
+PopCenter::PopCenter(double max_pop_mod, double max_health_mod) :
+    m_pop(),
+    m_health(),
+    m_growth(0),
+    m_race(0),
+    m_available_food(0)
 {
     Reset(max_pop_mod, max_health_mod);
 }
 
-PopCenter::PopCenter(int race, double max_pop_mod, double max_health_mod)
+PopCenter::PopCenter(int race, double max_pop_mod, double max_health_mod) :
+    m_pop(),
+    m_health(),
+    m_growth(0),
+    m_race(race),
+    m_available_food(0)
 {
     Reset(max_pop_mod, max_health_mod);
-    m_race = race;
 }
    
 PopCenter::~PopCenter()
@@ -91,21 +104,27 @@ double PopCenter::AdjustPop(double pop)
 
 double PopCenter::FuturePopGrowth() const
 {
-    return std::min(FuturePopGrowthMax(), std::min(AvailableFood(), m_pop.Max()) - m_pop.Current());
+    return std::max(-m_pop.Current(), std::min(FuturePopGrowthMax(), std::min(AvailableFood(), m_pop.Max()) - m_pop.Current()));
 }
 
 double PopCenter::FuturePopGrowthMax() const
 {
+    Logger().debugStream() << "PopCenter::FuturePopGrowthMax(): id: " << dynamic_cast<const UniverseObject* const>(this)->ID();
     if (20.0 < m_health.Current()) {
-        return m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01;
+        return std::min(m_pop.Max() - m_pop.Current(), m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01);
     } else if (m_health.Current() == 20.0) {
         return 0.0;
     } else { // m_health.Current() < 20.0
-        return m_pop.Current() * (m_health.Current() - 20.0) * 0.01;
+        return std::max(-m_pop.Current(), -m_pop.Current()*(  exp( (m_health.Current()-20)*(m_health.Current()-20) / (400/log(2.0)) ) - 1  ));
     }
 }
 
-void PopCenter::AdjustMaxMeters()
+double PopCenter::FutureHealthGrowth() const
+{
+    return std::min(MaxHealth() - Health(), m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
+}
+
+void PopCenter::ApplyUniverseTableMaxMeterAdjustments()
 {
     UniverseObject* object = GetObjectSignal();
     assert(object);
@@ -137,8 +156,8 @@ void PopCenter::PopGrowthProductionResearchPhase()
 
 void PopCenter::Reset(double max_pop_mod, double max_health_mod)
 {
-    m_pop = Meter(0.0, max_pop_mod);
-    m_health = Meter(max_health_mod, max_health_mod);
+    m_pop =     Meter(0.0,              max_pop_mod,    m_pop.InitialCurrent(),     m_pop.InitialMax(),     m_pop.PreviousCurrent(),    m_pop.PreviousMax());
+    m_health =  Meter(max_health_mod,   max_health_mod, m_health.InitialCurrent(),  m_health.InitialMax(),  m_health.PreviousCurrent(), m_health.PreviousMax());
     m_growth = 0.0;
     m_race = -1;
     m_available_food = 0.0;

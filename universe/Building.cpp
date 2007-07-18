@@ -38,43 +38,11 @@ namespace {
     };
 
     const phoenix::function<store_building_type_impl> store_building_type_;
-
-    // loads and stores BuildingTypes specified in [settings-dir]/buildings.txt
-    class BuildingTypeManager
-    {
-    public:
-        BuildingTypeManager()
-        {
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-            std::string filename = settings_dir + "buildings.txt";
-            std::ifstream ifs(filename.c_str());
-            std::string input;
-            std::getline(ifs, input, '\0');
-            ifs.close();
-            using namespace boost::spirit;
-            using namespace phoenix;
-            parse_info<const char*> result =
-                parse(input.c_str(),
-                      as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]],
-                      skip_p);
-            if (!result.full)
-                ReportError(std::cerr, input.c_str(), result);
-        }
-
-        const BuildingType* GetBuildingType(const std::string& name) const
-        {
-            std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
-            return it != m_building_types.end() ? it->second : 0;
-        }
-
-    private:
-        std::map<std::string, BuildingType*> m_building_types;
-    };
-
 }
 
+/////////////////////////////////////////////////
+// Building                                    //
+/////////////////////////////////////////////////
 Building::Building() :
     m_building_type(""),
     m_operating(true),
@@ -163,7 +131,10 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_location(location),
     m_effects(effects),
     m_graphic(graphic)
-{}
+{
+    if (m_graphic == "")
+       m_graphic = "building_icons/Generic_Building.png";
+}
 
 const std::string& BuildingType::Name() const
 {
@@ -263,12 +234,6 @@ void BuildingType::AddEffects(const std::vector<boost::shared_ptr<const Effect::
     std::copy(effects.begin(), effects.end(), m_effects.end());
 }
 
-const BuildingType* GetBuildingType(const std::string& name)
-{
-    static BuildingTypeManager manager;
-    return manager.GetBuildingType(name);
-}
-
 CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const {
     Empire* from_empire = Empires().Lookup(from_empire_id);
     if (!from_empire)
@@ -283,10 +248,77 @@ CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_i
         throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid location_id");
     
     if (as_production_item) {
-        Logger().debugStream() << "BuildingType::GetCaptureResult: returning CAPTURE for production item";
-        return CAPTURE;
+        Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_CAPTURE for production item";
+        return CR_CAPTURE;
     }
     
-    Logger().debugStream() << "BuildingType::GetCaptureResult: returning DESTROY";
-    return DESTROY;
+    Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_DESTROY";
+    return CR_DESTROY;
+}
+
+/////////////////////////////////////////////////
+// BuildingTypeManager                         //
+/////////////////////////////////////////////////
+// static(s)
+BuildingTypeManager* BuildingTypeManager::s_instance = 0;
+
+BuildingTypeManager::BuildingTypeManager()
+{
+    if (s_instance)
+        throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
+
+    s_instance = this;
+
+    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+        settings_dir += '/';
+    std::string filename = settings_dir + "buildings.txt";
+    std::ifstream ifs(filename.c_str());
+    std::string input;
+    std::getline(ifs, input, '\0');
+    ifs.close();
+    using namespace boost::spirit;
+    using namespace phoenix;
+    parse_info<const char*> result =
+        parse(input.c_str(),
+              as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]],
+              skip_p);
+    if (!result.full)
+        ReportError(std::cerr, input.c_str(), result);
+}
+
+const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const
+{
+    std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
+    return it != m_building_types.end() ? it->second : 0;
+}
+
+BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager()
+{
+    static BuildingTypeManager manager;
+    return manager;
+}
+
+BuildingTypeManager::iterator BuildingTypeManager::begin() const
+{
+    return m_building_types.begin();
+}
+
+BuildingTypeManager::iterator BuildingTypeManager::end() const
+{
+    return m_building_types.end();
+}
+
+
+///////////////////////////////////////////////////////////
+// Free Functions                                        //
+///////////////////////////////////////////////////////////
+BuildingTypeManager& GetBuildingTypeManager()
+{
+    return BuildingTypeManager::GetBuildingTypeManager();
+}
+
+const BuildingType* GetBuildingType(const std::string& name)
+{
+    return GetBuildingTypeManager().GetBuildingType(name);
 }

@@ -118,11 +118,9 @@ private:
     const System* dst;
 };
 
-
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-
 MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags ):
     CUIWnd( t, x, y, h, w, flags )
 { ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup(this); }
@@ -146,8 +144,7 @@ void MapWndPopup::Close()
 const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
 double    MapWnd::s_max_scale_factor = 8.0;
-const int MapWnd::SIDE_PANEL_WIDTH = 300;
-int       MapWnd::s_nebula_size = 192;
+const int MapWnd::SIDE_PANEL_WIDTH = 360;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -160,12 +157,13 @@ MapWnd::MapWnd() :
     m_bg_position_X(NUM_BACKGROUNDS),
     m_bg_position_Y(NUM_BACKGROUNDS),
     m_zoom_factor(1.0),
+    m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
+    m_active_fleet_wnd(0),
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
-    m_in_production_view_mode(false),
-    m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID)
+    m_in_production_view_mode(false)
 {
     SetText("MapWnd");
 
@@ -178,11 +176,10 @@ MapWnd::MapWnd() :
 
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
-    AttachChild(m_side_panel);
     GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
-    AttachChild(m_sitrep_panel);
 
     m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
@@ -203,28 +200,33 @@ MapWnd::MapWnd() :
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     const int BUTTON_TOTAL_MARGIN = 8;
 
+    // FPS indicator
+    m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
+    m_toolbar->AttachChild(m_FPS);
+
+    // Subscreen / Menu buttons
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_MENU") );
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, 0, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
     GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, LAYOUT_MARGIN, button_width, UserString("MAP_BTN_SITREP") );
+    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
 
     // resources
-    const int ICON_DUAL_WIDTH = 110;
+    const int ICON_DUAL_WIDTH = 100;
     const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
     m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
                                      (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(),
@@ -369,6 +371,15 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 bool MapWnd::InProductionViewMode() const
 { return m_in_production_view_mode; }
 
+bool MapWnd::FleetWndsOpen() const 
+{ return !m_fleet_wnds.empty(); }
+
+MapWnd::FleetWndIter MapWnd:: FleetWndBegin()
+{ return m_fleet_wnds.begin(); }
+
+MapWnd::FleetWndIter MapWnd::FleetWndEnd()
+{ return m_fleet_wnds.end(); }
+
 void MapWnd::Render()
 {
     RenderBackgrounds();
@@ -465,7 +476,7 @@ void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
                 while (GetOptionsDB().Get<int>("UI.chat-edit-history") < static_cast<int>(g_chat_edit_history.size()) + 1)
                     g_chat_edit_history.pop_back();
                 g_history_position = 0;
-                HumanClientApp::GetApp()->Networking().SendMessage(ChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
+                HumanClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
             }
             m_chat_edit->Clear();
             m_chat_edit->Hide();
@@ -530,6 +541,7 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         m_side_panel->Hide();
+        DetachChild(m_side_panel);
     }
     m_dragged = false;
 }
@@ -540,11 +552,12 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
 
     if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-        if (FleetWnd::CloseAllFleetWnds())
+        if (CloseAllFleetWnds())
             return;
 
         if (m_side_panel->Visible()) {
             m_side_panel->Hide();
+            DetachChild(m_side_panel);
             return;
         }
     }
@@ -604,6 +617,7 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
         GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
         GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
+        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
@@ -640,29 +654,60 @@ void MapWnd::InitTurn(int turn_number)
             m_moving_fleet_buttons.push_back(fb);
             AttachChild(fb);
             SetFleetMovement(fb);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }
 
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+
+
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        const PopCenter* pop = dynamic_cast<const PopCenter*>(it->second);
+        if (pop) Logger().debugStream() << "id: " << it->second->ID() << " max pop: " << pop->MaxPop() << " initial max pop: " << pop->PopulationMeter().InitialMax();
+    }
+    // update effect accounting and meter estimates
+    universe.InitMeterEstimatesAndDiscrepancies();
+
+
+    // determine level of supply each empire can provide to each system
+    m_system_supply.clear();
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        Empire* empire = it->second;
+        int empire_id = it->first;
+        const std::map<const System*, int>& supplyable_systems = empire->GetSupplyableSystems();
+        
+        for (std::map<const System*, int>::const_iterator it = supplyable_systems.begin(); it != supplyable_systems.end(); ++it) {
+            int system_id = it->first->ID();
+            int supply_level_for_current_empire = it->second;
+            std::map<int, int>& system_empire_supply_map = m_system_supply[system_id];
+
+            system_empire_supply_map[empire_id] = supply_level_for_current_empire;
+        }
+    }
+
+    m_active_fleet_wnd = 0;
+
     MoveChildUp(m_side_panel);
-    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-        m_side_panel->Hide();
 
     // set turn button to current turn
     m_turn_update->SetText( UserString("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
-    MoveChildUp( m_turn_update );
+    MoveChildUp(m_turn_update);
 
-    MoveChildUp(m_sitrep_panel);
     // are there any sitreps to show?
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     assert(empire);
     m_sitrep_panel->Update();
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
-    // I am sick of dealing with it, so I'm forcing a resize in order to force it to behave.
-    m_sitrep_panel->Resize(m_sitrep_panel->Size());
-    if (empire->NumSitRepEntries())
+    // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
+    m_sitrep_panel->Update();
+    if (empire->NumSitRepEntries()) {
+        AttachChild(m_sitrep_panel);
+        MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
-    else
+    } else {
+        DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide();
+    }
 
     m_research_wnd->Hide();
     m_production_wnd->Hide();
@@ -689,6 +734,8 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
+    // empire is recreated each turn based on turn update from server, so connections of signals emitted from
+    // the empire must be remade each turn (unlike connections to signals from the sidepanel)
     GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
     GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
     GG::Connect(empire->GetTradeResPool().ChangedSignal, &MapWnd::RefreshTradeResourceIndicator, this, 0);
@@ -697,9 +744,18 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::RefreshPopulationIndicator, this, 1);
 
-    empire->UpdateResourcePool();
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal, &SidePanel::Refresh);
+
+    //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
+    //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
     m_toolbar->Show();
+    m_FPS->Show();
+    m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
+    DetachChild(m_side_panel);
+    SelectSystem(m_side_panel->SystemID());
+
+    empire->UpdateResourcePool();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
@@ -753,6 +809,22 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
         m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(data.map_nebulae[i].filename));
         m_nebula_centers.push_back(data.map_nebulae[i].center);
     }
+}
+
+bool MapWnd::CloseAllFleetWnds()
+{
+    bool retval = 0 < m_fleet_wnds.size();
+    if (!retval) return retval;
+    
+    m_active_fleet_wnd = 0;
+
+    // TODO: close the currently open FleetWnd last, so that FleetWnd::LastPosition is preserved
+    while (0 < m_fleet_wnds.size()) {
+        FleetWnd* fleet_wnd = *m_fleet_wnds.begin();
+        fleet_wnd->Close(); // this erases fleet_wnd from m_fleet_wnds
+    }
+
+    return retval;
 }
 
 void MapWnd::ShowSystemNames()
@@ -822,6 +894,13 @@ void MapWnd::ShowTech(const std::string& tech_name)
     m_research_wnd->CenterOnTech(tech_name);
 }
 
+void MapWnd::ShowBuildingType(const std::string& building_type_name)
+{
+    //if (!m_production_wnd->Visible())
+    //    ToggleProduction();
+    //m_production_wnd->building_type_name);
+}
+
 void MapWnd::CenterOnSystem(System* system)
 { CenterOnMapCoord(system->X(), system->Y()); }
 
@@ -850,6 +929,7 @@ void MapWnd::SelectSystem(int system_id)
             m_production_wnd->SelectSystem(system_id);            
         }
         m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
+        DetachChild(m_side_panel);
     } else {    
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
             m_side_panel->SetSystem(system_id);
@@ -857,7 +937,11 @@ void MapWnd::SelectSystem(int system_id)
             // if selected an invalid system, hide sidepanel
             if (system_id == UniverseObject::INVALID_OBJECT_ID) {
                 m_side_panel->Hide();
+                DetachChild(m_side_panel);
             } else {
+                AttachChild(m_side_panel);
+                MoveChildUp(m_side_panel);
+                MoveChildUp(m_sitrep_panel);
                 m_side_panel->Show();
             }
         }
@@ -948,13 +1032,14 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
-    if (event.Type() == GG::WndEvent::RClick && !FleetWnd::FleetWndsOpen()) {
+    if (event.Type() == GG::WndEvent::RClick && !FleetWndsOpen()) {
         // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
         // Note that this enforces a one-close-per-click policy.
 
         if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
             if (m_side_panel->Visible()) {
                 m_side_panel->Hide();
+                DetachChild(m_side_panel);
                 return true;
             }
         }
@@ -1060,13 +1145,16 @@ void MapWnd::RenderBackgrounds()
     }
 
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
+        int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
+        int nebula_height = m_nebulae[i]->Height() / 3;
+
         GG::Pt ul = 
             ClientUpperLeft() + 
-            GG::Pt(static_cast<int>((m_nebula_centers[i].x - s_nebula_size / 2.0) * m_zoom_factor),
-                   static_cast<int>((m_nebula_centers[i].y - s_nebula_size / 2.0) * m_zoom_factor));
+            GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
+                   static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
         m_nebulae[i]->OrthoBlit(ul, 
-                                ul + GG::Pt(static_cast<int>(s_nebula_size * m_zoom_factor), 
-                                            static_cast<int>(s_nebula_size * m_zoom_factor)), 
+                                ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
+                                            static_cast<int>(nebula_height * m_zoom_factor)), 
                                 0,
                                 false);
     }
@@ -1074,13 +1162,15 @@ void MapWnd::RenderBackgrounds()
 
 void MapWnd::RenderStarlanes()
 {
-    double LINE_SCALE = std::max(1.0, 0.666 * m_zoom_factor);
+    double LINE_SCALE = 3.0;   //std::max(1.0, 0.666 * m_zoom_factor);
     double INNER_LINE_PORTION = 0.3;
     double INNER_LINE_WIDTH = (LINE_SCALE / 2.0) * INNER_LINE_PORTION; // these are actually half-widths in either direction
     double OUTER_LINE_WIDTH = (LINE_SCALE / 2.0);
     double CENTER_ALPHA = 0.7;
     double INNER_LINE_EDGE_ALPHA = 0.4;
     double OUTER_LINE_EDGE_ALPHA = 0.0;
+
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
     glDisable(GL_TEXTURE_2D);
 
@@ -1100,10 +1190,29 @@ void MapWnd::RenderStarlanes()
         double far_right2[2] = {center2[0] - OUTER_LINE_WIDTH * left_vec[0], center2[1] - OUTER_LINE_WIDTH * left_vec[1]};
 
         GG::Clr color = GG::CLR_WHITE;
-        if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
-            *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
-            color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
+        // if systems on both sides of starlane can be supplied, mark lane with this client's empire colour
+        // TODO: add way to mark lanes multiple colours
+        int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        int system1 = it->Src()->ID(), system2 = it->Dst()->ID();
+        
+        std::map<int, std::map<int, int> >::const_iterator it1 = m_system_supply.find(system1);
+        std::map<int, std::map<int, int> >::const_iterator it2 = m_system_supply.find(system2);
+        std::map<int, std::map<int, int> >::const_iterator end = m_system_supply.end();
+        if (it1 != end && it2 != end) {
+            std::map<int, int>::const_iterator it1a = it1->second.find(this_client_empire_id);
+            std::map<int, int>::const_iterator it2a = it2->second.find(this_client_empire_id);
+            std::map<int, int>::const_iterator end1 = it1->second.end();
+            std::map<int, int>::const_iterator end2 = it2->second.end();
+
+            if (it1a != end1 && it2a != end2)
+                color = empire->Color();
         }
+
+        // old version that coloured starlanes based on system ownership
+        //if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
+        //    *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
+        //    color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
+        //}
 
         glBegin(GL_TRIANGLE_STRIP);
         color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
@@ -1253,20 +1362,240 @@ void MapWnd::SystemLeftClicked(int system_id)
 
 void MapWnd::SystemRightClicked(int system_id)
 {
-    if (!m_in_production_view_mode)
-        SystemRightClickedSignal(system_id);
+    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+            SetProjectedFleetMovement(0, std::list<System*>()) ;
+        else
+            PlotFleetMovement(system_id, true);
+    }
+    SystemRightClickedSignal(system_id);
 }
 
 void MapWnd::MouseEnteringSystem(int system_id)
 {
-    if (!m_in_production_view_mode)
-        SystemBrowsedSignal(system_id);
+    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+        PlotFleetMovement(system_id, false);        
+    }
+    SystemBrowsedSignal(system_id);
 }
 
 void MapWnd::MouseLeavingSystem(int system_id)
 {
-    if (!m_in_production_view_mode)
-        SystemBrowsedSignal(UniverseObject::INVALID_OBJECT_ID);
+    MouseEnteringSystem(UniverseObject::INVALID_OBJECT_ID);
+}
+
+void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
+{
+    if (!m_active_fleet_wnd) return;
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    std::set<Fleet*> fleets = m_active_fleet_wnd->SelectedFleets();
+
+    for (std::set<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        Fleet* fleet = *it;
+        // only give orders / plot prospective move paths of fleets owned by player
+        if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips())) continue;
+
+        // plot empty move pathes if destination is not a known system
+        if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+            SetProjectedFleetMovement(fleet, std::list<System*>()) ;
+            continue;
+        }
+
+        int fleet_sys_id = fleet->SystemID();
+
+        int start_system = fleet_sys_id;
+        if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
+            start_system = fleet->NextSystemID();
+
+        // get path to destination...
+        std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
+
+        // disallow "offroad" (direct non-starlane non-wormhole) travel
+        if (route.size() == 2 && *route.begin() != *route.rbegin() &&
+            !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID()) &&
+            !(*route.rbegin())->HasStarlaneTo((*route.begin())->ID()) && !(*route.rbegin())->HasWormholeTo((*route.begin())->ID())) {
+            continue;
+        }
+
+        // if actually ordering fleet movement, not just prospectively previewing, ... do so
+        if (execute_move && !route.empty()) {
+            HumanClientApp::GetApp()->Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
+            if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
+                SetFleetMovement(fleet);
+        }
+
+        // show route on map
+        SetProjectedFleetMovement(fleet, route);
+    }
+}
+
+void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing)
+{
+    if (m_in_production_view_mode) return;
+
+    const std::vector<Fleet*>& btn_fleets = fleet_btn.Fleets();
+    if (btn_fleets.empty())
+        throw std::runtime_error("caught clicked signal for empty fleet button");
+
+    bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
+
+    Fleet* fleet = btn_fleets[0];
+
+    System* system = fleet->GetSystem();
+    int owner = *(fleet->Owners().begin());
+
+    // find if a FleetWnd for this FleetButton's fleet(s) is already open
+    FleetWnd* wnd_for_button = 0;
+    for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it) {
+        if ((*it)->ContainsFleet(fleet->ID())) {
+            wnd_for_button = *it;
+            break;
+        }
+    }
+
+    if (!wnd_for_button) {
+        // there was no preexisting open FleetWnd for this button's fleets
+        if (!multiple_fleet_windows)
+            CloseAllFleetWnds();
+
+        // get all fleets at this location.  may be in a system, in which case fleets are separated into
+        // departing or stationary; or may be away from any system, moving
+        std::vector<Fleet*> fleets;
+        if (system) {
+            const System::ObjectVec owned_fleets = system->FindObjects(OwnedVisitor<Fleet>(owner));
+            for (System::ObjectVec::const_iterator it = owned_fleets.begin(); it != owned_fleets.end(); ++it) {
+                Fleet* owned_fleet = dynamic_cast<Fleet*>(*it);
+                if (owned_fleet) fleets.push_back(owned_fleet);
+            }
+        } else {
+            std::copy(btn_fleets.begin(), btn_fleets.end(), std::back_inserter(fleets));
+        }
+        
+        // determine whether this FleetWnd can't be manipulated by the users: can't manipulate other 
+        // empires FleetWnds, and can't give orders to your fleets while they're en-route.
+        bool read_only = false;
+        if (owner != HumanClientApp::GetApp()->EmpireID() || !system)
+            read_only = true;
+
+        wnd_for_button = new FleetWnd(0, 0, fleets, 0, read_only);
+        m_fleet_wnds.insert(wnd_for_button);
+
+        GG::Connect(wnd_for_button->ClosingSignal, &MapWnd::FleetWndClosing, this);
+
+        // position new FleetWnd.  default to last user-set position...
+        GG::Pt wnd_position = FleetWnd::LastPosition();
+        // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-right
+        if (wnd_position == GG::Pt())
+            wnd_position = GG::Pt(5, GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
+
+        wnd_for_button->MoveTo(wnd_position);
+
+        // safety check to ensure window is on screen... may be redundant
+        if (GG::GUI::GetGUI()->AppWidth() - 5 < wnd_for_button->LowerRight().x)
+            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, 0));
+        if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
+            wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
+
+        GG::GUI::GetGUI()->Register(wnd_for_button);
+     }
+
+
+    // if active fleet wnd hasn't changed, cycle through fleets
+    if (m_active_fleet_wnd == wnd_for_button) {
+        std::set<Fleet*> selected_fleets = m_active_fleet_wnd->SelectedFleets();
+
+        const UniverseObject* selected_fleet = 0;
+
+        if (selected_fleets.empty()) {
+            // do nothing
+        } else if (selected_fleets.size() > 1) {
+            return; // don't mess up user's carefully selected fleets
+        } else {
+            selected_fleet = dynamic_cast<UniverseObject*>(*(selected_fleets.begin()));
+        }
+
+        if (system) {
+            System::ObjectVec departing_fleets = system->FindObjects(OrderedMovingFleetVisitor(owner));
+            System::ObjectVec stationary_fleets = system->FindObjects(StationaryFleetVisitor(owner));
+
+            if (departing_fleets.empty() && stationary_fleets.empty()) return;
+
+            if ((fleet_departing && !departing_fleets.empty()) || stationary_fleets.empty()) {
+                // are assured there is at least one departing fleet
+
+                // attempt to find already-selected fleet in departing fleets
+                System::ObjectVec::iterator it;
+                if (selected_fleet)
+                    it = std::find(departing_fleets.begin(), departing_fleets.end(), selected_fleet);
+                else
+                    it = departing_fleets.end();
+
+                if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
+                    // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
+
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
+                } else {
+                    // it was found, and wasn't at the end, so select the next fleet after it
+                    ++it;
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                }
+            } else {
+                // are assured there is at least one stationary fleet
+
+                // attempt to find already-selected fleet in departing fleets
+                System::ObjectVec::iterator it;
+                if (selected_fleet)
+                    it = std::find(stationary_fleets.begin(), stationary_fleets.end(), selected_fleet);
+                else
+                    it = stationary_fleets.end();
+
+                if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
+                    // it wasn't found, or it was found at the end, so select the first stationary fleet
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
+                } else {
+                    // it was found, and wasn't at the end, so select the next fleet after it
+                    ++it;
+                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                }
+            }
+        } else {
+            if (btn_fleets.empty()) return;
+            // are assured there is at least one moving fleet
+
+            // attempt to find already-selected fleet in moving fleets
+            std::vector<Fleet*>::const_iterator it;
+            if (selected_fleet)
+                it = std::find(btn_fleets.begin(), btn_fleets.end(), selected_fleet);
+            else
+                it == btn_fleets.end();
+
+            if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
+                // it wasn't found, or it was found at the end, so select the first moving fleet
+                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
+            } else {
+                // it was found, and wasn't at the end, so select the next fleet after it
+                ++it;
+                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+            }
+        }
+    } else {
+        // make FleetWnd for clicked button the selected fleet wnd
+        m_active_fleet_wnd = wnd_for_button;
+    }
+
+}
+
+void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
+{
+    m_fleet_wnds.erase(fleet_wnd);
+    if (fleet_wnd == m_active_fleet_wnd) {
+        if (m_fleet_wnds.empty())
+            m_active_fleet_wnd = 0;
+        else
+            m_active_fleet_wnd = *(m_fleet_wnds.begin());
+    }
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
@@ -1296,6 +1625,7 @@ void MapWnd::Cleanup()
     m_production_wnd->Hide();
     m_in_production_view_mode = false;
     m_toolbar->Hide();
+    m_FPS->Hide();
 }
 
 void MapWnd::Sanitize()
@@ -1303,6 +1633,7 @@ void MapWnd::Sanitize()
     Cleanup();
     m_side_panel->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y));
     m_chat_display->MoveTo(GG::Pt(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN));
+    m_chat_display->Clear();
     m_chat_edit->MoveTo(GG::Pt(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
     m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
@@ -1359,7 +1690,8 @@ bool MapWnd::ToggleSitRep()
 {
     m_projected_fleet_lines = MovementLineData();
     if (m_sitrep_panel->Visible()) {
-        m_sitrep_panel->Hide();
+        DetachChild(m_sitrep_panel);
+        m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     } else {
         // hide other "competing" windows
         m_research_wnd->Hide();
@@ -1374,6 +1706,8 @@ bool MapWnd::ToggleSitRep()
         HumanClientApp::GetApp()->MoveDown(m_production_wnd);
 
         // show the sitrep window
+        AttachChild(m_sitrep_panel);
+        MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
     }
     return true;
@@ -1415,13 +1749,17 @@ bool MapWnd::ToggleProduction()
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
+        DetachChild(m_sitrep_panel);
         m_research_wnd->Hide();
 
         // show the production window
         m_production_wnd->Show();
         m_in_production_view_mode = true;
         HideAllPopups();
+
         m_side_panel->Hide();
+        DetachChild(m_side_panel);
+
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
         m_production_wnd->Reset();
@@ -1445,6 +1783,7 @@ bool MapWnd::CloseSystemView()
 {
     SelectSystem(UniverseObject::INVALID_OBJECT_ID);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
+    DetachChild(m_side_panel);
     return true;
 }
 
@@ -1512,6 +1851,29 @@ void MapWnd::RefreshPopulationIndicator()
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     m_population->SetValue(empire->GetPopulationPool().Population());
     m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
+}
+
+void MapWnd::UpdateMetersAndResourcePools()
+{
+    UpdateMeterEstimates();
+    UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateMeterEstimates()
+{
+    GetUniverse().UpdateMeterEstimates();
+}
+
+void MapWnd::UpdateEmpireResourcePools()
+{
+    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
+       update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which
+       updates the empire resource pool indicators of the MapWnd. */
+    empire->UpdateResourcePool();
+
+    // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
+    m_side_panel->Refresh();
 }
 
 bool MapWnd::ZoomToHomeSystem()
@@ -1779,3 +2141,14 @@ void MapWnd::ShowAllPopups()
         (*it)->Show();
     }
 }
+
+MapWnd::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd) :
+    m_fleet_btn(fleet_btn),
+    m_map_wnd(map_wnd)
+{}
+
+void MapWnd::FleetButtonClickedFunctor::operator()()
+{
+    m_map_wnd.FleetButtonLeftClicked(m_fleet_btn, false);
+}
+

@@ -10,13 +10,9 @@
 #include <boost/signal.hpp>
 #endif
 
-#ifndef _Enums_h_
 #include "Enums.h"
-#endif
-
-#ifndef _Predicates_h_
 #include "Predicates.h"
-#endif
+#include "Effect.h"
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
@@ -47,8 +43,6 @@
 #include <string>
 #include <set>
 
-class System;
-
 #ifdef __GNUC__
   // GCC doesn't allow us to forward-declare PlayerSetupData
 #  ifndef _MultiplayerCommon_h_
@@ -61,12 +55,16 @@ class System;
 class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;
+struct ShipDesign;
+class UniverseObject;
+class System;
 
 class Universe
 {
 protected:
-    typedef std::map<int, UniverseObject*> ObjectMap;           ///< container type used to hold the objects in the universe; keyed by ID number
-    typedef std::map<int, std::set<int> > ObjectKnowledgeMap;   ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
+    typedef std::map<int, UniverseObject*>  ObjectMap;          ///< container type used to hold the objects in the universe; keyed by ID number
+    typedef std::map<int, std::set<int> >   ObjectKnowledgeMap; ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
+    typedef std::map<int, ShipDesign*>      ShipDesignMap;      ///< container type used to hold ShipDesigns created by players, keyed by design id number
 
 public:
     /** Set to true to make everything visible for everyone. Useful for debugging. */
@@ -82,9 +80,26 @@ public:
     typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for sequences over the objects in the universe
     typedef ObjectMap::iterator                  iterator;         ///< an iterator for sequences over the objects in the universe
 
+    typedef ShipDesignMap::const_iterator        ship_design_iterator;  ///< const iterator over ship designs created by players that are known by this client
+
     typedef std::vector<const UniverseObject*>   ConstObjectVec;   ///< the return type of FindObjects()
     typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
     typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
+
+    //!< contains info about a single effect's alterations to a meter
+    struct EffectAccountingInfo
+    {
+        EffectAccountingInfo();         // default ctor
+        int source_id;                  // source object of effect
+        int caused_by_empire_id;        // empire that causes effect to occur, if applicable.  Tech effects are caused by the empire that researched them
+        EffectsCauseType cause_type;    // is the effect due to a tech, building, special, or unknown cause?
+        std::string specific_cause;     // what tech, building or special was the cause?
+        double meter_change;            // net change on meter due to this effect, as best known by client's empire
+        double running_meter_total; 
+    };
+    typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;    //!< Effect accounting info for all meters
+    typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;   //!< Discrepancy between meter's value at start of turn, and the value that this client calculate that the meter should have with the knowledge available -> the unknown factor affecting the meter
+
 
     /** \name Signal Types */ //@{
     typedef boost::signal<void (const UniverseObject *)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
@@ -131,36 +146,57 @@ public:
 
     const UniverseObject* DestroyedObject(int id) const;          ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
     
-    const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
-    const_iterator endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
+    const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}    ///< returns the begin const_iterator for the destroyed objects from the universe
+    const_iterator endDestroyed() const    {return m_destroyed_objects.end();}      ///< returns the end const_iterator for the destroyed objects from the universe
 
 
-    double LinearDistance(int system1, int system2) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+    const ShipDesign* GetShipDesign(int ship_design_id) const;                      ///< returns the ship design with id \a ship_design id, or 0 if non exists
+
+    ship_design_iterator beginShipDesigns() const   {return m_ship_designs.begin();}    ///< returns the begin iterator for ship designs
+    ship_design_iterator endShipDesigns() const     {return m_ship_designs.end();}      ///< returns the end iterator for ship designs
+
+    double LinearDistance(int system1_id, int system2_id) const; ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
     /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a
         system1 to \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.
         Note that the path returned may be via one or more starlane, or may be "offroad".  The path is calculated using
         the visiblity for empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw
         std::out_of_range This function will throw if either system ID is out of range. */
-    std::pair<std::list<System*>, double> ShortestPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<System*>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns the sequence of systems, including \a system1 and \a system2, that defines the path with the fewest
         jumps from \a system1 to \a system2, and the number of jumps to get there.  If no such path exists, the list
         will be empty.  The path is calculated using the visiblity for empire \a empire_id, or without regard to
         visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
         ID is out of range. */
-    std::pair<std::list<System*>, int> LeastJumpsPath(int system1, int system2, int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<System*>, int> LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
-    /** returns true iff \a system is reachable (i.e. it has at least one known starlane to it).  The starlanes
-        considered depend on their visiblity for empire \a empire_id, or without regard to visibility if \a empire_id ==
-        ALL_EMPIRES.  \throw std::out_of_range This function will throw if the system ID is out of range. */
-    bool SystemReachable(int system, int empire_id = ALL_EMPIRES) const;
+    /** returns whether there is a path known to empire \a empire_id between system \a system1 and system \a system2.
+        The path is calculated using the visiblity for empire \a empire_id, or without regard to visibility if
+        \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if either system
+        ID is out of range. */
+    bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+
+    /** returns true iff \a system is reachable from another system (i.e. it has at least one known starlane to it).
+        This does not guarantee that the system is reachable from any other system, as two separate groups of locally
+        but not globally internonnected systems may exist. The starlanes considered depend on their visiblity for 
+        empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range
+        This function will throw if the system ID is out of range. */
+    bool SystemReachable(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns the systems that are one starlane hop away from system \a system.  The returned systems are indexed by
         distance from \a system.  The neighborhood is calculated using the visiblity for empire \a empire_id, or without
         regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function will throw if the
         system ID is out of range. */
-    std::map<double, System*> ImmediateNeighbors(int system, int empire_id = ALL_EMPIRES) const;
+    std::map<double, System*> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+
+    /** returns map, indexed by object id, to map, indexed by MeterType, to vector of EffectAccountInfo for the meter,
+        in order effects were applied to the meter. */
+    const EffectAccountingMap& GetEffectAccountingMap() const {return m_effect_accounting_map;}
+
+    /** returns map, indexed by object id, to map, indexed by MeterType, to the discrepancy between the actual and the
+        explainable value that the meter had at the start of the turn */
+    const EffectDiscrepancyMap& GetEffectDiscrepancyMap() const {return m_effect_discrepancy_map;}
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
@@ -171,11 +207,19 @@ public:
         passing it to Insert().*/
     int               Insert(UniverseObject* obj);
 
-    /** inserts object \a obj of given ID into the universe; returns true on proper insert , or false on failure.
+    /** inserts object \a obj of given ID into the universe; returns true on proper insert, or false on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
         passing it to InsertID().
         Useful mostly for times when ID needs to be consistant on client and server*/
-    bool              InsertID(UniverseObject* obj, int id );
+    bool              InsertID(UniverseObject* obj, int id);
+
+    /** Inserts \a ship_design into the universe; returns the ship design ID assigned to it, or -1 on failure.
+        \note Unvierse gains ownership of \a ship_design once inserted. */
+    int               InsertShipDesign(ShipDesign* ship_design);
+
+    /** Inserts \a ship_design into the universe with given \a id;  returns true on success, or false on failure.
+        \note Unvierse gains ownership of \a ship_design once inserted. */
+    bool              InsertShipDesignID(ShipDesign* ship_design, int id);
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
@@ -184,6 +228,10 @@ public:
 
     /** Applies all Effects from Buildings, Specials, Techs, etc. */
     void              ApplyEffects();
+
+    void              InitMeterEstimatesAndDiscrepancies();  ///< determines discrepancies and stores in m_effect_discrepancy_map, using UpdateMeterEstimates() in process
+
+    void              UpdateMeterEstimates();    ///< based on orders given up to this point, and known universe, estimates what meter maxes will be next turn, and updates them accordingly
 
     /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
     void              RebuildEmpireViewSystemGraphs();
@@ -205,6 +253,8 @@ public:
     static double UniverseWidth();
 
     int GenerateObjectID();  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
+
+    int GenerateDesignID();  ///< generates adesign ID for a new (ship) design. Usually used by the server to service new ID requests
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
@@ -249,6 +299,15 @@ protected:
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
 
+    // effects processing stuff
+    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
+    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
+
+    void GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map);   // populates \a effects_targets_map with all EffectsGroups and their targets in the known universe
+    void ExecuteEffects(EffectsAndTargetsMap& effects_targets_map);         // executes all effects
+    void ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bool do_effect_accounting = false); // executes meter-altering effects; ignores other effects.  If \a do_effect_acounting == true, records effect details in m_effect_accounting_map
+
+
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
 
     void PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);  ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
@@ -265,19 +324,32 @@ protected:
 
     void DestroyImpl(int id);
 
-    ObjectMap m_objects;                                    ///< note that for the system graph algorithms to work more easily, the first N elements should be the N systems
+    ObjectMap m_objects;                                    ///< UniverseObjects in the universe
+
     ObjectMap m_destroyed_objects;                          ///< objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
     ObjectKnowledgeMap m_destroyed_object_knowers;          ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
+
+    ShipDesignMap m_ship_designs;                           ///< ship designs in the universe
+
     DistanceMatrix m_system_distances;                      ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
     SystemGraph m_system_graph;                             ///< a graph in which the systems are vertices and the starlanes are edges
     EmpireViewSystemGraphMap m_empire_system_graph_views;   ///< a map of empire IDs to the views of the system graph by those empires
-    int m_last_allocated_id;
-    std::set<int> m_marked_destroyed;
+
+    EffectAccountingMap m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
+    EffectDiscrepancyMap m_effect_discrepancy_map;          ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
+
+
+    int m_last_allocated_object_id;
+    int m_last_allocated_design_id;
+
+    std::set<int> m_marked_destroyed;                       ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
 
     static double s_universe_width;
 
 private:
     static bool s_inhibit_universe_object_signals;
+
+    void GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -304,11 +376,18 @@ void Universe::serialize(Archive& ar, const unsigned int version)
             }
         }
     }
+    ShipDesignMap ship_designs;
+    if (Archive::is_saving::value)
+        GetShipDesignsToSerialize(objects, ship_designs);
+
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
-        & BOOST_SERIALIZATION_NVP(m_last_allocated_id);
+        & BOOST_SERIALIZATION_NVP(ship_designs)
+        & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
+        & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
     if (Archive::is_loading::value) {
         m_objects = objects;
+        m_ship_designs = ship_designs;
         InitializeSystemGraph();
     }
 }

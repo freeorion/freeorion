@@ -55,7 +55,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_servers_lb->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
     m_find_LAN_servers_bn = new CUIButton(0, 0, 1, UserString("REFRESH_LIST_BN"));
     m_internet_game_label = new GG::TextControl(0, 0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::TF_LEFT);
-    m_IP_address_edit = new CUIEdit(0, 0, 1, "");
+    m_IP_address_edit = new CUIEdit(0, 0, 1, "localhost");
     m_ok_bn = new CUIButton(0, 0, 1, UserString("OK"));
     m_cancel_bn = new CUIButton(0, 0, 1, UserString("CANCEL"));
 

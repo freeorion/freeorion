@@ -7,7 +7,7 @@
 #include "../util/SitRepEntry.h"
 
 #include <boost/filesystem/path.hpp>
-
+#include <boost/format.hpp>
 
 class ClientNetworking;
 class Combat;
@@ -20,6 +20,7 @@ struct SaveGameUIData;
 class System;
 class Tech;
 class TurnProgressWnd;
+class BuildingType;
 namespace GG {
     class Clr;
     class SubTexture;
@@ -86,62 +87,74 @@ public:
     static boost::filesystem::path ArtDir();   //!< directory holding artwork
     static boost::filesystem::path SoundDir(); //!< directory holding sound and music
 
-    static std::string Font();            //!< The default font to use
-    static std::string FontBold();        //!< The default bold font to use
-    static std::string FontItalic();      //!< The default italic font to use
-    static std::string FontBoldItalic();  //!< The default bold and italic font to use
-    static int         Pts();             //!< default point size
-    static std::string TitleFont();       //!< The default font to use for the window title
-    static int         TitlePts();        //!< default point size to use for window title
+    static std::string  Font();            //!< The default font to use
+    static std::string  FontBold();        //!< The default bold font to use
+    static std::string  FontItalic();      //!< The default italic font to use
+    static std::string  FontBoldItalic();  //!< The default bold and italic font to use
+    static int          Pts();             //!< default point size
+    static std::string  TitleFont();       //!< The default font to use for the window title
+    static int          TitlePts();        //!< default point size to use for window title
     
-    static GG::Clr     TextColor();       //!< color of UI text
+    static GG::Clr      TextColor();       //!< color of UI text
     
     // generic UI windows
-    static GG::Clr     WndColor();            //!< color of a UI window
-    static GG::Clr     WndBorderColor();      //!< color of window borders
-    static GG::Clr     WndOuterBorderColor(); //!< color of the outermost border
-    static GG::Clr     WndInnerBorderColor(); //!< color of the innermost border
+    static GG::Clr      WndColor();            //!< color of a UI window
+    static GG::Clr      WndBorderColor();      //!< color of window borders
+    static GG::Clr      WndOuterBorderColor(); //!< color of the outermost border
+    static GG::Clr      WndInnerBorderColor(); //!< color of the innermost border
 
     // controls
-    static GG::Clr     CtrlColor();           //!< color of UI controls
-    static GG::Clr     CtrlBorderColor();
+    static GG::Clr      CtrlColor();           //!< color of UI controls
+    static GG::Clr      CtrlBorderColor();
 
-    static GG::Clr     ButtonColor();
+    static GG::Clr      ButtonColor();
 
-    static GG::Clr     StateButtonColor();
+    static GG::Clr      StateButtonColor();
 
-    static GG::Clr     ScrollTabColor();
-    static  int        ScrollWidth();
+    static GG::Clr      ScrollTabColor();
+    static  int         ScrollWidth();
     
-    static GG::Clr     DropDownListIntColor();
-    static GG::Clr     DropDownListArrowColor();
+    static GG::Clr      DropDownListIntColor();
+    static GG::Clr      DropDownListArrowColor();
 
-    static GG::Clr     EditHiliteColor();
-    static GG::Clr     EditIntColor();
-    static GG::Clr     MultieditIntColor();
+    static GG::Clr      EditHiliteColor();
+    static GG::Clr      EditIntColor();
+    static GG::Clr      MultieditIntColor();
 
-    static GG::Clr     StatIncrColor();   //!< used to color increasing stats text (eg "+2")
-    static GG::Clr     StatDecrColor();   //!< used to color decreasing stats text (eg "-3")
+    static GG::Clr      StatIncrColor();   //!< used to color increasing stats text (eg "+2")
+    static GG::Clr      StatDecrColor();   //!< used to color decreasing stats text (eg "-3")
 
-    static int         SystemIconSize();                //!< the width/height of a System/Icon at zoom = 1.0
-    static double      FleetButtonSize();               //!< the width/height of a FleetButton, relative to the size of a SystemIcon
-    static double      SystemSelectionIndicatorSize();  //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
+    static int          SystemIconSize();                //!< the width/height of a System/Icon at zoom = 1.0
+    static double       FleetButtonSize();               //!< the width/height of a FleetButton, relative to the size of a SystemIcon
+    static double       SystemSelectionIndicatorSize();  //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
 
-    // game UI windows
-    static GG::Clr     SidePanelColor();
+    // misc UI windows
+    static GG::Clr      SidePanelColor();
+    static boost::shared_ptr<GG::Texture>
+                        ShipIcon(const std::string& design_name);
+    static boost::shared_ptr<GG::Texture>
+                        BuildingTexture(const BuildingType* building_type);
 
-    // tech screen
-    static GG::Clr     KnownTechFillColor();
-    static GG::Clr     KnownTechTextAndBorderColor();
-    static GG::Clr     ResearchableTechFillColor();
-    static GG::Clr     ResearchableTechTextAndBorderColor();
-    static GG::Clr     UnresearchableTechFillColor();
-    static GG::Clr     UnresearchableTechTextAndBorderColor();
-    static GG::Clr     TechWndProgressBarBackground();
-    static GG::Clr     TechWndProgressBar();
+
+    // research screen
+    static GG::Clr      KnownTechFillColor();
+    static GG::Clr      KnownTechTextAndBorderColor();
+    static GG::Clr      ResearchableTechFillColor();
+    static GG::Clr      ResearchableTechTextAndBorderColor();
+    static GG::Clr      UnresearchableTechFillColor();
+    static GG::Clr      UnresearchableTechTextAndBorderColor();
+    static GG::Clr      TechWndProgressBarBackground();
+    static GG::Clr      TechWndProgressBar();
+
+    static GG::Clr      CategoryColor(const std::string& category_name);
+    static boost::shared_ptr<GG::Texture> 
+                        CategoryIcon(const std::string& category_name);
+    static boost::shared_ptr<GG::Texture>
+                        TechTexture(const std::string& tech_name);
 
     static std::map<StarType, std::string>& StarTypeFilePrefixes();
     static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();
+
     //!@}
 
 private:
@@ -154,7 +167,7 @@ private:
 
     PrefixedTextures  m_prefixed_textures;
 
-    static ClientUI* s_the_UI;          //!< pointer to the one and only ClientUI object
+    static ClientUI*  s_the_UI;            //!< pointer to the one and only ClientUI object
 };
 
 /** temporarily disables UI sound effects, saving the old state (on or off), for later restoration upon object destruction.  TempSoundDisablers
@@ -182,5 +195,7 @@ struct StreamableColor
 std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
+/** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
+boost::format FlexibleFormat(const std::string &string_to_format);
 
 #endif // _ClientUI_h_

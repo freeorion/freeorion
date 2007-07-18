@@ -148,9 +148,9 @@ def AppendPackagePaths(package, env):
     if not lib and root:
         lib = os.path.normpath(os.path.join(root, 'lib'))
     if inc:
-        env.AppendUnique(CPPPATH = [inc])
+        env.AppendUnique(CPPPATH = [os.path.abspath(inc)])
     if lib:
-        env.AppendUnique(LIBPATH = [lib])
+        env.AppendUnique(LIBPATH = [os.path.abspath(lib)])
 
 def CheckPkgConfig(context, version):
     context.Message('Checking for pkg-config... ')
@@ -213,7 +213,7 @@ def CheckVersionHeader(context, package, header, regex, comparison_string, versi
     matches = FindRegexMatchesInHeader(regex, header, context.env)
     if len(matches) == 1:
         if isinstance(matches[0], basestring):
-	    match_str = matches[0]
+            match_str = matches[0]
         else:
             match_str = '.'.join(matches[0])
         if version_leq_check:
@@ -238,6 +238,14 @@ def CheckBoostLib(context, lib_tuple, conf):
             ret = lib_name
     return ret
 
+def CheckBGL(context, conf):
+    if not conf.CheckHeader('boost/graph/dijkstra_shortest_paths.hpp', '<>', 'C++'):
+        context.Message('Boost configuration... ')
+        context.Result(False)
+        return False
+    else:
+        return True
+
 def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
     AppendPackagePaths('boost', context.env)
     if not conf.CheckCXXHeader('boost/shared_ptr.hpp'):
@@ -250,6 +258,8 @@ def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
         context.Result(False)
         return False
     if check_libs:
+        if not CheckBGL(context, conf):
+            return False
         for i in lib_tuples:
             lib = CheckBoostLib(context, i, conf)
             if not lib:
@@ -259,6 +269,28 @@ def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
     context.Message('Boost configuration... ')
     context.Result('ok')
     return True
+
+def BoostLibWin32Name(name, env):
+    # For now, assume VC80 is used
+    toolset_tag = '-vc80'
+    if env['multithreaded']:
+        if env['dynamic']:
+            if env['debug']:
+                threading_and_abi_tag = '-mt-gd'
+            else:
+                threading_and_abi_tag = '-mt'
+        else:
+            if env['debug']:
+                threading_and_abi_tag = '-mt-sgd'
+            else:
+                threading_and_abi_tag = '-mt-sd'
+    else:
+        if env['debug']:
+            threading_and_abi_tag = '-sgd'
+        else:
+            threading_and_abi_tag = '-sd'
+    version_tag = '-' + boost_version_string.replace('.', '_')
+    return 'boost_' + name + toolset_tag + threading_and_abi_tag + version_tag
 
 def CheckSDL(context, options, conf, sdl_config, check_lib):
     ret = True
@@ -285,7 +317,8 @@ def CheckSDL(context, options, conf, sdl_config, check_lib):
             context.Result(False)
             return False
     version_regex = re.compile(r'SDL_MAJOR_VERSION\s*(\d+).*SDL_MINOR_VERSION\s*(\d+).*SDL_PATCHLEVEL\s*(\d+)', re.DOTALL)
-    if not conf.CheckVersionHeader('SDL', os.path.join('SDL', 'SDL_version.h'), version_regex, sdl_version, True):
+    if not conf.CheckVersionHeader('SDL', os.path.join('SDL', 'SDL_version.h'), version_regex, sdl_version, True) \
+           and not conf.CheckVersionHeader('SDL', 'SDL_version.h', version_regex, sdl_version, True):
         context.Message('SDL configuration... ')
         context.Result(False)
         return False

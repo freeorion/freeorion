@@ -64,7 +64,8 @@ public:
     virtual ~EffectsGroup();
 
     void GetTargetSet(int source_id, TargetSet& targets) const;
-    void Execute(int source_id, const TargetSet& targets) const;
+    void Execute(int source_id, const TargetSet& targets) const;                    // execute all effects in group
+    void Execute(int source_id, const TargetSet& targets, int effect_index) const;  // execute effect with \a effect_index (but not other effects)
     const std::string& StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
     Description GetDescription() const;
@@ -117,6 +118,7 @@ public:
     virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
+    MeterType GetMeterType() const {return m_meter;};
 
 private:
     MeterType                             m_meter;

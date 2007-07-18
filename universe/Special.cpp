@@ -83,11 +83,16 @@ namespace {
 }
 
 Special::Special(const std::string& name, const std::string& description,
-                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects) :
+                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
+                 const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_effects(effects)
-{}
+    m_effects(effects),
+    m_graphic(graphic)
+{
+    if (m_graphic == "")
+        m_graphic = "special_icons/Generic_Special.png";
+}
 
 const std::string& Special::Name() const
 {
@@ -119,6 +124,7 @@ std::string Special::Dump() const
         --g_indent;
         retval += DumpIndent() + "]\n";
     }
+    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
 }
@@ -126,6 +132,11 @@ std::string Special::Dump() const
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Special::Effects() const
 {
     return m_effects;
+}
+
+const std::string& Special::Graphic() const
+{
+    return m_graphic;
 }
 
 Special* GetSpecial(const std::string& name)

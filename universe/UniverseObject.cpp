@@ -215,7 +215,7 @@ void UniverseObject::ResetMaxMeters()
     }
 }
 
-void UniverseObject::AdjustMaxMeters()
+void UniverseObject::ApplyUniverseTableMaxMeterAdjustments()
 {}
 
 void UniverseObject::ClampMeters()

@@ -6,6 +6,8 @@
 #include "../universe/Enums.h"
 #endif
 
+#include "../universe/ShipDesign.h"
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/is_abstract.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -417,6 +419,7 @@ public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
     ProductionQueueOrder(int empire, BuildType build_type, const std::string& item, int number, int location);
+    ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location);
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
     ProductionQueueOrder(int empire, int index, int new_index);
     ProductionQueueOrder(int empire, int index);
@@ -426,7 +429,8 @@ private:
     virtual void ExecuteImpl() const;
 
     BuildType   m_build_type;
-    std::string m_item;
+    std::string m_item_name;
+    int         m_design_id;
     int         m_number;
     int         m_location;
     int         m_index;
@@ -441,6 +445,66 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+
+/////////////////////////////////////////////////////
+// ShipDesignOrder
+/////////////////////////////////////////////////////
+/** The Order subclass that represents manipulating an empire's ship designs.
+    The 2-arg ctor adds the existing ship design to the \a empire's set of designs - remembering, or "keeping" the
+    design and enabling the \a empire to produce ships of that design (if all design prerequisites are met)
+    The 3-arg ctor taking a bool removes the indicated design from the empire's set of remembered designs
+    The 3-arg ctor taking a ShipDesign argument creates a new shipdesign in the universe's catalog of shipdesigns
+    with the passed new design id, and adds this design to the \a empire's set of remembered designs.  The new design must
+    be marked as designed by this \a empire.*/
+class ShipDesignOrder : public Order
+{
+public:
+    /** \name Structors */ //@{
+    ShipDesignOrder();
+    ShipDesignOrder(int empire, int existing_design_id_to_remember);
+    ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
+    ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
+    //@}
+
+    /** \name Accessors */ //@{
+    const ShipDesign&         GetShipDesign() const {return m_ship_design;} ///< returns the ship design to be created and/or added or removed to/from the empire's designs
+    int                       DesignID() const      {return m_design_id;}   ///< returns the ship design ID
+    //@}
+
+private:
+    /**
+     * Preconditions of execute: 
+     *    - For creating a new design, the passed design is a valid reference to a design created by the
+     *      empire issuing the order
+     *    - For remembering an existing ship design, there exists a ship design with the passed id, and
+     *      the empire is aware of this ship design
+     *    - For removing a shipdesign from the empire's set of designs, there empire has a design with the
+     *      passed id in its set of designs
+     *
+     *  Postconditions:
+     *    - For creating a new ship design, the universe will contain a new ship design, and the creating
+     *      empire will have the new design as of of its designs
+     *    - For remembering a ship design, the empire will have the design's id in its set of design ids
+     *    - For removing a design, the empire will no longer have the design's id in its set of design ids
+     */
+    virtual void ExecuteImpl() const;
+
+    ShipDesign                  m_ship_design;
+    int                         m_design_id;
+    bool                        m_delete_design_from_empire;
+    bool                        m_create_new_design;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
+/////////////////////////////////////////////////////
+// FleetMoveOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents fleet movement
+    These orders change the current destination of a fleet */
 // Template Implementations
 template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
@@ -528,12 +592,23 @@ void ProductionQueueOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_build_type)
-        & BOOST_SERIALIZATION_NVP(m_item)
+        & BOOST_SERIALIZATION_NVP(m_item_name)
+        & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_number)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_index)
         & BOOST_SERIALIZATION_NVP(m_new_quantity)
         & BOOST_SERIALIZATION_NVP(m_new_index);
+}
+
+template <class Archive>
+void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_ship_design)
+        & BOOST_SERIALIZATION_NVP(m_design_id)
+        & BOOST_SERIALIZATION_NVP(m_delete_design_from_empire)
+        & BOOST_SERIALIZATION_NVP(m_create_new_design);
 }
 
 #endif // _Order_h_

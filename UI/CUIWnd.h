@@ -13,7 +13,6 @@
 
 class CUIEdit;
 class CUIButton;
-class CUIButton;
 
 
 /** a simple minimize/restore button that toggles its appearance between the styles for minimize and restore*/

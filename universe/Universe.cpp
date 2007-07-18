@@ -27,11 +27,7 @@
 #include "../server/ServerApp.h"
 #endif
 
-#ifdef FREEORION_LINUX
-#  include <SDL/SDL_byteorder.h>
-#else
-#  include <SDL_byteorder.h>
-#endif
+#include <SDL/SDL_byteorder.h>
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
@@ -41,13 +37,6 @@
 #include <stdexcept>
 
 namespace {
-    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
-    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
-    const double  AVG_UNIVERSE_WIDTH = 1000.0 / std::sqrt(150.0); // so a 150 star universe is 1000 units across
-    const int     ADJACENCY_BOXES = 25;
-    const double  PI = 3.141592653589793;
-    const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
-    SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables()
@@ -80,8 +69,7 @@ namespace {
         const int destination_system;
     };
 
-    // "only" defined for 1 <= n <= 3999, as we can't
-    // display the symbol for 5000
+    // "only" defined for 1 <= n <= 3999, as we can't display the symbol for 5000
     std::string RomanNumber(unsigned int n)
     {
         static const char N[] = "IVXLCDM??";
@@ -122,8 +110,1106 @@ namespace {
         }
     }
 
+    ////////////////////////////////////////////////////////////////
+    // templated implementations of Universe graph search methods //
+    ////////////////////////////////////////////////////////////////
+
+    // returns the \a graph index for system with \a system_id
+    template <class Graph>
+    int SystemGraphIndex(const Graph& graph, int system_id)
+    {
+        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
+
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
+            const int loop_sys_id = pointer_property_map[i]->ID();    // get system ID of this vertex
+            if (loop_sys_id == system_id)
+                return i;
+        }
+
+        throw std::out_of_range("SystemGraphIndex cannot be found due to invalid system ID");
+        return -1;
+    }
+
+    /* returns the path between vertices \a system1_id and \a system2_id of \a graph that travels the shorest 
+       distance on starlanes, and the path length.  If system1_id is the same vertex as system2_id, the path 
+       has just that system in it, and the path lenth is 0.  If there is no path between the two vertices, then
+       the list is empty and the path length is -1.0 */
+    template <class Graph>
+    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance)
+    {
+        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+        typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type             ConstIndexPropertyMap;
+        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type              ConstEdgeWeightPropertyMap;
+
+        std::pair<std::list<System*>, double> retval;
+
+        ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, graph);
+        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
+
+        int system1_index = SystemGraphIndex(graph, system1_id);
+        int system2_index = SystemGraphIndex(graph, system2_id);
+
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
+
+        // early exit if systems are the same
+        if (system1_id == system2_id) {
+            System* system = pointer_property_map[system2_index];
+            retval.first.push_back(system);
+            retval.second = 0.0;    // no jumps needed -> 0 distance
+            return retval;
+        }
+
+        /* initializing all vertices' predecessors to themselves prevents endless loops when back traversing the tree in the case where
+           one of the end systems is system 0, because systems that are not connected to the root system (system2) are not visited
+           by the search, and so their predecessors are left unchanged.  Default initialization of the vector may be 0 or undefined
+           which could lead to out of bounds errors, or endless loops if a system's default predecessor is 0 (debug mode), and 0's
+           predecessor is that system */
+        std::vector<int> predecessors(boost::num_vertices(graph));
+        std::vector<double> distances(boost::num_vertices(graph));
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
+            predecessors[i] = i;
+            distances[i] = -1.0;
+        }
+
+
+        // do the actual path finding using verbose boost magic...
+        try {
+            boost::dijkstra_shortest_paths(graph, system1_index, &predecessors[0], &distances[0], edge_weight_map, index_map, 
+                                           std::less<double>(), std::plus<double>(), std::numeric_limits<int>::max(), 0, 
+                                           boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2_index)));
+        } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
+            // catching this just means that the destination was found, and so the algorithm was exited early, via exception
+        }
+
+
+        int current_system = system2_index;
+        while (predecessors[current_system] != current_system) {
+            retval.first.push_front(pointer_property_map[current_system]);
+            current_system = predecessors[current_system];
+        }
+        retval.second = distances[system2_index];
+
+        if (retval.first.empty()) {
+            // there is no path between the specified nodes
+            retval.second = -1.0;
+            return retval;
+        } else {
+            // add start system to path, as it wasn't added by traversing predecessors array
+            retval.first.push_front(pointer_property_map[system1_index]);
+        }
+
+        return retval;
+    }
+
+    /* returns the path between vertices \a system1_id and \a system2_id of \a graph that takes the fewest 
+       number of jumps (edge traversals), and the number of jumps this path takes.  If system1_id is the same
+       vertex as system2_id, the path has just that system in it, and the path lenth is 0.  If there is no
+       path between the two vertices, then the list is empty and the path length is -1 */
+    template <class Graph>
+    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
+    {
+        Logger().errorStream() << "LeastJumpsPathImpl";
+        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
+        std::pair<std::list<System*>, int> retval;
+
+        int system1_index = SystemGraphIndex(graph, system1_id);
+        int system2_index = SystemGraphIndex(graph, system2_id);
+
+        // early exit if systems are the same
+        if (system1_id == system2_id) {
+            System* system = pointer_property_map[system2_index];
+            retval.first.push_back(system);
+            retval.second = 0;  // no jumps needed
+            return retval;
+        }
+
+        /* initializing all vertices' predecessors to themselves prevents endless loops when back traversing the tree in the case where
+           one of the end systems is system 0, because systems that are not connected to the root system (system2) are not visited
+           by the search, and so their predecessors are left unchanged.  Default initialization of the vector may be 0 or undefined
+           which could lead to out of bounds errors, or endless loops if a system's default predecessor is 0, (debug mode) and 0's
+           predecessor is that system */
+        std::vector<int> predecessors(boost::num_vertices(graph));
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i)
+            predecessors[i] = i;
+        
+        
+        // do the actual path finding using verbose boost magic...
+        try {
+            boost::queue<int> buf;
+            std::vector<int> colors(boost::num_vertices(graph));
+            boost::breadth_first_search(graph, system1_index, buf,
+                                        boost::make_bfs_visitor(std::make_pair(PathFindingShortCircuitingVisitor(system2_index),
+                                                                               boost::record_predecessors(&predecessors[0],
+                                                                                                          boost::on_tree_edge()))),
+                                        &colors[0]);
+        } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
+            // catching this just means that the destination was found, and so the algorithm was exited early, via exception
+        }
+
+
+        int current_system = system2_index;
+        while (predecessors[current_system] != current_system) {
+            retval.first.push_front(pointer_property_map[current_system]);
+            current_system = predecessors[current_system];
+        }
+        retval.second = retval.first.size() - 1;    // number of jumps is number of systems in path minus one for the starting system
+
+        if (retval.first.empty()) {
+            // there is no path between the specified nodes
+            retval.second = -1;
+        } else {
+            // add start system to path, as it wasn't added by traversing predecessors array
+            retval.first.push_front(pointer_property_map[system1_index]);
+        }
+        
+        return retval;
+    }
+
+    template <class Graph>
+    bool SystemReachableImpl(const Graph& graph, int system_id)
+    {
+        return boost::in_degree(SystemGraphIndex(graph, system_id), graph);
+    }
+
+    template <class Graph>
+    std::map<double, System*> ImmediateNeighborsImpl(const Graph& graph, int system_id)
+    {
+        typedef typename Graph::out_edge_iterator OutEdgeIterator;
+        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type ConstEdgeWeightPropertyMap;
+
+        std::map<double, System*> retval;
+        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
+        std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(SystemGraphIndex(graph, system_id), graph);
+        for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
+            retval[edge_weight_map[*it]] = pointer_property_map[boost::target(*it, graph)];
+        }
+        return retval;
+    }
+}
+
+/////////////////////////////////////////////
+// struct Universe::EdgeVisibilityFilter
+/////////////////////////////////////////////
+Universe::EdgeVisibilityFilter::EdgeVisibilityFilter() :
+    m_graph(0),
+    m_empire(0)
+{}
+
+Universe::EdgeVisibilityFilter::EdgeVisibilityFilter(const SystemGraph* graph, int empire_id) :
+    m_graph(graph),
+    m_empire(Empires().Lookup(empire_id))
+{}
+
+bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire, int system1, int system2)
+{
+    return empire->HasExploredSystem(system1) || empire->HasExploredSystem(system2);
+}
+
+
+/////////////////////////////////////////////
+// struct Universe::EffectAccountingInfo
+/////////////////////////////////////////////
+Universe::EffectAccountingInfo::EffectAccountingInfo() :
+    source_id(UniverseObject::INVALID_OBJECT_ID),
+    caused_by_empire_id(-1),
+    cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),
+    specific_cause(""),
+    meter_change(0.0),
+    running_meter_total(Meter::METER_MIN)
+{}
+
+
+/////////////////////////////////////////////
+// class Universe
+/////////////////////////////////////////////
+// static(s)
+const bool Universe::ALL_OBJECTS_VISIBLE = false;
+double Universe::s_universe_width = 1000.0;
+bool Universe::s_inhibit_universe_object_signals = false;
+int Universe::s_encoding_empire = ALL_EMPIRES;
+
+Universe::Universe()
+{}
+
+const Universe& Universe::operator=(Universe& rhs)
+{
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        delete it->second;
+    }
+    m_objects.clear();
+    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
+        delete it->second;
+    }
+    m_objects.clear();
+    m_destroyed_objects.clear();
+    m_last_allocated_object_id = rhs.m_last_allocated_object_id;
+    m_last_allocated_design_id = rhs.m_last_allocated_design_id;
+    m_objects = rhs.m_objects;
+    rhs.m_objects.clear();
+    m_destroyed_objects = rhs.m_destroyed_objects;
+    rhs.m_destroyed_objects.clear();
+    InitializeSystemGraph();
+    return *this;
+}
+
+Universe::~Universe()
+{
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        delete it->second;
+    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it)
+        delete it->second;
+}
+
+const UniverseObject* Universe::Object(int id) const
+{
+    const_iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? it->second : 0);
+}
+
+UniverseObject* Universe::Object(int id)
+{
+    iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? it->second : 0);
+}
+
+Universe::ConstObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor) const
+{
+    ConstObjectVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+Universe::ObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor)
+{
+    ObjectVec retval;
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+Universe::ObjectIDVec Universe::FindObjectIDs(const UniverseObjectVisitor& visitor) const
+{
+    ObjectIDVec retval;
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (it->second->Accept(visitor))
+            retval.push_back(it->first);
+    }
+    return retval;
+}
+
+Universe::iterator Universe::begin()
+{ return m_objects.begin(); }
+
+Universe::iterator Universe::end()
+{ return m_objects.end(); }
+
+Universe::const_iterator Universe::begin() const
+{ return m_objects.begin(); }
+
+Universe::const_iterator Universe::end() const
+{ return m_objects.end(); }
+
+const UniverseObject* Universe::DestroyedObject(int id) const
+{
+    const_iterator it = m_destroyed_objects.find(id);
+    return (it != m_destroyed_objects.end() ? it->second : 0);
+}
+
+const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
+{
+    ship_design_iterator it = m_ship_designs.find(ship_design_id);
+    return (it != m_ship_designs.end() ? it->second : 0);
+}
+
+double Universe::LinearDistance(int system1_id, int system2_id) const
+{
+    int system1_index = SystemGraphIndex(m_system_graph, system1_id);
+    int system2_index = SystemGraphIndex(m_system_graph, system2_id);
+    return m_system_distances.at(std::max(system1_index, system2_index)).at(std::min(system1_index, system2_index));
+}
+
+std::pair<std::list<System*>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
+{
+    double linear_distance = LinearDistance(system1_id, system2_id);
+    if (empire_id == ALL_EMPIRES) {
+        return ShortestPathImpl(m_system_graph, system1_id, system2_id, linear_distance);
+    } else {
+        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
+        if (graph_it != m_empire_system_graph_views.end())
+            return ShortestPathImpl(*graph_it->second, system1_id, system2_id, linear_distance);
+    }
+    return std::pair<std::list<System*>, double>();
+}
+
+std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
+{
+    if (empire_id == ALL_EMPIRES) {
+        return LeastJumpsPathImpl(m_system_graph, system1_id, system2_id);
+    } else {
+        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
+        if (graph_it != m_empire_system_graph_views.end())
+            return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id);
+    }
+    return std::pair<std::list<System*>, int>();
+}
+
+bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const
+{
+    std::pair<std::list<System*>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);
+    return (!path.first.empty());
+}
+
+bool Universe::SystemReachable(int system_id, int empire_id) const
+{
+    if (empire_id == ALL_EMPIRES) {
+        return SystemReachableImpl(m_system_graph, system_id);
+    } else {
+        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
+        if (graph_it != m_empire_system_graph_views.end())
+            return SystemReachableImpl(*graph_it->second, system_id);
+    }
+    return false;
+}
+
+std::map<double, System*> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
+{
+    if (empire_id == ALL_EMPIRES) {
+        return ImmediateNeighborsImpl(m_system_graph, system_id);
+    } else {
+        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
+        if (graph_it != m_empire_system_graph_views.end())
+            return ImmediateNeighborsImpl(*graph_it->second, system_id);
+    }
+    return std::map<double, System*>();
+}
+
+int Universe::Insert(UniverseObject* obj)
+{
+    int retval = UniverseObject::INVALID_OBJECT_ID;
+    if (obj) {
+        if (m_last_allocated_object_id + 1 < UniverseObject::MAX_ID) {
+            m_objects[++m_last_allocated_object_id] = obj;
+            obj->SetID(m_last_allocated_object_id);
+            retval = m_last_allocated_object_id;
+        } else { // we'll probably never execute this branch, considering how many IDs are available
+            // find a hole in the assigned IDs in which to place the object
+            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+            for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+                if (1 < it->first - last_id_seen) {
+                    m_objects[last_id_seen + 1] = obj;
+                    obj->SetID(last_id_seen + 1);
+                    retval = last_id_seen + 1;
+                    break;
+                }
+            }
+        }
+    }
+    return retval;
+}
+
+bool Universe::InsertID(UniverseObject* obj, int id )
+{
+    bool retval = false;
+
+    if (obj) {
+        if ( id < UniverseObject::MAX_ID) {
+            m_objects[id] = obj;
+            obj->SetID(id);
+            retval = true;
+        }
+    }
+    return retval;
+}
+
+int Universe::InsertShipDesign(ShipDesign* ship_design)
+{
+    int retval = UniverseObject::INVALID_OBJECT_ID;
+    if (ship_design) {
+        if (m_last_allocated_design_id + 1 < UniverseObject::MAX_ID) {
+            m_ship_designs[++m_last_allocated_design_id] = ship_design;
+            retval = m_last_allocated_design_id;
+        } else { // we'll probably never execute this branch, considering how many IDs are available
+            // find a hole in the assigned IDs in which to place the object
+            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+            for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+                if (1 < it->first - last_id_seen) {
+                    m_ship_designs[last_id_seen + 1] = ship_design;
+                    retval = last_id_seen + 1;
+                    break;
+                }
+            }
+        }
+    }
+    return retval;
+}
+
+bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
+{
+    bool retval = false;
+
+    if (ship_design) {
+        if ( id < UniverseObject::MAX_ID) {
+            m_ship_designs[id] = ship_design;
+            retval = true;
+        }
+    }
+    return retval;
+}
+
+void Universe::InitMeterEstimatesAndDiscrepancies()
+{
+    // clear old discrepancies
+    m_effect_discrepancy_map.clear();
+
+    // generate new estimates (normally uses discrepancies, but in this case will find none)
+    UpdateMeterEstimates();
+
+    // determine meter max discrepancies
+    for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
+        UniverseObject* obj = Object(obj_it->first);    // object that has some meters
+        std::map<MeterType, std::vector<EffectAccountingInfo> > meters_map = obj_it->second;
+
+        // ever meter has a value at the start of the turn, and a value after updating with known effects
+        for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = meters_map.begin(); meter_type_it != meters_map.end(); ++meter_type_it) {
+            MeterType type = meter_type_it->first;
+            Meter* meter = obj->GetMeter(type);
+            assert(meter);  // all objects should only have accounting info for a meter if that meter exists
+            int object_id = obj->ID();
+
+            // discrepancy is the difference between expected and actual meter values at start of turn
+            double discrepancy = meter->InitialMax() - meter->Max();
+
+            Logger().debugStream() << "object " << object_id << " has meter " << type << " initial max: " << meter->InitialMax() << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+
+            // add to discrepancy map
+            m_effect_discrepancy_map[object_id][type] = discrepancy;
+
+            // correct current max meter estimate for discrepancy
+            meter->AdjustMax(discrepancy);
+
+            // add discrepancy adjustment to meter accounting
+            EffectAccountingInfo info;
+            info.cause_type = ECT_UNKNOWN_CAUSE;
+            info.meter_change = discrepancy;
+            info.running_meter_total = meter->Max();
+            
+            m_effect_accounting_map[object_id][type].push_back(info);
+        }
+    }
+}
+
+void Universe::UpdateMeterEstimates()
+{
+    m_effect_accounting_map.clear();
+
+    // for all objects to see if they have meters that need to be processed
+    for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
+        UniverseObject* obj = obj_it->second;
+        int object_id = obj_it->first;
+
+        // Reset meters to METER_MIN
+        obj->ResetMaxMeters();
+
+        // Apply non-effect focus mods from tables
+        obj->ApplyUniverseTableMaxMeterAdjustments();
+
+        // record value of meters after applying universe table adjustments
+        for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
+            Meter* meter = obj->GetMeter(type);
+            if (meter) {
+                Logger().debugStream() << "object " << object_id << " has meter " << type << " with table-only max: " << meter->Max();
+
+                EffectAccountingInfo info;
+                info.source_id = UniverseObject::INVALID_OBJECT_ID;
+                info.caused_by_empire_id = -1;
+                info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
+                info.meter_change = meter->Max() - Meter::METER_MIN;
+                info.running_meter_total = meter->Max();
+                
+                m_effect_accounting_map[object_id][type].push_back(info);
+            }
+        }
+    }
+
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    EffectsAndTargetsMap effects_targets_map;
+    GetEffectsAndTargets(effects_targets_map);
+
+    // Apply and record effect meter adjustments
+    ExecuteMeterEffects(effects_targets_map, true);
+
+    // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
+    // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
+    // max at the start of the turn
+    if (!m_effect_discrepancy_map.empty()) {
+        for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
+            UniverseObject* obj = obj_it->second;
+            int object_id = obj_it->first;
+
+            // check if this object has any discrepancies
+            EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(object_id);
+            if (dis_it == m_effect_discrepancy_map.end()) continue;
+
+            // apply all meters' discrapancies
+            std::map<MeterType, double>& meter_map = dis_it->second;
+            for(std::map<MeterType, double>::iterator meter_it = meter_map.begin(); meter_it != meter_map.end(); ++meter_it) {
+                MeterType type = meter_it->first;
+                double discrepancy = meter_it->second;
+                Meter* meter = obj->GetMeter(type);
+
+                if (meter) {
+                    Logger().debugStream() << "object " << object_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+
+                    meter->AdjustMax(discrepancy);
+
+                    EffectAccountingInfo info;
+                    info.cause_type = ECT_UNKNOWN_CAUSE;
+                    info.meter_change = discrepancy;
+                    info.running_meter_total = meter->Max();
+                    
+                    m_effect_accounting_map[object_id][type].push_back(info);
+                }
+            }
+        }
+    }
+
+    ///////////////////////////
+    // do current meter growth
+    ///////////////////////////
+}
+
+void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map)
+{
+    // get effects groups from specials
+    for (Universe::const_iterator it = begin(); it != end(); ++it) {
+        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
+             special_it != it->second->Specials().end();
+             ++special_it) {
+            const Special* special = GetSpecial(*special_it);
+            assert(special);
+            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
+                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
+                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
+                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
+                effects_targets_map.insert(map_elem);
+            }
+        }
+    }
+
+    // get effects groups from techs
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
+            const Tech* tech = GetTech(*tech_it);
+            assert(tech);
+            for (unsigned int i = 0; i < tech->Effects().size(); ++i) {
+                boost::shared_ptr<const Effect::EffectsGroup> effect = tech->Effects()[i];
+                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->second->CapitolID(), Effect::EffectsGroup::TargetSet()));
+                tech->Effects()[i]->GetTargetSet(it->second->CapitolID(), map_elem.second.second);
+                effects_targets_map.insert(map_elem);
+            }
+        }
+    }
+
+    // get effects groups from buildings
+    std::vector<Building*> buildings = FindObjects<Building>();
+    for (unsigned int i = 0; i < buildings.size(); ++i) {
+        const BuildingType* building_type = buildings[i]->GetBuildingType();
+        assert(building_type);
+        for (unsigned int j = 0; j < building_type->Effects().size(); ++j) {
+            boost::shared_ptr<const Effect::EffectsGroup> effect = building_type->Effects()[j];
+            EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
+            building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
+            effects_targets_map.insert(map_elem);
+        }
+    }
+}
+
+void Universe::ExecuteEffects(EffectsAndTargetsMap& effects_targets_map)
+{
+    std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
+
+    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
+        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
+        Effect::EffectsGroup::TargetSet targets(it->second.second);
+        if (non_stacking_it != executed_nonstacking_effects.end()) {
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
+                targets.erase(*object_it);
+            }
+        }
+
+        // execute the Effects in the EffectsGroup
+        it->first->Execute(it->second.first, targets);
+
+        // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
+        if (it->first->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
+                affected_targets.insert(*object_it);
+            }
+        }
+    }
+
+    for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
+        DestroyImpl(*it);
+    }
+}
+
+void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bool do_effect_accounting)
+{
+    std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
+
+    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
+        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
+        Effect::EffectsGroup::TargetSet targets(it->second.second);
+        if (non_stacking_it != executed_nonstacking_effects.end()) {
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
+                targets.erase(*object_it);
+            }
+        }
+
+        // execute only the SetMeter effects in the EffectsGroup
+        boost::shared_ptr<const Effect::EffectsGroup> effects_group = it->first;
+        int source = it->second.first;
+        const std::vector<Effect::EffectBase*>& effects = effects_group->EffectsList();
+        for (unsigned int i = 0; i < effects.size(); ++i) {
+            const Effect::SetMeter* meter_effect = dynamic_cast<Effect::SetMeter*>(effects[i]);
+            if (!meter_effect) continue;
+
+            if (do_effect_accounting) {
+
+                // determine meter to be altered by this effect
+                MeterType meter_type = meter_effect->GetMeterType();
+                
+                // record pre-effect meter values
+                for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                    UniverseObject* target = *target_it;
+                    const Meter* meter = target->GetMeter(meter_type);
+                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                    Logger().debugStream() << "object " << target->ID() << " has meter " << meter_type << " with pre-effect max: " << meter->Max();
+
+                    // create new accounting info for this effect on this target/meter
+                    EffectAccountingInfo info;
+                    info.source_id = source;
+                    info.cause_type = ECT_UNKNOWN_CAUSE;    // need to get this somehow ...
+                    info.specific_cause = "";               // ... and this.
+                    info.running_meter_total = meter->Max();    // using as temp storage for max value before effects are applied
+                    
+                    // add accounting for this effect to end of vector
+                    m_effect_accounting_map[target->ID()][meter_type].push_back(info);
+                }
+
+                // apply effect to targets
+                effects_group->Execute(source, targets, i);
+
+                // find change in meter due to effect: equal to post-meter minus pre-meter value
+                for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                    UniverseObject* target = *target_it;
+                    const Meter* meter = target->GetMeter(meter_type);
+                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                    Logger().debugStream() << "object " << target->ID() << " has meter " << meter_type << " with post-effect max: " << meter->Max();
+
+                    // retreive info for this effect
+                    EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
+
+                    // update accounting info with meter change and new total
+                    info.meter_change = meter->Max() - info.running_meter_total;    // change is new max minus old max (stored in temp value with misleading name)
+                    info.running_meter_total = meter->Max();        // replacing temp stored value with new meter total
+                    info.cause_type = ECT_SPECIAL;    // need to get this somehow ...
+                }
+
+            } else {                
+                // just apply effect
+                effects_group->Execute(source, targets, i);
+            }
+        }
+
+        // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
+        if (it->first->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
+                affected_targets.insert(*object_it);
+            }
+        }
+    }
+}
+
+void Universe::ApplyEffects()
+{
+    m_marked_destroyed.clear();
+
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    EffectsAndTargetsMap effects_targets_map;
+    GetEffectsAndTargets(effects_targets_map);
+
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->ApplyUniverseTableMaxMeterAdjustments();
+    }
+
+    ExecuteEffects(effects_targets_map);
+}
+
+void Universe::RebuildEmpireViewSystemGraphs()
+{
+    m_empire_system_graph_views.clear();
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        EdgeVisibilityFilter filter(&m_system_graph, it->first);
+        boost::shared_ptr<EmpireViewSystemGraph> filtered_graph_ptr(new EmpireViewSystemGraph(m_system_graph, filter));
+        m_empire_system_graph_views[it->first] = filtered_graph_ptr;
+    }
+}
+
+void Universe::Destroy(int id)
+{
+    s_inhibit_universe_object_signals = true;
+    
+    UniverseObject* obj;
+    iterator it = m_objects.find(id);
+
+    // remove object from any containing UniverseObject
+    if (it != m_objects.end()) {
+        obj = it->second;
+        Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
+
+        // get and record set of empires that can presently see this object
+        std::set<int> knowing_empires;
+        for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
+            int empire_id = emp_it->first;
+            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj)) {
+                knowing_empires.insert(empire_id);
+                Logger().debugStream() << "..visible to empire: " << empire_id;
+            }
+        }
+        m_destroyed_object_knowers[id] = knowing_empires;
+
+        // remove object from any containing objects
+        if (System* sys = obj->GetSystem())
+            sys->Remove(id);
+        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+            if (Fleet* fleet = ship->GetFleet())
+                fleet->RemoveShip(ship->ID());
+        } else if (Building* building = universe_object_cast<Building*>(obj)) {
+            if (Planet* planet = building->GetPlanet())
+                planet->RemoveBuilding(building->ID());
+        }
+
+        // remove from existing objects set and insert into destroyed objects set
+        m_objects.erase(id);
+        m_destroyed_objects[id] = obj;
+    } else {
+        Logger().debugStream() << "Universe::Destroy called for nonexistant object with id: " << id;
+    }
+    
+    s_inhibit_universe_object_signals = false;
+}
+
+bool Universe::Delete(int id)
+{
+    s_inhibit_universe_object_signals = true;
+
+    // find object amongst existing objects
+    UniverseObject* obj;
+    iterator it = m_objects.find(id);
+    if (it != m_objects.end()) {
+        obj = it->second;
+
+        // remove object from any containing UniverseObject
+        if (System* sys = obj->GetSystem())
+            sys->Remove(id);
+        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+            if (Fleet* fleet = ship->GetFleet())
+                fleet->RemoveShip(ship->ID());
+        } else if (Building* building = universe_object_cast<Building*>(obj)) {
+            if (Planet* planet = building->GetPlanet())
+                planet->RemoveBuilding(building->ID());
+        }
+
+        m_objects.erase(id);
+        UniverseObjectDeleteSignal(obj);
+        delete obj;
+        s_inhibit_universe_object_signals = false;
+        return true;
+    }
+
+    // find object amongst destroyed objects
+    it = m_destroyed_objects.find(id);
+    if (it != m_destroyed_objects.end()) {
+        obj = it->second;
+        m_destroyed_objects.erase(id);
+        UniverseObjectDeleteSignal(obj);
+        delete obj;
+        s_inhibit_universe_object_signals = false;
+        return true;
+    }
+
+    Logger().debugStream() << "Tried to delete a nonexistant objects with id: " << id;
+
+    s_inhibit_universe_object_signals = false;
+    return false;
+}
+
+void Universe::EffectDestroy(int id)
+{
+    m_marked_destroyed.insert(id);
+}
+
+bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
+	// list of indices of systems that are accessible from previously visited systems.
+	// when a new system is found to be accessible, it is added to the back of the
+	// list.  the list is iterated through from front to back to find systems
+	// to examine
+	std::list<int> accessibleSystemsList;
+	std::list<int>::iterator sysListIter, sysListEnd;
+	
+	// map using star index number as the key, and also storing the number of starlane
+	// jumps away from system1 a given system is.  this is used to determine if a
+	// system has already been added to the accessibleSystemsList without needing
+	// to iterate through the list.  it also provides some indication of the
+	// current depth of the search, which allows the serch to terminate after searching
+	// to the depth of maxLaneJumps without finding system2
+	// (considered using a vector for this, but felt that for large galaxies, the
+	// size of the vector and the time to intialize would be too much)
+	std::map<int, int> accessibleSystemsMap;
+
+	// system currently being investigated, destination of a starlane origination at curSys
+	int curSys, curLaneDest;
+	// "depth" level in tree of system currently being investigated
+	int curDepth;
+
+	// iterators to set of starlanes, in graph, for the current system	
+	std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
+	
+	// check for simple cases for quick termination
+	if (system1 == system2) return true; // system is always connected to itself
+	if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
+	if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
+	if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
+	if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
+	if (system1 < 0 || system2 < 0) return false; // out of range
+	
+    // add starting system to list and set of accessible systems
+	accessibleSystemsList.push_back(system1);
+	accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
+
+	// loop through visited systems
+	sysListIter = accessibleSystemsList.begin();
+	sysListEnd = accessibleSystemsList.end();
+	while (sysListIter != sysListEnd) {
+		curSys = *sysListIter;
+		
+		// check that iteration hasn't reached maxLaneJumps levels deep, which would 
+		// mean that system2 isn't within maxLaneJumps starlane jumps of system1
+		curDepth = (*accessibleSystemsMap.find(curSys)).second;
+
+		if (curDepth >= maxLaneJumps) return false;
+		
+		// get set of starlanes for this system
+		curSysLanesSetIter = (laneSetArray[curSys]).begin();
+		curSysLanesSetEnd = (laneSetArray[curSys]).end();
+		
+		// add starlanes accessible from this system to list and set of accessible starlanes
+		// (and check for the goal starlane)
+		while (curSysLanesSetIter != curSysLanesSetEnd) {
+			curLaneDest = *curSysLanesSetIter;
+		
+			// check if curLaneDest has been added to the map of accessible systems
+			if (0 == accessibleSystemsMap.count(curLaneDest)) {
+				
+				// check for goal
+				if (curLaneDest == system2) return true;
+				
+				// add curLaneDest to accessible systems list and map
+				accessibleSystemsList.push_back(curLaneDest);
+				accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
+       		}
+		
+			curSysLanesSetIter++;
+		}
+
+		sysListIter++;
+	}	
+	return false; // default
+}
+
+void Universe::InitializeSystemGraph()
+{
+    for (int i = static_cast<int>(boost::num_vertices(m_system_graph)) - 1; i >= 0; --i) {
+        boost::clear_vertex(i, m_system_graph);
+        boost::remove_vertex(i, m_system_graph);
+    }
+
+    std::vector<System*> systems = FindObjects<System>();
+    m_system_distances.resize(systems.size());
+    SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
+
+    EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
+    typedef boost::graph_traits<SystemGraph>::edge_descriptor EdgeDescriptor;
+
+    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_system_graph of system's vertex
+
+    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+        // add a vertex to the graph for this system, and assign it a pointer for its System object
+        boost::add_vertex(m_system_graph);
+        System* system1 = systems[i];
+        pointer_property_map[i] = system1;
+        // add record of index in m_system_graph of this system
+        system_id_graph_index_reverse_lookup_map[system1->ID()] = i;
+    }
+
+    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+        System* system1 = systems[i];
+
+        // add edges and edge weights
+        for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
+            // get id in universe of system at other end of lane
+            int lane_dest_id = it->first;
+
+            // get m_system_graph index for this system
+            int lane_dest_graph_index = system_id_graph_index_reverse_lookup_map[lane_dest_id];
+
+            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_system_graph);
+            
+            if (it->second) {                               // if this is a wormhole
+                edge_weight_map[add_edge_result.first] = 0.0;
+            } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
+                UniverseObject* system2 = Object(it->first);
+                double x_dist = system2->X() - system1->X();
+                double y_dist = system2->Y() - system1->Y();
+                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist * x_dist + y_dist * y_dist);
+            }
+        }
+
+        // define the straight-line system distances for this system
+        m_system_distances[i].clear();
+        for (int j = 0; j < i; ++j) {
+            UniverseObject* system2 = Object(j);
+            double x_dist = system2->X() - system1->X();
+            double y_dist = system2->Y() - system1->Y();
+            m_system_distances[i].push_back(std::sqrt(x_dist * x_dist + y_dist * y_dist));
+        }
+        m_system_distances[i].push_back(0.0);
+    }
+
+    RebuildEmpireViewSystemGraphs();
+}
+
+double Universe::UniverseWidth()
+{
+    return s_universe_width;
+}
+
+const bool& Universe::InhibitUniverseObjectSignals()
+{
+    return s_inhibit_universe_object_signals;
+}
+
+void Universe::DestroyImpl(int id)
+{
+    UniverseObject* obj = Object(id);
+    if (!obj)
+        return;
+    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
+        Fleet* fleet = ship->GetFleet();
+        Delete(id);
+        if (fleet && fleet->NumShips() == 0)
+            Delete(fleet->ID());
+    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
+        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it) {
+            Delete(*it);
+        }
+        Delete(id);
+    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
+        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it) {
+            Delete (*it);
+        }
+        Delete(id);
+    } else if (universe_object_cast<System*>(obj)) {
+        // unsupported: do nothing
+    } else {
+        Delete(id);
+    }
+}
+
+void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize)
+{
+    if (s_encoding_empire == ALL_EMPIRES) {
+        designs_to_serialize = m_ship_designs;
+    } else {
+        // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
+        for (ObjectMap::const_iterator it = serialized_objects.begin(); it != serialized_objects.end(); ++it) {
+            Ship* ship = universe_object_cast<Ship*>(it->second);
+            if (ship) {
+                int design_id = ship->ShipDesignID();
+                if (design_id != UniverseObject::INVALID_OBJECT_ID)
+                    designs_to_serialize[design_id] = m_ship_designs[design_id];
+            }
+        }
+
+        // add all ship designs owned by this empire
+        Empire* empire = Empires().Lookup(s_encoding_empire);
+        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
+            designs_to_serialize[*it] = m_ship_designs[*it];
+        }
+    }
+}
+//////////////////////////////////////////
+//    Server-Only General Functions     //
+//////////////////////////////////////////
+int Universe::GenerateObjectID()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return ++m_last_allocated_object_id;
+#else
+    throw std::runtime_error("Non-server called Universe::GenerateObjectID");
+#endif
+}
+
+int Universe::GenerateDesignID()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return ++m_last_allocated_design_id;
+#else
+    throw std::runtime_error("Non-server called Universe::GenerateDesignID");
+#endif
+}
+
+
+//////////////////////////////////////////
+//  Server-Only Galaxy Setup Functions  //
+//////////////////////////////////////////
+namespace {
+#ifdef FREEORION_BUILD_SERVER
+    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
+    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
+    const double  AVG_UNIVERSE_WIDTH = 1000.0 / std::sqrt(150.0); // so a 150 star universe is 1000 units across
+    const int     ADJACENCY_BOXES = 25;
+    const double  PI = 3.141592653589793;
+    const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
+    SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
+    const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
+#endif
+
     double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
     {
+#ifdef FREEORION_BUILD_SERVER
         if(positions.size()==0)
             return 0.0;
 
@@ -138,12 +1224,14 @@ namespace {
                 lowest_dist = distance;
         }
         return lowest_dist;
+#else
+        throw std::runtime_error("Non-server called CalcNewPosNearestNeighbour; only server should call this while creating the universe");
+#endif
     }
-
-    const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
 
     void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
     {
+#ifdef FREEORION_BUILD_SERVER
         double arm_offset     = RandDouble(0.0,2.0*PI);
         double arm_angle      = 2.0*PI / arms;
         double arm_spread     = 0.3 * PI / arms;
@@ -195,10 +1283,14 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
+#else
+        throw std::runtime_error("Non-server called SpiralGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
     }
 
     void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int stars, double width, double height)
     {
+#ifdef FREEORION_BUILD_SERVER
         const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
         const double rotation = RandDouble(0.0, PI),
             rotation_sin = std::sin(rotation),
@@ -251,10 +1343,14 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
+#else
+        throw std::runtime_error("Non-server called EllipticalGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
     }
 
     void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int clusters, unsigned int stars, double width, double height)
     {
+#ifdef FREEORION_BUILD_SERVER
         assert(clusters);
         assert(stars);
 
@@ -336,10 +1432,14 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
+#else
+        throw std::runtime_error("Non-server called ClusterGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
     }
 
     void RingGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
     {
+#ifdef FREEORION_BUILD_SERVER
         double RING_WIDTH = width / 4.0;
         double RING_RADIUS = (width - RING_WIDTH) / 2.0;
 
@@ -372,10 +1472,14 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
+#else
+        throw std::runtime_error("Non-server called RingGalaxyCalcPositions; only server should call this while creating the universe");
+#endif
     }
 
     System* GenerateSystem(Universe &universe, Age age, double x, double y)
     {
+#ifdef FREEORION_BUILD_SERVER
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
 
@@ -408,21 +1512,29 @@ namespace {
                                      star_name + " into the object map failed.");
         }
         return system;
+#else
+        throw std::runtime_error("Non-server called GenerateSystem; only server should call this while creating the universe");
+#endif
     }
 
     void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> > &positions, 
                            Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
+#ifdef FREEORION_BUILD_SERVER
         // generate star field
         for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
             System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
             adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
                 [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
         }
+#else
+        throw std::runtime_error("Non-server called GenerateStarField; only server should call this while creating the universe");
+#endif
     }
 
     void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors)
     {
+#ifdef FREEORION_BUILD_SERVER
         const double ADJACENCY_BOX_SIZE = Universe::UniverseWidth() / ADJACENCY_BOXES;
         std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
                                                        static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
@@ -463,119 +1575,14 @@ namespace {
                 neighbors.insert(grid_square.begin(), grid_square.end());
             }
         }
-    }
-
-    // templated implementations of Universe graph search methods
-    template <class Graph>
-    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1, int system2, double linear_distance)
-    {
-        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-        typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type             ConstIndexPropertyMap;
-        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type              ConstEdgeWeightPropertyMap;
-
-        std::pair<std::list<System*>, double> retval;
-
-        std::vector<int> predecessors(boost::num_vertices(graph));
-        std::vector<double> distances(boost::num_vertices(graph));
-        ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, graph);
-        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
-        try {
-            boost::dijkstra_shortest_paths(graph, system1, &predecessors[0], &distances[0], edge_weight_map, index_map, 
-                                           std::less<double>(), std::plus<double>(), std::numeric_limits<int>::max(), 0, 
-                                           boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2)));
-        } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
-            // catching this just means that the destination was found, and so the algorithm was exited early, via exception
-        }
-
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
-        int current_system = system2;
-        while (predecessors[current_system] != current_system) {
-            retval.first.push_front(pointer_property_map[current_system]);
-            current_system = predecessors[current_system];
-        }
-        retval.second = distances[system2];
-
-        // note that at this point, if system1 != system2, retval.first will be empty if there was no starlane path from
-        // system1 to system2
-        if (!retval.first.empty() || system1 == system2) {
-            retval.first.push_front(pointer_property_map[current_system]);
-            if (system1 == system2)
-                retval.first.push_front(retval.first.front());
-        }
-
-#if 0   // disabled for now
-        // if system2 is unreachable or it would be faster to travel "offroad", use the linear distance
-        if (linear_distance * OFFROAD_SLOWDOWN_FACTOR < retval.second || retval.first.empty()) {
-            retval.first.clear();
-            retval.first.push_back(pointer_property_map[system1]);
-            retval.first.push_back(pointer_property_map[system2]);
-            retval.second = linear_distance;
-        }
+#else
+        throw std::runtime_error("Non-server called GetNeighbors; only server should call this while creating the universe");
 #endif
-
-        return retval;
-    }
-
-    template <class Graph>
-    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1, int system2)
-    {
-        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-
-        std::pair<std::list<System*>, int> retval;
-        std::vector<int> path;
-        std::vector<int> predecessors(boost::num_vertices(graph));
-        try {
-            boost::queue<int> buf;
-            std::vector<int> colors(boost::num_vertices(graph));
-            boost::breadth_first_search(graph, system1, buf,
-                                        boost::make_bfs_visitor(std::make_pair(PathFindingShortCircuitingVisitor(system2),
-                                                                               boost::record_predecessors(&predecessors[0],
-                                                                                                          boost::on_tree_edge()))),
-                                        &colors[0]);
-        } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
-            // catching this just means that the destination was found, and so the algorithm was exited early, via exception
-        }
-
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
-        int current_system = system2;
-        while (predecessors[current_system] != current_system) {
-            retval.first.push_front(pointer_property_map[current_system]);
-            current_system = predecessors[current_system];
-        }
-        retval.second = retval.first.size() - 1;
-
-        // note that at this point retval.first will be empty if there was no starlane path from system1 to system2
-        if (!retval.first.empty()) {
-            retval.first.push_front(pointer_property_map[current_system]);
-        }
-
-        return retval;
-    }
-
-    template <class Graph>
-    bool SystemReachableImpl(const Graph& graph, int system)
-    { return boost::in_degree(system, graph); }
-
-    template <class Graph>
-    std::map<double, System*> ImmediateNeighborsImpl(const Graph& graph, int system)
-    {
-        typedef typename Graph::out_edge_iterator OutEdgeIterator;
-        typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type ConstEdgeWeightPropertyMap;
-
-        std::map<double, System*> retval;
-        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);
-        std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(system, graph);
-        for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
-            retval[edge_weight_map[*it]] = pointer_property_map[boost::target(*it, graph)];
-        }
-        return retval;
     }
 }
 
+#ifdef FREEORION_BUILD_SERVER
 namespace Delauney {
-	
 	// simple 2D point.  would have used array of systems, but System class has limits on the range of 
 	// position values that would interfere with the triangulation algorithm (need a single large covering
 	// triangle that overlaps all actual points being triangulated)
@@ -587,8 +1594,16 @@ namespace Delauney {
 		DTPoint(double xp, double yp);
 		DTPoint();
 	};
-	
-	// simple class for an integer that has an associated "sorting value", so the integer can be stored in
+	DTPoint::DTPoint() {
+		x = 0;
+		y = 0;
+	};
+	DTPoint::DTPoint(double xp, double yp) {
+		x = xp;
+		y = yp;
+	};
+
+    // simple class for an integer that has an associated "sorting value", so the integer can be stored in
 	// a list sorted by something other than the value of the integer
 	class SortValInt {
 	public:
@@ -596,6 +1611,10 @@ namespace Delauney {
 		double sortVal;
 		
 		SortValInt(int n, double s);
+	};
+	SortValInt::SortValInt(int n, double s) {
+		num = n;
+		sortVal = s;
 	};
 	
 	// list of three interger array indices, and some additional info about the triangle that the corresponding
@@ -617,28 +1636,6 @@ namespace Delauney {
 		DTTriangle();
 	};
 
-	
-	// runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
-	// returns the list of triangles produced
-	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
-
-} // end namespace Delauney
-
-namespace Delauney {	
-	SortValInt::SortValInt(int n, double s) {
-		num = n;
-		sortVal = s;
-	};
-	
-	DTPoint::DTPoint() {
-		x = 0;
-		y = 0;
-	};
-	DTPoint::DTPoint(double xp, double yp) {
-		x = xp;
-		y = yp;
-	};
-	
 	// determines whether a specified point is within the circumcircle of the triangle
 	bool DTTriangle::PointInCircumCircle(Delauney::DTPoint &p) {
 		double vectX, vectY;
@@ -710,6 +1707,11 @@ namespace Delauney {
 		return verts;
 	};
 
+
+    // runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
+	// returns the list of triangles produced
+	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
+	
 	// does Delauney Triangulation to generate starlanes
 	std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
 
@@ -840,186 +1842,12 @@ namespace Delauney {
 		return triList;
 	} // end function
 } // end namespace
-
-/////////////////////////////////////////////
-// struct Universe::EdgeVisibilityFilter
-/////////////////////////////////////////////
-Universe::EdgeVisibilityFilter::EdgeVisibilityFilter() :
-    m_graph(0),
-    m_empire(0)
-{}
-
-Universe::EdgeVisibilityFilter::EdgeVisibilityFilter(const SystemGraph* graph, int empire_id) :
-    m_graph(graph),
-    m_empire(Empires().Lookup(empire_id))
-{}
-
-bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire, int system1, int system2)
-{
-    return empire->HasExploredSystem(system1) || empire->HasExploredSystem(system2);
-}
-
-
-/////////////////////////////////////////////
-// class Universe
-/////////////////////////////////////////////
-// static(s)
-const bool Universe::ALL_OBJECTS_VISIBLE = false;
-double Universe::s_universe_width = 1000.0;
-bool Universe::s_inhibit_universe_object_signals = false;
-int Universe::s_encoding_empire = ALL_EMPIRES;
-
-Universe::Universe()
-{}
-
-const Universe& Universe::operator=(Universe& rhs)
-{
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        delete it->second;
-    }
-    m_objects.clear();
-    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
-        delete it->second;
-    }
-    m_objects.clear();
-    m_destroyed_objects.clear();
-    m_last_allocated_id = rhs.m_last_allocated_id;
-    m_objects = rhs.m_objects;
-    rhs.m_objects.clear();
-    m_destroyed_objects = rhs.m_destroyed_objects;
-    rhs.m_destroyed_objects.clear();
-    InitializeSystemGraph();
-    return *this;
-}
-
-Universe::~Universe()
-{
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        delete it->second;
-    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it)
-        delete it->second;
-}
-
-const UniverseObject* Universe::Object(int id) const
-{
-    const_iterator it = m_objects.find(id);
-    return (it != m_objects.end() ? it->second : 0);
-}
-
-UniverseObject* Universe::Object(int id)
-{
-    iterator it = m_objects.find(id);
-    return (it != m_objects.end() ? it->second : 0);
-}
-
-Universe::ConstObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor) const
-{
-    ConstObjectVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second->Accept(visitor))
-            retval.push_back(obj);
-    }
-    return retval;
-}
-
-Universe::ObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor)
-{
-    ObjectVec retval;
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second->Accept(visitor))
-            retval.push_back(obj);
-    }
-    return retval;
-}
-
-Universe::ObjectIDVec Universe::FindObjectIDs(const UniverseObjectVisitor& visitor) const
-{
-    ObjectIDVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->second->Accept(visitor))
-            retval.push_back(it->first);
-    }
-    return retval;
-}
-
-Universe::iterator Universe::begin()
-{ return m_objects.begin(); }
-
-Universe::iterator Universe::end()
-{ return m_objects.end(); }
-
-Universe::const_iterator Universe::begin() const
-{ return m_objects.begin(); }
-
-Universe::const_iterator Universe::end() const
-{ return m_objects.end(); }
-
-const UniverseObject* Universe::DestroyedObject(int id) const
-{
-    const_iterator it = m_destroyed_objects.find(id);
-    return (it != m_destroyed_objects.end() ? it->second : 0);
-}
-
-double Universe::LinearDistance(int system1, int system2) const
-{
-    return m_system_distances.at(std::max(system1, system2)).at(std::min(system1, system2));
-}
-
-std::pair<std::list<System*>, double> Universe::ShortestPath(int system1, int system2, int empire_id/* = ALL_EMPIRES*/) const
-{
-    double linear_distance = LinearDistance(system1, system2);
-    if (empire_id == ALL_EMPIRES) {
-        return ShortestPathImpl(m_system_graph, system1, system2, linear_distance);
-    } else {
-        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_empire_system_graph_views.end())
-            return ShortestPathImpl(*graph_it->second, system1, system2, linear_distance);
-    }
-    return std::pair<std::list<System*>, double>();
-}
-
-std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1, int system2, int empire_id/* = ALL_EMPIRES*/) const
-{
-    if (empire_id == ALL_EMPIRES) {
-        return LeastJumpsPathImpl(m_system_graph, system1, system2);
-    } else {
-        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_empire_system_graph_views.end())
-            return LeastJumpsPathImpl(*graph_it->second, system1, system2);
-    }
-    return std::pair<std::list<System*>, int>();
-}
-
-bool Universe::SystemReachable(int system, int empire_id) const
-{
-    m_system_distances.at(system); // for an exception-throwing bounds check
-    if (empire_id == ALL_EMPIRES) {
-        return SystemReachableImpl(m_system_graph, system);
-    } else {
-        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_empire_system_graph_views.end())
-            return SystemReachableImpl(*graph_it->second, system);
-    }
-    return false;
-}
-
-std::map<double, System*> Universe::ImmediateNeighbors(int system, int empire_id/* = ALL_EMPIRES*/) const
-{
-    m_system_distances.at(system); // for an exception-throwing bounds check
-    if (empire_id == ALL_EMPIRES) {
-        return ImmediateNeighborsImpl(m_system_graph, system);
-    } else {
-        EmpireViewSystemGraphMap::const_iterator graph_it = m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_empire_system_graph_views.end())
-            return ImmediateNeighborsImpl(*graph_it->second, system);
-    }
-    return std::map<double, System*>();
-}
-
+#endif
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
                               SpecialsFrequency specials_freq, int players, int ai_players, 
                               const std::map<int, PlayerSetupData>& player_setup_data)
 {
+#ifdef FREEORION_BUILD_SERVER
 #ifdef FREEORION_RELEASE
     ClockSeed();
 #endif
@@ -1029,7 +1857,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
         delete itr->second;
     m_objects.clear();
 
-    m_last_allocated_id = -1;
+    m_last_allocated_object_id = -1;
+    m_last_allocated_design_id = -1;
 
     Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
 
@@ -1083,236 +1912,36 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
+    // Apply non-effect meter adjustments
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ResetMaxMeters();   // zero all meters
+        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
+    }
+
+    // Apply effects for 1st turn
     ApplyEffects();
-}
 
-int Universe::Insert(UniverseObject* obj)
-{
-    int retval = UniverseObject::INVALID_OBJECT_ID;
-    if (obj) {
-        if (m_last_allocated_id + 1 < UniverseObject::MAX_ID) {
-            m_objects[++m_last_allocated_id] = obj;
-            obj->SetID(m_last_allocated_id);
-            retval = m_last_allocated_id;
-        } else { // we'll probably never execute this branch, considering how many IDs are available
-            // find a hole in the assigned IDs in which to place the object
-            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
-            for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-                if (1 < it->first - last_id_seen) {
-                    m_objects[last_id_seen + 1] = obj;
-                    obj->SetID(last_id_seen + 1);
-                    retval = last_id_seen + 1;
-                    break;
-                }
+    // update initial and previous meter values
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        it->second->ClampMeters();  // limit current meters by max meters
+        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
+            if (Meter* meter = it->second->GetMeter(i)) {
+                meter->m_previous_current = meter->m_current;
+                meter->m_previous_max = meter->m_max;
+                meter->m_initial_current = meter->m_current;
+                meter->m_initial_max = meter->m_max;
             }
         }
     }
 
-    return retval;
-}
-
-bool Universe::InsertID(UniverseObject* obj, int id )
-{
-    bool retval = false;
-
-    if (obj) {
-        if ( id < UniverseObject::MAX_ID) {
-            m_objects[id] = obj;
-            obj->SetID(id);
-            retval = true;
-        }
-    }
-    return retval;
-}
-
-void Universe::ApplyEffects()
-{
-    m_marked_destroyed.clear();
-
-    // cache all activation and scoping condition results before applying Effects, since the application of
-    // these Effects may affect the activation and scoping evaluations
-    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
-    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
-    EffectsAndTargetsMap effects_targets_map;
-    for (Universe::const_iterator it = begin(); it != end(); ++it) {
-        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
-             special_it != it->second->Specials().end();
-             ++special_it) {
-            const Special* special = GetSpecial(*special_it);
-            assert(special);
-            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
-                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-            }
-        }
-    }
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
-            const Tech* tech = GetTech(*tech_it);
-            assert(tech);
-            for (unsigned int i = 0; i < tech->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = tech->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->second->CapitolID(), Effect::EffectsGroup::TargetSet()));
-                tech->Effects()[i]->GetTargetSet(it->second->CapitolID(), map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-            }
-        }
-    }
-    std::vector<Building*> buildings = FindObjects<Building>();
-    for (unsigned int i = 0; i < buildings.size(); ++i) {
-        const BuildingType* building_type = buildings[i]->GetBuildingType();
-        assert(building_type);
-        for (unsigned int j = 0; j < building_type->Effects().size(); ++j) {
-            boost::shared_ptr<const Effect::EffectsGroup> effect = building_type->Effects()[j];
-            EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
-            building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
-            effects_targets_map.insert(map_elem);
-        }
-    }
-
-    // reset max meter state that is affected by the application of effects
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->AdjustMaxMeters();
-    }
-
-    // execute effects on cached results
-    std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
-    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
-        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
-        Effect::EffectsGroup::TargetSet targets(it->second.second);
-        if (non_stacking_it != executed_nonstacking_effects.end()) {
-            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
-                targets.erase(*object_it);
-            }
-        }
-
-        // execute the Effects in the EffectsGroup
-        it->first->Execute(it->second.first, targets);
-
-        // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (it->first->StackingGroup() != "") {
-            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
-            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
-                affected_targets.insert(*object_it);
-            }
-        }
-    }
-
-    for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
-        DestroyImpl(*it);
-    }
-}
-
-void Universe::RebuildEmpireViewSystemGraphs()
-{
-    m_empire_system_graph_views.clear();
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        EdgeVisibilityFilter filter(&m_system_graph, it->first);
-        boost::shared_ptr<EmpireViewSystemGraph> filtered_graph_ptr(new EmpireViewSystemGraph(m_system_graph, filter));
-        m_empire_system_graph_views[it->first] = filtered_graph_ptr;
-    }
-}
-
-void Universe::Destroy(int id)
-{
-    s_inhibit_universe_object_signals = true;
-    
-    UniverseObject* obj;
-    iterator it = m_objects.find(id);
-
-    // remove object from any containing UniverseObject
-    if (it != m_objects.end()) {
-        obj = it->second;
-        Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
-
-        // get and record set of empires that can presently see this object
-        std::set<int> knowing_empires;
-        for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
-            int empire_id = emp_it->first;
-            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj)) {
-                knowing_empires.insert(empire_id);
-                Logger().debugStream() << "..visible to empire: " << empire_id;
-            }
-        }
-        m_destroyed_object_knowers[id] = knowing_empires;
-
-        // remove object from any containing objects
-        if (System* sys = obj->GetSystem())
-            sys->Remove(id);
-        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-            if (Fleet* fleet = ship->GetFleet())
-                fleet->RemoveShip(ship->ID());
-        } else if (Building* building = universe_object_cast<Building*>(obj)) {
-            if (Planet* planet = building->GetPlanet())
-                planet->RemoveBuilding(building->ID());
-        }
-
-        // remove from existing objects set and insert into destroyed objects set
-        m_objects.erase(id);
-        m_destroyed_objects[id] = obj;
-    } else {
-        Logger().debugStream() << "Universe::Destroy called for nonexistant object with id: " << id;
-    }
-    
-    s_inhibit_universe_object_signals = false;
-}
-
-bool Universe::Delete(int id)
-{
-    s_inhibit_universe_object_signals = true;
-
-    // find object amongst existing objects
-    UniverseObject* obj;
-    iterator it = m_objects.find(id);
-    if (it != m_objects.end()) {
-        obj = it->second;
-
-        // remove object from any containing UniverseObject
-        if (System* sys = obj->GetSystem())
-            sys->Remove(id);
-        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-            if (Fleet* fleet = ship->GetFleet())
-                fleet->RemoveShip(ship->ID());
-        } else if (Building* building = universe_object_cast<Building*>(obj)) {
-            if (Planet* planet = building->GetPlanet())
-                planet->RemoveBuilding(building->ID());
-        }
-
-        m_objects.erase(id);
-        UniverseObjectDeleteSignal(obj);
-        delete obj;
-        s_inhibit_universe_object_signals = false;
-        return true;
-    }
-
-    // find object amongst destroyed objects
-    it = m_destroyed_objects.find(id);
-    if (it != m_destroyed_objects.end()) {
-        obj = it->second;
-        m_destroyed_objects.erase(id);
-        UniverseObjectDeleteSignal(obj);
-        delete obj;
-        s_inhibit_universe_object_signals = false;
-        return true;
-    }
-
-    Logger().debugStream() << "Tried to delete a nonexistant objects with id: " << id;
-
-    s_inhibit_universe_object_signals = false;
-    return false;
-}
-
-void Universe::EffectDestroy(int id)
-{
-    m_marked_destroyed.insert(id);
+#else
+        throw std::runtime_error("Non-server called Universe::CreateUniverse; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
 {
+#ifdef FREEORION_BUILD_SERVER
     std::list<std::string> star_names;
     LoadSystemNames(star_names);
 
@@ -1350,10 +1979,14 @@ void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjace
             }
         }
     }
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateIrregularGalaxy; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq)
 {
+#ifdef FREEORION_BUILD_SERVER
     std::vector<System*> sys_vec = FindObjects<System>();
 
     if (sys_vec.empty())
@@ -1424,9 +2057,14 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
             system->Insert(planet, orbit);  // add planet to system map
         }
     }
+#else
+        throw std::runtime_error("Non-server called Universe::PopulateSystems; only server should call this while creating the universe");
+#endif
 }
 
-void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid) {
+void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
+{
+#ifdef FREEORION_BUILD_SERVER
     if (freq == LANES_NONE)
         return;
 
@@ -1561,94 +2199,14 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 			laneSetIter++;
 		} // end while
 	} // end for n
-	//Logger().debugStream() << "Done generating starlanes.";
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe");
+#endif
 }
 
-// used by GenerateStarlanes.  Determines if system1 and system2 are connected by maxLaneJumps or less edges
-// on graph.  Uses limited-depth breadth first search
-bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
-	// list of indices of systems that are accessible from previously visited systems.
-	// when a new system is found to be accessible, it is added to the back of the
-	// list.  the list is iterated through from front to back to find systems
-	// to examine
-	std::list<int> accessibleSystemsList;
-	std::list<int>::iterator sysListIter, sysListEnd;
-	
-	// map using star index number as the key, and also storing the number of starlane
-	// jumps away from system1 a given system is.  this is used to determine if a
-	// system has already been added to the accessibleSystemsList without needing
-	// to iterate through the list.  it also provides some indication of the
-	// current depth of the search, which allows the serch to terminate after searching
-	// to the depth of maxLaneJumps without finding system2
-	// (considered using a vector for this, but felt that for large galaxies, the
-	// size of the vector and the time to intialize would be too much)
-	std::map<int, int> accessibleSystemsMap;
-
-	// system currently being investigated, destination of a starlane origination at curSys
-	int curSys, curLaneDest;
-	// "depth" level in tree of system currently being investigated
-	int curDepth;
-
-	// iterators to set of starlanes, in graph, for the current system	
-	std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
-	
-	// check for simple cases for quick termination
-	if (system1 == system2) return true; // system is always connected to itself
-	if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
-	if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
-	if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
-	if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
-	if (system1 < 0 || system2 < 0) return false; // out of range
-	
-    // add starting system to list and set of accessible systems
-	accessibleSystemsList.push_back(system1);
-	accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
-
-	// loop through visited systems
-	sysListIter = accessibleSystemsList.begin();
-	sysListEnd = accessibleSystemsList.end();
-	while (sysListIter != sysListEnd) {
-		curSys = *sysListIter;
-		
-		// check that iteration hasn't reached maxLaneJumps levels deep, which would 
-		// mean that system2 isn't within maxLaneJumps starlane jumps of system1
-		curDepth = (*accessibleSystemsMap.find(curSys)).second;
-
-		if (curDepth >= maxLaneJumps) return false;
-		
-		// get set of starlanes for this system
-		curSysLanesSetIter = (laneSetArray[curSys]).begin();
-		curSysLanesSetEnd = (laneSetArray[curSys]).end();
-		
-		// add starlanes accessible from this system to list and set of accessible starlanes
-		// (and check for the goal starlane)
-		while (curSysLanesSetIter != curSysLanesSetEnd) {
-			curLaneDest = *curSysLanesSetIter;
-		
-			// check if curLaneDest has been added to the map of accessible systems
-			if (0 == accessibleSystemsMap.count(curLaneDest)) {
-				
-				// check for goal
-				if (curLaneDest == system2) return true;
-				
-				// add curLaneDest to accessible systems list and map
-				accessibleSystemsList.push_back(curLaneDest);
-				accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
-       		}
-		
-			curSysLanesSetIter++;
-		}
-
-		sysListIter++;
-	}	
-	return false; // default
-}
-
-// Removes lanes from passed graph that are angularly too close to other lanes emanating from the same star
-// Preferentially removes longer lanes in the case of two conficting lanes
-// Ensures that removing a lane does not create any isoalted subgraphs
-void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
-		
+void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+{
+#ifdef FREEORION_BUILD_SERVER
 	// start and end systems of a new lane being considered, and end points of lanes that already exist with that
 	// start at the start or destination of the new lane
 	int curSys, dest1, dest2;
@@ -1815,10 +2373,14 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
 
 		lanesToRemoveIter++;
 	}
+#else
+        throw std::runtime_error("Non-server called Universe::CullAngularlyTooCloseLanes; only server should call this while creating the universe");
+#endif
 }
 
-// Removes lanes from passed graph that are too long Ensures that removing a lane does not create any isoalted subgraphs
-void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
+void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+{
+#ifdef FREEORION_BUILD_SERVER
 	// start and end systems of a new lane being considered, and end points of lanes that already exist with that start
 	// at the start or destination of the new lane
 	int curSys, dest;
@@ -1903,12 +2465,14 @@ void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> 
 		}	
 		lanesToRemoveIter++;
 	}
+#else
+        throw std::runtime_error("Non-server called Universe::CullTooLongLanes; only server should call this while creating the universe");
+#endif
 }
 
-// Grows trees to connect stars.  Should produce a single, or nearly singly connected graph.  Takes an array of indices
-// of starting systems for the growing trees takes potential lanes as an array of sets for each system, and puts lanes
-// of tree(s) into other array of sets.
-void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray) {
+void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray)
+{
+#ifdef FREEORION_BUILD_SERVER
 	// array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
 	std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
 	
@@ -2083,58 +2647,15 @@ void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<in
 		treeSysListsMapEnd = treeSysListsMap.end();  // incase deleting or merging trees messed things up
 		if (treeSysListsMapIter == treeSysListsMapEnd)
 			treeSysListsMapIter = treeSysListsMap.begin();
-	}	
-}
-
-void Universe::InitializeSystemGraph()
-{
-    for (int i = static_cast<int>(boost::num_vertices(m_system_graph)) - 1; i >= 0; --i) {
-        boost::clear_vertex(i, m_system_graph);
-        boost::remove_vertex(i, m_system_graph);
     }
-
-    std::vector<System*> systems = FindObjects<System>();
-    m_system_distances.resize(systems.size());
-    SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_system_graph);
-
-    EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_system_graph);
-    typedef boost::graph_traits<SystemGraph>::edge_descriptor EdgeDescriptor;
-
-    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
-        // add a vertex to the graph for this system, and assign it a pointer for its System object
-        boost::add_vertex(m_system_graph);
-        System* system1 = systems[i];
-        pointer_property_map[i] = system1;
-
-        // add edges and edge weights
-        for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
-            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(system1->ID(), it->first, m_system_graph);
-            if (it->second) { // if this is a wormhole
-                edge_weight_map[add_edge_result.first] = 0.0;
-            } else if (add_edge_result.second) { // if this is a non-duplicate starlane
-                UniverseObject* system2 = Object(it->first);
-                double x_dist = system2->X() - system1->X();
-                double y_dist = system2->Y() - system1->Y();
-                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist * x_dist + y_dist * y_dist);
-            }
-        }
-
-        // define the straight-line system distances for this system
-        m_system_distances[i].clear();
-        for (int j = 0; j < i; ++j) {
-            UniverseObject* system2 = Object(j);
-            double x_dist = system2->X() - system1->X();
-            double y_dist = system2->Y() - system1->Y();
-            m_system_distances[i].push_back(std::sqrt(x_dist * x_dist + y_dist * y_dist));
-        }
-        m_system_distances[i].push_back(0.0);
-    }
-
-    RebuildEmpireViewSystemGraphs();
+#else
+        throw std::runtime_error("Non-server called Universe::GrowSpanningTrees; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 {
+#ifdef FREEORION_BUILD_SERVER
     homeworlds.clear();
 
     std::vector<System*> sys_vec = FindObjects<System>();
@@ -2192,10 +2713,14 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 
         homeworlds.push_back(planet_id);
     }
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::NamePlanets()
 {
+#ifdef FREEORION_BUILD_SERVER
     std::vector<System*> sys_vec = FindObjects<System>();
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
@@ -2212,6 +2737,9 @@ void Universe::NamePlanets()
             }
         }
     }
+#else
+        throw std::runtime_error("Non-server called Universe::NamePlanets; only server should call this while creating the universe");
+#endif
 }
 
 void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data)
@@ -2260,7 +2788,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->SetPrimaryFocus(FOCUS_BALANCED);
         home_planet->SetSecondaryFocus(FOCUS_BALANCED);
         home_planet->ResetMaxMeters();
-        home_planet->AdjustMaxMeters();
+        home_planet->ApplyUniverseTableMaxMeterAdjustments();
         Effect::EffectsGroup::TargetSet target_set;
         target_set.insert(home_planet);
         Special* special = GetSpecial("HOMEWORLD_SPECIAL");
@@ -2296,71 +2824,76 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h
-        ShipDesign design;
-        design.name = "Scout";
-        design.attack = 0;
-        design.defense = 1;
-        design.cost = 10;
-        design.speed = 80.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Small and cheap unarmed vessel designed for recon and exploration.";
-        design.graphic = "misc/scout1.png";
+        ShipDesign* design = new ShipDesign();
+        design->name = "Scout";
+        design->attack = 0;
+        design->defense = 1;
+        design->cost = 10;
+        design->speed = 80.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Small and cheap unarmed vessel designed for recon and exploration.";
+        design->graphic = "misc/scout1.png";
+        int scout_design_id = empire->AddShipDesign(design);
+
+        design = new ShipDesign();
+        design->name = "Colony Ship";
+        design->attack = 0;
+        design->defense = 1;
+        design->cost = 50;
+        design->speed = 35.0;
+        design->colonize = true;
+        design->empire = empire_id;
+        design->description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
+        design->graphic = "misc/colony1.png";
+        int colony_ship_design_id = empire->AddShipDesign(design);
+
+        design = new ShipDesign();
+        design->name = "Mark I";
+        design->attack = 2;
+        design->defense = 1;
+        design->cost = 20;
+        design->speed = 50.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Affordable armed patrol frigate.";
+        design->graphic = "misc/mark1.png";
         empire->AddShipDesign(design);
 
-        design.name = "Colony Ship";
-        design.attack = 0;
-        design.defense = 1;
-        design.cost = 50;
-        design.speed = 35.0;
-        design.colonize = true;
-        design.empire = empire_id;
-        design.description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
-        design.graphic = "misc/colony1.png";
+        design = new ShipDesign();
+        design->name = "Mark II";
+        design->attack = 5;
+        design->defense = 2;
+        design->cost = 40;
+        design->speed = 40.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Cruiser with storng defensive and offensive capabilities.";
+        design->graphic = "misc/mark2.png";
         empire->AddShipDesign(design);
 
-        design.name = "Mark I";
-        design.attack = 2;
-        design.defense = 1;
-        design.cost = 20;
-        design.speed = 50.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Affordable armed patrol frigate.";
-        design.graphic = "misc/mark1.png";
+        design = new ShipDesign();
+        design->name = "Mark III";
+        design->attack = 10;
+        design->defense = 3;
+        design->cost = 75;
+        design->speed = 30.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
+        design->graphic = "misc/mark3.png";
         empire->AddShipDesign(design);
 
-        design.name = "Mark II";
-        design.attack = 5;
-        design.defense = 2;
-        design.cost = 40;
-        design.speed = 40.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Cruiser with storng defensive and offensive capabilities.";
-        design.graphic = "misc/mark2.png";
-        empire->AddShipDesign(design);
-
-        design.name = "Mark III";
-        design.attack = 10;
-        design.defense = 3;
-        design.cost = 75;
-        design.speed = 30.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
-        design.graphic = "misc/mark3.png";
-        empire->AddShipDesign(design);
-
-        design.name = "Mark IV";
-        design.attack = 15;
-        design.defense = 5;
-        design.cost = 140;
-        design.speed = 25.0;
-        design.colonize = false;
-        design.empire = empire_id;
-        design.description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
-        design.graphic = "misc/mark4.png";
+        design = new ShipDesign();
+        design->name = "Mark IV";
+        design->attack = 15;
+        design->defense = 5;
+        design->cost = 140;
+        design->speed = 25.0;
+        design->colonize = false;
+        design->empire = empire_id;
+        design->description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
+        design->graphic = "misc/mark4.png";
         empire->AddShipDesign(design);
 
         // create the empire's starting fleet
@@ -2370,57 +2903,23 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         Ship* ship = 0;
 
-        ship = new Ship(empire_id, "Scout");
+        ship = new Ship(empire_id, scout_design_id);
         ship->Rename("Scout");
         int ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
-        ship = new Ship(empire_id, "Scout");
+        ship = new Ship(empire_id, scout_design_id);
         ship->Rename("Scout");
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
-        ship = new Ship(empire_id, "Colony Ship");
+        ship = new Ship(empire_id, colony_ship_design_id);
         ship->Rename("Colony Ship");
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
     }
+#else
+        throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");
 #endif
 }
 
-double Universe::UniverseWidth()
-{ return s_universe_width; }
-
-int Universe::GenerateObjectID()
-{ return ++m_last_allocated_id; }
-
-const bool& Universe::InhibitUniverseObjectSignals()
-{ return s_inhibit_universe_object_signals; }
-
-void Universe::DestroyImpl(int id)
-{
-    UniverseObject* obj = Object(id);
-    if (!obj)
-        return;
-    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        Fleet* fleet = ship->GetFleet();
-        Delete(id);
-        if (fleet && fleet->NumShips() == 0)
-            Delete(fleet->ID());
-    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
-        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it) {
-            Delete(*it);
-        }
-        Delete(id);
-    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
-        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it) {
-            Delete (*it);
-        }
-        Delete(id);
-    } else if (universe_object_cast<System*>(obj)) {
-        // unsupported: do nothing
-    } else {
-        Delete(id);
-    }
-}

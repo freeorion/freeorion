@@ -18,6 +18,7 @@
       <PERSON name="Michael J. Agostini" nick=""                task="Programming"/>
       <PERSON name="Geoff Topping"       nick="Geoff the Medio" task="Programming, Game Design"/>
       <PERSON name="Karol Szumski"       nick="MareviQ"         task="Programming"/>
+      <PERSON name="Mike Dotterer"       nick="maelstrom512"    task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Krum Stanoev"    nick=""           task="Game Design"/>
@@ -44,7 +45,7 @@
       <PERSON name="Tomi Hartikka"    nick="Mystiqq"        task="Graphics"/>
       <PERSON name="Brendan Mauro"    nick="BreadMan"       task="Graphics"/>
       <PERSON name="Karel Kalvoda"    nick="Solid Liquid"   task="Graphics"/>
-      <PERSON name="J. W. Bjerk"      nick="eleazar"        task="Graphics"/>
+      <PERSON name="J. W. Bjerk"      nick="eleazar"        task="Graphics, Game Design"/>
     </GROUP>
     <GROUP name ="AUDIO">
       <PERSON name="Shannon Roberts" nick="Guiguibaah" task="Audio"/>
@@ -53,7 +54,7 @@
       <PERSON name="_Robbob_"        nick=""           task="Audio"/>
     </GROUP>
     <GROUP name ="TRANSLATION">
-      <PERSON name="Martin Wuttke" nick="The Silent One" task="German Translation"/>
+      <PERSON name="Martin Wuttke" nick="The Silent One" task="German Translation, Graphics"/>
       <PERSON name="Ivan Sanchez" nick="Ivan s c" task="Spanish Translation"/>
     </GROUP>
   </CREDITS>

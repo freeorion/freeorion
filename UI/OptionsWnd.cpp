@@ -115,7 +115,14 @@ namespace {
 
     bool ValidDirectory(const std::string& file)
     {
-        return fs::exists(fs::path(file)) && fs::is_directory(fs::path(file));
+        // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
+            fs::path path = fs::path(file);
+            return fs::exists(path) && fs::is_directory(path);
+        } catch (std::exception ex) {
+            return false;
+        }        
     }
 
     template <class T>
@@ -214,6 +221,18 @@ namespace {
         CUISpin<int>* m_height_spin;
         CUISpin<int>* m_color_depth_spin;
         CUIStateButton* m_fullscreen_button;
+    };
+    struct LimitFPSSetOptionFunctor
+    {
+        LimitFPSSetOptionFunctor(CUISpin<double>* max_fps_spin) :
+            m_max_fps_spin(max_fps_spin)
+        {}
+        void operator()(bool b)
+        {
+            Logger().debugStream() << "LimitFPSSetOptionFunction: bool: " << b;
+            m_max_fps_spin->Disable(!b);
+        }
+        CUISpin<double>* m_max_fps_spin;
     };
 }
 
@@ -596,6 +615,11 @@ void OptionsWnd::ResolutionOption()
     CUISpin<int>* height_spin = IntOption("app-height", UserString("OPTIONS_APP_HEIGHT"));
     CUISpin<int>* color_depth_spin = IntOption("color-depth", UserString("OPTIONS_COLOR_DEPTH"));
     CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
+    CUIStateButton* limit_FPS_button = BoolOption("limit-fps", UserString("OPTIONS_LIMIT_FPS"));
+    CUISpin<double>* max_fps_spin = DoubleOption("max-fps", UserString("OPTIONS_MAX_FPS"));
+    GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
+    limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
+
 #ifdef FREEORION_WIN32
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
 #else

@@ -3,14 +3,8 @@
 #ifndef _SystemIcon_h_
 #define _SystemIcon_h_
 
-#ifndef _GG_Button_h_
 #include <GG/Button.h>
-#endif
-
-#ifndef _CUIDrawUtil_h_
 #include "CUIDrawUtil.h"
-#endif
-
 
 class Fleet;
 class FleetButton;
@@ -38,19 +32,12 @@ class SystemIcon : public GG::Control
 {
 public:
     //! \name Signal Types //!@{
-    typedef boost::signal<void (int)> MouseEnteringSignalType; //!< emitted when the user moves the cursor over the icon; returns the object id
-    typedef boost::signal<void (int)> MouseLeavingSignalType; //!< emitted when the user moves the cursor off of the icon; returns the object id
-    typedef boost::signal<void (int)> LeftClickedSignalType; //!< emitted when the user left clicks the icon; returns the objectID
-    typedef boost::signal<void (int)> RightClickedSignalType; //!< emitted when the user right clicks the icon; returns the objectID
-    typedef boost::signal<void (int)> LeftDoubleClickedSignalType; //!< emitted when the user left double-clicks the icon; returns the object id
-    //!@}
-
-    //! \name Slot Types //!@{
-    typedef MouseEnteringSignalType::slot_type MouseEnteringSlotType; //!< type of functor invoked when the user moves over the system
-    typedef MouseLeavingSignalType::slot_type MouseLeavingSlotType; //!< type of functor invoked when the user moves off of the system
-    typedef LeftClickedSignalType::slot_type LeftClickedSlotType; //!< type of functor invoked when the user left clicks
-    typedef RightClickedSignalType::slot_type RightClickedSlotType; //!< type of functor invoked when the user right clicks
-    typedef LeftDoubleClickedSignalType::slot_type LeftDoubleClickedSlotType; //!< type of functor invoked when the user left double-clicks
+    typedef boost::signal<void (int)>   MouseEnteringSignalType;    //!< emitted when the user moves the cursor over the icon; returns the object id
+    typedef boost::signal<void (int)>   MouseLeavingSignalType;     //!< emitted when the user moves the cursor off of the icon; returns the object id
+    typedef boost::signal<void (int)>   LeftClickedSignalType;      //!< emitted when the user left clicks the icon; returns the objectID
+    typedef boost::signal<void (int)>   RightClickedSignalType;     //!< emitted when the user right clicks the icon; returns the objectID
+    typedef boost::signal<void (int)>   LeftDoubleClickedSignalType;    //!< emitted when the user left double-clicks the icon; returns the object id
+    typedef boost::signal<void (FleetButton&, bool)>  FleetButtonClickedSignalType;   //!< emitted when one of the fleet buttons on this icon is clicked
     //!@}
 
     //! \name Structors //!@{
@@ -61,6 +48,7 @@ public:
     //! \name Accessors //!@{
     const System&      GetSystem() const;
     const FleetButton* GetFleetButton(Fleet* fleet) const;
+    virtual bool       InWindow(const GG::Pt& pt) const;    //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
     //!@}
 
     //! \name Mutators //!@{
@@ -78,11 +66,12 @@ public:
     void           ShowName(); //!< enables the system name text
     void           HideName(); //!< disables the system name text
 
-    mutable MouseEnteringSignalType     MouseEnteringSignal;
-    mutable MouseLeavingSignalType      MouseLeavingSignal;
-    mutable LeftClickedSignalType       LeftClickedSignal;
-    mutable RightClickedSignalType      RightClickedSignal;
-    mutable LeftDoubleClickedSignalType LeftDoubleClickedSignal;
+    mutable MouseEnteringSignalType         MouseEnteringSignal;
+    mutable MouseLeavingSignalType          MouseLeavingSignal;
+    mutable LeftClickedSignalType           LeftClickedSignal;
+    mutable RightClickedSignalType          RightClickedSignal;
+    mutable LeftDoubleClickedSignalType     LeftDoubleClickedSignal;
+    mutable FleetButtonClickedSignalType    FleetButtonClickedSignal;
     //!@}
 
 private:
@@ -101,7 +90,14 @@ private:
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
     std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
 
-    friend class FleetButtonClickedFunctor;
+    struct FleetButtonClickedFunctor
+    {
+        FleetButtonClickedFunctor(FleetButton& fleet_btn, SystemIcon& system_icon, bool fleet_departing);
+        void operator()();
+        FleetButton& m_fleet_btn;
+        SystemIcon& m_system_icon;
+        bool m_fleet_departing;
+    };
 };
 
 #endif // _SystemIcon_h_

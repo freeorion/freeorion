@@ -125,7 +125,6 @@ HumanClientApp::HumanClientApp() :
     Logger().setAdditivity(true);   // ...but allow the addition of others later
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
-    SetMaxFPS(60.0);
 
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
@@ -462,6 +461,10 @@ void HumanClientApp::Initialize()
     SetMusicVolume(GetOptionsDB().Get<int>("music-volume"));
     SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
 
+    EnableFPS();
+    UpdateFPSLimit();
+    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
+
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
@@ -683,6 +686,18 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     SetEmpireID(-1);
     SetPlayerName("");
     m_ui->GetMapWnd()->Sanitize();
+}
+
+void HumanClientApp::UpdateFPSLimit()
+{
+    if (GetOptionsDB().Get<bool>("limit-fps")) {
+        double fps = GetOptionsDB().Get<double>("max-fps");
+        SetMaxFPS(fps);
+        Logger().debugStream() << "Limited FPS to " << fps;
+    } else {
+        SetMaxFPS(0.0); // disable fps limit
+        Logger().debugStream() << "Disabled FPS limit";
+    }
 }
 
 /* Default sound implementation, do nothing */

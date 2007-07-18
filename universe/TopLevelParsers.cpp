@@ -51,6 +51,7 @@ namespace {
     ParamLabel effects_label("effects");
     ParamLabel name_label("name");
     ParamLabel description_label("description");
+    ParamLabel short_description_label("short_description");
     ParamLabel buildcost_label("buildcost");
     ParamLabel buildtime_label("buildtime");
     ParamLabel maintenancecost_label("maintenancecost");
@@ -103,8 +104,10 @@ namespace {
             (str_p("special")
              >> name_label >> name_p[special_p.name = arg1]
              >> description_label >> name_p[special_p.description = arg1]
-             >> effectsgroups_label >> effects_group_vec_p[special_p.effects_groups = arg1])
-            [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups)];
+             >> effectsgroups_label >> effects_group_vec_p[special_p.effects_groups = arg1]
+             >> graphic_label >> file_name_p[special_p.graphic = arg1])
+            [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
+                                             special_p.graphic)];
 
         tech_item_spec_p =
             (str_p("item")
@@ -120,6 +123,7 @@ namespace {
             (str_p("tech")
              >> name_label >> name_p[tech_p.name = arg1]
              >> description_label >> name_p[tech_p.description = arg1]
+             >> short_description_label >> name_p[tech_p.short_description = arg1]
              >> techtype_label >> tech_type_p[tech_p.tech_type = arg1]
              >> category_label >> name_p[tech_p.category = arg1]
              >> researchcost_label >> real_p[tech_p.research_cost = arg1]
@@ -132,9 +136,10 @@ namespace {
                  | ('[' >> *(tech_item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']'))
              >> !(effectsgroups_label >> effects_group_vec_p[tech_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[tech_p.graphic = arg1])
-            [tech_p.this_ = new_<Tech>(tech_p.name, tech_p.description, tech_p.category, tech_p.tech_type,
-                                       tech_p.research_cost, tech_p.research_turns, tech_p.effects_groups,
-                                       tech_p.prerequisites, tech_p.unlocked_items, tech_p.graphic)];
+            [tech_p.this_ = new_<Tech>(tech_p.name, tech_p.description, tech_p.short_description, tech_p.category,
+                                       tech_p.tech_type, tech_p.research_cost, tech_p.research_turns,
+                                       tech_p.effects_groups, tech_p.prerequisites, tech_p.unlocked_items,
+                                       tech_p.graphic)];
 
         return true;
     }

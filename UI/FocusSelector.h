@@ -55,7 +55,7 @@ public:
     virtual void RClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
     virtual void MouseLeave();
-    void Update(const ResourceCenter& resource_center);
+    void Update();
 
     mutable FocusChangedSignalType PrimaryFocusChangedSignal;
     mutable FocusChangedSignalType SecondaryFocusChangedSignal;
@@ -76,6 +76,8 @@ private:
     void AdjustMeterStatusBars(const ResourceCenter& resource_center);
     void PrimaryFocusClicked(int button);
     void SecondaryFocusClicked(int button);
+
+    const ResourceCenter& m_res_center;
 
     FocusType m_primary_focus;
     FocusType m_secondary_focus;

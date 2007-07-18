@@ -21,18 +21,23 @@ Ship::Ship()
 {
 }
 
-Ship::Ship(int empire_id, const std::string& design_name) :
-    m_design_name(design_name)
+Ship::Ship(int empire_id, int design_id) :
+    m_design_id(design_id)
 {
-   if (!GetShipDesign(empire_id, m_design_name))
-      throw std::invalid_argument("Attempted to construct a Ship with an invalid design name");
+    if (!GetShipDesign(design_id))
+        throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
 
-   AddOwner(empire_id);
+    AddOwner(empire_id);
 }
 
 const ShipDesign* Ship::Design() const
 {
-    return GetShipDesign(*Owners().begin(), m_design_name);
+    return GetShipDesign(m_design_id);
+}
+
+int Ship::ShipDesignID() const
+{
+    return m_design_id;
 }
 
 int Ship::FleetID() const

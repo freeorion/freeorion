@@ -1,22 +1,19 @@
 
-The artwork (images, sounds, music, etc.) is licensed under 
-the Creative Commons Attribution-Share-Alike 2.5 license.
+Artistic or creative content is licensed under the Creative Commons
+Attribution-Share-Alike 2.5 license.
 (http://creativecommons.org/licenses/by-sa/2.5/)
+This includes artwork, music, sounds, text that determines how art,
+music or sound is played or displayed in game, game content such as
+technologies, buildings, specials and their associated in-game 
+text, and the scripts that determine their in-game functionality.
+
+Game content scripts are also licensed under the GNU General Public
+License, Version 2 (http://www.gnu.org/licenses/licenses.html).
 
 Everything else is licensed under the GNU General Public License,
-Version 2 (http://creativecommons.org/licenses/GPL/2.0/). As a
-special exception to the GPL terms, the FreeOrion Team grants
-permission to link the code of this program with any version of the
-FMOD library, and distributed linked combinations including the two.
-You must obey the GNU GPL in all respects for all of the code used
-other than FMOD. If you modify FreeOrion's code, you may extend this
-exception to your version, but you are not obligated to do
-so.
-
+Version 2.
 
                             ----------
-
-GPL (License for everything except artwork)
 
 
 		    GNU GENERAL PUBLIC LICENSE
@@ -363,7 +360,6 @@ Public License instead of this License.
                             ----------
 
 Creative Commons Attribution Share-alike 2.5 license
-(License for artwork)
 
 THE WORK (AS DEFINED BELOW) IS PROVIDED UNDER THE TERMS OF THIS CREATIVE
 COMMONS PUBLIC LICENSE ("CCPL" OR "LICENSE"). THE WORK IS PROTECTED BY

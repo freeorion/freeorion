@@ -609,50 +609,21 @@ boost::statechart::result WaitingForTurnEnd::react(const RequestObjectID& msg)
     return discard_event();
 }
 
+boost::statechart::result WaitingForTurnEnd::react(const RequestDesignID& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
+    Server().m_networking.SendMessage(DispatchDesignIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateDesignID()));
+    return discard_event();
+}
+
 boost::statechart::result WaitingForTurnEnd::react(const PlayerChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.PlayerChat";
     ServerApp& server = Server();
-    const Message& message = msg.m_message;
-
-    std::string text = message.Text();
-
-    // If there's a colon in the message, treat all tokens before the colon as player names.  if there are tokens before
-    // the colon, but at least one of them *is not* a valid player names, assume there has been a typo, and don't send
-    // the message at all, since we can't decipher which parts are message and which parts are names
-    std::string::size_type colon_position = text.find(':');
-    // Note that target_player_names.empty() implies that all players should be sent the message; otherwise, only the
-    // indicated players will receive the message.
-    std::set<std::string> target_player_names;
-    if (colon_position != std::string::npos) {
-        std::vector<std::string> tokens = Tokenize(text.substr(0, colon_position));
-        for (unsigned int i = 0; i < tokens.size(); ++i) {
-            bool token_is_name = false;
-            for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-                if (tokens[i] == (*it)->PlayerName()) {
-                    token_is_name = true;
-                    break;
-                }
-            }
-            if (token_is_name)
-                target_player_names.insert(tokens[i]);
-            else
-                return discard_event();
-        }
-    }
-    if (!target_player_names.empty()) {
-        text = text.substr(colon_position + 1);
-        if (text == "")
-            return discard_event();
-    }
-    Empire* sender_empire = server.GetPlayerEmpire(message.SendingPlayer());
-    std::string final_text = RgbaTag(Empires().Lookup(sender_empire->EmpireID())->Color()) + (*server.m_networking.GetPlayer(message.SendingPlayer()))->PlayerName() +
-        (target_player_names.empty() ? ": " : " (" + UserString("CHAT_WHISPER") + "):") + text + "</rgba>\n";
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if (target_player_names.empty() || target_player_names.find((*it)->PlayerName()) != target_player_names.end())
-            (*it)->SendMessage(ChatMessage(message.SendingPlayer(), (*it)->ID(), final_text));
+        if (msg.m_message.ReceivingPlayer() == -1 || msg.m_message.ReceivingPlayer() == (*it)->ID())
+            (*it)->SendMessage(SingleRecipientChatMessage(msg.m_message.SendingPlayer(), (*it)->ID(), msg.m_message.Text()));
     }
-
     return discard_event();
 }
 

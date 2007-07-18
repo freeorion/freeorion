@@ -3,13 +3,8 @@
 #ifndef _FleetButton_h_
 #define _FleetButton_h_
 
-#ifndef _GG_Button_h_
 #include <GG/Button.h>
-#endif
-
-#ifndef _CUIDrawUtil_h_
 #include "CUIDrawUtil.h"
-#endif
 
 class Fleet;
 class FleetWnd;
@@ -28,26 +23,19 @@ public:
     /** \name Accessors */ //@{
     virtual bool           InWindow(const GG::Pt& pt) const;
 
-    const std::vector<Fleet*>& Fleets() const {return m_fleets;} ///< returns the ID numbers of the fleets represented by this control
+    const std::vector<Fleet*>& Fleets() const {return m_fleets;} ///< returns the fleets represented by this control
 
     /** returns the orientation of the fleet marker (will be one of SHAPE_LEFT ans SHAPE_RIGHT) */
     ShapeOrientation Orientation() const {return m_orientation;}
     //@}
 
     /** \name Mutators */ //@{
+    virtual void LClick(const GG::Pt& pt, Uint32 keys);
     virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
 
     /** sets the orientation of the fleet marker (must be one of SHAPE_LEFT and SHAPE_RIGHT; 
         otherwise, SHAPE_LEFT will be used) */
     void SetOrientation(ShapeOrientation orientation) {m_orientation = orientation;}
-
-    /** sets the FleetButton that represents moving fleets at the same system as this button (if this button represents stationary fleets at a system)
-        or stationary fleets at the same system as this button (if this button represents moving fleets at a system) */
-    void SetCompliment(FleetButton* compliment) {m_compliment = compliment;}
-
-    /** Makes fleet \a fleet the currently-selected fleet the next time the button is clicked. */
-    void SelectFleet(Fleet* fleet);
-    //@}
 
 protected:
     /** \name Mutators */ //@{
@@ -57,22 +45,8 @@ protected:
     //@}
 
 private:
-    void Clicked();
-    void FleetDeleted(const UniverseObject* obj);
-
     std::vector<Fleet*> m_fleets;   ///< the fleets represented by this button
     ShapeOrientation m_orientation;
-
-    Fleet* m_selected_fleet;
-
-    /** the FleetButton that represents the other moving or stationary fleets at the same system as this button 
-        (if this one is stationary or moving, respectively) */
-    FleetButton* m_compliment;
-
-    static void FleetIsBeingExamined(Fleet* fleet, FleetWnd* fleet_wnd);
-    static void FleetIsNotBeingExamined(Fleet* fleet);
-
-    static std::map<Fleet*, FleetWnd*> s_open_fleets;
 };
 
 #endif // _FleetButton_h_

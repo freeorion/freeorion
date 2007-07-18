@@ -145,7 +145,7 @@ void CUI_CloseButton::Render()
 ////////////////////////////////////////////////
 CUIWnd::CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
-    m_resizable (flags & GG::RESIZABLE),
+    m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
     m_minimized(false),
@@ -219,24 +219,27 @@ void CUIWnd::Render()
             glColor(ClientUI::WndInnerBorderColor());
             glVertex2i(cl_ul.x, cl_ul.y);
             glVertex2i(cl_lr.x, cl_ul.y);
-            glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-            glVertex2i(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+            if (m_resizable) {
+                glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
+                glVertex2i(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+            } else {
+                glVertex2i(cl_lr.x, cl_lr.y);
+            }
             glVertex2i(cl_ul.x, cl_lr.y);
             glVertex2i(cl_ul.x, cl_ul.y);
         glEnd();
-        glBegin(GL_LINES);
-            // draw the extra lines of the resize tab
-            if (m_resizable) {
+        if (m_resizable) {
+            glBegin(GL_LINES);
+                // draw the extra lines of the resize tab
                 glColor(ClientUI::WndInnerBorderColor());
-            } else {
-                glColor(GG::DisabledColor(ClientUI::WndInnerBorderColor()));
-            }
-            glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-            glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-            
-            glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-            glVertex2i(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-        glEnd();
+
+                glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
+                glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
+                
+                glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
+                glVertex2i(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
+            glEnd();
+        }
         glEnable(GL_TEXTURE_2D);
     } else {
         GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);

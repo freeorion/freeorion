@@ -2,6 +2,7 @@
 
 #include "CUIControls.h"
 
+#include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "CUISpin.h"
 #include "../client/human/HumanClientApp.h"
@@ -154,6 +155,16 @@ void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     }
 }
 
+void CUIButton::SetBorderColor(GG::Clr clr)
+{
+    m_border_color = clr;
+}
+
+void CUIButton::SetBorderThick(int thick)
+{
+    m_border_thick = std::max(thick, 0);    // don't allow negative thickness borders
+}
+
 void CUIButton::RenderPressed()
 {
     GG::Clr color_to_use = Color();
@@ -187,6 +198,32 @@ void CUIButton::RenderUnpressed()
     GG::Pt lr = LowerRight();
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
     TextControl::Render();
+}
+
+void CUIButton::MarkNotSelected()
+{
+    SetColor(ClientUI::ButtonColor());
+    SetBorderColor(ClientUI::CtrlBorderColor());
+    SetBorderThick(1);
+}
+
+void CUIButton::MarkSelectedGray()
+{
+    GG::Clr colour = ClientUI::CtrlBorderColor();
+    AdjustBrightness(colour, 120);
+    colour = ClientUI::CtrlColor();
+    AdjustBrightness(colour, 50);
+    SetColor(colour);
+    SetBorderThick(2);
+}
+
+void CUIButton::MarkSelectedTechCategoryColor(std::string category)
+{
+    GG::Clr cat_colour = ClientUI::CategoryColor(category);
+    SetBorderColor(cat_colour);
+    AdjustBrightness(cat_colour, -50);
+    SetColor(cat_colour);        
+    SetBorderThick(2);
 }
 
 
@@ -800,7 +837,7 @@ const double StatisticIcon::LARGE_VALUE = 9.9999e+9;
 
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
                              double value, int digits, bool integerize, bool showsign) :
-    GG::Control(x, y, w, h, 0),
+    GG::Control(x, y, w, h),
     m_num_values(1),
     m_values(std::vector<double>(1, value)),
     m_digits(std::vector<int>(1, digits)),
@@ -809,9 +846,12 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_positive_color(text_color),
     m_zero_color(text_color),
     m_negative_color(text_color),
-    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::GUI::GetGUI()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_icon(0),
     m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::TF_LEFT | GG::TF_VCENTER))
-{    
+{
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(icon_filename);
+    m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GR_FITGRAPHIC);
+    
     AttachChild(m_icon);
     AttachChild(m_text);
     Refresh();
@@ -829,9 +869,12 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     m_positive_color(text_color),
     m_zero_color(text_color),
     m_negative_color(text_color),
-    m_icon(new GG::StaticGraphic(0, 0, h, h, GG::GUI::GetGUI()->GetTexture(icon_filename), GG::GR_FITGRAPHIC)),
+    m_icon(0),
     m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::TF_LEFT | GG::TF_VCENTER))
-{   
+{
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(icon_filename);
+    m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GR_FITGRAPHIC);
+
     m_values[0] = value0;
     m_values[1] = value1;
     m_digits[0] = digits0;
@@ -927,10 +970,7 @@ std::string StatisticIcon::DoubleToString(double val, int digits, bool integeriz
 
     // default result for sentinel value
     if (val == UNKNOWN_VALUE)
-    {
-        text = UserString("UNKNOWN_VALUE_SYMBOL");
-        return text;
-    }
+        return UserString("UNKNOWN_VALUE_SYMBOL");
 
     double mag = std::abs(val);
 
@@ -1177,7 +1217,9 @@ void ColorSelector::Render()
 
 void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
 {
-    GG::ColorDlg dlg(pt.x, pt.y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
+    int x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
+    int y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
+    GG::ColorDlg dlg(x, y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
     dlg.SetNewString(UserString("COLOR_DLG_NEW"));
     dlg.SetOldString(UserString("COLOR_DLG_OLD"));
     dlg.SetRedString(UserString("COLOR_DLG_RED"));
@@ -1448,4 +1490,27 @@ void MultiTurnProgressBar::RightEndVertices(double x1, double y1, double x2, dou
     glVertex2d(x2, y1 + 4);
     glVertex2d(x2 - 5, y1);
     glVertex2d(x1, y1);
+}
+
+//////////////////////////////////////////////////
+// FPSIndicator
+//////////////////////////////////////////////////
+FPSIndicator::FPSIndicator(int x, int y) :
+GG::TextControl(x, y, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), 0, GG::ONTOP)
+{
+    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
+    UpdateEnabled();
+}
+
+void FPSIndicator::Render()
+{
+    if (m_enabled) {
+        SetText(boost::io::str(FlexibleFormat(UserString("MAP_INDICATOR_FPS")) % static_cast<int>(GG::GUI::GetGUI()->FPS())));
+        TextControl::Render();
+    }
+}
+
+void FPSIndicator::UpdateEnabled()
+{
+    m_enabled = GetOptionsDB().Get<bool>("show-fps");
 }

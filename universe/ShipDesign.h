@@ -37,7 +37,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-const ShipDesign* GetShipDesign(int empire_id, const std::string& name);
+
+/** Returns the ShipDesign specification object with id \a ship_design_id.  If no such ShipDesign
+    is present in the Universe (because it doesn't exist, or isn't know to this client), 0 is
+    returned instead. */
+const ShipDesign* GetShipDesign(int ship_design_id);
 
 // template implementations
 template <class Archive>

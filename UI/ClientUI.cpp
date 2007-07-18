@@ -1,17 +1,18 @@
 #include "ClientUI.h"
 
-#include "../util/AppInterface.h"
-#include "../util/Random.h"
-#include "../universe/Building.h"
 #include "CUIControls.h"
-#include "../universe/Fleet.h"
 #include "FleetWnd.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
 #include "SidePanel.h"
+#include "../util/AppInterface.h"
+#include "../util/Random.h"
+#include "../universe/Building.h"
+#include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
+#include "../universe/Tech.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
@@ -85,8 +86,23 @@ int         ClientUI::SystemIconSize()                  { return GetOptionsDB().
 double      ClientUI::FleetButtonSize()                 { return GetOptionsDB().Get<double>("UI.fleet-button-size"); }
 double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
 
-// game UI windows
+// misc UI windows
 GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }
+
+boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(const std::string& design_name)
+{
+    boost::shared_ptr<GG::Texture> texture = GetTexture(ArtDir() / "icons" / (design_name + ".png"));
+    if (texture) return texture;
+    return GetTexture(ArtDir() / "icons" / "Scout.png");
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const BuildingType* building_type)
+{
+    const std::string graphic_name = building_type->Graphic();
+    if (graphic_name.empty())
+        return GetTexture(ArtDir() / "building_icons" / "Generic_Building.png");
+    return GetTexture(ArtDir() / building_type->Graphic());
+}
 
 // tech screen
 GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<StreamableColor>("UI.known-tech").ToClr(); }
@@ -97,6 +113,43 @@ GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptions
 GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech-border").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBarBackground()         { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
 GG::Clr     ClientUI::TechWndProgressBar()                   { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
+
+GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
+{
+    const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
+    std::vector<std::string>::const_iterator it = std::find(tech_categories.begin(), tech_categories.end(), category_name);
+    if (it != tech_categories.end()) {
+        int category_index = std::distance(tech_categories.begin(), it) + 1;
+        return GetOptionsDB().Get<StreamableColor>("UI.tech-category-" + boost::lexical_cast<std::string>(category_index)).ToClr();
+    }
+    return GG::Clr();
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
+{
+    std::string icon_filename;
+    if (category_name == "CONSTRUCTION_CATEGORY")
+        icon_filename = "construction.png";
+    if (category_name == "ECONOMICS_CATEGORY")
+        icon_filename = "economics.png";
+    if (category_name == "GROWTH_CATEGORY")
+        icon_filename = "growth.png";
+    if (category_name == "LEARNING_CATEGORY")
+        icon_filename = "learning.png";
+    if (category_name == "PRODUCTION_CATEGORY")
+        icon_filename = "production.png";
+    return GetTexture(ArtDir() / "tech_icons" / "categories" / icon_filename);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
+{
+    const Tech* tech = GetTechManager().GetTech(tech_name);
+    std::string texture_name = tech->Graphic();
+    if (texture_name.empty()) {
+        return CategoryIcon(tech->Category());
+    }
+    return GetTexture(ArtDir() / texture_name);
+}
 
 std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
 {
@@ -150,6 +203,9 @@ namespace {
         db.Add("app-width", "OPTIONS_DB_APP_WIDTH", 1024, RangedValidator<int>(800, 2048));
         db.Add("app-height", "OPTIONS_DB_APP_HEIGHT", 768, RangedValidator<int>(600, 1536));
         db.Add('c', "color-depth", "OPTIONS_DB_COLOR_DEPTH", 32, RangedStepValidator<int>(8, 16, 32));
+        db.Add("show-fps", "OPTIONS_DB_SHOW_FPS", false);
+        db.Add("limit-fps", "OPTIONS_DB_LIMIT_FPS", true);
+        db.Add("max-fps", "OPTIONS_DB_MAX_FPS", 60.0, RangedValidator<double>(10.0, 200.0));
 
         // sound
         db.Add("UI.sound.enabled", "OPTIONS_DB_UI_SOUND_ENABLED", true, Validator<bool>());
@@ -173,8 +229,7 @@ namespace {
         db.Add<std::string>("UI.sound.industry-focus", "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS", "industry_select.wav");
         db.Add<std::string>("UI.sound.research-focus", "OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS", "research_select.wav");
         db.Add<std::string>("UI.sound.mining-focus", "OPTIONS_DB_UI_SOUND_MINING_FOCUS", "mining_select.wav");
-        // TODO: uncomment when trade is added to side panel
-        //db.Add<std::string>("UI.sound.trade-focus", "The sound file played when a trade focus button is clicked.", "trade_select.wav");
+        db.Add<std::string>("UI.sound.trade-focus", "OPTIONS_DB_UI_SOUND_TRADE_FOCUS", "trade_select.wav");
         db.Add<std::string>("UI.sound.balanced-focus", "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS", "balanced_select.wav");
 
         // fonts
@@ -217,7 +272,7 @@ namespace {
         // misc
         db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
         db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.5, RangedValidator<double>(0.2, 2));
+        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.3, RangedValidator<double>(0.2, 2));
         db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
         
         // tech category colors
@@ -226,11 +281,22 @@ namespace {
         const GG::Clr PRODUCTION_CATEGORY(240, 106, 106, 255);
         const GG::Clr CONSTRUCTION_CATEGORY(241, 233, 87, 255);
         const GG::Clr ECONOMICS_CATEGORY(255, 112, 247, 255);
+        const GG::Clr CATEGORY6(255, 85, 255, 255);
+        const GG::Clr CATEGORY7(85, 170, 255, 255);
+        const GG::Clr CATEGORY8(170, 255, 85, 255);
+        const GG::Clr CATEGORY9(85, 255, 170, 255);
+        const GG::Clr CATEGORY10(255, 170, 85, 255);
+
         db.Add("UI.tech-category-1", "OPTIONS_DB_UI_TECH_CATEGORY_1", StreamableColor(LEARNING_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-2", "OPTIONS_DB_UI_TECH_CATEGORY_2", StreamableColor(GROWTH_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-3", "OPTIONS_DB_UI_TECH_CATEGORY_3", StreamableColor(PRODUCTION_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-4", "OPTIONS_DB_UI_TECH_CATEGORY_4", StreamableColor(CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
         db.Add("UI.tech-category-5", "OPTIONS_DB_UI_TECH_CATEGORY_5", StreamableColor(ECONOMICS_CATEGORY), Validator<StreamableColor>());
+        db.Add("UI.tech-category-6", "OPTIONS_DB_UI_TECH_CATEGORY_6", StreamableColor(CATEGORY6), Validator<StreamableColor>());
+        db.Add("UI.tech-category-7", "OPTIONS_DB_UI_TECH_CATEGORY_7", StreamableColor(CATEGORY7), Validator<StreamableColor>());
+        db.Add("UI.tech-category-8", "OPTIONS_DB_UI_TECH_CATEGORY_8", StreamableColor(CATEGORY8), Validator<StreamableColor>());
+        db.Add("UI.tech-category-9", "OPTIONS_DB_UI_TECH_CATEGORY_9", StreamableColor(CATEGORY9), Validator<StreamableColor>());
+        db.Add("UI.tech-category-10", "OPTIONS_DB_UI_TECH_CATEGORY_10", StreamableColor(CATEGORY10), Validator<StreamableColor>());
 
         // UI behavior
         db.Add("UI.tooltip-delay", "OPTIONS_DB_UI_TOOLTIP_DELAY", 1000, RangedValidator<int>(0, 3000));
@@ -317,7 +383,7 @@ bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
 {
     if (!GetBuildingType(building_type_name))
         return false;
-    // TODO
+    m_map_wnd->ShowBuildingType(building_type_name);
     return true;
 }
 
@@ -344,7 +410,7 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
 
     m_map_wnd->CenterOnFleet(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
-    for (FleetWnd::FleetWndItr it = FleetWnd::FleetWndBegin(); it != FleetWnd::FleetWndEnd(); ++it) {
+    for (MapWnd::FleetWndIter it = m_map_wnd->FleetWndBegin(); it != m_map_wnd->FleetWndEnd(); ++it) {
         if ((*it)->ContainsFleet(fleet->ID())) {
             (*it)->SelectFleet(fleet);
             break;
@@ -491,3 +557,8 @@ std::istream& operator>>(std::istream& is, StreamableColor& clr)
     return is;
 }
 
+boost::format FlexibleFormat(const std::string &string_to_format) {
+    boost::format retval(string_to_format);
+    retval.exceptions(boost::io::all_error_bits ^ (boost::io::too_many_args_bit | boost::io::too_few_args_bit));
+    return retval;
+}
