@@ -533,7 +533,6 @@ if str(Platform()) == 'win32':
         'comdlg32',
         'gdi32',
         'GiGi',
-        'GiGiNet',
         'GiGiSDL',
         'glu32',
         'jpeg',
@@ -573,7 +572,6 @@ env.AppendUnique(CPPPATH = ['network'])
 if str(Platform()) == 'win32':
     import shutil
     shutil.copy(os.path.join('..', 'lib', 'GiGi.dll'), '.')
-    shutil.copy(os.path.join('..', 'lib', 'GiGiNet.dll'), '.')
     shutil.copy(os.path.join('..', 'lib', 'GiGiSDL.dll'), '.')
 
 Export('env')
