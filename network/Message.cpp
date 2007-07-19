@@ -398,7 +398,7 @@ Message DispatchObjectIDMessage(int player_id, int new_id)
 
 Message RequestNewDesignIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, -1, "", Message::DISPATCH_NEW_DESIGN_ID);
+    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, -1, "", true);
 }
 
 Message DispatchDesignIDMessage(int player_id, int new_id)
