@@ -192,6 +192,7 @@ void Message::Swap(Message& rhs)
     std::swap(m_type, rhs.m_type);
     std::swap(m_sending_player, rhs.m_sending_player);
     std::swap(m_receiving_player, rhs.m_receiving_player);
+    std::swap(m_synchronous_response, rhs.m_synchronous_response);
     std::swap(m_message_size, rhs.m_message_size);
     std::swap(m_message_text, rhs.m_message_text);
 }

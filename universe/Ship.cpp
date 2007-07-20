@@ -17,12 +17,14 @@ using boost::lexical_cast;
 ////////////////////////////////////////////////
 // Ship
 ////////////////////////////////////////////////
-Ship::Ship()
-{
-}
+Ship::Ship() :
+    m_design_id(INVALID_OBJECT_ID),
+    m_fleet_id(INVALID_OBJECT_ID)
+{}
 
 Ship::Ship(int empire_id, int design_id) :
-    m_design_id(design_id)
+    m_design_id(design_id),
+    m_fleet_id(INVALID_OBJECT_ID)
 {
     if (!GetShipDesign(design_id))
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
