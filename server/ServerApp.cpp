@@ -687,39 +687,24 @@ void ServerApp::ProcessTurns()
     // check if all empires are still alive
     std::map<int, int> eliminations; // map from player ids to empire ids
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        if (GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->first)).empty()) { // when you're out of planets, your game is over
-            std::string player_name = it->second->PlayerName();
+        if (GetUniverse().FindObjects(OwnedVisitor<Planet>(it->first)).empty()) { // when you're out of planets, your game is over
+            int player_id = GetEmpirePlayerID(it->first);
             for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-                if ((*player_it)->PlayerName() == player_name) {
-                    // record this player/empire so we can send out messages about it
-                    eliminations[(*player_it)->ID()] = it->first;
+                if ((*player_it)->ID() == player_id) {
+                    eliminations[player_id] = it->first;
                     break;
                 }
             }
         } 
     }
 
+    // TODO: This needs to remove buildings, fleets, ships, etc., not just remove ownership of them
     // clean up defeated empires
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         // remove the empire from play
         Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->second));
         for (unsigned int j = 0; j < object_vec.size(); ++j)
             object_vec[j]->RemoveOwner(it->second);
-    }
-
-    // compile map of PlayerInfo for each player, indexed by player ID
-    std::map<int, PlayerInfo> players;
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
-                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
-                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
-                                          (*it)->Host());
-    }
-
-    // send new-turn updates to all players
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
-        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
     }
 
     // notify all players of the eliminated players
@@ -731,6 +716,8 @@ void ServerApp::ProcessTurns()
                 (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), Empires().Lookup(it->second)->Name()));
         }
     }
+
+    SDL_Delay(1000);
 
     // dump connections to eliminated players, and remove server-side empire data
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
@@ -753,5 +740,21 @@ void ServerApp::ProcessTurns()
     } else if (m_ai_IDs.size() == m_networking.NumPlayers()) { // if there are none but AI players left, we're done
         m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
         Exit(0);
+    }
+
+
+    // compile map of PlayerInfo for each player, indexed by player ID
+    std::map<int, PlayerInfo> players;
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
+                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
+                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
+                                          (*it)->Host());
+    }
+
+    // send new-turn updates to all players
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
+        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
     }
 }
