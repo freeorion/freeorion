@@ -225,6 +225,7 @@ if not env.GetOption('clean'):
 
         freeorion_boost_libs = [
             ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
+            ('boost_thread', 'boost/thread/thread.hpp', 'boost::thread::thread();'),
             ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', ''),
             ('boost_python', 'boost/python.hpp', 'boost::python::throw_error_already_set();')
             ]
@@ -532,7 +533,6 @@ if str(Platform()) == 'win32':
         'comdlg32',
         'gdi32',
         'GiGi',
-        'GiGiNet',
         'GiGiSDL',
         'glu32',
         'jpeg',
@@ -564,11 +564,14 @@ version_cpp.write(version_cpp_in.read() % values)
 version_cpp.close()
 version_cpp_in.close()
 
+# This is necessary until Boost 1.35 is released, which will include Boost.Asio.  For now, we have a local copy of
+# Boost.Asio in the network directory.
+env.AppendUnique(CPPPATH = ['network'])
+
 # On Win32, assume we're using the SDK, and copy the installed GG DLLs to the FreeOrion directory.
 if str(Platform()) == 'win32':
     import shutil
     shutil.copy(os.path.join('..', 'lib', 'GiGi.dll'), '.')
-    shutil.copy(os.path.join('..', 'lib', 'GiGiNet.dll'), '.')
     shutil.copy(os.path.join('..', 'lib', 'GiGiSDL.dll'), '.')
 
 Export('env')

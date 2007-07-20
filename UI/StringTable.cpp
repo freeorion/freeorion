@@ -32,38 +32,21 @@ const string StringTable::S_ERROR_STRING = "ERROR: ";
 // StringTable
 StringTable::StringTable():
     m_filename(S_DEFAULT_FILENAME)
-{
-    Load();
-}
+{ Load(); }
 
 StringTable::StringTable(const string& filename):
     m_filename(filename)
-{
-    Load();
-}
+{ Load(); }
 
 StringTable::~StringTable()
-{
+{}
 
-}
-
-const string& StringTable::operator[] (std::string index)
+const string& StringTable::operator[] (std::string index) const
 {
-    static std::string retval = ""; // keep this because we are returning a reference
-    // since we're using a map now,
-    // just do a find and return
-    map<string, string>::iterator pos;
-    
-    pos=m_strings.find(index);
-    
-    if (pos == m_strings.end())
-        return (retval = S_ERROR_STRING + index);  // output the error string along with the index so we can debug
-        
-    // we got a value, now return the right one
-    return pos->second;
-    
+    static std::string error_retval;
+    map<string, string>::const_iterator it = m_strings.find(index);
+    return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
 }
-#include <iostream>
 
 void StringTable::Load()
 {

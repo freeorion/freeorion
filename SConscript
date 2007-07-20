@@ -7,7 +7,9 @@ common_sources = [
     'Empire/EmpireManager.cpp',
     'Empire/ResourcePool.cpp',
     'network/Message.cpp',
-    'network/NetworkCore.cpp',
+    'network/MessageQueue.cpp',
+    'network/Networking.cpp',
+    'network/boost/error_code.cpp',
     'UI/StringTable.cpp',
     'universe/Building.cpp',
     'universe/Condition.cpp',
@@ -53,9 +55,10 @@ common_sources = [
 if env['target_define'] == 'FREEORION_BUILD_SERVER':
     target_sources = [
         'combat/CombatSystem.cpp',
-        'network/ServerNetworkCore.cpp',
+        'network/ServerNetworking.cpp',
         'server/SaveLoad.cpp',
         'server/ServerApp.cpp',
+        'server/ServerFSM.cpp',
         'server/dmain.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp'
@@ -65,9 +68,10 @@ if env['target_define'] == 'FREEORION_BUILD_SERVER':
 if env['target_define'] == 'FREEORION_BUILD_AI':
     target_sources = [
         'client/ClientApp.cpp',
+        'client/ClientFSMEvents.cpp',
         'client/AI/AIClientApp.cpp',
         'client/AI/camain.cpp',
-        'network/ClientNetworkCore.cpp',
+        'network/ClientNetworking.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp',
         'AI/AIInterface.cpp',
@@ -78,10 +82,12 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
 if env['target_define'] == 'FREEORION_BUILD_HUMAN':
     target_sources = [
         'client/ClientApp.cpp',
+        'client/ClientFSMEvents.cpp',
+        'client/human/HumanClientFSM.cpp',
         'client/human/HumanClientApp.cpp',
         'client/human/HumanClientAppSoundOpenAL.cpp',
         'client/human/chmain.cpp',
-        'network/ClientNetworkCore.cpp',
+        'network/ClientNetworking.cpp',
         'UI/About.cpp',
         'UI/BuildDesignatorWnd.cpp',
         'UI/ClientUI.cpp',

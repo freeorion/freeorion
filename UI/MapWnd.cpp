@@ -58,9 +58,18 @@ namespace {
     const int CHAT_WIDTH = 400;
     const int CHAT_HEIGHT = 400;
     const int CHAT_EDIT_HEIGHT = 30;
+
     int g_chat_display_show_time = 0;
     std::deque<std::string> g_chat_edit_history;
     int g_history_position = 0; // the current edit contents are in history position 0
+
+    struct BoolToVoidAdapter
+    {
+        BoolToVoidAdapter(const boost::function<bool ()>& fn) : m_fn(fn) {}
+        void operator()() { m_fn(); }
+        boost::function<bool ()> m_fn;
+    };
+
     void AddOptions(OptionsDB& db)
     {
         db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
@@ -71,9 +80,9 @@ namespace {
 #ifndef FREEORION_RELEASE
     bool RequestRegressionTestDump()
     {
-        ClientNetworkCore& network_core = HumanClientApp::GetApp()->NetworkCore();
-        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, Message::CORE, "EffectsRegressionTest");
-        network_core.SendMessage(msg);
+        ClientNetworking& networking = HumanClientApp::GetApp()->Networking();
+        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, "EffectsRegressionTest");
+        networking.SendMessage(msg);
         return true;
     }
 #endif
@@ -101,8 +110,8 @@ struct MapWnd::StarlaneData
         return false;
     }
 
-    const System* Src() const {return src;}
-    const System* Dst() const {return dst;}
+    const System* Src() const { return src; }
+    const System* Dst() const { return dst; }
 
 private:
     const System* src;
@@ -114,16 +123,10 @@ private:
 ////////////////////////////////////////////////////////////
 MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags ):
     CUIWnd( t, x, y, h, w, flags )
-{
-    // register with map wnd
-    ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup( this );
-}
+{ ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup(this); }
 
-MapWndPopup::~MapWndPopup( )
-{
-    // remove from map wnd
-    ClientUI::GetClientUI()->GetMapWnd()->RemovePopup( this );
-}
+MapWndPopup::~MapWndPopup()
+{ ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this);}
 
 void MapWndPopup::CloseClicked()
 {
@@ -132,10 +135,7 @@ void MapWndPopup::CloseClicked()
 }
 
 void MapWndPopup::Close()
-{
-    // close window as though it's been clicked closed by the user.
-    CloseClicked( );
-}
+{ CloseClicked(); }
 
 ////////////////////////////////////////////////
 // MapWnd
@@ -156,6 +156,7 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate(NUM_BACKGROUNDS),
     m_bg_position_X(NUM_BACKGROUNDS),
     m_bg_position_Y(NUM_BACKGROUNDS),
+    m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
     m_active_fleet_wnd(0),
     m_drag_offset(-1, -1),
@@ -194,7 +195,7 @@ MapWnd::MapWnd() :
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
-    GG::Connect(m_turn_update->ClickedSignal, &MapWnd::TurnBtnClicked, this);
+    GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
     const int BUTTON_TOTAL_MARGIN = 8;
@@ -207,22 +208,22 @@ MapWnd::MapWnd() :
     int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
     m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, 0, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
-    GG::Connect(m_btn_menu->ClickedSignal, &MapWnd::MenuBtnClicked, this);
+    GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
     m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
-    GG::Connect(m_btn_production->ClickedSignal, &MapWnd::ProductionBtnClicked, this);
+    GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
     m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
-    GG::Connect(m_btn_research->ClickedSignal, &MapWnd::ResearchBtnClicked, this);
+    GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
     m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
-    GG::Connect(m_btn_siterep->ClickedSignal, &MapWnd::SitRepBtnClicked, this);
+    GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
 
     // resources
     const int ICON_DUAL_WIDTH = 100;
@@ -348,9 +349,13 @@ MapWnd::~MapWnd()
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
-{
-    return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
-}
+{ return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());}
+
+double MapWnd::ZoomFactor() const
+{ return m_zoom_factor; }
+
+SidePanel* MapWnd::GetSidePanel() const
+{ return m_side_panel; }
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
@@ -364,14 +369,16 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 }
 
 bool MapWnd::InProductionViewMode() const
-{
-    return m_in_production_view_mode;
-}
+{ return m_in_production_view_mode; }
 
 bool MapWnd::FleetWndsOpen() const 
-{
-     return !m_fleet_wnds.empty();
-}
+{ return !m_fleet_wnds.empty(); }
+
+MapWnd::FleetWndIter MapWnd:: FleetWndBegin()
+{ return m_fleet_wnds.begin(); }
+
+MapWnd::FleetWndIter MapWnd::FleetWndEnd()
+{ return m_fleet_wnds.end(); }
 
 void MapWnd::Render()
 {
@@ -469,7 +476,7 @@ void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
                 while (GetOptionsDB().Get<int>("UI.chat-edit-history") < static_cast<int>(g_chat_edit_history.size()) + 1)
                     g_chat_edit_history.pop_back();
                 g_history_position = 0;
-                HumanClientApp::GetApp()->NetworkCore().SendMessage(GlobalChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
+                HumanClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
             }
             m_chat_edit->Clear();
             m_chat_edit->Hide();
@@ -505,9 +512,7 @@ void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
 }
 
 void MapWnd::LButtonDown (const GG::Pt &pt, Uint32 keys)
-{
-    m_drag_offset = pt - ClientUpperLeft();
-}
+{ m_drag_offset = pt - ClientUpperLeft(); }
 
 void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
 {
@@ -897,14 +902,13 @@ void MapWnd::ShowBuildingType(const std::string& building_type_name)
 }
 
 void MapWnd::CenterOnSystem(System* system)
-{
-    CenterOnMapCoord(system->X(), system->Y());
-}
+{ CenterOnMapCoord(system->X(), system->Y()); }
 
 void MapWnd::CenterOnFleet(Fleet* fleet)
-{
-    CenterOnMapCoord(fleet->X(), fleet->Y());
-}
+{ CenterOnMapCoord(fleet->X(), fleet->Y()); }
+
+void MapWnd::ReselectLastSystem()
+{ SelectSystem(m_previously_selected_system); }
 
 void MapWnd::SelectSystem(int system_id)
 {
@@ -1167,7 +1171,6 @@ void MapWnd::RenderStarlanes()
     double OUTER_LINE_EDGE_ALPHA = 0.0;
 
     Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    const std::map<const System*, int>& supplyable_systems = empire->GetSupplyableSystems();
 
     glDisable(GL_TEXTURE_2D);
 
@@ -1596,12 +1599,7 @@ void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
-{
-    Fleet* fleet = const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj));
-    if (fleet) {
-        m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj)));
-    }
-}
+{ m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj))); }
 
 void MapWnd::RegisterPopup( MapWndPopup* popup )
 {
@@ -1643,6 +1641,7 @@ void MapWnd::Sanitize()
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
+    m_previously_selected_system = UniverseObject::INVALID_OBJECT_ID;
 }
 
 bool MapWnd::ReturnToMap()
@@ -1838,33 +1837,18 @@ void MapWnd::RefreshTradeResourceIndicator()
 void MapWnd::RefreshResearchResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
     m_research->SetValue(empire->GetResearchResPool().Production());
-    /*
-    m_research->SetValue(empire->GetResearchResPool().Stockpile());
-    double production = empire->GetResearchResPool().Production();
-    double spent = empire->GetResearchQueue().TotalRPsSpent();
-    m_research->SetValueSecond(production - spent);
-    */
 }
 
 void MapWnd::RefreshIndustryResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
     m_industry->SetValue(empire->GetIndustryResPool().Production());
-    /*
-    m_industry->SetValue(empire->GetIndustryResPool().Stockpile());
-    double production = empire->GetIndustryResPool().Production();
-    double spent = empire->GetProductionQueue().TotalPPsSpent();
-    m_industry->SetValueSecond(production - spent);
-    */
 }
 
 void MapWnd::RefreshPopulationIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
     m_population->SetValue(empire->GetPopulationPool().Population());
     m_population->SetValue(empire->GetPopulationPool().Growth(), 1);
 }

@@ -7,29 +7,25 @@
 #include <string>
 #include <map>
 
-class ClientNetworkCore;
 class EmpireManager;
+class Message;
 class MultiplayerLobbyData;
 class OrderSet;
 class SaveGameUIData;
-class ServerNetworkCore;
 class SinglePlayerSetupData;
 class Universe;
 class XMLDoc;
 struct PlayerInfo;
 
-/** compresses \a str using zlib, and puts the result into \a zipped_str */
-void ZipString(const std::string& str, std::string& zipped_str);
+/** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
+void BufferToHeader(const int* header_buf, Message& message);
 
-/** decompresses \a str using zlib, and puts the result into \a unzipped_str. The uncompressed size of 
-   the string must be known beforehand, and passed in \a size.  Results are undefined when \a str does 
-   not conatain a valid zipped byte sequence.*/
-void UnzipString(const std::string& str, std::string& unzipped_str, int size);
+/** Fills \a header_buf from the relevant portions of \a message. */
+void HeaderToBuffer(const Message& message, int* header_buf);
 
-/** FreeOrion network message class.  Messages are designed to be created, sent, received, read, then destroyed.
-   They are not meant to be altered; there are no mutators methods. Upon creation, the text of the Message is
-   compressed using zlib.  Subsequent reads incur the expense of decompressing the text.  The compressed text
-   is stored in a string at the end of a shared_ptr, so copying Message objects is extremely inexpensive.*/
+/** Encapsulates a variable-length char buffer containing a message to be passed among the server and one or more
+    clients.  Note that std::string is often thread unsafe on many platforms, so a dynamically allocated char array is
+    used instead.  (It was feared that using another STL container of char might misbehave as well.) */
 class Message
 {
 public:
@@ -37,102 +33,95 @@ public:
     enum MessageType {
         UNDEFINED,
         DEBUG,                   ///< used to send special messages used for debugging purposes
-        SERVER_STATUS,           ///< sent to the client when requested, and when the server first recieves a connection from a client
         HOST_SP_GAME,            ///< sent when a client wishes to establish a single player game at the server
         HOST_MP_GAME,            ///< sent when a client wishes to establish a multiplayer game at the server
         JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
-        RENAME_PLAYER,           ///< sent when the server must assign a new name to a player, because another player already has her desired name
         LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
         LOBBY_CHAT,              ///< used to send chat messages in the multiplayer lobby
         LOBBY_HOST_ABORT,        ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
         LOBBY_EXIT,              ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
         START_MP_GAME,           ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
         SAVE_GAME,               ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
-        LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded, or from the server to the clients when the game is being loaded
+        LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,             ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
         TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn
-        TURN_PROGRESS,           ///< sent to clients to display a turn progress message. To make messages short, IDs are used
+        TURN_PROGRESS,           ///< sent to clients to display a turn progress message
         CLIENT_SAVE_DATA,        ///< sent to the server in response to a server request for the data needed to create a save file
         COMBAT_START,            ///< sent to clients when a combat is about to start
         COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
         COMBAT_END,              ///< sent to clients when a combat is concluded
-        CHAT_MSG,                ///< sent when one player sends a text message to another
-        PLAYER_ELIMINATED,       ///< sent to all clients when a player is eliminated from play
-        PLAYER_EXIT,             ///< sent to the "host" client when another player leaves the game
+        HUMAN_PLAYER_CHAT,       ///< sent when one player sends a chat message to another in multiplayer
+        PLAYER_ELIMINATED,       ///< sent to all clients (except the eliminated player) when a player is eliminated from play
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,   ///< sent by client to server requesting a new design ID.
         DISPATCH_NEW_DESIGN_ID,  ///< sent by server to client with the new design ID.
-        END_GAME,                ///< sent to the server by the host client when the current game is to end
-    };
-
-    /** Represents the module which is the destination for the message */
-    enum ModuleType {
-        CORE,                           ///< this module is the ServerCore or ClientCore, as appropriate; all server-bound messages go here
-        CLIENT_LOBBY_MODULE,            ///< the human-only multiplayer lobby dialog
-        CLIENT_COMBAT_MODULE,           ///< the client Combat module
-        CLIENT_SYNCHRONOUS_RESPONSE     ///< client-only - the response to a synchronous message
+        END_GAME                 ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
     };
 
     enum TurnProgressPhase {
-        FLEET_MOVEMENT,           ///< fleet movement turn progress message
-        COMBAT,                   ///< combat turn progress message
-        EMPIRE_PRODUCTION,        ///< empire production turn progress message
-        WAITING_FOR_PLAYERS,      ///< waiting for other to end their turn
-        PROCESSING_ORDERS,        ///< processing orders
-        DOWNLOADING               ///< downloading new game state from server
+        FLEET_MOVEMENT,          ///< fleet movement turn progress message
+        COMBAT,                  ///< combat turn progress message
+        EMPIRE_PRODUCTION,       ///< empire production turn progress message
+        WAITING_FOR_PLAYERS,     ///< waiting for other to end their turn
+        PROCESSING_ORDERS,       ///< processing orders
+        DOWNLOADING              ///< downloading new game state from server
     };
 
+    enum EndGameReason {
+        HOST_DISCONNECTED,       ///< the host player suddenly lost connection to the server
+        NONHOST_DISCONNECTED,    ///< a non-host player suddenly lost connection to the server
+        YOU_ARE_DEFEATED,        ///< the receiving player is defeated
+        LAST_OPPONENT_DEFEATED   ///< all the receiving player's opponents are defeated; the receiver has won
+    };
 
     /** \name Structors */ //@{
-    /** default ctor. */
-    Message();
+    Message(); ///< Default ctor.
 
-    /** standard ctor.  Senders that are not part of a game and so have no player number should send -1 as the \a 
-        sender parameter. \throw std::invalid_argument May throw std::invalid_argument if the parameters would form
-        an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const std::string& text, MessageType response_msg = UNDEFINED);
- 
-    /** convienience ctor that converts \a doc into a std::string automatically.  Senders that are not part of a game 
-        and so have no player number should send -1 as the \a sender parameter. \throw std::invalid_argument May throw 
-        std::invalid_argument if the parameters would form an invalid message */
-    Message(MessageType msg_type, int sender, int receiver, ModuleType module, const XMLDoc& doc, MessageType response_msg = UNDEFINED);
+    /** Basic ctor. */
+    Message(MessageType message_type,
+            int sending_player,
+            int receiving_player,
+            const std::string& text,
+            bool synchronous_response = false);
+
+    Message(const Message& rhs);            ///< Copy ctor.
+    ~Message();                             ///< Dtor.
+    Message& operator=(const Message& rhs); ///< Assignment.
     //@}
 
     /** \name Accessors */ //@{
-    MessageType Type() const;      ///< returns type of message
-    MessageType Response() const;  ///< returns response this message expects, implies a sychronous message
-    int         Sender() const;    ///< returns the ID of the player sending the message (-1 represents server or a client not yet in a game)
-    int         Receiver() const;  ///< returns the ID of the player receiving the message (-1 represents server)
-    ModuleType  Module() const;    ///< returns the module that is to get the message at the receiving end
-    std::string GetText() const;   ///< returns the message text.  \note \note This function uncompresses the text in order to return it.
+    MessageType Type() const;               ///< Returns the type of the message.
+    int         SendingPlayer() const;      ///< Returns the ID of the sending player.
+    int         ReceivingPlayer() const;    ///< Returns the ID of the receiving player.
+    bool        SynchronousResponse() const;///< Returns true if this message is in reponse to a synchronous message
+    std::size_t Size() const;               ///< Returns the size of the underlying buffer.
+    const char* Data() const;               ///< Returns the underlying buffer.
+    std::string Text() const;               ///< Returns the underlying buffer as a std::string.
     //@}
- 
+
+    /** \name Accessors */ //@{
+    void        Resize(std::size_t size);   ///< Resizes the underlying char buffer to \a size uninitialized bytes.
+    char*       Data();                     ///< Returns the underlying buffer.
+    void        Swap(Message& rhs);         ///< Swaps the contents of \a *this with \a rhs.  Does not throw.
+    //@}
+
 private:
-/** private ctor to be used by the NetworkCore classes. Constructs a message from a string of bytes received over a 
-    network connection. \throw std::invalid_argument May throw std::invalid_argument if the parameter would form
-    an invalid message */
-    Message(const std::string& raw_msg);
-   
-    std::string HeaderString() const; ///< for use by the NetworkCore classes to create a string of bytes of the non-text portion of a Message
-    void ValidateMessage(); ///< checks that the data in the message are consistent
-    void CompressMessage(std::string& compressed_msg) const;     ///< fills \a compressed_msg with the compressed text of the message text
-    void DecompressMessage(std::string& uncompressed_msg) const; ///< fills \a decompressed_msg with the decompressed text of the message text
+    MessageType   m_type;
+    int           m_sending_player;
+    int           m_receiving_player;
+    bool          m_synchronous_response;
+    int           m_message_size;
+    char*         m_message_text;
 
-    MessageType                    m_message_type;
-    int                            m_sending_player;
-    int                            m_receiving_player;
-    ModuleType                     m_receiving_module;
-    boost::shared_ptr<std::string> m_message_text;
-    bool                           m_compressed;
-    int                            m_uncompressed_size;
-    MessageType                    m_response_msg;  ///< implies a synchronous message is set, this is the message it's expecting to be returned from the server ( only client messages can be synchronous )
-
-    friend class NetworkCore;         ///< grant access for calls to HeaderString()
-    friend class ClientNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
-    friend class ServerNetworkCore;   ///< grant access for calls to private ctor and HeaderString()
+    friend void BufferToHeader(const int* header_buf, Message& message);
 };
+
+bool operator==(const Message& lhs, const Message& rhs);
+bool operator!=(const Message& lhs, const Message& rhs);
+
+void swap(Message& lhs, Message& rhs); ///< Swaps the contents of \a lhs and \a rhs.  Does not throw.
 
 
 ////////////////////////////////////////////////
@@ -141,9 +130,6 @@ private:
 
 /** Returns a string representation of \a type. */
 std::string MessageTypeStr(Message::MessageType type);
-
-/** Returns a string representation of \a type. */
-std::string ModuleTypeStr(Message::ModuleType type);
 
 /** Returns a string representation of \a phase. */
 std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
@@ -157,16 +143,20 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 ////////////////////////////////////////////////
 
 /** creates a HOST_SP_GAME message*/
-Message HostSPGameMessage(int player_id, const SinglePlayerSetupData& setup_data);
+Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
 
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
-Message HostMPGameMessage(int player_id, const std::string& host_player_name);
+Message HostMPGameMessage(const std::string& host_player_name);
 
 /** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
 Message JoinGameMessage(const std::string& player_name);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
+
+/** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes data
+    loaded from a saved game. */
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players, const OrderSet& orders, const SaveGameUIData* ui_data);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -180,15 +170,12 @@ Message HostMPAckMessage(int player_id);
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
 
-/** creates a RENAME_PLAYER message that renames a player that has just joined a game with a name already in use.  The
-    \a player_id is the ID of the receiving player.  This message should only be sent by the server.*/
-Message RenameMessage(int player_id, const std::string& new_name);
+/** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the server are
+    considered valid.*/
+Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
 
-/** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the host client 
-    and the server are considered valid.*/
-Message EndGameMessage(int sender, int receiver);
-
-/** creates an END_GAME message indicating that the recipient has won the game.  This message should only be sent by the server.*/
+/** creates an END_GAME message indicating that the recipient has won the game.  This message should only be sent by the
+    server.*/
 Message VictoryMessage(int receiver);
 
 /** creates an TURN_ORDERS message. */
@@ -221,14 +208,8 @@ Message DispatchDesignIDMessage(int player_id, int new_id);
 /** creates a SAVE_GAME request message.  This message should only be sent by the host player.*/
 Message HostSaveGameMessage(int sender, const std::string& filename);
 
-/** creates a LOAD_GAME request message.  This message should only be sent by the the host player.*/
-Message HostLoadGameMessage(int sender, const std::string& filename);
-
 /** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
-Message ServerSaveGameMessage(int receiver, bool done = false);
-
-/** creates a LOAD_GAME data message.  This message should only be sent by the server to provide saved game data to a client.*/
-Message ServerLoadGameMessage(int receiver, const OrderSet& orders, const SaveGameUIData* ui_data);
+Message ServerSaveGameMessage(int receiver, bool synchronous_response);
 
 /** creates a CHAT_MSG, which is sent to the server, and then from the server to all players, including the 
     originating player.*/
@@ -236,10 +217,6 @@ Message GlobalChatMessage(int sender, const std::string& msg);
 
 /** creates a CHAT_MSG, which is sent to the server, and then from the server to a single recipient player */
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg);
-
-/** creates a PLAYER_EXIT message, which is sent to all remaining clients when a client looses its connection to the server.  
-    This message should only be sent by the server.*/
-Message PlayerDisconnectedMessage(int receiver, const std::string& player_name);
 
 /** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.  
     This message should only be sent by the server.*/
@@ -289,7 +266,7 @@ Message StartMPGameMessage(int player_id);
 
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players);
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players, OrderSet& orders, SaveGameUIData& ui_data, bool& loaded_game_data, bool& ui_data_available);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 
@@ -300,5 +277,7 @@ bool ExtractMessageData(const Message& msg, OrderSet& orders, SaveGameUIData& ui
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id);
 
 void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
+
+void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
 #endif // _Message_h_

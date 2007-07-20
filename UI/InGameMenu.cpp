@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "OptionsWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../network/Networking.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -43,31 +44,7 @@ InGameMenu::InGameMenu():
 
     // call to InGameMenu::MinimizedLength() because MinimizedLength is virtual
     SetMinSize(GG::Pt(InGameMenu::MinimizedLength(), MinSize().y));
-    Init(); //attaches children and connects signals to slots
-}
 
-InGameMenu::~InGameMenu()
-{
-}
-
-int InGameMenu::MinimizedLength() const
-{ 
-    return 135;
-}
-
-void InGameMenu::Render()
-{
-    CUIWnd::Render();
-}
-
-void InGameMenu::KeyPress (GG::Key key, Uint32 key_mods)
-{
-    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
-        Done();
-}
-
-void InGameMenu::Init()
-{
     //add children
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
@@ -83,8 +60,25 @@ void InGameMenu::Init()
     GG::Connect(m_done_btn->ClickedSignal, &InGameMenu::Done, this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
+        if (HumanClientApp::GetApp()->PlayerID() != Networking::HOST_PLAYER_ID)
+            m_save_btn->Disable();
         m_load_btn->Disable();
     }
+}
+
+InGameMenu::~InGameMenu()
+{}
+
+int InGameMenu::MinimizedLength() const
+{ return 135; }
+
+void InGameMenu::Render()
+{ CUIWnd::Render(); }
+
+void InGameMenu::KeyPress (GG::Key key, Uint32 key_mods)
+{
+    if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
+        Done();
 }
 
 void InGameMenu::Save()
@@ -97,16 +91,9 @@ void InGameMenu::Save()
     try {
         FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", true, false, save_file_types);
         dlg.Run();
-        std::string filename;
         if (!dlg.Result().empty()) {
-            filename = *dlg.Result().begin();
-            Message response;
-            bool save_succeeded = HumanClientApp::GetApp()->NetworkCore().SendSynchronousMessage(HostSaveGameMessage(HumanClientApp::GetApp()->PlayerID(), filename), response);
-            if (save_succeeded) {
-                CloseClicked();
-            } else {
-                ClientUI::MessageBox("Could not save game as \"" + filename + "\".", true);
-            }
+            HumanClientApp::GetApp()->SaveGame(*dlg.Result().begin());
+            CloseClicked();
         }
     } catch (const FileDlg::BadInitialDirectory& e) {
         ClientUI::MessageBox(e.what(), true);
@@ -115,8 +102,9 @@ void InGameMenu::Save()
 
 void InGameMenu::Load()
 {
-    if (HumanClientApp::GetApp()->LoadSinglePlayerGame())
-        CloseClicked();
+    Hide();
+    HumanClientApp::GetApp()->LoadSinglePlayerGame();
+    CloseClicked();
 }
 
 void InGameMenu::Options()
@@ -127,13 +115,9 @@ void InGameMenu::Options()
 
 void InGameMenu::Exit()
 {
-    if (HumanClientApp::GetApp()->NetworkCore().Connected())
-        HumanClientApp::GetApp()->NetworkCore().DisconnectFromServer();
     HumanClientApp::GetApp()->EndGame();
     CloseClicked();
 }
 
 void InGameMenu::Done()
-{
-    m_done = true;
-}
+{ m_done = true; }

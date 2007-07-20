@@ -10,7 +10,9 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include <set>
 #include <vector>
+
 
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
@@ -29,6 +31,9 @@ const std::string& UserString(const std::string& str);
 
 /** Returns the language of the StringTable currently in use */
 const std::string& Language();
+
+/** Returns the canonical name of the only human player in a single player game. */
+const std::string& SinglePlayerName();
 
 /** The data that represent the galaxy setup for a new game. */
 struct GalaxySetupData
@@ -50,17 +55,20 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** The data needed to establish a new single player game. */
+/** The data needed to establish a new single player game.  If \a m_new_game is true, a new game is to be started, using
+    the remaining members besides \a m_filename.  Otherwise, the saved game \a m_filename will be loaded instead. */
 struct SinglePlayerSetupData : public GalaxySetupData
 {
     /** \name Structors */ //@{
     SinglePlayerSetupData(); ///< default ctor.
     //@}
 
+    bool              m_new_game;
     std::string       m_host_player_name;
     std::string       m_empire_name;
     GG::Clr           m_empire_color;
     int               m_AIs;
+    std::string       m_filename;
 
 private:
     friend class boost::serialization::access;
@@ -141,14 +149,14 @@ struct MultiplayerLobbyData : public GalaxySetupData
     void RebuildSaveGameEmpireData(); ///< Rebuilds m_save_game_empire_data by reading player/Empire data from the current save file.
     //@}
 
-    bool                            m_new_game;
-    int                             m_save_file_index;
-    std::vector<PlayerSetupData>    m_players;
-    std::vector<PlayerSetupData>    m_AIs;
+    bool                              m_new_game;
+    int                               m_save_file_index;
+    std::map<int, PlayerSetupData>    m_players; // indexed by player_id
+    std::set<int>                     m_AI_player_ids;
 
-    std::vector<std::string>        m_save_games;
-    std::vector<GG::Clr>            m_empire_colors;
-    std::vector<SaveGameEmpireData> m_save_game_empire_data;
+    std::vector<std::string>          m_save_games;
+    std::vector<GG::Clr>              m_empire_colors;
+    std::map<int, SaveGameEmpireData> m_save_game_empire_data; // indexed by empire_id
 
     static const std::string MP_SAVE_FILE_EXTENSION;
 
@@ -191,10 +199,12 @@ template <class Archive>
 void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
+        & BOOST_SERIALIZATION_NVP(m_new_game)
         & BOOST_SERIALIZATION_NVP(m_host_player_name)
         & BOOST_SERIALIZATION_NVP(m_empire_name)
         & BOOST_SERIALIZATION_NVP(m_empire_color)
-        & BOOST_SERIALIZATION_NVP(m_AIs);
+        & BOOST_SERIALIZATION_NVP(m_AIs)
+        & BOOST_SERIALIZATION_NVP(m_filename);
 }
 
 template <class Archive>

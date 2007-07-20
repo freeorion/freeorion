@@ -7,16 +7,17 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "Predicates.h"
-#include "../server/ServerApp.h"
 #include "Ship.h"
 #include "System.h"
 #include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 
-#include "../util/AppInterface.h"
 #include <stdexcept>
+
+
+using boost::lexical_cast;
 
 namespace {
     DataTableMap& PlanetDataTables()

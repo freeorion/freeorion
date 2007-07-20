@@ -7,15 +7,12 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../util/Directories.h"
-#include "GalaxySetupWnd.h"
 #include "../network/Message.h"
-#include "../UI/MultiplayerLobbyWnd.h"
 #include "../util/MultiplayerCommon.h"
 #include "OptionsWnd.h"
 #include "../util/OptionsDB.h"
 #include "Splash.h"
 #include "../util/Serialize.h"
-#include "ServerConnectWnd.h"
 #include "../util/Version.h"
 
 #include <GG/DrawUtil.h>
@@ -29,7 +26,6 @@
 #include <string>
 
 namespace {
-    const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
     int MAIN_MENU_WIDTH = 200;
     int MAIN_MENU_HEIGHT = 340;
 
@@ -187,150 +183,48 @@ IntroScreen::~IntroScreen()
 
 void IntroScreen::OnSinglePlayer()
 {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
-    using boost::lexical_cast;
-    using std::string;
-
-    bool failed = false;
-    Hide();
-
-    if (!GetOptionsDB().Get<bool>("force-external-server"))
-        HumanClientApp::GetApp()->StartServer();
-    GalaxySetupWnd galaxy_wnd;    
-    galaxy_wnd.Run();
-    if (galaxy_wnd.EndedWithOk()) {
-        int start_time = GG::GUI::GetGUI()->Ticks();
-        while (!HumanClientApp::GetApp()->NetworkCore().ConnectToLocalhostServer()) {
-            if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
-                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                failed = true;
-                break;
-            } else {
-                FE_PumpEvents();
-            }
-        }
-
-        if (!failed) {
-            ClientUI::GetClientUI()->ScreenNewGame();
-
-            // TODO: Select number and difficulty of AIs
-            SinglePlayerSetupData setup_data;
-            galaxy_wnd.Panel().GetSetupData(setup_data);
-            setup_data.m_host_player_name = "Happy_Player";
-            setup_data.m_empire_name = galaxy_wnd.EmpireName();
-            setup_data.m_empire_color = galaxy_wnd.EmpireColor();
-            setup_data.m_AIs = 4;
-            HumanClientApp::GetApp()->NetworkCore().SendMessage(HostSPGameMessage(HumanClientApp::GetApp()->PlayerID(), setup_data));
-        }
-    } else {
-        failed = true;
-    }
-
-    if (failed) {
-        HumanClientApp::GetApp()->KillServer();
-        ClientUI::GetClientUI()->ScreenIntro();
-    }
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+    HumanClientApp::GetApp()->NewSinglePlayerGame();
 }
 
 void IntroScreen::OnMultiPlayer()
 {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
-    bool failed = false;
-    Hide();
-
-    ServerConnectWnd server_connect_wnd;
-    while (!failed && !HumanClientApp::GetApp()->NetworkCore().Connected()) {
-        server_connect_wnd.Run();
-
-        if (server_connect_wnd.Result().second == "") {
-            failed = true;
-        } else {
-            std::string server_name = server_connect_wnd.Result().second;
-            if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-                if (!GetOptionsDB().Get<bool>("force-external-server")) {
-                    HumanClientApp::GetApp()->StartServer();
-                    HumanClientApp::GetApp()->FreeServer();
-                }
-                server_name = "localhost";
-            }
-            int start_time = GG::GUI::GetGUI()->Ticks();
-            while (!HumanClientApp::GetApp()->NetworkCore().ConnectToServer(server_name)) {
-                if (SERVER_CONNECT_TIMEOUT < GG::GUI::GetGUI()->Ticks() - start_time) {
-                    ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                    if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
-                        HumanClientApp::GetApp()->KillServer();
-                    failed = true;
-                    break;
-                } else {
-                    FE_PumpEvents();
-                }
-            }
-        }
-    }
-
-    if (failed) {
-        ClientUI::GetClientUI()->ScreenIntro();
-    } else {
-        HumanClientApp::GetApp()->NetworkCore().SendMessage(server_connect_wnd.Result().second == "HOST GAME SELECTED" ? 
-                                                            HostMPGameMessage(HumanClientApp::GetApp()->PlayerID(), server_connect_wnd.Result().first) : 
-                                                            JoinGameMessage(server_connect_wnd.Result().first));
-        MultiplayerLobbyWnd multiplayer_lobby_wnd(server_connect_wnd.Result().second == "HOST GAME SELECTED");
-        multiplayer_lobby_wnd.Run();
-        if (!multiplayer_lobby_wnd.Result()) {
-            HumanClientApp::GetApp()->KillServer();
-            ClientUI::GetClientUI()->ScreenIntro();
-        } else {
-            if (multiplayer_lobby_wnd.LoadSelected())
-                ClientUI::GetClientUI()->ScreenLoad();
-            else
-                ClientUI::GetClientUI()->ScreenNewGame();
-        }
-    }
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+    HumanClientApp::GetApp()->MulitplayerGame();
 }
 
 void IntroScreen::OnLoadGame()
 {  
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
-    Hide();
-    if (!HumanClientApp::GetApp()->LoadSinglePlayerGame())
-        Show();
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+    HumanClientApp::GetApp()->LoadSinglePlayerGame();
 }
 
 void IntroScreen::OnOptions()
 {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+
     OptionsWnd options_wnd;
     options_wnd.Run();
 }
 
 void IntroScreen::OnAbout()
 {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+
     About about_wnd;
     about_wnd.Run();
 }
 
 void IntroScreen::OnCredits()
 {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+
 
     XMLDoc doc;
     boost::filesystem::ifstream ifs(GetSettingsDir() / "credits.xml");
@@ -343,7 +237,7 @@ void IntroScreen::OnCredits()
 
     XMLElement credits = doc.root_node.Child("CREDITS");
     // only the area between the upper and lower line of the splash screen should be darkend
-    // if we use another splash screen we have the chenge the following values
+    // if we use another splash screen we have the change the following values
     int nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768,
         nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 
@@ -357,24 +251,26 @@ void IntroScreen::OnCredits()
 
 void IntroScreen::OnExitGame()
 {
-    if (m_credits_wnd) {
-        delete m_credits_wnd;
-        m_credits_wnd = 0;
-    }
-    GG::GUI::GetGUI()->Exit(0); // exit with 0, good error code
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+
+    GG::GUI::GetGUI()->Exit(0);
 }
 
 void IntroScreen::KeyPress (GG::Key key, Uint32 key_mods)
 {
-    if (key == GG::GGK_ESCAPE) // Same behaviour as if "done" was pressed
+    if (key == GG::GGK_ESCAPE)
         OnExitGame();
 }
+
+void IntroScreen::Close()
+{ OnExitGame(); }
 
 void IntroScreen::Render()
 {
     boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), ClientUI::Pts());
     CUIWnd::Render();
-    GG::Pt size=font->TextExtent(FreeOrionVersionString());
+    GG::Pt size = font->TextExtent(FreeOrionVersionString());
     font->RenderText(GG::GUI::GetGUI()->AppWidth()-size.x,
                      GG::GUI::GetGUI()->AppHeight()-size.y,
                      FreeOrionVersionString());

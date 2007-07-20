@@ -193,6 +193,7 @@ namespace {
                 x_position += m_damage_stat->Width(); // no icon spacing is needed after stat icons
             } else if (m_damage_stat) {
                 DeleteChild(m_damage_stat);
+                m_damage_stat = 0;
             }
             if (m_ship->Design() && design->colonize) {
                 if (!m_colonizer_icon) {
@@ -204,6 +205,7 @@ namespace {
                 x_position += m_colonizer_icon->Width() + ICON_SPACING;
             } else if (m_colonizer_icon) {
                 DeleteChild(m_colonizer_icon);
+                m_colonizer_icon = 0;
             }
         }
 
@@ -408,6 +410,7 @@ void FleetDataPanel::Select(bool b)
 void FleetDataPanel::SetFleetIcon()
 {
     DeleteChild(m_fleet_icon);
+    m_fleet_icon = 0;
 
     const int ICON_OFFSET = (Size().y - FLEET_ICON_SZ) / 2;
     boost::shared_ptr<GG::Texture> icon;
@@ -479,6 +482,7 @@ void FleetDataPanel::Refresh()
             x_position += m_damage_icon->Width() + ICON_SPACING;
         } else if (m_damage_icon) {
             DeleteChild(m_damage_icon);
+            m_damage_icon = 0;
         }
         if (contains_colony_ship) {
             if (!m_colonizer_icon) {
@@ -490,6 +494,7 @@ void FleetDataPanel::Refresh()
             x_position += m_colonizer_icon->Width() + ICON_SPACING;
         } else if (m_colonizer_icon) {
             DeleteChild(m_colonizer_icon);
+            m_colonizer_icon = 0;
         }
     }
 }
@@ -1250,7 +1255,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
     double some_fleet_y = some_fleet->Y();
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    int new_fleet_id = ClientApp::GetNewObjectID();
+    int new_fleet_id = HumanClientApp::GetApp()->GetNewObjectID();
     if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
         ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
         return;

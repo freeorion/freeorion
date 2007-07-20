@@ -4,6 +4,8 @@
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
 #include "CUIWnd.h"
+#include "../client/human/HumanClientApp.h"
+#include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
@@ -14,12 +16,6 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
-#ifndef FREEORION_BUILD_UTIL
-#include "../client/human/HumanClientApp.h"
-#include "../util/AppInterface.h"
-#endif
-
-#include <valarray>
 #include <gvc.h>
 #include <boost/format.hpp>
 #include <algorithm>
@@ -1104,7 +1100,6 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
     m_selected(false)
 {
     EnableChildClipping(true);
-#ifndef FREEORION_BUILD_UTIL
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire->TechResearched(m_tech->Name())) {
         SetColor(ClientUI::KnownTechFillColor());
@@ -1116,19 +1111,6 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
         SetColor(ClientUI::UnresearchableTechFillColor());
         m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
     }
-#else
-    // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
-    if (m_tech->Type() == TT_THEORY) {
-        SetColor(ClientUI::KnownTechFillColor());
-        m_border_color = ClientUI::KnownTechTextAndBorderColor();
-    } else if (m_tech->Type() == TT_APPLICATION) {
-        SetColor(ClientUI::ResearchableTechFillColor());
-        m_border_color = ClientUI::ResearchableTechTextAndBorderColor();
-    } else {
-        SetColor(ClientUI::UnresearchableTechFillColor());
-        m_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
-    }
-#endif
     GG::Pt client_size = ClientSize();
     m_name_text = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, UserString(m_tech->Name()),
                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
@@ -1352,7 +1334,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     bool known_tech = false;
     bool queued_tech = false;
     bool researchable_tech = false;
-#ifndef FREEORION_BUILD_UTIL
+
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire->TechResearched(m_tech->Name())) {
         known_tech = true;
@@ -1367,15 +1349,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
         }
         researchable_tech = empire->ResearchableTech(m_tech->Name());
     }
-#else
-    // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
-    m_progress = 0.2;
-    if (m_tech->Type() == TT_THEORY) {
-        known_tech = true;
-    } else if (m_tech->Type() == TT_APPLICATION) {
-        researchable_tech = true;
-    }
-#endif
     if (known_tech) {
         m_fill_color = ClientUI::KnownTechFillColor();
         m_text_and_border_color = ClientUI::KnownTechTextAndBorderColor();
@@ -1890,18 +1863,9 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
                 }
                 points.push_back(Spline(temp));
             }
-#ifndef FREEORION_BUILD_UTIL
             const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
             
             TechStatus arc_type = empire->GetTechStatus(to->Name());
-#else
-            // these values are arbitrary; they're only useful for displaying techs in the tech-view utility app
-            if (to->Type() == TT_THEORY) {
-                arc_type = TS_COMPLETE;
-            } else if (to->Type() == TT_APPLICATION) {
-                arc_type = TS_RESEARCHABLE;
-            }
-#endif
             m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
         }
     }

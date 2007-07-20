@@ -54,7 +54,9 @@ const fs::path GetLocalDir()
 const fs::path GetGlobalDir()
 {
     if (!g_initialized) InitDirs();
-    fs::path p(br_find_data_dir("/usr/local/share"));
+    char* dir_name = br_find_data_dir("/usr/local/share");
+    fs::path p(dir_name);
+    std::free(dir_name);
     p /= "freeorion";
     // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
@@ -67,7 +69,9 @@ const fs::path GetGlobalDir()
 const fs::path GetBinDir()
 {
     if (!g_initialized) InitDirs();
-    fs::path p(br_find_bin_dir("/usr/local/bin"));
+    char* dir_name = br_find_data_dir("/usr/local/bin");
+    fs::path p(dir_name);
+    std::free(dir_name);
     // if the path does not exist, we fall back to the working directory
     if (!exists(p)) {
         return fs::initial_path();

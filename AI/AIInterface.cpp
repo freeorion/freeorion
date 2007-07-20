@@ -1,7 +1,7 @@
 #include "AIInterface.h"
 
 #include "../util/MultiplayerCommon.h"
-#include "../network/ClientNetworkCore.h"
+#include "../network/ClientNetworking.h"
 #include "../client/AI/AIClientApp.h"
 
 #include "../universe/Universe.h"
@@ -234,7 +234,7 @@ namespace AIInterface {
             }
         }
 
-        int new_fleet_id = ClientApp::GetNewObjectID();
+        int new_fleet_id = ClientApp::GetApp()->GetNewObjectID();
         if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) 
             throw std::runtime_error("Couldn't get new object ID when transferring ship to new fleet");
 
@@ -329,9 +329,9 @@ namespace AIInterface {
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text)
     {
         if (recipient_player_id == -1)
-            AIClientApp::GetApp()->NetworkCore().SendMessage(GlobalChatMessage(PlayerID(), message_text));
+            AIClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(PlayerID(), message_text));
         else
-            AIClientApp::GetApp()->NetworkCore().SendMessage(SingleRecipientChatMessage(PlayerID(), recipient_player_id, message_text));
+            AIClientApp::GetApp()->Networking().SendMessage(SingleRecipientChatMessage(PlayerID(), recipient_player_id, message_text));
     }
 
     void DoneTurn()

@@ -219,7 +219,7 @@ public:
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
     void              CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
                                      SpecialsFrequency specials_freq, int players, int ai_players, 
-                                     const std::vector<PlayerSetupData>& player_setup_data = std::vector<PlayerSetupData>());
+                                     const std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Applies all Effects from Buildings, Specials, Techs, etc. */
     void              ApplyEffects();
@@ -338,7 +338,7 @@ protected:
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
     void NamePlanets(); ///< Names the planets in each system, based on the system's name
     /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
-    void GenerateEmpires(int players, std::vector<int>& homeworlds, const std::vector<PlayerSetupData>& player_setup_data);
+    void GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data);
 
     void DestroyImpl(int id);
 

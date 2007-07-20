@@ -44,29 +44,29 @@ namespace {
 }
 
 PopCenter::PopCenter() :
+    m_pop(),
+    m_health(),
     m_growth(0),
     m_race(0),
-    m_available_food(0),
-    m_pop(),
-    m_health()
+    m_available_food(0)
 {}
 
 PopCenter::PopCenter(double max_pop_mod, double max_health_mod) :
+    m_pop(),
+    m_health(),
     m_growth(0),
     m_race(0),
-    m_available_food(0),
-    m_pop(),
-    m_health()
+    m_available_food(0)
 {
     Reset(max_pop_mod, max_health_mod);
 }
 
 PopCenter::PopCenter(int race, double max_pop_mod, double max_health_mod) :
+    m_pop(),
+    m_health(),
     m_growth(0),
     m_race(race),
-    m_available_food(0),
-    m_pop(),
-    m_health()
+    m_available_food(0)
 {
     Reset(max_pop_mod, max_health_mod);
 }

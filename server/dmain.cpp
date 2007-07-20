@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-   ServerApp g_app(argc, argv);
+   ServerApp g_app;
    g_app(); // run app (intialization and main process loop)
    return 0;
 }

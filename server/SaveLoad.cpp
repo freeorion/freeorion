@@ -1,5 +1,6 @@
 #include "SaveLoad.h"
 
+#include "ServerApp.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
@@ -9,6 +10,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../util/OrderSet.h"
+#include "../util/Serialize.h"
 
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>

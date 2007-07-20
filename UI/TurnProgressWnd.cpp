@@ -1,6 +1,5 @@
 #include "TurnProgressWnd.h"
 
-#include "CombatWnd.h"
 #include "CUIControls.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -22,8 +21,7 @@ namespace {
 ////////////////////////////////////////////////
 TurnProgressWnd::TurnProgressWnd() : 
     GG::Wnd(0, (GG::GUI::GetGUI()->AppHeight() - PROGRESS_WND_HEIGHT) / 2,
-            GG::GUI::GetGUI()->AppWidth(), PROGRESS_WND_HEIGHT,  GG::ONTOP | GG::CLICKABLE),
-    m_combat_wnd(0)
+            GG::GUI::GetGUI()->AppWidth(), PROGRESS_WND_HEIGHT,  GG::ONTOP | GG::CLICKABLE)
 {
     SetText(UserString("TURN_PROGRESS_WND"));
 
@@ -45,11 +43,6 @@ TurnProgressWnd::~TurnProgressWnd()
     }
 }
 
-bool TurnProgressWnd::InWindow(const GG::Pt& pt) const
-{
-    return GG::Wnd::InWindow(pt) || (m_combat_wnd && m_combat_wnd->InWindow(pt));
-}
-
 void TurnProgressWnd::Render()
 {
     GG::Pt ul = m_phase_text->UpperLeft(), lr = (m_empire_text->Empty() ? m_phase_text : m_empire_text)->LowerRight();
@@ -68,13 +61,3 @@ void TurnProgressWnd::UpdateTurnProgress(const std::string& phase_str, int empir
         *m_empire_text << "";
     }  
 }
-
-void TurnProgressWnd::UpdateCombatTurnProgress(const std::string& message)
-{
-    if (!m_combat_wnd) {
-        m_combat_wnd = new CombatWnd((Width() - CombatWnd::WIDTH) / 2, Height());
-        AttachChild(m_combat_wnd);
-    }
-    m_combat_wnd->UpdateCombatTurnProgress(message);
-}
-

@@ -64,14 +64,16 @@ int main(int argc, char* argv[])
 
     try {
         app(); // run app (intialization and main process loop)
+    } catch (const HumanClientApp::CleanQuit& e) {
+        // do nothing
     } catch (const std::invalid_argument& e) {
-        app.Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
+        Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
     } catch (const std::runtime_error& e) {
-        app.Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+        Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
     } catch (const  boost::io::format_error& e) {
-        app.Logger().errorStream() << "main() caught exception(boost::io::format_error): " << e.what();
+        Logger().errorStream() << "main() caught exception(boost::io::format_error): " << e.what();
     } catch (const std::exception& e) {
-        app.Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
+        Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
     }
     return 0;
 

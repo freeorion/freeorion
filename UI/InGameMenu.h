@@ -26,7 +26,6 @@ protected:
     virtual int MinimizedLength() const;//!< the width of a minimized InGameMenu wnd
 
 private:
-    void Init();        //!< Attaches children and connects signals
     void Save();        //!< when m_save_btn button is pressed
     void Load();        //!< when m_load_btn button is pressed
     void Options();     //!< when m_options_btn button is pressed

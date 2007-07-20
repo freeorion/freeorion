@@ -27,16 +27,12 @@ namespace {
 
     void PlayButtonClickSound()
     {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
-#endif
     }
 
     void PlayTurnButtonClickSound()
     {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"));
-#endif
     }
 
     struct PlayButtonCheckSound
@@ -44,39 +40,29 @@ namespace {
         PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
         void operator()(bool checked) const
         {
-#ifndef FREEORION_BUILD_UTIL
             if ((!m_play_only_when_checked || checked) && PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
-#endif
         }
         const bool m_play_only_when_checked;
     };
 
     void PlayListSelectSound(const std::set<int>&)
     {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-select"));
-#endif
     }
 
     void PlayDropDownListOpenSound()
     {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"));
-#endif
     }
 
     void PlayItemDropSound(int, GG::ListBox::Row*)
     {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.item-drop"));
-#endif
     }
 
     void PlayTextTypingSound(const std::string&)
     {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.text-typing"));
-#endif
     }
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
@@ -163,10 +149,8 @@ bool CUIButton::InWindow(const GG::Pt& pt) const
 void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled()) {
-#ifndef FREEORION_BUILD_UTIL
         if (State() != BN_ROLLOVER && PlaySounds())
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
-#endif
         SetState(BN_ROLLOVER);
     }
 }
@@ -283,10 +267,8 @@ bool CUIArrowButton::FillBackgroundWithWndColor() const
 void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
 {
     if (!Disabled()) {
-#ifndef FREEORION_BUILD_UTIL
         if (State() != BN_ROLLOVER && PlaySounds())
             HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
-#endif
         SetState(BN_ROLLOVER);
     }
 }
@@ -585,9 +567,7 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, Uint32 keys)
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
     if (!m_being_dragged && !m_mouse_here) {
-#ifndef FREEORION_BUILD_UTIL
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
-#endif
         m_mouse_here = true;
     }
 }
@@ -711,9 +691,7 @@ void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, Uint32 keys)
 {
-#ifndef FREEORION_BUILD_UTIL
     if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
-#endif
     m_mouse_here = true;
 }
 

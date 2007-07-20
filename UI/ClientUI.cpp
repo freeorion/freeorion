@@ -1,22 +1,22 @@
 #include "ClientUI.h"
 
-#include "../util/AppInterface.h"
-#include "../universe/Building.h"
 #include "CUIControls.h"
-#include "../universe/Fleet.h"
 #include "FleetWnd.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
 #include "SidePanel.h"
+#include "../util/AppInterface.h"
+#include "../util/Random.h"
+#include "../universe/Building.h"
+#include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/Tech.h"
-#include "TurnProgressWnd.h"
 #include "../client/human/HumanClientApp.h"
+#include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../util/Directories.h"
 
 #include <GG/GUI.h>
 #include <GG/Clr.h>
@@ -178,7 +178,6 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 }
 
 // private static members
-log4cpp::Category& ClientUI::s_logger(log4cpp::Category::getRoot());
 ClientUI* ClientUI::s_the_UI = 0;
 
 namespace {
@@ -315,62 +314,25 @@ namespace {
 ////////////////////////////////////////////////
 //Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI() :
-    m_state(STATE_STARTUP),
-    m_intro_screen(0),
-    m_map_wnd(0),
-    m_turn_progress_wnd(0),
-    m_previously_shown_system(UniverseObject::INVALID_OBJECT_ID)
+    m_map_wnd(new MapWnd)
 {
     s_the_UI = this;
-    Initialize();
-}
-
-bool ClientUI::Initialize()
-{
-    //initialize UI state & window
-    m_state = STATE_STARTUP;
-
-#ifndef FREEORION_BUILD_UTIL
-    m_map_wnd = new MapWnd();
     GG::GUI::GetGUI()->Register(m_map_wnd);
     m_map_wnd->Hide();
-#endif
-
-    return true;
 }
 
 ClientUI::~ClientUI() 
 {
-    Cleanup();
-}
-
-bool ClientUI::Cleanup()
-{
-#ifndef FREEORION_BUILD_UTIL
-    delete m_intro_screen;
-    m_intro_screen = 0;
-
     delete m_map_wnd;
-    m_map_wnd = 0;
-
-    delete m_turn_progress_wnd;
-    m_turn_progress_wnd = 0;
-#endif
-
     s_the_UI = 0;
-
-    return true; 
 }
+
+MapWnd* ClientUI::GetMapWnd()
+{ return m_map_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
-{
-    m_map_wnd->GetSaveGameUIData(data);
-}
+{ m_map_wnd->GetSaveGameUIData(data); }
 
-
-///////////////////////////////////////////////////
-
-//Zoom Functions///////////////////////////////////
 bool ClientUI::ZoomToPlanet(int id)
 {
     // this just zooms to the appropriate system, until we create a planet window of some kind
@@ -411,26 +373,18 @@ bool ClientUI::ZoomToShip(int id)
 
 bool ClientUI::ZoomToTech(const std::string& tech_name)
 {
-#ifndef FREEORION_BUILD_UTIL
     if (!GetTech(tech_name))
         return false;
     m_map_wnd->ShowTech(tech_name);
     return true;
-#else
-    return false;
-#endif
 }
 
 bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
 {
-#ifndef FREEORION_BUILD_UTIL
     if (!GetBuildingType(building_type_name))
         return false;
     m_map_wnd->ShowBuildingType(building_type_name);
     return true;
-#else
-    return false;
-#endif
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
@@ -445,10 +399,8 @@ void ClientUI::ZoomToSystem(System* system)
     if (!system)
         return;
 
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnSystem(system->ID());
     m_map_wnd->SelectSystem(system->ID());
-#endif
 }
 
 void ClientUI::ZoomToFleet(Fleet* fleet)
@@ -456,7 +408,6 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     if (!fleet)
         return;
 
-#ifndef FREEORION_BUILD_UTIL
     m_map_wnd->CenterOnFleet(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
     for (MapWnd::FleetWndIter it = m_map_wnd->FleetWndBegin(); it != m_map_wnd->FleetWndEnd(); ++it) {
@@ -465,7 +416,6 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
             break;
         }
     }
-#endif
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix)
@@ -483,157 +433,25 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 
-/////////////////////////////////////////////////////
-
-//Screen Functions///////////////////////////////////
 void ClientUI::InitTurn(int turn_number)
-{
-#ifndef FREEORION_BUILD_UTIL
-    m_map_wnd->InitTurn(turn_number);
-#endif
-}
+{ m_map_wnd->InitTurn(turn_number); }
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
-{
-#ifndef FREEORION_BUILD_UTIL
-    m_map_wnd->RestoreFromSaveData(ui_data);
-#endif
-}
+{ m_map_wnd->RestoreFromSaveData(ui_data); }
 
-void ClientUI::SwitchState(State state)
-{
-#ifndef FREEORION_BUILD_UTIL
-    HideAllWindows();
-    // clean up previous windows, based on previous state
-    switch (m_state) {
-    case STATE_STARTUP:
-        break;
-    case STATE_INTRO:
-        // when loading a game or starting a new game, defer removal of the intro screen until the new game has actually
-        // started, since either operation may fail due to the server
-        if (state != STATE_NEW_GAME && state != STATE_LOAD) {
-            delete m_intro_screen;
-            m_intro_screen = 0;
-        }
-        break;
-    case STATE_TURNSTART:
-        delete m_turn_progress_wnd;
-        m_turn_progress_wnd = 0;
-        break;
-    case STATE_MAP:
-        m_map_wnd->Hide();
-        break;
-    case STATE_COMBAT:
-        break;
-    case STATE_NEW_GAME:
-    case STATE_LOAD:
-        if (m_intro_screen) {
-            delete m_intro_screen;
-            m_intro_screen = 0;
-        }
-        delete m_turn_progress_wnd;
-        m_turn_progress_wnd = 0;
-        break;
-    default:
-        break;
-    }
+void ClientUI::ShowMap()
+{ m_map_wnd->Show(); }
 
-    switch (m_state = state) {
-    case STATE_STARTUP:
-        break;
-    case STATE_INTRO:
-        if (!m_intro_screen) {
-            m_intro_screen = new IntroScreen();
-            GG::GUI::GetGUI()->Register(m_intro_screen);
-        }
-        m_intro_screen->Show();
-        break;
-    case STATE_TURNSTART:
-        if (!m_turn_progress_wnd) {
-            m_turn_progress_wnd = new TurnProgressWnd();
-            GG::GUI::GetGUI()->Register(m_turn_progress_wnd);
-        }
-        m_turn_progress_wnd->Show();
-        break;
-    case STATE_MAP:
-        m_map_wnd->Show();
-        break;
-    case STATE_COMBAT:
-        break;
-    case STATE_NEW_GAME:
-    case STATE_LOAD:
-        m_map_wnd->Sanitize();
-        if (!m_turn_progress_wnd) {
-            m_turn_progress_wnd = new TurnProgressWnd();
-            GG::GUI::GetGUI()->Register(m_turn_progress_wnd);
-        }
-        m_turn_progress_wnd->UpdateTurnProgress(UserString(m_state == STATE_NEW_GAME ? "NEW_GAME" : "LOADING"), -1);
-        m_turn_progress_wnd->Show();
-        break;
-    default:
-        break;
-    }
-#endif
-}
-
-void ClientUI::ScreenIntro()
-{
-    SwitchState(STATE_INTRO); // set to intro screen state
-}
-
-void ClientUI::ScreenProcessTurn()
-{
-    SwitchState(STATE_TURNSTART); // set to turn start
-}
-
-void ClientUI::ScreenMap()
-{
-    SwitchState(STATE_MAP);
-}
-
-void ClientUI::UpdateTurnProgress(const std::string& phase_str, const int empire_id)
-{
-#ifndef FREEORION_BUILD_UTIL
-    m_turn_progress_wnd->UpdateTurnProgress(phase_str, empire_id);
-#endif
-}
-
-void ClientUI::UpdateCombatTurnProgress(const std::string& msg)
-{
-#ifndef FREEORION_BUILD_UTIL
-    m_turn_progress_wnd->UpdateCombatTurnProgress(msg);
-#endif
-}
-
-void ClientUI::ScreenSitrep(const std::vector<SitRepEntry> &events)
-{
-    ScreenMap();
-}
-
-void ClientUI::ScreenNewGame()
-{
-    SwitchState(STATE_NEW_GAME);
-}
-
-void ClientUI::ScreenLoad()
-{
-    SwitchState(STATE_LOAD);
-}
+ClientUI* ClientUI::GetClientUI()
+{ return s_the_UI; }
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
     GG::ThreeButtonDlg dlg(320,200,message,GG::GUI::GetGUI()->GetFont(Font(),Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
-#ifndef FREEORION_BUILD_UTIL
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");
-#endif
     dlg.Run();
-}
-
-void ClientUI::LogMessage(const std::string& msg)
-{
-    s_logger.debug(msg);
 }
 
 void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
@@ -649,19 +467,6 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     } catch(...) {
         return HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
     }
-}
-
-////////////////////////////////////////////////////
-void ClientUI::HideAllWindows()
-{
-#ifndef FREEORION_BUILD_UTIL
-    if (m_intro_screen)
-        m_intro_screen->Hide();
-    if (m_map_wnd)
-        m_map_wnd->Hide();
-    if (m_turn_progress_wnd)
-        m_turn_progress_wnd->Hide();
-#endif
 }
 
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)

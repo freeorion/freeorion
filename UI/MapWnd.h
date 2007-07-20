@@ -57,15 +57,15 @@ public:
     //! \name Accessors //!@{
     virtual GG::Pt ClientUpperLeft() const;
 
-    double          ZoomFactor() const {return m_zoom_factor;}
-    SidePanel*      GetSidePanel() const {return m_side_panel;}
-    void            GetSaveGameUIData(SaveGameUIData& data) const;  //!< populates the relevant UI state that should be restored after a save-and-load cycle
-    bool            InProductionViewMode() const;   //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
+    double         ZoomFactor() const;
+    SidePanel*     GetSidePanel() const;
+    void           GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    bool           InProductionViewMode() const; //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
     bool            FleetWndsOpen() const;  //!< returns true iff there is at least one open FleetWnd
     
     typedef std::set<FleetWnd*>::const_iterator FleetWndIter;
-    FleetWndIter    FleetWndBegin() {return m_fleet_wnds.begin();}
-    FleetWndIter    FleetWndEnd() {return m_fleet_wnds.end();}
+    FleetWndIter    FleetWndBegin();
+    FleetWndIter    FleetWndEnd();
     //!@}
 
     //! \name Mutators //!@{
@@ -97,6 +97,7 @@ public:
     void ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
     void ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
     void SelectSystem(int systemID);           //!< catches emitted signals from the system icons, and allows programmatic selection of planets
+    void ReselectLastSystem();                 //!< re-selects the most recently selected system, if a valid one exists
     void SelectFleet(int fleetID);             //!< allows programmatic selection of fleets
     void SelectFleet(Fleet* fleet);            //!< allows programmatic selection of fleets
 
@@ -104,13 +105,13 @@ public:
     void SetFleetMovement(Fleet* fleet);       //!< creates fleet movement lines for a single fleet that are already moving
     void SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route); //!< creates projected fleet movement lines for a fleet that the user has selected
 
-    void RegisterPopup( MapWndPopup* popup );  //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
-    void RemovePopup( MapWndPopup* popup );    //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
+    void RegisterPopup(MapWndPopup* popup);    //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void RemovePopup(MapWndPopup* popup);      //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void Cleanup();                            //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
     void Sanitize();                           //!< sanitizes the MapWnd after a game
     //!@}
 
-    static const int    SIDE_PANEL_WIDTH;
+    static const int SIDE_PANEL_WIDTH;
 
 protected:
     virtual bool   EventFilter(GG::Wnd* w, const GG::WndEvent& event);
@@ -200,6 +201,8 @@ private:
     std::vector<double>     m_bg_position_X;    //!< array, the X position of the first full background image
     std::vector<double>     m_bg_position_Y;    //!< array, the Y positions of the backgrounds
 
+    int                         m_previously_selected_system;
+
     double                      m_zoom_factor;      //! current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
     SidePanel*                  m_side_panel;       //! planet view panel on the side of the main map
     std::set<FleetWnd*>         m_fleet_wnds;       //! currently-open fleet wnds
@@ -256,12 +259,10 @@ private:
 class MapWndPopup : public CUIWnd
 {
 public:
-    MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags );
+    MapWndPopup(const std::string& t, int x, int y, int h, int w, Uint32 flags);
     virtual ~MapWndPopup();
-
     void CloseClicked();
-
-    void Close();      //!< closes the MapWndPopup   
+    void Close();
 };
 
 #endif // _MapWnd_h_
