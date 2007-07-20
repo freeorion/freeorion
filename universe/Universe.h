@@ -98,7 +98,6 @@ public:
         double running_meter_total; 
     };
     typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;    //!< Effect accounting info for all meters
-    typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;   //!< Discrepancy between meter's value at start of turn, and the value that this client calculate that the meter should have with the knowledge available -> the unknown factor affecting the meter
 
 
     /** \name Signal Types */ //@{
@@ -193,10 +192,6 @@ public:
     /** returns map, indexed by object id, to map, indexed by MeterType, to vector of EffectAccountInfo for the meter,
         in order effects were applied to the meter. */
     const EffectAccountingMap& GetEffectAccountingMap() const {return m_effect_accounting_map;}
-
-    /** returns map, indexed by object id, to map, indexed by MeterType, to the discrepancy between the actual and the
-        explainable value that the meter had at the start of the turn */
-    const EffectDiscrepancyMap& GetEffectDiscrepancyMap() const {return m_effect_discrepancy_map;}
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
@@ -300,12 +295,35 @@ protected:
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
 
     // effects processing stuff
+    /** Multimap from effects group to pairs (one per effect in the effects group), consisting of source object
+        ID and the set of targets to which the effects should be applied.  EffectsGroup does not contain any info
+        about its source object, so it needs to be stored here. */
     typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
     typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
+    
+    /** Discrepancy between meter's value at start of turn, and the value that this client calculate that the
+        meter should have with the knowledge available -> the unknown factor affecting the meter. */
+    typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;
 
-    void GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map);   // populates \a effects_targets_map with all EffectsGroups and their targets in the known universe
-    void ExecuteEffects(EffectsAndTargetsMap& effects_targets_map);         // executes all effects
-    void ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, bool do_effect_accounting = false); // executes meter-altering effects; ignores other effects.  If \a do_effect_acounting == true, records effect details in m_effect_accounting_map
+    /** Multimap from effects group to pairs (one per effect in the effects group), consistent of source object
+        ID and another pair, consisting of the type of cause for the effect (eg. special, building, tech) and the
+        name of the specific cause.  Specific cause is the name of the tech, building type or special that contains
+        the effects group.  The causes should be stored in the same order as the targets in a simultaneously built
+        EffectsAndTargetsMap, allowing a particular effects group's targets and cause info to be looked up together. */
+    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, std::pair<EffectsCauseType, std::string> > > EffectsAndCausesMapElem;
+    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, std::pair<EffectsCauseType, std::string> > > EffectsAndCausesMap;
+
+    /** Populates \a effects_targets_map with all EffectsGroups and their targets in the known universe.  If
+        \a effects_causes_map is provided (nonzero pointer) then this map will be simultaneously populated with
+        information about the causes of each effects group. */
+    void GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map = 0);
+    
+    void ExecuteEffects(EffectsAndTargetsMap& effects_targets_map);         ///< executes all effects
+
+    /** Executes only meter-altering effects; ignores other effects.  If \a effects_causes_map is provided
+        (nonzero pointer) then its contents will be used to records effect details in m_effect_accounting_map;
+        if it is not provided, then no effect accounting is done. */
+    void ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map = 0);
 
 
     void GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);   ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
