@@ -188,7 +188,7 @@ void HumanClientApp::NewSinglePlayerGame()
     if (!GetOptionsDB().Get<bool>("force-external-server"))
         StartServer();
 
-    GalaxySetupWnd galaxy_wnd;    
+    GalaxySetupWnd galaxy_wnd;
     galaxy_wnd.Run();
 
     bool failed = false;
@@ -370,12 +370,6 @@ void HumanClientApp::StartTurn()
     ClientApp::StartTurn();
     m_fsm->process_event(TurnEnded());
 }
-
-log4cpp::Category& HumanClientApp::Logger()
-{ return log4cpp::Category::getRoot(); }
-
-HumanClientApp* HumanClientApp::GetApp()
-{ return dynamic_cast<HumanClientApp*>(GG::GUI::GetGUI()); }
 
 void HumanClientApp::SDLInit()
 {
@@ -721,3 +715,17 @@ void HumanClientApp::SetMusicVolume(int vol)
 
 void HumanClientApp::SetUISoundsVolume(int vol)
 {}
+
+void HumanClientApp::Exit(int code)
+{
+    if (code)
+        Logger().debugStream() << "Initiating Exit (code " << code << " - error termination)";
+    SDLQuit();
+    if (code)
+        exit(code);
+    else
+        throw CleanQuit();
+}
+
+HumanClientApp* HumanClientApp::GetApp()
+{ return dynamic_cast<HumanClientApp*>(GG::GUI::GetGUI()); }

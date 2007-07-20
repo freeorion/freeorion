@@ -25,6 +25,8 @@ class MultiplayerLobbyWnd;
 class HumanClientApp : public ClientApp, public SDLGUI
 {
 public:
+    class CleanQuit : public std::exception {};
+
     /** \name Structors */ //@{
     HumanClientApp();
     virtual ~HumanClientApp();
@@ -53,8 +55,6 @@ public:
     virtual void Exit2DMode();
     virtual void StartTurn();
 
-    log4cpp::Category& Logger();
-
     /** plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a loops + 1 times otherwise. */
     virtual void PlayMusic(const boost::filesystem::path& path, int loops = 0);
     
@@ -75,6 +75,8 @@ public:
 
     /** sets the UI sounds volume from 0 (muted) to 255 (full volume); \a vol is range-adjusted */
     virtual void SetUISoundsVolume(int vol);
+
+    virtual void Exit(int code);
     //@}
 
     static HumanClientApp* GetApp(); ///< returns HumanClientApp pointer to the single instance of the app

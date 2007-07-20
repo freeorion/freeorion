@@ -44,11 +44,11 @@ namespace {
             retval += '/';
         return retval;
     }
-    StringTable* GetStringTable()
+    const StringTable& GetStringTable()
     {
-        static StringTable* string_table =
-            new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename"));
-        return string_table;
+        static std::auto_ptr<StringTable> string_table(
+            new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename")));
+        return *string_table;
     }
 }
 
@@ -115,12 +115,12 @@ int PriorityValue(const std::string& name)
 
 const std::string& UserString(const std::string& str)
 {
-    return GetStringTable()->String(str);
+    return GetStringTable().String(str);
 }
 
 const std::string& Language() 
 {
-    return GetStringTable()->Language();
+    return GetStringTable().Language();
 }
 
 const std::string& SinglePlayerName()
