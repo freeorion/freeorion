@@ -1,12 +1,12 @@
 #include "AIClientApp.h"
 
+#include "../../AI/PythonAI.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Serialize.h"
 #include "../../network/Message.h"
 
-#include <boost/lexical_cast.hpp>
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
@@ -21,9 +21,11 @@
 #include "../../util/Order.h"
 #include "../../Empire/Empire.h"
 
+#include <SDL/SDL_timer.h>
+
+#include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 
-#include "../../AI/PythonAI.h"
 
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
@@ -108,6 +110,8 @@ void AIClientApp::Run()
             Message msg;
             Networking().GetMessage(msg);
             HandleMessage(msg);
+        } else {
+            SDL_Delay(250);
         }
     }
 }
