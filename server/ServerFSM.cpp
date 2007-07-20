@@ -310,11 +310,10 @@ boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
 
     SDL_Delay(1000); // HACK! Add a delay here so the messages can propagate; setting socket linger does not appear to work
 
-    // TODO: Are these iterators invalidated in this loop?  Why does this work?
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if ((*it)->ID() != message.SendingPlayer()) {
-            server.m_networking.Disconnect((*it)->ID());
-        }
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ) {
+        PlayerConnectionPtr player_connection = *it++;
+        if (player_connection->ID() != message.SendingPlayer())
+            server.m_networking.Disconnect(player_connection);
     }
 
     return discard_event();
