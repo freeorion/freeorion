@@ -121,7 +121,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_i
     UniverseObject* source = GetUniverse().Object(source_id);
     assert(source);
 
-    assert(effect_index < m_effects.size() && effect_index >= 0);
+    assert(0 <= effect_index && effect_index < static_cast<int>(m_effects.size()));
 
     // execute effect on targets
     for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {

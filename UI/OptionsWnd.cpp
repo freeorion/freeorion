@@ -614,7 +614,7 @@ void OptionsWnd::ResolutionOption()
     CUISpin<int>* width_spin = IntOption("app-width", UserString("OPTIONS_APP_WIDTH"));
     CUISpin<int>* height_spin = IntOption("app-height", UserString("OPTIONS_APP_HEIGHT"));
     CUISpin<int>* color_depth_spin = IntOption("color-depth", UserString("OPTIONS_COLOR_DEPTH"));
-    CUIStateButton* show_FPS_button = BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
+    BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
     CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
     CUIStateButton* limit_FPS_button = BoolOption("limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     CUISpin<double>* max_fps_spin = DoubleOption("max-fps", UserString("OPTIONS_MAX_FPS"));
