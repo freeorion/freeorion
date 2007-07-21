@@ -608,19 +608,15 @@ Alias('install', Install(env['bindir'], freeorionca))
 Alias('install', Install(env['bindir'], freeorion))
 Alias('install', Install(env['datadir'], ['default', 'DejaVuSans-BoldOblique.ttf', 'DejaVuSans-Bold.ttf', 'DejaVuSans-Oblique.ttf', 'DejaVuSans.ttf']))
 
-# uninstall target
-# This is a dirty hack, used here because I don't know how else to do this.  Basically, I've created a Command that
-# deletes the uninstallable files.  To keep it dependent on its target and source arguments, I made it depend on
-# SConstruct for its source, since it is guaranteed to exist, and a target with a filename which is pretty well
-# guaranteed not to exist, and which is in fact never created.
 deletions = [
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeoriond[0])))),
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeorionca[0])))),
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeorion[0])))),
     Delete(os.path.normpath(env['datadir']))
     ]
-uninstall_cmd = env.Command('.unlikely_filename934765437', 'SConstruct', deletions)
-Alias('uninstall', uninstall_cmd)
+uninstall = env.Command('uninstall', '', deletions)
+env.AlwaysBuild(uninstall)
+env.Precious(uninstall)
 
 # default targets
 Default(freeoriond, freeorionca, freeorion)
