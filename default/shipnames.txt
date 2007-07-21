@@ -10,7 +10,6 @@ Baboon
 Badger
 Bandicoot
 Bat
-Bear
 Beaver
 Boar
 Bobcat
@@ -163,14 +162,12 @@ Crow
 Raven
 Pike
 Sockeye
-Trout
 Eel
 Albacore
 Anchovy
 Lamprey
 Herring
 Barracuda
-Sturgeon
 Mackerel
 Coelacanth
 Stingray
@@ -199,7 +196,6 @@ Oak
 Birch
 Maple
 Dogwood
-Chestnut
 Hickory
 Balsa
 Mahogany
@@ -350,7 +346,6 @@ Leo
 Lepus
 Libra
 Lupus
-Lynx
 Lyra
 Mensa
 Microscopium
@@ -361,7 +356,6 @@ Octans
 Ophiuchus
 Orion
 Pavo
-Pegasus
 Perseus
 Phoenix
 Pictor
@@ -394,28 +388,17 @@ Adhafera
 Adhil
 Agena
 Ain
-Al
-Athfar
-Al
-Bali
-Al
-Dhanab
-Al
-Dulfim
-Al
-Gieba
-Al
-Giedi
-Al
-Haud
-Al
-Nair
-Al
-Niyat
-Al
-Rescha
-Al
-Thalimain
+Al Athfar
+Al Bali
+Al Dhanab
+Al Dulfim
+Al Gieba
+Al Giedi
+Al Haud
+Al Nair
+Al Niyat
+Al Rescha
+Al Thalimain
 Alaraph
 Albireo
 Alchibah
@@ -461,7 +444,6 @@ Azha
 Azimech
 Baham
 Baten
-Kaitos
 Beid
 Bellatrix
 Benetnasch
@@ -480,12 +462,9 @@ Cheleb
 Chertan
 Chort
 Cih
-Cor
-Caroli
-Cor
-Hydrae
-Cor
-Leonis
+Cor Caroli
+Cor Hydrae
+Cor Leonis
 Coxa
 Cujam
 Cursa
@@ -578,7 +557,6 @@ Muhlifain
 Muliphein
 Mulu-lizi
 Muphrid
-Muscida
 Nakkar
 Naos
 Nashira
@@ -605,12 +583,9 @@ Procyon
 Propus
 Pulcherrima
 Rana
-Ras
-Algethi
-Ras
-Alhague
-Ras
-Elased
+Ras Algethi
+Ras Alhague
+Ras Elased
 Rasalas
 Rastaban
 Regor
@@ -624,10 +599,8 @@ Rukbah
 Rukbat
 Sabik
 Sadachbia
-Sadal
-Melik
-Sadal
-Suud
+Sadal Melik
+Sadal Suud
 Sadalbari
 Sadatoni
 Sadr
@@ -665,11 +638,9 @@ Tejat
 Thabit
 Thuban
 Tseen
-Ke
 Tsih
 Tso
 Hea
-Tsze
 Tsze
 Tseang
 Tyl
@@ -1057,7 +1028,6 @@ Aide
 Aideko
 Akerbeltz
 Ama
-Itsaso
 Amalur
 Argiduna
 Atarrabi
@@ -1133,16 +1103,11 @@ Urtzi
 Yaun
 Zezengorri
 Zuberoa
-Hydra
-Cerberus
 Gorgon
-Minotaur
 Sphinx
 Medusa
 Pegasus
 Echidna
-Basilisk
-Chimera
 Satyr
 Nymph
 Cyclops
@@ -1207,7 +1172,6 @@ Gancanagh
 Gargoyle
 Garuda
 Geryon
-Gorgon
 Grendel
 Griffin
 Guivre
@@ -1247,7 +1211,6 @@ Manananggal
 Mandrake
 Manticore
 Mara
-Medusa
 Menehune
 Merrow
 Midwayer
@@ -1290,7 +1253,6 @@ Simurgh
 Sirena
 Skvader
 Sluagh
-Sphinx
 Spriggan
 Squonk
 Stheno
@@ -1573,7 +1535,6 @@ Rodin
 Rubens
 Warhol
 Whistler
-Acceptance
 Altruism
 Autonomy
 Balance
@@ -1581,7 +1542,6 @@ Charity
 Chastity
 Commitment
 Compassion
-Confidence
 Continence
 Cooperation
 Courage
@@ -1610,7 +1570,6 @@ Happiness
 Helpfulness
 Honesty
 Honor
-Hope
 Hospitality
 Humility
 Humor
