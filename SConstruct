@@ -29,8 +29,10 @@ if str(Platform()) == 'posix':
     options.Add('prefix', 'Location to install FreeOrion', '/usr/local')
 else:
     options.Add('prefix', 'Location to install FreeOrion', 'C:\\')
+options.Update(env)
 options.Add('scons_cache_dir', 'Directory to use for SCons object file caching (specifying any directory will enable caching)')
-options.Add('bindir', 'Location to install executables', os.path.normpath(os.path.join('$prefix', 'bin')))
+options.Add('bindir', 'Location to install executables', os.path.normpath(os.path.join(env['prefix'], 'bin')))
+options.Add('datadir', 'Location to install application data', os.path.normpath(os.path.join(env['prefix'], 'share/freeorion')))
 options.Add('with_boost', 'Root directory of boost installation')
 options.Add('with_boost_include', 'Specify exact include dir for boost headers')
 options.Add('with_boost_libdir', 'Specify exact library dir for boost library')
@@ -604,6 +606,7 @@ else:
 Alias('install', Install(env['bindir'], freeoriond))
 Alias('install', Install(env['bindir'], freeorionca))
 Alias('install', Install(env['bindir'], freeorion))
+Alias('install', Install(env['datadir'], ['default', 'DejaVuSans-BoldOblique.ttf', 'DejaVuSans-Bold.ttf', 'DejaVuSans-Oblique.ttf', 'DejaVuSans.ttf']))
 
 # uninstall target
 # This is a dirty hack, used here because I don't know how else to do this.  Basically, I've created a Command that
@@ -613,7 +616,8 @@ Alias('install', Install(env['bindir'], freeorion))
 deletions = [
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeoriond[0])))),
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeorionca[0])))),
-    Delete(os.path.normpath(os.path.join(env['bindir'], str(freeorion[0]))))
+    Delete(os.path.normpath(os.path.join(env['bindir'], str(freeorion[0])))),
+    Delete(os.path.normpath(env['datadir']))
     ]
 uninstall_cmd = env.Command('.unlikely_filename934765437', 'SConstruct', deletions)
 Alias('uninstall', uninstall_cmd)
