@@ -42,8 +42,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_34&quot;;C:\Python25\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE"
+				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_34&quot;;C:\Python25\include;../../../network/"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				RuntimeLibrary="2"
 				DisableLanguageExtensions="false"
 				ForceConformanceInForLoopScope="true"
@@ -52,7 +52,7 @@
 				WarningLevel="3"
 				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4099;4251;4800;4267;4275;4244;4101;4258;4996"
+				DisableSpecificWarnings="4099;4251;4800;4267;4275;4244;4101;4258;4996;4312;4311"
 				ShowIncludes="false"
 			/>
 			<Tool
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGiNet.lib GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib log4cpp.lib freetype214MT.lib cdt.lib circogen.lib common.lib dotgen.lib fdpgen.lib gd.lib graph.lib gvc.lib libexpat.lib neatogen.lib pack.lib pathplan.lib plugin.lib twopigen.lib png.lib jpeg.lib OpenAL32.lib alut.lib libvorbisfile.lib"
+				AdditionalDependencies="GiGiSDL.lib GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib SDLmain.lib log4cpp.lib freetype214MT.lib cdt.lib circogen.lib common.lib dotgen.lib fdpgen.lib gd.lib graph.lib gvc.lib libexpat.lib neatogen.lib pack.lib pathplan.lib plugin.lib twopigen.lib png.lib jpeg.lib OpenAL32.lib alut.lib libvorbisfile.lib"
 				OutputFile="../../../freeorion.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs"
@@ -125,6 +125,14 @@
 					RelativePath="..\..\..\client\ClientApp.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\..\client\ClientFSMEvents.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\client\ClientFSMEvents.h"
+					>
+				</File>
 				<Filter
 					Name="human"
 					>
@@ -146,6 +154,14 @@
 					</File>
 					<File
 						RelativePath="..\..\..\client\human\HumanClientAppSoundOpenAL.h"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\client\human\HumanClientFSM.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\client\human\HumanClientFSM.h"
 						>
 					</File>
 				</Filter>
@@ -329,11 +345,11 @@
 				Name="network"
 				>
 				<File
-					RelativePath="..\..\..\network\ClientNetworkCore.cpp"
+					RelativePath="..\..\..\network\ClientNetworking.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\network\ClientNetworkCore.h"
+					RelativePath="..\..\..\network\ClientNetworking.h"
 					>
 				</File>
 				<File
@@ -345,13 +361,29 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\network\NetworkCore.cpp"
+					RelativePath="..\..\..\network\MessageQueue.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\network\NetworkCore.h"
+					RelativePath="..\..\..\network\MessageQueue.h"
 					>
 				</File>
+				<File
+					RelativePath="..\..\..\network\Networking.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\network\Networking.h"
+					>
+				</File>
+				<Filter
+					Name="boost"
+					>
+					<File
+						RelativePath="..\..\..\network\boost\error_code.cpp"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="UI"
@@ -558,14 +590,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\Ui\SitRepPanel.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\Splash.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\Splash.h"
 					>
 				</File>
 				<File
