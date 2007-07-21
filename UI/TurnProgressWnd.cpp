@@ -3,7 +3,6 @@
 #include "CUIControls.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
-#include "Splash.h"
 #include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
@@ -21,11 +20,18 @@ namespace {
 ////////////////////////////////////////////////
 TurnProgressWnd::TurnProgressWnd() : 
     GG::Wnd(0, (GG::GUI::GetGUI()->AppHeight() - PROGRESS_WND_HEIGHT) / 2,
-            GG::GUI::GetGUI()->AppWidth(), PROGRESS_WND_HEIGHT,  GG::ONTOP | GG::CLICKABLE)
+            GG::GUI::GetGUI()->AppWidth(), PROGRESS_WND_HEIGHT,  GG::ONTOP | GG::CLICKABLE),
+    m_splash(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
+                                   ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
+                                   GG::GR_FITGRAPHIC)),
+    m_logo(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
+                                 ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
+                                 GG::GR_FITGRAPHIC | GG::GR_PROPSCALE))
 {
     SetText(UserString("TURN_PROGRESS_WND"));
 
-    LoadSplashGraphics(m_bg_graphics);
+    GG::GUI::GetGUI()->Register(m_splash);
+    GG::GUI::GetGUI()->Register(m_logo);
 
     m_phase_text = new GG::TextControl(0, 20, Width(), ClientUI::Pts() * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 2), ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
     m_empire_text = new GG::TextControl(0, 50, Width(), ClientUI::Pts() * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 2), ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
@@ -36,11 +42,8 @@ TurnProgressWnd::TurnProgressWnd() :
 
 TurnProgressWnd::~TurnProgressWnd()
 {
-    for (unsigned int y = 0; y < m_bg_graphics.size(); ++y) {
-        for (unsigned int x = 0; x < m_bg_graphics[y].size(); ++x) {
-            delete m_bg_graphics[y][x];
-        }
-    }
+    delete m_logo;
+    delete m_splash;
 }
 
 void TurnProgressWnd::Render()

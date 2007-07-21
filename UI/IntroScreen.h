@@ -54,7 +54,8 @@ private:
 
     CreditsWnd*        m_credits_wnd;
 
-    std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
+    GG::StaticGraphic* m_splash;
+    GG::StaticGraphic* m_logo;
 };
 
 #endif // _IntroScreen_h_

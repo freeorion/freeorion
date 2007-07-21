@@ -26,7 +26,8 @@ public:
 private:
     GG::TextControl*   m_phase_text;
     GG::TextControl*   m_empire_text;
-    std::vector<std::vector<GG::StaticGraphic*> > m_bg_graphics;
+    GG::StaticGraphic* m_splash;
+    GG::StaticGraphic* m_logo;
 };
 
 #endif // _TurnProgressWnd_h_

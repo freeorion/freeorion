@@ -112,7 +112,6 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/ServerConnectWnd.cpp',
         'UI/SidePanel.cpp',
         'UI/SitRepPanel.cpp',
-        'UI/Splash.cpp',
         'UI/SystemIcon.cpp',
         'UI/TechTreeWnd.cpp',
         'UI/TurnProgressWnd.cpp',

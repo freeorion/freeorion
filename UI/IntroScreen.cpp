@@ -11,7 +11,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "OptionsWnd.h"
 #include "../util/OptionsDB.h"
-#include "Splash.h"
 #include "../util/Serialize.h"
 #include "../util/Version.h"
 
@@ -139,9 +138,16 @@ IntroScreen::IntroScreen() :
            static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
            static_cast<int>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
            MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::CLICKABLE),
-    m_credits_wnd(0)
+    m_credits_wnd(0),
+    m_splash(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
+                                   ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
+                                   GG::GR_FITGRAPHIC)),
+    m_logo(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
+                                 ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
+                                 GG::GR_FITGRAPHIC | GG::GR_PROPSCALE))
 {
-    LoadSplashGraphics(m_bg_graphics);
+    GG::GUI::GetGUI()->Register(m_splash);
+    GG::GUI::GetGUI()->Register(m_logo);
 
     //create buttons
     m_single_player = new CUIButton(15, 12, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
@@ -173,12 +179,9 @@ IntroScreen::IntroScreen() :
 
 IntroScreen::~IntroScreen()
 {
-    for (unsigned int y = 0; y < m_bg_graphics.size(); ++y) {
-        for (unsigned int x = 0; x < m_bg_graphics[y].size(); ++x) {
-            delete m_bg_graphics[y][x];
-        }
-    }
     delete m_credits_wnd;
+    delete m_logo;
+    delete m_splash;
 }
 
 void IntroScreen::OnSinglePlayer()
