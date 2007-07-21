@@ -141,13 +141,13 @@ IntroScreen::IntroScreen() :
     m_credits_wnd(0),
     m_splash(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
                                    ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
-                                   GG::GR_FITGRAPHIC)),
+                                   GG::GR_FITGRAPHIC, GG::CLICKABLE)),
     m_logo(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
                                  GG::GR_FITGRAPHIC | GG::GR_PROPSCALE))
 {
+    m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);
-    GG::GUI::GetGUI()->Register(m_logo);
 
     //create buttons
     m_single_player = new CUIButton(15, 12, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
