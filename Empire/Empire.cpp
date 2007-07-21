@@ -3,7 +3,9 @@
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/Random.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
 #include "ResourcePool.h"
@@ -17,6 +19,7 @@
 
 #include <algorithm>
 
+#include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
 
 
@@ -115,6 +118,18 @@ namespace {
             return a > b;
         }
     };
+
+    void LoadShipNames(std::vector<std::string>& names)
+    {
+        boost::filesystem::ifstream ifs(GetSettingsDir() / "shipnames.txt");
+        while (ifs) {
+            std::string latest_name;
+            std::getline(ifs, latest_name);
+            if (latest_name != "") {
+                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
+            }
+        }
+    }
 }
 
 
@@ -1186,6 +1201,20 @@ void Empire::AddExploredSystem(int ID)
     m_explored_systems.insert(ID);
 }
 
+std::string Empire::NewShipName()
+{
+    std::string retval;
+    static std::vector<std::string> ship_names;
+    if (ship_names.empty())
+        LoadShipNames(ship_names);
+    int star_name_idx = RandSmallInt(0, static_cast<int>(ship_names.size()) - 1);
+    retval = ship_names[star_name_idx];
+    int times_name_used = ++m_ship_names_used[retval];
+    if (1 < times_name_used)
+        retval += " " + RomanNumber(times_name_used);
+    return retval;
+}
+
 void Empire::AddShipDesign(int ship_design_id)
 {
     /* Check if design id is valid.  that is, check that it corresponds to an existing shipdesign in the
@@ -1345,12 +1374,16 @@ void Empire::CheckProductionProgress()
                 Logger().debugStream() << "New Fleet created on turn: " << fleet->CreationTurn();
   
                 // add ship
-                const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.design_id);
                 Ship *ship = new Ship(m_id, m_production_queue[i].item.design_id);
                 int ship_id = universe.Insert(ship);
+#if 0
+                const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.design_id);
                 std::string ship_name(ship_design->name);
                 ship_name += boost::lexical_cast<std::string>(ship_id);
                 ship->Rename(ship_name);
+#else
+                ship->Rename(NewShipName());
+#endif
                 fleet->AddShip(ship_id);
                 Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 

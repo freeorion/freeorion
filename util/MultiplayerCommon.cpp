@@ -118,6 +118,34 @@ const std::string& UserString(const std::string& str)
     return GetStringTable().String(str);
 }
 
+std::string RomanNumber(unsigned int n)
+{
+    static const char N[] = "IVXLCDM??";
+    std::string retval;
+    int e = 3;
+    int mod = 1000;
+    for (; 0 <= e; e--, mod /= 10) {
+        unsigned int m = (n / mod) % 10;
+        if (m % 5 == 4) {
+            retval += N[e << 1];
+            ++m;
+            if (m == 10) {
+                retval += N[(e << 1) + 2];
+                continue;
+            }
+        }
+        if (m >= 5) {
+            retval += N[(e << 1) + 1];
+            m -= 5;
+        }
+        while (m) {
+            retval += N[e << 1];
+            --m;
+        }
+    }
+    return retval;
+}
+
 const std::string& Language() 
 {
     return GetStringTable().Language();

@@ -29,6 +29,10 @@ int PriorityValue(const std::string& name);
 /** Returns a language-specific string for the key-string \a str */
 const std::string& UserString(const std::string& str);
 
+/** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
+    symbol for 5000. */
+std::string RomanNumber(unsigned int n);
+
 /** Returns the language of the StringTable currently in use */
 const std::string& Language();
 

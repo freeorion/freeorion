@@ -1424,7 +1424,7 @@ SITREP_BASE_BUILT
 %planet% has completed a defense base.
 
 SITREP_SHIP_BUILT
-A new %ship% has been produced in the %system% system.
+The %ship%, a new ship, has been produced in the %system% system.
 
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.

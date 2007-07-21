@@ -69,35 +69,6 @@ namespace {
         const int destination_system;
     };
 
-    // "only" defined for 1 <= n <= 3999, as we can't display the symbol for 5000
-    std::string RomanNumber(unsigned int n)
-    {
-        static const char N[] = "IVXLCDM??";
-        std::string retval;
-        int e = 3;
-        int mod = 1000;
-        for (; 0 <= e; e--, mod /= 10) {
-            unsigned int m = (n / mod) % 10;
-            if (m % 5 == 4) {
-                retval += N[e << 1];
-                ++m;
-                if (m == 10) {
-                    retval += N[(e << 1) + 2];
-                    continue;
-                }
-            }
-            if (m >= 5) {
-                retval += N[(e << 1) + 1];
-                m -= 5;
-            }
-            while (m) {
-                retval += N[e << 1];
-                --m;
-            }
-        }
-        return retval;
-    }
-
     void LoadSystemNames(std::list<std::string>& names)
     {
         boost::filesystem::ifstream ifs(GetSettingsDir() / "starnames.txt");
@@ -1977,9 +1948,6 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
 {
 #ifdef FREEORION_BUILD_SERVER
-    std::list<std::string> star_names;
-    LoadSystemNames(star_names);
-
     SmallIntDistType star_type_gen = SmallIntDist(0, NUM_STAR_TYPES - 1);
 
     // generate star field
@@ -2939,17 +2907,17 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         Ship* ship = 0;
 
         ship = new Ship(empire_id, scout_design_id);
-        ship->Rename("Scout");
+        ship->Rename(empire->NewShipName());
         int ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
         ship = new Ship(empire_id, scout_design_id);
-        ship->Rename("Scout");
+        ship->Rename(empire->NewShipName());
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
 
         ship = new Ship(empire_id, colony_ship_design_id);
-        ship->Rename("Colony Ship");
+        ship->Rename(empire->NewShipName());
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
     }

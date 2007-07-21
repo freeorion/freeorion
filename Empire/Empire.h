@@ -433,6 +433,9 @@ public:
     /// inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is UniverseObject::INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
     int AddShipDesign(ShipDesign* ship_design);
 
+    /// generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
+    std::string NewShipName();
+
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership
      *  of the entry object to the Empire.
@@ -608,6 +611,8 @@ private:
       */
     double m_maintenance_total_cost;
 
+    std::map<std::string, int> m_ship_names_used; // map from name to number of times used
+
     friend class boost::serialization::access;
     Empire();
     template <class Archive>
@@ -695,7 +700,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_trade_resource_pool)
             & BOOST_SERIALIZATION_NVP(m_population_pool)
             & BOOST_SERIALIZATION_NVP(m_food_total_distributed)
-            & BOOST_SERIALIZATION_NVP(m_maintenance_total_cost);
+            & BOOST_SERIALIZATION_NVP(m_maintenance_total_cost)
+            & BOOST_SERIALIZATION_NVP(m_ship_names_used);
     }
 }
 
