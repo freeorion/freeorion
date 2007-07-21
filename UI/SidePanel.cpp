@@ -1060,14 +1060,12 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 {
-    if (!(pt > UpperLeft() && pt < LowerRight()))
-        return false;
-
-    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
+    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         if ((*it)->InWindow(pt))
             return true;
+    }
 
-    return false;
+    return UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight();
 }
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
