@@ -17,7 +17,7 @@ namespace {
 
 
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
-    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
+    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
 {
     TempUISoundDisabler sound_disabler;
     m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y,
@@ -25,6 +25,7 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
     m_sitreps_lb->SetStyle(GG::LB_NOSORT);
 
     AttachChild(m_sitreps_lb);
+    EnableChildClipping(false);
 
     Hide();
 }
@@ -58,6 +59,11 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void SitRepPanel::OnClose()
 {
     Hide();
+}
+
+void SitRepPanel::CloseClicked()
+{
+    ClosingSignal();
 }
 
 void SitRepPanel::Update()
