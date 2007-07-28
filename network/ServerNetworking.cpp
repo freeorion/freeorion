@@ -2,6 +2,7 @@
 
 #include "Networking.h"
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/bind.hpp>
 #include <boost/iterator/filter_iterator.hpp>

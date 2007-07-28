@@ -2,6 +2,7 @@
 
 #include "Networking.h"
 #include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
