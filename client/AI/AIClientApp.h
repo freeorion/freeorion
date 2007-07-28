@@ -20,6 +20,7 @@ public:
 
    /** \name Mutators */ //@{   
    void                 operator()();     ///< external interface to Run()
+   void                 Wait(int ms);     ///< put the main thread to sleep for \a ms milliseconds
    void                 Exit(int code);   ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
    //@}
    

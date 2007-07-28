@@ -3,8 +3,6 @@
 #include "Networking.h"
 #include "../util/AppInterface.h"
 
-#include <SDL/SDL_timer.h>
-
 #include <boost/bind.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
@@ -146,7 +144,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error, 
         // problem.  For now, this is sufficient, since rapid connects and disconnects are not a priority.
         if (m_new_connection) {
             // wait half a second if the first data read is an error; we probably just need more setup time
-            SDL_Delay(500);
+            Sleep(500);
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset)

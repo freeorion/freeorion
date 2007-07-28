@@ -39,6 +39,11 @@ const std::string& Language();
 /** Returns the canonical name of the only human player in a single player game. */
 const std::string& SinglePlayerName();
 
+#ifndef FREEORION_WIN32
+/** Puts the calling thread to sleep for \a ms milliseconds. */
+void Sleep(int ms);
+#endif
+
 /** The data that represent the galaxy setup for a new game. */
 struct GalaxySetupData
 {

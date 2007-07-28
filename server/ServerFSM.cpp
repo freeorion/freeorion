@@ -8,8 +8,6 @@
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
 
-#include <SDL/SDL_timer.h>
-
 #include <GG/Font.h>
 
 
@@ -92,7 +90,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
             }
         }
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Host player disconnected; server terminating.";
-        SDL_Delay(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
+        Sleep(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         m_server.Exit(1);
     } else if (m_server.m_losers.find(id) == m_server.m_losers.end()) { // player abnormally disconnected during a regular game
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
@@ -109,7 +107,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.NumPlayers()) {
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
-        SDL_Delay(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
+        Sleep(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         m_server.Exit(1);
     }
 }
@@ -308,7 +306,7 @@ boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
         }
     }
 
-    SDL_Delay(1000); // HACK! Add a delay here so the messages can propagate; setting socket linger does not appear to work
+    Sleep(1000); // HACK! Add a delay here so the messages can propagate; setting socket linger does not appear to work
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ) {
         PlayerConnectionPtr player_connection = *it++;

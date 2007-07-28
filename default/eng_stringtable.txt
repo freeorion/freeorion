@@ -416,9 +416,6 @@ Sets the number of turns that should elapse between autosaves.
 OPTIONS_DB_AUTOSAVE_SAVES
 Sets the number of autosaved games that should be kept.
 
-OPTIONS_DB_ENABLE_SDL_EVENT_THREAD
-Enables creation of a thread dedicated to handling incoming SDL messages. This may make FreeOrion more or less responsive, depending on your system.
-
 OPTIONS_DB_MUSIC_VOLUME
 The volume (0 to 255) at which music should be played.
 

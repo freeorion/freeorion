@@ -21,8 +21,6 @@
 #include "../../util/Order.h"
 #include "../../Empire/Empire.h"
 
-#include <SDL/SDL_timer.h>
-
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 
@@ -111,7 +109,7 @@ void AIClientApp::Run()
             Networking().GetMessage(msg);
             HandleMessage(msg);
         } else {
-            SDL_Delay(250);
+            Sleep(250);
         }
     }
 }

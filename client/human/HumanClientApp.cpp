@@ -83,9 +83,6 @@ namespace {
         db.Add("autosave.multiplayer", "OPTIONS_DB_AUTOSAVE_MULTIPLAYER", false, Validator<bool>());
         db.Add("autosave.turns", "OPTIONS_DB_AUTOSAVE_TURNS", 5, RangedValidator<int>(1, 50));
         db.Add("autosave.saves", "OPTIONS_DB_AUTOSAVE_SAVES", 10, RangedValidator<int>(1, 50));
-#if defined(FREEORION_LINUX)
-        db.Add("enable-sdl-event-thread", "OPTIONS_DB_ENABLE_SDL_EVENT_THREAD", false, Validator<bool>());
-#endif
         db.Add("music-volume", "OPTIONS_DB_MUSIC_VOLUME", 255, RangedValidator<int>(1, 255));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -379,17 +376,7 @@ void HumanClientApp::SDLInit()
     // Set Fullscreen if specified at command line or in config-file
     DoFullScreen = GetOptionsDB().Get<bool>("fullscreen") ? SDL_FULLSCREEN : 0;
 
-    // SDL on MacOsX crashes if the Eventhandling-thread isn't the
-    // application's main thread. It seems that only the applications
-    // main-thread is able to receive events...
-#if defined(FREEORION_WIN32) || defined(FREEORION_MACOSX) 
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
-#else
-    Uint32 init_flags = SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE;
-    if (GetOptionsDB().Get<bool>("enable-sdl-event-thread"))
-        init_flags |= SDL_INIT_EVENTTHREAD;
-    if (SDL_Init(init_flags) < 0) {
-#endif
         Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
         Exit(1);
     }

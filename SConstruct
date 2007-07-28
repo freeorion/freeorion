@@ -42,10 +42,6 @@ options.Add('boost_signals_namespace',
 options.Add('with_sdl', 'Root directory of SDL installation')
 options.Add('with_sdl_include', 'Specify exact include dir for SDL headers')
 options.Add('with_sdl_libdir', 'Specify exact library dir for SDL library')
-options.Add(BoolOption('with_builtin_sdlnet', 'Use built-in version of SDL_net', 1))
-options.Add('with_sdlnet', 'Root directory of SDL_net installation (ignored if $with_builtin_sdlnet is true)')
-options.Add('with_sdlnet_include', 'Specify exact include dir for SDL_net headers (ignored if $with_builtin_sdlnet is true)')
-options.Add('with_sdlnet_libdir', 'Specify exact library dir for SDL_net library (ignored if $with_builtin_sdlnet is true)')
 options.Add('with_ft', 'Root directory of FreeType2 installation')
 options.Add('with_ft_include', 'Specify exact include dir for FreeType2 headers')
 options.Add('with_ft_libdir', 'Specify exact library dir for FreeType2 library')
@@ -227,7 +223,6 @@ if not env.GetOption('clean'):
 
         freeorion_boost_libs = [
             ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
-            ('boost_thread', 'boost/thread/thread.hpp', 'boost::thread::thread();'),
             ('boost_iostreams', 'boost/iostreams/filtering_stream.hpp', ''),
             ('boost_python', 'boost/python.hpp', 'boost::python::throw_error_already_set();')
             ]
@@ -245,7 +240,8 @@ if not env.GetOption('clean'):
 
             boost_libs = freeorion_boost_libs + [
                 ('boost_signals', 'boost/signals.hpp', 'boost::signals::connection();'),
-                ('boost_filesystem', 'boost/filesystem/operations.hpp', 'boost::filesystem::initial_path();')
+                ('boost_filesystem', 'boost/filesystem/operations.hpp', 'boost::filesystem::initial_path();'),
+                ('boost_thread', 'boost/thread/thread.hpp', 'boost::thread::yield();'),
                 ]
             if not conf.CheckBoost(boost_version_string, boost_libs, conf, not ms_linker):
                 Exit(1)
@@ -280,13 +276,6 @@ if not env.GetOption('clean'):
             sdl_config = WhereIs('sdl-config')
             if not conf.CheckSDL(options, conf, sdl_config, not ms_linker):
                 Exit(1)
-
-            # SDL_net (optional)
-            if not env['with_builtin_sdlnet']:
-                AppendPackagePaths('sdlnet', env)
-                if not conf.CheckCHeader('SDL/SDL_net.h') and not conf.CheckCHeader('SDL_net.h') or \
-                       not conf.CheckLib('SDL_net', 'SDLNet_Init'):
-                    Exit(1)
 
             # FreeType2
             AppendPackagePaths('ft', env)

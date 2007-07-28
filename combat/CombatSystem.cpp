@@ -360,7 +360,6 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         msg = XMLDoc();
         msg.root_node.AppendChild(GenerateCombatUpdateMessage(-1,system_id,empire_combat_forces).XMLEncode());
         SendMessageToAllPlayers(Message::COMBAT_ROUND_UPDATE, msg);
-        //SDL_Delay(1000); maybe we add an delay to illustrate players a ongoing combat
     }
 
 #ifdef DEBUG_COMBAT

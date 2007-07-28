@@ -20,6 +20,8 @@
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/cerrno.hpp>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/xtime.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -156,6 +158,21 @@ const std::string& SinglePlayerName()
     static const std::string RETVAL("Happy_Player");
     return RETVAL;
 }
+
+#ifndef FREEORION_WIN32
+void Sleep(int ms)
+{
+    boost::xtime t;
+    boost::xtime_get(&t, boost::TIME_UTC);
+    int ns_sum = t.nsec + ms * 1000000;
+    const int NANOSECONDS_PER_SECOND = 1000000000;
+    int delta_secs = ns_sum / NANOSECONDS_PER_SECOND;
+    int nanosecs = ns_sum % NANOSECONDS_PER_SECOND;
+    t.sec += delta_secs;
+    t.nsec = nanosecs;
+    boost::thread::sleep(t);
+}
+#endif
 
 
 /////////////////////////////////////////////////////

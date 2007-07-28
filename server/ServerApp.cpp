@@ -30,10 +30,6 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
-#include <SDL/SDL_timer.h>
-// for dummy video driver setenv-hack
-#include <SDL/SDL_getenv.h>
-
 #include <ctime>
 
 
@@ -609,7 +605,7 @@ void ServerApp::ProcessTurns()
 
     // if a combat happened, give the human user a chance to look at the results
     if (combat_happend)
-        SDL_Delay(1500);
+        Sleep(1500);
 
     // process production and growth phase
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
@@ -717,7 +713,7 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    SDL_Delay(1000);
+    Sleep(1000);
 
     // dump connections to eliminated players, and remove server-side empire data
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
@@ -735,7 +731,7 @@ void ServerApp::ProcessTurns()
         while (m_networking.NumPlayers() == 1) {
             m_networking.SendMessage(EndGameMessage((*m_networking.established_begin())->ID(), Message::LAST_OPPONENT_DEFEATED));
         }
-        SDL_Delay(2000);
+        Sleep(2000);
         Exit(0);
     } else if (m_ai_IDs.size() == m_networking.NumPlayers()) { // if there are none but AI players left, we're done
         m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";

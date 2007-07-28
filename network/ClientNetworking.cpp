@@ -3,8 +3,6 @@
 #include "Networking.h"
 #include "../util/AppInterface.h"
 
-#include <SDL/SDL_timer.h>
-
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
@@ -177,7 +175,7 @@ bool ClientNetworking::ConnectToLocalHostServer(boost::posix_time::seconds timeo
 void ClientNetworking::DisconnectFromServer()
 {
     m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-    SDL_Delay(1000); // HACK! wait a bit for the disconnect to occur
+    Sleep(1000); // HACK! wait a bit for the disconnect to occur
 }
 
 void ClientNetworking::SendMessage(const Message& message)
