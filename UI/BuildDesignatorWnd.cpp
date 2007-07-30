@@ -992,9 +992,9 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     MoveChildUp(m_build_detail_panel);
     MoveChildUp(m_build_selector);
 
-    ShowAllTypes(false);            // without populating the list
-    ShowAvailability(false, false); // ...
-    ShowAvailability(true, false);  // ...
+    ShowAllTypes(false);            // show all types without populating the list
+    HideAvailability(false, false); // hide unavailable items without populating the list
+    ShowAvailability(true, false);  // show available items without populating the list
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
