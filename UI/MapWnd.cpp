@@ -1138,7 +1138,7 @@ void MapWnd::RenderBackgrounds()
         while (x < app_width + bg_width) {
             y = std::fmod(m_bg_position_Y[i], bg_height);
             while (y < app_height + bg_height) {
-                m_backgrounds[i]->OrthoBlit(static_cast<int>(x - bg_width), static_cast<int>(y - bg_height), false);
+                m_backgrounds[i]->OrthoBlit(GG::Pt(static_cast<int>(x - bg_width), static_cast<int>(y - bg_height)));
                 y += m_backgrounds[i]->Height();
             }
             x += m_backgrounds[i]->Width();
@@ -1155,9 +1155,7 @@ void MapWnd::RenderBackgrounds()
                    static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
         m_nebulae[i]->OrthoBlit(ul, 
                                 ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
-                                            static_cast<int>(nebula_height * m_zoom_factor)), 
-                                0,
-                                false);
+                                            static_cast<int>(nebula_height * m_zoom_factor)));
     }
 }
 

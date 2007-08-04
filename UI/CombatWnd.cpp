@@ -117,8 +117,8 @@ class CombatInfoControl : public GG::Control
           GG::FlatRectangle(col.Left(), col.Top()+38, col.Right()+2, col.Bottom(), GG::CLR_ZERO,border_color, 2);
           glColor(ClientUI::TextColor());
 
-          img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight(), false);
-          img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight(), false);
+          img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight());
+          img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight());
 
           font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
           for(unsigned int j=0;j<4;j++)

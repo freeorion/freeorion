@@ -58,7 +58,7 @@ void FocusButton::Render()
         GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_SHADOW, GG::CLR_ZERO, 0);
     if (m_texture) {
         glColor(GG::CLR_WHITE);
-        m_texture->OrthoBlit(ul, lr, 0, false);
+        m_texture->OrthoBlit(ul, lr, 0);
     }
 }
 

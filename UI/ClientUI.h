@@ -79,7 +79,7 @@ public:
 
     static void GenerateSitRepText(SitRepEntry *sit_rep); ///< generates a SitRep string from \a sit_rep.
 
-    /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true load default
+    /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true; loads default
         missing.png if name isn't found. */
     static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 

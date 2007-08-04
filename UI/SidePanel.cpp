@@ -540,11 +540,10 @@ public:
             double x_scale = PlanetDiameter(m_size) / static_cast<double>(texture_w);
             double y_scale = PlanetDiameter(m_size) / static_cast<double>(texture_h);
             glColor4ub(255, 255, 255, m_atmosphere_alpha);
-            m_atmosphere_texture->OrthoBlit(static_cast<int>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
-                                            static_cast<int>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale),
-                                            static_cast<int>(lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale),
-                                            static_cast<int>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale),
-                                            0, false);
+            m_atmosphere_texture->OrthoBlit(GG::Pt(static_cast<int>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
+                                                   static_cast<int>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale)),
+                                            GG::Pt(static_cast<int>(lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale),
+                                                   static_cast<int>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale)));
         }
     }
 
@@ -1223,7 +1222,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   //farming
   glColor(ClientUI::TextColor());
-  icon=IconFarming(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  icon=IconFarming(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
   //x+=font->Height();
   text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
@@ -1232,7 +1231,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   //mining
   glColor(ClientUI::TextColor());
-  icon=IconMining(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  icon=IconMining(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
   //x+=font->Height();
   text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
@@ -1241,7 +1240,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   //trade
   glColor(ClientUI::TextColor());
-  icon=IconTrade(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  icon=IconTrade(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
   //x+=font->Height();
   text = (trade<0?"-":"+") + lexical_cast<std::string>(trade);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
@@ -1250,7 +1249,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   //research
   glColor(ClientUI::TextColor());
-  icon=IconResearch(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  icon=IconResearch(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
   //x+=font->Height();
   text = (research<0?"-":"+") + lexical_cast<std::string>(research);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
@@ -1259,7 +1258,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   //industy
   glColor(ClientUI::TextColor());
-  icon=IconIndustry(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  icon=IconIndustry(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
   //x+=font->Height();
   text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
@@ -1268,7 +1267,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   //defense
   glColor(ClientUI::TextColor());
-  icon=IconDefense(); icon->OrthoBlit(x,y,x+font->Height(),y+font->Height(), 0, false);
+  icon=IconDefense(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
   //x+=font->Height();
   text = lexical_cast<std::string>(defense)+"/"+lexical_cast<std::string>(defense*3);
   font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
