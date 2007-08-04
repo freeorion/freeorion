@@ -200,10 +200,10 @@ FocusSelector::FocusSelector(int w, const ResourceCenter& resource_center) :
             delta_str << "--";
         } else {
             if (0.0 < delta) {
-                delta_color = GG::CLR_GREEN;
+                delta_color = ClientUI::StatIncrColor();
                 delta_str << '+';
             } else if (delta < 0.0) {
-                delta_color = GG::CLR_RED;
+                delta_color = ClientUI::StatDecrColor();
             }
             if (delta < -1.0 || 1.0 < delta)
                 delta_str << boost::format("%.3g") % delta;

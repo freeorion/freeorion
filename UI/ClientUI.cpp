@@ -254,8 +254,8 @@ namespace {
         db.Add("UI.edit-hilite", "OPTIONS_DB_UI_EDIT_HILITE", StreamableColor(GG::Clr(43, 81, 102, 255)), Validator<StreamableColor>());
         db.Add("UI.edit-interior", "OPTIONS_DB_UI_EDIT_INTERIOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
         db.Add("UI.multiedit-interior", "OPTIONS_DB_UI_MULTIEDIT_INTERIOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.stat-increase-color", "OPTIONS_DB_UI_STAT_INCREASE_COLOR", StreamableColor(GG::Clr(127, 255, 127, 255)), Validator<StreamableColor>());
-        db.Add("UI.stat-decrease-color", "OPTIONS_DB_UI_STAT_DECREASE_COLOR", StreamableColor(GG::Clr(255, 127, 127, 255)), Validator<StreamableColor>());
+        db.Add("UI.stat-increase-color", "OPTIONS_DB_UI_STAT_INCREASE_COLOR", StreamableColor(GG::Clr(0, 255, 0, 255)), Validator<StreamableColor>());
+        db.Add("UI.stat-decrease-color", "OPTIONS_DB_UI_STAT_DECREASE_COLOR", StreamableColor(GG::Clr(255, 0, 0, 255)), Validator<StreamableColor>());
         db.Add("UI.sidepanel-color", "OPTIONS_DB_UI_SIDEPANEL_COLOR", StreamableColor(GG::Clr(0, 0, 0, 220)), Validator<StreamableColor>());
         db.Add("UI.wnd-outer-border-color", "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR", StreamableColor(GG::Clr(64, 64, 64, 255)), Validator<StreamableColor>());
         db.Add("UI.wnd-border-color", "OPTIONS_DB_UI_WND_BORDER_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());

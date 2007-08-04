@@ -232,7 +232,7 @@ MapWnd::MapWnd() :
     m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
                                      (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(),
                                      GG::CLR_WHITE,0,0,3,2,false,false,false,true);
-    m_population->SetPositiveColor(GG::CLR_GREEN); m_population->SetNegativeColor(GG::CLR_RED);
+    m_population->SetPositiveColor(ClientUI::StatIncrColor()); m_population->SetNegativeColor(ClientUI::StatDecrColor());
     m_toolbar->AttachChild(m_population);
    
     m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
@@ -248,19 +248,19 @@ MapWnd::MapWnd() :
     m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
                                 (ClientUI::ArtDir() / "icons" / "trade.png").native_file_string(),
                                 GG::CLR_WHITE,0,0,3,2,false,false,false,true);
-    m_trade->SetPositiveColor(GG::CLR_GREEN); m_trade->SetNegativeColor(GG::CLR_RED);
+    m_trade->SetPositiveColor(ClientUI::StatIncrColor()); m_trade->SetNegativeColor(ClientUI::StatDecrColor());
     m_toolbar->AttachChild(m_trade);
 
     m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
                                   (ClientUI::ArtDir() / "icons" / "mining.png").native_file_string(),
                                   GG::CLR_WHITE,0,0,2,2,false,false,false,true);
-    m_mineral->SetPositiveColor(GG::CLR_GREEN); m_mineral->SetNegativeColor(GG::CLR_RED);
+    m_mineral->SetPositiveColor(ClientUI::StatIncrColor()); m_mineral->SetNegativeColor(ClientUI::StatDecrColor());
     m_toolbar->AttachChild(m_mineral);
 
     m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
                                (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(),
                                GG::CLR_WHITE,0,0,3,2,false,false,false,true);
-    m_food->SetPositiveColor(GG::CLR_GREEN); m_food->SetNegativeColor(GG::CLR_RED);
+    m_food->SetPositiveColor(ClientUI::StatIncrColor()); m_food->SetNegativeColor(ClientUI::StatDecrColor());
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box

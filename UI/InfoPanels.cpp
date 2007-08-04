@@ -35,47 +35,9 @@ namespace {
             m_obj(obj),
             m_meter_map(meter_map),
             m_summary_title(0), m_current_label(0), m_current_value(0), m_next_turn_label(0),
-            m_next_turn_value(0), m_change_label(0), m_change_value(0), m_meter_title(0)
-        {
-            row_height = ClientUI::Pts()*3/2;
-            const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
-            
-            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-            const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
-            
-            m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "Resource Production / Amount", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
-            AttachChild(m_summary_title);
-
-            m_current_label = new GG::TextControl(0, row_height, LABEL_WIDTH, row_height, "Current", font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
-            AttachChild(m_current_label);
-            m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "0", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
-            AttachChild(m_current_value);
-
-            m_next_turn_label = new GG::TextControl(0, row_height*2, LABEL_WIDTH, row_height, "Next Turn", font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
-            AttachChild(m_next_turn_label);
-            m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "0", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
-            AttachChild(m_next_turn_value);
-
-            m_change_label = new GG::TextControl(0, row_height*3, LABEL_WIDTH, row_height, "Change", font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
-            AttachChild(m_change_label);
-            m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "+0", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
-            AttachChild(m_change_value);
-
-            m_meter_title = new GG::TextControl(0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "Meter Max Effects", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
-            AttachChild(m_meter_title);
-
-            UpdateEffectLabelsAndValues();
-            int y = m_meter_title->LowerRight().y;
-            for (int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-                m_effect_labels_and_values[i].first->MoveTo(GG::Pt(0, y));
-                AttachChild(m_effect_labels_and_values[i].first);
-                m_effect_labels_and_values[i].second->MoveTo(GG::Pt(LABEL_WIDTH, y));
-                AttachChild(m_effect_labels_and_values[i].second);
-                y += row_height;
-            }
-
-            Resize(GG::Pt(TOTAL_WIDTH, y));
-        }
+            m_next_turn_value(0), m_change_label(0), m_change_value(0), m_meter_title(0),
+            initialized(false)
+        {}
 
         virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
             const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
@@ -86,41 +48,170 @@ namespace {
         virtual void Render() {
             GG::Pt ul = UpperLeft();
             GG::Pt lr = LowerRight();
-            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
+            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
             GG::FlatRectangle(ul.x, ul.y, lr.x, ul.y + row_height, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
             GG::FlatRectangle(ul.x, ul.y + 4*row_height, lr.x, ul.y + 5*row_height, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
         }
 
     private:
+        void Initialize() {
+            row_height = ClientUI::Pts()*3/2;
+            const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
+            
+            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+            const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
+            
+            m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_summary_title);
+
+            m_current_label = new GG::TextControl(0, row_height, LABEL_WIDTH, row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_current_label);
+            m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            AttachChild(m_current_value);
+
+            m_next_turn_label = new GG::TextControl(0, row_height*2, LABEL_WIDTH, row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_next_turn_label);
+            m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            AttachChild(m_next_turn_value);
+
+            m_change_label = new GG::TextControl(0, row_height*3, LABEL_WIDTH, row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_change_label);
+            m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            AttachChild(m_change_value);
+
+            m_meter_title = new GG::TextControl(0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_meter_title);
+
+            UpdateSummary();
+            UpdateEffectLabelsAndValues();
+            int y = m_meter_title->LowerRight().y;
+            for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
+                m_effect_labels_and_values[i].first->MoveTo(GG::Pt(0, y));
+                m_effect_labels_and_values[i].second->MoveTo(GG::Pt(LABEL_WIDTH, y));
+                AttachChild(m_effect_labels_and_values[i].second);
+                y += row_height;
+            }
+
+            Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, y));
+
+            initialized = true;
+        }
+
+        virtual void UpdateImpl(int mode, const Wnd* target) {
+            if (!initialized)
+                Initialize();
+        }
+
         // total resource production or amounts summary text
-        void UpdateSummaryAmounts() {
+        void UpdateSummary() {
             const Meter* meter = m_obj->GetMeter(m_meter_type);
             if (!meter) return;
             
+            double current = 0, change = 0, next = 0, meter_max = 0;
+            const PopCenter* pop = 0;
+            const ResourceCenter* res = 0;
+
             switch (m_meter_type) {
             case METER_POPULATION:
-                m_summary_title->SetText("Population");
-                m_current_value->SetText("23");
+                pop = dynamic_cast<const PopCenter*>(m_obj);
+                assert(pop);
+                current = pop->PopPoints();
+                change = pop->FuturePopGrowth();
+                next = current + change;
+                meter_max = pop->PopulationMeter().Max();
+                m_summary_title->SetText(UserString("PP_POPULATION"));
                 break;
 
             case METER_FARMING:
-            case METER_INDUSTRY:
-            case METER_RESEARCH:
-            case METER_TRADE:
-            case METER_MINING:
-            case METER_CONSTRUCTION:
-            case METER_HEALTH:
-            default:
-                m_summary_title->SetText("Soemthing");
-                m_current_value->SetText(">??!");
+                res = dynamic_cast<const ResourceCenter*>(m_obj);
+                assert(res);
+                current = res->FarmingPoints();
+                next = res->ProjectedFarmingPoints();
+                change = next - current;
+                meter_max = res->FarmingMeter().Max();
+                m_summary_title->SetText(UserString("RP_FOOD"));
                 break;
+
+            case METER_INDUSTRY:
+                res = dynamic_cast<const ResourceCenter*>(m_obj);
+                assert(res);
+                current = res->IndustryPoints();
+                next = res->ProjectedIndustryPoints();
+                change = next - current;
+                meter_max = res->IndustryMeter().Max();
+                m_summary_title->SetText(UserString("RP_INDUSTRY"));
+                break;
+
+            case METER_RESEARCH:
+                res = dynamic_cast<const ResourceCenter*>(m_obj);
+                assert(res);
+                current = res->ResearchPoints();
+                next = res->ProjectedResearchPoints();
+                change = next - current;
+                meter_max = res->ResearchMeter().Max();
+                m_summary_title->SetText(UserString("RP_RESEARCH"));
+                break;
+
+            case METER_TRADE:
+                res = dynamic_cast<const ResourceCenter*>(m_obj);
+                assert(res);
+                current = res->TradePoints();
+                next = res->ProjectedTradePoints();
+                change = next - current;
+                meter_max = res->TradeMeter().Max();
+                m_summary_title->SetText(UserString("RP_TRADE"));
+                break;
+
+            case METER_MINING:
+                res = dynamic_cast<const ResourceCenter*>(m_obj);
+                assert(res);
+                current = res->MiningPoints();
+                next = res->ProjectedMiningPoints();
+                change = next - current;
+                meter_max = res->MiningMeter().Max();
+                m_summary_title->SetText(UserString("RP_MINERALS"));
+                break;
+
+            case METER_CONSTRUCTION:
+                res = dynamic_cast<const ResourceCenter*>(m_obj);
+                assert(res);
+                current = res->ConstructionMeter().Current();
+                next = res->ProjectedCurrent(METER_CONSTRUCTION);
+                change = next - current;
+                meter_max = res->ConstructionMeter().Max();
+                m_summary_title->SetText(UserString("RP_CONSTRUCTION"));
+                break;
+
+            case METER_HEALTH:
+                pop = dynamic_cast<const PopCenter*>(m_obj);
+                assert(pop);
+                current = pop->Health();
+                change = pop->FutureHealthGrowth();
+                next = current + change;
+                meter_max = pop->HealthMeter().Max();
+                m_summary_title->SetText(UserString("PP_HEALTH"));
+                break;
+            default:
+                m_summary_title->SetText("");
             }
 
-            //retval.first = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("METER_FARMING"));
-            //retval.second = std::pair<std::string, std::FlexibleFormat(UserString("RP_FOOD_TOOLTIP")) % current % next % change;
+            m_current_value->SetText(StatisticIcon::DoubleToString(current, 2, false, false));
+            m_next_turn_value->SetText(StatisticIcon::DoubleToString(next, 2, false, false));
+            GG::Clr clr = ClientUI::TextColor();
+            if (change > 0.0)
+                clr = ClientUI::StatIncrColor();
+            else if (change < 0.0)
+                clr = ClientUI::StatDecrColor();
+            m_change_value->SetText(GG::RgbaTag(clr) + StatisticIcon::DoubleToString(change, 2, false, true) + "</rgba>");
+            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % StatisticIcon::DoubleToString(meter_max, 2, false, false)));
         }
 
+        // meter effect entries
         void UpdateEffectLabelsAndValues() {
+            for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
+                DeleteChild(m_effect_labels_and_values[i].first);
+                DeleteChild(m_effect_labels_and_values[i].second);
+            }
             m_effect_labels_and_values.clear();
 
             const Meter* meter = m_obj->GetMeter(m_meter_type);
@@ -142,45 +233,53 @@ namespace {
                 const Empire* empire = 0;
                 const Building* building = 0;
                 const Planet* planet = 0;
-                std::string text = "";
+                std::string text = "", name = "";
 
                 switch (info_it->cause_type) {
                 case ECT_UNIVERSE_TABLE_ADJUSTMENT:
-                    text += "Basic Focus & Universe";
+                    text += UserString("TT_BASIC_FOCUS_AND_UNIVERSE");
                     break;
 
                 case ECT_TECH:
                     if (empire_id >= 0) {
                         empire = EmpireManager().Lookup(empire_id);
                         if (empire)
-                            text += empire->Name() + " ";
+                            name = empire->Name();
                     }
-                    text += "Tech " + UserString(info_it->specific_cause);
+                    text += boost::io::str(FlexibleFormat(UserString("TT_TECH")) % name % UserString(info_it->specific_cause));
                     break;
 
                 case ECT_BUILDING:
-                    text += "Building " + UserString(info_it->specific_cause);
                     building = dynamic_cast<const Building*>(source);
                     if (building) {
                         planet = building->GetPlanet();
                         if (planet) {
-                            text += " at " + planet->Name();
+                            name = planet->Name();
                         }
                     }
+                    text += boost::io::str(FlexibleFormat(UserString("TT_BUILDING")) % name % UserString(info_it->specific_cause));
                     break;
 
                 case ECT_SPECIAL:
-                    text += "Special " + UserString(info_it->specific_cause);
+                    text += boost::io::str(FlexibleFormat(UserString("TT_SPECIAL")) % UserString(info_it->specific_cause));
                     break;
 
                 case ECT_UNKNOWN_CAUSE:
                 default:
-                    text = "Unknown";
+                    text += UserString("TT_UNKNOWN");
                 }
-                m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(
-                    new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER),
-                    new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, StatisticIcon::DoubleToString(info_it->meter_change, 3, false, true),
-                                        font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER)));
+                GG::TextControl* label = new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+                AttachChild(label);
+                GG::Clr clr = ClientUI::TextColor();
+                if (info_it->meter_change > 0.0)
+                    clr = ClientUI::StatIncrColor();
+                else if (info_it->meter_change < 0.0)
+                    clr = ClientUI::StatDecrColor();
+                GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, 
+                                                             GG::RgbaTag(clr) + StatisticIcon::DoubleToString(info_it->meter_change, 2, false, true) + "</rgba>",
+                                                             font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+                AttachChild(value);
+                m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
             }
         }
                 
@@ -206,6 +305,8 @@ namespace {
         static const int LABEL_WIDTH = 180;
         static const int VALUE_WIDTH = 50;
         static const int EDGE_PAD = 3;
+
+        bool initialized;
     };
 
     class SpecialBrowseWnd : public GG::BrowseInfoWnd {
@@ -217,7 +318,7 @@ namespace {
         {
             const Special* special = GetSpecial(special_name);
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
-            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, 0, GG::CLICKABLE);
+            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
             AttachChild(m_icon);
 
             std::string text = UserString(special->Name()) + "\n\n" + UserString(special->Description());
@@ -1683,7 +1784,7 @@ void SpecialsPanel::Update()
         const Special* special = GetSpecial(*it);
 
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, 0, GG::CLICKABLE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new SpecialBrowseWnd(special->Name())));
         m_icons.push_back(graphic);

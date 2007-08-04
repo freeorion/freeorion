@@ -1063,11 +1063,11 @@ Colonize
 
 ##Population Panel#########
 
-PP_POPULATION_TOOLTIP
-Population\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+PP_POPULATION
+Population
 
-PP_HEALTH_TOOLTIP
-Health\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+PP_HEALTH
+Health
 
 ##Resources Panel##########
 
@@ -1077,23 +1077,23 @@ Primary Focus: %1%
 RP_SECONDARY_FOCUS_TOOLTIP
 Secondary Focus: %1%
 
-RP_FOOD_TOOLTIP
-Food Production\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+RP_FOOD
+Food Production
 
-RP_MINERALS_TOOLTIP
-Minerals Production\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+RP_MINERALS
+Minerals Production
 
-RP_INDUSTRY_TOOLTIP
-Industrial Output\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+RP_INDUSTRY
+Industrial Output
 
-RP_RESEARCH_TOOLTIP
-Research Output\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+RP_RESEARCH
+Research Output
 
-RP_TRADE_TOOLTIP
-Trade Level\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%
+RP_TRADE
+Trade Level
 
-RP_CONSTRUCTION_TOOLTIP
-Construction Infrastructure\nCurrent: %1%\nNext Turn: %2% (estimate)\nChange: %3%\nMaximum: %4%
+RP_CONSTRUCTION
+Construction Infrastructure
 
 ## Buildings Panel##########
 
@@ -1102,6 +1102,35 @@ BP_INCOMPLETE_BUILDING_TOOLTIP
 
 BP_COMPLETE_BUILDING_TOOLTIP
 %1%\n\n%2%
+
+## General Tooltips#########
+
+TT_CURRENT
+Current
+
+TT_NEXT
+Next Turn
+
+TT_CHANGE
+Change
+
+TT_MAX_METER
+Max Meter: %1%
+
+TT_BASIC_FOCUS_AND_UNIVERSE
+Basic Focus and Universe
+
+TT_TECH
+%1% Tech %2%
+
+TT_BUILDING
+%1% Building %2%
+
+TT_SPECIAL
+Special %1%
+
+TT_UNKNOWN
+Unknown
 
 ## Misc. Sidepanel##########
 
