@@ -2180,6 +2180,17 @@ ECONOMICS_CATEGORY
 Economics
 
 ####################################
+# Misc / Debug Tech Stuff          #
+####################################
+
+TEST_TECH
+Test Tech
+
+TEST_TECH_DESC
+This is a test tech.  Research at your own risk, and don't be surprised, complain on the forums or post bug reports if weird things happen after you do.
+
+
+####################################
 # Theory Tech Names & Descriptions #
 ####################################
 

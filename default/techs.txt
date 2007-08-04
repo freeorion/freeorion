@@ -751,8 +751,8 @@ Tech
 TechCategory "PRODUCTION_CATEGORY"
 
 Tech
-    name = "THEORY_SHORT_DESC"
-    description = "TEST_DESC"
+    name = "TEST_TECH"
+    description = "TEST_TECH_DESC"
     short_description = "THEORY_SHORT_DESC"
     techtype = Application
     category = "PRODUCTION_CATEGORY"
