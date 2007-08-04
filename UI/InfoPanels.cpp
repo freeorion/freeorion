@@ -18,88 +18,238 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/StaticGraphic.h>
+#include <GG/BrowseInfoWnd.h>
+#include <GG/StyleFactory.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
 using boost::lexical_cast;
 
-// Free Function
-std::string EffectAccountingToolTip(MeterType meter_type, const UniverseObject* obj, 
-                                                 const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map)
-{
-    std::string text = "";
-
-    const Meter* meter = obj->GetMeter(meter_type);
-    if (!meter) return text;
-    
-    // determine if meter_map contains info about the specified meter
-    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = meter_map.find(meter_type);
-    if (meter_it == meter_map.end() || meter_it->second.empty()) {
-        // no info about specified meter -> no tooltip
-        text = "Meter Max: " + lexical_cast<std::string>(meter->Max());
-        return text;
-    }
-
-    text = "Meter Max: " + lexical_cast<std::string>(meter->Max()) + "\n\nAccounting:";
-    
-    // append lines to tooltip for each alteration to the meter
-    const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
-    for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-        const UniverseObject* source = GetUniverse().Object(info_it->source_id);
-
-        int empire_id = info_it->caused_by_empire_id;
-        const Empire* empire = 0;
-        const Building* building = 0;
-        const Planet* planet = 0;
-
-        switch (info_it->cause_type) {
-        case ECT_UNIVERSE_TABLE_ADJUSTMENT:
-            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
-                 +  " from Basic Focus and Universe Adjustments";
-            break;
-
-        case ECT_TECH:
-            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
-                 +  " due to: " + UserString(info_it->specific_cause) + " [Tech]";
+namespace {
+    class MeterBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map) :
+            GG::BrowseInfoWnd(0, 0, LABEL_WIDTH + VALUE_WIDTH, 1),
+            m_meter_type(meter_type),
+            m_obj(obj),
+            m_meter_map(meter_map),
+            m_summary_title(0), m_current_label(0), m_current_value(0), m_next_turn_label(0),
+            m_next_turn_value(0), m_change_label(0), m_change_value(0), m_meter_title(0)
+        {
+            row_height = ClientUI::Pts()*3/2;
+            const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
             
-            if (empire_id != -1) {
-                empire = EmpireManager().Lookup(empire_id);   
-                if (empire) {
-                    text += " of empire: " + empire->Name() + " with id: " + boost::lexical_cast<std::string>(empire_id);
+            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+            const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
+            
+            m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "Resource Production / Amount", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_summary_title);
+
+            m_current_label = new GG::TextControl(0, row_height, LABEL_WIDTH, row_height, "Current", font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_current_label);
+            m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "0", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            AttachChild(m_current_value);
+
+            m_next_turn_label = new GG::TextControl(0, row_height*2, LABEL_WIDTH, row_height, "Next Turn", font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_next_turn_label);
+            m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "0", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            AttachChild(m_next_turn_value);
+
+            m_change_label = new GG::TextControl(0, row_height*3, LABEL_WIDTH, row_height, "Change", font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_change_label);
+            m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "+0", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            AttachChild(m_change_value);
+
+            m_meter_title = new GG::TextControl(0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "Meter Max Effects", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            AttachChild(m_meter_title);
+
+            UpdateEffectLabelsAndValues();
+            int y = m_meter_title->LowerRight().y;
+            for (int i = 0; i < m_effect_labels_and_values.size(); ++i) {
+                m_effect_labels_and_values[i].first->MoveTo(GG::Pt(0, y));
+                AttachChild(m_effect_labels_and_values[i].first);
+                m_effect_labels_and_values[i].second->MoveTo(GG::Pt(LABEL_WIDTH, y));
+                AttachChild(m_effect_labels_and_values[i].second);
+                y += row_height;
+            }
+
+            Resize(GG::Pt(TOTAL_WIDTH, y));
+        }
+
+        virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
+            const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
+            assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
+            return true;
+        }
+
+        virtual void Render() {
+            GG::Pt ul = UpperLeft();
+            GG::Pt lr = LowerRight();
+            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
+            GG::FlatRectangle(ul.x, ul.y, lr.x, ul.y + row_height, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+            GG::FlatRectangle(ul.x, ul.y + 4*row_height, lr.x, ul.y + 5*row_height, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
+        }
+
+    private:
+        // total resource production or amounts summary text
+        void UpdateSummaryAmounts() {
+            const Meter* meter = m_obj->GetMeter(m_meter_type);
+            if (!meter) return;
+            
+            switch (m_meter_type) {
+            case METER_POPULATION:
+                m_summary_title->SetText("Population");
+                m_current_value->SetText("23");
+                break;
+
+            case METER_FARMING:
+            case METER_INDUSTRY:
+            case METER_RESEARCH:
+            case METER_TRADE:
+            case METER_MINING:
+            case METER_CONSTRUCTION:
+            case METER_HEALTH:
+            default:
+                m_summary_title->SetText("Soemthing");
+                m_current_value->SetText(">??!");
+                break;
+            }
+
+            //retval.first = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("METER_FARMING"));
+            //retval.second = std::pair<std::string, std::FlexibleFormat(UserString("RP_FOOD_TOOLTIP")) % current % next % change;
+        }
+
+        void UpdateEffectLabelsAndValues() {
+            m_effect_labels_and_values.clear();
+
+            const Meter* meter = m_obj->GetMeter(m_meter_type);
+            if (!meter) return;
+            
+            // determine if meter_map contains info about the meter that this MeterBrowseWnd is describing
+            std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = m_meter_map.find(m_meter_type);
+            if (meter_it == m_meter_map.end() || meter_it->second.empty())
+                return; // couldn't find appropriate meter type, or there were no entries for that meter.
+
+            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+            // add label-value pairs for each alteration recorded for this meter
+            const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
+            for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
+                const UniverseObject* source = GetUniverse().Object(info_it->source_id);
+
+                int empire_id = info_it->caused_by_empire_id;
+                const Empire* empire = 0;
+                const Building* building = 0;
+                const Planet* planet = 0;
+                std::string text = "";
+
+                switch (info_it->cause_type) {
+                case ECT_UNIVERSE_TABLE_ADJUSTMENT:
+                    text += "Basic Focus & Universe";
                     break;
+
+                case ECT_TECH:
+                    if (empire_id >= 0) {
+                        empire = EmpireManager().Lookup(empire_id);
+                        if (empire)
+                            text += empire->Name() + " ";
+                    }
+                    text += "Tech " + UserString(info_it->specific_cause);
+                    break;
+
+                case ECT_BUILDING:
+                    text += "Building " + UserString(info_it->specific_cause);
+                    building = dynamic_cast<const Building*>(source);
+                    if (building) {
+                        planet = building->GetPlanet();
+                        if (planet) {
+                            text += " at " + planet->Name();
+                        }
+                    }
+                    break;
+
+                case ECT_SPECIAL:
+                    text += "Special " + UserString(info_it->specific_cause);
+                    break;
+
+                case ECT_UNKNOWN_CAUSE:
+                default:
+                    text = "Unknown";
                 }
-            } 
-            // else...
-            text += " of unknown empire";   // I think this should never come up, as if it's known the effect is due to a tech, the source empire should also be known
-            break;
-
-        case ECT_BUILDING:
-            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
-                 +  " due to: " + UserString(info_it->specific_cause) + " [Building]";
-            
-            building = dynamic_cast<const Building*>(source);
-            if (!building) break;
-            planet = building->GetPlanet();
-            if (!planet) break;
-           
-            text += " at: " + planet->Name();
-            break;
-
-        case ECT_SPECIAL:
-            text += "\n" + lexical_cast<std::string>(info_it->meter_change)
-                 +  " due to: " + UserString(info_it->specific_cause) + " [Special]";
-            break;
-
-        case ECT_UNKNOWN_CAUSE:
-        default:
-            if (info_it->meter_change != 0.0) {
-                text += "\n" + lexical_cast<std::string>(info_it->meter_change)
-                     +  " [Cause Unknown]";
+                m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(
+                    new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER),
+                    new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, StatisticIcon::DoubleToString(info_it->meter_change, 3, false, true),
+                                        font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER)));
             }
         }
-    }
-    return text;
+                
+        MeterType m_meter_type;
+        const UniverseObject* m_obj;
+        const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& m_meter_map;
+
+        GG::TextControl* m_summary_title;
+
+        GG::TextControl* m_current_label;
+        GG::TextControl* m_current_value;
+        GG::TextControl* m_next_turn_label;
+        GG::TextControl* m_next_turn_value;
+        GG::TextControl* m_change_label;
+        GG::TextControl* m_change_value;
+
+        GG::TextControl* m_meter_title;
+
+        std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_effect_labels_and_values;
+
+        int row_height;
+
+        static const int LABEL_WIDTH = 180;
+        static const int VALUE_WIDTH = 50;
+        static const int EDGE_PAD = 3;
+    };
+
+    class SpecialBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        SpecialBrowseWnd(const std::string& special_name) :
+            GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
+            m_icon(0),
+            m_text_control(0)
+        {
+            const Special* special = GetSpecial(special_name);
+            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
+            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, 0, GG::CLICKABLE);
+            AttachChild(m_icon);
+
+            std::string text = UserString(special->Name()) + "\n\n" + UserString(special->Description());
+            m_text_control = new GG::TextControl(m_icon->Width(), TEXT_PAD, TEXT_WIDTH, ICON_WIDTH, text, 
+                                                 GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                                 ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
+            AttachChild(m_text_control);
+            m_text_control->SetMinSize(true);
+            m_text_control->Resize(m_text_control->MinSize());
+            Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), m_text_control->Height() + 2*TEXT_PAD)));
+        }
+
+        virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
+            const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
+            assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
+            return true;
+        }
+
+        virtual void Render() {
+            GG::Pt ul = UpperLeft();
+            GG::Pt lr = LowerRight();
+            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+        }
+
+    private:
+        GG::StaticGraphic* m_icon;
+        GG::TextControl* m_text_control;
+
+        static const int TEXT_WIDTH = 400;
+        static const int TEXT_PAD = 3;
+        static const int ICON_WIDTH = 64;
+    };
 }
 
 /////////////////////////////////////
@@ -293,6 +443,7 @@ void PopulationPanel::Render()
 void PopulationPanel::Update()
 {
     const PopCenter* pop = GetPopCenter();
+    const Universe& universe = GetUniverse();
     const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
@@ -329,12 +480,26 @@ void PopulationPanel::Update()
     text = boost::io::str(FlexibleFormat(UserString("PP_HEALTH_TOOLTIP")) % current % next % change % max);
     m_health_stat->SetBrowseText(text);
 
+
+    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
+    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_popcenter_id);
+    if (map_it != effect_accounting_map.end())
+        meter_map = &(map_it->second);
+
+
     // meter bar display
     m_pop_meter_bar->SetProjectedCurrent(pop->PopPoints() + pop->FuturePopGrowth());
     m_pop_meter_bar->SetProjectedMax(pop->MaxPop());
 
     m_health_meter_bar->SetProjectedCurrent(pop->Health() + pop->FutureHealthGrowth());
     m_health_meter_bar->SetProjectedMax(pop->MaxHealth());
+
+    if (meter_map) {
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_HEALTH, obj, *meter_map);
+        m_health_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        m_health_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+    }
 }
 
 void PopulationPanel::Refresh()
@@ -814,42 +979,48 @@ void ResourcePanel::Update()
     m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
     if (meter_map) {
         m_farming_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_farming_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_FARMING, obj, *meter_map));
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_FARMING, obj, *meter_map);
+        m_farming_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
     }
 
     m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
     m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
     if (meter_map) {
         m_mining_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_mining_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_MINING, obj, *meter_map));
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_MINING, obj, *meter_map);
+        m_mining_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
     }
 
     m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
     m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
     if (meter_map) {
         m_industry_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_industry_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_INDUSTRY, obj, *meter_map));
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map);
+        m_industry_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
     }
 
     m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
     m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
     if (meter_map) {
         m_research_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_research_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_RESEARCH, obj, *meter_map));
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map);
+        m_research_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
     }
 
     m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
     m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
     if (meter_map) {
         m_trade_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_trade_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_TRADE, obj, *meter_map));
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_TRADE, obj, *meter_map);
+        m_trade_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
     }
 
     m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
     m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
     if (meter_map) {
         m_construction_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_construction_meter_bar->SetBrowseText(EffectAccountingToolTip(METER_CONSTRUCTION, obj, *meter_map));
+        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map);
+        m_construction_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
     }
 
     switch (res->PrimaryFocus())
@@ -1456,7 +1627,7 @@ void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
 //         SpecialsPanel           //
 /////////////////////////////////////
 SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) : 
-    Wnd(0, 0, w, ClientUI::Pts()*4/3, GG::CLICKABLE),
+    Wnd(0, 0, w, 32, GG::CLICKABLE),
     m_object_id(obj.ID()),
     m_icons()
 {
@@ -1512,10 +1683,9 @@ void SpecialsPanel::Update()
         const Special* special = GetSpecial(*it);
 
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, 0, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        graphic->SetBrowseText(UserString(special->Name()) + "\n\n" + UserString(special->Description()));
-        graphic->SetText(UserString(special->Name()) + " Special graphic");
+        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new SpecialBrowseWnd(special->Name())));
         m_icons.push_back(graphic);
     }
 
