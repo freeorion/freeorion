@@ -309,19 +309,18 @@ namespace {
         bool initialized;
     };
 
-    class SpecialBrowseWnd : public GG::BrowseInfoWnd {
+    class IconTextBrowseWnd : public GG::BrowseInfoWnd {
     public:
-        SpecialBrowseWnd(const std::string& special_name) :
+        IconTextBrowseWnd(const std::string& icon_graphic, const std::string& title_text, const std::string& main_text) :
             GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
             m_icon(0),
             m_text_control(0)
         {
-            const Special* special = GetSpecial(special_name);
-            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
+            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / icon_graphic);
             m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
             AttachChild(m_icon);
 
-            std::string text = UserString(special->Name()) + "\n\n" + UserString(special->Description());
+            std::string text = UserString(title_text) + "\n\n" + UserString(main_text);
             m_text_control = new GG::TextControl(m_icon->Width(), TEXT_PAD, TEXT_WIDTH, ICON_WIDTH, text, 
                                                  GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                                  ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
@@ -330,7 +329,6 @@ namespace {
             m_text_control->Resize(m_text_control->MinSize());
             Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), m_text_control->Height() + 2*TEXT_PAD)));
         }
-
         virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
             const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
             assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
@@ -340,50 +338,8 @@ namespace {
         virtual void Render() {
             GG::Pt ul = UpperLeft();
             GG::Pt lr = LowerRight();
-            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-        }
-
-    private:
-        GG::StaticGraphic* m_icon;
-        GG::TextControl* m_text_control;
-
-        static const int TEXT_WIDTH = 400;
-        static const int TEXT_PAD = 3;
-        static const int ICON_WIDTH = 64;
-    };
-
-    class BuildingBrowseWnd : public GG::BrowseInfoWnd {
-    public:
-        BuildingBrowseWnd(const std::string& building_name) :
-            GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
-            m_icon(0),
-            m_text_control(0)
-        {
-            const BuildingType* type = GetBuildingType(building_name);
-            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic());
-            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
-            AttachChild(m_icon);
-
-            std::string text = UserString(type->Name()) + "\n\n" + UserString(type->Description());
-            m_text_control = new GG::TextControl(m_icon->Width(), TEXT_PAD, TEXT_WIDTH, ICON_WIDTH, text, 
-                                                 GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                                 ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
-            AttachChild(m_text_control);
-            m_text_control->SetMinSize(true);
-            m_text_control->Resize(m_text_control->MinSize());
-            Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), m_text_control->Height() + 2*TEXT_PAD)));
-        }
-
-        virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
-            const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-            assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
-            return true;
-        }
-
-        virtual void Render() {
-            GG::Pt ul = UpperLeft();
-            GG::Pt lr = LowerRight();
-            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
+            GG::FlatRectangle(ul.x + ICON_WIDTH, ul.y, lr.x, ul.y + ClientUI::Pts()*3/2, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
         }
 
     private:
@@ -1639,7 +1595,7 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     m_progress_bar(0)
 {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new BuildingBrowseWnd(type.Name())));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(type.Graphic(), type.Name(), type.Description())));
         
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
@@ -1654,7 +1610,7 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     m_progress_bar(0)
 {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new BuildingBrowseWnd(type.Name())));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(type.Graphic(), type.Name(), type.Description())));
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
@@ -1790,7 +1746,7 @@ void SpecialsPanel::Update()
         boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
         GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new SpecialBrowseWnd(special->Name())));
+        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(special->Graphic(), special->Name(), special->Description())));
         m_icons.push_back(graphic);
     }
 

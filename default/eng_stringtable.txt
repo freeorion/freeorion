@@ -54,8 +54,11 @@ Generating Universe and AIs ...
 LOADING
 Loading ...
 
+SERVER_WONT_START
+The server could not be started.
+
 SERVER_TIMEOUT
-The server is not responding
+The server is not responding.
 
 SERVER_LOST
 The connection to the server has been lost.

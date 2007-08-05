@@ -182,8 +182,15 @@ void HumanClientApp::KillServer()
 
 void HumanClientApp::NewSinglePlayerGame()
 {
-    if (!GetOptionsDB().Get<bool>("force-external-server"))
-        StartServer();
+    if (!GetOptionsDB().Get<bool>("force-external-server")) {
+        try {
+            StartServer();
+        } catch (std::runtime_error err) {
+            Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
+            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);            
+            return;
+        }
+    }
 
     GalaxySetupWnd galaxy_wnd;
     galaxy_wnd.Run();
