@@ -761,13 +761,13 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
     EffectsAndCausesMap::const_iterator causes_it;
-    if (effects_causes_map)
-         causes_it = effects_causes_map->begin();
 
     for (EffectsAndTargetsMap::const_iterator targets_it = effects_targets_map.begin(); targets_it != effects_targets_map.end(); ++targets_it) {
+        Effect::EffectsGroup::TargetSet targets = targets_it->second.second;
+        const boost::shared_ptr<const Effect::EffectsGroup>& effects_group = targets_it->first;
+
         // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
         std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(targets_it->first->StackingGroup());
-        Effect::EffectsGroup::TargetSet targets(targets_it->second.second);
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
@@ -778,12 +778,14 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
         EffectsCauseType cause_type = INVALID_EFFECTS_GROUP_CAUSE_TYPE;
         std::string specific_cause = "";
         if (effects_causes_map) {
+            causes_it = effects_causes_map->find(effects_group);
+            if (causes_it == effects_causes_map->end())
+                Logger().debugStream() << "something funky's going on...";
             cause_type = causes_it->second.second.first;        // see definition of Universe::EffectsAndCausesMapElem
             specific_cause = causes_it->second.second.second;
         }
 
         // execute only the SetMeter effects in the EffectsGroup
-        boost::shared_ptr<const Effect::EffectsGroup> effects_group = targets_it->first;
         int source = targets_it->second.first;
         const std::vector<Effect::EffectBase*>& effects = effects_group->EffectsList();
         for (unsigned int i = 0; i < effects.size(); ++i) {

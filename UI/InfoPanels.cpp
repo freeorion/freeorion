@@ -302,7 +302,7 @@ namespace {
 
         int row_height;
 
-        static const int LABEL_WIDTH = 180;
+        static const int LABEL_WIDTH = 300;
         static const int VALUE_WIDTH = 50;
         static const int EDGE_PAD = 3;
 
@@ -322,6 +322,49 @@ namespace {
             AttachChild(m_icon);
 
             std::string text = UserString(special->Name()) + "\n\n" + UserString(special->Description());
+            m_text_control = new GG::TextControl(m_icon->Width(), TEXT_PAD, TEXT_WIDTH, ICON_WIDTH, text, 
+                                                 GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                                 ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
+            AttachChild(m_text_control);
+            m_text_control->SetMinSize(true);
+            m_text_control->Resize(m_text_control->MinSize());
+            Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), m_text_control->Height() + 2*TEXT_PAD)));
+        }
+
+        virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
+            const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
+            assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
+            return true;
+        }
+
+        virtual void Render() {
+            GG::Pt ul = UpperLeft();
+            GG::Pt lr = LowerRight();
+            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+        }
+
+    private:
+        GG::StaticGraphic* m_icon;
+        GG::TextControl* m_text_control;
+
+        static const int TEXT_WIDTH = 400;
+        static const int TEXT_PAD = 3;
+        static const int ICON_WIDTH = 64;
+    };
+
+    class BuildingBrowseWnd : public GG::BrowseInfoWnd {
+    public:
+        BuildingBrowseWnd(const std::string& building_name) :
+            GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
+            m_icon(0),
+            m_text_control(0)
+        {
+            const BuildingType* type = GetBuildingType(building_name);
+            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic());
+            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
+            AttachChild(m_icon);
+
+            std::string text = UserString(type->Name()) + "\n\n" + UserString(type->Description());
             m_text_control = new GG::TextControl(m_icon->Width(), TEXT_PAD, TEXT_WIDTH, ICON_WIDTH, text, 
                                                  GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                                  ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
@@ -565,21 +608,9 @@ void PopulationPanel::Update()
 
     m_pop_stat->SetValue(pop->PopPoints());
     m_pop_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = pop->PopPoints();
-    change = pop->FuturePopGrowth();
-    next = current + change;
-    max = pop->MaxPop();
-    text = boost::io::str(FlexibleFormat(UserString("PP_POPULATION_TOOLTIP")) % current % next % change % max);
-    m_pop_stat->SetBrowseText(text);
 
     m_health_stat->SetValue(pop->Health());
     m_health_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = pop->Health();
-    change = pop->FutureHealthGrowth();
-    next = current + change;
-    max = pop->MaxHealth();
-    text = boost::io::str(FlexibleFormat(UserString("PP_HEALTH_TOOLTIP")) % current % next % change % max);
-    m_health_stat->SetBrowseText(text);
 
 
     const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
@@ -588,18 +619,29 @@ void PopulationPanel::Update()
     if (map_it != effect_accounting_map.end())
         meter_map = &(map_it->second);
 
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-    // meter bar display
+    // meter bar displays and production stats
     m_pop_meter_bar->SetProjectedCurrent(pop->PopPoints() + pop->FuturePopGrowth());
     m_pop_meter_bar->SetProjectedMax(pop->MaxPop());
+    m_pop_stat->SetValue(pop->PopPoints());
+    if (meter_map) {
+        m_pop_stat->SetBrowseModeTime(tooltip_delay);
+        m_pop_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
+        m_pop_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_pop_stat->SetBrowseInfoWnd(browse_wnd);
+    }
 
     m_health_meter_bar->SetProjectedCurrent(pop->Health() + pop->FutureHealthGrowth());
     m_health_meter_bar->SetProjectedMax(pop->MaxHealth());
-
+    m_health_stat->SetValue(pop->Health());
     if (meter_map) {
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_HEALTH, obj, *meter_map);
-        m_health_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_health_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        m_health_stat->SetBrowseModeTime(tooltip_delay);
+        m_health_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_HEALTH, obj, *meter_map));
+        m_health_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_health_stat->SetBrowseInfoWnd(browse_wnd);
     }
 }
 
@@ -1015,115 +1057,84 @@ void ResourcePanel::Update()
         m_secondary_focus_drop->Disable(true);
     }
 
-    // mousover text - resource production not equal to meter value
-    double current, next, change, max;
-    std::string text;
-
-    m_farming_stat->SetValue(res->FarmingPoints());
-    m_farming_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = res->FarmingPoints();
-    next = res->ProjectedFarmingPoints();
-    change = next - current;
-    text = boost::io::str(FlexibleFormat(UserString("RP_FOOD_TOOLTIP")) % current % next % change);
-    m_farming_stat->SetBrowseText(text);
-
-    m_mining_stat->SetValue(res->MiningPoints());
-    m_mining_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = res->MiningPoints();
-    next = res->ProjectedMiningPoints();
-    change = next - current;
-    text = boost::io::str(FlexibleFormat(UserString("RP_MINERALS_TOOLTIP")) % current % next % change);
-    m_mining_stat->SetBrowseText(text);
-
-    m_industry_stat->SetValue(res->IndustryPoints());
-    m_industry_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = res->IndustryPoints();
-    next = res->ProjectedIndustryPoints();
-    change = next - current;
-    text = boost::io::str(FlexibleFormat(UserString("RP_INDUSTRY_TOOLTIP")) % current % next % change);
-    m_industry_stat->SetBrowseText(text);
-
-    m_research_stat->SetValue(res->ResearchPoints());
-    m_research_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = res->ResearchPoints();
-    next = res->ProjectedResearchPoints();
-    change = next - current;
-    text = boost::io::str(FlexibleFormat(UserString("RP_RESEARCH_TOOLTIP")) % current % next % change);
-    m_research_stat->SetBrowseText(text);
-
-    m_trade_stat->SetValue(res->TradePoints());
-    m_trade_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = res->TradePoints();
-    next = res->ProjectedTradePoints();
-    change = next - current;
-    text = boost::io::str(FlexibleFormat(UserString("RP_TRADE_TOOLTIP")) % current % next % change);
-    m_trade_stat->SetBrowseText(text);
-
-    m_construction_stat->SetValue(res->ConstructionMeter().Current());
-    m_construction_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    current = res->ConstructionMeter().Current();
-    next = res->ProjectedCurrent(METER_CONSTRUCTION);
-    change = next - current;
-    max = res->ConstructionMeter().Max();
-    text = boost::io::str(FlexibleFormat(UserString("RP_CONSTRUCTION_TOOLTIP")) % current % next % change % max);
-    m_construction_stat->SetBrowseText(text);
-
     const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
     const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
     Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_rescenter_id);
     if (map_it != effect_accounting_map.end())
         meter_map = &(map_it->second);
 
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-    // meter bar display
+    // meter bar displays and production stats
     m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
     m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
+    m_farming_stat->SetValue(res->FarmingPoints());
     if (meter_map) {
-        m_farming_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_FARMING, obj, *meter_map);
-        m_farming_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        m_farming_stat->SetBrowseModeTime(tooltip_delay);
+        m_farming_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
+        m_farming_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_farming_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
     m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
     m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
+    m_mining_stat->SetValue(res->MiningPoints());
     if (meter_map) {
-        m_mining_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_MINING, obj, *meter_map);
-        m_mining_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        m_mining_stat->SetBrowseModeTime(tooltip_delay);
+        m_mining_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, obj, *meter_map));
+        m_mining_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_mining_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
     m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
     m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
+    m_industry_stat->SetValue(res->IndustryPoints());
     if (meter_map) {
-        m_industry_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map);
-        m_industry_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        m_industry_stat->SetBrowseModeTime(tooltip_delay);
+        m_industry_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map));
+        m_industry_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_industry_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
     m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
     m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
+    m_research_stat->SetValue(res->ResearchPoints());
+
     if (meter_map) {
-        m_research_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map);
-        m_research_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        m_research_stat->SetBrowseModeTime(tooltip_delay);
+        m_research_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map));
+        m_research_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_research_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
     m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
     m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
+    m_trade_stat->SetValue(res->TradePoints());
     if (meter_map) {
-        m_trade_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_TRADE, obj, *meter_map);
-        m_trade_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        m_trade_stat->SetBrowseModeTime(tooltip_delay);
+        m_trade_meter_bar->SetBrowseModeTime(tooltip_delay);
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, obj, *meter_map));
+        m_trade_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_trade_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
     m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
     m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
+    m_construction_stat->SetValue(res->ConstructionMeter().Current());
     if (meter_map) {
+        m_construction_stat->SetBrowseModeTime(tooltip_delay);
         m_construction_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        MeterBrowseWnd* browse_wnd = new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map);
-        m_construction_meter_bar->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(browse_wnd));
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map));
+        m_construction_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        m_construction_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
+
+    std::string text;
     switch (res->PrimaryFocus())
     {
     case FOCUS_BALANCED:
@@ -1628,11 +1639,8 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     m_graphic(0),
     m_progress_bar(0)
 {
-    SetText(UserString(type.Name()) + " BuildingIndicator");
-
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText(boost::io::str(FlexibleFormat(UserString("BP_COMPLETE_BUILDING_TOOLTIP")) %
-                                               UserString(type.Name()) % UserString(type.Description())));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new BuildingBrowseWnd(type.Name())));
         
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
@@ -1646,11 +1654,8 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     m_graphic(0),
     m_progress_bar(0)
 {
-    SetText(UserString(type.Name()) + " BuildingIndicator");
-
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseText(boost::io::str(FlexibleFormat(UserString("BP_INCOMPLETE_BUILDING_TOOLTIP")) %
-                                               UserString(type.Name()) % UserString(type.Description())));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new BuildingBrowseWnd(type.Name())));
 
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
