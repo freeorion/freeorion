@@ -153,7 +153,7 @@ namespace {
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
     QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn) :
-        GG::Control(0, 0, w, 10, 0),
+        GG::Control(0, 0, w, 10, GG::Flags<GG::WndFlag>()),
         m_build(build),
         m_in_progress(build.spending),
         m_total_turns(turns),

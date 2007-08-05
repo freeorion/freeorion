@@ -12,31 +12,6 @@
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 
-/** \mainpage FreeOrion User Interface
-
-    \section s_overview Overview
-    The User Interface module contains all classes pertaining to
-    user interactivity.  It consists of the ClientUI class which acts
-    as the driver for all of the others.  This module operates as an
-    extension to the GG Graphical User Interface Library written by Zach Laine.
-
-    \section s_interface_classes Interface Classes
-    <ul>
-    <li>ClientUI - the main driver class of the module.
-    <li>CUIWnd - parent class of all non-modal interface windows.
-    <li>IntroScreen - a combination main menu/splash screen.  The first thing the user sees.
-    <li>ServerConnectWnd - a modal window that allows the user to find and choose a game server.
-    <li>GalaxySetupWnd - a modal window that allows the user to setup the galaxy size and shape.
-    </ul>
-    
-    \section s_utility_classes Utility Classes
-    <ul>
-    <li>StringTable - a construct allowing language-independent string storage and retrieval.
-    <li>ToolWnd - a GG::Control-derived class that provides balloon-style help
-    <li>ToolContainer - a manager construct that drives the functionality of all ToolWnd objects.
-    </ul>
-    
-*/
 
 namespace {
     bool PlaySounds()
@@ -143,7 +118,20 @@ void CUI_CloseButton::Render()
 ////////////////////////////////////////////////
 // CUIWnd
 ////////////////////////////////////////////////
-CUIWnd::CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags) : 
+GG::WndFlag MINIMIZABLE(1 << 10);
+GG::WndFlag CLOSABLE(1 << 11);
+
+namespace {
+    bool RegisterWndFlags()
+    {
+        GG::FlagSpec<GG::WndFlag>::instance().insert(MINIMIZABLE, "MINIMIZABLE");
+        GG::FlagSpec<GG::WndFlag>::instance().insert(CLOSABLE, "CLOSABLE");
+        return true;
+    }
+    bool dummy = RegisterWndFlags();
+}
+
+CUIWnd::CUIWnd(const std::string& t, int x, int y, int w, int h, GG::Flags<GG::WndFlag> flags) : 
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -388,7 +376,7 @@ void CUIWnd::MinimizeClicked()
 // class CUIEditWnd
 ///////////////////////////////////////
 
-CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags/* = Wnd::MODAL*/) : 
+CUIEditWnd::CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags/* = Wnd::MODAL*/) : 
     CUIWnd(prompt_text, 0, 0, w, 1, flags)
 {
     m_edit = new CUIEdit(LeftBorder() + 3, TopBorder() + 3, ClientWidth() - 2 * BUTTON_WIDTH - 2 * CONTROL_MARGIN - 6 - LeftBorder() - RightBorder(), edit_text);

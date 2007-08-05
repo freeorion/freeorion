@@ -15,7 +15,7 @@ bool LinkText::s_link_tags_registered = false;
 
 
 LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = GG::CLICKABLE*/) : 
+                   Uint32 text_fmt/* = 0*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, w, 1, str, font, color, text_fmt, flags),
     m_old_sel_link(-1),
     m_old_rollover_link(-1)
@@ -25,7 +25,7 @@ LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::sha
 }
 
 LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   GG::Clr color/* = GG::CLR_BLACK*/, Uint32 flags/* = GG::CLICKABLE*/) : 
+                   GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, str, font, color, 0, flags),
     m_old_sel_link(-1),
     m_old_rollover_link(-1)

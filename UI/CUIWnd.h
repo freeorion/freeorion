@@ -46,6 +46,12 @@ public:
    void Render();
 };
 
+
+// Aditional window creation flags
+extern GG::WndFlag MINIMIZABLE;    ///< allows the window to be minimized
+extern GG::WndFlag CLOSABLE;       ///< allows the window to be closed
+
+
 //! This class is a superclass of all interface windows in GG.  It takes care of
 /** the drawing and handling of common window interfaces like the close button, minimize
     button, and resize handle, if applicable.<br>
@@ -82,14 +88,8 @@ public:
 class CUIWnd : public GG::Wnd
 {
 public:
-    //! additional window creation flags
-    enum {
-        MINIMIZABLE = 1 << 10,    //!< allows the window to be minimized
-        CLOSABLE =    1 << 11     //!< allows the window to be closed
-    };
-
     //! \name Structors //@{
-    CUIWnd(const std::string& t, int x, int y, int w, int h, Uint32 flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
+    CUIWnd(const std::string& t, int x, int y, int w, int h, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
     ~CUIWnd();    //!< Destructor
     //@}
 
@@ -160,7 +160,7 @@ protected:
 class CUIEditWnd : public CUIWnd
 {
 public:
-    CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, Uint32 flags = GG::MODAL);
+    CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
 
     virtual void ModalInit();
     virtual void KeyPress(GG::Key key, Uint32 key_mods);

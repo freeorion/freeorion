@@ -84,7 +84,7 @@ void FocusButton::SetImage(const boost::shared_ptr<GG::Texture>& image)
 
 
 MeterStatusBar::MeterStatusBar(int w, int h, double initial_max, double initial_current, double max, double current) :
-    GG::Wnd(0, 0, w, h, 0),
+    GG::Wnd(0, 0, w, h, GG::Flags<GG::WndFlag>()),
     m_initial_max(initial_max),
     m_initial_current(initial_current),
     m_projected_max(max),

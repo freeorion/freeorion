@@ -259,7 +259,7 @@ private:
 class MapWndPopup : public CUIWnd
 {
 public:
-    MapWndPopup(const std::string& t, int x, int y, int h, int w, Uint32 flags);
+    MapWndPopup(const std::string& t, int x, int y, int h, int w, GG::Flags<GG::WndFlag> flags);
     virtual ~MapWndPopup();
     void CloseClicked();
     void Close();

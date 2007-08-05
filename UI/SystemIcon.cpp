@@ -22,7 +22,7 @@
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text/* = ""*/, Uint32 flags/* = 0*/) :
+OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text/* = ""*/, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
     Control(0, 0, 1, 1, flags)
 {
     std::string str = format_text == "" ? system->Name() : boost::io::str(boost::format(format_text) % system->Name());

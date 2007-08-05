@@ -41,7 +41,7 @@ namespace {
     class PlaceholderWnd : public GG::Wnd
     {
     public:
-        PlaceholderWnd(int w, int h) : Wnd(0, 0, w, h, 0) {}
+        PlaceholderWnd(int w, int h) : Wnd(0, 0, w, h, GG::Flags<GG::WndFlag>()) {}
         virtual void Render() {}
     };
 

@@ -18,7 +18,7 @@ class TextControl;
 class OwnerColoredSystemName : public GG::Control
 {
 public:
-    OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text = "", Uint32 flags = 0);
+    OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text = "", GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
     virtual void Render();
 
 private:

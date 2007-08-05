@@ -509,7 +509,7 @@ class RotatingPlanetControl : public GG::Control
 {
 public:
     RotatingPlanetControl(int x, int y, PlanetSize size, StarType star_type, const RotatingPlanetData& planet_data) :
-        GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), 0),
+        GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), GG::Flags<GG::WndFlag>()),
         m_planet_data(planet_data),
         m_size(size),
         m_surface_texture(ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true)),

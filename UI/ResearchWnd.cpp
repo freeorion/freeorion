@@ -150,7 +150,7 @@ namespace {
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
     QueueTechPanel::QueueTechPanel(int w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn) :
-        GG::Control(0, 0, w, 10, 0),
+        GG::Control(0, 0, w, 10, GG::Flags<GG::WndFlag>()),
         m_tech(tech),
         m_in_progress(in_progress),
         m_total_turns(tech->ResearchTurns()),

@@ -22,8 +22,9 @@ namespace
 class CombatInfoControl : public GG::Control
 {
   public:
-    CombatInfoControl(int w, int h,const CombatUpdateMessage &combat_info) 
-        : Control(0, 0, w, h, 0),m_combat_info(combat_info)
+    CombatInfoControl(int w, int h,const CombatUpdateMessage &combat_info) :
+        Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+        m_combat_info(combat_info)
     {}
 
     void Update(const CombatUpdateMessage &combat_info) {m_combat_info=combat_info;}
@@ -155,7 +156,7 @@ struct CombatInfoRow : public GG::ListBox::Row
 // CombatWnd
 ////////////////////////////////////////////////
 CombatWnd::CombatWnd(int x,int y)
-    : CUIWnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CUIWnd::MINIMIZABLE)
+    : CUIWnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | MINIMIZABLE)
 {
   m_combats_lb = new CUIListBox(0,0,ClientWidth(),ClientHeight(),GG::CLR_ZERO,GG::CLR_ZERO);
   AttachChild(m_combats_lb);

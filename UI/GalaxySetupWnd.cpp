@@ -40,7 +40,7 @@ namespace {
 // GalaxySetupPanel
 ////////////////////////////////////////////////
 GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
-    GG::Control(x, y, w, GAL_SETUP_PANEL_HT, 0),
+    GG::Control(x, y, w, GAL_SETUP_PANEL_HT, GG::Flags<GG::WndFlag>()),
     m_stars_spin(0),
     m_galaxy_shapes_list(0),
     m_galaxy_ages_list(0),

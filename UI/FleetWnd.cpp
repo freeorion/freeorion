@@ -88,7 +88,7 @@ namespace {
         };
 
         ShipDataPanel(int w, int h, const Ship* ship) :
-            Control(0, 0, w, h, 0),
+            Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
             m_ship(ship),
             m_ship_icon(0),
             m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
@@ -289,7 +289,7 @@ namespace {
 ////////////////////////////////////////////////
 FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
                                int empire/* = -1*/, int system_id/* = -1*/, double x/* = 0.0*/, double y/* = 0.0*/) :
-    Control(0, 0, w, h, fleet ? 0 : GG::CLICKABLE),
+    Control(0, 0, w, h, fleet ? GG::Flags<GG::WndFlag>() : GG::CLICKABLE),
     m_fleet(fleet),
     m_empire(empire),
     m_system_id(system_id),
@@ -507,7 +507,7 @@ class ShipsListBox;
 class FleetDetailPanel : public GG::Wnd
 {
 public:
-    FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags = 0); ///< ctor
+    FleetDetailPanel(Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>()); ///< ctor
 
     Fleet* GetFleet() const {return m_fleet;} ///< returns the currently-displayed fleet (may be 0)
 
@@ -722,7 +722,7 @@ private:
 ////////////////////////////////////////////////
 // FleetDetailPanel implementation
 ////////////////////////////////////////////////
-FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, Uint32 flags/* = 0*/) : 
+FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) : 
     Wnd(0, 0, 1, 1, flags),
     m_fleet(0),
     m_read_only(read_only),
@@ -908,7 +908,7 @@ std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 ////////////////////////////////////////////////
 // FleetDetailWnd
 ////////////////////////////////////////////////
-FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, Uint32 flags/* = CLICKABLE | DRAGABLE | RESIZABLE | ONTOP | CLOSABLE*/) : 
+FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags/* = CLICKABLE | DRAGABLE | RESIZABLE | ONTOP | CLOSABLE*/) : 
     CUIWnd("", x, y, 1, 1, flags),
     m_fleet_panel(0)
 {
@@ -951,7 +951,7 @@ std::string FleetDetailWnd::TitleText() const
 GG::Pt FleetWnd::s_last_position;
 
 FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
-                   Uint32 flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE*/) : 
+                   GG::Flags<GG::WndFlag> flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE*/) : 
     MapWndPopup("", x, y, 1, 1, flags | GG::RESIZABLE),
     m_empire_id(*fleets[0]->Owners().begin()),
     m_system_id(UniverseObject::INVALID_OBJECT_ID),

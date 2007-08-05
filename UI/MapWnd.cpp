@@ -121,8 +121,8 @@ private:
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup( const std::string& t, int x, int y, int h, int w, Uint32 flags ):
-    CUIWnd( t, x, y, h, w, flags )
+MapWndPopup::MapWndPopup(const std::string& t, int x, int y, int h, int w, GG::Flags<GG::WndFlag> flags) :
+    CUIWnd( t, x, y, h, w, flags)
 { ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup(this); }
 
 MapWndPopup::~MapWndPopup()
@@ -266,7 +266,7 @@ MapWnd::MapWnd() :
     // chat display and chat input box
     m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, 
                                        GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
-                                       ClientUI::TextColor(), GG::CLR_ZERO, 0);
+                                       ClientUI::TextColor(), GG::CLR_ZERO, GG::Flags<GG::WndFlag>());
     AttachChild(m_chat_display);
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
