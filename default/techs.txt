@@ -146,7 +146,7 @@ Tech
         "LRN_XENOARCH"
     ]
     unlock = []
-    graphic = "icons/mind_of_the_void.png"
+    graphic = "icons/tech/mind_of_the_void.png"
 
 Tech
     name = "LRN_TIME_MECH"

@@ -472,7 +472,7 @@ BuildingType
 
 BuildingType
     name = "BLD_PARADISE"
-    description = "BLD_DEEP_GREEN_DESC"
+    description = "BLD_PARADISE_DESC"
     buildcost = 100
     buildtime = 10
     maintenancecost = 0
