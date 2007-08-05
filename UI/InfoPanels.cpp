@@ -603,7 +603,6 @@ void PopulationPanel::Update()
     }
 
     // mousover text - actual population and health is just the corresponding meter values
-    double current, next, change, max;
     std::string text;
 
     m_pop_stat->SetValue(pop->PopPoints());
