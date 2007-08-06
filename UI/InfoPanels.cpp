@@ -313,21 +313,29 @@ namespace {
     public:
         IconTextBrowseWnd(const std::string& icon_graphic, const std::string& title_text, const std::string& main_text) :
             GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
-            m_icon(0),
-            m_text_control(0)
+            m_icon(0), m_title_text(0), m_main_text(0),
+            ROW_HEIGHT(ClientUI::Pts()*3/2)
         {
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / icon_graphic);
             m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
             AttachChild(m_icon);
 
-            std::string text = UserString(title_text) + "\n\n" + UserString(main_text);
-            m_text_control = new GG::TextControl(m_icon->Width(), TEXT_PAD, TEXT_WIDTH, ICON_WIDTH, text, 
-                                                 GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                                 ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
-            AttachChild(m_text_control);
-            m_text_control->SetMinSize(true);
-            m_text_control->Resize(m_text_control->MinSize());
-            Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), m_text_control->Height() + 2*TEXT_PAD)));
+            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+            const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
+
+            m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, 0, TEXT_WIDTH, ROW_HEIGHT, UserString(title_text), 
+                                               font_bold, ClientUI::TextColor(), GG::TF_LEFT | GG::TF_VCENTER);
+            AttachChild(m_title_text);
+
+
+            m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_WIDTH, UserString(main_text), 
+                                              font, ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
+            AttachChild(m_main_text);
+
+
+            m_main_text->SetMinSize(true);
+            m_main_text->Resize(m_main_text->MinSize());
+            Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), ROW_HEIGHT + m_main_text->Height())));
         }
         virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
             const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
@@ -339,16 +347,18 @@ namespace {
             GG::Pt ul = UpperLeft();
             GG::Pt lr = LowerRight();
             GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
-            GG::FlatRectangle(ul.x + ICON_WIDTH, ul.y, lr.x, ul.y + ClientUI::Pts()*3/2, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+            GG::FlatRectangle(ul.x + ICON_WIDTH, ul.y, lr.x, ul.y + ROW_HEIGHT, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
         }
 
     private:
         GG::StaticGraphic* m_icon;
-        GG::TextControl* m_text_control;
+        GG::TextControl* m_title_text;
+        GG::TextControl* m_main_text;
 
         static const int TEXT_WIDTH = 400;
         static const int TEXT_PAD = 3;
         static const int ICON_WIDTH = 64;
+        const int ROW_HEIGHT;
     };
 }
 
