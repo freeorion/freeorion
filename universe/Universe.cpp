@@ -560,7 +560,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             // discrepancy is the difference between expected and actual meter values at start of turn
             double discrepancy = meter->InitialMax() - meter->Max();
 
-            Logger().debugStream() << "object " << object_id << " has meter " << type << " initial max: " << meter->InitialMax() << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+            if (discrepancy == 0.0) continue;   // no discrepancy for this meter
 
             // add to discrepancy map
             m_effect_discrepancy_map[object_id][type] = discrepancy;
@@ -598,8 +598,6 @@ void Universe::UpdateMeterEstimates()
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
             Meter* meter = obj->GetMeter(type);
             if (meter) {
-                Logger().debugStream() << "object " << object_id << " has meter " << type << " with table-only max: " << meter->Max();
-
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
                 info.caused_by_empire_id = -1;
@@ -803,8 +801,6 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
                     const Meter* meter = target->GetMeter(meter_type);
                     if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                    Logger().debugStream() << "object " << target->ID() << " has meter " << meter_type << " with pre-effect max: " << meter->Max();
-
                     // create new accounting info for this effect on this target/meter
                     EffectAccountingInfo info;
                     info.source_id = source;
@@ -824,8 +820,6 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
                     UniverseObject* target = *target_it;
                     const Meter* meter = target->GetMeter(meter_type);
                     if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
-
-                    Logger().debugStream() << "object " << target->ID() << " has meter " << meter_type << " with post-effect max: " << meter->Max();
 
                     // retreive info for this effect
                     EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();

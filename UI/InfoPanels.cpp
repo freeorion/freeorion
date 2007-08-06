@@ -34,8 +34,6 @@ namespace {
             m_meter_type(meter_type),
             m_obj(obj),
             m_meter_map(meter_map),
-            m_summary_title(0), m_current_label(0), m_current_value(0), m_next_turn_label(0),
-            m_next_turn_value(0), m_change_label(0), m_change_value(0), m_meter_title(0),
             initialized(false)
         {}
 
@@ -88,7 +86,6 @@ namespace {
             for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
                 m_effect_labels_and_values[i].first->MoveTo(GG::Pt(0, y));
                 m_effect_labels_and_values[i].second->MoveTo(GG::Pt(LABEL_WIDTH, y));
-                AttachChild(m_effect_labels_and_values[i].second);
                 y += row_height;
             }
 
@@ -313,7 +310,6 @@ namespace {
     public:
         IconTextBrowseWnd(const std::string& icon_graphic, const std::string& title_text, const std::string& main_text) :
             GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
-            m_icon(0), m_title_text(0), m_main_text(0),
             ROW_HEIGHT(ClientUI::Pts()*3/2)
         {
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / icon_graphic);

@@ -109,7 +109,6 @@ double PopCenter::FuturePopGrowth() const
 
 double PopCenter::FuturePopGrowthMax() const
 {
-    Logger().debugStream() << "PopCenter::FuturePopGrowthMax(): id: " << dynamic_cast<const UniverseObject* const>(this)->ID();
     if (20.0 < m_health.Current()) {
         return std::min(m_pop.Max() - m_pop.Current(), m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01);
     } else if (m_health.Current() == 20.0) {

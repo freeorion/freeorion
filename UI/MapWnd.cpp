@@ -662,10 +662,6 @@ void MapWnd::InitTurn(int turn_number)
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
 
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        const PopCenter* pop = dynamic_cast<const PopCenter*>(it->second);
-        if (pop) Logger().debugStream() << "id: " << it->second->ID() << " max pop: " << pop->MaxPop() << " initial max pop: " << pop->PopulationMeter().InitialMax();
-    }
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
