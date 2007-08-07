@@ -328,6 +328,7 @@ namespace {
         GG::Clr ambient(intensity, intensity, intensity, 1.0);
         intensity = GetRotatingPlanetDiffuseIntensity();
         GG::Clr diffuse(intensity, intensity, intensity, 1.0);
+
         RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
 
         glPopAttrib();
@@ -517,13 +518,11 @@ public:
         m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
     {
-        m_surface_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
         const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
         std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
         if (it != atmosphere_data.end()) {
             const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
             m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
-            m_atmosphere_texture->SetFilters(GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR);
             m_atmosphere_alpha = atmosphere.alpha;
             m_atmosphere_planet_rect = GG::Rect(1, 1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
         }

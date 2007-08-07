@@ -128,12 +128,20 @@ public:
     static double       FleetButtonSize();               //!< the width/height of a FleetButton, relative to the size of a SystemIcon
     static double       SystemSelectionIndicatorSize();  //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
 
-    // misc UI windows
+    // SidePanel
     static GG::Clr      SidePanelColor();
+
+    // Content Texture Getters
     static boost::shared_ptr<GG::Texture>
-                        ShipIcon(const std::string& design_name);
+                        ShipIcon(int design_id);
     static boost::shared_ptr<GG::Texture>
-                        BuildingTexture(const BuildingType* building_type);
+                        BuildingTexture(const std::string& building_type_name);
+    static boost::shared_ptr<GG::Texture> 
+                        CategoryIcon(const std::string& category_name);
+    static boost::shared_ptr<GG::Texture>
+                        TechTexture(const std::string& tech_name);
+    static boost::shared_ptr<GG::Texture>
+                        SpecialTexture(const std::string& special_name);
 
 
     // research screen
@@ -147,10 +155,6 @@ public:
     static GG::Clr      TechWndProgressBar();
 
     static GG::Clr      CategoryColor(const std::string& category_name);
-    static boost::shared_ptr<GG::Texture> 
-                        CategoryIcon(const std::string& category_name);
-    static boost::shared_ptr<GG::Texture>
-                        TechTexture(const std::string& tech_name);
 
     static std::map<StarType, std::string>& StarTypeFilePrefixes();
     static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();

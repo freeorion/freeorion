@@ -182,10 +182,10 @@ namespace {
         boost::shared_ptr<GG::Texture> graphic;
         std::string name_text;
         if (build.item.build_type == BT_BUILDING) {
-            graphic = ClientUI::BuildingTexture(GetBuildingType(build.item.name));
+            graphic = ClientUI::BuildingTexture(build.item.name);
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {
-            graphic = ClientUI::GetTexture(ClientUI::ArtDir() / GetShipDesign(build.item.design_id)->graphic);
+            graphic = ClientUI::ShipIcon(build.item.design_id);
             name_text = GetShipDesign(build.item.design_id)->name;
         } else if (build.item.build_type == BT_ORBITAL) {
             graphic = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "base1.png"); // this is a kludge for v0.3 only

@@ -308,11 +308,10 @@ namespace {
 
     class IconTextBrowseWnd : public GG::BrowseInfoWnd {
     public:
-        IconTextBrowseWnd(const std::string& icon_graphic, const std::string& title_text, const std::string& main_text) :
+        IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text, const std::string& main_text) :
             GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
             ROW_HEIGHT(ClientUI::Pts()*3/2)
         {
-            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / icon_graphic);
             m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
             AttachChild(m_icon);
 
@@ -1441,7 +1440,7 @@ void BuildingsPanel::Update()
 
     // get existing / finished buildings and use them to create building indicators
     for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-        const BuildingType* building_type = universe.Object<Building>(*it)->GetBuildingType();        
+        const BuildingType* building_type = universe.Object<Building>(*it)->GetBuildingType();
         BuildingIndicator* ind = new BuildingIndicator(indicator_size, *building_type);
         m_building_indicators.push_back(ind);
     }
@@ -1600,10 +1599,11 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     m_graphic(0),
     m_progress_bar(0)
 {
+    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type.Name());
+
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(type.Graphic(), type.Name(), type.Description())));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, type.Name(), type.Description())));
         
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     AttachChild(m_graphic);
 }
@@ -1615,10 +1615,11 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     m_graphic(0),
     m_progress_bar(0)
 {
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(type.Graphic(), type.Name(), type.Description())));
+    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type.Name());
 
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / type.Graphic());
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, type.Name(), type.Description())));
+
     m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
     AttachChild(m_graphic);
 
@@ -1748,11 +1749,9 @@ void SpecialsPanel::Update()
     // get specials and use them to create specials icons
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
-
-        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / special->Graphic());
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, ClientUI::SpecialTexture(special->Name()), GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(special->Graphic(), special->Name(), special->Description())));
+        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()), special->Name(), special->Description())));
         m_icons.push_back(graphic);
     }
 

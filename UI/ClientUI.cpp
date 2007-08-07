@@ -13,6 +13,7 @@
 #include "../universe/System.h"
 #include "../universe/Ship.h"
 #include "../universe/Tech.h"
+#include "../universe/Special.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
@@ -86,22 +87,60 @@ int         ClientUI::SystemIconSize()                  { return GetOptionsDB().
 double      ClientUI::FleetButtonSize()                 { return GetOptionsDB().Get<double>("UI.fleet-button-size"); }
 double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
 
-// misc UI windows
+// SidePanel
 GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }
 
-boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(const std::string& design_name)
+// content texture getters
+boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
-    boost::shared_ptr<GG::Texture> texture = GetTexture(ArtDir() / "icons" / (design_name + ".png"));
+    const ShipDesign* design = GetShipDesign(design_id);
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / "icons" / (design->name + ".png"), true);
     if (texture) return texture;
-    return GetTexture(ArtDir() / "icons" / "Scout.png");
+    return ClientUI::GetTexture(ArtDir() / "icons" / "Scout.png", true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const BuildingType* building_type)
+boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name)
 {
+    const BuildingType* building_type = GetBuildingType(building_type_name);
     const std::string graphic_name = building_type->Graphic();
     if (graphic_name.empty())
-        return GetTexture(ArtDir() / "building_icons" / "Generic_Building.png");
-    return GetTexture(ArtDir() / building_type->Graphic());
+        return ClientUI::GetTexture(ArtDir() / "building_icons" / "Generic_Building.png", true);
+    return ClientUI::GetTexture(ArtDir() / graphic_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
+{
+    std::string icon_filename;
+    if (category_name == "CONSTRUCTION_CATEGORY")
+        icon_filename = "construction.png";
+    if (category_name == "ECONOMICS_CATEGORY")
+        icon_filename = "economics.png";
+    if (category_name == "GROWTH_CATEGORY")
+        icon_filename = "growth.png";
+    if (category_name == "LEARNING_CATEGORY")
+        icon_filename = "learning.png";
+    if (category_name == "PRODUCTION_CATEGORY")
+        icon_filename = "production.png";
+    return ClientUI::GetTexture(ArtDir() / "tech_icons" / "categories" / icon_filename, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
+{
+    const Tech* tech = GetTechManager().GetTech(tech_name);
+    std::string texture_name = tech->Graphic();
+    if (texture_name.empty()) {
+        return CategoryIcon(tech->Category());
+    }
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& special_name)
+{
+    const Special* special = GetSpecial(special_name);
+    std::string texture_name = special->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "special_icons" / "Generic_Special.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name);
 }
 
 // tech screen
@@ -123,32 +162,6 @@ GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
         return GetOptionsDB().Get<StreamableColor>("UI.tech-category-" + boost::lexical_cast<std::string>(category_index)).ToClr();
     }
     return GG::Clr();
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
-{
-    std::string icon_filename;
-    if (category_name == "CONSTRUCTION_CATEGORY")
-        icon_filename = "construction.png";
-    if (category_name == "ECONOMICS_CATEGORY")
-        icon_filename = "economics.png";
-    if (category_name == "GROWTH_CATEGORY")
-        icon_filename = "growth.png";
-    if (category_name == "LEARNING_CATEGORY")
-        icon_filename = "learning.png";
-    if (category_name == "PRODUCTION_CATEGORY")
-        icon_filename = "production.png";
-    return GetTexture(ArtDir() / "tech_icons" / "categories" / icon_filename);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
-{
-    const Tech* tech = GetTechManager().GetTech(tech_name);
-    std::string texture_name = tech->Graphic();
-    if (texture_name.empty()) {
-        return CategoryIcon(tech->Category());
-    }
-    return GetTexture(ArtDir() / texture_name);
 }
 
 std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
@@ -305,7 +318,6 @@ namespace {
         db.Add("UI.window-quickclose", "OPTIONS_DB_UI_WINDOW_QUICKCLOSE", true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-
 }
 
 
