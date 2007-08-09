@@ -397,9 +397,9 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Render();
-    virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void RClick(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
     void Refresh();                 ///< updates panels, shows / hides colonize button, redoes layout of infopanels
     void Hilite(HilitingType ht);
@@ -453,7 +453,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual bool InWindow(const GG::Pt& pt) const;
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
     int                PlanetID() const            {return m_planet_id;}
     int                PlanetPanels() const        {return m_planet_panels.size();}
@@ -897,11 +897,11 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
     HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false));
 } 
 
-void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if ((parent=Parent()))
-        parent->MouseWheel(pt,move,keys);
+        parent->MouseWheel(pt,move,mod_keys);
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
@@ -919,7 +919,7 @@ SidePanel::PlanetPanel::HilitingType SidePanel::PlanetPanel:: Hiliting() const
     return m_hiliting;
 }
 
-void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, Uint32 keys) 
+void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) 
 {
     if (InPlanet(pt))
     {
@@ -1010,7 +1010,7 @@ void SidePanel::PlanetPanel::ClickColonize()
     }
 }
 
-void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, Uint32 keys)
+void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     const Planet *planet = GetPlanet();
   
@@ -1066,7 +1066,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
     return UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight();
 }
 
-void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_vscroll)
         move < 0 ? m_vscroll->ScrollLineIncr() : m_vscroll->ScrollLineDecr();

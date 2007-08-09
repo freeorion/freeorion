@@ -54,10 +54,10 @@ public:
     //! \name Mutators //!@{
     virtual void   SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void   Render() {}
-    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   RClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   LDoubleClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void   LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void   MouseLeave();
     void           SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 

@@ -67,7 +67,7 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void Render();
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
     /* need to redefine this so that icons and name can be put at the top of the Wnd, rather
        than being restricted to the client area of a CUIWnd */
@@ -238,7 +238,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
@@ -268,7 +268,7 @@ void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt&
             final_move = new_ul - ul;
         }
 
-        GG::Wnd::LDrag(pt, final_move, keys);
+        GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
 }
 
@@ -393,7 +393,7 @@ public:
     BuildSelector(int w, int h);
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
     const std::set<BuildType>&      GetBuildTypesShown() const;
     const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
@@ -530,7 +530,7 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt&
         DoLayout();
 }
 
-void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
@@ -560,7 +560,7 @@ void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& mo
             final_move = new_ul - ul;
         }
 
-        GG::Wnd::LDrag(pt, final_move, keys);
+        GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
 }
 

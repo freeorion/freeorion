@@ -79,7 +79,7 @@ namespace {
                 GG::FlatRectangle(ul.x, ul.y - 1, lr.x, ul.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
             }
         }
-        virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+        virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
         {
             if (drag_drop_wnds.size() == 1 && AllowedDropTypes().find(drag_drop_wnds.begin()->first->DragDropDataType()) != AllowedDropTypes().end()) {
                 m_drop_point = RowUnderPt(pt);
@@ -90,7 +90,7 @@ namespace {
             } else {
                 m_drop_point = -1;
             }
-            ListBox::DragDropHere(pt, drag_drop_wnds, keys);
+            ListBox::DragDropHere(pt, drag_drop_wnds, mod_keys);
         }
         virtual void DragDropLeave()
         {

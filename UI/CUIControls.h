@@ -43,7 +43,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
 
     void SetBorderColor(GG::Clr clr);   ///< sets the color used to render the border of the button
     void SetBorderThick(int thick);     ///< sets the thickness of the rendered the border of the button
@@ -92,7 +92,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
+    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
 
     void FillBackgroundWithWndColor(bool fill);
     //@}
@@ -129,7 +129,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void   Render();
-    virtual void   MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void   MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void   MouseLeave();
     //@}
 
@@ -150,10 +150,10 @@ public:
         ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, GG::Clr border_color); ///< basic ctor
         virtual void SetColor(GG::Clr c);
         virtual void Render();
-        virtual void LButtonDown(const GG::Pt& pt, Uint32 keys);
-        virtual void LButtonUp(const GG::Pt& pt, Uint32 keys);
-        virtual void LClick(const GG::Pt& pt, Uint32 keys);
-        virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+        virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+        virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+        virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+        virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
         virtual void MouseLeave();
     private:
         GG::Clr m_border_color;
@@ -229,8 +229,8 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Render();
-    virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseLeave();
 
     void         DisableDropArrow();  ///< disables rendering of the small downward-facing arrow on the right of the control
@@ -440,7 +440,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Render();
-    virtual void LClick(const GG::Pt& pt, Uint32 keys);
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
     mutable ColorChangedSignalType ColorChangedSignal;

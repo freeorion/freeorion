@@ -1,5 +1,4 @@
 // -*- C++ -*-
-//FleetButton.h
 #ifndef _FleetButton_h_
 #define _FleetButton_h_
 
@@ -30,8 +29,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
 
     /** sets the orientation of the fleet marker (must be one of SHAPE_LEFT and SHAPE_RIGHT; 
         otherwise, SHAPE_LEFT will be used) */

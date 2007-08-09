@@ -54,10 +54,10 @@ public:
 
     /** \name Mutators */ //@{
     virtual void   Render();
-    virtual void   LButtonDown(const GG::Pt& pt, Uint32 keys);
-    virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
-    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseHere(const GG::Pt& pt, Uint32 keys);
+    virtual void   LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void   MouseLeave();
    
     /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text 

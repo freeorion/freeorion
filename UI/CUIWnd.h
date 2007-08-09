@@ -3,13 +3,9 @@
 #ifndef _CUIWnd_h_
 #define _CUIWnd_h_
 
-#ifndef _GG_Wnd_h_
-#include <GG/Wnd.h>
-#endif
-
-#ifndef _GG_Button_h_
 #include <GG/Button.h>
-#endif
+#include <GG/Wnd.h>
+#include <GG/WndEvent.h>
 
 class CUIEdit;
 class CUIButton;
@@ -103,10 +99,10 @@ public:
     //! \name Mutators //@{
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void Render();
-    virtual void LButtonDown(const GG::Pt& pt, Uint32 keys);
-    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
-    virtual void LButtonUp(const GG::Pt& pt, Uint32 keys);
-    virtual void LClick(const GG::Pt& pt, Uint32 keys) {return LButtonUp(pt, keys);}
+    virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {return LButtonUp(pt, mod_keys);}
 
     void ToggleMinimized() {MinimizeClicked();}
     void Close()           {CloseClicked();}
@@ -163,7 +159,7 @@ public:
     CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
 
     virtual void ModalInit();
-    virtual void KeyPress(GG::Key key, Uint32 key_mods);
+    virtual void KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
 
     const std::string& Result() const;
 

@@ -348,7 +348,7 @@ public:
     //! \name Mutators //@{
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void Render();
-    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
 private:
@@ -534,7 +534,7 @@ void TechTreeWnd::TechTreeControls::Render()
 }
 
 
-void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
@@ -565,7 +565,7 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
             final_move = new_ul - ul;
         }
 
-        GG::Wnd::LDrag(pt, final_move, keys);
+        GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
 }
 
@@ -584,7 +584,7 @@ public:
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void Render();
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
     /* need to redefine this so that icons and name can be put at the top of the Wnd, rather
        than being restricted to the client area of a CUIWnd */
@@ -755,7 +755,7 @@ void TechTreeWnd::TechDetailPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void TechTreeWnd::TechDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void TechTreeWnd::TechDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
@@ -785,7 +785,7 @@ void TechTreeWnd::TechDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, U
             final_move = new_ul - ul;
         }
 
-        GG::Wnd::LDrag(pt, final_move, keys);
+        GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
 }
 
@@ -881,7 +881,7 @@ public:
     mutable boost::signal<void (const Tech*)> TechClickedSignal;
 
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
+    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
 private:
     /** A control with a label \a str on it, and that is rendered partially onto the next row.
@@ -904,8 +904,8 @@ private:
         virtual GG::Pt ClientLowerRight() const {return LowerRight() - GG::Pt(2, 2);}
         virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
         virtual void Render();
-        virtual void LClick(const GG::Pt& pt, Uint32 keys) {ClickedSignal(m_tech);}
-        virtual void MouseEnter(const GG::Pt& pt, Uint32 keys) {m_selected = true;}
+        virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {ClickedSignal(m_tech);}
+        virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_selected = true;}
         virtual void MouseLeave() {m_selected = false;}
 
         mutable boost::signal<void (const Tech*)> ClickedSignal;
@@ -997,7 +997,7 @@ void TechTreeWnd::TechNavigator::DoLayout()
     }
 }
 
-void TechTreeWnd::TechNavigator::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void TechTreeWnd::TechNavigator::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
@@ -1027,7 +1027,7 @@ void TechTreeWnd::TechNavigator::LDrag(const GG::Pt& pt, const GG::Pt& move, Uin
             final_move = new_ul - ul;
         }
 
-        GG::Wnd::LDrag(pt, final_move, keys);
+        GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
 }
 
@@ -1215,8 +1215,8 @@ private:
     {
     public:
         LayoutSurface() : Wnd(0, 0, 1, 1, GG::CLICKABLE | GG::DRAGABLE) {}
-        virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys) {DraggedSignal(move);}
-        virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys) {ZoomedSignal(move);}
+        virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {DraggedSignal(move);}
+        virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {ZoomedSignal(move);}
         mutable boost::signal<void (int)> ZoomedSignal;
         mutable boost::signal<void (const GG::Pt&)> DraggedSignal;
     };
@@ -1273,10 +1273,10 @@ public:
 
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual void Render();
-    virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void LDoubleClick(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseHere(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys) {ZoomedSignal(move);}
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {ZoomedSignal(move);}
     mutable boost::signal<void (int)> ZoomedSignal;
 
     void Select(bool select);
@@ -1430,18 +1430,18 @@ void TechTreeWnd::LayoutPanel::TechPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, Uint32 keys)
+void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_selected)
         TechClickedSignal(m_tech);
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, Uint32 keys)
+void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     TechDoubleClickedSignal(m_tech);
 }
 
-void TechTreeWnd::LayoutPanel::TechPanel::MouseHere(const GG::Pt& pt, Uint32 keys)
+void TechTreeWnd::LayoutPanel::TechPanel::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     TechBrowsedSignal(m_tech);
 }

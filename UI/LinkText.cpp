@@ -3,6 +3,7 @@
 #include "../util/MultiplayerCommon.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/WndEvent.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -48,18 +49,18 @@ void LinkText::Render()
     GG::TextControl::Render();
 }
 
-void LinkText::LButtonDown(const GG::Pt& pt, Uint32 keys)
+void LinkText::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_old_sel_link = GetLinkUnderPt(pt);
 }
 
-void LinkText::LButtonUp(const GG::Pt& pt, Uint32 keys)
+void LinkText::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_old_sel_link = -1;
     ClearOldRollover();
 }
 
-void LinkText::LClick(const GG::Pt& pt, Uint32 keys)
+void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     using boost::lexical_cast;
     int sel_link = GetLinkUnderPt(pt);
@@ -83,7 +84,7 @@ void LinkText::LClick(const GG::Pt& pt, Uint32 keys)
     m_old_sel_link = -1;
 }
 
-void LinkText::MouseHere(const GG::Pt& pt, Uint32 keys)
+void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     int rollover_link = GetLinkUnderPt(pt);
     if (rollover_link != m_old_rollover_link) {

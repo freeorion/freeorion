@@ -20,6 +20,7 @@
 #include <GG/StaticGraphic.h>
 #include <GG/BrowseInfoWnd.h>
 #include <GG/StyleFactory.h>
+#include <GG/WndEvent.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -480,11 +481,11 @@ void PopulationPanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
-void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
-        parent->MouseWheel(pt, move, keys);
+        parent->MouseWheel(pt, move, mod_keys);
 }
 
 void PopulationPanel::Render() 
@@ -924,11 +925,11 @@ void ResourcePanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
-void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
-        parent->MouseWheel(pt, move, keys);
+        parent->MouseWheel(pt, move, mod_keys);
 }
 
 void ResourcePanel::Render() 
@@ -1310,11 +1311,11 @@ void MeterStatusBar2::Render()
                       clr, clr, 0);
 }
 
-void MeterStatusBar2::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void MeterStatusBar2::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
-        parent->MouseWheel(pt, move, keys);
+        parent->MouseWheel(pt, move, mod_keys);
 }
 
 /////////////////////////////////////
@@ -1417,11 +1418,11 @@ void BuildingsPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
-        parent->MouseWheel(pt, move, keys);
+        parent->MouseWheel(pt, move, mod_keys);
 }
 
 void BuildingsPanel::Update()
@@ -1684,11 +1685,11 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     if (m_progress_bar)
         m_progress_bar->SizeMove(GG::Pt(0, bar_top), child_lr);
 }
-void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
-        parent->MouseWheel(pt, move, keys);
+        parent->MouseWheel(pt, move, mod_keys);
 }
 
 /////////////////////////////////////
@@ -1726,11 +1727,11 @@ bool SpecialsPanel::InWindow(const GG::Pt& pt) const
 void SpecialsPanel::Render()
 {}
 
-void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
-        parent->MouseWheel(pt, move, keys);
+        parent->MouseWheel(pt, move, mod_keys);
 }
 
 void SpecialsPanel::Update()

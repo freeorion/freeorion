@@ -464,59 +464,11 @@ void HumanClientApp::Initialize()
 
 void HumanClientApp::HandleSystemEvents()
 {
-    // handle events
-    SDL_Event event;
-    while (0 < SDL_PollEvent(&event)) {
-        bool send_to_gg = false;
-        EventType gg_event = MOUSEMOVE;
-        GG::Key key = GGKeyFromSDLKey(event.key.keysym);
-        Uint32 key_mods = SDL_GetModState();
-        GG::Pt mouse_pos(event.motion.x, event.motion.y);
-        GG::Pt mouse_rel(event.motion.xrel, event.motion.yrel);
-
-        switch (event.type) {
-        case SDL_KEYDOWN:
-            if (key < GG::GGK_NUMLOCK)
-                send_to_gg = true;
-            gg_event = KEYPRESS;
-            break;
-        case SDL_MOUSEMOTION:
-            send_to_gg = true;
-            gg_event = MOUSEMOVE;
-            break;
-        case SDL_MOUSEBUTTONDOWN:
-            send_to_gg = true;
-            switch (event.button.button) {
-                case SDL_BUTTON_LEFT:      gg_event = LPRESS; break;
-                case SDL_BUTTON_MIDDLE:    gg_event = MPRESS; break;
-                case SDL_BUTTON_RIGHT:     gg_event = RPRESS; break;
-                case SDL_BUTTON_WHEELUP:   gg_event = MOUSEWHEEL; mouse_rel = GG::Pt(0, 1); break;
-                case SDL_BUTTON_WHEELDOWN: gg_event = MOUSEWHEEL; mouse_rel = GG::Pt(0, -1); break;
-            }
-            key_mods = SDL_GetModState();
-            break;
-        case SDL_MOUSEBUTTONUP:
-            send_to_gg = true;
-            switch (event.button.button) {
-                case SDL_BUTTON_LEFT:   gg_event = LRELEASE; break;
-                case SDL_BUTTON_MIDDLE: gg_event = MRELEASE; break;
-                case SDL_BUTTON_RIGHT:  gg_event = RRELEASE; break;
-            }
-            key_mods = SDL_GetModState();
-            break;
-        }
-
-        if (send_to_gg)
-            HandleGGEvent(gg_event, key, key_mods, mouse_pos, mouse_rel);
-        else
-            HandleNonGGEvent(event);
-    }
-
-    // now check for a single network message
+    SDLGUI::HandleSystemEvents();
     if (m_connected && !Networking().Connected()) {
         m_connected = false;
         // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
-        // Disconnection inherently precipitates a transition out of any state A that handles it, and if another event
+        // Disconnection inherently precipitates a transition out of any state S that handles it, and if another event
         // that also causes a transition out of S is currently active (e.g. MPLobby), a double-destruction of S will
         // occur.
         m_fsm->post_event(Disconnection());

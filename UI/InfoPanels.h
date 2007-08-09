@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _InfoPanels_h_
 #define _InfoPanels_h_
 
@@ -45,7 +46,7 @@ public:
 
     virtual void Render();
 
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
     void Update();          ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void Refresh();         ///< updates, redoes layout, resizes indicator
@@ -97,7 +98,7 @@ public:
     void ExpandCollapse(bool expanded); ///< expands or collapses panel to show details or just summary info
 
     virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
     void Update();  ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void Refresh(); ///< updates, redoes layout, resizes indicator
@@ -164,7 +165,7 @@ public:
     void ExpandCollapse(bool expanded);         ///< expands or collapses panel to show details or just summary info
 
     virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
     void Refresh();                             ///< recreates indicators, redoes layout, resizes
 
@@ -204,7 +205,7 @@ public:
     virtual void Render();
 
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
 
 private:
@@ -229,7 +230,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
     
     void Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
     //@}
@@ -252,7 +253,7 @@ public:
     MeterStatusBar2(int w, int h, const Meter& meter);
 
     virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, Uint32 keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
     void SetProjectedCurrent(double current);
     void SetProjectedMax(double max);

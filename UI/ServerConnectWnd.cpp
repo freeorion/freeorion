@@ -98,7 +98,7 @@ void ServerConnectWnd::ModalInit()
     GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit);
 }
 
-void ServerConnectWnd::KeyPress(GG::Key key, Uint32 key_mods)
+void ServerConnectWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
         OkClicked();

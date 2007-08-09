@@ -186,25 +186,25 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     }
 }
 
-void SystemIcon::LClick(const GG::Pt& pt, Uint32 keys)
+void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
         LeftClickedSignal(m_system.ID());
 }
 
-void SystemIcon::RClick(const GG::Pt& pt, Uint32 keys)
+void SystemIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
         RightClickedSignal(m_system.ID());
 }
 
-void SystemIcon::LDoubleClick(const GG::Pt& pt, Uint32 keys)
+void SystemIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
         LeftDoubleClickedSignal(m_system.ID());
 }
 
-void SystemIcon::MouseEnter(const GG::Pt& pt, Uint32 keys)
+void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     // indicate mouseover
     if (m_mouseover_indicator) {
@@ -267,13 +267,13 @@ void SystemIcon::ClickFleetButton(Fleet* fleet)
 {
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
-            it->second->LClick(GG::Pt(), 0);
+            it->second->LClick(GG::Pt(), GG::MOD_KEY_NONE);
             return;
         }
     }
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
         if (std::find(it->second->Fleets().begin(), it->second->Fleets().end(), fleet) != it->second->Fleets().end()) {
-            it->second->LClick(GG::Pt(), 0);
+            it->second->LClick(GG::Pt(), GG::MOD_KEY_NONE);
             return;
         }
     }

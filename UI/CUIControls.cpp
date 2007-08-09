@@ -146,7 +146,7 @@ bool CUIButton::InWindow(const GG::Pt& pt) const
     return InAngledCornerRect(pt, ul.x, ul.y, lr.x, lr.y, CUIBUTTON_ANGLE_OFFSET);
 }
 
-void CUIButton::MouseHere(const GG::Pt& pt, Uint32 keys)
+void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER && PlaySounds())
@@ -264,7 +264,7 @@ bool CUIArrowButton::InWindow(const GG::Pt& pt) const
 bool CUIArrowButton::FillBackgroundWithWndColor() const
 { return m_fill_background_with_wnd_color; }
 
-void CUIArrowButton::MouseHere(const GG::Pt& pt, Uint32 keys)
+void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER && PlaySounds())
@@ -448,7 +448,7 @@ void CUIStateButton::Render()
     }
 }
 
-void CUIStateButton::MouseEnter(const GG::Pt& pt, Uint32 keys)
+void CUIStateButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_mouse_here = true;
 }
@@ -547,24 +547,24 @@ void CUIScroll::ScrollTab::Render()
     AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
-void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, Uint32 keys)
+void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_being_dragged = true;
 }
 
-void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, Uint32 keys)
+void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_being_dragged = false;
     if (!InWindow(GG::GUI::GetGUI()->MousePosition()))
         m_mouse_here = false;
 }
 
-void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, Uint32 keys)
+void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_being_dragged = false;
 }
 
-void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, Uint32 keys)
+void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_being_dragged && !m_mouse_here) {
         if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
@@ -682,14 +682,14 @@ void CUIDropDownList::Render()
     }
 }
 
-void CUIDropDownList::LClick(const GG::Pt& pt, Uint32 keys)
+void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
         PlayDropDownListOpenSound();
-    DropDownList::LClick(pt, keys);
+    DropDownList::LClick(pt, mod_keys);
 }
 
-void CUIDropDownList::MouseEnter(const GG::Pt& pt, Uint32 keys)
+void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
     m_mouse_here = true;
@@ -1215,7 +1215,7 @@ void ColorSelector::Render()
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_WHITE, 1);
 }
 
-void ColorSelector::LClick(const GG::Pt& pt, Uint32 keys)
+void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     int x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
     int y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg

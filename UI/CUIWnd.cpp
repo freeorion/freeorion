@@ -238,7 +238,7 @@ void CUIWnd::Render()
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }
 
-void CUIWnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
+void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_minimized && m_resizable) {
         GG::Pt cl_lr = LowerRight() - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
@@ -249,7 +249,7 @@ void CUIWnd::LButtonDown(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
+void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_drag_offset != GG::Pt(-1, -1)) { // resize-dragging
         Resize((pt - m_drag_offset) - UpperLeft());
@@ -257,11 +257,11 @@ void CUIWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys)
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
                           std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
-        GG::Wnd::LDrag(pt + final_move - move, final_move, keys);
+        GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
     }
 }
 
-void CUIWnd::LButtonUp(const GG::Pt& pt, Uint32 keys)
+void CUIWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
 }
@@ -403,7 +403,7 @@ void CUIEditWnd::ModalInit()
     GG::GUI::GetGUI()->SetFocusWnd(m_edit);
 }
 
-void CUIEditWnd::KeyPress(GG::Key key, Uint32 key_mods)
+void CUIEditWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;

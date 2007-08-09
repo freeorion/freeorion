@@ -9,6 +9,7 @@
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+#include <GG/WndEvent.h>
 
 #include <boost/format.hpp>
 
@@ -62,12 +63,12 @@ void FocusButton::Render()
     }
 }
 
-void FocusButton::RClick(const GG::Pt& pt, Uint32 keys)
+void FocusButton::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     RightClickedSignal();
 }
 
-void FocusButton::MouseEnter(const GG::Pt& pt, Uint32 keys)
+void FocusButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_mouse_here = true;
 }
@@ -243,17 +244,17 @@ void FocusSelector::Render()
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, FOCUS_SELECTOR_SECONDARY_OUTLINE_COLOR, 1);
 }
 
-void FocusSelector::LClick(const GG::Pt& pt, Uint32 keys)
+void FocusSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     PrimaryFocusChangedSignal(FOCUS_BALANCED);
 }
 
-void FocusSelector::RClick(const GG::Pt& pt, Uint32 keys)
+void FocusSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     SecondaryFocusChangedSignal(FOCUS_BALANCED);
 }
 
-void FocusSelector::MouseEnter(const GG::Pt& pt, Uint32 keys)
+void FocusSelector::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_mouse_here = true;
 }

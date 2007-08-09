@@ -65,7 +65,7 @@ bool FleetButton::InWindow(const GG::Pt& pt) const
     return InFleetMarker(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
 }
 
-void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)
+void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
@@ -75,12 +75,12 @@ void FleetButton::MouseHere(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-void FleetButton::LClick(const GG::Pt& pt, Uint32 keys)
+void FleetButton::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode()))
         PlayFleetButtonOpenSound();
-    GG::Button::LClick(pt, keys);
+    GG::Button::LClick(pt, mod_keys);
 }
 
 void FleetButton::RenderUnpressed()

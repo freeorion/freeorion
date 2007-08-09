@@ -61,22 +61,22 @@ public:
     SidePanel*     GetSidePanel() const;
     void           GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
     bool           InProductionViewMode() const; //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
-    bool            FleetWndsOpen() const;  //!< returns true iff there is at least one open FleetWnd
+    bool           FleetWndsOpen() const;  //!< returns true iff there is at least one open FleetWnd
     
     typedef std::set<FleetWnd*>::const_iterator FleetWndIter;
-    FleetWndIter    FleetWndBegin();
-    FleetWndIter    FleetWndEnd();
+    FleetWndIter   FleetWndBegin();
+    FleetWndIter   FleetWndEnd();
     //!@}
 
     //! \name Mutators //!@{
     virtual void   Render();
-    virtual void   KeyPress (GG::Key key, Uint32 key_mods);
-    virtual void   LButtonDown(const GG::Pt& pt, Uint32 keys);
-    virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, Uint32 keys);
-    virtual void   LButtonUp(const GG::Pt& pt, Uint32 keys);
-    virtual void   LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   RClick(const GG::Pt& pt, Uint32 keys);
-    virtual void   MouseWheel(const GG::Pt& pt, int move, Uint32 keys);
+    virtual void   KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void           InitTurn(int turn_number);                       //!< called at the start of each turn
     void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().

@@ -296,41 +296,41 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate[2] = 0.5;
 
     // connect keyboard accelerators
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE, 0), &MapWnd::ReturnToMap, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
 
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, 0), &MapWnd::OpenChatWindow, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, 0), &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN), &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
 
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL), &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL), &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL), &MapWnd::EndTurn, this);
 
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2, 0), &MapWnd::ToggleSitRep, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3, 0), &MapWnd::ToggleResearch, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4, 0), &MapWnd::ToggleProduction, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10, 0), &MapWnd::ShowMenu, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s, 0), &MapWnd::CloseSystemView, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2), &MapWnd::ToggleSitRep, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3), &MapWnd::ToggleResearch, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4), &MapWnd::ToggleProduction, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10), &MapWnd::ShowMenu, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s), &MapWnd::CloseSystemView, this);
 
     // Keys for zooming
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e, 0), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS, 0), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, 0), &MapWnd::KeyboardZoomOut, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS, 0), &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS), &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r), &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS), &MapWnd::KeyboardZoomOut, this);
 
     // Keys for showing systems
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d, 0), &MapWnd::ZoomToHomeSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x, 0), &MapWnd::ZoomToPrevOwnedSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c, 0), &MapWnd::ZoomToNextOwnedSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d), &MapWnd::ZoomToHomeSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x), &MapWnd::ZoomToPrevOwnedSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c), &MapWnd::ZoomToNextOwnedSystem, this);
 
     // Keys for showing fleets
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f, 0), &MapWnd::ZoomToPrevIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g, 0), &MapWnd::ZoomToNextIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v, 0), &MapWnd::ZoomToPrevFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b, 0), &MapWnd::ZoomToNextFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f), &MapWnd::ZoomToPrevIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g), &MapWnd::ZoomToNextIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v), &MapWnd::ZoomToPrevFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b), &MapWnd::ZoomToNextFleet, this);
 
 #ifndef FREEORION_RELEASE
     // special development-only key combo that dumps ValueRef, Condition, and Effect regression tests using the current
     // Universe
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::GGKMOD_CTRL), &RequestRegressionTestDump);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL), &RequestRegressionTestDump);
 #endif
 
     g_chat_edit_history.push_front("");
@@ -395,7 +395,7 @@ void MapWnd::Render()
     }
 }
 
-void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
+void MapWnd::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_TAB: { // auto-complete current chat edit word
@@ -512,10 +512,10 @@ void MapWnd::KeyPress (GG::Key key, Uint32 key_mods)
     }
 }
 
-void MapWnd::LButtonDown (const GG::Pt &pt, Uint32 keys)
+void MapWnd::LButtonDown (const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 { m_drag_offset = pt - ClientUpperLeft(); }
 
-void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
+void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
@@ -530,13 +530,13 @@ void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, Uint32 keys)
     m_dragged = true;
 }
 
-void MapWnd::LButtonUp (const GG::Pt &pt, Uint32 keys)
+void MapWnd::LButtonUp (const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     m_dragged = false;
 }
 
-void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
+void MapWnd::LClick (const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged && !m_in_production_view_mode) {
@@ -547,7 +547,7 @@ void MapWnd::LClick (const GG::Pt &pt, Uint32 keys)
     m_dragged = false;
 }
 
-void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
+void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     // Attempt to close open fleet windows (if any are open and this is allowed), then attempt to close the SidePanel (if open);
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
@@ -564,7 +564,7 @@ void MapWnd::RClick(const GG::Pt& pt, Uint32 keys)
     }
 }
 
-void MapWnd::MouseWheel(const GG::Pt& pt, int move, Uint32 keys)
+void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (move)
         Zoom(move);
@@ -963,7 +963,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     } else {
         for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
             if (std::find(m_moving_fleet_buttons[i]->Fleets().begin(), m_moving_fleet_buttons[i]->Fleets().end(), fleet) != m_moving_fleet_buttons[i]->Fleets().end()) {
-                m_moving_fleet_buttons[i]->LClick(GG::Pt(), 0);
+                m_moving_fleet_buttons[i]->LClick(GG::Pt(), GG::MOD_KEY_NONE);
                 break;
             }
         }
@@ -2003,77 +2003,77 @@ bool MapWnd::ZoomToNextFleet()
 
 void MapWnd::SetAccelerators()
 {
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE);
 
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER);
 
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
 
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F3, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F4, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_s, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F3);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F4);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_s);
 
     // Keys for zooming
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_e, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_PLUS, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_MINUS, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_e);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_PLUS);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_MINUS);
 
     // Keys for showing systems
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_d, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_x, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_d);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_x);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_c);
 
     // Keys for showing fleets
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_f, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v, 0);
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b, 0);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_f);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
 
 #ifndef FREEORION_RELEASE
-    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, GG::MOD_KEY_CTRL);
 #endif
 }
 
 void MapWnd::RemoveAccelerators()
 {
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_ESCAPE, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_ESCAPE);
 
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER);
     
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, GG::GGKMOD_CTRL);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
 
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F2, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F3, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F4, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F10, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_s, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F2);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F3);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F4);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F10);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_s);
 
     // Zoom keys
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_e, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_PLUS, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_MINUS, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_e);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_PLUS);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_MINUS);
 
     // Keys for showing systems
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_d, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_x, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_c, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_d);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_x);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_c);
 
     // Keys for showing fleets
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_f, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_g, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_v, 0);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_b, 0);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_f);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_g);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_v);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_b);
 
 #ifndef FREEORION_RELEASE
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, GG::GGKMOD_CTRL);
+    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, GG::MOD_KEY_CTRL);
 #endif
 }
 
@@ -2088,7 +2088,7 @@ void MapWnd::DisableAlphaNumAccels()
 {
     for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
          i != GG::GUI::GetGUI()->accel_end(); ++i) {
-        if (i->second != 0) // we only want to disable keys without modifiers
+        if (i->second != 0) // we only want to disable mod_keys without modifiers
             continue; 
         GG::Key key = i->first;
         if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
@@ -2098,7 +2098,7 @@ void MapWnd::DisableAlphaNumAccels()
     }
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
-        GG::GUI::GetGUI()->RemoveAccelerator(*i, 0);
+        GG::GUI::GetGUI()->RemoveAccelerator(*i);
     }
 }
 
@@ -2107,7 +2107,7 @@ void MapWnd::EnableAlphaNumAccels()
 {
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
-        GG::GUI::GetGUI()->SetAccelerator(*i, 0);
+        GG::GUI::GetGUI()->SetAccelerator(*i);
     }
     m_disabled_accels_list.clear();
 }

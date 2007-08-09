@@ -315,7 +315,7 @@ void GalaxySetupWnd::Render()
                       ClientUpperLeft().y + m_preview_ul.y + PREVIEW_SZ.y + 2, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void GalaxySetupWnd::KeyPress (GG::Key key, Uint32 key_mods)
+void GalaxySetupWnd::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_ok->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) // Same behaviour as if "OK" was pressed
         OkClicked();

@@ -27,7 +27,7 @@ public:
     //! \name Mutators
     //!@{
     virtual void ModalInit ();
-    virtual void KeyPress (GG::Key key, Uint32 key_mods);
+    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
     //!@}
 
     /** \name Accessors */ //@{

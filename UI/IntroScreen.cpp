@@ -46,7 +46,7 @@ public:
     CreditsWnd(int x, int y, int w, int h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co);
         
     virtual void Render();
-    virtual void LClick(const GG::Pt& pt, Uint32 keys) {m_bRender=false;}
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_bRender=false;}
 
 private:
     XMLElement m_credits;
@@ -260,7 +260,7 @@ void IntroScreen::OnExitGame()
     GG::GUI::GetGUI()->Exit(0);
 }
 
-void IntroScreen::KeyPress (GG::Key key, Uint32 key_mods)
+void IntroScreen::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE)
         OnExitGame();

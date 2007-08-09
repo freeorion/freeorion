@@ -14,8 +14,8 @@ public:
     FocusButton(GG::Clr color, const boost::shared_ptr<GG::Texture>& image);
 
     virtual void Render();
-    virtual void RClick(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseLeave();
     void SetImage(const boost::shared_ptr<GG::Texture>& image);
 
@@ -51,9 +51,9 @@ public:
     FocusSelector(int w, const ResourceCenter& resource_center);
 
     virtual void Render();
-    virtual void LClick(const GG::Pt& pt, Uint32 keys);
-    virtual void RClick(const GG::Pt& pt, Uint32 keys);
-    virtual void MouseEnter(const GG::Pt& pt, Uint32 keys);
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseLeave();
     void Update();
 

@@ -78,11 +78,11 @@ namespace {
                 GG::FlatRectangle(ul.x, ul.y - 1, lr.x, ul.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
             }
         }
-        virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+        virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
         {
-            DragDropHere(pt, drag_drop_wnds, keys);
+            DragDropHere(pt, drag_drop_wnds, mod_keys);
         }
-        virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, Uint32 keys)
+        virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
         {
             if (drag_drop_wnds.size() == 1 && drag_drop_wnds.begin()->first->DragDropDataType() == "PRODUCTION_QUEUE_ROW") {
                 m_drop_point = RowUnderPt(pt);
