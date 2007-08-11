@@ -180,12 +180,12 @@ namespace {
         int left = MARGIN;
 
 
-        m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, ClientUI::TechTexture(m_tech->Name()), GG::GR_FITGRAPHIC);
+        m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
         m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
 
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, UserString(tech->Name()), font, clr, GG::TF_TOP | GG::TF_LEFT);
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, UserString(tech->Name()), font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
@@ -202,13 +202,13 @@ namespace {
 
         std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns());
         m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
-                                                   turns_cost_text, font, clr, GG::TF_LEFT);
+                                                   turns_cost_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
         
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(format(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
-                                                     turns_left_text, font, clr, GG::TF_RIGHT);
+                                                     turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_text->ClipText(true);
 
 
@@ -258,7 +258,7 @@ ResearchWnd::ResearchWnd(int w, int h) :
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, 200, UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     m_queue_lb = new QueueListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), this);
-    m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
+    m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, 6);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, 3));

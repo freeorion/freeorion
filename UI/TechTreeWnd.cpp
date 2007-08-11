@@ -620,7 +620,7 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     m_tech_name_text = new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
     m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
     m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
-    m_description_box =   new CUIMultiEdit(0, 0, 10, 10, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    m_description_box =   new CUIMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
@@ -810,14 +810,14 @@ void TechTreeWnd::TechDetailPanel::Reset()
 
     m_tech_graphic = new GG::StaticGraphic(0, 0, 10, 10,
                                            ClientUI::TechTexture(m_tech->Name()),
-                                           GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_tech_graphic->Show();
     m_tech_graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
     AttachChild(m_tech_graphic);
 
     m_category_graphic = new GG::StaticGraphic(0, 0, 10, 10,
                                                ClientUI::CategoryIcon(m_tech->Category()),
-                                               GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_category_graphic->Show();
     m_category_graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
     AttachChild(m_category_graphic);
@@ -936,7 +936,7 @@ TechTreeWnd::TechNavigator::TechNavigator(int w, int h) :
     m_current_tech(0)
 {
     m_lb = new CUIListBox(LB_MARGIN_X, LB_MARGIN_Y, 100, 100);    // resized later when TechNavigator is SizeMoved
-    m_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
+    m_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     AttachChild(m_lb);
 }
 
@@ -1036,7 +1036,7 @@ TechTreeWnd::TechNavigator::SectionHeaderControl::SectionHeaderControl(const std
 {
     m_label = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, str,
                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                  ClientUI::KnownTechTextAndBorderColor(), GG::TF_LEFT);
+                                  ClientUI::KnownTechTextAndBorderColor(), GG::FORMAT_LEFT);
     AttachChild(m_label);
 }
 
@@ -1114,7 +1114,7 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
     GG::Pt client_size = ClientSize();
     m_name_text = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, UserString(m_tech->Name()),
                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                      m_border_color, GG::TF_LEFT);
+                                      m_border_color, GG::FORMAT_LEFT);
     AttachChild(m_name_text);
 }
 
@@ -1361,7 +1361,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     }
 
     int graphic_size = size.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) - 2;
-    m_icon = new GG::StaticGraphic(1, 1, graphic_size, graphic_size, ClientUI::TechTexture(m_tech->Name()), GG::GR_FITGRAPHIC);
+    m_icon = new GG::StaticGraphic(1, 1, graphic_size, graphic_size, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
     m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), FONT_PTS);
@@ -1369,7 +1369,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     int text_left = m_icon->LowerRight().x + static_cast<int>(4 * m_scale);
     m_tech_name_text = new GG::TextControl(text_left, UPPER_TECH_TEXT_OFFSET.y,
                                            Width() - m_icon->LowerRight().x - static_cast<int>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), font->Lineskip(),
-                                           UserString(m_tech->Name()), font, m_text_and_border_color, GG::TF_TOP | GG::TF_LEFT);
+                                           UserString(m_tech->Name()), font, m_text_and_border_color, GG::FORMAT_TOP | GG::FORMAT_LEFT);
     m_tech_name_text->ClipText(true);
     AttachChild(m_icon);
     AttachChild(m_tech_name_text);
@@ -1379,7 +1379,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
         cost_str = str(format(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
     m_tech_cost_text = new GG::TextControl(text_left, 0,
                                            Width() - text_left, Height() - LOWER_TECH_TEXT_OFFSET.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
-                                           cost_str, font, m_text_and_border_color, GG::TF_BOTTOM | GG::TF_LEFT);
+                                           cost_str, font, m_text_and_border_color, GG::FORMAT_BOTTOM | GG::FORMAT_LEFT);
     AttachChild(m_tech_cost_text);
 
     GG::Rect progress_panel = ProgressPanelRect(UpperLeft(), LowerRight());

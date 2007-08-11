@@ -115,7 +115,7 @@ class CUIStateButton : public GG::StateButton
 {
 public:
     /** \name Structors */ //@{
-    CUIStateButton(int x, int y, int w, int h, const std::string& str, Uint32 text_fmt, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
+    CUIStateButton(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
                    GG::Clr color = ClientUI::StateButtonColor(), const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                    GG::Clr text_color = ClientUI::TextColor(), GG::Clr interior = GG::CLR_ZERO,
                    GG::Clr border = ClientUI::CtrlBorderColor(), GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor
@@ -264,7 +264,7 @@ class CUIMultiEdit : public GG::MultiEdit
 {
 public:
     /** \name Structors */ //@{
-    CUIMultiEdit(int x, int y, int w, int h, const std::string& str, Uint32 style = GG::TF_LINEWRAP,
+    CUIMultiEdit(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                  GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
                  GG::Clr interior = ClientUI::MultieditIntColor(), GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< basic ctor

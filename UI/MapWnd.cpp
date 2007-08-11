@@ -265,7 +265,7 @@ MapWnd::MapWnd() :
 
     // chat display and chat input box
     m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, 
-                                       GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE | GG::MultiEdit::INTEGRAL_HEIGHT | GG::MultiEdit::NO_VSCROLL, 
+                                       GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT | GG::MULTI_NO_VSCROLL, 
                                        ClientUI::TextColor(), GG::CLR_ZERO, GG::Flags<GG::WndFlag>());
     AttachChild(m_chat_display);
     m_chat_display->SetMaxLinesOfHistory(100);

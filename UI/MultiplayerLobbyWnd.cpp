@@ -85,7 +85,7 @@ namespace {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
             CUIDropDownList* empire_list = new CUIDropDownList(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
-            empire_list->SetStyle(GG::LB_NOSORT);
+            empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
             for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
                 empire_list->Insert(new CUISimpleDropDownListRow(it->second.m_name));
@@ -169,7 +169,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     int x = CONTROL_MARGIN;
     m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");
     m_chat_box = new CUIMultiEdit(x, CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "", 
-                                  GG::TF_LINEWRAP | GG::MultiEdit::READ_ONLY | GG::MultiEdit::TERMINAL_STYLE);
+                                  GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
     const int RADIO_BN_HT = ClientUI::Pts() + 4;
@@ -181,22 +181,22 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
                                  m_galaxy_setup_panel->LowerRight().y + 100, m_galaxy_setup_panel->LowerRight().y + RADIO_BN_HT - CONTROL_MARGIN,
                                  GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
-    m_saved_games_list->SetStyle(GG::LB_NOSORT);
+    m_saved_games_list->SetStyle(GG::LIST_NOSORT);
 
     g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, CONTROL_MARGIN + PREVIEW_MARGIN);
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GR_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
     int y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
     m_players_lb = new CUIListBox(x, y, ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
-    m_players_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL);
+    m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
 
     if (m_host)
         m_start_game_bn = new CUIButton(0, 0, 125, UserString("START_GAME_BN"));
@@ -210,7 +210,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
                                                   m_cancel_bn->UpperLeft().x - x, ClientUI::Pts()*3/2,
                                                   UserString("MULTIPLAYER_GAME_START_CONDITIONS"),
                                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                                  ClientUI::TextColor(), GG::TF_LEFT);
+                                                  ClientUI::TextColor(), GG::FORMAT_LEFT);
 
     AttachChild(m_chat_box);
     AttachChild(m_chat_input_edit);
@@ -356,7 +356,7 @@ void MultiplayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new
         DeleteChild(m_preview_image);
         m_preview_image = 0;
     }
-    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GR_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, new_image, GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_preview_image);
 }
 

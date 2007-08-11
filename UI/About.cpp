@@ -27,7 +27,7 @@ About::About():
     m_license = new CUIButton(310,440,75,UserString("LICENSE"));
     m_vision = new CUIButton(220,440,75,UserString("VISION"));
     m_info = new CUIMultiEdit(20, 20, 550, 400, UserString("FREEORION_VISION"), 
-                              GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY,
+                              GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
                               GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                               ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
                               ClientUI::MultieditIntColor(), GG::CLICKABLE);

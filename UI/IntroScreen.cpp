@@ -69,7 +69,7 @@ void CreditsWnd::Render()
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.3));;
-    Uint32 format = GG::TF_CENTER | GG::TF_TOP;
+    GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
     glColor(GG::CLR_WHITE);
@@ -141,10 +141,10 @@ IntroScreen::IntroScreen() :
     m_credits_wnd(0),
     m_splash(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
                                    ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
-                                   GG::GR_FITGRAPHIC, GG::CLICKABLE)),
+                                   GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE)),
     m_logo(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
-                                 GG::GR_FITGRAPHIC | GG::GR_PROPSCALE))
+                                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE))
 {
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);

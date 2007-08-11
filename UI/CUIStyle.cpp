@@ -12,11 +12,11 @@ GG::Button* CUIStyle::NewButton(int x, int y, int w, int h, const std::string& s
 }
 
 GG::StateButton* CUIStyle::NewStateButton(int x, int y, int w, int h, const std::string& str,
-                                          const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt, GG::Clr color,
+                                          const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                           GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                           GG::StateButtonStyle style/* = GG::SBSTYLE_3D_XBOX*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) const
 {
-    return new CUIStateButton(x, y, w, h, str, text_fmt, style);
+    return new CUIStateButton(x, y, w, h, str, format, style);
 }
 
 GG::DropDownList* CUIStyle::NewDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color,
@@ -39,7 +39,7 @@ GG::ListBox* CUIStyle::NewListBox(int x, int y, int w, int h, GG::Clr color, GG:
 }
 
 GG::MultiEdit* CUIStyle::NewMultiEdit(int x, int y, int w, int h, const std::string& str,
-                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, Uint32 style/* = GG::TF_LINEWRAP*/,
+                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Flags<GG::MultiEditStyle> style/* = GG::MULTI_LINEWRAP*/,
                                       GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                       GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) const
 {
@@ -144,11 +144,11 @@ GG::Button* CUIStyle::NewSpinDecrButton(int x, int y, int w, int h, const std::s
 }
 
 GG::StateButton* CUIStyle::NewTabBarTab(int x, int y, int w, int h, const std::string& str,
-                                        const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt, GG::Clr color,
+                                        const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                         GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                         GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) const
 {
-    GG::StateButton* retval = new CUIStateButton(x, y, w, h, str, text_fmt, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
+    GG::StateButton* retval = new CUIStateButton(x, y, w, h, str, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
     retval->Resize(retval->MinUsableSize() + GG::Pt(12, 0));
     return retval;
 }

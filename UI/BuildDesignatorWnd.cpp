@@ -109,7 +109,7 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     m_item_name_text = new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
     m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
     m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
-    m_description_box =   new CUIMultiEdit(0, 0, 10, 10, "", GG::TF_WORDBREAK | GG::MultiEdit::READ_ONLY);
+    m_description_box =   new CUIMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
@@ -369,7 +369,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
 
     if (graphic) {
         GG::Pt ul = ClientUpperLeft();
-        m_item_graphic = new GG::StaticGraphic(0, 0, 10, 10, graphic, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        m_item_graphic = new GG::StaticGraphic(0, 0, 10, 10, graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_item_graphic->Show();
         AttachChild(m_item_graphic);
     }
@@ -474,7 +474,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     AttachChild(m_buildable_items);
     GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
     GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
-    m_buildable_items->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
+    m_buildable_items->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
     row_height = ClientUI::Pts()*3/2;
 
@@ -758,7 +758,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             // icon
             GG::Control* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
                 ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic()),
-                GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(icon);
 
             // building name
@@ -773,7 +773,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 
             // brief description
             std::string desc_text = UserString("BT_BUILDING");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::TF_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -813,7 +813,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             // icon
             GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
                 ClientUI::GetTexture(ClientUI::ArtDir() / ship_design->graphic),
-                GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // ship design name
@@ -828,7 +828,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 
             // brief description            
             std::string desc_text = UserString("BT_SHIP");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::TF_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -860,7 +860,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
             // icon
             GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
                 ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "defensebase.png"),
-                GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // Defense Base "name"
@@ -875,7 +875,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 
             // brief description            
             std::string desc_text = UserString("BT_ORBITAL");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::TF_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row

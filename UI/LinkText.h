@@ -44,7 +44,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt = 0, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor taking a font directly
+    LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 

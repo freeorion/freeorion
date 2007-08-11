@@ -92,7 +92,7 @@ namespace {
             m_ship(ship),
             m_ship_icon(0),
             m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                                 ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER)),
+                                                 ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER)),
             m_ship_strength_stat(0),
             m_damage_stat(0),
             m_colonizer_icon(0),
@@ -168,7 +168,7 @@ namespace {
                 design_name = "Scout";
             }
             m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
-            /*ClientUI::ShipIcon(design_name)*/ ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")), GG::GR_FITGRAPHIC);
+            /*ClientUI::ShipIcon(design_name)*/ ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")), GG::GRAPHIC_FITGRAPHIC);
             AttachChild(m_ship_icon);
         }
 
@@ -199,7 +199,7 @@ namespace {
                 if (!m_colonizer_icon) {
                     m_colonizer_icon = new GG::StaticGraphic(x_position, SHIP_NAME_HT, ICON_SZ, ICON_SZ, 
                                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png"),
-                                                             GG::GR_FITGRAPHIC);
+                                                             GG::GRAPHIC_FITGRAPHIC);
                     AttachChild(m_colonizer_icon);
                 }
                 x_position += m_colonizer_icon->Width() + ICON_SPACING;
@@ -298,7 +298,7 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
     m_fleet_icon(0),
     m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
                                           GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
-                                          GG::TF_RIGHT | GG::TF_VCENTER)),
+                                          GG::FORMAT_RIGHT | GG::FORMAT_VCENTER)),
     m_num_ships_stat(0),
     m_fleet_strength_stat(0),
     m_damage_icon(0),
@@ -441,7 +441,7 @@ void FleetDataPanel::SetFleetIcon()
     }
 
     if (icon) {
-        m_fleet_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, FLEET_ICON_SZ, FLEET_ICON_SZ, icon, GG::GR_FITGRAPHIC);
+        m_fleet_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, FLEET_ICON_SZ, FLEET_ICON_SZ, icon, GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_fleet_icon);
     }
 }
@@ -476,7 +476,7 @@ void FleetDataPanel::Refresh()
             if (!m_damage_icon) {
                 m_damage_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
                                                       ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "damagemarker.png"),
-                                                      GG::GR_FITGRAPHIC);
+                                                      GG::GRAPHIC_FITGRAPHIC);
                 AttachChild(m_damage_icon);
             }
             x_position += m_damage_icon->Width() + ICON_SPACING;
@@ -488,7 +488,7 @@ void FleetDataPanel::Refresh()
             if (!m_colonizer_icon) {
                 m_colonizer_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 
                                                          ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png"),
-                                                         GG::GR_FITGRAPHIC);
+                                                         GG::GRAPHIC_FITGRAPHIC);
                 AttachChild(m_colonizer_icon);
             }
             x_position += m_colonizer_icon->Width() + ICON_SPACING;
@@ -733,10 +733,10 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, GG::Flags<GG::W
     SetText("FleetDetailPanel");
     EnableChildClipping(true);
 
-    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::Pts() + 4, "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT);
+    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::Pts() + 4, "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_ships_lb = new ShipsListBox(0, m_destination_text->LowerRight().y + CONTROL_MARGIN, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, 0, read_only);
     m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::Pts() + 4, 
-                                             "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::TF_LEFT);
+                                             "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_destination_text->SetMinSize(true);
     m_ships_lb->SetMinSize(m_ships_lb->Size());
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
@@ -795,9 +795,9 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
 void FleetDetailPanel::Init()
 {
     if (m_read_only) {
-        m_ships_lb->SetStyle(GG::LB_NOSEL | GG::LB_BROWSEUPDATES);
+        m_ships_lb->SetStyle(GG::LIST_NOSEL | GG::LIST_BROWSEUPDATES);
     } else {
-        m_ships_lb->SetStyle(GG::LB_QUICKSEL | GG::LB_BROWSEUPDATES);
+        m_ships_lb->SetStyle(GG::LIST_QUICKSEL | GG::LIST_BROWSEUPDATES);
         m_ships_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
     }
 
@@ -1028,9 +1028,9 @@ void FleetWnd::CloseClicked()
 void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
 {
     if (m_read_only) {
-        m_fleets_lb->SetStyle(GG::LB_NOSORT | GG::LB_BROWSEUPDATES | GG::LB_SINGLESEL);
+        m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES | GG::LIST_SINGLESEL);
     } else {
-        m_fleets_lb->SetStyle(GG::LB_NOSORT | GG::LB_BROWSEUPDATES);
+        m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
         m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
         m_fleets_lb->AllowDropType(FLEET_DROP_TYPE_STRING);
     }

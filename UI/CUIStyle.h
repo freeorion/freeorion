@@ -12,7 +12,7 @@ public:
                                              GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
 
     virtual GG::StateButton*       NewStateButton(int x, int y, int w, int h, const std::string& str,
-                                                  const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt, GG::Clr color,
+                                                  const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                                   GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
                                                   GG::StateButtonStyle style = GG::SBSTYLE_3D_XBOX, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
 
@@ -27,7 +27,7 @@ public:
                                               GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
 
     virtual GG::MultiEdit*         NewMultiEdit(int x, int y, int w, int h, const std::string& str,
-                                                const boost::shared_ptr<GG::Font>& font, GG::Clr color, Uint32 style = GG::TF_LINEWRAP,
+                                                const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
                                                 GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
                                                 GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
 
@@ -87,7 +87,7 @@ public:
                                                      GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;
 
     virtual GG::StateButton*       NewTabBarTab(int x, int y, int w, int h, const std::string& str,
-                                                const boost::shared_ptr<GG::Font>& font, Uint32 text_fmt, GG::Clr color,
+                                                const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                                 GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO,
                                                 GG::StateButtonStyle style = GG::SBSTYLE_3D_TOP_ATTACHED_TAB, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
 

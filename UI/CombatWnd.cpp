@@ -45,7 +45,7 @@ class CombatInfoControl : public GG::Control
       GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
 
       boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
-      Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
+      GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
       std::string text;
 
       GG::SubTexture img_topic[3],img_ship_civil,img_planet,img_arrow_split;
@@ -62,13 +62,13 @@ class CombatInfoControl : public GG::Control
       rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
       font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
       glColor(ClientUI::TextColor());
-      format = GG::TF_LEFT | GG::TF_BOTTOM;
+      format = GG::FORMAT_LEFT | GG::FORMAT_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
 
       rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
       font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.7));
       glColor(ClientUI::TextColor());
-      format = GG::TF_LEFT | GG::TF_BOTTOM;
+      format = GG::FORMAT_LEFT | GG::FORMAT_BOTTOM;
       font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
       
 
@@ -79,27 +79,30 @@ class CombatInfoControl : public GG::Control
         GG::Rect area (ul.x+20,ul.y+30+i*110,ul.x+20+ITEM_WIDTH*3,ul.y+30+(i+1)*110-5);
         struct 
         {
-          std::string txt;Uint32 txt_fmt;
-          GG::Clr bg_clr;GG::Clr border_clr;unsigned int border_width;
+            std::string txt;
+            GG::Flags<GG::TextFormat> format;
+            GG::Clr bg_clr;
+            GG::Clr border_clr;
+            unsigned int border_width;
         } entries[3][4] =
         {
           {
-            {UserString("COMBAT_MILITARY_SHIPS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->combat_ships          ) + UserString("COMBAT_REMAINING"),GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->combat_ships_retreated) + UserString("COMBAT_RETREATED"),GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_retreated)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->combat_ships_destroyed) + UserString("COMBAT_DESTROYED"),GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->combat_ships_destroyed)?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
+            {UserString("COMBAT_MILITARY_SHIPS") ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->combat_ships          ) + UserString("COMBAT_REMAINING"),GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->combat_ships_retreated) + UserString("COMBAT_RETREATED"),GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->combat_ships_retreated)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->combat_ships_destroyed) + UserString("COMBAT_DESTROYED"),GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->combat_ships_destroyed)?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
           },
           {
-            {UserString("COMBAT_CIVILIAN_SHIPS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships          )+UserString("COMBAT_REMAINING")    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships_retreated)+UserString("COMBAT_RETREATED")    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_retreated)?GG::CLR_ZERO : GG::Clr(128,64,64,255)  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships_destroyed)+UserString("COMBAT_DESTROYED")    ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->non_combat_ships_destroyed)?GG::CLR_ZERO : GG::CLR_RED   ,GG::CLR_ZERO ,0}
+            {UserString("COMBAT_CIVILIAN_SHIPS") ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships          )+UserString("COMBAT_REMAINING")    ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships_retreated)+UserString("COMBAT_RETREATED")    ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->non_combat_ships_retreated)?GG::CLR_ZERO : GG::Clr(128,64,64,255)  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->non_combat_ships_destroyed)+UserString("COMBAT_DESTROYED")    ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->non_combat_ships_destroyed)?GG::CLR_ZERO : GG::CLR_RED   ,GG::CLR_ZERO ,0}
           },
           {
-            {UserString("COMBAT_PLANETS") ,GG::TF_CENTER | GG::TF_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->planets            )+UserString("COMBAT_REMAINING")    ,GG::TF_CENTER | GG::TF_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->planets_defenseless)+UserString("COMBAT_DEFENSELESS")  ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_defenseless)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->planets_lost       )+UserString("COMBAT_LOST")         ,GG::TF_LEFT   | GG::TF_VCENTER,(0==eci->planets_lost       )?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
+            {UserString("COMBAT_PLANETS") ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_BLACK ,border_color ,1},
+            {boost::lexical_cast<std::string>(eci->planets            )+UserString("COMBAT_REMAINING")    ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->planets_defenseless)+UserString("COMBAT_DEFENSELESS")  ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->planets_defenseless)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
+            {boost::lexical_cast<std::string>(eci->planets_lost       )+UserString("COMBAT_LOST")         ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->planets_lost       )?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
           }
         };
         
@@ -108,7 +111,7 @@ class CombatInfoControl : public GG::Control
         font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.2));
 
         rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
-        glColor(ClientUI::TextColor());format = GG::TF_LEFT | GG::TF_VCENTER;
+        glColor(ClientUI::TextColor());format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
         font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0);
 
         for(unsigned int c=0;c<3;c++)
@@ -127,7 +130,7 @@ class CombatInfoControl : public GG::Control
             rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
             GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);
             glColor(ClientUI::TextColor());
-            font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].txt_fmt, 0);
+            font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].format, 0);
           }
         }
       }

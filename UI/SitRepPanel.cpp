@@ -22,7 +22,7 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
     TempUISoundDisabler sound_disabler;
     m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y,
                                   ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y);
-    m_sitreps_lb->SetStyle(GG::LB_NOSORT);
+    m_sitreps_lb->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_sitreps_lb);
     EnableChildClipping(false);
@@ -77,7 +77,7 @@ void SitRepPanel::Update()
     m_sitreps_lb->Clear();
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-    Uint32 format = GG::TF_LEFT | GG::TF_WORDBREAK;
+    GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
     int width = m_sitreps_lb->Width() - 8;
 
     // loop through sitreps and display

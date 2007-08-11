@@ -706,7 +706,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     {
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         GetAsteroidTextures(planet.ID(), textures);
-        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
@@ -1212,7 +1212,7 @@ void SidePanel::SystemResourceSummary::Render()
 
   std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
   boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
-  Uint32 format = GG::TF_LEFT | GG::TF_VCENTER;
+  GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
   const int ICON_MARGIN    =  5;
   
   x=UpperLeft().x;y=UpperLeft().y;
@@ -1299,7 +1299,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     SetText(UserString("SIDE_PANEL"));
 
     m_system_name->DisableDropArrow();
-    m_system_name->SetStyle(GG::LB_CENTER);
+    m_system_name->SetStyle(GG::LIST_CENTER);
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
 
     m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), 0, 0, 32, 32));
@@ -1432,7 +1432,7 @@ void SidePanel::SetSystemImpl()
         textures.push_back(graphic);
 
         int star_dim = (Width()*4)/5;
-        m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         AttachChild(m_star_graphic);
         MoveChildDown(m_star_graphic);

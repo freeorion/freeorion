@@ -37,7 +37,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost
         AttachChild(m_subcontrols.back());
         width += m_subcontrols.back()->Width();
     } else {
-        Uint32 format = 0;
+        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
         std::vector<GG::Font::LineData> lines;
         GG::Pt extent = font->DetermineLines(str, format, 1000, lines);
         unsigned int first_char_pos = 0;
@@ -85,22 +85,22 @@ SystemIcon::SystemIcon(int id, double zoom) :
 
     // disc graphic
     boost::shared_ptr<GG::Texture> disc_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], m_system.ID());
-    m_disc_graphic = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, disc_texture, GG::GR_FITGRAPHIC);
+    m_disc_graphic = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, disc_texture, GG::GRAPHIC_FITGRAPHIC);
     m_disc_graphic->SetColor(GG::CLR_WHITE);
     AttachChild(m_disc_graphic);
 
     // halo graphic
     boost::shared_ptr<GG::Texture> halo_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], m_system.ID());
     if (halo_texture)
-        m_halo_graphic = new GG::StaticGraphic(-DEFAULT_SIZE, -DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE, halo_texture, GG::GR_FITGRAPHIC);
+        m_halo_graphic = new GG::StaticGraphic(-DEFAULT_SIZE, -DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE, halo_texture, GG::GRAPHIC_FITGRAPHIC);
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
-    m_selection_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, selection_texture, GG::GR_FITGRAPHIC);
+    m_selection_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, selection_texture, GG::GRAPHIC_FITGRAPHIC);
 
     // mouseover indicator graphic
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
-    m_mouseover_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, mouseover_texture, GG::GR_FITGRAPHIC);
+    m_mouseover_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, mouseover_texture, GG::GRAPHIC_FITGRAPHIC);
 
     // resize icon, along with indicators and halo (which are also done in SizeMove(...))
     GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SystemIconSize() / 2) * zoom),

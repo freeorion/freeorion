@@ -45,16 +45,16 @@ ServerConnectWnd::ServerConnectWnd() :
     TempUISoundDisabler sound_disabler;
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-    GG::TextControl* player_name_label = new GG::TextControl(0, 0, 1, 1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::TF_LEFT);
+    GG::TextControl* player_name_label = new GG::TextControl(0, 0, 1, 1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_player_name_edit = new CUIEdit(0, 0, 1, "");
     m_host_or_join_radio_group = new GG::RadioButtonGroup(0, 0, 1, 1, GG::VERTICAL);
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, 1, 1, UserString("HOST_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, 1, 1, UserString("JOIN_GAME_BN"), GG::TF_LEFT, GG::SBSTYLE_3D_RADIO));
-    m_LAN_game_label = new GG::TextControl(0, 0, UserString("LAN_GAME_LABEL"), font, ClientUI::TextColor(), GG::TF_LEFT);
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, 1, 1, UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, 1, 1, UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+    m_LAN_game_label = new GG::TextControl(0, 0, UserString("LAN_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_servers_lb = new CUIListBox(0, 0, 1, 1);
-    m_servers_lb->SetStyle(GG::LB_NOSORT | GG::LB_SINGLESEL);
+    m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_find_LAN_servers_bn = new CUIButton(0, 0, 1, UserString("REFRESH_LIST_BN"));
-    m_internet_game_label = new GG::TextControl(0, 0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::TF_LEFT);
+    m_internet_game_label = new GG::TextControl(0, 0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_IP_address_edit = new CUIEdit(0, 0, 1, "localhost");
     m_ok_bn = new CUIButton(0, 0, 1, UserString("OK"));
     m_cancel_bn = new CUIButton(0, 0, 1, UserString("CANCEL"));

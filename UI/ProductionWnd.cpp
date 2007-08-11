@@ -208,13 +208,13 @@ namespace {
         int left = MARGIN;
 
         if (graphic)
-            m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, graphic, GG::GR_FITGRAPHIC);
+            m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, graphic, GG::GRAPHIC_FITGRAPHIC);
         else
             m_icon = 0;
 
         left += GRAPHIC_SIZE + MARGIN;
 
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, name_text, font, clr, GG::TF_TOP | GG::TF_LEFT);
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, name_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
@@ -228,7 +228,7 @@ namespace {
 
         std::string turns_cost_text = str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns);
         m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
-                                                   turns_cost_text, font, clr, GG::TF_LEFT);
+                                                   turns_cost_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
         
@@ -236,7 +236,7 @@ namespace {
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
-                                                                         turns_left_text, font, clr, GG::TF_RIGHT);
+                                                                         turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 
         if (m_icon) AttachChild(m_icon);
@@ -284,7 +284,7 @@ ProductionWnd::ProductionWnd(int w, int h) :
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, 200, UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     m_queue_lb = new QueueListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), this);
-    m_queue_lb->SetStyle(GG::LB_NOSORT | GG::LB_NOSEL | GG::LB_USERDELETE);
+    m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), 6);
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
     m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), 0));

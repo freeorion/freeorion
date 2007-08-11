@@ -60,25 +60,25 @@ namespace {
             const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
             const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
             
-            m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_summary_title);
 
-            m_current_label = new GG::TextControl(0, row_height, LABEL_WIDTH, row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            m_current_label = new GG::TextControl(0, row_height, LABEL_WIDTH, row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_current_label);
-            m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
             AttachChild(m_current_value);
 
-            m_next_turn_label = new GG::TextControl(0, row_height*2, LABEL_WIDTH, row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            m_next_turn_label = new GG::TextControl(0, row_height*2, LABEL_WIDTH, row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_next_turn_label);
-            m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
             AttachChild(m_next_turn_value);
 
-            m_change_label = new GG::TextControl(0, row_height*3, LABEL_WIDTH, row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            m_change_label = new GG::TextControl(0, row_height*3, LABEL_WIDTH, row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_change_label);
-            m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+            m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
             AttachChild(m_change_value);
 
-            m_meter_title = new GG::TextControl(0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+            m_meter_title = new GG::TextControl(0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_meter_title);
 
             UpdateSummary();
@@ -266,7 +266,7 @@ namespace {
                 default:
                     text += UserString("TT_UNKNOWN");
                 }
-                GG::TextControl* label = new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::TF_RIGHT | GG::TF_VCENTER);
+                GG::TextControl* label = new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
                 AttachChild(label);
                 GG::Clr clr = ClientUI::TextColor();
                 if (info_it->meter_change > 0.0)
@@ -275,7 +275,7 @@ namespace {
                     clr = ClientUI::StatDecrColor();
                 GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, 
                                                              GG::RgbaTag(clr) + StatisticIcon::DoubleToString(info_it->meter_change, 2, false, true) + "</rgba>",
-                                                             font, ClientUI::TextColor(), GG::TF_CENTER | GG::TF_VCENTER);
+                                                             font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
                 AttachChild(value);
                 m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
             }
@@ -313,19 +313,19 @@ namespace {
             GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
             ROW_HEIGHT(ClientUI::Pts()*3/2)
         {
-            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
+            m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
             AttachChild(m_icon);
 
             const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
             const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
 
             m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, 0, TEXT_WIDTH, ROW_HEIGHT, UserString(title_text), 
-                                               font_bold, ClientUI::TextColor(), GG::TF_LEFT | GG::TF_VCENTER);
+                                               font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             AttachChild(m_title_text);
 
 
             m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_WIDTH, UserString(main_text), 
-                                              font, ClientUI::TextColor(), GG::TF_LEFT | GG::TF_TOP | GG::TF_WORDBREAK);
+                                              font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
             AttachChild(m_main_text);
 
 
@@ -677,7 +677,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
     m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_primary_focus_drop->Insert(row);
@@ -687,7 +687,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + icon_size/2, 0,
                                                  icon_size*4, icon_size*3/2, icon_size*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_secondary_focus_drop->Insert(row);
@@ -1605,7 +1605,7 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, type.Name(), type.Description())));
         
-    m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+    m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 }
 
@@ -1621,7 +1621,7 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, type.Name(), type.Description())));
 
-    m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GR_FITGRAPHIC | GG::GR_PROPSCALE);
+    m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
     m_progress_bar = new MultiTurnProgressBar(w, w/5, turns, turns_completed, partial_turn, GG::CLR_GRAY, GG::CLR_BLACK, GG::CLR_WHITE);
@@ -1750,7 +1750,7 @@ void SpecialsPanel::Update()
     // get specials and use them to create specials icons
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, ClientUI::SpecialTexture(special->Name()), GG::GR_FITGRAPHIC | GG::GR_PROPSCALE, GG::CLICKABLE);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, ClientUI::SpecialTexture(special->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()), special->Name(), special->Description())));
         m_icons.push_back(graphic);
