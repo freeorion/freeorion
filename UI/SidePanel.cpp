@@ -721,7 +721,8 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
         {
             // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that only the lower 16 bits of the system and
             // planet ID's are significant
-            Uint32 hash_value = (static_cast<Uint32>(planet.SystemID()) & 0xFFFF) + (static_cast<Uint32>(planet.ID()) & 0xFFFF);
+            unsigned int hash_value =
+                (static_cast<unsigned int>(planet.SystemID()) & 0xFFFF) + (static_cast<unsigned int>(planet.ID()) & 0xFFFF);
             hash_value += ~(hash_value << 15);
             hash_value ^= hash_value >> 10;
             hash_value += hash_value << 3;

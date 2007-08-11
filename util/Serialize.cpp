@@ -58,7 +58,6 @@ BOOST_STATIC_ASSERT(SDL_BYTEORDER == SDL_LIL_ENDIAN);
 BOOST_STATIC_ASSERT(sizeof(char) == 1);
 BOOST_STATIC_ASSERT(sizeof(short) == 2);
 BOOST_STATIC_ASSERT(sizeof(int) == 4);
-BOOST_STATIC_ASSERT(sizeof(Uint32) == 4);
 BOOST_STATIC_ASSERT(sizeof(long long) == 8);
 BOOST_STATIC_ASSERT(sizeof(float) == 4);
 BOOST_STATIC_ASSERT(sizeof(double) == 8);
