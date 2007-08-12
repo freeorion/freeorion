@@ -1190,7 +1190,7 @@ void FleetWnd::FleetDeleted(int row_idx, GG::ListBox::Row* row)
 {
     if (m_current_fleet == row_idx)
         m_current_fleet = -1;
-    if (m_fleets_lb->Empty() || m_fleets_lb->NumRows() == 1 && !FleetInRow(0))
+    if (m_fleets_lb->Empty())
         CloseClicked();
 }
 
@@ -1313,9 +1313,6 @@ void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)
             break;
         }
     }
-    
-    if (m_fleets_lb->Empty() || m_fleets_lb->NumRows() == 1 && !FleetInRow(0))
-        CloseClicked();
 }
 
 void FleetWnd::SystemChangedSlot()
