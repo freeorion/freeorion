@@ -1,5 +1,6 @@
 #include "LinkText.h"
 
+#include "ClientUI.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <GG/DrawUtil.h>
@@ -66,19 +67,19 @@ void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     int sel_link = GetLinkUnderPt(pt);
     if (sel_link == m_old_sel_link && sel_link != -1) {
         if (m_links[sel_link].type == "planet") {
-            PlanetLinkSignal(lexical_cast<int>(m_links[sel_link].data));
+            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "system") {
-            SystemLinkSignal(lexical_cast<int>(m_links[sel_link].data));
+            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "fleet") {
-            FleetLinkSignal(lexical_cast<int>(m_links[sel_link].data));
+            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "ship") {
-            ShipLinkSignal(lexical_cast<int>(m_links[sel_link].data));
+            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(m_links[sel_link].data));
         } else if (m_links[sel_link].type == "tech") {
-            TechLinkSignal(m_links[sel_link].data);
+            ClientUI::GetClientUI()->ZoomToTech(m_links[sel_link].data);
         } else if (m_links[sel_link].type == "building") {
-            BuildingLinkSignal(m_links[sel_link].data);
+            ClientUI::GetClientUI()->ZoomToBuildingType(m_links[sel_link].data);
         } else if (m_links[sel_link].type == "encyclopedia") {
-            EncyclopediaLinkSignal(m_links[sel_link].data);
+            ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(m_links[sel_link].data);
         }
     }
     m_old_sel_link = -1;

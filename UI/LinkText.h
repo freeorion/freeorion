@@ -64,14 +64,6 @@ public:
         (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever 
         space the newly rendered text occupies. */
     virtual void   SetText(const std::string& str);
-
-    mutable IDSignalType     PlanetLinkSignal;       ///< returns the planet link signal object for this LinkText
-    mutable IDSignalType     SystemLinkSignal;       ///< returns the system link signal object for this LinkText
-    mutable IDSignalType     FleetLinkSignal;        ///< returns the fleet link signal object for this LinkText
-    mutable IDSignalType     ShipLinkSignal;         ///< returns the ship link signal object for this LinkText
-    mutable StringSignalType TechLinkSignal;         ///< returns the tech link signal object for this LinkText
-    mutable StringSignalType BuildingLinkSignal;     ///< returns the building link signal object for this LinkText
-    mutable StringSignalType EncyclopediaLinkSignal; ///< returns the encyclopedia link signal object for this LinkText
     //@}
     
 private:

@@ -84,13 +84,6 @@ void SitRepPanel::Update()
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
         LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
-        GG::Connect(link_text->PlanetLinkSignal, &ClientUI::ZoomToPlanet, ClientUI::GetClientUI());
-        GG::Connect(link_text->SystemLinkSignal, &ClientUI::ZoomToSystem, ClientUI::GetClientUI());
-        GG::Connect(link_text->FleetLinkSignal, &ClientUI::ZoomToFleet, ClientUI::GetClientUI());
-        GG::Connect(link_text->ShipLinkSignal, &ClientUI::ZoomToShip, ClientUI::GetClientUI());
-        GG::Connect(link_text->TechLinkSignal, &ClientUI::ZoomToTech, ClientUI::GetClientUI());
-        GG::Connect(link_text->BuildingLinkSignal, &ClientUI::ZoomToBuildingType, ClientUI::GetClientUI());
-        GG::Connect(link_text->EncyclopediaLinkSignal, &ClientUI::ZoomToEncyclopediaEntry, ClientUI::GetClientUI());
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);                
     }
