@@ -2764,7 +2764,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
             color = colors[color_idx];
             colors.erase(colors.begin() + color_idx);
         } else { // as a last resort, make up a color
-            color = GG::Clr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+            color = GG::FloatClr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
         }
 
         int home_planet_id = homeworlds[i];

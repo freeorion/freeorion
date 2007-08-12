@@ -1159,7 +1159,7 @@ CUIToolBar::CUIToolBar(int x, int y, int w, int h) :
 void CUIToolBar::Render()
 {
     GG::Pt ul(UpperLeft()),lr(LowerRight());
-    GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.8),GG::CLR_ZERO,0);
+    GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::FloatClr(0.0,0.0,0.0,0.8),GG::CLR_ZERO,0);
 }
 
 ///////////////////////////////////////

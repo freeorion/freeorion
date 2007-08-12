@@ -325,9 +325,9 @@ namespace {
         glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
         glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
         double intensity = GetRotatingPlanetAmbientIntensity();
-        GG::Clr ambient(intensity, intensity, intensity, 1.0);
+        GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0);
         intensity = GetRotatingPlanetDiffuseIntensity();
-        GG::Clr diffuse(intensity, intensity, intensity, 1.0);
+        GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0);
 
         RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
 
@@ -549,7 +549,7 @@ public:
     void SetRotatingPlanetData(const RotatingPlanetData& planet_data)
     {
         m_planet_data = planet_data;
-        m_surface_texture = GG::GUI::GetGUI()->GetTexture(m_planet_data.filename);
+        m_surface_texture = ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true);
     }
 
 private:
@@ -1207,7 +1207,7 @@ SidePanel::SystemResourceSummary::SystemResourceSummary(int x, int y, int w, int
 
 void SidePanel::SystemResourceSummary::Render()
 {
-  GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,1);
+  GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,1);
 
   int farming=m_farming,mining=m_mining,trade=m_trade,research=m_research,industry=m_industry,defense=m_defense;
 
@@ -1287,7 +1287,7 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
-    m_system_name(new CUIDropDownList(MAX_PLANET_DIAMETER, 0, w-MAX_PLANET_DIAMETER, SystemNameFontSize(), 10*SystemNameFontSize(), GG::CLR_ZERO, GG::Clr(0.0, 0.0, 0.0, 0.5))),
+    m_system_name(new CUIDropDownList(MAX_PLANET_DIAMETER, 0, w-MAX_PLANET_DIAMETER, SystemNameFontSize(), 10*SystemNameFontSize(), GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5))),
     m_button_prev(new GG::Button(MAX_PLANET_DIAMETER+4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_button_next(new GG::Button(w-SystemNameFontSize()-4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_star_graphic(0),

@@ -71,7 +71,7 @@ void CreditsWnd::Render()
     boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.3));;
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
-    GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::Clr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
+    GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
     glColor(GG::CLR_WHITE);
 
     int offset=m_co;

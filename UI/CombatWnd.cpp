@@ -39,7 +39,9 @@ class CombatInfoControl : public GG::Control
                       item_img_topic        ( 24,48,24+40,48+40),
                       item_img_arrow_split  ( 65,40,65+64,40+64),
                       rc_txt_empire         ( 25, 6,500,19);
-      const GG::Clr border_color(0.5,0.5,0.5,1.0),bg_color(0.25,0.25,0.25,1.0),bg_item_color(0.15,0.15,0.15,1.0);
+                      const GG::Clr border_color = GG::FloatClr(0.5,0.5,0.5,1.0);
+                      const GG::Clr bg_color = GG::FloatClr(0.25,0.25,0.25,1.0);
+                      const GG::Clr bg_item_color = GG::FloatClr(0.15,0.15,0.15,1.0);
 
       GG::Pt ul(UpperLeft()),lr(LowerRight());
       GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
