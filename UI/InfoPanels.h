@@ -12,7 +12,9 @@ class BuildingsPanel;
 class BuildingIndicator;
 class SpecialsPanel;
 class MultiTurnProgressBar;
-class MeterStatusBar2;
+class MultiMeterStatusBar;
+class MeterStatusBar;   // TODO: delete this line
+class MultiIconValueIndicator;
 class Meter;
 class Planet;
 class ResourceCenter;
@@ -67,12 +69,10 @@ private:
     StatisticIcon*      m_pop_stat;             ///< icon and number of population
     StatisticIcon*      m_health_stat;          ///< icon and number of health
 
-    MeterStatusBar2*    m_pop_meter_bar;        ///< graphically indicates status of population
-    MeterStatusBar2*    m_health_meter_bar;     ///< graphically indicates health
+    MeterStatusBar*    m_pop_meter_bar;        ///< graphically indicates status of population
+    MeterStatusBar*    m_health_meter_bar;     ///< graphically indicates health
     
     GG::Button*         m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
-
-    std::set<boost::signals::connection> m_misc_connections;
 
     static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
@@ -116,33 +116,28 @@ private:
     void PrimaryFocusDropListSelectionChanged(int selected);    ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
     void SecondaryFocusDropListSelectionChanged(int selected);  ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
     
-    ResourceCenter*        GetResourceCenter(); ///< returns the planet with ID m_planet_id
-    const ResourceCenter*  GetResourceCenter() const;
+    ResourceCenter*         GetResourceCenter(); ///< returns the planet with ID m_planet_id
+    const ResourceCenter*   GetResourceCenter() const;
 
-    int                     m_rescenter_id;     ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
+    int                         m_rescenter_id;     ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
-    StatisticIcon*          m_farming_stat;         ///< icon and number of food production
-    StatisticIcon*          m_mining_stat;          ///< icon and number of minerals production
-    StatisticIcon*          m_industry_stat;        ///< icon and number of industry production
-    StatisticIcon*          m_research_stat;        ///< icon and number of research production
-    StatisticIcon*          m_trade_stat;           ///< icon and number of trade production
-    StatisticIcon*          m_construction_stat;    ///< icon and number of construction meter
+    StatisticIcon*              m_farming_stat;         ///< icon and number of food production
+    StatisticIcon*              m_mining_stat;          ///< icon and number of minerals production
+    StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
+    StatisticIcon*              m_research_stat;        ///< icon and number of research production
+    StatisticIcon*              m_trade_stat;           ///< icon and number of trade production
+  
+    MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
+    MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    MeterStatusBar2*         m_farming_meter_bar;       ///< graphically indicates farming meter
-    MeterStatusBar2*         m_mining_meter_bar;        ///< graphically indicates mining meter
-    MeterStatusBar2*         m_industry_meter_bar;      ///< graphically indicates industry meter
-    MeterStatusBar2*         m_research_meter_bar;      ///< graphically indicates research meter
-    MeterStatusBar2*         m_trade_meter_bar;         ///< graphically indicates trade meter
-    MeterStatusBar2*         m_construction_meter_bar;  ///< graphically indicates construction meter
+    CUIDropDownList*            m_primary_focus_drop;   ///< displays and allows selection of primary focus
+    CUIDropDownList*            m_secondary_focus_drop; ///< displays and allows selection of secondary focus
 
-    CUIDropDownList*        m_primary_focus_drop;   ///< displays and allows selection of primary focus
-    CUIDropDownList*        m_secondary_focus_drop; ///< displays and allows selection of secondary focus
+    GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 
-    std::set<boost::signals::connection> m_misc_connections;
-
-    static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
+    static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
 };
 
 class BuildingsPanel : public GG::Wnd
@@ -189,8 +184,6 @@ private:
 
     GG::Button*             m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    std::set<boost::signals::connection> m_misc_connections;
-
     static std::map<int, bool> s_expanded_map;  ///< map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false)
 };
 
@@ -220,7 +213,6 @@ class SpecialsPanel : public GG::Wnd
 public:
     /** \name Structors */ //@{
     SpecialsPanel(int w, const UniverseObject &obj);   ///< basic ctor
-    ~SpecialsPanel();
     //@}
 
     /** \name Accessors */ //@{
@@ -247,13 +239,13 @@ private:
 
 /** Graphically represents the current, max and (in future: projected) changes to values of a Meter as a
     horizontal bar */
-class MeterStatusBar2 : public GG::Wnd
+class MeterStatusBar : public GG::Wnd
 {
 public:
-    MeterStatusBar2(int w, int h, const Meter& meter);
+    MeterStatusBar(int w, int h, const Meter& meter);
 
     virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void SetProjectedCurrent(double current);
     void SetProjectedMax(double max);
@@ -264,6 +256,55 @@ private:
     double m_initial_current;
     double m_projected_max;
     double m_projected_current;
+};
+
+/** Display icon and number for various meter-related quantities associated with objects.  Typical use
+    would be to display the resource production values for a planet (not the meter values) and the
+    construction (a meter value), or the population (not a meter value) and health (a meter value).  
+    Given a set of MeterType, the indicator will present the appropriate values for each.
+*/
+class MultiIconValueIndicator : public GG::Wnd
+{
+public:
+    MultiIconValueIndicator(int w, int h, const UniverseObject& obj, std::vector<MeterType>& value_types);
+
+    virtual void Render();
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+
+    void Update();
+
+private:
+    std::vector<MeterType> m_meter_types;
+    const UniverseObject& obj;
+};
+
+/** Graphically represets the current max and projected changes to values of multiple Meters, using a
+    horizontal indicator for each meter. */
+class MultiMeterStatusBar : public GG::Wnd
+{
+public:
+    MultiMeterStatusBar(int w, int h, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
+
+    virtual void Render();
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+
+    void Update();
+
+private:
+    std::vector<MeterType> m_meter_types;
+    std::vector<double> m_initial_maxes;
+    std::vector<double> m_initial_currents;
+    std::vector<double> m_projected_maxes;
+    std::vector<double> m_projected_currents;
+
+    const UniverseObject& m_obj;
+
+    static const int EDGE_PAD = 2;
+    static const int BAR_PAD = 1;
+
+    int m_bar_height;
+
+    std::vector<GG::Clr> m_bar_colours;
 };
 
 #endif

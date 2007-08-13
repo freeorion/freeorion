@@ -267,6 +267,7 @@ namespace {
                     text += UserString("TT_UNKNOWN");
                 }
                 GG::TextControl* label = new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                label->Resize(GG::Pt(LABEL_WIDTH, row_height));
                 AttachChild(label);
                 GG::Clr clr = ClientUI::TextColor();
                 if (info_it->meter_change > 0.0)
@@ -319,15 +320,13 @@ namespace {
             const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
             const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
 
-            m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, 0, TEXT_WIDTH, ROW_HEIGHT, UserString(title_text), 
+            m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, 0, TEXT_WIDTH, ROW_HEIGHT, UserString(title_text),
                                                font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             AttachChild(m_title_text);
 
-
-            m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_WIDTH, UserString(main_text), 
+            m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_WIDTH, UserString(main_text),
                                               font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
             AttachChild(m_main_text);
-
 
             m_main_text->SetMinSize(true);
             m_main_text->Resize(m_main_text->MinSize());
@@ -356,6 +355,85 @@ namespace {
         static const int ICON_WIDTH = 64;
         const int ROW_HEIGHT;
     };
+
+    GG::Clr MeterColor(MeterType meter_type)
+    {
+        switch (meter_type) {
+        case METER_FARMING:
+            return GG::CLR_YELLOW;
+            break;
+        case METER_MINING:
+        case METER_HEALTH:
+            return GG::CLR_RED;
+            break;
+        case METER_INDUSTRY:
+            return GG::CLR_BLUE;
+            break;
+        case METER_RESEARCH:
+            return GG::CLR_GREEN;
+            break;
+        case METER_TRADE:
+            return GG::Clr(255, 148, 0, 255);   // orange
+            break;
+        case METER_CONSTRUCTION:
+        case METER_POPULATION:
+        default:
+            return GG::CLR_WHITE;
+        }
+    }
+
+    double ProjectedCurrentMeter(const UniverseObject* obj, MeterType meter_type)
+    {
+        const ResourceCenter* res;
+        const PopCenter* pop;
+        const Meter* meter;
+
+        switch (meter_type) {
+        case METER_FARMING:
+        case METER_MINING:
+        case METER_INDUSTRY:
+        case METER_RESEARCH:
+        case METER_TRADE:
+        case METER_CONSTRUCTION:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedCurrent(meter_type);
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_POPULATION:
+            pop = dynamic_cast<const PopCenter*>(obj);
+            if (pop) {
+                return pop->PopPoints() + pop->FuturePopGrowth();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_HEALTH:
+            pop = dynamic_cast<const PopCenter*>(obj);
+            if (pop) {
+                return pop->Health() + pop->FutureHealthGrowth();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        default:
+            meter = obj->GetMeter(meter_type);
+            if (meter)
+                return meter->Current();
+            throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+        }
+    }
 }
 
 /////////////////////////////////////
@@ -393,11 +471,11 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
                                       0, 3, false, false);
     AttachChild(m_health_stat);
 
-    m_pop_meter_bar = new MeterStatusBar2(w - m_pop_stat->Width() - icon_size*5/2 - m_expand_button->Width(), m_pop_stat->Height(), pop->PopulationMeter());
+    m_pop_meter_bar = new MeterStatusBar(w - m_pop_stat->Width() - icon_size*5/2 - m_expand_button->Width(), m_pop_stat->Height(), pop->PopulationMeter());
     m_pop_meter_bar->MoveTo(GG::Pt(m_pop_stat->Width() + icon_size*5/2, 0));
     m_pop_meter_bar->Hide();
 
-    m_health_meter_bar = new MeterStatusBar2(w - m_health_stat->Width() - icon_size*5/2 - m_expand_button->Width(), m_health_stat->Height(), pop->HealthMeter());
+    m_health_meter_bar = new MeterStatusBar(w - m_health_stat->Width() - icon_size*5/2 - m_expand_button->Width(), m_health_stat->Height(), pop->HealthMeter());
     m_health_meter_bar->MoveTo(GG::Pt(m_health_stat->Width() + icon_size*5/2, m_pop_stat->LowerRight().y));
     m_health_meter_bar->Hide();
 
@@ -411,12 +489,6 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
 
 PopulationPanel::~PopulationPanel()
 {
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
-
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_pop_stat;
     delete m_health_stat;
@@ -638,11 +710,9 @@ std::map<int, bool> ResourcePanel::s_expanded_map = std::map<int, bool>();
 ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     Wnd(0, 0, w, ClientUI::Pts()*9, GG::CLICKABLE),
     m_rescenter_id(obj.ID()),
-    m_farming_stat(0), m_mining_stat(0), m_industry_stat(0),
-    m_research_stat(0), m_trade_stat(0), m_construction_stat(0),
-    m_farming_meter_bar(0), m_mining_meter_bar(0), m_industry_meter_bar(0),
-    m_research_meter_bar(0), m_trade_meter_bar(0), m_construction_meter_bar(0),
+    m_farming_stat(0), m_mining_stat(0), m_industry_stat(0), m_research_stat(0), m_trade_stat(0),
     m_primary_focus_drop(0), m_secondary_focus_drop(0),
+    m_multi_meter_status_bar(0), m_multi_icon_value_indicator(0),
     m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
     SetText("ResourcePanel");
@@ -697,11 +767,10 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
     GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
     
-    // resource indicators
+    // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(), GG::CLR_WHITE,
                                        0, 3, false, false);
     AttachChild(m_farming_stat);
-
     m_mining_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "mining.png").native_file_string(), GG::CLR_WHITE,
                                       0, 3, false, false);
     AttachChild(m_mining_stat);
@@ -718,39 +787,14 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
                                      0, 3, false, false);
     AttachChild(m_trade_stat);
 
-    m_construction_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "construction.png").native_file_string(), GG::CLR_WHITE,
-                                            0, 3, false, false);
-    AttachChild(m_construction_stat);
 
-    // meter bars
-    int top = UpperLeft().y;
-    int bar_width = w - m_farming_stat->Width() - icon_size*5/2 - m_expand_button->Width();
-    int bar_left = m_farming_stat->Width() + icon_size*5/2;
-    int bar_height = m_farming_stat->Height();
-
-    m_farming_meter_bar = new MeterStatusBar2(bar_width, bar_height, res->FarmingMeter());
-    m_farming_meter_bar->MoveTo(GG::Pt(bar_left, m_primary_focus_drop->LowerRight().y - top + icon_size/2));
-    m_farming_meter_bar->Hide();
-
-    m_mining_meter_bar = new MeterStatusBar2(bar_width, bar_height, res->MiningMeter());
-    m_mining_meter_bar->MoveTo(GG::Pt(bar_left, m_farming_meter_bar->LowerRight().y - top));
-    m_mining_meter_bar->Hide();
-
-    m_industry_meter_bar = new MeterStatusBar2(bar_width, bar_height, res->IndustryMeter());
-    m_industry_meter_bar->MoveTo(GG::Pt(bar_left, m_mining_meter_bar->LowerRight().y - top));
-    m_industry_meter_bar->Hide();
-
-    m_research_meter_bar = new MeterStatusBar2(bar_width, bar_height, res->ResearchMeter());
-    m_research_meter_bar->MoveTo(GG::Pt(bar_left, m_industry_meter_bar->LowerRight().y - top));
-    m_research_meter_bar->Hide();
-
-    m_trade_meter_bar = new MeterStatusBar2(bar_width, bar_height, res->TradeMeter());
-    m_trade_meter_bar->MoveTo(GG::Pt(bar_left, m_research_meter_bar->LowerRight().y - top));
-    m_trade_meter_bar->Hide();
-
-    m_construction_meter_bar = new MeterStatusBar2(bar_width, bar_height, res->ConstructionMeter());
-    m_construction_meter_bar->MoveTo(GG::Pt(bar_left, m_trade_meter_bar->LowerRight().y - top + icon_size/2));
-    m_construction_meter_bar->Hide();
+    // meter and production indicators
+    std::vector<MeterType> meters;
+    meters.push_back(METER_FARMING);    meters.push_back(METER_MINING); meters.push_back(METER_INDUSTRY);
+    meters.push_back(METER_RESEARCH);   meters.push_back(METER_TRADE);  meters.push_back(METER_CONSTRUCTION);
+    const int MMSB_HEIGHT = 6*7 + 5*1 + 2*2;    // 6 bars + 5 inter-bar gaps + 2 top/bottom pads
+    m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, MMSB_HEIGHT, obj, meters);
+    AttachChild(m_multi_meter_status_bar);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_rescenter_id);
@@ -762,26 +806,15 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
 ResourcePanel::~ResourcePanel()
 {
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
-
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
+    delete m_multi_icon_value_indicator;
+    delete m_multi_meter_status_bar;
+
     delete m_farming_stat;
     delete m_mining_stat;
     delete m_industry_stat;
     delete m_research_stat;
     delete m_trade_stat;
-    delete m_construction_stat;
-
-    delete m_farming_meter_bar;
-    delete m_mining_meter_bar;
-    delete m_industry_meter_bar;
-    delete m_research_meter_bar;
-    delete m_trade_meter_bar;
-    delete m_construction_meter_bar;
 
     delete m_primary_focus_drop;
     delete m_secondary_focus_drop;
@@ -810,6 +843,10 @@ void ResourcePanel::DoExpandCollapseLayout()
     if (!s_expanded_map[m_rescenter_id]) {
         DetachChild(m_secondary_focus_drop);
         DetachChild(m_primary_focus_drop);
+
+        // detach / hide meter bars and large resource indicators
+        DetachChild(m_multi_meter_status_bar);
+
 
         // determine which two resource icons to display while collapsed: the two with the highest production
         const ResourceCenter* res = GetResourceCenter();
@@ -843,69 +880,27 @@ void ResourcePanel::DoExpandCollapseLayout()
             n++;
         }
         
-        
-        // hide construction icon and all the meter bars
-        DetachChild(m_construction_stat);
-        DetachChild(m_farming_meter_bar);
-        DetachChild(m_mining_meter_bar);
-        DetachChild(m_industry_meter_bar);
-        DetachChild(m_research_meter_bar);
-        DetachChild(m_trade_meter_bar);
-        DetachChild(m_construction_meter_bar);
 
         Resize(GG::Pt(Width(), icon_size));
     } else {
+        // detach statistic icons
+        DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
+        DetachChild(m_research_stat);   DetachChild(m_trade_stat);
+
+        // attach / show focus selector drops
         m_secondary_focus_drop->Show();
         AttachChild(m_secondary_focus_drop);
         
         m_primary_focus_drop->Show();
         AttachChild(m_primary_focus_drop);
 
+        // attach and show meter bars and large resource indicators
         int top = UpperLeft().y;
+        AttachChild(m_multi_meter_status_bar);
+        m_multi_meter_status_bar->MoveTo(GG::Pt(EDGE_PAD, m_primary_focus_drop->LowerRight().y + EDGE_PAD - top));
+        m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
 
-        m_farming_stat->MoveTo(GG::Pt(0, m_primary_focus_drop->LowerRight().y - top + icon_size/2));
-        m_farming_stat->Show();
-        AttachChild(m_farming_stat);
-
-        m_mining_stat->MoveTo(GG::Pt(0, m_farming_stat->LowerRight().y - top));
-        m_mining_stat->Show();
-        AttachChild(m_mining_stat);
-
-        m_industry_stat->MoveTo(GG::Pt(0, m_mining_stat->LowerRight().y - top));
-        m_industry_stat->Show();
-        AttachChild(m_industry_stat);
-
-        m_research_stat->MoveTo(GG::Pt(0, m_industry_stat->LowerRight().y - top));
-        m_research_stat->Show();
-        AttachChild(m_research_stat);
-
-        m_trade_stat->MoveTo(GG::Pt(0, m_research_stat->LowerRight().y - top));
-        m_trade_stat->Show();
-        AttachChild(m_trade_stat);
-
-        m_construction_stat->MoveTo(GG::Pt(0, m_trade_stat->LowerRight().y - top + icon_size/2));
-        m_construction_stat->Show();
-        AttachChild(m_construction_stat);
-
-        AttachChild(m_farming_meter_bar);
-        m_farming_meter_bar->Show();
-        
-        AttachChild(m_mining_meter_bar);
-        m_mining_meter_bar->Show();
-        
-        AttachChild(m_industry_meter_bar);
-        m_industry_meter_bar->Show();
-        
-        AttachChild(m_research_meter_bar);
-        m_research_meter_bar->Show();
-        
-        AttachChild(m_trade_meter_bar);
-        m_trade_meter_bar->Show();
-        
-        AttachChild(m_construction_meter_bar);
-        m_construction_meter_bar->Show();
-
-        Resize(GG::Pt(Width(), m_construction_stat->LowerRight().y - top));
+        Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
 
     // update appearance of expand/collapse button
@@ -1027,74 +1022,39 @@ void ResourcePanel::Update()
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     // meter bar displays and production stats
-    m_farming_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_FARMING));
-    m_farming_meter_bar->SetProjectedMax(res->FarmingMeter().Max());
-    m_farming_stat->SetValue(res->FarmingPoints());
+    m_multi_meter_status_bar->Update();
+
+    m_farming_stat->SetValue(res->ProjectedFarmingPoints());
+    m_mining_stat->SetValue(res->ProjectedMiningPoints());
+    m_industry_stat->SetValue(res->ProjectedIndustryPoints());
+    m_research_stat->SetValue(res->ProjectedResearchPoints());
+    m_trade_stat->SetValue(res->ProjectedTradePoints());
+
+    // tooltips
     if (meter_map) {
         m_farming_stat->SetBrowseModeTime(tooltip_delay);
-        m_farming_meter_bar->SetBrowseModeTime(tooltip_delay);
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
-        m_farming_meter_bar->SetBrowseInfoWnd(browse_wnd);
-        m_farming_stat->SetBrowseInfoWnd(browse_wnd);
-    }
-
-    m_mining_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_MINING));
-    m_mining_meter_bar->SetProjectedMax(res->MiningMeter().Max());
-    m_mining_stat->SetValue(res->MiningPoints());
-    if (meter_map) {
         m_mining_stat->SetBrowseModeTime(tooltip_delay);
-        m_mining_meter_bar->SetBrowseModeTime(tooltip_delay);
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, obj, *meter_map));
-        m_mining_meter_bar->SetBrowseInfoWnd(browse_wnd);
-        m_mining_stat->SetBrowseInfoWnd(browse_wnd);
-    }
-
-    m_industry_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_INDUSTRY));
-    m_industry_meter_bar->SetProjectedMax(res->IndustryMeter().Max());
-    m_industry_stat->SetValue(res->IndustryPoints());
-    if (meter_map) {
         m_industry_stat->SetBrowseModeTime(tooltip_delay);
-        m_industry_meter_bar->SetBrowseModeTime(tooltip_delay);
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map));
-        m_industry_meter_bar->SetBrowseInfoWnd(browse_wnd);
-        m_industry_stat->SetBrowseInfoWnd(browse_wnd);
-    }
-
-    m_research_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_RESEARCH));
-    m_research_meter_bar->SetProjectedMax(res->ResearchMeter().Max());
-    m_research_stat->SetValue(res->ResearchPoints());
-
-    if (meter_map) {
         m_research_stat->SetBrowseModeTime(tooltip_delay);
-        m_research_meter_bar->SetBrowseModeTime(tooltip_delay);
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map));
-        m_research_meter_bar->SetBrowseInfoWnd(browse_wnd);
-        m_research_stat->SetBrowseInfoWnd(browse_wnd);
-    }
-
-    m_trade_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_TRADE));
-    m_trade_meter_bar->SetProjectedMax(res->TradeMeter().Max());
-    m_trade_stat->SetValue(res->TradePoints());
-    if (meter_map) {
         m_trade_stat->SetBrowseModeTime(tooltip_delay);
-        m_trade_meter_bar->SetBrowseModeTime(tooltip_delay);
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, obj, *meter_map));
-        m_trade_meter_bar->SetBrowseInfoWnd(browse_wnd);
+        
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
+        m_farming_stat->SetBrowseInfoWnd(browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, obj, *meter_map));
+        m_mining_stat->SetBrowseInfoWnd(browse_wnd);
+    
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map));
+        m_industry_stat->SetBrowseInfoWnd(browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map));
+        m_research_stat->SetBrowseInfoWnd(browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, obj, *meter_map));
         m_trade_stat->SetBrowseInfoWnd(browse_wnd);
     }
 
-    m_construction_meter_bar->SetProjectedCurrent(res->ProjectedCurrent(METER_CONSTRUCTION));
-    m_construction_meter_bar->SetProjectedMax(res->ConstructionMeter().Max());
-    m_construction_stat->SetValue(res->ConstructionMeter().Current());
-    if (meter_map) {
-        m_construction_stat->SetBrowseModeTime(tooltip_delay);
-        m_construction_meter_bar->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map));
-        m_construction_meter_bar->SetBrowseInfoWnd(browse_wnd);
-        m_construction_stat->SetBrowseInfoWnd(browse_wnd);
-    }
-
-
+    // focus droplists
     std::string text;
     switch (res->PrimaryFocus())
     {
@@ -1164,7 +1124,6 @@ void ResourcePanel::Update()
     m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_secondary_focus_drop->SetBrowseText(text);
 }
-
 
 void ResourcePanel::Refresh()
 {
@@ -1250,7 +1209,7 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 /////////////////////////////////////
 //         MeterStatusBar          //
 /////////////////////////////////////
-MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
+MeterStatusBar::MeterStatusBar(int w, int h, const Meter& meter) :
     GG::Wnd(0, 0, w, h, GG::CLICKABLE),
     m_meter(meter),
     m_initial_max(m_meter.Max()),
@@ -1258,21 +1217,21 @@ MeterStatusBar2::MeterStatusBar2(int w, int h, const Meter& meter) :
     m_projected_max(m_meter.Max()),
     m_projected_current(m_meter.Current())
 {
-    SetText("MeterStatusBar2");
+    SetText("MeterStatusBar");
 }
 
-void MeterStatusBar2::SetProjectedCurrent(double current)
+void MeterStatusBar::SetProjectedCurrent(double current)
 {
     assert(Meter::METER_MIN <= current && current <= Meter::METER_MAX);
     m_projected_current = current;
 }
-void MeterStatusBar2::SetProjectedMax(double max)
+void MeterStatusBar::SetProjectedMax(double max)
 {
     assert(Meter::METER_MIN <= max && max <= Meter::METER_MAX);
     m_projected_max = max;
 }
 
-void MeterStatusBar2::Render()
+void MeterStatusBar::Render()
 {
     // colours from eleazar's forum post
     GG::Clr light_grey_bar(193, 193, 193, 255); // lighter than A6A6A6 100%
@@ -1311,12 +1270,118 @@ void MeterStatusBar2::Render()
                       clr, clr, 0);
 }
 
-void MeterStatusBar2::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+void MeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
     if((parent = Parent()))
         parent->MouseWheel(pt, move, mod_keys);
 }
+
+/////////////////////////////////////
+//       MultiMeterStatusBar         //
+/////////////////////////////////////
+MultiMeterStatusBar::MultiMeterStatusBar(int w, int h, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
+    GG::Wnd(0, 0, w, h, GG::CLICKABLE),
+    m_meter_types(meter_types), m_obj(obj),
+    m_bar_height(1), m_bar_colours(),
+    m_initial_maxes(), m_initial_currents(), m_projected_maxes(), m_projected_currents()
+{
+    SetText("MultiMeterStatusBar");
+
+    Update();
+}
+
+void MultiMeterStatusBar::Render()
+{
+    GG::Clr DARY_GREY = GG::Clr(44, 44, 44, 255);
+
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+
+    // outline of whole control
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+
+    const int BAR_LEFT = ClientUpperLeft().x + EDGE_PAD;
+    const int BAR_RIGHT = ClientLowerRight().x - EDGE_PAD;
+    const int BAR_MAX_LENGTH = BAR_RIGHT - BAR_LEFT;
+    int y = ClientUpperLeft().y + EDGE_PAD;
+
+    for (unsigned int i = 0; i < m_initial_maxes.size(); ++i) {
+        // bar grey backgrounds
+        GG::FlatRectangle(BAR_LEFT, y, BAR_RIGHT, y + m_bar_height, DARY_GREY, DARY_GREY, 0);
+
+        // max value
+        const int MAX_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_maxes[i] / (Meter::METER_MAX - Meter::METER_MIN) + 0.5);
+        const int BORDER = 1;
+        if (MAX_RIGHT > BAR_LEFT)
+            GG::FlatRectangle(BAR_LEFT - BORDER, y - BORDER, MAX_RIGHT + BORDER, y + m_bar_height + BORDER, GG::DarkColor(m_bar_colours[i]), GG::CLR_BLACK, 1);
+
+        // current value
+        const int CUR_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_initial_currents[i] / (Meter::METER_MAX - Meter::METER_MIN) + 0.5);
+        GG::FlatRectangle(BAR_LEFT, y, CUR_RIGHT, y + m_bar_height, m_bar_colours[i], GG::CLR_ZERO, 0);
+
+        // projected value
+        const int PROJECTED_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_currents[i] / (Meter::METER_MAX - Meter::METER_MIN) + 0.5);
+
+        GG::Clr projected_clr = ClientUI::StatIncrColor();
+        if (m_projected_currents[i] < m_initial_currents[i]) projected_clr = ClientUI::StatDecrColor();
+
+        int change_right = std::max(CUR_RIGHT, PROJECTED_RIGHT);
+        int change_left = std::min(PROJECTED_RIGHT, CUR_RIGHT);
+        GG::FlatRectangle(change_left, y + EDGE_PAD, change_right, y + m_bar_height, projected_clr, projected_clr, 0);
+
+        Logger().debugStream() << "diff: " << m_projected_currents[i] - m_initial_currents[i];
+
+        y += m_bar_height + BAR_PAD;
+    }
+
+    //// projected value
+    //GG::Clr clr = green_change;
+    //if (m_projected_current < m_initial_current) clr = red_change;
+    //GG::FlatRectangle(delta_ul.x + static_cast<int>(w * m_initial_current / (Meter::METER_MAX - Meter::METER_MIN) + 0.5), delta_ul.y, 
+    //                  delta_ul.x + static_cast<int>(w * m_projected_current / (Meter::METER_MAX - Meter::METER_MIN) + 0.5), delta_lr.y,
+    //                  clr, clr, 0);
+}
+
+void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{
+    GG::Wnd *parent;
+    if((parent = Parent()))
+        parent->MouseWheel(pt, move, mod_keys);
+}
+
+void MultiMeterStatusBar::Update()
+{
+    std::vector<const Meter*> meters;
+    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+        const Meter* meter = m_obj.GetMeter(*it);
+        if (!meter) 
+            throw std::runtime_error("MultiMeterStatusBar::Update() tried to get a meter from and object that didn't have a meter of the specified type");
+        meters.push_back(meter);
+    }
+
+    const int NUM_BARS = meters.size();
+
+    m_initial_maxes.clear();
+    m_initial_currents.clear();
+    m_projected_maxes.clear();
+    m_projected_currents.clear();
+    for (int i = 0; i < NUM_BARS; ++i) {
+        const Meter* meter = meters[i];
+        m_initial_maxes.push_back(meter->InitialMax());
+        m_initial_currents.push_back(meter->InitialCurrent());
+        m_projected_maxes.push_back(meter->Max());
+        m_projected_currents.push_back(ProjectedCurrentMeter(&m_obj, m_meter_types[i]));
+        m_bar_colours.push_back(MeterColor(m_meter_types[i]));
+    }
+
+    m_bar_height = std::max((Height() - 2*EDGE_PAD) / NUM_BARS, 1);
+
+    const int NEW_HEIGHT = 2*EDGE_PAD + NUM_BARS*m_bar_height + (NUM_BARS - 1)*BAR_PAD;
+
+    Resize(GG::Pt(Width(), NEW_HEIGHT));
+}
+
 
 /////////////////////////////////////
 //         BuildingsPanel          //
@@ -1355,11 +1420,6 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
 
 BuildingsPanel::~BuildingsPanel()
 {
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
     // delete building indicators
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
         delete *it;
@@ -1705,15 +1765,6 @@ SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) :
     Update();
 }
 
-SpecialsPanel::~SpecialsPanel()
-{
-    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
-        DetachChild(*it);
-        delete *it;
-    }
-    m_icons.clear();
-}
-
 bool SpecialsPanel::InWindow(const GG::Pt& pt) const
 {
     bool retval = false;
@@ -1736,10 +1787,8 @@ void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey>
 
 void SpecialsPanel::Update()
 {
-    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
-        DetachChild(*it);
-        delete *it;
-    }
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it)
+        DeleteChild(*it);
     m_icons.clear();
 
     const UniverseObject* obj = GetObject();

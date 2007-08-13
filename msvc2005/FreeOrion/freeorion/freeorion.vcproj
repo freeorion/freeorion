@@ -473,14 +473,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\Ui\FocusSelector.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\Ui\FocusSelector.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\Ui\GalaxySetupWnd.cpp"
 					>
 				</File>

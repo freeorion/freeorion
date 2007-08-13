@@ -17,10 +17,11 @@ class CUIDropDownList;
 class CUIIconButton;
 class CUIScroll;
 class CUITextureButton;
-class FocusSelector;
 class RotatingPlanetControl;
 class UniverseObjectVisitor;
-namespace GG {class TextControl;}
+namespace GG {
+    class TextControl;
+}
 
 class SidePanel : public GG::Wnd
 {
