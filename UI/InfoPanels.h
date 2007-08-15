@@ -69,8 +69,8 @@ private:
     StatisticIcon*      m_pop_stat;             ///< icon and number of population
     StatisticIcon*      m_health_stat;          ///< icon and number of health
 
-    MeterStatusBar*    m_pop_meter_bar;        ///< graphically indicates status of population
-    MeterStatusBar*    m_health_meter_bar;     ///< graphically indicates health
+    MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population and health
+    MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
     
     GG::Button*         m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
@@ -237,27 +237,6 @@ private:
     std::vector<GG::StaticGraphic*> m_icons;
 };
 
-/** Graphically represents the current, max and (in future: projected) changes to values of a Meter as a
-    horizontal bar */
-class MeterStatusBar : public GG::Wnd
-{
-public:
-    MeterStatusBar(int w, int h, const Meter& meter);
-
-    virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-
-    void SetProjectedCurrent(double current);
-    void SetProjectedMax(double max);
-
-private:
-    const Meter& m_meter;
-    double m_initial_max;
-    double m_initial_current;
-    double m_projected_max;
-    double m_projected_current;
-};
-
 /** Display icon and number for various meter-related quantities associated with objects.  Typical use
     would be to display the resource production values for a planet (not the meter values) and the
     construction (a meter value), or the population (not a meter value) and health (a meter value).  
@@ -266,16 +245,17 @@ private:
 class MultiIconValueIndicator : public GG::Wnd
 {
 public:
-    MultiIconValueIndicator(int w, int h, const UniverseObject& obj, std::vector<MeterType>& value_types);
+    MultiIconValueIndicator(int w, const UniverseObject& obj, std::vector<MeterType>& meter_types);
 
-    virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void Update();
 
 private:
+
+
     std::vector<MeterType> m_meter_types;
-    const UniverseObject& obj;
+    const UniverseObject& m_obj;
 };
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a
@@ -283,7 +263,7 @@ private:
 class MultiMeterStatusBar : public GG::Wnd
 {
 public:
-    MultiMeterStatusBar(int w, int h, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
+    MultiMeterStatusBar(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
@@ -302,7 +282,7 @@ private:
     static const int EDGE_PAD = 2;
     static const int BAR_PAD = 1;
 
-    int m_bar_height;
+    static const int BAR_HEIGHT = 7;
 
     std::vector<GG::Clr> m_bar_colours;
 };
