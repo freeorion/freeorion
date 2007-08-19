@@ -143,6 +143,41 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& speci
     return ClientUI::GetTexture(ArtDir() / texture_name);
 }
 
+boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
+{
+    std::string icon_filename;
+    switch (meter_type) {
+    case METER_POPULATION:
+        icon_filename = "pop.png";
+        break;
+    case METER_FARMING:
+        icon_filename = "farming.png";
+        break;
+    case METER_INDUSTRY:
+        icon_filename = "industry.png";
+        break;
+    case METER_RESEARCH:
+        icon_filename = "research.png";
+        break;
+    case METER_TRADE:
+        icon_filename = "trade.png";
+        break;
+    case METER_MINING:
+        icon_filename = "mining.png";
+        break;
+    case METER_CONSTRUCTION:
+        icon_filename = "construction.png";
+        break;
+    case METER_HEALTH:
+        icon_filename = "health.png";
+        break;
+    default:
+        break;
+    }
+    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / icon_filename, true);
+}
+
+
 // tech screen
 GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<StreamableColor>("UI.known-tech").ToClr(); }
 GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<StreamableColor>("UI.known-tech-border").ToClr(); }
@@ -574,3 +609,155 @@ boost::format FlexibleFormat(const std::string &string_to_format) {
     retval.exceptions(boost::io::all_error_bits ^ (boost::io::too_many_args_bit | boost::io::too_few_args_bit));
     return retval;
 }
+
+const double SMALL_UI_DISPLAY_VALUE = 1.0e-6;
+const double LARGE_UI_DISPLAY_VALUE = 9.99999999e+9;
+const double UNKNOWN_UI_DISPLAY_VALUE = std::numeric_limits<double>::infinity();
+
+int EffectiveSign(double val, bool integerize)
+{
+    if (val == UNKNOWN_UI_DISPLAY_VALUE)
+        return 0;
+
+    if (integerize)
+        val = floor(val);
+
+    if (std::abs(val) >= SMALL_UI_DISPLAY_VALUE) {
+        if (val >= 0)
+            return 1;
+        else
+            return -1;
+    }
+    else
+        return 0;
+}
+
+std::string DoubleToString(double val, int digits, bool integerize, bool showsign)
+{
+    std::string text = "";
+
+    // default result for sentinel value
+    if (val == UNKNOWN_UI_DISPLAY_VALUE)
+        return UserString("UNKNOWN_VALUE_SYMBOL");
+
+    double mag = std::abs(val);
+
+    // integerize?
+    if (integerize)
+        mag = floor(mag);
+
+    // prepend signs if neccessary
+    int effectiveSign = EffectiveSign(val, integerize);
+    if (effectiveSign == -1) text += "-";
+    else if (showsign) text += "+";
+
+    if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
+    
+    // if digits 0 or negative, return full precision value
+    if (digits < 1) {
+        text += boost::lexical_cast<std::string>(mag);
+        return text;
+    }
+    // minimum digits is 2.  Less can't always be displayed with powers of 1000 base
+    digits = std::max(digits, 2);
+
+    // if value is effectively 0, avoid unnecessary later processing
+    if (effectiveSign == 0) {
+        if (integerize) {
+            text += "0";
+        } else {
+            text += "0.0";
+            for (int n = 2; n < digits; ++n) text += "0";  // fill in 0's to required number of digits
+        }
+        return text;
+    }
+
+    // power of 10 of highest valued digit in number
+    int pow10 = static_cast<int>(floor(log10(mag))); // = 2 for 234.4 (100's),  = 4 for 45324 (10000's)
+
+    // power of 10 of lowest digit to be included in number (limited by digits)
+    int LDPow10 = pow10 - digits + 1; // = 1 for 234.4 and digits = 2 (10's)
+
+    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000
+    int LDDANLP1000;
+    if (LDPow10 >= 0)
+        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.4);
+    else
+        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##);
+
+    // Lowest Digit's Next Lower Power of 1000
+    int LDNLP1000 = LDPow10 - LDDANLP1000;
+
+    // Lowest Digit's Next Higher Power of 1000
+    int LDNHP1000 = LDNLP1000 + 3;
+
+    /* Pick what power of 10 to use as base unit.  If lowest digit lines up with a power of 1000, use it.
+       Otherwise, have to use next higher power of 1000 to avoid having too many digits.
+       Also may set adjusting factor to remove a digit below the units digit if using the next
+       higher power of 1000, as highest digit may be less than this, in which case extra 0. at
+       start of number needs to be counted in digits */ 
+    int unitPow10, digitCor = 0;
+    if (LDDANLP1000 == 0)
+        unitPow10 = LDNLP1000;
+    else
+        unitPow10 = LDNHP1000;        
+
+    if (integerize && unitPow10 < 0) unitPow10 = 0;
+    if (pow10 < unitPow10) digitCor = -1;   // if value is less than the base unit, there will be a leading 0 using up one digit
+
+    /* round number down at lowest digit to be displayed, to prevent lexical_cast from rounding up
+       in cases like 0.998k with 2 digits -> 1.00k */
+    double roundingFactor = pow(10.0, static_cast<double>(pow10 - digits + 1));
+    mag /= roundingFactor;
+    mag = floor(mag);
+    mag *= roundingFactor;
+    
+    // scale number by unit power of 10
+    mag /= pow(10.0, static_cast<double>(unitPow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
+
+    // total digits
+    int totalDigits = digits + digitCor;
+    // fraction digits:
+    int fractionDigits = 0;
+    if (!integerize) fractionDigits = unitPow10 - LDPow10;
+    
+    std::string format;
+    format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." + 
+              boost::lexical_cast<std::string>(fractionDigits) + "f";
+    text += (boost::format(format) % mag).str();
+
+    // append base scale SI prefix (as postfix)
+    switch (unitPow10) {
+    case -15:
+        text += "f";    // femto
+        break;
+    case -12:
+        text += "p";    // pico
+        break;
+    case -9:
+        text += "n";    // nano
+        break;
+    case -6:
+        text += "µ";    // micro
+        break;
+    case -3:
+        text += "m";    // milli
+        break;
+    case 3:
+        text += "k";    // kilo
+        break;
+    case 6:
+        text += "M";    // Mega
+        break;
+    case 9:
+        text += "G";    // Giga
+        break;
+    case 12:
+        text += "T";    // Terra
+        break;
+    default:
+        break;
+    }
+    return text;
+}
+

@@ -193,15 +193,15 @@ namespace {
                 m_summary_title->SetText("");
             }
 
-            m_current_value->SetText(StatisticIcon::DoubleToString(current, 2, false, false));
-            m_next_turn_value->SetText(StatisticIcon::DoubleToString(next, 2, false, false));
+            m_current_value->SetText(DoubleToString(current, 2, false, false));
+            m_next_turn_value->SetText(DoubleToString(next, 2, false, false));
             GG::Clr clr = ClientUI::TextColor();
             if (change > 0.0)
                 clr = ClientUI::StatIncrColor();
             else if (change < 0.0)
                 clr = ClientUI::StatDecrColor();
-            m_change_value->SetText(GG::RgbaTag(clr) + StatisticIcon::DoubleToString(change, 2, false, true) + "</rgba>");
-            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % StatisticIcon::DoubleToString(meter_max, 2, false, false)));
+            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 2, false, true) + "</rgba>");
+            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % DoubleToString(meter_max, 2, false, false)));
         }
 
         // meter effect entries
@@ -275,7 +275,7 @@ namespace {
                 else if (info_it->meter_change < 0.0)
                     clr = ClientUI::StatDecrColor();
                 GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, 
-                                                             GG::RgbaTag(clr) + StatisticIcon::DoubleToString(info_it->meter_change, 2, false, true) + "</rgba>",
+                                                             GG::RgbaTag(clr) + DoubleToString(info_it->meter_change, 2, false, true) + "</rgba>",
                                                              font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
                 AttachChild(value);
                 m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
@@ -461,11 +461,11 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
 
     int icon_size = ClientUI::Pts()*4/3;
 
-    m_pop_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(), GG::CLR_WHITE,
+    m_pop_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_POPULATION),
                                    0, 3, false, false);
     AttachChild(m_pop_stat);
 
-    m_health_stat = new StatisticIcon(w/2, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "health.png").native_file_string() , GG::CLR_WHITE,
+    m_health_stat = new StatisticIcon(w/2, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_HEALTH),
                                       0, 3, false, false);
     AttachChild(m_health_stat);
 
@@ -753,22 +753,22 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
     
     // small resource indicators - for use when panel is collapsed
-    m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(), GG::CLR_WHITE,
+    m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_FARMING),
                                        0, 3, false, false);
     AttachChild(m_farming_stat);
-    m_mining_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "mining.png").native_file_string(), GG::CLR_WHITE,
+    m_mining_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_MINING),
                                       0, 3, false, false);
     AttachChild(m_mining_stat);
 
-    m_industry_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "industry.png").native_file_string(), GG::CLR_WHITE,
+    m_industry_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_INDUSTRY),
                                         0, 3, false, false);
     AttachChild(m_industry_stat);
 
-    m_research_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "research.png").native_file_string(), GG::CLR_WHITE,
+    m_research_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_RESEARCH),
                                         0, 3, false, false);
     AttachChild(m_research_stat);
 
-    m_trade_stat = new StatisticIcon(0, 0, icon_size, icon_size, (ClientUI::ArtDir() / "icons" / "trade.png").native_file_string(), GG::CLR_WHITE,
+    m_trade_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_TRADE),
                                      0, 3, false, false);
     AttachChild(m_trade_stat);
 
@@ -1203,10 +1203,30 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 /////////////////////////////////////
 MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& obj, std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
-    m_meter_types(meter_types), m_obj(obj)
+    m_meter_types(meter_types), m_obj(obj), m_icons()
 {
     SetText("MultiIconValueIndicator");
+
+    int x = EDGE_PAD;
+    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
+        m_icons.push_back(new StatisticIcon(x, EDGE_PAD, ICON_WIDTH, ICON_WIDTH + ClientUI::Pts()*3/2, texture,
+                                            ProjectedCurrentMeter(&m_obj, *it), 3, false, false));
+        AttachChild(m_icons.back());
+        x += ICON_WIDTH;
+    }
+    if (!m_icons.empty())
+        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2 + EDGE_PAD));
     Update();
+}
+
+void MultiIconValueIndicator::Render()
+{
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+
+    // outline of whole control
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1218,18 +1238,8 @@ void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<G
 
 void MultiIconValueIndicator::Update()
 {
-    std::vector<const Meter*> meters;
-    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        const Meter* meter = m_obj.GetMeter(*it);
-        if (!meter) 
-            throw std::runtime_error("MultiMeterStatusBar::Update() tried to get a meter from and object that didn't have a meter of the specified type");
-        meters.push_back(meter);
-    }
-    const int NUM_BARS = meters.size();
-
-    const int HEIGHT = 30;
-
-    Resize(GG::Pt(Width(), HEIGHT));
+    for (unsigned int i = 0; i < m_icons.size(); ++i)
+        m_icons.at(i)->SetValue(ProjectedCurrentMeter(&m_obj, m_meter_types.at(i)));
 }
 
 

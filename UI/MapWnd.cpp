@@ -230,37 +230,33 @@ MapWnd::MapWnd() :
     const int ICON_DUAL_WIDTH = 100;
     const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
     m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
-                                     (ClientUI::ArtDir() / "icons" / "pop.png").native_file_string(),
-                                     GG::CLR_WHITE,0,0,3,2,false,false,false,true);
-    m_population->SetPositiveColor(ClientUI::StatIncrColor()); m_population->SetNegativeColor(ClientUI::StatDecrColor());
+                                     ClientUI::MeterIcon(METER_POPULATION),
+                                     0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_population);
    
     m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
-                                   (ClientUI::ArtDir() / "icons" / "industry.png").native_file_string(),
-                                   GG::CLR_WHITE,0,2,false,false);
+                                   ClientUI::MeterIcon(METER_INDUSTRY),
+                                   0,3,true,false);
     m_toolbar->AttachChild(m_industry);
 
     m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
-                                   (ClientUI::ArtDir() / "icons" / "research.png").native_file_string(),
-                                   GG::CLR_WHITE,0,5,true,false);
+                                   ClientUI::MeterIcon(METER_RESEARCH),
+                                   0,3,true,false);
     m_toolbar->AttachChild(m_research);
 
     m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
-                                (ClientUI::ArtDir() / "icons" / "trade.png").native_file_string(),
-                                GG::CLR_WHITE,0,0,3,2,false,false,false,true);
-    m_trade->SetPositiveColor(ClientUI::StatIncrColor()); m_trade->SetNegativeColor(ClientUI::StatDecrColor());
+                                ClientUI::MeterIcon(METER_TRADE),
+                                0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_trade);
 
     m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
-                                  (ClientUI::ArtDir() / "icons" / "mining.png").native_file_string(),
-                                  GG::CLR_WHITE,0,0,2,2,false,false,false,true);
-    m_mineral->SetPositiveColor(ClientUI::StatIncrColor()); m_mineral->SetNegativeColor(ClientUI::StatDecrColor());
+                                  ClientUI::MeterIcon(METER_MINING),
+                                  0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_mineral);
 
     m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
-                               (ClientUI::ArtDir() / "icons" / "farming.png").native_file_string(),
-                               GG::CLR_WHITE,0,0,3,2,false,false,false,true);
-    m_food->SetPositiveColor(ClientUI::StatIncrColor()); m_food->SetNegativeColor(ClientUI::StatDecrColor());
+                               ClientUI::MeterIcon(METER_FARMING),
+                               0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box

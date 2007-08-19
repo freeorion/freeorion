@@ -105,8 +105,8 @@ namespace {
 
             AttachChild(m_ship_name_text);
 
-            m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, (ClientUI::ArtDir() / "icons" / "combatstrength.png").native_file_string(),
-                                                     ClientUI::TextColor(), 0, 0, true, false);
+            m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combatstrength.png"),
+                                                     0, 0, true, false);
             AttachChild(m_ship_strength_stat);
             m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
@@ -178,7 +178,7 @@ namespace {
 
             SetShipIcon();
             m_ship_name_text->SetText(m_ship->Name());
-            m_ship_strength_stat->SetValue(design ? design->attack : StatisticIcon::UNKNOWN_VALUE);
+            m_ship_strength_stat->SetValue(design ? design->attack : UNKNOWN_UI_DISPLAY_VALUE);
 
             const int ICON_SPACING = 5;
             const int ICON_SZ = Height() - SHIP_NAME_HT - 1;
@@ -186,8 +186,8 @@ namespace {
             int damage_pts = 0; // TODO: acount for damaged ships once damage system is in place
             if (damage_pts) {
                 if (!m_damage_stat) {
-                    m_damage_stat = new StatisticIcon(x_position, SHIP_NAME_HT, STAT_ICON_WD, ICON_SZ, (ClientUI::ArtDir() / "icons" / "damagemarker.png").native_file_string(),
-                                                      ClientUI::TextColor(), damage_pts, 0, true, false);
+                    m_damage_stat = new StatisticIcon(x_position, SHIP_NAME_HT, STAT_ICON_WD, ICON_SZ, ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "damagemarker.png"),
+                                                      damage_pts, 0, true, false);
                     AttachChild(m_damage_stat);
                 }
                 x_position += m_damage_stat->Width(); // no icon spacing is needed after stat icons
@@ -311,11 +311,11 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
 
     if (m_fleet) {
         m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                             (ClientUI::ArtDir() / "icons" / "3shipfleet.png").native_file_string(),
-                                             ClientUI::TextColor(), 0, 0, true, false);
+                                             ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "3shipfleet.png"),
+                                             0, 0, true, false);
         m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
-                                                  (ClientUI::ArtDir() / "icons" / "combatstrength.png").native_file_string(),
-                                                  ClientUI::TextColor(), 0, 0, true, false);
+                                                  ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combatstrength.png"),
+                                                  0, 0, true, false);
         AttachChild(m_num_ships_stat);
         AttachChild(m_fleet_strength_stat);
         m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
@@ -467,7 +467,7 @@ void FleetDataPanel::Refresh()
             }
             // TODO: account for damaged ships once damage system is in place
         }
-        m_fleet_strength_stat->SetValue(attack_factor_unknown ? StatisticIcon::UNKNOWN_VALUE : attack_strength);
+        m_fleet_strength_stat->SetValue(attack_factor_unknown ? UNKNOWN_UI_DISPLAY_VALUE : attack_strength);
 
         const int ICON_SPACING = 5;
         const int ICON_SZ = Height() - FLEET_NAME_HT - 1;

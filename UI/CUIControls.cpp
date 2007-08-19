@@ -830,50 +830,49 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
 ///////////////////////////////////////
 // class StatisticIcon
 ///////////////////////////////////////
-// static(s)
-const double StatisticIcon::UNKNOWN_VALUE = std::numeric_limits<double>::infinity();
-const double StatisticIcon::SMALL_VALUE = 1.0e-6;
-const double StatisticIcon::LARGE_VALUE = 9.9999e+9;
-
-StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
+StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool integerize, bool showsign) :
     GG::Control(x, y, w, h),
     m_num_values(1),
-    m_values(std::vector<double>(1, value)),
-    m_digits(std::vector<int>(1, digits)),
-    m_integerize(std::vector<bool>(1, integerize)),
-    m_show_signs(std::vector<bool>(1, showsign)),
-    m_positive_color(text_color),
-    m_zero_color(text_color),
-    m_negative_color(text_color),
-    m_icon(0),
-    m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::FORMAT_LEFT | GG::FORMAT_VCENTER))
+    m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
+    m_integerize(std::vector<bool>(1, integerize)), m_show_signs(std::vector<bool>(1, showsign)),
+    m_icon(0), m_text(0)
 {
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(icon_filename);
-    m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
+    int font_space = ClientUI::Pts()*3/2;
+    // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
+    if (w >= h) {
+        m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(h, 0, w - h, std::max(font_space, h), "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    } else {
+        // need vertical space for text, but don't want icon to be larger than available horizintal space
+        int icon_height = std::min(w, std::max(h - font_space, 1));
+        int icon_left = (w - icon_height)/2;
+        m_icon = new GG::StaticGraphic(icon_left, 0, icon_height, icon_height, texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(0, icon_height, w, font_space, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
+    }
     
     AttachChild(m_icon);
     AttachChild(m_text);
     Refresh();
 }
 
-StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
-              double value0, double value1, int digits0, int digits1,
-              bool integerize0, bool integerize1, bool showsign0, bool showsign1) :
+StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
+                             double value0, double value1, int digits0, int digits1,
+                             bool integerize0, bool integerize1, bool showsign0, bool showsign1) :
     GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
     m_num_values(2),
-    m_values(std::vector<double>(2, 0.0)),
-    m_digits(std::vector<int>(2, 2)),
-    m_integerize(std::vector<bool>(2, false)),
-    m_show_signs(std::vector<bool>(2, false)),
-    m_positive_color(text_color),
-    m_zero_color(text_color),
-    m_negative_color(text_color),
-    m_icon(0),
-    m_text(new GG::TextControl(h, 0, w - h, h, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), text_color, GG::FORMAT_LEFT | GG::FORMAT_VCENTER))
+    m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
+    m_integerize(std::vector<bool>(2, false)), m_show_signs(std::vector<bool>(2, false)),
+    m_icon(0), m_text(0)
 {
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(icon_filename);
-    m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
+    // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
+    if (w >= h) {
+        m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(h, 0, w - h, std::max(ClientUI::Pts()*3/2, h), "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    } else {
+        m_icon = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(0, w, w, ClientUI::Pts()*3/2, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+    }
 
     m_values[0] = value0;
     m_values[1] = value1;
@@ -888,72 +887,11 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const std::string& icon
     Refresh();
 }
 
-double StatisticIcon::Value(int index) const
-{
-    if (index < 0 || index + 1 > m_num_values) throw std::invalid_argument("out of range index passed to StatisticIcon::SetValue");
-    return m_values[index];
-}
-
-int StatisticIcon::SigFigs(int index) const
-{
-    if (index < 0 || index + 1 > m_num_values) throw std::invalid_argument("out of range index passed to StatisticIcon::SigFigs");
-    return m_digits[index];
-}
-
-bool StatisticIcon::Integerize(int index) const
-{
-    if (index < 0 || index + 1 > m_num_values) throw std::invalid_argument("out of range index passed to StatisticIcon::Integerize");
-    return m_integerize[index];
-}
-
-bool StatisticIcon::ShowSigns(int index) const
-{
-    if (index < 0 || index + 1 > m_num_values) throw std::invalid_argument("out of range index passed to StatisticIcon::ShowSigns");
-    return m_show_signs[index];
-}
-
-void StatisticIcon::SetNumValues(int num)
-{
-    if (num < 1) throw std::invalid_argument("negative num passed to StatisticIcon::SetNumValues");
-    if (num > 2) throw std::invalid_argument("num greater than 2 passed to StatisticIcon::SetNumValues.  Only 1 or 2 supported.");
-    m_num_values = num;
-    m_values.resize(m_num_values, 0.0);
-    m_digits.resize(m_num_values, m_digits[0]);
-    m_integerize.resize(m_num_values, m_integerize[0]);
-    m_show_signs.resize(m_num_values, m_show_signs[0]);
-    Refresh();
-}
-
-void StatisticIcon::SetSigFigs(int digits, int index)
-{
-    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::SetSigFigs");
-    if (index > m_num_values) throw std::invalid_argument("index larger than current range of values passed to StatisticIcon::SetSigFigs");
-    m_digits[index] = digits;
-    Refresh();
-}
-
-void StatisticIcon::SetIntegerize(bool integerize, int index)
-{
-    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::SetIntegerize");
-    if (index > m_num_values) throw std::invalid_argument("index larger than current range of values passed to StatisticIcon::SetIntegerize");
-    m_integerize[index] = integerize;
-    Refresh();
-}
-
-void StatisticIcon::SetShowSigns(bool sign, int index)
-{
-    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::SetShowSigns");
-    if (index > m_num_values) throw std::invalid_argument("index larger than current range of values passed to StatisticIcon::SetShowSigns");
-    m_show_signs[index] = sign;
-    Refresh();
-}
-
 void StatisticIcon::SetValue(double value, int index)
 {
     if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::SetValue");
     if (index > 1) throw std::invalid_argument("index greater than 1 passed to StatisticIcon::SetValue.  Only 1 or 2 values, with indices 0 or 1, supported.");
-    if (index + 1 > m_num_values)
-    {
+    if (index + 1 > m_num_values) {
         m_num_values = index + 1;
         m_values.resize(m_num_values, 0.0);        
         m_show_signs.resize(m_num_values, m_show_signs[0]);
@@ -962,173 +900,6 @@ void StatisticIcon::SetValue(double value, int index)
     }
     m_values[index] = value;
     Refresh();
-}
-
-std::string StatisticIcon::DoubleToString(double val, int digits, bool integerize, bool showsign)
-{
-    std::string text = "";
-
-    // default result for sentinel value
-    if (val == UNKNOWN_VALUE)
-        return UserString("UNKNOWN_VALUE_SYMBOL");
-
-    double mag = std::abs(val);
-
-    // integerize?
-    if (integerize)
-        mag = floor(mag);
-
-    // prepend signs if neccessary
-    int effectiveSign = EffectiveSign(val, integerize);
-    if (effectiveSign == -1) text += "-";
-    else if (showsign) text += "+";
-
-    if (mag > LARGE_VALUE) mag = LARGE_VALUE;
-    
-    // if digits 0 or negative, return full precision value
-    if (digits < 1)
-    {
-        text += boost::lexical_cast<std::string>(mag);
-        return text;
-    }
-    // minimum digits is 2.  Less can't always be displayed with powers of 1000 base
-    digits = std::max(digits, 2);
-
-    // if value is effectively 0, avoid unnecessary later processing
-    if (effectiveSign == 0)
-    {
-        if (integerize)
-            text += "0";
-        else
-        {
-            text += "0.0";
-            for (int n = 2; n < digits; ++n) text += "0";  // fill in 0's to required number of digits
-        }
-        return text;
-    }
-
-    // power of 10 of highest valued digit in number
-    int pow10 = static_cast<int>(floor(log10(mag))); // = 2 for 234.4 (100's),  = 4 for 45324 (10000's)
-
-    // power of 10 of lowest digit to be included in number (limited by digits)
-    int LDPow10 = pow10 - digits + 1; // = 1 for 234.4 and digits = 2 (10's)
-
-    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000
-    int LDDANLP1000;
-    if (LDPow10 >= 0)
-        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.4);
-    else
-        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##);
-
-    // Lowest Digit's Next Lower Power of 1000
-    int LDNLP1000 = LDPow10 - LDDANLP1000;
-
-    // Lowest Digit's Next Higher Power of 1000
-    int LDNHP1000 = LDNLP1000 + 3;
-
-    /* Pick what power of 10 to use as base unit.  If lowest digit lines up with a power of 1000, use it.
-       Otherwise, have to use next higher power of 1000 to avoid having too many digits.
-       Also may set adjusting factor to remove a digit below the units digit if using the next
-       higher power of 1000, as highest digit may be less than this, in which case extra 0. at
-       start of number needs to be counted in digits */ 
-    int unitPow10, digitCor = 0;
-    if (LDDANLP1000 == 0)
-        unitPow10 = LDNLP1000;
-    else
-    {
-        unitPow10 = LDNHP1000;        
-    }
-
-    if (integerize && unitPow10 < 0) unitPow10 = 0;
-    if (pow10 < unitPow10) digitCor = -1;   // if value is less than the base unit, there will be a leading 0 using up one digit
-
-    /* round number down at lowest digit to be displayed, to prevent lexical_cast from rounding up
-       in cases like 0.998k with 2 digits -> 1.00k */
-    double roundingFactor = pow(10.0, static_cast<double>(pow10 - digits + 1));
-    mag /= roundingFactor;
-    mag = floor(mag);
-    mag *= roundingFactor;
-    
-    // scale number by unit power of 10
-    mag /= pow(10.0, static_cast<double>(unitPow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
-
-    // total digits
-    int totalDigits = digits + digitCor;
-    // fraction digits:
-    int fractionDigits = 0;
-    if (!integerize) fractionDigits = unitPow10 - LDPow10;
-    
-    std::string format;
-    format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." + 
-              boost::lexical_cast<std::string>(fractionDigits) + "f";
-    text += (boost::format(format) % mag).str();
-
-    // append base scale SI prefix (as postfix)
-    switch (unitPow10)
-    {
-    case -15:
-        text += "f";    // femto
-        break;
-    case -12:
-        text += "p";    // pico
-        break;
-    case -9:
-        text += "n";    // nano
-        break;
-    case -6:
-        text += "µ";    // micro
-        break;
-    case -3:
-        text += "m";    // milli
-        break;
-    case 3:
-        text += "k";    // kilo
-        break;
-    case 6:
-        text += "M";    // Mega
-        break;
-    case 9:
-        text += "G";    // Giga
-        break;
-    case 12:
-        text += "T";    // Terra
-        break;
-    }
-     
-    return text;
-}
-
-int StatisticIcon::EffectiveSign(double val, bool integerize)
-{
-    if (val == UNKNOWN_VALUE)
-        return 0;
-
-    if (integerize)
-        val = floor(val);
-
-    if (std::abs(val) >= SMALL_VALUE)
-    {
-        if (val >= 0)
-            return 1;
-        else
-            return -1;
-    }
-    else
-        return 0;
-}
-
-GG::Clr StatisticIcon::ValueColor(int index) const
-{
-    if (index < 0) throw std::invalid_argument("negative index passed to StatisticIcon::ValueColor");
-    if (index > m_num_values) throw std::invalid_argument("index larger than current range of values passed to StatisticIcon::ValueColor");
-    int effectiveSign = EffectiveSign(m_values[index], m_integerize[index]);
-
-    // in multi-value icons, first value always has the zero colour
-    if (m_num_values > 1 && index == 0) return m_zero_color;
-
-    if (effectiveSign == -1) return m_negative_color;
-    if (effectiveSign == 1) return m_positive_color;
-    return m_zero_color;
 }
 
 void StatisticIcon::Refresh()
@@ -1147,6 +918,18 @@ void StatisticIcon::Refresh()
     }
 
     m_text->SetText(text);
+}
+
+GG::Clr StatisticIcon::ValueColor(int index) const
+{
+    int effectiveSign = EffectiveSign(m_values.at(index), m_integerize.at(index));
+     
+    if (index == 0) return ClientUI::TextColor();
+
+    if (effectiveSign == -1) return ClientUI::StatDecrColor();
+    if (effectiveSign == 1) return ClientUI::StatIncrColor();
+
+    return ClientUI::TextColor();
 }
 
 ///////////////////////////////////////

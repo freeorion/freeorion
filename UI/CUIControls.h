@@ -301,76 +301,27 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row
     "[population icon] 66 (+5)", where [... icon] is an icon image, not text.
     The icon may have one or two numerical values.  If one, just that number is displayed.  If two, the first
     number is displayed followed by the second in brackets "()"
-    
-    The number of significant figures to display may be specified for each value.  In order to represent
-    numbers which would normally require more digits than the allowed sig figs, SI unit prefixes indicate
-    powers of 1000.  Possible prefixes include k = 10^3, M = 10^6, G = 10^9, T = 10^12, m = 10^-3,
-    µ = 10^-6, n = 10^-9, p = 10^-12.  The smallest prefix possible for the number and sig figs limit is used.
-
-    Each value may optionally be displayed rounded to the nearest integer, and/or with signs always indicated
-    (including + for positive numbers or zero) or only for negative numbers (-)
-    
-    Note: PositiveColor(), NegativeColor() and ZeroColor() are all the same color by default, specifically the one
-    \a text_color parameter specified in the ctor. 
   */
 class StatisticIcon : public GG::Control
 {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
+    StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture, 
                   double value, int digits, bool integerize, bool showsign); ///< initializes with one value
     
-    StatisticIcon(int x, int y, int w, int h, const std::string& icon_filename, GG::Clr text_color,
+    StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
                   bool integerize0, bool integerize1, bool showsign0, bool showsign1);  ///< initializes with two values
     //@}
 
-    /** \name Accessors */ //@{
-    int NumValues() const {return m_num_values;}                ///< returns the number of values displayed
-    std::vector<double> Values() const {return m_values;}       ///< returns a vector containing the values displayed
-    double Value(int index) const;                              ///< returns the value with \a index
-    std::vector<int> SigFigs() const {return m_digits;}         ///< returns a vector of int containing the number of digits to display for each value
-    int SigFigs(int index) const;                               ///< returns the number of digits for value with \a index
-    std::vector<bool> Integerize() const {return m_integerize;} ///< returns a vector of bool containing whether each value should be rounded to an integer
-    bool Integerize(int index) const;                           ///< returns whether the the value with \a index should be rounded to an integer
-    std::vector<bool> ShowsSigns() const {return m_show_signs;} ///< returns a vector of bool containing whether the sign of each value should be shown
-    bool ShowSigns(int index) const;                            ///< returns whether the sign of the value with \a index should always be shown
-    GG::Clr PositiveColor() const {return m_positive_color;}    ///< returns the color that will be used to display positive values
-    GG::Clr ZeroColor() const {return m_zero_color;}            ///< returns the color that will be used to display values of 0
-    GG::Clr NegativeColor() const {return m_negative_color;}    ///< returns the color that will be used to display negative values
-    //@}
-    
-    GG::Clr ValueColor(int index) const;                        ///< returns colour in which to draw value
-
     /** \name Mutators */ //@{
     void Render() {}
-
-    void SetValue(double value, int index = 0);             ///< sets displayed \a value with \a index
-
-    /** sets the number of values displayed to \a num.  If \a num is greater than the current number of values, extra values are
-      * initilaized to 0.  If \a num is less than the current number of values, the extra values are discarded, and the first
-      * \a num values are kept unchanged
-      */
-    void SetNumValues(int num); 
-
-    void SetSigFigs(int digits, int index = 0);       ///< sets the significant figures of value with \a index.  Negative or zero digits are displayed to full precision.
-    void SetIntegerize(bool integerize, int index = 0); ///< sets whether value with \a index should be rounded to the nearest integer when displayed
-    void SetShowSigns(bool sign, int index = 0);        ///< sets whether the sign of value with \a index should always be shown, even for positive or zero values
-
-    void SetPositiveColor(GG::Clr c) {m_positive_color = c; Refresh();} ///< sets the color that will be used to display positive values
-    void SetZeroColor(GG::Clr c) {m_zero_color = c; Refresh();} ///< sets the color that will be used to display values of zero
-    void SetNegativeColor(GG::Clr c) {m_negative_color = c; Refresh();} ///< sets the color that will be used to display negative values
+    void SetValue(double value, int index = 0); ///< sets displayed \a value with \a index
     //@}
 
-    static const double UNKNOWN_VALUE;
-    static const double SMALL_VALUE;    ///< smallest (absolute value) number displayed as nonzero, with nonzero colour
-    static const double LARGE_VALUE;    ///< largest (absolute value) number displayed.  larger values rounded down to this
-
-    static std::string DoubleToString(double val, int digits, bool integerize, bool showsign); ///< converts double to string with \a digits significant figures.  Represents large numbers with SI prefixes.
-
 private:
-    void Refresh();    
-    static int EffectiveSign(double val, bool integerize);  // returns sign of value, accounting for SMALL_VALUE: +1 for positive values and -1 for negative values if their absolute value is larger than SMALL VALUE, and returns 0 for zero values or values with absolute value less than SMALL_VALUE
+    void Refresh();
+    GG::Clr ValueColor(int index) const;        ///< returns colour in which to draw value
 
     int                 m_num_values;
 
@@ -379,9 +330,6 @@ private:
     std::vector<bool>   m_integerize;
     std::vector<bool>   m_show_signs;
     
-    GG::Clr             m_positive_color;
-    GG::Clr             m_zero_color;
-    GG::Clr             m_negative_color;
     GG::StaticGraphic*  m_icon;
     GG::TextControl*    m_text;
 };

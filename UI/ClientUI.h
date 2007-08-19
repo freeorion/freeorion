@@ -14,7 +14,6 @@ class Combat;
 class Fleet;
 class IntroScreen;
 class MapWnd;
-class PythonConsoleWnd;
 class SitRepEntry;
 struct SaveGameUIData;
 class System;
@@ -142,7 +141,8 @@ public:
                         TechTexture(const std::string& tech_name);
     static boost::shared_ptr<GG::Texture>
                         SpecialTexture(const std::string& special_name);
-
+    static boost::shared_ptr<GG::Texture>
+                        MeterIcon(MeterType meter_type);
 
     // research screen
     static GG::Clr      KnownTechFillColor();
@@ -158,7 +158,6 @@ public:
 
     static std::map<StarType, std::string>& StarTypeFilePrefixes();
     static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();
-
     //!@}
 
 private:
@@ -167,7 +166,6 @@ private:
     TexturesAndDist PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix);
 
     MapWnd*           m_map_wnd;           //!< the galaxy map
-    PythonConsoleWnd* m_python_console;    //!< the python console
 
     PrefixedTextures  m_prefixed_textures;
 
@@ -201,5 +199,12 @@ std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
 /** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
 boost::format FlexibleFormat(const std::string &string_to_format);
+
+extern const double SMALL_UI_DISPLAY_VALUE;
+extern const double LARGE_UI_DISPLAY_VALUE;
+extern const double UNKNOWN_UI_DISPLAY_VALUE;
+
+int EffectiveSign(double val, bool integerize);     ///< returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for positive values and -1 for negative values if their absolute value is larger than SMALL VALUE, and returns 0 for zero values or values with absolute value less than SMALL_UI_DISPLAY_VALUE
+std::string DoubleToString(double val, int digits, bool integerize, bool showsign); ///< converts double to string with \a digits significant figures.  Represents large or small numbers with SI prefixes.
 
 #endif // _ClientUI_h_

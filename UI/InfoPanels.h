@@ -247,15 +247,19 @@ class MultiIconValueIndicator : public GG::Wnd
 public:
     MultiIconValueIndicator(int w, const UniverseObject& obj, std::vector<MeterType>& meter_types);
 
+    virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void Update();
 
 private:
-
+    std::vector<StatisticIcon*> m_icons;
 
     std::vector<MeterType> m_meter_types;
     const UniverseObject& m_obj;
+
+    static const int EDGE_PAD = 2;
+    static const int ICON_WIDTH = 32;
 };
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a
