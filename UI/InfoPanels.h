@@ -75,6 +75,8 @@ private:
     GG::Button*         m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
+
+    static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
 };
 
 class ResourcePanel : public GG::Wnd
@@ -251,6 +253,8 @@ public:
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void Update();
+
+    void SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
 
 private:
     std::vector<StatisticIcon*> m_icons;

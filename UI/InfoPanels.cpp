@@ -445,7 +445,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_popcenter_id(obj.ID()),
     m_pop_stat(0), m_health_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
-    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
+    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE))
 {
     SetText("PopulationPanel");
 
@@ -468,6 +468,27 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_health_stat = new StatisticIcon(w/2, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_HEALTH),
                                       0, 3, false, false);
     AttachChild(m_health_stat);
+
+
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    m_pop_stat->SetBrowseModeTime(tooltip_delay);
+    m_health_stat->SetBrowseModeTime(tooltip_delay);
+
+
+    // meter and production indicators
+    std::vector<MeterType> meters;
+    meters.push_back(METER_POPULATION); meters.push_back(METER_HEALTH);
+
+    // attach and show meter bars and large resource indicators
+    int top = UpperLeft().y;
+
+    m_multi_icon_value_indicator = new MultiIconValueIndicator(Width() - 2*EDGE_PAD, obj, meters);
+    m_multi_icon_value_indicator->MoveTo(GG::Pt(EDGE_PAD, EDGE_PAD - top));
+    m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
+
+    m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, obj, meters);
+    m_multi_meter_status_bar->MoveTo(GG::Pt(EDGE_PAD, m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+    m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
 
 
     // determine if this panel has been created yet.
@@ -508,28 +529,32 @@ void PopulationPanel::DoExpandCollapseLayout()
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_popcenter_id]) {
-        m_pop_stat->MoveTo(GG::Pt(0, 0));
-        m_health_stat->MoveTo(GG::Pt(Width()/2, 0));
-
+        // detach / hide meter bars and large resource indicators
+        DetachChild(m_multi_meter_status_bar);
+        DetachChild(m_multi_icon_value_indicator);
+      
+        AttachChild(m_pop_stat);
+        AttachChild(m_health_stat);
 
         Resize(GG::Pt(Width(), icon_size));
     } else {
-        m_pop_stat->MoveTo(GG::Pt(0, 0));
-        m_health_stat->MoveTo(GG::Pt(0, icon_size));
+        // detach statistic icons
+        DetachChild(m_health_stat); DetachChild(m_pop_stat);
 
+        AttachChild(m_multi_icon_value_indicator);
+        AttachChild(m_multi_meter_status_bar);
+        MoveChildUp(m_expand_button);
 
-        Resize(GG::Pt(Width(), icon_size*2));
+        int top = UpperLeft().y;
+        Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
 
     // update appearance of expand/collapse button
-    if (s_expanded_map[m_popcenter_id])
-    {
+    if (s_expanded_map[m_popcenter_id]) {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), 0, 0, 32, 32));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), 0, 0, 32, 32));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), 0, 0, 32, 32));
-    }
-    else
-    {
+    } else {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
@@ -620,16 +645,9 @@ void PopulationPanel::Update()
         else
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
-
-    // mousover text - actual population and health is just the corresponding meter values
-    std::string text;
-
+ 
     m_pop_stat->SetValue(pop->PopPoints());
-    m_pop_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-
     m_health_stat->SetValue(pop->Health());
-    m_health_stat->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-
 
     const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
     const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
@@ -640,27 +658,23 @@ void PopulationPanel::Update()
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     // meter bar displays and production stats
-    //m_pop_meter_bar->SetProjectedCurrent(pop->PopPoints() + pop->FuturePopGrowth());
-    //m_pop_meter_bar->SetProjectedMax(pop->MaxPop());
-    //m_pop_stat->SetValue(pop->PopPoints());
-    //if (meter_map) {
-    //    m_pop_stat->SetBrowseModeTime(tooltip_delay);
-    //    m_pop_meter_bar->SetBrowseModeTime(tooltip_delay);
-    //    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
-    //    m_pop_meter_bar->SetBrowseInfoWnd(browse_wnd);
-    //    m_pop_stat->SetBrowseInfoWnd(browse_wnd);
-    //}
+    m_multi_meter_status_bar->Update();
+    m_multi_icon_value_indicator->Update();
 
-    //m_health_meter_bar->SetProjectedCurrent(pop->Health() + pop->FutureHealthGrowth());
-    //m_health_meter_bar->SetProjectedMax(pop->MaxHealth());
-    //m_health_stat->SetValue(pop->Health());
-    //if (meter_map) {
-    //    m_health_stat->SetBrowseModeTime(tooltip_delay);
-    //    m_health_meter_bar->SetBrowseModeTime(tooltip_delay);
-    //    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_HEALTH, obj, *meter_map));
-    //    m_health_meter_bar->SetBrowseInfoWnd(browse_wnd);
-    //    m_health_stat->SetBrowseInfoWnd(browse_wnd);
-    //}
+    m_pop_stat->SetValue(pop->PopPoints() + pop->FuturePopGrowth());
+    m_health_stat->SetValue(pop->Health() + pop->FutureHealthGrowth());
+
+
+    // tooltips
+    if (meter_map) {
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
+        m_pop_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_HEALTH, obj, *meter_map));
+        m_health_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
+    }
 }
 
 void PopulationPanel::Refresh()
@@ -749,6 +763,10 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     }
     AttachChild(m_secondary_focus_drop);
 
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    m_primary_focus_drop->SetBrowseModeTime(tooltip_delay);
+    m_secondary_focus_drop->SetBrowseModeTime(tooltip_delay);
+
     GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
     GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
     
@@ -771,6 +789,13 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_trade_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_TRADE),
                                      0, 3, false, false);
     AttachChild(m_trade_stat);
+
+
+    m_farming_stat->SetBrowseModeTime(tooltip_delay);
+    m_mining_stat->SetBrowseModeTime(tooltip_delay);
+    m_industry_stat->SetBrowseModeTime(tooltip_delay);
+    m_research_stat->SetBrowseModeTime(tooltip_delay);
+    m_trade_stat->SetBrowseModeTime(tooltip_delay);
 
 
     // meter and production indicators
@@ -865,7 +890,6 @@ void ResourcePanel::DoExpandCollapseLayout()
 
             n++;
         }
-        
 
         Resize(GG::Pt(Width(), icon_size));
     } else {
@@ -1010,10 +1034,9 @@ void ResourcePanel::Update()
     if (map_it != effect_accounting_map.end())
         meter_map = &(map_it->second);
 
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
+    m_multi_icon_value_indicator->Update();
 
     m_farming_stat->SetValue(res->ProjectedFarmingPoints());
     m_mining_stat->SetValue(res->ProjectedMiningPoints());
@@ -1023,26 +1046,28 @@ void ResourcePanel::Update()
 
     // tooltips
     if (meter_map) {
-        m_farming_stat->SetBrowseModeTime(tooltip_delay);
-        m_mining_stat->SetBrowseModeTime(tooltip_delay);
-        m_industry_stat->SetBrowseModeTime(tooltip_delay);
-        m_research_stat->SetBrowseModeTime(tooltip_delay);
-        m_trade_stat->SetBrowseModeTime(tooltip_delay);
-        
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
         m_farming_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
 
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, obj, *meter_map));
         m_mining_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_MINING, browse_wnd);
     
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map));
         m_industry_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_INDUSTRY, browse_wnd);
 
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map));
         m_research_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_RESEARCH, browse_wnd);
 
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, obj, *meter_map));
         m_trade_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_TRADE, browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map));
+        m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
     }
 
     // focus droplists
@@ -1078,7 +1103,6 @@ void ResourcePanel::Update()
         text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
-    m_primary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_primary_focus_drop->SetBrowseText(text);
 
     switch (res->SecondaryFocus())
@@ -1112,7 +1136,6 @@ void ResourcePanel::Update()
         text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
-    m_secondary_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_secondary_focus_drop->SetBrowseText(text);
 }
 
@@ -1240,6 +1263,15 @@ void MultiIconValueIndicator::Update()
 {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
         m_icons.at(i)->SetValue(ProjectedCurrentMeter(&m_obj, m_meter_types.at(i)));
+}
+
+void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd)
+{
+    for (unsigned int i = 0; i < m_icons.size(); ++i)
+        if (m_meter_types.at(i) == meter_type) {
+            m_icons.at(i)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);
+        }
 }
 
 
