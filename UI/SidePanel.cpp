@@ -735,21 +735,10 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
         }
     }
 
-    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER, 5, planet.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()*4/3), ClientUI::TextColor());
+    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER + 3, 5, planet.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts()*4/3), ClientUI::TextColor());
     AttachChild(m_planet_name);
 
     std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
-
-    m_env_size = new GG::TextControl(MAX_PLANET_DIAMETER, m_planet_name->LowerRight().y - UpperLeft().y, env_size_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
-    AttachChild(m_env_size);
-
-    int col_but_wid = 80;
-    m_button_colonize = new CUIButton(Width() - col_but_wid, 10, col_but_wid, UserString("PL_COLONIZE"),
-                                      GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                      ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
-                                      ClientUI::TextColor(), GG::CLICKABLE);
-    GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
-    AttachChild(m_button_colonize);
 
     m_population_panel = new PopulationPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_population_panel);
@@ -765,9 +754,22 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_specials_panel = new SpecialsPanel(MAX_PLANET_DIAMETER, planet);
+    m_specials_panel = new SpecialsPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_specials_panel);
-    m_specials_panel->MoveTo(GG::Pt(0, MAX_PLANET_DIAMETER - m_specials_panel->Height()));
+    m_specials_panel->MoveTo(GG::Pt(GG::Pt(Width() - m_population_panel->Width(), m_planet_name->LowerRight().y - UpperLeft().y)));
+
+    m_env_size = new GG::TextControl(MAX_PLANET_DIAMETER, m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+    AttachChild(m_env_size);
+
+
+    m_button_colonize = new CUIButton(MAX_PLANET_DIAMETER, m_env_size->LowerRight().y - UpperLeft().y + 1, 80, UserString("PL_COLONIZE"),
+                                      GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                      ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
+                                      ClientUI::TextColor(), GG::CLICKABLE);
+
+    GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
+    AttachChild(m_button_colonize);
+
 
     if (planet.Type() == PT_ASTEROIDS) 
         MoveChildDown(m_planet_graphic);
@@ -814,25 +816,25 @@ void SidePanel::PlanetPanel::Hilite(HilitingType ht)
 void SidePanel::PlanetPanel::DoLayout()
 {
     const int INTERPANEL_SPACE = 3;
-    int next_panel_top = m_planet_name->LowerRight().y - UpperLeft().y;
-    int panel_width = Width() - m_population_panel->Width();
+    int y = m_specials_panel->LowerRight().y - UpperLeft().y;
+    int x = Width() - m_population_panel->Width();
     
     if (m_population_panel->Parent() == this) {
-        m_population_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
-        next_panel_top += m_population_panel->Height() + INTERPANEL_SPACE;
+        m_population_panel->MoveTo(GG::Pt(x, y));
+        y += m_population_panel->Height() + INTERPANEL_SPACE;
     }
     
     if (m_resource_panel->Parent() == this) {
-        m_resource_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
-        next_panel_top += m_resource_panel->Height() + INTERPANEL_SPACE;
+        m_resource_panel->MoveTo(GG::Pt(x, y));
+        y += m_resource_panel->Height() + INTERPANEL_SPACE;
     }   
 
     if (m_buildings_panel->Parent() == this) {
-        m_buildings_panel->MoveTo(GG::Pt(panel_width, next_panel_top));
-        next_panel_top += m_buildings_panel->Height();
+        m_buildings_panel->MoveTo(GG::Pt(x, y));
+        y += m_buildings_panel->Height();
     }
 
-    Resize(GG::Pt(Width(), std::max(next_panel_top, MAX_PLANET_DIAMETER)));
+    Resize(GG::Pt(Width(), std::max(y, MAX_PLANET_DIAMETER)));
     ResizedSignal();
 }
 
@@ -932,6 +934,11 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
 void SidePanel::PlanetPanel::Render()
 {
+    GG::Clr DARK_GREY = GG::Clr(26, 26, 26, 255);
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul.x + SidePanel::MAX_PLANET_DIAMETER, m_planet_name->UpperLeft().y, lr.x, m_planet_name->LowerRight().y, DARK_GREY, DARK_GREY, 0);   // top title filled background
+
     const Planet *planet = GetPlanet();
 
     if (m_hiliting == HILITING_CANDIDATE && planet->Type() != PT_ASTEROIDS) {

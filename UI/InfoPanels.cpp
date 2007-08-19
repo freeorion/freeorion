@@ -1807,29 +1807,40 @@ void SpecialsPanel::Update()
 
     const int icon_size = 24;
 
+    int tooltip_time = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
     // get specials and use them to create specials icons
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
         GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, ClientUI::SpecialTexture(special->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
-        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        graphic->SetBrowseModeTime(tooltip_time);
         graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()), special->Name(), special->Description())));
         m_icons.push_back(graphic);
     }
 
-    int num_specials = specials.size();
-    int max_icons = Width() / (icon_size + 1);      // most icons that can be fit into available space
-    int centre = Width() / 2;
-    int left = centre - (icon_size * num_specials) / 2; // left side of row of specials
+    const int NUM_SPECIALS = specials.size();
+    const int AVAILABLE_WIDTH = Width() - EDGE_PAD;
+    const int ROW_ICONS = AVAILABLE_WIDTH / (icon_size + EDGE_PAD);  // number of icons that will fit into one row
+    int x = EDGE_PAD;
+    int y = EDGE_PAD;
 
-    int n = 0;
-    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end() && n <= max_icons; ++it, ++n) {
+    for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
         GG::StaticGraphic* icon = *it;
-        
-        int x = left + icon_size * n;
-
-        icon->MoveTo(GG::Pt(x, 0));
+        icon->MoveTo(GG::Pt(x, y));
         AttachChild(icon);
-        GG::Pt icon_ul = icon->UpperLeft();
+
+        x += icon_size + EDGE_PAD;
+
+        if (x + icon_size + EDGE_PAD > AVAILABLE_WIDTH) {
+            x = EDGE_PAD;
+            y += icon_size + EDGE_PAD;
+        }
+    }
+
+    if (m_icons.empty()) {
+        Resize(GG::Pt(Width(), 0));
+    } else {
+        Resize(GG::Pt(Width(), y + icon_size + EDGE_PAD*2));
     }
 }
 

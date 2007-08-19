@@ -237,6 +237,8 @@ private:
     int                     m_object_id;        ///< id for the Object whose specials this panel displays
 
     std::vector<GG::StaticGraphic*> m_icons;
+
+    static const int EDGE_PAD = 2;
 };
 
 /** Display icon and number for various meter-related quantities associated with objects.  Typical use
