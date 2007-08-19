@@ -1130,7 +1130,7 @@ TT_BUILDING
 %1% Building <i>%2%</i>
 
 TT_SPECIAL
-Special <i>%2%</i>
+Special <i>%1%</i>
 
 TT_UNKNOWN
 Unknown

@@ -1236,7 +1236,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& ob
         m_icons.push_back(new StatisticIcon(x, EDGE_PAD, ICON_WIDTH, ICON_WIDTH + ClientUI::Pts()*3/2, texture,
                                             ProjectedCurrentMeter(&m_obj, *it), 3, false, false));
         AttachChild(m_icons.back());
-        x += ICON_WIDTH;
+        x += ICON_WIDTH + EDGE_PAD;
     }
     if (!m_icons.empty())
         Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2 + EDGE_PAD));
