@@ -1186,7 +1186,7 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
 ////////////////////////////////////////////////
 // static(s)
 const int SidePanel::MAX_PLANET_DIAMETER = 128; // size of a huge planet, in on-screen pixels
-const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 3; // size of a tiny planet, in on-screen pixels
+const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 4; // size of a tiny planet, in on-screen pixels
 
 const System*        SidePanel::s_system = 0;
 std::set<SidePanel*> SidePanel::s_side_panels;
@@ -1217,9 +1217,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), 0, 0, 32, 32));
     m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), 0, 0, 32, 32));
 
-    std::vector<const UniverseObject*> no_objects_vec;
-    std::vector<MeterType> no_meter_types_vec;
-    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - 8, no_objects_vec, no_meter_types_vec);
+    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - 8);
     m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + 4, 140 - m_system_resource_summary->Height()));
 
 

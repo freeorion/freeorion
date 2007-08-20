@@ -249,8 +249,9 @@ private:
 class MultiIconValueIndicator : public GG::Wnd
 {
 public:
-    MultiIconValueIndicator(int w, const UniverseObject& obj, std::vector<MeterType>& meter_types);
-    MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(int w); ///< initializes with no icons shown
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);

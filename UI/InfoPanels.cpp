@@ -1327,7 +1327,7 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 /////////////////////////////////////
 //    MultiIconValueIndicator      //
 /////////////////////////////////////
-MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& obj, std::vector<MeterType>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
     m_meter_types(meter_types), m_obj_vec(), m_icons()
 {
@@ -1349,7 +1349,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& ob
     Update();
 }
 
-MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, std::vector<MeterType>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
     m_meter_types(meter_types), m_obj_vec(obj_vec), m_icons()
 {
@@ -1367,6 +1367,13 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const 
     if (!m_icons.empty())
         Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2 + EDGE_PAD));
     Update();
+}
+
+MultiIconValueIndicator::MultiIconValueIndicator(int w) :
+    GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+    m_meter_types(), m_obj_vec(), m_icons()
+{
+    SetText("MultiIconValueIndicator");
 }
 
 void MultiIconValueIndicator::Render()
@@ -1388,7 +1395,7 @@ void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<G
 void MultiIconValueIndicator::Update()
 {
     for (unsigned int i = 0; i < m_icons.size(); ++i) {
-        double sum = 0;
+        double sum = 0.0;
         for (unsigned int j = 0; j < m_obj_vec.size(); ++j) {
             const UniverseObject* obj = m_obj_vec.at(j);
             sum += ProjectedResourceAmount(obj, m_meter_types.at(i));
