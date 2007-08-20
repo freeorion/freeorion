@@ -1217,8 +1217,9 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), 0, 0, 32, 32));
     m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), 0, 0, 32, 32));
 
-
-    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - 8, std::vector<const UniverseObject*>(), std::vector<MeterType>());
+    std::vector<const UniverseObject*> no_objects_vec;
+    std::vector<MeterType> no_meter_types_vec;
+    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - 8, no_objects_vec, no_meter_types_vec);
     m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + 4, 140 - m_system_resource_summary->Height()));
 
 
