@@ -484,28 +484,6 @@ private:
     CUIScroll*        m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
 };
 
-class SidePanel::SystemResourceSummary : public GG::Wnd
-{
-public:
-    /** \name Structors */ //@{
-    SystemResourceSummary(int x, int y, int w, int h);
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual void Render();
-
-    void SetFarming (int farming ) {m_farming = farming;}
-    void SetMining  (int mining  ) {m_mining  = mining;}
-    void SetTrade   (int trade   ) {m_trade   = trade;}
-    void SetResearch(int research) {m_research= research;}
-    void SetIndustry(int industry) {m_industry= industry;}
-    void SetDefense (int defense ) {m_defense = defense;}
-    //@}
-
-private:
-    int m_farming,m_mining,m_trade,m_research,m_industry,m_defense;
-};
-
 class RotatingPlanetControl : public GG::Control
 {
 public:
@@ -1204,85 +1182,6 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
 }
 
 ////////////////////////////////////////////////
-// SidePanel::SystemResourceSummary
-////////////////////////////////////////////////
-SidePanel::SystemResourceSummary::SystemResourceSummary(int x, int y, int w, int h)
-: Wnd(x, y, w, h, GG::CLICKABLE),
-  m_farming(0),m_mining(0),m_trade(0),m_research(0),m_industry(0),m_defense(0)
-{
-}
-
-void SidePanel::SystemResourceSummary::Render()
-{
-  GG::FlatRectangle(UpperLeft().x,UpperLeft().y,LowerRight().x,LowerRight().y,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,1);
-
-  int farming=m_farming,mining=m_mining,trade=m_trade,research=m_research,industry=m_industry,defense=m_defense;
-
-  std::string text; int x,y; boost::shared_ptr<GG::Texture> icon;
-  boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()));
-  GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
-  const int ICON_MARGIN    =  5;
-  
-  x=UpperLeft().x;y=UpperLeft().y;
-
-  int info_elem_width = (Width()-(6+1)*ICON_MARGIN)/6;
-
-  //farming
-  glColor(ClientUI::TextColor());
-  icon=IconFarming(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
-  //x+=font->Height();
-  text = (farming<0?"-":"+") + lexical_cast<std::string>(farming);
-  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
-  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
-  x+=info_elem_width+ICON_MARGIN;
-
-  //mining
-  glColor(ClientUI::TextColor());
-  icon=IconMining(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
-  //x+=font->Height();
-  text = (mining<0?"-":"+") + lexical_cast<std::string>(mining);
-  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
-  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
-  x+=info_elem_width+ICON_MARGIN;
-
-  //trade
-  glColor(ClientUI::TextColor());
-  icon=IconTrade(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
-  //x+=font->Height();
-  text = (trade<0?"-":"+") + lexical_cast<std::string>(trade);
-  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
-  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
-  x+=info_elem_width+ICON_MARGIN;
-
-  //research
-  glColor(ClientUI::TextColor());
-  icon=IconResearch(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
-  //x+=font->Height();
-  text = (research<0?"-":"+") + lexical_cast<std::string>(research);
-  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
-  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
-  x+=info_elem_width+ICON_MARGIN;
-
-  //industy
-  glColor(ClientUI::TextColor());
-  icon=IconIndustry(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
-  //x+=font->Height();
-  text = (industry<0?"-":"+") + lexical_cast<std::string>(industry);
-  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
-  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
-  x+=info_elem_width+ICON_MARGIN;
-
-  //defense
-  glColor(ClientUI::TextColor());
-  icon=IconDefense(); icon->OrthoBlit(GG::Pt(x, y), GG::Pt(x+font->Height(), y+font->Height()));
-  //x+=font->Height();
-  text = lexical_cast<std::string>(defense)+"/"+lexical_cast<std::string>(defense*3);
-  font->RenderText(x+font->Height(),y,x + 500, y+Height(), text, format, 0);
-  //x+=font->TextExtent(text, format).x+ICON_MARGIN;
-  x+=info_elem_width+ICON_MARGIN;
-}
-
-////////////////////////////////////////////////
 // SidePanel
 ////////////////////////////////////////////////
 // static(s)
@@ -1300,7 +1199,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_star_graphic(0),
     m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
     m_planet_panel_container(new PlanetPanelContainer(0,140,w,h-170)),
-    m_system_resource_summary(new SystemResourceSummary(MAX_PLANET_DIAMETER,140-20,w-MAX_PLANET_DIAMETER,20))
+    m_system_resource_summary(0)
 {
     TempUISoundDisabler sound_disabler;
 
@@ -1317,6 +1216,11 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_button_next->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"  ), 0, 0, 32, 32));
     m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), 0, 0, 32, 32));
     m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), 0, 0, 32, 32));
+
+
+    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - 8, std::vector<const UniverseObject*>(), std::vector<MeterType>());
+    m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + 4, 140 - m_system_resource_summary->Height()));
+
 
     AttachChild(m_system_name);
     AttachChild(m_button_prev);
@@ -1367,7 +1271,7 @@ void SidePanel::Refresh()
 
 void SidePanel::RefreshImpl()
 {
-    UpdateSystemResourceSummary();   
+    m_system_resource_summary->Update();
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
     m_planet_panel_container->RefreshAllPlanetPanels();
 }
@@ -1454,13 +1358,27 @@ void SidePanel::SetSystemImpl()
         // add planets
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
+        std::vector<const UniverseObject*> owned_planets;
+        for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it)
+            if ((*it)->WhollyOwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                owned_planets.push_back(dynamic_cast<const UniverseObject*>(*it));
+
+        std::vector<MeterType> meter_types;
+        meter_types.push_back(METER_FARMING);   meter_types.push_back(METER_MINING);    meter_types.push_back(METER_INDUSTRY);
+        meter_types.push_back(METER_RESEARCH);  meter_types.push_back(METER_TRADE);
+
+        delete m_system_resource_summary;
+        m_system_resource_summary = new MultiIconValueIndicator(Width() - MAX_PLANET_DIAMETER - 8, owned_planets, meter_types);
+        m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + 4, 140 - m_system_resource_summary->Height()));
+        AttachChild(m_system_resource_summary);
+
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
         for (unsigned int i = 0; i < plt_vec.size(); i++) {
-            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal, &SidePanel::UpdateSystemResourceSummary, this));
+            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal, &MultiIconValueIndicator::Update, m_system_resource_summary));
             m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
         }
 
-        UpdateSystemResourceSummary();
+        m_system_resource_summary->Update();
     }
 }
 
@@ -1553,40 +1471,4 @@ void SidePanel::FleetsChanged()
     m_planet_panel_container->RefreshAllPlanetPanels();
 
     // TODO: if there are fleet status indicators on the SidePanel, update them
-}
-
-void SidePanel::UpdateSystemResourceSummary()
-{
-
-    if (s_system) {
-
-        std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
-        int farming = 0, mining = 0, trade = 0, research = 0, industry = 0, defense = 0, num_empire_planets = 0;
-
-
-        for (unsigned int i = 0; i < plt_vec.size(); i++) {
-            if (plt_vec[i]->Owners().find(HumanClientApp::GetApp()->EmpireID()) != plt_vec[i]->Owners().end()) {
-                farming   +=static_cast<int>(plt_vec[i]->FarmingPoints());
-                mining    +=static_cast<int>(plt_vec[i]->MiningPoints());
-                trade     +=static_cast<int>(plt_vec[i]->TradePoints());
-                industry  +=static_cast<int>(plt_vec[i]->IndustryPoints());
-                research  +=static_cast<int>(plt_vec[i]->ResearchPoints());
-                defense   +=plt_vec[i]->DefBases();
-                        
-                num_empire_planets++;
-            }
-        }
-
-        m_system_resource_summary->SetFarming (farming );
-        m_system_resource_summary->SetMining  (mining  );
-        m_system_resource_summary->SetTrade   (trade   );
-        m_system_resource_summary->SetResearch(research);
-        m_system_resource_summary->SetIndustry(industry);
-        m_system_resource_summary->SetDefense (defense );
-
-        if (num_empire_planets == 0)
-            m_system_resource_summary->Hide();
-        else
-            m_system_resource_summary->Show();
-    }
 }

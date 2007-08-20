@@ -19,6 +19,8 @@ class CUIScroll;
 class CUITextureButton;
 class RotatingPlanetControl;
 class UniverseObjectVisitor;
+class MultiIconValueIndicator;
+
 namespace GG {
     class TextControl;
 }
@@ -70,7 +72,6 @@ public:
 
 private:
     class PlanetPanelContainer;
-    class SystemResourceSummary;
 
     void RefreshImpl();
     void SetSystemImpl();
@@ -78,7 +79,6 @@ private:
     void SystemFleetAdded(const Fleet& flt);
     void SystemFleetRemoved(const Fleet& flt);
     void FleetsChanged();
-    void UpdateSystemResourceSummary();
     void PrevButtonClicked();
     void NextButtonClicked();
     void PlanetSelected(int planet_id);
@@ -93,8 +93,8 @@ private:
 
     std::vector<GG::SubTexture> m_fleet_icons;
 
-    PlanetPanelContainer  *m_planet_panel_container;
-    SystemResourceSummary *m_system_resource_summary;
+    PlanetPanelContainer*       m_planet_panel_container;
+    MultiIconValueIndicator*    m_system_resource_summary;
 
     static const System*        s_system;
     static std::set<SidePanel*> s_side_panels;

@@ -434,6 +434,109 @@ namespace {
             throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
         }
     }
+
+    double ProjectedResourceAmount(const UniverseObject* obj, MeterType meter_type)
+    {
+        const ResourceCenter* res;
+        const PopCenter* pop;
+        const Meter* meter;
+
+        switch (meter_type) {
+        case METER_FARMING:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedFarmingPoints();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_MINING:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedMiningPoints();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_INDUSTRY:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedIndustryPoints();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_RESEARCH:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedResearchPoints();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_TRADE:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedTradePoints();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_CONSTRUCTION:
+            res = dynamic_cast<const ResourceCenter*>(obj);
+            if (res) {
+                return res->ProjectedCurrent(meter_type);
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_POPULATION:
+            pop = dynamic_cast<const PopCenter*>(obj);
+            if (pop) {
+                return pop->PopPoints() + pop->FuturePopGrowth();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        case METER_HEALTH:
+            pop = dynamic_cast<const PopCenter*>(obj);
+            if (pop) {
+                return pop->Health() + pop->FutureHealthGrowth();
+            } else {
+                meter = obj->GetMeter(meter_type);
+                if (meter)
+                    return meter->Current();
+                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+            }
+            break;
+        default:
+            meter = obj->GetMeter(meter_type);
+            if (meter)
+                return meter->Current();
+            throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
+        }
+    }
 }
 
 /////////////////////////////////////
@@ -1226,7 +1329,29 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 /////////////////////////////////////
 MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& obj, std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
-    m_meter_types(meter_types), m_obj(obj), m_icons()
+    m_meter_types(meter_types), m_obj_vec(), m_icons()
+{
+    m_obj_vec.push_back(&obj);
+
+    SetText("MultiIconValueIndicator");
+
+    int x = EDGE_PAD;
+    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
+        m_icons.push_back(new StatisticIcon(x, EDGE_PAD, ICON_WIDTH, ICON_WIDTH + ClientUI::Pts()*3/2, texture,
+                                            0.0, 3, false, false));
+        AttachChild(m_icons.back());
+        m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        x += ICON_WIDTH + EDGE_PAD;
+    }
+    if (!m_icons.empty())
+        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2 + EDGE_PAD));
+    Update();
+}
+
+MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, std::vector<MeterType>& meter_types) :
+    GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+    m_meter_types(meter_types), m_obj_vec(obj_vec), m_icons()
 {
     SetText("MultiIconValueIndicator");
 
@@ -1234,8 +1359,9 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& ob
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
         m_icons.push_back(new StatisticIcon(x, EDGE_PAD, ICON_WIDTH, ICON_WIDTH + ClientUI::Pts()*3/2, texture,
-                                            ProjectedCurrentMeter(&m_obj, *it), 3, false, false));
+                                            0.0, 3, false, false));
         AttachChild(m_icons.back());
+        m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += ICON_WIDTH + EDGE_PAD;
     }
     if (!m_icons.empty())
@@ -1261,17 +1387,21 @@ void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<G
 
 void MultiIconValueIndicator::Update()
 {
-    for (unsigned int i = 0; i < m_icons.size(); ++i)
-        m_icons.at(i)->SetValue(ProjectedCurrentMeter(&m_obj, m_meter_types.at(i)));
+    for (unsigned int i = 0; i < m_icons.size(); ++i) {
+        double sum = 0;
+        for (unsigned int j = 0; j < m_obj_vec.size(); ++j) {
+            const UniverseObject* obj = m_obj_vec.at(j);
+            sum += ProjectedResourceAmount(obj, m_meter_types.at(i));
+        }
+        m_icons.at(i)->SetValue(sum);
+    }
 }
 
 void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd)
 {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
-        if (m_meter_types.at(i) == meter_type) {
-            m_icons.at(i)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        if (m_meter_types.at(i) == meter_type)
             m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);
-        }
 }
 
 
