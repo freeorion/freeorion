@@ -418,8 +418,10 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
     SaveGameUIData ui_data;
     bool loaded_game_data;
     bool ui_data_available;
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, Client().Orders(), ui_data, loaded_game_data, ui_data_available);
+    OrderSet orders;
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, orders, ui_data, loaded_game_data, ui_data_available);
     Client().StartGame();
+    std::swap(Client().Orders(), orders);
     if (loaded_game_data) {
         if (ui_data_available)
             Client().m_ui->RestoreFromSaveData(ui_data);
