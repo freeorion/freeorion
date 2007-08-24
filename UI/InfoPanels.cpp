@@ -758,8 +758,6 @@ void PopulationPanel::Update()
     if (map_it != effect_accounting_map.end())
         meter_map = &(map_it->second);
 
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
@@ -808,13 +806,20 @@ PopCenter* PopulationPanel::GetPopCenter()
 /////////////////////////////////////
 //         ResourcePanel           //
 /////////////////////////////////////
-std::map<int, bool> ResourcePanel::s_expanded_map = std::map<int, bool>();
+std::map<int, bool> ResourcePanel::s_expanded_map;
+
 ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     Wnd(0, 0, w, ClientUI::Pts()*9, GG::CLICKABLE),
     m_rescenter_id(obj.ID()),
-    m_farming_stat(0), m_mining_stat(0), m_industry_stat(0), m_research_stat(0), m_trade_stat(0),
-    m_primary_focus_drop(0), m_secondary_focus_drop(0),
-    m_multi_meter_status_bar(0), m_multi_icon_value_indicator(0),
+    m_farming_stat(0),
+    m_mining_stat(0),
+    m_industry_stat(0),
+    m_research_stat(0),
+    m_trade_stat(0),
+    m_multi_icon_value_indicator(0),
+    m_multi_meter_status_bar(0),
+    m_primary_focus_drop(0),
+    m_secondary_focus_drop(0),
     m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
 {
     SetText("ResourcePanel");
@@ -1329,7 +1334,9 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
 /////////////////////////////////////
 MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
-    m_meter_types(meter_types), m_obj_vec(), m_icons()
+    m_icons(),
+    m_meter_types(meter_types),
+    m_obj_vec()
 {
     m_obj_vec.push_back(&obj);
 
@@ -1351,7 +1358,9 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& ob
 
 MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
-    m_meter_types(meter_types), m_obj_vec(obj_vec), m_icons()
+    m_icons(),
+    m_meter_types(meter_types),
+    m_obj_vec(obj_vec)
 {
     SetText("MultiIconValueIndicator");
 
@@ -1371,7 +1380,9 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const 
 
 MultiIconValueIndicator::MultiIconValueIndicator(int w) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
-    m_meter_types(), m_obj_vec(), m_icons()
+    m_icons(),
+    m_meter_types(),
+    m_obj_vec()
 {
     SetText("MultiIconValueIndicator");
 }
@@ -1417,8 +1428,13 @@ void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shar
 /////////////////////////////////////
 MultiMeterStatusBar::MultiMeterStatusBar(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
-    m_meter_types(meter_types), m_obj(obj), m_bar_colours(),
-    m_initial_maxes(), m_initial_currents(), m_projected_maxes(), m_projected_currents()
+    m_meter_types(meter_types),
+    m_initial_maxes(),
+    m_initial_currents(),
+    m_projected_maxes(),
+    m_projected_currents(),
+    m_obj(obj),
+    m_bar_colours()
 {
     SetText("MultiMeterStatusBar");
     Update();
@@ -1955,9 +1971,7 @@ void SpecialsPanel::Update()
         m_icons.push_back(graphic);
     }
 
-    const int NUM_SPECIALS = specials.size();
     const int AVAILABLE_WIDTH = Width() - EDGE_PAD;
-    const int ROW_ICONS = AVAILABLE_WIDTH / (icon_size + EDGE_PAD);  // number of icons that will fit into one row
     int x = EDGE_PAD;
     int y = EDGE_PAD;
 
