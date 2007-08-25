@@ -41,14 +41,12 @@ namespace {
     {
         return PlanetDataTables()["PlanetEnvHealthMod"][0][environment];
     }
-
-
 }
 
 Planet::Planet() :
     UniverseObject(),
-    PopCenter(MaxPopMod(SZ_MEDIUM, Environment(PT_TERRAN)), MaxHealthMod(Environment(PT_TERRAN))),
-    ResourceCenter(PopCenter::PopulationMeter()),
+    PopCenter(0),
+    ResourceCenter(),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
@@ -58,12 +56,14 @@ Planet::Planet() :
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
+    // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
+    // in functional form by deserialization
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) :
     UniverseObject(),
-    PopCenter(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type))),
-    ResourceCenter(PopCenter::PopulationMeter()),
+    PopCenter(0),
+    ResourceCenter(),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
     m_available_trade(0.0),
@@ -71,11 +71,12 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_is_about_to_be_colonized(false),
     m_def_bases(0)
 {
-    SetType(type);
-    SetSize(size);
-    m_def_bases = 0;
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
+    PopCenter::Init(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type)));
+    ResourceCenter::Init();
+    SetType(type);
+    SetSize(size);
 }
 
 PlanetEnvironment Planet::Environment() const
@@ -102,39 +103,6 @@ double Planet::BuildingCosts() const
     return retval;
 }
 
-const Meter* Planet::GetMeter(MeterType type) const
-{
-    switch (type) {
-    case METER_POPULATION:
-        return &PopulationMeter();
-        break;
-    case METER_FARMING:
-        return &FarmingMeter();
-        break;
-    case METER_INDUSTRY:
-        return &IndustryMeter();
-        break;
-    case METER_RESEARCH:
-        return &ResearchMeter();
-        break;
-    case METER_TRADE:
-        return &TradeMeter();
-        break;
-    case METER_MINING:
-        return &MiningMeter();
-        break;
-    case METER_CONSTRUCTION:
-        return &ConstructionMeter();
-        break;
-    case METER_HEALTH:
-        return &HealthMeter();
-        break;
-    default:
-        break;
-    }
-    return 0;
-}
-
 UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility
@@ -144,6 +112,66 @@ UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<Planet* const>(this));
+}
+
+double Planet::ProjectedCurrentMeter(MeterType type) const
+{
+    switch (type) {
+    case METER_FARMING:
+    case METER_MINING:
+    case METER_INDUSTRY:
+    case METER_RESEARCH:
+    case METER_TRADE:
+    case METER_CONSTRUCTION:
+        return ResourceCenter::ProjectedCurrentMeter(type);
+        break;
+    case METER_POPULATION:
+    case METER_HEALTH:
+        return PopCenter::ProjectedCurrentMeter(type);
+    default:
+        return UniverseObject::ProjectedCurrentMeter(type);
+        break;
+    }
+}
+
+double Planet::MeterPoints(MeterType type) const
+{
+    switch (type) {
+    case METER_FARMING:
+    case METER_MINING:
+    case METER_INDUSTRY:
+    case METER_RESEARCH:
+    case METER_TRADE:
+    case METER_CONSTRUCTION:
+        return ResourceCenter::MeterPoints(type);
+        break;
+    case METER_POPULATION:
+    case METER_HEALTH:
+        return PopCenter::MeterPoints(type);
+    default:
+        return UniverseObject::MeterPoints(type);
+        break;
+    }
+}
+
+double Planet::ProjectedMeterPoints(MeterType type) const
+{
+    switch (type) {
+    case METER_FARMING:
+    case METER_MINING:
+    case METER_INDUSTRY:
+    case METER_RESEARCH:
+    case METER_TRADE:
+    case METER_CONSTRUCTION:
+        return ResourceCenter::ProjectedMeterPoints(type);
+        break;
+    case METER_POPULATION:
+    case METER_HEALTH:
+        return PopCenter::ProjectedMeterPoints(type);
+    default:
+        return UniverseObject::ProjectedMeterPoints(type);
+        break;
+    }
 }
 
 void Planet::SetType(PlanetType type)
@@ -294,39 +322,6 @@ void Planet::ResetIsAboutToBeColonized()
     SetIsAboutToBeColonized(false);
 }
 
-Meter* Planet::GetMeter(MeterType type)
-{
-    switch (type) {
-    case METER_POPULATION:
-        return &PopulationMeter();
-        break;
-    case METER_FARMING:
-        return &FarmingMeter();
-        break;
-    case METER_INDUSTRY:
-        return &IndustryMeter();
-        break;
-    case METER_RESEARCH:
-        return &ResearchMeter();
-        break;
-    case METER_TRADE:
-        return &TradeMeter();
-        break;
-    case METER_MINING:
-        return &MiningMeter();
-        break;
-    case METER_CONSTRUCTION:
-        return &ConstructionMeter();
-        break;
-    case METER_HEALTH:
-        return &HealthMeter();
-        break;
-    default:
-        break;
-    }
-    return 0;
-}
-
 void Planet::MovementPhase()
 {
 }
@@ -368,9 +363,4 @@ PlanetEnvironment Planet::Environment(PlanetType type)
     case PT_GAIA:       return PE_OPTIMAL;
     default:            return PE_UNINHABITABLE;
     }
-}
-
-UniverseObject* Planet::This()
-{
-    return this;
 }

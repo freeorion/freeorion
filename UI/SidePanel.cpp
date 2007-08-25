@@ -561,7 +561,7 @@ private:
 namespace {
     int SystemNameFontSize()
     {
-        return static_cast<int>(ClientUI::Pts()*1.4);
+        return static_cast<int>(ClientUI::Pts()*3/2);
     }
   
     boost::shared_ptr<GG::Texture> IconPopulation() {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "pop.png"        );}
@@ -848,7 +848,7 @@ void SidePanel::PlanetPanel::Refresh()
         m_resource_panel->Refresh();
     }
 
-    if (owner == OS_NONE && planet->MaxPop() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
+    if (owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("PL_COLONIZE"));
     
@@ -1193,14 +1193,18 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
-    m_system_name(new CUIDropDownList(MAX_PLANET_DIAMETER, 0, w-MAX_PLANET_DIAMETER, SystemNameFontSize(), 10*SystemNameFontSize(), GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5))),
-    m_button_prev(new GG::Button(MAX_PLANET_DIAMETER+4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
-    m_button_next(new GG::Button(w-SystemNameFontSize()-4,4,SystemNameFontSize(),SystemNameFontSize(),"",GG::GUI::GetGUI()->GetFont(ClientUI::Font(),SystemNameFontSize()),GG::CLR_WHITE)),
     m_star_graphic(0),
-    m_next_pltview_fade_in(0),m_next_pltview_planet_id(UniverseObject::INVALID_OBJECT_ID),m_next_pltview_fade_out(-1),
-    m_planet_panel_container(new PlanetPanelContainer(0,140,w,h-170)),
+    m_button_prev(0),   m_system_name(0),   m_button_next(0),
+    m_planet_panel_container(new PlanetPanelContainer(0, 140, w, h-170)),
     m_system_resource_summary(0)
 {
+    const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SystemNameFontSize());
+    const int DROP_HEIGHT = SystemNameFontSize()*3/2;
+
+    m_button_prev = new GG::Button(MAX_PLANET_DIAMETER + EDGE_PAD, EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
+    m_button_next = new GG::Button(w - DROP_HEIGHT - EDGE_PAD,     EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
+    m_system_name = new CUIDropDownList(MAX_PLANET_DIAMETER, 0, w - MAX_PLANET_DIAMETER, DROP_HEIGHT, 10*SystemNameFontSize(), GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+
     TempUISoundDisabler sound_disabler;
 
     SetText(UserString("SIDE_PANEL"));
@@ -1217,8 +1221,8 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), 0, 0, 32, 32));
     m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), 0, 0, 32, 32));
 
-    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - 8);
-    m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + 4, 140 - m_system_resource_summary->Height()));
+    m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - EDGE_PAD*2);
+    m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + EDGE_PAD, 140 - m_system_resource_summary->Height()));
 
 
     AttachChild(m_system_name);

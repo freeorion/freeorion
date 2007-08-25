@@ -62,148 +62,117 @@ namespace {
         return retval;
     }
 
-    void Growth(Meter& construction, Meter& farming, Meter& industry, Meter& mining, Meter& research, Meter& trade, const Meter& pop)
+    void GrowResourceMeter(Meter* resource_meter, double updated_current_construction)
     {
-        // update the construction meter
-        double delta = (construction.Current() + 1) * ((construction.Max() - construction.Current()) / (construction.Max() + 1)) * (pop.Current() * 10.0) * 0.01;
-        double new_cur = std::min(construction.Max(), construction.Current() + delta);
-        construction.SetCurrent(new_cur);
+        assert(resource_meter);
+        double delta = updated_current_construction / (10.0 + resource_meter->Current());
+        double new_cur = std::min(resource_meter->Max(), resource_meter->Current() + delta);
+        resource_meter->SetCurrent(new_cur);
+    }
 
-        // update the resource meters
-        delta = construction.Current() / (10.0 + farming.Current());
-        new_cur = std::min(farming.Max(), farming.Current() + delta);
-        farming.SetCurrent(new_cur);
-
-        delta = construction.Current() / (10.0 + industry.Current());
-        new_cur = std::min(industry.Max(), industry.Current() + delta);
-        industry.SetCurrent(new_cur);
-
-        delta = construction.Current() / (10.0 + mining.Current());
-        new_cur = std::min(mining.Max(), mining.Current() + delta);
-        mining.SetCurrent(new_cur);
-
-        delta = construction.Current() / (10.0 + research.Current());
-        new_cur = std::min(research.Max(), research.Current() + delta);
-        research.SetCurrent(new_cur);
-
-        delta = construction.Current() / (10.0 + trade.Current());
-        new_cur = std::min(trade.Max(), trade.Current() + delta);
-        trade.SetCurrent(new_cur);
+    void GrowConstructionMeter(Meter* construction_meter, double updated_current_population)
+    {
+        assert(construction_meter);
+        double cur = construction_meter->Current();
+        double max = construction_meter->Max();
+        double delta = (cur + 1) * ((max - cur) / (max + 1)) * (updated_current_population * 10.0) * 0.01;
+        double new_cur = std::min(max, cur + delta);
+        construction_meter->SetCurrent(new_cur);
     }
 }
 
-ResourceCenter::ResourceCenter() : 
-    m_primary(FOCUS_UNKNOWN),
-    m_secondary(FOCUS_UNKNOWN),
-    m_pop(0)
-{}
-
-ResourceCenter::ResourceCenter(const Meter& pop) : 
-    m_pop(&pop)
+ResourceCenter::ResourceCenter()
 {
-    Reset();
 }
 
 ResourceCenter::~ResourceCenter()
 {
 }
 
-const Meter* ResourceCenter::GetMeter(MeterType type) const
+void ResourceCenter::Init()
 {
+    InsertMeter(METER_FARMING, Meter());
+    InsertMeter(METER_MINING, Meter());
+    InsertMeter(METER_INDUSTRY, Meter());
+    InsertMeter(METER_RESEARCH, Meter());
+    InsertMeter(METER_TRADE, Meter());
+    InsertMeter(METER_CONSTRUCTION, Meter());
+    Reset();
+}
+
+double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
+{
+    Meter construction = Meter(*GetMeter(METER_CONSTRUCTION));
+    const Meter* original_meter = GetMeter(type);
+    assert(original_meter);
+    Meter meter = Meter(*original_meter);
+    double construction_change, new_construction, current_change, new_current;
+
     switch (type) {
-    case METER_FARMING: return &m_farming;
-    case METER_INDUSTRY: return &m_industry;
-    case METER_RESEARCH: return &m_research;
-    case METER_TRADE: return &m_trade;
-    case METER_MINING: return &m_mining;
-    case METER_CONSTRUCTION: return &m_construction;
-    default: return 0;
-    }
-}
-
-double ResourceCenter::FarmingPoints() const
-{
-    return m_pop->Current() / 10.0 * m_farming.Current();
-}
-
-double ResourceCenter::IndustryPoints() const
-{
-    return m_pop->Current() / 10.0 * m_industry.Current();
-}
-
-double ResourceCenter::MiningPoints() const
-{
-    return m_pop->Current() / 10.0 * m_mining.Current();
-}
-
-double ResourceCenter::ResearchPoints() const
-{
-    return m_pop->Current() / 10.0 * m_research.Current();
-}
-
-double ResourceCenter::TradePoints() const
-{
-    return m_pop->Current() / 10.0 * m_trade.Current();
-}
-
-double ResourceCenter::ProjectedCurrent(MeterType type) const
-{
-    Meter construction = m_construction;
-    Meter farming = Meter(m_farming.Current(), m_farming.Max());
-    Meter mining = Meter(m_mining.Current(), m_mining.Max());
-    Meter industry = Meter(m_industry.Current(), m_industry.Max());
-    Meter research = Meter(m_research.Current(), m_research.Max());
-    Meter trade = Meter(m_trade.Current(), m_trade.Max());
-
-    Growth(construction, farming, industry, mining, research, trade, *m_pop);
-    switch (type) {
-    case METER_FARMING: return farming.Current();
-    case METER_INDUSTRY: return industry.Current();
-    case METER_RESEARCH: return research.Current();
-    case METER_TRADE: return trade.Current();
-    case METER_MINING: return mining.Current();
-    case METER_CONSTRUCTION: return construction.Current();
+    case METER_FARMING:
+    case METER_MINING:
+    case METER_INDUSTRY:
+    case METER_RESEARCH:
+    case METER_TRADE:
+        GrowConstructionMeter(&construction, GetPopMeter()->Current());
+        GrowResourceMeter(&meter, construction.Current());
+        return meter.Current();
+        break;
+    case METER_CONSTRUCTION:
+        GrowConstructionMeter(&construction, GetPopMeter()->Current());
+        return construction.Current();
+        break;
     default:
-        assert(0);
-        return 0.0;
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
+        if (obj)
+            return obj->ProjectedCurrentMeter(type);
+        else
+            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
     }
 }
 
-double ResourceCenter::ProjectedFarmingPoints() const
-{
-    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_FARMING);
-}
-
-double ResourceCenter::ProjectedIndustryPoints() const
-{
-    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_INDUSTRY);
-}
-
-double ResourceCenter::ProjectedMiningPoints() const
-{
-    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_MINING);
-}
-
-double ResourceCenter::ProjectedResearchPoints() const
-{
-    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_RESEARCH);
-}
-
-double ResourceCenter::ProjectedTradePoints() const
-{
-    return m_pop->Current() / 10.0 * ProjectedCurrent(METER_TRADE);
-}
-
-Meter* ResourceCenter::GetMeter(MeterType type)
+double ResourceCenter::MeterPoints(MeterType type) const
 {
     switch (type) {
-    case METER_FARMING: return &m_farming;
-    case METER_INDUSTRY: return &m_industry;
-    case METER_RESEARCH: return &m_research;
-    case METER_TRADE: return &m_trade;
-    case METER_MINING: return &m_mining;
-    case METER_CONSTRUCTION: return &m_construction;
-    default: return 0;
+    case METER_FARMING:
+    case METER_MINING:
+    case METER_INDUSTRY:
+    case METER_RESEARCH:
+    case METER_TRADE:
+        return GetPopMeter()->Current() / 10.0 * GetMeter(type)->Current();
+        break;
+    case METER_CONSTRUCTION:
+        return  GetMeter(METER_CONSTRUCTION)->Current();
+        break;
+    default:
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
+        if (obj)
+            return obj->MeterPoints(type);
+        else
+            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
+    }
+}
+
+double ResourceCenter::ProjectedMeterPoints(MeterType type) const
+{
+    switch (type) {
+    case METER_FARMING:
+    case METER_MINING:
+    case METER_INDUSTRY:
+    case METER_RESEARCH:
+    case METER_TRADE:
+        // TODO: get projected current population instead of using just current population
+        return GetPopMeter()->Current() / 10.0 * ProjectedCurrentMeter(type);
+        break;
+    case METER_CONSTRUCTION:
+        return ProjectedCurrentMeter(METER_CONSTRUCTION);
+        break;
+    default:
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
+        if (obj)
+            return obj->ProjectedMeterPoints(type);
+        else
+            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
     }
 }
 
@@ -226,42 +195,42 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments()
     double secondary_specialized_factor = ProductionDataTables()["FocusMods"][1][0];
     double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
     double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
-    m_construction.AdjustMax(20.0); // default construction max is 20
+    GetMeter(METER_CONSTRUCTION)->AdjustMax(20.0); // default construction max is 20
     UniverseObject* object = GetObjectSignal();
     assert(object);
-    m_farming.AdjustMax(MaxFarmingModFromObject(object));
-    m_industry.AdjustMax(MaxIndustryModFromObject(object));
+    GetMeter(METER_FARMING)->AdjustMax(MaxFarmingModFromObject(object));
+    GetMeter(METER_INDUSTRY)->AdjustMax(MaxIndustryModFromObject(object));
     switch (m_primary) {
     case FOCUS_BALANCED:
-        m_farming.AdjustMax(primary_balanced_factor);
-        m_industry.AdjustMax(primary_balanced_factor);
-        m_mining.AdjustMax(primary_balanced_factor);
-        m_research.AdjustMax(primary_balanced_factor);
-        m_trade.AdjustMax(primary_balanced_factor);
+        GetMeter(METER_FARMING)->AdjustMax(primary_balanced_factor);
+        GetMeter(METER_INDUSTRY)->AdjustMax(primary_balanced_factor);
+        GetMeter(METER_MINING)->AdjustMax(primary_balanced_factor);
+        GetMeter(METER_RESEARCH)->AdjustMax(primary_balanced_factor);
+        GetMeter(METER_TRADE)->AdjustMax(primary_balanced_factor);
         break;
 
-    case FOCUS_FARMING:  m_farming.AdjustMax(primary_specialized_factor); break;
-    case FOCUS_INDUSTRY: m_industry.AdjustMax(primary_specialized_factor); break;
-    case FOCUS_MINING:   m_mining.AdjustMax(primary_specialized_factor); break;
-    case FOCUS_RESEARCH: m_research.AdjustMax(primary_specialized_factor ); break;
-    case FOCUS_TRADE:    m_trade.AdjustMax(primary_specialized_factor); break;
+    case FOCUS_FARMING:  GetMeter(METER_FARMING)->AdjustMax(primary_specialized_factor); break;
+    case FOCUS_INDUSTRY: GetMeter(METER_INDUSTRY)->AdjustMax(primary_specialized_factor); break;
+    case FOCUS_MINING:   GetMeter(METER_MINING)->AdjustMax(primary_specialized_factor); break;
+    case FOCUS_RESEARCH: GetMeter(METER_RESEARCH)->AdjustMax(primary_specialized_factor ); break;
+    case FOCUS_TRADE:    GetMeter(METER_TRADE)->AdjustMax(primary_specialized_factor); break;
 
     default:             break;
     }
     switch (m_secondary) {
     case FOCUS_BALANCED: 
-        m_farming.AdjustMax(secondary_balanced_factor);
-        m_industry.AdjustMax(secondary_balanced_factor);
-        m_mining.AdjustMax(secondary_balanced_factor);
-        m_research.AdjustMax(secondary_balanced_factor);
-        m_trade.AdjustMax(secondary_balanced_factor);
+        GetMeter(METER_FARMING)->AdjustMax(secondary_balanced_factor);
+        GetMeter(METER_INDUSTRY)->AdjustMax(secondary_balanced_factor);
+        GetMeter(METER_MINING)->AdjustMax(secondary_balanced_factor);
+        GetMeter(METER_RESEARCH)->AdjustMax(secondary_balanced_factor);
+        GetMeter(METER_TRADE)->AdjustMax(secondary_balanced_factor);
         break;
 
-    case FOCUS_FARMING:  m_farming.AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_INDUSTRY: m_industry.AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_MINING:   m_mining.AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_RESEARCH: m_research.AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_TRADE:    m_trade.AdjustMax(secondary_specialized_factor); break;
+    case FOCUS_FARMING:  GetMeter(METER_FARMING)->AdjustMax(secondary_specialized_factor); break;
+    case FOCUS_INDUSTRY: GetMeter(METER_INDUSTRY)->AdjustMax(secondary_specialized_factor); break;
+    case FOCUS_MINING:   GetMeter(METER_MINING)->AdjustMax(secondary_specialized_factor); break;
+    case FOCUS_RESEARCH: GetMeter(METER_RESEARCH)->AdjustMax(secondary_specialized_factor); break;
+    case FOCUS_TRADE:    GetMeter(METER_TRADE)->AdjustMax(secondary_specialized_factor); break;
 
     default:             break;
     }
@@ -269,26 +238,31 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments()
 
 void ResourceCenter::PopGrowthProductionResearchPhase()
 {
-    Growth(m_construction, m_farming, m_industry, m_mining, m_research, m_trade, *m_pop);
+    GrowConstructionMeter(GetMeter(METER_CONSTRUCTION), GetPopMeter()->Current());
+    double new_current_construction = GetMeter(METER_CONSTRUCTION)->Current();
+    GrowResourceMeter(GetMeter(METER_FARMING),  new_current_construction);
+    GrowResourceMeter(GetMeter(METER_INDUSTRY), new_current_construction);
+    GrowResourceMeter(GetMeter(METER_MINING),   new_current_construction);
+    GrowResourceMeter(GetMeter(METER_RESEARCH), new_current_construction);
+    GrowResourceMeter(GetMeter(METER_TRADE),    new_current_construction);
 }
-
 
 void ResourceCenter::Reset()
 {
     m_primary = FOCUS_UNKNOWN;
     m_secondary = FOCUS_UNKNOWN;
 
-    m_farming = Meter();
-    m_industry = Meter();
-    m_mining = Meter();
-    m_research = Meter();
-    m_trade = Meter();
-    m_construction = Meter();
+    GetMeter(METER_FARMING)->Reset();
+    GetMeter(METER_INDUSTRY)->Reset();
+    GetMeter(METER_MINING)->Reset();
+    GetMeter(METER_RESEARCH)->Reset();
+    GetMeter(METER_TRADE)->Reset();
+    GetMeter(METER_CONSTRUCTION)->Reset();
 
     double balanced_balanced_max = ProductionDataTables()["FocusMods"][2][0] + ProductionDataTables()["FocusMods"][3][0];
-    m_farming.SetMax(balanced_balanced_max);
-    m_industry.SetMax(balanced_balanced_max);
-    m_mining.SetMax(balanced_balanced_max);
-    m_research.SetMax(balanced_balanced_max);
-    m_trade.SetMax(balanced_balanced_max);
+    GetMeter(METER_FARMING)->SetMax(balanced_balanced_max);
+    GetMeter(METER_INDUSTRY)->SetMax(balanced_balanced_max);
+    GetMeter(METER_MINING)->SetMax(balanced_balanced_max);
+    GetMeter(METER_RESEARCH)->SetMax(balanced_balanced_max);
+    GetMeter(METER_TRADE)->SetMax(balanced_balanced_max);
 }

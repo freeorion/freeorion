@@ -40,46 +40,32 @@ namespace {
             return PlanetDataTables()["PlanetEnvHealthMod"][0][planet->Environment()];
         return 0.0;
     }
+}
 
+PopCenter::PopCenter(int race) :
+    m_growth(0.0), m_race(race), m_available_food(0.0)
+{
 }
 
 PopCenter::PopCenter() :
-    m_pop(),
-    m_health(),
-    m_growth(0),
-    m_race(0),
-    m_available_food(0)
-{}
-
-PopCenter::PopCenter(double max_pop_mod, double max_health_mod) :
-    m_pop(),
-    m_health(),
-    m_growth(0),
-    m_race(0),
-    m_available_food(0)
+    m_growth(0.0), m_race(-1), m_available_food(0.0)
 {
-    Reset(max_pop_mod, max_health_mod);
-}
-
-PopCenter::PopCenter(int race, double max_pop_mod, double max_health_mod) :
-    m_pop(),
-    m_health(),
-    m_growth(0),
-    m_race(race),
-    m_available_food(0)
-{
-    Reset(max_pop_mod, max_health_mod);
 }
    
 PopCenter::~PopCenter()
 {
 }
 
+void PopCenter::Init(double max_pop_mod, double max_health_mod)
+{
+    InsertMeter(METER_POPULATION, Meter());
+    InsertMeter(METER_HEALTH, Meter());
+    Reset(max_pop_mod, max_health_mod);
+}
+
 double PopCenter::Inhabitants() const
 {
-    double retval = 0.0;
-    // TODO
-    return retval;
+    return GetMeter(METER_POPULATION)->Current();    // TO DO: Something fancy for different races
 }
 
 PopCenter::DensityType PopCenter::PopDensity() const
@@ -91,36 +77,97 @@ PopCenter::DensityType PopCenter::PopDensity() const
 
 double PopCenter::AdjustPop(double pop)
 {
+    double max_pop = GetMeter(METER_POPULATION)->Max();
+    double cur_pop = GetMeter(METER_POPULATION)->Current();
+
     double retval = 0.0;
-    double new_val = m_pop.Current() + pop;
-    m_pop.SetCurrent(new_val);
+    double new_val = cur_pop + pop;
+    GetMeter(METER_POPULATION)->SetCurrent(new_val);
     if (new_val < Meter::METER_MIN) {
         retval = new_val;
-    } else if (m_pop.Max() < new_val) {
-        retval = new_val - m_pop.Max();
+    } else if (max_pop < new_val) {
+        retval = new_val - max_pop;
     }
     return retval;
 }
 
 double PopCenter::FuturePopGrowth() const
 {
-    return std::max(-m_pop.Current(), std::min(FuturePopGrowthMax(), std::min(AvailableFood(), m_pop.Max()) - m_pop.Current()));
+    double max = GetMeter(METER_POPULATION)->Max();
+    double cur = GetMeter(METER_POPULATION)->Current();
+    return std::max(-cur, std::min(FuturePopGrowthMax(), std::min(AvailableFood(), max) - cur));           
 }
 
 double PopCenter::FuturePopGrowthMax() const
 {
-    if (20.0 < m_health.Current()) {
-        return std::min(m_pop.Max() - m_pop.Current(), m_pop.Current() * (((m_pop.Max() + 1.0) - m_pop.Current()) / (m_pop.Max() + 1.0)) * (m_health.Current() - 20.0) * 0.01);
-    } else if (m_health.Current() == 20.0) {
+    double max_pop = GetMeter(METER_POPULATION)->Max();
+    double cur_pop = GetMeter(METER_POPULATION)->Current();
+    double cur_health = GetMeter(METER_HEALTH)->Current();
+
+    if (20.0 < cur_health) {
+        return std::min(max_pop - cur_pop, cur_pop * (((max_pop + 1.0) - cur_pop) / (max_pop + 1.0)) * (cur_health - 20.0) * 0.01);
+    } else if (cur_health == 20.0) {
         return 0.0;
-    } else { // m_health.Current() < 20.0
-        return std::max(-m_pop.Current(), -m_pop.Current()*(  exp( (m_health.Current()-20)*(m_health.Current()-20) / (400/log(2.0)) ) - 1  ));
+    } else { // cur_health < 20.0
+        return std::max(-cur_pop, -cur_pop*(  exp( (cur_health-20)*(cur_health-20) / (400/log(2.0)) ) - 1  ));
     }
 }
 
 double PopCenter::FutureHealthGrowth() const
 {
-    return std::min(MaxHealth() - Health(), m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
+    double max = GetMeter(METER_HEALTH)->Max();
+    double cur = GetMeter(METER_HEALTH)->Current();
+    return std::min(max - cur, cur * (((max + 1.0) - cur) / (max + 1.0)));
+}
+
+double PopCenter::ProjectedCurrentMeter(MeterType type) const
+{
+    switch (type) {
+    case METER_POPULATION:
+        return GetMeter(METER_POPULATION)->Current() + FuturePopGrowth();
+        break;
+    case METER_HEALTH:
+        return GetMeter(METER_HEALTH)->Current() + FutureHealthGrowth();
+        break;
+    default:
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
+        if (obj)
+            return obj->ProjectedCurrentMeter(type);
+        else
+            throw std::runtime_error("PopCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
+    }
+}
+
+double PopCenter::MeterPoints(MeterType type) const
+{
+    switch (type) {
+    case METER_POPULATION:
+    case METER_HEALTH:
+        return GetMeter(type)->Current();    // health and population point values are equal to meter values
+        break;
+    default:
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
+        if (obj)
+            return obj->MeterPoints(type);
+        else
+            throw std::runtime_error("PopCenter::MeterPoints couldn't convert this pointer to Universe*");
+    }
+}
+
+double PopCenter::ProjectedMeterPoints(MeterType type) const
+{
+    switch (type) {
+    case METER_POPULATION:
+    case METER_HEALTH:
+        return ProjectedCurrentMeter(type);
+        break;
+    default:
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
+        if (obj)
+            return obj->ProjectedMeterPoints(type);
+        else
+            throw std::runtime_error("PopCenter::ProjectedMeterPoints couldn't convert this pointer to Universe*");
+    }
 }
 
 void PopCenter::ApplyUniverseTableMaxMeterAdjustments()
@@ -128,35 +175,38 @@ void PopCenter::ApplyUniverseTableMaxMeterAdjustments()
     UniverseObject* object = GetObjectSignal();
     assert(object);
     // determine meter maxes; they should have been previously reset to 0, then adjusted by Specials, Building effects, etc.
-    m_pop.AdjustMax(MaxPopModFromObject(object));
-    m_health.AdjustMax(MaxHealthModFromObject(object));
+    GetMeter(METER_POPULATION)->AdjustMax(MaxPopModFromObject(object));
+    GetMeter(METER_HEALTH)->AdjustMax(MaxHealthModFromObject(object));
 }
 
 void PopCenter::PopGrowthProductionResearchPhase()
 {
     UniverseObject* object = GetObjectSignal();
     assert(object);
-    m_pop.AdjustCurrent(FuturePopGrowth());
-    if (AvailableFood() < m_pop.Current()) { // starvation
+    Meter* pop = GetMeter(METER_POPULATION);
+    Meter* health = GetMeter(METER_HEALTH);
+
+    GetMeter(METER_POPULATION)->AdjustCurrent(FuturePopGrowth());
+    if (AvailableFood() < pop->Current()) { // starvation
         object->AddSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
-    } else if (m_available_food < 2 * m_pop.Current()) { // "minimal" nutrient levels
+        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
+    } else if (m_available_food < 2 * pop->Current()) { // "minimal" nutrient levels
         object->RemoveSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
-    } else if (m_available_food < 4 * m_pop.Current()) { // "normal" nutrient levels
+        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
+    } else if (m_available_food < 4 * pop->Current()) { // "normal" nutrient levels
         object->RemoveSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
+        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
     } else { // food orgy!
         object->RemoveSpecial("STARVATION_SPECIAL");
-        m_health.AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
+        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
     }
-    m_health.AdjustCurrent(m_health.Current() * (((m_health.Max() + 1.0) - m_health.Current()) / (m_health.Max() + 1.0)));
+    health->AdjustCurrent(health->Current() * (((health->Max() + 1.0) - health->Current()) / (health->Max() + 1.0)));
 }
 
 void PopCenter::Reset(double max_pop_mod, double max_health_mod)
 {
-    m_pop =     Meter(0.0,              max_pop_mod,    m_pop.InitialCurrent(),     m_pop.InitialMax(),     m_pop.PreviousCurrent(),    m_pop.PreviousMax());
-    m_health =  Meter(max_health_mod,   max_health_mod, m_health.InitialCurrent(),  m_health.InitialMax(),  m_health.PreviousCurrent(), m_health.PreviousMax());
+    GetMeter(METER_POPULATION)->Set(0.0, max_pop_mod);
+    GetMeter(METER_HEALTH)->Set(max_health_mod, max_health_mod);
     m_growth = 0.0;
     m_race = -1;
     m_available_food = 0.0;

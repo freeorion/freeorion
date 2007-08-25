@@ -206,31 +206,14 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     class_<ResourceCenter, noncopyable>("ResourceCenter", no_init)
         .def("PrimaryFocus",            &ResourceCenter::PrimaryFocus)
         .def("SecondaryFocus",          &ResourceCenter::SecondaryFocus)
-        .def("FarmingPoints",           &ResourceCenter::FarmingPoints)
-        .def("IndustryPoints",          &ResourceCenter::IndustryPoints)
-        .def("MiningPoints",            &ResourceCenter::MiningPoints)
-        .def("ResearchPoints",          &ResourceCenter::ResearchPoints)
-        .def("TradePoints",             &ResourceCenter::TradePoints)
-        .def("ProjectedFarmingPoints",  &ResourceCenter::ProjectedFarmingPoints)
-        .def("ProjectedIndustryPoints", &ResourceCenter::ProjectedIndustryPoints)
-        .def("ProjectedMiningPoints",   &ResourceCenter::ProjectedMiningPoints)
-        .def("ProjectedResearchPoints", &ResourceCenter::ProjectedResearchPoints)
-        .def("ProjectedTradePoints",    &ResourceCenter::ProjectedTradePoints)
     ;
 
     ///////////////////
     //   PopCenter   //
     ///////////////////
     class_<PopCenter, noncopyable>("PopCenter", no_init)
-        .def("PopPoints",           &PopCenter::PopPoints)
-        .def("MaxPop",              &PopCenter::MaxPop)
-        .def("PopGrowth",           &PopCenter::PopGrowth)
-        .def("Health",              &PopCenter::Health)
-        .def("MaxHealth",           &PopCenter::MaxHealth)
         .def("Inhabitants",         &PopCenter::Inhabitants)
         .def("AvailableFood",       &PopCenter::AvailableFood)
-        .def("FuturePopGrowth",     &PopCenter::FuturePopGrowth)
-        .def("FuturePopGrowthMax",  &PopCenter::FuturePopGrowthMax)
     ;
 
     //////////////////

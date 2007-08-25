@@ -12,7 +12,8 @@ Meter::Meter() :
     m_initial_max(METER_MIN),
     m_previous_current(METER_MIN),
     m_previous_max(METER_MIN)
-{}
+{
+}
 
 Meter::Meter(double current, double max) :
     m_current(current),
@@ -21,7 +22,8 @@ Meter::Meter(double current, double max) :
     m_initial_max(METER_MIN),
     m_previous_current(METER_MIN),
     m_previous_max(METER_MIN)
-{}
+{
+}
 
 Meter::Meter(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max) :
     m_current(current),
@@ -30,7 +32,8 @@ Meter::Meter(double current, double max, double initial_current, double initial_
     m_initial_max(initial_max),
     m_previous_current(previous_current),
     m_previous_max(previous_max)
-{}
+{
+}
 
 
 double Meter::Current() const
@@ -101,4 +104,30 @@ void Meter::AdjustMax(double max)
 void Meter::Clamp()
 {
     m_current = std::max(METER_MIN, std::min(m_current, m_max));
+}
+
+void Meter::Reset()
+{
+    m_current = METER_MIN;
+    m_max = METER_MIN;
+    m_initial_current = METER_MIN;
+    m_initial_max = METER_MIN;
+    m_previous_current = METER_MIN;
+    m_previous_max = METER_MIN;
+}
+
+void Meter::Set(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max)
+{
+    m_current = current;
+    m_max = max;
+    m_initial_current = initial_current;
+    m_initial_max = initial_max;
+    m_previous_current = previous_current;
+    m_previous_max = previous_max;
+}
+
+void Meter::Set(double current, double max)
+{
+    m_current = current;
+    m_max = max;
 }

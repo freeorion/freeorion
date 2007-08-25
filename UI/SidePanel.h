@@ -87,10 +87,6 @@ private:
     GG::Button          *m_button_prev, *m_button_next;
     GG::DynamicGraphic  *m_star_graphic;
 
-    int                 m_next_pltview_fade_in;
-    int                 m_next_pltview_planet_id;
-    int                 m_next_pltview_fade_out;
-
     std::vector<GG::SubTexture> m_fleet_icons;
 
     PlanetPanelContainer*       m_planet_panel_container;
@@ -101,6 +97,8 @@ private:
 
     std::set<boost::signals::connection> m_system_connections;
     std::map<int, boost::signals::connection> m_fleet_connections;
+
+    static const int EDGE_PAD = 4;
 };
 
 #endif // _SidePanel_h_

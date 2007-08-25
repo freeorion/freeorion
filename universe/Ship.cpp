@@ -14,13 +14,19 @@
 using boost::lexical_cast;
 #include <stdexcept>
 
-////////////////////////////////////////////////
-// Ship
-////////////////////////////////////////////////
+namespace {
+    void GrowFuelMeter(Meter* fuel) {
+        double regen = 0.5;        
+        double new_cur = std::min(fuel->Max(), fuel->Max() + regen);
+        fuel->SetCurrent(new_cur);
+    }
+}
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
     m_fleet_id(INVALID_OBJECT_ID)
-{}
+{
+    InsertMeter(METER_FUEL, Meter());
+}
 
 Ship::Ship(int empire_id, int design_id) :
     m_design_id(design_id),
@@ -30,6 +36,8 @@ Ship::Ship(int empire_id, int design_id) :
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
 
     AddOwner(empire_id);
+
+    InsertMeter(METER_FUEL, Meter());
 }
 
 const ShipDesign* Ship::Design() const
@@ -89,10 +97,38 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const
     return visitor.Visit(const_cast<Ship* const>(this));
 }
 
+double Ship::ProjectedCurrentMeter(MeterType type) const
+{
+    const Meter* fuel = GetMeter(METER_FUEL);
+    Meter copy;
+
+    switch (type) {
+    case METER_FUEL:
+        assert(fuel);
+        copy = Meter(*fuel);
+        GrowFuelMeter(&copy);
+        return copy.Current();
+        break;
+    default:
+        return UniverseObject::ProjectedCurrentMeter(type);
+        break;
+    }
+}
+
 void Ship::MovementPhase()
 {
 }
 
 void Ship::PopGrowthProductionResearchPhase()
 {
+    GrowFuelMeter(GetMeter(METER_FUEL));
 }
+
+bool Ship::AdjustFuel(double amount)
+{
+    double new_fuel = GetMeter(METER_FUEL)->Current() + amount;
+    if (new_fuel > GetMeter(METER_FUEL)->Max() || new_fuel < Meter::METER_MIN) return false;
+    GetMeter(METER_FUEL)->SetCurrent(new_fuel);
+    return true;
+}
+

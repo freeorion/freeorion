@@ -8,10 +8,7 @@
 #ifndef _UniverseObject_h_
 #define _UniverseObject_h_
 
-
-#ifndef _InhibitableSignal_h_
 #include "InhibitableSignal.h"
-#endif
 
 #include <boost/serialization/is_abstract.hpp>
 
@@ -73,21 +70,24 @@ public:
     //@}
    
     /** \name Accessors */ //@{
-    int                  ID() const;            ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    const std::string&   Name() const;          ///< returns the name of this object; some valid objects will have no name
-    double               X() const;             ///< the X-coordinate of this object
-    double               Y() const;             ///< the Y-coordinate of this object
-    const std::set<int>& Owners() const;        ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-    int                  SystemID() const;      ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    System*              GetSystem() const;     ///< returns system in which this object can be found, or null if the object is not within any system
+    int                     ID() const;            ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    const std::string&      Name() const;          ///< returns the name of this object; some valid objects will have no name
+    double                  X() const;             ///< the X-coordinate of this object
+    double                  Y() const;             ///< the Y-coordinate of this object
+    const std::set<int>&    Owners() const;        ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
+    int                     SystemID() const;      ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    System*                 GetSystem() const;     ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
-                         Specials() const;      ///< returns the set of names of the Specials attached to this object
+                            Specials() const;      ///< returns the set of names of the Specials attached to this object
 
-    virtual const Meter* GetMeter(MeterType type) const;  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    const Meter*            GetMeter(MeterType type) const;     ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual double          ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+    virtual double          MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value)
+    virtual double          ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
 
-    bool                 Unowned() const;                 ///< returns true iff there are no owners of this object
-    bool                 OwnedBy(int empire) const;       ///< returns true iff the empire with id \a empire is an owner of this object
-    bool                 WhollyOwnedBy(int empire) const; ///< returns true iff the empire with id \a empire is the only owner of this object
+    bool                    Unowned() const;                 ///< returns true iff there are no owners of this object
+    bool                    OwnedBy(int empire) const;       ///< returns true iff the empire with id \a empire is an owner of this object
+    bool                    WhollyOwnedBy(int empire) const; ///< returns true iff the empire with id \a empire is the only owner of this object
 
     virtual Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual const std::string& PublicName(int empire_id) const; ///< returns the name of this objectas it appears to empire \a empire_id
@@ -113,7 +113,7 @@ public:
         either coordinate of the move is outside the map area.*/
     void MoveTo(double x, double y);
    
-    virtual Meter* GetMeter(MeterType type);  ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    Meter* GetMeter(MeterType type);    ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void AddOwner(int id);                       ///< adds the Empire with ID \a id to the list of owners of this object
     virtual void RemoveOwner(int id);                    ///< removes the Empire with ID \a id to the list of owners of this object
@@ -147,15 +147,19 @@ public:
     static const int    INVALID_OBJECT_AGE;    ///< the age returned by UniverseObject::AgeInTurns() if the current turn is INVALID_GAME_TURN, or if the turn on which an object was created is INVALID_GAME_TURN
     static const int    SINCE_BEFORE_TIME_AGE; ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
+protected:
+    void InsertMeter(MeterType meter_type, const Meter& meter); ///< inserts \a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
+
 private:
-    int                   m_id;
-    std::string           m_name;
-    double                m_x;
-    double                m_y;
-    std::set<int>         m_owners;
-    int                   m_system_id;
-    std::set<std::string> m_specials;
-    int                   m_created_on_turn;
+    int                         m_id;
+    std::string                 m_name;
+    double                      m_x;
+    double                      m_y;
+    std::set<int>               m_owners;
+    int                         m_system_id;
+    std::set<std::string>       m_specials;
+    std::map<MeterType, Meter>  m_meters;
+    int                         m_created_on_turn;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -175,6 +179,8 @@ UniverseObject* Default0Combiner::operator()(Iter first, Iter last)
     return retval;
 }
 
+#include "../util/AppInterface.h"
+
 template <class Archive>
 void UniverseObject::serialize(Archive& ar, const unsigned int version)
 {
@@ -185,7 +191,8 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
-        & BOOST_SERIALIZATION_NVP(m_system_id);
+        & BOOST_SERIALIZATION_NVP(m_system_id)
+        & BOOST_SERIALIZATION_NVP(m_meters);
     if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
         std::string name;

@@ -1528,17 +1528,17 @@ void Empire::UpdateFoodDistribution()
         ResourceCenter *center = *res_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
-        fp_map[obj->ID()] = center->FarmingPoints();
+        fp_map[obj->ID()] = obj->MeterPoints(METER_FARMING);
     }
 
     // first pass: give food to PopCenters that produce food, limited by their food need and their food production
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
     {
         PopCenter *center = *pop_it;
-        double need = center->PopPoints();  // basic need is current population - prevents starvation
-
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
+
+        double need = obj->MeterPoints(METER_FARMING);  // basic need is current population - prevents starvation
         
         // determine if, and if so how much, food this center produces locally
         double food_prod = 0.0;
@@ -1560,7 +1560,10 @@ void Empire::UpdateFoodDistribution()
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
     {
         PopCenter *center = *pop_it;
-        double need = center->PopPoints();
+        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
+        assert(obj);
+
+        double need = obj->MeterPoints(METER_FARMING);
         double has = center->AvailableFood();
         double addition = std::min(need - has, available_food);
 
@@ -1575,12 +1578,12 @@ void Empire::UpdateFoodDistribution()
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
     {
         PopCenter *center = *pop_it;
-        double basic_need = center->PopPoints();
+        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
+        assert(obj);
+
+        double basic_need = obj->MeterPoints(METER_FARMING);
         double full_need = 2 * basic_need;
         double has = center->AvailableFood();
-
-        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);
-        assert(obj);
 
         double food_prod = 0.0;
         std::map<int, double>::iterator fp_map_it = fp_map.find(obj->ID());
@@ -1600,7 +1603,10 @@ void Empire::UpdateFoodDistribution()
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
     {
         PopCenter *center = *pop_it;
-        double basic_need = center->PopPoints();
+        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
+        assert(obj);
+
+        double basic_need = obj->MeterPoints(METER_FARMING);
         double full_need = 2*basic_need;
         double has = center->AvailableFood();
         double addition = std::min(full_need - has, available_food);

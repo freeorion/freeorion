@@ -29,7 +29,8 @@ UniverseObject::UniverseObject() :
     m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
-    m_system_id(INVALID_OBJECT_ID)
+    m_system_id(INVALID_OBJECT_ID),
+    m_meters()
 {
     m_created_on_turn = CurrentTurn();
 }
@@ -42,7 +43,8 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_x(x),
     m_y(y),
     m_owners(owners),
-    m_system_id(INVALID_OBJECT_ID)
+    m_system_id(INVALID_OBJECT_ID),
+    m_meters()
 {
     if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
@@ -108,7 +110,37 @@ const std::set<std::string>& UniverseObject::Specials() const
 
 const Meter* UniverseObject::GetMeter(MeterType type) const
 {
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it != m_meters.end())
+        return &(it->second);
     return 0;
+}
+
+double UniverseObject::ProjectedCurrentMeter(MeterType type) const
+{
+        std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+        if (it == m_meters.end())
+            throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
+        return it->second.Current();    // default to no growth
+}
+
+double UniverseObject::MeterPoints(MeterType type) const
+{
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::MeterPoints was passed a MeterType that this UniverseObject does not have");
+    return it->second.Current();    // default to meter value
+}
+
+double UniverseObject::ProjectedMeterPoints(MeterType type) const
+{
+    Logger().errorStream() << "UniverseObject::ProjectedMeterPoints";
+    return MeterPoints(type);
+}
+
+void UniverseObject::InsertMeter(MeterType meter_type, const Meter& meter)
+{
+    m_meters[meter_type] = meter;
 }
 
 bool UniverseObject::Unowned() const 
@@ -173,6 +205,9 @@ void UniverseObject::MoveTo(double x, double y)
 
 Meter* UniverseObject::GetMeter(MeterType type)
 {
+    std::map<MeterType, Meter>::iterator it = m_meters.find(type);
+    if (it != m_meters.end())
+        return &(it->second);
     return 0;
 }
 

@@ -2795,7 +2795,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         for (unsigned int j = 0; j < special->Effects().size(); ++j) {
             special->Effects()[j]->Execute(home_planet->ID(), target_set);
         }
-        home_planet->AdjustPop( home_planet->MaxPop() );
+        home_planet->AdjustPop(home_planet->GetMeter(METER_HEALTH)->Max());
         home_planet->GetMeter(METER_HEALTH)->SetCurrent(home_planet->GetMeter(METER_HEALTH)->Max());
         home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max());
         home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max());

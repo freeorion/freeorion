@@ -21,40 +21,17 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    ResourceCenter(const Meter& pop); ///< basic ctor
-    virtual ~ResourceCenter(); ///< dtor
+    ResourceCenter();           ///< default ctor
+    virtual ~ResourceCenter();  ///< dtor
     //@}
 
     /** \name Accessors */ //@{
     FocusType      PrimaryFocus() const     {return m_primary;}
     FocusType      SecondaryFocus() const   {return m_secondary;}
-    const Meter&   FarmingMeter() const     {return m_farming;}      ///< returns the farming Meter for this center
-    const Meter&   IndustryMeter() const    {return m_industry;}     ///< returns the industry Meter for this center
-    const Meter&   MiningMeter() const      {return m_mining;}       ///< returns the mining Meter for this center
-    const Meter&   ResearchMeter() const    {return m_research;}     ///< returns the research Meter for this center
-    const Meter&   TradeMeter() const       {return m_trade;}        ///< returns the trade Meter for this center
-    const Meter&   ConstructionMeter() const{return m_construction;} ///< returns the construction Meter for this center
-    const Meter*   GetMeter(MeterType type) const;
 
-    /** Return the amount of each resource the ResourceCenter produced this turn */
-    double         FarmingPoints() const;
-    double         IndustryPoints() const;
-    double         MiningPoints() const;
-    double         ResearchPoints() const;
-    double         TradePoints() const;
-
-    /** Returns the Current() value that the requested type of meter is projected to have next turn.  This projection is
-        only a rough estimate, based on the meter's current and max from this turn. */
-    double         ProjectedCurrent(MeterType type) const;
-
-    /** Returns the amount of each resource the ResourceCenter is predicted to produce next turn, after focus changes
-        and effects are applied */
-    double         ProjectedFarmingPoints() const;
-    double         ProjectedIndustryPoints() const;
-    double         ProjectedMiningPoints() const;
-    double         ProjectedResearchPoints() const;
-    double         ProjectedTradePoints() const;
-
+    virtual double  ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+    virtual double  MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value)
+    virtual double  ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
 
     mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal; ///< the state changed signal object for this ResourceCenter
     //@}
@@ -62,13 +39,6 @@ public:
     /** \name Mutators */ //@{
     void     SetPrimaryFocus(FocusType focus);
     void     SetSecondaryFocus(FocusType focus);
-    Meter&   FarmingMeter()                  {return m_farming;}      ///< returns the farming Meter for this center
-    Meter&   IndustryMeter()                 {return m_industry;}     ///< returns the industry Meter for this center
-    Meter&   MiningMeter()                   {return m_mining;}       ///< returns the mining Meter for this center
-    Meter&   ResearchMeter()                 {return m_research;}     ///< returns the research Meter for this center
-    Meter&   TradeMeter()                    {return m_trade;}        ///< returns the trade Meter for this center
-    Meter&   ConstructionMeter()             {return m_construction;} ///< returns the construction Meter for this center
-    Meter*   GetMeter(MeterType type);
 
     virtual void ApplyUniverseTableMaxMeterAdjustments();
     virtual void PopGrowthProductionResearchPhase();
@@ -78,22 +48,20 @@ public:
     //@}
 
 protected:
-    mutable GetObjectSignalType GetObjectSignal; ///< the UniverseObject-retreiving signal object for this ResourceCenter
+    mutable GetObjectSignalType GetObjectSignal;    ///< the UniverseObject-retreiving signal object for this ResourceCenter
+
+    void Init();                                    ///< initialization that needs to be called by derived class after derived class is constructed
 
 private:
-    ResourceCenter(); ///< default ctor
-
     FocusType  m_primary;
     FocusType  m_secondary;
 
-    Meter      m_farming;
-    Meter      m_industry;
-    Meter      m_mining;
-    Meter      m_research;
-    Meter      m_trade;
-    Meter      m_construction;
+    virtual const Meter*    GetPopMeter() const = 0;            ///< implimentation should return the population meter to use when calculating meter points for this resource center
 
-    const Meter* m_pop;    ///< current / max pop present in this center (may be the one from m_object, e.g. if m_object is a Planet)
+    virtual const Meter*    GetMeter(MeterType type) const = 0; ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual Meter*          GetMeter(MeterType type) = 0;       ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+
+    virtual void InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -114,14 +82,7 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
     if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == UniverseObject::FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_primary)
-            & BOOST_SERIALIZATION_NVP(m_secondary)
-            & BOOST_SERIALIZATION_NVP(m_farming)
-            & BOOST_SERIALIZATION_NVP(m_industry)
-            & BOOST_SERIALIZATION_NVP(m_mining)
-            & BOOST_SERIALIZATION_NVP(m_research)
-            & BOOST_SERIALIZATION_NVP(m_trade)
-            & BOOST_SERIALIZATION_NVP(m_construction)
-            & boost::serialization::make_nvp("m_pop", const_cast<Meter*&>(m_pop));
+            & BOOST_SERIALIZATION_NVP(m_secondary);
     }
 }
 

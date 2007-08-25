@@ -2,9 +2,8 @@
 #ifndef _Ship_h_
 #define _Ship_h_
 
-#ifndef _UniverseObject_h_
 #include "UniverseObject.h"
-#endif
+#include "Meter.h"
 
 class Fleet;
 class ShipDesign;
@@ -27,21 +26,25 @@ public:
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
 
-    bool IsArmed() const;
-    double Speed() const;
+    bool            IsArmed() const;
+    double          Speed() const;
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+
+    virtual double  ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
     //@}
 
     /** \name Mutators */ //@{   
-    void         SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
-    virtual void MovementPhase();
-    virtual void PopGrowthProductionResearchPhase();
+    void            SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
+    virtual void    MovementPhase();
+    virtual void    PopGrowthProductionResearchPhase();
+
+    bool            AdjustFuel(double amount);  ///< Adds \a amount of fuel to ship's fuel meter.  Returns true unless deduction would cause ship to have negative fuel, or more fuel than it can carry
     //@}
 
 private:
-    int         m_design_id;
-    int         m_fleet_id;
+    int     m_design_id;
+    int     m_fleet_id;
 
     friend class boost::serialization::access;
     template <class Archive>

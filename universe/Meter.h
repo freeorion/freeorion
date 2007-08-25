@@ -22,19 +22,24 @@ public:
     double    Current() const; ///< returns the current value of the meter, which will be in [METER_MIN, Max()]
     double    Max() const;     ///< returns the maximum value of the meter, which will be in [METER_MIN, METER_MAX]
 
-    double    InitialCurrent() const;  ///< returns the current value of the meter, as it was at the beginning of the turn
-    double    InitialMax() const;      ///< returns the maximum value of the meter, as it was at the beginning of the turn
-    double    PreviousCurrent() const; ///< returns the current value of the meter, as it was at the beginning of last turn
-    double    PreviousMax() const;     ///< returns the maximum value of the meter, as it was at the beginning of last turn
-    double    DeltaCurrent() const;    ///< returns InitialCurrent() - PreviousCurrent()
-    double    DeltaMax() const;        ///< returns InitialMax() - PreviousMax()
+    double    InitialCurrent() const;   ///< returns the current value of the meter, as it was at the beginning of the turn
+    double    InitialMax() const;       ///< returns the maximum value of the meter, as it was at the beginning of the turn
+    double    PreviousCurrent() const;  ///< returns the current value of the meter, as it was at the beginning of last turn
+    double    PreviousMax() const;      ///< returns the maximum value of the meter, as it was at the beginning of last turn
+    double    DeltaCurrent() const;     ///< returns InitialCurrent() - PreviousCurrent()
+    double    DeltaMax() const;         ///< returns InitialMax() - PreviousMax()
 
-    void ResetMax();                       ///< resets the max value of the Meter to METER_MIN, during max value recalculation
-    void SetCurrent(double current);       ///< sets the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void SetMax(double max);               ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void AdjustCurrent(double adjustment); ///< adds \a current to the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void AdjustMax(double max);            ///< adds \a max to the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void Clamp();                          ///< clamps Current() to the range [METER_MIN, Max()]
+    void ResetMax();                        ///< resets the max value of the Meter to METER_MIN, during max value recalculation
+    void SetCurrent(double current);        ///< sets the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
+    void SetMax(double max);                ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
+    void AdjustCurrent(double adjustment);  ///< adds \a current to the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
+    void AdjustMax(double max);             ///< adds \a max to the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
+    void Clamp();                           ///< clamps Current() to the range [METER_MIN, Max()]
+
+    void Reset();                           ///< sets all members to METER_MIN
+    /** Sets all members */
+    void Set(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max);
+    void Set(double current, double max);   ///< sets current and max, previous and initial current and maxes unchanges
 
     static const double METER_MIN;
     static const double METER_MAX;

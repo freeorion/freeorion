@@ -60,34 +60,12 @@ void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resour
 
 void ResourcePool::Update()
 {
-    m_production = 0.0;
-
     // sum production from all ResourceCenters for resource point type appropriate for this pool
-    switch (m_type)
-    {
-    case RE_FOOD:
-        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->ProjectedFarmingPoints();
-        break;
-    case RE_INDUSTRY:
-        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->ProjectedIndustryPoints();
-        break;
-    case RE_MINERALS:
-        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->ProjectedMiningPoints();
-        break;
-    case RE_RESEARCH:
-        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->ProjectedResearchPoints();
-        break;
-    case RE_TRADE:
-        for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
-            m_production += (*it)->ProjectedTradePoints();
-        break;
-    default:
-        throw std::runtime_error("ResourceCenterChanged was called without a valid m_type.");
-    }
+    MeterType meter_type = ResourceToMeter(m_type);
+    m_production = 0.0;
+    for(std::vector<ResourceCenter*>::const_iterator it = ResourceCenters().begin(); it != ResourceCenters().end(); ++it)
+        m_production += (*it)->ProjectedMeterPoints(meter_type);
+
     ChangedSignal();
 }
 
@@ -97,7 +75,7 @@ void ResourcePool::Update()
 namespace {
     bool PopCenterLess(PopCenter* elem1, PopCenter* elem2)
 	{
-	    return elem1->PopPoints() < elem2->PopPoints();
+	    return elem1->MeterPoints(METER_POPULATION) < elem2->MeterPoints(METER_POPULATION);
 	}
 }
 
@@ -130,12 +108,12 @@ void PopulationPool::SetPopCenters(const std::vector<PopCenter*>& pop_center_vec
 void PopulationPool::Update()
 {
     m_population = 0.0;
-    m_growth = 0.0;
+    double m_future_population = 0.0;
     // sum population from all PopCenters in this pool
-    for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it)
-    {
-        m_population += (*it)->PopPoints();
-        m_growth += (*it)->FuturePopGrowth();
+    for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it) {
+        m_population += (*it)->MeterPoints(METER_POPULATION);
+        m_future_population += (*it)->ProjectedMeterPoints(METER_POPULATION);
     }
+    m_growth = m_future_population - m_population;
     ChangedSignal();
 }

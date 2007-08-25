@@ -195,10 +195,8 @@ enum MeterType {
     METER_MINING,
     METER_CONSTRUCTION,
     METER_HEALTH,
-    /* Future meter types (more TBD)
-    METER_HAPPINESS,
-    METER_SECURITY
-    */
+    METER_FUEL,
+    METER_SUPPLY,
     NUM_METER_TYPES
 };
 
@@ -213,6 +211,8 @@ namespace GG {
     GG_ENUM_MAP_INSERT(METER_MINING)
     GG_ENUM_MAP_INSERT(METER_CONSTRUCTION)
     GG_ENUM_MAP_INSERT(METER_HEALTH)
+    GG_ENUM_MAP_INSERT(METER_FUEL)
+    GG_ENUM_MAP_INSERT(METER_SUPPLY)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(MeterType)
@@ -468,6 +468,9 @@ MeterType FocusToMeter(FocusType type);
 
 /** Returns the equivalent meter type for the given focus; if no such focus exists, returns INVALID_FOCUS_TYPE. */
 FocusType MeterToFocus(MeterType type);
+
+/** Returns the equivalent meter type for the given resource type; if no such meter type exists, returns INVALID_METER_TYPE. */
+MeterType ResourceToMeter(ResourceType type);
 
 /** the value used for the encoding empire when all data are desired, not just those visible to one empire */
 enum EncodingVisbility {

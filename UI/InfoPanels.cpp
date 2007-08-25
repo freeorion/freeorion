@@ -105,93 +105,10 @@ namespace {
             const Meter* meter = m_obj->GetMeter(m_meter_type);
             if (!meter) return;
             
-            double current = 0, change = 0, next = 0, meter_max = 0;
-            const PopCenter* pop = 0;
-            const ResourceCenter* res = 0;
-
-            switch (m_meter_type) {
-            case METER_POPULATION:
-                pop = dynamic_cast<const PopCenter*>(m_obj);
-                assert(pop);
-                current = pop->PopPoints();
-                change = pop->FuturePopGrowth();
-                next = current + change;
-                meter_max = pop->PopulationMeter().Max();
-                m_summary_title->SetText(UserString("PP_POPULATION"));
-                break;
-
-            case METER_FARMING:
-                res = dynamic_cast<const ResourceCenter*>(m_obj);
-                assert(res);
-                current = res->FarmingPoints();
-                next = res->ProjectedFarmingPoints();
-                change = next - current;
-                meter_max = res->FarmingMeter().Max();
-                m_summary_title->SetText(UserString("RP_FOOD"));
-                break;
-
-            case METER_INDUSTRY:
-                res = dynamic_cast<const ResourceCenter*>(m_obj);
-                assert(res);
-                current = res->IndustryPoints();
-                next = res->ProjectedIndustryPoints();
-                change = next - current;
-                meter_max = res->IndustryMeter().Max();
-                m_summary_title->SetText(UserString("RP_INDUSTRY"));
-                break;
-
-            case METER_RESEARCH:
-                res = dynamic_cast<const ResourceCenter*>(m_obj);
-                assert(res);
-                current = res->ResearchPoints();
-                next = res->ProjectedResearchPoints();
-                change = next - current;
-                meter_max = res->ResearchMeter().Max();
-                m_summary_title->SetText(UserString("RP_RESEARCH"));
-                break;
-
-            case METER_TRADE:
-                res = dynamic_cast<const ResourceCenter*>(m_obj);
-                assert(res);
-                current = res->TradePoints();
-                next = res->ProjectedTradePoints();
-                change = next - current;
-                meter_max = res->TradeMeter().Max();
-                m_summary_title->SetText(UserString("RP_TRADE"));
-                break;
-
-            case METER_MINING:
-                res = dynamic_cast<const ResourceCenter*>(m_obj);
-                assert(res);
-                current = res->MiningPoints();
-                next = res->ProjectedMiningPoints();
-                change = next - current;
-                meter_max = res->MiningMeter().Max();
-                m_summary_title->SetText(UserString("RP_MINERALS"));
-                break;
-
-            case METER_CONSTRUCTION:
-                res = dynamic_cast<const ResourceCenter*>(m_obj);
-                assert(res);
-                current = res->ConstructionMeter().Current();
-                next = res->ProjectedCurrent(METER_CONSTRUCTION);
-                change = next - current;
-                meter_max = res->ConstructionMeter().Max();
-                m_summary_title->SetText(UserString("RP_CONSTRUCTION"));
-                break;
-
-            case METER_HEALTH:
-                pop = dynamic_cast<const PopCenter*>(m_obj);
-                assert(pop);
-                current = pop->Health();
-                change = pop->FutureHealthGrowth();
-                next = current + change;
-                meter_max = pop->HealthMeter().Max();
-                m_summary_title->SetText(UserString("PP_HEALTH"));
-                break;
-            default:
-                m_summary_title->SetText("");
-            }
+            double current = m_obj->MeterPoints(m_meter_type);
+            double next = m_obj->ProjectedMeterPoints(m_meter_type);
+            double change = next - current;
+            double meter_max = meter->Max();
 
             m_current_value->SetText(DoubleToString(current, 2, false, false));
             m_next_turn_value->SetText(DoubleToString(next, 2, false, false));
@@ -202,6 +119,27 @@ namespace {
                 clr = ClientUI::StatDecrColor();
             m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 2, false, true) + "</rgba>");
             m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % DoubleToString(meter_max, 2, false, false)));
+
+            switch (m_meter_type) {
+            case METER_POPULATION:
+                m_summary_title->SetText(UserString("PP_POPULATION"));  break;
+            case METER_FARMING:
+                m_summary_title->SetText(UserString("RP_FOOD"));        break;
+            case METER_INDUSTRY:
+                m_summary_title->SetText(UserString("RP_INDUSTRY"));    break;
+            case METER_RESEARCH:
+                m_summary_title->SetText(UserString("RP_RESEARCH"));    break;
+            case METER_TRADE:
+               m_summary_title->SetText(UserString("RP_TRADE"));        break;
+            case METER_MINING:
+                m_summary_title->SetText(UserString("RP_MINERALS"));    break;
+            case METER_CONSTRUCTION:
+                m_summary_title->SetText(UserString("RP_CONSTRUCTION"));break;
+            case METER_HEALTH:
+                m_summary_title->SetText(UserString("PP_HEALTH"));      break;
+            default:
+                m_summary_title->SetText("");                           break;
+            }
         }
 
         // meter effect entries
@@ -382,161 +320,6 @@ namespace {
         }
     }
 
-    double ProjectedCurrentMeter(const UniverseObject* obj, MeterType meter_type)
-    {
-        const ResourceCenter* res;
-        const PopCenter* pop;
-        const Meter* meter;
-
-        switch (meter_type) {
-        case METER_FARMING:
-        case METER_MINING:
-        case METER_INDUSTRY:
-        case METER_RESEARCH:
-        case METER_TRADE:
-        case METER_CONSTRUCTION:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedCurrent(meter_type);
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_POPULATION:
-            pop = dynamic_cast<const PopCenter*>(obj);
-            if (pop) {
-                return pop->PopPoints() + pop->FuturePopGrowth();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_HEALTH:
-            pop = dynamic_cast<const PopCenter*>(obj);
-            if (pop) {
-                return pop->Health() + pop->FutureHealthGrowth();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        default:
-            meter = obj->GetMeter(meter_type);
-            if (meter)
-                return meter->Current();
-            throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-        }
-    }
-
-    double ProjectedResourceAmount(const UniverseObject* obj, MeterType meter_type)
-    {
-        const ResourceCenter* res;
-        const PopCenter* pop;
-        const Meter* meter;
-
-        switch (meter_type) {
-        case METER_FARMING:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedFarmingPoints();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_MINING:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedMiningPoints();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_INDUSTRY:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedIndustryPoints();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_RESEARCH:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedResearchPoints();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_TRADE:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedTradePoints();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_CONSTRUCTION:
-            res = dynamic_cast<const ResourceCenter*>(obj);
-            if (res) {
-                return res->ProjectedCurrent(meter_type);
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_POPULATION:
-            pop = dynamic_cast<const PopCenter*>(obj);
-            if (pop) {
-                return pop->PopPoints() + pop->FuturePopGrowth();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        case METER_HEALTH:
-            pop = dynamic_cast<const PopCenter*>(obj);
-            if (pop) {
-                return pop->Health() + pop->FutureHealthGrowth();
-            } else {
-                meter = obj->GetMeter(meter_type);
-                if (meter)
-                    return meter->Current();
-                throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-            }
-            break;
-        default:
-            meter = obj->GetMeter(meter_type);
-            if (meter)
-                return meter->Current();
-            throw std::invalid_argument("InfoPanels ProjectedCurrentMeter passed an object without the requested meter type");
-        }
-    }
 }
 
 /////////////////////////////////////
@@ -749,8 +532,8 @@ void PopulationPanel::Update()
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
  
-    m_pop_stat->SetValue(pop->PopPoints());
-    m_health_stat->SetValue(pop->Health());
+    m_pop_stat->SetValue(pop->MeterPoints(METER_POPULATION));
+    m_health_stat->SetValue(pop->MeterPoints(METER_HEALTH));
 
     const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
     const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
@@ -762,8 +545,8 @@ void PopulationPanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_pop_stat->SetValue(pop->PopPoints() + pop->FuturePopGrowth());
-    m_health_stat->SetValue(pop->Health() + pop->FutureHealthGrowth());
+    m_pop_stat->SetValue(pop->ProjectedMeterPoints(METER_POPULATION));
+    m_health_stat->SetValue(pop->ProjectedMeterPoints(METER_HEALTH));
 
 
     // tooltips
@@ -972,11 +755,11 @@ void ResourcePanel::DoExpandCollapseLayout()
 
         // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
         std::multimap<double, StatisticIcon*> res_prod_icon_map;
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedFarmingPoints(), m_farming_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMiningPoints(), m_mining_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedIndustryPoints(), m_industry_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedResearchPoints(), m_research_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedTradePoints(), m_trade_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_FARMING),    m_farming_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_MINING),     m_mining_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_INDUSTRY),   m_industry_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_RESEARCH),   m_research_stat));
+        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_TRADE),      m_trade_stat));
 
         // initially detach all...
         for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.begin(); it != res_prod_icon_map.end(); ++it)
@@ -1146,11 +929,11 @@ void ResourcePanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_farming_stat->SetValue(res->ProjectedFarmingPoints());
-    m_mining_stat->SetValue(res->ProjectedMiningPoints());
-    m_industry_stat->SetValue(res->ProjectedIndustryPoints());
-    m_research_stat->SetValue(res->ProjectedResearchPoints());
-    m_trade_stat->SetValue(res->ProjectedTradePoints());
+    m_farming_stat->SetValue(res->ProjectedMeterPoints(METER_FARMING));
+    m_mining_stat->SetValue(res->ProjectedMeterPoints(METER_MINING));
+    m_industry_stat->SetValue(res->ProjectedMeterPoints(METER_INDUSTRY));
+    m_research_stat->SetValue(res->ProjectedMeterPoints(METER_RESEARCH));
+    m_trade_stat->SetValue(res->ProjectedMeterPoints(METER_TRADE));
 
     // tooltips
     if (meter_map) {
@@ -1409,7 +1192,7 @@ void MultiIconValueIndicator::Update()
         double sum = 0.0;
         for (unsigned int j = 0; j < m_obj_vec.size(); ++j) {
             const UniverseObject* obj = m_obj_vec.at(j);
-            sum += ProjectedResourceAmount(obj, m_meter_types.at(i));
+            sum += obj->ProjectedMeterPoints(m_meter_types.at(i));
         }
         m_icons.at(i)->SetValue(sum);
     }
@@ -1539,7 +1322,7 @@ void MultiMeterStatusBar::Update()
         m_initial_maxes.push_back(meter->InitialMax());
         m_initial_currents.push_back(meter->InitialCurrent());
         m_projected_maxes.push_back(meter->Max());
-        m_projected_currents.push_back(ProjectedCurrentMeter(&m_obj, m_meter_types[i]));
+        m_projected_currents.push_back(m_obj.ProjectedCurrentMeter(m_meter_types[i]));
         m_bar_colours.push_back(MeterColor(m_meter_types[i]));
     }
 

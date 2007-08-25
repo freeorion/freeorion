@@ -2,21 +2,10 @@
 #ifndef _Planet_h_
 #define _Planet_h_
 
-#ifndef _Universe_h_
 #include "Universe.h"
-#endif
-
-#ifndef _UniverseObject_h_
 #include "UniverseObject.h"
-#endif
-
-#ifndef _PopCenter_h_
 #include "PopCenter.h"
-#endif
-
-#ifndef _ResourceCenter_h_
 #include "ResourceCenter.h"
-#endif
 
 /** a class representing a FreeOrion planet.*/
 class Planet :
@@ -44,8 +33,6 @@ public:
 
     bool IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
-    virtual const Meter* GetMeter(MeterType type) const;
-
     /////////////////////////////////////////////////////////////////////////////
     // V0.3 ONLY!!!!
     int DefBases() const {return m_def_bases;}
@@ -55,14 +42,20 @@ public:
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
-    //@}
-        
-    /** \name Mutators */ //@{
-    virtual Meter* GetMeter(MeterType type);
 
+    virtual double ProjectedCurrentMeter(MeterType type) const; ///< returns expected value of  specified meter current value on the next turn
+    virtual double MeterPoints(MeterType type) const;           ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
+    virtual double ProjectedMeterPoints(MeterType type) const;  ///< returns expected "true amount" associated with a meter on the next turn
+
+    virtual const Meter* GetMeter(MeterType type) const  {return UniverseObject::GetMeter(type);}
+    //@}
+
+    /** \name Mutators */ //@{
     virtual void MovementPhase( );
     virtual void ApplyUniverseTableMaxMeterAdjustments( );
     virtual void PopGrowthProductionResearchPhase( );
+
+    virtual Meter*  GetMeter(MeterType type)    {return UniverseObject::GetMeter(type);}
 
     /////////////////////////////////////////////////////////////////////////////
     // V0.3 ONLY!!!!
@@ -85,7 +78,7 @@ public:
     void Reset();
 
     /// Called during combat when a planet changes hands
-    void Conquer( int conquerer ) ;
+    void Conquer(int conquerer);
     
     /// Called during colonization when a planet is about to be colonized
     void SetIsAboutToBeColonized(bool b);
@@ -97,7 +90,11 @@ public:
     static PlanetEnvironment Environment(PlanetType type); ///< returns the environment that corresponds to each planet type
 
 private:
-    UniverseObject* This();
+    UniverseObject* This() {return this;}
+
+    virtual void InsertMeter(MeterType meter_type, Meter meter) {UniverseObject::InsertMeter(meter_type, meter);}
+
+    virtual const Meter* GetPopMeter() const {return GetMeter(METER_POPULATION);}
 
     PlanetType    m_type;
     PlanetSize    m_size;

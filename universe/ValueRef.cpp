@@ -358,23 +358,23 @@ namespace ValueRef {
             }
         } else if (m_property_name.back() == "TradeProduction") {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->TradePoints();
+                retval = prod_center->MeterPoints(METER_TRADE);
             }
         } else if (m_property_name.back() == "FoodProduction") {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->FarmingPoints();
+                retval = prod_center->MeterPoints(METER_FARMING);
             }
         } else if (m_property_name.back() == "MineralProduction") {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->MiningPoints();
+                retval = prod_center->MeterPoints(METER_MINING);
             }
         } else if (m_property_name.back() == "IndustryProduction") {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->IndustryPoints();
+                retval = prod_center->MeterPoints(METER_INDUSTRY);
             }
         } else if (m_property_name.back() == "ResearchProduction") {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->ResearchPoints();
+                retval = prod_center->MeterPoints(METER_RESEARCH);
             }
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");

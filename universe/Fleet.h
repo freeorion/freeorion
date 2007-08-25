@@ -2,9 +2,7 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#ifndef _System_h_
 #include "System.h"
-#endif
 
 #include <list>
 

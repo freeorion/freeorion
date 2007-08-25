@@ -149,16 +149,24 @@ bool Fleet::HasArmedShips() const
 }
 
 int Fleet::NumShips() const
-{ return m_ships.size(); }
+{
+    return m_ships.size();
+}
 
 bool Fleet::ContainsShip(int id) const
-{ return m_ships.find(id) != m_ships.end(); }
+{
+    return m_ships.find(id) != m_ships.end();
+}
 
 bool Fleet::UnknownRoute() const
-{ return m_travel_route.size() == 1 && m_travel_route.front()->ID() == UniverseObject::INVALID_OBJECT_ID; }
+{
+    return m_travel_route.size() == 1 && m_travel_route.front()->ID() == UniverseObject::INVALID_OBJECT_ID;
+}
 
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(const_cast<Fleet* const>(this)); }
+{
+    return visitor.Visit(const_cast<Fleet* const>(this));
+}
 
 void Fleet::SetRoute(const std::list<System*>& route, double distance)
 {
