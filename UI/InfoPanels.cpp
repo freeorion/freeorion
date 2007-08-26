@@ -1132,10 +1132,10 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& ob
                                             0.0, 3, false, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        x += ICON_WIDTH + EDGE_PAD;
+        x += ICON_WIDTH + ICON_SPACING;
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2 + EDGE_PAD));
+        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2));
     Update();
 }
 
@@ -1154,10 +1154,10 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const 
                                             0.0, 3, false, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        x += ICON_WIDTH + EDGE_PAD;
+        x += ICON_WIDTH + ICON_SPACING;
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2 + EDGE_PAD));
+        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2));
     Update();
 }
 
@@ -1217,7 +1217,8 @@ MultiMeterStatusBar::MultiMeterStatusBar(int w, const UniverseObject& obj, const
     m_projected_maxes(),
     m_projected_currents(),
     m_obj(obj),
-    m_bar_colours()
+    m_bar_colours(),
+    m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png"))
 {
     SetText("MultiMeterStatusBar");
     Update();
@@ -1248,49 +1249,72 @@ void MultiMeterStatusBar::Render()
     }
 
 
-    // check lines for 25, 50, 75
-    double verts[][2] = {{BAR_LEFT + BAR_MAX_LENGTH/4, TOP}, {BAR_LEFT + BAR_MAX_LENGTH/4, y - BAR_PAD},
-                         {BAR_LEFT + BAR_MAX_LENGTH/2, TOP}, {BAR_LEFT + BAR_MAX_LENGTH/2, y - BAR_PAD},
-                         {BAR_LEFT + 3*BAR_MAX_LENGTH/4, TOP}, {BAR_LEFT + 3*BAR_MAX_LENGTH/4, y - BAR_PAD}};
+    // lines for 20, 40, 60, 80 %
     glDisable(GL_TEXTURE_2D);
     glColor(HALF_GREY);
     glBegin(GL_LINES);
-    glVertex2dv(verts[0]);
-    glVertex2dv(verts[1]);
-    glVertex2dv(verts[2]);
-    glVertex2dv(verts[3]);
-    glVertex2dv(verts[4]);
-    glVertex2dv(verts[5]);
+    glVertex2i(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
+    glVertex2i(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex2i(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
+    glVertex2i(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex2i(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
+    glVertex2i(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex2i(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
+    glVertex2i(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
     glEnd();
     glEnable(GL_TEXTURE_2D);
 
 
     y = TOP;
     for (unsigned int i = 0; i < m_initial_maxes.size(); ++i) {
-        // max value
-        const int MAX_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_maxes[i] / (Meter::METER_MAX - Meter::METER_MIN) + 0.5);
+        GG::Clr clr;
+
+        const int MAX_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_maxes[i] / (Meter::METER_MAX - Meter::METER_MIN));
         const int BORDER = 1;
-        if (MAX_RIGHT > BAR_LEFT)
-            GG::FlatRectangle(BAR_LEFT - BORDER, y - BORDER, MAX_RIGHT + BORDER, y + BAR_HEIGHT + BORDER, GG::DarkColor(m_bar_colours[i]), GG::CLR_BLACK, 1);
+        const int BAR_BOTTOM = y + BAR_HEIGHT;
 
-        // current value
-        const int CUR_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_initial_currents[i] / (Meter::METER_MAX - Meter::METER_MIN) + 0.5);
-        GG::FlatRectangle(BAR_LEFT, y, CUR_RIGHT, y + BAR_HEIGHT, m_bar_colours[i], GG::CLR_ZERO, 0);
+        // max value
+        if (MAX_RIGHT > BAR_LEFT) {
+            glColor(DarkColor(m_bar_colours[i]));
+            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(MAX_RIGHT, BAR_BOTTOM));
+        }
 
-        // projected value
-        const int PROJECTED_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_currents[i] / (Meter::METER_MAX - Meter::METER_MIN) + 0.5);
+        const int CUR_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_initial_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const int PROJECTED_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const int PROJECTED_TOP = y + 3*EDGE_PAD/2;
 
         GG::Clr projected_clr = ClientUI::StatIncrColor();
         if (m_projected_currents[i] < m_initial_currents[i]) projected_clr = ClientUI::StatDecrColor();
 
-        int change_right = std::max(CUR_RIGHT, PROJECTED_RIGHT);
-        int change_left = std::min(PROJECTED_RIGHT, CUR_RIGHT);
-        GG::FlatRectangle(change_left, y + EDGE_PAD, change_right, y + BAR_HEIGHT, projected_clr, projected_clr, 0);
+        if (PROJECTED_RIGHT > CUR_RIGHT) {
+            // projected border
+            glColor(GG::CLR_BLACK);
+            GG::FlatRectangle(CUR_RIGHT, PROJECTED_TOP,     PROJECTED_RIGHT + 1, BAR_BOTTOM, GG::CLR_BLACK, GG::CLR_BLACK, 0);
+            // projected colour bar
+            GG::FlatRectangle(CUR_RIGHT, PROJECTED_TOP + 1, PROJECTED_RIGHT,     BAR_BOTTOM, projected_clr, projected_clr, 0);
+            // current value
+            glColor(m_bar_colours[i]);
+            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(CUR_RIGHT, BAR_BOTTOM));
+            // black border
+            GG::FlatRectangle(BAR_LEFT - BORDER, y - BORDER, MAX_RIGHT + BORDER, BAR_BOTTOM + BORDER, GG::CLR_ZERO, GG::CLR_BLACK, 1);
+        } else {
+            // current value
+            glColor(m_bar_colours[i]);
+            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(CUR_RIGHT, BAR_BOTTOM));
+            if (PROJECTED_RIGHT < CUR_RIGHT) {
+                // projected border
+                glColor(GG::CLR_BLACK);
+                GG::FlatRectangle(PROJECTED_RIGHT - 1, PROJECTED_TOP,     CUR_RIGHT, BAR_BOTTOM, GG::CLR_BLACK, GG::CLR_BLACK, 0);
+                // projected colour bar
+                glColor(m_bar_colours[i]);
+                GG::FlatRectangle(PROJECTED_RIGHT,     PROJECTED_TOP + 1, CUR_RIGHT, BAR_BOTTOM, projected_clr, projected_clr, 0);
+            }
+            // black border
+            GG::FlatRectangle(BAR_LEFT - BORDER, y - BORDER, CUR_RIGHT + BORDER, BAR_BOTTOM + BORDER, GG::CLR_ZERO, GG::CLR_BLACK, 1);
+        }
 
         y += BAR_HEIGHT + BAR_PAD;
     }
-    
-
 }
 
 void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)

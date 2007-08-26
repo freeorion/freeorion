@@ -266,8 +266,9 @@ private:
     std::vector<MeterType> m_meter_types;
     std::vector<const UniverseObject*> m_obj_vec;
 
-    static const int EDGE_PAD = 2;
-    static const int ICON_WIDTH = 32;
+    static const int EDGE_PAD = 4;
+    static const int ICON_SPACING = 12;
+    static const int ICON_WIDTH = 24;
 };
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a
@@ -283,6 +284,8 @@ public:
     void Update();
 
 private:
+    boost::shared_ptr<GG::Texture> m_bar_shading_texture;
+
     std::vector<MeterType> m_meter_types;
     std::vector<double> m_initial_maxes;
     std::vector<double> m_initial_currents;
@@ -294,7 +297,7 @@ private:
     static const int EDGE_PAD = 2;
     static const int BAR_PAD = 1;
 
-    static const int BAR_HEIGHT = 7;
+    static const int BAR_HEIGHT = 10;
 
     std::vector<GG::Clr> m_bar_colours;
 };

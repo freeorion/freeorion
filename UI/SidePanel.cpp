@@ -1199,7 +1199,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_system_resource_summary(0)
 {
     const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SystemNameFontSize());
-    const int DROP_HEIGHT = SystemNameFontSize()*3/2;
+    const int DROP_HEIGHT = SystemNameFontSize();
 
     m_button_prev = new GG::Button(MAX_PLANET_DIAMETER + EDGE_PAD, EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
     m_button_next = new GG::Button(w - DROP_HEIGHT - EDGE_PAD,     EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
@@ -1314,6 +1314,9 @@ void SidePanel::SetSystemImpl()
             if (sys_vec[i]->Name().length()==0) {
                 if (sys_vec[i] == s_system) {
                     row->push_back(UserString("SP_UNKNOWN_SYSTEM"), ClientUI::Font(), SystemNameFontSize(), ClientUI::TextColor());
+                    GG::Control* control = row->at(0);
+                    GG::TextControl* text_control = dynamic_cast<GG::TextControl*>(control);
+                    text_control->SetTextFormat(GG::FORMAT_VCENTER | GG::FORMAT_CENTER);
                 } else {
                     delete row;
                     continue;
