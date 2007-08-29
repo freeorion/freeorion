@@ -164,7 +164,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     m_cancel_bn(0),
     m_start_conditions_text(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     int x = CONTROL_MARGIN;
     m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");

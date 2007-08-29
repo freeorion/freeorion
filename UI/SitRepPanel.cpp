@@ -3,6 +3,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"
 #include "LinkText.h"
+#include "Sound.h"
 #include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
 
@@ -19,7 +20,7 @@ namespace {
 SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
     CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y,
                                   ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y);
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT);

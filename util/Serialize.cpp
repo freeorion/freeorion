@@ -10,7 +10,6 @@
 #include "../universe/System.h"
 #include "../util/OrderSet.h"
 
-#include <SDL/SDL_byteorder.h>
 
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
@@ -54,7 +53,9 @@ BOOST_CLASS_EXPORT(ProductionQueueOrder)
 // some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
 // that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
 // appropriate size(s).
-BOOST_STATIC_ASSERT(SDL_BYTEORDER == SDL_LIL_ENDIAN);
+#if !defined(OGRE_CONFIG_LITTLE_ENDIAN) && !defined(_MSC_VER)
+#  error "Incompatible endianness for binary serialization."
+#endif
 BOOST_STATIC_ASSERT(sizeof(char) == 1);
 BOOST_STATIC_ASSERT(sizeof(short) == 2);
 BOOST_STATIC_ASSERT(sizeof(int) == 4);

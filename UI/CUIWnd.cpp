@@ -5,6 +5,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "Sound.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -14,8 +15,6 @@
 
 
 namespace {
-    bool PlaySounds()
-    { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
     const std::string& SoundDir()
     {
         static std::string retval;
@@ -28,11 +27,11 @@ namespace {
         return retval;
     }
     void PlayMinimizeSound()
-    { if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize")); }
+    { Sound::GetSound().PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
     void PlayMaximizeSound()
-    { if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize")); }
+    { Sound::GetSound().PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
     void PlayCloseSound()
-    { if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close")); }
+    { Sound::GetSound().PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
 
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 }

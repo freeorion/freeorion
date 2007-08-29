@@ -27,8 +27,6 @@
 #include "../server/ServerApp.h"
 #endif
 
-#include <SDL/SDL_byteorder.h>
-
 #include <boost/filesystem/fstream.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/breadth_first_search.hpp>

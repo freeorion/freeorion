@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
 #include "CUIWnd.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
@@ -2002,7 +2003,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     m_tech_navigator(0),
     m_layout_panel(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     const int NAVIGATOR_WIDTH = 214;
 

@@ -6,6 +6,10 @@
 
 #include "ClientUI.h"
 #include "CUISpin.h"
+#include "Sound.h"
+
+#include <OgreRoot.h>
+#include <OgreRenderSystem.h>
 
 #include <GG/GUI.h>
 #include <GG/Layout.h>
@@ -546,39 +550,28 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
 
 void OptionsWnd::ResolutionOption()
 {
-    // NOTE: It appears that on the SDL-on-X setup, arbitrary resolutions can be selected (e.g. 307 x 400).  So the
-    // drop-down list of resolutions is really only useful on the Win32 platform.
-#ifdef FREEORION_WIN32
     // Retrieve (and if necessary generate) the fullscreen resolutions.
     std::vector<std::string> resolutions;
     boost::shared_ptr<const RangedValidator<int> > width_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("app-width"));
     boost::shared_ptr<const RangedValidator<int> > height_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("app-height"));
-    const std::string RESOLUTION_FORMAT_STR = "%1% x %2% @ %3%";
-    fs::path resolution_file = GetLocalDir() / "resolutions.txt";
-    if (!fs::exists(resolution_file)) {
-        boost::filesystem::ofstream ofs(resolution_file);
-        for (int w = width_validator->m_min; w <= width_validator->m_max; w += 4) {
-            for (int h = height_validator->m_min; h <= height_validator->m_max; h += 4) {
-                if (SDL_VideoModeOK(w, h, 16, SDL_FULLSCREEN | SDL_OPENGL))
-                    ofs << boost::io::str(boost::format(RESOLUTION_FORMAT_STR) % w % h % 16) << std::endl;
-                if (SDL_VideoModeOK(w, h, 32, SDL_FULLSCREEN | SDL_OPENGL))
-                    ofs << boost::io::str(boost::format(RESOLUTION_FORMAT_STR) % w % h % 32) << std::endl;
+    std::string current_resolution_string;
+    int current_resolution_index = -1;
+    Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
+    assert(render_system);
+    Ogre::ConfigOptionMap& current_renderer_options = render_system->getConfigOptions();
+    Ogre::ConfigOptionMap::iterator end_it = current_renderer_options.end();
+    for (Ogre::ConfigOptionMap::iterator it = current_renderer_options.begin(); it != end_it; ++it) {
+        if (it->first == "Video Mode") {
+            current_resolution_string = it->second.currentValue;
+            for (unsigned int i = 0; i < it->second.possibleValues.size(); ++i) {
+                resolutions.push_back(it->second.possibleValues[i]);
+                if (resolutions.back().substr(0, current_resolution_string.size()) == current_resolution_string)
+                    current_resolution_index = resolutions.size() - 1;
+                if (resolutions.back().find_first_of("@") == std::string::npos)
+                    resolutions.back() += " @ 32";
             }
         }
-    }
-    assert(fs::exists(resolution_file));
-    int current_resolution_index = -1;
-    std::string current_resolution_string = boost::io::str(boost::format(RESOLUTION_FORMAT_STR) % GetOptionsDB().Get<int>("app-width") % GetOptionsDB().Get<int>("app-height") % GetOptionsDB().Get<int>("color-depth"));
-    fs::ifstream ifs(resolution_file);
-    while (ifs) {
-        std::string line;
-        std::getline(ifs, line);
-        if (line != "") {
-            resolutions.push_back(line);
-            if (line == current_resolution_string)
-                current_resolution_index = resolutions.size() - 1;
-        }
-    }
+    } 
 
     // create controls
     GG::ListBox::Row* row = new GG::ListBox::Row();
@@ -610,7 +603,7 @@ void OptionsWnd::ResolutionOption()
     drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
     drop_list_text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop_list_text_control->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
-#endif
+
     CUISpin<int>* width_spin = IntOption("app-width", UserString("OPTIONS_APP_WIDTH"));
     CUISpin<int>* height_spin = IntOption("app-height", UserString("OPTIONS_APP_HEIGHT"));
     CUISpin<int>* color_depth_spin = IntOption("color-depth", UserString("OPTIONS_COLOR_DEPTH"));
@@ -621,22 +614,14 @@ void OptionsWnd::ResolutionOption()
     GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
     limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
 
-#ifdef FREEORION_WIN32
     GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
-#else
-    // HACK! These lines are only here to quiet "unused variable" warnings.
-    width_spin = 0;
-    height_spin = 0;
-    color_depth_spin = 0;
-    fullscreen_button = 0;
-#endif
 }
 
 void OptionsWnd::Init()
 {
     bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
 
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 2, LAYOUT_MARGIN, LAYOUT_MARGIN);
     layout->SetMinimumColumnWidth(0, m_done_button->Width() + LAYOUT_MARGIN);
@@ -801,25 +786,24 @@ void OptionsWnd::MusicClicked(bool checked)
     if (!checked)
     {
         GetOptionsDB().Set("music-off", true);
-        HumanClientApp::GetApp()->StopMusic();
+        Sound::GetSound().StopMusic();
     }
     else
     {
         GetOptionsDB().Set("music-off", false);
-        HumanClientApp::GetApp()->PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
+        Sound::GetSound().PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
     }
 }
 
 void OptionsWnd::MusicVolumeSlid(int pos, int low, int high)
 {
     GetOptionsDB().Set("music-volume", pos);
-    HumanClientApp::GetApp()->SetMusicVolume(pos);
+    Sound::GetSound().SetMusicVolume(pos);
 }
 
 void OptionsWnd::UISoundsVolumeSlid(int pos, int low, int high)
 {
     GetOptionsDB().Set("UI.sound.volume", pos);
-    HumanClientApp::GetApp()->SetUISoundsVolume(pos);
-    if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
-        HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+    Sound::GetSound().SetUISoundsVolume(pos);
+    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }

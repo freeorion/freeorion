@@ -12,6 +12,7 @@
 #include "../../UI/GalaxySetupWnd.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../UI/ServerConnectWnd.h"
+#include "../../UI/Sound.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
@@ -19,10 +20,10 @@
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
-#include "../../util/Version.h"
 #include "../../Empire/Empire.h"
 
 #include <GG/BrowseInfoWnd.h>
+#include <GG/Cursor.h>
 
 #include <log4cpp/Appender.hh>
 #include <log4cpp/Category.hh>
@@ -67,8 +68,6 @@ void SigHandler(int sig)
 
     ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary", true);
 
-    // Try SDL-shutdown
-    SDL_Quit();
     raise(sig);
 }
 #endif //ENABLE_CRASH_BACKTRACE
@@ -88,17 +87,24 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
 }
- 
-HumanClientApp::HumanClientApp() : 
+
+HumanClientApp::HumanClientApp(Ogre::Root* root,
+                               Ogre::RenderWindow* window,
+                               Ogre::SceneManager* scene_manager,
+                               Ogre::Camera* camera,
+                               Ogre::Viewport* viewport) : 
     ClientApp(), 
-    SDLGUI(GetOptionsDB().Get<int>("app-width"), 
-           GetOptionsDB().Get<int>("app-height"),
-           false, "freeorion"),
+    OgreGUI(window, "OISInput.cfg"),
     m_fsm(new HumanClientFSM(*this)),
     m_single_player_game(true),
     m_game_started(false),
     m_turns_since_autosave(0),
-    m_connected(false)
+    m_connected(false),
+    m_root(root),
+    m_window(window),
+    m_scene_manager(scene_manager),
+    m_camera(camera),
+    m_viewport(viewport)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -122,15 +128,44 @@ HumanClientApp::HumanClientApp() :
     Logger().setAdditivity(true);   // ...but allow the addition of others later
     Logger().setPriority(PriorityValue(GetOptionsDB().Get<std::string>("log-level")));
 
-
     boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
 
-    GUI::SetMinDragTime(0);
+    SetMinDragTime(0);
+    EnableMouseButtonDownRepeat(250, 15);
+
+    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
+
+    if (!(GetOptionsDB().Get<bool>("music-off")))
+        Sound::GetSound().PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
+
+    Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("music-volume"));
+    Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
+
+    EnableFPS();
+    UpdateFPSLimit();
+    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
+
+    boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
+        new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                     GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
+                                     GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
+    GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
+
+    boost::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
+    SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(6, 3))));
+    RenderCursor(true);
+
+    m_fsm->initiate();
 }
 
 HumanClientApp::~HumanClientApp()
-{ delete m_fsm; }
+{
+    if (Networking().Connected())
+        Networking().DisconnectFromServer();
+    m_server_process.RequestTermination();
+    delete m_fsm;
+}
 
 const std::string& HumanClientApp::SaveFileName() const
 { return m_save_filename; }
@@ -203,8 +238,6 @@ void HumanClientApp::NewSinglePlayerGame()
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
                 break;
-            } else {
-                SDL_PumpEvents();
             }
         }
 
@@ -256,8 +289,6 @@ void HumanClientApp::MulitplayerGame()
                         KillServer();
                     failed = true;
                     break;
-                } else {
-                    SDL_PumpEvents();
                 }
             }
         }
@@ -375,96 +406,9 @@ void HumanClientApp::StartTurn()
     m_fsm->process_event(TurnEnded());
 }
 
-void HumanClientApp::SDLInit()
-{
-    const SDL_VideoInfo* vid_info = 0;
-    Uint32 DoFullScreen = 0;
-
-    // Set Fullscreen if specified at command line or in config-file
-    DoFullScreen = GetOptionsDB().Get<bool>("fullscreen") ? SDL_FULLSCREEN : 0;
-
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE) < 0) {
-        Logger().errorStream() << "SDL initialization failed: " << SDL_GetError();
-        Exit(1);
-    }
-
-    SDL_WM_SetCaption(("FreeOrion " + FreeOrionVersionString()).c_str(), "FreeOrion");
-
-    vid_info = SDL_GetVideoInfo();
-
-    if (!vid_info) {
-        Logger().errorStream() << "Video info query failed: " << SDL_GetError();
-        Exit(1);
-    }
-
-    int bpp = boost::lexical_cast<int>(GetOptionsDB().Get<int>("color-depth"));
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    if (24 <= bpp) {
-        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-    } else { // assumes 16 bpp minimum
-        SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-        SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 6);
-        SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-    }
-
-    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, DoFullScreen | SDL_OPENGL) == 0) {
-        Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
-        Exit(1);
-    }
-
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
-    EnableMouseButtonDownRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL / 2);
-
-    Logger().debugStream() << "SDLInit() complete.";
-    GLInit();
-}
-
-void HumanClientApp::GLInit()
-{
-    double ratio = AppWidth() / (float)(AppHeight());
-
-    glEnable(GL_BLEND);
-    glClearColor(0, 0, 0, 0);
-    glViewport(0, 0, AppWidth(), AppHeight());
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(50.0, ratio, 0.0, 10.0);
-    gluLookAt(0.0, 0.0, 5.0, 
-              0.0, 0.0, 0.0, 
-              0.0, 1.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    SDL_GL_SwapBuffers();
-    Logger().debugStream() << "GLInit() complete.";
-}
-
-void HumanClientApp::Initialize()
-{
-    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
-
-    if (!(GetOptionsDB().Get<bool>("music-off")))
-        PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
-
-    SetMusicVolume(GetOptionsDB().Get<int>("music-volume"));
-    SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
-
-    EnableFPS();
-    UpdateFPSLimit();
-    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
-
-    boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
-                                     GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
-                                     GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
-    GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
-
-    m_fsm->initiate();
-}
-
 void HumanClientApp::HandleSystemEvents()
 {
-    SDLGUI::HandleSystemEvents();
+    OgreGUI::HandleSystemEvents();
     if (m_connected && !Networking().Connected()) {
         m_connected = false;
         // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
@@ -477,32 +421,6 @@ void HumanClientApp::HandleSystemEvents()
         Networking().GetMessage(msg);
         HandleMessage(msg);
     }
-}
-
-void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
-{
-    if (event.type == SDL_QUIT)
-        Exit(0);
-}
-
-void HumanClientApp::RenderBegin()
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGUI::RenderBegin()
-}
-
-void HumanClientApp::FinalCleanup()
-{
-    if (Networking().Connected()) {
-        Networking().DisconnectFromServer();
-    }
-    m_server_process.RequestTermination();
-}
-
-void HumanClientApp::SDLQuit()
-{
-    FinalCleanup();
-    SDL_Quit();
-    Logger().debugStream() << "SDLQuit() complete.";
 }
 
 void HumanClientApp::HandleMessage(Message& msg)
@@ -640,33 +558,10 @@ void HumanClientApp::UpdateFPSLimit()
     }
 }
 
-/* Default sound implementation, do nothing */
-void HumanClientApp::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
-{}
-
-void HumanClientApp::StopMusic()
-{}
-
-void HumanClientApp::PlaySound(const boost::filesystem::path& path)
-{}
-
-void HumanClientApp::FreeSound(const boost::filesystem::path& path)
-{}
-
-void HumanClientApp::FreeAllSounds()
-{}
-
-void HumanClientApp::SetMusicVolume(int vol)
-{}
-
-void HumanClientApp::SetUISoundsVolume(int vol)
-{}
-
 void HumanClientApp::Exit(int code)
 {
     if (code)
         Logger().debugStream() << "Initiating Exit (code " << code << " - error termination)";
-    SDLQuit();
     if (code)
         exit(code);
     else

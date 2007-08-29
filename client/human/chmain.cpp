@@ -1,7 +1,16 @@
-#include "HumanClientAppSoundOpenAL.h"
+#include "HumanClientApp.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
+#include "../../util/Version.h"
 #include "../../util/XMLDoc.h"
+
+#include <OgreCamera.h>
+#include <OgreLogManager.h>
+#include <OgreRenderSystem.h>
+#include <OgreRenderWindow.h>
+#include <OgreRoot.h>
+#include <OgreSceneManager.h>
+#include <OgreViewport.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
@@ -12,7 +21,12 @@
 #include <iostream>
 
 
-extern "C" // use C-linkage, as required by SDL
+#ifdef FREEORION_WIN32
+#  define OGRE_INPUT_PLUGIN_NAME "GiGiOgrePlugin_OIS.dll"
+#else
+#  define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
+#endif
+
 int main(int argc, char* argv[])
 {
     InitDirs();
@@ -60,10 +74,70 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    HumanClientAppSoundOpenAL app;
+    Ogre::LogManager* log_manager = 0;
+    Ogre::Root* root = 0;
 
     try {
-        app(); // run app (intialization and main process loop)
+        using namespace Ogre;
+
+        log_manager = new LogManager();
+        log_manager->createLog("ogre_log.txt", true, false);
+
+        root = new Root("ogre_plugins.cfg");
+
+        RenderSystemList* renderers_list = root->getAvailableRenderers();
+        bool failed = true;
+        RenderSystem* selected_render_system = 0;
+        for (unsigned int i = 0; i < renderers_list->size(); ++i) {
+            selected_render_system = renderers_list->at(i);
+            String name = selected_render_system->getName();
+            if (name.compare("OpenGL Rendering Subsystem") == 0) {
+                failed = false;
+                break;
+            }
+        }
+        if (failed)
+            throw std::runtime_error("Failed to find an Ogre GL render system.");
+
+        root->setRenderSystem(selected_render_system);
+
+        selected_render_system->setConfigOption("Full Screen", GetOptionsDB().Get<bool>("fullscreen") ? "Yes" : "No");
+        std::string video_mode_str =
+            boost::io::str(boost::format("%1% x %2% @ %3%-bit colour") %
+                           GetOptionsDB().Get<int>("app-width") %
+                           GetOptionsDB().Get<int>("app-height") %
+                           GetOptionsDB().Get<int>("color-depth"));
+        selected_render_system->setConfigOption("Video Mode", video_mode_str);
+
+        // retrieve the config option map
+        ConfigOptionMap config_options = selected_render_system->getConfigOptions();
+        ConfigOptionMap::const_iterator end_it = config_options.end();
+        for (ConfigOptionMap::const_iterator it = config_options.begin(); it != end_it; ++it) {
+            String option_name = it->first;
+            String current_value = it->second.currentValue;
+            StringVector possible_values = it->second.possibleValues;
+            for (unsigned int i = 0; i < possible_values.size(); ++i) {
+                String value = possible_values.at(i);
+            }
+        }
+
+        RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());
+        SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager");
+
+        Camera* camera = scene_manager->createCamera("Camera");
+        // Position it at 500 in Z direction
+        camera->setPosition(Vector3(0, 0, 500));
+        // Look back along -Z
+        camera->lookAt(Vector3(0, 0, -300));
+        camera->setNearClipDistance(5);
+
+        Viewport* viewport = window->addViewport(camera);
+        viewport->setBackgroundColour(ColourValue(0, 0, 0));
+        camera->setAspectRatio(static_cast<double>(viewport->getActualWidth()) / viewport->getActualHeight());
+
+        HumanClientApp app(root, window, scene_manager, camera, viewport);
+        root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
+        app();
     } catch (const HumanClientApp::CleanQuit& e) {
         // do nothing
     } catch (const std::invalid_argument& e) {
@@ -75,9 +149,14 @@ int main(int argc, char* argv[])
     } catch (const std::exception& e) {
         Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
     }
+
+    if (root) {
+        root->unloadPlugin(OGRE_INPUT_PLUGIN_NAME);
+        delete root;
+    }
+
+    if (log_manager)
+        delete log_manager;
+
     return 0;
-
 }
-
-
-

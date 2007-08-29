@@ -39,15 +39,15 @@ options.Add('with_boost_libdir', 'Specify exact library dir for boost library')
 options.Add('boost_lib_suffix', 'Specify the suffix placed on user-compiled Boost libraries (e.g. "-vc71-mt-gd-1_31")')
 options.Add('boost_signals_namespace',
             'Specify alternate namespace used for boost::signals (only needed if you changed it using the BOOST_SIGNALS_NAMESPACE define when you built boost)')
-options.Add('with_sdl', 'Root directory of SDL installation')
-options.Add('with_sdl_include', 'Specify exact include dir for SDL headers')
-options.Add('with_sdl_libdir', 'Specify exact library dir for SDL library')
 options.Add('with_ft', 'Root directory of FreeType2 installation')
 options.Add('with_ft_include', 'Specify exact include dir for FreeType2 headers')
 options.Add('with_ft_libdir', 'Specify exact library dir for FreeType2 library')
 options.Add('with_devil', 'Root directory of DevIL installation')
 options.Add('with_devil_include', 'Specify exact include dir for DevIL headers')
 options.Add('with_devil_libdir', 'Specify exact library dir for DevIL library')
+options.Add('with_ogre', 'Root directory of Ogre installation')
+options.Add('with_ogre_include', 'Specify exact include dir for Ogre headers')
+options.Add('with_ogre_libdir', 'Specify exact library dir for Ogre library')
 options.Add('with_log4cpp', 'Root directory of Log4cpp installation')
 options.Add('with_log4cpp_include', 'Specify exact include dir for Log4cpp headers')
 options.Add('with_log4cpp_libdir', 'Specify exact library dir for Log4cpp library')
@@ -167,16 +167,17 @@ if str(Platform()) == 'win32':
 ##################################################
 if not env.GetOption('clean'):
     if not preconfigured:
+        if os.environ.has_key('PKG_CONFIG_PATH'):
+            env['ENV']['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
+
         conf = env.Configure(custom_tests = {'CheckVersionHeader' : CheckVersionHeader,
                                              'CheckPkgConfig' : CheckPkgConfig,
                                              'CheckPkg' : CheckPkg,
                                              'CheckBoost' : CheckBoost,
                                              'CheckBoostLib' : CheckBoostLib,
-                                             'CheckSDL' : CheckSDL,
                                              'CheckLibLTDL' : CheckLibLTDL,
                                              'CheckConfigSuccess' : CheckConfigSuccess})
 
-        
         if str(Platform()) == 'posix':
             print 'Configuring for POSIX system...'
         elif str(Platform()) == 'win32':
@@ -217,8 +218,8 @@ if not env.GetOption('clean'):
 
         found_gg_pkg_config = False
         if pkg_config:
-            if conf.CheckPkg('GiGiSDL', gigi_version):
-                env.ParseConfig('pkg-config --cflags --libs GiGiSDL')
+            if conf.CheckPkg('GiGiOgre', gigi_version):
+                env.ParseConfig('pkg-config --cflags --libs GiGiOgre')
                 found_gg_pkg_config = True
 
         freeorion_boost_libs = [
@@ -272,11 +273,6 @@ if not env.GetOption('clean'):
                        not conf.CheckLib('GLU', 'gluLookAt'):
                     Exit(1)
 
-            # SDL
-            sdl_config = WhereIs('sdl-config')
-            if not conf.CheckSDL(options, conf, sdl_config, not ms_linker):
-                Exit(1)
-
             # FreeType2
             AppendPackagePaths('ft', env)
             found_it_with_pkg_config = False
@@ -304,7 +300,6 @@ if not env.GetOption('clean'):
             if not conf.CheckCHeader('IL/il.h') or \
                    not conf.CheckCHeader('IL/ilu.h') or \
                    not conf.CheckCHeader('IL/ilut.h'):
-                print "Note: since SDL support is disabled, the SDL headers are not in the compiler's search path during tests.  If DevIL was built with SDL support, this may cause the search for ilut.h to fail."
                 Exit(1)
             if str(Platform()) != 'win32' and (not conf.CheckLib('IL', 'ilInit') or \
                                                not conf.CheckLib('ILU', 'iluInit') or \
@@ -331,6 +326,26 @@ int main() {
                 if not conf.CheckLibLTDL():
                     print 'Check libltdl/config.log to see what went wrong.'
                     Exit(1)
+
+            # Ogre
+            AppendPackagePaths('ogre', env)
+            found_it_with_pkg_config = False
+            if pkg_config:
+                if conf.CheckPkg('OGRE', ogre_version):
+                    env.ParseConfig('pkg-config --cflags --libs OGRE')
+                    found_it_with_pkg_config = True
+            if not found_it_with_pkg_config:
+                version_regex = re.compile(r'OGRE_VERSION_MAJOR\s*(\d+).*OGRE_VERSION_MINOR\s*(\d+).*OGRE_VERSION_PATCH\s*(\d+)', re.DOTALL)
+                if not conf.CheckVersionHeader('Ogre', 'OgrePrerequisites.h', version_regex, ogre_version, True):
+                    Exit(1)
+            if not conf.CheckCXXHeader('Ogre.h'):
+                Exit(1)
+            if str(Platform()) != 'win32':
+                if not conf.CheckLib('OgreMain', 'Ogre::Root', '#include <Ogre.h>', 'C++'):
+                    Exit(1)
+            else:
+                env.Append(LIBS = ['OgreMain'])
+
 
         ##########################
         # End of GG requirements #
@@ -524,15 +539,13 @@ if str(Platform()) == 'win32':
         'comdlg32',
         'gdi32',
         'GiGi',
-        'GiGiSDL',
+        'GiGiOgre',
         'glu32',
         'jpeg',
         'kernel32',
         'log4cpp',
         'opengl32',
         'png',
-        'SDL',
-        'SDLmain',
         'user32',
         'winspool',
         'wsock32',
@@ -559,11 +572,16 @@ version_cpp_in.close()
 # Boost.Asio in the network directory.
 env.AppendUnique(CPPPATH = ['network'])
 
-# On Win32, assume we're using the SDK, and copy the installed GG DLLs to the FreeOrion directory.
+# On Win32, assume we're using the SDK, and copy the installed GG DLLs (and any other key files) to the FreeOrion directory.
 if str(Platform()) == 'win32':
     import shutil
     shutil.copy(os.path.join('..', 'lib', 'GiGi.dll'), '.')
-    shutil.copy(os.path.join('..', 'lib', 'GiGiSDL.dll'), '.')
+    shutil.copy(os.path.join('..', 'lib', 'GiGiOgre.dll'), '.')
+    shutil.copy(os.path.join('..', 'lib', 'GiGiOgrePlugin_OIS.dll'), '.')
+    shutil.copy(os.path.join('GG', 'src', 'Ogre', 'Plugins', 'OISInput.cfg'), '.')
+
+# create Ogre plugin config file
+CreateOgrePluginsFile(['ogre_plugins.cfg'], ['ogre_plugins.cfg.in'], env)
 
 Export('env')
 

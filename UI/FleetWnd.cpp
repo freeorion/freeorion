@@ -13,6 +13,7 @@
 #include "../universe/System.h"
 #include "../network/Message.h"
 #include "SidePanel.h"
+#include "Sound.h"
 #include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
@@ -912,7 +913,7 @@ FleetDetailWnd::FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, GG::F
     CUIWnd("", x, y, 1, 1, flags),
     m_fleet_panel(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     m_fleet_panel = new FleetDetailPanel(fleet, read_only);
     Resize(m_fleet_panel->Size() + (Size() - ClientSize()) + GG::Pt(14, 14));
     AttachChild(m_fleet_panel);
@@ -971,7 +972,7 @@ FleetWnd::FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet,
             m_system_id = UniverseObject::INVALID_OBJECT_ID;
     }
 
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     m_fleets_lb = new FleetsListBox(0, 0, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, read_only);
     if (!m_read_only) {

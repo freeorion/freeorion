@@ -5,6 +5,7 @@
 #include "IntroScreen.h"
 #include "MapWnd.h"
 #include "SidePanel.h"
+#include "Sound.h"
 #include "../util/AppInterface.h"
 #include "../util/Random.h"
 #include "../universe/Building.h"
@@ -496,8 +497,8 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 {
     GG::ThreeButtonDlg dlg(320,200,message,GG::GUI::GetGUI()->GetFont(Font(),Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
-    if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
-        HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");
+    if (play_alert_sound)
+        Sound::GetSound().PlaySound(SoundDir() / "alert.wav", true);
     dlg.Run();
 }
 
@@ -540,19 +541,6 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
         rand_int.reset(new SmallIntDistType(SmallIntDist(0, textures.size() - 1)));
     }
     return prefixed_textures_it->second;
-}
-
-TempUISoundDisabler::TempUISoundDisabler() :
-    m_was_enabled(GetOptionsDB().Get<bool>("UI.sound.enabled"))
-{
-    if (m_was_enabled)
-        GetOptionsDB().Set("UI.sound.enabled", false);
-}
-
-TempUISoundDisabler::~TempUISoundDisabler()
-{
-    if (m_was_enabled)
-        GetOptionsDB().Set("UI.sound.enabled", true);
 }
 
 StreamableColor::StreamableColor() :

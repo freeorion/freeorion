@@ -1,6 +1,6 @@
-#include "HumanClientAppSoundOpenAL.h"
-#include "../../util/AppInterface.h"
-#include "../../util/OptionsDB.h"
+#include "Sound.h"
+#include "../util/AppInterface.h"
+#include "../util/OptionsDB.h"
 
 #include <AL/alc.h>
 #include <AL/alut.h>
@@ -50,63 +50,42 @@ namespace {
 #endif
 }
 
-HumanClientAppSoundOpenAL::HumanClientAppSoundOpenAL() :
-    HumanClientApp()
+////////////////////////////////////////////////////////////
+// TempUISoundDisabler
+////////////////////////////////////////////////////////////
+Sound::TempUISoundDisabler::TempUISoundDisabler()
+{ Sound::GetSound().m_UI_sounds_temporarily_disabled.push(true); }
+
+Sound::TempUISoundDisabler::~TempUISoundDisabler()
+{ Sound::GetSound().m_UI_sounds_temporarily_disabled.pop(); }
+
+////////////////////////////////////////////////////////////
+// Sound
+////////////////////////////////////////////////////////////
+Sound& Sound::GetSound()
+{
+    static Sound sound;
+    return sound;
+}
+
+Sound::Sound() :
+    m_sources(),
+    m_music_loops(),
+    m_music_name(),
+    m_buffers(),
+    m_music_buffers(),
+    m_ogg_file(),
+    m_ogg_format(),
+    m_ogg_freq(),
+    m_UI_sounds_temporarily_disabled()
 {
     InitOpenAL(NUM_SOURCES, m_sources, m_music_buffers);
 }
 
-HumanClientAppSoundOpenAL::~HumanClientAppSoundOpenAL()
-{
-    alutExit();
-}
+Sound::~Sound()
+{ alutExit(); }
 
-int HumanClientAppSoundOpenAL::RefillBuffer(ALuint *bufferName)
-{
-    ALenum m_openal_error;
-    int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
-    int bitStream,bytes,bytes_new;
-    char array[BUFFER_SIZE];
-    bytes = 0;
-   
-    if (alcGetCurrentContext() != NULL)
-    {
-        /* First, let's fill up the buffer. We need the loop, as ov_read treats (BUFFER_SIZE - bytes) to read as a suggestion only */
-        do
-        {
-            bytes_new = ov_read(&m_ogg_file, &array[bytes],(BUFFER_SIZE - bytes), endian, 2, 1, &bitStream);
-            bytes += bytes_new;
-            if (bytes_new == 0)
-            {
-                if (m_music_loops != 0) // enter here if we need to play the same file again
-                {
-                    if (m_music_loops > 0)
-                        m_music_loops--;
-                    ov_time_seek(&m_ogg_file,0.0); // rewind to beginning
-                }
-                else
-                    break;
-            }
-        } while ((BUFFER_SIZE - bytes) > 4096);
-        if (bytes > 0)
-        {
-            alBufferData(bufferName[0], m_ogg_format, array, static_cast < ALsizei > (bytes),m_ogg_freq);
-            m_openal_error = alGetError();
-            if (m_openal_error != AL_NONE)
-                Logger().errorStream() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
-        }
-        else
-        {
-            m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
-            ov_clear(&m_ogg_file); // the app might think we still have something to play.
-            return 1;
-        }
-        return 0;
-    }
-    return 1;
-}
-
-void HumanClientAppSoundOpenAL::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
+void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {
     ALenum m_openal_error;
     std::string filename = path.native_file_string();
@@ -177,7 +156,7 @@ void HumanClientAppSoundOpenAL::PlayMusic(const boost::filesystem::path& path, i
         Logger().errorStream() << "PlayMusic: OpenAL ERROR: " << alGetString(m_openal_error);
 }
 
-void HumanClientAppSoundOpenAL::StopMusic()
+void Sound::StopMusic()
 {
     if (alcGetCurrentContext() != NULL)
     {
@@ -191,8 +170,11 @@ void HumanClientAppSoundOpenAL::StopMusic()
     }
 }
 
-void HumanClientAppSoundOpenAL::PlaySound(const boost::filesystem::path& path)
+void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
 {
+    if (is_ui_sound && (UISoundsTemporarilyDisabled() || !GetOptionsDB().Get<bool>("UI.sound.enabled")))
+        return;
+
     std::string filename = path.native_file_string();
     ALuint m_current_buffer;
     ALenum m_source_state;
@@ -242,7 +224,7 @@ void HumanClientAppSoundOpenAL::PlaySound(const boost::filesystem::path& path)
     }
 }
 
-void HumanClientAppSoundOpenAL::FreeSound(const boost::filesystem::path& path)
+void Sound::FreeSound(const boost::filesystem::path& path)
 {
     ALenum m_openal_error;
     std::string filename = path.native_file_string();
@@ -259,7 +241,7 @@ void HumanClientAppSoundOpenAL::FreeSound(const boost::filesystem::path& path)
     }
 }
 
-void HumanClientAppSoundOpenAL::FreeAllSounds()
+void Sound::FreeAllSounds()
 {
     ALenum m_openal_error;
    
@@ -274,7 +256,7 @@ void HumanClientAppSoundOpenAL::FreeAllSounds()
     }
 }
 
-void HumanClientAppSoundOpenAL::SetMusicVolume(int vol)
+void Sound::SetMusicVolume(int vol)
 {
     ALenum m_openal_error;
    
@@ -291,7 +273,7 @@ void HumanClientAppSoundOpenAL::SetMusicVolume(int vol)
     }
 }
 
-void HumanClientAppSoundOpenAL::SetUISoundsVolume(int vol)
+void Sound::SetUISoundsVolume(int vol)
 {
     ALenum m_openal_error;
    
@@ -309,7 +291,7 @@ void HumanClientAppSoundOpenAL::SetUISoundsVolume(int vol)
     }
 }
 
-void HumanClientAppSoundOpenAL::RenderBegin()
+void Sound::DoFrame()
 {
     ALint    state;
     int      num_buffers_processed;
@@ -330,5 +312,52 @@ void HumanClientAppSoundOpenAL::RenderBegin()
         if (state == AL_STOPPED)  /// this may happen if the source plays all its buffers before we manage to refill them
             alSourcePlay(m_sources[0]);
     }
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // this is the only line in SDLGUI::RenderBegin()
 } 
+
+bool Sound::UISoundsTemporarilyDisabled() const
+{ return !m_UI_sounds_temporarily_disabled.empty(); }
+
+int Sound::RefillBuffer(ALuint *bufferName)
+{
+    ALenum m_openal_error;
+    int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
+    int bitStream,bytes,bytes_new;
+    char array[BUFFER_SIZE];
+    bytes = 0;
+   
+    if (alcGetCurrentContext() != NULL)
+    {
+        /* First, let's fill up the buffer. We need the loop, as ov_read treats (BUFFER_SIZE - bytes) to read as a suggestion only */
+        do
+        {
+            bytes_new = ov_read(&m_ogg_file, &array[bytes],(BUFFER_SIZE - bytes), endian, 2, 1, &bitStream);
+            bytes += bytes_new;
+            if (bytes_new == 0)
+            {
+                if (m_music_loops != 0) // enter here if we need to play the same file again
+                {
+                    if (m_music_loops > 0)
+                        m_music_loops--;
+                    ov_time_seek(&m_ogg_file,0.0); // rewind to beginning
+                }
+                else
+                    break;
+            }
+        } while ((BUFFER_SIZE - bytes) > 4096);
+        if (bytes > 0)
+        {
+            alBufferData(bufferName[0], m_ogg_format, array, static_cast < ALsizei > (bytes),m_ogg_freq);
+            m_openal_error = alGetError();
+            if (m_openal_error != AL_NONE)
+                Logger().errorStream() << "RefillBuffer: OpenAL ERROR: " << alGetString(m_openal_error);
+        }
+        else
+        {
+            m_music_name.clear();  // m_music_name.clear() must always be called before ov_clear. Otherwise
+            ov_clear(&m_ogg_file); // the app might think we still have something to play.
+            return 1;
+        }
+        return 0;
+    }
+    return 1;
+}
