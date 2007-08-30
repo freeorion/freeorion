@@ -23,7 +23,16 @@ int main(int argc, char* argv[])
         GetOptionsDB().AddFlag('g', "generate-config-xml", "OPTIONS_DB_GENERATE_CONFIG_XML");
         GetOptionsDB().AddFlag('m', "music-off", "OPTIONS_DB_MUSIC_OFF");
         GetOptionsDB().Add<std::string>("bg-music", "OPTIONS_DB_BG_MUSIC", "artificial_intelligence_v3.ogg");
-        GetOptionsDB().AddFlag('f', "fullscreen", "OPTIONS_DB_FULLSCREEN", false);
+
+        // The false/true parameter below controls whether this option is stored in the XML config file.  On Win32 it is
+        // not, because the installed version of FO is run with the command-line flag added in as appropriate.
+        GetOptionsDB().AddFlag('f', "fullscreen", "OPTIONS_DB_FULLSCREEN",
+#ifdef FREEORION_WIN32
+                               false
+#else
+                               true
+#endif
+            );
         XMLDoc doc;
         boost::filesystem::ifstream ifs(GetConfigPath());
         doc.ReadDoc(ifs);
