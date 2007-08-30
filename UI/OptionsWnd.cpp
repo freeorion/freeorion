@@ -189,7 +189,8 @@ namespace {
                     m_width_spin->Disable(true);
                     m_height_spin->Disable(true);
                     m_color_depth_spin->Disable(true);
-                    m_fullscreen_button->Disable(true);
+                    if (m_fullscreen_button)
+                        m_fullscreen_button->Disable(true);
                 }
             }
         void operator()(int index)
@@ -200,11 +201,13 @@ namespace {
                     m_width_spin->Disable(false);
                     m_height_spin->Disable(false);
                     m_color_depth_spin->Disable(false);
-                    m_fullscreen_button->Disable(false);
+                    if (m_fullscreen_button)
+                        m_fullscreen_button->Disable(false);
                     GetOptionsDB().Set<int>("app-width", m_width_spin->Value());
                     GetOptionsDB().Set<int>("app-height", m_height_spin->Value());
                     GetOptionsDB().Set<int>("color-depth", m_color_depth_spin->Value());
-                    GetOptionsDB().Set<bool>("fullscreen", m_fullscreen_button->Checked());
+                    if (m_fullscreen_button)
+                        GetOptionsDB().Set<bool>("fullscreen", m_fullscreen_button->Checked());
                 } else {
                     int w, h, bpp;
                     using namespace boost::spirit;
@@ -213,11 +216,13 @@ namespace {
                     GetOptionsDB().Set<int>("app-width", w);
                     GetOptionsDB().Set<int>("app-height", h);
                     GetOptionsDB().Set<int>("color-depth", bpp);
-                    GetOptionsDB().Set<bool>("fullscreen", true);
+                    if (m_fullscreen_button)
+                        GetOptionsDB().Set<bool>("fullscreen", true);
                     m_width_spin->Disable(true);
                     m_height_spin->Disable(true);
                     m_color_depth_spin->Disable(true);
-                    m_fullscreen_button->Disable(true);
+                    if (m_fullscreen_button)
+                        m_fullscreen_button->Disable(true);
                 }
             }
         CUIDropDownList* m_drop_list;
@@ -608,7 +613,10 @@ void OptionsWnd::ResolutionOption()
     CUISpin<int>* height_spin = IntOption("app-height", UserString("OPTIONS_APP_HEIGHT"));
     CUISpin<int>* color_depth_spin = IntOption("color-depth", UserString("OPTIONS_COLOR_DEPTH"));
     BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
-    CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
+    CUIStateButton* fullscreen_button = 0;
+#ifndef FREEORION_WIN32
+    fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
+#endif
     CUIStateButton* limit_FPS_button = BoolOption("limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     CUISpin<double>* max_fps_spin = DoubleOption("max-fps", UserString("OPTIONS_MAX_FPS"));
     GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
