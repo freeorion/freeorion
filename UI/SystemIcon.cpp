@@ -423,6 +423,10 @@ bool SystemIcon::InWindow(const GG::Pt& pt) const
         if (it->second->InWindow(pt))
             return true;
     }
+    for (std::map<int, FleetButton*>::const_iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
+        if (it->second->InWindow(pt))
+            return true;
+    }
 
     return Wnd::InWindow(pt);
 }
