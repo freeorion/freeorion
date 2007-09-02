@@ -134,7 +134,7 @@ double PopCenter::ProjectedCurrentMeter(MeterType type) const
         if (obj)
             return obj->ProjectedCurrentMeter(type);
         else
-            throw std::runtime_error("PopCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
+            throw std::runtime_error("PopCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
     }
 }
 
@@ -150,7 +150,7 @@ double PopCenter::MeterPoints(MeterType type) const
         if (obj)
             return obj->MeterPoints(type);
         else
-            throw std::runtime_error("PopCenter::MeterPoints couldn't convert this pointer to Universe*");
+            throw std::runtime_error("PopCenter::MeterPoints couldn't convert this pointer to UniverseObject*");
     }
 }
 
@@ -166,7 +166,7 @@ double PopCenter::ProjectedMeterPoints(MeterType type) const
         if (obj)
             return obj->ProjectedMeterPoints(type);
         else
-            throw std::runtime_error("PopCenter::ProjectedMeterPoints couldn't convert this pointer to Universe*");
+            throw std::runtime_error("PopCenter::ProjectedMeterPoints couldn't convert this pointer to UniverseObject*");
     }
 }
 

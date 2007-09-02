@@ -127,7 +127,7 @@ double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
         if (obj)
             return obj->ProjectedCurrentMeter(type);
         else
-            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
+            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
     }
 }
 
@@ -149,7 +149,7 @@ double ResourceCenter::MeterPoints(MeterType type) const
         if (obj)
             return obj->MeterPoints(type);
         else
-            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
+            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
     }
 }
 
@@ -172,7 +172,7 @@ double ResourceCenter::ProjectedMeterPoints(MeterType type) const
         if (obj)
             return obj->ProjectedMeterPoints(type);
         else
-            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to Universe*");
+            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
     }
 }
 
