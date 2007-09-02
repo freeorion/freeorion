@@ -72,9 +72,9 @@ private:
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population and health
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
     
-    GG::Button*         m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    static std::map<int, bool> s_expanded_map;  ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
+    static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 
     static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
 };
@@ -266,7 +266,7 @@ private:
     std::vector<MeterType> m_meter_types;
     std::vector<const UniverseObject*> m_obj_vec;
 
-    static const int EDGE_PAD = 4;
+    static const int EDGE_PAD = 6;
     static const int ICON_SPACING = 12;
     static const int ICON_WIDTH = 24;
 };
