@@ -43,12 +43,12 @@ namespace {
 }
 
 PopCenter::PopCenter(int race) :
-    m_growth(0.0), m_race(race), m_available_food(0.0)
+    m_race(race), m_available_food(0.0)
 {
 }
 
 PopCenter::PopCenter() :
-    m_growth(0.0), m_race(-1), m_available_food(0.0)
+    m_race(-1), m_available_food(0.0)
 {
 }
    
@@ -207,7 +207,6 @@ void PopCenter::Reset(double max_pop_mod, double max_health_mod)
 {
     GetMeter(METER_POPULATION)->Set(0.0, max_pop_mod);
     GetMeter(METER_HEALTH)->Set(max_health_mod, max_health_mod);
-    m_growth = 0.0;
     m_race = -1;
     m_available_food = 0.0;
 }

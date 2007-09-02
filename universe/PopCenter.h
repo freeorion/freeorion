@@ -74,7 +74,6 @@ private:
     double  FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
     double  FutureHealthGrowth() const; ///< predicts by which amount the health meter will grow next turn
 
-    double  m_growth;
     int     m_race; ///< the id of the race that occupies this planet
     double  m_available_food;
 
