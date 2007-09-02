@@ -636,6 +636,9 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
 {
     std::string text = "";
 
+    // minimum digits is 2.  Less can't always be displayed with powers of 1000 base
+    digits = std::max(digits, 2);
+
     // default result for sentinel value
     if (val == UNKNOWN_UI_DISPLAY_VALUE)
         return UserString("UNKNOWN_VALUE_SYMBOL");
@@ -643,13 +646,26 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     double mag = std::abs(val);
 
     // integerize?
-    if (integerize)
-        mag = floor(mag);
+    if (integerize) {
+        mag = floor(mag + 0.499); // round magnitude to nearest integer (with slight down bias)
+        if (mag == 0.0) return "0";
+    }
+
+    // early termination if magnitude is 0
+    if (mag == 0.0) {
+        std::string format;
+        format += "%1." + boost::lexical_cast<std::string>(digits - 1) + "f";
+        text += (boost::format(format) % mag).str();
+        return text;
+    }
 
     // prepend signs if neccessary
     int effectiveSign = EffectiveSign(val, integerize);
-    if (effectiveSign == -1) text += "-";
-    else if (showsign) text += "+";
+    if (effectiveSign == -1) {
+        text += "-";
+    } else {
+        if (showsign) text += "+";
+    }
 
     if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
     
@@ -658,15 +674,13 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
         text += boost::lexical_cast<std::string>(mag);
         return text;
     }
-    // minimum digits is 2.  Less can't always be displayed with powers of 1000 base
-    digits = std::max(digits, 2);
 
     // if value is effectively 0, avoid unnecessary later processing
     if (effectiveSign == 0) {
         if (integerize) {
-            text += "0";
+            text = "0";
         } else {
-            text += "0.0";
+            text = "0.0";
             for (int n = 2; n < digits; ++n) text += "0";  // fill in 0's to required number of digits
         }
         return text;
@@ -678,12 +692,12 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     // power of 10 of lowest digit to be included in number (limited by digits)
     int LDPow10 = pow10 - digits + 1; // = 1 for 234.4 and digits = 2 (10's)
 
-    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000
+    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000.  Can be 0, 1 or 2
     int LDDANLP1000;
     if (LDPow10 >= 0)
-        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.4);
+        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.#)
     else
-        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##);
+        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##)   (+3 ensure positive result)
 
     // Lowest Digit's Next Lower Power of 1000
     int LDNLP1000 = LDPow10 - LDDANLP1000;
@@ -700,7 +714,7 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     if (LDDANLP1000 == 0)
         unitPow10 = LDNLP1000;
     else
-        unitPow10 = LDNHP1000;        
+        unitPow10 = LDNHP1000;  
 
     if (integerize && unitPow10 < 0) unitPow10 = 0;
     if (pow10 < unitPow10) digitCor = -1;   // if value is less than the base unit, there will be a leading 0 using up one digit
@@ -723,7 +737,7 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     
     std::string format;
     format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." + 
-              boost::lexical_cast<std::string>(fractionDigits) + "f";
+                    boost::lexical_cast<std::string>(fractionDigits) + "f";
     text += (boost::format(format) % mag).str();
 
     // append base scale SI prefix (as postfix)
