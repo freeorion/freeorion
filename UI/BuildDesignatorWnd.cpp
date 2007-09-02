@@ -1039,7 +1039,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
         // this code assumes that the build site is a planet
         int system = build_location->SystemID();
         MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
-        map->CenterOnSystem(system);
+        map->CenterOnObject(system);
         if (m_side_panel->SystemID() != system)
             SystemSelectedSignal(system);
         m_side_panel->SelectPlanet(queue[queue_idx].location);

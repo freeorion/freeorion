@@ -86,6 +86,90 @@ const std::list<System*>& Fleet::TravelRoute() const
     return m_travel_route;
 }
 
+std::list<MovePathNode> Fleet::MovePath() const
+{
+    return MovePath(TravelRoute());
+}
+
+std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
+{
+    std::list<MovePathNode> retval = std::list<MovePathNode>();
+
+    if (route.empty()) return retval;                                       // nowhere to go => empty path
+    if (route.size() == 2 && route.front() == route.back()) return retval;  // nowhere to go => empty path
+
+    MovePathNode cur_pos(this->X(), this->Y(), true, 0);    // initialize to initial position of fleet.
+
+    int running_eta = 1;    // turns to each node
+    double this_turn_travel_dist_left = this->Speed();
+    
+    // simulate moving fleet to each stop along path in sequence, remembering nodes at each stop and 
+    // each time a turn's travel distance runs out
+    for(std::list<System*>::const_iterator next_sys_it = route.begin(); next_sys_it != route.end(); ++next_sys_it) {
+
+        const System* next_sys = *next_sys_it;
+
+        if (GetSystem() && GetSystem() == next_sys) continue;   // don't add system fleet starts in to the path
+
+
+        // get direction and distance to next system
+        double x_dist = next_sys->X() - cur_pos.x;
+        double y_dist = next_sys->Y() - cur_pos.y;
+        double next_sys_dist = std::sqrt(x_dist * x_dist + y_dist * y_dist);
+        double unit_vec_x = x_dist / next_sys_dist;
+        double unit_vec_y = y_dist / next_sys_dist;
+        
+        
+        // take turn-travel-distance steps until next system is reached
+        while (next_sys_dist > 1.0e-5) {   // epsilon taken from Fleet::MovementPhase()
+
+            if (next_sys_dist > this_turn_travel_dist_left) {
+                // system is further away than the fleet can travel this turn -> take the rest of this turn's movement
+
+                // set current position to position after this turn's movement
+                double step_vec_x = unit_vec_x * this_turn_travel_dist_left;
+                double step_vec_y = unit_vec_y * this_turn_travel_dist_left;
+                cur_pos.x += step_vec_x;
+                cur_pos.y += step_vec_y;
+                cur_pos.turn_end = true;    // new position is at the end of a turn's movement
+                cur_pos.eta = running_eta;
+
+                // add new node to list
+                retval.push_back(cur_pos);
+
+                // update distance to next system to account for this turn's movement
+                next_sys_dist -= this_turn_travel_dist_left;
+
+                // next turn, can move a full turn's movement
+                this_turn_travel_dist_left = this->Speed();
+
+                ++running_eta;
+
+            } else {
+                // system can be reached this turn
+
+                // set current position to system's position
+                cur_pos.x = next_sys->X();
+                cur_pos.y = next_sys->Y();
+                cur_pos.turn_end = false;
+                cur_pos.eta = running_eta;
+
+                // add new node to list
+                retval.push_back(cur_pos);
+
+                // update distance that can still be travelled this turn
+                this_turn_travel_dist_left -= next_sys_dist;
+
+                // have arrived at system ensure inner loop ends and next system is fetched
+                next_sys_dist = 0.0;
+
+                // TO DO: Account for fuel use.  If fleet has insufficient fuel, it can't move towards the next system
+            }
+        }
+    }
+    return retval;
+}
+
 std::pair<int, int> Fleet::ETA() const
 {
     std::pair<int, int> retval;

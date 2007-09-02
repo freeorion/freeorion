@@ -64,7 +64,7 @@ void OwnerColoredSystemName::Render()
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
-SystemIcon::SystemIcon(int id, double zoom) :
+SystemIcon::SystemIcon(int id) :
     GG::Control(0, 0, 1, 1, GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
     m_disc_graphic(0),
@@ -74,6 +74,23 @@ SystemIcon::SystemIcon(int id, double zoom) :
     m_selected(false),
     m_name(0)
 {
+    Init();
+}
+
+SystemIcon::SystemIcon(int x, int y, int w, int id) :
+    GG::Control(x, y, w, w, GG::CLICKABLE),
+    m_system(*GetUniverse().Object<const System>(id)),
+    m_disc_graphic(0),
+    m_halo_graphic(0),
+    m_selection_indicator(0),
+    m_mouseover_indicator(0),
+    m_selected(false),
+    m_name(0)
+{
+    Init();
+}
+
+void SystemIcon::Init() {
     Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
 
     SetText(m_system.Name());
@@ -102,12 +119,7 @@ SystemIcon::SystemIcon(int id, double zoom) :
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
     m_mouseover_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, mouseover_texture, GG::GRAPHIC_FITGRAPHIC);
 
-    // resize icon, along with indicators and halo (which are also done in SizeMove(...))
-    GG::Pt ul(static_cast<int>((m_system.X() - ClientUI::SystemIconSize() / 2) * zoom),
-              static_cast<int>((m_system.Y() - ClientUI::SystemIconSize() / 2) * zoom));
-    GG::Pt lr(static_cast<int>(ul.x + ClientUI::SystemIconSize() * zoom + 0.5),
-              static_cast<int>(ul.y + ClientUI::SystemIconSize() * zoom + 0.5));
-    SizeMove(ul, lr);
+    Refresh();
 }
 
 SystemIcon::~SystemIcon()
@@ -137,6 +149,47 @@ const FleetButton* SystemIcon::GetFleetButton(Fleet* fleet) const
             return it->second;
     }
     return 0;
+}
+
+GG::Pt SystemIcon::FleetButtonCentre(int empire_id, bool moving) const
+{
+    // determine if the specified empire has the specified fleetbutton, and if so, where it is
+    std::map<int, FleetButton*>::const_iterator it, end;
+    if (moving) {
+        it = m_moving_fleet_markers.find(empire_id);
+        end = m_moving_fleet_markers.end();
+    } else {
+        it = m_stationary_fleet_markers.find(empire_id);
+        end = m_stationary_fleet_markers.end();
+    }
+
+    if (it == end)  // no such fleetbutton
+        return GG::Pt(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+
+    const int HALF_SIZE = static_cast<int>(it->second->Width() * 0.5);
+    return it->second->UpperLeft() + GG::Pt(HALF_SIZE, HALF_SIZE);
+}
+
+GG::Pt SystemIcon::NthFleetButtonUpperLeft(int n, bool moving) const
+{
+    assert(n > 0);
+    // determine where the nth fleetbutton should be located
+    GG::Pt retval = GG::Pt(0, 0);//this->UpperLeft();
+    const int FLEETBUTTON_SIZE = FleetButtonSize();
+
+    if (moving) {   // moving at bottom left
+        retval += GG::Pt(-FLEETBUTTON_SIZE, this->Height());
+        retval += GG::Pt(0, FLEETBUTTON_SIZE*(n - 1));
+        return retval;
+    } else {        // stationary at top right
+        retval += GG::Pt(this->Width(), -FLEETBUTTON_SIZE*n);
+        return retval;
+    }
+}
+
+int SystemIcon::FleetButtonSize() const
+{
+    return static_cast<int>(Height() * ClientUI::FleetButtonSize());
 }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -172,18 +225,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
     PositionSystemName();
 
-    const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FleetButtonSize());
-    GG::Pt size = Size();
-    int stationary_y = 0;
-    for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
-        it->second->SizeMove(GG::Pt(size.x - BUTTON_SIZE, stationary_y), GG::Pt(size.x, stationary_y + BUTTON_SIZE));
-        stationary_y += BUTTON_SIZE;
-    }
-    int moving_y = size.y - BUTTON_SIZE;
-    for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
-        it->second->SizeMove(GG::Pt(0, moving_y), GG::Pt(BUTTON_SIZE, moving_y + BUTTON_SIZE));
-        moving_y -= BUTTON_SIZE;
-    }
+    DoFleetButtonLayout();
 }
 
 void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -301,32 +343,65 @@ void SystemIcon::CreateFleetButtons()
     m_stationary_fleet_markers.clear();
     m_moving_fleet_markers.clear();
 
-    const int BUTTON_SIZE = static_cast<int>(Height() * ClientUI::FleetButtonSize());
-    GG::Pt size = Size();
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    int stationary_y = 0;
-    int moving_y = size.y - BUTTON_SIZE;
+    FleetButton* fb;
+
+    // create new fleet buttons
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        std::vector<int> fleet_IDs = m_system.FindObjectIDs(StationaryFleetVisitor(it->first));
-        FleetButton* stationary_fb = 0;
+        const int empire_id = it->first;
+        const Empire* empire = it->second;
+
+        std::vector<int> fleet_IDs = m_system.FindObjectIDs(StationaryFleetVisitor(empire_id));        
         if (!fleet_IDs.empty()) {
-            stationary_fb = new FleetButton(size.x - BUTTON_SIZE, stationary_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_LEFT);
-            m_stationary_fleet_markers[it->first] = stationary_fb;
-            AttachChild(m_stationary_fleet_markers[it->first]);
-            map_wnd->SetFleetMovement(stationary_fb);
-            GG::Connect(stationary_fb->ClickedSignal, FleetButtonClickedFunctor(*stationary_fb, *this, false));
-            stationary_y += BUTTON_SIZE;
+            fb = new FleetButton(empire->Color(), fleet_IDs);
+            m_stationary_fleet_markers[empire_id] = fb;
+            AttachChild(m_stationary_fleet_markers[empire_id]);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this, false));
         }
+
         fleet_IDs = m_system.FindObjectIDs(OrderedMovingFleetVisitor(it->first));
-        FleetButton* moving_fb = 0;
         if (!fleet_IDs.empty()) {
-            moving_fb = new FleetButton(0, moving_y, BUTTON_SIZE, BUTTON_SIZE, it->second->Color(), fleet_IDs, SHAPE_RIGHT);
-            m_moving_fleet_markers[it->first] = moving_fb;
-            AttachChild(m_moving_fleet_markers[it->first]);
-            map_wnd->SetFleetMovement(moving_fb);
-            GG::Connect(moving_fb->ClickedSignal, FleetButtonClickedFunctor(*moving_fb, *this, true));
-            moving_y -= BUTTON_SIZE;
+            fb = new FleetButton(empire->Color(), fleet_IDs);
+            m_moving_fleet_markers[empire_id] = fb;
+            AttachChild(m_moving_fleet_markers[empire_id]);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this, true));
         }
+    }
+
+    // position new fleet buttons
+    DoFleetButtonLayout();
+
+    // create movement lines (after positioning buttons, so lines will originate from button location)
+    for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
+        const int empire_id = empire_it->first;
+        
+        std::map<int, FleetButton*>::iterator button_it = m_stationary_fleet_markers.find(empire_id);
+        if (button_it != m_stationary_fleet_markers.end())
+            map_wnd->SetFleetMovement(button_it->second);
+        
+        button_it = m_moving_fleet_markers.find(empire_id);
+        if (button_it != m_moving_fleet_markers.end())
+            map_wnd->SetFleetMovement(button_it->second);
+    }
+}
+
+void SystemIcon::DoFleetButtonLayout()
+{
+    const int FLEETBUTTON_SIZE = FleetButtonSize();
+    const GG::Pt SIZE = GG::Pt(FLEETBUTTON_SIZE, FLEETBUTTON_SIZE);
+    
+    // stationary fleet buttons
+    int empire_num = 1;
+    for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
+        GG::Pt ul = NthFleetButtonUpperLeft(empire_num, false);
+        it->second->SizeMove(ul, ul + SIZE);
+    }
+    
+    // departing fleet buttons
+    empire_num = 1;
+    for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
+        GG::Pt ul = NthFleetButtonUpperLeft(empire_num, true);
+        it->second->SizeMove(ul, ul + SIZE);
     }
 }
 

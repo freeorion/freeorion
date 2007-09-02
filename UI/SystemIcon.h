@@ -41,30 +41,34 @@ public:
     //!@}
 
     //! \name Structors //!@{
-    SystemIcon(int id, double zoom); //!< construct from a universe ID, to be placed in a MapWnd at zoom level \a zoom
-    ~SystemIcon();      //!< dtor
+    SystemIcon(int id);                         //!< construct from a universe ID at default size (needs to be positioned and resized)
+    SystemIcon(int x, int y, int w, int id);    //!< construct from a universe ID at specified size and position
+    ~SystemIcon();                              //!< dtor
     //!@}
 
     //! \name Accessors //!@{
-    const System&      GetSystem() const;
-    const FleetButton* GetFleetButton(Fleet* fleet) const;
-    virtual bool       InWindow(const GG::Pt& pt) const;    //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
+    const System&       GetSystem() const;
+    const FleetButton*  GetFleetButton(Fleet* fleet) const;
+    GG::Pt              FleetButtonCentre(int empire_id, bool moving) const;    //!< returns centre of fleetbutton owned by empire with id \a empire_id, or GG::Pt(INVALID_POSITION, INVALID_POSITION) if there is no such FleetButton for the specified empire.
+
+    virtual bool        InWindow(const GG::Pt& pt) const;   //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
     //!@}
 
     //! \name Mutators //!@{
-    virtual void   SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void   Render() {}
-    virtual void   LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   MouseLeave();
-    void           SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    Render() {}
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseLeave();
+    void            SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 
-    void           Refresh(); //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
-    void           ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
-    void           ShowName(); //!< enables the system name text
-    void           HideName(); //!< disables the system name text
+    void            Refresh();                      //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
+    void            DoFleetButtonLayout();          //!< arranges and resizes fleet buttons
+    void            ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
+    void            ShowName();                     //!< enables the system name text
+    void            HideName();                     //!< disables the system name text
 
     mutable MouseEnteringSignalType         MouseEnteringSignal;
     mutable MouseLeavingSignalType          MouseLeavingSignal;
@@ -75,7 +79,13 @@ public:
     //!@}
 
 private:
+    void    Init(); //!< common constructor tasks
+
+    GG::Pt  NthFleetButtonUpperLeft(int n, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown, not empire id
+    int     FleetButtonSize() const;                            //!< returns absolute size of fleetbuttons at current zoom level
+
     void CreateFleetButtons();
+
     void PositionSystemName();
     void FleetCreatedOrDestroyed(const Fleet&);
 

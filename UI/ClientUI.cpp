@@ -320,7 +320,7 @@ namespace {
         // misc
         db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
         db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.3, RangedValidator<double>(0.2, 2));
+        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 1.0, RangedValidator<double>(0.2, 2));
         db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
         
         // tech category colors
@@ -446,7 +446,7 @@ void ClientUI::ZoomToSystem(System* system)
     if (!system)
         return;
 
-    m_map_wnd->CenterOnSystem(system->ID());
+    m_map_wnd->CenterOnObject(system->ID());
     m_map_wnd->SelectSystem(system->ID());
 }
 
@@ -455,7 +455,7 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     if (!fleet)
         return;
 
-    m_map_wnd->CenterOnFleet(fleet->ID());
+    m_map_wnd->CenterOnObject(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
     for (MapWnd::FleetWndIter it = m_map_wnd->FleetWndBegin(); it != m_map_wnd->FleetWndEnd(); ++it) {
         if ((*it)->ContainsFleet(fleet->ID())) {

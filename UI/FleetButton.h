@@ -15,8 +15,8 @@ class FleetButton : public GG::Button
 {
 public:
     /** \name Structors */ //@{
-    FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom); ///< ctor for moving fleets
-    FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation); ///< ctor for a fleets at a System
+    FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs); ///< basic  ctor
+    FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs); ///< ctor to specify size and location
     //@}
 
     /** \name Accessors */ //@{

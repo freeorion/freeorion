@@ -6,9 +6,20 @@
 
 #include <list>
 
-class System;
+////////////////////////////////////////////////
+// MovePathNode
+////////////////////////////////////////////////
+/** Contains info about a single notable point on the move path of a fleet or other UniverseObject. */
+struct MovePathNode {
+    MovePathNode(double x_, double y_, bool turn_end_, int eta_) :
+        x(x_), y(y_), turn_end(turn_end_), eta(eta_)
+    {}
+    double x, y;    ///< location in Universe of node
+    bool turn_end;  ///< true if the fleet will end a turn at this point
+    int eta;        ///< estimated turns to reach this node
+};
 
-/** */
+/** encapsulates data for a FreeOrion fleet.  Fleets are basically a group of ships that travel together. */
 class Fleet : public UniverseObject
 {
 private:
@@ -17,7 +28,7 @@ private:
 public:
     typedef ShipIDSet::iterator         iterator;         ///< an iterator to the ships in the fleet
     typedef ShipIDSet::const_iterator   const_iterator;   ///< a const iterator to the ships in the fleet
-   
+
     /** \name Structors */ //@{
     Fleet(); ///< default ctor
     Fleet(const std::string& name, double x, double y, int owner);
@@ -33,6 +44,14 @@ public:
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */
     const std::list<System*>& TravelRoute() const;
+
+    /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
+        specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
+        location, however the fleet's current location will not be on the list, even if it is currently in a system. */
+    std::list<MovePathNode> MovePath(const std::list<System*>& route) const;
+
+    /// Returns MovePath for fleet's current TravelRoute */
+    std::list<MovePathNode> MovePath() const;
 
     /// Returns the number of turns which must elapse before the fleet arrives at its final destination and the turns to the next system, respectively.
     std::pair<int, int> ETA() const;
