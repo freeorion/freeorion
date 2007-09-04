@@ -5,10 +5,12 @@
 #include "UniverseObject.h"
 #include "Meter.h"
 
-/** a population center decoration for a UniverseObject.  This is a decorator class.  That is, it is designed to 
-    augment another class with extra functionality.  Planet is the most obvious class to inherit PopCenter, but 
-    other classes could be made from it as well (e.g., a ship that is large enough to support population and still 
-    travel between systems).*/
+/** The PopCenter class is an abstract base class for anything in the FreeOrion gamestate that has population on 
+ *  or in it.  Most likely, such an object will also be a subclass of UniverseObject.
+ *  
+ *  Planet is the most obvious class to inherit PopCenter, but other classes could be made from it as well (e.g.,
+ *  a ship that is large enough to support population and still travel between systems).
+ */
 class PopCenter
 {
 public:

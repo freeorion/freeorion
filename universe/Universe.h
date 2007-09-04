@@ -59,6 +59,13 @@ struct ShipDesign;
 class UniverseObject;
 class System;
 
+/** The Universe class contains the majority of FreeOrion gamestate: All the UniverseObjects in a game, and (of 
+    less importance) all ShipDesigns in a game.  (Other gamestate is contained in the Empire class.)
+
+    The Universe class also provides many functions with which to access objects in it, information about the
+    objects, and infromation about the objects' relationships to eachother.  As well, there are functions that
+    generate and populate new Universe gamestates when new games are started.
+*/
 class Universe
 {
 protected:

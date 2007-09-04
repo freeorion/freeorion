@@ -210,15 +210,15 @@ private:
 *   - name
 *   - player name
 *   - numeric ID
-*   - control state (human or AI)
-*   - accumulated research
+*   - accumulated research progress
+*   - accumulated production progress
 *   - list of technologies
 *   - list of explored systems
 *   - list of ship designs
 *   - list of sitrep entries
 *
-* Only should create these objects.  In both the client and server, Empires are managed by a subclass of EmpireManager,
-* and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer.
+* In both the client and server, Empires are managed by a subclass of EmpireManager, and can be accessed from
+* other modules by using the EmpireManager::Lookup() method to obtain a pointer.
 */ 
 class Empire 
 {

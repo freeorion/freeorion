@@ -10,8 +10,13 @@
 
 class Empire;
 
-
-/** a production center decoration for a UniverseObject. */
+/** The ResourceCenter class is an abstract base class for anything in the FreeOrion gamestate that generates
+ *  resources (food, minerals, etc.).  Most likely, such an object will also be a subclass of UniverseObject.
+ *  
+ *  Planet is the most obvious class to inherit ResourceCenter, but other classes could be made from it as well
+ *  (e.g., a trade-ship or mining vessel, or a non-Planet UniverseObject- and PopCenter- derived object of some 
+ *  sort.
+ */
 class ResourceCenter
 {
 public:

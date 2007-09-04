@@ -12,8 +12,9 @@
 class ResourceCenter;
 class PopCenter;
 
-//! The ResourcePool class keeps track of an empire's stockpile and production of 
-/** a particular resource (food, minerals, trade, and even research or industry). */
+/** The ResourcePool class keeps track of an empire's stockpile and production of 
+ *  a particular resource (food, minerals, trade, research or industry).
+ */
 class ResourcePool
 {
 public:
@@ -61,9 +62,8 @@ private:
     ResourceType m_type;        ///< what kind of resource does this pool hold?
 };
 
-//! The PopulationPool class keeps track of an empire's total population
-/**
-  */
+/** The PopulationPool class keeps track of an empire's total population and its growth.
+ */
 class PopulationPool
 {
 public:
