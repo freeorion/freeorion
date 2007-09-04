@@ -16,8 +16,9 @@ using boost::lexical_cast;
 namespace {
     const double MAX_SHIP_SPEED = 500.0; // max allowed speed of ship movement
 
-    inline bool SystemNotReachable(System* system)
-    { return !GetUniverse().SystemReachable(system->ID(), Universe::s_encoding_empire); }
+    inline bool SystemNotReachable(System* system, int empire_id) {
+        return !GetUniverse().SystemReachable(system->ID(), empire_id);
+    }
 }
 
 // static(s)
@@ -97,6 +98,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
     if (route.empty()) return retval;                                       // nowhere to go => empty path
     if (route.size() == 2 && route.front() == route.back()) return retval;  // nowhere to go => empty path
+    if (this->Speed() < 1.0e-5) return retval;                              // unable to move (epsilon taken from Fleet::MovementPhase())
 
     MovePathNode cur_pos(this->X(), this->Y(), true, 0);    // initialize to initial position of fleet.
 
@@ -523,17 +525,25 @@ void Fleet::RecalculateFleetSpeed()
     }
 }
 
-void Fleet::GetVisibleRoute(std::list<System*>& travel_route, int moving_to)
+void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last_system)
 {
     std::list<System*>::iterator visible_end_it;
-    if (moving_to != m_moving_to) {
-        System* final_destination = GetUniverse().Object<System>(moving_to);
+    if (last_system != m_moving_to) {
+        // The system the fleet will appear to be moving to it's actually it's final destination.  remove any
+        // extra systems from the route after the apparent destination
+        System* final_destination = GetUniverse().Object<System>(last_system);
         assert(std::find(m_travel_route.begin(), m_travel_route.end(), final_destination) != m_travel_route.end());
         visible_end_it = ++std::find(m_travel_route.begin(), m_travel_route.end(), final_destination);
     } else {
         visible_end_it = m_travel_route.end();
     }
-    std::list<System*>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemNotReachable, _1));
+    
+    int fleet_owner = -1;
+    const std::set<int>& owners = Owners();
+    if (owners.size() == 1)
+        fleet_owner = *(owners.begin());
+
+    std::list<System*>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemNotReachable, _1, fleet_owner));
     std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
     // If no Systems in a nonempty route are known reachable, put a null pointer in the route as a sentinel indicating
     // that the route is unknown, but needs not be recomputed.

@@ -113,7 +113,7 @@ public:
 private:
     void CalculateRoute() const;    // sets m_travel_route and m_travel_distance to their proper values based on the other member data
     void RecalculateFleetSpeed();   // recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
-    void GetVisibleRoute(std::list<System*>& travel_route, int moving_to);
+    void ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last_system);  // removes any systems on the route after the specified system
 
     ShipIDSet           m_ships;
     int                 m_moving_to;
@@ -150,7 +150,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_saving::value) {
         moving_to = (Universe::ALL_OBJECTS_VISIBLE || vis == FULL_VISIBILITY) ? m_moving_to : m_next_system;
         if (1 <= version) {
-            GetVisibleRoute(travel_route, moving_to);
+            ShortenRouteToEndAtSystem(travel_route, moving_to);
             travel_distance = m_travel_distance;
             if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != m_travel_route.size()) {
                 if (moving_to == m_moving_to)
