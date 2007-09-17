@@ -57,6 +57,7 @@
     <GROUP name ="TRANSLATION">
       <PERSON name="Martin Wuttke" nick="The Silent One" task="German Translation, Graphics"/>
       <PERSON name="Ivan Sanchez" nick="Ivan s c" task="Spanish Translation"/>
+      <PERSON name="Myckel Habets" nick="Myckel" task="Dutch Translation"/>
     </GROUP>
   </CREDITS>
 </XMLDoc>
