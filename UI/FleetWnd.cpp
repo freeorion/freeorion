@@ -1181,7 +1181,8 @@ void FleetWnd::FleetDoubleClicked(int row_idx, GG::ListBox::Row* row)
         if (GG::GUI::GetGUI()->AppHeight() < fleet_detail_wnd->LowerRight().y)
             window_posn.y = GG::GUI::GetGUI()->AppHeight() - fleet_detail_wnd->Height();
         fleet_detail_wnd->MoveTo(window_posn);
-
+        
+        GG::Connect(fleet_detail_wnd->ClosingSignal,&FleetWnd::FleetDetailWndClosing,this);
         GG::GUI::GetGUI()->Register(fleet_detail_wnd);
     }
 }
