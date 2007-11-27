@@ -2,32 +2,46 @@
 #ifndef _CombatWnd_h_
 #define _CombatWnd_h_
 
-#ifndef _CUIWnd_h_
-#include "CUIWnd.h"
-#endif
+#include <OgreMath.h>
 
-namespace GG {
-  class TextControl;
-  class StaticGraphic;
+#include <GG/Wnd.h>
+
+
+namespace Ogre {
+    class Camera;
+    class SceneManager;
+    class SceneNode;
+    class Viewport;
 }
 
-class CUIListBox;
-
-class CombatWnd : public CUIWnd
+class CombatWnd :
+    public GG::Wnd
 {
-  public:
-    enum { WIDTH = 800, HEIGHT = 300}; 
+public:
+    CombatWnd (Ogre::SceneManager* scene_manager,
+               Ogre::Camera* camera,
+               Ogre::Viewport* viewport);
 
-    /** \name Structors */ //@{
-    CombatWnd(int x,int y);
-    ~CombatWnd();
-    //@}
+    virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyRelease(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
 
-    void UpdateCombatTurnProgress(const std::string& message);
+private:
+    Ogre::SceneManager* m_scene_manager;
+    Ogre::Camera* m_camera;
+    Ogre::Viewport* m_viewport;
+    Ogre::SceneNode* m_durgha_node;
 
-  private:
-    CUIListBox*  m_combats_lb;
-
+    Ogre::Real m_distance_to_lookat_point;
+    Ogre::Radian m_pitch;
+    Ogre::Radian m_yaw;
+    GG::Pt m_last_pos;
 };
 
-#endif // _CombatWnd_h_
+#endif

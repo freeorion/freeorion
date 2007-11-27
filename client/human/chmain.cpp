@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
         }
 
         RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());
-        SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager");
+        SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
 
         Camera* camera = scene_manager->createCamera("Camera");
         // Position it at 500 in Z direction

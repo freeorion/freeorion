@@ -1,193 +1,141 @@
 #include "CombatWnd.h"
 
-#include "../combat/Combat.h"
-#include "CUIControls.h"
-#include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
+#include "ClientUI.h"
 
-#include <GG/DrawUtil.h>
-#include <GG/StaticGraphic.h>
+#include <OgreCamera.h>
+#include <OgreConfigFile.h>
+#include <OgreEntity.h>
+#include <OgreMeshManager.h>
+#include <OgreSceneManager.h>
 
-#include <boost/format.hpp>
+#include <GG/GUI.h>
 
-namespace
+
+CombatWnd::CombatWnd (Ogre::SceneManager* scene_manager,
+                      Ogre::Camera* camera,
+                      Ogre::Viewport* viewport) :
+    Wnd(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::CLICKABLE),
+    m_scene_manager(scene_manager),
+    m_camera(camera),
+    m_viewport(viewport),
+    m_distance_to_lookat_point(m_camera->getPosition().length()),
+    m_pitch(0.0),
+    m_yaw(0.0),
+    m_last_pos()
 {
-    GG::SubTexture GetSubTexture(const boost::filesystem::path& path, bool mipmap = false)
+    // Load resource paths from config file
+    Ogre::ConfigFile cf;
+    cf.load((ClientUI::ArtDir() / "combat" / "resources.cfg").native_file_string());
+
+    // Go through all sections & settings in the file
+    Ogre::ConfigFile::SectionIterator section_it = cf.getSectionIterator();
+    while (section_it.hasMoreElements())
     {
-        boost::shared_ptr<GG::Texture> texture(ClientUI::GetTexture(path, mipmap));
-        return GG::SubTexture(texture,0,0,texture->DefaultWidth(),texture->DefaultHeight());
-    }
-}
-
-class CombatInfoControl : public GG::Control
-{
-  public:
-    CombatInfoControl(int w, int h,const CombatUpdateMessage &combat_info) :
-        Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
-        m_combat_info(combat_info)
-    {}
-
-    void Update(const CombatUpdateMessage &combat_info) {m_combat_info=combat_info;}
-
-    virtual void Render()
-    {
-      const int ITEM_WIDTH = 230;
-      const GG::Rect  item_txt[4] ={GG::Rect(  7,27,100,45),
-                                    GG::Rect(  4,84, 81,99),
-                                    GG::Rect(124,49,205,67),
-                                    GG::Rect(124,78,205,96)},
-                      item_img_topic        ( 24,48,24+40,48+40),
-                      item_img_arrow_split  ( 65,40,65+64,40+64),
-                      rc_txt_empire         ( 25, 6,500,19);
-                      const GG::Clr border_color = GG::FloatClr(0.5f,0.5f,0.5f,1.0f);
-                      const GG::Clr bg_color = GG::FloatClr(0.25f,0.25f,0.25f,1.0f);
-                      const GG::Clr bg_item_color = GG::FloatClr(0.15f,0.15f,0.15f,1.0f);
-
-      GG::Pt ul(UpperLeft()),lr(LowerRight());
-      GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
-
-      boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
-      GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
-      std::string text;
-
-      GG::SubTexture img_topic[3],img_ship_civil,img_planet,img_arrow_split;
-
-      img_topic[0]    = GetSubTexture(ClientUI::ArtDir() / "misc" / "mark2icon.png");
-      img_topic[1]    = GetSubTexture(ClientUI::ArtDir() / "misc" / "colonyicon.png");
-      img_topic[2]    = GetSubTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png");
-      img_arrow_split = GetSubTexture(ClientUI::ArtDir() / "misc" / "forkedarrow.png");
-
-      int y=ul.y;
-
-      GG::Rect rc;
-
-      rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
-      glColor(ClientUI::TextColor());
-      format = GG::FORMAT_LEFT | GG::FORMAT_BOTTOM;
-      font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
-
-      rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
-      font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.7));
-      glColor(ClientUI::TextColor());
-      format = GG::FORMAT_LEFT | GG::FORMAT_BOTTOM;
-      font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
-      
-
-      for(unsigned int i=0;i<m_combat_info.m_opponents.size();i++,y+=font->Height()+2)
-      {
-        CombatUpdateMessage::EmpireCombatInfo *eci = &m_combat_info.m_opponents[i];
-
-        GG::Rect area (ul.x+20,ul.y+30+i*110,ul.x+20+ITEM_WIDTH*3,ul.y+30+(i+1)*110-5);
-        struct 
+        Ogre::String section_name = section_it.peekNextKey();
+        Ogre::ConfigFile::SettingsMultiMap *settings = section_it.getNext();
+        for (Ogre::ConfigFile::SettingsMultiMap::iterator it = settings->begin();
+             it != settings->end();
+             ++it)
         {
-            std::string txt;
-            GG::Flags<GG::TextFormat> format;
-            GG::Clr bg_clr;
-            GG::Clr border_clr;
-            unsigned int border_width;
-        } entries[3][4] =
-        {
-          {
-            {UserString("COMBAT_MILITARY_SHIPS") ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->combat_ships          ) + UserString("COMBAT_REMAINING"),GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->combat_ships_retreated) + UserString("COMBAT_RETREATED"),GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->combat_ships_retreated)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->combat_ships_destroyed) + UserString("COMBAT_DESTROYED"),GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->combat_ships_destroyed)?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
-          },
-          {
-            {UserString("COMBAT_CIVILIAN_SHIPS") ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships          )+UserString("COMBAT_REMAINING")    ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships_retreated)+UserString("COMBAT_RETREATED")    ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->non_combat_ships_retreated)?GG::CLR_ZERO : GG::Clr(128,64,64,255)  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->non_combat_ships_destroyed)+UserString("COMBAT_DESTROYED")    ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->non_combat_ships_destroyed)?GG::CLR_ZERO : GG::CLR_RED   ,GG::CLR_ZERO ,0}
-          },
-          {
-            {UserString("COMBAT_PLANETS") ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,GG::CLR_BLACK ,border_color ,1},
-            {boost::lexical_cast<std::string>(eci->planets            )+UserString("COMBAT_REMAINING")    ,GG::FORMAT_CENTER | GG::FORMAT_VCENTER,(0==0)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->planets_defenseless)+UserString("COMBAT_DEFENSELESS")  ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->planets_defenseless)?GG::CLR_ZERO:GG::CLR_ZERO  ,GG::CLR_ZERO ,0},
-            {boost::lexical_cast<std::string>(eci->planets_lost       )+UserString("COMBAT_LOST")         ,GG::FORMAT_LEFT   | GG::FORMAT_VCENTER,(0==eci->planets_lost       )?GG::CLR_ZERO:GG::CLR_RED   ,GG::CLR_ZERO ,0}
-          }
-        };
-        
-        GG::FlatRectangle(area.Left(), area.Top(), area.Right()+2, area.Bottom(),bg_item_color,border_color, 2);
-
-        font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.2));
-
-        rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
-        glColor(ClientUI::TextColor());format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
-        font->RenderText(rc.UpperLeft(),rc.LowerRight(),m_combat_info.m_opponents[i].empire, format, 0);
-
-        for(unsigned int c=0;c<3;c++)
-        {
-          GG::Rect col (area.Left()+c*ITEM_WIDTH, area.Top(),area.Left()+(c+1)*ITEM_WIDTH, area.Bottom());
-          
-          GG::FlatRectangle(col.Left(), col.Top()+38, col.Right()+2, col.Bottom(), GG::CLR_ZERO,border_color, 2);
-          glColor(ClientUI::TextColor());
-
-          img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight());
-          img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight());
-
-          font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
-          for(unsigned int j=0;j<4;j++)
-          {
-            rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
-            GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);
-            glColor(ClientUI::TextColor());
-            font->RenderText(rc.UpperLeft(),rc.LowerRight(),entries[c][j].txt, entries[c][j].format, 0);
-          }
+            Ogre::String type_name = it->first, path_name = it->second;
+            Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
+                (ClientUI::ArtDir() / path_name).native_file_string(),
+                type_name, section_name);
         }
-      }
     }
 
-    const std::string& System() const {return m_combat_info.m_system;}
-  private:
-    CombatUpdateMessage m_combat_info;
+    // Initialise, parse scripts etc
+    Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
-};
 
-struct CombatInfoRow : public GG::ListBox::Row
+    //////////////////////////////////////////////////////////////////
+    // NOTE: Below is temporary code for combat system prototyping! //
+    //////////////////////////////////////////////////////////////////
+
+    m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1", 50);
+
+    // Put an "Durgha" ship model in the middle
+    Ogre::MeshPtr m = Ogre::MeshManager::getSingleton().load(
+        "durgha.mesh",
+        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    Ogre::Entity* e = m_scene_manager->createEntity("durgha", "durgha.mesh");
+    m_durgha_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("durgha node");
+    m_durgha_node->setDirection(0, -1, 0);
+    m_durgha_node->yaw(Ogre::Radian(Ogre::Math::PI));
+    m_durgha_node->attachObject(e);
+}
+
+void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ m_last_pos = GG::Pt(); }
+
+void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
-    CombatInfoRow(int w,const CombatUpdateMessage &combat_info) :
-        GG::ListBox::Row(w, 30+combat_info.m_opponents.size()*110, "CombatInfo")
-    {
-        push_back(new CombatInfoControl(w, Height(), combat_info));
+    if (m_last_pos == GG::Pt())
+        m_last_pos = pt - move;
+
+    GG::Pt delta_pos = pt - m_last_pos;
+    m_last_pos = pt;
+
+    // set position to look-at point
+    m_camera->setPosition(Ogre::Vector3()); // TODO (leave it at the origin for now)
+
+    // set orientation
+    m_camera->setDirection(-Ogre::Vector3::UNIT_Z);
+    Ogre::Radian delta_pitch = -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
+    m_pitch += delta_pitch;
+    if (m_pitch < Ogre::Radian(-Ogre::Math::HALF_PI))
+        m_pitch = Ogre::Radian(-Ogre::Math::HALF_PI);
+    if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
+        m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
+    m_camera->pitch(m_pitch);
+    Ogre::Radian delta_yaw = -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
+    m_yaw += delta_yaw;
+    m_camera->yaw(m_yaw);
+
+    // back up to final position
+    m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_lookat_point));
+}
+
+void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{}
+
+void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+#if 0 // this was a test to see how easy it is to clean up the Ogre scene graph in order to go back to GG-only mode
+    if (m_durgha_node->isInSceneGraph()) {
+        m_scene_manager->getRootSceneNode()->removeChild(m_durgha_node);
+        m_scene_manager->setSkyBox(false, "backgrounds/sky_box_1");
+    } else {
+        m_scene_manager->getRootSceneNode()->addChild(m_durgha_node);
+        m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1", 50);
     }
-
-    void Update(const CombatUpdateMessage &combat_info) {static_cast<CombatInfoControl*>(operator[](0))->Update(combat_info);}
-    const std::string& System() const {return static_cast<CombatInfoControl*>(operator[](0))->System();}
-
-};
-
-////////////////////////////////////////////////
-// CombatWnd
-////////////////////////////////////////////////
-CombatWnd::CombatWnd(int x,int y)
-    : CUIWnd(UserString("COMBAT_WINDOW_TITLE"),x,y, WIDTH, HEIGHT,  GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | MINIMIZABLE)
-{
-  m_combats_lb = new CUIListBox(0,0,ClientWidth(),ClientHeight(),GG::CLR_ZERO,GG::CLR_ZERO);
-  AttachChild(m_combats_lb);
+#endif
 }
 
-CombatWnd::~CombatWnd( )
+void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{}
+
+void CombatWnd::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{}
+
+void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{}
+
+void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
+    const Ogre::Real c_move_incr = 10.0;
+    const Ogre::Real c_min_distance = 50.0;
+    Ogre::Real scale_factor = 1.0;
+    if (mod_keys & GG::MOD_KEY_SHIFT)
+        scale_factor *= 5.0;
+    if (mod_keys & GG::MOD_KEY_CTRL)
+        scale_factor /= 5.0;
+    Ogre::Real total_move = c_move_incr * scale_factor * move;
+    if (m_distance_to_lookat_point + total_move < c_min_distance)
+        total_move -= c_min_distance - (m_distance_to_lookat_point + total_move);
+    m_distance_to_lookat_point -= total_move;
+    m_camera->moveRelative(Ogre::Vector3(0, 0, -total_move));
 }
 
-void CombatWnd::UpdateCombatTurnProgress(const std::string& message)
-{
-  std::stringstream stream(message);
-  XMLDoc doc;
-  doc.ReadDoc(stream);          
-
-  CombatUpdateMessage msg(doc.root_node.Child("combat-update-message"));
-  int r;
-  for(r=0;r<m_combats_lb->NumRows();r++)
-    if(static_cast<CombatInfoRow&>(m_combats_lb->GetRow(r)).System()==msg.m_system)
-    {
-      static_cast<CombatInfoRow&>(m_combats_lb->GetRow(r)).Update(msg);
-      break;
-    }
-
-  if(r>=m_combats_lb->NumRows())
-    m_combats_lb->Insert(new CombatInfoRow(m_combats_lb->Width() - ClientUI::ScrollWidth(),msg));
-
-
-}
+void CombatWnd::KeyRelease(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+{}

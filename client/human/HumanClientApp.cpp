@@ -361,6 +361,15 @@ void HumanClientApp::LoadSinglePlayerGame()
 void HumanClientApp::SetSaveFileName(const std::string& filename)
 { m_save_filename = filename; }
 
+Ogre::SceneManager* HumanClientApp::SceneManager()
+{ return m_scene_manager; }
+
+Ogre::Camera* HumanClientApp::Camera()
+{ return m_camera; }
+
+Ogre::Viewport* HumanClientApp::Viewport()
+{ return m_viewport; }
+
 void HumanClientApp::Enter2DMode()
 {
     glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT);

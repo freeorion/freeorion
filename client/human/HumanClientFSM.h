@@ -18,6 +18,8 @@
 #include <vector>
 
 
+#define TEST_COMBAT_WND_ON_STARTUP 1
+
 enum WaitingForDataMode {
     WAITING_FOR_NEW_GAME,
     WAITING_FOR_LOADED_GAME,
@@ -145,7 +147,11 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenu
     boost::statechart::result react(const HostMPGameRequested& a);
     boost::statechart::result react(const JoinMPGameRequested& a);
 
+#if TEST_COMBAT_WND_ON_STARTUP
+    CombatWnd* m_combat_wnd;
+#else
     IntroScreen* m_intro_screen;
+#endif
 
     CLIENT_ACCESSOR
 };

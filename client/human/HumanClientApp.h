@@ -62,6 +62,10 @@ public:
     void LoadSinglePlayerGame(); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void SetSaveFileName(const std::string& filename); ///< records the current game's filename
 
+    Ogre::SceneManager* SceneManager();
+    Ogre::Camera*       Camera();
+    Ogre::Viewport*     Viewport();
+
     virtual void Enter2DMode();
     virtual void Exit2DMode();
     virtual void StartTurn();
