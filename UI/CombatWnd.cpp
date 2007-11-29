@@ -6,14 +6,18 @@
 #include <OgreConfigFile.h>
 #include <OgreEntity.h>
 #include <OgreMeshManager.h>
+#include <OgreRoot.h>
 #include <OgreSceneManager.h>
 
 #include <GG/GUI.h>
 
 
-CombatWnd::CombatWnd (Ogre::SceneManager* scene_manager,
-                      Ogre::Camera* camera,
-                      Ogre::Viewport* viewport) :
+////////////////////////////////////////////////////////////
+// CombatWnd
+////////////////////////////////////////////////////////////
+CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
+                     Ogre::Camera* camera,
+                     Ogre::Viewport* viewport) :
     Wnd(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::CLICKABLE),
     m_scene_manager(scene_manager),
     m_camera(camera),
@@ -21,8 +25,11 @@ CombatWnd::CombatWnd (Ogre::SceneManager* scene_manager,
     m_distance_to_lookat_point(m_camera->getPosition().length()),
     m_pitch(0.0),
     m_yaw(0.0),
-    m_last_pos()
+    m_last_pos(),
+    m_exit(false)
 {
+    Ogre::Root::getSingleton().addFrameListener(this);
+
     // Load resource paths from config file
     Ogre::ConfigFile cf;
     cf.load((ClientUI::ArtDir() / "combat" / "resources.cfg").native_file_string());
@@ -59,11 +66,21 @@ CombatWnd::CombatWnd (Ogre::SceneManager* scene_manager,
         "durgha.mesh",
         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
     Ogre::Entity* e = m_scene_manager->createEntity("durgha", "durgha.mesh");
+    e->setCastShadows(true);
     m_durgha_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("durgha node");
     m_durgha_node->setDirection(0, -1, 0);
     m_durgha_node->yaw(Ogre::Radian(Ogre::Math::PI));
     m_durgha_node->attachObject(e);
+
+    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    Ogre::Light* star = m_scene_manager->createLight("Star");
+    star->setType(Ogre::Light::LT_DIRECTIONAL);
+    star->setDirection(Ogre::Vector3(1, -0.15, 0.25).normalisedCopy());
 }
+
+CombatWnd::~CombatWnd()
+{ Ogre::Root::getSingleton().removeFrameListener(this); }
 
 void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { m_last_pos = GG::Pt(); }
@@ -137,5 +154,11 @@ void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod
     m_camera->moveRelative(Ogre::Vector3(0, 0, -total_move));
 }
 
-void CombatWnd::KeyRelease(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
-{}
+void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
+        m_exit = true;
+}
+
+bool CombatWnd::frameStarted(const Ogre::FrameEvent &event)
+{ return !m_exit; }
