@@ -4,12 +4,14 @@
 
 #include <OgreFrameListener.h>
 #include <OgreMath.h>
+#include <OgreVector3.h>
 
 #include <GG/Wnd.h>
 
 
 namespace Ogre {
     class Camera;
+    class RaySceneQuery;
     class SceneManager;
     class SceneNode;
     class Viewport;
@@ -38,15 +40,20 @@ public:
 private:
     virtual bool frameStarted(const Ogre::FrameEvent &event);
 
+    void UpdateCameraPosition();
+
     Ogre::SceneManager* m_scene_manager;
     Ogre::Camera* m_camera;
     Ogre::Viewport* m_viewport;
-    Ogre::SceneNode* m_durgha_node;
+    Ogre::RaySceneQuery* m_ray_scene_query;
 
     Ogre::Real m_distance_to_lookat_point;
     Ogre::Radian m_pitch;
     Ogre::Radian m_yaw;
     GG::Pt m_last_pos;
+    bool m_mouse_dragged;
+    Ogre::SceneNode* m_currently_selected_scene_node;
+    Ogre::Vector3 m_lookat_point;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };
