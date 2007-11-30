@@ -1,16 +1,64 @@
 #include "CombatWnd.h"
 
 #include "ClientUI.h"
+#include "../util/Version.h"
 
 #include <OgreCamera.h>
 #include <OgreConfigFile.h>
 #include <OgreEntity.h>
 #include <OgreMeshManager.h>
 #include <OgreRoot.h>
+#include <OgreRenderTarget.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneQuery.h>
 
 #include <GG/GUI.h>
+
+
+namespace {
+    const GG::Pt INVALID_SHIFT_DRAG_POS(-1, -1);
+}
+
+////////////////////////////////////////////////////////////
+// SelectionRect
+////////////////////////////////////////////////////////////
+CombatWnd::SelectionRect::SelectionRect() :
+    ManualObject("SelectionRect")
+{
+    setUseIdentityProjection(true);
+    setUseIdentityView(true);
+    setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
+    setQueryFlags(0);
+}
+
+void CombatWnd::SelectionRect::Resize(const GG::Pt& pt1, const GG::Pt& pt2)
+{
+    const float APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
+    const float APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
+
+    float left = std::min(pt1.x, pt2.x) / APP_WIDTH;
+    float right = std::max(pt1.x, pt2.x) / APP_WIDTH;
+    float top = std::min(pt1.y, pt2.y) / APP_HEIGHT;
+    float bottom = std::max(pt1.y, pt2.y) / APP_HEIGHT;
+
+    left = left * 2 - 1;
+    right = right * 2 - 1;
+    top = 1 - top * 2;
+    bottom = 1 - bottom * 2;
+
+    clear();
+    begin("", Ogre::RenderOperation::OT_LINE_STRIP);
+    position(left, top, -1);
+    position(right, top, -1);
+    position(right, bottom, -1);
+    position(left, bottom, -1);
+    position(left, top, -1);
+    end();
+
+    Ogre::AxisAlignedBox box;
+    box.setInfinite();
+    setBoundingBox(box);
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -24,12 +72,16 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_camera(camera),
     m_viewport(viewport),
     m_ray_scene_query(m_scene_manager->createRayQuery(Ogre::Ray())),
+    m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
     m_distance_to_lookat_point(m_camera->getPosition().length()),
     m_pitch(0.0),
     m_yaw(0.0),
     m_last_pos(),
+    m_shift_drag_start(INVALID_SHIFT_DRAG_POS),
+    m_shift_drag_stop(INVALID_SHIFT_DRAG_POS),
     m_mouse_dragged(false),
     m_currently_selected_scene_node(0),
+    m_selection_rect(new SelectionRect),
     m_lookat_point(0, 0, 0),
     m_exit(false)
 {
@@ -59,6 +111,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     // Initialise, parse scripts etc
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+    m_scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(m_selection_rect);
 
     //////////////////////////////////////////////////////////////////
     // NOTE: Below is temporary code for combat system prototyping! //
@@ -96,6 +149,8 @@ CombatWnd::~CombatWnd()
 {
     Ogre::Root::getSingleton().removeFrameListener(this);
     m_scene_manager->destroyQuery(m_ray_scene_query);
+    m_scene_manager->destroyQuery(m_volume_scene_query);
+    delete m_selection_rect;
 }
 
 void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -107,34 +162,60 @@ void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Pt delta_pos = pt - m_last_pos;
-    m_last_pos = pt;
+    if (m_mouse_dragged ||
+        GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
+        delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y) {
+        if (mod_keys & GG::MOD_KEY_SHIFT) {
+            if (m_shift_drag_start == INVALID_SHIFT_DRAG_POS) {
+                m_shift_drag_start = pt;
+                m_selection_rect->setVisible(true);
+                m_selection_rect->clear();
+            } else {
+                m_shift_drag_stop = pt;
+                m_selection_rect->Resize(m_shift_drag_start, m_shift_drag_stop);
+            }
+        } else {
+            if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS) {
+                m_shift_drag_start = INVALID_SHIFT_DRAG_POS;
+                m_selection_rect->clear();
+            }
 
-    Ogre::Radian delta_pitch =
-        -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
-    m_pitch += delta_pitch;
-    if (m_pitch < Ogre::Radian(-Ogre::Math::HALF_PI))
-        m_pitch = Ogre::Radian(-Ogre::Math::HALF_PI);
-    if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
-        m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
-    Ogre::Radian delta_yaw =
-        -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
-    m_yaw += delta_yaw;
+            m_last_pos = pt;
 
-    UpdateCameraPosition();
+            Ogre::Radian delta_pitch =
+                -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
+            m_pitch += delta_pitch;
+            if (m_pitch < Ogre::Radian(-Ogre::Math::HALF_PI))
+                m_pitch = Ogre::Radian(-Ogre::Math::HALF_PI);
+            if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
+                m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
+            Ogre::Radian delta_yaw =
+                -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
+            m_yaw += delta_yaw;
 
-    m_mouse_dragged = true;
+            UpdateCameraPosition();
+
+            m_mouse_dragged = true;
+        }
+    }
 }
 
 void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{}
+{
+    if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS)
+        EndShiftDrag();
+}
 
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_mouse_dragged) {
+    if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS) {
+        SelectObjectsInVolume();
+        EndShiftDrag();
+    } else if (!m_mouse_dragged) {
         Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
                                                          pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
         m_ray_scene_query->setRay(ray);
-        Ogre::RaySceneQueryResult &result = m_ray_scene_query->execute();
+        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
         if (result.begin() != result.end() && result.begin()->movable) {
             Ogre::SceneNode* clicked_scene_node = result.begin()->movable->getParentSceneNode();
             assert(clicked_scene_node);
@@ -176,12 +257,16 @@ void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
         m_exit = true;
 }
 
-bool CombatWnd::frameStarted(const Ogre::FrameEvent &event)
+bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 {
     if (m_currently_selected_scene_node) {
         m_lookat_point = m_currently_selected_scene_node->getWorldPosition();
         UpdateCameraPosition();
     }
+#if 0 // TODO: Remove this; it only here for profiling the number of triangles rendered.
+    Ogre::RenderTarget::FrameStats stats = Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
+    std::cout << "tris: " << stats.triangleCount << " batches: " << stats.batchCount << std::endl;
+#endif
     return !m_exit;
 }
 
@@ -192,4 +277,57 @@ void CombatWnd::UpdateCameraPosition()
     m_camera->pitch(m_pitch);
     m_camera->yaw(m_yaw);
     m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_lookat_point));
+}
+
+void CombatWnd::EndShiftDrag()
+{
+    m_shift_drag_start = INVALID_SHIFT_DRAG_POS;
+    m_selection_rect->setVisible(false);
+}
+
+void CombatWnd::SelectObjectsInVolume()
+{
+    const float APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
+    const float APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
+
+    float left = std::min(m_shift_drag_start.x, m_shift_drag_stop.x) / APP_WIDTH;
+    float right = std::max(m_shift_drag_start.x, m_shift_drag_stop.x) / APP_WIDTH;
+    float top = std::min(m_shift_drag_start.y, m_shift_drag_stop.y) / APP_HEIGHT;
+    float bottom = std::max(m_shift_drag_start.y, m_shift_drag_stop.y) / APP_HEIGHT;
+
+    const float MIN_SELECTION_VOLUME = 0.0001;
+    if ((right - left) * (bottom - top) < MIN_SELECTION_VOLUME)
+        return;
+
+    Ogre::Ray ul = m_camera->getCameraToViewportRay(left, top);
+    Ogre::Ray ur = m_camera->getCameraToViewportRay(right, top);
+    Ogre::Ray ll = m_camera->getCameraToViewportRay(left, bottom);
+    Ogre::Ray lr = m_camera->getCameraToViewportRay(right, bottom);
+
+    Ogre::PlaneBoundedVolume volume;
+    volume.planes.push_back(
+        Ogre::Plane(ul.getOrigin(), ur.getOrigin(), lr.getOrigin())); // front plane
+    volume.planes.push_back(
+        Ogre::Plane(ul.getOrigin(), ul.getPoint(1.0), ur.getPoint(1.0))); // top plane
+    volume.planes.push_back(
+        Ogre::Plane(ll.getOrigin(), lr.getPoint(1.0), ll.getPoint(1.0))); // bottom plane
+    volume.planes.push_back(
+        Ogre::Plane(ul.getOrigin(), ll.getPoint(1.0), ul.getPoint(1.0))); // left plane
+    volume.planes.push_back(
+        Ogre::Plane(ur.getOrigin(), ur.getPoint(1.0), lr.getPoint(1.0))); // right plane
+
+    Ogre::PlaneBoundedVolumeList volume_list;
+    volume_list.push_back(volume);
+    m_volume_scene_query->setVolumes(volume_list);
+    Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
+    for (unsigned int i = 0; i < m_current_selections.size(); ++i) {
+        // TODO: Come up with a system for ensuring that the pointers in m_current_selections are not left dangling, so
+        // that deselection code like that below doesn't crash the app.
+        m_current_selections[i]->getParentSceneNode()->showBoundingBox(false); // TODO: Remove.
+    }
+    m_current_selections.clear();
+    for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
+        (*it)->getParentSceneNode()->showBoundingBox(true); // TODO: Remove.
+        m_current_selections.push_back(*it);
+    }
 }

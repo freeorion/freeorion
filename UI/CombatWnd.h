@@ -3,6 +3,7 @@
 #define _CombatWnd_h_
 
 #include <OgreFrameListener.h>
+#include <OgreManualObject.h>
 #include <OgreMath.h>
 #include <OgreVector3.h>
 
@@ -15,6 +16,7 @@ namespace Ogre {
     class SceneManager;
     class SceneNode;
     class Viewport;
+    class PlaneBoundedVolumeListSceneQuery;
 }
 
 class CombatWnd :
@@ -38,24 +40,38 @@ public:
     virtual void KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
 
 private:
-    virtual bool frameStarted(const Ogre::FrameEvent &event);
+    class SelectionRect : public Ogre::ManualObject
+    {
+    public:
+        SelectionRect();
+        void Resize(const GG::Pt& pt1, const GG::Pt& pt2);
+    };
+
+    virtual bool frameStarted(const Ogre::FrameEvent& event);
 
     void UpdateCameraPosition();
+    void EndShiftDrag();
+    void SelectObjectsInVolume();
 
     Ogre::SceneManager* m_scene_manager;
     Ogre::Camera* m_camera;
     Ogre::Viewport* m_viewport;
     Ogre::RaySceneQuery* m_ray_scene_query;
+    Ogre::PlaneBoundedVolumeListSceneQuery* m_volume_scene_query;
 
     Ogre::Real m_distance_to_lookat_point;
     Ogre::Radian m_pitch;
     Ogre::Radian m_yaw;
     GG::Pt m_last_pos;
+    GG::Pt m_shift_drag_start;
+    GG::Pt m_shift_drag_stop;
     bool m_mouse_dragged;
     Ogre::SceneNode* m_currently_selected_scene_node;
+    SelectionRect* m_selection_rect;
     Ogre::Vector3 m_lookat_point;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
+    std::vector<Ogre::MovableObject*> m_current_selections;
 };
 
 #endif
