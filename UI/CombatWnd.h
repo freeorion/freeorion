@@ -12,6 +12,7 @@
 
 namespace Ogre {
     class Camera;
+    class MovableObject;
     class RaySceneQuery;
     class SceneManager;
     class SceneNode;
@@ -51,7 +52,9 @@ private:
 
     void UpdateCameraPosition();
     void EndShiftDrag();
-    void SelectObjectsInVolume();
+    void SelectObjectsInVolume(bool toggle_selected_items);
+    Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
+    void DeselectAll();
 
     Ogre::SceneManager* m_scene_manager;
     Ogre::Camera* m_camera;
@@ -69,9 +72,9 @@ private:
     Ogre::SceneNode* m_currently_selected_scene_node;
     SelectionRect* m_selection_rect;
     Ogre::Vector3 m_lookat_point;
+    std::set<Ogre::MovableObject*> m_current_selections;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
-    std::vector<Ogre::MovableObject*> m_current_selections;
 };
 
 #endif

@@ -209,19 +209,31 @@ void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS) {
-        SelectObjectsInVolume();
+        SelectObjectsInVolume(mod_keys & GG::MOD_KEY_CTRL);
         EndShiftDrag();
     } else if (!m_mouse_dragged) {
-        Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
-                                                         pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
-        m_ray_scene_query->setRay(ray);
-        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
-        if (result.begin() != result.end() && result.begin()->movable) {
-            Ogre::SceneNode* clicked_scene_node = result.begin()->movable->getParentSceneNode();
+        if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
+            Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
             assert(clicked_scene_node);
-            m_currently_selected_scene_node = clicked_scene_node;
-            m_lookat_point = m_currently_selected_scene_node->getWorldPosition();
-            UpdateCameraPosition();
+            if (mod_keys & GG::MOD_KEY_CTRL) {
+                std::set<Ogre::MovableObject*>::iterator it = m_current_selections.find(movable_object);
+                if (it == m_current_selections.end()) {
+                    movable_object->getParentSceneNode()->showBoundingBox(true); // TODO: Replace.
+                    m_current_selections.insert(movable_object);
+                } else {
+                    (*it)->getParentSceneNode()->showBoundingBox(false); // TODO: Replace.
+                    m_current_selections.erase(it);
+                }
+            } else {
+                DeselectAll();
+                movable_object->getParentSceneNode()->showBoundingBox(true); // TODO: Replace.
+                m_current_selections.insert(movable_object);
+                m_currently_selected_scene_node = clicked_scene_node;
+                m_lookat_point = m_currently_selected_scene_node->getWorldPosition();
+                UpdateCameraPosition();
+            }
+        } else {
+            DeselectAll();
         }
     }
 }
@@ -285,7 +297,7 @@ void CombatWnd::EndShiftDrag()
     m_selection_rect->setVisible(false);
 }
 
-void CombatWnd::SelectObjectsInVolume()
+void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
 {
     const float APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
     const float APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
@@ -319,15 +331,38 @@ void CombatWnd::SelectObjectsInVolume()
     Ogre::PlaneBoundedVolumeList volume_list;
     volume_list.push_back(volume);
     m_volume_scene_query->setVolumes(volume_list);
+    if (!toggle_selected_items)
+        DeselectAll();
     Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
-    for (unsigned int i = 0; i < m_current_selections.size(); ++i) {
+    for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
+        std::pair<std::set<Ogre::MovableObject*>::iterator, bool> insertion_result = m_current_selections.insert(*it);
+        if (insertion_result.second) {
+            (*it)->getParentSceneNode()->showBoundingBox(true); // TODO: Remove.
+        } else {
+            (*insertion_result.first)->getParentSceneNode()->showBoundingBox(false); // TODO: Remove.
+            m_current_selections.erase(insertion_result.first);
+        }
+    }
+}
+
+Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
+{
+    Ogre::MovableObject* retval = 0;
+    Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
+                                                     pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
+    m_ray_scene_query->setRay(ray);
+    Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+    if (result.begin() != result.end())
+        retval = result.begin()->movable;
+    return retval;
+}
+
+void CombatWnd::DeselectAll()
+{
+    for (std::set<Ogre::MovableObject*>::iterator it = m_current_selections.begin(); it != m_current_selections.end(); ++it) {
         // TODO: Come up with a system for ensuring that the pointers in m_current_selections are not left dangling, so
         // that deselection code like that below doesn't crash the app.
-        m_current_selections[i]->getParentSceneNode()->showBoundingBox(false); // TODO: Remove.
+        (*it)->getParentSceneNode()->showBoundingBox(false); // TODO: Replace.
     }
     m_current_selections.clear();
-    for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
-        (*it)->getParentSceneNode()->showBoundingBox(true); // TODO: Remove.
-        m_current_selections.push_back(*it);
-    }
 }
