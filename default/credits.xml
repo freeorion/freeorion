@@ -5,7 +5,6 @@
       <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programming, Game Design, Graphics"/>
       <PERSON name="Zach Laine"      nick="Tzlaine"         task="Programming Lead, Game Design"/>
       <PERSON name="Geoff Topping"   nick="Geoff the Medio" task="Game Design Lead, Programming"/>
-      <PERSON name="Jonathan Hill"   nick="Obiwan"          task="Graphics Lead"/>
       <PERSON name="Kenneth Welch"   nick="LithiumMongoose" task="Audio Lead"/>
     </GROUP>
     <GROUP name ="PROGRAMMING">
@@ -37,10 +36,11 @@
       <PERSON name="Andrew Hull"     nick="moxy"       task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
+      <PERSON name="Jonathan Hill"    nick="Obiwan"         task="Graphics"/>
       <PERSON name="Ka"               nick=""               task="Graphics"/>
       <PERSON name="Alex Kaludis"     nick="That Guy"       task="Graphics"/>
       <PERSON name="Chris Montgomery" nick=""               task="Graphics"/>
-      <PERSON name="Mathias Köhler"   nick="pd"             task="Graphics"/>
+      <PERSON name="Mathias Köhler"   nick="pd"             task="Graphics Assistant Lead"/>
       <PERSON name="Anton Ruonala"    nick="Miu"            task="Graphics"/>
       <PERSON name="Tim Gilmour"      nick="burndaddy"      task="Graphics"/>
       <PERSON name="Zanzibar"         nick=""               task="Graphics"/>
