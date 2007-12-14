@@ -1523,8 +1523,7 @@ void Empire::UpdateFoodDistribution()
 
     // compile map of food production of ResourceCenters, indexed by center's id
     std::map<int, double> fp_map;
-    for (res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it)
-    {
+    for (res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it) {
         ResourceCenter *center = *res_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
@@ -1532,8 +1531,7 @@ void Empire::UpdateFoodDistribution()
     }
 
     // first pass: give food to PopCenters that produce food, limited by their food need and their food production
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
@@ -1556,9 +1554,8 @@ void Empire::UpdateFoodDistribution()
 
     //Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
-    // second pass: give food to PopCenters limited by their food need only: prevent starvation if possible
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
+    // second pass: give as much food as needed to PopCenters to maintain current population
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
@@ -1573,47 +1570,15 @@ void Empire::UpdateFoodDistribution()
         m_food_total_distributed += addition;
     }
 
-    /* third pass: give food to PopCenters limited by their twice their basic food need (the most a planet
-       can consume on one turn) or their local production if it is less than twice the basic need, but more
-       than they already have.  (Don't take any food away if production is less than already allocated.) */
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
+    // third pass: give as much food as needed to PopCenters to allow max possible growth
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
 
-        double basic_need = obj->MeterPoints(METER_POPULATION);
-        double full_need = 2 * basic_need;
-        double has = center->AvailableFood();
+        double addition = center->FuturePopGrowthMax();
 
-        double food_prod = 0.0;
-        std::map<int, double>::iterator fp_map_it = fp_map.find(obj->ID());
-        if (fp_map_it != fp_map.end())
-            food_prod = fp_map_it->second;
-
-        double addition = 0.0;
-        if (food_prod > has)
-            addition = std::min(available_food, std::min(full_need - has, food_prod - has));
-
-        center->SetAvailableFood(has + addition);
-        available_food -= addition;
-
-        m_food_total_distributed += addition;
-    }
-
-    // fourth pass: give food to PopCenters limited by twice their food need only: allow full growth rate    
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
-        PopCenter *center = *pop_it;
-        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
-        assert(obj);
-
-        double basic_need = obj->MeterPoints(METER_POPULATION);
-        double full_need = 2*basic_need;
-        double has = center->AvailableFood();
-        double addition = std::min(full_need - has, available_food);
-
-        center->SetAvailableFood(has + addition);
+        center->SetAvailableFood(center->AvailableFood() + addition);
         available_food -= addition;
 
         m_food_total_distributed += addition;

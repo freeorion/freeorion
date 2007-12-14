@@ -52,16 +52,15 @@ namespace {
             ("desert", PT_DESERT)
             ("terran", PT_TERRAN)
             ("ocean", PT_OCEAN)
-            ("gaia", PT_GAIA)
             ("asteroids", PT_ASTEROIDS)
             ("gasgiant", PT_GASGIANT);
 
         planet_environment_type_p.add
             ("uninhabitable", PE_UNINHABITABLE)
-            ("terrible", PE_TERRIBLE)
+            ("hostile", PE_HOSTILE)
+            ("poor", PE_POOR)
             ("adequate", PE_ADEQUATE)
-            ("superb", PE_SUPERB)
-            ("optimal", PE_OPTIMAL);
+            ("good", PE_GOOD);
 
         universe_object_type_p.add
             ("building", OBJ_BUILDING)

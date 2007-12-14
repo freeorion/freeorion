@@ -102,7 +102,6 @@ namespace ValueRef {
         case PT_DESERT: return "Desert";
         case PT_TERRAN: return "Terran";
         case PT_OCEAN: return "Ocean";
-        case PT_GAIA: return "Gaia";
         case PT_ASTEROIDS: return "Asteroids";
         case PT_GASGIANT: return "GasGiant";
         default: return "?";
@@ -114,10 +113,10 @@ namespace ValueRef {
     {
         switch (m_value) {
         case PE_UNINHABITABLE: return "Uninhabitable";
-        case PE_TERRIBLE: return "Terrible";
+        case PE_HOSTILE: return "Hostile";
+        case PE_POOR: return "Poor";
         case PE_ADEQUATE: return "Adequate";
-        case PE_SUPERB: return "Superb";
-        case PE_OPTIMAL: return "Optimal";
+        case PE_GOOD: return "Good";
         default: return "?";
         }                     
     }

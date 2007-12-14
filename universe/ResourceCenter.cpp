@@ -195,7 +195,7 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments()
     double secondary_specialized_factor = ProductionDataTables()["FocusMods"][1][0];
     double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
     double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
-    GetMeter(METER_CONSTRUCTION)->AdjustMax(20.0); // default construction max is 20
+    GetMeter(METER_CONSTRUCTION)->AdjustMax(10.0); // default construction max is 20
     UniverseObject* object = GetObjectSignal();
     assert(object);
     GetMeter(METER_FARMING)->AdjustMax(MaxFarmingModFromObject(object));

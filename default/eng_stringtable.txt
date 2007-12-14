@@ -1490,12 +1490,6 @@ Homeworld
 HOMEWORLD_SPECIAL_DESCRIPTION
 This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
 
-STARVATION_SPECIAL
-Starvation
-
-STARVATION_SPECIAL_DESCRIPTION
-This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
-
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
@@ -1610,8 +1604,6 @@ PT_TERRAN
 terran
 PT_OCEAN
 ocean
-PT_GAIA
-gaia
 PT_ASTEROIDS
 asteroids
 PT_GASGIANT
@@ -1642,14 +1634,14 @@ gas giant
 
 PE_UNINHABITABLE
 uninhabitable
-PE_TERRIBLE
-terrible
+PE_HOSTILE
+hostile
+PE_POOR
+poor
 PE_ADEQUATE
 adequate
-PE_SUPERB
-superb
-PE_OPTIMAL
-optimal
+PE_GOOD
+good
 
 
 # FocusTypes

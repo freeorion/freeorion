@@ -621,8 +621,7 @@ Tech
             scope = And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    Planet environment = Terrible
-                    CurrentConstruction low = 20 high = 999
+                    Planet environment = [Poor Adequate]
             ]
             activation = Source
             effects = SetMaxPopulation Target.MaxPopulation + 2
@@ -971,7 +970,7 @@ Tech
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
                     PrimaryFocus Mining
-                    Planet environment = [Optimal Superb]
+                    Planet environment = Good
                 ]
             activation = Source
             effects = SetMaxMining value = Target.MaxMining + 2
@@ -981,7 +980,7 @@ Tech
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
                     PrimaryFocus Balanced
-                    Planet environment = [Optimal Superb]
+                    Planet environment = Good
                 ]
             activation = Source
             effects = SetMaxMining value = Target.MaxMining + 1
@@ -991,7 +990,7 @@ Tech
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
                     SecondaryFocus Mining
-                    Planet environment = [Optimal Superb]
+                    Planet environment = Good
                 ]
             activation = Source
             effects = SetMaxMining value = Target.MaxMining + 1

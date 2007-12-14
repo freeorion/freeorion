@@ -349,18 +349,17 @@ PlanetEnvironment Planet::Environment(PlanetType type)
 {
     switch (type)
     {
-    case PT_ASTEROIDS:
-    case PT_GASGIANT:   return PE_UNINHABITABLE;
-    case PT_SWAMP:
-    case PT_TOXIC:
     case PT_INFERNO:
     case PT_RADIATED:
-    case PT_BARREN:
-    case PT_TUNDRA:     return PE_TERRIBLE;
+    case PT_TOXIC:
+    case PT_BARREN:     return PE_HOSTILE;      // 3 or more away from EP
+    case PT_SWAMP:
+    case PT_TUNDRA:     return PE_POOR;         // 2 away from EP
     case PT_DESERT:
-    case PT_OCEAN:      return PE_ADEQUATE;
-    case PT_TERRAN:     return PE_SUPERB;
-    case PT_GAIA:       return PE_OPTIMAL;
-    default:            return PE_UNINHABITABLE;
+    case PT_OCEAN:      return PE_ADEQUATE;     // 1 away form EP
+    case PT_TERRAN:     return PE_GOOD;         // EP
+    case PT_ASTEROIDS:
+    case PT_GASGIANT:
+    default:            return PE_UNINHABITABLE;// out of the loop
     }
 }

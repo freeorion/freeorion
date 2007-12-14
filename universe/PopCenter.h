@@ -41,6 +41,10 @@ public:
     virtual double          ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
     virtual double          MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
     virtual double          ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
+
+    double  FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
+    double  FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
+    double  FutureHealthGrowth() const; ///< predicts by which amount the health meter will grow next turn
     //@}
 
     /** \name Mutators */ //@{
@@ -71,10 +75,6 @@ private:
     virtual Meter*          GetMeter(MeterType type) = 0;       ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
-
-    double  FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
-    double  FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
-    double  FutureHealthGrowth() const; ///< predicts by which amount the health meter will grow next turn
 
     int     m_race; ///< the id of the race that occupies this planet
     double  m_available_food;

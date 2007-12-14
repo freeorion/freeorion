@@ -70,12 +70,11 @@ enum PlanetType {
     PT_BARREN,
     PT_TUNDRA,
     PT_DESERT,
-    PT_TERRAN,                   //changed the order to be clockwise around the 
-    PT_OCEAN,                    // wheel of EP, added Inferno and Swamp types
-    PT_GAIA,
-    PT_ASTEROIDS,                //these need to be types also so they can have an environment
+    PT_TERRAN,                  //changed the order to be clockwise around the 
+    PT_OCEAN,                   // wheel of EP, added Inferno and Swamp types
+    PT_ASTEROIDS,               //these need to be types also so they can have an environment
     PT_GASGIANT,                     
-    NUM_PLANET_TYPES   //keep this last
+    NUM_PLANET_TYPES            //keep this last
 };
 
 namespace GG {
@@ -90,7 +89,6 @@ namespace GG {
     GG_ENUM_MAP_INSERT(PT_DESERT)
     GG_ENUM_MAP_INSERT(PT_TERRAN)
     GG_ENUM_MAP_INSERT(PT_OCEAN)
-    GG_ENUM_MAP_INSERT(PT_GAIA)
     GG_ENUM_MAP_INSERT(PT_ASTEROIDS)
     GG_ENUM_MAP_INSERT(PT_GASGIANT)
     GG_ENUM_MAP_END
@@ -134,10 +132,10 @@ GG_ENUM_STREAM_OUT(PlanetSize)
 enum PlanetEnvironment {
     INVALID_PLANET_ENVIRONMENT = -1,
     PE_UNINHABITABLE,   //for gas giants and asteroids
-    PE_TERRIBLE,
+    PE_HOSTILE,
+    PE_POOR,
     PE_ADEQUATE,
-    PE_SUPERB,
-    PE_OPTIMAL,
+    PE_GOOD,
     NUM_PLANET_ENVIRONMENTS   //keep this last
 };
 
@@ -145,10 +143,10 @@ namespace GG {
     GG_ENUM_MAP_BEGIN(PlanetEnvironment)
     GG_ENUM_MAP_INSERT(INVALID_PLANET_ENVIRONMENT)
     GG_ENUM_MAP_INSERT(PE_UNINHABITABLE)
-    GG_ENUM_MAP_INSERT(PE_TERRIBLE)
+    GG_ENUM_MAP_INSERT(PE_HOSTILE)
+    GG_ENUM_MAP_INSERT(PE_POOR)
     GG_ENUM_MAP_INSERT(PE_ADEQUATE)
-    GG_ENUM_MAP_INSERT(PE_SUPERB)
-    GG_ENUM_MAP_INSERT(PE_OPTIMAL)
+    GG_ENUM_MAP_INSERT(PE_GOOD)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(PlanetEnvironment)

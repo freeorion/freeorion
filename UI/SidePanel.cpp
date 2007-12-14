@@ -850,7 +850,7 @@ void SidePanel::PlanetPanel::Refresh()
 
     if (owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
-        m_button_colonize->SetText(UserString("PL_COLONIZE"));
+        m_button_colonize->SetText(UserString("PL_COLONIZE") + " " + boost::lexical_cast<std::string>(planet->GetMeter(METER_POPULATION)->Max()));
     
     } else if (planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);

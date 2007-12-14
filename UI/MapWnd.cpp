@@ -689,10 +689,13 @@ void MapWnd::InitTurn(int turn_number)
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
+    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
+    // population is available for currently uncolonized planets
+    UpdateMeterEstimates();
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
-    // determine level of supply each empire can provide to each system
+    // determine level of supply each empire can provide to fleets in each system
     m_system_supply.clear();
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         Empire* empire = it->second;
@@ -1964,7 +1967,33 @@ void MapWnd::UpdateMetersAndResourcePools()
 
 void MapWnd::UpdateMeterEstimates()
 {
+    // add this player ownership to all planets that the player can see but which aren't currently colonized.
+    // this way, any effects the player knows about that would act on those planets if the player colonized them
+    // include those planets in their scope.  This lets effects from techs the player knows alter the max
+    // population of planet that is displayed to the player, even if those effects have a condition that causes
+    // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
+    // tech that should only benefit him/herself)
+    
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+
+    // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
+    // the current player's ownership to all, while remembering which planets this is done to
+    std::vector<Planet*> unowned_planets;
+    std::vector<Planet*> all_planets = HumanClientApp::GetApp()->GetUniverse().FindObjects<Planet>();
+    for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
+         Planet* planet = *it;
+         if (planet->Owners().empty()) {
+             unowned_planets.push_back(planet);
+             planet->AddOwner(player_id);
+         }
+    }
+
+    // update meter estimates with temporary ownership
     GetUniverse().UpdateMeterEstimates();
+
+    // remove temporary ownership added above
+    for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
+        (*it)->RemoveOwner(player_id);
 }
 
 void MapWnd::UpdateEmpireResourcePools()

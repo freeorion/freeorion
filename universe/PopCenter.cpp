@@ -188,17 +188,17 @@ void PopCenter::PopGrowthProductionResearchPhase()
 
     GetMeter(METER_POPULATION)->AdjustCurrent(FuturePopGrowth());
     if (AvailableFood() < pop->Current()) { // starvation
-        object->AddSpecial("STARVATION_SPECIAL");
-        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
+        //object->AddSpecial("STARVATION_SPECIAL");
+        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
     } else if (m_available_food < 2 * pop->Current()) { // "minimal" nutrient levels
-        object->RemoveSpecial("STARVATION_SPECIAL");
-        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
+        //object->RemoveSpecial("STARVATION_SPECIAL");
+        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
     } else if (m_available_food < 4 * pop->Current()) { // "normal" nutrient levels
-        object->RemoveSpecial("STARVATION_SPECIAL");
-        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
+        //object->RemoveSpecial("STARVATION_SPECIAL");
+        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
     } else { // food orgy!
-        object->RemoveSpecial("STARVATION_SPECIAL");
-        health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
+        //object->RemoveSpecial("STARVATION_SPECIAL");
+        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
     }
     health->AdjustCurrent(health->Current() * (((health->Max() + 1.0) - health->Current()) / (health->Max() + 1.0)));
 }
