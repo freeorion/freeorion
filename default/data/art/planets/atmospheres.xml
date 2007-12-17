@@ -28,15 +28,6 @@
     </atmosphere>
   </PlanetAtmosphereData>
   <PlanetAtmosphereData>
-    <planet_filename>planets/Gaia.png</planet_filename>
-    <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/blue_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
-    </atmosphere>
-  </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
     <planet_filename>planets/GasGiant01.png</planet_filename>
     <atmospheres>
       <Atmosphere>

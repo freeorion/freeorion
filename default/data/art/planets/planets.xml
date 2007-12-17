@@ -296,15 +296,6 @@
 
 
     <RotatingPlanetData>
-      <planet_type>PT_GAIA</planet_type>
-      <filename>planets/Gaia.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>23.0</axis_angle>
-      <shininess>0.0</shininess>
-    </RotatingPlanetData>
-
-
-    <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant01.png</filename>
       <RPM>1.5</RPM>
