@@ -394,6 +394,7 @@ void SystemIcon::DoFleetButtonLayout()
     int empire_num = 1;
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         GG::Pt ul = NthFleetButtonUpperLeft(empire_num, false);
+        ++empire_num;
         it->second->SizeMove(ul, ul + SIZE);
     }
     
@@ -401,6 +402,7 @@ void SystemIcon::DoFleetButtonLayout()
     empire_num = 1;
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
         GG::Pt ul = NthFleetButtonUpperLeft(empire_num, true);
+        ++empire_num;
         it->second->SizeMove(ul, ul + SIZE);
     }
 }
