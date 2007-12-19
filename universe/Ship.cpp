@@ -74,12 +74,12 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
 
 bool Ship::IsArmed() const
 {
-    return Design()->attack > 0;
+    return Design()->Attack() > 0;
 }
 
 double Ship::Speed() const
 {
-    return Design()->speed;
+    return Design()->Speed();
 }
 
 const std::string& Ship::PublicName(int empire_id) const

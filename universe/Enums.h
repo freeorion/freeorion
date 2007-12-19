@@ -438,6 +438,7 @@ namespace GG {
 GG_ENUM_STREAM_IN(BuildType)
 GG_ENUM_STREAM_OUT(BuildType)
 
+/** Types of resources that planets can produce */
 enum ResourceType {
     INVALID_RESOURCE_TYPE = -1,
     RE_FOOD,
@@ -493,7 +494,10 @@ enum EffectsCauseType {
     ECT_UNKNOWN_CAUSE,
     ECT_TECH,
     ECT_BUILDING,
-    ECT_SPECIAL
+    ECT_SPECIAL,
+    ECT_SHIP_PART,
+    ECT_SHIP_HULL
 };
+
 
 #endif // _Enums_h_

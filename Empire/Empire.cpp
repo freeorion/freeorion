@@ -356,7 +356,7 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
 {
     if (build_type == BT_SHIP) {
         const ShipDesign* ship_design = GetShipDesign(design_id);
-        name = ship_design->name;
+        name = ship_design->Name();
     } else {
         name = "???";
     }
@@ -791,7 +791,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
         const ShipDesign* ship_design = GetShipDesign(design_id);
         if (!ship_design)
             break;
-        return std::make_pair(ship_design->cost, 5); // v0.3 only
+        return std::make_pair(ship_design->Cost(), 5); // v0.3 only
     }
     default:
         break;
@@ -1378,7 +1378,7 @@ void Empire::CheckProductionProgress()
                 int ship_id = universe.Insert(ship);
 #if 0
                 const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.design_id);
-                std::string ship_name(ship_design->name);
+                std::string ship_name(ship_design->Name());
                 ship_name += boost::lexical_cast<std::string>(ship_id);
                 ship->Rename(ship_name);
 #else

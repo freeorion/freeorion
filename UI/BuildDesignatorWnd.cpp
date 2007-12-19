@@ -352,13 +352,13 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
         assert(design);
         turns = 5; // this is a kludge for v0.3 only
         boost::tie(cost_per_turn, turns) = empire->ProductionCostAndTime(BT_SHIP, m_item_design_id);
-        item_name_str = design->name;
+        item_name_str = design->Name();
         description_str = str(format(UserString("PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR"))
-                              % design->description
-                              % design->attack
-                              % design->defense
-                              % design->speed);
-        graphic = ClientUI::GetTexture(ClientUI::ArtDir() / design->graphic);
+                              % design->Description()
+                              % design->Attack()
+                              % design->Defense()
+                              % design->Speed());
+        graphic = ClientUI::GetTexture(ClientUI::ArtDir() / design->Graphic());
     } else if (m_build_type == BT_ORBITAL) {
         turns = DEFENSE_BASE_BUILD_TURNS;
         cost_per_turn = DEFENSE_BASE_BUILD_COST;
@@ -812,12 +812,12 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
 
             // icon
             GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
-                ClientUI::GetTexture(ClientUI::ArtDir() / ship_design->graphic),
+                ClientUI::GetTexture(ClientUI::ArtDir() / ship_design->Graphic()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
 
             // ship design name
-            row->push_back(ship_design->name, default_font, ClientUI::TextColor());
+            row->push_back(ship_design->Name(), default_font, ClientUI::TextColor());
 
             // cost / turn, and minimum production turns
             const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, ship_design_id);

@@ -671,7 +671,7 @@ void ShipDesignOrder::ExecuteImpl() const
         empire->RemoveShipDesign(m_design_id);
 
     } else if (m_create_new_design) {
-        if (m_ship_design.empire != EmpireID())
+        if (m_ship_design.DesignedByEmpire() != EmpireID())
             throw std::runtime_error("Tried to create a new ShipDesign designed by another empire");
 
         Universe& universe = GetUniverse();

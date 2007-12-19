@@ -529,7 +529,8 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
     bool retval = false;
 
     if (ship_design) {
-        if ( id < UniverseObject::MAX_ID) {
+        if (id < UniverseObject::MAX_ID) {
+            ship_design->SetID(id);
             m_ship_designs[id] = ship_design;
             retval = true;
         }
@@ -2823,77 +2824,36 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h
-        ShipDesign* design = new ShipDesign();
-        design->name = "Scout";
-        design->attack = 0;
-        design->defense = 1;
-        design->cost = 10;
-        design->speed = 80.0;
-        design->colonize = false;
-        design->empire = empire_id;
-        design->description = "Small and cheap unarmed vessel designed for recon and exploration.";
-        design->graphic = "misc/scout1.png";
+        ShipDesign* design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Scout", empire_id, 0, 
+                                            "HULL", std::vector<std::string>(), "graphic", "model");
         int scout_design_id = empire->AddShipDesign(design);
+        design->SetID(scout_design_id);
 
-        design = new ShipDesign();
-        design->name = "Colony Ship";
-        design->attack = 0;
-        design->defense = 1;
-        design->cost = 50;
-        design->speed = 35.0;
-        design->colonize = true;
-        design->empire = empire_id;
-        design->description = "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
-        design->graphic = "misc/colony1.png";
+        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Colony Ship", empire_id, 0, 
+                                "HULL", std::vector<std::string>(), "graphic", "model");
         int colony_ship_design_id = empire->AddShipDesign(design);
+        design->SetID(colony_ship_design_id);
 
-        design = new ShipDesign();
-        design->name = "Mark I";
-        design->attack = 2;
-        design->defense = 1;
-        design->cost = 20;
-        design->speed = 50.0;
-        design->colonize = false;
-        design->empire = empire_id;
-        design->description = "Affordable armed patrol frigate.";
-        design->graphic = "misc/mark1.png";
-        empire->AddShipDesign(design);
+        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark I", empire_id, 0, 
+                                "HULL", std::vector<std::string>(), "graphic", "model");
+        int mark_I_design_id = empire->AddShipDesign(design);
+        design->SetID(mark_I_design_id);
 
-        design = new ShipDesign();
-        design->name = "Mark II";
-        design->attack = 5;
-        design->defense = 2;
-        design->cost = 40;
-        design->speed = 40.0;
-        design->colonize = false;
-        design->empire = empire_id;
-        design->description = "Cruiser with storng defensive and offensive capabilities.";
-        design->graphic = "misc/mark2.png";
-        empire->AddShipDesign(design);
+        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark II", empire_id, 0, 
+                                "HULL", std::vector<std::string>(), "graphic", "model");
+        int temp = empire->AddShipDesign(design);
+        design->SetID(temp);
 
-        design = new ShipDesign();
-        design->name = "Mark III";
-        design->attack = 10;
-        design->defense = 3;
-        design->cost = 75;
-        design->speed = 30.0;
-        design->colonize = false;
-        design->empire = empire_id;
-        design->description = "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
-        design->graphic = "misc/mark3.png";
-        empire->AddShipDesign(design);
+        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark III", empire_id, 0, 
+                                "HULL", std::vector<std::string>(), "graphic", "model");
+        temp = empire->AddShipDesign(design);
+        design->SetID(temp);
 
-        design = new ShipDesign();
-        design->name = "Mark IV";
-        design->attack = 15;
-        design->defense = 5;
-        design->cost = 140;
-        design->speed = 25.0;
-        design->colonize = false;
-        design->empire = empire_id;
-        design->description = "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
-        design->graphic = "misc/mark4.png";
-        empire->AddShipDesign(design);
+        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark IV", empire_id, 0, 
+                                "HULL", std::vector<std::string>(), "graphic", "model");
+        temp = empire->AddShipDesign(design);
+        design->SetID(temp);
+
 
         // create the empire's starting fleet
         Fleet* home_fleet = new Fleet(UserString("FW_HOME_FLEET"), home_system->X(), home_system->Y(), empire_id);
@@ -2916,6 +2876,16 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         ship->Rename(empire->NewShipName());
         ship_id = Insert(ship);
         home_fleet->AddShip(ship_id);
+
+        // create a battle fleet
+        Fleet* battle_fleet = new Fleet(UserString("FW_BATTLE_FLEET"), home_system->X(), home_system->Y(), empire_id);
+        Insert(battle_fleet);
+        home_system->Insert(battle_fleet);
+
+        ship = new Ship(empire_id, mark_I_design_id);
+        ship->Rename(empire->NewShipName());
+        ship_id = Insert(ship);
+        battle_fleet->AddShip(ship_id);
     }
 #else
         throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");

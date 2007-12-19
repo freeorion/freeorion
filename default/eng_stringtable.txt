@@ -1188,6 +1188,9 @@ FW_EMPIRE_FLEETS
 FW_HOME_FLEET
 Home Fleet
 
+FW_BATTLE_FLEET
+Battle Fleet
+
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
 Foreign fleet

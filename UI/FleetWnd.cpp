@@ -159,7 +159,7 @@ namespace {
             std::string design_name;
             const ShipDesign* design = m_ship->Design();
             if (design) {
-                design_name = design->name;
+                design_name = design->Name();
                 std::string::size_type space = design_name.find(' ');
                 if (space != std::string::npos) {
                     design_name[space] = '_';
@@ -178,7 +178,7 @@ namespace {
 
             SetShipIcon();
             m_ship_name_text->SetText(m_ship->Name());
-            m_ship_strength_stat->SetValue(design ? design->attack : UNKNOWN_UI_DISPLAY_VALUE);
+            m_ship_strength_stat->SetValue(design ? design->Attack() : UNKNOWN_UI_DISPLAY_VALUE);
 
             const int ICON_SPACING = 5;
             const int ICON_SZ = Height() - SHIP_NAME_HT - 1;
@@ -195,7 +195,7 @@ namespace {
                 DeleteChild(m_damage_stat);
                 m_damage_stat = 0;
             }
-            if (m_ship->Design() && design->colonize) {
+            if (m_ship->Design() && design->Colonize()) {
                 if (!m_colonizer_icon) {
                     m_colonizer_icon = new GG::StaticGraphic(x_position, SHIP_NAME_HT, ICON_SZ, ICON_SZ, 
                                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png"),
@@ -426,7 +426,7 @@ void FleetDataPanel::SetFleetIcon()
             const ShipDesign* design = ship->Design();
             std::string design_name;
             if (design) {
-                design_name = design->name;
+                design_name = design->Name();
                 std::string::size_type space = design_name.find(' ');
                 if (space != std::string::npos) {
                     design_name[space] = '_';
@@ -460,9 +460,9 @@ void FleetDataPanel::Refresh()
             Ship* ship = GetUniverse().Object<Ship>(*it);
             const ShipDesign* design = ship->Design();
             if (design) {
-                if (design->colonize)
+                if (design->Colonize())
                     contains_colony_ship = true;
-                attack_strength += design->attack;
+                attack_strength += design->Attack();
                 attack_factor_unknown = false;
             }
             // TODO: account for damaged ships once damage system is in place
@@ -900,7 +900,7 @@ std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 {
     Ship* ship = GetUniverse().Object<Ship>(ship_id);
     const ShipDesign* design = ship->Design();
-    return UserString("FW_SHIP_CLASS") + " \"" + (design ? design->name : UserString("FW_UNKNOWN_DESIGN_NAME")) + "\"";
+    return UserString("FW_SHIP_CLASS") + " \"" + (design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME")) + "\"";
 }
 
 

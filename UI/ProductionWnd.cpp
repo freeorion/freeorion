@@ -186,7 +186,7 @@ namespace {
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {
             graphic = ClientUI::ShipIcon(build.item.design_id);
-            name_text = GetShipDesign(build.item.design_id)->name;
+            name_text = GetShipDesign(build.item.design_id)->Name();
         } else if (build.item.build_type == BT_ORBITAL) {
             graphic = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "base1.png"); // this is a kludge for v0.3 only
             name_text = UserString(build.item.name);

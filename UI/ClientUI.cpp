@@ -94,7 +94,7 @@ GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<Strea
 boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
     const ShipDesign* design = GetShipDesign(design_id);
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / "icons" / (design->name + ".png"), true);
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / design->Graphic(), true);
     if (texture) return texture;
     return ClientUI::GetTexture(ArtDir() / "icons" / "Scout.png", true);
 }

@@ -652,7 +652,7 @@ namespace {
                     continue;
                 }
                 
-                if (design->colonize) return s;
+                if (design->Colonize()) return s;
             }
         }
         return 0;   // no ships found...
