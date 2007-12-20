@@ -13,6 +13,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../util/Random.h"
+#include "DesignWnd.h"
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
 #include "SidePanel.h"
@@ -192,6 +193,11 @@ MapWnd::MapWnd() :
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
+    m_design_wnd = new DesignWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_design_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_design_wnd);
+    m_design_wnd->Hide();
+
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
@@ -210,8 +216,13 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
 
+    button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_DESIGN") );
+    m_toolbar->AttachChild(m_btn_design);
+    GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
+
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
 
@@ -302,6 +313,7 @@ MapWnd::MapWnd() :
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3), &MapWnd::ToggleResearch, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4), &MapWnd::ToggleProduction, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5), &MapWnd::ToggleDesign, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10), &MapWnd::ShowMenu, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s), &MapWnd::CloseSystemView, this);
 
@@ -341,6 +353,7 @@ MapWnd::~MapWnd()
     delete m_toolbar;
     delete m_research_wnd;
     delete m_production_wnd;
+    delete m_design_wnd;
     RemoveAccelerators();
 }
 
@@ -737,6 +750,7 @@ void MapWnd::InitTurn(int turn_number)
 
     m_research_wnd->Hide();
     m_production_wnd->Hide();
+    m_design_wnd->Hide();
     m_in_production_view_mode = false;
 
     m_chat_edit->Hide();
@@ -1729,6 +1743,7 @@ void MapWnd::Cleanup()
     RemoveAccelerators();
     m_research_wnd->Hide();
     m_production_wnd->Hide();
+    m_design_wnd->Hide();
     m_in_production_view_mode = false;
     m_toolbar->Hide();
     m_FPS->Hide();
@@ -1747,6 +1762,7 @@ void MapWnd::Sanitize()
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
+    m_design_wnd->Sanitize();
     m_previously_selected_system = UniverseObject::INVALID_OBJECT_ID;
 }
 
@@ -1758,6 +1774,8 @@ bool MapWnd::ReturnToMap()
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
     }
+    if (m_design_wnd->Visible())
+        m_design_wnd->Hide();
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
@@ -1802,6 +1820,8 @@ bool MapWnd::ToggleSitRep()
         // hide other "competing" windows
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
+        m_design_wnd->Hide();
+        HumanClientApp::GetApp()->MoveDown(m_design_wnd);
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
@@ -1827,6 +1847,7 @@ bool MapWnd::ToggleResearch()
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
+        m_design_wnd->Hide();
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
@@ -1857,6 +1878,7 @@ bool MapWnd::ToggleProduction()
         m_sitrep_panel->Hide();
         DetachChild(m_sitrep_panel);
         m_research_wnd->Hide();
+        m_design_wnd->Hide();
 
         // show the production window
         m_production_wnd->Show();
@@ -1869,6 +1891,31 @@ bool MapWnd::ToggleProduction()
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
         m_production_wnd->Reset();
+    }
+    return true;
+}
+
+bool MapWnd::ToggleDesign()
+{
+    m_projected_fleet_line = MovementLineData();
+    if (m_design_wnd->Visible()) {
+        m_design_wnd->Hide();
+    } else {
+        // hide other "competing" windows
+        m_sitrep_panel->Hide();
+        m_research_wnd->Hide();
+        m_production_wnd->Hide();
+        if (m_in_production_view_mode) {
+            m_in_production_view_mode = false;
+            ShowAllPopups();
+            if (!m_side_panel->Visible())
+                m_side_panel->SetSystem(m_side_panel->SystemID());
+        }
+
+        // show the design window
+        m_design_wnd->Show();
+        GG::GUI::GetGUI()->MoveUp(m_design_wnd);
+        m_design_wnd->Reset();
     }
     return true;
 }

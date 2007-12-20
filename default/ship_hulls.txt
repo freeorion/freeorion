@@ -13,3 +13,11 @@ Hull
     mass = 300
     graphic = "ship_hull_icons/Large.png"
     model = "ship_models/Large.mod"
+
+Hull
+    name = "SH_HUGE"
+    description = "SH_HUGE_DESC"
+    slots = 20
+    mass = 1500
+    graphic = "ship_hull_icons/Huge.png"
+    model = "ship_models/Huge.mod"

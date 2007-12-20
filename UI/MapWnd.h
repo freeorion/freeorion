@@ -15,6 +15,7 @@ class CUITurnButton;
 class FleetButton;
 class FleetWnd;
 class MapWndPopup;
+class DesignWnd;
 class ProductionWnd;
 class ResearchWnd;
 struct SaveGameUIData;
@@ -131,12 +132,6 @@ private:
     void UpdateMeterEstimates();            ///< re-estimates meter values based on orders given
     void UpdateEmpireResourcePools();       ///< recalculates production and predicted changes of player's empire's resource and population pools
 
-    void TurnBtnClicked() {EndTurn();}
-    void MenuBtnClicked() {ShowMenu();}
-    void ProductionBtnClicked() {ToggleProduction();}
-    void ResearchBtnClicked() {ToggleResearch();}
-    void SitRepBtnClicked() {ToggleSitRep();}
-
     struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
 
     /** contains all the information necessary to render a single fleet movement line on the main map */
@@ -182,6 +177,7 @@ private:
     bool ToggleSitRep();
     bool ToggleResearch();
     bool ToggleProduction();
+    bool ToggleDesign();
     bool ShowMenu();
     bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
@@ -223,6 +219,7 @@ private:
     SitRepPanel*                m_sitrep_panel;     //! sitrep panel
     ResearchWnd*                m_research_wnd;     //! research screen
     ProductionWnd*              m_production_wnd;   //! production screen
+    DesignWnd*                  m_design_wnd;       //! design screen
     GG::MultiEdit*              m_chat_display;     //! (read-only) MP-chat output multi-line edit box
     CUIEdit*                    m_chat_edit;        //! MP-chat input edit box
     std::vector<FleetButton*>   m_moving_fleet_buttons; //! moving fleets in the main map (SystemIcons contain stationary fleet buttons)
@@ -248,7 +245,7 @@ private:
     CUIToolBar                  *m_toolbar;
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
 
-    CUIButton                   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_menu;
+    CUIButton                   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_menu;
 
     FPSIndicator*               m_FPS;
 

@@ -67,7 +67,7 @@ namespace {
     ParamLabel unlock_label("unlock");
     ParamLabel type_label("type");
     ParamLabel location_label("location");
-    ParamLabel partclass_label("partclass");
+    ParamLabel partclass_label("class");
     ParamLabel upgrade_label("upgrade");
     ParamLabel power_label("power");
     ParamLabel range_label("range");

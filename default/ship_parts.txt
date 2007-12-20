@@ -15,5 +15,5 @@ Part
     power = 20
     range = 15
     mass = 50
-    upgrade = []
+    upgrade = ""
     graphic = "ship_part_icons/Ion_Cannon.png"

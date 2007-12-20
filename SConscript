@@ -106,6 +106,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/MapWnd.cpp',
         'UI/MultiplayerLobbyWnd.cpp',
         'UI/OptionsWnd.cpp',
+        'UI/DesignWnd.cpp',
         'UI/ProductionWnd.cpp',
         'UI/ResearchWnd.cpp',
         'UI/ServerConnectWnd.cpp',

@@ -457,6 +457,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\UI\DesignWnd.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\UI\DesignWnd.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\FleetButton.cpp"
 					>
 				</File>
