@@ -23,6 +23,7 @@ symbols<FocusType> focus_type_p;
 symbols<EmpireAffiliationType> affiliation_type_p;
 symbols<UnlockableItemType> unlockable_item_type_p;
 symbols<TechType> tech_type_p;
+symbols<ShipPartClass> part_class_p;
 
 namespace {
     bool Init()
@@ -102,6 +103,9 @@ namespace {
             ("theory", TT_THEORY)
             ("application", TT_APPLICATION)
             ("refinement", TT_REFINEMENT);
+
+        part_class_p.add
+            ("shortrangebeam", PC_SHORT_RANGE_BEAM);
 
         return true;
     }

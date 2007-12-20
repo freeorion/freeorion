@@ -9,13 +9,18 @@ class PartType {
 public:
     /** \name Structors */ //@{
     PartType();
+    PartType(std::string name, std::string description, ShipPartClass part_class, std::string upgrade, 
+             double mass, double power, double range, /* TODO: add effects group parameter */ 
+             std::string graphic);
     //@}
 
     /** \name Accessors */ //@{
     std::string         Name() const;           ///< returns name of part
     std::string         Description() const;    ///< returns stringtable entry name of description
 
-    std::string         UpgradesTo() const;     ///< returns name of part that this part can be upgraded to.  may return an empty string if there is no such upgrade
+    std::string         Upgrade() const;        ///< returns name of part that this part can be upgraded to.  may return an empty string if there is no such upgrade
+
+    ShipPartClass       Class() const;          ///< returns that class of part that this is.
 
     double              Mass() const;           ///< returns mass of part
     double              Power() const;          ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
@@ -33,6 +38,8 @@ private:
     std::string         m_description;
     std::string         m_upgrade;
 
+    ShipPartClass       m_class;
+
     double              m_mass;
     double              m_power;
     double              m_range;
@@ -48,6 +55,44 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Holds FreeOrion ship part types */
+class PartTypeManager {
+public:
+    typedef std::map<std::string, PartType*>::const_iterator iterator;
+
+    /** \name Accessors */ //@{
+    /** returns the part type with the name \a name; you should use the free function GetPartType() instead */
+    const PartType* GetPartType(const std::string& name) const;
+
+    /** iterator to the first part type */
+    iterator begin() const;
+
+    /** iterator to the last + 1th part type */
+    iterator end() const;
+
+    /** returns the instance of this singleton class; you should use the free function GetPartTypeManager() instead */
+    static const PartTypeManager& GetPartTypeManager();
+    //@}
+
+private:
+    PartTypeManager();
+    std::string PartTypeManager::FindFirstDependencyCycle();
+    std::map<std::string, PartType*> m_parts;
+    static PartTypeManager* s_instance;
+};
+
+
+/** returns the singleton part type manager */
+const PartTypeManager& GetPartTypeManager();
+
+/** Returns the ship PartType specification object with name \a name.  If no such PartType exists,
+    0 is returned instead. */
+const PartType* GetPartType(const std::string& name);
+
+
+/** Specification for the hull, or base, on which ship designs are created by adding parts.  The hull 
+    determines some final design characteristics directly, and also determine how many parts can be
+    added to the design. */
 class HullType {
 public:
     /** \name Structors */ //@{
@@ -83,6 +128,39 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** Holds FreeOrion hull types */
+class HullTypeManager {
+public:
+    typedef std::map<std::string, HullType*>::const_iterator iterator;
+
+    /** \name Accessors */ //@{
+    /** returns the hull type with the name \a name; you should use the free function GetHullType() instead */
+    const HullType* GetHullType(const std::string& name) const;
+
+    /** iterator to the first hull type */
+    iterator begin() const;
+
+    /** iterator to the last + 1th hull type */
+    iterator end() const;
+
+    /** returns the instance of this singleton class; you should use the free function GetHullTypeManager() instead */
+    static const HullTypeManager& GetHullTypeManager();
+    //@}
+
+private:
+    HullTypeManager();
+    std::map<std::string, HullType*> m_hulls;
+    static HullTypeManager* s_instance;
+};
+
+/** returns the singleton hull type manager */
+const HullTypeManager& GetHullTypeManager();
+
+/** Returns the ship HullType specification object with name \a name.  If no such HullType exists,
+    0 is returned instead. */
+const HullType* GetHullType(const std::string& name);
+
 
 class ShipDesign {
 public:
@@ -143,11 +221,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-
 /** Returns the ShipDesign specification object with id \a ship_design_id.  If no such ShipDesign
     is present in the Universe (because it doesn't exist, or isn't know to this client), 0 is
     returned instead. */
 const ShipDesign* GetShipDesign(int ship_design_id);
+
 
 // template implementations
 template <class Archive>

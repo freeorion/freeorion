@@ -1,0 +1,19 @@
+Part
+    name = "SR_LASER"
+    description = "SR_LASER_DESC"
+    class = ShortRangeBeam
+    power = 10
+    range = 10
+    mass = 30
+    upgrade = "SR_ION_CANNON"
+    graphic = "ship_part_icons/Laser.png"
+
+Part
+    name = "SR_ION_CANNON"
+    description = "SR_ION_CANNON_DESC"
+    class = ShortRangeBeam
+    power = 20
+    range = 15
+    mass = 50
+    upgrade = []
+    graphic = "ship_part_icons/Ion_Cannon.png"

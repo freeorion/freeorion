@@ -1,6 +1,5 @@
 #include "Special.h"
 
-#include "../universe/Parser.h"
 #include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"

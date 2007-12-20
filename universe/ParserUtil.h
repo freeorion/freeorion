@@ -50,6 +50,7 @@ extern boost::spirit::symbols<FocusType> focus_type_p;
 extern boost::spirit::symbols<EmpireAffiliationType> affiliation_type_p;
 extern boost::spirit::symbols<UnlockableItemType> unlockable_item_type_p;
 extern boost::spirit::symbols<TechType> tech_type_p;
+extern boost::spirit::symbols<ShipPartClass> part_class_p;
 
 void ReportError(std::ostream& os, const char* input, const boost::spirit::parse_info<const char*>& result);
 

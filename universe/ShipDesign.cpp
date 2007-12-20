@@ -4,16 +4,203 @@
 #include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../universe/ParserUtil.h"
+#include "../util/OptionsDB.h"
+
+#include <fstream>
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
+
+namespace {
+    struct store_part_type_impl {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::map<std::string, PartType*>& part_types, const T& part_type) const {
+            if (part_types.find(part_type->Name()) != part_types.end()) {
+                std::string error_str = "ERROR: More than one ship part in ship_parts.txt has the name " + part_type->Name();
+                throw std::runtime_error(error_str.c_str());
+            }
+            part_types[part_type->Name()] = part_type;
+        }
+    };
+
+    const phoenix::function<store_part_type_impl> store_part_type_;
+}
+
+////////////////////////////////////////////////
+// Free Functions                             //
+////////////////////////////////////////////////
+const PartTypeManager& GetPartTypeManager() {
+    return PartTypeManager::GetPartTypeManager();
+}
+
+const PartType* GetPartType(const std::string& name) {
+    return GetPartTypeManager().GetPartType(name);
+}
+
+const HullTypeManager& GetHullTypeManager() {
+    return HullTypeManager::GetHullTypeManager();
+}
+
+const HullType* GetHullType(const std::string& name) {
+    return GetHullTypeManager().GetHullType(name);
+}
+
+const ShipDesign* GetShipDesign(int ship_design_id)
+{
+    return GetUniverse().GetShipDesign(ship_design_id);
+}
+
+
+/////////////////////////////////////
+// PartTypeManager                 //
+/////////////////////////////////////
+// static
+PartTypeManager* PartTypeManager::s_instance = 0;
+
+PartTypeManager::PartTypeManager() {
+    if (s_instance)
+        throw std::runtime_error("Attempted to create more than one PartTypeManager.");
+    s_instance = this;
+
+    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+        settings_dir += '/';
+    std::string filename = settings_dir + "ship_parts.txt";
+    std::ifstream ifs(filename.c_str());
+    
+    std::string input;
+    std::getline(ifs, input, '\0');
+    ifs.close();
+    using namespace boost::spirit;
+    using namespace phoenix;
+    parse_info<const char*> result =
+        parse(input.c_str(),
+              as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]],
+              skip_p);
+    if (!result.full)
+        ReportError(std::cerr, input.c_str(), result);
+
+    std::string cycle_str = FindFirstDependencyCycle();
+    if (!cycle_str.empty())
+        throw std::runtime_error(cycle_str.c_str());
+}
+
+const PartType* PartTypeManager::GetPartType(const std::string& name) const {
+    std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
+    return it != m_parts.end() ? it->second : 0;
+}
+
+std::string PartTypeManager::FindFirstDependencyCycle() {
+    return "";
+
+    //assert(!m_parts.empty());
+
+    //std::set<std::string> checked_parts; // the list of parts that are not part of any cycle
+    //for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+    //    if (checked_parts.find(it->first) != checked_parts.end())
+    //        continue;   // part already checked, so skip
+
+    //    std::vector<std::string> stack;
+    //    stack.push_back(*it);
+    //    while (!stack.empty()) {
+    //        // Examine the part on top of the stack.  If the part has no upgrades, or if its
+    //        // upgrade has already been checked, pop it off the stack and mark it as checked;
+    //        // otherwise, push its unchecked upgrade onto the stack.
+    //        const PartType* current_part = stack.back();
+    //        unsigned int starting_stack_size = stack.size();
+    //        const std::string upgrade_name = current_part->Upgrade();
+
+    //        if (upgrade_name != "") {
+    //            const PartType* upgrade = GetPartType(upgrade_name);
+    //            if (checked_parts.find(upgrade_name) == checked_parts.end()) {
+    //                // since this is not a checked upgrade, see if it is already in the stack somewhere; if so, we have a cycle
+    //                std::vector<const PartType*>::reverse_iterator stack_duplicate_it =
+    //                    std::find(stack.rbegin(), stack.rend(), upgrade);
+    //                if (stack_duplicate_it != stack.rend()) {
+    //                    std::stringstream stream;
+    //                    std::string upgrade_name = upgrade->Name();
+    //                    stream << "ERROR: Ship PartType dependency cycle found in ship_parts.txt (A <-- B means A is an upgrade of B): \""
+    //                           << upgrade_name << "\"";
+    //                    for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
+    //                         stack_it != stack_duplicate_it;
+    //                         ++stack_it) {
+    //                        if ((*stack_it)->Upgrade() != "") {
+    //                            upgrade_name = (*stack_it)->Name();
+    //                            stream << " <-- \"" << upgrade_name << "\"";
+    //                        }
+    //                    }
+    //                    stream << " <-- \"" << upgrade->Name() << "\" ... ";
+    //                    return stream.str();
+    //                } else {
+    //                    stack.push_back(upgrade);
+    //                }
+    //            }
+    //        }
+    //        if (starting_stack_size == stack.size()) {
+    //            stack.pop_back();
+    //            checked_parts.insert(upgrade);
+    //        }
+    //    }
+    //}
+    //return "";
+}
+
+const PartTypeManager& PartTypeManager::GetPartTypeManager() {
+    static PartTypeManager manager;
+    return manager;
+}
+
+PartTypeManager::iterator PartTypeManager::begin() const {
+    return m_parts.begin();
+}
+
+PartTypeManager::iterator PartTypeManager::end() const {
+    return m_parts.end();
+}
+
 
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
 PartType::PartType() :
-    m_name("generic part type")
+    m_name("invalid part type"),
+    m_description("indescribable"),
+    m_class(INVALID_SHIP_PART_CLASS),
+    m_upgrade(""),
+    m_mass(1.0),
+    m_power(1.0),
+    m_range(1.0),
+    m_effects(),
+    m_graphic(""),
+    m_battle_animation("")
 {}
+
+PartType::PartType(std::string name, std::string description, ShipPartClass part_class, std::string upgrade,
+                   double mass, double power, double range, /*std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects, */
+                   std::string graphic) :
+    m_name(name),
+    m_description(description),
+    m_class(part_class),
+    m_upgrade(upgrade),
+    m_mass(mass),
+    m_power(power),
+    m_range(range),
+    m_effects(),
+    m_graphic(graphic),
+    m_battle_animation("")
+{}
+
+std::string PartType::Name() const {
+    return m_name;
+}
+    
+std::string PartType::Upgrade() const {
+    return m_upgrade;
+}
+
 
 ////////////////////////////////////////////////
 // HullType
@@ -22,13 +209,60 @@ HullType::HullType() :
     m_name("generic hull type")
 {}
 
-////////////////////////////////////////////////
-// Free Function
-////////////////////////////////////////////////
-const ShipDesign* GetShipDesign(int ship_design_id)
-{
-    return GetUniverse().GetShipDesign(ship_design_id);
+std::string HullType::Name() const {
+    return m_name;
 }
+
+
+/////////////////////////////////////
+// HullTypeManager                 //
+/////////////////////////////////////
+// static
+HullTypeManager* HullTypeManager::s_instance = 0;
+
+HullTypeManager::HullTypeManager() {
+    if (s_instance)
+        throw std::runtime_error("Attempted to create more than one HullTypeManager.");
+    s_instance = this;
+
+    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+        settings_dir += '/';
+    std::string filename = settings_dir + "ship_hulls.txt";
+    std::ifstream ifs(filename.c_str());
+    
+    //std::string input;
+    //std::getline(ifs, input, '\0');
+    //ifs.close();
+    //using namespace boost::spirit;
+    //using namespace phoenix;
+    //parse_info<const char*> result =
+    //    parse(input.c_str(),
+    //          as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]],
+    //          skip_p);
+    //if (!result.full)
+    //    ReportError(std::cerr, input.c_str(), result);
+}
+
+const HullType* HullTypeManager::GetHullType(const std::string& name) const {
+    std::map<std::string, HullType*>::const_iterator it = m_hulls.find(name);
+    return it != m_hulls.end() ? it->second : 0;
+}
+
+const HullTypeManager& HullTypeManager::GetHullTypeManager()
+{
+    static HullTypeManager manager;
+    return manager;
+}
+
+HullTypeManager::iterator HullTypeManager::begin() const {
+    return m_hulls.begin();
+}
+
+HullTypeManager::iterator HullTypeManager::end() const {
+    return m_hulls.end();
+}
+
 
 ////////////////////////////////////////////////
 // ShipDesign

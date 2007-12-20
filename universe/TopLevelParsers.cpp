@@ -8,6 +8,7 @@
 #include "Special.h"    // for Special and constructor
 #include "../Empire/Empire.h"
 #include "Condition.h"
+#include "ShipDesign.h"
 
 using namespace boost::spirit;
 using namespace phoenix;
@@ -16,6 +17,7 @@ rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
 rule<Scanner, SpecialClosure::context_t> special_p;
 rule<Scanner, NameClosure::context_t> tech_category_p;
 rule<Scanner, TechClosure::context_t> tech_p;
+rule<Scanner, PartClosure::context_t> part_p;
 
 struct EffectsGroupClosure : boost::spirit::closure<EffectsGroupClosure, Effect::EffectsGroup*,
                                                     Condition::ConditionBase*, Condition::ConditionBase*,
@@ -51,7 +53,7 @@ namespace {
     ParamLabel effects_label("effects");
     ParamLabel name_label("name");
     ParamLabel description_label("description");
-    ParamLabel short_description_label("short_description");
+    ParamLabel shortdescription_label("short_description");
     ParamLabel buildcost_label("buildcost");
     ParamLabel buildtime_label("buildtime");
     ParamLabel maintenancecost_label("maintenancecost");
@@ -65,6 +67,11 @@ namespace {
     ParamLabel unlock_label("unlock");
     ParamLabel type_label("type");
     ParamLabel location_label("location");
+    ParamLabel partclass_label("partclass");
+    ParamLabel upgrade_label("upgrade");
+    ParamLabel power_label("power");
+    ParamLabel range_label("range");
+    ParamLabel mass_label("mass");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -123,7 +130,7 @@ namespace {
             (str_p("tech")
              >> name_label >> name_p[tech_p.name = arg1]
              >> description_label >> name_p[tech_p.description = arg1]
-             >> short_description_label >> name_p[tech_p.short_description = arg1]
+             >> shortdescription_label >> name_p[tech_p.short_description = arg1]
              >> techtype_label >> tech_type_p[tech_p.tech_type = arg1]
              >> category_label >> name_p[tech_p.category = arg1]
              >> researchcost_label >> real_p[tech_p.research_cost = arg1]
@@ -140,6 +147,19 @@ namespace {
                                        tech_p.tech_type, tech_p.research_cost, tech_p.research_turns,
                                        tech_p.effects_groups, tech_p.prerequisites, tech_p.unlocked_items,
                                        tech_p.graphic)];
+
+        part_p =
+            (str_p("part")
+             >> name_label >> name_p[part_p.name = arg1]
+             >> description_label >> name_p[part_p.description = arg1]
+             >> partclass_label >> part_class_p[part_p.part_class = arg1]
+             >> power_label >> real_p[part_p.power = arg1]
+             >> range_label >> real_p[part_p.range = arg1]
+             >> mass_label >> real_p[part_p.mass = arg1]
+             >> upgrade_label >> name_p[part_p.upgrade = arg1]
+             >> graphic_label >> file_name_p[part_p.graphic = arg1])
+            [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class, part_p.upgrade,
+                                           part_p.mass, part_p.power, part_p.range, part_p.graphic)];
 
         return true;
     }

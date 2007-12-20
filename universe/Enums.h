@@ -462,6 +462,22 @@ namespace GG {
 GG_ENUM_STREAM_IN(ResourceType)
 GG_ENUM_STREAM_OUT(ResourceType)
 
+/** Types "classes" of ship parts */
+enum ShipPartClass {
+    INVALID_SHIP_PART_CLASS = -1,
+    PC_SHORT_RANGE_BEAM,
+    NUM_SHIP_PART_CLASSES
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(ShipPartClass)
+    GG_ENUM_MAP_INSERT(INVALID_SHIP_PART_CLASS)
+    GG_ENUM_MAP_INSERT(PC_SHORT_RANGE_BEAM)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(ShipPartClass)
+GG_ENUM_STREAM_OUT(ShipPartClass)
+
 /** Returns the equivalent focus type for the given meter; if no such focus exists, returns INVALID_METER_TYPE. */
 MeterType FocusToMeter(FocusType type);
 

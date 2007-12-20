@@ -1,0 +1,15 @@
+Hull
+    name = "SH_SMALL"
+    description = "SH_SMALL_DESC"
+    slots = 5
+    mass = 100
+    graphic = "ship_hull_icons/Small.png"
+    model = "ship_models/Small.mod"
+
+Hull
+    name = "SH_LARGE"
+    description = "SH_LARGE_DESC"
+    slots = 10
+    mass = 300
+    graphic = "ship_hull_icons/Large.png"
+    model = "ship_models/Large.mod"
