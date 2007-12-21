@@ -18,6 +18,7 @@ rule<Scanner, SpecialClosure::context_t> special_p;
 rule<Scanner, NameClosure::context_t> tech_category_p;
 rule<Scanner, TechClosure::context_t> tech_p;
 rule<Scanner, PartClosure::context_t> part_p;
+rule<Scanner, HullClosure::context_t> hull_p;
 
 struct EffectsGroupClosure : boost::spirit::closure<EffectsGroupClosure, Effect::EffectsGroup*,
                                                     Condition::ConditionBase*, Condition::ConditionBase*,
@@ -72,6 +73,8 @@ namespace {
     ParamLabel power_label("power");
     ParamLabel range_label("range");
     ParamLabel mass_label("mass");
+    ParamLabel speed_label("speed");
+    ParamLabel slots_label("slots");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -161,7 +164,18 @@ namespace {
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class, part_p.upgrade,
                                            part_p.mass, part_p.power, part_p.range, part_p.graphic)];
 
-        return true;
+        hull_p =
+            (str_p("hull")
+             >> name_label >> name_p[hull_p.name = arg1]
+             >> description_label >> name_p[hull_p.description = arg1]
+             >> mass_label >> real_p[hull_p.mass = arg1]
+             >> speed_label >> real_p[hull_p.speed = arg1]
+             >> slots_label >> int_p[hull_p.number_slots = arg1]
+             >> graphic_label >> file_name_p[hull_p.graphic = arg1])
+            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.mass, hull_p.speed, 
+                                           hull_p.number_slots, hull_p.graphic)];
+
+             return true;
     }
     bool dumy = Init();
 }

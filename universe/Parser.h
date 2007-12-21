@@ -30,8 +30,9 @@ namespace Effect {
 class Special;
 class BuildingType;
 class Tech;
-class PartType;
 struct ItemSpec;
+class PartType;
+class HullType;
 
 ////////////////////////////////////////////////////////////
 // Scanner                                                //
@@ -146,10 +147,23 @@ struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string,
     member9 graphic;
 };
 
+struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double,
+                                            int, std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 mass;
+    member5 speed;
+    member6 number_slots;
+    member7 graphic;
+};
+
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
 extern boost::spirit::rule<Scanner, SpecialClosure::context_t> special_p;
 extern boost::spirit::rule<Scanner, NameClosure::context_t> tech_category_p;
 extern boost::spirit::rule<Scanner, TechClosure::context_t> tech_p;
 extern boost::spirit::rule<Scanner, PartClosure::context_t> part_p;
+extern boost::spirit::rule<Scanner, HullClosure::context_t> hull_p;
 
 #endif // _Parser_h_

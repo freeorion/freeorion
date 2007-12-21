@@ -97,6 +97,8 @@ class HullType {
 public:
     /** \name Structors */ //@{
     HullType();
+    HullType(std::string name, std::string description, double mass, double speed, int num_slots,
+             std::string graphic);
     //@}
 
     /** \name Accessors */ //@{
@@ -232,12 +234,27 @@ template <class Archive>
 void PartType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_upgrade)
+        & BOOST_SERIALIZATION_NVP(m_class)
+        & BOOST_SERIALIZATION_NVP(m_mass)
+        & BOOST_SERIALIZATION_NVP(m_power)
+        & BOOST_SERIALIZATION_NVP(m_range)
+        & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_graphic)
+        & BOOST_SERIALIZATION_NVP(m_battle_animation)
 }
 
 template <class Archive>
 void HullType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name);
+    ar  & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_mass)
+        & BOOST_SERIALIZATION_NVP(m_speed)
+        & BOOST_SERIALIZATION_NVP(m_number_slots)
+        & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_graphic)
 }
 
 template <class Archive>
@@ -254,5 +271,3 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
 }
 
 #endif // _ShipDesign_h_
-
-

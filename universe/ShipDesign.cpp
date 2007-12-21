@@ -27,6 +27,21 @@ namespace {
     };
 
     const phoenix::function<store_part_type_impl> store_part_type_;
+    
+    struct store_hull_type_impl {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::map<std::string, HullType*>& hull_types, const T& hull_type) const {
+            if (hull_types.find(hull_type->Name()) != hull_types.end()) {
+                std::string error_str = "ERROR: More than one ship hull in ship_hulls.txt has the name " + hull_type->Name();
+                throw std::runtime_error(error_str.c_str());
+            }
+            hull_types[hull_type->Name()] = hull_type;
+        }
+    };
+
+    const phoenix::function<store_hull_type_impl> store_hull_type_;
 }
 
 ////////////////////////////////////////////////
@@ -206,7 +221,24 @@ std::string PartType::Upgrade() const {
 // HullType
 ////////////////////////////////////////////////
 HullType::HullType() :
-    m_name("generic hull type")
+    m_name("generic hull type"),
+    m_description("indescribable"),
+    m_mass(1.0),
+    m_speed(1.0),
+    m_number_slots(5),
+    m_effects(),
+    m_graphic("")
+{}
+
+HullType::HullType(std::string name, std::string description, double mass, double speed, int num_slots,
+                   std::string graphic) :
+    m_name(name),
+    m_description(description),
+    m_mass(mass),
+    m_speed(speed),
+    m_number_slots(num_slots),
+    m_effects(),
+    m_graphic(graphic)
 {}
 
 std::string HullType::Name() const {
@@ -231,17 +263,17 @@ HullTypeManager::HullTypeManager() {
     std::string filename = settings_dir + "ship_hulls.txt";
     std::ifstream ifs(filename.c_str());
     
-    //std::string input;
-    //std::getline(ifs, input, '\0');
-    //ifs.close();
-    //using namespace boost::spirit;
-    //using namespace phoenix;
-    //parse_info<const char*> result =
-    //    parse(input.c_str(),
-    //          as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]],
-    //          skip_p);
-    //if (!result.full)
-    //    ReportError(std::cerr, input.c_str(), result);
+    std::string input;
+    std::getline(ifs, input, '\0');
+    ifs.close();
+    using namespace boost::spirit;
+    using namespace phoenix;
+    parse_info<const char*> result =
+        parse(input.c_str(),
+              as_lower_d[*hull_p[store_hull_type_(var(m_hulls), arg1)]],
+              skip_p);
+    if (!result.full)
+        ReportError(std::cerr, input.c_str(), result);
 }
 
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {

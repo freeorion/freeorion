@@ -22,9 +22,14 @@ DesignWnd::DesignWnd(int w, int h) :
     GG::Wnd(0, 0, w, h, GG::ONTOP) {
     EnableChildClipping(true);
 
-    const PartTypeManager& manager = GetPartTypeManager();
-    for (PartTypeManager::iterator it = manager.begin(); it != manager.end(); ++it)
+    const PartTypeManager& part_manager = GetPartTypeManager();
+    for (PartTypeManager::iterator it = part_manager.begin(); it != part_manager.end(); ++it)
         Logger().errorStream() << "part: " << it->first;
+
+    const HullTypeManager& hull_manager = GetHullTypeManager();
+    for (HullTypeManager::iterator it = hull_manager.begin(); it != hull_manager.end(); ++it)
+        Logger().errorStream() << "hull: " << it->first;
+
 }
 
 void DesignWnd::Reset() {
