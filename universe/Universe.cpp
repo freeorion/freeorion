@@ -2824,32 +2824,32 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h
-        ShipDesign* design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Scout", empire_id, 0, 
+        ShipDesign* design = new ShipDesign("Scout", empire_id, 0, 
                                             "HULL", std::vector<std::string>(), "graphic", "model");
         int scout_design_id = empire->AddShipDesign(design);
         design->SetID(scout_design_id);
 
-        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Colony Ship", empire_id, 0, 
+        design = new ShipDesign("Colony Ship", empire_id, 0, 
                                 "HULL", std::vector<std::string>(), "graphic", "model");
         int colony_ship_design_id = empire->AddShipDesign(design);
         design->SetID(colony_ship_design_id);
 
-        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark I", empire_id, 0, 
+        design = new ShipDesign("Mark I", empire_id, 0, 
                                 "HULL", std::vector<std::string>(), "graphic", "model");
         int mark_I_design_id = empire->AddShipDesign(design);
         design->SetID(mark_I_design_id);
 
-        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark II", empire_id, 0, 
+        design = new ShipDesign("Mark II", empire_id, 0, 
                                 "HULL", std::vector<std::string>(), "graphic", "model");
         int temp = empire->AddShipDesign(design);
         design->SetID(temp);
 
-        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark III", empire_id, 0, 
+        design = new ShipDesign("Mark III", empire_id, 0, 
                                 "HULL", std::vector<std::string>(), "graphic", "model");
         temp = empire->AddShipDesign(design);
         design->SetID(temp);
 
-        design = new ShipDesign(UniverseObject::INVALID_OBJECT_ID, "Mark IV", empire_id, 0, 
+        design = new ShipDesign("Mark IV", empire_id, 0, 
                                 "HULL", std::vector<std::string>(), "graphic", "model");
         temp = empire->AddShipDesign(design);
         design->SetID(temp);

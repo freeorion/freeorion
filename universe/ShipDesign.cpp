@@ -310,10 +310,10 @@ ShipDesign::ShipDesign() :
     m_3D_model("")
 {}
 
-ShipDesign::ShipDesign(int id, std::string name, int designed_by_empire_id, int designed_on_turn, 
+ShipDesign::ShipDesign(std::string name, int designed_by_empire_id, int designed_on_turn, 
                        std::string hull, std::vector<std::string> parts, std::string graphic,
                        std::string model) :
-    m_id(id),
+    m_id(UniverseObject::INVALID_OBJECT_ID),
     m_name(name),
     m_designed_by_empire_id(designed_by_empire_id),
     m_designed_on_turn(designed_on_turn),

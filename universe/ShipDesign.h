@@ -76,9 +76,11 @@ public:
 
 private:
     PartTypeManager();
-    std::string PartTypeManager::FindFirstDependencyCycle();
-    std::map<std::string, PartType*> m_parts;
-    static PartTypeManager* s_instance;
+
+    std::string                         FindFirstDependencyCycle();
+
+    std::map<std::string, PartType*>    m_parts;
+    static PartTypeManager*             s_instance;
 };
 
 
@@ -168,7 +170,7 @@ class ShipDesign {
 public:
     /** \name Structors */ //@{
     ShipDesign(); ///< default ctor
-    ShipDesign(int id, std::string name, int designed_by_empire_id, int designed_on_turn, 
+    ShipDesign(std::string name, int designed_by_empire_id, int designed_on_turn, 
                std::string hull, std::vector<std::string> parts, std::string graphic,
                std::string model);
     //@}
@@ -193,7 +195,9 @@ public:
     /////// TEMPORARY ///////
 
     std::string                     Hull() const;               ///< returns name of hull on which design is based
-    const std::vector<std::string>  Parts() const;              ///< returns vector of names of parts in design
+    const HullType*                 GetHull() const;            ///< returns HullType on which design is based
+
+    const std::vector<std::string>& Parts() const;              ///< returns vector of names of parts in design
 
     std::string                     Graphic() const;            ///< returns filename of graphic for design
     std::string                     Model() const;              ///< returns filename of 3D model that represents ships of design
@@ -233,7 +237,7 @@ const ShipDesign* GetShipDesign(int ship_design_id);
 template <class Archive>
 void PartType::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name);
+    ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_upgrade)
         & BOOST_SERIALIZATION_NVP(m_class)
@@ -242,7 +246,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_range)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_battle_animation)
+        & BOOST_SERIALIZATION_NVP(m_battle_animation);
 }
 
 template <class Archive>
@@ -254,7 +258,7 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_speed)
         & BOOST_SERIALIZATION_NVP(m_number_slots)
         & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic)
+        & BOOST_SERIALIZATION_NVP(m_graphic);
 }
 
 template <class Archive>

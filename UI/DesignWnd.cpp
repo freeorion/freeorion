@@ -30,6 +30,16 @@ DesignWnd::DesignWnd(int w, int h) :
     for (HullTypeManager::iterator it = hull_manager.begin(); it != hull_manager.end(); ++it)
         Logger().errorStream() << "hull: " << it->first;
 
+    //int empire_id = HumanClientApp::GetApp()->EmpireID();
+    //Empire* empire = Empires().Lookup(empire_id);
+
+    //std::vector<std::string> parts;
+    //parts.push_back("SR_LASER");
+    //parts.push_back("SR_LASER");
+    //parts.push_back("SR_ION_CANNON");
+    //ShipDesign* design = new ShipDesign("test design", 0, 1, "SH_SMALL", parts, "misc/base1.png", "unknown model");
+    //int design_id = empire->AddShipDesign(design);
+    //design->SetID(design_id);
 }
 
 void DesignWnd::Reset() {
