@@ -20,36 +20,36 @@ extern "C" {
 
 /** These error codes can be returned by br_init(), br_init_lib(), gbr_init() or gbr_init_lib(). */
 typedef enum {
-	/** Cannot allocate memory. */
-	BR_INIT_ERROR_NOMEM,
-	/** Unable to open /proc/self/maps; see errno for details. */
-	BR_INIT_ERROR_OPEN_MAPS,
-	/** Unable to read from /proc/self/maps; see errno for details. */
-	BR_INIT_ERROR_READ_MAPS,
-	/** The file format of /proc/self/maps is invalid; kernel bug? */
-	BR_INIT_ERROR_INVALID_MAPS,
-	/** BinReloc is disabled (the ENABLE_BINRELOC macro is not defined). */
-	BR_INIT_ERROR_DISABLED
+    /** Cannot allocate memory. */
+    BR_INIT_ERROR_NOMEM,
+    /** Unable to open /proc/self/maps; see errno for details. */
+    BR_INIT_ERROR_OPEN_MAPS,
+    /** Unable to read from /proc/self/maps; see errno for details. */
+    BR_INIT_ERROR_READ_MAPS,
+    /** The file format of /proc/self/maps is invalid; kernel bug? */
+    BR_INIT_ERROR_INVALID_MAPS,
+    /** BinReloc is disabled (the ENABLE_BINRELOC macro is not defined). */
+    BR_INIT_ERROR_DISABLED
 } BrInitError;
 
 
 #ifndef BINRELOC_RUNNING_DOXYGEN
 /* Mangle symbol names to avoid symbol collisions with other ELF objects. */
-	#define br_init             cdZS24307578558826_br_init
-	#define br_init_lib         cdZS24307578558826_br_init_lib
-	#define br_find_exe         cdZS24307578558826_br_find_exe
-	#define br_find_exe_dir     cdZS24307578558826_br_find_exe_dir
-	#define br_find_prefix      cdZS24307578558826_br_find_prefix
-	#define br_find_bin_dir     cdZS24307578558826_br_find_bin_dir
-	#define br_find_sbin_dir    cdZS24307578558826_br_find_sbin_dir
-	#define br_find_data_dir    cdZS24307578558826_br_find_data_dir
-	#define br_find_locale_dir  cdZS24307578558826_br_find_locale_dir
-	#define br_find_lib_dir     cdZS24307578558826_br_find_lib_dir
-	#define br_find_libexec_dir cdZS24307578558826_br_find_libexec_dir
-	#define br_find_etc_dir     cdZS24307578558826_br_find_etc_dir
-	#define br_strcat           cdZS24307578558826_br_strcat
-	#define br_build_path       cdZS24307578558826_br_build_path
-	#define br_dirname          cdZS24307578558826_br_dirname
+    #define br_init             cdZS24307578558826_br_init
+    #define br_init_lib         cdZS24307578558826_br_init_lib
+    #define br_find_exe         cdZS24307578558826_br_find_exe
+    #define br_find_exe_dir     cdZS24307578558826_br_find_exe_dir
+    #define br_find_prefix      cdZS24307578558826_br_find_prefix
+    #define br_find_bin_dir     cdZS24307578558826_br_find_bin_dir
+    #define br_find_sbin_dir    cdZS24307578558826_br_find_sbin_dir
+    #define br_find_data_dir    cdZS24307578558826_br_find_data_dir
+    #define br_find_locale_dir  cdZS24307578558826_br_find_locale_dir
+    #define br_find_lib_dir     cdZS24307578558826_br_find_lib_dir
+    #define br_find_libexec_dir cdZS24307578558826_br_find_libexec_dir
+    #define br_find_etc_dir     cdZS24307578558826_br_find_etc_dir
+    #define br_strcat           cdZS24307578558826_br_strcat
+    #define br_build_path       cdZS24307578558826_br_build_path
+    #define br_dirname          cdZS24307578558826_br_dirname
 
 
 #endif

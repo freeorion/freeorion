@@ -74,9 +74,9 @@ void ResourcePool::Update()
 //////////////////////////////////////////////////
 namespace {
     bool PopCenterLess(PopCenter* elem1, PopCenter* elem2)
-	{
-	    return elem1->MeterPoints(METER_POPULATION) < elem2->MeterPoints(METER_POPULATION);
-	}
+    {
+        return elem1->MeterPoints(METER_POPULATION) < elem2->MeterPoints(METER_POPULATION);
+    }
 }
 
 PopulationPool::PopulationPool() :

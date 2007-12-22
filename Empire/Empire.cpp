@@ -1231,11 +1231,6 @@ void Empire::AddShipDesign(int ship_design_id)
     }
 }
 
-void Empire::RemoveShipDesign(int ship_design_id)
-{
-        m_ship_designs.erase(ship_design_id);
-}
-
 int Empire::AddShipDesign(ShipDesign* ship_design)
 {
     Universe& universe = GetUniverse();
@@ -1253,17 +1248,26 @@ int Empire::AddShipDesign(ShipDesign* ship_design)
     // design is apparently new, so add it to the universe and put its new id in the empire's set of designs
     int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
 
-    if (new_design_id == UniverseObject::INVALID_OBJECT_ID)
-        throw std::runtime_error("Unable to get new design id");
+    if (new_design_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "Unable to get new design id";
+        return new_design_id;
+    }
 
     bool success = universe.InsertShipDesignID(ship_design, new_design_id);
 
-    if (!success)
-        throw std::runtime_error("Unable to add new design to universe");
+    if (!success) {
+        Logger().errorStream() << "Unable to add new design to universe";
+        return UniverseObject::INVALID_OBJECT_ID;
+    }
 
     m_ship_designs.insert(new_design_id);
 
     return new_design_id;
+}
+
+void Empire::RemoveShipDesign(int ship_design_id)
+{
+        m_ship_designs.erase(ship_design_id);
 }
 
 void Empire::AddSitRepEntry(SitRepEntry* entry)
@@ -1455,9 +1459,9 @@ void Empire::UpdateResourcePool()
     for (unsigned int i = 0; i < object_vec.size(); ++i)
     {
         if (ResourceCenter* rc = dynamic_cast<ResourceCenter*>(object_vec[i]))
-	        res_vec.push_back(rc);
-	    if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
-	        pop_vec.push_back(pc);
+            res_vec.push_back(rc);
+        if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
+            pop_vec.push_back(pc);
     }
 
     m_mineral_resource_pool.SetResourceCenters(res_vec);

@@ -4,6 +4,7 @@
 
 #include "CUIWnd.h"
 
+class CUIButton;
 class ShipDesign;
 
 /** Lets the player design ships */
@@ -19,6 +20,12 @@ public:
 
     void Render();
     //@}
+
+private:
+    void AddDesign();
+    bool ValidateCurrentDesign();       ///< returns true if ship currently being designed is complete and can be added to the empire and universe
+
+    CUIButton*  m_add_design_button;
 };
 
 #endif // _DesignWnd_h_

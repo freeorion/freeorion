@@ -204,7 +204,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void SetID(int id);                   ///< sets the ID number of the design to \a id
+    void SetID(int id);                   ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     void Rename(const std::string& name); ///< renames this design to \a name
     //@}
 

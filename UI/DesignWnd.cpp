@@ -19,7 +19,9 @@
 // DesignWnd                                    //
 //////////////////////////////////////////////////
 DesignWnd::DesignWnd(int w, int h) :
-    GG::Wnd(0, 0, w, h, GG::ONTOP) {
+    GG::Wnd(0, 0, w, h, GG::ONTOP),
+    m_add_design_button(0)
+{
     EnableChildClipping(true);
 
     const PartTypeManager& part_manager = GetPartTypeManager();
@@ -30,16 +32,9 @@ DesignWnd::DesignWnd(int w, int h) :
     for (HullTypeManager::iterator it = hull_manager.begin(); it != hull_manager.end(); ++it)
         Logger().errorStream() << "hull: " << it->first;
 
-    //int empire_id = HumanClientApp::GetApp()->EmpireID();
-    //Empire* empire = Empires().Lookup(empire_id);
-
-    //std::vector<std::string> parts;
-    //parts.push_back("SR_LASER");
-    //parts.push_back("SR_LASER");
-    //parts.push_back("SR_ION_CANNON");
-    //ShipDesign* design = new ShipDesign("test design", 0, 1, "SH_SMALL", parts, "misc/base1.png", "unknown model");
-    //int design_id = empire->AddShipDesign(design);
-    //design->SetID(design_id);
+    m_add_design_button = new CUIButton(100, 100, 120, "Add Test Design");
+    AttachChild(m_add_design_button);
+    GG::Connect(m_add_design_button->ClickedSignal, &DesignWnd::AddDesign, this);
 }
 
 void DesignWnd::Reset() {
@@ -71,4 +66,29 @@ void DesignWnd::Render() {
     // reset this to whatever it was initially
     glPolygonMode(GL_BACK, initial_modes[1]);
     glEnable(GL_TEXTURE_2D);
+}
+
+bool DesignWnd::ValidateCurrentDesign() {
+    // TODO: determine if design specified in UI is valid
+    return true;
+}
+
+void DesignWnd::AddDesign() {
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) return;
+
+    if (!ValidateCurrentDesign()) return;
+
+    // create design from stuff chosen in UI
+    ShipDesign* design = new ShipDesign("procedural dummy design", empire_id, CurrentTurn(), "SH_SMALL",
+                                        std::vector<std::string>(), "some graphic", "some model");
+
+    if (!design) {
+        Logger().errorStream() << "DesignWnd::AddDesign failed to create a new ShipDesign object";
+        return;
+    }
+
+    int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+    HumanClientApp::GetApp()->Orders().IssueOrder(new ShipDesignOrder(empire_id, new_design_id, *design));
 }

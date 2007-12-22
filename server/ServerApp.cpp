@@ -194,6 +194,7 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     case Message::CLIENT_SAVE_DATA:      m_fsm.process_event(ClientSaveData(msg, player_connection)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
     case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
+    case Message::REQUEST_NEW_DESIGN_ID: m_fsm.process_event(RequestDesignID(msg, player_connection)); break;
     default:
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \""
                                      << msg.Type() << "\".  Terminating connection.";

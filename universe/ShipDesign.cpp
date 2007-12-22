@@ -335,7 +335,6 @@ int ShipDesign::DesignedByEmpire() const
 
 void ShipDesign::SetID(int id)
 {
-    // TODO: figure out if this requires a bunch of adjustments to ships using this design
     m_id = id;
 }
 
