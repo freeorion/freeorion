@@ -26,8 +26,9 @@ public:
     double              Power() const;          ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
     double              Range() const;          ///< returns the range of a part.  may not have meaning for all part types.
 
+    double              Cost() const;           ///< returns cost of part
+
     std::string         Graphic() const;        ///< returns graphic that represents part in UI
-    std::string         Animation() const;      ///< returns name of animation that is played when part activates in battle
 
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                         Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part has
@@ -48,7 +49,6 @@ private:
                         m_effects;
     
     std::string         m_graphic;
-    std::string         m_battle_animation;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -110,7 +110,9 @@ public:
     double      Mass() const;           ///< returns mass of hull
     double      Speed() const;          ///< returns speed (?) of hull
 
-    int         NumberSlots();          ///< returns number of part slots in hull
+    double      Cost() const;           ///< returns cost of hull
+
+    int         NumberSlots() const;    ///< returns number of part slots in hull
 
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                 Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part hull has
@@ -245,8 +247,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_power)
         & BOOST_SERIALIZATION_NVP(m_range)
         & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_battle_animation);
+        & BOOST_SERIALIZATION_NVP(m_graphic);
 }
 
 template <class Archive>
