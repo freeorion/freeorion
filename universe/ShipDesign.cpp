@@ -426,6 +426,31 @@ const std::string& ShipDesign::Model() const {
     return m_3D_model;
 }
 
+bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
+    Condition::ObjectSet locations;
+    Condition::ObjectSet non_locations;
+
+    Universe& universe = GetUniverse();
+
+    UniverseObject* loc = universe.Object(location_id);
+    if (!loc) return false;
+
+    Empire * empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().debugStream() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
+        return false;
+    }
+
+    UniverseObject * source = universe.Object(empire->CapitolID());
+    if (!source) return false;
+
+    return true;
+
+    locations.insert(loc);
+    // TODO: apply part and hull location conditions
+    return !(locations.empty());
+}
+
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
     if (!hull_type)

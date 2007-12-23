@@ -229,11 +229,6 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     return !(locations.empty());
 }
 
-void BuildingType::AddEffects(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
-{
-    std::copy(effects.begin(), effects.end(), m_effects.end());
-}
-
 CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const {
     Empire* from_empire = Empires().Lookup(from_empire_id);
     if (!from_empire)

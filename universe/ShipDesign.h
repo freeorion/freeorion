@@ -205,6 +205,8 @@ public:
     const std::string&              Model() const;              ///< returns filename of 3D model that represents ships of design
     //@}
 
+    bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
+
     /** \name Mutators */ //@{
     void                    SetID(int id);                      ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
     void                    Rename(const std::string& name);    ///< renames this design to \a name

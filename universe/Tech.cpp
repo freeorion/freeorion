@@ -265,9 +265,10 @@ std::string ItemSpec::Dump() const
 {
     std::string retval = "Item type = ";
     switch (type) {
-    case UIT_BUILDING:       retval += "Building"; break;
-    case UIT_SHIP_COMPONENT: retval += "ShipComponent"; break;
-    default: retval += "?"; break;
+    case UIT_BUILDING:  retval += "Building"; break;
+    case UIT_SHIP_PART: retval += "ShipPart"; break;
+    case UIT_SHIP_HULL: retval += "ShipHull"; break;
+    default:            retval += "?"; break;
     }
     retval += " name = \"" + name + "\"\n";
     return retval;

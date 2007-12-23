@@ -899,7 +899,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
 {
     // special case to check for buildings or orbitals being passed with ids, not names
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING OR BT_ORBITAL with a design id number, but these types are tracked by name");
+        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING or BT_ORBITAL with a design id number, but these types are tracked by name");
 
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
 
@@ -915,14 +915,8 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         // design must be known to this empire
         const ShipDesign* ship_design = GetShipDesign(design_id);
         if (!ship_design) return false;
-
-        // the design must be available
-        if (!ShipDesignAvailable(design_id)) return false;
-
-        // this empire must be only owner of the build location
-        if (!( build_location->Owners().size() == 1 && *build_location->Owners().begin() == m_id)) return false;
-
-        return true;
+        // ...and the specified location must be a valid production location for this design
+        return ship_design->ProductionLocation(m_id, location);
 
     } else {
         throw std::invalid_argument("Empire::BuildableItem was passed an invalid BuildType");

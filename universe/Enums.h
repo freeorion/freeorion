@@ -360,8 +360,9 @@ GG_ENUM_STREAM_OUT(EmpireAffiliationType)
 /** the types of items that can be unlocked for production by Effects */
 enum UnlockableItemType {
     INVALID_UNLOCKABLE_ITEM_TYPE = -1,
-    UIT_BUILDING,             ///< a kind of Building
-    UIT_SHIP_COMPONENT,       ///< a kind of ShipComponent
+    UIT_BUILDING,               ///< a kind of Building
+    UIT_SHIP_PART,              ///< a kind of ship part (which are placed into hulls to make designs)
+    UIT_SHIP_HULL,              ///< a ship hull (into which parts are placed)
     NUM_UNLOCKABLE_ITEM_TYPES
 };
 
@@ -369,7 +370,8 @@ namespace GG {
     GG_ENUM_MAP_BEGIN(UnlockableItemType)
     GG_ENUM_MAP_INSERT(INVALID_UNLOCKABLE_ITEM_TYPE)
     GG_ENUM_MAP_INSERT(UIT_BUILDING)
-    GG_ENUM_MAP_INSERT(UIT_SHIP_COMPONENT)
+    GG_ENUM_MAP_INSERT(UIT_SHIP_PART)
+    GG_ENUM_MAP_INSERT(UIT_SHIP_HULL)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(UnlockableItemType)
