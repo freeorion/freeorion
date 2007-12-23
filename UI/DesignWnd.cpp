@@ -26,11 +26,11 @@ DesignWnd::DesignWnd(int w, int h) :
 
     const PartTypeManager& part_manager = GetPartTypeManager();
     for (PartTypeManager::iterator it = part_manager.begin(); it != part_manager.end(); ++it)
-        Logger().errorStream() << "part: " << it->first;
+        Logger().debugStream() << "part: " << it->first;
 
     const HullTypeManager& hull_manager = GetHullTypeManager();
     for (HullTypeManager::iterator it = hull_manager.begin(); it != hull_manager.end(); ++it)
-        Logger().errorStream() << "hull: " << it->first;
+        Logger().debugStream() << "hull: " << it->first;
 
     m_add_design_button = new CUIButton(100, 100, 120, "Add Test Design");
     AttachChild(m_add_design_button);
@@ -78,11 +78,21 @@ void DesignWnd::AddDesign() {
     const Empire* empire = Empires().Lookup(empire_id);
     if (!empire) return;
 
-    if (!ValidateCurrentDesign()) return;
+    // get currently selected parts and hull, etc.
+    std::string hull = "SH_SMALL";
+    std::vector<std::string> parts;
+    parts.push_back("SR_LASER");
+    parts.push_back("SR_LASER");
+    parts.push_back("SR_ION_CANNON");
+
+    if (!ShipDesign::ValidDesign(hull, parts)) {
+        Logger().errorStream() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
+        return;
+    }
 
     // create design from stuff chosen in UI
-    ShipDesign* design = new ShipDesign("procedural dummy design", empire_id, CurrentTurn(), "SH_SMALL",
-                                        std::vector<std::string>(), "some graphic", "some model");
+    ShipDesign* design = new ShipDesign("procedural dummy design", "generated for testing purposes",
+                                        empire_id, CurrentTurn(), hull, parts, "misc/base1.png", "some model");
 
     if (!design) {
         Logger().errorStream() << "DesignWnd::AddDesign failed to create a new ShipDesign object";

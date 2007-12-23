@@ -2,7 +2,7 @@ Part
     name = "SR_LASER"
     description = "SR_LASER_DESC"
     class = ShortRangeBeam
-    power = 10
+    power = 1
     range = 10
     mass = 30
     upgrade = "SR_ION_CANNON"
@@ -12,7 +12,7 @@ Part
     name = "SR_ION_CANNON"
     description = "SR_ION_CANNON_DESC"
     class = ShortRangeBeam
-    power = 20
+    power = 2
     range = 15
     mass = 50
     upgrade = ""

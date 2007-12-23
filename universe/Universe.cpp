@@ -2824,28 +2824,28 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         // create the empire's initial ship designs
         // for now, the order that these are created need to match
         // the enums for ship designs in ships.h
-        ShipDesign* design = new ShipDesign("Scout", empire_id, 0, 
-                                            "HULL", std::vector<std::string>(), "graphic", "model");
+        ShipDesign* design = new ShipDesign("Scout", "Small and cheap unarmed vessel designed for recon and exploration.",
+                                            empire_id, 0, "SH_SMALL", std::vector<std::string>(), "misc/scout1.png", "model");
         int scout_design_id = empire->AddShipDesign(design);
 
-        design = new ShipDesign("Colony Ship", empire_id, 0, 
-                                "HULL", std::vector<std::string>(), "graphic", "model");
+        design = new ShipDesign("Colony Ship", "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.",
+                                empire_id, 0, "SH_SMALL", std::vector<std::string>(), "misc/colony1.png", "model");
         int colony_ship_design_id = empire->AddShipDesign(design);
 
-        design = new ShipDesign("Mark I", empire_id, 0, 
-                                "HULL", std::vector<std::string>(), "graphic", "model");
+        design = new ShipDesign("Mark I", "Affordable armed patrol frigate.",
+                                empire_id, 0, "SH_SMALL", std::vector<std::string>(), "misc/mark1.png", "model");
         int mark_I_design_id = empire->AddShipDesign(design);
 
-        design = new ShipDesign("Mark II", empire_id, 0, 
-                                "HULL", std::vector<std::string>(), "graphic", "model");
+        design = new ShipDesign("Mark II", "Cruiser with storng defensive and offensive capabilities.",
+                                empire_id, 0, "SH_SMALL", std::vector<std::string>(), "misc/mark2.png", "model");
         int temp = empire->AddShipDesign(design);
 
-        design = new ShipDesign("Mark III", empire_id, 0, 
-                                "HULL", std::vector<std::string>(), "graphic", "model");
+        design = new ShipDesign("Mark III", "Advanced cruiser with heavy weaponry and armor to do the dirty work.",
+                                empire_id, 0, "SH_SMALL", std::vector<std::string>(), "misc/mark3.png", "model");
         temp = empire->AddShipDesign(design);
 
-        design = new ShipDesign("Mark IV", empire_id, 0, 
-                                "HULL", std::vector<std::string>(), "graphic", "model");
+        design = new ShipDesign("Mark IV", "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.",
+                                empire_id, 0, "SH_SMALL", std::vector<std::string>(), "misc/mark4.png", "model");
         temp = empire->AddShipDesign(design);
 
 

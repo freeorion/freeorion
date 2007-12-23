@@ -307,6 +307,18 @@ public:
     /// Returns true iff the given ship design id is in the set of design ids of this empire.  That is, it has been added to this empire.
     bool ShipDesignKept(int ship_design_id) const;
 
+    /// Returns the set of ship part names this empire that the empire can currently build
+    std::set<std::string> AvailableShipParts() const;
+
+    /// Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
+    bool ShipPartAvailable(const std::string& name) const;
+
+    /// Returns the set of ship hull names that that the empire can currently build
+    std::set<std::string> AvailableShipHulls() const;
+
+    /// Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
+    bool ShipHullAvailable(const std::string& name) const;
+
     /// Returns the queue of items being or queued to be produced.
     const ProductionQueue& GetProductionQueue() const;
 

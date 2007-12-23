@@ -901,7 +901,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
     Logger().debugStream() << "Selecting Row";
     if (row_to_select != -1)
         m_buildable_items->SelectRow(row_to_select);
-    Logger().errorStream() << "Done";
+    Logger().debugStream() << "Done";
 }
 
 std::vector<int> BuildDesignatorWnd::BuildSelector::ColWidths()

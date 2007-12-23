@@ -748,13 +748,59 @@ std::set<int> Empire::AvailableShipDesigns() const
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const
 {
-    /* currently any ship design is available, but in future this will need to determine if 
-       the specific design is buildable */
-    return ShipDesignKept(ship_design_id);
+    // if design isn't kept by this empire, it can't be built
+    if (!ShipDesignKept(ship_design_id))
+        return false;
+
+    const ShipDesign* design = GetShipDesign(ship_design_id);
+    if (!design) return false;
+
+    // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech 
+    // requirements might prevent it from being built.
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
+        if (!ShipPartAvailable(*it))
+            return false;
+    if (!ShipHullAvailable(design->Hull()))
+        return false;
+
+    // if there are no reasons the design isn't available, then by default it is available
+    return true;
 }
 
 bool Empire::ShipDesignKept(int ship_design_id) const {
     return (m_ship_designs.find(ship_design_id) != m_ship_designs.end());
+}
+
+std::set<std::string> Empire::AvailableShipParts() const {
+    std::set<std::string> retval;
+    const PartTypeManager& manager = GetPartTypeManager();
+    for (PartTypeManager::iterator it = manager.begin(); it != manager.end(); ++it)
+        if (ShipPartAvailable(it->first))
+            retval.insert(it->first);
+    return retval;
+}
+
+bool Empire::ShipPartAvailable(const std::string& name) const {
+    // TODO: more interesting checks...
+    const PartType* part = GetPartType(name);
+    if (!part) return false;
+    return true;
+}
+
+std::set<std::string> Empire::AvailableShipHulls() const {
+    std::set<std::string> retval;
+    const HullTypeManager& manager = GetHullTypeManager();
+    for (HullTypeManager::iterator it = manager.begin(); it != manager.end(); ++it)
+        if (ShipHullAvailable(it->first))
+            retval.insert(it->first);
+    return retval;
+}
+
+bool Empire::ShipHullAvailable(const std::string& name) const {
+    const HullType* hull = GetHullType(name);
+    if (!hull) return false;
+    return true;
 }
 
 const ProductionQueue& Empire::GetProductionQueue() const

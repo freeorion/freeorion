@@ -192,9 +192,9 @@ PartType::PartType() :
     m_graphic("")
 {}
 
-PartType::PartType(std::string name, std::string description, ShipPartClass part_class, std::string upgrade,
-                   double mass, double power, double range, /*std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects, */
-                   std::string graphic) :
+PartType::PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
+                   const std::string& upgrade, double mass, double power, double range, /* TODO: add effects group parameter */ 
+                   const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_class(part_class),
@@ -206,15 +206,15 @@ PartType::PartType(std::string name, std::string description, ShipPartClass part
     m_graphic(graphic)
 {}
 
-std::string PartType::Name() const {
+const std::string& PartType::Name() const {
     return m_name;
 }
 
-std::string PartType::Description() const {
+const std::string& PartType::Description() const {
     return m_description;
 }
 
-std::string PartType::Upgrade() const {
+const std::string& PartType::Upgrade() const {
     return m_upgrade;
 }
 
@@ -238,7 +238,7 @@ double PartType::Cost() const {
     return 10;  /// TEMPORARY ///
 }
 
-std::string PartType::Graphic() const {
+const std::string& PartType::Graphic() const {
     return m_graphic;
 }
 
@@ -260,8 +260,8 @@ HullType::HullType() :
     m_graphic("")
 {}
 
-HullType::HullType(std::string name, std::string description, double mass, double speed, int num_slots,
-                   std::string graphic) :
+HullType::HullType(const std::string& name, const std::string& description, double mass, double speed, int num_slots,
+                   const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_mass(mass),
@@ -271,11 +271,11 @@ HullType::HullType(std::string name, std::string description, double mass, doubl
     m_graphic(graphic)
 {}
 
-std::string HullType::Name() const {
+const std::string& HullType::Name() const {
     return m_name;
 }
 
-std::string HullType::Description() const {
+const std::string& HullType::Description() const {
     return m_description;
 }
 
@@ -364,11 +364,12 @@ ShipDesign::ShipDesign() :
     m_3D_model("")
 {}
 
-ShipDesign::ShipDesign(std::string name, int designed_by_empire_id, int designed_on_turn, 
-                       std::string hull, std::vector<std::string> parts, std::string graphic,
-                       std::string model) :
+ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
+                       int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
+                       const std::string& graphic, const std::string& model) :
     m_id(UniverseObject::INVALID_OBJECT_ID),
     m_name(name),
+    m_description(description),
     m_designed_by_empire_id(designed_by_empire_id),
     m_designed_on_turn(designed_on_turn),
     m_hull(hull),
@@ -376,16 +377,11 @@ ShipDesign::ShipDesign(std::string name, int designed_by_empire_id, int designed
     m_graphic(graphic),
     m_3D_model(model)
 {
-    const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
-    if (!hull_type) {
-        Logger().errorStream() << "ShipDesign created with invalid hull: " << hull;
-    } else {
-        if (hull_type->NumberSlots() < static_cast<int>(parts.size()))
-            Logger().errorStream() << "ShipDesign created with too many parts (" << parts.size() << ") for its hull (capacity " << hull_type->NumberSlots();
-    }
+    if (!ValidDesign(m_hull, m_parts))
+        Logger().errorStream() << "constructing an invalid ShipDesign!";
 }
 
-std::string ShipDesign::Name() const
+const std::string& ShipDesign::Name() const
 {
     return m_name;
 }
@@ -405,42 +401,16 @@ void ShipDesign::Rename(const std::string& name)
     m_name = name;
 }
 
-std::string ShipDesign::Graphic() const
-{
-    if (m_name == "Scout")
-        return "misc/scout1.png";
-    if (m_name == "Colony Ship")
-        return "misc/colony1.png";
-    if (m_name == "Mark I")
-        return "misc/mark1.png";
-    if (m_name == "Mark II")
-        return "misc/mark2.png";
-    if (m_name == "Mark III")
-        return "misc/mark3.png";
-    if (m_name == "Mark IV")
-        return "misc/mark4.png";
+const std::string& ShipDesign::Graphic() const {
     return m_graphic;
 }
 
-std::string ShipDesign::Description() const
+const std::string& ShipDesign::Description() const
 {
-    if (m_name == "Scout")
-        return "Small and cheap unarmed vessel designed for recon and exploration.";
-    if (m_name == "Colony Ship")
-        return "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.";
-    if (m_name == "Mark I")
-        return "Affordable armed patrol frigate.";
-    if (m_name == "Mark II")
-        return "Cruiser with storng defensive and offensive capabilities.";
-    if (m_name == "Mark III")
-        return "Advanced cruiser with heavy weaponry and armor to do the dirty work.";
-    if (m_name == "Mark IV")
-        return "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.";
-    return "A nonspecific ship";
+    return m_description;
 }
 
-
-std::string ShipDesign::Hull() const {
+const std::string& ShipDesign::Hull() const {
     return m_hull;
 }
 
@@ -452,14 +422,24 @@ const std::vector<std::string>& ShipDesign::Parts() const {
     return m_parts;
 }
 
-std::string ShipDesign::Model() const {
+const std::string& ShipDesign::Model() const {
     return m_3D_model;
+}
+
+bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
+    const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
+    if (!hull_type)
+        return false;
+    if (hull_type->NumberSlots() < static_cast<int>(parts.size()))
+        return false;
+
+    return true;
 }
 
 //// TEMPORARY
 double ShipDesign::Defense() const
 {
-    if (m_name == "Mark I")
+    if (m_name == "Mark I" || m_name == "Scout" || m_name == "Colony Ship")
         return 1.0;
     if (m_name == "Mark II")
         return 2.0;
@@ -467,7 +447,22 @@ double ShipDesign::Defense() const
         return 3.0;
     if (m_name == "Mark IV")
         return 5.0;
-    return 1.0;
+
+    // accumulate mass from all parts and hull in design.  Using this for defense for now, for lack of better idea.
+    double total_mass = 0.0;
+    const PartTypeManager& part_manager = GetPartTypeManager();
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+        const PartType* part = part_manager.GetPartType(*it);
+        if (part)
+            total_mass += part->Mass();
+    }
+
+    const HullTypeManager& hull_manager = GetHullTypeManager();
+    const HullType* hull = hull_manager.GetHullType(m_hull);
+    if (hull)
+        total_mass += hull->Mass();
+
+    return total_mass;
 }
 
 double ShipDesign::Speed() const
@@ -497,6 +492,8 @@ double ShipDesign::Attack() const
         return 10.0;
     if (m_name == "Mark IV")
         return 15.0;
+    if (m_name == "Scout" || m_name == "Colony Ship")
+        return 0.0;
 
     // accumulate attack power from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
@@ -534,7 +531,7 @@ double ShipDesign::Cost() const
         return 80.0;
 
     // accumulate cost from hull and all parts in design
-    double total_cost = 0.001;  // default small value
+    double total_cost = 0.0;
 
     const PartTypeManager& part_manager = GetPartTypeManager();
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {

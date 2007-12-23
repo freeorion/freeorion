@@ -9,16 +9,16 @@ class PartType {
 public:
     /** \name Structors */ //@{
     PartType();
-    PartType(std::string name, std::string description, ShipPartClass part_class, std::string upgrade, 
-             double mass, double power, double range, /* TODO: add effects group parameter */ 
-             std::string graphic);
+    PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
+             const std::string& upgrade, double mass, double power, double range, /* TODO: add effects group parameter */ 
+             const std::string& graphic);
     //@}
 
     /** \name Accessors */ //@{
-    std::string         Name() const;           ///< returns name of part
-    std::string         Description() const;    ///< returns stringtable entry name of description
+    const std::string&  Name() const;           ///< returns name of part
+    const std::string&  Description() const;    ///< returns stringtable entry name of description
 
-    std::string         Upgrade() const;        ///< returns name of part that this part can be upgraded to.  may return an empty string if there is no such upgrade
+    const std::string&  Upgrade() const;        ///< returns name of part that this part can be upgraded to.  may return an empty string if there is no such upgrade
 
     ShipPartClass       Class() const;          ///< returns that class of part that this is.
 
@@ -28,7 +28,7 @@ public:
 
     double              Cost() const;           ///< returns cost of part
 
-    std::string         Graphic() const;        ///< returns graphic that represents part in UI
+    const std::string&  Graphic() const;        ///< returns graphic that represents part in UI
 
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                         Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part has
@@ -99,23 +99,23 @@ class HullType {
 public:
     /** \name Structors */ //@{
     HullType();
-    HullType(std::string name, std::string description, double mass, double speed, int num_slots,
-             std::string graphic);
+    HullType(const std::string& name, const std::string& description, double mass, double speed, int num_slots,
+             const std::string& graphic);
     //@}
 
     /** \name Accessors */ //@{
-    std::string Name() const;           ///< returns name of hull
-    std::string Description() const;    ///< returns stringtable entry name of description
+    const std::string&  Name() const;           ///< returns name of hull
+    const std::string&  Description() const;    ///< returns stringtable entry name of description
 
-    double      Mass() const;           ///< returns mass of hull
-    double      Speed() const;          ///< returns speed (?) of hull
+    double              Mass() const;           ///< returns mass of hull
+    double              Speed() const;          ///< returns speed (?) of hull
 
-    double      Cost() const;           ///< returns cost of hull
+    double              Cost() const;           ///< returns cost of hull
 
-    int         NumberSlots() const;    ///< returns number of part slots in hull
+    int                 NumberSlots() const;    ///< returns number of part slots in hull
 
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part hull has
+                        Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part hull has
     //@}
 
 private:
@@ -172,15 +172,15 @@ class ShipDesign {
 public:
     /** \name Structors */ //@{
     ShipDesign(); ///< default ctor
-    ShipDesign(std::string name, int designed_by_empire_id, int designed_on_turn, 
-               std::string hull, std::vector<std::string> parts, std::string graphic,
-               std::string model);
+    ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
+               int designed_on_turn, const std::string&, const std::vector<std::string>& parts,
+               const std::string& graphic, const std::string& model);
     //@}
 
     /** \name Accessors */ //@{
     int                             ID() const;                 ///< returns id number of design
-    std::string                     Name() const;               ///< returns name of design
-    std::string                     Description() const;        ///< returns description of design
+    const std::string&              Name() const;               ///< returns name of design
+    const std::string&              Description() const;        ///< returns description of design
     int                             DesignedByEmpire() const;   ///< returns id of empire that created design
     int                             DesginedOnTurn() const;     ///< returns turn on which design was created
 
@@ -196,24 +196,27 @@ public:
     double      Cost() const;
     /////// TEMPORARY ///////
 
-    std::string                     Hull() const;               ///< returns name of hull on which design is based
+    const std::string&              Hull() const;               ///< returns name of hull on which design is based
     const HullType*                 GetHull() const;            ///< returns HullType on which design is based
 
     const std::vector<std::string>& Parts() const;              ///< returns vector of names of parts in design
 
-    std::string                     Graphic() const;            ///< returns filename of graphic for design
-    std::string                     Model() const;              ///< returns filename of 3D model that represents ships of design
+    const std::string&              Graphic() const;            ///< returns filename of graphic for design
+    const std::string&              Model() const;              ///< returns filename of 3D model that represents ships of design
     //@}
 
     /** \name Mutators */ //@{
-    void SetID(int id);                   ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
-    void Rename(const std::string& name); ///< renames this design to \a name
+    void                    SetID(int id);                      ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    void                    Rename(const std::string& name);    ///< renames this design to \a name
     //@}
+
+    static bool ValidDesign(const std::string& hull, const std::vector<std::string>& parts);  ///< returns true if \a design is a valid ShipDesign
 
 private:
     int                         m_id;
 
     std::string                 m_name;
+    std::string                 m_description;
 
     int                         m_designed_by_empire_id;
     int                         m_designed_on_turn;
@@ -267,6 +270,7 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_designed_by_empire_id)
         & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
         & BOOST_SERIALIZATION_NVP(m_hull)
