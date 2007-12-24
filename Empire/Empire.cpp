@@ -758,9 +758,13 @@ bool Empire::ShipDesignAvailable(int ship_design_id) const
     // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech 
     // requirements might prevent it from being built.
     const std::vector<std::string>& parts = design->Parts();
-    for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
-        if (!ShipPartAvailable(*it))
+    for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+        std::string name = *it;
+        if (name == "")
+            continue;   // empty slot can't be unavailable
+        if (!ShipPartAvailable(name))
             return false;
+    }
     if (!ShipHullAvailable(design->Hull()))
         return false;
 

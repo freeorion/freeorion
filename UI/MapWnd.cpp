@@ -1774,8 +1774,10 @@ bool MapWnd::ReturnToMap()
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
     }
-    if (m_design_wnd->Visible())
+    if (m_design_wnd->Visible()) {
         m_design_wnd->Hide();
+        HumanClientApp::GetApp()->MoveDown(m_design_wnd);
+    }
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
@@ -1915,6 +1917,8 @@ bool MapWnd::ToggleDesign()
         // show the design window
         m_design_wnd->Show();
         GG::GUI::GetGUI()->MoveUp(m_design_wnd);
+        GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
+        //DisableAlphaNumAccels();    // so users can type names and descriptions (commented out until I can figure out how to make doing this play nice with the other ToggleSubscreen functions)
         m_design_wnd->Reset();
     }
     return true;
@@ -2261,13 +2265,6 @@ void MapWnd::RemoveAccelerators()
 #endif
 }
 
-/* Disables keyboard accelerators that use an alphanumeric key
-   without modifiers. This is useful if a keyboard input is required,
-   so that the keys aren't interpreted as an accelerator.
-   @note Repeated calls of DisableAlphaNumAccels have to be followed by the
-   same number of calls to EnableAlphaNumAccels to re-enable the
-   accelerators.
-*/
 void MapWnd::DisableAlphaNumAccels()
 {
     for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
@@ -2286,7 +2283,6 @@ void MapWnd::DisableAlphaNumAccels()
     }
 }
 
-// Re-enable accelerators disabled by DisableAlphaNumAccels
 void MapWnd::EnableAlphaNumAccels()
 {
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
