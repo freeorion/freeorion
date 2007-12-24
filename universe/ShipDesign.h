@@ -194,6 +194,7 @@ public:
     double      Attack() const;
     bool        Colonize() const;
     double      Cost() const;
+    int         BuildTime() const;
     /////// TEMPORARY ///////
 
     const std::string&              Hull() const;               ///< returns name of hull on which design is based

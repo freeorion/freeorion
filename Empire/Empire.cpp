@@ -837,7 +837,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
         const ShipDesign* ship_design = GetShipDesign(design_id);
         if (!ship_design)
             break;
-        return std::make_pair(ship_design->Cost(), 5); // v0.3 only
+        return std::make_pair(ship_design->Cost(), ship_design->BuildTime());
     }
     default:
         break;

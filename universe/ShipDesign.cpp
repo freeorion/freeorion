@@ -462,99 +462,44 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
 }
 
 //// TEMPORARY
-double ShipDesign::Defense() const
-{
-    if (m_name == "Mark I" || m_name == "Scout" || m_name == "Colony Ship")
-        return 1.0;
-    if (m_name == "Mark II")
-        return 2.0;
-    if (m_name == "Mark III")
-        return 3.0;
-    if (m_name == "Mark IV")
-        return 5.0;
-
-    // accumulate mass from all parts and hull in design.  Using this for defense for now, for lack of better idea.
-    double total_mass = 0.0;
+double ShipDesign::Defense() const {
+    // accumulate defense from defensive parts in design.
+    double total_defense = 0.0;
     const PartTypeManager& part_manager = GetPartTypeManager();
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         const PartType* part = part_manager.GetPartType(*it);
-        if (part)
-            total_mass += part->Mass();
+        if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
+            total_defense += part->Power();
     }
-
-    const HullTypeManager& hull_manager = GetHullTypeManager();
-    const HullType* hull = hull_manager.GetHullType(m_hull);
-    if (hull)
-        total_mass += hull->Mass();
-
-    return total_mass;
+    return total_defense;
 }
 
-double ShipDesign::Speed() const
-{
-    if (m_name == "Scout")
-        return 80.0;
-    if (m_name == "Colony Ship")
-        return 50.0;
-    if (m_name == "Mark I")
-        return 50.0;
-    if (m_name == "Mark II")
-        return 40.0;
-    if (m_name == "Mark III")
-        return 30.0;
-    if (m_name == "Mark IV")
-        return 25.0;
+double ShipDesign::Speed() const {
     return GetHull()->Speed();
 }
 
-double ShipDesign::Attack() const
-{
-    if (m_name == "Mark I")
-        return 2.0;
-    if (m_name == "Mark II")
-        return 5.0;
-    if (m_name == "Mark III")
-        return 10.0;
-    if (m_name == "Mark IV")
-        return 15.0;
-    if (m_name == "Scout" || m_name == "Colony Ship")
-        return 0.0;
-
+double ShipDesign::Attack() const {
     // accumulate attack power from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
 
     double total_attack = 0.0;
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         const PartType* part = manager.GetPartType(*it);
-        if (part && part->Class() == PC_SHORT_RANGE_BEAM)
+        if (part && (part->Class() == PC_SHORT_RANGE || part->Class() == PC_MISSILES || 
+                     part->Class() == PC_FIGHTERS || part->Class() == PC_POINT_DEFENSE)) {
             total_attack += part->Power();
+        }
     }
-
     return total_attack;
 }
 
-bool ShipDesign::Colonize() const
-{
+bool ShipDesign::Colonize() const {
     if (m_name == "Colony Ship")
         return true;    
     return false;
 }
 
-double ShipDesign::Cost() const
-{
-    if (m_name == "Scout")
-        return 10.0;
-    if (m_name == "Colony Ship")
-        return 50.0;
-    if (m_name == "Mark I")
-        return 20.0;
-    if (m_name == "Mark II")
-        return 40.0;
-    if (m_name == "Mark III")
-        return 60.0;
-    if (m_name == "Mark IV")
-        return 80.0;
-
+double ShipDesign::Cost() const {
     // accumulate cost from hull and all parts in design
     double total_cost = 0.0;
 
@@ -573,4 +518,7 @@ double ShipDesign::Cost() const
     return total_cost;
 }
 
+int ShipDesign::BuildTime() const {
+    return 5;   /// TEMPORARY!
+}
 //// TEMPORARY

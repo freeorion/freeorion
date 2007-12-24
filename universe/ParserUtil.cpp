@@ -106,7 +106,13 @@ namespace {
             ("refinement", TT_REFINEMENT);
 
         part_class_p.add
-            ("shortrangebeam", PC_SHORT_RANGE_BEAM);
+            ("shortrange", PC_SHORT_RANGE)
+            ("missiles", PC_MISSILES)
+            ("fighters", PC_FIGHTERS)
+            ("pointdefense", PC_POINT_DEFENSE)
+            ("shield", PC_SHIELD)
+            ("armour", PC_ARMOUR)
+            ("mission", PC_MISSION);
 
         return true;
     }

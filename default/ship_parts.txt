@@ -1,19 +1,48 @@
 Part
     name = "SR_LASER"
     description = "SR_LASER_DESC"
-    class = ShortRangeBeam
+    class = ShortRange
     power = 1
     range = 10
-    mass = 30
+    mass = 0
     upgrade = "SR_ION_CANNON"
     graphic = "ship_part_icons/Laser.png"
 
 Part
     name = "SR_ION_CANNON"
     description = "SR_ION_CANNON_DESC"
-    class = ShortRangeBeam
+    class = ShortRange
     power = 2
     range = 15
-    mass = 50
+    mass = 1
     upgrade = ""
     graphic = "ship_part_icons/Ion_Cannon.png"
+
+Part
+    name = "AR_LEAD_PLATE"
+    description = "AR_LEAD_PLATE_DESC"
+    class = Armour
+    power = 1
+    range = 0
+    mass = 3
+    upgrade = ""
+    graphic = "ship_part_icons/Lead_Plate.png"
+
+Part
+    name = "SH_DEFENSE_GRID"
+    description = "SH_DEFENSE_GRID_DESC"
+    class = Shield
+    power = 1
+    range = 0
+    mass = 0
+    upgrade = ""
+    graphic = "ship_part_icons/Defense_Grid.png"
+Part
+    name = "SH_DEFLECTOR"
+    description = "SH_DEFLECTOR_DESC"
+    class = Shield
+    power = 3
+    range = 0
+    mass = 1
+    upgrade = ""
+    graphic = "ship_part_icons/Deflector.png"

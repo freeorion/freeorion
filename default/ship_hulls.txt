@@ -17,15 +17,15 @@ Hull
 Hull
     name = "SH_LARGE"
     description = "SH_LARGE_DESC"
-    mass = 8
-    speed = 50
+    mass = 6
+    speed = 40
     slots = 8
     graphic = "ship_hull_icons/Large.png"
 
 Hull
     name = "SH_HUGE"
     description = "SH_HUGE_DESC"
-    mass = 12
+    mass = 10
     speed = 30
     slots = 12
     graphic = "ship_hull_icons/Huge.png"
