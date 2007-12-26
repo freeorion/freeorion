@@ -217,30 +217,31 @@ private:
 
     int                         m_previously_selected_system;
 
-    double                      m_zoom_factor;      //! current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
-    SidePanel*                  m_side_panel;       //! planet view panel on the side of the main map
-    std::set<FleetWnd*>         m_fleet_wnds;       //! currently-open fleet wnds
-    FleetWnd*                   m_active_fleet_wnd; //! currently active FleetWnd is showing fleets.  Active FleetWnd chosen by clicking FleetButtons
-    std::map<int, SystemIcon*>  m_system_icons;     //! system icons in the main map, indexed by system id
-    SitRepPanel*                m_sitrep_panel;     //! sitrep panel
-    ResearchWnd*                m_research_wnd;     //! research screen
-    ProductionWnd*              m_production_wnd;   //! production screen
-    DesignWnd*                  m_design_wnd;       //! design screen
-    GG::MultiEdit*              m_chat_display;     //! (read-only) MP-chat output multi-line edit box
-    CUIEdit*                    m_chat_edit;        //! MP-chat input edit box
-    std::vector<FleetButton*>   m_moving_fleet_buttons; //! moving fleets in the main map (SystemIcons contain stationary fleet buttons)
-    std::set<StarlaneData>      m_starlanes;        //! starlanes between systems
+    double                      m_zoom_factor;      //!< current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
+    SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
+    std::set<FleetWnd*>         m_fleet_wnds;       //!< currently-open fleet wnds
+    FleetWnd*                   m_active_fleet_wnd; //!< currently active FleetWnd is showing fleets.  Active FleetWnd chosen by clicking FleetButtons
+    std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
+    SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
+    ResearchWnd*                m_research_wnd;     //!< research screen
+    ProductionWnd*              m_production_wnd;   //!< production screen
+    DesignWnd*                  m_design_wnd;       //!< design screen
+    GG::MultiEdit*              m_chat_display;     //!< (read-only) MP-chat output multi-line edit box
+    CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
+    std::vector<FleetButton*>   m_moving_fleet_buttons; //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
+    std::set<StarlaneData>      m_starlanes;        //!< starlanes between systems
 
     std::map<Fleet*, MovementLineData>
-                                m_fleet_lines;              //! lines used for moving fleets in the main map
+                                m_fleet_lines;          //!< lines used for moving fleets in the main map
 
-    MovementLineData            m_projected_fleet_line;     //! lines that show the projected path of the active fleet in the FleetWnd
+    MovementLineData            m_projected_fleet_line; //!< lines that show the projected path of the active fleet in the FleetWnd
 
-    std::map<int, std::map<int, int> >
-                                m_system_supply;            //! map from system id to ( map from empire id to level of supply that empire can provide to ships in system )
+    std::map<int, std::set<int> > m_empire_system_fleet_supply; //!< map from empire id to set of systems that empire can provide fleet supply to this turn
+    std::map<int, std::map<int, std::set<int> > >
+                                m_empire_fleet_supply_lanes;    //!< map from empire id to set of starlanes (stored as directed pair of start and end systems) along which fleet supply travels for that empire
 
-    GG::Pt                      m_drag_offset;      //! distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
-    bool                        m_dragged;          //! tracks whether or not a drag occurs during a left button down sequence of events
+    GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
+    bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
     CUITurnButton*              m_turn_update;      //!< button that updates player's turn
     std::list<MapWndPopup*>     m_popups;           //!< list of currently active popup windows
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency

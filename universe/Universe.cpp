@@ -1160,7 +1160,7 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
         for (ObjectMap::const_iterator it = serialized_objects.begin(); it != serialized_objects.end(); ++it) {
             Ship* ship = universe_object_cast<Ship*>(it->second);
             if (ship) {
-                int design_id = ship->ShipDesignID();
+                int design_id = ship->DesignID();
                 if (design_id != UniverseObject::INVALID_OBJECT_ID)
                     designs_to_serialize[design_id] = m_ship_designs[design_id];
             }

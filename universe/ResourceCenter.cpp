@@ -142,7 +142,7 @@ double ResourceCenter::MeterPoints(MeterType type) const
         return GetPopMeter()->Current() / 10.0 * GetMeter(type)->Current();
         break;
     case METER_CONSTRUCTION:
-        return  GetMeter(METER_CONSTRUCTION)->Current();
+        return GetMeter(METER_CONSTRUCTION)->Current();
         break;
     default:
         const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);

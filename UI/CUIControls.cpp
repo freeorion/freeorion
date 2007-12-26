@@ -222,7 +222,7 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category)
     GG::Clr cat_colour = ClientUI::CategoryColor(category);
     SetBorderColor(cat_colour);
     AdjustBrightness(cat_colour, -50);
-    SetColor(cat_colour);        
+    SetColor(cat_colour);
     SetBorderThick(2);
 }
 

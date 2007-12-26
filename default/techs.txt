@@ -25,19 +25,6 @@ Tech
     graphic = "icons/tech/algorithmic_elegance.png"
 
 Tech
-    name = "LRN_GAL_EXPLO"
-    description = "LRN_GAL_EXPLO_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "LEARNING_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    prerequisites = []
-    unlock = []
-    graphic = "tech_icons/Galactic_Exploration.png"
-
-
-Tech
     name = "LRN_TRANSLING_THT"
     description = "LRN_TRANSLING_THT_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -46,7 +33,7 @@ Tech
     researchcost = 1
     researchturns = 1
     prerequisites = [
-        "LRN_GAL_EXPLO"
+        "SHP_GAL_EXPLO"
         "LRN_PHYS_BRAIN"
     ]
     unlock = []
@@ -87,7 +74,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 30
     researchturns = 10
-    prerequisites = "LRN_GAL_EXPLO"
+    prerequisites = "SHP_GAL_EXPLO"
     unlock = []
     graphic = "icons/tech/xenoarchaeology.png"
 
@@ -220,7 +207,7 @@ Tech
     researchcost = 1
     researchturns = 1
     prerequisites = [
-        "LRN_GAL_EXPLO"
+        "SHP_GAL_EXPLO"
         "CON_ORBITAL_CON"
     ]
     unlock = []
@@ -295,33 +282,6 @@ Tech
     graphic = ""
 
 Tech
-    name = "LRN_LIGHTHOUSE"
-    description = "LRN_LIGHTHOUSE_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    prerequisites = [
-        "LRN_NAVIGATION"
-        "CON_ORBITAL_CON"
-    ]
-    unlock = Item type = Building name = "BLD_LIGHTHOUSE"
-    graphic = ""
-
-Tech
-    name = "LRN_NAVIGATION"
-    description = "LRN_NAVIGATION_DESC"
-    short_description = "DOES_NOTHING_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    prerequisites = "LRN_GAL_EXPLO"
-    unlock = []
-    graphic = "tech_icons/Stellar_Navigation.png"
-
-Tech
     name = "LRN_COLLECTIVE_NET"
     description = "LRN_COLLECTIVE_NET_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -389,7 +349,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 25
     researchturns = 5
-    prerequisites = "LRN_GAL_EXPLO"
+    prerequisites = "SHP_GAL_EXPLO"
     unlock = Item type = Building name = "BLD_MONUMENT_EXODUS"
     graphic = "icons/tech/monument_to_exodus.png"
 
@@ -508,7 +468,7 @@ Tech
     prerequisites = [
         "GRO_GENETIC_MED"
         "GRO_SYMBIOTIC_BIO"
-        "LRN_GAL_EXPLO"
+        "SHP_GAL_EXPLO"
     ]
     unlock = []
     graphic = "tech_icons/Xenological_Genetics.png"
@@ -1883,4 +1843,68 @@ Tech
     researchturns = 20
     prerequisites = "ECO_ECON_FLUIDITY"
     unlock = Item type = Building name = "BLD_ECON_SINKHOLE"
+    graphic = ""
+
+TechCategory "SHIPS_CATEGORY"
+
+Tech
+    name = "SHP_GAL_EXPLO"
+    description = "SHP_GAL_EXPLO_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = []
+    unlock = []
+    graphic = "tech_icons/Galactic_Exploration.png"
+
+Tech
+    name = "SHP_NAVIGATION"
+    description = "SHP_NAVIGATION_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "SHP_GAL_EXPLO"
+    unlock = []
+    graphic = "tech_icons/Stellar_Navigation.png"
+
+Tech
+    name = "SHP_LIGHTHOUSE"
+    description = "SHP_LIGHTHOUSE_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "SHP_NAVIGATION"
+        "CON_ORBITAL_CON"
+    ]
+    unlock = Item type = Building name = "BLD_LIGHTHOUSE"
+    graphic = ""
+
+Tech
+    name = "SHP_FLEET_LOGISTICS"
+    description = "SHP_FLEET_LOGISTICS_DESC"
+    short_description = ""
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "SHP_GAL_EXPLO"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope =
+                And [
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    Planet
+                ]
+            activation =
+                Source
+            effects =
+                SetMaxSupply value = Target.MaxSupply + 5
     graphic = ""

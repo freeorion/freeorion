@@ -709,19 +709,12 @@ void MapWnd::InitTurn(int turn_number)
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
     // determine level of supply each empire can provide to fleets in each system
-    m_system_supply.clear();
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* empire = it->second;
         int empire_id = it->first;
-        const std::map<const System*, int>& supplyable_systems = empire->GetSupplyableSystems();
-        
-        for (std::map<const System*, int>::const_iterator it = supplyable_systems.begin(); it != supplyable_systems.end(); ++it) {
-            int system_id = it->first->ID();
-            int supply_level_for_current_empire = it->second;
-            std::map<int, int>& system_empire_supply_map = m_system_supply[system_id];
-
-            system_empire_supply_map[empire_id] = supply_level_for_current_empire;
-        }
+        const Empire* empire = it->second;
+        // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
+        std::make_pair(m_empire_system_fleet_supply[empire_id], m_empire_fleet_supply_lanes[empire_id])=
+            empire->GetFleetSupplyableSystemsAndStarlanesUsed();
     }
 
     m_active_fleet_wnd = 0;
@@ -1294,21 +1287,21 @@ void MapWnd::RenderStarlanes()
         GG::Clr color = GG::CLR_WHITE;
         // if systems on both sides of starlane can be supplied, mark lane with this client's empire colour
         // TODO: add way to mark lanes multiple colours
-        int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        /*int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
         int system1 = it->Src()->ID(), system2 = it->Dst()->ID();
         
-        std::map<int, std::map<int, int> >::const_iterator it1 = m_system_supply.find(system1);
-        std::map<int, std::map<int, int> >::const_iterator it2 = m_system_supply.find(system2);
-        std::map<int, std::map<int, int> >::const_iterator end = m_system_supply.end();
+        std::map<int, std::map<int, double> >::const_iterator it1 = m_system_supply.find(system1);
+        std::map<int, std::map<int, double> >::const_iterator it2 = m_system_supply.find(system2);
+        std::map<int, std::map<int, double> >::const_iterator end = m_system_supply.end();
         if (it1 != end && it2 != end) {
-            std::map<int, int>::const_iterator it1a = it1->second.find(this_client_empire_id);
-            std::map<int, int>::const_iterator it2a = it2->second.find(this_client_empire_id);
-            std::map<int, int>::const_iterator end1 = it1->second.end();
-            std::map<int, int>::const_iterator end2 = it2->second.end();
+            std::map<int, double>::const_iterator it1a = it1->second.find(this_client_empire_id);
+            std::map<int, double>::const_iterator it2a = it2->second.find(this_client_empire_id);
+            std::map<int, double>::const_iterator end1 = it1->second.end();
+            std::map<int, double>::const_iterator end2 = it2->second.end();
 
             if (it1a != end1 && it2a != end2)
                 color = empire->Color();
-        }
+        }*/
 
         // old version that coloured starlanes based on system ownership
         //if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&

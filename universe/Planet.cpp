@@ -20,8 +20,7 @@
 using boost::lexical_cast;
 
 namespace {
-    DataTableMap& PlanetDataTables()
-    {
+    DataTableMap& PlanetDataTables() {
         static DataTableMap map;
         if (map.empty()) {
             std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
@@ -32,14 +31,20 @@ namespace {
         return map;
     }
 
-    double MaxPopMod(PlanetSize size, PlanetEnvironment environment)
-    {
+    double MaxPopMod(PlanetSize size, PlanetEnvironment environment) {
         return PlanetDataTables()["PlanetMaxPop"][size][environment];
     }
 
-    double MaxHealthMod(PlanetEnvironment environment)
-    {
+    double MaxHealthMod(PlanetEnvironment environment) {
         return PlanetDataTables()["PlanetEnvHealthMod"][0][environment];
+    }
+
+    void GrowPlanetMeters(Meter* meter, double updated_current_construction) {
+        // TODO: something better here...
+        assert(meter);
+        double delta = updated_current_construction / (10.0 + meter->Current());
+        double new_cur = std::min(meter->Max(), meter->Current() + delta);
+        meter->SetCurrent(new_cur);
     }
 }
 
@@ -57,7 +62,7 @@ Planet::Planet() :
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
-    // in functional form by deserialization
+    // in functional form by deserialization.  Also assumes planet-specific meters don't need to be re-added.
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) :
@@ -75,8 +80,17 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
     PopCenter::Init(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type)));
     ResourceCenter::Init();
+    Planet::Init();
     SetType(type);
     SetSize(size);
+}
+
+void Planet::Init() {
+    InsertMeter(METER_SUPPLY, Meter());
+    InsertMeter(METER_SHIELD, Meter());
+    InsertMeter(METER_DEFENSE, Meter());
+    InsertMeter(METER_DETECTION, Meter());
+    InsertMeter(METER_STEALTH, Meter());
 }
 
 PlanetEnvironment Planet::Environment() const
@@ -116,6 +130,9 @@ UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
 
 double Planet::ProjectedCurrentMeter(MeterType type) const
 {
+    const Meter* original_meter = 0;
+    Meter meter;
+
     switch (type) {
     case METER_FARMING:
     case METER_MINING:
@@ -128,6 +145,18 @@ double Planet::ProjectedCurrentMeter(MeterType type) const
     case METER_POPULATION:
     case METER_HEALTH:
         return PopCenter::ProjectedCurrentMeter(type);
+        break;
+    case METER_SUPPLY:
+    case METER_SHIELD:
+    case METER_DEFENSE:
+    case METER_DETECTION:
+    case METER_STEALTH:
+        original_meter = GetMeter(type);
+        assert(original_meter);
+        meter = Meter(*original_meter);
+        GrowPlanetMeters(&meter, ProjectedCurrentMeter(METER_CONSTRUCTION));
+        return meter.Current();
+        break;
     default:
         return UniverseObject::ProjectedCurrentMeter(type);
         break;
@@ -148,6 +177,14 @@ double Planet::MeterPoints(MeterType type) const
     case METER_POPULATION:
     case METER_HEALTH:
         return PopCenter::MeterPoints(type);
+        break;
+    case METER_SUPPLY:
+    case METER_SHIELD:
+    case METER_DEFENSE:
+    case METER_DETECTION:
+    case METER_STEALTH:
+        return GetMeter(type)->Current();
+        break;
     default:
         return UniverseObject::MeterPoints(type);
         break;
@@ -168,6 +205,13 @@ double Planet::ProjectedMeterPoints(MeterType type) const
     case METER_POPULATION:
     case METER_HEALTH:
         return PopCenter::ProjectedMeterPoints(type);
+        break;
+    case METER_SUPPLY:
+    case METER_SHIELD:
+    case METER_DEFENSE:
+    case METER_DETECTION:
+    case METER_STEALTH:
+        return ProjectedCurrentMeter(type);
     default:
         return UniverseObject::ProjectedMeterPoints(type);
         break;

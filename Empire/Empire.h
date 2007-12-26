@@ -347,14 +347,18 @@ public:
     /** Returns true iff this empire can produce the specified item at the specified location. */
     bool BuildableItem(const ProductionQueue::ProductionItem& item, int location) const;
 
-    /// Returns true if the given item is in the appropriate list, false if it is not.
+    /** Returns true if the given item is in the appropriate list, false if it is not. */
     bool HasExploredSystem(int ID) const;
 
-    /// Returns the number of entries in the SitRep.
+    /** Returns the number of entries in the SitRep. */
     int NumSitRepEntries() const;
 
-    ///returns map of systems, where ship can be resupply and amoung of supply
-    const std::map<const System*,int>& GetSupplyableSystems();
+    /** Returns std::pair containing:
+      * first:  set of system ids where fleets can be supplied by this empire
+      * second: starlanes along which fleet supply can flow.  entries are directed, so the same starlane
+      *         could appear twice - once for each direction.  the map index is the start and
+      *         values are the ends of lane traversals that can carry fleet supplies. */
+    std::pair<std::set<int>, std::map<int, std::set<int> > > GetFleetSupplyableSystemsAndStarlanesUsed() const;
 
     TechItr TechBegin() const;
     TechItr TechEnd() const;
@@ -367,7 +371,7 @@ public:
     SitRepItr SitRepBegin() const;
     SitRepItr SitRepEnd() const;
 
-    /// Returns the number of production points available to the empire (this is the minimum of available industry and available minerals)
+    /** Returns the number of production points available to the empire (this is the minimum of available industry and available minerals) */
     double ProductionPoints() const;
 
     /** Returns amount of food empire will distribute this turn.  Assumes Empire::UpdateFoodDistribution() has
@@ -585,9 +589,6 @@ private:
 
     /// progress of partially-completed builds; completed items are removed
     std::vector<double> m_production_progress;
-
-    /// set of supplyable systems
-    std::map<const System*, int> m_sup_systems;
 
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_available_building_types;

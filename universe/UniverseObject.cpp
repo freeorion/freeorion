@@ -134,7 +134,7 @@ double UniverseObject::MeterPoints(MeterType type) const
 
 double UniverseObject::ProjectedMeterPoints(MeterType type) const
 {
-    Logger().errorStream() << "UniverseObject::ProjectedMeterPoints";
+    // Note that this is the default implementation.  Derived classes might do something different.
     return MeterPoints(type);
 }
 

@@ -340,6 +340,42 @@ namespace ValueRef {
         } else if (m_property_name.back() == "MaxPopulation") {
             const Meter* m = object->GetMeter(METER_POPULATION);
             retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "MaxFuel") {
+            const Meter* m = object->GetMeter(METER_FUEL);
+            retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "CurrentFuel") {
+            const Meter* m = object->GetMeter(METER_FUEL);
+            retval = m ? m->Current() : 0;
+        } else if (m_property_name.back() == "MaxSupply") {
+            const Meter* m = object->GetMeter(METER_SUPPLY);
+            retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "CurrentSupply") {
+            const Meter* m = object->GetMeter(METER_SUPPLY);
+            retval = m ? m->Current() : 0;
+        } else if (m_property_name.back() == "MaxStealth") {
+            const Meter* m = object->GetMeter(METER_STEALTH);
+            retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "CurrentStealth") {
+            const Meter* m = object->GetMeter(METER_STEALTH);
+            retval = m ? m->Current() : 0;
+        } else if (m_property_name.back() == "MaxDetection") {
+            const Meter* m = object->GetMeter(METER_DETECTION);
+            retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "CurrentDetection") {
+            const Meter* m = object->GetMeter(METER_DETECTION);
+            retval = m ? m->Current() : 0;
+        } else if (m_property_name.back() == "MaxShield") {
+            const Meter* m = object->GetMeter(METER_SHIELD);
+            retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "CurrentShield") {
+            const Meter* m = object->GetMeter(METER_SHIELD);
+            retval = m ? m->Current() : 0;
+        } else if (m_property_name.back() == "MaxDefense") {
+            const Meter* m = object->GetMeter(METER_DEFENSE);
+            retval = m ? m->Max() : 0;
+        } else if (m_property_name.back() == "CurrentDefense") {
+            const Meter* m = object->GetMeter(METER_DEFENSE);
+            retval = m ? m->Current() : 0;
         } else if (m_property_name.back() == "TradeStockpile") {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());

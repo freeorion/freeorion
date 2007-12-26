@@ -359,6 +359,21 @@ Sets color of the fourth category of techs defined in techs.xml.
 OPTIONS_DB_UI_TECH_CATEGORY_5
 Sets color of the fifth category of techs defined in techs.xml.
 
+OPTIONS_DB_UI_TECH_CATEGORY_6
+Sets color of the sixth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_7
+Sets color of the seventh category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_8
+Sets color of the eighth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_9
+Sets color of the ninth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_10
+Sets color of the tenth category of techs defined in techs.xml.
+
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip popup delay, in ms.
 
@@ -1686,6 +1701,18 @@ METER_CONSTRUCTION
 construction
 METER_HEALTH
 health
+METER_FUEL
+fuel
+METER_SUPPLY
+supply
+METER_STEALTH
+stealth
+METER_DETECTION
+detection
+METER_SHIELD
+shield
+METER_DEFENSE
+defense
 
 
 # EmpireAffiliationTypes
@@ -1825,6 +1852,42 @@ current population
 
 DESC_VAR_MAXPOPULATION
 max population
+
+DESC_VAR_CURRENTFUEL
+current fuel
+
+DESC_VAR_MAXFUEL
+max fuel
+
+DESC_VAR_CURRENTSUPPLY
+current supply
+
+DESC_VAR_MAXSUPPLY
+max supply
+
+DESC_VAR_CURRENTSTEALTH
+current stealth
+
+DESC_VAR_MAXSTEALTH
+max stealth
+
+DESC_VAR_CURRENTDETECTION
+current detection
+
+DESC_VAR_MAXDETECTION
+max detection
+
+DESC_VAR_CURRENTSHIELD
+current shield
+
+DESC_VAR_MAXSHIELD
+max shield
+
+DESC_VAR_CURRENTDEFENSE
+current defense
+
+DESC_VAR_MAXDEFENSE
+max defense
 
 DESC_VAR_TRADESTOCKPILE
 trade stockpile
@@ -2179,6 +2242,8 @@ GROWTH_CATEGORY
 Growth
 ECONOMICS_CATEGORY
 Economics
+SHIPS_CATEGORY
+Ships
 
 ####################################
 # Misc / Debug Tech Stuff          #
@@ -2209,12 +2274,6 @@ Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
-
-LRN_GAL_EXPLO
-Galactic Exploration
-
-LRN_GAL_EXPLO_DESC
-The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
 
 LRN_TRANSLING_THT
 Translinguistics
@@ -2624,6 +2683,13 @@ Economic Hegemony
 ECO_ECON_HEGEMONY_DESC
 An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
+SHP_GAL_EXPLO
+Galactic Exploration
+
+SHP_GAL_EXPLO_DESC
+The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
+
+
 #########################################
 # Tech Application Names & Descriptions #
 #########################################
@@ -2799,18 +2865,6 @@ Automatic Theorm Prover
 LRN_THEORM_PROVER_DESC
 Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
 
-LRN_LIGHTHOUSE
-Interstellar Lighthouses
-
-LRN_LIGHTHOUSE_DESC
-Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
-
-LRN_NAVIGATION
-Intersetaller Navigation
-
-LRN_NAVIGATION_DESC
-Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
-
 LRN_COLLECTIVE_NET
 Collective Thought Network
 
@@ -2931,6 +2985,23 @@ Energy Conversion
 PRO_ENERGY_CONV_DESC
 At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
 
+SHP_LIGHTHOUSE
+Interstellar Lighthouses
+
+SHP_LIGHTHOUSE_DESC
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+
+SHP_NAVIGATION
+Intersetaller Navigation
+
+SHP_NAVIGATION_DESC
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
+
+SHP_FLEET_LOGISTICS
+Fleet Logistics
+
+SHP_FLEET_LOGISTICS_DESC
+Gives planets ability to resupply fleets in systems several starlane jumps away.
 
 ########################################
 # Tech Refinement Names & Descriptions #

@@ -117,7 +117,13 @@ namespace {
                  | str_p("trade")[set_meter.meter = val(METER_TRADE)]
                  | str_p("mining")[set_meter.meter = val(METER_MINING)]
                  | str_p("construction")[set_meter.meter = val(METER_CONSTRUCTION)]
-                 | str_p("health")[set_meter.meter = val(METER_HEALTH)])
+                 | str_p("health")[set_meter.meter = val(METER_HEALTH)]
+                 | str_p("fuel")[set_meter.meter = val(METER_FUEL)]
+                 | str_p("supply")[set_meter.meter = val(METER_SUPPLY)]
+                 | str_p("stealth")[set_meter.meter = val(METER_STEALTH)]
+                 | str_p("detection")[set_meter.meter = val(METER_DETECTION)]
+                 | str_p("shield")[set_meter.meter = val(METER_SHIELD)]
+                 | str_p("defense")[set_meter.meter = val(METER_DEFENSE)])
              >> value_label >> double_expr_p[set_meter.value = arg1])
             [set_meter.this_ = new_<Effect::SetMeter>(set_meter.meter, set_meter.value, set_meter.max_meter)];
 

@@ -648,7 +648,7 @@ namespace {
                 const ShipDesign* design = s->Design();
 
                 if (!design) {
-                    Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->ShipDesignID();
+                    Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->DesignID();
                     continue;
                 }
                 

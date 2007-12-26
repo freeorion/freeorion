@@ -89,6 +89,9 @@ public:
 
     static PlanetEnvironment Environment(PlanetType type); ///< returns the environment that corresponds to each planet type
 
+protected:
+    void Init();
+
 private:
     UniverseObject* This() {return this;}
 

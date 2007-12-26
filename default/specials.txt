@@ -12,5 +12,6 @@ Special
                 SetMaxFarming value = Source.MaxFarming + 8
                 SetMaxIndustry value = Source.MaxIndustry + 5
                 SetMaxTrade value = Source.MaxTrade + 2
+                SetMaxSupply value = Source.MaxSupply + 2
             ]
     graphic = "icons/specials_tiny/homeworld.png"
