@@ -977,7 +977,7 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
     // the system
 
     std::map<int, int> system_supply_ranges;                    // map from system id to that system's (best known) fleet supply range in starlane jumps
-    std::map<int, std::set<int>> supply_starlane_traversals;    // map from start system id to end system ids of starlanes traversed to deliver fleet supply
+    std::map<int, std::set<int> > supply_starlane_traversals;    // map from start system id to end system ids of starlanes traversed to deliver fleet supply
 
     // determine all objects owned by this empire which might be able to distribute fleet supplies.  as of this
     // writing, this is just Planets, but if other objects get the ability to distribute fleet supplies, this
@@ -985,7 +985,6 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
     Universe::ObjectVec owned_planets = GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id));
     for (Universe::ObjectVec::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
         const UniverseObject* obj = *it;
-        int source_id = obj->ID();
 
         // check if object has a supply meter
         const Meter* supply_meter = obj->GetMeter(METER_SUPPLY);
