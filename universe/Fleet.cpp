@@ -188,6 +188,7 @@ std::pair<int, int> Fleet::ETA() const
                 std::list<System*>::iterator next_system_it = m_travel_route.begin();
                 if (SystemID() == m_travel_route.front()->ID())
                     ++next_system_it;
+                assert(next_system_it != m_travel_route.end());
                 System* next = *next_system_it;
                 if (next == m_travel_route.back()) {
                     retval.second = retval.first;
@@ -271,6 +272,8 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
     // if resetting to no movement while in a system
     if (SystemID() != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_travel_route.back()->ID()) {
         m_moving_to = UniverseObject::INVALID_OBJECT_ID;
+        m_next_system = UniverseObject::INVALID_OBJECT_ID;
+        m_prev_system = UniverseObject::INVALID_OBJECT_ID;
     } else {
         // if we're already moving, add in the distance from where we are to the first system in the route
         if (SystemID() != route.front()->ID()) {
