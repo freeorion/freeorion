@@ -386,6 +386,13 @@ void Planet::PopGrowthProductionResearchPhase( )
 
     PopCenter::PopGrowthProductionResearchPhase();
 
+    double current_construction = GetMeter(METER_CONSTRUCTION)->Current();
+    GrowPlanetMeters(GetMeter(METER_SUPPLY), current_construction);
+    GrowPlanetMeters(GetMeter(METER_SHIELD), current_construction);
+    GrowPlanetMeters(GetMeter(METER_DEFENSE), current_construction);
+    GrowPlanetMeters(GetMeter(METER_DETECTION), current_construction);
+    GrowPlanetMeters(GetMeter(METER_STEALTH), current_construction);
+
     StateChangedSignal();
 }
 

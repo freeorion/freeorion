@@ -249,7 +249,8 @@ BuildingType
                 ]
                 PrimaryFocus Mining
             ]
-            activation = OwnerHasTech "PRO_ASTEROID_MINE_I"
+            activation = OwnerHasTech "PRO_ASTEROID_MINE"
+            stackinggroup = "ASTEROID_LOCAL_EFFECT"
             effects = SetMaxMining Target.MaxMining + 4
 
         EffectsGroup
@@ -261,7 +262,8 @@ BuildingType
                 PrimaryFocus Mining
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE_II"
-            effects = SetMaxMining Target.MaxMining + 4
+            stackinggroup = "ASTEROID_LOCAL_EFFECT"
+            effects = SetMaxMining Target.MaxMining + 8
 
     ]
     graphic = ""

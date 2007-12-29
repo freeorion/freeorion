@@ -631,9 +631,9 @@ void MapWnd::InitTurn(int turn_number)
     m_projected_fleet_line = MovementLineData();
 
     // systems and starlanes
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
-    }
+
     m_system_icons.clear();
     m_starlanes.clear();
 
@@ -713,8 +713,13 @@ void MapWnd::InitTurn(int turn_number)
         int empire_id = it->first;
         const Empire* empire = it->second;
         // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
-        std::make_pair(m_empire_system_fleet_supply[empire_id], m_empire_fleet_supply_lanes[empire_id])=
-            empire->GetFleetSupplyableSystemsAndStarlanesUsed();
+        std::pair<std::set<int>, std::map<int, std::set<int> > > retval;
+        retval = empire->GetFleetSupplyableSystemsAndStarlanesUsed();
+        m_empire_system_fleet_supply[empire_id] = retval.first;
+        m_empire_fleet_supply_lanes[empire_id] = retval.second;
+
+        Logger().errorStream() << "id " << retval.first.size() << " and " << retval.second.size();
+        Logger().errorStream() << m_empire_system_fleet_supply[empire_id].size() << " and " << m_empire_fleet_supply_lanes[empire_id].size();
     }
 
     m_active_fleet_wnd = 0;
@@ -1265,11 +1270,15 @@ void MapWnd::RenderStarlanes()
     double INNER_LINE_EDGE_ALPHA = 0.4;
     double OUTER_LINE_EDGE_ALPHA = 0.0;
 
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    GG::Pt ul = ClientUpperLeft();
+
+    const Universe& universe = GetUniverse();
+    const EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    const Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
 
     glDisable(GL_TEXTURE_2D);
 
-    GG::Pt ul = ClientUpperLeft();
+    // render base starlanes
     for (std::set<StarlaneData>::iterator it = m_starlanes.begin(); it != m_starlanes.end(); ++it) {
         double center1[2] = {ul.x + it->Src()->X() * m_zoom_factor, ul.y + it->Src()->Y() * m_zoom_factor};
         double center2[2] = {ul.x + it->Dst()->X() * m_zoom_factor, ul.y + it->Dst()->Y() * m_zoom_factor};
@@ -1285,29 +1294,6 @@ void MapWnd::RenderStarlanes()
         double far_right2[2] = {center2[0] - OUTER_LINE_WIDTH * left_vec[0], center2[1] - OUTER_LINE_WIDTH * left_vec[1]};
 
         GG::Clr color = GG::CLR_WHITE;
-        // if systems on both sides of starlane can be supplied, mark lane with this client's empire colour
-        // TODO: add way to mark lanes multiple colours
-        /*int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        int system1 = it->Src()->ID(), system2 = it->Dst()->ID();
-        
-        std::map<int, std::map<int, double> >::const_iterator it1 = m_system_supply.find(system1);
-        std::map<int, std::map<int, double> >::const_iterator it2 = m_system_supply.find(system2);
-        std::map<int, std::map<int, double> >::const_iterator end = m_system_supply.end();
-        if (it1 != end && it2 != end) {
-            std::map<int, double>::const_iterator it1a = it1->second.find(this_client_empire_id);
-            std::map<int, double>::const_iterator it2a = it2->second.find(this_client_empire_id);
-            std::map<int, double>::const_iterator end1 = it1->second.end();
-            std::map<int, double>::const_iterator end2 = it2->second.end();
-
-            if (it1a != end1 && it2a != end2)
-                color = empire->Color();
-        }*/
-
-        // old version that coloured starlanes based on system ownership
-        //if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
-        //    *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
-        //    color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
-        //}
 
         glBegin(GL_TRIANGLE_STRIP);
         color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
@@ -1333,6 +1319,52 @@ void MapWnd::RenderStarlanes()
         glEnd();
     }
 
+    // render fleet supply lines
+    const GLushort PATTERN = 0x8888;    // = 1000100010001000  -> widely space small dots
+    const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
+    const double RATE = 0.1;            // slow crawl
+    const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+    LINE_SCALE = std::max(0.75, m_zoom_factor);
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_LINE_STIPPLE);
+    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
+    glLineWidth(LINE_SCALE);
+    // add series of vertices...
+
+    glBegin(GL_LINES);
+    for (std::map<int, std::map<int, std::set<int> > >::const_iterator empire_it = m_empire_fleet_supply_lanes.begin(); empire_it != m_empire_fleet_supply_lanes.end(); ++empire_it) {
+        int empire_id = empire_it->first;
+        Logger().errorStream() << "for empire " << empire_id << " have " << m_empire_fleet_supply_lanes[empire_id].size() << " lanes to animate";
+        empire = manager.Lookup(empire_id);
+        glColor(empire->Color());
+        const std::map<int, std::set<int> >& starlanes = empire_it->second;
+        for (std::map<int, std::set<int> >::const_iterator start_it = starlanes.begin(); start_it != starlanes.end(); ++start_it) {
+            int lane_start_sys_id = start_it->first;
+            const System* start_sys = universe.Object<System>(lane_start_sys_id);
+            double start_x = start_sys->X(), start_y = start_sys->Y();
+            GG::Pt start_screen_coords = ScreenCoordsFromUniversePosition(start_x, start_y);
+
+            const std::set<int>& lane_ends = start_it->second;
+            for (std::set<int>::const_iterator end_it = lane_ends.begin(); end_it != lane_ends.end(); ++end_it) {
+                int lane_end_sys_id = *end_it;
+                const System* end_sys = universe.Object<System>(lane_end_sys_id);
+                double end_x = end_sys->X(), end_y = end_sys->Y();
+                GG::Pt end_screen_coords = ScreenCoordsFromUniversePosition(end_x, end_y);
+
+                glVertex2d(start_screen_coords.x, start_screen_coords.y);
+                glVertex2d(end_screen_coords.x, end_screen_coords.y);
+            }
+        }
+    }
+    glEnd();
+
+    // add series of vertices...
+    glLineWidth(1.0);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
     glEnable(GL_TEXTURE_2D);
 }
 
