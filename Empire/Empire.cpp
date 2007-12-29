@@ -968,8 +968,10 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
                 blocked = true;
             }
         }
-        if (!blocked)
+        if (!blocked) {
             unobstructed_systems.insert(system_id);
+            //Logger().debugStream() << "unobstructed system: " << system_id;
+        }
     }
     
     // determine the fleet supply range of each system.  store in a map, indexed by system id.  the fleet supply
@@ -997,10 +999,14 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
         // get supply range for next turn for this object
         int supply_range = static_cast<int>(floor(obj->ProjectedCurrentMeter(METER_SUPPLY)));
 
+        //Logger().errorStream() << "object: " << obj->Name() << " has supply meter: " << obj->ProjectedCurrentMeter(METER_SUPPLY);
+
         // if this object can provide more supply than the best previously checked object in this system, record its range as the new best for the system
         std::map<int, int>::iterator system_it = system_supply_ranges.find(system_id);     // try to find a previous entry for this system's supply range
-        if (system_it == system_supply_ranges.end() || supply_range > system_it->second)    // if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
+        if (system_it == system_supply_ranges.end() || supply_range > system_it->second) { // if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
             system_supply_ranges[system_id] = supply_range;
+            //Logger().debugStream() << "system " << system_id << " supply range: " << supply_range;
+        }
     }
     
 
@@ -1020,6 +1026,8 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
         int cur_sys_id = *sys_list_it;
         int cur_sys_range = system_supply_ranges[cur_sys_id];
 
+        //Logger().errorStream() << "system " << cur_sys_id << " has range " << cur_sys_range;
+
         if (cur_sys_range <= 0) {
             // can't propegate any further
             ++sys_list_it;
@@ -1032,21 +1040,29 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
         for (System::StarlaneMap::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
             int lane_end_sys_id = lane_it->first;
 
+            //Logger().errorStream() << "considering adjacent system " << lane_end_sys_id;
+
             if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) continue; // can't propegate here
+
+            //Logger().errorStream() << "... is unobstructed!";
 
             // compare next system's supply range to this system's supply range.  propegate if necessary.
             std::map<int, int>::const_iterator lane_end_sys_it = system_supply_ranges.find(lane_end_sys_id);
-            if (lane_end_sys_it == system_supply_ranges.end() || system_supply_ranges[lane_end_sys_id] < cur_sys_range - 1) {
-                // next system has no supply range, or its range is smaller than this system's supply would be once
-                // propegated along the starlane...
+            if (lane_end_sys_it == system_supply_ranges.end() || system_supply_ranges[lane_end_sys_id] <= cur_sys_range) {
+                // next system has no supply yet, or its range equal to or smaller than this system's
 
-                // update next system's range
-                system_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
+                //Logger().errorStream() << "...with old range " << system_supply_ranges[lane_end_sys_id];
 
-                // add next system to list of systems to propegate further
-                propegating_systems_list.push_back(lane_end_sys_id);
+                // update next system's range, if propegating from this system would make it larger
+                if (lane_end_sys_it == system_supply_ranges.end() || system_supply_ranges[lane_end_sys_id] < cur_sys_range - 1) {
+                    // update with new range
+                    system_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
+                    // add next system to list of systems to propegate further
+                    propegating_systems_list.push_back(lane_end_sys_id);
+                }
 
-                // add this starlane traversal to set of starlanes that can / do carry supplies for this empire
+                // regardless of whether propegating from current to next system increased its range, add the
+                // traversed lane to show redundancies in supply network to player
                 supply_starlane_traversals[cur_sys_id].insert(lane_end_sys_id);
             }
         }
@@ -1054,10 +1070,17 @@ std::pair<std::set<int>, std::map<int, std::set<int> > > Empire::GetFleetSupplya
         sys_list_end = propegating_systems_list.end();
     }
 
+    //Logger().errorStream() << "number of systems with supply access: " << system_supply_ranges.size();
+
     // convert supply ranges info into output set of supplyable systems
     std::set<int> supplyable_systems;
     for (std::map<int, int>::const_iterator it = system_supply_ranges.begin(); it != system_supply_ranges.end(); ++it)
         supplyable_systems.insert(it->first);
+
+    //Logger().errorStream() << "after copying: " << supplyable_systems.size();
+
+    //Logger().errorStream() << "number of supply starlane transversals: " << supply_starlane_traversals.size();
+
     return std::make_pair(supplyable_systems, supply_starlane_traversals);
 }
 

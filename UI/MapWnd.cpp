@@ -1320,7 +1320,7 @@ void MapWnd::RenderStarlanes()
     }
 
     // render fleet supply lines
-    const GLushort PATTERN = 0x8888;    // = 1000100010001000  -> widely space small dots
+    const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
     const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
     const double RATE = 0.1;            // slow crawl
     const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
