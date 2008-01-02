@@ -237,8 +237,8 @@ private:
     MovementLineData            m_projected_fleet_line; //!< lines that show the projected path of the active fleet in the FleetWnd
 
     std::map<int, std::set<int> > m_empire_system_fleet_supply; //!< map from empire id to set of systems that empire can provide fleet supply to this turn
-    std::map<int, std::map<int, std::set<int> > >
-                                m_empire_fleet_supply_lanes;    //!< map from empire id to set of starlanes (stored as directed pair of start and end systems) along which fleet supply travels for that empire
+    std::map<int, std::set<std::pair<int, int> > >
+                                m_empire_fleet_supply_lanes;    //!< map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which fleet supply travels for that empire
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events

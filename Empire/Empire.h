@@ -353,12 +353,23 @@ public:
     /** Returns the number of entries in the SitRep. */
     int NumSitRepEntries() const;
 
-    /** Returns std::pair containing:
+    /** modifies passed parameters, which are
       * first:  set of system ids where fleets can be supplied by this empire
       * second: starlanes along which fleet supply can flow.  entries are directed, so the same starlane
-      *         could appear twice - once for each direction.  the map index is the start and
-      *         values are the ends of lane traversals that can carry fleet supplies. */
-    std::pair<std::set<int>, std::map<int, std::set<int> > > GetFleetSupplyableSystemsAndStarlanesUsed() const;
+      *         could appear twice - once for each direction.  the first value is the start and the second
+      *         value is the end of the lane traversals that can carry fleet supplies. */
+    void GetSupplyableSystemsAndStarlanesUsed(std::set<int>& supplyable_system_ids, 
+                                              std::set<std::pair<int, int> >& supply_starlane_traversals) const;
+
+    /** modifies passed parameter, which is the set of system ids where fleet supply can be propegated from
+      * one starlane to the next, or where supply can be delivered if a supply route can reach the system.
+      */
+    void GetSupplyUnobstructedSystems(std::set<int>& unobstructed_system_ids) const;
+
+    /** modifies passed parameter, which is a map from system id to the range, in starlane jumps that the
+      * system can send supplies.
+      */
+    void GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
 
     TechItr TechBegin() const;
     TechItr TechEnd() const;

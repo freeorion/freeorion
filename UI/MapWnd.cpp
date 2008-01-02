@@ -713,13 +713,8 @@ void MapWnd::InitTurn(int turn_number)
         int empire_id = it->first;
         const Empire* empire = it->second;
         // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
-        std::pair<std::set<int>, std::map<int, std::set<int> > > retval;
-        retval = empire->GetFleetSupplyableSystemsAndStarlanesUsed();
-        m_empire_system_fleet_supply[empire_id] = retval.first;
-        m_empire_fleet_supply_lanes[empire_id] = retval.second;
-
-        Logger().errorStream() << "id " << retval.first.size() << " and " << retval.second.size();
-        Logger().errorStream() << m_empire_system_fleet_supply[empire_id].size() << " and " << m_empire_fleet_supply_lanes[empire_id].size();
+        empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
+                                                     m_empire_fleet_supply_lanes[empire_id]);
     }
 
     m_active_fleet_wnd = 0;
@@ -1335,28 +1330,24 @@ void MapWnd::RenderStarlanes()
     // add series of vertices...
 
     glBegin(GL_LINES);
-    for (std::map<int, std::map<int, std::set<int> > >::const_iterator empire_it = m_empire_fleet_supply_lanes.begin(); empire_it != m_empire_fleet_supply_lanes.end(); ++empire_it) {
+    for (std::map<int, std::set<std::pair<int, int> > >::const_iterator empire_it = m_empire_fleet_supply_lanes.begin(); empire_it != m_empire_fleet_supply_lanes.end(); ++empire_it) {
         int empire_id = empire_it->first;
-        Logger().errorStream() << "for empire " << empire_id << " have " << m_empire_fleet_supply_lanes[empire_id].size() << " lanes to animate";
         empire = manager.Lookup(empire_id);
         glColor(empire->Color());
-        const std::map<int, std::set<int> >& starlanes = empire_it->second;
-        for (std::map<int, std::set<int> >::const_iterator start_it = starlanes.begin(); start_it != starlanes.end(); ++start_it) {
-            int lane_start_sys_id = start_it->first;
+        const std::set<std::pair<int, int> >& starlanes = empire_it->second;
+        for (std::set<std::pair<int, int> >::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
+            int lane_start_sys_id = lane_it->first;
             const System* start_sys = universe.Object<System>(lane_start_sys_id);
             double start_x = start_sys->X(), start_y = start_sys->Y();
             GG::Pt start_screen_coords = ScreenCoordsFromUniversePosition(start_x, start_y);
 
-            const std::set<int>& lane_ends = start_it->second;
-            for (std::set<int>::const_iterator end_it = lane_ends.begin(); end_it != lane_ends.end(); ++end_it) {
-                int lane_end_sys_id = *end_it;
-                const System* end_sys = universe.Object<System>(lane_end_sys_id);
-                double end_x = end_sys->X(), end_y = end_sys->Y();
-                GG::Pt end_screen_coords = ScreenCoordsFromUniversePosition(end_x, end_y);
+            int lane_end_sys_id = lane_it->second;
+            const System* end_sys = universe.Object<System>(lane_end_sys_id);
+            double end_x = end_sys->X(), end_y = end_sys->Y();
+            GG::Pt end_screen_coords = ScreenCoordsFromUniversePosition(end_x, end_y);
 
-                glVertex2d(start_screen_coords.x, start_screen_coords.y);
-                glVertex2d(end_screen_coords.x, end_screen_coords.y);
-            }
+            glVertex2d(start_screen_coords.x, start_screen_coords.y);
+            glVertex2d(end_screen_coords.x, end_screen_coords.y);
         }
     }
     glEnd();
