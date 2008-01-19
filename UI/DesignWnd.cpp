@@ -40,14 +40,14 @@ DesignWnd::DesignWnd(int w, int h) :
 {
     EnableChildClipping(true);
 
-    m_add_design_button = new CUIButton(100, 100, 120, "Add Test Design");
+    m_add_design_button = new CUIButton(100, 100, 120, UserString("DESIGN_ADD_TEST"));
     AttachChild(m_add_design_button);
     GG::Connect(m_add_design_button->ClickedSignal, &DesignWnd::AddDesign, this);
 
-    m_design_name_edit = new CUIEdit(100, 125, 150, "ShipDesign Name");
+    m_design_name_edit = new CUIEdit(100, 125, 150, UserString("DESIGN_NAME_DEFAULT"));
     AttachChild(m_design_name_edit);
 
-    m_design_description_edit = new CUIEdit(100, 150, 150, "ShipDesign Description");
+    m_design_description_edit = new CUIEdit(100, 150, 150, UserString("DESIGN_DESCRIPTION_DEFAULT"));
     AttachChild(m_design_description_edit);
 
     GG::Connect(this->DesignChangedSignal, &DesignWnd::DesignChanged, this);
@@ -60,7 +60,7 @@ DesignWnd::DesignWnd(int w, int h) :
     const HullTypeManager& hull_manager = GetHullTypeManager();
     for (HullTypeManager::iterator it = hull_manager.begin(); it != hull_manager.end(); ++it) {
         const std::string& hull_name = it->first;
-        m_hulls_list->Insert(new CUISimpleDropDownListRow(hull_name));
+        m_hulls_list->Insert(new CUISimpleDropDownListRow(UserString(hull_name)));
     }
     m_hulls_list->Select(m_hulls_list->NumRows() - 1);
 }
@@ -195,7 +195,7 @@ void DesignWnd::SetDesignHull(const std::string& hull) {
         // populate new list with parts
         for (PartTypeManager::iterator it = part_manager.begin(); it != part_manager.end(); ++it) {
             const std::string& part_name = it->first;
-            list->Insert(new CUISimpleDropDownListRow(part_name));
+            list->Insert(new CUISimpleDropDownListRow(UserString(part_name)));
         }
 
         // select no part by default

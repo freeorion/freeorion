@@ -1392,6 +1392,20 @@ PRODUCTION_QUEUE_MULTIPLES
 %1%x 
 
 
+###############
+#  DesignWnd  #
+###############
+
+DESIGN_ADD_TEST
+Add Test Design
+
+DESIGN_NAME_DEFAULT
+Default Design Name
+
+DESIGN_DESCRIPTION_DEFAULT
+Default Design Description
+
+
 ####################
 # Combat Messages  #
 ####################
@@ -3211,3 +3225,56 @@ Economic Sinkhole
 
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
+
+##############
+# Ship Parts #
+##############
+
+SR_LASER
+Laser
+SR_LASER_DESC
+Lower power and mass
+
+SR_ION_CANNON
+Ion Cannon
+SR_ION_CANNON_DESC
+Moderate power and mass
+
+AR_LEAD_PLATE
+Lead Armour Plating
+AR_LEAD_PLATE_DESC
+Weak defense with large mass
+
+SH_DEFENSE_GRID
+Defense Grid
+SH_DEFENSE_GRID_DESC
+Weak defense with no extra mass
+
+SH_DEFLECTOR
+Deflector Shield
+SH_DEFLECTOR_DESC
+Strong defense with small mass
+
+##############
+# Ship Hulls #
+##############
+
+SH_SMALL
+Small Hull
+SH_SMALL_DESC
+Few slots but high speed
+
+SH_MEDIUM
+Medium Hull
+SH_MEDIUM_DESC
+Moderate number of slots and moderate speed
+
+SH_LARGE
+Large Hull
+SH_LARGE_DESC
+Many slots but slow speed
+
+SH_HUGE
+Huge Hull
+SH_HUGE_DESC
+Very many slots but very slow speed
