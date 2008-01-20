@@ -45,11 +45,11 @@ namespace fs = boost::filesystem;
 fs::path ClientUI::ArtDir()                    { return GetSettingsDir() / "data" / "art"; }
 fs::path ClientUI::SoundDir()                  { return GetSettingsDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                   { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
-std::string ClientUI::FontBold()               { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
-std::string ClientUI::FontItalic()             { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font-italic")).native_file_string(); }
-std::string ClientUI::FontBoldItalic()         { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font-bold-italic")).native_file_string(); }
-std::string ClientUI::TitleFont()              { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
+std::string ClientUI::Font()                   { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
+std::string ClientUI::FontBold()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
+std::string ClientUI::FontItalic()             { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-italic")).native_file_string(); }
+std::string ClientUI::FontBoldItalic()         { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold-italic")).native_file_string(); }
+std::string ClientUI::TitleFont()              { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
 
 int         ClientUI::Pts()                    { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()               { return GetOptionsDB().Get<int>("UI.title-font-size"); }
@@ -104,7 +104,7 @@ boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& buil
     const BuildingType* building_type = GetBuildingType(building_type_name);
     const std::string graphic_name = building_type->Graphic();
     if (graphic_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "building_icons" / "Generic_Building.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "building" / "generic_building.png", true);
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }
 
@@ -121,7 +121,7 @@ boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& categor
         icon_filename = "learning.png";
     if (category_name == "PRODUCTION_CATEGORY")
         icon_filename = "production.png";
-    return ClientUI::GetTexture(ArtDir() / "tech_icons" / "categories" / icon_filename, true);
+    return ClientUI::GetTexture(ArtDir() / "icons" / "tech/" / "categories" / icon_filename, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
@@ -139,7 +139,7 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& speci
     const Special* special = GetSpecial(special_name);
     std::string texture_name = special->Graphic();
     if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "special_icons" / "Generic_Special.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "specials_tiny" / "generic_special.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name);
 }
 

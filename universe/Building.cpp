@@ -131,10 +131,7 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_location(location),
     m_effects(effects),
     m_graphic(graphic)
-{
-    if (m_graphic == "")
-       m_graphic = "building_icons/Generic_Building.png";
-}
+{}
 
 const std::string& BuildingType::Name() const
 {
