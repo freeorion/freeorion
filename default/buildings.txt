@@ -11,7 +11,7 @@ BuildingType
             scope = Source
             activation = Source
             effects = SetMaxHealth Target.MaxHealth - 2
-    graphic = ""
+    graphic = "icons/building/bioterror_lab.png"
 
 BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
@@ -47,7 +47,7 @@ BuildingType
             stackinggroup = "BIOTERROR_PROJECTOR_OTHER"
             effects = SetMaxHealth Target.MaxHealth - 4
     ]            
-    graphic = ""
+    graphic = "icons/building/bioterror_projector.png"
 
 BuildingType
     name = "BLD_AUTOLAB_CONTROL"
@@ -81,7 +81,7 @@ BuildingType
                 SetMaxHealth Target.MaxHealth - 1
             ]
     ]            
-    graphic = ""
+    graphic = "icons/building/autolab_control_centre.png"
 
 BuildingType
     name = "BLD_AUTOFACTORY_CONTROL"
@@ -109,7 +109,7 @@ BuildingType
             stackinggroup = "AUTOFACTORY_STACK_SECONDARY"
             effects = SetMaxIndustry Target.MaxIndustry + 1
     ]            
-    graphic = ""
+    graphic = "icons/building/autofactory_control_centre.png"
 
 BuildingType
     name = "BLD_THEORM_PROVER"
@@ -182,7 +182,7 @@ BuildingType
                 SetMaxMining Target.MaxMining + 2
             ]
     ]
-    graphic = ""
+    graphic = "icons/building/heavy_mining_processor.png"
 
 BuildingType
     name = "BLD_INDUSTRY_CENTRE"
@@ -302,7 +302,7 @@ BuildingType
             effects =
                 SetMaxConstruction value = Target.MaxConstruction + 3
     ]
-    graphic = ""
+    graphic = "icons/building/megalith.png"
 
 BuildingType
     name = "BLD_COLLECTIVE_NET"
@@ -524,7 +524,7 @@ BuildingType
             activation = Source
             stackinggroup = "BLD_CADUCEAN"
             effects = SetMaxHealth value = Target.MaxHealth + 2
-    graphic = ""
+    graphic = "icons/building/the_caducean_institute.png"
 
 BuildingType
     name = "BLD_LIVING_PLANET"
@@ -705,7 +705,7 @@ BuildingType
             stackinggroup = "BLD_MONUMENT_EXODUS_EFFECT"
             effects =
                 SetCurrentHealth value = Target.MaxHealth + 10
-    graphic = ""
+    graphic = "icons/building/monument_to_exodus.png"
 
 BuildingType
     name = "BLD_PSICORP"
@@ -811,7 +811,7 @@ BuildingType
             stackinggroup = "BLD_MINI_SUN_EFFECT"
             effects =
                 SetMaxIndustry value = Target.MaxIndustry + 4
-    graphic = ""
+    graphic = "icons/building/miniature_sun.png"
 
 BuildingType
     name = "BLD_ECON_SINKHOLE"
@@ -830,4 +830,4 @@ BuildingType
             stackinggroup = "BLD_ECON_SINKHOLE_EFFECT"
             effects =
                 SetMaxTrade value = Target.MaxTrade - 10
-    graphic = ""
+    graphic = "icons/building/economic_sinkhole.png"

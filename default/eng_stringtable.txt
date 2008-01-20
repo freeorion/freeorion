@@ -55,7 +55,7 @@ LOADING
 Loading ...
 
 SERVER_WONT_START
-The server could not be started.
+The server could not be started.\n\nNote for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.
 
 SERVER_TIMEOUT
 The server is not responding.
@@ -2734,6 +2734,9 @@ Improves Infrastructure
 
 POPULATION_SHORT_DESC
 Increases Planet Population
+
+FLEET_RANGE_DESC
+Improves Fleet Supply
 
 CON_GRAVITY_WELLS
 Controlled gravity wells
