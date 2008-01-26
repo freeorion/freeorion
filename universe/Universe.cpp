@@ -1118,9 +1118,14 @@ double Universe::UniverseWidth()
     return s_universe_width;
 }
 
-const bool& Universe::InhibitUniverseObjectSignals()
+const bool& Universe::UniverseObjectSignalsInhibited()
 {
     return s_inhibit_universe_object_signals;
+}
+
+void Universe::InhibitUniverseObjectSignals(bool inhibit)
+{
+    s_inhibit_universe_object_signals = inhibit;
 }
 
 void Universe::DestroyImpl(int id)

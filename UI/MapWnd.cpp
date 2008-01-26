@@ -715,6 +715,7 @@ void MapWnd::InitTurn(int turn_number)
         // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
         empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
                                                      m_empire_fleet_supply_lanes[empire_id]);
+
     }
 
     m_active_fleet_wnd = 0;
@@ -2047,6 +2048,7 @@ void MapWnd::UpdateMeterEstimates()
     // the current player's ownership to all, while remembering which planets this is done to
     std::vector<Planet*> unowned_planets;
     std::vector<Planet*> all_planets = HumanClientApp::GetApp()->GetUniverse().FindObjects<Planet>();
+    Universe::InhibitUniverseObjectSignals(true);
     for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
          Planet* planet = *it;
          if (planet->Owners().empty()) {
@@ -2061,6 +2063,7 @@ void MapWnd::UpdateMeterEstimates()
     // remove temporary ownership added above
     for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
         (*it)->RemoveOwner(player_id);
+    Universe::InhibitUniverseObjectSignals(false);
 }
 
 void MapWnd::UpdateEmpireResourcePools()

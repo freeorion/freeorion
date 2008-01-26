@@ -248,6 +248,9 @@ public:
 
     /** marks an object for destruction by the Destroy effect. */
     void              EffectDestroy(int id);
+
+    /** sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
+    static void       InhibitUniverseObjectSignals(bool inhibit = true);
     //@}
 
     /** returns the size of the galaxy map.  Does not measure absolute distances; the ratio between map coordinates and actual distance varies
@@ -260,7 +263,7 @@ public:
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
-    static const bool& InhibitUniverseObjectSignals();
+    static const bool& UniverseObjectSignalsInhibited();    // returns true if UniverseOjbectSignals are inhibited, false otherwise
 
     /** HACK! This must be set to the encoding empire's id when serializing a Universe, so that only the relevant parts
         of the Universe are serialized.  The use of this global variable is done just so I don't have to rewrite any
@@ -344,7 +347,7 @@ protected:
     void InitializeSystemGraph(); ///< resizes the system graph to the appropriate size and populates m_system_distances 
     void GenerateHomeworlds(int players, std::vector<int>& homeworlds);  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
     void NamePlanets(); ///< Names the planets in each system, based on the system's name
-    /// Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets
+    /** Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets */
     void GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data);
 
     void DestroyImpl(int id);
