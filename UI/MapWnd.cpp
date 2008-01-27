@@ -716,6 +716,18 @@ void MapWnd::InitTurn(int turn_number)
         empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
                                                      m_empire_fleet_supply_lanes[empire_id]);
 
+        std::set<std::set<int> > supply_system_groups;
+        std::set<std::pair<int, int> > supply_starlane_traversals;
+
+        empire->GetSupplySystemGroupsAndStarlanesUsed(supply_system_groups, supply_starlane_traversals);
+
+        //Logger().debugStream() << "empire " << empire_id << " system supply groups:";
+        //for (std::set<std::set<int> >::const_iterator sets_it = supply_system_groups.begin(); sets_it != supply_system_groups.end(); ++sets_it) {
+        //    Logger().debugStream() << "...Group:";
+        //    const std::set<int>& set = *sets_it;
+        //    for (std::set<int>::const_iterator set_it = set.begin(); set_it != set.end(); ++set_it)
+        //        Logger().debugStream() << "......" << *set_it;
+        //}
     }
 
     m_active_fleet_wnd = 0;

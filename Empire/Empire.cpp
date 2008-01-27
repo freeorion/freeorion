@@ -21,6 +21,8 @@
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
 
 
 using std::find;
@@ -948,11 +950,11 @@ void Empire::GetSupplyUnobstructedSystems(std::set<int>& unobstructed_system_ids
         int system_id = system->ID();
 
         // to be unobstructed, systems must both:
-        // be explored by this empire
+        // be explored by this empire...
         if (m_explored_systems.find(system_id) == m_explored_systems.end())
             continue;
 
-        // and ( contain a friendly fleet *or* not contain a hostile fleet )
+        // ...and ( contain a friendly fleet *or* not contain a hostile fleet )
         bool blocked = false;
         std::vector<const Fleet*> fleets = system->FindObjects<Fleet>();
         for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
@@ -1043,7 +1045,7 @@ void Empire::GetSupplyableSystemsAndStarlanesUsed(std::set<int>& supplyable_syst
 
         // can propegate further, if adjacent systems have smaller supply range than one less than this system's range
         const System* system = GetUniverse().Object<System>(cur_sys_id);
-        System::StarlaneMap starlanes = system->VisibleStarlanes(m_id); // .first is system ids of destinations of starlanes (and wormholes) this empire knows about
+        System::StarlaneMap starlanes = system->VisibleStarlanes(m_id);
         for (System::StarlaneMap::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
             int lane_end_sys_id = lane_it->first;
 
@@ -1074,6 +1076,204 @@ void Empire::GetSupplyableSystemsAndStarlanesUsed(std::set<int>& supplyable_syst
     // convert supply ranges info into output set of supplyable systems
     for (std::map<int, int>::const_iterator it = system_supply_ranges.begin(); it != system_supply_ranges.end(); ++it)
         supplyable_system_ids.insert(it->first);
+}
+
+void Empire::GetSupplySystemGroupsAndStarlanesUsed(std::set<std::set<int> >& supply_system_groups, std::set<std::pair<int, int> >& supply_starlane_traversals) const {
+    // need to get a set of sets of systems that can exchange resources.  some sets may be just one system,
+    // in which resources can be exchanged between UniverseObjects producing or consuming them, but which 
+    // can't exchange with any other systems.
+
+    supply_system_groups.clear();
+    supply_starlane_traversals.clear();
+
+    // systems through which supply can propegate
+    std::set<int> unobstructed_systems;
+    GetSupplyUnobstructedSystems(unobstructed_systems);
+
+    // map from system id to that system's inherent supply range
+    std::map<int, int> system_supply_ranges;
+    GetSystemSupplyRanges(system_supply_ranges);
+
+    // map from system id to set of systems that are connected to it directly
+    std::map<int, std::set<int> > supply_groups_map;
+
+    // all systems that can supply another system or within themselves, or can be supplied by another system.
+    // need to keep track of this so that only these systems are put into the boost adjacency graph.  if
+    // additional systems were put in, they would be returned as being in their own "connected" component and
+    // would have to be filtered out of the results before being returned
+    std::set<int> all_supply_exchanging_systems;
+
+
+    // loop through systems, getting set of systems that can be supplied by each.  (may be an empty set for
+    // some systems that cannot supply within themselves, or may contain only source systesm, or could contain
+    // multiple other systsms)
+    for (std::set<int>::const_iterator source_sys_it = unobstructed_systems.begin(); source_sys_it != unobstructed_systems.end(); ++source_sys_it) {
+        int source_sys_id = *source_sys_it;
+
+        // skip systems that don't have any supply to propegate.
+        std::map<int, int>::const_iterator system_supply_it = system_supply_ranges.find(source_sys_id);
+        if (system_supply_it == system_supply_ranges.end() || system_supply_it->second == 0)
+            continue;
+
+        // skip systems that can't propegate supply, even if they have supply to propegate
+        std::set<int>::const_iterator unobstructed_systems_it = unobstructed_systems.find(source_sys_id);
+        if (unobstructed_systems_it == unobstructed_systems.end())
+            continue;
+
+
+        // system can supply itself, so store this fact
+        supply_groups_map[source_sys_id].insert(source_sys_id);
+
+
+        // add source system to start of list of systems to propegate supply to
+        std::list<int> propegating_systems_list;
+        propegating_systems_list.push_back(source_sys_id);
+
+        // set up map from system_id to number of supply jumps further supply can propegate from that system.
+        // this ensures that supply propegation is limited in distance, and doesn't back-propegate
+        std::map<int, int> propegating_system_supply_ranges;
+        // initialize with source supply range
+        propegating_system_supply_ranges[source_sys_id] = system_supply_it->second;
+
+
+        // iterate through list of accessible systems, processing each in order it was added (like breadth first
+        // search) adding adjacent systems as appropriate, until no systems are left able to further propregate
+        std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
+        std::list<int>::iterator sys_list_end = propegating_systems_list.end();
+        while (sys_list_it != sys_list_end) {
+            int cur_sys_id = *sys_list_it;
+
+            // get additional supply range this system can propegate
+            int cur_sys_range = propegating_system_supply_ranges[cur_sys_id];
+
+            // skip system if it can't propegate futher
+            if (cur_sys_range <= 0) {
+                ++sys_list_it;
+                continue;
+            }
+
+            // attempt to propegate to unobstructed adjacent systems
+            const System* system = GetUniverse().Object<System>(cur_sys_id);
+            System::StarlaneMap starlanes = system->VisibleStarlanes(m_id);
+            for (System::StarlaneMap::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
+                int lane_end_sys_id = lane_it->first;
+
+                // ensure this adjacent system is unobstructed
+                if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) continue; // can't propegate here
+
+                // compare next system's supply range to this system's supply range.  propegate if necessary.
+                std::map<int, int>::const_iterator lane_end_sys_it = propegating_system_supply_ranges.find(lane_end_sys_id);
+                if (lane_end_sys_it == propegating_system_supply_ranges.end() || propegating_system_supply_ranges[lane_end_sys_id] <= cur_sys_range) {
+                    // next system has no supply yet, or its range equal to or smaller than this system's
+
+                    int next_sys_range = cur_sys_range - 1;
+
+                    // if propegating from this system would make it longer, update next system's range
+                    if (lane_end_sys_it == propegating_system_supply_ranges.end() || propegating_system_supply_ranges[lane_end_sys_id] < next_sys_range) {
+                        // update with new range
+                        propegating_system_supply_ranges[lane_end_sys_id] = next_sys_range;
+                        // add next system to list of systems to propegate further
+                        propegating_systems_list.push_back(lane_end_sys_id);
+                    }
+
+                    // regardless of whether propegating from current to next system increased its range, add the
+                    // traversed lane to show redundancies in supply network to player
+                    supply_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+                }
+            }
+            ++sys_list_it;
+            sys_list_end = propegating_systems_list.end();
+        }
+
+        // for debug purposes, output the propegated supply
+        //Logger().debugStream() << "source system " << source_sys_id << " propegated ranges:";
+        //for (std::map<int, int>::const_iterator pssr_it = propegating_system_supply_ranges.begin(); pssr_it != propegating_system_supply_ranges.end(); ++pssr_it)
+        //    Logger().debugStream() << "....system id: " << pssr_it->first << " range: " << pssr_it->second;
+
+        all_supply_exchanging_systems.insert(source_sys_id);
+        // have now propegated supply as far as it can go from this source.  store results
+        for (std::map<int, int>::const_iterator pssr_it = propegating_system_supply_ranges.begin(); pssr_it != propegating_system_supply_ranges.end(); ++pssr_it) {
+            int cur_sys_id = pssr_it->first;
+            supply_groups_map[source_sys_id].insert(cur_sys_id);    // source system can share with current system
+            all_supply_exchanging_systems.insert(cur_sys_id);
+        }
+    }
+
+    if (supply_groups_map.empty()) return;  // need to avoid going to boost graph stuff below, which doesn't seem to like being fed empty graphs...
+
+
+    // Need to merge interconnected supply groups into as few sets of mutually-supply-exchanging systems
+    // as possible.  This requires finding the connected components of an undirected graph, where the node
+    // adjacency are the directly-connected systems determined above.
+
+    // create graph
+    boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> graph;
+
+    // boost expects vertex labels to range from 0 to num vertices - 1, so need to map from system id
+    // to graph id and back when accessing vertices
+    std::vector<int> graph_id_to_sys_id;
+    graph_id_to_sys_id.reserve(all_supply_exchanging_systems.size());
+
+    std::map<int, int> sys_id_to_graph_id;
+    int graph_id = 0;
+    for (std::set<int>::const_iterator sys_it = all_supply_exchanging_systems.begin(); sys_it != all_supply_exchanging_systems.end(); ++sys_it, ++graph_id) {
+        int sys_id = *sys_it;
+        //const UniverseObject* sys = GetUniverse().Object(sys_id);
+        //std::string name = sys->Name();
+        //Logger().debugStream() << "supply-exchanging system: " << name;
+
+        boost::add_vertex(graph);   // should add with index = graph_id
+
+        graph_id_to_sys_id.push_back(sys_id);
+        sys_id_to_graph_id[sys_id] = graph_id;
+    }
+
+    // add edges for all direct connections between systems
+    for (std::map<int, std::set<int> >::const_iterator maps_it = supply_groups_map.begin(); maps_it != supply_groups_map.end(); ++maps_it) {
+        int start_graph_id = sys_id_to_graph_id[maps_it->first];
+        const std::set<int>& set = maps_it->second;
+        for(std::set<int>::const_iterator set_it = set.begin(); set_it != set.end(); ++set_it) {
+            int end_graph_id = sys_id_to_graph_id[*set_it];
+            boost::add_edge(start_graph_id, end_graph_id, graph);
+
+            //int sys_id1 = graph_id_to_sys_id[start_graph_id];
+            //const UniverseObject* sys1 = GetUniverse().Object(sys_id1);
+            //std::string name1 = sys1->Name();
+            //int sys_id2 = graph_id_to_sys_id[end_graph_id];
+            //const UniverseObject* sys2 = GetUniverse().Object(sys_id2);
+            //std::string name2 = sys2->Name();
+
+            //Logger().debugStream() << "added edge to graph: " << name1 << " and " << name2;
+        }
+    }
+
+    // declare storage and fill with the component id (group id of connected systems) for each graph vertex
+    std::vector<int> components(boost::num_vertices(graph));
+    boost::connected_components(graph, &components[0]);
+
+    //for (std::vector<int>::size_type i = 0; i != components.size(); ++i) {
+    //    int sys_id = graph_id_to_sys_id[i];
+    //    const UniverseObject* sys = GetUniverse().Object(sys_id);
+    //    std::string name = sys->Name();
+    //    std::cout << "ssytem " << name <<" is in component " << components[i] << std::endl;
+    //}
+    //std::cout << std::endl;
+
+    // convert results back from graph id to system id, and into desired output format
+    // output: std::set<std::set<int> >& supply_system_groups
+
+    // first, sort into a map from component id to set of system ids in component
+    std::map<int, std::set<int> > component_sets_map;
+    for (int graph_id = 0; graph_id != components.size(); ++graph_id) {
+        int label = components[graph_id];
+        int sys_id = graph_id_to_sys_id[graph_id];
+        component_sets_map[label].insert(sys_id);
+    }
+
+    // copy sets in map into set of sets
+    for (std::map<int, std::set<int> >::const_iterator map_it = component_sets_map.begin(); map_it != component_sets_map.end(); ++map_it) {
+        supply_system_groups.insert(map_it->second);
+    }
 }
 
 Empire::TechItr Empire::TechBegin() const

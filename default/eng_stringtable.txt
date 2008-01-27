@@ -3009,7 +3009,7 @@ SHP_LIGHTHOUSE_DESC
 Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
 
 SHP_NAVIGATION
-Intersetaller Navigation
+Interstellar Navigation
 
 SHP_NAVIGATION_DESC
 Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...

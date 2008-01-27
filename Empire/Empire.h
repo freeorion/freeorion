@@ -353,13 +353,20 @@ public:
     /** Returns the number of entries in the SitRep. */
     int NumSitRepEntries() const;
 
-    /** modifies passed parameters, which are
+    /** clears and sets passed parameters, which are
       * first:  set of system ids where fleets can be supplied by this empire
       * second: starlanes along which fleet supply can flow.  entries are directed, so the same starlane
       *         could appear twice - once for each direction.  the first value is the start and the second
       *         value is the end of the lane traversals that can carry fleet supplies. */
     void GetSupplyableSystemsAndStarlanesUsed(std::set<int>& supplyable_system_ids, 
                                               std::set<std::pair<int, int> >& supply_starlane_traversals) const;
+
+    /** clears and sets passed parameters, which are
+      * first:  set sets of system ids that are able to share resources between and within eachother
+      * second: starlanes along which resources can be exchanged.  entries are directed, so the same starlane
+      *         could appear twice - once for each direction.  the first value is the start and the second
+      *         value is the end of the lane traversals that can carry resources between systems. */
+    void GetSupplySystemGroupsAndStarlanesUsed(std::set<std::set<int> >& supply_system_groups, std::set<std::pair<int, int> >& supply_starlane_traversals) const;
 
     /** modifies passed parameter, which is the set of system ids where fleet supply can be propegated from
       * one starlane to the next, or where supply can be delivered if a supply route can reach the system.
