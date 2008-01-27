@@ -527,7 +527,11 @@ public:
 
     /// Mutator for empire's player name
     void SetPlayerName(const std::string& player_name);
-    //@}
+
+    /** Determines ResourceCenters that can provide resources for this empire and sets
+        the supply groups used for each ResourcePool as appropriate for each resource.
+     */
+    void InitResourcePools(const std::set<std::set<int> >& system_supply_groups);
 
     /** Resets production of resources and calculates spending (on each item in queues and 
       * overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
@@ -536,7 +540,7 @@ public:
       * from queue, processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions.
       */
-    void UpdateResourcePool();
+    void UpdateResourcePools();
 
     /** Calls Update() on empire's research queue, which recalculates the RPs spent on and
       * number of turns left for each tech in the queue.
@@ -576,6 +580,7 @@ public:
     ResourcePool& GetIndustryResPool() {return m_industry_resource_pool;}
     ResourcePool& GetTradeResPool() {return m_trade_resource_pool;}
     PopulationPool& GetPopulationPool() {return m_population_pool;}
+    //@}
 
 private:
     /// Empire's unique numeric id

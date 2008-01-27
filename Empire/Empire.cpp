@@ -1773,7 +1773,7 @@ void Empire::SetPlayerName(const std::string& player_name)
     m_player_name = player_name;
 }
 
-void Empire::UpdateResourcePool()
+void Empire::InitResourcePools(const std::set<std::set<int> >& system_supply_groups)
 {
     Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
     std::vector<ResourceCenter*> res_vec;
@@ -1795,6 +1795,35 @@ void Empire::UpdateResourcePool()
 
     m_population_pool.SetPopCenters(pop_vec);
 
+
+    // inform the blockadeable resource pools about systems that can share
+    m_mineral_resource_pool.SetSystemSupplyGroups(system_supply_groups);
+    m_food_resource_pool.SetSystemSupplyGroups(system_supply_groups);
+    m_industry_resource_pool.SetSystemSupplyGroups(system_supply_groups);
+
+    // set non-blockadeable resrouce pools to share resources between all systems
+    std::set<std::set<int> > sets_set;
+    std::set<int> all_systems_set;
+    const std::vector<System*> all_systems_vec = GetUniverse().FindObjects<System>();
+    for (std::vector<System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
+        all_systems_set.insert((*it)->ID());
+    sets_set.insert(all_systems_set);
+    m_research_resource_pool.SetSystemSupplyGroups(sets_set);
+    m_trade_resource_pool.SetSystemSupplyGroups(sets_set);
+
+    // set stockpile location
+    m_mineral_resource_pool.SetStockpileSystem(CapitolID());
+    m_food_resource_pool.SetStockpileSystem(CapitolID());
+    m_industry_resource_pool.SetStockpileSystem(CapitolID());
+    m_research_resource_pool.SetStockpileSystem(CapitolID());
+    m_trade_resource_pool.SetStockpileSystem(CapitolID());
+}
+
+void Empire::UpdateResourcePools()
+{
+    // updating queues, spending, distribution and growth each update their respective pools,
+    // (as well as the ways in which the resources are used, which needs to be done
+    // simultaneously to keep things consistent)
     UpdateResearchQueue();
     UpdateProductionQueue();
     UpdateTradeSpending();

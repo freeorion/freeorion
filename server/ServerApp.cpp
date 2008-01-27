@@ -623,8 +623,16 @@ void ServerApp::ProcessTurns()
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        Empire* empire = it->second;
+
+        std::set<std::set<int> > system_supply_groups;
+        std::set<std::pair<int, int> > supply_starlane_traversals;  // don't need this info, but need somewhere to put the output of GetSupplySystemGroupsAndStarlanesUsed
+        empire->GetSupplySystemGroupsAndStarlanesUsed(system_supply_groups, supply_starlane_traversals);
+
+        empire->InitResourcePools(system_supply_groups);
+        empire->UpdateResourcePools();
+    }
 
     // consume distributed resources on queues
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {

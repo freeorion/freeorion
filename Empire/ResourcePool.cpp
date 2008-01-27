@@ -11,6 +11,9 @@
 //////////////////////////////////////////////////
 ResourcePool::ResourcePool(ResourceType type) :
     m_stockpile(0.0),
+    m_resource_centers(),
+    m_supply_system_groups(),
+    m_stockpile_system_id(UniverseObject::INVALID_OBJECT_ID),
     m_max_stockpile(200.0), // change to 0.0 later when effects can alter the max stockpile
     m_production(0.0),
     m_type(type)
@@ -56,6 +59,14 @@ double ResourcePool::Available() const
 void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec)
 {
     m_resource_centers = resource_center_vec;
+}
+
+void ResourcePool::SetSystemSupplyGroups(const std::set<std::set<int> >& supply_system_groups) {
+    m_supply_system_groups = supply_system_groups;
+}
+
+void ResourcePool::SetStockpileSystem(int stockpile_system_id) {
+    m_stockpile_system_id = stockpile_system_id;
 }
 
 void ResourcePool::Update()

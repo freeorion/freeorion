@@ -708,26 +708,21 @@ void MapWnd::InitTurn(int turn_number)
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
-    // determine level of supply each empire can provide to fleets in each system
+    // determine sytems where fleets can delivery supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         int empire_id = it->first;
-        const Empire* empire = it->second;
+        Empire* empire = it->second;
+
         // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
         empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
                                                      m_empire_fleet_supply_lanes[empire_id]);
 
-        std::set<std::set<int> > supply_system_groups;
-        std::set<std::pair<int, int> > supply_starlane_traversals;
+        // get sets of systems from and to which physical resources can be shared
+        std::set<std::pair<int, int> > supply_starlane_traversals;  // as of this writing, rules for propegation of fleet supply and planetary resource exchange are the same, so the info about which lanes are traversed to exchange resources can be discarded
+        std::set<std::set<int> > system_supply_groups;
+        empire->GetSupplySystemGroupsAndStarlanesUsed(system_supply_groups, supply_starlane_traversals);
 
-        empire->GetSupplySystemGroupsAndStarlanesUsed(supply_system_groups, supply_starlane_traversals);
-
-        //Logger().debugStream() << "empire " << empire_id << " system supply groups:";
-        //for (std::set<std::set<int> >::const_iterator sets_it = supply_system_groups.begin(); sets_it != supply_system_groups.end(); ++sets_it) {
-        //    Logger().debugStream() << "...Group:";
-        //    const std::set<int>& set = *sets_it;
-        //    for (std::set<int>::const_iterator set_it = set.begin(); set_it != set.end(); ++set_it)
-        //        Logger().debugStream() << "......" << *set_it;
-        //}
+        empire->InitResourcePools(system_supply_groups);
     }
 
     m_active_fleet_wnd = 0;
@@ -801,7 +796,7 @@ void MapWnd::InitTurn(int turn_number)
     DetachChild(m_side_panel);
     SelectSystem(m_side_panel->SystemID());
 
-    empire->UpdateResourcePool();
+    empire->UpdateResourcePools();
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
@@ -2084,7 +2079,7 @@ void MapWnd::UpdateEmpireResourcePools()
     /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
        update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which
        updates the empire resource pool indicators of the MapWnd. */
-    empire->UpdateResourcePool();
+    empire->UpdateResourcePools();
 
     // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
     m_side_panel->Refresh();
