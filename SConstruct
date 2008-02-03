@@ -254,8 +254,8 @@ if not env.GetOption('clean'):
             if str(Platform()) == 'posix':
                 if env['multithreaded']:
                     if conf.CheckCHeader('pthread.h') and conf.CheckLib('pthread', 'pthread_create', autoadd = 0):
-                        env.AppendUnique(CCFLAGS = ' -pthread')
-                        env.AppendUnique(LINKFLAGS = ' -pthread')
+                        env.AppendUnique(CCFLAGS = '-pthread')
+                        env.AppendUnique(LINKFLAGS = '-pthread')
                     else:
                         Exit(1)
 
