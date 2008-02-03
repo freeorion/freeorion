@@ -1316,6 +1316,7 @@ Empire::SitRepItr Empire::SitRepBegin() const
 {
     return m_sitrep_entries.begin();
 }
+
 Empire::SitRepItr Empire::SitRepEnd() const
 {
     return m_sitrep_entries.end();

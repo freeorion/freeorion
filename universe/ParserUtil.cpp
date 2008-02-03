@@ -11,19 +11,20 @@ const Skip skip_p;
 const function<push_back_impl> push_back_ = push_back_impl();
 const function<insert_impl> insert_ = insert_impl();
 
-rule<Scanner, NameClosure::context_t> name_p;
-rule<Scanner, NameClosure::context_t> file_name_p;
+rule<Scanner, NameClosure::context_t>   name_p;
+rule<Scanner, NameClosure::context_t>   file_name_p;
+rule<Scanner, ColourClosure::context_t> colour_p;
 
-symbols<PlanetSize> planet_size_p;
-symbols<PlanetType> planet_type_p;
-symbols<PlanetEnvironment> planet_environment_type_p;
-symbols<UniverseObjectType> universe_object_type_p;
-symbols<StarType> star_type_p;
-symbols<FocusType> focus_type_p;
-symbols<EmpireAffiliationType> affiliation_type_p;
-symbols<UnlockableItemType> unlockable_item_type_p;
-symbols<TechType> tech_type_p;
-symbols<ShipPartClass> part_class_p;
+symbols<PlanetSize>             planet_size_p;
+symbols<PlanetType>             planet_type_p;
+symbols<PlanetEnvironment>      planet_environment_type_p;
+symbols<UniverseObjectType>     universe_object_type_p;
+symbols<StarType>               star_type_p;
+symbols<FocusType>              focus_type_p;
+symbols<EmpireAffiliationType>  affiliation_type_p;
+symbols<UnlockableItemType>     unlockable_item_type_p;
+symbols<TechType>               tech_type_p;
+symbols<ShipPartClass>          part_class_p;
 
 namespace {
     bool Init()
@@ -32,7 +33,14 @@ namespace {
             lexeme_d['"' >> (*(alnum_p | '_'))[name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
 
         file_name_p =
-            lexeme_d['"' >> (*(alnum_p | '_' | '-'  | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
+            lexeme_d['"' >> (*(alnum_p | '_' | '-' | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
+
+        colour_p =
+            ('(' >> uint_p[colour_p.r] >> ','
+             >> uint_p[colour_p.g] >> ','
+             >> uint_p[colour_p.b] >> ','
+             >> uint_p[colour_p.a] >> ')')
+            [colour_p.this_ = construct_<GG::Clr>(colour_p.r, colour_p.g, colour_p.b, colour_p.a)];
 
         planet_size_p.add
             ("tiny", SZ_TINY)

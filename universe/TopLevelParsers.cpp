@@ -2,10 +2,10 @@
 
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
-#include "Tech.h"       // for struct ItemSpec;
-#include "Effect.h"     // for Effect::EffectsGroup constructor
-#include "Building.h"   // for Building and constructor
-#include "Special.h"    // for Special and constructor
+#include "Tech.h"       // for Tech, ItemSpec and TechCategory;
+#include "Effect.h"     // for Effect::EffectsGroup
+#include "Building.h"   // for Building
+#include "Special.h"    // for Special
 #include "../Empire/Empire.h"
 #include "Condition.h"
 #include "ShipDesign.h"
@@ -13,12 +13,12 @@
 using namespace boost::spirit;
 using namespace phoenix;
 
-rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
-rule<Scanner, SpecialClosure::context_t> special_p;
-rule<Scanner, NameClosure::context_t> tech_category_p;
-rule<Scanner, TechClosure::context_t> tech_p;
-rule<Scanner, PartClosure::context_t> part_p;
-rule<Scanner, HullClosure::context_t> hull_p;
+rule<Scanner, BuildingTypeClosure::context_t>   building_type_p;
+rule<Scanner, SpecialClosure::context_t>        special_p;
+rule<Scanner, TechClosure::context_t>           tech_p;
+rule<Scanner, CategoryClosure::context_t>       category_p;
+rule<Scanner, PartClosure::context_t>           part_p;
+rule<Scanner, HullClosure::context_t>           hull_p;
 
 struct EffectsGroupClosure : boost::spirit::closure<EffectsGroupClosure, Effect::EffectsGroup*,
                                                     Condition::ConditionBase*, Condition::ConditionBase*,
@@ -43,10 +43,11 @@ struct TechItemSpecClosure : boost::spirit::closure<TechItemSpecClosure, ItemSpe
     member3 name;
 };
 
+
 namespace {
-    rule<Scanner, EffectsGroupClosure::context_t> effects_group_p;
-    rule<Scanner, TechItemSpecClosure::context_t> tech_item_spec_p;
-    rule<Scanner, EffectsGroupVecClosure::context_t> effects_group_vec_p;
+    rule<Scanner, EffectsGroupClosure::context_t>       effects_group_p;
+    rule<Scanner, TechItemSpecClosure::context_t>       tech_item_spec_p;
+    rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
 
     ParamLabel scope_label("scope");
     ParamLabel activation_label("activation");
@@ -75,6 +76,7 @@ namespace {
     ParamLabel mass_label("mass");
     ParamLabel speed_label("speed");
     ParamLabel slots_label("slots");
+    ParamLabel colour_label("colour");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -125,9 +127,12 @@ namespace {
              >> name_label >> name_p[tech_item_spec_p.name = arg1])
             [tech_item_spec_p.this_ = construct_<ItemSpec>(tech_item_spec_p.type, tech_item_spec_p.name)];
 
-        tech_category_p =
-            (str_p("techcategory")
-             >> name_p[tech_category_p.this_ = arg1]);
+        category_p =
+            (str_p("category")
+             >> name_label >> name_p[category_p.name = arg1]
+             >> graphic_label >> file_name_p[category_p.graphic = arg1]
+             >> colour_label >> colour_p[category_p.colour = arg1])
+            [category_p.this_ = new_<TechCategory>(category_p.name, category_p.graphic, category_p.colour)];
 
         tech_p =
             (str_p("tech")

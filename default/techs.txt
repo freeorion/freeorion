@@ -1,4 +1,32 @@
-TechCategory "LEARNING_CATEGORY"
+Category 
+    name = "LEARNING_CATEGORY"
+    graphic = "blah"
+    colour = (93,  155, 246, 255)
+
+Category 
+    name = "GROWTH_CATEGORY"
+    graphic = "blah"
+    colour = (116, 225, 107, 255)
+
+Category 
+    name = "PRODUCTION_CATEGORY"
+    graphic = "blah"
+    colour = (240, 106, 106, 255)
+
+Category 
+    name = "CONSTRUCTION_CATEGORY"
+    graphic = "blah"
+    colour = (241, 233, 87,  255)
+
+Category 
+    name = "ECONOMICS_CATEGORY"
+    graphic = "blah"
+    colour = (255, 112, 247, 255)
+
+Category 
+    name = "SHIPS_CATEGORY"
+    graphic = "blah"
+    colour = (85,  255, 170, 255)
 
 Tech
     name = "LRN_PHYS_BRAIN"
@@ -365,8 +393,6 @@ Tech
     unlock = Item type = Building name = "BLD_PSICORP"
     graphic = ""
 
-TechCategory "GROWTH_CATEGORY"
-
 Tech
     name = "GRO_PLANET_ECOL"
     description = "GRO_PLANET_ECOL_DESC"
@@ -706,8 +732,6 @@ Tech
     ]
     unlock = []
     graphic = "icons/tech/industrial_cloning.png"
-
-TechCategory "PRODUCTION_CATEGORY"
 
 Tech
     name = "PRO_MICROGRAV_MAN"
@@ -1222,8 +1246,6 @@ Tech
     unlock = Item type = Building name = "BLD_MINI_SUN"
     graphic = "icons/tech/miniature_suns.png"
 
-TechCategory "CONSTRUCTION_CATEGORY"
-
 Tech
     name = "CON_ORBITAL_CON"
     description = "CON_ORBITAL_CON_DESC"
@@ -1546,8 +1568,6 @@ Tech
                 SetMaxConstruction value = Target.MaxConstruction + 5
     graphic = ""
 
-TechCategory "ECONOMICS_CATEGORY"
-
 Tech
     name = "ECO_MARKET_ECON"
     description = "ECO_MARKET_ECON_DESC"
@@ -1821,8 +1841,6 @@ Tech
     prerequisites = "ECO_ECON_FLUIDITY"
     unlock = Item type = Building name = "BLD_ECON_SINKHOLE"
     graphic = "icons/tech/economic_sinkholes.png"
-
-TechCategory "SHIPS_CATEGORY"
 
 Tech
     name = "SHP_GAL_EXPLO"

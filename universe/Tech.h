@@ -14,12 +14,14 @@
 #include <string>
 #include <vector>
 
+#include <GG/Clr.h>
+
 namespace Effect {
     class EffectsGroup;
 }
 class TechManager;
-
 struct ItemSpec;
+
 
 /** encasulates the data for a single FreeOrion technology */
 class Tech
@@ -120,6 +122,16 @@ struct ItemSpec
 };
 
 
+/** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
+struct TechCategory {
+    TechCategory();     ///< default ctor
+    TechCategory(const std::string& name_, const std::string& graphic_, const GG::Clr& colour_);    ///< basic ctor
+    std::string name;       ///< name of category
+    std::string graphic;    ///< icon that represents catetegory
+    GG::Clr     colour;     ///< colour associatied with category
+};
+
+
 /** holds all FreeOrion techs.  Techs may be looked up by name and by category, and the next researchable techs can be querried,
     given a set of currently-known techs. */
 class TechManager
@@ -160,8 +172,11 @@ public:
     /** returns the tech with the name \a name; you should use the free function GetTech() instead */
     const Tech*                     GetTech(const std::string& name);
 
+    /** returns the tech category with the name \a name; you should use the free function GetTechCategory() instead */
+    const TechCategory*             GetTechCategory(const std::string& name);
+
     /** returns the list of category names */
-    const std::vector<std::string>& CategoryNames() const;
+    std::vector<std::string>        CategoryNames() const;
 
     /** returns all researchable techs */
     std::vector<const Tech*>        AllNextTechs(const std::set<std::string>& known_techs);
@@ -210,12 +225,13 @@ private:
 
     void AllChildren(const Tech* tech, std::map<std::string, std::string>& children);
 
-    std::vector<std::string> m_categories;
-    TechContainer            m_techs;
+    std::map<std::string, TechCategory*>    m_categories;
+    TechContainer                           m_techs;
 
-    static TechManager* s_instance;
+    static TechManager*                     s_instance;
 
     friend struct store_tech_impl;
+    friend struct store_category_impl;
 };
 
 /** returns the singleton tech manager */
@@ -223,5 +239,8 @@ TechManager& GetTechManager();
 
 /** returns a pointer to the tech with the name \a name, or 0 if no such tech exists */
 const Tech* GetTech(const std::string& name);
+
+/** returns a pointer to the tech category with the name \a name, or 0 if no such category exists */
+const TechCategory* GetTechCategory(const std::string& name);
 
 #endif // _Tech_h_

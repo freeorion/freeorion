@@ -16,6 +16,7 @@
 #include <set>
 #include <string>
 
+#include <GG/Clr.h>
 
 ////////////////////////////////////////////////////////////
 // Forward Declarations                                   //
@@ -30,6 +31,7 @@ namespace Effect {
 class Special;
 class BuildingType;
 class Tech;
+struct TechCategory;
 struct ItemSpec;
 class PartType;
 class HullType;
@@ -61,6 +63,14 @@ struct NameClosure : boost::spirit::closure<NameClosure, std::string>
     member1 this_;
 };
 
+struct ColourClosure : boost::spirit::closure<ColourClosure, GG::Clr, GLubyte, GLubyte, GLubyte, GLubyte>
+{
+    member1 this_;
+    member2 r;
+    member3 g;
+    member4 b;
+    member5 a;
+};
 
 ////////////////////////////////////////////////////////////
 // Condition Parser                                       //
@@ -114,6 +124,14 @@ struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::st
     member5 graphic;
 };
 
+struct CategoryClosure : boost::spirit::closure<CategoryClosure, TechCategory*, std::string, std::string, GG::Clr>
+{
+    member1 this_;
+    member2 name;
+    member3 graphic;
+    member4 colour;
+};
+
 struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std::string, std::string,
                                             std::string, TechType, double, int,
                                             std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
@@ -161,7 +179,7 @@ struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string,
 
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
 extern boost::spirit::rule<Scanner, SpecialClosure::context_t> special_p;
-extern boost::spirit::rule<Scanner, NameClosure::context_t> tech_category_p;
+extern boost::spirit::rule<Scanner, CategoryClosure::context_t> category_p;
 extern boost::spirit::rule<Scanner, TechClosure::context_t> tech_p;
 extern boost::spirit::rule<Scanner, PartClosure::context_t> part_p;
 extern boost::spirit::rule<Scanner, HullClosure::context_t> hull_p;
