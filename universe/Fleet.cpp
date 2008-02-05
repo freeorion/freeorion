@@ -49,6 +49,11 @@ Fleet::const_iterator Fleet::begin() const
 Fleet::const_iterator Fleet::end() const
 { return m_ships.end(); }
 
+const std::set<int>& Fleet::ShipIDs() const
+{
+    return m_ships;
+}
+
 UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
 {
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {

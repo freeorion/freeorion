@@ -61,13 +61,14 @@ std::vector<std::string>    (*StringSetToStringVector)(const std::set<std::strin
 
 
 // Expose AIInterface and all associated classes to Python
-BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
+BOOST_PYTHON_MODULE(FreeOrionAIInterface)
 {
     ///////////////////
     //  AIInterface  //
     ///////////////////
     def("PlayerName",               AIIntPlayerNameVoid,        return_value_policy<copy_const_reference>());
     def("PlayerName",               AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
+
 
     def("PlayerID",                 AIInterface::PlayerID);
     def("EmpirePlayerID",           AIInterface::EmpirePlayerID);
@@ -102,11 +103,12 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //     Empire    //
     ///////////////////
     class_<Empire, noncopyable>("Empire", no_init)
-        .def("Name",                    &Empire::Name,                      return_value_policy<copy_const_reference>())
-        .def("PlayerName",              &Empire::PlayerName,                return_value_policy<copy_const_reference>())
-        .def("EmpireID",                &Empire::EmpireID)
-        .def("HomeworldID",             &Empire::HomeworldID)
-        .def("CapitolID",               &Empire::CapitolID)
+        .add_property("name",           make_function(&Empire::Name,        return_value_policy<copy_const_reference>()))
+        .add_property("playerName",     make_function(&Empire::PlayerName,  return_value_policy<copy_const_reference>()))
+
+        .add_property("empireID",       &Empire::EmpireID)
+        .add_property("homeworldID",    &Empire::HomeworldID)
+        .add_property("capitolID",      &Empire::CapitolID)
 
         .def("BuildingTypeAvailable",   &Empire::BuildingTypeAvailable)
         .def("AvailableBuildingTypes",  &Empire::AvailableBuildingTypes,    return_value_policy<copy_const_reference>()) 
@@ -130,7 +132,7 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
         .def("GetBuilding",         UniverseGetBuilding,                        return_value_policy<reference_existing_object>())
         .def("GetSpecial",          GetSpecial,                                 return_value_policy<reference_existing_object>())
 
-        .def("ObjectIDs",           &Universe::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>())
+        .add_property("allObjectIDs",  make_function(&Universe::FindObjectIDs<UniverseObject>, return_value_policy<return_by_value>()))
 
         .def("SystemHasStarlane",   &Universe::SystemReachable)
         .def("SystemsConnected",    &Universe::SystemsConnected)
@@ -140,17 +142,17 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     // UniverseObject //
     ////////////////////
     class_<UniverseObject, noncopyable>("UniverseObject", no_init)
-        .def("ID",                          &UniverseObject::ID)
-        .def("Name",                        &UniverseObject::Name,      return_value_policy<copy_const_reference>())
-        .def("X",                           &UniverseObject::X)
-        .def("Y",                           &UniverseObject::Y)
-        .def("SystemID",                    &UniverseObject::SystemID)
+        .add_property("id",                 &UniverseObject::ID)
+        .add_property("name",               make_function(&UniverseObject::Name,        return_value_policy<copy_const_reference>()))
+        .add_property("x",                  &UniverseObject::X)
+        .add_property("y",                  &UniverseObject::Y)
+        .add_property("systemID",           &UniverseObject::SystemID)
         .def("Unowned",                     &UniverseObject::Unowned)
         .def("OwnedBy",                     &UniverseObject::OwnedBy)
         .def("WhollyOwnedBy",               &UniverseObject::WhollyOwnedBy)
-        .def("CreationTurn",                &UniverseObject::CreationTurn)
-        .def("AgeInTurns",                  &UniverseObject::AgeInTurns)
-        .def("Specials",                    &UniverseObject::Specials,  return_value_policy<copy_const_reference>())
+        .add_property("creationTurn",       &UniverseObject::CreationTurn)
+        .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
+        .add_property("specials",           make_function(&UniverseObject::Specials,    return_value_policy<copy_const_reference>()))
 
         .def_readonly("INVALID_OBJECT_ID",  &UniverseObject::INVALID_OBJECT_ID)
         .def_readonly("INVALID_OBJECT_AGE", &UniverseObject::INVALID_OBJECT_AGE)
@@ -160,105 +162,105 @@ BOOST_PYTHON_MODULE(foaiint)    // "FreeOrion Artificial Intelligence INTerface"
     //     Fleet     //
     ///////////////////
     class_<Fleet, bases<UniverseObject>, noncopyable>("Fleet", no_init)
-        .def("FinalDestinationID",          &Fleet::FinalDestinationID)
-        .def("NextSystemID",                &Fleet::NextSystemID)
-        .def("Speed",                       &Fleet::Speed)
-        .def("CanChangeDirectionEnRoute",   &Fleet::CanChangeDirectionEnRoute)
-        .def("HasArmedShips",               &Fleet::HasArmedShips)
-        .def("NumShips",                    &Fleet::NumShips)
-        .def("ContainsShipID",              &Fleet::ContainsShip)
+        .add_property("finalDestinationID",         &Fleet::FinalDestinationID)
+        .add_property("nextSystemID",               &Fleet::NextSystemID)
+        .add_property("speed",                      &Fleet::Speed)
+        .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
+        .add_property("hasArmedShips",              &Fleet::HasArmedShips)
+        .add_property("numShips",                   &Fleet::NumShips)
+        .def("ContainsShipID",                      &Fleet::ContainsShip)
+        .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_value_policy<copy_const_reference>()))
     ;
 
     //////////////////
     //     Ship     //
     //////////////////
     class_<Ship, bases<UniverseObject>, noncopyable>("Ship", no_init)
-        .def("FleetID",     &Ship::FleetID)
-        .def("GetFleet",    &Ship::GetFleet,    return_value_policy<reference_existing_object>())
-        .def("IsArmed",     &Ship::IsArmed)
-        .def("Speed",       &Ship::Speed)
+        .add_property("fleetID",    &Ship::FleetID)
+        .def("GetFleet",            &Ship::GetFleet,                return_value_policy<reference_existing_object>())
+        .add_property("isArmed",    &Ship::IsArmed)
+        .add_property("speed",      &Ship::Speed)
     ;
 
     //////////////////
     //   Building   //
     //////////////////
     class_<Building, bases<UniverseObject>, noncopyable>("Building", no_init)
-        .def("GetBuildingType", &Building::GetBuildingType, return_value_policy<reference_existing_object>())
-        .def("Operating",       &Building::Operating)
-        .def("GetPlanet",       &Building::GetPlanet,       return_value_policy<reference_existing_object>())
+        .def("GetBuildingType",         &Building::GetBuildingType, return_value_policy<reference_existing_object>())
+        .add_property("operating",      &Building::Operating)
+        .def("GetPlanet",               &Building::GetPlanet,       return_value_policy<reference_existing_object>())
     ;
 
     //////////////////
     // BuildingType //
     //////////////////
     class_<BuildingType, noncopyable>("BuildingType", no_init)
-        .def("Name",            &BuildingType::Name,        return_value_policy<copy_const_reference>())
-        .def("Description",     &BuildingType::Description, return_value_policy<copy_const_reference>())
-        .def("BuildCost",       &BuildingType::BuildCost)
-        .def("BuildTime",       &BuildingType::BuildTime)
-        .def("MaintenanceCost", &BuildingType::MaintenanceCost)
-        .def("CaptureResult",   &BuildingType::GetCaptureResult)
+        .add_property("name",               make_function(&BuildingType::Name,          return_value_policy<copy_const_reference>()))
+        .add_property("description",        make_function(&BuildingType::Description,   return_value_policy<copy_const_reference>()))
+        .add_property("buildCost",          &BuildingType::BuildCost)
+        .add_property("buildTime",          &BuildingType::BuildTime)
+        .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
+        .def("CaptureResult",               &BuildingType::GetCaptureResult)
     ;
 
     ////////////////////
     // ResourceCenter //
     ////////////////////
     class_<ResourceCenter, noncopyable>("ResourceCenter", no_init)
-        .def("PrimaryFocus",            &ResourceCenter::PrimaryFocus)
-        .def("SecondaryFocus",          &ResourceCenter::SecondaryFocus)
+        .add_property("primaryFocus",       &ResourceCenter::PrimaryFocus)
+        .add_property("secondaryFocus",     &ResourceCenter::SecondaryFocus)
     ;
 
     ///////////////////
     //   PopCenter   //
     ///////////////////
     class_<PopCenter, noncopyable>("PopCenter", no_init)
-        .def("Inhabitants",         &PopCenter::Inhabitants)
-        .def("AvailableFood",       &PopCenter::AvailableFood)
+        .add_property("inhabitants",        &PopCenter::Inhabitants)
+        .add_property("availableFood",      &PopCenter::AvailableFood)
     ;
 
     //////////////////
     //    Planet    //
     //////////////////
     class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("Planet", no_init)
-        .def("Size",                &Planet::Size)
-        .def("Type",                &Planet::Type)
-        .def("Buildings",           &Planet::Buildings,     return_value_policy<copy_const_reference>());
+        .add_property("size",               &Planet::Size)
+        .add_property("type",               &Planet::Type)
+        .add_property("buildings",          make_function(&Planet::Buildings,   return_value_policy<copy_const_reference>()))
     ;
 
     //////////////////
     //    System    //
     //////////////////
     class_<System, bases<UniverseObject>, noncopyable>("System", no_init)
-        .def("StarType",                &System::Star)
-        .def("Orbits",                  &System::Orbits)
-        .def("Starlanes",               &System::Starlanes)
-        .def("Wormholes",               &System::Wormholes)
-        .def("HasStarlaneToSystemID",   &System::HasStarlaneTo)
-        .def("HasWormholeToSystemID",   &System::HasWormholeTo)
+        .add_property("starType",           &System::Star)
+        .add_property("numOrbits",          &System::Orbits)
+        .add_property("numStarlanes",       &System::Starlanes)
+        .add_property("numWormholes",       &System::Wormholes)
+        .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
+        .def("HasWormholeToSystemID",       &System::HasWormholeTo)
     ;
 
     //////////////////
     //     Tech     //
     //////////////////
     class_<Tech, noncopyable>("Tech", no_init)
-        .def("Name",                &Tech::Name,                return_value_policy<copy_const_reference>())
-        .def("Description",         &Tech::Description,         return_value_policy<copy_const_reference>())
-        .def("ShortDescription",    &Tech::ShortDescription,    return_value_policy<copy_const_reference>())
-        .def("Type",                &Tech::Type)
-        .def("Category",            &Tech::Category,            return_value_policy<copy_const_reference>())
-        .def("ResearchCost",        &Tech::ResearchCost)
-        .def("ResearchTurns",       &Tech::ResearchTurns)
-        .def("Prerequisites",       &Tech::Prerequisites,      return_value_policy<copy_const_reference>())
-        .def("UnlockedTechs",       &Tech::UnlockedTechs,      return_value_policy<copy_const_reference>())
-        //.def("UnlockedItems",       &Tech::UnlockedItems,      return_value_policy<copy_const_reference>())
+        .add_property("Name",               make_function(&Tech::Name,              return_value_policy<copy_const_reference>()))
+        .add_property("Description",        make_function(&Tech::Description,       return_value_policy<copy_const_reference>()))
+        .add_property("ShortDescription",   make_function(&Tech::ShortDescription,  return_value_policy<copy_const_reference>()))
+        .add_property("Type",               &Tech::Type)
+        .add_property("Category",           make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
+        .add_property("ResearchCost",       &Tech::ResearchCost)
+        .add_property("ResearchTurns",      &Tech::ResearchTurns)
+        .add_property("Prerequisites",      make_function(&Tech::Prerequisites,     return_value_policy<copy_const_reference>()))
+        .add_property("UnlockedTechs",      make_function(&Tech::UnlockedTechs,     return_value_policy<copy_const_reference>()))
     ;
 
     /////////////////
     //   Special   //
     /////////////////
     class_<Special, noncopyable>("Special", no_init)
-        .def("Name",                &Special::Name,                return_value_policy<copy_const_reference>())
-        .def("Description",         &Special::Description,         return_value_policy<copy_const_reference>())
+        .add_property("Name",               make_function(&Special::Name,           return_value_policy<copy_const_reference>()))
+        .add_property("Description",        make_function(&Special::Description,    return_value_policy<copy_const_reference>()))
     ;
 
 
@@ -370,9 +372,9 @@ PythonAI::PythonAI()
 
     Py_Initialize();    // initializes Python interpreter, allowing Python functions to be called from C++
 
-    initfoaiint();   // allows the "foaiint" C++ module to be imported within Python code
+    initFreeOrionAIInterface();   // allows the "FreeOrionAIInterface" C++ module to be imported within Python code
 
-    
+
     // get access to Python main namespace, which is needed to call other functions below
     try {
         main_module = PyOBJECT((PyHANDLE(borrowed(PyImport_AddModule("__main__")))));
@@ -423,7 +425,7 @@ PythonAI::PythonAI()
 
 PythonAI::~PythonAI()
 {
-    std::cout << "Cleaning up / destructing Python AI" << std::endl;
+    Logger().debugStream() << "Cleaning up / destructing Python AI";
     Py_Finalize();      // stops Python interpreter and release its resources
 }
 

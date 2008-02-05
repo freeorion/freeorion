@@ -38,6 +38,8 @@ public:
     const_iterator begin() const;  ///< returns the begin const_iterator for the ships in the fleet
     const_iterator end() const;    ///< returns the end const_iterator for the ships in the fleet
 
+    const std::set<int>& ShipIDs() const;   ///< returns set of IDs of ships in fleet.
+
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
 
