@@ -1,97 +1,97 @@
-import FreeOrionAIInterface as fo
+import freeOrionAIInterface as fo
 
 
 # called when Python AI starts
-def InitFreeOrionAI():
-    fo.LogOutput("Initialized FreeOrion Python AI")
-    fo.LogOutput(fo.PlayerName())
+def initFreeOrionAI():
+    print "Initialized FreeOrion Python AI"
+    print fo.playerName()
 
 
 # called once per turn
-def GenerateOrders():
-    fo.LogOutput("Generating Orders")
+def generateOrders():
+    print "Generating Orders"
 
-    empire = fo.GetEmpire()
-    empire_id = fo.EmpireID()
-    universe = fo.GetUniverse()
+    empire = fo.getEmpire()
+    empireID = fo.empireID()
+    universe = fo.getUniverse()
 
     # get stationary fleets
-    fleet_ids_list = GetEmpireStationaryFleetIDs(empire_id)
-    fo.LogOutput("fleet_ids_list: " + str(fleet_ids_list))
+    fleetIDs = getEmpireStationaryFleetIDs(empireID)
+    print "fleetIDs: " + str(fleetIDs)
 
 
-    for fleet_id in fleet_ids_list:
-        fleet = universe.GetFleet(fleet_id)
+    for fleet_id in fleetIDs:
+        fleet = universe.getFleet(fleet_id)
         if (fleet == None): continue
 
-        fo.LogOutput("Fleet: " + str(fleet_id));
+        print "Fleet: " + str(fleet_id)
 
-        start_system_id = fleet.systemID
-        if (start_system_id == fleet.INVALID_OBJECT_ID): continue
+        startSystemID = fleet.systemID
+        if (startSystemID == fleet.invalidObjectID): continue
 
-        fo.LogOutput("in system: " + str(start_system_id));
+        print "in system: " + str(startSystemID)
 
-        system_ids_list = GetExplorableSystemIDs(start_system_id, empire_id)
+        systemIDs = getExplorableSystemIDs(startSystemID, empireID)
 
-        fo.LogOutput("can explore: " + str(system_ids_list));
+        print "can explore: " + str(systemIDs)
 
-        if (len(system_ids_list) > 0):
-            destination_id = system_ids_list[0]
-            fo.IssueFleetMoveOrder(fleet_id, destination_id)
-
-
-    fo.DoneTurn()
+        if (len(systemIDs) > 0):
+            destinationID = systemIDs[0]
+            fo.issueFleetMoveOrder(fleet_id, destinationID)
 
 
-# returns list of systems ids known of by but not explored by empire_id,
-# that a ship located in start_system_id could reach via starlanes
-def GetExplorableSystemIDs(start_system_id, empire_id):
-    fo.LogOutput("GetExplorableSystemIDs")
-    universe = fo.GetUniverse()
-    object_ids_vec = universe.allObjectIDs
-    empire = fo.GetEmpire(empire_id)
-
-    system_ids_list = []
+    fo.doneTurn()
 
 
-    for obj_id in object_ids_vec:
-        fo.LogOutput("GetExplorableSystemIDs object id: " + str(obj_id))
+# returns list of systems ids known of by but not explored by empireID,
+# that a ship located in startSystemID could reach via starlanes
+def getExplorableSystemIDs(startSystemID, empireID):
+    print "getExplorableSystemIDs"
+    universe = fo.getUniverse()
+    objectIDs = universe.allObjectIDs
+    empire = fo.getEmpire(empireID)
 
-        system = universe.GetSystem(obj_id)
+    systemIDs = []
+
+
+    for objectID in objectIDs:
+        print "getExplorableSystemIDs object id: " + str(objectID)
+
+        system = universe.getSystem(objectID)
         if (system == None): continue
 
-        fo.LogOutput("...is a system")
+        print "...is a system"
 
-        if (empire.HasExploredSystem(obj_id)): continue
+        if (empire.hasExploredSystem(objectID)): continue
 
-        fo.LogOutput("...not explored")
+        print "...not explored"
 
-        if (not universe.SystemsConnected(obj_id, start_system_id, empire_id)): continue
+        if (not universe.systemsConnected(objectID, startSystemID, empireID)): continue
 
-        fo.LogOutput("...is connected to start system " + str(start_system_id))
+        print "...is connected to start system " + str(startSystemID)
 
-        system_ids_list = system_ids_list + [obj_id]
+        systemIDs = systemIDs + [objectID]
 
-    return system_ids_list
+    return systemIDs
 
 
-# returns list of staitionary fleet ids owned by empire_id
-def GetEmpireStationaryFleetIDs(empire_id):
-    fo.LogOutput("GetEmpireFleetIDs")
-    universe = fo.GetUniverse()
-    object_ids_vec = universe.allObjectIDs
+# returns list of staitionary fleet ids owned by empireID
+def getEmpireStationaryFleetIDs(empireID):
+    print "getEmpireStationaryFleetIDs"
+    universe = fo.getUniverse()
+    objectIDs = universe.allObjectIDs
 
-    fleet_ids_list = []
+    fleetIDs = []
 
-    for obj_id in object_ids_vec:
-        fleet = universe.GetFleet(obj_id)
+    for objectID in objectIDs:
+        fleet = universe.getFleet(objectID)
         if (fleet == None): continue
 
-        if (not fleet.WhollyOwnedBy(empire_id)): continue
+        if (not fleet.whollyOwnedBy(empireID)): continue
 
-        if (fleet.nextSystemID != fleet.INVALID_OBJECT_ID): continue
+        if (fleet.nextSystemID != fleet.invalidObjectID): continue
 
-        fleet_ids_list = fleet_ids_list + [obj_id]
+        fleetIDs = fleetIDs + [objectID]
 
-    return fleet_ids_list
+    return fleetIDs
 

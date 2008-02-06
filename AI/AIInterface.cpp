@@ -23,8 +23,7 @@
 AIBase::~AIBase()
 {}
 
-void AIBase::GenerateOrders()
-{
+void AIBase::GenerateOrders() {
     AIInterface::DoneTurn();
 }
 
@@ -35,13 +34,11 @@ void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 //        AI Interface          //
 //////////////////////////////////
 namespace AIInterface {
-    const std::string& PlayerName()
-    {
+    const std::string& PlayerName() {
         return AIClientApp::GetApp()->PlayerName();
     }
 
-    const std::string& PlayerName(int player_id)
-    {
+    const std::string& PlayerName(int player_id) {
         const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
         std::map<int, PlayerInfo>::const_iterator it = players.find(player_id);
         if (it != players.end())
@@ -52,18 +49,15 @@ namespace AIInterface {
         }
     }
 
-    int PlayerID()
-    {
+    int PlayerID() {
         return AIClientApp::GetApp()->PlayerID();
     }
 
-    int EmpireID()
-    {
+    int EmpireID() {
         return AIClientApp::GetApp()->EmpireID();
     }
 
-    int PlayerEmpireID(int player_id)
-    {
+    int PlayerEmpireID(int player_id) {
         const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
         for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it) {
             if (it->first == player_id)
@@ -72,8 +66,7 @@ namespace AIInterface {
         return -1;  // default invalid value
     }
 
-    std::vector<int>  AllEmpireIDs()
-    {
+    std::vector<int>  AllEmpireIDs() {
         const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
         std::vector<int> empire_ids;
         for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it)
@@ -81,26 +74,22 @@ namespace AIInterface {
         return empire_ids;
     }
 
-    const Empire* GetEmpire()
-    {
+    const Empire* GetEmpire() {
         return AIClientApp::GetApp()->Empires().Lookup(AIClientApp::GetApp()->EmpireID());
     }
 
-    const Empire* GetEmpire(int empire_id)
-    {
+    const Empire* GetEmpire(int empire_id) {
         return AIClientApp::GetApp()->Empires().Lookup(empire_id);
     }
 
-    int EmpirePlayerID(int empire_id)
-    {
+    int EmpirePlayerID(int empire_id) {
         int player_id = AIClientApp::GetApp()->GetEmpirePlayerID(empire_id);
         if (-1 == player_id)
             Logger().debugStream() << "AIInterface::EmpirePlayerID(" << boost::lexical_cast<std::string>(empire_id) << ") - passed an invalid empire_id";
         return player_id;
     }
 
-    std::vector<int> AllPlayerIDs()
-    {
+    std::vector<int> AllPlayerIDs() {
         const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
         std::vector<int> player_ids;
         for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it)
@@ -108,33 +97,27 @@ namespace AIInterface {
         return player_ids;
     }
 
-    bool PlayerIsAI(int player_id)
-    {
-        return false;
+    bool PlayerIsAI(int player_id) {
+        return false;   // TODO: implement this
     }
 
-    bool PlayerIsHost(int player_id)
-    {
-        return false;
+    bool PlayerIsHost(int player_id) {
+        return false;   // TODO: implement this
     }
 
-    const Universe& GetUniverse()
-    {
+    const Universe& GetUniverse() {
         return AIClientApp::GetApp()->GetUniverse();
     }
 
-    const Tech* GetTech(const std::string& tech_name)
-    {
+    const Tech* GetTech(const std::string& tech_name) {
         return TechManager::GetTechManager().GetTech(tech_name);
     }
 
-    int CurrentTurn()
-    {
+    int CurrentTurn() {
         return AIClientApp::GetApp()->CurrentTurn();
     }
 
-    int IssueFleetMoveOrder(int fleet_id, int destination_id)
-    {
+    int IssueFleetMoveOrder(int fleet_id, int destination_id) {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         
         const Fleet* fleet = universe.Object<Fleet>(fleet_id);
@@ -158,8 +141,7 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueRenameOrder(int object_id, const std::string& new_name)
-    {
+    int IssueRenameOrder(int object_id, const std::string& new_name) {
         if (new_name.empty()) {
             Logger().errorStream() << "AIInterface::IssueRenameOrder : passed an empty new name";
             return 0;
@@ -183,8 +165,7 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids)
-    {
+    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids) {
         if (ship_ids.empty()) {
             Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed empty vector of ship_ids";
             return 0;
@@ -246,13 +227,11 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueFleetTransferOrder()
-    {
+    int IssueFleetTransferOrder() {
         return 0;
     }
 
-    int IssueFleetColonizeOrder(int ship_id, int planet_id)
-    {
+    int IssueFleetColonizeOrder(int ship_id, int planet_id) {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
@@ -306,36 +285,30 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueDeleteFleetOrder()
-    {
+    int IssueDeleteFleetOrder() {
         return 0;
     }
 
-    int IssueChangeFocusOrder()
-    {
+    int IssueChangeFocusOrder() {
         return 0;
     }
 
-    int IssueResearchQueueOrder()
-    {
+    int IssueResearchQueueOrder() {
         return 0;
     }
 
-    int IssueProductionQueueOrder()
-    {
+    int IssueProductionQueueOrder() {
         return 0;
     }
 
-    void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text)
-    {
+    void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text) {
         if (recipient_player_id == -1)
             AIClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(PlayerID(), message_text));
         else
             AIClientApp::GetApp()->Networking().SendMessage(SingleRecipientChatMessage(PlayerID(), recipient_player_id, message_text));
     }
 
-    void DoneTurn()
-    {
+    void DoneTurn() {
         Logger().debugStream() << "AIInterface::DoneTurn()";
         AIClientApp::GetApp()->StartTurn(); // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
     }
@@ -346,8 +319,10 @@ namespace AIInterface {
     void LoadState()
     {}
 
-    void LogOutput(const std::string& log_text)
-    {
-        Logger().debugStream() << "AI Log : " << log_text;
+    void LogOutput(const std::string& log_text) {
+        Logger().debugStream() << log_text;
+    }
+    void ErrorOutput(const std::string& log_text) {
+        Logger().errorStream() << log_text;
     }
 } // namespace AIInterface

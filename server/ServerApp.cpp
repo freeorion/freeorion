@@ -121,7 +121,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
     m_ai_clients.clear();
     m_ai_IDs.clear();
 
-    int ai_client_base_number = time(0) % 999; // get a random number from which to start numbering the AI clients
+    int ai_client_base_number = 1;
     int i = 0;
     for (std::vector<PlayerSetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
         // TODO: add other command line args to AI client invocation as needed

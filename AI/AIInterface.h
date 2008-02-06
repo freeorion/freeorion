@@ -71,7 +71,8 @@ namespace AIInterface
     //@}
 
     /** Misc */ //@{
-    void LogOutput(const std::string& log_text);   ///< output text to logfile
+    void LogOutput(const std::string& log_text);    ///< output text to as DEBUG
+    void ErrorOutput(const std::string& log_text);  ///< output text to as ERROR
     //@}
 };
 
