@@ -75,7 +75,7 @@ namespace {
         };
 
         static void Wrap(const std::string& python_name) {
-            class_<Set, boost::noncopyable>(python_name.c_str(), no_init)
+            class_<Set, noncopyable>(python_name.c_str(), no_init)
                 .def("__str__",         &to_string)
                 .def("__len__",         &size)
                 .def("size",            &size)
@@ -240,12 +240,12 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("y",                  &UniverseObject::Y)
         .add_property("systemID",           &UniverseObject::SystemID)
         .add_property("unowned",            &UniverseObject::Unowned)
-        .add_property("owners",             make_function(&UniverseObject::Owners,      return_value_policy<copy_const_reference>()))
+        .add_property("owners",             make_function(&UniverseObject::Owners,      return_value_policy<reference_existing_object>()))
         .def("ownedBy",                     &UniverseObject::OwnedBy)
         .def("whollyOwnedBy",               &UniverseObject::WhollyOwnedBy)
         .add_property("creationTurn",       &UniverseObject::CreationTurn)
         .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
-        .add_property("specials",           make_function(&UniverseObject::Specials,    return_value_policy<copy_const_reference>()))
+        .add_property("specials",           make_function(&UniverseObject::Specials,    return_value_policy<reference_existing_object>()))
 
         .def_readonly("invalidObjectID",  &UniverseObject::INVALID_OBJECT_ID)
         .def_readonly("invalidObjectAge", &UniverseObject::INVALID_OBJECT_AGE)
@@ -262,7 +262,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("hasArmedShips",              &Fleet::HasArmedShips)
         .add_property("numShips",                   &Fleet::NumShips)
         .def("containsShipID",                      &Fleet::ContainsShip)
-        .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_value_policy<copy_const_reference>()))
+        .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_value_policy<reference_existing_object>()))
     ;
 
     //////////////////
@@ -318,7 +318,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("planet", no_init)
         .add_property("size",               &Planet::Size)
         .add_property("type",               &Planet::Type)
-        .add_property("buildings",          make_function(&Planet::Buildings,   return_value_policy<copy_const_reference>()))
+        .add_property("buildings",          make_function(&Planet::Buildings,   return_value_policy<reference_existing_object>()))
     ;
 
     //////////////////
@@ -344,8 +344,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("category",           make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
         .add_property("researchCost",       &Tech::ResearchCost)
         .add_property("researchTurns",      &Tech::ResearchTurns)
-        .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_value_policy<copy_const_reference>()))
-        .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_value_policy<copy_const_reference>()))
+        .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_value_policy<reference_existing_object>()))
+        .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_value_policy<reference_existing_object>()))
     ;
 
     /////////////////

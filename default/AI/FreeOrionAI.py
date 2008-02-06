@@ -39,6 +39,18 @@ def generateOrders():
             fo.issueFleetMoveOrder(fleet_id, destinationID)
 
 
+    # list planet specials, owners
+    objectIDs = universe.allObjectIDs
+    for objectID in objectIDs:
+        planet = universe.getPlanet(objectID)
+        if (planet == None): continue
+
+        ons = planet.owners
+        print ons
+
+        spl = planet.specials
+        print spl
+
     fo.doneTurn()
 
 
