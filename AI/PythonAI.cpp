@@ -114,17 +114,15 @@ void LogText(const char* text) {
     // Python sends text as several null-terminated array of char which need to be
     // concatenated before they are output to the logger.  There's probably a better
     // way to do this, but I don't know what it is, and this seems reasonably safe...
-    bool flush = false;
+    if (!text) return;
     for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
         if (text[i] == '\0') break;
-        if (text[i] == '\n')
-            flush = true;
-        else
+        if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
+            AIInterface::LogOutput(log_buffer);
+            log_buffer = "";
+        } else {
             log_buffer += text[i];
-    }
-    if (flush) {
-        AIInterface::LogOutput(std::string(log_buffer));
-        log_buffer = "";
+        }
     }
 }
 
@@ -133,17 +131,15 @@ void ErrorText(const char* text) {
     // Python sends text as several null-terminated array of char which need to be
     // concatenated before they are output to the logger.  There's probably a better
     // way to do this, but I don't know what it is, and this seems reasonably safe...
-    bool flush = false;
+   if (!text) return;
     for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
         if (text[i] == '\0') break;
-        if (text[i] == '\n') 
-            flush = true;
-        else
+        if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
+            AIInterface::ErrorOutput(error_buffer);
+            error_buffer = "";
+        } else {
             error_buffer += text[i];
-    }
-    if (flush) {
-        AIInterface::ErrorOutput(std::string(error_buffer));
-        error_buffer = "";
+        }
     }
 }
 
