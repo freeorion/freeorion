@@ -4,7 +4,6 @@ import freeOrionAIInterface as fo
 # called when Python AI starts
 def initFreeOrionAI():
     print "Initialized FreeOrion Python AI"
-    print fo.playerName()
 
 
 # called once per turn

@@ -108,12 +108,43 @@ const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Objec
 
 // Expose interface for redirecting standard output and error to FreeOrion logging.  Can be imported
 // before loading the main FreeOrion AI interface library.
+static const int MAX_SINGLE_CHUNK_TEXT_SIZE = 1000; 
+static std::string log_buffer("");
 void LogText(const char* text) {
-    AIInterface::LogOutput(std::string(text));
+    // Python sends text as several null-terminated array of char which need to be
+    // concatenated before they are output to the logger.  There's probably a better
+    // way to do this, but I don't know what it is, and this seems reasonably safe...
+    bool flush = false;
+    for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
+        if (text[i] == '\0') break;
+        if (text[i] == '\n')
+            flush = true;
+        else
+            log_buffer += text[i];
+    }
+    if (flush) {
+        AIInterface::LogOutput(std::string(log_buffer));
+        log_buffer = "";
+    }
 }
 
+static std::string error_buffer("");
 void ErrorText(const char* text) {
-    AIInterface::ErrorOutput(std::string(text));
+    // Python sends text as several null-terminated array of char which need to be
+    // concatenated before they are output to the logger.  There's probably a better
+    // way to do this, but I don't know what it is, and this seems reasonably safe...
+    bool flush = false;
+    for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
+        if (text[i] == '\0') break;
+        if (text[i] == '\n') 
+            flush = true;
+        else
+            error_buffer += text[i];
+    }
+    if (flush) {
+        AIInterface::ErrorOutput(std::string(error_buffer));
+        error_buffer = "";
+    }
 }
 
 BOOST_PYTHON_MODULE(freeOrionLogger)
