@@ -595,7 +595,7 @@ else:
 Alias('install', Install(env['bindir'], freeoriond))
 Alias('install', Install(env['bindir'], freeorionca))
 Alias('install', Install(env['bindir'], freeorion))
-Alias('install', Install(env['datadir'], ['default', 'DejaVuSans-BoldOblique.ttf', 'DejaVuSans-Bold.ttf', 'DejaVuSans-Oblique.ttf', 'DejaVuSans.ttf']))
+Alias('install', Install(env['datadir'], 'default'))
 
 deletions = [
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeoriond[0])))),
