@@ -23,18 +23,25 @@
 
 #include <boost/lexical_cast.hpp>
 
+using boost::python::class_;
+using boost::python::bases;
 using boost::python::def;
+using boost::python::iterator;
+using boost::python::no_init;
+using boost::noncopyable;
 using boost::python::return_value_policy;
 using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
 using boost::python::return_by_value;
-using boost::python::class_;
-using boost::python::bases;
-using boost::noncopyable;
-using boost::python::no_init;
 using boost::python::enum_;
 using boost::python::vector_indexing_suite;
 using boost::python::map_indexing_suite;
+using boost::python::object;
+using boost::python::import;
+using boost::python::error_already_set;
+using boost::python::exec;
+using boost::python::dict;
+using boost::python::extract;
 
 namespace {
     //////////////////////////
@@ -82,7 +89,7 @@ namespace {
                 .def("empty",           &empty)
                 .def("__contains__",    &contains)
                 .def("count",           &count)
-                .def("__iter__",        boost::python::iterator<Set>())
+                .def("__iter__",        iterator<Set>())
                 ;
         }
     };
@@ -143,6 +150,8 @@ void ErrorText(const char* text) {
     }
 }
 
+// Expose minimal debug and error (stdout and stderr respectively) sinks so Python text output can be
+// recovered and saved in c++
 BOOST_PYTHON_MODULE(freeOrionLogger)
 {
     def("log",                    LogText);
@@ -453,6 +462,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 ///////////////////////
 //     PythonAI      //
 ///////////////////////
+static dict main_namespace = dict();
 PythonAI::PythonAI()
 {
     using boost::python::borrowed;
@@ -462,72 +472,45 @@ PythonAI::PythonAI()
     initfreeOrionLogger();          // allows the "freeOrionLogger" C++ module to be imported within Python code
     initfreeOrionAIInterface();     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
 
-
-    // get access to Python main namespace, which is needed to call other functions below
     try {
-        main_module = PyOBJECT((PyHANDLE(borrowed(PyImport_AddModule("__main__")))));
-        dict = PyOBJECT(main_module.attr("__dict__"));
-    } catch (PyERROR err) {
-        Logger().errorStream() << "error with main module or namespace";
+        // get main namespace, needed to run other interpreted code
+        object main_module = import("__main__");
+        main_namespace = extract<dict>(main_module.attr("__dict__"));
+    } catch (error_already_set err) {
+        Logger().errorStream() << "Unable to initialize Python interpreter.";
         return;
     }
 
-    PyHANDLE handle;
-
     try {
-        handle = PyHANDLE(PyRun_String("import sys", Py_file_input, dict.ptr(), dict.ptr()));
-    } catch (PyERROR err) {
-        Logger().errorStream() << "error appending default AI script directory to sys.path";
+        // set up Logging by redirecting stdout and stderr to exposed logging functions
+        object ignored = exec("import sys", main_namespace, main_namespace);
+        std::string logger_script = "import freeOrionLogger\n"
+                                    "class debugLogger:\n"
+                                    "  def write(self, stng):\n"
+                                    "    freeOrionLogger.log(stng)\n"
+                                    "class errorLogger:\n"
+                                    "  def write(self, stng):\n"
+                                    "    freeOrionLogger.error(stng)\n"
+                                    "sys.stdout = debugLogger()\n"
+                                    "sys.stderr = errorLogger()\n"
+                                    "print 'Python stdout and stderr redirected'";
+        ignored = exec(logger_script.c_str(), main_namespace, main_namespace);
+    } catch (error_already_set err) {
+        Logger().errorStream() << "Unable to redirect Python stdout and stderr.";
         return;
     }
 
-
-
-    // import FreeOrion logging interface and redirect stdout and stderr to FreeOrion Logger
     try {
-        handle = PyHANDLE(PyRun_String((std::string("import freeOrionLogger\n") +
-                                        "class debugLogger:\n" +
-                                        "  def write(self, stng):\n" +
-                                        "    freeOrionLogger.log(stng)\n" +
-                                        "class errorLogger:\n" +
-                                        "  def write(self, stng):\n" +
-                                        "    freeOrionLogger.error(stng)\n" +
-                                        "sys.stdout = debugLogger()\n" +
-                                        "sys.stderr = errorLogger()\n" +
-                                        "print 'Python stdout and stderr redirected'\n").c_str()
-                                      , Py_file_input, dict.ptr(), dict.ptr()));
-    } catch (PyERROR err) {
-        Logger().errorStream() << "error redirecting output to logger";
-        return;
-    }
+        // tell Python the path in which to locate AI script file
+        std::string AI_path = (GetGlobalDir() / "default" / "AI").native_directory_string();
+        std::string path_command = "sys.path.append('" + AI_path + "')";
+        object ignored = exec(path_command.c_str(), main_namespace, main_namespace);
 
-
-    // tell Python the path in which to locate AI script file
-    std::string AI_path = (GetGlobalDir() / "default" / "AI").native_directory_string();
-    std::string python_path_command = "sys.path.append('" + AI_path + "')";
-    try {
-        handle = PyHANDLE(PyRun_String(python_path_command.c_str(), Py_file_input, dict.ptr(), dict.ptr()));
-    } catch (PyERROR err) {
-        Logger().errorStream() << "error appending default AI script directory to sys.path";
-        return;
-    }
-
-
-
-    // load Python script of AI functions
-    try {
-        handle = PyHANDLE(PyRun_String("import FreeOrionAI", Py_file_input, dict.ptr(), dict.ptr()));
-    } catch (PyERROR err) {
-        Logger().errorStream() << "error importing FreeOrionAI.py into Python";
-        PyErr_Print();
-        return;
-    }
-
-    // initialize AI within Python
-    try {
-        handle = PyHANDLE(PyRun_String("FreeOrionAI.initFreeOrionAI()", Py_file_input, dict.ptr(), dict.ptr()));
-    } catch(PyERROR err) {
-        Logger().errorStream() << "error calling FreeOrionAI.initfreeOrionAI()";
+        // import AI script file and run initialization function
+        std::string fo_interface_import_script = "import FreeOrionAI\n"
+                                                 "FreeOrionAI.initFreeOrionAI()";
+        ignored = exec(fo_interface_import_script.c_str(), main_namespace, main_namespace);
+    } catch (error_already_set err) {
         PyErr_Print();
         return;
     }
@@ -544,9 +527,9 @@ PythonAI::~PythonAI()
 void PythonAI::GenerateOrders()
 {
     try {
-        PyHANDLE handle = PyHANDLE(PyRun_String("FreeOrionAI.generateOrders()", Py_file_input, dict.ptr(), dict.ptr()));
-    } catch(PyERROR err) {
-        Logger().errorStream() << "error calling FreeOrionAI.generateOrders()";
+        // tell Python the path in which to locate AI script file
+        object ignored = exec("FreeOrionAI.generateOrders()", main_namespace, main_namespace);
+    } catch (error_already_set err) {
         PyErr_Print();
         AIInterface::DoneTurn();
         return;
