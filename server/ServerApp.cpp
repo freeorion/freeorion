@@ -35,15 +35,6 @@
 
 namespace fs = boost::filesystem;
 
-namespace {
-#ifdef FREEORION_WIN32
-    const std::string AI_CLIENT_EXE = "freeorionca.exe";
-#else
-    const fs::path BIN_DIR = GetBinDir();
-    const std::string AI_CLIENT_EXE = (BIN_DIR / "freeorionca").native_file_string();
-#endif
-}
-
 ////////////////////////////////////////////////
 // PlayerSaveGameData
 ////////////////////////////////////////////////
@@ -123,6 +114,12 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
 
     int ai_client_base_number = 1;
     int i = 0;
+
+#ifdef FREEORION_WIN32
+    const std::string AI_CLIENT_EXE = "freeorionca.exe";
+#else
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").native_file_string();
+#endif
     for (std::vector<PlayerSetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
         // TODO: add other command line args to AI client invocation as needed
         std::string player_name = "AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i);

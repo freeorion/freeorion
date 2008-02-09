@@ -8,7 +8,7 @@
 #include <string>
 
 // assume Linux environment by default
-#if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX))
+#if (!defined(FREEORION_WIN32) && !defined(FREEORION_LINUX) && !defined(FREEORION_MACOSX))
 #define FREEORION_LINUX
 #endif
 
@@ -75,7 +75,7 @@ private:
    #if defined(FREEORION_WIN32)
       STARTUPINFO          m_startup_info;
       PROCESS_INFORMATION  m_process_info;
-   #elif defined(FREEORION_LINUX)
+   #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
       pid_t                m_process_id;
    #endif
    };

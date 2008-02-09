@@ -88,7 +88,7 @@ void Process::ProcessImpl::Kill()
     CloseHandle(m_process_info.hThread);
 }
 
-#elif defined(FREEORION_LINUX)
+#elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
 
 #include <sys/types.h>
 #include <unistd.h>

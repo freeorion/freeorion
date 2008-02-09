@@ -830,7 +830,7 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     m_nebulae.clear();
     m_nebula_centers.clear();
     for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
-        m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(data.map_nebulae[i].filename));
+        m_nebulae.push_back(ClientUI::GetTexture(data.map_nebulae[i].filename));
         m_nebula_centers.push_back(data.map_nebulae[i].center);
     }
 }

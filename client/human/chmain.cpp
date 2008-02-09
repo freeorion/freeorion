@@ -44,6 +44,14 @@ int main(int argc, char* argv[])
             GetOptionsDB().GetUsage(std::cerr);
             early_exit = true;
         }
+#ifdef FREEORION_MACOSX
+        // Handle the case where the settings-dir does not exist anymore gracefully by resetting it to the standard path
+        // into the application bundle this may happen if a previous installed version of FreeOrion was residing in a
+        // different directory.
+        if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("settings-dir"))))
+            GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").native_directory_string());
+#endif
+        
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             GetOptionsDB().Remove("generate-config-xml");
             boost::filesystem::ofstream ofs(GetConfigPath());

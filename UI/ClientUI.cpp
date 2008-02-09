@@ -509,11 +509,17 @@ void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
 
 boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
+    boost::shared_ptr<GG::Texture> retval;
     try {
-        return HumanClientApp::GetApp()->GetTexture(path.native_file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture(path.native_file_string(), mipmap);
     } catch(...) {
-        return HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
     }
+#ifdef FREEORION_MACOSX
+    if (!mipmap)
+        retval->SetFilters(GL_LINEAR, GL_LINEAR);
+#endif
+    return retval;
 }
 
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)

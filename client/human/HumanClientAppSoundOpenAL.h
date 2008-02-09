@@ -1,7 +1,11 @@
 // -*- C++ -*-
 #include "HumanClientApp.h"
 
-#include <AL/al.h>
+#ifdef FREEORION_MACOSX
+# include <OpenAL/al.h>
+#else
+# include <AL/al.h>
+#endif
 
 #include <vorbis/vorbisfile.h>
 

@@ -2,8 +2,14 @@
 #include "../../util/AppInterface.h"
 #include "../../util/OptionsDB.h"
 
-#include <AL/alc.h>
-#include <AL/alut.h>
+#ifdef FREEORION_MACOSX
+# include <OpenAL/alc.h>
+# include <OpenAL/alut.h>
+#else
+# include <AL/alc.h>
+# include <AL/alut.h>
+#endif
+
 
 namespace {
     const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
