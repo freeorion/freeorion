@@ -137,18 +137,8 @@ private:
     /** contains all the information necessary to render a single fleet movement line on the main map */
     struct MovementLineData
     {
-        MovementLineData() : 
-            colour(GG::CLR_ZERO), 
-            path(),
-            x(-100000.0),   // UniverseObject::INVALID_POSITION value respecified here to avoid unnecessary include dependency
-            y(-100000.0)
-        {}
-        MovementLineData(double x_, double y_, const std::list<MovePathNode>& path_, GG::Clr colour_ = GG::CLR_WHITE) :
-            colour(colour_),
-            path(path_),
-            x(x_),
-            y(y_)
-        {}
+        MovementLineData();
+        MovementLineData(double x_, double y_, const std::list<MovePathNode>& path_, GG::Clr colour_ = GG::CLR_WHITE);
         GG::Clr colour;                 ///< colour in which to draw line
         std::list<MovePathNode> path;   ///< path to draw
         double x, y;                    ///< universe x and y at which to originate line (start point isn't in the path)

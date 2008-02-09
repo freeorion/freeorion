@@ -64,20 +64,7 @@ void OwnerColoredSystemName::Render()
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
-SystemIcon::SystemIcon(int id) :
-    GG::Control(0, 0, 1, 1, GG::CLICKABLE),
-    m_system(*GetUniverse().Object<const System>(id)),
-    m_disc_graphic(0),
-    m_halo_graphic(0),
-    m_selection_indicator(0),
-    m_mouseover_indicator(0),
-    m_selected(false),
-    m_name(0)
-{
-    Init();
-}
-
-SystemIcon::SystemIcon(int x, int y, int w, int id) :
+SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
     GG::Control(x, y, w, w, GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
     m_disc_graphic(0),
@@ -87,6 +74,7 @@ SystemIcon::SystemIcon(int x, int y, int w, int id) :
     m_selected(false),
     m_name(0)
 {
+    parent->AttachChild(this);
     Init();
 }
 

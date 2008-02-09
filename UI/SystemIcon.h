@@ -41,8 +41,7 @@ public:
     //!@}
 
     //! \name Structors //!@{
-    SystemIcon(int id);                         //!< construct from a universe ID at default size (needs to be positioned and resized)
-    SystemIcon(int x, int y, int w, int id);    //!< construct from a universe ID at specified size and position
+    SystemIcon(GG::Wnd* parent, int x, int y, int w, int id);    //!< construct from a universe ID at specified size and position
     ~SystemIcon();                              //!< dtor
     //!@}
 

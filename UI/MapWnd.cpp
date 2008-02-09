@@ -140,6 +140,22 @@ void MapWndPopup::Close()
 ////////////////////////////////////////////////
 // MapWnd
 ////////////////////////////////////////////////
+// MapWnd::MovementLineData
+MapWnd::MovementLineData::MovementLineData() : 
+    colour(GG::CLR_ZERO), 
+    path(),
+    x(-100000.0),   // UniverseObject::INVALID_POSITION value respecified here to avoid unnecessary include dependency
+    y(-100000.0)
+{}
+
+MapWnd::MovementLineData::MovementLineData(double x_, double y_, const std::list<MovePathNode>& path_, GG::Clr colour_/* = GG::CLR_WHITE*/) :
+    colour(colour_),
+    path(path_),
+    x(x_),
+    y(y_)
+{}
+
+// MapWnd
 // static(s)
 const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
@@ -642,7 +658,10 @@ void MapWnd::InitTurn(int turn_number)
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
-        SystemIcon* icon = new SystemIcon(systems[i]->ID());
+        const int SYSTEM_ICON_SIZE = SystemIconSize();
+        GG::Pt icon_ul(static_cast<int>(systems[i]->X() * m_zoom_factor - SYSTEM_ICON_SIZE / 2.0), 
+                       static_cast<int>(systems[i]->Y() * m_zoom_factor - SYSTEM_ICON_SIZE / 2.0));
+        SystemIcon* icon = new SystemIcon(this, icon_ul.x, icon_ul.y, SYSTEM_ICON_SIZE, systems[i]->ID());
         m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
@@ -1755,9 +1774,8 @@ void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 
 void MapWnd::RegisterPopup( MapWndPopup* popup )
 {
-    if (popup) {
+    if (popup)
         m_popups.push_back(popup);
-    }
 }
 
 void MapWnd::RemovePopup( MapWndPopup* popup )
