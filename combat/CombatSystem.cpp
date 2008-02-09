@@ -204,9 +204,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
                 Ship *shp = GetUniverse().Object<Ship>(*shp_it);
         
                 if(shp->IsArmed())
-                    cahp.combat_ships    .push_back(std::pair<Ship*,unsigned int> (shp,shp->Design()->Defense()));
+                    cahp.combat_ships    .push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
                 else   
-                    cahp.non_combat_ships.push_back(std::pair<Ship*,unsigned int> (shp,shp->Design()->Defense()));
+                    cahp.non_combat_ships.push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
             }
         }
         for(unsigned int i=0; i<assets[e].planets.size(); i++)

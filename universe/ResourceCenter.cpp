@@ -106,7 +106,6 @@ double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
     const Meter* original_meter = GetMeter(type);
     assert(original_meter);
     Meter meter = Meter(*original_meter);
-    double construction_change, new_construction, current_change, new_current;
 
     switch (type) {
     case METER_FARMING:

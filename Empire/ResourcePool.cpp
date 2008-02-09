@@ -10,10 +10,10 @@
 // ResourcePool
 //////////////////////////////////////////////////
 ResourcePool::ResourcePool(ResourceType type) :
-    m_stockpile(0.0),
     m_resource_centers(),
     m_supply_system_groups(),
     m_stockpile_system_id(UniverseObject::INVALID_OBJECT_ID),
+    m_stockpile(0.0),
     m_max_stockpile(200.0), // change to 0.0 later when effects can alter the max stockpile
     m_production(0.0),
     m_type(type)

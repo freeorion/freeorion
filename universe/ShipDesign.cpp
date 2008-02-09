@@ -183,8 +183,8 @@ PartTypeManager::iterator PartTypeManager::end() const {
 PartType::PartType() :
     m_name("invalid part type"),
     m_description("indescribable"),
-    m_class(INVALID_SHIP_PART_CLASS),
     m_upgrade(""),
+    m_class(INVALID_SHIP_PART_CLASS),
     m_mass(1.0),
     m_power(1.0),
     m_range(1.0),
@@ -197,8 +197,8 @@ PartType::PartType(const std::string& name, const std::string& description, Ship
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_class(part_class),
     m_upgrade(upgrade),
+    m_class(part_class),
     m_mass(mass),
     m_power(power),
     m_range(range),

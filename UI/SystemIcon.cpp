@@ -163,8 +163,10 @@ GG::Pt SystemIcon::FleetButtonCentre(int empire_id, bool moving) const
         end = m_stationary_fleet_markers.end();
     }
 
-    if (it == end)  // no such fleetbutton
-        return GG::Pt(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+    if (it == end) {  // no such fleetbutton
+        return GG::Pt(static_cast<int>(UniverseObject::INVALID_POSITION),
+                      static_cast<int>(UniverseObject::INVALID_POSITION));
+    }
 
     const int HALF_SIZE = static_cast<int>(it->second->Width() * 0.5);
     return it->second->UpperLeft() + GG::Pt(HALF_SIZE, HALF_SIZE);

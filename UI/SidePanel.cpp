@@ -1193,8 +1193,10 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 
 SidePanel::SidePanel(int x, int y, int w, int h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
+    m_system_name(0),
+    m_button_prev(0),
+    m_button_next(0),
     m_star_graphic(0),
-    m_button_prev(0),   m_system_name(0),   m_button_next(0),
     m_planet_panel_container(new PlanetPanelContainer(0, 140, w, h-170)),
     m_system_resource_summary(0)
 {

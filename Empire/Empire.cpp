@@ -1264,7 +1264,7 @@ void Empire::GetSupplySystemGroupsAndStarlanesUsed(std::set<std::set<int> >& sup
 
     // first, sort into a map from component id to set of system ids in component
     std::map<int, std::set<int> > component_sets_map;
-    for (int graph_id = 0; graph_id != components.size(); ++graph_id) {
+    for (std::size_t graph_id = 0; graph_id != components.size(); ++graph_id) {
         int label = components[graph_id];
         int sys_id = graph_id_to_sys_id[graph_id];
         component_sets_map[label].insert(sys_id);

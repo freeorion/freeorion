@@ -1211,14 +1211,14 @@ void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shar
 /////////////////////////////////////
 MultiMeterStatusBar::MultiMeterStatusBar(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
     GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+    m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(meter_types),
     m_initial_maxes(),
     m_initial_currents(),
     m_projected_maxes(),
     m_projected_currents(),
     m_obj(obj),
-    m_bar_colours(),
-    m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png"))
+    m_bar_colours()
 {
     SetText("MultiMeterStatusBar");
     Update();

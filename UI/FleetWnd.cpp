@@ -462,7 +462,7 @@ void FleetDataPanel::Refresh()
             if (design) {
                 if (design->Colonize())
                     contains_colony_ship = true;
-                attack_strength += design->Attack();
+                attack_strength += static_cast<int>(design->Attack());
                 attack_factor_unknown = false;
             }
             // TODO: account for damaged ships once damage system is in place

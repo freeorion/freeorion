@@ -30,11 +30,11 @@ namespace {
 //////////////////////////////////////////////////
 DesignWnd::DesignWnd(int w, int h) :
     GG::Wnd(0, 0, w, h, GG::ONTOP | GG::CLICKABLE),
-    m_add_design_button(0),
     m_hulls_list(0),
+    m_parts_lists(),
+    m_add_design_button(0),
     m_design_name_edit(0),
     m_design_description_edit(0),
-    m_parts_lists(),
     m_selected_hull(""),
     m_selected_parts()
 {
