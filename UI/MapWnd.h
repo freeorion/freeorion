@@ -205,6 +205,7 @@ private:
     void ShowAllPopups();
 
     void FleetWndClosing(FleetWnd* fleet_wnd);
+    void HandleEmpireElimination(int empire_id); //!< cleans up internal storage of now-invalidated empire ID
 
     std::set<GG::Key> m_disabled_accels_list;   //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 

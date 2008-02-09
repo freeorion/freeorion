@@ -220,7 +220,7 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
 
 /** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.  
     This message should only be sent by the server.*/
-Message PlayerEliminatedMessage(int receiver, const std::string& empire_name);
+Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
 
 
 ////////////////////////////////////////////////
@@ -279,5 +279,7 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
 void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 
 void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
+
+void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
 #endif // _Message_h_

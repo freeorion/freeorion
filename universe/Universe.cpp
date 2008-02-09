@@ -549,9 +549,9 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     // determine meter max discrepancies
     for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
         UniverseObject* obj = Object(obj_it->first);    // object that has some meters
-        std::map<MeterType, std::vector<EffectAccountingInfo> > meters_map = obj_it->second;
+        std::map<MeterType, std::vector<EffectAccountingInfo> >& meters_map = obj_it->second;
 
-        // ever meter has a value at the start of the turn, and a value after updating with known effects
+        // every meter has a value at the start of the turn, and a value after updating with known effects
         for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = meters_map.begin(); meter_type_it != meters_map.end(); ++meter_type_it) {
             MeterType type = meter_type_it->first;
             Meter* meter = obj->GetMeter(type);
@@ -973,6 +973,21 @@ void Universe::EffectDestroy(int id)
     m_marked_destroyed.insert(id);
 }
 
+void Universe::HandleEmpireElimination(int empire_id)
+{
+    for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
+        // ever meter has a value at the start of the turn, and a value after updating with known effects
+        for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
+            for (std::size_t i = 0; i < meter_type_it->second.size(); ) {
+                if (meter_type_it->second[i].caused_by_empire_id == empire_id)
+                    meter_type_it->second.erase(meter_type_it->second.begin() + i);
+                else
+                    ++i;
+            }
+        }
+    }
+}
+
 bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
     // list of indices of systems that are accessible from previously visited systems.
     // when a new system is found to be accessible, it is added to the back of the
@@ -1178,6 +1193,7 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
         }
     }
 }
+
 //////////////////////////////////////////
 //    Server-Only General Functions     //
 //////////////////////////////////////////

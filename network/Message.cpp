@@ -427,9 +427,15 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
     return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, msg);
 }
 
-Message PlayerEliminatedMessage(int receiver, const std::string& empire_name)
+Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name)
 {
-    return Message(Message::PLAYER_ELIMINATED, -1, receiver, empire_name);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(empire_id)
+           << BOOST_SERIALIZATION_NVP(empire_name);
+    }
+    return Message(Message::PLAYER_ELIMINATED, -1, receiver, os.str());
 }
 
 
@@ -620,6 +626,20 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
            >> BOOST_SERIALIZATION_NVP(reason_player_name);
     } catch (const boost::archive::archive_exception &e) {
         std::cerr << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name) failed!  "
+                  << "Message:\n" << msg.Text() << std::endl;
+        throw;
+    }
+}
+
+void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(empire_id)
+           >> BOOST_SERIALIZATION_NVP(empire_name);
+    } catch (const boost::archive::archive_exception &e) {
+        std::cerr << "ExtractMessageData(const Message& msg, int empire_id, std::string& empire_name) failed!  "
                   << "Message:\n" << msg.Text() << std::endl;
         throw;
     }

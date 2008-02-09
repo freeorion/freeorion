@@ -130,7 +130,8 @@ private:
    
     int                       m_current_turn;         ///< current turn number
 
-    std::vector<Process>      m_ai_clients;           ///< AI client child processes
+    std::map<std::string, Process>
+                              m_ai_clients;           ///< AI client child processes
     std::set<int>             m_ai_IDs;               ///< player IDs of AI clients
 
     bool                      m_single_player_game;   ///< true when the game being played is single-player

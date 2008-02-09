@@ -17,6 +17,10 @@ ClientApp::ClientApp() :
     m_empire_id(-1),
     m_current_turn(INVALID_GAME_TURN)
 {
+#ifdef FREEORION_BUILD_HUMAN
+    EmpireEliminatedSignal.connect(boost::bind(&Universe::HandleEmpireElimination, &m_universe, _1));
+#endif
+
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");
     s_app = this;

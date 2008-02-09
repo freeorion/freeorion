@@ -305,8 +305,12 @@ boost::statechart::result PlayingGame::react(const Disconnection& d)
 boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerEliminated";
+    int empire_id;
+    std::string empire_name;
+    ExtractMessageData(msg.m_message, empire_id, empire_name);
+    Client().EmpireEliminatedSignal(empire_id);
     // TODO: replace this with something better
-    ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.m_message.Text()));
+    ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % empire_name));
     return discard_event();
 }
 

@@ -249,6 +249,9 @@ public:
     /** marks an object for destruction by the Destroy effect. */
     void              EffectDestroy(int id);
 
+    /** cleans up internal storage of now-invalidated empire ID */
+    void              HandleEmpireElimination(int empire_id);
+
     /** sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
     static void       InhibitUniverseObjectSignals(bool inhibit = true);
     //@}

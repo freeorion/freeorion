@@ -346,6 +346,8 @@ MapWnd::MapWnd() :
     boost::shared_ptr<GG::BrowseInfoWnd> browser_wnd(new BrowseFoo());
     GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
 #endif
+
+    Connect(ClientApp::GetApp()->EmpireEliminatedSignal, &MapWnd::HandleEmpireElimination, this);
 }
 
 MapWnd::~MapWnd()
@@ -1740,6 +1742,12 @@ void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
         else
             m_active_fleet_wnd = *(m_fleet_wnds.begin());
     }
+}
+
+void MapWnd::HandleEmpireElimination(int empire_id)
+{
+    m_empire_system_fleet_supply.erase(empire_id);
+    m_empire_fleet_supply_lanes.erase(empire_id);
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)

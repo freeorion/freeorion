@@ -132,7 +132,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE;
-        m_ai_clients.push_back(Process(AI_CLIENT_EXE, args));
+        m_ai_clients[player_name] = Process(AI_CLIENT_EXE, args);
         Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
     }
 }
@@ -165,8 +165,8 @@ void ServerApp::Run()
 
 void ServerApp::CleanupAIs()
 {
-    for (unsigned int i = 0; i < m_ai_clients.size(); ++i) {
-        m_ai_clients[i].Kill();
+    for (std::map<std::string, Process>::iterator it = m_ai_clients.begin(); it != m_ai_clients.end(); ++it) {
+        it->second.Kill();
     }
 }
 
@@ -709,13 +709,16 @@ void ServerApp::ProcessTurns()
             object_vec[j]->RemoveOwner(it->second);
     }
 
+    std::map<std::string, Process> processes_copy = m_ai_clients;
     // notify all players of the eliminated players
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-            if ((*player_it)->ID() == it->first)
+            if ((*player_it)->ID() == it->first) {
+                m_ai_clients.erase((*player_it)->PlayerName());
                 (*player_it)->SendMessage(EndGameMessage((*player_it)->ID(), Message::YOU_ARE_DEFEATED));
-            else
-                (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), Empires().Lookup(it->second)->Name()));
+            } else {
+                (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), it->second, Empires().Lookup(it->second)->Name()));
+            }
         }
     }
 
