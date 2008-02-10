@@ -510,7 +510,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     drop_list->SetStyle(GG::LIST_NOSORT);
     std::set<std::string> filenames;
     fs::directory_iterator end_it;
-    for (fs::directory_iterator it(fs::initial_path()); it != end_it; ++it) {
+    for (fs::directory_iterator it(GetSettingsDir()); it != end_it; ++it) {
         try {
             if (fs::exists(*it)) {
                 std::string filename = it->leaf();
