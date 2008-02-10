@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-import otherStuff
 
 i = 0
 
@@ -14,7 +13,7 @@ def generateOrders():
 
     global i
     i = i + 1
-    otherStuff.doStuff(i)
+    print "data persistent between turns: " + str(i)
 
     empire = fo.getEmpire()
     empireID = fo.empireID()
