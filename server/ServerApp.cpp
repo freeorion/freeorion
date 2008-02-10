@@ -700,13 +700,20 @@ void ServerApp::ProcessTurns()
         } 
     }
 
-    // TODO: This needs to remove buildings, fleets, ships, etc., not just remove ownership of them
     // clean up defeated empires
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         // remove the empire from play
         Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->second));
-        for (unsigned int j = 0; j < object_vec.size(); ++j)
+        for (unsigned int j = 0; j < object_vec.size(); ++j) {
             object_vec[j]->RemoveOwner(it->second);
+            // TODO: Consider just removing ownership from Buildings, and making
+            // them capturable by colonizing a planet.
+            if (object_vec[j]->Owners().empty() &&
+                (universe_object_cast<Building*>(object_vec[j]) ||
+                 universe_object_cast<Ship*>(object_vec[j]) ||
+                 universe_object_cast<Fleet*>(object_vec[j])))
+                GetUniverse().Destroy(object_vec[j]->ID());
+        }
     }
 
     std::map<std::string, Process> processes_copy = m_ai_clients;
