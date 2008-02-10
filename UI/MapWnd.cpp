@@ -1827,6 +1827,7 @@ bool MapWnd::ReturnToMap()
     if (m_design_wnd->Visible()) {
         m_design_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_design_wnd);
+        EnableAlphaNumAccels();
     }
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
@@ -1872,8 +1873,11 @@ bool MapWnd::ToggleSitRep()
         // hide other "competing" windows
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
-        m_design_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_design_wnd);
+        if (m_design_wnd->Visible()) {
+            m_design_wnd->Hide();
+            HumanClientApp::GetApp()->MoveDown(m_design_wnd);
+            EnableAlphaNumAccels();
+        }
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
@@ -1899,7 +1903,10 @@ bool MapWnd::ToggleResearch()
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
-        m_design_wnd->Hide();
+        if (m_design_wnd->Visible()) {
+            m_design_wnd->Hide();
+            EnableAlphaNumAccels();
+        }
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
@@ -1930,7 +1937,10 @@ bool MapWnd::ToggleProduction()
         m_sitrep_panel->Hide();
         DetachChild(m_sitrep_panel);
         m_research_wnd->Hide();
-        m_design_wnd->Hide();
+        if (m_design_wnd->Visible()) {
+            m_design_wnd->Hide();
+            EnableAlphaNumAccels();
+        }
 
         // show the production window
         m_production_wnd->Show();
@@ -1952,6 +1962,7 @@ bool MapWnd::ToggleDesign()
     m_projected_fleet_line = MovementLineData();
     if (m_design_wnd->Visible()) {
         m_design_wnd->Hide();
+        EnableAlphaNumAccels();
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
@@ -1968,7 +1979,7 @@ bool MapWnd::ToggleDesign()
         m_design_wnd->Show();
         GG::GUI::GetGUI()->MoveUp(m_design_wnd);
         GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
-        //DisableAlphaNumAccels();    // so users can type names and descriptions (commented out until I can figure out how to make doing this play nice with the other ToggleSubscreen functions)
+        DisableAlphaNumAccels();
         m_design_wnd->Reset();
     }
     return true;
