@@ -167,7 +167,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("playerName",               AIIntPlayerNameVoid,        return_value_policy<copy_const_reference>());
     def("playerName",               AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
 
-
     def("playerID",                 AIInterface::PlayerID);
     def("empirePlayerID",           AIInterface::EmpirePlayerID);
     def("allPlayerIDs",             AIInterface::AllPlayerIDs,  return_value_policy<return_by_value>());
@@ -189,7 +188,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
     def("issueRenameOrder",         AIInterface::IssueRenameOrder);
     def("issueNewFleetOrder",       AIInterface::IssueNewFleetOrder);
-    def("issueFleetColonizeOrder",  AIInterface::IssueFleetColonizeOrder);
+    def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
 
@@ -221,18 +220,23 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     //    Universe    //
     ////////////////////
     class_<Universe, noncopyable>("universe", no_init)
-        .def("getObject",               UniverseGetObject,              return_value_policy<reference_existing_object>())
-        .def("getFleet",                UniverseGetFleet,               return_value_policy<reference_existing_object>())
-        .def("getShip",                 UniverseGetShip,                return_value_policy<reference_existing_object>())
-        .def("getPlanet",               UniverseGetPlanet,              return_value_policy<reference_existing_object>())
-        .def("getSystem",               UniverseGetSystem,              return_value_policy<reference_existing_object>())
-        .def("getBuilding",             UniverseGetBuilding,            return_value_policy<reference_existing_object>())
-        .def("getSpecial",              GetSpecial,                     return_value_policy<reference_existing_object>())
+        .def("getObject",                   UniverseGetObject,              return_value_policy<reference_existing_object>())
+        .def("getFleet",                    UniverseGetFleet,               return_value_policy<reference_existing_object>())
+        .def("getShip",                     UniverseGetShip,                return_value_policy<reference_existing_object>())
+        .def("getPlanet",                   UniverseGetPlanet,              return_value_policy<reference_existing_object>())
+        .def("getSystem",                   UniverseGetSystem,              return_value_policy<reference_existing_object>())
+        .def("getBuilding",                 UniverseGetBuilding,            return_value_policy<reference_existing_object>())
+        .def("getSpecial",                  GetSpecial,                     return_value_policy<reference_existing_object>())
 
-        .add_property("allObjectIDs",  make_function(&Universe::FindObjectIDs<UniverseObject>, return_value_policy<return_by_value>()))
+        .add_property("allObjectIDs",       make_function(&Universe::FindObjectIDs<UniverseObject>, return_value_policy<return_by_value>()))
+        // TODO: add ability to iterate over all objects in universe
 
-        .def("systemHasStarlane",   &Universe::SystemReachable)
-        .def("systemsConnected",    &Universe::SystemsConnected)
+        .def("systemHasStarlane",           &Universe::SystemReachable)
+        .def("systemsConnected",            &Universe::SystemsConnected)
+
+        // put as part of universe class so one doesn't need a UniverseObject object in python to access these
+        .def_readonly("invalidObjectID",    &UniverseObject::INVALID_OBJECT_ID)
+        .def_readonly("invalidObjectAge",   &UniverseObject::INVALID_OBJECT_AGE)
     ;
 
     ////////////////////
@@ -251,9 +255,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("creationTurn",       &UniverseObject::CreationTurn)
         .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
         .add_property("specials",           make_function(&UniverseObject::Specials,    return_value_policy<reference_existing_object>()))
-
-        .def_readonly("invalidObjectID",  &UniverseObject::INVALID_OBJECT_ID)
-        .def_readonly("invalidObjectAge", &UniverseObject::INVALID_OBJECT_AGE)
     ;
 
     ///////////////////
@@ -268,6 +269,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("numShips",                   &Fleet::NumShips)
         .def("containsShipID",                      &Fleet::ContainsShip)
         .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_value_policy<reference_existing_object>()))
+        // TODO: add ability to iterate over ships in fleet
     ;
 
     //////////////////
@@ -324,6 +326,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("size",               &Planet::Size)
         .add_property("type",               &Planet::Type)
         .add_property("buildings",          make_function(&Planet::Buildings,   return_value_policy<reference_existing_object>()))
+        // TODO: add ability to iterate over buildings on planet
     ;
 
     //////////////////
@@ -336,6 +339,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("numWormholes",       &System::Wormholes)
         .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
         .def("HasWormholeToSystemID",       &System::HasWormholeTo)
+        // TODO: add ability to iterate over planets in system
     ;
 
     //////////////////
@@ -483,8 +487,8 @@ PythonAI::PythonAI()
 
     try {
         // set up Logging by redirecting stdout and stderr to exposed logging functions
-        object ignored = exec("import sys", main_namespace, main_namespace);
-        std::string logger_script = "import freeOrionLogger\n"
+        std::string logger_script = "import sys\n"
+                                    "import freeOrionLogger\n"
                                     "class debugLogger:\n"
                                     "  def write(self, stng):\n"
                                     "    freeOrionLogger.log(stng)\n"
@@ -494,7 +498,7 @@ PythonAI::PythonAI()
                                     "sys.stdout = debugLogger()\n"
                                     "sys.stderr = errorLogger()\n"
                                     "print 'Python stdout and stderr redirected'";
-        ignored = exec(logger_script.c_str(), main_namespace, main_namespace);
+        object ignored = exec(logger_script.c_str(), main_namespace, main_namespace);
     } catch (error_already_set err) {
         Logger().errorStream() << "Unable to redirect Python stdout and stderr.";
         return;

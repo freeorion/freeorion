@@ -1,5 +1,7 @@
 import freeOrionAIInterface as fo
+import otherStuff
 
+i = 0
 
 # called when Python AI starts
 def initFreeOrionAI():
@@ -9,6 +11,10 @@ def initFreeOrionAI():
 # called once per turn
 def generateOrders():
     print "Generating Orders"
+
+    global i
+    i = i + 1
+    otherStuff.doStuff(i)
 
     empire = fo.getEmpire()
     empireID = fo.empireID()
@@ -26,7 +32,7 @@ def generateOrders():
         print "Fleet: " + str(fleet_id)
 
         startSystemID = fleet.systemID
-        if (startSystemID == fleet.invalidObjectID): continue
+        if (startSystemID == universe.invalidObjectID): continue
 
         print "in system: " + str(startSystemID)
 
@@ -39,11 +45,17 @@ def generateOrders():
             fo.issueFleetMoveOrder(fleet_id, destinationID)
 
 
-    # list planet specials, owners
+    # Testing: list planet specials, owners; rename a planet this player owns, etc.
     objectIDs = universe.allObjectIDs
     for objectID in objectIDs:
         planet = universe.getPlanet(objectID)
         if (planet == None): continue
+        
+        print "planet: " + str(planet.name)
+        
+        if (not planet.whollyOwnedBy(empireID)): continue
+
+        fo.issueRenameOrder(objectID, "RENAMED PLANET!!!")
 
         ons = planet.owners
         print ons
@@ -51,6 +63,36 @@ def generateOrders():
         spl = planet.specials
         print spl
 
+    planetToColonizeID = universe.invalidObjectID
+    # colonize?!
+    for objectID in objectIDs:
+        planet = universe.getPlanet(objectID)
+        if (planet == None): continue
+        if (planet.type == fo.planetType.terran):
+            planetToColonizeID = objectID
+            break
+
+    if (planetToColonizeID != universe.invalidObjectID):
+        planetToColonize = universe.getPlanet(planetToColonizeID)
+        planetToColonizeSystemID = planetToColonize.systemID
+        planetToColonizeSystem = universe.getSystem(planetToColonizeSystemID)
+
+        colonyShipID = universe.invalidObjectID
+        for objectID in objectIDs:
+            ship = universe.getShip(objectID)
+            if (ship == None): continue
+
+            if (not ship.whollyOwnedBy(empireID)): continue
+            if (ship.name != "Colony Ship"): continue
+            if (ship.systemID != planetToColonizeSystemID): continue
+
+            colonyShipID = objectID
+            break
+
+        if (colonyShipID != universe.invalidObjectID):
+            fo.issueColonizeOrder(colonyShipID, planetToColonizeID)
+
+    
     fo.doneTurn()
 
 
@@ -100,7 +142,7 @@ def getEmpireStationaryFleetIDs(empireID):
 
         if (not fleet.whollyOwnedBy(empireID)): continue
 
-        if (fleet.nextSystemID != fleet.invalidObjectID): continue
+        if (fleet.nextSystemID != universe.invalidObjectID): continue
 
         fleetIDs = fleetIDs + [objectID]
 
