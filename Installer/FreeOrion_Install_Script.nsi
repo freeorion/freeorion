@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "FreeOrion-0.3.1-RC6-Setup.exe"
+OutFile "..\..\FreeOrion-0.3.1-RC8-Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -53,17 +53,14 @@ ShowUnInstDetails show
 Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   SetOverwrite try
-  File "vcredist_x86.exe"
-  ExecWait "$INSTDIR\vcredist_x86.exe"
-  Delete "$INSTDIR\vcredist_x86.exe"
+  File "..\..\vcredist_x86.exe"
+  ExecWait "$INSTDIR\vcredist_x86.exe /q"
   File /r /x .svn "..\default"
   File "..\alut.dll"
   File "..\boost_python-vc80-mt-1_34.dll"
-  File "..\devil.dll"vcredist_x86.exe
+  File "..\devil.dll"
   File "..\GiGi.dll"
   File "..\GG\GiGi.dll.manifest"
-  File "..\GiGiNet.dll"
-  File "..\GG\GiGiNet.dll.manifest"
   File "..\GiGiSDL.dll"
   File "..\GG\GiGiSDL.dll.manifest"
   File "..\ilu.dll"
@@ -84,10 +81,6 @@ Section "MainSection" SEC01
   File "..\wrap_oal.dll"
   File "..\z.dll"
   File "..\zlib1.dll"
-  File "..\DejaVuSans.ttf"
-  File "..\DejaVuSans-Bold.ttf"
-  File "..\DejaVuSans-Oblique.ttf"
-  File "..\DejaVuSans-BoldOblique.ttf"
   File "..\freeorionca.exe"
   File "..\freeoriond.exe"
   File "..\freeorion.exe"
