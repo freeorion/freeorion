@@ -8,6 +8,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Building.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/PopCenter.h"
@@ -276,19 +277,27 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     //     Ship     //
     //////////////////
     class_<Ship, bases<UniverseObject>, noncopyable>("ship", no_init)
-        .add_property("fleetID",    &Ship::FleetID)
-        .add_property("getFleet",   make_function(&Ship::GetFleet,   return_value_policy<reference_existing_object>()))
-        .add_property("isArmed",    &Ship::IsArmed)
-        .add_property("speed",      &Ship::Speed)
+        .add_property("design",             make_function(&Ship::Design,        return_value_policy<reference_existing_object>()))
+        .add_property("fleetID",            &Ship::FleetID)
+        .add_property("getFleet",           make_function(&Ship::GetFleet,      return_value_policy<reference_existing_object>()))
+        .add_property("isArmed",            &Ship::IsArmed)
+        .add_property("speed",              &Ship::Speed)
+    ;
+
+    //////////////////
+    //  ShipDesign  //
+    //////////////////
+    class_<ShipDesign, noncopyable>("shipDesign", no_init)
+        .add_property("name",               make_function(&ShipDesign::Name,    return_value_policy<copy_const_reference>()))
     ;
 
     //////////////////
     //   Building   //
     //////////////////
     class_<Building, bases<UniverseObject>, noncopyable>("building", no_init)
-        .def("getBuildingType",         &Building::GetBuildingType, return_value_policy<reference_existing_object>())
-        .add_property("operating",      &Building::Operating)
-        .def("getPlanet",               &Building::GetPlanet,       return_value_policy<reference_existing_object>())
+        .def("getBuildingType",             &Building::GetBuildingType,         return_value_policy<reference_existing_object>())
+        .add_property("operating",          &Building::Operating)
+        .def("getPlanet",                   &Building::GetPlanet,               return_value_policy<reference_existing_object>())
     ;
 
     //////////////////
