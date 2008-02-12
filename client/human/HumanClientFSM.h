@@ -319,8 +319,8 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
         boost::statechart::custom_reaction<TurnUpdate>,
         boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<GameStart>,
+        boost::statechart::custom_reaction<SaveGame>,
         boost::statechart::deferral<PlayerEliminated>,
-        boost::statechart::deferral<SaveGame>,
         boost::statechart::deferral<PlayerChat>
     > reactions;
 
@@ -331,6 +331,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     boost::statechart::result react(const TurnUpdate& msg);
     boost::statechart::result react(const CombatStart& msg);
     boost::statechart::result react(const GameStart& msg);
+    boost::statechart::result react(const SaveGame& msg);
 
     TurnProgressWnd* m_turn_progress_wnd;
 

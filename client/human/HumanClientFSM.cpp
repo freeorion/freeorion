@@ -436,6 +436,13 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
     return transit<PlayingTurn>();
 }
 
+boost::statechart::result WaitingForTurnData::react(const SaveGame& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.SaveGame";
+    Client().HandleSaveGameDataRequest();
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // PlayingTurn
