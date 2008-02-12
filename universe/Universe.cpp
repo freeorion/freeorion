@@ -180,7 +180,6 @@ namespace {
     template <class Graph>
     std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
     {
-        Logger().errorStream() << "LeastJumpsPathImpl";
         typedef typename boost::property_map<Graph, Universe::vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
 
         ConstSystemPointerPropertyMap pointer_property_map = boost::get(Universe::vertex_system_pointer_t(), graph);

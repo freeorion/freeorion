@@ -611,7 +611,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
-    
+
     // expand / collapse button at top right    
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
@@ -628,12 +628,12 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
     // focus-selection droplists
     std::vector<boost::shared_ptr<GG::Texture> > textures;
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "balanced.png"));
+    textures.push_back(ClientUI::MeterIcon(METER_FARMING));
+    textures.push_back(ClientUI::MeterIcon(METER_MINING));
+    textures.push_back(ClientUI::MeterIcon(METER_INDUSTRY));
+    textures.push_back(ClientUI::MeterIcon(METER_RESEARCH));
+    textures.push_back(ClientUI::MeterIcon(METER_TRADE));
 
     m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {

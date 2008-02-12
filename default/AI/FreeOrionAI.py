@@ -1,50 +1,105 @@
-import freeOrionAIInterface as fo
+import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
+import pickle                       # Python object serialization library
 
+
+# global variable for test purposes.  code in generateOrders demonstrates that this value persists between
+# calls from c++ to functions defined in this module
 i = 0
 
-# called when Python AI starts
+# global Python dict in which AI state information can be stored.  data will persist between calls to
+# generate orders.  a dict can be serialized to a string, which can be stored in a saved game.  the
+# string will then be returned when the saved game is loaded, and can be deserialized to restore AI
+# state from before the save.
+d = {}
+
+
+# called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI():
+    global i
     print "Initialized FreeOrion Python AI"
+    i = 20
 
 
-# called once per turn
+# called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
+# and set up whatever is needed for AI to generate orders
+def startNewGame():
+    global d
+    print "New game started"
+    d = {"dict_key" : "dict_value"}
+
+
+# called when client receives a load game message
+def resumeLoadedGame(savedStateString):
+    global d
+    print "Resuming loaded game"
+    try:
+        d = pickle.loads(savedStateString)
+    except:
+        print "failed to parse saved state string"
+        d = {}
+
+
+# called when the game is about to be saved, to let the Python AI know it should save any AI state
+# information, such as plans or knowledge about the game from previous turns, in the state string so that 
+# they can be restored if the game is loaded
+def prepareForSave():
+    global d
+    print "Preparing for game save by serializing state"
+
+    # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
+    fo.setSaveStateString(pickle.dumps(d))
+
+
+# called when this player receives a chat message.  senderID is the player who sent the message, and 
+# messageText is the text of the sent message
+def handleChatMessage(senderID, messageText):
+    print "Received chat message - ignoring it"
+
+
+# called once per turn to tell the Python AI to generate and issue orders to control its empire.
+# at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
+# and can be sent to the server for processing.
 def generateOrders():
     print "Generating Orders"
 
     global i
+    global d
+
+    # demonstrate persistant data that can be modified each time a Python function is called from C++
     i = i + 1
     print "data persistent between turns: " + str(i)
 
+    # diplay current state of global dictionary
+    print "global dict: " + str(d)
+    d[i] = fo.currentTurn()
+
+
+    # retreive objects from freeOrionAIInterface that can be used to access the gamestate
     empire = fo.getEmpire()
     empireID = fo.empireID()
     universe = fo.getUniverse()
+
 
     # get stationary fleets
     fleetIDs = getEmpireStationaryFleetIDs(empireID)
     print "fleetIDs: " + str(fleetIDs)
 
-
+    # order stationary fleets to explore
     for fleet_id in fleetIDs:
         fleet = universe.getFleet(fleet_id)
         if (fleet == None): continue
 
-        print "Fleet: " + str(fleet_id)
-
         startSystemID = fleet.systemID
         if (startSystemID == universe.invalidObjectID): continue
 
-        print "in system: " + str(startSystemID)
-
         systemIDs = getExplorableSystemIDs(startSystemID, empireID)
-
-        print "can explore: " + str(systemIDs)
 
         if (len(systemIDs) > 0):
             destinationID = systemIDs[0]
             fo.issueFleetMoveOrder(fleet_id, destinationID)
 
 
-    # get all object IDs
+    # get id numbers of all objects in the universe known to this player
     objectIDs = universe.allObjectIDs
 
     # Testing: list planet specials, owners; rename a planet this player owns, etc.
@@ -52,17 +107,14 @@ def generateOrders():
         planet = universe.getPlanet(objectID)
         if (planet == None): continue
 
-        print "planet: " + str(planet.name)
-
         if (not planet.whollyOwnedBy(empireID)): continue
 
-        fo.issueRenameOrder(objectID, "RENAMED PLANET!!!")
+        #fo.issueRenameOrder(objectID, "RENAMED PLANET!!!")
 
-        ons = planet.owners
-        print ons
+        print "this empire owns planet: " + str(planet.name)
 
-        spl = planet.specials
-        print spl
+        #print planet.owners
+        #print planet.specials
 
 
     # colonize?!
@@ -70,10 +122,10 @@ def generateOrders():
     for shipID in objectIDs:
         ship = universe.getShip(shipID)
         if (ship == None): continue
-        print "ship id: " + str(shipID)
 
         if (ship.systemID == universe.invalidObjectID): continue
         if (not ship.whollyOwnedBy(empireID)): continue
+        print "ship id: " + str(shipID)
         print "owned by me!"
         if (ship.design.name != "Colony Ship"): continue
         print "with design name Colony Ship, in system with id " + str(ship.systemID)
@@ -107,23 +159,11 @@ def getExplorableSystemIDs(startSystemID, empireID):
 
     systemIDs = []
 
-
     for objectID in objectIDs:
-        print "getExplorableSystemIDs object id: " + str(objectID)
-
         system = universe.getSystem(objectID)
         if (system == None): continue
-
-        print "...is a system"
-
         if (empire.hasExploredSystem(objectID)): continue
-
-        print "...not explored"
-
         if (not universe.systemsConnected(objectID, startSystemID, empireID)): continue
-
-        print "...is connected to start system " + str(startSystemID)
-
         systemIDs = systemIDs + [objectID]
 
     return systemIDs

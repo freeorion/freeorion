@@ -171,10 +171,28 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
     case METER_HEALTH:
         icon_filename = "health.png";
         break;
+    case METER_FUEL:
+        icon_filename = "fuel.png";
+        break;
+    case METER_SUPPLY:
+        icon_filename = "supply.png";
+        break;
+    case METER_STEALTH:
+        icon_filename = "stealth.png";
+        break;
+    case METER_DETECTION:
+        icon_filename = "detection.png";
+        break;
+    case METER_SHIELD:
+        icon_filename = "shield.png";
+        break;
+    case METER_DEFENSE:
+        icon_filename = "defense.png";
+        break;
     default:
         break;
     }
-    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / icon_filename, true);
+    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
 
 

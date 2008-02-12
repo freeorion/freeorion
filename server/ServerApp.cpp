@@ -42,11 +42,12 @@ PlayerSaveGameData::PlayerSaveGameData() :
     m_empire(0)
 {}
 
-PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data) :
+PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string) :
     m_name(name),
     m_empire(empire),
     m_orders(orders),
-    m_ui_data(ui_data)
+    m_ui_data(ui_data),
+    m_save_state_string(save_state_string)
 {}
 
 
@@ -251,6 +252,7 @@ void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
 
 void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
 {
+    // multiplayer load
     std::set<int> used_save_game_data;
     std::map<int, int> player_id_to_save_game_data_index;
     for (std::map<int, PlayerSetupData>::const_iterator it = lobby_data->m_players.begin(); it != lobby_data->m_players.end(); ++it) {
@@ -344,16 +346,39 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // compile map of PlayerInfo for each player, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
-                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
-                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
-                                          (*it)->Host());
+        // extract connection struct and info from it
+        boost::shared_ptr<PlayerConnection> player_connection = *it;
+        std::string player_name =           player_connection->PlayerName();
+        int player_id =                     player_connection->ID();
+        const Empire* player_empire =       GetPlayerEmpire(player_id);
+        int player_empire_id =              player_empire->EmpireID();
+        bool player_is_host =               player_connection->Host();
+        bool player_is_AI =                 m_ai_IDs.find(player_id) != m_ai_IDs.end();
+        // store in PlayerInfo struct
+        players[player_id] = PlayerInfo(player_name, player_empire_id, player_is_AI, player_is_host);
     }
 
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        Empire* empire = GetPlayerEmpire((*it)->ID());
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
-                                            players, *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
+        // extract info needed for GameStartMessage for this player
+        int player_id =                             (*it)->ID();
+        Empire* empire =                            GetPlayerEmpire(player_id);
+        int empire_id =                             empire->EmpireID();
+        bool player_is_AI =                         players[player_id].AI;
+        boost::shared_ptr<OrderSet> orders =        player_data_by_empire[empire]->m_orders;
+        boost::shared_ptr<SaveGameUIData> ui_data = player_data_by_empire[empire]->m_ui_data;
+        std::string save_state_string =             player_data_by_empire[empire]->m_save_state_string;
+        // send load game messages to human and AI players.  AIs might have something useful in save_state_string,
+        // but clients are assumed to only use the ui_data struct
+        if (player_is_AI) {
+            std::string* sss = 0;   // I first tried making PlayerSaveGameData::m_save_string_data a boost::shared_ptr<std::string>, but the compiler didn't like this, and refused to allow the struct to be serialized.  Consequently, the raw data is now contained in the struct, and this test to see if there is anything in the string is done instead of the more elegant system used to check of ui_data is available.
+            if (!save_state_string.empty())
+                sss = &save_state_string;
+            (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
+            players, *orders, sss));
+        } else {
+            (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
+                                                players, *orders, ui_data.get()));
+        }
     }
 
     m_losers.clear();

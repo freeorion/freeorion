@@ -30,6 +30,19 @@ void AIBase::GenerateOrders() {
 void AIBase::HandleChatMessage(int sender_id, const std::string& msg)
 {}
 
+void AIBase::StartNewGame()
+{}
+
+void AIBase::ResumeLoadedGame(const std::string& save_state_string)
+{}
+
+const std::string& AIBase::GetSaveStateString() {
+    static std::string default_state_string("AIBase default save state string");
+    Logger().debugStream() << "AIBase::GetSaveStateString() returning: " << default_state_string;
+    return default_state_string;
+}
+
+
 //////////////////////////////////
 //        AI Interface          //
 //////////////////////////////////
@@ -313,16 +326,11 @@ namespace AIInterface {
         AIClientApp::GetApp()->StartTurn(); // encodes order sets and sends turn orders message.  "done" the turn for the client, but "starts" the turn for the server
     }
 
-    void SaveState()
-    {}
-
-    void LoadState()
-    {}
-
     void LogOutput(const std::string& log_text) {
         Logger().debugStream() << log_text;
     }
-    void ErrorOutput(const std::string& log_text) {
-        Logger().errorStream() << log_text;
+
+    void ErrorOutput(const std::string& error_text) {
+        Logger().errorStream() << error_text;
     }
 } // namespace AIInterface

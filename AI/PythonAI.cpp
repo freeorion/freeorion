@@ -114,6 +114,19 @@ const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Objec
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
 const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
+namespace {
+    // static s_save_state_string, getter and setter to be exposed to Python
+    static std::string  s_save_state_string("");
+    static const std::string& GetStaticSaveStateString() {
+        //Logger().debugStream() << "Python-exposed GetSaveStateString() returning " << s_save_state_string;
+        return s_save_state_string;
+    }
+    static void SetStaticSaveStateString(const std::string& new_state_string) {
+        s_save_state_string = new_state_string;
+        //Logger().debugStream() << "Python-exposed SetSaveStateString(" << s_save_state_string << ")";
+    }
+}
+
 // Expose interface for redirecting standard output and error to FreeOrion logging.  Can be imported
 // before loading the main FreeOrion AI interface library.
 static const int MAX_SINGLE_CHUNK_TEXT_SIZE = 1000; 
@@ -165,24 +178,24 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ///////////////////
     //  AIInterface  //
     ///////////////////
-    def("playerName",               AIIntPlayerNameVoid,        return_value_policy<copy_const_reference>());
-    def("playerName",               AIIntPlayerNameInt,         return_value_policy<copy_const_reference>());
+    def("playerName",               AIIntPlayerNameVoid,            return_value_policy<copy_const_reference>());
+    def("playerName",               AIIntPlayerNameInt,             return_value_policy<copy_const_reference>());
 
     def("playerID",                 AIInterface::PlayerID);
     def("empirePlayerID",           AIInterface::EmpirePlayerID);
-    def("allPlayerIDs",             AIInterface::AllPlayerIDs,  return_value_policy<return_by_value>());
+    def("allPlayerIDs",             AIInterface::AllPlayerIDs,      return_value_policy<return_by_value>());
 
     def("playerIsAI",               AIInterface::PlayerIsAI);
     def("playerIsHost",             AIInterface::PlayerIsHost);
 
     def("empireID",                 AIInterface::EmpireID);
     def("playerEmpireID",           AIInterface::PlayerEmpireID);
-    def("allEmpireIDs",             AIInterface::AllEmpireIDs,  return_value_policy<return_by_value>());
+    def("allEmpireIDs",             AIInterface::AllEmpireIDs,      return_value_policy<return_by_value>());
 
-    def("getEmpire",                AIIntGetEmpireVoid,         return_value_policy<reference_existing_object>());
-    def("getEmpire",                AIIntGetEmpireInt,          return_value_policy<reference_existing_object>());
+    def("getEmpire",                AIIntGetEmpireVoid,             return_value_policy<reference_existing_object>());
+    def("getEmpire",                AIIntGetEmpireInt,              return_value_policy<reference_existing_object>());
 
-    def("getUniverse",              AIInterface::GetUniverse,   return_value_policy<reference_existing_object>());
+    def("getUniverse",              AIInterface::GetUniverse,       return_value_policy<reference_existing_object>());
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
@@ -192,6 +205,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
+
+    def("setSaveStateString",       SetStaticSaveStateString);
+    def("getSaveStateString",       GetStaticSaveStateString,               return_value_policy<copy_const_reference>());
 
     def("doneTurn",                 AIInterface::DoneTurn);
 
@@ -475,10 +491,18 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 ///////////////////////
 //     PythonAI      //
 ///////////////////////
-static dict main_namespace = dict();
+static dict         s_main_namespace = dict();
+static object       s_ai_module = object();
+static PythonAI*    s_ai = 0;
 PythonAI::PythonAI()
 {
-    using boost::python::borrowed;
+    // in order to expose a getter for it to Python, s_save_state_string must be static, and not a member
+    // variable of class PythonAI, because the exposing is done outside the PythonAI class and there is no
+    // access to a pointer to PythonAI
+    if (s_ai)
+        throw std::runtime_error("Attempted to create more than one Python AI instance");
+
+    s_ai = this;
 
     Py_Initialize();    // initializes Python interpreter, allowing Python functions to be called from C++
 
@@ -488,7 +512,7 @@ PythonAI::PythonAI()
     try {
         // get main namespace, needed to run other interpreted code
         object main_module = import("__main__");
-        main_namespace = extract<dict>(main_module.attr("__dict__"));
+        s_main_namespace = extract<dict>(main_module.attr("__dict__"));
     } catch (error_already_set err) {
         Logger().errorStream() << "Unable to initialize Python interpreter.";
         return;
@@ -507,7 +531,7 @@ PythonAI::PythonAI()
                                     "sys.stdout = debugLogger()\n"
                                     "sys.stderr = errorLogger()\n"
                                     "print 'Python stdout and stderr redirected'";
-        object ignored = exec(logger_script.c_str(), main_namespace, main_namespace);
+        object ignored = exec(logger_script.c_str(), s_main_namespace, s_main_namespace);
     } catch (error_already_set err) {
         Logger().errorStream() << "Unable to redirect Python stdout and stderr.";
         return;
@@ -517,12 +541,14 @@ PythonAI::PythonAI()
         // tell Python the path in which to locate AI script file
         std::string AI_path = (GetGlobalDir() / "default" / "AI").native_directory_string();
         std::string path_command = "sys.path.append('" + AI_path + "')";
-        object ignored = exec(path_command.c_str(), main_namespace, main_namespace);
+        object ignored = exec(path_command.c_str(), s_main_namespace, s_main_namespace);
 
         // import AI script file and run initialization function
-        std::string fo_interface_import_script = "import FreeOrionAI\n"
-                                                 "FreeOrionAI.initFreeOrionAI()";
-        ignored = exec(fo_interface_import_script.c_str(), main_namespace, main_namespace);
+        s_ai_module = import("FreeOrionAI");
+        object initAIPythonFunction = s_ai_module.attr("initFreeOrionAI");
+        initAIPythonFunction();
+
+        //ignored = exec(fo_interface_import_script.c_str(), s_main_namespace, s_main_namespace);
     } catch (error_already_set err) {
         PyErr_Print();
         return;
@@ -535,19 +561,63 @@ PythonAI::~PythonAI()
 {
     Logger().debugStream() << "Cleaning up / destructing Python AI";
     Py_Finalize();      // stops Python interpreter and release its resources
+    s_ai = 0;
 }
 
 void PythonAI::GenerateOrders()
 {
     try {
-        // tell Python the path in which to locate AI script file
-        object ignored = exec("FreeOrionAI.generateOrders()", main_namespace, main_namespace);
+        // call Python function that generates orders for current turn
+        object generateOrdersPythonFunction = s_ai_module.attr("generateOrders");
+        generateOrdersPythonFunction();
     } catch (error_already_set err) {
         PyErr_Print();
         AIInterface::DoneTurn();
-        return;
     }
 }
 
-void PythonAI::HandleChatMessage(int sender_id, const std::string& msg)
-{}
+void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
+    try {
+        // call Python function that responds or ignores a chat message
+        object handleChatMessagePythonFunction = s_ai_module.attr("handleChatMessage");
+        handleChatMessagePythonFunction(sender_id, msg);
+    } catch (error_already_set err) {
+        PyErr_Print();
+    }
+}
+
+void PythonAI::StartNewGame() {
+    s_save_state_string = "";
+    try {
+        // call Python function that sets up the AI to be able to generate orders for a new game
+        object startNewGamePythonFunction = s_ai_module.attr("startNewGame");
+        startNewGamePythonFunction();
+    } catch (error_already_set err) {
+        PyErr_Print();
+    }
+}
+
+void PythonAI::ResumeLoadedGame(const std::string& save_state_string) {
+    Logger().debugStream() << "PythonAI::ResumeLoadedGame(" << save_state_string << ")";
+    s_save_state_string = save_state_string;
+    try {
+        // call Python function that deals with the new state string sent by the server
+        object resumeLoadedGamePythonFunction = s_ai_module.attr("resumeLoadedGame");
+        resumeLoadedGamePythonFunction(s_save_state_string);
+    } catch (error_already_set err) {
+        PyErr_Print();
+    }
+}
+
+const std::string& PythonAI::GetSaveStateString() {
+    try {
+        // call Python function that serializes AI state for storage in save file and sets s_save_state_string
+        // to contain that string
+        object prepareForSavePythonFunction = s_ai_module.attr("prepareForSave");
+        prepareForSavePythonFunction();
+    } catch (error_already_set err) {
+        PyErr_Print();
+    }
+    Logger().debugStream() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
+    return s_save_state_string;
+}

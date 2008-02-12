@@ -681,9 +681,15 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
 
     boost::shared_ptr<OrderSet> order_set(new OrderSet);
     boost::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
-    if (!ExtractMessageData(message, *order_set, *ui_data))
+    bool ui_data_available = false;
+    std::string save_state_string = "";
+    bool save_state_string_available = false;
+    ExtractMessageData(message, *order_set, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+    if (!ui_data_available)
         ui_data.reset();
-    m_player_save_game_data.push_back(PlayerSaveGameData(player_connection->PlayerName(), server.GetPlayerEmpire(message.SendingPlayer()), order_set, ui_data));
+    if (!save_state_string_available)
+        save_state_string = "ServerFSM: No save state string sent from player " + player_connection->ID();
+    m_player_save_game_data.push_back(PlayerSaveGameData(player_connection->PlayerName(), server.GetPlayerEmpire(message.SendingPlayer()), order_set, ui_data, save_state_string));
     m_players_responded.insert(message.SendingPlayer());
 
     if (m_players_responded == m_needed_reponses) {

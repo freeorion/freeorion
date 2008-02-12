@@ -419,11 +419,13 @@ boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.GameStart";
-    SaveGameUIData ui_data;
     bool loaded_game_data;
     bool ui_data_available;
+    SaveGameUIData ui_data;
+    bool save_state_string_available;
+    std::string save_state_string;      // ignored - used by AI but not by human client
     OrderSet orders;
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, orders, ui_data, loaded_game_data, ui_data_available);
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, orders, loaded_game_data, ui_data_available, ui_data, save_state_string_available, save_state_string);
     Client().StartGame();
     std::swap(Client().Orders(), orders);
     if (loaded_game_data) {

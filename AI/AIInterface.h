@@ -15,13 +15,17 @@ class AIBase
 public:
     virtual ~AIBase();
 
-    virtual void GenerateOrders();  ///< The server has sent a new turn update.  AI should review the new gamestate and send orders for this turn.
-    virtual void HandleChatMessage(int sender_id, const std::string& msg);  ///< another player has sent a chat message to this player.  AI can respond or ignore.
+    virtual void                GenerateOrders();                                           ///< Called when the server has sent a new turn update.  AI should review the new gamestate and send orders for this turn.
+    virtual void                HandleChatMessage(int sender_id, const std::string& msg);   ///< Called when another player sends a chat message to this player.  AI can respond or ignore.
+    virtual void                StartNewGame();                                             ///< Called when a new game (not loaded) is started.  AI should clear its state and prepare to start a new game
+    virtual void                ResumeLoadedGame(const std::string& save_state_string);     ///< Called when a game is loaded from save.  AI should extract any state information stored in \a save_state_string so as to be able to continue generating orders when asked to do so
+    virtual const std::string&  GetSaveStateString();                                       ///< Called when the server is saving the game.  AI should store any state information it will need to resume at a later time, and return this information in the save_state_string
 };
 
-/* Public interface providing functions that an AI client program can call to get information about the
-   gamestate and to interact with it, such as by issuing orders, ending its turn, or sending message to
-   other players. */
+/* Public interface providing relatively easy-to use and somewhat conveniently grouped-together functions that
+   a class that implements AIBase can call to get information from the AIClientApp about the gamestate, and which
+   can be used to interat with the gamestate by issueing orders, ending the AI player's turn, or sending message
+   to other players. */
 namespace AIInterface
 {
     /** Gamestate Accessors */ //@{
@@ -50,29 +54,24 @@ namespace AIInterface
     //@}
 
     /** Order-Giving */ //@{
-    int IssueFleetMoveOrder(int fleet_id, int destination_id);
-    int IssueRenameOrder(int object_id, const std::string& new_name);
-    int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
-    int IssueFleetTransferOrder();
-    int IssueFleetColonizeOrder(int ship_id, int planet_id);
-    int IssueDeleteFleetOrder();
-    int IssueChangeFocusOrder();
-    int IssueResearchQueueOrder();
-    int IssueProductionQueueOrder();
+    int                     IssueFleetMoveOrder(int fleet_id, int destination_id);
+    int                     IssueRenameOrder(int object_id, const std::string& new_name);
+    int                     IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
+    int                     IssueFleetTransferOrder();
+    int                     IssueFleetColonizeOrder(int ship_id, int planet_id);
+    int                     IssueDeleteFleetOrder();
+    int                     IssueChangeFocusOrder();
+    int                     IssueResearchQueueOrder();
+    int                     IssueProductionQueueOrder();
 
-    void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
+    void                    SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
 
-    void DoneTurn();        ///< AI player is done submitting orders for this turn
+    void                    DoneTurn();        ///< AI player is done submitting orders for this turn
     //@}
 
-    /** AI State storage and retrieval */ //@{
-    void SaveState();
-    void LoadState();
-    //@}
-
-    /** Misc */ //@{
-    void LogOutput(const std::string& log_text);    ///< output text to as DEBUG
-    void ErrorOutput(const std::string& log_text);  ///< output text to as ERROR
+    /** Logging */ //@{
+    void                    LogOutput(const std::string& log_text);     ///< output text to as DEBUG
+    void                    ErrorOutput(const std::string& log_text);   ///< output text to as ERROR
     //@}
 };
 

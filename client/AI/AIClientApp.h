@@ -11,7 +11,7 @@ namespace log4cpp {class Category;}
 class AIClientApp : public ClientApp
 {
 public:
-    virtual void StartTurn();       ///< encodes order sets and sends turn orders message
+    virtual void StartTurn();           ///< encodes order sets and sends turn orders message
 
    /** \name Structors */ //@{   
    AIClientApp(int argc, char* argv[]);
@@ -19,13 +19,14 @@ public:
    //@}
 
    /** \name Mutators */ //@{   
-   void                 operator()();     ///< external interface to Run()
-   void                 Wait(int ms);     ///< put the main thread to sleep for \a ms milliseconds
-   void                 Exit(int code);   ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
+   void                 operator()();   ///< external interface to Run()
+   void                 Wait(int ms);   ///< put the main thread to sleep for \a ms milliseconds
+   void                 Exit(int code); ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
    //@}
    
-   static AIClientApp*  GetApp();         ///< returns a AIClientApp pointer to the singleton instance of the app
-   
+   static AIClientApp*  GetApp();       ///< returns a AIClientApp pointer to the singleton instance of the app
+   const AIBase*        GetAI();        ///< returns pointer to AIBase implementation of AI for this client
+
 private:
    void Run();              ///< initializes app state, then executes main event handler/render loop (PollAndRender())
 
