@@ -63,7 +63,10 @@ namespace AIInterface
     int                     IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);
     int                     IssueEnqueueTechOrder(const std::string& tech_name, int position);
     int                     IssueDequeueTechOrder(const std::string& tech_name);
-    int                     IssueProductionQueueOrder();
+    int                     IssueEnqueueProductionOrder(BuildType build_type, const std::string& item_name, int location_id);
+    int                     IssueEnqueueProductionOrder(BuildType build_type, int design_id, int location_id);
+    int                     IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
+    int                     IssueDequeueProductionOrder(int queue_index);
 
     void                    SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
 

@@ -10,6 +10,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Tech.h"
+#include "../Empire/Empire.h"
 
 #include "../util/OrderSet.h"
 
@@ -351,8 +352,87 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueProductionQueueOrder() {
-        return 0;
+    int IssueEnqueueProductionOrder(BuildType build_type, const std::string& item_name, int location_id) {
+        if (build_type != BT_BUILDING && build_type != BT_ORBITAL) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : passed build_type other than BT_ORBITAL or BT_BUILDING with an item name.  BT_SHIP are stored by int id, whereas BT_BUILDING and BT_ORBITAL are stored by string name";
+            return 0;
+        }
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+
+        if (!empire->BuildableItem(build_type, item_name, location_id)) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, build_type, item_name, 1, location_id)));
+
+        return 1;
+    }
+
+    int IssueEnqueueProductionOrder(BuildType build_type, int design_id, int location_id) {
+        if (build_type != BT_SHIP) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : passed build_type other than BT_SHIP with a design id.  BT_SHIP are stored by int id, whereas BT_BUILDING and BT_ORBITAL are stored by string name";
+            return 0;
+        }
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+
+        if (!empire->BuildableItem(build_type, design_id, location_id)) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, build_type, design_id, 1, location_id)));
+
+        return 1;
+    }
+
+    int IssueRequeueProductionOrder(int old_queue_index, int new_queue_index) {
+        if (old_queue_index == new_queue_index) {
+            Logger().errorStream() << "AIInterface::IssueRequeueProductionOrder : passed same old and new indexes... nothing to do.";
+            return 0;
+        }
+
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+
+        const ProductionQueue& queue = empire->GetProductionQueue();
+        if (old_queue_index < 0 || static_cast<int>(queue.size()) <= old_queue_index) {
+            Logger().errorStream() << "AIInterface::IssueRequeueProductionOrder : passed old_queue_index outside range of items on queue.";
+            return 0;
+        }
+
+        // After removing an earlier entry in queue, all later entries are shifted down one queue index, so
+        // inserting before the specified item index should now insert before the previous item index.  This
+        // also allows moving to the end of the queue, rather than only before the last item on the queue.
+        int actual_new_index = new_queue_index;
+        if (old_queue_index < new_queue_index)
+            actual_new_index = new_queue_index - 1;
+
+        if (new_queue_index < 0 || static_cast<int>(queue.size()) <= actual_new_index) {
+            Logger().errorStream() << "AIInterface::IssueRequeueProductionOrder : passed new_queue_index outside range of items on queue.";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, old_queue_index, new_queue_index)));
+
+        return 1;
+    }
+
+    int IssueDequeueProductionOrder(int queue_index) {
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
+
+        const ProductionQueue& queue = empire->GetProductionQueue();
+        if (queue_index < 0 || static_cast<int>(queue.size()) <= queue_index) {
+            Logger().errorStream() << "AIInterface::IssueDequeueProductionOrder : passed queue_index outside range of items on queue.";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, queue_index)));
+
+        return 1;
     }
 
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text) {

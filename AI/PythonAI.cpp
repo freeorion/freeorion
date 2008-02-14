@@ -114,6 +114,11 @@ const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Objec
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
 const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
+int                     (*AIIntEnqueueBuildingOrbital)(BuildType, const std::string&, int) =
+                                                                &AIInterface::IssueEnqueueProductionOrder;
+int                     (*AIIntEnqueueShip)(BuildType, int, int) =
+                                                                &AIInterface::IssueEnqueueProductionOrder;
+
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
     static std::string  s_save_state_string("");
@@ -199,13 +204,17 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
-    def("issueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
-    def("issueRenameOrder",         AIInterface::IssueRenameOrder);
-    def("issueNewFleetOrder",       AIInterface::IssueNewFleetOrder);
-    def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
-    def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
-    def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
-    def("issueDequeueTechOrder",    AIInterface::IssueDequeueTechOrder);
+    def("issueFleetMoveOrder",          AIInterface::IssueFleetMoveOrder);
+    def("issueRenameOrder",             AIInterface::IssueRenameOrder);
+    def("issueNewFleetOrder",           AIInterface::IssueNewFleetOrder);
+    def("issueColonizeOrder",           AIInterface::IssueFleetColonizeOrder);
+    def("issueChangeFocusOrder",        AIInterface::IssueChangeFocusOrder);
+    def("issueEnqueueTechOrder",        AIInterface::IssueEnqueueTechOrder);
+    def("issueDequeueTechOrder",        AIInterface::IssueDequeueTechOrder);
+    def("issueEnqueueProductionOrder",  AIIntEnqueueBuildingOrbital);
+    def("issueEnqueueProductionOrder",  AIIntEnqueueShip);
+    def("issueRequeueProductionOrder",  AIInterface::IssueRequeueProductionOrder);
+    def("issueDequeueProductionOrder",  AIInterface::IssueDequeueProductionOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
 
