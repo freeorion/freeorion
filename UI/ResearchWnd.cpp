@@ -291,7 +291,7 @@ void ResearchWnd::CenterOnTech(const std::string& tech_name)
 
 void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx)));
     UpdateQueue();
     ResetInfoPanel();
 }
@@ -366,7 +366,7 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
     if (!queue.InQueue(tech)) {
-        HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
         UpdateQueue();
         ResetInfoPanel();
         m_tech_tree_wnd->Update();
@@ -382,7 +382,7 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
     for (std::vector<const Tech*>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
         const Tech* tech = *it;
         if (!queue.InQueue(tech))
-            orders.IssueOrder(new ResearchQueueOrder(id, tech->Name(), -1));
+            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(id, tech->Name(), -1)));
     }
     
     UpdateQueue();
@@ -392,7 +392,7 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
 
 void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name()));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name())));
     UpdateQueue();
     ResetInfoPanel();
     m_tech_tree_wnd->Update();

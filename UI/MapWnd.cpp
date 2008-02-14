@@ -1586,7 +1586,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()) {
-            HumanClientApp::GetApp()->Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id)));
             if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
                 SetFleetMovement(fleet);
         }

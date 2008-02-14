@@ -457,24 +457,26 @@ void ServerApp::ProcessTurns()
     }    
 
     // filter FleetColonizeOrder for later processing
-    std::map<int,std::vector<FleetColonizeOrder*> > colonize_order_map;
+    typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
+    ColonizeOrderMap colonize_order_map;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         pOrderSet = it->second;
 
         // filter FleetColonizeOrder and sort them per planet
-        FleetColonizeOrder *order;
-        for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
-            if((order=dynamic_cast<FleetColonizeOrder*>(order_it->second)))
+        boost::shared_ptr<FleetColonizeOrder> order;
+        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
+            if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second)))
             {
-                std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = colonize_order_map.find(order->PlanetID());
+                ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
                 if(it == colonize_order_map.end())
                 {
-                    colonize_order_map.insert(std::pair<int,std::vector<FleetColonizeOrder*> >(order->PlanetID(),std::vector<FleetColonizeOrder*>()));
+                    colonize_order_map.insert(std::make_pair(order->PlanetID(),std::vector<boost::shared_ptr<FleetColonizeOrder> >()));
                     it = colonize_order_map.find(order->PlanetID());
                 }
                 it->second.push_back(order);
             }
+        }
     }
 
     // colonization apply be the following rules
@@ -482,7 +484,7 @@ void ServerApp::ProcessTurns()
     // 2 - if there are more than one empire then
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
-    for (std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it)
+    for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it)
     {
         Planet *planet = GetUniverse().Object<Planet>(it->first);
 

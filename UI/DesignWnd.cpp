@@ -126,7 +126,7 @@ void DesignWnd::AddDesign() {
     }
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ShipDesignOrder(empire_id, new_design_id, *design));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
 
     Logger().errorStream() << "Added new design: " << design->Name();
 

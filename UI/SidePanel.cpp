@@ -869,13 +869,13 @@ void SidePanel::PlanetPanel::Refresh()
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
 {
     Planet *planet = GetPlanet();
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true)));
 }
 
 void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
     Planet *planet = GetPlanet();
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false)));
 } 
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -968,12 +968,13 @@ void SidePanel::PlanetPanel::ClickColonize()
             return;
         }
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID()));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID())));
     }
     else // cancel colonization
     {
-        const FleetColonizeOrder *col_order = dynamic_cast<const FleetColonizeOrder*>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
-        int ship_id = col_order?col_order->ShipID():UniverseObject::INVALID_OBJECT_ID;
+        boost::shared_ptr<FleetColonizeOrder> col_order =
+            boost::dynamic_pointer_cast<FleetColonizeOrder>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
+        int ship_id = col_order ? col_order->ShipID() : UniverseObject::INVALID_OBJECT_ID;
 
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     
@@ -1018,7 +1019,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             edit_wnd.Run();
             if (edit_wnd.Result() != "")
             {
-                HumanClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
                 m_planet_name->SetText(planet->Name());
             }
             break;

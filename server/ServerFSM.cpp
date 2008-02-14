@@ -574,7 +574,7 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
     Empire* empire = server.GetPlayerEmpire(message.SendingPlayer());
     assert(empire);
     for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
-        Order* order = it->second;
+        OrderPtr order = it->second;
         assert(order);
         if (empire->EmpireID() != order->EmpireID()) {
             throw std::runtime_error(
@@ -679,12 +679,24 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    boost::shared_ptr<OrderSet> order_set(new OrderSet);
+    OrderSet received_orders;
     boost::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
     bool ui_data_available = false;
     std::string save_state_string = "";
     bool save_state_string_available = false;
-    ExtractMessageData(message, *order_set, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+    ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+    boost::shared_ptr<OrderSet> order_set;
+    Empire *empire = server.GetPlayerEmpire(player_connection->ID());
+    assert(empire);
+    OrderSet* existing_orders = server.m_turn_sequence[empire->EmpireID()];
+    if (existing_orders)
+        order_set.reset(new OrderSet(*existing_orders));
+    else
+        order_set.reset(new OrderSet(received_orders));
+    std::cout << "Received save game data from player "
+              << player_connection->PlayerName()
+              << " ... " << std::distance(order_set->begin(), order_set->end()) << " orders received"
+              << std::endl;
     if (!ui_data_available)
         ui_data.reset();
     if (!save_state_string_available)

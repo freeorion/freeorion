@@ -149,7 +149,7 @@ namespace AIInterface {
         if (start_id == UniverseObject::INVALID_OBJECT_ID)
             start_id = fleet->NextSystemID();
 
-        AIClientApp::GetApp()->Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet_id, start_id, destination_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_id, destination_id)));
 
         return 1;
     }
@@ -173,7 +173,7 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(empire_id, object_id, new_name));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(empire_id, object_id, new_name)));
 
         return 1;
     }
@@ -233,9 +233,9 @@ namespace AIInterface {
             throw std::runtime_error("Couldn't get new object ID when transferring ship to new fleet");
 
         if (system)
-            AIClientApp::GetApp()->Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system->ID(), ship_ids));
+            AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system->ID(), ship_ids)));
         else
-            AIClientApp::GetApp()->Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, ship_x, ship_y, ship_ids));
+            AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, ship_x, ship_y, ship_ids)));
         
         return 1;
     }
@@ -293,7 +293,7 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(new FleetColonizeOrder(empire_id, ship_id, planet_id));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder(empire_id, ship_id, planet_id)));
     
         return 1;
     }

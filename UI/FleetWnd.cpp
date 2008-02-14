@@ -592,22 +592,22 @@ public:
             for (unsigned int i = 0; i < fleets.size(); ++i)
             {
                 int fleet_id = fleets[i]->ID();
-                HumanClientApp::GetApp()->Orders().IssueOrder(
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                     new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID(), target_fleet->ID(),
-                                           std::vector<int>(fleets[i]->begin(), fleets[i]->end())));
+                                           std::vector<int>(fleets[i]->begin(), fleets[i]->end()))));
                 // if the transfer did not result in the indirect deletion of the fleet, delete it if it is empty
                 Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id);
                 if (fleet && fleet->NumShips() == 0) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
-                        new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID()));
+                        OrderPtr(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleets[i]->ID())));
                 }
             }
         } else if (!ships.empty()) {
             if (!ValidShip(ships[0], target_fleet))
                 return;
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                 new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), target_fleet->ID(),
-                                       ship_ids));
+                                       ship_ids)));
         }
     }
 
@@ -707,9 +707,9 @@ public:
                 return;
             }
 
-            HumanClientApp::GetApp()->Orders().IssueOrder(
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                 new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ship_row->m_ship->FleetID(), 
-                                       m_fleet->ID(), ship_ids));
+                                       m_fleet->ID(), ship_ids)));
         }
         wnds.clear();
     }
@@ -864,7 +864,7 @@ void FleetDetailPanel::ShipRightClicked(int row_idx, GG::ListBox::Row* row, cons
             CUIEditWnd edit_wnd(350, UserString("ENTER_NEW_NAME"), ship_name);
             edit_wnd.Run();
             if (edit_wnd.Result() != "") {
-                HumanClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(), edit_wnd.Result()));
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(), edit_wnd.Result())));
                 m_ships_lb->GetRow(row_idx)[0]->SetText(edit_wnd.Result());
             }
             break;}
@@ -1157,7 +1157,7 @@ void FleetWnd::FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::P
           CUIEditWnd edit_wnd(350, UserString("ENTER_NEW_NAME"), fleet_name);
           edit_wnd.Run();
           if (edit_wnd.Result() != "") {
-              HumanClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID(), edit_wnd.Result()));
+              HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID(), edit_wnd.Result())));
               m_fleets_lb->GetRow(row_idx)[0]->SetText(edit_wnd.Result());
           }
           break;
@@ -1234,7 +1234,7 @@ void FleetWnd::DeleteFleet(Fleet* fleet)
             break;
         }
     }
-    HumanClientApp::GetApp()->Orders().IssueOrder(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID()));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new DeleteFleetOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID())));
 }
 
 void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>& ship_ids)
@@ -1266,7 +1266,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
 
     Fleet* new_fleet = 0;
     if (system) {
-        HumanClientApp::GetApp()->Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system->ID(), ship_ids));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system->ID(), ship_ids)));
         System::ObjectVec fleets = system->FindObjectsInOrbit(-1, StationaryFleetVisitor(empire_id));
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->ID() == new_fleet_id) {
@@ -1275,7 +1275,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
             }
         }
     } else {
-        HumanClientApp::GetApp()->Orders().IssueOrder(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, some_fleet_x, some_fleet_y, ship_ids));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, some_fleet_x, some_fleet_y, ship_ids)));
         std::vector<Fleet*> fleets = GetUniverse().FindObjects<Fleet>();
         for (unsigned int i = 0; i < fleets.size(); ++i) {
             if (fleets[i]->Name() == fleet_name && fleets[i]->X() == some_fleet_x && fleets[i]->Y() == some_fleet_y) {
