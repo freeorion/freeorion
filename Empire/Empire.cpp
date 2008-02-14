@@ -861,7 +861,7 @@ bool Empire::HasExploredSystem(int ID) const
     return (item != ExploredEnd());
 }
 
-bool Empire::BuildableItem(BuildType build_type, std::string name, int location) const
+bool Empire::BuildableItem(BuildType build_type, const std::string& name, int location) const
 {
     // special case to check for ships being passed with names, not design ids
     if (build_type == BT_SHIP)

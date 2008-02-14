@@ -339,7 +339,7 @@ public:
     std::pair<double, int> ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const;
 
     /** Returns true iff this empire can produce the specified item at the specified location. */
-    bool BuildableItem(BuildType build_type, std::string name, int location) const;
+    bool BuildableItem(BuildType build_type, const std::string& name, int location) const;
 
     /** Returns true iff this empire can produce the specified item at the specified location. */
     bool BuildableItem(BuildType build_type, int design_id, int location) const;

@@ -118,6 +118,10 @@ int                     (*AIIntEnqueueBuildingOrbital)(BuildType, const std::str
                                                                 &AIInterface::IssueEnqueueProductionOrder;
 int                     (*AIIntEnqueueShip)(BuildType, int, int) =
                                                                 &AIInterface::IssueEnqueueProductionOrder;
+bool                    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const =
+                                                                &Empire::BuildableItem;
+bool                    (Empire::*BuildableItemShip)(BuildType, int, int) const =
+                                                                &Empire::BuildableItem;
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
@@ -204,17 +208,17 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
-    def("issueFleetMoveOrder",          AIInterface::IssueFleetMoveOrder);
-    def("issueRenameOrder",             AIInterface::IssueRenameOrder);
-    def("issueNewFleetOrder",           AIInterface::IssueNewFleetOrder);
-    def("issueColonizeOrder",           AIInterface::IssueFleetColonizeOrder);
-    def("issueChangeFocusOrder",        AIInterface::IssueChangeFocusOrder);
-    def("issueEnqueueTechOrder",        AIInterface::IssueEnqueueTechOrder);
-    def("issueDequeueTechOrder",        AIInterface::IssueDequeueTechOrder);
-    def("issueEnqueueProductionOrder",  AIIntEnqueueBuildingOrbital);
-    def("issueEnqueueProductionOrder",  AIIntEnqueueShip);
-    def("issueRequeueProductionOrder",  AIInterface::IssueRequeueProductionOrder);
-    def("issueDequeueProductionOrder",  AIInterface::IssueDequeueProductionOrder);
+    def("issueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
+    def("issueRenameOrder",         AIInterface::IssueRenameOrder);
+    def("issueNewFleetOrder",       AIInterface::IssueNewFleetOrder);
+    def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
+    def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
+    def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
+    def("issueDequeueTechOrder",    AIInterface::IssueDequeueTechOrder);
+    def("issueEnqueueBuidlOrder",   AIIntEnqueueBuildingOrbital);
+    def("issueEnqueueBuildOrder",   AIIntEnqueueShip);
+    def("issueRequeueBuildOrder",   AIInterface::IssueRequeueProductionOrder);
+    def("issueDequeueBuildOrder",   AIInterface::IssueDequeueProductionOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
 
@@ -241,6 +245,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .def("availableTechs",          &Empire::AvailableTechs,            return_value_policy<copy_const_reference>()) 
         .def("getTechStatus",           &Empire::GetTechStatus)
         .def("researchStatus",          &Empire::ResearchStatus)
+
+        .def("canBuild",                BuildableItemBuildingOrbital)
+        .def("canBuild",                BuildableItemShip)
 
         .def("hasExploredSystem",       &Empire::HasExploredSystem)
     ;
