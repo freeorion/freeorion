@@ -60,8 +60,9 @@ namespace AIInterface
     int                     IssueFleetTransferOrder();
     int                     IssueFleetColonizeOrder(int ship_id, int planet_id);
     int                     IssueDeleteFleetOrder();
-    int                     IssueChangeFocusOrder();
-    int                     IssueResearchQueueOrder();
+    int                     IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);
+    int                     IssueEnqueueTechOrder(const std::string& tech_name, int position);
+    int                     IssueDequeueTechOrder(const std::string& tech_name);
     int                     IssueProductionQueueOrder();
 
     void                    SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);

@@ -508,8 +508,7 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name,
     m_tech_name(tech_name),
     m_position(position),
     m_remove(false)
-{
-}
+{}
 
 void ResearchQueueOrder::ExecuteImpl() const
 {

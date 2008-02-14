@@ -132,13 +132,13 @@ namespace AIInterface {
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
-        
+
         const Fleet* fleet = universe.Object<Fleet>(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "AIInterface::IssueFleetMoveOrder : passed an invalid fleet_id";
             return 0;
         }
-        
+
         int empire_id = AIClientApp::GetApp()->EmpireID();
         if (!fleet->WhollyOwnedBy(empire_id)) {
             Logger().errorStream() << "AIInterface::IssueFleetMoveOrder : passed fleet_id of fleet not owned only by player";
@@ -294,7 +294,7 @@ namespace AIInterface {
         }
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder(empire_id, ship_id, planet_id)));
-    
+
         return 1;
     }
 
@@ -302,12 +302,53 @@ namespace AIInterface {
         return 0;
     }
 
-    int IssueChangeFocusOrder() {
-        return 0;
+    int IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary) {
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        const Planet* planet = universe.Object<Planet>(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : no planet with passed planet_id";
+            return 0;
+        }
+        if (!planet->WhollyOwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : empire does not own planet with passed planet_id";
+            return 0;
+        }
+        if (focus_type <= INVALID_FOCUS_TYPE || focus_type >= NUM_FOCI) {
+            Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : invalid focus specified";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(empire_id, planet_id, focus_type, primary)));
+
+        return 1;
     }
 
-    int IssueResearchQueueOrder() {
-        return 0;
+    int IssueEnqueueTechOrder(const std::string& tech_name, int position) {
+        const Tech* tech = GetTech(tech_name);
+        if (!tech) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueTechOrder : passed tech_name that is not the name of a tech.";
+            return 0;
+        }
+
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, position)));
+
+        return 1;
+    }
+    int IssueDequeueTechOrder(const std::string& tech_name) {
+        const Tech* tech = GetTech(tech_name);
+        if (!tech) {
+            Logger().errorStream() << "AIInterface::IssueDequeueTechOrder : passed tech_name that is not the name of a tech.";
+            return 0;
+        }
+
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name)));
+
+        return 1;
     }
 
     int IssueProductionQueueOrder() {

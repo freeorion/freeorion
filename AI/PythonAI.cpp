@@ -203,6 +203,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueRenameOrder",         AIInterface::IssueRenameOrder);
     def("issueNewFleetOrder",       AIInterface::IssueNewFleetOrder);
     def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
+    def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
+    def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
+    def("issueDequeueTechOrder",    AIInterface::IssueDequeueTechOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
 
@@ -494,8 +497,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 static dict         s_main_namespace = dict();
 static object       s_ai_module = object();
 static PythonAI*    s_ai = 0;
-PythonAI::PythonAI()
-{
+PythonAI::PythonAI() {
     // in order to expose a getter for it to Python, s_save_state_string must be static, and not a member
     // variable of class PythonAI, because the exposing is done outside the PythonAI class and there is no
     // access to a pointer to PythonAI
@@ -557,15 +559,13 @@ PythonAI::PythonAI()
     Logger().debugStream() << "Initialized Python AI";
 }
 
-PythonAI::~PythonAI()
-{
+PythonAI::~PythonAI() {
     Logger().debugStream() << "Cleaning up / destructing Python AI";
     Py_Finalize();      // stops Python interpreter and release its resources
     s_ai = 0;
 }
 
-void PythonAI::GenerateOrders()
-{
+void PythonAI::GenerateOrders() {
     try {
         // call Python function that generates orders for current turn
         object generateOrdersPythonFunction = s_ai_module.attr("generateOrders");

@@ -739,11 +739,10 @@ void MapWnd::InitTurn(int turn_number)
                                                      m_empire_fleet_supply_lanes[empire_id]);
 
         // get sets of systems from and to which physical resources can be shared
-        std::set<std::pair<int, int> > supply_starlane_traversals;  // as of this writing, rules for propegation of fleet supply and planetary resource exchange are the same, so the info about which lanes are traversed to exchange resources can be discarded
-        std::set<std::set<int> > system_supply_groups;
-        empire->GetSupplySystemGroupsAndStarlanesUsed(system_supply_groups, supply_starlane_traversals);
+        empire->GetSupplySystemGroupsAndStarlanesUsed(m_empire_resource_sharing_groups[empire_id],
+                                                      m_empire_resource_sharing_lanes[empire_id]);
 
-        empire->InitResourcePools(system_supply_groups);
+        empire->InitResourcePools(m_empire_resource_sharing_groups[empire_id]);
     }
 
     m_active_fleet_wnd = 0;
@@ -1538,7 +1537,7 @@ void MapWnd::SystemRightClicked(int system_id)
 void MapWnd::MouseEnteringSystem(int system_id)
 {
     if (!m_in_production_view_mode && m_active_fleet_wnd) {
-        PlotFleetMovement(system_id, false);        
+        PlotFleetMovement(system_id, false);
     }
     SystemBrowsedSignal(system_id);
 }
@@ -1767,6 +1766,8 @@ void MapWnd::HandleEmpireElimination(int empire_id)
 {
     m_empire_system_fleet_supply.erase(empire_id);
     m_empire_fleet_supply_lanes.erase(empire_id);
+    m_empire_resource_sharing_groups.erase(empire_id);
+    m_empire_resource_sharing_lanes.erase(empire_id);
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
@@ -2019,31 +2020,31 @@ bool MapWnd::KeyboardZoomOut()
 void MapWnd::RefreshFoodResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
+
     m_food->SetValue(empire->GetFoodResPool().Stockpile()); // set first value to stockpiled food
 
     double production = empire->GetFoodResPool().Production();
     double spent = empire->TotalFoodDistributed();
-    
+
     m_food->SetValue(production - spent, 1);    // set second (bracketed) value to predicted stockpile change
 }
 
 void MapWnd::RefreshMineralsResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
+
     m_mineral->SetValue(empire->GetMineralResPool().Stockpile());
 
     double production = empire->GetMineralResPool().Production();
     double spent = empire->GetProductionQueue().TotalPPsSpent();
-    
+
     m_mineral->SetValue(production - spent, 1);
 }
 
 void MapWnd::RefreshTradeResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
+
     m_trade->SetValue(empire->GetTradeResPool().Stockpile());
 
     double production = empire->GetTradeResPool().Production();
