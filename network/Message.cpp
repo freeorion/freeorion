@@ -258,7 +258,6 @@ Message JoinGameMessage(const std::string& player_name)
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players)
 {
-    Logger().debugStream() << "GameStartMessage 1";
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -277,7 +276,6 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players, const OrderSet& orders, const SaveGameUIData* ui_data)
 {
-    Logger().debugStream() << "GameStartMessage 2";
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -303,7 +301,6 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id, 
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players, const OrderSet& orders, const std::string* save_state_string)
 {
-    Logger().debugStream() << "GameStartMessage 3";
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -395,7 +392,6 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const 
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data)
 {
-    Logger().debugStream() << "ClientSaveDataMessage with UI data, without save state string";
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -411,7 +407,6 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGame
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string)
 {
-    Logger().debugStream() << "ClientSaveDataMessage without UI data, with save state string";
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -427,7 +422,6 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::str
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders)
 {
-    Logger().debugStream() << "ClientSaveDataMessage with neither UI data nor save state string";
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
@@ -467,7 +461,6 @@ Message HostSaveGameMessage(int sender, const std::string& filename)
 
 Message ServerSaveGameMessage(int receiver, bool synchronous_response)
 {
-    Logger().debugStream() << "ServerSaveGameMessage";
     return Message(Message::SAVE_GAME, -1, receiver, "", synchronous_response);
 }
 
@@ -591,18 +584,19 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
             ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 ia >> BOOST_SERIALIZATION_NVP(save_state_string);
+        } else {
+            ui_data_available = false;
+            save_state_string_available = false;
         }
     } catch (const boost::archive::archive_exception &e) {
         std::cerr << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players, OrderSet& orders, SaveGameUIData& ui_data, bool& loaded_game_data, bool& ui_data_available) failed!  "
                   << "Message:\n" << msg.Text() << std::endl;
         throw;
     }
-    Logger().debugStream() << "ExtractMessageData 1...  ui_data: " << ui_data_available << "  save_state_string_available: " << save_state_string_available;
 }
 
 void ExtractMessageData(const Message& msg, OrderSet& orders)
 {
-    Logger().debugStream() << "ExtractMessageData with just orders... nothing else";
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
@@ -648,7 +642,6 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
                   << "Message:\n" << msg.Text() << std::endl;
         throw;
     }
-    Logger().debugStream() << "ExtractMessageData 2...  ui_data: " << ui_data_available << "  save_state_string_available: " << save_state_string_available;
 }
 
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id)

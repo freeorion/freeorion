@@ -412,9 +412,10 @@ TechManager::TechManager()
     parse_info<const char*> result =
         parse(input.c_str(),
               as_lower_d[*(
-                            tech_p[store_tech_(var(m_techs), var(categories_seen_in_techs), arg1)]
-                          | category_p[store_category_(var(m_categories), arg1)]
-                          )],
+                            tech_p[store_tech_(var(m_techs), var(categories_seen_in_techs), arg1)] |
+                            category_p[store_category_(var(m_categories), arg1)]
+                          )]
+              >> end_p,
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);

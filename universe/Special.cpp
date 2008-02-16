@@ -64,7 +64,8 @@ namespace {
             using namespace phoenix;
             parse_info<const char*> result =
                 parse(input.c_str(),
-                      as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]],
+                      as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]]
+                      >> end_p,
                       skip_p);
             if (!result.full)
                 ReportError(std::cerr, input.c_str(), result);

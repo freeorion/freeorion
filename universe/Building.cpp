@@ -273,7 +273,8 @@ BuildingTypeManager::BuildingTypeManager()
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
-              as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]],
+              as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]]
+              >> end_p,
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);

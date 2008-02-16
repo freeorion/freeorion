@@ -93,7 +93,8 @@ PartTypeManager::PartTypeManager() {
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
-              as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]],
+              as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]]
+              >> end_p,
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);
@@ -324,7 +325,8 @@ HullTypeManager::HullTypeManager() {
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
-              as_lower_d[*hull_p[store_hull_type_(var(m_hulls), arg1)]],
+              as_lower_d[*hull_p[store_hull_type_(var(m_hulls), arg1)]]
+              >> end_p,
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);

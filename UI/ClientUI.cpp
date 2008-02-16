@@ -121,6 +121,8 @@ boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& categor
         icon_filename = "learning.png";
     if (category_name == "PRODUCTION_CATEGORY")
         icon_filename = "production.png";
+    if (category_name == "SHIPS_CATEGORY")
+        icon_filename = "ships.png";
     return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / icon_filename, true);
 }
 
