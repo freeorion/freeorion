@@ -378,12 +378,12 @@ public:
       */
     void GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
 
+    const std::set<int>& ExploredSystems() const;
+
     TechItr TechBegin() const;
     TechItr TechEnd() const;
     BuildingTypeItr AvailableBuildingTypeBegin() const;
     BuildingTypeItr AvailableBuildingTypeEnd() const;
-    SystemIDItr ExploredBegin() const;
-    SystemIDItr ExploredEnd() const;
     ShipDesignItr ShipDesignBegin() const;
     ShipDesignItr ShipDesignEnd() const;
     SitRepItr SitRepBegin() const;

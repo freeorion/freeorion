@@ -857,8 +857,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Prod
 
 bool Empire::HasExploredSystem(int ID) const
 {
-    Empire::SystemIDItr item = find(ExploredBegin(), ExploredEnd(), ID);
-    return (item != ExploredEnd());
+    return (m_explored_systems.find(ID) != m_explored_systems.end());
 }
 
 bool Empire::BuildableItem(BuildType build_type, const std::string& name, int location) const
@@ -1294,13 +1293,9 @@ Empire::TechItr Empire::AvailableBuildingTypeEnd() const
     return m_available_building_types.end();
 }
 
-Empire::SystemIDItr Empire::ExploredBegin()  const
+const std::set<int>& Empire::ExploredSystems() const
 {
-    return m_explored_systems.begin();
-}
-Empire::SystemIDItr Empire::ExploredEnd() const
-{
-    return m_explored_systems.end();
+    return m_explored_systems;
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const

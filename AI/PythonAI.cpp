@@ -65,22 +65,8 @@ namespace {
         static unsigned int count(const Set& self, const ElementType& item) { return self.find(item) == self.end() ? 0u : 1u; }
         static SetIterator begin(const Set& self) { return self.begin(); }
         static SetIterator end(const Set& self) { return self.end(); }
-        static std::string to_string(const Set& self) {
-            std::string retval = "set([";
-            for (SetIterator it = self.begin(); it != self.end(); ++it) {
-                if (it != self.end() && it != self.begin()) {
-                    retval += ", ";
-                }
-                try {
-                    std::string s = boost::lexical_cast<std::string>(*it);
-                    retval += s;
-                } catch (...) {
-                    retval += "?";
-                }
-            }
-            retval += "])";
-            return retval;
-        };
+
+        static std::string to_string(const Set& self); 
 
         static void Wrap(const std::string& python_name) {
             class_<Set, noncopyable>(python_name.c_str(), no_init)
@@ -93,6 +79,29 @@ namespace {
                 .def("__iter__",        iterator<Set>())
                 ;
         }
+    };
+
+    // TODO: specialized template implementations for UniverseObject and subclasses, if needed
+
+    // generic template implementation
+    template <typename ElementType>
+    std::string SetWrapper<ElementType>::to_string(const Set& self) {
+        std::string retval = "set([";
+        for (SetIterator it = self.begin(); it != self.end(); ++it) {
+            if (it != self.end() && it != self.begin()) {
+                retval += ", ";
+            }
+            try {
+                // attempt to cast directly to string (for ints and other built-in types)
+                std::string s = boost::lexical_cast<std::string>(*it);
+                retval += s;
+            } catch (...) {
+                // cast failed, so default to unknown result
+                retval += "?";
+            }
+        }
+        retval += "])";
+        return retval;
     };
 }
 
@@ -114,14 +123,13 @@ const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Objec
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
 const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
-int                     (*AIIntEnqueueBuildingOrbital)(BuildType, const std::string&, int) =
-                                                                &AIInterface::IssueEnqueueProductionOrder;
-int                     (*AIIntEnqueueShip)(BuildType, int, int) =
-                                                                &AIInterface::IssueEnqueueProductionOrder;
-bool                    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const =
-                                                                &Empire::BuildableItem;
-bool                    (Empire::*BuildableItemShip)(BuildType, int, int) const =
-                                                                &Empire::BuildableItem;
+int     (*AIIntEnqueueBuildingOrbital)(BuildType, const std::string&, int) =
+                                                                    &AIInterface::IssueEnqueueProductionOrder;
+int     (*AIIntEnqueueShip)(BuildType, int, int) =                  &AIInterface::IssueEnqueueProductionOrder;
+bool    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const =
+                                                                    &Empire::BuildableItem;
+bool    (Empire::*BuildableItemShip)(BuildType, int, int) const =   &Empire::BuildableItem;
+
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
@@ -215,7 +223,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
     def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
     def("issueDequeueTechOrder",    AIInterface::IssueDequeueTechOrder);
-    def("issueEnqueueBuidlOrder",   AIIntEnqueueBuildingOrbital);
+    def("issueEnqueueBuildOrder",   AIIntEnqueueBuildingOrbital);
     def("issueEnqueueBuildOrder",   AIIntEnqueueShip);
     def("issueRequeueBuildOrder",   AIInterface::IssueRequeueProductionOrder);
     def("issueDequeueBuildOrder",   AIInterface::IssueDequeueProductionOrder);
@@ -232,24 +240,25 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     //     Empire    //
     ///////////////////
     class_<Empire, noncopyable>("empire", no_init)
-        .add_property("name",           make_function(&Empire::Name,        return_value_policy<copy_const_reference>()))
-        .add_property("playerName",     make_function(&Empire::PlayerName,  return_value_policy<copy_const_reference>()))
+        .add_property("name",                   make_function(&Empire::Name,                    return_value_policy<copy_const_reference>()))
+        .add_property("playerName",             make_function(&Empire::PlayerName,              return_value_policy<copy_const_reference>()))
 
-        .add_property("empireID",       &Empire::EmpireID)
-        .add_property("homeworldID",    &Empire::HomeworldID)
-        .add_property("capitolID",      &Empire::CapitolID)
+        .add_property("empireID",               &Empire::EmpireID)
+        .add_property("homeworldID",            &Empire::HomeworldID)
+        .add_property("capitolID",              &Empire::CapitolID)
 
-        .def("buildingTypeAvailable",   &Empire::BuildingTypeAvailable)
-        .def("availableBuildingTypes",  &Empire::AvailableBuildingTypes,    return_value_policy<copy_const_reference>()) 
-        .def("techResearched",          &Empire::TechResearched)
-        .def("availableTechs",          &Empire::AvailableTechs,            return_value_policy<copy_const_reference>()) 
-        .def("getTechStatus",           &Empire::GetTechStatus)
-        .def("researchStatus",          &Empire::ResearchStatus)
+        .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
+        .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_value_policy<reference_existing_object>()))
+        .def("techResearched",                  &Empire::TechResearched)
+        .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_value_policy<reference_existing_object>()))
+        .def("getTechStatus",                   &Empire::GetTechStatus)
+        .def("researchStatus",                  &Empire::ResearchStatus)
 
-        .def("canBuild",                BuildableItemBuildingOrbital)
-        .def("canBuild",                BuildableItemShip)
+        .def("canBuild",                        BuildableItemBuildingOrbital)
+        .def("canBuild",                        BuildableItemShip)
 
-        .def("hasExploredSystem",       &Empire::HasExploredSystem)
+        .def("hasExploredSystem",               &Empire::HasExploredSystem)
+        .add_property("exploredSystemIDs",      make_function(&Empire::ExploredSystems,         return_value_policy<reference_existing_object>()))
     ;
 
     ////////////////////
@@ -265,7 +274,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .def("getSpecial",                  GetSpecial,                     return_value_policy<reference_existing_object>())
 
         .add_property("allObjectIDs",       make_function(&Universe::FindObjectIDs<UniverseObject>, return_value_policy<return_by_value>()))
-        // TODO: add ability to iterate over all objects in universe
+        .add_property("systemIDs",          make_function(&Universe::FindObjectIDs<System>,         return_value_policy<return_by_value>()))
+        .add_property("fleetIDs",           make_function(&Universe::FindObjectIDs<Fleet>,          return_value_policy<return_by_value>()))
 
         .def("systemHasStarlane",           &Universe::SystemReachable)
         .def("systemsConnected",            &Universe::SystemsConnected)
@@ -305,7 +315,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("numShips",                   &Fleet::NumShips)
         .def("containsShipID",                      &Fleet::ContainsShip)
         .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_value_policy<reference_existing_object>()))
-        // TODO: add ability to iterate over ships in fleet
     ;
 
     //////////////////
@@ -369,8 +378,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("planet", no_init)
         .add_property("size",               &Planet::Size)
         .add_property("type",               &Planet::Type)
-        .add_property("buildings",          make_function(&Planet::Buildings,   return_value_policy<reference_existing_object>()))
-        // TODO: add ability to iterate over buildings on planet
+        .add_property("buildingIDs",        make_function(&Planet::Buildings,   return_value_policy<reference_existing_object>()))
     ;
 
     //////////////////
@@ -383,7 +391,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("numWormholes",       &System::Wormholes)
         .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
         .def("HasWormholeToSystemID",       &System::HasWormholeTo)
-        // TODO: add ability to iterate over planets in system
+        .add_property("allObjectIDs",       make_function(&System::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>()))
+        .add_property("planetIDs",          make_function(&System::FindObjectIDs<Planet>,           return_value_policy<return_by_value>()))
+        .add_property("fleetIDs",           make_function(&System::FindObjectIDs<Fleet>,            return_value_policy<return_by_value>()))
     ;
 
     //////////////////
@@ -579,6 +589,8 @@ PythonAI::~PythonAI() {
     Logger().debugStream() << "Cleaning up / destructing Python AI";
     Py_Finalize();      // stops Python interpreter and release its resources
     s_ai = 0;
+    s_main_namespace = dict();
+    s_ai_module = object();
 }
 
 void PythonAI::GenerateOrders() {
@@ -614,7 +626,7 @@ void PythonAI::StartNewGame() {
 }
 
 void PythonAI::ResumeLoadedGame(const std::string& save_state_string) {
-    Logger().debugStream() << "PythonAI::ResumeLoadedGame(" << save_state_string << ")";
+    //Logger().debugStream() << "PythonAI::ResumeLoadedGame(" << save_state_string << ")";
     s_save_state_string = save_state_string;
     try {
         // call Python function that deals with the new state string sent by the server
@@ -634,6 +646,6 @@ const std::string& PythonAI::GetSaveStateString() {
     } catch (error_already_set err) {
         PyErr_Print();
     }
-    Logger().debugStream() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
+    //Logger().debugStream() << "PythonAI::GetSaveStateString() returning: " << s_save_state_string;
     return s_save_state_string;
 }

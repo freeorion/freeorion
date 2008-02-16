@@ -89,6 +89,10 @@ def generateOrders():
         fleet = universe.getFleet(fleet_id)
         if (fleet == None): continue
 
+        print "fleet " + fleet.name + " ships:"
+        for shipID in fleet.shipIDs:
+            print "shipID: " + str(shipID)
+
         startSystemID = fleet.systemID
         if (startSystemID == universe.invalidObjectID): continue
 
