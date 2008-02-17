@@ -36,10 +36,10 @@ namespace {
             lexeme_d['"' >> (*(alnum_p | '_' | '-' | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
 
         colour_p =
-            ('(' >> uint_p[colour_p.r] >> ','
-             >> uint_p[colour_p.g] >> ','
-             >> uint_p[colour_p.b] >> ','
-             >> uint_p[colour_p.a] >> ')')
+            ('(' >> limit_d(0u, 255u)[uint_p[colour_p.r]] >> ','
+                 >> limit_d(0u, 255u)[uint_p[colour_p.g]] >> ','
+                 >> limit_d(0u, 255u)[uint_p[colour_p.b]] >> ','
+                 >> limit_d(0u, 255u)[uint_p[colour_p.a]] >> ')')
             [colour_p.this_ = construct_<GG::Clr>(colour_p.r, colour_p.g, colour_p.b, colour_p.a)];
 
         planet_size_p.add

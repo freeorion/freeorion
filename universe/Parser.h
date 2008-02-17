@@ -63,7 +63,7 @@ struct NameClosure : boost::spirit::closure<NameClosure, std::string>
     member1 this_;
 };
 
-struct ColourClosure : boost::spirit::closure<ColourClosure, GG::Clr, GLubyte, GLubyte, GLubyte, GLubyte>
+struct ColourClosure : boost::spirit::closure<ColourClosure, GG::Clr, unsigned int, unsigned int, unsigned int, unsigned int>
 {
     member1 this_;
     member2 r;

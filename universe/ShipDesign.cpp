@@ -27,7 +27,7 @@ namespace {
     };
 
     const phoenix::function<store_part_type_impl> store_part_type_;
-    
+
     struct store_hull_type_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
@@ -317,7 +317,7 @@ HullTypeManager::HullTypeManager() {
         settings_dir += '/';
     std::string filename = settings_dir + "ship_hulls.txt";
     std::ifstream ifs(filename.c_str());
-    
+
     std::string input;
     std::getline(ifs, input, '\0');
     ifs.close();
