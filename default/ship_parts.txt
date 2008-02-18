@@ -7,6 +7,7 @@ Part
     mass = 0
     buildcost = 4
     buildtime = 1
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Laser.png"
 
 Part
@@ -18,6 +19,7 @@ Part
     mass = 1
     buildcost = 8
     buildtime = 2
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Ion_Cannon.png"
 
 Part
@@ -29,6 +31,7 @@ Part
     mass = 3
     buildcost = 6
     buildtime = 1
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Lead_Plate.png"
 
 Part
@@ -40,7 +43,9 @@ Part
     mass = 0
     buildcost = 4
     buildtime = 0
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Defense_Grid.png"
+
 Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
@@ -50,4 +55,5 @@ Part
     mass = 1
     buildcost = 12
     buildtime = 2
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Deflector.png"

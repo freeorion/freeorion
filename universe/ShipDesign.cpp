@@ -6,6 +6,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../universe/ParserUtil.h"
 #include "../util/OptionsDB.h"
+#include "Condition.h"
 
 #include <fstream>
 
@@ -190,12 +191,15 @@ PartType::PartType() :
     m_range(1.0),
     m_cost(1.0),
     m_build_time(1),
-    m_effects(),
+    m_location(0),
+    m_effects(0),
     m_graphic("")
 {}
 
 PartType::PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
                    double mass, double power, double range, double cost, int build_time,
+                   const Condition::ConditionBase* location,
+                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -205,7 +209,8 @@ PartType::PartType(const std::string& name, const std::string& description, Ship
     m_range(range),
     m_cost(cost),
     m_build_time(build_time),
-    m_effects(),
+    m_location(location),
+    m_effects(effects),
     m_graphic(graphic)
 {}
 
@@ -257,6 +262,10 @@ const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& PartType::Eff
     return m_effects;
 }
 
+const Condition::ConditionBase* PartType::Location() const {
+    return m_location;
+}
+
 
 ////////////////////////////////////////////////
 // HullType
@@ -270,12 +279,15 @@ HullType::HullType() :
     m_build_time(1),
     m_num_external_slots(1),
     m_num_internal_slots(1),
-    m_effects(),
+    m_location(0),
+    m_effects(0),
     m_graphic("")
 {}
 
 HullType::HullType(const std::string& name, const std::string& description, double mass, double speed, double cost,
                    int build_time,  unsigned int num_external_slots, unsigned int num_internal_slots,
+                   const Condition::ConditionBase* location,
+                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -285,7 +297,8 @@ HullType::HullType(const std::string& name, const std::string& description, doub
     m_build_time(build_time),
     m_num_external_slots(num_external_slots),
     m_num_internal_slots(num_internal_slots),
-    m_effects(),
+    m_location(location),
+    m_effects(effects),
     m_graphic(graphic)
 {}
 
@@ -323,6 +336,10 @@ unsigned int HullType::NumInternalSlots() const {
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& HullType::Effects() const {
     return m_effects;
+}
+
+const Condition::ConditionBase* HullType::Location() const {
+    return m_location;
 }
 
 
@@ -483,22 +500,61 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     UniverseObject * source = universe.Object(empire->CapitolID());
     if (!source) return false;
 
-    return true;
-
     locations.insert(loc);
-    // TODO: apply part and hull location conditions
-    return !(locations.empty());
+
+    // apply hull location conditions to potential location
+    const HullType* hull = GetHull();
+    if (!hull)
+        throw std::runtime_error("ShipDesign couldn't get its own hull...?");
+    hull->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
+    if (locations.empty())
+        return false;
+
+    // apply external and internal parts' location conditions to potential location
+    for (std::vector<std::string>::const_iterator part_it = m_external_parts.begin(); part_it != m_external_parts.end(); ++part_it) {
+        const PartType* part = GetPartType(*part_it);
+        if (!part)
+            throw std::runtime_error("ShipDesign couldn't get one of its own external parts...?");
+        part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
+        if (locations.empty())
+            return false;
+    }
+    for (std::vector<std::string>::const_iterator part_it = m_internal_parts.begin(); part_it != m_internal_parts.end(); ++part_it) {
+        const PartType* part = GetPartType(*part_it);
+        if (!part)
+            throw std::runtime_error("ShipDesign couldn't get one of its own internal parts...?");
+        part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
+        if (locations.empty())
+            return false;
+    }
+
+    // location matched all hull and part conditions, so is a valid build location
+    return true;
 }
 
 bool ShipDesign::ValidDesign(const std::string& hull,
                              const std::vector<std::string>& external_parts,
                              const std::vector<std::string>& internal_parts) {
+    // ensure hull type exists and has enough slots of appropriate type for passed parts
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
     if ((!hull_type)
         || (hull_type->NumExternalSlots() < static_cast<unsigned int>(external_parts.size()))
         || (hull_type->NumInternalSlots() < static_cast<unsigned int>(internal_parts.size())))
     {
         return false;
+    }
+
+    // ensure all passed parts can be mounted in slots of type they were passed for
+    const PartTypeManager& part_manager = GetPartTypeManager();
+    for (std::vector<std::string>::const_iterator it = external_parts.begin(); it != external_parts.end(); ++it) {
+        const PartType* part = part_manager.GetPartType(*it);
+        if (!part || !(part->CanMountExternally()))
+            return false;
+    }
+    for (std::vector<std::string>::const_iterator it = internal_parts.begin(); it != internal_parts.end(); ++it) {
+        const PartType* part = part_manager.GetPartType(*it);
+        if (!part || !(part->CanMountInternally()))
+            return false;
     }
 
     return true;

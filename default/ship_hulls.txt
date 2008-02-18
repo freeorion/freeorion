@@ -7,6 +7,7 @@ Hull
     buildtime = 4
     externalslots = 3
     internalslots = 0
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Small.png"
 
 Hull
@@ -18,6 +19,7 @@ Hull
     buildtime = 5
     externalslots = 4
     internalslots = 1
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Large.png"
 
 Hull
@@ -29,6 +31,12 @@ Hull
     buildtime = 6
     externalslots = 5
     internalslots = 3
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = 
+        EffectsGroup
+            scope = All
+            activation = All
+            effects = SetMaxMining Target.MaxMining + 2
     graphic = "ship_hull_icons/Large.png"
 
 Hull
@@ -40,4 +48,5 @@ Hull
     buildtime = 8
     externalslots = 8
     internalslots = 4
+    location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Huge.png"

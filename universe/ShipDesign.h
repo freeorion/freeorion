@@ -10,7 +10,9 @@ public:
     /** \name Structors */ //@{
     PartType();
     PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
-             double mass, double power, double range, double cost, int build_time, /* TODO: add effects group parameter */
+             double mass, double power, double range, double cost, int build_time,
+             const Condition::ConditionBase* location,
+             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
     //@}
 
@@ -32,6 +34,8 @@ public:
 
     const std::string&  Graphic() const;        ///< returns graphic that represents part in UI
 
+    const Condition::ConditionBase*
+                        Location() const;       ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                         Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part has
     //@}
@@ -49,9 +53,11 @@ private:
     double              m_cost;         // in PP
     int                 m_build_time;   // in turns
 
+    const Condition::ConditionBase*
+                        m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                         m_effects;
-    
+
     std::string         m_graphic;
 
     friend class boost::serialization::access;
@@ -105,6 +111,8 @@ public:
     HullType();
     HullType(const std::string& name, const std::string& description, double mass, double speed, double cost,
              int build_time,  unsigned int num_external_slots, unsigned int num_internal_slots,
+             const Condition::ConditionBase* location,
+             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
     //@}
 
@@ -121,6 +129,8 @@ public:
     unsigned int        NumExternalSlots() const;   ///< returns number of external part slots in hull
     unsigned int        NumInternalSlots() const;   ///< returns number of internanl part slots in hull
 
+    const Condition::ConditionBase*
+                        Location() const;       ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                         Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part hull has
     //@}
@@ -137,8 +147,11 @@ private:
     unsigned int        m_num_external_slots;
     unsigned int        m_num_internal_slots;
 
+    const Condition::ConditionBase*
+                        m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                         m_effects;
+
     std::string         m_graphic;
 
     friend class boost::serialization::access;
@@ -270,6 +283,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_range)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
+        & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }
@@ -285,6 +299,7 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_num_external_slots)
         & BOOST_SERIALIZATION_NVP(m_num_internanl_slots)
+        & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }

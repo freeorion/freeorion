@@ -166,9 +166,13 @@ namespace {
              >> mass_label >> real_p[part_p.mass = arg1]
              >> buildcost_label >> real_p[part_p.cost = arg1]
              >> buildtime_label >> int_p[part_p.build_time = arg1]
+             >> location_label >> condition_p[part_p.location = arg1]
+             >> !(effectsgroups_label >> effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[part_p.graphic = arg1])
-            [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class, part_p.mass,
-                                           part_p.power, part_p.range, part_p.cost, part_p.build_time,
+            [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
+                                           part_p.mass, part_p.power, part_p.range, part_p.cost, part_p.build_time,
+                                           part_p.location,
+                                           part_p.effects_groups,
                                            part_p.graphic)];
 
         hull_p =
@@ -181,9 +185,13 @@ namespace {
              >> buildtime_label >> int_p[hull_p.build_time = arg1]
              >> external_slots_label >> uint_p[hull_p.num_external_slots = arg1]
              >> internal_slots_label >> uint_p[hull_p.num_internal_slots = arg1]
+             >> location_label >> condition_p[hull_p.location = arg1]
+             >> !(effectsgroups_label >> effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[hull_p.graphic = arg1])
             [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.mass, hull_p.speed, hull_p.cost,
                                            hull_p.build_time, hull_p.num_external_slots, hull_p.num_internal_slots,
+                                           hull_p.location,
+                                           hull_p.effects_groups,
                                            hull_p.graphic)];
 
              return true;

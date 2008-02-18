@@ -222,7 +222,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     locations.insert(loc);
 
     m_location->Eval(source, locations, non_locations, Condition::TARGETS);
-        
+
     return !(locations.empty());
 }
 
