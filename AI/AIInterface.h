@@ -57,7 +57,8 @@ namespace AIInterface
     int                     IssueFleetMoveOrder(int fleet_id, int destination_id);
     int                     IssueRenameOrder(int object_id, const std::string& new_name);
     int                     IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
-    int                     IssueFleetTransferOrder();
+    int                     IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
+    int                     IssueFleetTransferOrder(int ship_id, int new_fleet_id);
     int                     IssueFleetColonizeOrder(int ship_id, int planet_id);
     int                     IssueDeleteFleetOrder();
     int                     IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);

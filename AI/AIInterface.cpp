@@ -185,6 +185,11 @@ namespace AIInterface {
             return 0;
         }
 
+        if (fleet_name == "") {
+            Logger().errorStream() << "AIInterface::IssueNewFleetOrder : tried to create a nameless fleet";
+            return 0;
+        }
+
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         const Ship* ship = 0;
@@ -202,30 +207,19 @@ namespace AIInterface {
             }
         }
 
-        // make sure all ships are at the same location
-        System* system = ship->GetSystem();
+        // make sure all ships are at a system, and that all are at the same system
         int system_id = ship->SystemID();
-        double ship_x = ship->X();
-        double ship_y = ship->Y();
-        if (system_id != UniverseObject::INVALID_OBJECT_ID) {
-            // ships are located in a system: can just check that all ships have same system id as first ship
-            std::vector<int>::const_iterator it = ship_ids.begin();
-            for (++it; it != ship_ids.end(); ++it) {
-                const Ship* ship2 = universe.Object<Ship>(*it);
-                if (ship2->SystemID() != system_id) {
-                    Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
-                    return 0;
-                }
-            }
-        } else {
-            // ships are located in deep space: need to check their exact locations
-            std::vector<int>::const_iterator it = ship_ids.begin();
-            for (++it; it != ship_ids.end(); ++it) {
-                const Ship* ship2 = universe.Object<Ship>(*it);
-                if ((ship2->X() != ship_x) || (ship2->Y() != ship_y)) {
-                    Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
-                    return 0;
-                }
+        if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
+            return 0;
+        }
+
+        std::vector<int>::const_iterator it = ship_ids.begin();
+        for (++it; it != ship_ids.end(); ++it) {
+            const Ship* ship2 = universe.Object<Ship>(*it);
+            if (ship2->SystemID() != system_id) {
+                Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_ids of ships at different locations";
+                return 0;
             }
         }
 
@@ -233,16 +227,67 @@ namespace AIInterface {
         if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) 
             throw std::runtime_error("Couldn't get new object ID when transferring ship to new fleet");
 
-        if (system)
-            AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system->ID(), ship_ids)));
-        else
-            AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, ship_x, ship_y, ship_ids)));
-        
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+
         return 1;
     }
 
-    int IssueFleetTransferOrder() {
-        return 0;
+    int IssueNewFleetOrder(const std::string& fleet_name, int ship_id) {
+        std::vector<int> ship_ids;
+        ship_ids.push_back(ship_id);
+        return IssueNewFleetOrder(fleet_name, ship_ids);
+    }
+
+    int IssueFleetTransferOrder(int ship_id, int new_fleet_id) {
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        const Ship* ship = universe.Object<Ship>(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed an invalid ship_id";
+            return 0;
+        }
+        int ship_sys_id = ship->SystemID();
+        if (ship_sys_id == UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is not in a system";
+            return 0;
+        }
+        if (!ship->WhollyOwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed ship_id of ship not owned only by player";
+            return 0;
+        }
+
+        const Fleet* fleet = universe.Object<Fleet>(new_fleet_id);
+        if (!fleet) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed an invalid new_fleet_id";
+            return 0;
+        }
+        int fleet_sys_id = fleet->SystemID();
+        if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : new fleet is not in a system";
+            return 0;
+        }
+        if (!fleet->WhollyOwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed fleet_id of fleet not owned only by player";
+            return 0;
+        }
+
+        if (fleet_sys_id != ship_sys_id) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : new fleet and ship are not in the same system";
+            return 0;
+        }
+
+        int old_fleet_id = ship->FleetID();
+        if (new_fleet_id == old_fleet_id) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is already in new fleet";
+            return 0;
+        }
+
+        std::vector<int> ship_ids;
+        ship_ids.push_back(ship_id);
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetTransferOrder(empire_id, old_fleet_id, new_fleet_id, ship_ids)));
+
+        return 1;
     }
 
     int IssueFleetColonizeOrder(int ship_id, int planet_id) {

@@ -130,6 +130,8 @@ bool    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, i
                                                                     &Empire::BuildableItem;
 bool    (Empire::*BuildableItemShip)(BuildType, int, int) const =   &Empire::BuildableItem;
 
+int     (*AIIntNewFleet)(const std::string&, int) =                 &AIInterface::IssueNewFleetOrder;
+
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
@@ -218,7 +220,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("issueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
     def("issueRenameOrder",         AIInterface::IssueRenameOrder);
-    def("issueNewFleetOrder",       AIInterface::IssueNewFleetOrder);
+    def("issueNewFleetOrder",       AIIntNewFleet);
+    def("issueFleetTransferOrder",  AIInterface::IssueFleetTransferOrder);
     def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
     def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
     def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
