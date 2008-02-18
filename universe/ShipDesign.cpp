@@ -184,25 +184,27 @@ PartTypeManager::iterator PartTypeManager::end() const {
 PartType::PartType() :
     m_name("invalid part type"),
     m_description("indescribable"),
-    m_upgrade(""),
     m_class(INVALID_SHIP_PART_CLASS),
     m_mass(1.0),
     m_power(1.0),
     m_range(1.0),
+    m_cost(1.0),
+    m_build_time(1),
     m_effects(),
     m_graphic("")
 {}
 
 PartType::PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
-                   const std::string& upgrade, double mass, double power, double range, /* TODO: add effects group parameter */ 
+                   double mass, double power, double range, double cost, int build_time,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_upgrade(upgrade),
     m_class(part_class),
     m_mass(mass),
     m_power(power),
     m_range(range),
+    m_cost(cost),
+    m_build_time(build_time),
     m_effects(),
     m_graphic(graphic)
 {}
@@ -213,10 +215,6 @@ const std::string& PartType::Name() const {
 
 const std::string& PartType::Description() const {
     return m_description;
-}
-
-const std::string& PartType::Upgrade() const {
-    return m_upgrade;
 }
 
 ShipPartClass PartType::Class() const {
@@ -235,8 +233,20 @@ double PartType::Range() const {
     return m_range;
 }
 
+bool PartType::CanMountExternally() const {
+    return true;    // temporary
+}
+
+bool PartType::CanMountInternally() const {
+    return true;    // temporary
+}
+
 double PartType::Cost() const {
-    return 10;  /// TEMPORARY ///
+    return m_cost;
+}
+
+int PartType::BuildTime() const {
+    return m_build_time;
 }
 
 const std::string& PartType::Graphic() const {
@@ -256,18 +266,25 @@ HullType::HullType() :
     m_description("indescribable"),
     m_mass(1.0),
     m_speed(1.0),
-    m_number_slots(5),
+    m_cost(1.0),
+    m_build_time(1),
+    m_num_external_slots(1),
+    m_num_internal_slots(1),
     m_effects(),
     m_graphic("")
 {}
 
-HullType::HullType(const std::string& name, const std::string& description, double mass, double speed, int num_slots,
+HullType::HullType(const std::string& name, const std::string& description, double mass, double speed, double cost,
+                   int build_time,  unsigned int num_external_slots, unsigned int num_internal_slots,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_mass(mass),
     m_speed(speed),
-    m_number_slots(num_slots),
+    m_cost(cost),
+    m_build_time(build_time),
+    m_num_external_slots(num_external_slots),
+    m_num_internal_slots(num_internal_slots),
     m_effects(),
     m_graphic(graphic)
 {}
@@ -289,11 +306,19 @@ double HullType::Speed() const {
 }
 
 double HullType::Cost() const {
-    return 30;  //// TEMPORARY ////
+    return m_cost;
 }
 
-int HullType::NumberSlots() const {
-    return m_number_slots;
+int HullType::BuildTime() const {
+    return m_build_time;
+}
+
+unsigned int HullType::NumExternalSlots() const {
+    return m_num_external_slots;
+}
+
+unsigned int HullType::NumInternalSlots() const {
+    return m_num_internal_slots;
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& HullType::Effects() const {
@@ -361,25 +386,27 @@ ShipDesign::ShipDesign() :
     m_designed_by_empire_id(-1),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
     m_hull(""),
-    m_parts(),
+    m_external_parts(),
+    m_internal_parts(),
     m_graphic(""),
     m_3D_model("")
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
-                       int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-                       const std::string& graphic, const std::string& model) :
+                       int designed_on_turn, const std::string& hull,const std::vector<std::string>& external_parts,
+                       const std::vector<std::string>& internal_parts, const std::string& graphic, const std::string& model) :
     m_id(UniverseObject::INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
     m_designed_by_empire_id(designed_by_empire_id),
     m_designed_on_turn(designed_on_turn),
     m_hull(hull),
-    m_parts(parts),
+    m_external_parts(external_parts),
+    m_internal_parts(internal_parts),
     m_graphic(graphic),
     m_3D_model(model)
 {
-    if (!ValidDesign(m_hull, m_parts))
+    if (!ValidDesign(m_hull, m_external_parts, m_internal_parts))
         Logger().errorStream() << "constructing an invalid ShipDesign!";
 }
 
@@ -420,8 +447,18 @@ const HullType* ShipDesign::GetHull() const {
     return GetHullTypeManager().GetHullType(m_hull);
 }
 
-const std::vector<std::string>& ShipDesign::Parts() const {
-    return m_parts;
+const std::vector<std::string>& ShipDesign::ExternalParts() const {
+    return m_external_parts;
+}
+
+const std::vector<std::string>& ShipDesign::InternalParts() const {
+    return m_internal_parts;
+}
+
+std::vector<std::string> ShipDesign::Parts() const {
+    std::vector<std::string> retval = m_external_parts;
+    std::copy(m_internal_parts.begin(), m_internal_parts.end(), std::back_inserter(retval));
+    return retval;
 }
 
 const std::string& ShipDesign::Model() const {
@@ -453,12 +490,16 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     return !(locations.empty());
 }
 
-bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
+bool ShipDesign::ValidDesign(const std::string& hull,
+                             const std::vector<std::string>& external_parts,
+                             const std::vector<std::string>& internal_parts) {
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
-    if (!hull_type)
+    if ((!hull_type)
+        || (hull_type->NumExternalSlots() < static_cast<unsigned int>(external_parts.size()))
+        || (hull_type->NumInternalSlots() < static_cast<unsigned int>(internal_parts.size())))
+    {
         return false;
-    if (hull_type->NumberSlots() < static_cast<int>(parts.size()))
-        return false;
+    }
 
     return true;
 }
@@ -468,7 +509,8 @@ double ShipDesign::Defense() const {
     // accumulate defense from defensive parts in design.
     double total_defense = 0.0;
     const PartTypeManager& part_manager = GetPartTypeManager();
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+    std::vector<std::string> all_parts = Parts();
+    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = part_manager.GetPartType(*it);
         if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
             total_defense += part->Power();
@@ -485,7 +527,8 @@ double ShipDesign::Attack() const {
     const PartTypeManager& manager = GetPartTypeManager();
 
     double total_attack = 0.0;
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+    std::vector<std::string> all_parts = Parts();
+    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = manager.GetPartType(*it);
         if (part && (part->Class() == PC_SHORT_RANGE || part->Class() == PC_MISSILES || 
                      part->Class() == PC_FIGHTERS || part->Class() == PC_POINT_DEFENSE)) {
@@ -506,7 +549,8 @@ double ShipDesign::Cost() const {
     double total_cost = 0.0;
 
     const PartTypeManager& part_manager = GetPartTypeManager();
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+    std::vector<std::string> all_parts = Parts();
+    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = part_manager.GetPartType(*it);
         if (part)
             total_cost += part->Cost();
@@ -521,6 +565,21 @@ double ShipDesign::Cost() const {
 }
 
 int ShipDesign::BuildTime() const {
-    return 5;   /// TEMPORARY!
+    // accumulate time from hull and all parts in design
+    int total_turns = 0;
+
+    const PartTypeManager& part_manager = GetPartTypeManager();
+    std::vector<std::string> all_parts = Parts();
+    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
+        const PartType* part = part_manager.GetPartType(*it);
+        if (part)
+            total_turns += part->BuildTime();
+    }
+
+    const HullTypeManager& hull_manager = GetHullTypeManager();
+    const HullType* hull = hull_manager.GetHullType(m_hull);
+    if (hull)
+        total_turns += hull->BuildTime();
+
+    return total_turns;
 }
-//// TEMPORARY

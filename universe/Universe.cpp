@@ -2842,41 +2842,42 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->GetMeter(METER_TRADE)->m_initial_max = home_planet->GetMeter(METER_TRADE)->Max();
 
         // create the empire's initial ship designs
-        // for now, the order that these are created need to match
-        // the enums for ship designs in ships
-        std::vector<std::string> parts;
+        std::vector<std::string> external_parts;
+        std::vector<std::string> internal_parts;
+        Logger().debugStream() << "external parts: " << external_parts.size();
+        Logger().debugStream() << "internal parts: " << internal_parts.size();
         ShipDesign* design = new ShipDesign("Scout", "Small and cheap unarmed vessel designed for recon and exploration.",
-                                            empire_id, 0, "SH_SMALL", parts, "misc/scout1.png", "model");
+                                            empire_id, 0, "SH_SMALL", external_parts, internal_parts, "misc/scout1.png", "model");
         int scout_design_id = empire->AddShipDesign(design);
 
         design = new ShipDesign("Colony Ship", "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.",
-                                empire_id, 0, "SH_MEDIUM", parts, "misc/colony1.png", "model");
+                                empire_id, 0, "SH_MEDIUM", external_parts, internal_parts, "misc/colony1.png", "model");
         int colony_ship_design_id = empire->AddShipDesign(design);
 
-        parts.push_back("SR_LASER");
-        parts.push_back("SH_DEFENSE_GRID");
+        external_parts.push_back("SR_LASER");
+        external_parts.push_back("SH_DEFENSE_GRID");
         design = new ShipDesign("Mark I", "Affordable armed patrol frigate.",
-                                empire_id, 0, "SH_SMALL", parts, "misc/mark1.png", "model");
+                                empire_id, 0, "SH_SMALL", external_parts, internal_parts, "misc/mark1.png", "model");
         int mark_I_design_id = empire->AddShipDesign(design);
 
-        parts.clear();
-        parts.push_back("SR_ION_CANNON");
-        parts.push_back("SH_DEFENSE_GRID");
+        external_parts.clear();
+        external_parts.push_back("SR_ION_CANNON");
+        external_parts.push_back("SH_DEFENSE_GRID");
         design = new ShipDesign("Mark II", "Cruiser with strong defensive and offensive capabilities.",
-                                empire_id, 0, "SH_SMALL", parts, "misc/mark2.png", "model");
+                                empire_id, 0, "SH_SMALL", external_parts, internal_parts, "misc/mark2.png", "model");
         int temp = empire->AddShipDesign(design);
 
-        parts.push_back("SR_ION_CANNON");
-        parts.push_back("SH_DEFLECTOR");
+        external_parts.push_back("SR_ION_CANNON");
+        internal_parts.push_back("SH_DEFLECTOR");
         design = new ShipDesign("Mark III", "Advanced cruiser with heavy weaponry and armor to do the dirty work.",
-                                empire_id, 0, "SH_MEDIUM", parts, "misc/mark3.png", "model");
+                                empire_id, 0, "SH_MEDIUM", external_parts, internal_parts, "misc/mark3.png", "model");
         temp = empire->AddShipDesign(design);
 
-        parts.push_back("SR_ION_CANNON");
-        parts.push_back("SR_ION_CANNON");
-        parts.push_back("SH_DEFLECTOR");
+        external_parts.push_back("SR_ION_CANNON");
+        external_parts.push_back("SR_ION_CANNON");
+        internal_parts.push_back("SH_DEFLECTOR");
         design = new ShipDesign("Mark IV", "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.",
-                                empire_id, 0, "SH_LARGE", parts, "misc/mark4.png", "model");
+                                empire_id, 0, "SH_LARGE", external_parts, internal_parts, "misc/mark4.png", "model");
         temp = empire->AddShipDesign(design);
 
 

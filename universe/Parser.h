@@ -152,7 +152,7 @@ struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std
 };
 
 struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
-                                            double, double, double, std::string, std::string>
+                                            double, double, double, double, int, std::string>
 {
     member1 this_;
     member2 name;
@@ -161,20 +161,24 @@ struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string,
     member5 power;
     member6 range;
     member7 mass;
-    member8 upgrade;
-    member9 graphic;
+    member8 cost;
+    member9 build_time;
+    member10 graphic;
 };
 
 struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double,
-                                            int, std::string>
+                                            double, int, unsigned int, unsigned int, std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
     member4 mass;
     member5 speed;
-    member6 number_slots;
-    member7 graphic;
+    member6 cost;
+    member7 build_time;
+    member8 num_external_slots;
+    member9 num_internal_slots;
+    member10 graphic;
 };
 
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;

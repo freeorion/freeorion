@@ -3,7 +3,10 @@ Hull
     description = "SH_SMALL_DESC"
     mass = 1
     speed = 80
-    slots = 3
+    buildcost = 10
+    buildtime = 4
+    externalslots = 3
+    internalslots = 0
     graphic = "ship_hull_icons/Small.png"
 
 Hull
@@ -11,7 +14,10 @@ Hull
     description = "SH_MEDIUM_DESC"
     mass = 3
     speed = 50
-    slots = 5
+    buildcost = 20
+    buildtime = 5
+    externalslots = 4
+    internalslots = 1
     graphic = "ship_hull_icons/Large.png"
 
 Hull
@@ -19,7 +25,10 @@ Hull
     description = "SH_LARGE_DESC"
     mass = 6
     speed = 40
-    slots = 8
+    buildcost = 30
+    buildtime = 6
+    externalslots = 5
+    internalslots = 3
     graphic = "ship_hull_icons/Large.png"
 
 Hull
@@ -27,5 +36,8 @@ Hull
     description = "SH_HUGE_DESC"
     mass = 10
     speed = 30
-    slots = 12
+    buildcost = 50
+    buildtime = 8
+    externalslots = 8
+    internalslots = 4
     graphic = "ship_hull_icons/Huge.png"

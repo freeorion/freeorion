@@ -70,7 +70,8 @@ namespace {
 
         variable_container =
             str_p("planet")
-            | "system";
+            | "system"
+            | "fleet";
 
         SpecializedVarDefinition();
 

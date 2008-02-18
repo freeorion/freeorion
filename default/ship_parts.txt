@@ -5,7 +5,8 @@ Part
     power = 1
     range = 10
     mass = 0
-    upgrade = "SR_ION_CANNON"
+    buildcost = 4
+    buildtime = 1
     graphic = "ship_part_icons/Laser.png"
 
 Part
@@ -15,7 +16,8 @@ Part
     power = 2
     range = 15
     mass = 1
-    upgrade = ""
+    buildcost = 8
+    buildtime = 2
     graphic = "ship_part_icons/Ion_Cannon.png"
 
 Part
@@ -25,7 +27,8 @@ Part
     power = 1
     range = 0
     mass = 3
-    upgrade = ""
+    buildcost = 6
+    buildtime = 1
     graphic = "ship_part_icons/Lead_Plate.png"
 
 Part
@@ -35,7 +38,8 @@ Part
     power = 1
     range = 0
     mass = 0
-    upgrade = ""
+    buildcost = 4
+    buildtime = 0
     graphic = "ship_part_icons/Defense_Grid.png"
 Part
     name = "SH_DEFLECTOR"
@@ -44,5 +48,6 @@ Part
     power = 3
     range = 0
     mass = 1
-    upgrade = ""
+    buildcost = 12
+    buildtime = 2
     graphic = "ship_part_icons/Deflector.png"
