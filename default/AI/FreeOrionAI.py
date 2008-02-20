@@ -88,7 +88,6 @@ def generateOrders():
     fo.issueEnqueueTechOrder("GRO_MEDICAL_PATH", -1)
 
     print "final techs on queue: " + str(len(researchQueue))
-
     for element in researchQueue:
         print element.tech.name
 
@@ -96,6 +95,17 @@ def generateOrders():
 
     print "tech LRN_ALGO_ELEGANCE on queue? " + str(researchQueue.inQueue("LRN_ALGO_ELEGANCE"))
 
+    #fo.issueEnqueueBuildingProductionOrder("BLD_BIOTERROR_LAB", empire.capitolID)
+    availableShipDesignIDs = empire.availableShipDesigns
+    for id in availableShipDesignIDs:
+        print "available design id: " + str(id)
+        fo.issueEnqueueShipProductionOrder(id, empire.capitolID)
+
+    productionQueue = empire.productionQueue
+
+    print "items on production queue:"
+    for element in productionQueue:
+        print "name: " + element.name + " id: " + str(element.designID) + " turns left: " + str(element.turnsLeft)
 
     # get stationary fleets
     fleetIDs = getEmpireStationaryFleetIDs(empireID)

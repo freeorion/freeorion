@@ -73,7 +73,7 @@ namespace {
         static std::string to_string(const Set& self); 
 
         static void Wrap(const std::string& python_name) {
-            class_<Set, noncopyable>(python_name.c_str(), no_init)
+            class_<Set>(python_name.c_str(), no_init)
                 .def("__str__",         &to_string)
                 .def("__len__",         &size)
                 .def("size",            &size)
@@ -135,17 +135,26 @@ bool                    (Empire::*BuildableItemShip)(BuildType, int, int) const 
 int                     (*AIIntNewFleet)(const std::string&, int) =
                                                                 &AIInterface::IssueNewFleetOrder;
 
-// helper functions for exposing queues.  queues test whether they contain a Tech, Building or Shipdesign, but
-// python needs a __contains__ function that takes an *Queue::Element.  helper functions take an Element and 
-// return the associated Tech, Building or ShipDesign
+// helper functions for exposing queues.
+
+// Research queue tests whether it contains a Tech but Python needs a __contains__ function that takes a 
+// *Queue::Element.  This helper functions take an Element and returns the associated Tech.
 const Tech*             TechFromResearchQueueElement(const ResearchQueue::Element& element) { return element.tech; }
 
-// create function that takes two parameters.  The first parameter is a ResearchQueue*, which is passed directly
-// to ResearchQueue::InQueue as the this pointer.  The second parameter is a ResearchQueue::Element which is
-// passed into TechFromResearchQueueElement, which reeturns a Tech*, which is passed into ResearchQueue::InQueue
-// as the second parameter.
+// Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
+// is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
+// ResearchQueue::Element which is passed into TechFromResearchQueueElement, which reeturns a Tech*, which is
+// passed into ResearchQueue::InQueue as the second parameter.
 boost::function<bool(const ResearchQueue*, const ResearchQueue::Element&)> InQueueFromResearchQueueElementFunc =
     boost::bind(&ResearchQueue::InQueue, _1, boost::bind(TechFromResearchQueueElement, _2));
+
+// ProductionQueue::Element contains a ProductionItem which contains details of the item on the queue.  Need helper
+// functions to get the details about the item in the Element without adding extra pointless exposed classes to
+// the Python interface
+BuildType               BuildTypeFromProductionQueueElement(const ProductionQueue::Element& element) { return element.item.build_type; }
+const std::string&      NameFromProductionQueueElement(const ProductionQueue::Element& element) { return element.item.name; }
+int                     DesignIDFromProductionQueueElement(const ProductionQueue::Element& element) { return element.item.design_id; }
+
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
@@ -283,6 +292,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
         .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
         .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_internal_reference<>()))
+        .def("shipDesignAvailable",             &Empire::ShipDesignAvailable)
+        .add_property("availableShipDesigns",   make_function(&Empire::AvailableShipDesigns,    return_value_policy<return_by_value>()))
         .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      return_internal_reference<>()))
 
         .def("techResearched",                  &Empire::TechResearched)
@@ -308,32 +319,42 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ;
     class_<ResearchQueue, noncopyable>("researchQueue", no_init)
         .def("__iter__",                        iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
-        .def("__getitem__",                     &ResearchQueue::operator[],                     return_value_policy<copy_const_reference>())
+        .def("__getitem__",                     &ResearchQueue::operator[],                     return_internal_reference<>())
         .def("__len__",                         &ResearchQueue::size)
         .def("size",                            &ResearchQueue::size)
         .def("empty",                           &ResearchQueue::empty)
         .def("inQueue",                         &ResearchQueue::InQueue)
-        .def("inQueue",         make_function(
-                                    boost::bind(&ResearchQueue::InQueue, _1, boost::bind(&GetTech, _2)),
-                                    return_value_policy<return_by_value>(),
-                                    boost::mpl::vector<bool, const ResearchQueue*, const std::string&>()
-                                ))
-        .def("__contains__",    make_function(
-                                    boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
-                                    return_value_policy<return_by_value>(),
-                                    boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
-                                ))
-        //.def("count", ...?)
+        .def("inQueue",                         make_function(
+                                                    boost::bind(&ResearchQueue::InQueue, _1, boost::bind(&GetTech, _2)),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<bool, const ResearchQueue*, const std::string&>()
+                                                ))
+        .def("__contains__",                    make_function(
+                                                    boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
+                                                ))
     ;
-
 
     //////////////////////
     // Production Queue //
     //////////////////////
-    class_<ProductionQueue::Element, noncopyable>("productionQueueElement", no_init)
-        //.add_property("buildingName",           make_getter(&ProductionQueue::Element::item.name,       return_value_policy<return_by_value>()))
-        //.add_property("designID",               make_getter(&ProductionQueue::Element::tech.design_id,  return_value_policy<return_by_value>()))
-        //.add_property("buildType",              make_getter(&ProductionQueue::Element::tech.build_type, return_value_policy<return_by_value>()))
+    class_<ProductionQueue::Element>("productionQueueElement", no_init)
+        .add_property("name",                   make_function(
+                                                    boost::bind(NameFromProductionQueueElement, _1),
+                                                    return_value_policy<copy_const_reference>(),
+                                                    boost::mpl::vector<const std::string&, const ProductionQueue::Element&>()
+                                                ))
+        .add_property("designID",               make_function(
+                                                    boost::bind(DesignIDFromProductionQueueElement, _1),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<int, const ProductionQueue::Element&>()
+                                                ))
+        .add_property("buildType",              make_function(
+                                                    boost::bind(BuildTypeFromProductionQueueElement, _1),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<BuildType, const ProductionQueue::Element&>()
+                                                ))
         .def_readonly("locationID",             &ProductionQueue::Element::location)
         .def_readonly("spending",               &ProductionQueue::Element::spending)
         .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
@@ -345,7 +366,6 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .def("__len__",                         &ProductionQueue::size)
         .def("size",                            &ProductionQueue::size)
         .def("empty",                           &ProductionQueue::empty)
-        //.def("inQueue",                         &ProductionQueue::InQueue)
     ;
 
 
