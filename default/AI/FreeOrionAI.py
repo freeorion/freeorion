@@ -79,6 +79,23 @@ def generateOrders():
     empireID = fo.empireID()
     universe = fo.getUniverse()
 
+    researchQueue = empire.researchQueue
+
+    print "initial techs on queue: " + str(len(researchQueue))
+
+    fo.issueEnqueueTechOrder("LRN_PHYS_BRAIN", -1)
+    fo.issueEnqueueTechOrder("LRN_ALGO_ELEGANCE", -1)
+    fo.issueEnqueueTechOrder("GRO_MEDICAL_PATH", -1)
+
+    print "final techs on queue: " + str(len(researchQueue))
+
+    for element in researchQueue:
+        print element.tech.name
+
+    #print "tech 2: " + str(researchQueue[2].tech.name) # this works on turn one, but will crash on turn two because the tech will have been researched.  left here, commented, full illustrative purposes
+
+    print "tech LRN_ALGO_ELEGANCE on queue? " + str(researchQueue.inQueue("LRN_ALGO_ELEGANCE"))
+
 
     # get stationary fleets
     fleetIDs = getEmpireStationaryFleetIDs(empireID)

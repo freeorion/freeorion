@@ -22,6 +22,9 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 
+#include <boost/function.hpp>
+#include <boost/mpl/vector.hpp>
+
 #include <boost/lexical_cast.hpp>
 
 using boost::python::class_;
@@ -124,16 +127,25 @@ const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Objec
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
 const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
-bool    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const =
-                                                                    &Empire::BuildableItem;
-bool    (Empire::*BuildableItemShip)(BuildType, int, int) const =   &Empire::BuildableItem;
+bool                    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const =
+                                                                &Empire::BuildableItem;
+bool                    (Empire::*BuildableItemShip)(BuildType, int, int) const =
+                                                                &Empire::BuildableItem;
 
-int     (*AIIntNewFleet)(const std::string&, int) =                 &AIInterface::IssueNewFleetOrder;
+int                     (*AIIntNewFleet)(const std::string&, int) =
+                                                                &AIInterface::IssueNewFleetOrder;
 
 // helper functions for exposing queues.  queues test whether they contain a Tech, Building or Shipdesign, but
 // python needs a __contains__ function that takes an *Queue::Element.  helper functions take an Element and 
 // return the associated Tech, Building or ShipDesign
 const Tech*             TechFromResearchQueueElement(const ResearchQueue::Element& element) { return element.tech; }
+
+// create function that takes two parameters.  The first parameter is a ResearchQueue*, which is passed directly
+// to ResearchQueue::InQueue as the this pointer.  The second parameter is a ResearchQueue::Element which is
+// passed into TechFromResearchQueueElement, which reeturns a Tech*, which is passed into ResearchQueue::InQueue
+// as the second parameter.
+boost::function<bool(const ResearchQueue*, const ResearchQueue::Element&)> InQueueFromResearchQueueElementFunc =
+    boost::bind(&ResearchQueue::InQueue, _1, boost::bind(TechFromResearchQueueElement, _2));
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
@@ -289,19 +301,28 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ////////////////////
     // Research Queue //
     ////////////////////
-    class_<ResearchQueue::Element, noncopyable>("researchQueueElement", no_init)
+    class_<ResearchQueue::Element>("researchQueueElement", no_init)
         .add_property("tech",                   make_getter(&ResearchQueue::Element::tech,      return_value_policy<reference_existing_object>()))
         .def_readonly("spending",               &ResearchQueue::Element::spending)
         .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
     ;
     class_<ResearchQueue, noncopyable>("researchQueue", no_init)
         .def("__iter__",                        iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
-        .def("__getitem__",                     &ResearchQueue::operator[],                     return_internal_reference<>())
+        .def("__getitem__",                     &ResearchQueue::operator[],                     return_value_policy<copy_const_reference>())
         .def("__len__",                         &ResearchQueue::size)
         .def("size",                            &ResearchQueue::size)
         .def("empty",                           &ResearchQueue::empty)
         .def("inQueue",                         &ResearchQueue::InQueue)
-        //.def("__contains__",                    make_function(boost::bind(&ResearchQueue::InQueue, TechFromResearchQueueElement(_1))))
+        .def("inQueue",         make_function(
+                                    boost::bind(&ResearchQueue::InQueue, _1, boost::bind(&GetTech, _2)),
+                                    return_value_policy<return_by_value>(),
+                                    boost::mpl::vector<bool, const ResearchQueue*, const std::string&>()
+                                ))
+        .def("__contains__",    make_function(
+                                    boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
+                                    return_value_policy<return_by_value>(),
+                                    boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
+                                ))
         //.def("count", ...?)
     ;
 
