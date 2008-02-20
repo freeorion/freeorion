@@ -34,6 +34,7 @@ using boost::python::return_value_policy;
 using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
 using boost::python::return_by_value;
+using boost::python::return_internal_reference;
 using boost::python::enum_;
 using boost::python::vector_indexing_suite;
 using boost::python::map_indexing_suite;
@@ -123,19 +124,20 @@ const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Objec
 const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
 const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
-int     (*AIIntEnqueueBuildingOrbital)(BuildType, const std::string&, int) =
-                                                                    &AIInterface::IssueEnqueueProductionOrder;
-int     (*AIIntEnqueueShip)(BuildType, int, int) =                  &AIInterface::IssueEnqueueProductionOrder;
 bool    (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const =
                                                                     &Empire::BuildableItem;
 bool    (Empire::*BuildableItemShip)(BuildType, int, int) const =   &Empire::BuildableItem;
 
 int     (*AIIntNewFleet)(const std::string&, int) =                 &AIInterface::IssueNewFleetOrder;
 
+// helper functions for exposing queues.  queues test whether they contain a Tech, Building or Shipdesign, but
+// python needs a __contains__ function that takes an *Queue::Element.  helper functions take an Element and 
+// return the associated Tech, Building or ShipDesign
+const Tech*             TechFromResearchQueueElement(const ResearchQueue::Element& element) { return element.tech; }
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
-    static std::string  s_save_state_string("");
+    static std::string s_save_state_string("");
     static const std::string& GetStaticSaveStateString() {
         //Logger().debugStream() << "Python-exposed GetSaveStateString() returning " << s_save_state_string;
         return s_save_state_string;
@@ -191,7 +193,24 @@ BOOST_PYTHON_MODULE(freeOrionLogger)
     def("error",                  ErrorText);
 }
 
-// Expose AIInterface and all associated classes to Python
+/** Expose AIInterface and all associated classes to Python.
+ *
+ * CallPolicies:
+ *
+ * return_value_policy<copy_const_reference>        when returning a relatively small object, such as a string,
+ *                                                  that is returned by const reference or pointer
+ *
+ * return_value_policy<return_by_value>             when returning either a simple data type or a temporary object
+ *                                                  in a function that will go out of scope after being returned
+ *
+ * return_internal_reference<>                      when returning an object or data that is a member of the object
+ *                                                  on which the function is called (and shares its lifetime)
+ *
+ * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a 
+ *                                                  member function where the returned object's lifetime is not
+ *                                                  fixed to the lifetime of the object on which the function is
+ *                                                  called
+ */
 BOOST_PYTHON_MODULE(freeOrionAIInterface)
 {
     ///////////////////
@@ -226,15 +245,15 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
     def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
     def("issueDequeueTechOrder",    AIInterface::IssueDequeueTechOrder);
-    def("issueEnqueueBuildOrder",   AIIntEnqueueBuildingOrbital);
-    def("issueEnqueueBuildOrder",   AIIntEnqueueShip);
-    def("issueRequeueBuildOrder",   AIInterface::IssueRequeueProductionOrder);
-    def("issueDequeueBuildOrder",   AIInterface::IssueDequeueProductionOrder);
+    def("issueEnqueueBuildingProductionOrder",  AIInterface::IssueEnqueueBuildingProductionOrder);
+    def("issueEnqueueShipProductionOrder",      AIInterface::IssueEnqueueShipProductionOrder);
+    def("issueRequeueProductionOrder",          AIInterface::IssueRequeueProductionOrder);
+    def("issueDequeueProductionOrder",          AIInterface::IssueDequeueProductionOrder);
 
     def("sendChatMessage",          AIInterface::SendPlayerChatMessage);
 
     def("setSaveStateString",       SetStaticSaveStateString);
-    def("getSaveStateString",       GetStaticSaveStateString,               return_value_policy<copy_const_reference>());
+    def("getSaveStateString",       GetStaticSaveStateString,       return_value_policy<copy_const_reference>());
 
     def("doneTurn",                 AIInterface::DoneTurn);
 
@@ -251,18 +270,63 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("capitolID",              &Empire::CapitolID)
 
         .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)
-        .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_value_policy<reference_existing_object>()))
+        .add_property("availableBuildingTypes", make_function(&Empire::AvailableBuildingTypes,  return_internal_reference<>()))
+        .add_property("productionQueue",        make_function(&Empire::GetProductionQueue,      return_internal_reference<>()))
+
         .def("techResearched",                  &Empire::TechResearched)
-        .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_value_policy<reference_existing_object>()))
+        .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_internal_reference<>()))
         .def("getTechStatus",                   &Empire::GetTechStatus)
         .def("researchStatus",                  &Empire::ResearchStatus)
+        .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        return_internal_reference<>()))
 
         .def("canBuild",                        BuildableItemBuildingOrbital)
         .def("canBuild",                        BuildableItemShip)
 
         .def("hasExploredSystem",               &Empire::HasExploredSystem)
-        .add_property("exploredSystemIDs",      make_function(&Empire::ExploredSystems,         return_value_policy<reference_existing_object>()))
+        .add_property("exploredSystemIDs",      make_function(&Empire::ExploredSystems,         return_internal_reference<>()))
     ;
+
+    ////////////////////
+    // Research Queue //
+    ////////////////////
+    class_<ResearchQueue::Element, noncopyable>("researchQueueElement", no_init)
+        .add_property("tech",                   make_getter(&ResearchQueue::Element::tech,      return_value_policy<reference_existing_object>()))
+        .def_readonly("spending",               &ResearchQueue::Element::spending)
+        .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
+    ;
+    class_<ResearchQueue, noncopyable>("researchQueue", no_init)
+        .def("__iter__",                        iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
+        .def("__getitem__",                     &ResearchQueue::operator[],                     return_internal_reference<>())
+        .def("__len__",                         &ResearchQueue::size)
+        .def("size",                            &ResearchQueue::size)
+        .def("empty",                           &ResearchQueue::empty)
+        .def("inQueue",                         &ResearchQueue::InQueue)
+        //.def("__contains__",                    make_function(boost::bind(&ResearchQueue::InQueue, TechFromResearchQueueElement(_1))))
+        //.def("count", ...?)
+    ;
+
+
+    //////////////////////
+    // Production Queue //
+    //////////////////////
+    class_<ProductionQueue::Element, noncopyable>("productionQueueElement", no_init)
+        //.add_property("buildingName",           make_getter(&ProductionQueue::Element::item.name,       return_value_policy<return_by_value>()))
+        //.add_property("designID",               make_getter(&ProductionQueue::Element::tech.design_id,  return_value_policy<return_by_value>()))
+        //.add_property("buildType",              make_getter(&ProductionQueue::Element::tech.build_type, return_value_policy<return_by_value>()))
+        .def_readonly("locationID",             &ProductionQueue::Element::location)
+        .def_readonly("spending",               &ProductionQueue::Element::spending)
+        .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
+        .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
+    ;
+    class_<ProductionQueue, noncopyable>("productionQueue", no_init)
+        .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
+        //.def("__getitem__",                     &ProductionQueue::operator[],                   return_internal_reference<>())
+        .def("__len__",                         &ProductionQueue::size)
+        .def("size",                            &ProductionQueue::size)
+        .def("empty",                           &ProductionQueue::empty)
+        //.def("inQueue",                         &ProductionQueue::InQueue)
+    ;
+
 
     ////////////////////
     //    Universe    //
@@ -298,12 +362,12 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("y",                  &UniverseObject::Y)
         .add_property("systemID",           &UniverseObject::SystemID)
         .add_property("unowned",            &UniverseObject::Unowned)
-        .add_property("owners",             make_function(&UniverseObject::Owners,      return_value_policy<reference_existing_object>()))
+        .add_property("owners",             make_function(&UniverseObject::Owners,      return_internal_reference<>()))
         .def("ownedBy",                     &UniverseObject::OwnedBy)
         .def("whollyOwnedBy",               &UniverseObject::WhollyOwnedBy)
         .add_property("creationTurn",       &UniverseObject::CreationTurn)
         .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
-        .add_property("specials",           make_function(&UniverseObject::Specials,    return_value_policy<reference_existing_object>()))
+        .add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
     ;
 
     ///////////////////
@@ -317,7 +381,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("hasArmedShips",              &Fleet::HasArmedShips)
         .add_property("numShips",                   &Fleet::NumShips)
         .def("containsShipID",                      &Fleet::ContainsShip)
-        .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_value_policy<reference_existing_object>()))
+        .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
     ;
 
     //////////////////
@@ -381,7 +445,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("planet", no_init)
         .add_property("size",               &Planet::Size)
         .add_property("type",               &Planet::Type)
-        .add_property("buildingIDs",        make_function(&Planet::Buildings,   return_value_policy<reference_existing_object>()))
+        .add_property("buildingIDs",        make_function(&Planet::Buildings,   return_internal_reference<>()))
     ;
 
     //////////////////
@@ -410,8 +474,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .add_property("category",           make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
         .add_property("researchCost",       &Tech::ResearchCost)
         .add_property("researchTurns",      &Tech::ResearchTurns)
-        .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_value_policy<reference_existing_object>()))
-        .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_value_policy<reference_existing_object>()))
+        .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_internal_reference<>()))
+        .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
     ;
 
     /////////////////
@@ -473,6 +537,10 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .value("unresearchable",    TS_UNRESEARCHABLE)
         .value("researchable",      TS_RESEARCHABLE)
         .value("complete",          TS_COMPLETE)
+    ;
+    enum_<BuildType>("buildType")
+        .value("unresearchable",    BT_BUILDING)
+        .value("researchable",      BT_SHIP)
     ;
     enum_<MeterType>("meterType")
         .value("population",    METER_POPULATION)

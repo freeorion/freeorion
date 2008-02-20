@@ -197,6 +197,12 @@ ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
     return end();
 }
 
+const ResearchQueue::Element& ResearchQueue::operator[](int i) const
+{
+    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    return m_queue[i];
+}
+
 ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
 {
     for (const_iterator it = begin(); it != end(); ++it) {

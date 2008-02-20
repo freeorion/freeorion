@@ -397,38 +397,30 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueEnqueueProductionOrder(BuildType build_type, const std::string& item_name, int location_id) {
-        if (build_type != BT_BUILDING && build_type != BT_ORBITAL) {
-            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : passed build_type other than BT_ORBITAL or BT_BUILDING with an item name.  BT_SHIP are stored by int id, whereas BT_BUILDING and BT_ORBITAL are stored by string name";
-            return 0;
-        }
+    int IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
-        if (!empire->BuildableItem(build_type, item_name, location_id)) {
-            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
+        if (!empire->BuildableItem(BT_BUILDING, item_name, location_id)) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueBuildingProductionOrder : specified item_name and location_id that don't indicate an item that can be built at that location";
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, build_type, item_name, 1, location_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_BUILDING, item_name, 1, location_id)));
 
         return 1;
     }
 
-    int IssueEnqueueProductionOrder(BuildType build_type, int design_id, int location_id) {
-        if (build_type != BT_SHIP) {
-            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : passed build_type other than BT_SHIP with a design id.  BT_SHIP are stored by int id, whereas BT_BUILDING and BT_ORBITAL are stored by string name";
-            return 0;
-        }
+    int IssueEnqueueShipProductionOrder(int design_id, int location_id) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         const Empire* empire = AIClientApp::GetApp()->Empires().Lookup(empire_id);
 
-        if (!empire->BuildableItem(build_type, design_id, location_id)) {
-            Logger().errorStream() << "AIInterface::IssueEnqueueProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
+        if (!empire->BuildableItem(BT_SHIP, design_id, location_id)) {
+            Logger().errorStream() << "AIInterface::IssueEnqueueShipProductionOrder : specified design_id and location_id that don't indicate a design that can be built at that location";
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, build_type, design_id, 1, location_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(empire_id, BT_SHIP, design_id, 1, location_id)));
 
         return 1;
     }

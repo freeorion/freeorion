@@ -54,18 +54,22 @@ namespace AIInterface
     //@}
 
     /** Order-Giving */ //@{
-    int                     IssueFleetMoveOrder(int fleet_id, int destination_id);
     int                     IssueRenameOrder(int object_id, const std::string& new_name);
+
+    int                     IssueFleetMoveOrder(int fleet_id, int destination_id);
     int                     IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
     int                     IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
     int                     IssueFleetTransferOrder(int ship_id, int new_fleet_id);
     int                     IssueFleetColonizeOrder(int ship_id, int planet_id);
     int                     IssueDeleteFleetOrder();
+
     int                     IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);
+
     int                     IssueEnqueueTechOrder(const std::string& tech_name, int position);
     int                     IssueDequeueTechOrder(const std::string& tech_name);
-    int                     IssueEnqueueProductionOrder(BuildType build_type, const std::string& item_name, int location_id);
-    int                     IssueEnqueueProductionOrder(BuildType build_type, int design_id, int location_id);
+
+    int                     IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id);
+    int                     IssueEnqueueShipProductionOrder(int design_id, int location_id);
     int                     IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
     int                     IssueDequeueProductionOrder(int queue_index);
 

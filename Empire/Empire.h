@@ -56,6 +56,7 @@ struct ResearchQueue
     const_iterator begin() const;
     const_iterator end() const;
     const_iterator find(const Tech* tech) const;
+    const Element& operator[](int i) const;
 
     /** Returns an iterator to the underfunded research project, or end() if none exists. */
     const_iterator UnderfundedProject() const;
