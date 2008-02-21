@@ -132,6 +132,11 @@ bool                    (Empire::*BuildableItemBuildingOrbital)(BuildType, const
 bool                    (Empire::*BuildableItemShip)(BuildType, int, int) const =
                                                                 &Empire::BuildableItem;
 
+const ProductionQueue::Element&
+                        (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =
+                                                                &ProductionQueue::operator[];
+
+
 int                     (*AIIntNewFleet)(const std::string&, int) =
                                                                 &AIInterface::IssueNewFleetOrder;
 
@@ -362,7 +367,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ;
     class_<ProductionQueue, noncopyable>("productionQueue", no_init)
         .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
-        //.def("__getitem__",                     &ProductionQueue::operator[],                   return_internal_reference<>())
+        .def("__getitem__",                     ProductionQueueOperatorSquareBrackets,          return_internal_reference<>())
         .def("__len__",                         &ProductionQueue::size)
         .def("size",                            &ProductionQueue::size)
         .def("empty",                           &ProductionQueue::empty)

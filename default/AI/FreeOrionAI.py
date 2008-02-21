@@ -107,6 +107,8 @@ def generateOrders():
     for element in productionQueue:
         print "name: " + element.name + " id: " + str(element.designID) + " turns left: " + str(element.turnsLeft)
 
+    #print "production item 2: " + productionQueue[2].name
+
     # get stationary fleets
     fleetIDs = getEmpireStationaryFleetIDs(empireID)
     print "fleetIDs: " + str(fleetIDs)
