@@ -298,16 +298,16 @@ Tech
     graphic = "icons/tech/basic_autolabs.png"
 
 Tech
-    name = "LRN_THEORM_PROVER"
-    description = "LRN_THEORM_PROVER_DESC"
+    name = "LRN_THEOREM_PROVER"
+    description = "LRN_THEOREM_PROVER_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 1
     researchturns = 1
     prerequisites = "LRN_ALGO_ELEGANCE"
-    unlock = Item type = Building name = "BLD_THEORM_PROVER"
-    graphic = ""
+    unlock = Item type = Building name = "BLD_THEOREM_PROVER"
+    graphic = "icons/tech/automatic_theorem_prover.png"
 
 Tech
     name = "LRN_COLLECTIVE_NET"
@@ -590,7 +590,7 @@ Tech
             ]
             activation = Source
             effects = SetMaxFarming Target.MaxFarming + 5
-    graphic = ""
+    graphic = "icons/tech/self-rotating_crops.png"
 
 Tech
     name = "GRO_HABITATION_DOMES"
@@ -1879,7 +1879,7 @@ Tech
         "CON_ORBITAL_CON"
     ]
     unlock = Item type = Building name = "BLD_LIGHTHOUSE"
-    graphic = ""
+    graphic = "icons/tech/interstellar_lighthouse.png"
 
 Tech
     name = "SHP_FLEET_LOGISTICS"
