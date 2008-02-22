@@ -561,6 +561,40 @@ namespace AIInterface {
         return 1;
     }
 
+    int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
+                                   const std::string& hull,
+                                   const std::vector<std::string>& external_parts,
+                                   const std::vector<std::string>& internal_parts,
+                                   const std::string& graphic, const std::string& model)
+    {
+        if (name.empty() || description.empty() || hull.empty() || graphic.empty()) {
+            Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : passed an empty name, description, hull or graphic.";
+            return 0;
+        }
+        if (!ShipDesign::ValidDesign(hull, external_parts, internal_parts)) {
+            Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";
+            return 0;
+        }
+
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+        int current_turn = CurrentTurn();
+
+        // create design from stuff chosen in UI
+        ShipDesign* design = new ShipDesign(name, description, empire_id, current_turn,
+                                            hull, external_parts, internal_parts,
+                                            graphic, model);
+
+        if (!design) {
+            Logger().errorStream() << "AIInterface::IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
+            return 0;
+        }
+
+        int new_design_id = AIClientApp::GetApp()->GetNewDesignID();
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+
+        return 1;
+    }
+
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text) {
         if (recipient_player_id == -1)
             AIClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(PlayerID(), message_text));

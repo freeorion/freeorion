@@ -427,6 +427,10 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
         Logger().errorStream() << "constructing an invalid ShipDesign!";
 }
 
+int ShipDesign::ID() const {
+    return m_id;
+}
+
 const std::string& ShipDesign::Name() const
 {
     return m_name;
@@ -454,6 +458,22 @@ const std::string& ShipDesign::Graphic() const {
 const std::string& ShipDesign::Description() const
 {
     return m_description;
+}
+
+int ShipDesign::DesignedOnTurn() const {
+    return m_designed_on_turn;
+}
+
+double ShipDesign::StarlaneSpeed() const {
+    return GetHull()->Speed();
+}
+
+double ShipDesign::BattleSpeed() const {
+    return GetHull()->Speed();
+}
+
+double ShipDesign::Mass() const {
+    return 1.0; //TODO: this
 }
 
 const std::string& ShipDesign::Hull() const {
@@ -558,6 +578,10 @@ bool ShipDesign::ValidDesign(const std::string& hull,
     }
 
     return true;
+}
+
+bool ShipDesign::ValidDesign(const ShipDesign& design) {
+    return ValidDesign(design.m_hull, design.m_external_parts, design.m_internal_parts);
 }
 
 //// TEMPORARY

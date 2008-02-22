@@ -206,7 +206,7 @@ public:
     const std::string&              Name() const;               ///< returns name of design
     const std::string&              Description() const;        ///< returns description of design
     int                             DesignedByEmpire() const;   ///< returns id of empire that created design
-    int                             DesginedOnTurn() const;     ///< returns turn on which design was created
+    int                             DesignedOnTurn() const;     ///< returns turn on which design was created
 
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
     double                          BattleSpeed() const;        ///< returns design speed on the battle map
@@ -243,6 +243,10 @@ public:
     static bool             ValidDesign(const std::string& hull,
                                         const std::vector<std::string>& external_parts,
                                         const std::vector<std::string>& internal_parts);
+
+    ///< returns true if the \a design passed is a valid ShipDesign in terms of its hull and parts.  does not check any other member variables
+    static bool             ValidDesign(const ShipDesign& design);
+
 
 private:
     int                         m_id;

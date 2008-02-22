@@ -164,5 +164,7 @@ namespace FreeOrionPython {
             .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_internal_reference<>()))
             .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
         ;
+        def("getTech",                          &GetTech,                               return_value_policy<reference_existing_object>());
+        def("getTechCategories",                &TechManager::CategoryNames,            return_value_policy<return_by_value>());
     }
 }

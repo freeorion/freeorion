@@ -2,6 +2,7 @@
 #define AI_INTERFACE
 
 #include "../universe/Universe.h"
+#include "../universe/ShipDesign.h"
 
 #include <string>
 
@@ -78,6 +79,12 @@ namespace AIInterface
     int                 IssueEnqueueShipProductionOrder(int design_id, int location_id);
     int                 IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
     int                 IssueDequeueProductionOrder(int queue_index);
+
+    int                 IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
+                                                   const std::string& hull,
+                                                   const std::vector<std::string>& external_parts,
+                                                   const std::vector<std::string>& internal_parts,
+                                                   const std::string& graphic, const std::string& model);
 
     void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
 
