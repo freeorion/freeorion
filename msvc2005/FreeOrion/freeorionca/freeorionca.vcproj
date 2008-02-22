@@ -597,7 +597,15 @@
 				Name="python"
 				>
 				<File
+					RelativePath="..\..\..\Python\PythonEnumWrapper.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Python\PythonSetWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Python\PythonWrappers.h"
 					>
 				</File>
 			</Filter>

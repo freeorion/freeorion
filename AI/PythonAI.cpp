@@ -18,7 +18,7 @@
 
 #include "../universe/Enums.h"
 
-#include "../python/PythonSetWrapper.h"
+#include "../python/PythonWrappers.h"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
@@ -40,7 +40,6 @@ using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
 using boost::python::return_by_value;
 using boost::python::return_internal_reference;
-using boost::python::enum_;
 using boost::python::vector_indexing_suite;
 using boost::python::map_indexing_suite;
 using boost::python::object;
@@ -476,88 +475,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ////////////////////
     //     Enums      //
     ////////////////////
-    enum_<StarType>("starType")
-        .value("blue",      STAR_BLUE)
-        .value("white",     STAR_WHITE)
-        .value("yellow",    STAR_YELLOW)
-        .value("orange",    STAR_ORANGE)
-        .value("red",       STAR_RED)
-        .value("neutron",   STAR_NEUTRON)
-        .value("blackHole", STAR_BLACK)
-    ;
-    enum_<PlanetSize>("planetSize")
-        .value("tiny",      SZ_TINY)
-        .value("small",     SZ_SMALL)
-        .value("medium",    SZ_MEDIUM)
-        .value("large",     SZ_LARGE)
-        .value("huge",      SZ_HUGE)
-        .value("asteroids", SZ_ASTEROIDS)
-        .value("gasGiant",  SZ_GASGIANT)
-    ;
-    enum_<PlanetType>("planetType")
-        .value("swamp",     PT_SWAMP)
-        .value("radiated",  PT_RADIATED)
-        .value("toxic",     PT_TOXIC)
-        .value("inferno",   PT_INFERNO)
-        .value("barren",    PT_BARREN)
-        .value("tundra",    PT_TUNDRA)
-        .value("desert",    PT_DESERT)
-        .value("terran",    PT_TERRAN)
-        .value("ocean",     PT_OCEAN)
-        .value("asteroids", PT_ASTEROIDS)
-        .value("gasGiant",  PT_GASGIANT)
-    ;
-    enum_<PlanetEnvironment>("planetEnvironment")
-        .value("uninhabitable", PE_UNINHABITABLE)
-        .value("hostile",       PE_HOSTILE)
-        .value("poor",          PE_POOR)
-        .value("adequate",      PE_ADEQUATE)
-        .value("good",          PE_GOOD)
-    ;
-    enum_<TechType>("techType")
-        .value("theory",        TT_THEORY)
-        .value("application",   TT_APPLICATION)
-        .value("refinement",    TT_REFINEMENT)
-    ;
-    enum_<TechStatus>("techStatus")
-        .value("unresearchable",    TS_UNRESEARCHABLE)
-        .value("researchable",      TS_RESEARCHABLE)
-        .value("complete",          TS_COMPLETE)
-    ;
-    enum_<BuildType>("buildType")
-        .value("unresearchable",    BT_BUILDING)
-        .value("researchable",      BT_SHIP)
-    ;
-    enum_<MeterType>("meterType")
-        .value("population",    METER_POPULATION)
-        .value("farming",       METER_FARMING)
-        .value("industry",      METER_INDUSTRY)
-        .value("research",      METER_RESEARCH)
-        .value("trade",         METER_TRADE)
-        .value("mining",        METER_MINING)
-        .value("construction",  METER_CONSTRUCTION)
-        .value("health",        METER_HEALTH)
-        .value("fuel",          METER_FUEL)
-        .value("supply",        METER_SUPPLY)
-        .value("stealth",       METER_STEALTH)
-        .value("detection",     METER_DETECTION)
-        .value("shield",        METER_SHIELD)
-        .value("defense",       METER_DEFENSE)
-    ;
-    enum_<FocusType>("focusType")
-        .value("balanced",  FOCUS_BALANCED)
-        .value("farming",   FOCUS_FARMING)
-        .value("industry",  FOCUS_INDUSTRY)
-        .value("mining",    FOCUS_MINING)
-        .value("research",  FOCUS_RESEARCH)
-        .value("trade",     FOCUS_TRADE)
-    ;
-    enum_<CaptureResult>("captureResult")
-        .value("capture",   CR_CAPTURE)
-        .value("destroy",   CR_DESTROY)
-        .value("retain",    CR_RETAIN)
-        .value("share",     CR_SHARE)
-    ;
+    FreeOrionPython::WrapGameStateEnums();
 
 
     ////////////////////
