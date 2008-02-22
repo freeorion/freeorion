@@ -77,7 +77,8 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
         'AI/AIInterface.cpp',
         'AI/PythonAI.cpp',
         'python/PythonEnumWrapper.cpp',
-        'python/PythonUniverseWrapper.cpp'
+        'python/PythonUniverseWrapper.cpp',
+        'python/PythonEmpireWrapper.cpp'
         ]
     target = 'ai'
 

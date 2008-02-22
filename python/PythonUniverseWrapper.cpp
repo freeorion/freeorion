@@ -32,6 +32,23 @@ namespace FreeOrionPython {
     using boost::python::return_by_value;
     using boost::python::return_internal_reference;
 
+    /**
+     * CallPolicies:
+     *
+     * return_value_policy<copy_const_reference>        when returning a relatively small object, such as a string,
+     *                                                  that is returned by const reference or pointer
+     *
+     * return_value_policy<return_by_value>             when returning either a simple data type or a temporary object
+     *                                                  in a function that will go out of scope after being returned
+     *
+     * return_internal_reference<>                      when returning an object or data that is a member of the object
+     *                                                  on which the function is called (and shares its lifetime)
+     *
+     * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a 
+     *                                                  member function where the returned object's lifetime is not
+     *                                                  fixed to the lifetime of the object on which the function is
+     *                                                  called
+     */
     void WrapUniverseClasses() {
         ////////////////////
         //    Universe    //

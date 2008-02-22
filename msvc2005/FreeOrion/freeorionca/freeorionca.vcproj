@@ -597,6 +597,10 @@
 				Name="python"
 				>
 				<File
+					RelativePath="..\..\..\Python\PythonEmpireWrapper.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Python\PythonEnumWrapper.cpp"
 					>
 				</File>

@@ -4,9 +4,9 @@
 #include "PythonSetWrapper.h"
 
 namespace FreeOrionPython {
-    void WrapAIInterface();
     void WrapUniverseClasses();
     void WrapGameStateEnums();
+    void WrapEmpire();
 }
 
 #endif
