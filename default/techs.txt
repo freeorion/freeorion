@@ -1,32 +1,32 @@
 Category 
     name = "LEARNING_CATEGORY"
-    graphic = "blah"
+    graphic = "learning.png"
     colour = (93,  155, 246, 255)
 
 Category 
     name = "GROWTH_CATEGORY"
-    graphic = "blah"
+    graphic = "growth.png"
     colour = (116, 225, 107, 255)
 
 Category 
     name = "PRODUCTION_CATEGORY"
-    graphic = "blah"
+    graphic = "production.png"
     colour = (240, 106, 106, 255)
 
 Category 
     name = "CONSTRUCTION_CATEGORY"
-    graphic = "blah"
+    graphic = "construction.png"
     colour = (241, 233, 87,  255)
 
 Category 
     name = "ECONOMICS_CATEGORY"
-    graphic = "blah"
+    graphic = "economics.png"
     colour = (255, 112, 247, 255)
 
 Category 
     name = "SHIPS_CATEGORY"
-    graphic = "blah"
-    colour = (85,  255, 170, 255)
+    graphic = "ships.png"
+    colour = (255, 139, 85, 255)
 
 Tech
     name = "LRN_PHYS_BRAIN"

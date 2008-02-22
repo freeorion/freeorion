@@ -305,12 +305,12 @@ TechCategory::TechCategory(const std::string& name_, const std::string& graphic_
     graphic(graphic_),
     colour(colour_)
 {
-    Logger().debugStream() << "TechCategory::TechCategory(" << name << ", " << graphic << ", [" 
-                               << static_cast<unsigned int>(colour.r) << ", "
-                               << static_cast<unsigned int>(colour.g) << ", "
-                               << static_cast<unsigned int>(colour.b) << ", "
-                               << static_cast<unsigned int>(colour.a)
-                           << "])";
+    //Logger().debugStream() << "TechCategory::TechCategory(" << name << ", " << graphic << ", [" 
+    //                           << static_cast<unsigned int>(colour.r) << ", "
+    //                           << static_cast<unsigned int>(colour.g) << ", "
+    //                           << static_cast<unsigned int>(colour.b) << ", "
+    //                           << static_cast<unsigned int>(colour.a)
+    //                       << "])";
 }
 
 
@@ -617,4 +617,9 @@ TechManager& GetTechManager()
 const Tech* GetTech(const std::string& name)
 {
     return GetTechManager().GetTech(name);
+}
+
+const TechCategory* GetTechCategory(const std::string& name)
+{
+    return GetTechManager().GetTechCategory(name);
 }

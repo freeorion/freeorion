@@ -111,18 +111,9 @@ boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& buil
 boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
 {
     std::string icon_filename;
-    if (category_name == "CONSTRUCTION_CATEGORY")
-        icon_filename = "construction.png";
-    if (category_name == "ECONOMICS_CATEGORY")
-        icon_filename = "economics.png";
-    if (category_name == "GROWTH_CATEGORY")
-        icon_filename = "growth.png";
-    if (category_name == "LEARNING_CATEGORY")
-        icon_filename = "learning.png";
-    if (category_name == "PRODUCTION_CATEGORY")
-        icon_filename = "production.png";
-    if (category_name == "SHIPS_CATEGORY")
-        icon_filename = "ships.png";
+    const TechCategory* category = GetTechCategory(category_name);
+    if (category)
+        icon_filename = category->graphic;
     return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / icon_filename, true);
 }
 
@@ -210,12 +201,9 @@ GG::Clr     ClientUI::TechWndProgressBar()                   { return GetOptions
 
 GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
 {
-    const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
-    std::vector<std::string>::const_iterator it = std::find(tech_categories.begin(), tech_categories.end(), category_name);
-    if (it != tech_categories.end()) {
-        int category_index = std::distance(tech_categories.begin(), it) + 1;
-        return GetOptionsDB().Get<StreamableColor>("UI.tech-category-" + boost::lexical_cast<std::string>(category_index)).ToClr();
-    }
+    const TechCategory* category = GetTechCategory(category_name);
+    if (category)
+        return category->colour;
     return GG::Clr();
 }
 
@@ -342,29 +330,6 @@ namespace {
         db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
         db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 1.0, RangedValidator<double>(0.2, 2));
         db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
-        
-        // tech category colors
-        const GG::Clr CLR_LEARNING_CATEGORY     (93,  155, 246, 255);
-        const GG::Clr CLR_GROWTH_CATEGORY       (116, 225, 107, 255);
-        const GG::Clr CLR_PRODUCTION_CATEGORY   (240, 106, 106, 255);
-        const GG::Clr CLR_CONSTRUCTION_CATEGORY (241, 233, 87,  255);
-        const GG::Clr CLR_ECONOMICS_CATEGORY    (255, 112, 247, 255);
-        const GG::Clr CLR_CATEGORY6             (85,  170, 255, 255);
-        const GG::Clr CLR_CATEGORY7             (170, 255, 85,  255);
-        const GG::Clr CLR_CATEGORY8             (85,  255, 170, 255);
-        const GG::Clr CLR_CATEGORY9             (255, 170, 85,  255);
-        const GG::Clr CLR_CATEGORY10            (170, 170, 170, 255);
-
-        db.Add("UI.tech-category-1", "OPTIONS_DB_UI_TECH_CATEGORY_1",   StreamableColor(CLR_LEARNING_CATEGORY),     Validator<StreamableColor>());
-        db.Add("UI.tech-category-2", "OPTIONS_DB_UI_TECH_CATEGORY_2",   StreamableColor(CLR_GROWTH_CATEGORY),       Validator<StreamableColor>());
-        db.Add("UI.tech-category-3", "OPTIONS_DB_UI_TECH_CATEGORY_3",   StreamableColor(CLR_PRODUCTION_CATEGORY),   Validator<StreamableColor>());
-        db.Add("UI.tech-category-4", "OPTIONS_DB_UI_TECH_CATEGORY_4",   StreamableColor(CLR_CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-5", "OPTIONS_DB_UI_TECH_CATEGORY_5",   StreamableColor(CLR_ECONOMICS_CATEGORY),    Validator<StreamableColor>());
-        db.Add("UI.tech-category-6", "OPTIONS_DB_UI_TECH_CATEGORY_6",   StreamableColor(CLR_CATEGORY6),             Validator<StreamableColor>());
-        db.Add("UI.tech-category-7", "OPTIONS_DB_UI_TECH_CATEGORY_7",   StreamableColor(CLR_CATEGORY7),             Validator<StreamableColor>());
-        db.Add("UI.tech-category-8", "OPTIONS_DB_UI_TECH_CATEGORY_8",   StreamableColor(CLR_CATEGORY8),             Validator<StreamableColor>());
-        db.Add("UI.tech-category-9", "OPTIONS_DB_UI_TECH_CATEGORY_9",   StreamableColor(CLR_CATEGORY9),             Validator<StreamableColor>());
-        db.Add("UI.tech-category-10", "OPTIONS_DB_UI_TECH_CATEGORY_10", StreamableColor(CLR_CATEGORY10),            Validator<StreamableColor>());
 
         // UI behavior
         db.Add("UI.tooltip-delay", "OPTIONS_DB_UI_TOOLTIP_DELAY", 1000, RangedValidator<int>(0, 3000));
