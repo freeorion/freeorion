@@ -298,7 +298,7 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_num_external_slots)
-        & BOOST_SERIALIZATION_NVP(m_num_internanl_slots)
+        & BOOST_SERIALIZATION_NVP(m_num_internal_slots)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic);
