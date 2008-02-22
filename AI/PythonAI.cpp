@@ -12,18 +12,16 @@
 #include <boost/lexical_cast.hpp>
 
 using boost::python::class_;
-using boost::python::bases;
 using boost::python::def;
-using boost::python::iterator;
-using boost::python::no_init;
-using boost::noncopyable;
 using boost::python::return_value_policy;
 using boost::python::copy_const_reference;
 using boost::python::reference_existing_object;
 using boost::python::return_by_value;
 using boost::python::return_internal_reference;
+
 using boost::python::vector_indexing_suite;
 using boost::python::map_indexing_suite;
+
 using boost::python::object;
 using boost::python::import;
 using boost::python::error_already_set;
@@ -36,71 +34,35 @@ using boost::python::extract;
 // Python AIInterface //
 ////////////////////////
 // disambiguation of overloaded functions
-const std::string&      (*AIIntPlayerNameVoid)(void) =              &AIInterface::PlayerName;
-const std::string&      (*AIIntPlayerNameInt)(int) =                &AIInterface::PlayerName;
+const std::string&  (*AIIntPlayerNameVoid)(void) =              &AIInterface::PlayerName;
+const std::string&  (*AIIntPlayerNameInt)(int) =                &AIInterface::PlayerName;
 
-const Empire*           (*AIIntGetEmpireVoid)(void) =               &AIInterface::GetEmpire;
-const Empire*           (*AIIntGetEmpireInt)(int) =                 &AIInterface::GetEmpire;
+const Empire*       (*AIIntGetEmpireVoid)(void) =               &AIInterface::GetEmpire;
+const Empire*       (*AIIntGetEmpireInt)(int) =                 &AIInterface::GetEmpire;
 
-int                     (*AIIntNewFleet)(const std::string&, int) = &AIInterface::IssueNewFleetOrder;
+int                 (*AIIntNewFleet)(const std::string&, int) = &AIInterface::IssueNewFleetOrder;
 
 
 namespace {
     // static s_save_state_string, getter and setter to be exposed to Python
     static std::string s_save_state_string("");
+
     static const std::string& GetStaticSaveStateString() {
-        //Logger().debugStream() << "Python-exposed GetSaveStateString() returning " << s_save_state_string;
         return s_save_state_string;
     }
+
     static void SetStaticSaveStateString(const std::string& new_state_string) {
         s_save_state_string = new_state_string;
-        //Logger().debugStream() << "Python-exposed SetSaveStateString(" << s_save_state_string << ")";
     }
 }
 
-// Expose interface for redirecting standard output and error to FreeOrion logging.  Can be imported
-// before loading the main FreeOrion AI interface library.
-static const int MAX_SINGLE_CHUNK_TEXT_SIZE = 1000; 
-static std::string log_buffer("");
-void LogText(const char* text) {
-    // Python sends text as several null-terminated array of char which need to be
-    // concatenated before they are output to the logger.  There's probably a better
-    // way to do this, but I don't know what it is, and this seems reasonably safe...
-    if (!text) return;
-    for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
-        if (text[i] == '\0') break;
-        if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
-            AIInterface::LogOutput(log_buffer);
-            log_buffer = "";
-        } else {
-            log_buffer += text[i];
-        }
-    }
-}
 
-static std::string error_buffer("");
-void ErrorText(const char* text) {
-    // Python sends text as several null-terminated array of char which need to be
-    // concatenated before they are output to the logger.  There's probably a better
-    // way to do this, but I don't know what it is, and this seems reasonably safe...
-   if (!text) return;
-    for (int i = 0; i < MAX_SINGLE_CHUNK_TEXT_SIZE; ++i) {
-        if (text[i] == '\0') break;
-        if (text[i] == '\n' || i == MAX_SINGLE_CHUNK_TEXT_SIZE - 1) {
-            AIInterface::ErrorOutput(error_buffer);
-            error_buffer = "";
-        } else {
-            error_buffer += text[i];
-        }
-    }
-}
-
-// Expose minimal debug and error (stdout and stderr respectively) sinks so Python text output can be
-// recovered and saved in c++
+// Create the freeOrionLogger Python module, which exposes debug and error (stdout and stderr respectively)
+// sinks so Python text output can be recovered and saved in c++.  These can be accessed from within Python
+// by freeOrionLogger.log(stringParam) and freeOrionLogger.error(stringParam)
 BOOST_PYTHON_MODULE(freeOrionLogger)
 {
-    def("log",                    LogText);
-    def("error",                  ErrorText);
+    FreeOrionPython::WrapLogger();
 }
 
 /** Expose AIInterface and all associated classes to Python.
@@ -113,13 +75,7 @@ BOOST_PYTHON_MODULE(freeOrionLogger)
  * return_value_policy<return_by_value>             when returning either a simple data type or a temporary object
  *                                                  in a function that will go out of scope after being returned
  *
- * return_internal_reference<>                      when returning an object or data that is a member of the object
- *                                                  on which the function is called (and shares its lifetime)
- *
- * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a 
- *                                                  member function where the returned object's lifetime is not
- *                                                  fixed to the lifetime of the object on which the function is
- *                                                  called
+ * return_value_policy<reference_existing_object>   when returning an object from a non-member function
  */
 BOOST_PYTHON_MODULE(freeOrionAIInterface)
 {
@@ -168,9 +124,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     def("doneTurn",                 AIInterface::DoneTurn);
 
 
-    ///////////////////
-    //     Empire    //
-    ///////////////////
+    //////////////////
+    //    Empire    //
+    //////////////////
     FreeOrionPython::WrapEmpire();
 
 
@@ -180,9 +136,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     FreeOrionPython::WrapUniverseClasses();
 
 
-    ////////////////////
-    //     Enums      //
-    ////////////////////
+    ///////////////////
+    //     Enums     //
+    ///////////////////
     FreeOrionPython::WrapGameStateEnums();
 
 
@@ -200,9 +156,9 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
 }
  
-///////////////////////
-//     PythonAI      //
-///////////////////////
+//////////////////////
+//     PythonAI     //
+//////////////////////
 static dict         s_main_namespace = dict();
 static object       s_ai_module = object();
 static PythonAI*    s_ai = 0;

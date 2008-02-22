@@ -605,6 +605,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\Python\PythonLoggingWrapper.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Python\PythonSetWrapper.h"
 					>
 				</File>

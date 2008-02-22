@@ -29,64 +29,64 @@ public:
 namespace AIInterface
 {
     /** Gamestate Accessors */ //@{
-    const std::string&      PlayerName();                   ///< returns the player name of this client
-    const std::string&      PlayerName(int player_id);      ///< returns the name of player with \a player_id
+    const std::string&  PlayerName();                   ///< returns the player name of this client
+    const std::string&  PlayerName(int player_id);      ///< returns the name of player with \a player_id
 
-    int                     PlayerID();                     ///< returns the player ID of this client
-    int                     EmpirePlayerID(int empire_id);  ///< returns ID of player controlling empire with id \a empire_id
-    std::vector<int>        AllPlayerIDs();                 ///< returns vector containing IDs of all players in game
+    int                 PlayerID();                     ///< returns the player ID of this client
+    int                 EmpirePlayerID(int empire_id);  ///< returns ID of player controlling empire with id \a empire_id
+    std::vector<int>    AllPlayerIDs();                 ///< returns vector containing IDs of all players in game
 
-    bool                    PlayerIsAI(int player_id);      ///< returns true iff the player with id \a player_id is an AI
-    bool                    PlayerIsHost(int player_id);    ///< returns true iff the player with id \a player_id is the game host
+    bool                PlayerIsAI(int player_id);      ///< returns true iff the player with id \a player_id is an AI
+    bool                PlayerIsHost(int player_id);    ///< returns true iff the player with id \a player_id is the game host
 
-    int                     EmpireID();                     ///< returns the empire ID of this client
-    int                     PlayerEmpireID(int player_id);  ///< returns ID of empire controlled by player with id \a player_id
-    std::vector<int>        AllEmpireIDs();                 ///< returns vector containing IDs of all empires in game
+    int                 EmpireID();                     ///< returns the empire ID of this client
+    int                 PlayerEmpireID(int player_id);  ///< returns ID of empire controlled by player with id \a player_id
+    std::vector<int>    AllEmpireIDs();                 ///< returns vector containing IDs of all empires in game
 
-    const Empire*           GetEmpire();                    ///< returns empire of this client's player
-    const Empire*           GetEmpire(int empire_id);       ///< returns empire with id \a empire_id
+    const Empire*       GetEmpire();                    ///< returns empire of this client's player
+    const Empire*       GetEmpire(int empire_id);       ///< returns empire with id \a empire_id
 
-    const Universe&         GetUniverse();                  ///< returns Universe known to this player
+    const Universe&     GetUniverse();                  ///< returns Universe known to this player
 
-    const Tech*             GetTech(const std::string& tech_name);  ///< returns Tech with name \a name
+    const Tech*         GetTech(const std::string& tech_name);  ///< returns Tech with name \a name
 
-    int                     CurrentTurn();                  ///< returns the current game turn
+    int                 CurrentTurn();                  ///< returns the current game turn
     //@}
 
     /** Gamestate Prediction Utilites */ //@{
-    void InitTurn();                                        ///< intializes and calculates meters, resource pools and queues so info based on latest turn update
-    void UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire = true); ///< sets object meters to what they are expected to be during the next turn processing phase, after orders are submitted.  if \a pretend_unowned_planets_owned_by_this_ai_empire is true, unowned planets known of by this player will have this player added as an owner before meter values are calculated, so that their max meter values will be what they would be if those planets were colonized by this empire
-    void UpdateResourcePoolsAndQueues();                    ///< determines how much of each resource is available at each object owned by this empire, and updates resource pool amounts and spending on queues accordingly
+    void                InitTurn();                     ///< intializes and calculates meters, resource pools and queues so info based on latest turn update
+    void                UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire = true);  ///< sets object meters to what they are expected to be during the next turn processing phase, after orders are submitted.  if \a pretend_unowned_planets_owned_by_this_ai_empire is true, unowned planets known of by this player will have this player added as an owner before meter values are calculated, so that their max meter values will be what they would be if those planets were colonized by this empire
+    void                UpdateResourcePoolsAndQueues(); ///< determines how much of each resource is available at each object owned by this empire, and updates resource pool amounts and spending on queues accordingly
     //@}
 
     /** Order-Giving */ //@{
-    int                     IssueRenameOrder(int object_id, const std::string& new_name);
+    int                 IssueRenameOrder(int object_id, const std::string& new_name);
 
-    int                     IssueFleetMoveOrder(int fleet_id, int destination_id);
-    int                     IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
-    int                     IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
-    int                     IssueFleetTransferOrder(int ship_id, int new_fleet_id);
-    int                     IssueFleetColonizeOrder(int ship_id, int planet_id);
-    int                     IssueDeleteFleetOrder();
+    int                 IssueFleetMoveOrder(int fleet_id, int destination_id);
+    int                 IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids);
+    int                 IssueNewFleetOrder(const std::string& fleet_name, int ship_id);
+    int                 IssueFleetTransferOrder(int ship_id, int new_fleet_id);
+    int                 IssueFleetColonizeOrder(int ship_id, int planet_id);
+    int                 IssueDeleteFleetOrder();
 
-    int                     IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);
+    int                 IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);
 
-    int                     IssueEnqueueTechOrder(const std::string& tech_name, int position);
-    int                     IssueDequeueTechOrder(const std::string& tech_name);
+    int                 IssueEnqueueTechOrder(const std::string& tech_name, int position);
+    int                 IssueDequeueTechOrder(const std::string& tech_name);
 
-    int                     IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id);
-    int                     IssueEnqueueShipProductionOrder(int design_id, int location_id);
-    int                     IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
-    int                     IssueDequeueProductionOrder(int queue_index);
+    int                 IssueEnqueueBuildingProductionOrder(const std::string& item_name, int location_id);
+    int                 IssueEnqueueShipProductionOrder(int design_id, int location_id);
+    int                 IssueRequeueProductionOrder(int old_queue_index, int new_queue_index);
+    int                 IssueDequeueProductionOrder(int queue_index);
 
-    void                    SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
+    void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
 
-    void                    DoneTurn();        ///< AI player is done submitting orders for this turn
+    void                DoneTurn();        ///< AI player is done submitting orders for this turn
     //@}
 
     /** Logging */ //@{
-    void                    LogOutput(const std::string& log_text);     ///< output text to as DEBUG
-    void                    ErrorOutput(const std::string& log_text);   ///< output text to as ERROR
+    void                LogOutput(const std::string& log_text);     ///< output text to as DEBUG
+    void                ErrorOutput(const std::string& log_text);   ///< output text to as ERROR
     //@}
 };
 
