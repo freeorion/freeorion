@@ -53,6 +53,12 @@ namespace AIInterface
     int                     CurrentTurn();                  ///< returns the current game turn
     //@}
 
+    /** Gamestate Prediction Utilites */ //@{
+    void InitTurn();                                        ///< intializes and calculates meters, resource pools and queues so info based on latest turn update
+    void UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire = true); ///< sets object meters to what they are expected to be during the next turn processing phase, after orders are submitted.  if \a pretend_unowned_planets_owned_by_this_ai_empire is true, unowned planets known of by this player will have this player added as an owner before meter values are calculated, so that their max meter values will be what they would be if those planets were colonized by this empire
+    void UpdateResourcePoolsAndQueues();                    ///< determines how much of each resource is available at each object owned by this empire, and updates resource pool amounts and spending on queues accordingly
+    //@}
+
     /** Order-Giving */ //@{
     int                     IssueRenameOrder(int object_id, const std::string& new_name);
 

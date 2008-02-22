@@ -593,6 +593,14 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="python"
+				>
+				<File
+					RelativePath="..\..\..\Python\PythonSetWrapper.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

@@ -47,6 +47,45 @@ const std::string& AIBase::GetSaveStateString() {
 //////////////////////////////////
 //        AI Interface          //
 //////////////////////////////////
+namespace {
+    // stuff used in AIInterface, but not needed to be visible outside this file
+
+    // fleet and resource supply distribution
+    std::map<int, std::set<int> >                   s_empire_system_fleet_supply;       // map from empire id to set of systems that empire can provide fleet supply to this turn
+    std::map<int, std::set<std::pair<int, int> > >  s_empire_fleet_supply_lanes;        // map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which fleet supply travels for that empire
+    std::map<int, std::set<std::set<int> > >        s_empire_resource_sharing_groups;   // map from empire id to set of sets of systems that can share resources for that empire
+    std::map<int, std::set<std::pair<int, int> > >  s_empire_resource_sharing_lanes;    // map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which inter-system resource sharing travels for that empire
+
+    // start of turn initialization for meters
+    void InitMeterEstimatesAndDiscrepancies() {
+        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        universe.InitMeterEstimatesAndDiscrepancies();
+    }
+
+    // start of turn initialization for Empire ResourcePools.  determines where supplies can be delivered, and 
+    // between which systems resources can be exchanged (which is necessary to know before resource pools can be
+    // updated
+    void InitResourcePools() {
+        EmpireManager& manager = AIClientApp::GetApp()->Empires();
+
+        // determine sytems where fleets can delivery supply, and groups of systems that can exchange resources
+        for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+            int empire_id = it->first;
+            Empire* empire = it->second;
+
+            // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
+            empire->GetSupplyableSystemsAndStarlanesUsed(s_empire_system_fleet_supply[empire_id],
+                                                         s_empire_fleet_supply_lanes[empire_id]);
+
+            // get sets of systems from and to which physical resources can be shared
+            empire->GetSupplySystemGroupsAndStarlanesUsed(s_empire_resource_sharing_groups[empire_id],
+                                                          s_empire_resource_sharing_lanes[empire_id]);
+
+            empire->InitResourcePools(s_empire_resource_sharing_groups[empire_id]);
+        }
+    }
+}
+
 namespace AIInterface {
     const std::string& PlayerName() {
         return AIClientApp::GetApp()->PlayerName();
@@ -129,6 +168,56 @@ namespace AIInterface {
 
     int CurrentTurn() {
         return AIClientApp::GetApp()->CurrentTurn();
+    }
+
+    void InitTurn() {
+        InitMeterEstimatesAndDiscrepancies();
+        UpdateMeterEstimates();
+        InitResourcePools();
+        UpdateResourcePoolsAndQueues();
+    }
+
+    void UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire) {
+        std::vector<Planet*> unowned_planets;
+        int player_id = -1;
+        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        if (pretend_unowned_planets_owned_by_this_ai_empire) {
+            // add this player ownership to all planets that the player can see but which aren't currently colonized.
+            // this way, any effects the player knows about that would act on those planets if the player colonized them
+            // include those planets in their scope.  This lets effects from techs the player knows alter the max
+            // population of planet that is displayed to the player, even if those effects have a condition that causes
+            // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
+            // tech that should only benefit him/herself)
+            player_id = AIInterface::PlayerID();
+
+            // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
+            // the current player's ownership to all, while remembering which planets this is done to
+            std::vector<Planet*> all_planets = universe.FindObjects<Planet>();
+            Universe::InhibitUniverseObjectSignals(true);
+            for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
+                 Planet* planet = *it;
+                 if (planet->Owners().empty()) {
+                     unowned_planets.push_back(planet);
+                     planet->AddOwner(player_id);
+                 }
+            }
+        }
+
+        // update meter estimates with temporary ownership
+        universe.UpdateMeterEstimates();
+
+        if (pretend_unowned_planets_owned_by_this_ai_empire) {
+            // remove temporary ownership added above
+            for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
+                (*it)->RemoveOwner(player_id);
+            Universe::InhibitUniverseObjectSignals(false);
+        }
+    }
+
+    void UpdateResourcePoolsAndQueues() {
+        EmpireManager& manager = AIClientApp::GetApp()->Empires();
+        for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
+            it->second->UpdateResourcePools();
     }
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {
