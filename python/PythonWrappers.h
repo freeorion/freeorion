@@ -5,7 +5,7 @@
 
 namespace FreeOrionPython {
     void WrapAIInterface();
-    void WrapGameStateClasses();
+    void WrapUniverseClasses();
     void WrapGameStateEnums();
 }
 

@@ -605,6 +605,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\Python\PythonUniverseWrapper.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Python\PythonWrappers.h"
 					>
 				</File>
