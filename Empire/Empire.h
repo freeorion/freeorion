@@ -309,13 +309,13 @@ public:
     bool ShipDesignKept(int ship_design_id) const;
 
     /// Returns the set of ship part names this empire that the empire can currently build
-    std::set<std::string> AvailableShipParts() const;
+    const std::set<std::string>& AvailableShipParts() const;
 
     /// Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
     bool ShipPartAvailable(const std::string& name) const;
 
     /// Returns the set of ship hull names that that the empire can currently build
-    std::set<std::string> AvailableShipHulls() const;
+    const std::set<std::string>& AvailableShipHulls() const;
 
     /// Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
     bool ShipHullAvailable(const std::string& name) const;
@@ -458,6 +458,12 @@ public:
 
     /// Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void AddBuildingType(const std::string& name);
+
+    /// Inserts the given ship PartType into the Empire's list of available BuldingTypes.
+    void AddPartType(const std::string& name);
+
+    /// Inserts the given ship HullType into the Empire's list of available BuldingTypes.
+    void AddHullType(const std::string& name);
 
     /// Inserts the given ID into the Empire's list of explored systems.
     void AddExploredSystem(int ID);
@@ -617,6 +623,12 @@ private:
     /// list of acquired BuildingType.  These are string names referencing BuildingType objects
     std::set<std::string> m_available_building_types;
 
+    /// list of acquired ship PartType.  These are string names referencing PartType objects
+    std::set<std::string> m_available_part_types;
+
+    /// list of acquired ship HullType.  These are string names referencing HullType objects
+    std::set<std::string> m_available_hull_types;
+
     /// systems you've explored
     std::set<int> m_explored_systems;
 
@@ -727,6 +739,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_production_queue)
             & BOOST_SERIALIZATION_NVP(m_production_progress)
             & BOOST_SERIALIZATION_NVP(m_available_building_types)
+            & BOOST_SERIALIZATION_NVP(m_available_part_types)
+            & BOOST_SERIALIZATION_NVP(m_available_hull_types)
             & BOOST_SERIALIZATION_NVP(m_explored_systems)
             & BOOST_SERIALIZATION_NVP(m_ship_designs)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)

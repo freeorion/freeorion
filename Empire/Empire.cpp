@@ -727,8 +727,7 @@ const std::set<std::string>& Empire::AvailableBuildingTypes() const
 
 bool Empire::BuildingTypeAvailable(const std::string& name) const
 {
-    Empire::BuildingTypeItr item = m_available_building_types.find(name);
-    return item != m_available_building_types.end();
+    return m_available_building_types.find(name) != m_available_building_types.end();
 }
 
 const std::set<int>& Empire::ShipDesigns() const
@@ -777,35 +776,20 @@ bool Empire::ShipDesignKept(int ship_design_id) const {
     return (m_ship_designs.find(ship_design_id) != m_ship_designs.end());
 }
 
-std::set<std::string> Empire::AvailableShipParts() const {
-    std::set<std::string> retval;
-    const PartTypeManager& manager = GetPartTypeManager();
-    for (PartTypeManager::iterator it = manager.begin(); it != manager.end(); ++it)
-        if (ShipPartAvailable(it->first))
-            retval.insert(it->first);
-    return retval;
+const std::set<std::string>& Empire::AvailableShipParts() const {
+    return m_available_part_types;
 }
 
 bool Empire::ShipPartAvailable(const std::string& name) const {
-    // TODO: more interesting checks...
-    const PartType* part = GetPartType(name);
-    if (!part) return false;
-    return true;
+    return m_available_part_types.find(name) != m_available_part_types.end();
 }
 
-std::set<std::string> Empire::AvailableShipHulls() const {
-    std::set<std::string> retval;
-    const HullTypeManager& manager = GetHullTypeManager();
-    for (HullTypeManager::iterator it = manager.begin(); it != manager.end(); ++it)
-        if (ShipHullAvailable(it->first))
-            retval.insert(it->first);
-    return retval;
+const std::set<std::string>& Empire::AvailableShipHulls() const {
+    return m_available_hull_types;
 }
 
 bool Empire::ShipHullAvailable(const std::string& name) const {
-    const HullType* hull = GetHullType(name);
-    if (!hull) return false;
-    return true;
+    return m_available_hull_types.find(name) != m_available_hull_types.end();
 }
 
 const ProductionQueue& Empire::GetProductionQueue() const
@@ -1512,13 +1496,34 @@ void Empire::AddTech(const std::string& name)
 void Empire::UnlockItem(const ItemSpec& item)
 {
     // TODO: handle other types (such as ship components) as they are implemented
-    if (item.type == UIT_BUILDING)
+    switch (item.type) {
+    case UIT_BUILDING:
         AddBuildingType(item.name);
+        break;
+    case UIT_SHIP_PART:
+        AddPartType(item.name);
+        break;
+    case UIT_SHIP_HULL:
+        AddHullType(item.name);
+        break;
+    default:
+        Logger().errorStream() << "Empire::UnlockItem : passed ItemSpec with unrecognized UnlockableItemType";
+    }
 }
 
 void Empire::AddBuildingType(const std::string& name)
 {
     m_available_building_types.insert(name);
+}
+
+void Empire::AddPartType(const std::string& name)
+{
+    m_available_part_types.insert(name);
+}
+
+void Empire::AddHullType(const std::string& name)
+{
+    m_available_hull_types.insert(name);
 }
 
 void Empire::AddExploredSystem(int ID)

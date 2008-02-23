@@ -1,5 +1,20 @@
 
 BuildingType
+    name = "BLD_IMERIAL_PALACE"
+    description = "BLD_IMERIAL_PALACE_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxConstruction Target.MaxConstruction + 2
+    graphic = ""
+
+
+BuildingType
     name = "BLD_BIOTERROR_LAB"
     description = "BLD_BIOTERROR_LAB_DESC"
     buildcost = 1

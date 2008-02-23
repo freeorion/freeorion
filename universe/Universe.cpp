@@ -2841,6 +2841,18 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->GetMeter(METER_TRADE)->m_initial_current = home_planet->GetMeter(METER_TRADE)->Current();
         home_planet->GetMeter(METER_TRADE)->m_initial_max = home_planet->GetMeter(METER_TRADE)->Max();
 
+
+        // grant empire access to some initial buildings, ship parts and hulls
+        empire->AddBuildingType("BLD_IMERIAL_PALACE");
+
+        empire->AddPartType("SR_LASER");
+        empire->AddPartType("SR_ION_CANNON");
+        empire->AddPartType("AR_LEAD_PLATE");
+
+        empire->AddHullType("SH_SMALL");
+        empire->AddHullType("SH_MEDIUM");
+
+
         // create the empire's initial ship designs
         std::vector<std::string> external_parts;
         std::vector<std::string> internal_parts;
