@@ -2846,11 +2846,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         empire->AddBuildingType("BLD_IMERIAL_PALACE");
 
         empire->AddPartType("SR_LASER");
-        empire->AddPartType("SR_ION_CANNON");
         empire->AddPartType("AR_LEAD_PLATE");
 
         empire->AddHullType("SH_SMALL");
-        empire->AddHullType("SH_MEDIUM");
 
 
         // create the empire's initial ship designs

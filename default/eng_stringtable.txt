@@ -393,7 +393,7 @@ OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
 The shape of the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-The shape of the galaxy to be generated.
+The age of the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 The number of planets per system in the galaxy to be generated.
@@ -806,7 +806,7 @@ OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
 
 OPTIONS_VIDEO_MODE
-Video Mode
+Video Mode  (restart for changes to take effect)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Enables fullscreen mode, sets screen resolution, and sets bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
@@ -1404,6 +1404,9 @@ Default Design Name
 
 DESIGN_DESCRIPTION_DEFAULT
 Default Design Description
+
+DESIGN_NO_PART
+None
 
 
 ####################

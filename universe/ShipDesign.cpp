@@ -567,12 +567,18 @@ bool ShipDesign::ValidDesign(const std::string& hull,
     // ensure all passed parts can be mounted in slots of type they were passed for
     const PartTypeManager& part_manager = GetPartTypeManager();
     for (std::vector<std::string>::const_iterator it = external_parts.begin(); it != external_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
+        const std::string part_name = *it;
+        if (part_name.empty())
+            continue;   // if part slot is empty, ignore - doesn't affect validity of design
+        const PartType* part = part_manager.GetPartType(part_name);
         if (!part || !(part->CanMountExternally()))
             return false;
     }
     for (std::vector<std::string>::const_iterator it = internal_parts.begin(); it != internal_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
+        const std::string part_name = *it;
+        if (part_name.empty())
+            continue;   // if part slot is empty, ignore - doesn't affect validity of design
+        const PartType* part = part_manager.GetPartType(part_name);
         if (!part || !(part->CanMountInternally()))
             return false;
     }

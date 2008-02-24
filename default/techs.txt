@@ -1901,5 +1901,48 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxSupply value = Target.MaxSupply + 5
+                SetMaxSupply value = Target.MaxSupply + 2
+    graphic = ""
+
+Tech
+    name = "SHP_MEDIUM_HULL"
+    description = "SHP_MEDIUM_HULL_DESC"
+    short_description = ""
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "PRO_ROBOTIC_PROD"
+    unlock = Item type = ShipHull name = "SH_MEDIUM"
+    graphic = ""
+
+Tech
+    name = "SHP_LARGE_HULL"
+    description = "SHP_LARGE_HULL_DESC"
+    short_description = ""
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "SHP_MEDIUM_HULL"
+        "PRO_MICROGRAV_MAN"
+    ]
+    unlock = Item type = ShipHull name = "SH_LARGE"
+    graphic = ""
+
+
+Tech
+    name = "SHP_HUGE_HULL"
+    description = "SHP_HUGE_HULL_DESC"
+    short_description = ""
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "SHP_LARGE_HULL"
+        "PRO_FRC_FLD_ASSMB"
+    ]
+    unlock = Item type = ShipHull name = "SH_HUGE"
     graphic = ""
