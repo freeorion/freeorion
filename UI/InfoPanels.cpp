@@ -56,10 +56,10 @@ namespace {
         void Initialize() {
             row_height = ClientUI::Pts()*3/2;
             const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
-            
+
             const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
             const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
-            
+
             m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_summary_title);
 
@@ -319,7 +319,6 @@ namespace {
             return GG::CLR_WHITE;
         }
     }
-
 }
 
 /////////////////////////////////////

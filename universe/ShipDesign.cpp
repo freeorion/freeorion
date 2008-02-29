@@ -10,9 +10,6 @@
 
 #include <fstream>
 
-#include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-
 namespace {
     struct store_part_type_impl {
         template <class T1, class T2>
@@ -99,70 +96,11 @@ PartTypeManager::PartTypeManager() {
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);
-
-    std::string cycle_str = FindFirstDependencyCycle();
-    if (!cycle_str.empty())
-        throw std::runtime_error(cycle_str.c_str());
 }
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
     std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
     return it != m_parts.end() ? it->second : 0;
-}
-
-std::string PartTypeManager::FindFirstDependencyCycle() {
-    return "";
-
-    //assert(!m_parts.empty());
-
-    //std::set<std::string> checked_parts; // the list of parts that are not part of any cycle
-    //for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-    //    if (checked_parts.find(it->first) != checked_parts.end())
-    //        continue;   // part already checked, so skip
-
-    //    std::vector<std::string> stack;
-    //    stack.push_back(*it);
-    //    while (!stack.empty()) {
-    //        // Examine the part on top of the stack.  If the part has no upgrades, or if its
-    //        // upgrade has already been checked, pop it off the stack and mark it as checked;
-    //        // otherwise, push its unchecked upgrade onto the stack.
-    //        const PartType* current_part = stack.back();
-    //        unsigned int starting_stack_size = stack.size();
-    //        const std::string upgrade_name = current_part->Upgrade();
-
-    //        if (upgrade_name != "") {
-    //            const PartType* upgrade = GetPartType(upgrade_name);
-    //            if (checked_parts.find(upgrade_name) == checked_parts.end()) {
-    //                // since this is not a checked upgrade, see if it is already in the stack somewhere; if so, we have a cycle
-    //                std::vector<const PartType*>::reverse_iterator stack_duplicate_it =
-    //                    std::find(stack.rbegin(), stack.rend(), upgrade);
-    //                if (stack_duplicate_it != stack.rend()) {
-    //                    std::stringstream stream;
-    //                    std::string upgrade_name = upgrade->Name();
-    //                    stream << "ERROR: Ship PartType dependency cycle found in ship_parts.txt (A <-- B means A is an upgrade of B): \""
-    //                           << upgrade_name << "\"";
-    //                    for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
-    //                         stack_it != stack_duplicate_it;
-    //                         ++stack_it) {
-    //                        if ((*stack_it)->Upgrade() != "") {
-    //                            upgrade_name = (*stack_it)->Name();
-    //                            stream << " <-- \"" << upgrade_name << "\"";
-    //                        }
-    //                    }
-    //                    stream << " <-- \"" << upgrade->Name() << "\" ... ";
-    //                    return stream.str();
-    //                } else {
-    //                    stack.push_back(upgrade);
-    //                }
-    //            }
-    //        }
-    //        if (starting_stack_size == stack.size()) {
-    //            stack.pop_back();
-    //            checked_parts.insert(upgrade);
-    //        }
-    //    }
-    //}
-    //return "";
 }
 
 const PartTypeManager& PartTypeManager::GetPartTypeManager() {
@@ -186,29 +124,27 @@ PartType::PartType() :
     m_name("invalid part type"),
     m_description("indescribable"),
     m_class(INVALID_SHIP_PART_CLASS),
-    m_mass(1.0),
     m_power(1.0),
-    m_range(1.0),
     m_cost(1.0),
     m_build_time(1),
+    m_mountable_slot_types(),
     m_location(0),
     m_effects(0),
     m_graphic("")
 {}
 
 PartType::PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
-                   double mass, double power, double range, double cost, int build_time,
-                   const Condition::ConditionBase* location,
+                   double power, double cost, int build_time,
+                   std::vector<ShipSlotType> mountable_slot_types, const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_class(part_class),
-    m_mass(mass),
     m_power(power),
-    m_range(range),
     m_cost(cost),
     m_build_time(build_time),
+    m_mountable_slot_types(mountable_slot_types),
     m_location(location),
     m_effects(effects),
     m_graphic(graphic)
@@ -226,24 +162,17 @@ ShipPartClass PartType::Class() const {
     return m_class;
 }
 
-double PartType::Mass() const {
-    return m_mass;
-}
-
 double PartType::Power() const {
     return m_power;
 }
 
-double PartType::Range() const {
-    return m_range;
-}
-
-bool PartType::CanMountExternally() const {
-    return true;    // temporary
-}
-
-bool PartType::CanMountInternally() const {
-    return true;    // temporary
+bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
+    if (INVALID_SHIP_SLOT_TYPE == slot_type)
+        return false;
+    for (std::vector<ShipSlotType>::const_iterator it = m_mountable_slot_types.begin(); it != m_mountable_slot_types.end(); ++it)
+        if (*it == slot_type)
+            return true;
+    return false;
 }
 
 double PartType::Cost() const {
@@ -273,30 +202,26 @@ const Condition::ConditionBase* PartType::Location() const {
 HullType::HullType() :
     m_name("generic hull type"),
     m_description("indescribable"),
-    m_mass(1.0),
     m_speed(1.0),
     m_cost(1.0),
     m_build_time(1),
-    m_num_external_slots(1),
-    m_num_internal_slots(1),
+    m_slots(),
     m_location(0),
     m_effects(0),
     m_graphic("")
 {}
 
-HullType::HullType(const std::string& name, const std::string& description, double mass, double speed, double cost,
-                   int build_time,  unsigned int num_external_slots, unsigned int num_internal_slots,
+HullType::HullType(const std::string& name, const std::string& description, double speed, double cost,
+                   int build_time, const std::vector<Slot>& slots,
                    const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_mass(mass),
     m_speed(speed),
     m_cost(cost),
     m_build_time(build_time),
-    m_num_external_slots(num_external_slots),
-    m_num_internal_slots(num_internal_slots),
+    m_slots(slots),
     m_location(location),
     m_effects(effects),
     m_graphic(graphic)
@@ -308,10 +233,6 @@ const std::string& HullType::Name() const {
 
 const std::string& HullType::Description() const {
     return m_description;
-}
-
-double HullType::Mass() const {
-    return m_mass;
 }
 
 double HullType::Speed() const {
@@ -326,12 +247,20 @@ int HullType::BuildTime() const {
     return m_build_time;
 }
 
-unsigned int HullType::NumExternalSlots() const {
-    return m_num_external_slots;
+unsigned int HullType::NumSlots() const {
+    return m_slots.size();
 }
 
-unsigned int HullType::NumInternalSlots() const {
-    return m_num_internal_slots;
+unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
+    unsigned int count = 0;
+    for (std::vector<Slot>::const_iterator it = m_slots.begin(); it != m_slots.end(); ++it)
+        if (it->type == slot_type)
+            ++count;
+    return count;
+}
+
+const std::vector<HullType::Slot>& HullType::Slots() const {
+    return m_slots;
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& HullType::Effects() const {
@@ -403,27 +332,25 @@ ShipDesign::ShipDesign() :
     m_designed_by_empire_id(-1),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
     m_hull(""),
-    m_external_parts(),
-    m_internal_parts(),
+    m_parts(),
     m_graphic(""),
     m_3D_model("")
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
-                       int designed_on_turn, const std::string& hull,const std::vector<std::string>& external_parts,
-                       const std::vector<std::string>& internal_parts, const std::string& graphic, const std::string& model) :
+                       int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
+                       const std::string& graphic, const std::string& model) :
     m_id(UniverseObject::INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
     m_designed_by_empire_id(designed_by_empire_id),
     m_designed_on_turn(designed_on_turn),
     m_hull(hull),
-    m_external_parts(external_parts),
-    m_internal_parts(internal_parts),
+    m_parts(parts),
     m_graphic(graphic),
     m_3D_model(model)
 {
-    if (!ValidDesign(m_hull, m_external_parts, m_internal_parts))
+    if (!ValidDesign(m_hull, m_parts))
         Logger().errorStream() << "constructing an invalid ShipDesign!";
 }
 
@@ -472,10 +399,6 @@ double ShipDesign::BattleSpeed() const {
     return GetHull()->Speed();
 }
 
-double ShipDesign::Mass() const {
-    return 1.0; //TODO: this
-}
-
 const std::string& ShipDesign::Hull() const {
     return m_hull;
 }
@@ -484,17 +407,25 @@ const HullType* ShipDesign::GetHull() const {
     return GetHullTypeManager().GetHullType(m_hull);
 }
 
-const std::vector<std::string>& ShipDesign::ExternalParts() const {
-    return m_external_parts;
+const std::vector<std::string>& ShipDesign::Parts() const {
+    return m_parts;
 }
 
-const std::vector<std::string>& ShipDesign::InternalParts() const {
-    return m_internal_parts;
-}
+std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
+    std::vector<std::string> retval;
 
-std::vector<std::string> ShipDesign::Parts() const {
-    std::vector<std::string> retval = m_external_parts;
-    std::copy(m_internal_parts.begin(), m_internal_parts.end(), std::back_inserter(retval));
+    const HullType* hull = GetHull();
+    assert(hull);
+    const std::vector<HullType::Slot>& slots = hull->Slots();
+
+    unsigned int size = m_parts.size();
+    assert(size == hull_type->NumSlots());
+
+    // add to output vector each part that is in a slot of the indicated ShipSlotType 
+    for (unsigned int i = 0; i < size; ++i)
+        if (slots[i].type == slot_type)
+            retval.push_back(m_parts[i]);
+
     return retval;
 }
 
@@ -531,55 +462,44 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         return false;
 
     // apply external and internal parts' location conditions to potential location
-    for (std::vector<std::string>::const_iterator part_it = m_external_parts.begin(); part_it != m_external_parts.end(); ++part_it) {
+    for (std::vector<std::string>::const_iterator part_it = m_parts.begin(); part_it != m_parts.end(); ++part_it) {
         const PartType* part = GetPartType(*part_it);
         if (!part)
-            throw std::runtime_error("ShipDesign couldn't get one of its own external parts...?");
+            throw std::runtime_error("ShipDesign couldn't get one of its own parts...?");
         part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
         if (locations.empty())
             return false;
     }
-    for (std::vector<std::string>::const_iterator part_it = m_internal_parts.begin(); part_it != m_internal_parts.end(); ++part_it) {
-        const PartType* part = GetPartType(*part_it);
-        if (!part)
-            throw std::runtime_error("ShipDesign couldn't get one of its own internal parts...?");
-        part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
-        if (locations.empty())
-            return false;
-    }
-
     // location matched all hull and part conditions, so is a valid build location
     return true;
 }
 
-bool ShipDesign::ValidDesign(const std::string& hull,
-                             const std::vector<std::string>& external_parts,
-                             const std::vector<std::string>& internal_parts) {
-    // ensure hull type exists and has enough slots of appropriate type for passed parts
+bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
+    // ensure hull type exists and has exactly enough slots for passed parts
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
-    if ((!hull_type)
-        || (hull_type->NumExternalSlots() < static_cast<unsigned int>(external_parts.size()))
-        || (hull_type->NumInternalSlots() < static_cast<unsigned int>(internal_parts.size())))
-    {
+    if (!hull_type)
         return false;
-    }
+
+    unsigned int size = parts.size();
+    if (size != hull_type->NumSlots())
+        return false;
+
+    const std::vector<HullType::Slot>& slots = hull_type->Slots();
 
     // ensure all passed parts can be mounted in slots of type they were passed for
     const PartTypeManager& part_manager = GetPartTypeManager();
-    for (std::vector<std::string>::const_iterator it = external_parts.begin(); it != external_parts.end(); ++it) {
-        const std::string part_name = *it;
+    for (unsigned int i = 0; i < size; ++i) {
+        const std::string& part_name = parts[i];
         if (part_name.empty())
-            continue;   // if part slot is empty, ignore - doesn't affect validity of design
+            continue;   // if part slot is empty, ignore - doesn't invalidate design
+
         const PartType* part = part_manager.GetPartType(part_name);
-        if (!part || !(part->CanMountExternally()))
+        if (!part)
             return false;
-    }
-    for (std::vector<std::string>::const_iterator it = internal_parts.begin(); it != internal_parts.end(); ++it) {
-        const std::string part_name = *it;
-        if (part_name.empty())
-            continue;   // if part slot is empty, ignore - doesn't affect validity of design
-        const PartType* part = part_manager.GetPartType(part_name);
-        if (!part || !(part->CanMountInternally()))
+
+        // verify part can mount in indicated slot
+        ShipSlotType slot_type = slots[i].type;
+        if (!(part->CanMountInSlotType(slot_type)))
             return false;
     }
 
@@ -587,7 +507,7 @@ bool ShipDesign::ValidDesign(const std::string& hull,
 }
 
 bool ShipDesign::ValidDesign(const ShipDesign& design) {
-    return ValidDesign(design.m_hull, design.m_external_parts, design.m_internal_parts);
+    return ValidDesign(design.m_hull, design.m_parts);
 }
 
 //// TEMPORARY

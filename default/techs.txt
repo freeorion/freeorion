@@ -1247,6 +1247,22 @@ Tech
     graphic = "icons/tech/miniature_suns.png"
 
 Tech
+    name = "PRO_NEUTRONIUM_EXTRACTION"
+    description = "PRO_NEUTRONIUM_EXTRACTION_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "PRODUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = ["PRO_CORE_MINE"
+                     "PRO_ORBITAL_MINE"
+                     "LRN_STELLAR_TOMOGRAPHY"
+    ]
+    unlock = []
+    graphic = ""
+    
+
+Tech
     name = "CON_ORBITAL_CON"
     description = "CON_ORBITAL_CON_DESC"
     short_description = "THEORY_SHORT_DESC"

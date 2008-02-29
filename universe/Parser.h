@@ -6,6 +6,7 @@
 #define BOOST_SPIRIT_CLOSURE_LIMIT PHOENIX_LIMIT
 
 #include "Enums.h"
+#include "ShipDesign.h"     // because HullType::Slot are stored by vale in vector passed to HullType constructor
 
 #include <boost/spirit.hpp>
 #include <boost/spirit/attribute.hpp>
@@ -33,8 +34,7 @@ class BuildingType;
 class Tech;
 struct TechCategory;
 struct ItemSpec;
-class PartType;
-class HullType;
+
 
 ////////////////////////////////////////////////////////////
 // Scanner                                                //
@@ -152,7 +152,8 @@ struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std
 };
 
 struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
-                                            double, double, double, double, int, Condition::ConditionBase*,
+                                            double, double, int, std::vector<ShipSlotType>,
+                                            Condition::ConditionBase*,
                                             std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                             std::string>
 {
@@ -161,32 +162,29 @@ struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string,
     member3 description;
     member4 part_class;
     member5 power;
-    member6 range;
-    member7 mass;
-    member8 cost;
-    member9 build_time;
-    member10 location;
-    member11 effects_groups;
-    member12 graphic;
+    member6 cost;
+    member7 build_time;
+    member8 mountable_slot_types;
+    member9 location;
+    member10 effects_groups;
+    member11 graphic;
 };
 
-struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double,
-                                            double, int, unsigned int, unsigned int, Condition::ConditionBase*,
+struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double, int,
+                                            std::vector<HullType::Slot>, Condition::ConditionBase*,
                                             std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                             std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
-    member4 mass;
-    member5 speed;
-    member6 cost;
-    member7 build_time;
-    member8 num_external_slots;
-    member9 num_internal_slots;
-    member10 location;
-    member11 effects_groups;
-    member12 graphic;
+    member4 speed;
+    member5 cost;
+    member6 build_time;
+    member7 slots;
+    member8 location;
+    member9 effects_groups;
+    member10 graphic;
 };
 
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;

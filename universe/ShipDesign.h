@@ -2,7 +2,23 @@
 #ifndef _ShipDesign_h_
 #define _ShipDesign_h_
 
-#include "Effect.h"
+#include <string>
+#include <vector>
+#include <map>
+
+#include <boost/shared_ptr.hpp>
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
+namespace Condition {
+    class ConditionBase;
+}
+namespace Effect {
+    class EffectsGroup;
+}
+
+enum ShipPartClass;
+enum ShipSlotType;
 
 /** A type of ship part */
 class PartType {
@@ -10,8 +26,8 @@ public:
     /** \name Structors */ //@{
     PartType();
     PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
-             double mass, double power, double range, double cost, int build_time,
-             const Condition::ConditionBase* location,
+             double power, double cost, int build_time,
+             std::vector<ShipSlotType> mountable_slot_types, const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
     //@}
@@ -22,12 +38,9 @@ public:
 
     ShipPartClass       Class() const;          ///< returns that class of part that this is.
 
-    double              Mass() const;           ///< returns mass of part
     double              Power() const;          ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
-    double              Range() const;          ///< returns the range of a part.  may not have meaning for all part types.
 
-    bool                CanMountExternally() const; ///< returns true if this part can be placed in an external part slot in a design
-    bool                CanMountInternally() const; ///< returns true if this part can be placed in an internal part slot in a design
+    bool                CanMountInSlotType(ShipSlotType slot_type) const;   ///< returns true if this part can be placed in a slot of the indicated type
 
     double              Cost() const;           ///< returns cost of part
     int                 BuildTime() const;      ///< returns additional turns to build design that this part adds
@@ -46,12 +59,12 @@ private:
 
     ShipPartClass       m_class;
 
-    double              m_mass;
     double              m_power;
-    double              m_range;
 
     double              m_cost;         // in PP
     int                 m_build_time;   // in turns
+
+    std::vector<ShipSlotType> m_mountable_slot_types;
 
     const Condition::ConditionBase*
                         m_location;
@@ -87,8 +100,6 @@ public:
 private:
     PartTypeManager();
 
-    std::string                         FindFirstDependencyCycle();
-
     std::map<std::string, PartType*>    m_parts;
     static PartTypeManager*             s_instance;
 };
@@ -107,10 +118,21 @@ const PartType* GetPartType(const std::string& name);
     added to the design. */
 class HullType {
 public:
+    struct Slot {
+        Slot() :
+            type(ShipSlotType(-1))
+        {};
+        Slot(ShipSlotType slot_type) :
+            type(slot_type)
+        {};
+        ShipSlotType type;
+        // LATER: More details
+    };
+
     /** \name Structors */ //@{
     HullType();
-    HullType(const std::string& name, const std::string& description, double mass, double speed, double cost,
-             int build_time,  unsigned int num_external_slots, unsigned int num_internal_slots,
+    HullType(const std::string& name, const std::string& description, double speed, double cost,
+             int build_time, const std::vector<Slot>& slots,
              const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
@@ -120,14 +142,15 @@ public:
     const std::string&  Name() const;           ///< returns name of hull
     const std::string&  Description() const;    ///< returns stringtable entry name of description
 
-    double              Mass() const;           ///< returns mass of hull
     double              Speed() const;          ///< returns speed (?) of hull
 
     double              Cost() const;           ///< returns cost of hull
     int                 BuildTime() const;      ///< returns base build time for this hull, before parts are added
 
-    unsigned int        NumExternalSlots() const;   ///< returns number of external part slots in hull
-    unsigned int        NumInternalSlots() const;   ///< returns number of internanl part slots in hull
+    unsigned int        NumSlots() const;                       ///< returns total number of of slots in hull
+    unsigned int        NumSlots(ShipSlotType slot_type) const; ///< returns number of of slots of indicated type in hull
+    const std::vector<Slot>&
+                        Slots() const;          ///< returns vector of slots in hull
 
     const Condition::ConditionBase*
                         Location() const;       ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
@@ -136,23 +159,21 @@ public:
     //@}
 
 private:
-    std::string         m_name;
-    std::string         m_description;
-    double              m_mass;
-    double              m_speed;
+    std::string                 m_name;
+    std::string                 m_description;
+    double                      m_speed;
 
-    double              m_cost;         // in PP
-    int                 m_build_time;   // in turns
+    double                      m_cost;         // in PP
+    int                         m_build_time;   // in turns
 
-    unsigned int        m_num_external_slots;
-    unsigned int        m_num_internal_slots;
+    std::vector<Slot>           m_slots;
 
     const Condition::ConditionBase*
-                        m_location;
+                                m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                        m_effects;
+                                m_effects;
 
-    std::string         m_graphic;
+    std::string                 m_graphic;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -197,8 +218,8 @@ public:
     /** \name Structors */ //@{
     ShipDesign(); ///< default ctor
     ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
-               int designed_on_turn, const std::string& hull, const std::vector<std::string>& external_parts,
-               const std::vector<std::string>& internal_parts, const std::string& graphic, const std::string& model);
+               int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
+               const std::string& graphic, const std::string& model);
     //@}
 
     /** \name Accessors */ //@{
@@ -210,7 +231,6 @@ public:
 
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
     double                          BattleSpeed() const;        ///< returns design speed on the battle map
-    double                          Mass() const;               ///< returns design mass
 
     /////// TEMPORARY ///////
     double      Defense() const;
@@ -224,9 +244,8 @@ public:
     const std::string&              Hull() const;               ///< returns name of hull on which design is based
     const HullType*                 GetHull() const;            ///< returns HullType on which design is based
 
-    const std::vector<std::string>& ExternalParts() const;      ///< returns vector of names of external parts in design
-    const std::vector<std::string>& InternalParts() const;      ///< returns vector of names of internal parts in design
-    std::vector<std::string>        Parts() const;              ///< returns vector of names of all parts in design
+    const std::vector<std::string>& Parts() const;                          ///< returns vector of names of all parts in design
+    std::vector<std::string>        Parts(ShipSlotType slot_type) const;    ///< returns vector of names of parts in slots of indicated type
 
     const std::string&              Graphic() const;            ///< returns filename of graphic for design
     const std::string&              Model() const;              ///< returns filename of 3D model that represents ships of design
@@ -240,9 +259,7 @@ public:
     //@}
 
     ///< returns true if the \a hull and parts vectors passed make a valid ShipDesign
-    static bool             ValidDesign(const std::string& hull,
-                                        const std::vector<std::string>& external_parts,
-                                        const std::vector<std::string>& internal_parts);
+    static bool             ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
 
     ///< returns true if the \a design passed is a valid ShipDesign in terms of its hull and parts.  does not check any other member variables
     static bool             ValidDesign(const ShipDesign& design);
@@ -258,8 +275,7 @@ private:
     int                         m_designed_on_turn;
 
     std::string                 m_hull;
-    std::vector<std::string>    m_external_parts;
-    std::vector<std::string>    m_internal_parts;
+    std::vector<std::string>    m_parts;
 
     std::string                 m_graphic;
     std::string                 m_3D_model;
@@ -287,6 +303,8 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_range)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
+        & BOOST_SERIALIZATION_NVP(m_can_mount_external)
+        & BOOST_SERIALIZATION_NVP(m_can_mount_internal)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_effects)
         & BOOST_SERIALIZATION_NVP(m_graphic);
@@ -317,8 +335,7 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_designed_by_empire_id)
         & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
         & BOOST_SERIALIZATION_NVP(m_hull)
-        & BOOST_SERIALIZATION_NVP(m_external_parts)
-        & BOOST_SERIALIZATION_NVP(m_internal_parts)
+        & BOOST_SERIALIZATION_NVP(m_parts)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_3D_model);
 }

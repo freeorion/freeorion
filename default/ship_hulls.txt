@@ -1,36 +1,48 @@
 Hull
     name = "SH_SMALL"
     description = "SH_SMALL_DESC"
-    mass = 1
     speed = 80
     buildcost = 10
     buildtime = 4
-    externalslots = 3
-    internalslots = 0
+    slots = [
+        Slot type = External
+        Slot type = External
+        Slot type = External
+    ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Small.png"
 
 Hull
     name = "SH_MEDIUM"
     description = "SH_MEDIUM_DESC"
-    mass = 3
     speed = 50
     buildcost = 20
     buildtime = 5
-    externalslots = 4
-    internalslots = 1
+    slots = [
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = Internal
+    ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Large.png"
 
 Hull
     name = "SH_LARGE"
     description = "SH_LARGE_DESC"
-    mass = 6
     speed = 40
     buildcost = 30
     buildtime = 6
-    externalslots = 5
-    internalslots = 3
+    slots = [
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = Internal
+        Slot type = Internal
+    ]
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = 
         EffectsGroup
@@ -42,11 +54,20 @@ Hull
 Hull
     name = "SH_HUGE"
     description = "SH_HUGE_DESC"
-    mass = 10
     speed = 30
     buildcost = 50
     buildtime = 8
-    externalslots = 8
-    internalslots = 4
+    slots = [
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = External
+        Slot type = Internal
+        Slot type = Internal
+        Slot type = Internal
+        Slot type = Internal
+    ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Huge.png"

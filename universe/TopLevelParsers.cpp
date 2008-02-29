@@ -43,11 +43,29 @@ struct TechItemSpecClosure : boost::spirit::closure<TechItemSpecClosure, ItemSpe
     member3 name;
 };
 
+struct SlotClosure : boost::spirit::closure<SlotClosure, HullType::Slot, ShipSlotType>
+{
+    member1 this_;
+    member2 slot_type;
+};
+
+struct SlotVecClosure : boost::spirit::closure<SlotVecClosure, std::vector<HullType::Slot> >
+{
+    member1 this_;
+};
+
+struct ShipSlotTypeVecClosure : boost::spirit::closure<ShipSlotTypeVecClosure, std::vector<ShipSlotType> >
+{
+    member1 this_;
+};
 
 namespace {
     rule<Scanner, EffectsGroupClosure::context_t>       effects_group_p;
-    rule<Scanner, TechItemSpecClosure::context_t>       tech_item_spec_p;
     rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
+    rule<Scanner, TechItemSpecClosure::context_t>       tech_item_spec_p;
+    rule<Scanner, SlotClosure::context_t>               slot_p;
+    rule<Scanner, SlotVecClosure::context_t>            slot_vec_p;
+    rule<Scanner, ShipSlotTypeVecClosure::context_t>    ship_slot_type_vec_p;
 
     ParamLabel scope_label("scope");
     ParamLabel activation_label("activation");
@@ -71,11 +89,9 @@ namespace {
     ParamLabel location_label("location");
     ParamLabel partclass_label("class");
     ParamLabel power_label("power");
-    ParamLabel range_label("range");
-    ParamLabel mass_label("mass");
     ParamLabel speed_label("speed");
-    ParamLabel external_slots_label("externalslots");
-    ParamLabel internal_slots_label("internalslots");
+    ParamLabel slots_label("slots");
+    ParamLabel mountableslottypes_label("mountableslottypes");
     ParamLabel colour_label("colour");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
@@ -156,40 +172,50 @@ namespace {
                                        tech_p.effects_groups, tech_p.prerequisites, tech_p.unlocked_items,
                                        tech_p.graphic)];
 
+        ship_slot_type_vec_p =
+            slot_type_p[push_back_(ship_slot_type_vec_p.this_, arg1)]
+            | ('[' >> +(slot_type_p[push_back_(ship_slot_type_vec_p.this_, arg1)]) >> ']');
+
         part_p =
             (str_p("part")
              >> name_label >> name_p[part_p.name = arg1]
              >> description_label >> name_p[part_p.description = arg1]
              >> partclass_label >> part_class_p[part_p.part_class = arg1]
              >> power_label >> real_p[part_p.power = arg1]
-             >> range_label >> real_p[part_p.range = arg1]
-             >> mass_label >> real_p[part_p.mass = arg1]
              >> buildcost_label >> real_p[part_p.cost = arg1]
              >> buildtime_label >> int_p[part_p.build_time = arg1]
+             >> mountableslottypes_label >> ship_slot_type_vec_p[part_p.mountable_slot_types = arg1]
              >> location_label >> condition_p[part_p.location = arg1]
              >> !(effectsgroups_label >> effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[part_p.graphic = arg1])
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
-                                           part_p.mass, part_p.power, part_p.range, part_p.cost, part_p.build_time,
-                                           part_p.location,
+                                           part_p.power, part_p.cost, part_p.build_time,
+                                           part_p.mountable_slot_types, part_p.location,
                                            part_p.effects_groups,
                                            part_p.graphic)];
+
+        slot_p =
+            (str_p("slot")
+             >> type_label >> slot_type_p[slot_p.slot_type = arg1])
+            [slot_p.this_ = construct_<HullType::Slot>(slot_p.slot_type)];
+
+        slot_vec_p =
+            slot_p[push_back_(slot_vec_p.this_, arg1)]
+            | ('[' >> +(slot_p[push_back_(slot_vec_p.this_, arg1)]) >> ']');
 
         hull_p =
             (str_p("hull")
              >> name_label >> name_p[hull_p.name = arg1]
              >> description_label >> name_p[hull_p.description = arg1]
-             >> mass_label >> real_p[hull_p.mass = arg1]
              >> speed_label >> real_p[hull_p.speed = arg1]
              >> buildcost_label >> real_p[hull_p.cost = arg1]
              >> buildtime_label >> int_p[hull_p.build_time = arg1]
-             >> external_slots_label >> uint_p[hull_p.num_external_slots = arg1]
-             >> internal_slots_label >> uint_p[hull_p.num_internal_slots = arg1]
+             >> !(slots_label >> slot_vec_p[hull_p.slots = arg1])
              >> location_label >> condition_p[hull_p.location = arg1]
              >> !(effectsgroups_label >> effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[hull_p.graphic = arg1])
-            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.mass, hull_p.speed, hull_p.cost,
-                                           hull_p.build_time, hull_p.num_external_slots, hull_p.num_internal_slots,
+            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.speed, hull_p.cost,
+                                           hull_p.build_time, hull_p.slots,
                                            hull_p.location,
                                            hull_p.effects_groups,
                                            hull_p.graphic)];

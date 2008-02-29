@@ -21,9 +21,14 @@ namespace {
     const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
-                                                       const std::vector<std::string>& external_parts,
-                                                       const std::vector<std::string>& internal_parts) =    &ShipDesign::ValidDesign;
-    bool                    (*ValidDesignDesign)(const ShipDesign&) =                                       &ShipDesign::ValidDesign;}
+                                                       const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
+    bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;}
+
+    const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
+    std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
+
+    unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
+    unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
 
 namespace FreeOrionPython {
     using boost::python::def;
@@ -132,7 +137,6 @@ namespace FreeOrionPython {
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,      return_value_policy<return_by_value>()))
             .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,       return_value_policy<return_by_value>()))
             .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,         return_value_policy<return_by_value>()))
-            .add_property("mass",               make_function(&ShipDesign::Mass,                return_value_policy<return_by_value>()))
             .add_property("defense",            make_function(&ShipDesign::Defense,             return_value_policy<return_by_value>()))
             .add_property("speed",              make_function(&ShipDesign::Speed,               return_value_policy<return_by_value>()))
             .add_property("attack",             make_function(&ShipDesign::Attack,              return_value_policy<return_by_value>()))
@@ -140,9 +144,8 @@ namespace FreeOrionPython {
             .add_property("cost",               make_function(&ShipDesign::Cost,                return_value_policy<return_by_value>()))
             .add_property("buildTime",          make_function(&ShipDesign::BuildTime,           return_value_policy<return_by_value>()))
             .add_property("hull",               make_function(&ShipDesign::Hull,                return_value_policy<return_by_value>()))
-            .add_property("externalParts",      make_function(&ShipDesign::ExternalParts,       return_internal_reference<>()))
-            .add_property("internalParts",      make_function(&ShipDesign::InternalParts,       return_internal_reference<>()))
-            .add_property("parts",              make_function(&ShipDesign::Parts,               return_value_policy<return_by_value>()))
+            .add_property("parts",              make_function(PartsVoid,                        return_internal_reference<>()))
+            .def("partsInSlotType",             PartsSlotType,                                  return_value_policy<return_by_value>())
             //.add_property("graphic",            make_function(&ShipDesign::Graphic,             return_value_policy<copy_const_reference>()))
             //.add_property("model",              make_function(&ShipDesign::Model,               return_value_policy<copy_const_reference>()))
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
@@ -150,6 +153,20 @@ namespace FreeOrionPython {
         def("validShipDesign",                  ValidDesignHullAndParts);
         def("validShipDesign",                  ValidDesignDesign);
         def("getShipDesign",                    &GetShipDesign,                                 return_value_policy<reference_existing_object>());
+
+        class_<PartType, noncopyable>("partType", no_init)
+            .add_property("name",               make_function(&PartType::Name,                  return_value_policy<copy_const_reference>()))
+            .def("canMountInSlotType",          &PartType::CanMountInSlotType)
+        ;
+        def("getPartType",                      &GetPartType,                                   return_value_policy<reference_existing_object>());
+
+        class_<HullType, noncopyable>("hullType", no_init)
+            .add_property("name",               make_function(&HullType::Name,                  return_value_policy<copy_const_reference>()))
+            .add_property("numSlots",           make_function(NumSlotsTotal,                    return_value_policy<return_by_value>()))
+            .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
+            .add_property("slots",              make_function(&HullType::Slots,                 return_internal_reference<>()))
+        ;
+        def("getHullType",                      &GetHullType,                                   return_value_policy<reference_existing_object>());
 
 
         //////////////////

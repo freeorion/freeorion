@@ -32,7 +32,7 @@ namespace GG {
 GG_ENUM_STREAM_IN(UniverseObjectType)
 GG_ENUM_STREAM_OUT(UniverseObjectType)
 
-/** types of stars in FreeOrion v0.2 */
+/** types of stars */
 enum StarType {
     INVALID_STAR_TYPE = -1,
     STAR_BLUE,
@@ -60,7 +60,7 @@ namespace GG {
 GG_ENUM_STREAM_IN(StarType)
 GG_ENUM_STREAM_OUT(StarType)
 
-/** the types of planets in FreeOrion*/
+/** types of planets */
 enum PlanetType {
     INVALID_PLANET_TYPE = -1,
     PT_SWAMP,
@@ -96,8 +96,7 @@ namespace GG {
 GG_ENUM_STREAM_IN(PlanetType)
 GG_ENUM_STREAM_OUT(PlanetType)
 
-
-/** the sizes of planets in FreeOrion*/
+/** sizes of planets */
 enum PlanetSize {
     INVALID_PLANET_SIZE = -1,
     SZ_NOWORLD,         ///< used to designate an empty planet slot
@@ -128,7 +127,7 @@ GG_ENUM_STREAM_IN(PlanetSize)
 GG_ENUM_STREAM_OUT(PlanetSize)
 
 
-/** the environmental conditions of planets in FreeOrion*/
+/** environmental suitability of planets for a particular race */
 enum PlanetEnvironment {
     INVALID_PLANET_ENVIRONMENT = -1,
     PE_UNINHABITABLE,
@@ -153,7 +152,7 @@ GG_ENUM_STREAM_IN(PlanetEnvironment)
 GG_ENUM_STREAM_OUT(PlanetEnvironment)
 
 
-/** the types of production focus*/
+/** types of production focus*/
 enum FocusType {
     INVALID_FOCUS_TYPE = -1,
     FOCUS_UNKNOWN,
@@ -165,7 +164,7 @@ enum FocusType {
     FOCUS_TRADE,
     NUM_FOCI
 };
-                      
+
 namespace GG {
     GG_ENUM_MAP_BEGIN(FocusType)
     GG_ENUM_MAP_INSERT(INVALID_FOCUS_TYPE)
@@ -182,7 +181,7 @@ GG_ENUM_STREAM_IN(FocusType)
 GG_ENUM_STREAM_OUT(FocusType)
 
 
-/** the possible types for Meters in FreeOrion. */
+/** types for Meters */
 enum MeterType {
     INVALID_METER_TYPE = -1,
     METER_POPULATION,
@@ -224,7 +223,7 @@ namespace GG {
 GG_ENUM_STREAM_IN(MeterType)
 GG_ENUM_STREAM_OUT(MeterType)
 
-/** the types of universe shapes available in FreeOrion*/
+/** types of universe shapes during galaxy generation */
 enum Shape {
     INVALID_SHAPE = -1,
     SPIRAL_2,       ///< a two-armed spiral galaxy
@@ -274,7 +273,7 @@ GG_ENUM_STREAM_IN(Age)
 GG_ENUM_STREAM_OUT(Age)
 
 
-/** types of Planet Density */
+/** types of Planet Density during universe generation */
 enum PlanetDensity {
     INVALID_PLANET_DENSITY = -1,
     PD_LOW,
@@ -295,7 +294,7 @@ GG_ENUM_STREAM_IN(PlanetDensity)
 GG_ENUM_STREAM_OUT(PlanetDensity)
 
 
-/** types of starlane frequencies */
+/** starlane frequencies during universe generation */
 enum StarlaneFrequency {
     INVALID_STARLANE_FREQENCY = -1,
     LANES_NONE, 
@@ -322,7 +321,7 @@ GG_ENUM_STREAM_IN(StarlaneFrequency)
 GG_ENUM_STREAM_OUT(StarlaneFrequency)
 
 
-/** types of starlane frequencies */
+/** specials frequencies during universe generation */
 enum SpecialsFrequency {
     INVALID_SPECIALS_FREQENCY = -1,
     SPECIALS_NONE, 
@@ -345,7 +344,7 @@ GG_ENUM_STREAM_IN(SpecialsFrequency)
 GG_ENUM_STREAM_OUT(SpecialsFrequency)
 
 
-/** the types of diplomatic empire affiliations to a given empire*/
+/** types of diplomatic empire affiliations to another empire*/
 enum EmpireAffiliationType {
     INVALID_EMPIRE_AFFIL_TYPE = -1,
     AFFIL_SELF,     ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
@@ -365,7 +364,7 @@ namespace GG {
 GG_ENUM_STREAM_IN(EmpireAffiliationType)
 GG_ENUM_STREAM_OUT(EmpireAffiliationType)
 
-/** the types of items that can be unlocked for production by Effects */
+/** types of items that can be unlocked for production by Effects */
 enum UnlockableItemType {
     INVALID_UNLOCKABLE_ITEM_TYPE = -1,
     UIT_BUILDING,               ///< a kind of Building
@@ -481,7 +480,9 @@ enum ShipPartClass {
     PC_POINT_DEFENSE,       ///< short range direct weapons, good against fighters or incoming missiles, bad against ships
     PC_SHIELD,              ///< energy-based defense
     PC_ARMOUR,              ///< defensive material on hull of ship
-    PC_MISSION,             ///< part not directly related to combat.  may have effects or give ship an ability
+    PC_DETECTION,           ///< range of vision and seeing through stealth
+    PC_STEALTH,             ///< hiding from enemies
+    PC_FUEL,                ///< increases range away from resupply
     NUM_SHIP_PART_CLASSES
 };
 
@@ -494,11 +495,31 @@ namespace GG {
     GG_ENUM_MAP_INSERT(PC_POINT_DEFENSE)
     GG_ENUM_MAP_INSERT(PC_SHIELD)
     GG_ENUM_MAP_INSERT(PC_ARMOUR)
-    GG_ENUM_MAP_INSERT(PC_MISSION)
+    GG_ENUM_MAP_INSERT(PC_DETECTION)
+    GG_ENUM_MAP_INSERT(PC_STEALTH)
+    GG_ENUM_MAP_INSERT(PC_FUEL)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(ShipPartClass)
 GG_ENUM_STREAM_OUT(ShipPartClass)
+
+/* Types of slots in hulls.  Parts may be restricted to only certain slot types */
+enum ShipSlotType {
+    INVALID_SHIP_SLOT_TYPE = -1,
+    SL_EXTERNAL,            ///< external slots.  more easily damaged
+    SL_INTERNAL,            ///< internal slots.  more protected, fewer in number
+    NUM_SHIP_SLOT_TYPES
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(ShipSlotType)
+    GG_ENUM_MAP_INSERT(INVALID_SHIP_SLOT_TYPE)
+    GG_ENUM_MAP_INSERT(SL_EXTERNAL)
+    GG_ENUM_MAP_INSERT(SL_INTERNAL)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(ShipSlotType)
+GG_ENUM_STREAM_OUT(ShipSlotType)
 
 /** Returns the equivalent focus type for the given meter; if no such focus exists, returns INVALID_METER_TYPE. */
 MeterType FocusToMeter(FocusType type);

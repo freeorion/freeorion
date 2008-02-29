@@ -82,8 +82,7 @@ namespace AIInterface
 
     int                 IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
                                                    const std::string& hull,
-                                                   const std::vector<std::string>& external_parts,
-                                                   const std::vector<std::string>& internal_parts,
+                                                   const std::vector<std::string>& parts,
                                                    const std::string& graphic, const std::string& model);
 
     void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);

@@ -26,8 +26,8 @@ public:
 
     void Render();
 
-    void HullSelected(int hull_index);                                      ///< called when a hull is selected.  alters the design accordingly
-    void PartSelected(int part_index, bool external, unsigned int slot);    ///< called when a part is selected.  alters the design accordingly
+    void HullSelected(const std::string& hull_name);                    ///< called when a hull is selected.  alters the design accordingly
+    void PartSelected(const std::string& part_name, unsigned int slot); ///< called when a part is selected.  alters the design accordingly
 
     mutable DesignChangedSignalType DesignChangedSignal;
     //@}
@@ -39,22 +39,21 @@ private:
 
     void AddDesign();
 
-    void SetDesignHull(const std::string& hull);            ///< sets m_selected_hull and creates appropriate set of part droplists
-    void SetDesignPart(const std::string& part, bool external, unsigned int slot);  ///< sets part in external part \a slot if \a external is true, or internal slot if external is false
+    void SetDesignHull(const std::string& hull);                    ///< sets m_selected_hull and creates appropriate set of part droplists
+    void SetDesignPart(const std::string& part, unsigned int slot); ///< sets part in indicated \a slot
 
     void DesignChanged();                                   ///< called when design is changed.  disables add design button if design is invalid
 
     CUIDropDownList*                                    m_hulls_list;
-    std::vector<boost::shared_ptr<CUIDropDownList> >    m_external_parts_lists;
-    std::vector<boost::shared_ptr<CUIDropDownList> >    m_internal_parts_lists;
+    std::vector<boost::shared_ptr<CUIDropDownList> >    m_parts_lists;
+    std::vector<boost::shared_ptr<GG::TextControl> >    m_parts_list_labels;
 
     CUIButton*                      m_add_design_button;
     CUIEdit*                        m_design_name_edit;
     CUIEdit*                        m_design_description_edit;
 
     std::string                     m_selected_hull;
-    std::vector<std::string>        m_selected_external_parts;
-    std::vector<std::string>        m_selected_internal_parts;
+    std::vector<std::string>        m_selected_parts;
 };
 
 #endif // _DesignWnd_h_

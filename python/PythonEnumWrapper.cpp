@@ -74,18 +74,33 @@ namespace FreeOrionPython {
             .value("defense",       METER_DEFENSE)
         ;
         enum_<FocusType>("focusType")
-            .value("balanced",  FOCUS_BALANCED)
-            .value("farming",   FOCUS_FARMING)
-            .value("industry",  FOCUS_INDUSTRY)
-            .value("mining",    FOCUS_MINING)
-            .value("research",  FOCUS_RESEARCH)
-            .value("trade",     FOCUS_TRADE)
+            .value("balanced",      FOCUS_BALANCED)
+            .value("farming",       FOCUS_FARMING)
+            .value("industry",      FOCUS_INDUSTRY)
+            .value("mining",        FOCUS_MINING)
+            .value("research",      FOCUS_RESEARCH)
+            .value("trade",         FOCUS_TRADE)
         ;
         enum_<CaptureResult>("captureResult")
-            .value("capture",   CR_CAPTURE)
-            .value("destroy",   CR_DESTROY)
-            .value("retain",    CR_RETAIN)
-            .value("share",     CR_SHARE)
+            .value("capture",       CR_CAPTURE)
+            .value("destroy",       CR_DESTROY)
+            .value("retain",        CR_RETAIN)
+            .value("share",         CR_SHARE)
+        ;
+        enum_<ShipSlotType>("shipSlotType")
+            .value("external",      SL_EXTERNAL)
+            .value("internal",      SL_INTERNAL)
+        ;
+        enum_<ShipPartClass>("shipPartClass")
+            .value("shortrange",    PC_SHORT_RANGE)
+            .value("missiles",      PC_MISSILES)
+            .value("fighters",      PC_FIGHTERS)
+            .value("pointdefense",  PC_POINT_DEFENSE)
+            .value("shields",       PC_SHIELD)
+            .value("armour",        PC_ARMOUR)
+            .value("detection",     PC_DETECTION)
+            .value("stealth",       PC_STEALTH)
+            .value("fuel",          PC_FUEL)
         ;
     }
 }

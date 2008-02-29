@@ -3,10 +3,9 @@ Part
     description = "SR_LASER_DESC"
     class = ShortRange
     power = 1
-    range = 10
-    mass = 0
     buildcost = 4
     buildtime = 1
+    mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Laser.png"
 
@@ -15,22 +14,31 @@ Part
     description = "SR_ION_CANNON_DESC"
     class = ShortRange
     power = 2
-    range = 15
-    mass = 1
     buildcost = 8
     buildtime = 2
+    mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Ion_Cannon.png"
+
+Part
+    name = "LR_NUCLEAR_MISSILE"
+    description = "LR_NUCLEAR_MISSILE"
+    class = Missiles
+    power = 3
+    buildcost = 12
+    buildtime = 4
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "ship_part_icons/Nuclear_Missile.png"
 
 Part
     name = "AR_LEAD_PLATE"
     description = "AR_LEAD_PLATE_DESC"
     class = Armour
     power = 1
-    range = 0
-    mass = 3
     buildcost = 6
     buildtime = 1
+    mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Lead_Plate.png"
 
@@ -39,10 +47,9 @@ Part
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
     power = 1
-    range = 0
-    mass = 0
     buildcost = 4
     buildtime = 0
+    mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Defense_Grid.png"
 
@@ -51,9 +58,52 @@ Part
     description = "SH_DEFLECTOR_DESC"
     class = Shield
     power = 3
-    range = 0
-    mass = 1
     buildcost = 12
     buildtime = 2
+    mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Deflector.png"
+
+Part
+    name = "DT_ACTIVE_RADAR"
+    description = "DT_ACTIVE_RADAR_DESC"
+    class = Detection
+    power = 3
+    buildcost = 12
+    buildtime = 4
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "ship_part_icons/Active_Radar.png"
+
+Part
+    name = "FU_DEUTERIUM_TANK"
+    description = "FU_DEUTERIUM_TANK_DESC"
+    class = Fuel
+    power = 3
+    buildcost = 8
+    buildtime = 1
+    mountableSlotTypes = [External Internal]
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "ship_part_icons/Deuterium_Tank.png"
+
+Part
+    name = "FU_ANTIMATTER_TANK"
+    description = "FU_ANTIMATTER_TANK_DESC"
+    class = Fuel
+    power = 8
+    buildcost = 20
+    buildtime = 6
+    mountableSlotTypes = [External Internal]
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "ship_part_icons/Antimatter_Tank.png"
+
+Part
+    name = "ST_EM_DAMPER"
+    description = "ST_EM_DAMPER_DESC"
+    class = Stealth
+    power = 2
+    buildcost = 20
+    buildtime = 6
+    mountableSlotTypes = Internal
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "ship_part_icons/Emission_Damper.png"

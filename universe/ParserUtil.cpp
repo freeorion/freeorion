@@ -25,6 +25,7 @@ symbols<EmpireAffiliationType>  affiliation_type_p;
 symbols<UnlockableItemType>     unlockable_item_type_p;
 symbols<TechType>               tech_type_p;
 symbols<ShipPartClass>          part_class_p;
+symbols<ShipSlotType>           slot_type_p;
 
 namespace {
     bool Init()
@@ -90,37 +91,43 @@ namespace {
             ("blackhole", STAR_BLACK);
 
         focus_type_p.add
-            ("unknown", FOCUS_UNKNOWN)
-            ("balanced", FOCUS_BALANCED)
-            ("farming", FOCUS_FARMING)
-            ("industry", FOCUS_INDUSTRY)
-            ("mining", FOCUS_MINING)
-            ("research", FOCUS_RESEARCH)
-            ("trade", FOCUS_TRADE);
+            ("unknown",     FOCUS_UNKNOWN)
+            ("balanced",    FOCUS_BALANCED)
+            ("farming",     FOCUS_FARMING)
+            ("industry",    FOCUS_INDUSTRY)
+            ("mining",      FOCUS_MINING)
+            ("research",    FOCUS_RESEARCH)
+            ("trade",       FOCUS_TRADE);
 
         affiliation_type_p.add
-            ("theempire", AFFIL_SELF)
-            ("enemyof", AFFIL_ENEMY)
-            ("allyof", AFFIL_ALLY);
+            ("theempire",   AFFIL_SELF)
+            ("enemyof",     AFFIL_ENEMY)
+            ("allyof",      AFFIL_ALLY);
 
         unlockable_item_type_p.add
-            ("building", UIT_BUILDING)
-            ("shippart", UIT_SHIP_PART)
-            ("shiphull", UIT_SHIP_HULL);
+            ("building",    UIT_BUILDING)
+            ("shippart",    UIT_SHIP_PART)
+            ("shiphull",    UIT_SHIP_HULL);
 
         tech_type_p.add
-            ("theory", TT_THEORY)
+            ("theory",      TT_THEORY)
             ("application", TT_APPLICATION)
-            ("refinement", TT_REFINEMENT);
+            ("refinement",  TT_REFINEMENT);
 
         part_class_p.add
-            ("shortrange", PC_SHORT_RANGE)
-            ("missiles", PC_MISSILES)
-            ("fighters", PC_FIGHTERS)
-            ("pointdefense", PC_POINT_DEFENSE)
-            ("shield", PC_SHIELD)
-            ("armour", PC_ARMOUR)
-            ("mission", PC_MISSION);
+            ("shortrange",      PC_SHORT_RANGE)
+            ("missiles",        PC_MISSILES)
+            ("fighters",        PC_FIGHTERS)
+            ("pointdefense",    PC_POINT_DEFENSE)
+            ("shield",          PC_SHIELD)
+            ("armour",          PC_ARMOUR)
+            ("detection",       PC_DETECTION)
+            ("stealth",         PC_STEALTH)
+            ("fuel",            PC_FUEL);
+
+        slot_type_p.add
+            ("external",    SL_EXTERNAL)
+            ("internal",    SL_INTERNAL);
 
         return true;
     }
