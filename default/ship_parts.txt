@@ -107,3 +107,27 @@ Part
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_part_icons/Emission_Damper.png"
+
+Part
+    name = "CO_COLONY_POD"
+    description = "CO_COLONY_POD_DESC"
+    class = Stealth
+    power = 1
+    buildcost = 40
+    buildtime = 10
+    mountableSlotTypes = Internal
+    location = And [OwnedBy TheEmpire Source.Owner
+                    CurrentPopulation low = 3 high = 999]
+    graphic = "ship_part_icons/Colony_Pod.png"
+
+Part
+    name = "CO_SUSPEND_ANIM_POD"
+    description = "CO_SUSPEND_ANIM_POD_DESC"
+    class = Stealth
+    power = 5
+    buildcost = 80
+    buildtime = 12
+    mountableSlotTypes = Internal
+    location = And [OwnedBy TheEmpire Source.Owner
+                    CurrentPopulation low = 3 high = 999]
+    graphic = ""

@@ -1921,6 +1921,18 @@ Tech
     graphic = ""
 
 Tech
+    name = "SHP_SUSPENDED_ANIMATION"
+    description = "SHP_SUSPENDED_ANIMATION_DESC"
+    short_description = "DOES_NOTHING_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "GRO_LIFECYCLE_MAN"
+    unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
+    graphic = ""
+
+Tech
     name = "SHP_MEDIUM_HULL"
     description = "SHP_MEDIUM_HULL_DESC"
     short_description = ""
@@ -1962,3 +1974,4 @@ Tech
     ]
     unlock = Item type = ShipHull name = "SH_HUGE"
     graphic = ""
+

@@ -3028,23 +3028,29 @@ Fleet Logistics
 SHP_FLEET_LOGISTICS_DESC
 Gives planets ability to resupply fleets in systems several starlane jumps away.
 
+SHP_SUSPENDED_ANIMATION
+Suspended Animation
+
+SHP_SUSPENDED_ANIMATION_DESC
+Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently.  Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space.  With this technique, the capacity of colony ships can be greatly increased.
+
 SHP_MEDIUM_HULL
-Medium Ship Hull
+Medium Ship Hulls
 
 SHP_MEDIUM_HULL_DESC
-Medium Ship Hull
+Medium Ship Hulls
 
 SHP_LARGE_HULL
-Large Ship Hull
+Large Ship Hulls
 
 SHP_LARGE_HULL_DESC
-Large Ship Hull
+Large Ship Hulls
 
 SHP_HUGE_HULL
-Huge Ship Hull
+Huge Ship Hulls
 
 SHP_HUGE_HULL_DESC
-Huge Ship Hull
+Huge Ship Hulls
 
 ########################################
 # Tech Refinement Names & Descriptions #
@@ -3325,6 +3331,18 @@ SH_DEFLECTOR
 Deflector Shield
 SH_DEFLECTOR_DESC
 Strong defense with small mass
+
+CO_COLONY_POD
+Colony Pod
+
+CO_COLONY_POD_DESC
+Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
+
+CO_SUSPEND_ANIM_POD
+Cryonic Colony Pod
+
+CO_SUSPEND_ANIM_POD_DESC
+Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
 
 ##############
 # Ship Hulls #

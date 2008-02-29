@@ -1938,6 +1938,7 @@ void Empire::UpdateFoodDistribution()
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
+        obj = 0;    // to quiet warning about unused varaible
 
         double addition = center->FuturePopGrowthMax();
 
