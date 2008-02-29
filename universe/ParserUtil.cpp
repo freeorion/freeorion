@@ -123,7 +123,8 @@ namespace {
             ("armour",          PC_ARMOUR)
             ("detection",       PC_DETECTION)
             ("stealth",         PC_STEALTH)
-            ("fuel",            PC_FUEL);
+            ("fuel",            PC_FUEL)
+            ("colony",          PC_COLONY);
 
         slot_type_p.add
             ("external",    SL_EXTERNAL)

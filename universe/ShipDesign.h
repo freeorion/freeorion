@@ -10,15 +10,14 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include "Enums.h"
+
 namespace Condition {
     class ConditionBase;
 }
 namespace Effect {
     class EffectsGroup;
 }
-
-enum ShipPartClass;
-enum ShipSlotType;
 
 /** A type of ship part */
 class PartType {

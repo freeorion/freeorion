@@ -111,7 +111,7 @@ Part
 Part
     name = "CO_COLONY_POD"
     description = "CO_COLONY_POD_DESC"
-    class = Stealth
+    class = Colony
     power = 1
     buildcost = 40
     buildtime = 10
@@ -123,7 +123,7 @@ Part
 Part
     name = "CO_SUSPEND_ANIM_POD"
     description = "CO_SUSPEND_ANIM_POD_DESC"
-    class = Stealth
+    class = Colony
     power = 5
     buildcost = 80
     buildtime = 12

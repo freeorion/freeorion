@@ -483,6 +483,7 @@ enum ShipPartClass {
     PC_DETECTION,           ///< range of vision and seeing through stealth
     PC_STEALTH,             ///< hiding from enemies
     PC_FUEL,                ///< increases range away from resupply
+    PC_COLONY,              ///< transports colonists and allows ships to make new colonies
     NUM_SHIP_PART_CLASSES
 };
 
@@ -498,6 +499,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(PC_DETECTION)
     GG_ENUM_MAP_INSERT(PC_STEALTH)
     GG_ENUM_MAP_INSERT(PC_FUEL)
+    GG_ENUM_MAP_INSERT(PC_COLONY)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(ShipPartClass)

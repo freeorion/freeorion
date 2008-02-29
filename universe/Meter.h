@@ -2,10 +2,10 @@
 #ifndef _Meter_h_
 #define _Meter_h_
 
-#ifndef _UniverseObject_h_
-#include "UniverseObject.h"
-#endif
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
 
+class Universe;
 class ServerApp;
 
 /** A Meter is a value with an associated maximum value.  A typical example is the population meter.  The max represents the max 
