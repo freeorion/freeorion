@@ -797,11 +797,11 @@ void MapWnd::InitTurn(int turn_number)
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
-    GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
-    GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
-    GG::Connect(empire->GetTradeResPool().ChangedSignal, &MapWnd::RefreshTradeResourceIndicator, this, 0);
-    GG::Connect(empire->GetResearchResPool().ChangedSignal, &MapWnd::RefreshResearchResourceIndicator, this, 0);
-    GG::Connect(empire->GetIndustryResPool().ChangedSignal, &MapWnd::RefreshIndustryResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal, &MapWnd::RefreshTradeResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal, &MapWnd::RefreshResearchResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal, &MapWnd::RefreshIndustryResourceIndicator, this, 0);
 
     GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::RefreshPopulationIndicator, this, 1);
 
@@ -2021,9 +2021,9 @@ void MapWnd::RefreshFoodResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-    m_food->SetValue(empire->GetFoodResPool().Stockpile()); // set first value to stockpiled food
+    m_food->SetValue(empire->ResourceStockpile(RE_FOOD)); // set first value to stockpiled food
 
-    double production = empire->GetFoodResPool().Production();
+    double production = empire->ResourceProduction(RE_FOOD);
     double spent = empire->TotalFoodDistributed();
 
     m_food->SetValue(production - spent, 1);    // set second (bracketed) value to predicted stockpile change
@@ -2033,9 +2033,9 @@ void MapWnd::RefreshMineralsResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-    m_mineral->SetValue(empire->GetMineralResPool().Stockpile());
+    m_mineral->SetValue(empire->ResourceStockpile(RE_MINERALS));
 
-    double production = empire->GetMineralResPool().Production();
+    double production = empire->ResourceProduction(RE_MINERALS);
     double spent = empire->GetProductionQueue().TotalPPsSpent();
 
     m_mineral->SetValue(production - spent, 1);
@@ -2045,9 +2045,9 @@ void MapWnd::RefreshTradeResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
 
-    m_trade->SetValue(empire->GetTradeResPool().Stockpile());
+    m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
 
-    double production = empire->GetTradeResPool().Production();
+    double production = empire->ResourceProduction(RE_TRADE);
     double spent = empire->TotalTradeSpending();
 
     m_trade->SetValue(production - spent, 1);
@@ -2056,13 +2056,13 @@ void MapWnd::RefreshTradeResourceIndicator()
 void MapWnd::RefreshResearchResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    m_research->SetValue(empire->GetResearchResPool().Production());
+    m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
 }
 
 void MapWnd::RefreshIndustryResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    m_industry->SetValue(empire->GetIndustryResPool().Production());
+    m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
 }
 
 void MapWnd::RefreshPopulationIndicator()

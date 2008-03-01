@@ -1078,6 +1078,7 @@ void ResourcePanel::PrimaryFocusDropListSelectionChanged(int selected)
         throw std::invalid_argument("PrimaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
         break;
     }
+    TempUISoundDisabler sound_disabler;
     PrimaryFocusChangedSignal(focus);
 }
 
@@ -1107,6 +1108,7 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
         throw std::invalid_argument("SecondaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
         break;
     }
+    TempUISoundDisabler sound_disabler;
     SecondaryFocusChangedSignal(focus);
 }
 

@@ -88,7 +88,14 @@ namespace FreeOrionPython {
 
             .def("hasExploredSystem",               &Empire::HasExploredSystem)
             .add_property("exploredSystemIDs",      make_function(&Empire::ExploredSystems,         return_internal_reference<>()))
+
+            .add_property("productionPoints",       make_function(&Empire::ProductionPoints,        return_value_policy<return_by_value>()))
+            .def("resourceStockpile",               &Empire::ResourceStockpile)
+            .def("resourceMaxStockpile",            &Empire::ResourceMaxStockpile)
+            .def("resourceProduction",              &Empire::ResourceProduction)
+            .def("resourceAvailable",               &Empire::ResourceAvailable)
         ;
+
 
         ////////////////////
         // Research Queue //

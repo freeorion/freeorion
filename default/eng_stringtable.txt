@@ -2828,7 +2828,7 @@ GRO_BIOTERROR
 Bioterror Facilites
 
 GRO_BIOTERROR_DESC
-I dunno... it makes people grow less.
+A research centre created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict but as a weapon of terror it is unsurpassed, a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sows despair beyond the affected area, however care must be taken when developing such organisms to ensure they are not accidental released furthermore utter secrecy is required at the risk of damaging relations with other empires and our own people.
 
 GRO_HABITATION_DOMES
 Habitation Domes

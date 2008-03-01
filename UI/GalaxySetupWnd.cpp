@@ -266,6 +266,7 @@ void GalaxySetupPanel::DetachSignalChildren()
 
 void GalaxySetupPanel::SettingChanged(int)
 {
+    TempUISoundDisabler sound_disabler;
     SettingsChangedSignal();
 }
 

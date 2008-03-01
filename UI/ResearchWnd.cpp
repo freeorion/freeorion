@@ -347,7 +347,7 @@ void ResearchWnd::ResetInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
-    double RPs = empire->GetResearchResPool().Production();
+    double RPs = empire->ResourceProduction(RE_RESEARCH);
     double total_queue_cost = queue.TotalRPsSpent();
     ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
     double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;

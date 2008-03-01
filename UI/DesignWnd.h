@@ -2,12 +2,17 @@
 #ifndef _DesignWnd_h_
 #define _DesignWnd_h_
 
-#include "CUIWnd.h"
+#include <GG/Wnd.h>
+#include <boost/signal.hpp>
+#include <boost/shared_ptr.hpp>
 
 class CUIEdit;
 class CUIButton;
 class CUIDropDownList;
 class ShipDesign;
+namespace GG {
+    class TextControl;
+}
 
 /** Lets the player design ships */
 class DesignWnd : public GG::Wnd {

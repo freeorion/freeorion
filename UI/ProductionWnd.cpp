@@ -436,7 +436,7 @@ void ProductionWnd::ResetInfoPanel()
        or free up excess minerals.  Signalling that the MineralResPool has changed causes the
        MapWnd to be signalled that that pool has changed, which causes the resource indicator
        to be updated (which polls the ProductionQueue to determine how many PPs are being spent) */
-    empire->GetMineralResPool().ChangedSignal();
+    empire->GetResourcePool(RE_MINERALS)->ChangedSignal();
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)

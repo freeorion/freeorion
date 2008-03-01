@@ -9,6 +9,16 @@
 //////////////////////////////////////////////////
 // ResourcePool
 //////////////////////////////////////////////////
+ResourcePool::ResourcePool() :
+    m_resource_centers(),
+    m_supply_system_groups(),
+    m_stockpile_system_id(UniverseObject::INVALID_OBJECT_ID),
+    m_stockpile(-1.0),
+    m_max_stockpile(-1.0),
+    m_production(-1.0),
+    m_type(INVALID_RESOURCE_TYPE)
+{}
+
 ResourcePool::ResourcePool(ResourceType type) :
     m_resource_centers(),
     m_supply_system_groups(),

@@ -57,6 +57,13 @@ namespace FreeOrionPython {
             .value("unresearchable",    BT_BUILDING)
             .value("researchable",      BT_SHIP)
         ;
+        enum_<ResourceType>("resourceType")
+            .value("food",          RE_FOOD)
+            .value("minerals",      RE_MINERALS)
+            .value("industry",      RE_INDUSTRY)
+            .value("trade",         RE_TRADE)
+            .value("research",      RE_RESEARCH)
+        ;
         enum_<MeterType>("meterType")
             .value("population",    METER_POPULATION)
             .value("farming",       METER_FARMING)

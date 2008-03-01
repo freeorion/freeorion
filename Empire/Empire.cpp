@@ -25,9 +25,6 @@
 #include <boost/graph/connected_components.hpp>
 
 
-using std::find;
-using boost::lexical_cast;
-
 namespace {
     const double EPSILON = 1.0e-5;
 
@@ -336,12 +333,9 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject()
     return end();
 }
 
-
-////////////////////////////////////////
-// ProductionQueue                    //
-////////////////////////////////////////
-
-// ProductionQueue::ProductionItem
+/////////////////////////////////////
+// ProductionQueue::ProductionItem //
+/////////////////////////////////////
 ProductionQueue::ProductionItem::ProductionItem()
 {}
 
@@ -364,7 +358,9 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
     }
 }
 
-// ProductionQueue::Elemnt
+//////////////////////////////
+// ProductionQueue::Element //
+//////////////////////////////
 ProductionQueue::Element::Element() :
     ordered(0),
     remaining(0),
@@ -404,7 +400,9 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
     turns_left_to_completion(-1)
 {}
 
-// ProductionQueue
+/////////////////////
+// ProductionQueue //
+/////////////////////
 ProductionQueue::ProductionQueue() :
     m_projects_in_progress(0),
     m_total_PPs_spent(0.0)
@@ -610,37 +608,41 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
 }
 
 
-////////////////////////////////////////
-// class Empire                       //
-////////////////////////////////////////
+////////////
+// Empire //
+////////////
 Empire::Empire() :
     m_id(-1),
-    m_homeworld_id(-1),
-    m_mineral_resource_pool(RE_MINERALS),
-    m_food_resource_pool(RE_FOOD),
-    m_research_resource_pool(RE_RESEARCH),
-    m_industry_resource_pool(RE_INDUSTRY),
-    m_trade_resource_pool(RE_TRADE),
+    m_homeworld_id(UniverseObject::INVALID_OBJECT_ID),
+    m_resource_pools(),
     m_population_pool(),
     m_food_total_distributed(0),
     m_maintenance_total_cost(0)
-{}
+{
+    m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
+    m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
+    m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
+    m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
+    m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+}
 
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
     m_id(ID),
     m_name(name),
     m_player_name(player_name),
     m_color(color), 
-    m_homeworld_id(homeworld_id), 
-    m_mineral_resource_pool(RE_MINERALS),
-    m_food_resource_pool(RE_FOOD),
-    m_research_resource_pool(RE_RESEARCH),
-    m_industry_resource_pool(RE_INDUSTRY),
-    m_trade_resource_pool(RE_TRADE),
+    m_homeworld_id(UniverseObject::INVALID_OBJECT_ID),
+    m_resource_pools(),
     m_population_pool(),
     m_food_total_distributed(0),
     m_maintenance_total_cost(0)
-{}
+{
+    m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
+    m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
+    m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
+    m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
+    m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+}
 
 Empire::~Empire()
 {
@@ -1309,7 +1311,63 @@ Empire::SitRepItr Empire::SitRepEnd() const
 
 double Empire::ProductionPoints() const
 {
-    return std::min(m_industry_resource_pool.Available(), m_mineral_resource_pool.Available());
+    return std::min(GetResourcePool(RE_INDUSTRY)->Available(), GetResourcePool(RE_MINERALS)->Available());
+}
+
+const ResourcePool* Empire::GetResourcePool(ResourceType resource_type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
+    if (it == m_resource_pools.end())
+        return 0;
+    return it->second.get();
+}
+
+double Empire::ResourceStockpile(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceStockpile passed invalid ResourceType");
+    return it->second->Stockpile();
+}
+
+double Empire::ResourceMaxStockpile(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceMaxStockpile passed invalid ResourceType");
+    return it->second->MaxStockpile();
+}
+
+double Empire::ResourceProduction(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceProduction passed invalid ResourceType");
+    return it->second->Production();
+}
+
+double Empire::ResourceAvailable(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
+    return it->second->Available();
+}
+
+void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::SetResourceStockpile passed invalid ResourceType");
+    return it->second->SetStockpile(stockpile);
+}
+
+void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::SetResourceMaxStockpile passed invalid ResourceType");
+    return it->second->SetMaxStockpile(max);
 }
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
@@ -1328,7 +1386,7 @@ void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
             m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, tech);
     }
-    m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
+    m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
 }
 
 void Empire::RemoveTechFromQueue(const Tech* tech)
@@ -1336,7 +1394,7 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
-        m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
+        m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
     }
 }
 
@@ -1633,7 +1691,7 @@ void Empire::ClearSitRep()
 void Empire::CheckResearchProgress()
 {
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
-    // m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
+    // m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
     std::vector<const Tech*> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
         const Tech* tech = it->tech;
@@ -1658,7 +1716,7 @@ void Empire::CheckResearchProgress()
             m_research_queue.erase(temp_it);
     }
     // can uncomment following line when / if research stockpiling is enabled...
-    // m_research_resource_pool.SetStockpile(m_industry_resource_pool.Available() - m_research_queue.TotalRPsSpent());
+    // m_resource_pools[RE_RESEARCH]->SetStockpile(m_resource_pools[RE_RESEARCH]->Available() - m_research_queue.TotalRPsSpent());
 }
 
 void Empire::CheckProductionProgress()
@@ -1750,19 +1808,19 @@ void Empire::CheckProductionProgress()
         m_production_queue.erase(*it);
     }
 
-    m_mineral_resource_pool.SetStockpile(m_mineral_resource_pool.Available() - m_production_queue.TotalPPsSpent());
+    m_resource_pools[RE_MINERALS]->SetStockpile(m_resource_pools[RE_MINERALS]->Available() - m_production_queue.TotalPPsSpent());
     // can uncomment following line when / if industry stockpiling is allowed...
-    // m_industry_resource_pool.SetStockpile(m_industry_resource_pool.Available() - m_production_queue.TotalPPsSpent());
+    // m_resource_pools[RE_INDUSTRY]->SetStockpile(m_resource_pools[RE_INDUSTRY]->Available() - m_production_queue.TotalPPsSpent());
 }
 
 void Empire::CheckTradeSocialProgress()
 {
-    m_trade_resource_pool.SetStockpile(m_trade_resource_pool.Available() - m_maintenance_total_cost);
+    m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->Available() - m_maintenance_total_cost);
 }
 
 void Empire::CheckGrowthFoodProgress()
 {
-    m_food_resource_pool.SetStockpile(m_food_resource_pool.Available() - m_food_total_distributed);
+    m_resource_pools[RE_FOOD]->SetStockpile(m_resource_pools[RE_FOOD]->Available() - m_food_total_distributed);
 }
 
 void Empire::SetColor(const GG::Clr& color)
@@ -1794,19 +1852,19 @@ void Empire::InitResourcePools(const std::set<std::set<int> >& system_supply_gro
             pop_vec.push_back(pc);
     }
 
-    m_mineral_resource_pool.SetResourceCenters(res_vec);
-    m_food_resource_pool.SetResourceCenters(res_vec);
-    m_research_resource_pool.SetResourceCenters(res_vec);
-    m_industry_resource_pool.SetResourceCenters(res_vec);
-    m_trade_resource_pool.SetResourceCenters(res_vec);
+    m_resource_pools[RE_MINERALS]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_FOOD]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_RESEARCH]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_INDUSTRY]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_TRADE]->SetResourceCenters(res_vec);
 
     m_population_pool.SetPopCenters(pop_vec);
 
 
     // inform the blockadeable resource pools about systems that can share
-    m_mineral_resource_pool.SetSystemSupplyGroups(system_supply_groups);
-    m_food_resource_pool.SetSystemSupplyGroups(system_supply_groups);
-    m_industry_resource_pool.SetSystemSupplyGroups(system_supply_groups);
+    m_resource_pools[RE_MINERALS]->SetSystemSupplyGroups(system_supply_groups);
+    m_resource_pools[RE_FOOD]->SetSystemSupplyGroups(system_supply_groups);
+    m_resource_pools[RE_INDUSTRY]->SetSystemSupplyGroups(system_supply_groups);
 
     // set non-blockadeable resrouce pools to share resources between all systems
     std::set<std::set<int> > sets_set;
@@ -1815,15 +1873,15 @@ void Empire::InitResourcePools(const std::set<std::set<int> >& system_supply_gro
     for (std::vector<System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
         all_systems_set.insert((*it)->ID());
     sets_set.insert(all_systems_set);
-    m_research_resource_pool.SetSystemSupplyGroups(sets_set);
-    m_trade_resource_pool.SetSystemSupplyGroups(sets_set);
+    m_resource_pools[RE_RESEARCH]->SetSystemSupplyGroups(sets_set);
+    m_resource_pools[RE_TRADE]->SetSystemSupplyGroups(sets_set);
 
     // set stockpile location
-    m_mineral_resource_pool.SetStockpileSystem(CapitolID());
-    m_food_resource_pool.SetStockpileSystem(CapitolID());
-    m_industry_resource_pool.SetStockpileSystem(CapitolID());
-    m_research_resource_pool.SetStockpileSystem(CapitolID());
-    m_trade_resource_pool.SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_MINERALS]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_FOOD]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_RESEARCH]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_TRADE]->SetStockpileSystem(CapitolID());
 }
 
 void Empire::UpdateResourcePools()
@@ -1840,23 +1898,23 @@ void Empire::UpdateResourcePools()
 
 void Empire::UpdateResearchQueue()
 {
-    m_research_resource_pool.Update();
-    m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
-    m_research_resource_pool.ChangedSignal();
+    m_resource_pools[RE_RESEARCH]->Update();
+    m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
+    m_resource_pools[RE_RESEARCH]->ChangedSignal();
 }
 
 void Empire::UpdateProductionQueue()
 {
-    m_mineral_resource_pool.Update();
-    m_industry_resource_pool.Update();
+    m_resource_pools[RE_MINERALS]->Update();
+    m_resource_pools[RE_INDUSTRY]->Update();
     m_production_queue.Update(this, ProductionPoints(), m_production_progress);
-    m_mineral_resource_pool.ChangedSignal();
-    m_industry_resource_pool.ChangedSignal();
+    m_resource_pools[RE_MINERALS]->ChangedSignal();
+    m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
 
 void Empire::UpdateTradeSpending()
 {
-    m_trade_resource_pool.Update(); // recalculate total trade production
+    m_resource_pools[RE_TRADE]->Update(); // recalculate total trade production
 
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
     m_maintenance_total_cost = 0.0;
@@ -1869,19 +1927,19 @@ void Empire::UpdateTradeSpending()
         if (building->Operating())
             m_maintenance_total_cost += GetBuildingType(building->BuildingTypeName())->MaintenanceCost();
     }
-    m_trade_resource_pool.ChangedSignal();
+    m_resource_pools[RE_TRADE]->ChangedSignal();
 }
 
 void Empire::UpdateFoodDistribution()
 {
-    m_food_resource_pool.Update();  // recalculate total food production
+    m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
-    double available_food = GetFoodResPool().Available();
+    double available_food = m_resource_pools[RE_FOOD]->Available();
     m_food_total_distributed = 0.0;
 
-    std::vector<PopCenter*> pop_centers = GetPopulationPool().PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
+    std::vector<PopCenter*> pop_centers = m_population_pool.PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
     std::vector<PopCenter*>::iterator pop_it;
-    std::vector<ResourceCenter*> resource_centers = GetFoodResPool().ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
+    std::vector<ResourceCenter*> resource_centers = m_resource_pools[RE_FOOD]->ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
     std::vector<ResourceCenter*>::iterator res_it;
 
     // compile map of food production of ResourceCenters, indexed by center's id
@@ -1951,7 +2009,7 @@ void Empire::UpdateFoodDistribution()
     // after changing food distribution, population growth predictions may need to be redone
     // by calling UpdatePopulationGrowth()  
 
-    m_food_resource_pool.ChangedSignal();
+    m_resource_pools[RE_FOOD]->ChangedSignal();
 }
 
 void Empire::UpdatePopulationGrowth()

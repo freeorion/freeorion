@@ -12,6 +12,7 @@
 
 class ResourceCenter;
 class PopCenter;
+class Empire;
 
 /** The ResourcePool class keeps track of an empire's stockpile and production of 
  *  a particular resource (food, minerals, trade, research or industry).
@@ -55,13 +56,11 @@ public:
     void Update();  ///< recalculates total resource production
 
 private:
+    ResourcePool(); ///< default ctor needed for serialization
+
     std::vector<ResourceCenter*>    m_resource_centers;     ///< list of ResourceCenters: produce resources
     std::set<std::set<int> >        m_supply_system_groups; ///< sets of system that can share resources
     int                             m_stockpile_system_id;  ///< system at which resources are stockpiled
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
 
     double m_stockpile;         ///< current stockpiled amount of resource
     double m_max_stockpile;     ///< maximum allowed stockpile of resource
@@ -69,6 +68,10 @@ private:
     double m_production;        ///< amount of resource being produced by empire
 
     ResourceType m_type;        ///< what kind of resource does this pool hold?
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** The PopulationPool class keeps track of an empire's total population and its growth.
@@ -118,7 +121,8 @@ void ResourcePool::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_stockpile)
         & BOOST_SERIALIZATION_NVP(m_max_stockpile)
-        & BOOST_SERIALIZATION_NVP(m_type);
+        & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_stockpile_system_id);
 }
 
 template <class Archive>
