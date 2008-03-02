@@ -1,11 +1,21 @@
-vertex_program PlanetVert glsl
+vertex_program planet_vert glsl
 {
     source planet.vert
 }
 
-fragment_program PlanetFrag glsl
+fragment_program planet_frag glsl
 {
     source planet.frag
+}
+
+vertex_program planet_atmosphere_vert glsl
+{
+    source planet_atmosphere.vert
+}
+
+fragment_program planet_atmosphere_frag glsl
+{
+    source planet_atmosphere.frag
 }
 
 material Planet
@@ -14,12 +24,12 @@ material Planet
 	{
         pass
         {
-            vertex_program_ref PlanetVert
+            vertex_program_ref planet_vert
             { 
                 param_named light_dir float3 1.0 0.0 0.0
             }
 
-            fragment_program_ref PlanetFrag
+            fragment_program_ref planet_frag
             {
                 param_named day_texture int 0
                 param_named night_texture int 1
@@ -39,6 +49,22 @@ material Planet
             texture_unit
             {
                 texture clouds.png 2d 0
+            }
+        }
+
+        pass
+        {
+            scene_blend alpha_blend
+
+            vertex_program_ref planet_atmosphere_vert
+            { 
+                param_named light_dir float3 1.0 0.0 0.0
+                param_named_auto camera_pos camera_position_object_space
+            }
+
+            fragment_program_ref planet_atmosphere_frag
+            {
+                param_named atmosphere_color float4 0.501 0.684 1.0 0.602
             }
         }
     }
