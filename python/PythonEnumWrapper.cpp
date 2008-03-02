@@ -108,6 +108,7 @@ namespace FreeOrionPython {
             .value("detection",     PC_DETECTION)
             .value("stealth",       PC_STEALTH)
             .value("fuel",          PC_FUEL)
+            .value("colony",        PC_COLONY)
         ;
     }
 }

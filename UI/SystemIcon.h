@@ -95,6 +95,7 @@ private:
     GG::StaticGraphic*              m_mouseover_indicator;  //!< shown when the mouse cursor is over the system
     bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator
     OwnerColoredSystemName*         m_name;                 //!< the control that holds the name of the system
+    bool                            m_showing_name;         //!< is the icon supposed to show its name?
 
     std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
     std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner

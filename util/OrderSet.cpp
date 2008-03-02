@@ -22,7 +22,7 @@ int OrderSet::IssueOrder(OrderPtr order)
 {
     int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
     m_orders[retval] = order;
-    
+
     order->Execute();
 
     return retval;

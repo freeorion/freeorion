@@ -72,7 +72,8 @@ SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
     m_selection_indicator(0),
     m_mouseover_indicator(0),
     m_selected(false),
-    m_name(0)
+    m_name(0),
+    m_showing_name(false)
 {
     parent->AttachChild(this);
     Init();
@@ -84,7 +85,7 @@ void SystemIcon::Init() {
     SetText(m_system.Name());
 
     StarType star_type = m_system.Star();
-    
+
     // everything is resized at the bottom of this function
     const int DEFAULT_SIZE = 10;
 
@@ -243,6 +244,8 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         AttachChild(m_mouseover_indicator);
         MoveChildUp(m_mouseover_indicator);
     }
+    if (m_name)
+        m_name->Show();
 
     MouseEnteringSignal(m_system.ID());
 }
@@ -253,6 +256,8 @@ void SystemIcon::MouseLeave()
     if (m_mouseover_indicator) {
         DetachChild(m_mouseover_indicator);
     }
+    if (!m_showing_name && m_name)
+        m_name->Hide();
 
     MouseLeavingSignal(m_system.ID());
 }
@@ -280,9 +285,10 @@ void SystemIcon::Refresh()
     // set up the name text controls
     if (!m_system.Name().empty()) {
         delete m_name;
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 3);
         m_name = new OwnerColoredSystemName(&m_system, font);
         AttachChild(m_name);
+        m_showing_name = true;
         PositionSystemName();
     }
 
@@ -315,12 +321,14 @@ void SystemIcon::ShowName()
 {
     if (m_name)
         m_name->Show();
+    m_showing_name = true;
 }
 
 void SystemIcon::HideName()
 {
     if (m_name)
         m_name->Hide();
+    m_showing_name = false;
 }
 
 void SystemIcon::CreateFleetButtons()
