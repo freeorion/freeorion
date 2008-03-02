@@ -5,9 +5,9 @@ Hull
     buildcost = 10
     buildtime = 4
     slots = [
-        Slot type = External
-        Slot type = External
-        Slot type = External
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
     ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Small.png"
@@ -19,11 +19,11 @@ Hull
     buildcost = 20
     buildtime = 5
     slots = [
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = Internal
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = Internal position = (0.8, 0.8)
     ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Large.png"
@@ -35,13 +35,13 @@ Hull
     buildcost = 30
     buildtime = 6
     slots = [
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = Internal
-        Slot type = Internal
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = Internal position = (0.8, 0.8)
+        Slot type = Internal position = (0.8, 0.8)
     ]
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = 
@@ -58,16 +58,16 @@ Hull
     buildcost = 50
     buildtime = 8
     slots = [
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = External
-        Slot type = Internal
-        Slot type = Internal
-        Slot type = Internal
-        Slot type = Internal
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.5, 0.5)
+        Slot type = Internal position = (0.8, 0.8)
+        Slot type = Internal position = (0.8, 0.8)
+        Slot type = Internal position = (0.8, 0.8)
+        Slot type = Internal position = (0.8, 0.8)
     ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Huge.png"

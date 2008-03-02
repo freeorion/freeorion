@@ -119,13 +119,17 @@ class HullType {
 public:
     struct Slot {
         Slot() :
-            type(ShipSlotType(-1))
+            type(ShipSlotType(-1)),
+            x(0.5),
+            y(0.5)
         {};
-        Slot(ShipSlotType slot_type) :
-            type(slot_type)
+        Slot(ShipSlotType slot_type, double x_, double y_) :
+            type(slot_type),
+            x(x_),
+            y(y_)
         {};
         ShipSlotType type;
-        // LATER: More details
+        double x, y;
     };
 
     /** \name Structors */ //@{

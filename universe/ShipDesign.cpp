@@ -419,7 +419,7 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
     const std::vector<HullType::Slot>& slots = hull->Slots();
 
     unsigned int size = m_parts.size();
-    assert(size == hull_type->NumSlots());
+    assert(size == hull->NumSlots());
 
     // add to output vector each part that is in a slot of the indicated ShipSlotType 
     for (unsigned int i = 0; i < size; ++i)

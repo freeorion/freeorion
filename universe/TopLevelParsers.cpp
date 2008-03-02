@@ -43,10 +43,12 @@ struct TechItemSpecClosure : boost::spirit::closure<TechItemSpecClosure, ItemSpe
     member3 name;
 };
 
-struct SlotClosure : boost::spirit::closure<SlotClosure, HullType::Slot, ShipSlotType>
+struct SlotClosure : boost::spirit::closure<SlotClosure, HullType::Slot, ShipSlotType, double, double>
 {
     member1 this_;
     member2 slot_type;
+    member3 x;
+    member4 y;
 };
 
 struct SlotVecClosure : boost::spirit::closure<SlotVecClosure, std::vector<HullType::Slot> >
@@ -93,6 +95,7 @@ namespace {
     ParamLabel slots_label("slots");
     ParamLabel mountableslottypes_label("mountableslottypes");
     ParamLabel colour_label("colour");
+    ParamLabel position_label("position");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -196,8 +199,10 @@ namespace {
 
         slot_p =
             (str_p("slot")
-             >> type_label >> slot_type_p[slot_p.slot_type = arg1])
-            [slot_p.this_ = construct_<HullType::Slot>(slot_p.slot_type)];
+             >> type_label >> slot_type_p[slot_p.slot_type = arg1]
+             >> position_label >> '(' >> real_p[slot_p.x = arg1]
+             >> ',' >> real_p[slot_p.y = arg1] >> ')')
+            [slot_p.this_ = construct_<HullType::Slot>(slot_p.slot_type, slot_p.x, slot_p.y)];
 
         slot_vec_p =
             slot_p[push_back_(slot_vec_p.this_, arg1)]
