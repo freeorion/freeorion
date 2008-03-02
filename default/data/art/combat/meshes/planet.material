@@ -1,0 +1,45 @@
+vertex_program PlanetVert glsl
+{
+    source planet.vert
+}
+
+fragment_program PlanetFrag glsl
+{
+    source planet.frag
+}
+
+material Planet
+{
+	technique
+	{
+        pass
+        {
+            vertex_program_ref PlanetVert
+            { 
+                param_named light_dir float3 1.0 0.0 0.0
+            }
+
+            fragment_program_ref PlanetFrag
+            {
+                param_named day_texture int 0
+                param_named night_texture int 1
+                param_named cloud_gloss_texture int 2
+            }
+
+            texture_unit
+            {
+                texture day.png 2d 0
+            }
+
+            texture_unit
+            {
+                texture night.png 2d 0
+            }
+
+            texture_unit
+            {
+                texture clouds.png 2d 0
+            }
+        }
+    }
+}

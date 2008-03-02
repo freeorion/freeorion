@@ -11,6 +11,7 @@
 #include <OgreRenderTarget.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneQuery.h>
+#include <OgreSubEntity.h>
 
 #include <GG/GUI.h>
 
@@ -124,13 +125,27 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         "durgha.mesh",
         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 
+    Ogre::Vector3 light_dir(1, -0.15, 0.25);
+    light_dir.normalise();
+
     // Put a few Durghas into the scene
-    Ogre::Entity* entity = m_scene_manager->createEntity("lead durgha", "durgha.mesh");
+    Ogre::Entity* entity = m_scene_manager->createEntity("planet", "sphere.mesh");
+    entity->setMaterialName("Planet");
+    assert(entity->getNumSubEntities() == 1u);
+    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+    entity->setCastShadows(true);
+    Ogre::SceneNode* planet_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("planet node");
+    planet_node->setScale(125.0, 125.0, 125.0);
+    planet_node->attachObject(entity);
+
+    // Put a few Durghas into the scene
+    entity = m_scene_manager->createEntity("lead durgha", "durgha.mesh");
     entity->setCastShadows(true);
     Ogre::SceneNode* lead_durgha_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("lead durgha node");
     lead_durgha_node->setDirection(0, -1, 0);
     lead_durgha_node->yaw(Ogre::Radian(Ogre::Math::PI));
     lead_durgha_node->attachObject(entity);
+    lead_durgha_node->setPosition(750, 0, 0);
 
     entity = m_scene_manager->createEntity("wing durgha 1", "durgha.mesh");
     entity->setCastShadows(true);
@@ -138,11 +153,11 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     durgha_node->attachObject(entity);
     durgha_node->setPosition(250, 250, 0);
 
-    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
-    m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
+    m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
     Ogre::Light* star = m_scene_manager->createLight("Star");
     star->setType(Ogre::Light::LT_DIRECTIONAL);
-    star->setDirection(Ogre::Vector3(1, -0.15, 0.25).normalisedCopy());
+    star->setDirection(light_dir);
 }
 
 CombatWnd::~CombatWnd()
