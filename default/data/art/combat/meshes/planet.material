@@ -18,7 +18,7 @@ fragment_program planet_atmosphere_frag glsl
     source planet_atmosphere.frag
 }
 
-material Planet
+material planet
 {
 	technique
 	{
@@ -51,10 +51,17 @@ material Planet
                 texture clouds.png 2d 0
             }
         }
+    }
+}
 
+material atmosphere
+{
+	technique
+	{
         pass
         {
             scene_blend alpha_blend
+            depth_write off
 
             vertex_program_ref planet_atmosphere_vert
             { 

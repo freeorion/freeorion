@@ -372,7 +372,8 @@ Ogre::Viewport* HumanClientApp::Viewport()
 
 void HumanClientApp::Enter2DMode()
 {
-    glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT);
+    OgreGUI::Enter2DMode();
+
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_LIGHTING);
     glDisable(GL_CULL_FACE);
@@ -384,7 +385,6 @@ void HumanClientApp::Enter2DMode()
     glViewport(0, 0, AppWidth(), AppHeight()); //removed -1 from AppWidth & Height
 
     glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
     glLoadIdentity();
 
     // set up coordinates with origin in upper-left and +x and +y directions right and down, respectively
@@ -392,7 +392,6 @@ void HumanClientApp::Enter2DMode()
     glOrtho(0.0, AppWidth(), AppHeight(), 0.0, 0.0, AppWidth());
 
     glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
     glLoadIdentity();
 
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
@@ -400,13 +399,7 @@ void HumanClientApp::Enter2DMode()
 
 void HumanClientApp::Exit2DMode()
 {
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-
-    glPopAttrib();
+    OgreGUI::Exit2DMode();
 }
 
 void HumanClientApp::StartTurn()

@@ -128,14 +128,19 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     Ogre::Vector3 light_dir(1, -0.15, 0.25);
     light_dir.normalise();
 
-    // Put a few Durghas into the scene
     Ogre::Entity* entity = m_scene_manager->createEntity("planet", "sphere.mesh");
-    entity->setMaterialName("Planet");
+    entity->setMaterialName("planet");
     assert(entity->getNumSubEntities() == 1u);
     entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
     entity->setCastShadows(true);
     Ogre::SceneNode* planet_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("planet node");
     planet_node->setScale(125.0, 125.0, 125.0);
+    planet_node->attachObject(entity);
+
+    entity = m_scene_manager->createEntity("atmosphere", "sphere.mesh");
+    entity->setMaterialName("atmosphere");
+    assert(entity->getNumSubEntities() == 1u);
+    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
     planet_node->attachObject(entity);
 
     // Put a few Durghas into the scene

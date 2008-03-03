@@ -15,7 +15,7 @@ void main()
 
     float spec_intensity = pow(max(dot(reflect_vec, view_vec), 0.0), 12.0);
     spec_intensity = 0.5 * spec_intensity; 
-    specular = spec_intensity;
+    specular = vec3(spec_intensity);
     diffuse = dot(light_vec, normal);
     tex_coord = vec2(gl_MultiTexCoord0);
 
