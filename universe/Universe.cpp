@@ -881,7 +881,7 @@ void Universe::RebuildEmpireViewSystemGraphs()
 void Universe::Destroy(int id)
 {
     s_inhibit_universe_object_signals = true;
-    
+
     UniverseObject* obj;
     iterator it = m_objects.find(id);
 
@@ -918,7 +918,7 @@ void Universe::Destroy(int id)
     } else {
         Logger().debugStream() << "Universe::Destroy called for nonexistant object with id: " << id;
     }
-    
+
     s_inhibit_universe_object_signals = false;
 }
 
@@ -2846,7 +2846,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         empire->AddBuildingType("BLD_IMERIAL_PALACE");
 
         empire->AddPartType("SR_LASER");
-        empire->AddPartType("AR_LEAD_PLATE");
+        empire->AddPartType("SH_DEFENSE_GRID");
+        empire->AddPartType("CO_COLONY_POD");
 
         empire->AddHullType("SH_SMALL");
 
@@ -2857,10 +2858,12 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
                                             empire_id, 0, "SH_SMALL", parts, "misc/scout1.png", "model");
         int scout_design_id = empire->AddShipDesign(design);
 
+        parts.push_back("CO_COLONY_POD");
         design = new ShipDesign("Colony Ship", "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.",
                                 empire_id, 0, "SH_MEDIUM", parts, "misc/colony1.png", "model");
         int colony_ship_design_id = empire->AddShipDesign(design);
 
+        parts.clear();
         parts.push_back("SR_LASER");
         parts.push_back("SH_DEFENSE_GRID");
         design = new ShipDesign("Mark I", "Affordable armed patrol frigate.",
@@ -2881,7 +2884,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         temp = empire->AddShipDesign(design);
 
         parts.push_back("SR_ION_CANNON");
-        parts.push_back("SR_ION_CANNON");
         parts.push_back("SH_DEFLECTOR");
         design = new ShipDesign("Mark IV", "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.",
                                 empire_id, 0, "SH_LARGE", parts, "misc/mark4.png", "model");
@@ -2894,31 +2896,33 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_system->Insert(home_fleet);
 
         Ship* ship = 0;
+        int ship_id = -1;
 
-        ship = new Ship(empire_id, scout_design_id);
-        ship->Rename(empire->NewShipName());
-        int ship_id = Insert(ship);
-        home_fleet->AddShip(ship_id);
+        // 5 scouts for The Silent One ot explore with
+        for (int n = 0; n < 5; ++n) {
+            ship = new Ship(empire_id, scout_design_id);
+            ship->Rename(empire->NewShipName());
+            ship_id = Insert(ship);
+            home_fleet->AddShip(ship_id);
+        }
 
-        ship = new Ship(empire_id, scout_design_id);
-        ship->Rename(empire->NewShipName());
-        ship_id = Insert(ship);
-        home_fleet->AddShip(ship_id);
+        // 10 colony ships for The Silent One to test colonization
+        for (int n = 0; n < 10; ++n) {
+            ship = new Ship(empire_id, colony_ship_design_id);
+            ship->Rename(empire->NewShipName());
+            ship_id = Insert(ship);
+            home_fleet->AddShip(ship_id);
+        }
 
-        ship = new Ship(empire_id, colony_ship_design_id);
-        ship->Rename(empire->NewShipName());
-        ship_id = Insert(ship);
-        home_fleet->AddShip(ship_id);
+        //// create a battle fleet
+        //Fleet* battle_fleet = new Fleet(UserString("FW_BATTLE_FLEET"), home_system->X(), home_system->Y(), empire_id);
+        //Insert(battle_fleet);
+        //home_system->Insert(battle_fleet);
 
-        // create a battle fleet
-        Fleet* battle_fleet = new Fleet(UserString("FW_BATTLE_FLEET"), home_system->X(), home_system->Y(), empire_id);
-        Insert(battle_fleet);
-        home_system->Insert(battle_fleet);
-
-        ship = new Ship(empire_id, mark_I_design_id);
-        ship->Rename(empire->NewShipName());
-        ship_id = Insert(ship);
-        battle_fleet->AddShip(ship_id);
+        //ship = new Ship(empire_id, mark_I_design_id);
+        //ship->Rename(empire->NewShipName());
+        //ship_id = Insert(ship);
+        //battle_fleet->AddShip(ship_id);
     }
 #else
         throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");

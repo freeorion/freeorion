@@ -2699,11 +2699,23 @@ Economic Hegemony
 ECO_ECON_HEGEMONY_DESC
 An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
+SHP_SPACE_TACTICS
+Space Tactics
+
+SHP_SPACE_TACTICS_DESC
+Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
+
 SHP_GAL_EXPLO
 Galactic Exploration
 
 SHP_GAL_EXPLO_DESC
 The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
+
+SHP_NAVIGATION
+Interstellar Navigation
+
+SHP_NAVIGATION_DESC
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
 
 
 #########################################
@@ -2712,6 +2724,12 @@ The discovery of interstellar travel via starlanes ushers in a new era of develo
 
 DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
+
+SHIP_PART_UNLOCK_SHORT_DESC
+Unlocks Ship Part
+
+SHIP_HULL_UNLOCK_SHORT_DESC
+Unlocks Ship Hull
 
 BUILDING_UNLOCK_SHORT_DESC
 Unlocks Building
@@ -3016,12 +3034,6 @@ Interstellar Lighthouses
 SHP_LIGHTHOUSE_DESC
 Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
 
-SHP_NAVIGATION
-Interstellar Navigation
-
-SHP_NAVIGATION_DESC
-Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
-
 SHP_FLEET_LOGISTICS
 Fleet Logistics
 
@@ -3033,6 +3045,36 @@ Suspended Animation
 
 SHP_SUSPENDED_ANIMATION_DESC
 Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently.  Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space.  With this technique, the capacity of colony ships can be greatly increased.
+
+SHP_ION_CANNON
+Ion Cannon
+
+SHP_ION_CANNON_DESC
+Unlocks Ion Cannon ship part.
+
+SHP_NUCLEAR_MISSLE
+Nuclear Missle
+
+SHP_NUCLEAR_MISSLE_DESC
+Unlocks Nuclear Missile ship part.
+
+SHP_DEFLECTOR
+Deflector Shield
+
+SHP_DEFLECTOR_DESC
+Unlocks Deflector Shield ship part.
+
+SHP_RADAR
+Active Radar
+
+SHP_RADAR_DESC
+Unlocks Active Radar ship part.
+
+SHP_DEUTERIUM_TANK
+Deuterium Tank
+
+SHP_DEUTERIUM_TANK_DESC
+Unlocks Deuterium Tank ship part.
 
 SHP_MEDIUM_HULL
 Medium Ship Hulls
@@ -3127,7 +3169,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Does nothing.  Maybe in future this could make certain ships go faster, or increase trade, or make starlanes more visible nearby (thereby indirectly increasing trade)...
+Increases by 1 starlane jump the supply meter of all planets - regardless of owner - within 200 distance units.
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor

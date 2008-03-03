@@ -179,9 +179,13 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = Not All
-            activation = Not All
-            effects = SetMaxFarming Target.MaxFarming        
+            scope = And [
+                Planet
+                WithinDistance distance = 200 condition = Source                
+            ]
+            activation = Source
+            stackinggroup = "LIGHTHOUSE_STACK"
+            effects = SetMaxSupply Target.MaxSupply + 1
     graphic = ""
 
 BuildingType
