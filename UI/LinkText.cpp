@@ -8,34 +8,120 @@
 
 #include <boost/lexical_cast.hpp>
 
-
 #define RENDER_DEBUGGING_LINK_RECTS 0
 
 
-// initialize static(s)
-bool LinkText::s_link_tags_registered = false;
-
-
+///////////////////////////////////////
+// LinkText
+///////////////////////////////////////
 LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, w, 1, str, font, color, format, flags),
-    m_old_sel_link(-1),
-    m_old_rollover_link(-1)
+    TextLinker()
 {
     Resize(TextLowerRight() - TextUpperLeft());
-    Init();
+    FindLinks();
 }
 
 LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, str, font, color, GG::FORMAT_NONE, flags),
-    m_old_sel_link(-1),
-    m_old_rollover_link(-1)
+    TextLinker()
 {
-    Init();
+    FindLinks();
 }
 
 void LinkText::Render()
+{
+    TextLinker::RenderLinkRects();
+    GG::TextControl::Render();
+}
+
+void LinkText::SetText(const std::string& str)
+{
+    GG::TextControl::SetText(str);
+    FindLinks();
+}
+
+void LinkText::SetLinkedText(const std::string& str){
+    GG::TextControl::SetText(str);
+}
+
+void LinkText::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    TextLinker::LButtonDown(pt, mod_keys);
+}
+
+void LinkText::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    TextLinker::LButtonUp(pt, mod_keys);
+}
+
+GG::Pt LinkText::TextUpperLeft() const
+{
+    return GG::TextControl::TextUpperLeft();
+}
+
+GG::Pt LinkText::TextLowerRight() const
+{
+    return GG::TextControl::TextLowerRight();
+}
+
+const std::vector<GG::Font::LineData>& LinkText::GetLineData() const
+{
+    return GG::TextControl::GetLineData();
+}
+
+const boost::shared_ptr<GG::Font>& LinkText::GetFont() const
+{
+    return GG::TextControl::GetFont();
+}
+
+const std::string& LinkText::WindowText() const
+{
+    return GG::TextControl::WindowText();
+}
+
+void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    TextLinker::LClick(pt, mod_keys);
+}
+
+void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    TextLinker::MouseHere(pt, mod_keys);
+}
+
+void LinkText::MouseLeave()
+{
+    TextLinker::MouseLeave();
+}
+
+
+///////////////////////////////////////
+// TextLinker
+///////////////////////////////////////
+// initialize static(s)
+bool TextLinker::s_link_tags_registered = false;
+
+TextLinker::TextLinker() : 
+    m_old_sel_link(-1),
+    m_old_rollover_link(-1)
+{
+    // if this is the first LinkText created, it needs to register the tags that it knows about
+    if (!s_link_tags_registered) {
+        GG::Font::RegisterKnownTag("planet");
+        GG::Font::RegisterKnownTag("system");
+        GG::Font::RegisterKnownTag("fleet");
+        GG::Font::RegisterKnownTag("ship");
+        GG::Font::RegisterKnownTag("tech");
+        GG::Font::RegisterKnownTag("building");
+        GG::Font::RegisterKnownTag("encyclopedia");
+        s_link_tags_registered = true;
+    }
+}
+
+void TextLinker::RenderLinkRects()
 {
 #if RENDER_DEBUGGING_LINK_RECTS
     GG::Rect bounds(TextUpperLeft(), TextLowerRight());
@@ -47,21 +133,20 @@ void LinkText::Render()
         }
     }
 #endif
-    GG::TextControl::Render();
 }
 
-void LinkText::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_old_sel_link = GetLinkUnderPt(pt);
 }
 
-void LinkText::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_old_sel_link = -1;
     ClearOldRollover();
 }
 
-void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     using boost::lexical_cast;
     int sel_link = GetLinkUnderPt(pt);
@@ -85,7 +170,7 @@ void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     m_old_sel_link = -1;
 }
 
-void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     int rollover_link = GetLinkUnderPt(pt);
     if (rollover_link != m_old_rollover_link) {
@@ -94,41 +179,18 @@ void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             std::string text = WindowText();
             text.insert(m_links[rollover_link].text_posn.first, "<u>");
             text.insert(m_links[rollover_link].text_posn.second + 3, "</u>");
-            SetText(text);
+            SetLinkedText(text);
             m_old_rollover_link = rollover_link;
         }
     }
 }
 
-void LinkText::MouseLeave()
+void TextLinker::MouseLeave()
 {
     ClearOldRollover();
 }
-   
-void LinkText::SetText(const std::string& str)
-{
-    GG::TextControl::SetText(str);
-    FindLinks();
-}
 
-void LinkText::Init()
-{
-    // if this is the first LinkText created, it needs to register the tags that it knows about
-    if (!s_link_tags_registered) {
-        GG::Font::RegisterKnownTag("planet");
-        GG::Font::RegisterKnownTag("system");
-        GG::Font::RegisterKnownTag("fleet");
-        GG::Font::RegisterKnownTag("ship");
-        GG::Font::RegisterKnownTag("tech");
-        GG::Font::RegisterKnownTag("building");
-        GG::Font::RegisterKnownTag("encyclopedia");
-        s_link_tags_registered = true;
-        SetText(WindowText());
-    }
-    FindLinks();
-}
-
-void LinkText::FindLinks()
+void TextLinker::FindLinks()
 {
     m_links.clear();
 
@@ -181,7 +243,7 @@ void LinkText::FindLinks()
     }
 }
 
-int LinkText::GetLinkUnderPt(const GG::Pt& pt)
+int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
 {
     int retval = -1;
     for (unsigned int i = 0; i < m_links.size(); ++i) {
@@ -196,7 +258,7 @@ int LinkText::GetLinkUnderPt(const GG::Pt& pt)
     return retval;
 }
 
-void LinkText::ClearOldRollover()
+void TextLinker::ClearOldRollover()
 {
     if (m_old_rollover_link != -1) {
         std::string text = WindowText();
@@ -204,9 +266,7 @@ void LinkText::ClearOldRollover()
         text.erase(pos, 3);
         pos = text.find("</u>", m_links[m_old_rollover_link].text_posn.first);
         text.erase(pos, 4);
-        SetText(text);
+        SetLinkedText(text);
     }
     m_old_rollover_link = -1;
 }
-
-
