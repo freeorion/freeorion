@@ -831,8 +831,8 @@ void TechTreeWnd::TechDetailPanel::Reset()
 
     m_summary_text->SetText("<i>" + str(format(UserString("TECH_DETAIL_TYPE_STR"))
         % UserString(m_tech->Category())
-        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))) + " - "
-        + str(format(UserString(m_tech->ShortDescription()))) + "</i>");
+        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
+        % str(format(UserString(m_tech->ShortDescription())))) + "</i>");
 
     m_summary_text->SetColor(ClientUI::CategoryColor(m_tech->Category()));
  

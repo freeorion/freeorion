@@ -275,7 +275,7 @@ void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt&
 void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, const std::string& item)
 {
     if (build_type != BT_BUILDING && build_type != BT_ORBITAL && build_type != INVALID_BUILD_TYPE)
-        throw std::invalid_argument("Attempted to SetBuildItem with a name that wasn't a BT_BUILDING or BT_ORBITAL");
+        throw std::invalid_argument("Attempted to SetBuildItem with a name and BuildType that wasn't BT_BUILDING or BT_ORBITAL");
     m_build_type = build_type;
     m_item_name = item;
     m_item_design_id = UniverseObject::INVALID_OBJECT_ID;
@@ -285,7 +285,7 @@ void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, co
 void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, int design_id)
 {
     if (build_type != BT_SHIP)
-        throw std::invalid_argument("Attempted to SetBuildItem with a design id that wasn't a BT_SHIP");
+        throw std::invalid_argument("Attempted to SetBuildItem with a design id and BuildType that wasn't BT_SHIP");
     m_build_type = build_type;
     m_item_name = "";
     m_item_design_id = design_id;

@@ -132,7 +132,25 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& speci
     const Special* special = GetSpecial(special_name);
     std::string texture_name = special->Graphic();
     if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "specials_tiny" / "generic_special.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_name)
+{
+    const PartType* part = GetPartType(part_name);
+    std::string texture_name = part->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
+{
+    const HullType* hull = GetHullType(hull_name);
+    std::string texture_name = "";//hull->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name);
 }
 

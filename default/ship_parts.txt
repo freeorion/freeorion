@@ -7,7 +7,7 @@ Part
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Laser.png"
+    graphic = ""
 
 Part
     name = "SR_ION_CANNON"
@@ -18,7 +18,7 @@ Part
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Ion_Cannon.png"
+    graphic = ""
 
 Part
     name = "LR_NUCLEAR_MISSILE"
@@ -29,7 +29,7 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Nuclear_Missile.png"
+    graphic = ""
 
 Part
     name = "AR_LEAD_PLATE"
@@ -40,7 +40,7 @@ Part
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Lead_Plate.png"
+    graphic = ""
 
 Part
     name = "SH_DEFENSE_GRID"
@@ -51,7 +51,7 @@ Part
     buildtime = 0
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Defense_Grid.png"
+    graphic = ""
 
 Part
     name = "SH_DEFLECTOR"
@@ -62,7 +62,7 @@ Part
     buildtime = 2
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Deflector.png"
+    graphic = ""
 
 Part
     name = "DT_ACTIVE_RADAR"
@@ -73,7 +73,7 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Active_Radar.png"
+    graphic = ""
 
 Part
     name = "FU_DEUTERIUM_TANK"
@@ -84,7 +84,7 @@ Part
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Deuterium_Tank.png"
+    graphic = ""
 
 Part
     name = "FU_ANTIMATTER_TANK"
@@ -95,7 +95,7 @@ Part
     buildtime = 6
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Antimatter_Tank.png"
+    graphic = ""
 
 Part
     name = "ST_EM_DAMPER"
@@ -106,7 +106,7 @@ Part
     buildtime = 6
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_part_icons/Emission_Damper.png"
+    graphic = ""
 
 Part
     name = "CO_COLONY_POD"
@@ -118,7 +118,7 @@ Part
     mountableSlotTypes = Internal
     location = And [OwnedBy TheEmpire Source.Owner
                     CurrentPopulation low = 3 high = 999]
-    graphic = "ship_part_icons/Colony_Pod.png"
+    graphic = ""
 
 Part
     name = "CO_SUSPEND_ANIM_POD"

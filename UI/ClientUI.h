@@ -143,6 +143,10 @@ public:
                         SpecialTexture(const std::string& special_name);
     static boost::shared_ptr<GG::Texture>
                         MeterIcon(MeterType meter_type);
+    static boost::shared_ptr<GG::Texture>
+                        PartTexture(const std::string& part_name);
+    static boost::shared_ptr<GG::Texture>
+                        HullTexture(const std::string& hull_name);
 
     // research screen
     static GG::Clr      KnownTechFillColor();

@@ -1228,10 +1228,10 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / %2% Turns
+%1% RP / Turn @ %2% Turns
 
 TECH_TURN_COST_STR
-%1% RP / %2% Turns
+%1% RP / Turn @ %2% Turns
 
 TECH_TURNS_LEFT_STR
 %1% Turns
@@ -1240,7 +1240,7 @@ TECH_TURNS_LEFT_NEVER
 Never
 
 TECH_DETAIL_TYPE_STR
-%1% %2%
+%1% %2% - %3%
 
 TECH_DETAIL_DESCRIPTION_STR
 %1%
@@ -1345,10 +1345,10 @@ PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Unavailable
 
 PRODUCTION_TOTAL_COST_STR
-%1% PP / %2% Turns
+%1% PP / Turn @ %2% Turns
 
 PRODUCTION_TURN_COST_STR
-%1% PP / %2% Turns
+%1% PP / Turn @ %2% Turns
 
 PRODUCTION_TURNS_LEFT_STR
 %1% Turns left
@@ -1400,21 +1400,73 @@ DESIGN_ADD_TEST
 Add Test Design
 
 DESIGN_NAME_DEFAULT
-Default Design Name
+Custom Ship Design
 
 DESIGN_DESCRIPTION_DEFAULT
-Default Design Description
+Design Description
 
 DESIGN_NO_PART
 None
 
-# ShipSlotTypes
+DESIGN_SHIP_PART
+Ship Part
+
+DESIGN_SHIP_HULL
+Ship Hull
+
+DESIGN_DETAIL_TYPE_STR
+%1% %2%
+
+DESIGN_SHIP_COST_STR
+%1% PP / Turn @ %2% Turns
+
+DESIGN_DETAIL_DESCRIPTION_STR
+%1%
+
+DESIGN_DETAIL_EFFECTS_STR
+\n\n<u>Effects</u>\n\n%1%
+
+
+# Ship Slot Types
 
 SL_EXTERNAL
 External
 
 SL_INTERNAL
 Internal
+
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Short Range
+
+PC_MISSILES
+Missiles
+
+PC_FIGHTERS
+Fighters
+
+PC_POINT_DEFENSE
+Point Defense
+
+PC_SHIELD
+Shields
+
+PC_ARMOUR
+Armour
+
+PC_DETECTION
+Detection
+
+PC_STEALTH
+Stealth
+
+PC_FUEL
+Fuel
+
+PC_COLONY
+Colonization
 
 
 ####################
