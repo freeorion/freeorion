@@ -12,7 +12,6 @@
 namespace {
     const int    SITREP_LB_MARGIN_X = 5;
     const int    SITREP_LB_MARGIN_Y = 5;
-
 }
 
 

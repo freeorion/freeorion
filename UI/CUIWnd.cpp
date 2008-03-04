@@ -41,7 +41,7 @@ namespace {
 // CUI_MinRestoreButton
 ////////////////////////////////////////////////
 CUI_MinRestoreButton::CUI_MinRestoreButton(int x, int y) : 
-    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
+    GG::Button(x, y, 12, 12, "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
 {
     GG::Connect(ClickedSignal, &CUI_MinRestoreButton::Toggle, this);
@@ -86,7 +86,7 @@ void CUI_MinRestoreButton::Toggle()
 // CUI_CloseButton
 ////////////////////////////////////////////////
 CUI_CloseButton::CUI_CloseButton(int x, int y) : 
-    GG::Button(x, y, 7, 7, "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+    GG::Button(x, y, 12, 12, "", boost::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
 {
     GG::Connect(ClickedSignal, &PlayCloseSound, -1);
 }

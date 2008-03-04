@@ -97,7 +97,7 @@ private:
 };
 
 DesignWnd::DetailPanel::DetailPanel(int w, int h) :
-    CUIWnd("", 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd("", 1, 1, w - 1, h - 1, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
     m_part(0),
     m_hull(0)
 {
@@ -358,6 +358,31 @@ void DesignWnd::DetailPanel::SetItem(const HullType* hull) {
     m_hull = hull;
     Reset();
 }
+
+
+//////////////////////////////////////////////////
+// DesignWnd::BaseSelector                      //
+//////////////////////////////////////////////////
+class DesignWnd::BaseSelector : public CUIWnd {
+public:
+};
+
+
+//////////////////////////////////////////////////
+// DesignWnd::PartPalette                       //
+//////////////////////////////////////////////////
+class DesignWnd::PartPalette : public CUIWnd {
+public:
+};
+
+
+//////////////////////////////////////////////////
+// DesignWnd::MainPanel                         //
+//////////////////////////////////////////////////
+class DesignWnd::MainPanel : public CUIWnd {
+public:
+};
+
 
 //////////////////////////////////////////////////
 // DesignWnd                                    //
