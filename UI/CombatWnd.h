@@ -35,8 +35,16 @@ public:
     virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
 
@@ -66,8 +74,8 @@ private:
     Ogre::Radian m_pitch;
     Ogre::Radian m_yaw;
     GG::Pt m_last_pos;
-    GG::Pt m_shift_drag_start;
-    GG::Pt m_shift_drag_stop;
+    GG::Pt m_selection_drag_start;
+    GG::Pt m_selection_drag_stop;
     bool m_mouse_dragged;
     Ogre::SceneNode* m_currently_selected_scene_node;
     SelectionRect* m_selection_rect;

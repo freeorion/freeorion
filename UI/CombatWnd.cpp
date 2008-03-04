@@ -17,7 +17,7 @@
 
 
 namespace {
-    const GG::Pt INVALID_SHIFT_DRAG_POS(-1, -1);
+    const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
 }
 
 ////////////////////////////////////////////////////////////
@@ -78,8 +78,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_pitch(0.0),
     m_yaw(0.0),
     m_last_pos(),
-    m_shift_drag_start(INVALID_SHIFT_DRAG_POS),
-    m_shift_drag_stop(INVALID_SHIFT_DRAG_POS),
+    m_selection_drag_start(INVALID_SELECTION_DRAG_POS),
+    m_selection_drag_stop(INVALID_SELECTION_DRAG_POS),
     m_mouse_dragged(false),
     m_currently_selected_scene_node(0),
     m_selection_rect(new SelectionRect),
@@ -185,50 +185,27 @@ void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
     if (m_mouse_dragged ||
         GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
         delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y) {
-        if (mod_keys & GG::MOD_KEY_SHIFT) {
-            if (m_shift_drag_start == INVALID_SHIFT_DRAG_POS) {
-                m_shift_drag_start = pt;
-                m_selection_rect->setVisible(true);
-                m_selection_rect->clear();
-            } else {
-                m_shift_drag_stop = pt;
-                m_selection_rect->Resize(m_shift_drag_start, m_shift_drag_stop);
-            }
+        if (m_selection_drag_start == INVALID_SELECTION_DRAG_POS) {
+            m_selection_drag_start = pt;
+            m_selection_rect->setVisible(true);
+            m_selection_rect->clear();
         } else {
-            if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS) {
-                m_shift_drag_start = INVALID_SHIFT_DRAG_POS;
-                m_selection_rect->clear();
-            }
-
-            m_last_pos = pt;
-
-            Ogre::Radian delta_pitch =
-                -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
-            m_pitch += delta_pitch;
-            if (m_pitch < Ogre::Radian(-Ogre::Math::HALF_PI))
-                m_pitch = Ogre::Radian(-Ogre::Math::HALF_PI);
-            if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
-                m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
-            Ogre::Radian delta_yaw =
-                -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
-            m_yaw += delta_yaw;
-
-            UpdateCameraPosition();
-
-            m_mouse_dragged = true;
+            m_selection_drag_stop = pt;
+            m_selection_rect->Resize(m_selection_drag_start, m_selection_drag_stop);
         }
+        m_mouse_dragged = true;
     }
 }
 
 void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS)
+    if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS)
         EndShiftDrag();
 }
 
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_shift_drag_start != INVALID_SHIFT_DRAG_POS) {
+    if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS) {
         SelectObjectsInVolume(mod_keys & GG::MOD_KEY_CTRL);
         EndShiftDrag();
     } else if (!m_mouse_dragged) {
@@ -259,13 +236,71 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 }
 
 void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{}
+{
+}
+
+void CombatWnd::MButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    m_last_pos = pt;
+    m_mouse_dragged = false;
+}
+
+void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+{
+    GG::Pt delta_pos = pt - m_last_pos;
+    if (m_mouse_dragged ||
+        GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
+        delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y) {
+        m_last_pos = pt;
+
+        Ogre::Radian delta_pitch =
+            -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
+        m_pitch += delta_pitch;
+        if (m_pitch < Ogre::Radian(-Ogre::Math::HALF_PI))
+            m_pitch = Ogre::Radian(-Ogre::Math::HALF_PI);
+        if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
+            m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
+        Ogre::Radian delta_yaw =
+            -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
+        m_yaw += delta_yaw;
+
+        UpdateCameraPosition();
+
+        m_mouse_dragged = true;
+    }
+}
+
+void CombatWnd::MButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+}
+
+void CombatWnd::MClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+}
+
+void CombatWnd::MDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+}
 
 void CombatWnd::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{}
+{
+}
+
+void CombatWnd::RDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+{
+}
+
+void CombatWnd::RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+}
 
 void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{}
+{
+}
+
+void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+}
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -313,7 +348,7 @@ void CombatWnd::UpdateCameraPosition()
 
 void CombatWnd::EndShiftDrag()
 {
-    m_shift_drag_start = INVALID_SHIFT_DRAG_POS;
+    m_selection_drag_start = INVALID_SELECTION_DRAG_POS;
     m_selection_rect->setVisible(false);
 }
 
@@ -322,10 +357,10 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
     const float APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
     const float APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
 
-    float left = std::min(m_shift_drag_start.x, m_shift_drag_stop.x) / APP_WIDTH;
-    float right = std::max(m_shift_drag_start.x, m_shift_drag_stop.x) / APP_WIDTH;
-    float top = std::min(m_shift_drag_start.y, m_shift_drag_stop.y) / APP_HEIGHT;
-    float bottom = std::max(m_shift_drag_start.y, m_shift_drag_stop.y) / APP_HEIGHT;
+    float left = std::min(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH;
+    float right = std::max(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH;
+    float top = std::min(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT;
+    float bottom = std::max(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT;
 
     const float MIN_SELECTION_VOLUME = 0.0001;
     if ((right - left) * (bottom - top) < MIN_SELECTION_VOLUME)
