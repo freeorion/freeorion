@@ -388,7 +388,7 @@ Tech
     researchturns = 1
     prerequisites = "LRN_PSIONICS"
     unlock = Item type = Building name = "BLD_PSICORP"
-    graphic = ""
+    graphic = "icons/tech/psicorp.png"
 
 Tech
     name = "GRO_PLANET_ECOL"
@@ -672,7 +672,7 @@ Tech
     researchturns = 1
     prerequisites = "GRO_ORBIT_FARMING"
     unlock = Item type = Building name = "BLD_ORBITAL_GARDENS"
-    graphic = ""
+    graphic = "icons/tech/orbital_gardens.png"
 
 Tech
     name = "GRO_URBAN_FARM"
@@ -1556,7 +1556,7 @@ Tech
     researchturns = 1
     prerequisites = "CON_ARCH_MONOFILS"
     unlock = Item type = Building name = "BLD_SPACE_ELEVATOR"
-    graphic = ""
+    graphic = "icons/tech/space_elevator.png"
 
 Tech
     name = "CON_SUBTER_CONST"
@@ -1615,7 +1615,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "icons/tech/externality_integration.png"
 
 Tech
     name = "ECO_ECON_SPECTRO"
@@ -1791,7 +1791,7 @@ Tech
     researchturns = 1
     prerequisites = "ECO_ECON_FLUIDITY"
     unlock = Item type = Building name = "BLD_COMM_UNION"
-    graphic = ""
+    graphic = "icons/tech/commercial_uniion_of_the_colonies.png"
 
 Tech
     name = "ECO_DEEP_GREEN"
