@@ -14,7 +14,7 @@ class Ship : public UniverseObject
 public:
     /** \name Structors */ //@{
     Ship(); ///< default ctor
-    Ship(int empire_id, int design_id);             ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
+    Ship(int empire_id, int design_id);     ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
     //@}
 
     /** \name Accessors */ //@{

@@ -62,7 +62,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib python25.lib boost_python-vc80-mt-1_34.lib"
+				AdditionalDependencies="GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc80-mt-1_34.lib"
 				OutputFile="../../../freeorionca.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs"
