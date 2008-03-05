@@ -1,4 +1,13 @@
 Hull
+    name = "SH_EMPTY"
+    description = "SH_SMALL_DESC"
+    speed = 120
+    buildcost = 1
+    buildtime = 1
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Hull
     name = "SH_SMALL"
     description = "SH_SMALL_DESC"
     speed = 80

@@ -1348,7 +1348,7 @@ PRODUCTION_TOTAL_COST_STR
 %1% PP / Turn @ %2% Turns
 
 PRODUCTION_TURN_COST_STR
-%1% PP / Turn @ %2% Turns
++%1% PP
 
 PRODUCTION_TURNS_LEFT_STR
 %1% Turns left

@@ -142,7 +142,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, build, turn_cost, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueBuildPanel(w, build, build.spending, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
         Resize(panel->Size());
         push_back(panel);
 
@@ -152,7 +152,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn) :
+    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(0, 0, w, 10, GG::Flags<GG::WndFlag>()),
         m_build(build),
         m_in_progress(build.spending),
@@ -218,7 +218,7 @@ namespace {
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
-        
+
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, turns, turns_completed, 
                                                   partially_complete_turn, ClientUI::TechWndProgressBar(),
                                                   ClientUI::TechWndProgressBarBackground(), clr);
@@ -226,12 +226,12 @@ namespace {
 
         top += m_progress_bar->Height() + MARGIN;
 
-        std::string turns_cost_text = str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns);
+        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % turn_spending);
         m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
-                                                   turns_cost_text, font, clr, GG::FORMAT_LEFT);
+                                                   turn_spending_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
-        
+
 
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
