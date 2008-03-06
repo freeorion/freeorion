@@ -3,6 +3,7 @@
 #include "ClientUI.h"
 #include "../util/Version.h"
 
+#include <OgreBillboardSet.h>
 #include <OgreCamera.h>
 #include <OgreConfigFile.h>
 #include <OgreEntity.h>
@@ -18,6 +19,53 @@
 
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
+
+    const double NEAR_CLIP = 1.0; // km
+    const double FAR_CLIP = 1e9; // km
+
+    const double CELESTIAL_OBJECT_SCALE_FACTOR = 1.0;
+    const double NONCELESTIAL_OBJECT_SCALE_FACTOR = 1.0;
+
+    // TODO: These are for testing only.
+    const double EARTH_RADIUS = 6378.135; // km (equatorial)
+    const double EARTH_TO_SUN = 149.0e6; // km (average)
+    const double SUN_RADIUS = 695500.0 * 10.0; // km (equatorial)
+
+    Ogre::Vector3 Project(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
+    {
+        Ogre::Vector3 retval(-5.0, -5.0, 1.0);
+
+        Ogre::Matrix4 modelview_ = camera.getViewMatrix();
+        if (0.0 < (modelview_ * world_pt).z) {
+            GLdouble modelview[16];
+            for (std::size_t i = 0; i < 16; ++i) {
+                modelview[i] = modelview_[i % 4][i / 4];
+            }
+            GLdouble projection[16];
+            Ogre::Matrix4 projection_ = camera.getProjectionMatrix();
+            for (std::size_t i = 0; i < 16; ++i) {
+                projection[i] = projection_[i % 4][i / 4];
+            }
+            Ogre::Viewport* viewport_ = camera.getViewport();
+            GLint viewport[4] = {
+                static_cast<GLint>(viewport_->getLeft()),
+                static_cast<GLint>(viewport_->getTop()),
+                static_cast<GLint>(viewport_->getWidth()),
+                static_cast<GLint>(viewport_->getHeight())
+            };
+            GLdouble x, y, z;
+            if (gluProject(world_pt.x, world_pt.y, world_pt.z,
+                           modelview, projection, viewport,
+                           &x, &y, &z)) {
+                retval = Ogre::Vector3(x * 2 - 1.0, y * 2 - 1.0, z * 2 - 1.0);
+            }
+            Ogre::Vector3 eyeSpacePos = modelview_ * world_pt;
+            std::cout << eyeSpacePos.x << " " << eyeSpacePos.y << " " << eyeSpacePos.z << "\n";
+        }
+        std::cout << retval.x << " " << retval.y << " " << retval.z << "\n";
+
+        return retval;
+    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -29,6 +77,8 @@ CombatWnd::SelectionRect::SelectionRect() :
     setUseIdentityProjection(true);
     setUseIdentityView(true);
     setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
+    setUseIdentityProjection(true);
+    setUseIdentityView(true);
     setQueryFlags(0);
 }
 
@@ -63,6 +113,38 @@ void CombatWnd::SelectionRect::Resize(const GG::Pt& pt1, const GG::Pt& pt2)
 
 
 ////////////////////////////////////////////////////////////
+// StarRect
+////////////////////////////////////////////////////////////
+CombatWnd::StarRect::StarRect() :
+    ManualObject("StarRect")
+{
+    setUseIdentityProjection(true);
+    setUseIdentityView(true);
+    setRenderQueueGroup(Ogre::RENDER_QUEUE_1);
+    setQueryFlags(0);
+}
+
+void CombatWnd::StarRect::Resize(Ogre::Real left, Ogre::Real top, Ogre::Real right, Ogre::Real bottom)
+{
+    clear();
+    begin("backgrounds/star", Ogre::RenderOperation::OT_TRIANGLE_FAN);
+    position(right, top, -1);
+    textureCoord(1.0, 0.0);
+    position(left, top, -1);
+    textureCoord(0.0, 0.0);
+    position(left, bottom, -1);
+    textureCoord(0.0, 1.0);
+    position(right, bottom, -1);
+    textureCoord(1.0, 1.0);
+    end();
+
+    Ogre::AxisAlignedBox box;
+    box.setInfinite();
+    setBoundingBox(box);
+}
+
+
+////////////////////////////////////////////////////////////
 // CombatWnd
 ////////////////////////////////////////////////////////////
 CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
@@ -74,8 +156,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_viewport(viewport),
     m_ray_scene_query(m_scene_manager->createRayQuery(Ogre::Ray())),
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
-    m_distance_to_lookat_point(m_camera->getPosition().length()),
-    m_pitch(0.0),
+    m_distance_to_lookat_point(1e7),
+    m_pitch(-Ogre::Math::HALF_PI),
     m_yaw(0.0),
     m_last_pos(),
     m_selection_drag_start(INVALID_SELECTION_DRAG_POS),
@@ -83,6 +165,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_mouse_dragged(false),
     m_currently_selected_scene_node(0),
     m_selection_rect(new SelectionRect),
+    m_star_rect(new StarRect),
     m_lookat_point(0, 0, 0),
     m_exit(false)
 {
@@ -113,20 +196,38 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     m_scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(m_selection_rect);
+    m_scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(m_star_rect);
+
+    m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1", 5000.0);
+
+    m_camera->setNearClipDistance(NEAR_CLIP);
+    m_camera->setFarClipDistance(FAR_CLIP);
+
+    m_star_rect->setVisible(true);
+
+    UpdateCameraPosition();
 
     //////////////////////////////////////////////////////////////////
     // NOTE: Below is temporary code for combat system prototyping! //
     //////////////////////////////////////////////////////////////////
 
-    m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1", 50);
+    Ogre::Vector3 light_dir(1, -0.15, 0.25);
+    light_dir.normalise();
+
+    if (0)
+    {
+        Ogre::SceneNode* star_node = m_scene_manager->getRootSceneNode()->createChildSceneNode();
+        Ogre::BillboardSet* star_billboard_set = m_scene_manager->createBillboardSet("StarBillboardSet");
+        star_billboard_set->setMaterialName("backgrounds/star");
+        star_billboard_set->setRenderQueueGroup(Ogre::RENDER_QUEUE_1);
+        star_node->attachObject(star_billboard_set);
+        star_billboard_set->createBillboard(-5000.0 * light_dir);
+    }
 
     // Load the "Durgha" ship mesh
     Ogre::MeshPtr m = Ogre::MeshManager::getSingleton().load(
         "durgha.mesh",
         Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
-
-    Ogre::Vector3 light_dir(1, -0.15, 0.25);
-    light_dir.normalise();
 
     Ogre::Entity* entity = m_scene_manager->createEntity("planet", "sphere.mesh");
     entity->setMaterialName("planet");
@@ -134,7 +235,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
     entity->setCastShadows(true);
     Ogre::SceneNode* planet_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("planet node");
-    planet_node->setScale(125.0, 125.0, 125.0);
+    //planet_node->setPosition(EARH_TO_SUN, 0.0, 0.0);
+    planet_node->setScale(EARTH_RADIUS * CELESTIAL_OBJECT_SCALE_FACTOR,
+                          EARTH_RADIUS * CELESTIAL_OBJECT_SCALE_FACTOR,
+                          EARTH_RADIUS * CELESTIAL_OBJECT_SCALE_FACTOR);
     planet_node->attachObject(entity);
 
     entity = m_scene_manager->createEntity("atmosphere", "sphere.mesh");
@@ -171,6 +275,7 @@ CombatWnd::~CombatWnd()
     m_scene_manager->destroyQuery(m_ray_scene_query);
     m_scene_manager->destroyQuery(m_volume_scene_query);
     delete m_selection_rect;
+    delete m_star_rect;
 }
 
 void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -304,13 +409,13 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    const Ogre::Real c_move_incr = 10.0;
+    const Ogre::Real c_move_incr = m_distance_to_lookat_point * 0.25;
     const Ogre::Real c_min_distance = 50.0;
     Ogre::Real scale_factor = 1.0;
     if (mod_keys & GG::MOD_KEY_SHIFT)
-        scale_factor *= 5.0;
+        scale_factor *= 2.0;
     if (mod_keys & GG::MOD_KEY_CTRL)
-        scale_factor /= 5.0;
+        scale_factor /= 4.0;
     Ogre::Real total_move = c_move_incr * scale_factor * move;
     if (m_distance_to_lookat_point + total_move < c_min_distance)
         total_move -= c_min_distance - (m_distance_to_lookat_point + total_move);
@@ -330,6 +435,25 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
         m_lookat_point = m_currently_selected_scene_node->getWorldPosition();
         UpdateCameraPosition();
     }
+
+    // update star
+    {
+        Ogre::Vector3 star_pos = Ogre::Vector3(EARTH_TO_SUN, 0.0, 0.0);
+        Ogre::Vector3 star_screen_pos = Project(*m_camera, star_pos);
+        Ogre::Vector3 camera_pos = m_camera->getPosition();
+        Ogre::Radian sun_angular_half_width = Ogre::Math::ATan2(SUN_RADIUS, (star_pos - camera_pos).length());
+        Ogre::Radian half_fov_y = m_camera->getFOVy() / 2.0;
+        Ogre::Radian half_fov_x = half_fov_y * m_camera->getAspectRatio();
+        Ogre::Real sun_height_view_y = sun_angular_half_width.valueRadians() / half_fov_y.valueRadians();
+        Ogre::Real sun_height_view_x = sun_angular_half_width.valueRadians() / half_fov_x.valueRadians();
+        std::cout << "Resize(" << (star_screen_pos.x - sun_height_view_x) << ", "
+                  << (star_screen_pos.y + sun_height_view_y) << ", "
+                  << (star_screen_pos.x + sun_height_view_x) << ", "
+                  << (star_screen_pos.y - sun_height_view_y) << ")\n";
+        m_star_rect->Resize(star_screen_pos.x - sun_height_view_x, star_screen_pos.y + sun_height_view_y,
+                            star_screen_pos.x + sun_height_view_x, star_screen_pos.y - sun_height_view_y);
+    }
+
 #if 0 // TODO: Remove this; it only here for profiling the number of triangles rendered.
     Ogre::RenderTarget::FrameStats stats = Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
     std::cout << "tris: " << stats.triangleCount << " batches: " << stats.batchCount << std::endl;

@@ -56,6 +56,13 @@ private:
         void Resize(const GG::Pt& pt1, const GG::Pt& pt2);
     };
 
+    class StarRect : public Ogre::ManualObject
+    {
+    public:
+        StarRect();
+        void Resize(Ogre::Real left, Ogre::Real top, Ogre::Real right, Ogre::Real bottom);
+    };
+
     virtual bool frameStarted(const Ogre::FrameEvent& event);
 
     void UpdateCameraPosition();
@@ -79,6 +86,7 @@ private:
     bool m_mouse_dragged;
     Ogre::SceneNode* m_currently_selected_scene_node;
     SelectionRect* m_selection_rect;
+    StarRect* m_star_rect;
     Ogre::Vector3 m_lookat_point;
     std::set<Ogre::MovableObject*> m_current_selections;
 
