@@ -33,8 +33,8 @@ LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr
 
 void LinkText::Render()
 {
-    TextLinker::RenderLinkRects();
     GG::TextControl::Render();
+    TextLinker::RenderLinkRects();
 }
 
 void LinkText::SetText(const std::string& str)
@@ -43,7 +43,8 @@ void LinkText::SetText(const std::string& str)
     FindLinks();
 }
 
-void LinkText::SetLinkedText(const std::string& str){
+void LinkText::SetLinkedText(const std::string& str)
+{
     GG::TextControl::SetText(str);
 }
 

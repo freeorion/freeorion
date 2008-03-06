@@ -2914,15 +2914,15 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
             home_fleet->AddShip(ship_id);
         }
 
-        //// create a battle fleet
-        //Fleet* battle_fleet = new Fleet(UserString("FW_BATTLE_FLEET"), home_system->X(), home_system->Y(), empire_id);
-        //Insert(battle_fleet);
-        //home_system->Insert(battle_fleet);
+        // create a battle fleet
+        Fleet* battle_fleet = new Fleet(UserString("FW_BATTLE_FLEET"), home_system->X(), home_system->Y(), empire_id);
+        Insert(battle_fleet);
+        home_system->Insert(battle_fleet);
 
-        //ship = new Ship(empire_id, mark_I_design_id);
-        //ship->Rename(empire->NewShipName());
-        //ship_id = Insert(ship);
-        //battle_fleet->AddShip(ship_id);
+        ship = new Ship(empire_id, mark_I_design_id);
+        ship->Rename(empire->NewShipName());
+        ship_id = Insert(ship);
+        battle_fleet->AddShip(ship_id);
     }
 #else
         throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");

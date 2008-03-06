@@ -14,6 +14,8 @@
 #include <GG/Scroll.h>
 #include <GG/Slider.h>
 
+#include "LinkText.h"
+
 namespace GG {
     class StaticGraphic;
 }
@@ -274,6 +276,44 @@ public:
     virtual void Render();
     //@}
 };
+
+/** a FreeOrion MultiEdit control that parses its text and makes links within clickable */
+class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker
+{
+public:
+    /** \name Structors */ //@{
+    CUILinkTextMultiEdit(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
+                         const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+                         GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
+                         GG::Clr interior = ClientUI::MultieditIntColor(), GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< basic ctor
+    //@}
+    /** \name Accessors */ //@{
+    virtual const std::vector<GG::Font::LineData>&  GetLineData() const;
+    virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
+    virtual GG::Pt                                  TextUpperLeft() const;
+    virtual GG::Pt                                  TextLowerRight() const;
+    virtual const std::string&                      WindowText() const;
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void    Render();
+    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseLeave();
+
+    /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text 
+        (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever 
+        space the newly rendered text occupies. */
+    virtual void    SetText(const std::string& str);
+    //@}
+
+private:
+    virtual void    SetLinkedText(const std::string& str);
+    bool            m_already_setting_text_so_dont_link;
+};
+
 
 
 /** a FreeOrion slider, much feared in the forums */
