@@ -314,8 +314,6 @@ private:
     bool            m_already_setting_text_so_dont_link;
 };
 
-
-
 /** a FreeOrion slider, much feared in the forums */
 class CUISlider : public GG::Slider
 {

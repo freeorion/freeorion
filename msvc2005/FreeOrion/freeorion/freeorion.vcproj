@@ -465,6 +465,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\UI\EncyclopediaDetailPanel.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\UI\EncyclopediaDetailPanel.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\FleetButton.cpp"
 					>
 				</File>

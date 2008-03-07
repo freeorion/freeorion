@@ -1951,8 +1951,8 @@ Tech
     graphic = ""
 
 Tech
-    name = "SHP_NUCLEAR_MISSLE"
-    description = "SHP_NUCLEAR_MISSLE_DESC"
+    name = "SHP_NUCLEAR_MISSILE"
+    description = "SHP_NUCLEAR_MISSILE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"

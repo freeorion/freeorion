@@ -9,6 +9,7 @@
 class CUIEdit;
 class CUIButton;
 class CUIDropDownList;
+class EncyclopediaDetailPanel;
 class ShipDesign;
 namespace GG {
     class TextControl;
@@ -38,7 +39,6 @@ public:
     mutable DesignChangedSignalType DesignChangedSignal;
 
 private:
-    class DetailPanel;      // shows detailed info about selected part or hull
     class BaseSelector;     // has tabs to pick empty hull, previously-saved design or an autodesign template to start new design
     class PartPalette;      // shows parts that can be clicked for detailed or dragged on slots in design
     class MainPanel;        // shows image of hull, slots and parts, design name and description entry boxes, confirm button
@@ -67,7 +67,7 @@ private:
     CUIEdit*                    m_design_name_edit;
     CUIEdit*                    m_design_description_edit;
 
-    DetailPanel*                m_detail_panel;
+    EncyclopediaDetailPanel*    m_detail_panel;
     BaseSelector*               m_base_selector;
     PartPalette*                m_part_palette;
     MainPanel*                  m_main_panel;

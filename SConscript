@@ -120,7 +120,8 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/TechTreeWnd.cpp',
         'UI/TurnProgressWnd.cpp',
         'universe/Universe.cpp',
-        'util/AppInterface.cpp'
+        'util/AppInterface.cpp',
+        'UI/EncyclopediaDetailPanel.cpp'
         ]
     target = 'human'
 
