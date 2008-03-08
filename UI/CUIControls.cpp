@@ -808,37 +808,37 @@ const std::string& CUILinkTextMultiEdit::WindowText() const
 void CUILinkTextMultiEdit::Render()
 {
     CUIMultiEdit::Render();
-    TextLinker::RenderLinkRects();
+    TextLinker::Render_();
 }
 
 void CUILinkTextMultiEdit::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     CUIMultiEdit::LButtonDown(pt, mod_keys);
-    TextLinker::LButtonDown(pt, mod_keys);
+    TextLinker::LButtonDown_(pt, mod_keys);
 }
 
 void CUILinkTextMultiEdit::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     CUIMultiEdit::LButtonUp(pt, mod_keys);
-    TextLinker::LButtonUp(pt, mod_keys);
+    TextLinker::LButtonUp_(pt, mod_keys);
 }
 
 void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     CUIMultiEdit::LClick(pt, mod_keys);
-    TextLinker::LClick(pt, mod_keys);
+    TextLinker::LClick_(pt, mod_keys);
 }
 
 void CUILinkTextMultiEdit::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     CUIMultiEdit::MouseHere(pt, mod_keys);
-    TextLinker::MouseHere(pt, mod_keys);
+    TextLinker::MouseHere_(pt + ScrollPosition(), mod_keys);
 }
 
 void CUILinkTextMultiEdit::MouseLeave()
 {
     CUIMultiEdit::MouseLeave();
-    TextLinker::MouseLeave();
+    TextLinker::MouseLeave_();
 }
 
 void CUILinkTextMultiEdit::SetText(const std::string& str)
@@ -864,6 +864,7 @@ void CUILinkTextMultiEdit::SetText(const std::string& str)
 
 void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)
 {
+    MultiEdit::PreserveTextPositionOnNextSetText();
     CUIMultiEdit::SetText(str);
 }
 

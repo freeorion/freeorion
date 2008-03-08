@@ -34,7 +34,7 @@ LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr
 void LinkText::Render()
 {
     GG::TextControl::Render();
-    TextLinker::RenderLinkRects();
+    TextLinker::Render_();
 }
 
 void LinkText::SetText(const std::string& str)
@@ -50,12 +50,12 @@ void LinkText::SetLinkedText(const std::string& str)
 
 void LinkText::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    TextLinker::LButtonDown(pt, mod_keys);
+    TextLinker::LButtonDown_(pt, mod_keys);
 }
 
 void LinkText::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    TextLinker::LButtonUp(pt, mod_keys);
+    TextLinker::LButtonUp_(pt, mod_keys);
 }
 
 GG::Pt LinkText::TextUpperLeft() const
@@ -85,17 +85,17 @@ const std::string& LinkText::WindowText() const
 
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    TextLinker::LClick(pt, mod_keys);
+    TextLinker::LClick_(pt, mod_keys);
 }
 
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    TextLinker::MouseHere(pt, mod_keys);
+    TextLinker::MouseHere_(pt, mod_keys);
 }
 
 void LinkText::MouseLeave()
 {
-    TextLinker::MouseLeave();
+    TextLinker::MouseLeave_();
 }
 
 
@@ -122,7 +122,10 @@ TextLinker::TextLinker() :
     }
 }
 
-void TextLinker::RenderLinkRects()
+TextLinker::~TextLinker()
+{}
+
+void TextLinker::Render_()
 {
 #if RENDER_DEBUGGING_LINK_RECTS
     GG::Rect bounds(TextUpperLeft(), TextLowerRight());
@@ -136,18 +139,18 @@ void TextLinker::RenderLinkRects()
 #endif
 }
 
-void TextLinker::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::LButtonDown_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_old_sel_link = GetLinkUnderPt(pt);
 }
 
-void TextLinker::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::LButtonUp_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_old_sel_link = -1;
     ClearOldRollover();
 }
 
-void TextLinker::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     using boost::lexical_cast;
     int sel_link = GetLinkUnderPt(pt);
@@ -171,7 +174,7 @@ void TextLinker::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     m_old_sel_link = -1;
 }
 
-void TextLinker::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     int rollover_link = GetLinkUnderPt(pt);
     if (rollover_link != m_old_rollover_link) {
@@ -186,7 +189,7 @@ void TextLinker::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 }
 
-void TextLinker::MouseLeave()
+void TextLinker::MouseLeave_()
 {
     ClearOldRollover();
 }

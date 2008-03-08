@@ -18,18 +18,17 @@ private:
 public:
     /** \name Structors */ //@{
     TextLinker();
-    //@}
-
-    /** \name Mutators */ //@{
-    void        RenderLinkRects();
-    void        LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        MouseLeave();
+    virtual ~TextLinker();
     //@}
 
 protected:
+    void        Render_();
+    void        LButtonDown_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void        LButtonUp_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void        LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void        MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void        MouseLeave_();
+
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const = 0;
     virtual const boost::shared_ptr<GG::Font>&      GetFont() const = 0;
     virtual GG::Pt                                  TextUpperLeft() const = 0;
