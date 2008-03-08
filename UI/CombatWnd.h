@@ -56,11 +56,14 @@ private:
         void Resize(const GG::Pt& pt1, const GG::Pt& pt2);
     };
 
-    class StarRect : public Ogre::ManualObject
+    class FlareRect : public Ogre::ManualObject
     {
     public:
-        StarRect();
+        FlareRect(const std::string& material_name);
         void Resize(Ogre::Real left, Ogre::Real top, Ogre::Real right, Ogre::Real bottom);
+
+    private:
+        std::string m_material_name;
     };
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
@@ -86,9 +89,9 @@ private:
     bool m_mouse_dragged;
     Ogre::SceneNode* m_currently_selected_scene_node;
     SelectionRect* m_selection_rect;
-    StarRect* m_star_rect;
     Ogre::Vector3 m_lookat_point;
     std::set<Ogre::MovableObject*> m_current_selections;
+    Ogre::Billboard* m_star_back_billboard;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };

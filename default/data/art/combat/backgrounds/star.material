@@ -1,0 +1,72 @@
+material backgrounds/star_back
+{
+	technique
+	{
+		pass
+		{
+            lighting off
+			scene_blend src_alpha dest_alpha
+
+			texture_unit
+			{
+				texture star_back.png
+			}
+		}
+
+		pass
+		{
+            lighting off
+			scene_blend src_alpha dest_alpha
+
+			texture_unit
+			{
+				texture star_rainbow.png
+                scale 0.75 0.75
+                tex_address_mode clamp
+			}
+		}
+
+		pass
+		{
+            lighting off
+			scene_blend src_alpha dest_alpha
+
+			texture_unit
+			{
+				texture star_rays.png
+			}
+		}
+
+		pass
+		{
+            lighting off
+			scene_blend src_alpha dest_alpha
+
+			texture_unit
+			{
+				texture star_horizontal_flare.png
+                scale 1.5 0.05
+                tex_address_mode clamp
+			}
+		}
+	}
+}
+
+material backgrounds/star_core
+{
+	technique
+	{
+		pass
+		{
+            lighting off
+			scene_blend src_alpha dest_alpha
+
+			texture_unit
+			{
+				texture star_core.png
+                scale 0.25 0.25
+                tex_address_mode clamp
+			}
+		}
+	}
+}
