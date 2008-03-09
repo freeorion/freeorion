@@ -1408,6 +1408,8 @@ Design Description
 DESIGN_NO_PART
 None
 
+DESIGN_WND_PART_PALETTE_TITLE
+Ship Parts
 
 # Ship Slot Types
 
@@ -3473,6 +3475,12 @@ Colonists are kept in suspended animation during colonization journey, eliminati
 ##############
 # Ship Hulls #
 ##############
+
+SH_EMPTY
+Empty Hull
+SH_EMPTY_DESC
+Cheap and fast, but can't mount any parts.
+
 
 SH_SMALL
 Small Hull

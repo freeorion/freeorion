@@ -437,7 +437,7 @@ private:
 
     std::set<BuildType>                     m_build_types_shown;
     std::pair<bool, bool>                   m_availabilities_shown; // .first -> available items; .second -> unavailable items
-    
+
     BuildableItemsListBox*                  m_buildable_items;
     std::map<GG::ListBox::Row*, BuildType>  m_build_types;
     GG::Pt                                  m_original_ul;
@@ -988,7 +988,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
     AttachChild(m_build_detail_panel);
     AttachChild(m_build_selector);
     AttachChild(m_side_panel);
-    
+
     MoveChildUp(m_build_detail_panel);
     MoveChildUp(m_build_selector);
 

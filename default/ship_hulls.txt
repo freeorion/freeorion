@@ -1,6 +1,6 @@
 Hull
     name = "SH_EMPTY"
-    description = "SH_SMALL_DESC"
+    description = "SH_EMPTY_DESC"
     speed = 120
     buildcost = 1
     buildtime = 1
