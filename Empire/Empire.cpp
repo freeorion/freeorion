@@ -1354,6 +1354,16 @@ double Empire::ResourceAvailable(ResourceType type) const
     return it->second->Available();
 }
 
+const PopulationPool& Empire::GetPopulationPool() const
+{
+    return m_population_pool;
+}
+
+double Empire::Population() const
+{
+    return m_population_pool.Population();
+}
+
 void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
 {
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);

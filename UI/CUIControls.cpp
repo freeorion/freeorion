@@ -759,7 +759,6 @@ void CUIMultiEdit::Render()
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
 
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, color_to_use, 1);
 

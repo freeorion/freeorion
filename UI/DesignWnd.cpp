@@ -14,7 +14,7 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
-#include <cmath>
+
 
 namespace {
     // functor connecting slot droplists from which parts are selected to adding parts to the design.
@@ -61,7 +61,129 @@ namespace {
         DesignWnd* const m_design_wnd;
         const std::map<int, std::string> m_hull_names_by_row_index;
     };
+
+    static const std::string PART_CONTROL_DROP_TYPE_STRING = "Part Control";
+    static const std::string EMPTY_STRING = "";
 }
+
+//////////////////////////////////////////////////
+// PartControl                                  //
+//////////////////////////////////////////////////
+/** UI representation of a ship part.  Displayed in the PartPalette, and can be dragged onto SlotControls to
+  * add parts to the design.
+  */
+class PartControl : public GG::Control {
+public:
+    /** \name Structors */ //@{
+    PartControl(const PartType* part);
+    //@}
+
+    /** \name Accessors */ //@{
+    const PartType*     Part() { return m_part; }
+    const std::string&  PartName() { m_part ? m_part->Name() : EMPTY_STRING; }
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void        Render() {} // m_icon does the lookin' nice
+
+    static const int SIZE = 64;
+private:
+    GG::StaticGraphic*  m_icon;
+    const PartType*     m_part;
+};
+
+PartControl::PartControl(const PartType* part) :
+    GG::Control(0, 0, SIZE, SIZE, GG::CLICKABLE),
+    m_icon(0),
+    m_part(part)
+{
+    m_icon = new GG::StaticGraphic(0, 0, SIZE, SIZE, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon->Show();
+    AttachChild(m_icon);
+    SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+}
+
+//////////////////////////////////////////////////
+// PartsListBox                                 //
+//////////////////////////////////////////////////
+/** Arrangement of PartControls that can be dragged onto SlotControls
+  */
+class PartsListBox : public CUIListBox {
+public:
+    /** \name Structors */ //@{
+    PartsListBox(int w, int h);
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            PopulateList();
+    //@}
+
+private:
+    std::set<ShipPartClass>         m_part_classes_shown;   // which part classes should be shown
+    std::pair<bool, bool>           m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+
+    GG::ListBox                     m_list_boxes;
+    boost::shared_ptr<GG::Scroll>   m_scroll;
+};
+
+PartsListBox::PartsListBox(int w, int h) :
+    CUIListBox(0, 0, w, h)
+{}
+
+void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+
+    // maybe later do something interesting with docking
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (Visible() && old_size != GG::Wnd::Size())
+        PopulateList();
+}
+
+void PartsListBox::PopulateList() {
+    const int PART_SIZE = PartControl::SIZE;
+
+    const int TOTAL_WIDTH = Size().x;
+    const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / PART_SIZE);
+
+
+    //for (unsigned int i = 0; i < m_build_type_buttons.size() - 1; ++i) {
+    //    m_build_type_buttons[BuildType(BT_BUILDING + i)]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height));
+    //    x += button_width;
+    //}
+    //m_build_type_buttons[NUM_BUILD_TYPES]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height)); x += button_width;
+
+    //m_availability_buttons[0]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height)); x += button_width;
+    //m_availability_buttons[1]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height));
+
+    //m_buildable_items->SizeMove(GG::Pt(0, button_height), ClientSize() - GG::Pt(TEXT_MARGIN_X, TEXT_MARGIN_Y));
+}
+
+//////////////////////////////////////////////////
+// DesignWnd::PartPalette                       //
+//////////////////////////////////////////////////
+/** Contains graphical list of PartControl which can be dragged and dropped onto slots to assign parts to those slots
+  */
+class DesignWnd::PartPalette : public CUIWnd {
+public:
+    /** \name Structors */ //@{
+    PartPalette(int w, int h);
+    //@}
+
+    /** \name Mutators */ //@{
+    void ShowClass(BuildType type, bool refresh_list = true);
+    void ShowAllClasses(bool refresh_list = true);
+    void HideClass(BuildType type, bool refresh_list = true);
+    void HideAllClasses(bool refresh_list = true);
+
+    void ShowAvailability(bool available, bool refresh_list = true);
+    void HideAvailability(bool available, bool refresh_list = true);
+    //@}
+
+private:
+    PartsListBox*   m_parts_list;
+};
 
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
@@ -71,12 +193,37 @@ public:
 };
 
 
+
 //////////////////////////////////////////////////
-// DesignWnd::PartPalette                       //
+// SlotControl                                  //
 //////////////////////////////////////////////////
-class DesignWnd::PartPalette : public CUIWnd {
-public:
-};
+/** UI representation and drop-target for slots of a design.  PartControl may be dropped into slots to add
+  * the corresponding parts to the ShipDesign, or the part may be set programmatically with SetPart().
+  */
+class SlotControl : public GG::Control {
+    public:
+        //! \name Signal Types //!@{
+        typedef boost::signal<void ()>  SlotContentsAlteredSignalType;  //!< emitted when a part / slot is altered
+        //@}
+
+        /** \name Structors */ //@{
+        SlotControl();
+        //@}
+
+        /** \name Mutators */ //@{
+        virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
+        virtual void    ChildrenDraggedAway(const std::list<Wnd*>& wnds, const Wnd* destination);
+
+        virtual void    Render();
+
+        void            SetPart(const std::string& part_name);
+        void            SetPart(const PartType* part = 0);
+        //@}
+
+        mutable SlotContentsAlteredSignalType SlotContentsAlteredSignal;
+    private:
+        boost::shared_ptr<PartControl>  m_part;
+    };
 
 
 //////////////////////////////////////////////////
@@ -84,6 +231,27 @@ public:
 //////////////////////////////////////////////////
 class DesignWnd::MainPanel : public CUIWnd {
 public:
+    //! \name Signal Types //!@{
+    typedef boost::signal<void ()>  DesignChangedSignalType;    //!< emitted when the design is changed
+    //@}
+
+    /** \name Structors */ //@{
+    MainPanel(int w, int h);
+    //@}
+
+    /** \name Mutators */ //@{
+    void        SetPart(const std::string& part_name);
+    void        SetPart(const PartType* part);
+    void        SetHull(const std::string& hull_name);
+    void        SetHull(const HullType* hull);
+    //@}
+private:
+    std::vector<boost::shared_ptr<SlotControl> >    m_slots;
+
+    GG::Edit*                   m_design_name;
+    GG::Edit*                   m_design_description;
+    GG::Button*                 m_confirm_button;
+    GG::Button*                 m_clear_button;
 };
 
 

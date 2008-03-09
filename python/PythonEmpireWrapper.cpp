@@ -94,6 +94,8 @@ namespace FreeOrionPython {
             .def("resourceMaxStockpile",            &Empire::ResourceMaxStockpile)
             .def("resourceProduction",              &Empire::ResourceProduction)
             .def("resourceAvailable",               &Empire::ResourceAvailable)
+
+            .def("population",                      &Empire::Population)
         ;
 
 

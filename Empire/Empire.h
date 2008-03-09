@@ -347,7 +347,8 @@ public:
     double                  ResourceProduction(ResourceType type) const;            ///< returns amount of resource \a type being produced by ResourceCenters
     double                  ResourceAvailable(ResourceType type) const;             ///< returns amount of resource \a type immediately available.  This = production + stockpile
 
-    const PopulationPool&   GetPopulationPool() const {return m_population_pool;}   ///< Returns PopulationPool
+    const PopulationPool&   GetPopulationPool() const;                              ///< Returns PopulationPool
+    double                  Population() const;                                     ///< returns total Population of empire
     //@}
 
     /** \name Mutators */ //@{

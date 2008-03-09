@@ -402,13 +402,13 @@ public:
 
     void SetBuildLocation(int location_id);
 
-    void Reset(bool keep_selection);
+    void Reset();
 
     void ShowType(BuildType type, bool refresh_list = true);
     void ShowAllTypes(bool refresh_list = true);
     void HideType(BuildType type, bool refresh_list = true);
     void HideAllTypes(bool refresh_list = true);
-    
+
     void ShowAvailability(bool available, bool refresh_list = true);
     void HideAvailability(bool available, bool refresh_list = true);
 
@@ -426,9 +426,9 @@ private:
     bool BuildableItemVisible(BuildType build_type, const std::string& name);
     bool BuildableItemVisible(BuildType build_type, int design_id);
 
-    void PopulateList(bool keep_selection);
+    void PopulateList();
     std::vector<int> ColWidths();
-    
+
     void BuildItemSelected(const std::set<int>& selections);
     void BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row);
 
@@ -601,20 +601,20 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
 void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id)
 {
     m_build_location = location_id;
-    PopulateList(true);
+    PopulateList();
 }
 
-void BuildDesignatorWnd::BuildSelector::Reset(bool keep_selection)
+void BuildDesignatorWnd::BuildSelector::Reset()
 {
-    PopulateList(keep_selection);
-    DoLayout();
+    PopulateList();
+    //DoLayout();
 }
 
 void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_list)
 {
     if (m_build_types_shown.find(type) == m_build_types_shown.end()) {
         m_build_types_shown.insert(type);
-        if (refresh_list) PopulateList(true);
+        if (refresh_list) PopulateList();
     }
 }
 
@@ -623,7 +623,7 @@ void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_li
     std::set<BuildType>::iterator it = m_build_types_shown.find(type);
     if (it != m_build_types_shown.end()) {
         m_build_types_shown.erase(it);
-        if (refresh_list) PopulateList(true);
+        if (refresh_list) PopulateList();
     }
 }
 
@@ -632,13 +632,13 @@ void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list)
     m_build_types_shown.insert(BT_BUILDING);
     m_build_types_shown.insert(BT_SHIP);
     m_build_types_shown.insert(BT_ORBITAL);
-    if (refresh_list) PopulateList(true);
+    if (refresh_list) PopulateList();
 }
 
 void BuildDesignatorWnd::BuildSelector::HideAllTypes(bool refresh_list)
 {
     m_build_types_shown.clear();
-    if (refresh_list) PopulateList(false);
+    if (refresh_list) PopulateList();
 }
 
 void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool refresh_list)
@@ -646,12 +646,12 @@ void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool re
     if (available) {
         if (!m_availabilities_shown.first) {
             m_availabilities_shown.first = true;
-            if (refresh_list) PopulateList(true);
+            if (refresh_list) PopulateList();
         }
     } else {
         if (!m_availabilities_shown.second) {
             m_availabilities_shown.second = true;
-            if (refresh_list) PopulateList(true);
+            if (refresh_list) PopulateList();
         }
     }
 }
@@ -661,12 +661,12 @@ void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool re
     if (available) {
         if (m_availabilities_shown.first) {
             m_availabilities_shown.first = false;
-            if (refresh_list) PopulateList(true);
+            if (refresh_list) PopulateList();
         }
     } else {
         if (m_availabilities_shown.second) {
             m_availabilities_shown.second = false;
-            if (refresh_list) PopulateList(true);
+            if (refresh_list) PopulateList();
         }
     }
 }
@@ -713,14 +713,14 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
         return m_availabilities_shown.second;
 }
 
-void BuildDesignatorWnd::BuildSelector::PopulateList(bool keep_selection)
+void BuildDesignatorWnd::BuildSelector::PopulateList()
 {
     if (!Visible()) return;
 
     Logger().debugStream() << "PopulateList start";
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) return;
-    
+
     // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
     std::string selected_row;
     if (m_buildable_items->Selections().size() == 1) {
@@ -1072,7 +1072,7 @@ void BuildDesignatorWnd::Reset()
         SystemSelectedSignal(home_system_id);
     }
     SelectDefaultPlanet(m_side_panel->SystemID());
-    m_build_selector->Reset(true);
+    m_build_selector->Reset();
     m_build_detail_panel->SetBuildItem(INVALID_BUILD_TYPE);
     m_side_panel->Refresh();
 }
@@ -1080,7 +1080,7 @@ void BuildDesignatorWnd::Reset()
 void BuildDesignatorWnd::Clear()
 {
     m_build_detail_panel->SetBuildItem(INVALID_BUILD_TYPE);
-    m_build_selector->Reset(false);
+    m_build_selector->Reset();
     SystemSelectedSignal(UniverseObject::INVALID_OBJECT_ID);
     m_side_panel->Hide();
     m_build_location = UniverseObject::INVALID_OBJECT_ID;
