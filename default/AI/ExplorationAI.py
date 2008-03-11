@@ -56,19 +56,15 @@ def dictHasValue(dictionary, value):
 
 # returns the systemID of the home world
 def getHomeSystemID(empire, universe):
-    for systemID in universe.allObjectIDs:
-        
-        system = universe.getSystem(systemID)
-        if system == None: continue
-        if empire.homeworldID in system.planetIDs: return systemID
+    
+    homeworldObject = universe.getPlanet(empire.homeworldID)
 
-    return (-1)
+    return homeworldObject.systemID
 
 
 # returns list of systems ids known of by but not explored by empireID,
 # that a ship located in startSystemID could reach via starlanes
 def getExplorableSystemIDs(startSystemID, empireID):
-    print "getExplorableSystemIDs(" + str(startSystemID) + ", " + str(empireID) + ")"
 
     universe = fo.getUniverse()
     objectIDs = universe.allObjectIDs
@@ -117,11 +113,17 @@ def removeInvalidExploreMissions(exploreMissions, empire, universe):
     for fleetID in exploreMissions:
 
         # system explored? => delete mission
-        if empire.hasExploredSystem(exploreMissions[fleetID]): removeMissions.append(fleetID)
+        if empire.hasExploredSystem(exploreMissions[fleetID]):
+            removeMissions.append(fleetID)
+            continue
 
         # fleet not there (or from a different empire)? => delete mission
         fleet = universe.getFleet(fleetID)
-        if (fleet == None): removeMissions.append(fleetID)
+        
+        if (fleet == None):
+            removeMissions.append(fleetID)
+            continue
+        
         if not (fleet.whollyOwnedBy(empire.empireID)): removeMissions.append(fleetID)
 
     for fleetID in removeMissions: del exploreMissions[fleetID]

@@ -283,19 +283,23 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void ShowClass(ShipPartClass part_class, bool refresh_list = true);
-    void ShowAllClasses(bool refresh_list = true);
-    void HideClass(ShipPartClass part_class, bool refresh_list = true);
-    void HideAllClasses(bool refresh_list = true);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    void ShowAvailability(bool available, bool refresh_list = true);
-    void HideAvailability(bool available, bool refresh_list = true);
+    void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
+    void            ShowAllClasses(bool refresh_list = true);
+    void            HideClass(ShipPartClass part_class, bool refresh_list = true);
+    void            HideAllClasses(bool refresh_list = true);
+
+    void            ShowAvailability(bool available, bool refresh_list = true);
+    void            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
 private:
+    void            DoLayout();
+
     PartsListBox*   m_parts_list;
 
-    std::map<ShipPartClass, boost::shared_ptr<GG::Button> > m_build_type_buttons;
+    std::map<ShipPartClass, boost::shared_ptr<GG::Button> > m_class_buttons;
     std::vector<boost::shared_ptr<GG::Button> >             m_availability_buttons;
 };
 
@@ -306,8 +310,88 @@ DesignWnd::PartPalette::PartPalette(int w, int h) :
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     EnableChildClipping(true);
 
-    m_parts_list = new PartsListBox(15, 30, w - 30, h - 40);
+    m_parts_list = new PartsListBox(0, 0, 10, 10);
     AttachChild(m_parts_list);
+
+    // class buttons
+    for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
+        m_class_buttons[part_class] = boost::shared_ptr<GG::Button>(new CUIButton(10, 10, 10, UserString(boost::lexical_cast<std::string>(part_class))));
+        AttachChild(m_class_buttons[part_class].get());
+    }
+
+    m_availability_buttons.push_back(boost::shared_ptr<GG::Button>(new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"))));
+    AttachChild(m_availability_buttons[0].get());
+    m_availability_buttons.push_back(boost::shared_ptr<GG::Button>(new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"))));
+    AttachChild(m_availability_buttons[1].get());
+
+    DoLayout();
+}
+
+void DesignWnd::PartPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    CUIWnd::SizeMove(ul, lr);
+    DoLayout();
+}
+
+void DesignWnd::PartPalette::DoLayout() {
+    const int PTS = ClientUI::Pts();
+    const int PTS_WIDE = PTS/2;         // guess at how wide per character the font needs
+    const int BUTTON_HEIGHT = PTS*3/2;
+    const int BUTTON_SEPARATION = 3;    // vertical or horizontal sepration between adjacent buttons
+    const int BUTTON_EDGE_PAD = 2;      // distance from edges of control to buttons
+    const int RIGHT_EDGE_PAD = 8;       // to account for border of CUIWnd
+
+    const int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, 1);   // space in which to fit buttons
+    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 16;                   // rough guesstimate... avoid overly long part class names
+    const int MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
+    const int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), 1);
+
+    const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
+    const int NUM_AVAILABILITY_BUTTONS_PER_ROW = (NUM_CLASS_BUTTONS + 2 > MAX_BUTTONS_PER_ROW) ? 1 : 2;
+
+    const int MAX_CLASS_BUTTONS_PER_ROW = std::max(1, MAX_BUTTONS_PER_ROW - NUM_AVAILABILITY_BUTTONS_PER_ROW);
+
+    const int NUM_CLASS_BUTTON_ROWS = NUM_CLASS_BUTTONS / MAX_CLASS_BUTTONS_PER_ROW;
+    const int NUM_CLASS_BUTTONS_PER_ROW = NUM_CLASS_BUTTONS / NUM_CLASS_BUTTON_ROWS;
+
+    const int TOTAL_BUTTONS_PER_ROW = NUM_CLASS_BUTTONS_PER_ROW + NUM_AVAILABILITY_BUTTONS_PER_ROW;
+
+    const int BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;
+
+    const int COL_OFFSET = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
+    const int ROW_OFFSET = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
+
+    // place class buttons
+    int col = MAX_CLASS_BUTTONS_PER_ROW, row = -1;
+    for (std::map<ShipPartClass, boost::shared_ptr<GG::Button> >::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
+        if (col >= MAX_CLASS_BUTTONS_PER_ROW) {
+            col = 0;
+            ++row;
+        }
+        GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+        GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+        it->second->SizeMove(ul, lr);
+        ++col;
+    }
+
+    // place parts list.  note: assuming at least as many rows of class buttons as availability buttons, as this
+    //                          is quite likely, as long as there are two or more classes of parts, and it's
+    //                          slightly less work than being more careful to ensure this is the case
+    m_parts_list->SizeMove(GG::Pt(0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(BUTTON_SEPARATION, BUTTON_SEPARATION));
+
+
+    // place availability buttons
+    col = MAX_CLASS_BUTTONS_PER_ROW;
+    row = 0;
+    GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_availability_buttons[0]->SizeMove(ul, lr);
+    if (NUM_AVAILABILITY_BUTTONS_PER_ROW <= 1)
+        ++row;
+    else
+        ++col;
+    ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_availability_buttons[1]->SizeMove(ul, lr);
 }
 
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {

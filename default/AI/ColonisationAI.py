@@ -11,6 +11,9 @@ minimalColoniseValue = 5 # minimal value a planet must have to be colonised; rig
 # globals
 coloniseMissions = {}
 
+colonisablePlanets = []
+colonyships = []   # should be changed to colonyshipIDs
+
 
 # main function
 def generateColonisationOrders():
@@ -24,12 +27,16 @@ def generateColonisationOrders():
     colonyshipIDs = getEmpireColonyshipIDs(empireID, universe)
 
     global coloniseMissions
-    print "Current colonise missions" + str(coloniseMissions)
+    print "Current colonise missions: " + str(coloniseMissions)
 
     removeColonyshipsWithMission(colonyshipIDs, universe)
     removeInvalidMissions(universe)
     
     print "Available colony ships: " + str(colonyshipIDs)
+
+    # export available colony ships
+    global colonyships
+    colonyships = colonyshipIDs
 
     # get planets
     systemIDs = getExploredSystemIDs(empire, universe)
@@ -45,6 +52,10 @@ def generateColonisationOrders():
 
     print "Colonisable planets:"
     for evaluationPair in sortedPlanets: print "ID|Score: " + str(evaluationPair)
+
+    # export planets for other AI modules
+    global colonisablePlanets
+    colonisablePlanets = sortedPlanets
 
     # send Colony Ships, colonise
     sendColonyShips(colonyshipIDs, sortedPlanets, universe)
@@ -126,7 +137,7 @@ def removeInvalidMissions(universe):
 
         planet = universe.getPlanet(coloniseMissions[shipID])
         if planet == None: deleteMissions.append(shipID)
-        if not planet.unowned: deleteMissions.append(shipID)
+        if (not planet.unowned): deleteMissions.append(shipID)
 
     for shipID in deleteMissions:
         print "remove invalid mission :" + str(shipID) + "/" + str(coloniseMissions[shipID])
@@ -159,15 +170,8 @@ def getPlanetsInSystemsIDs(systemIDs, universe):
         system = universe.getSystem(systemID)
         if (system == None): continue
 
-        # complicated code below, one line code would be:
-        # planetIDs.extend(system.planetIDs)
-        for object_id in objectIDs:
-            planet = universe.getPlanet(object_id)
-            if (planet == None): continue
-            if (planet.systemID != systemID): continue
-
-            planetIDs.append(object_id)
-
+        planetIDs.extend(system.planetIDs)
+        
     return planetIDs
 
 
@@ -177,24 +181,27 @@ def removeAlreadyOwnedPlanetIDs(planetIDs, empireID, universe):
 # - that an own colony ship is en route to
 
     global coloniseMissions
+    deletePlanets = []
 
     for planetID in planetIDs:
 
         planet = universe.getPlanet(planetID)
-        deletePlanet = False
 
-        if not (planet.unowned): deletePlanet = True
+        if (not planet.unowned):
+            deletePlanets.append(planetID)
+            continue
       
-         # remove planets that are target of a mission of your own colony ship
+        # remove planets that are target of a mission of your own colony ship
         for colonyshipID in coloniseMissions:
             if planetID != coloniseMissions[colonyshipID]: continue
           
             colonyship = universe.getShip(colonyshipID)
-            if colonyship.whollyOwnedBy(empireID): deletePlanet = True
+            if colonyship.whollyOwnedBy(empireID): deletePlanets.append(planetID)
+
              
-        if deletePlanet:
-            planetIDs.remove(planetID)
-            # print "removed planet " + str(planetID)
+    for ID in deletePlanets:
+        planetIDs.remove(ID)
+        print "removed planet " + str(ID)
 
     return planetIDs
 

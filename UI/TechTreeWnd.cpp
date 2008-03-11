@@ -346,28 +346,36 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void Render();
-    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    Render();
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
 private:
-    void DoButtonLayout();
+    void            DoButtonLayout();
 
-    int m_buttons_per_row;
-    int m_col_offset;  //!< horizontal distance between each column of buttons
-    int m_row_offset;  //!< vertical distance between each row of buttons
-    int m_category_button_rows;
-    int m_status_or_type_button_rows;
+    /** These values are determined when doing button layout, and stored.  They are later
+      * used when rendering separator lines between the groups of buttons */
+    int m_buttons_per_row;                  // number of buttons that can fit into available horizontal space
+    int m_col_offset;                       // horizontal distance between each column of buttons
+    int m_row_offset;                       // vertical distance between each row of buttons
+    int m_category_button_rows;             // number of rows used for category buttons
+    int m_status_or_type_button_rows;       // number of rows used for status buttons and for type buttons (both groups have the same number of buttons (three) so use the same number of rows)
 
-    static const int BUTTON_SEPARATION = 3;     // vertical or horizontal sepration between adjacent buttons
-    static const int UPPER_LEFT_PAD = 2;        // offset of buttons' position from top left of controls box
+    /** These values are used for rendering separator lines between groups of buttons */
+    static const int BUTTON_SEPARATION = 3; // vertical or horizontal sepration between adjacent buttons
+    static const int UPPER_LEFT_PAD = 2;    // offset of buttons' position from top left of controls box
 
-    std::vector<CUIButton*> m_category_buttons;
-    std::map<TechType, CUIButton*> m_tech_type_buttons;
-    std::map<TechStatus, CUIButton*> m_tech_status_buttons;
+    // TODO: replace all the above stored information with a vector of pairs of GG::Pt (or perhaps GG::Rect)
+    // This will contain the start and end points of all separator lines that need to be drawn.  This will be
+    // calculated by SizeMove, and stored, so that start and end positions don't need to be recalculated each
+    // time Render is called.
 
-    friend class TechTreeWnd;                   // so TechTreeWnd can access buttons
+    std::vector<CUIButton*>             m_category_buttons;
+    std::map<TechType, CUIButton*>      m_tech_type_buttons;
+    std::map<TechStatus, CUIButton*>    m_tech_status_buttons;
+
+    friend class TechTreeWnd;               // so TechTreeWnd can access buttons
 };
 
 TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
@@ -395,7 +403,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     // colour
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin(); it != m_tech_type_buttons.end(); ++it)
         it->second->MarkSelectedGray();
-    
+
     // create a button for each tech status
     m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(0, 0, 20, UserString("TECH_WND_STATUS_UNRESEARCHABLE"));
     AttachChild(m_tech_status_buttons[TS_UNRESEARCHABLE]);
@@ -406,7 +414,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     // colour
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
         it->second->MarkSelectedGray();
-    
+
     EnableChildClipping(true);
     DoButtonLayout();
     Resize(GG::Pt(Width(), MinSize().y));
@@ -424,13 +432,13 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
     const float NUM_CATEGORY_BUTTONS = static_cast<float>(m_category_buttons.size());
     const int ROWS = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / MAX_BUTTONS_PER_ROW));
     m_buttons_per_row = static_cast<int>(std::ceil(NUM_CATEGORY_BUTTONS / ROWS));   // number of buttons in a typical row
-    
+
     const int BUTTON_WIDTH = (USABLE_WIDTH - (m_buttons_per_row - 1)*BUTTON_SEPARATION) / m_buttons_per_row;
     const int BUTTON_HEIGHT = m_category_buttons.back()->Height();
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
-    
+
     int row = 0, col = -1;
     for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin(); it != m_category_buttons.end(); ++it) {
         ++col;
@@ -509,7 +517,7 @@ void TechTreeWnd::TechTreeControls::Render()
         glColor(ClientUI::WndOuterBorderColor());
 
         int category_bottom = cl_ul.y + m_category_button_rows*m_row_offset - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
-        
+
         glVertex2i(cl_ul.x, category_bottom);
         glVertex2i(cl_lr.x - 1, category_bottom);
 
