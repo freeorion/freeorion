@@ -81,7 +81,7 @@ public:
 
     /** \name Accessors */ //@{
     const PartType*     Part() { return m_part; }
-    const std::string&  PartName() { m_part ? m_part->Name() : EMPTY_STRING; }
+    const std::string&  PartName() { return m_part ? m_part->Name() : EMPTY_STRING; }
     //@}
 
     /** \name Mutators */ //@{
@@ -177,7 +177,6 @@ void PartsListBox::Populate() {
 
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
-    const PartTypeManager& manager = GetPartTypeManager();
 
     int cur_col = NUM_COLUMNS;
     GG::ListBox::Row* cur_row = 0;  // ...?
