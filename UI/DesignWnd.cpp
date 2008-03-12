@@ -14,6 +14,7 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
+#include <algorithm>
 
 
 namespace {
@@ -341,7 +342,7 @@ void DesignWnd::PartPalette::DoLayout() {
     const int RIGHT_EDGE_PAD = 8;       // to account for border of CUIWnd
 
     const int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, 1);   // space in which to fit buttons
-    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 16;                   // rough guesstimate... avoid overly long part class names
+    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                   // rough guesstimate... avoid overly long part class names
     const int MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
     const int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), 1);
 
@@ -350,8 +351,8 @@ void DesignWnd::PartPalette::DoLayout() {
 
     const int MAX_CLASS_BUTTONS_PER_ROW = std::max(1, MAX_BUTTONS_PER_ROW - NUM_AVAILABILITY_BUTTONS_PER_ROW);
 
-    const int NUM_CLASS_BUTTON_ROWS = NUM_CLASS_BUTTONS / MAX_CLASS_BUTTONS_PER_ROW;
-    const int NUM_CLASS_BUTTONS_PER_ROW = NUM_CLASS_BUTTONS / NUM_CLASS_BUTTON_ROWS;
+    const int NUM_CLASS_BUTTON_ROWS = static_cast<int>(std::ceil(static_cast<float>(NUM_CLASS_BUTTONS) / MAX_CLASS_BUTTONS_PER_ROW));
+    const int NUM_CLASS_BUTTONS_PER_ROW = static_cast<int>(std::ceil(static_cast<float>(NUM_CLASS_BUTTONS) / NUM_CLASS_BUTTON_ROWS));
 
     const int TOTAL_BUTTONS_PER_ROW = NUM_CLASS_BUTTONS_PER_ROW + NUM_AVAILABILITY_BUTTONS_PER_ROW;
 
@@ -361,9 +362,9 @@ void DesignWnd::PartPalette::DoLayout() {
     const int ROW_OFFSET = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
 
     // place class buttons
-    int col = MAX_CLASS_BUTTONS_PER_ROW, row = -1;
+    int col = NUM_CLASS_BUTTONS_PER_ROW, row = -1;
     for (std::map<ShipPartClass, boost::shared_ptr<GG::Button> >::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
-        if (col >= MAX_CLASS_BUTTONS_PER_ROW) {
+        if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
         }
@@ -380,7 +381,7 @@ void DesignWnd::PartPalette::DoLayout() {
 
 
     // place availability buttons
-    col = MAX_CLASS_BUTTONS_PER_ROW;
+    col = NUM_CLASS_BUTTONS_PER_ROW;
     row = 0;
     GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
     GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
