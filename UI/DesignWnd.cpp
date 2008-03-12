@@ -63,6 +63,22 @@ namespace {
         const std::map<int, std::string> m_hull_names_by_row_index;
     };
 
+    //struct ToggleClassFunctor
+    //{
+    //    ToggleClassFunctor(PartPalette* part_palette, ShipPartClass part_class) : m_palette(part_palette), m_part_class(part_class) {}
+    //    void operator()() {m_palette->ToggleType(m_part_class);}
+    //    PartPalette* const m_palette;
+    //    const ShipPartClass m_part_class;
+    //};
+
+    //struct ToggleAvailabilityFunctor
+    //{
+    //    ToggleAvailabilityFunctor(BuildDesignatorWnd* designator_wnd, bool available) : m_designator_wnd(designator_wnd), m_available(available) {}
+    //    void operator()() {m_designator_wnd->ToggleAvailabilitly(m_available);}
+    //    BuildDesignatorWnd* const m_designator_wnd;
+    //    const bool m_available; // true: toggle whether to show available techs; false: toggle whether to show unavailable techs
+    //};
+
     static const std::string PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     static const std::string EMPTY_STRING = "";
 }
@@ -86,6 +102,10 @@ public:
 
     /** \name Mutators */ //@{
     virtual void        Render() {} // m_icon does the lookin' nice
+    virtual void        LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    //@}
+
+    mutable boost::signal<void (const PartType*)> ClickedSignal;
 
     static const int SIZE = 64;
 private:
@@ -104,6 +124,10 @@ PartControl::PartControl(const PartType* part) :
     SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
 }
 
+void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    ClickedSignal(m_part);
+}
+
 //////////////////////////////////////////////////
 // PartsListBox                                 //
 //////////////////////////////////////////////////
@@ -111,11 +135,13 @@ PartControl::PartControl(const PartType* part) :
   */
 class PartsListBox : public CUIListBox {
 public:
+    public:
     /** \name Structors */ //@{
     PartsListBox(int x, int y, int w, int h);
     //@}
 
     /** \name Mutators */ //@{
+    virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Populate();
 
@@ -128,11 +154,11 @@ public:
     void            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
+    mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
+
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
     std::pair<bool, bool>   m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
-
-    std::map<const PartType*, boost::shared_ptr<PartControl> >  m_part_controls;
 
     int                     m_previous_num_columns;
 };
@@ -141,22 +167,24 @@ PartsListBox::PartsListBox(int x, int y, int w, int h) :
     CUIListBox(x, y, w, h),
     m_part_classes_shown(),
     m_availabilities_shown(std::make_pair(false, false)),
-    m_part_controls(),  // TODO: Store PartControls sorted by PartType::Class
     m_previous_num_columns(-1)
 {
-    // create PartControl objects for all parts
-    const PartTypeManager& manager = GetPartTypeManager();
-    for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
-        const PartType* part = part_it->second;
-        m_part_controls[part] = boost::shared_ptr<PartControl>(new PartControl(part));
-    }
+    SetStyle(GG::LIST_NOSEL);
+    m_availabilities_shown.first = true;
+    m_availabilities_shown.second = false;
+    for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1))
+        m_part_classes_shown.insert(part_class);
+}
+
+void PartsListBox::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    wnds.clear();   // reject drops
 }
 
 void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
 
     // maybe later do something interesting with docking
-    GG::Wnd::SizeMove(ul, lr);
+    CUIListBox::SizeMove(ul, lr);
 
     if (Visible() && old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
@@ -177,15 +205,20 @@ void PartsListBox::Populate() {
 
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire)
+        return;
+    const PartTypeManager& manager = GetPartTypeManager();
 
     int cur_col = NUM_COLUMNS;
-    GG::ListBox::Row* cur_row = 0;  // ...?
+    GG::ListBox::Row* cur_row = 0;
 
-    for (std::map<const PartType*, boost::shared_ptr<PartControl> >::iterator control_it = m_part_controls.begin();
-         control_it != m_part_controls.end();
-         ++control_it)
-    {
-        const PartType* part = control_it->first;
+    // remove parts currently in rows of listbox
+    Clear();
+
+    // loop through all possible parts
+    for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
+        const PartType* part = part_it->second;
+
         // check whether this part should be shown in list
         ShipPartClass part_class = part->Class();
         if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
@@ -194,15 +227,25 @@ void PartsListBox::Populate() {
         if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.first))
             continue;   // part is available but available parts shouldn't be shown, or part isn't available and not available parts shouldn't be shown
 
-        // part should be shown in list.  Add the control to the end of the current row, or start of a new row if the current row is full
+        // part should be shown in list.
+
+        // check if current row is full, and make a new row if necessary
         if (cur_col >= NUM_COLUMNS) {
+            if (cur_row)
+                Insert(cur_row);
             cur_col = 0;
-            cur_row = new GG::ListBox::Row(TOTAL_WIDTH, PART_SIZE + PART_PAD, "");
-            Insert(cur_row);
+            cur_row = new GG::ListBox::Row(TOTAL_WIDTH, PART_SIZE + PART_PAD, "");  // drag_drop_data_type = "" implies not draggable row
         }
+        ++cur_col;
 
-
+        // make new part control and add to row
+        PartControl* control = new PartControl(part);
+        GG::Connect(control->ClickedSignal, PartsListBox::PartTypeClickedSignal);
+        cur_row->push_back(control);
     }
+    // add any incomplete rows
+    if (cur_row)
+        Insert(cur_row);
 
     // keep track of how many columns are present now
     m_previous_num_columns = NUM_COLUMNS;
@@ -292,15 +335,19 @@ public:
 
     void            ShowAvailability(bool available, bool refresh_list = true);
     void            HideAvailability(bool available, bool refresh_list = true);
+
+    void            Reset();
     //@}
+
+    mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
 
 private:
     void            DoLayout();
 
     PartsListBox*   m_parts_list;
 
-    std::map<ShipPartClass, boost::shared_ptr<GG::Button> > m_class_buttons;
-    std::vector<boost::shared_ptr<GG::Button> >             m_availability_buttons;
+    std::map<ShipPartClass, GG::Button*>    m_class_buttons;
+    std::pair<GG::Button*, GG::Button*>     m_availability_buttons;
 };
 
 DesignWnd::PartPalette::PartPalette(int w, int h) :
@@ -312,17 +359,21 @@ DesignWnd::PartPalette::PartPalette(int w, int h) :
 
     m_parts_list = new PartsListBox(0, 0, 10, 10);
     AttachChild(m_parts_list);
+    GG::Connect(m_parts_list->PartTypeClickedSignal, DesignWnd::PartPalette::PartTypeClickedSignal);
 
     // class buttons
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
-        m_class_buttons[part_class] = boost::shared_ptr<GG::Button>(new CUIButton(10, 10, 10, UserString(boost::lexical_cast<std::string>(part_class))));
-        AttachChild(m_class_buttons[part_class].get());
+        m_class_buttons[part_class] = (new CUIButton(10, 10, 10, UserString(boost::lexical_cast<std::string>(part_class))));
+        AttachChild(m_class_buttons[part_class]);
     }
 
-    m_availability_buttons.push_back(boost::shared_ptr<GG::Button>(new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"))));
-    AttachChild(m_availability_buttons[0].get());
-    m_availability_buttons.push_back(boost::shared_ptr<GG::Button>(new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"))));
-    AttachChild(m_availability_buttons[1].get());
+    GG::Button* button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    m_availability_buttons.first = button;
+    AttachChild(button);
+    //GG::Connect(button->ClickedSignal, &DesignWnd::PartPalette::
+
+    m_availability_buttons.second = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    AttachChild(m_availability_buttons.second);
 
     DoLayout();
 }
@@ -362,7 +413,7 @@ void DesignWnd::PartPalette::DoLayout() {
 
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW, row = -1;
-    for (std::map<ShipPartClass, boost::shared_ptr<GG::Button> >::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
+    for (std::map<ShipPartClass, GG::Button*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
@@ -384,16 +435,110 @@ void DesignWnd::PartPalette::DoLayout() {
     row = 0;
     GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
     GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons[0]->SizeMove(ul, lr);
+    m_availability_buttons.first->SizeMove(ul, lr);
     if (NUM_AVAILABILITY_BUTTONS_PER_ROW <= 1)
         ++row;
     else
         ++col;
     ul = GG::Pt(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
     lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-    m_availability_buttons[1]->SizeMove(ul, lr);
+    m_availability_buttons.second->SizeMove(ul, lr);
 }
 
+
+//
+//void BuildDesignatorWnd::ShowAllTypes(bool refresh_list)
+//{
+//    m_build_selector->ShowAllTypes(refresh_list);
+//    m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkSelectedGray();
+//    m_build_selector->m_build_type_buttons[BT_SHIP]->MarkSelectedGray();
+//    m_build_selector->m_build_type_buttons[BT_ORBITAL]->MarkSelectedGray();
+//}
+//
+//void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list)
+//{
+//    if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
+//        m_build_selector->HideType(type, refresh_list);
+//        m_build_selector->m_build_type_buttons[type]->MarkNotSelected();
+//    } else {
+//        throw std::invalid_argument("BuildDesignatorWnd::HideType was passed an invalid BuildType");
+//    }
+//}
+//
+//void BuildDesignatorWnd::HideAllTypes(bool refresh_list)
+//{
+//    m_build_selector->HideAllTypes(refresh_list);
+//    m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkNotSelected();
+//    m_build_selector->m_build_type_buttons[BT_SHIP]->MarkNotSelected();
+//    m_build_selector->m_build_type_buttons[BT_ORBITAL]->MarkNotSelected();
+//}
+//
+//void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list)
+//{
+//    if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
+//        const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
+//        if (types_shown.find(type) == types_shown.end())
+//            ShowType(type, refresh_list);
+//        else
+//            HideType(type, refresh_list);
+//    } else {
+//        throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
+//    } 
+//}
+//
+//void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list)
+//{
+//    const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
+//    if (types_shown.size() == 3)    // will need to update this if more build types are added
+//        HideAllTypes(refresh_list);
+//    else
+//        ShowAllTypes(refresh_list);
+//}
+//
+//void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list)
+//{
+//    m_build_selector->ShowAvailability(available, refresh_list);
+//    if (available)
+//        m_build_selector->m_availability_buttons.at(0)->MarkSelectedGray();
+//    else
+//        m_build_selector->m_availability_buttons.at(1)->MarkSelectedGray();
+//}
+//
+//void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list)
+//{
+//    m_build_selector->HideAvailability(available, refresh_list);
+//    if (available)
+//        m_build_selector->m_availability_buttons.at(0)->MarkNotSelected();
+//    else
+//        m_build_selector->m_availability_buttons.at(1)->MarkNotSelected();
+//}
+//
+//void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
+//{
+//    const std::pair<bool, bool>& avail_shown = m_build_selector->GetAvailabilitiesShown();
+//    if (available) {
+//        if (avail_shown.first)
+//            HideAvailability(true, refresh_list);
+//        else
+//            ShowAvailability(true, refresh_list);
+//    } else {
+//        if (avail_shown.second)
+//            HideAvailability(false, refresh_list);
+//        else
+//            ShowAvailability(false, refresh_list);
+//    }
+//}
+
+
+//void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list)
+//{
+//    if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
+//        m_build_selector->ShowType(type, refresh_list);
+//        m_build_selector->m_build_type_buttons[type]->MarkSelectedGray();
+//    } else {
+//        throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
+//    }
+//}
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
     m_parts_list->ShowClass(part_class, refresh_list);
 }
@@ -416,6 +561,10 @@ void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list)
 
 void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
     m_parts_list->HideAvailability(available, refresh_list);
+}
+
+void DesignWnd::PartPalette::Reset() {
+    m_parts_list->Populate();
 }
 
 //////////////////////////////////////////////////
@@ -547,10 +696,12 @@ DesignWnd::DesignWnd(int w, int h) :
 
     m_part_palette = new PartPalette(500, 300);
     AttachChild(m_part_palette);
+    GG::Connect(m_part_palette->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
     m_part_palette->MoveTo(GG::Pt(0, 400));
 }
 
 void DesignWnd::Reset() {
+    m_part_palette->Reset();
 }
 
 void DesignWnd::Sanitize() {

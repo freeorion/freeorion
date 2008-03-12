@@ -18,12 +18,6 @@ public:
     typedef boost::signal<void (std::vector<const Tech*>)>  AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
     //@}
 
-    /** \name Slot Types */ //@{
-    typedef TechBrowsedSignalType::slot_type       TechBrowsedSlotType;       ///< type of functor(s) invoked on a TechBrowsedSignalType
-    typedef TechClickedSignalType::slot_type       TechClickedSlotType;       ///< type of functor(s) invoked on a TechClickedSignalType
-    typedef TechDoubleClickedSignalType::slot_type TechDoubleClickedSlotType; ///< type of functor(s) invoked on a TechDoubleClickedSignalType
-    //@}
-
     /** \name Structors */ //@{
     TechTreeWnd(int w, int h);
     //@}
