@@ -3267,7 +3267,11 @@ BLD_INDUSTRY_CENTRE
 Industrial Centre
 
 BLD_INDUSTRY_CENTRE_DESC
-Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\n<tech PRO_INDUSTRY_CENTRE_II>Greater Industrial Centre</tech> refinement increases bonus to +6 and increases distance to 200.\n\n<tech PRO_INDUSTRY_CENTRE_III>Supreme Industrial Centre</tech> refinement further increases bonus to +7 and range to 300.
+'''Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.
+
+[[tech PRO_INDUSTRY_CENTRE_II]] refinement increases bonus to +6 and increases distance to 200.
+
+[[tech PRO_INDUSTRY_CENTRE_III]] refinement further increases bonus to +7 and range to 300.'''
 
 BLD_ASTEROID_MINE
 Asteroid Mining Facility
