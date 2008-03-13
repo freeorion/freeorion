@@ -121,7 +121,12 @@ void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
   */
 class PartsListBox : public CUIListBox {
 public:
+    class PartsListBoxRow : public CUIListBox::Row {
     public:
+        PartsListBoxRow(int w, int h);
+        virtual void    ChildrenDraggedAway(const std::list<Wnd*>& wnds, const Wnd* destination);
+    };
+
     /** \name Structors */ //@{
     PartsListBox(int x, int y, int w, int h);
     //@}
@@ -153,6 +158,19 @@ private:
 
     int                     m_previous_num_columns;
 };
+
+PartsListBox::PartsListBoxRow::PartsListBoxRow(int w, int h) :
+    CUIListBox::Row(w, h, "")    // drag_drop_data_type = "" implies not draggable row
+{}
+
+void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+    //std::vector<const PartType*> parts;
+    //std::vector<GG::Wnd*>
+    //for (GG::ListBox::Row::size_t i = GG::ListBox::Row::size_t(0); i < size(); ++i) {
+    //    const PartControl* control = dynamic_cast<const PartControl*>((*this)[i]);
+    //    parts.push_back(control->Part());
+    //}
+}
 
 PartsListBox::PartsListBox(int x, int y, int w, int h) :
     CUIListBox(x, y, w, h),
@@ -204,7 +222,7 @@ void PartsListBox::Populate() {
     const PartTypeManager& manager = GetPartTypeManager();
 
     int cur_col = NUM_COLUMNS;
-    GG::ListBox::Row* cur_row = 0;
+    PartsListBoxRow* cur_row = 0;
 
     // remove parts currently in rows of listbox
     Clear();
@@ -228,7 +246,7 @@ void PartsListBox::Populate() {
             if (cur_row)
                 Insert(cur_row);
             cur_col = 0;
-            cur_row = new GG::ListBox::Row(TOTAL_WIDTH, PART_SIZE, "");  // drag_drop_data_type = "" implies not draggable row
+            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PART_SIZE);
         }
         ++cur_col;
 
@@ -555,29 +573,164 @@ public:
   * the corresponding parts to the ShipDesign, or the part may be set programmatically with SetPart().
   */
 class SlotControl : public GG::Control {
-    public:
-        //! \name Signal Types //!@{
-        typedef boost::signal<void ()>  SlotContentsAlteredSignalType;  //!< emitted when a part / slot is altered
-        //@}
+public:
+    /** \name Structors */ //@{
+    SlotControl();
+    SlotControl(ShipSlotType slot_type);
+    //@}
 
-        /** \name Structors */ //@{
-        SlotControl();
-        //@}
+    /** \name Accessors */ //@{
+    ShipSlotType    SlotType() const;
+    //@}
 
-        /** \name Mutators */ //@{
-        virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
-        virtual void    ChildrenDraggedAway(const std::list<Wnd*>& wnds, const Wnd* destination);
+    /** \name Mutators */ //@{
+    virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
+    virtual void    ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination);
+    virtual void    DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    DragDropLeave();
 
-        virtual void    Render();
+    virtual void    Render();
 
-        void            SetPart(const std::string& part_name);
-        void            SetPart(const PartType* part = 0);
-        //@}
+    void            SetPart(const std::string& part_name);  //!< used to programmatically set the PartControl in this slot.  Does not emit signal
+    void            SetPart(const PartType* part_type = 0); //!< used to programmatically set the PartControl in this slot.  Does not emit signal
+    //@}
 
-        mutable SlotContentsAlteredSignalType SlotContentsAlteredSignal;
-    private:
-        boost::shared_ptr<PartControl>  m_part;
-    };
+    mutable boost::signal<void (const PartType*)> SlotContentsAlteredSignal;    //!< emitted when the contents of a slot are altered by the dragging a PartControl in or out of the slot.  signal should be caught and the slot contents set using SetPart accordingly
+private:
+    ShipSlotType    m_slot_type;
+    PartControl*    m_part_control;
+};
+
+SlotControl::SlotControl() :
+    GG::Control(0, 0, PartControl::SIZE, PartControl::SIZE, GG::CLICKABLE),
+    m_slot_type(INVALID_SHIP_SLOT_TYPE),
+    m_part_control(0)
+{
+    SetDragDropDataType("");
+}
+
+SlotControl::SlotControl(ShipSlotType slot_type) :
+    GG::Control(0, 0, PartControl::SIZE, PartControl::SIZE, GG::CLICKABLE),
+    m_slot_type(slot_type),
+    m_part_control(0)
+{
+    SetDragDropDataType("");
+}
+
+ShipSlotType SlotControl::SlotType() const {
+    return m_slot_type;
+}
+
+void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    if (wnds.empty())
+        return;
+
+    GG::Wnd* accepted_wnd = 0;
+
+    std::list<GG::Wnd*>::iterator wnds_it;
+    std::list<GG::Wnd*>::iterator wnds_end = wnds.end();
+    std::list<GG::Wnd*>::iterator wnds_next = wnds.begin();
+
+    // scan through list to find a PartControl to accept
+    while (wnds_next != wnds_end) {
+        wnds_it = wnds_next++;
+
+        // check if this wnd is an acceptable PartControl
+        GG::Wnd* wnd = *wnds_it;
+        if (wnd->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
+            accepted_wnd = wnd;
+            break;
+        }
+
+        // current part wasn't accepted, so remove from list of accepted wnds
+        wnds.erase(wnds_it);
+    }
+
+    // remove rest of list, as nothing else will be accepted (or have reached the end of the list)
+    wnds_it = wnds_next;
+    wnds.erase(wnds_it, wnds_end);
+
+    if (!accepted_wnd)
+        return;
+
+    PartControl* part_control = dynamic_cast<PartControl*>(accepted_wnd);
+    if (!part_control) {
+        Logger().errorStream() << "SlotControl::AcceptDrops accepted a control which wasn't a PartControl...?";
+        return;
+    }
+
+    const PartType* part = part_control->Part();
+    delete part_control;    // will recreate new PartControl to represent part when SetPart is called
+
+    SlotContentsAlteredSignal(part);
+}
+
+void SlotControl::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+    if (wnds.empty())
+        return;
+    const GG::Wnd* wnd = wnds.front();
+    const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
+    if (!part_control)
+        return;
+    m_part_control = 0;
+    SlotContentsAlteredSignal(0);
+}
+
+void SlotControl::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys) {
+}
+
+void SlotControl::DragDropLeave() {
+}
+
+void SlotControl::Render() {
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+
+    //// use GL to draw the lines
+    //glDisable(GL_TEXTURE_2D);
+    //GLint initial_modes[2];
+    //glGetIntegerv(GL_POLYGON_MODE, initial_modes);
+
+    //// draw background
+    //glPolygonMode(GL_BACK, GL_FILL);
+    //glBegin(GL_POLYGON);
+    //    glColor(ClientUI::WndColor());
+    //    glVertex2i(ul.x, ul.y);
+    //    glVertex2i(lr.x, ul.y);
+    //    glVertex2i(lr.x, lr.y);
+    //    glVertex2i(ul.x, lr.y);
+    //    glVertex2i(ul.x, ul.y);
+    //glEnd();
+
+    //// draw outer border on pixel inside of the outer edge of the window
+    //glPolygonMode(GL_BACK, GL_LINE);
+    //glBegin(GL_POLYGON);
+    //    glColor(ClientUI::WndOuterBorderColor());
+    //    glVertex2i(ul.x, ul.y);
+    //    glVertex2i(lr.x, ul.y);
+    //    glVertex2i(lr.x, lr.y);
+    //    glVertex2i(ul.x, lr.y);
+    //    glVertex2i(ul.x, ul.y);
+    //glEnd();
+
+    //// reset this to whatever it was initially
+    //glPolygonMode(GL_BACK, initial_modes[1]);
+
+    //glEnable(GL_TEXTURE_2D);
+
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+}
+
+void SlotControl::SetPart(const std::string& part_name) {
+    SetPart(GetPartType(part_name));
+}
+
+void SlotControl::SetPart(const PartType* part_type) {
+    if (m_part_control)
+        delete m_part_control;
+    m_part_control = new PartControl(part_type);
+    AttachChild(m_part_control);
+}
 
 
 //////////////////////////////////////////////////
