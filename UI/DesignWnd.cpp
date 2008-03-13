@@ -14,6 +14,8 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/format.hpp>
+#include <boost/function.hpp>
+
 #include <algorithm>
 
 
@@ -62,22 +64,6 @@ namespace {
         DesignWnd* const m_design_wnd;
         const std::map<int, std::string> m_hull_names_by_row_index;
     };
-
-    //struct ToggleClassFunctor
-    //{
-    //    ToggleClassFunctor(PartPalette* part_palette, ShipPartClass part_class) : m_palette(part_palette), m_part_class(part_class) {}
-    //    void operator()() {m_palette->ToggleType(m_part_class);}
-    //    PartPalette* const m_palette;
-    //    const ShipPartClass m_part_class;
-    //};
-
-    //struct ToggleAvailabilityFunctor
-    //{
-    //    ToggleAvailabilityFunctor(BuildDesignatorWnd* designator_wnd, bool available) : m_designator_wnd(designator_wnd), m_available(available) {}
-    //    void operator()() {m_designator_wnd->ToggleAvailabilitly(m_available);}
-    //    BuildDesignatorWnd* const m_designator_wnd;
-    //    const bool m_available; // true: toggle whether to show available techs; false: toggle whether to show unavailable techs
-    //};
 
     static const std::string PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     static const std::string EMPTY_STRING = "";
@@ -140,6 +126,11 @@ public:
     PartsListBox(int x, int y, int w, int h);
     //@}
 
+    /** \name Accessors */ //@{
+    const std::set<ShipPartClass>&  GetClassesShown() const;
+    const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+    //@}
+
     /** \name Mutators */ //@{
     virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
@@ -170,10 +161,14 @@ PartsListBox::PartsListBox(int x, int y, int w, int h) :
     m_previous_num_columns(-1)
 {
     SetStyle(GG::LIST_NOSEL);
-    m_availabilities_shown.first = true;
-    m_availabilities_shown.second = false;
-    for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1))
-        m_part_classes_shown.insert(part_class);
+}
+
+const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const {
+    return m_part_classes_shown;
+}
+
+const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const {
+    return m_availabilities_shown;
 }
 
 void PartsListBox::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
@@ -199,9 +194,8 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void PartsListBox::Populate() {
     const int PART_SIZE = PartControl::SIZE;
-    const int PART_PAD = 6;
-    const int TOTAL_WIDTH = Width() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, (TOTAL_WIDTH - PART_PAD) / (PART_SIZE + PART_PAD));
+    const int TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
+    const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / PART_SIZE);
 
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
@@ -224,7 +218,7 @@ void PartsListBox::Populate() {
         if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
             continue;   // part of this class is not requested to be shown
         bool part_available = empire->ShipPartAvailable(part->Name());
-        if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.first))
+        if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.second))
             continue;   // part is available but available parts shouldn't be shown, or part isn't available and not available parts shouldn't be shown
 
         // part should be shown in list.
@@ -234,7 +228,7 @@ void PartsListBox::Populate() {
             if (cur_row)
                 Insert(cur_row);
             cur_col = 0;
-            cur_row = new GG::ListBox::Row(TOTAL_WIDTH, PART_SIZE + PART_PAD, "");  // drag_drop_data_type = "" implies not draggable row
+            cur_row = new GG::ListBox::Row(TOTAL_WIDTH, PART_SIZE, "");  // drag_drop_data_type = "" implies not draggable row
         }
         ++cur_col;
 
@@ -332,9 +326,12 @@ public:
     void            ShowAllClasses(bool refresh_list = true);
     void            HideClass(ShipPartClass part_class, bool refresh_list = true);
     void            HideAllClasses(bool refresh_list = true);
+    void            ToggleClass(ShipPartClass part_class, bool refresh_list = true);
+    void            ToggleAllClasses(bool refresh_list = true);
 
     void            ShowAvailability(bool available, bool refresh_list = true);
     void            HideAvailability(bool available, bool refresh_list = true);
+    void            ToggleAvailability(bool available, bool refresh_list = true);
 
     void            Reset();
     //@}
@@ -346,8 +343,8 @@ private:
 
     PartsListBox*   m_parts_list;
 
-    std::map<ShipPartClass, GG::Button*>    m_class_buttons;
-    std::pair<GG::Button*, GG::Button*>     m_availability_buttons;
+    std::map<ShipPartClass, CUIButton*> m_class_buttons;
+    std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
 DesignWnd::PartPalette::PartPalette(int w, int h) :
@@ -365,15 +362,24 @@ DesignWnd::PartPalette::PartPalette(int w, int h) :
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
         m_class_buttons[part_class] = (new CUIButton(10, 10, 10, UserString(boost::lexical_cast<std::string>(part_class))));
         AttachChild(m_class_buttons[part_class]);
+        GG::Connect(m_class_buttons[part_class]->ClickedSignal,
+                    boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
-    GG::Button* button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    // availability buttons
+    CUIButton* button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     m_availability_buttons.first = button;
     AttachChild(button);
-    //GG::Connect(button->ClickedSignal, &DesignWnd::PartPalette::
+    GG::Connect(button->ClickedSignal, 
+                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
+    button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    m_availability_buttons.second = button;
+    AttachChild(button);
+    GG::Connect(button->ClickedSignal, 
+                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
-    m_availability_buttons.second = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
-    AttachChild(m_availability_buttons.second);
+    ShowAllClasses(false);
+    ShowAvailability(true, false);
 
     DoLayout();
 }
@@ -413,7 +419,7 @@ void DesignWnd::PartPalette::DoLayout() {
 
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW, row = -1;
-    for (std::map<ShipPartClass, GG::Button*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
+    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it) {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
@@ -445,122 +451,88 @@ void DesignWnd::PartPalette::DoLayout() {
     m_availability_buttons.second->SizeMove(ul, lr);
 }
 
-
-//
-//void BuildDesignatorWnd::ShowAllTypes(bool refresh_list)
-//{
-//    m_build_selector->ShowAllTypes(refresh_list);
-//    m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkSelectedGray();
-//    m_build_selector->m_build_type_buttons[BT_SHIP]->MarkSelectedGray();
-//    m_build_selector->m_build_type_buttons[BT_ORBITAL]->MarkSelectedGray();
-//}
-//
-//void BuildDesignatorWnd::HideType(BuildType type, bool refresh_list)
-//{
-//    if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
-//        m_build_selector->HideType(type, refresh_list);
-//        m_build_selector->m_build_type_buttons[type]->MarkNotSelected();
-//    } else {
-//        throw std::invalid_argument("BuildDesignatorWnd::HideType was passed an invalid BuildType");
-//    }
-//}
-//
-//void BuildDesignatorWnd::HideAllTypes(bool refresh_list)
-//{
-//    m_build_selector->HideAllTypes(refresh_list);
-//    m_build_selector->m_build_type_buttons[BT_BUILDING]->MarkNotSelected();
-//    m_build_selector->m_build_type_buttons[BT_SHIP]->MarkNotSelected();
-//    m_build_selector->m_build_type_buttons[BT_ORBITAL]->MarkNotSelected();
-//}
-//
-//void BuildDesignatorWnd::ToggleType(BuildType type, bool refresh_list)
-//{
-//    if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
-//        const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
-//        if (types_shown.find(type) == types_shown.end())
-//            ShowType(type, refresh_list);
-//        else
-//            HideType(type, refresh_list);
-//    } else {
-//        throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
-//    } 
-//}
-//
-//void BuildDesignatorWnd::ToggleAllTypes(bool refresh_list)
-//{
-//    const std::set<BuildType>& types_shown = m_build_selector->GetBuildTypesShown();
-//    if (types_shown.size() == 3)    // will need to update this if more build types are added
-//        HideAllTypes(refresh_list);
-//    else
-//        ShowAllTypes(refresh_list);
-//}
-//
-//void BuildDesignatorWnd::ShowAvailability(bool available, bool refresh_list)
-//{
-//    m_build_selector->ShowAvailability(available, refresh_list);
-//    if (available)
-//        m_build_selector->m_availability_buttons.at(0)->MarkSelectedGray();
-//    else
-//        m_build_selector->m_availability_buttons.at(1)->MarkSelectedGray();
-//}
-//
-//void BuildDesignatorWnd::HideAvailability(bool available, bool refresh_list)
-//{
-//    m_build_selector->HideAvailability(available, refresh_list);
-//    if (available)
-//        m_build_selector->m_availability_buttons.at(0)->MarkNotSelected();
-//    else
-//        m_build_selector->m_availability_buttons.at(1)->MarkNotSelected();
-//}
-//
-//void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
-//{
-//    const std::pair<bool, bool>& avail_shown = m_build_selector->GetAvailabilitiesShown();
-//    if (available) {
-//        if (avail_shown.first)
-//            HideAvailability(true, refresh_list);
-//        else
-//            ShowAvailability(true, refresh_list);
-//    } else {
-//        if (avail_shown.second)
-//            HideAvailability(false, refresh_list);
-//        else
-//            ShowAvailability(false, refresh_list);
-//    }
-//}
-
-
-//void BuildDesignatorWnd::ShowType(BuildType type, bool refresh_list)
-//{
-//    if (type == BT_BUILDING || type == BT_SHIP || type == BT_ORBITAL) {
-//        m_build_selector->ShowType(type, refresh_list);
-//        m_build_selector->m_build_type_buttons[type]->MarkSelectedGray();
-//    } else {
-//        throw std::invalid_argument("BuildDesignatorWnd::ShowType was passed an invalid BuildType");
-//    }
-//}
 void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_list) {
-    m_parts_list->ShowClass(part_class, refresh_list);
+    if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
+        m_parts_list->ShowClass(part_class, refresh_list);
+        m_class_buttons[part_class]->MarkSelectedGray();
+    } else {
+        throw std::invalid_argument("PartPalette::ShowClass was passed an invalid ShipPartClass");
+    }
 }
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
+    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
+        it->second->MarkSelectedGray();
 }
 
 void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_list) {
-    m_parts_list->HideClass(part_class, refresh_list);
+    if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
+        m_parts_list->HideClass(part_class, refresh_list);
+        m_class_buttons[part_class]->MarkNotSelected();
+    } else {
+        throw std::invalid_argument("PartPalette::HideClass was passed an invalid ShipPartClass");
+    }
 }
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
+    for (std::map<ShipPartClass, CUIButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
+        it->second->MarkNotSelected();
 }
 
-void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list) {
+void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list)
+{
+    if (part_class >= ShipPartClass(0) && part_class < NUM_SHIP_PART_CLASSES) {
+        const std::set<ShipPartClass>& classes_shown = m_parts_list->GetClassesShown();
+        if (classes_shown.find(part_class) == classes_shown.end())
+            ShowClass(part_class, refresh_list);
+        else
+            HideClass(part_class, refresh_list);
+    } else {
+        throw std::invalid_argument("PartPalette::ToggleClass was passed an invalid ShipPartClass");
+    } 
+}
+
+void DesignWnd::PartPalette::ToggleAllClasses(bool refresh_list)
+{
+    const std::set<ShipPartClass>& classes_shown = m_parts_list->GetClassesShown();
+    if (classes_shown.size() == NUM_SHIP_PART_CLASSES)
+        HideAllClasses(refresh_list);
+    else
+        ShowAllClasses(refresh_list);
+}
+
+void DesignWnd::PartPalette::ShowAvailability(bool available, bool refresh_list)
+{
     m_parts_list->ShowAvailability(available, refresh_list);
+    if (available)
+        m_availability_buttons.first->MarkSelectedGray();
+    else
+        m_availability_buttons.second->MarkSelectedGray();
 }
 
 void DesignWnd::PartPalette::HideAvailability(bool available, bool refresh_list) {
     m_parts_list->HideAvailability(available, refresh_list);
+    if (available)
+        m_availability_buttons.first->MarkNotSelected();
+    else
+        m_availability_buttons.second->MarkNotSelected();
+}
+
+void DesignWnd::PartPalette::ToggleAvailability(bool available, bool refresh_list) {
+    const std::pair<bool, bool>& avail_shown = m_parts_list->GetAvailabilitiesShown();
+    if (available) {
+        if (avail_shown.first)
+            HideAvailability(true, refresh_list);
+        else
+            ShowAvailability(true, refresh_list);
+    } else {
+        if (avail_shown.second)
+            HideAvailability(false, refresh_list);
+        else
+            ShowAvailability(false, refresh_list);
+    }
 }
 
 void DesignWnd::PartPalette::Reset() {
@@ -630,10 +602,10 @@ public:
 private:
     std::vector<boost::shared_ptr<SlotControl> >    m_slots;
 
-    GG::Edit*                   m_design_name;
-    GG::Edit*                   m_design_description;
-    GG::Button*                 m_confirm_button;
-    GG::Button*                 m_clear_button;
+    GG::Edit*   m_design_name;
+    GG::Edit*   m_design_description;
+    GG::Button* m_confirm_button;
+    GG::Button* m_clear_button;
 };
 
 
