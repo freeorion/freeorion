@@ -89,9 +89,11 @@ public:
     /** \name Mutators */ //@{
     virtual void        Render() {} // m_icon does the lookin' nice
     virtual void        LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void        LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
     mutable boost::signal<void (const PartType*)> ClickedSignal;
+    mutable boost::signal<void (const PartType*)> DoubleClickedSignal;
 
     static const int SIZE = 64;
 private:
@@ -112,6 +114,10 @@ PartControl::PartControl(const PartType* part) :
 
 void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     ClickedSignal(m_part);
+}
+
+void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    DoubleClickedSignal(m_part);
 }
 
 //////////////////////////////////////////////////
@@ -151,6 +157,7 @@ public:
     //@}
 
     mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
@@ -252,7 +259,8 @@ void PartsListBox::Populate() {
 
         // make new part control and add to row
         PartControl* control = new PartControl(part);
-        GG::Connect(control->ClickedSignal, PartsListBox::PartTypeClickedSignal);
+        GG::Connect(control->ClickedSignal,         PartsListBox::PartTypeClickedSignal);
+        GG::Connect(control->DoubleClickedSignal,   PartsListBox::PartTypeDoubleClickedSignal);
         cur_row->push_back(control);
     }
     // add any incomplete rows
@@ -355,6 +363,7 @@ public:
     //@}
 
     mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
+    mutable boost::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
 
 private:
     void            DoLayout();
@@ -374,7 +383,8 @@ DesignWnd::PartPalette::PartPalette(int w, int h) :
 
     m_parts_list = new PartsListBox(0, 0, 10, 10);
     AttachChild(m_parts_list);
-    GG::Connect(m_parts_list->PartTypeClickedSignal, DesignWnd::PartPalette::PartTypeClickedSignal);
+    GG::Connect(m_parts_list->PartTypeClickedSignal,        PartTypeClickedSignal);
+    GG::Connect(m_parts_list->PartTypeDoubleClickedSignal,  PartTypeDoubleClickedSignal);
 
     // class buttons
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
@@ -598,7 +608,11 @@ public:
     //@}
 
     mutable boost::signal<void (const PartType*)> SlotContentsAlteredSignal;    //!< emitted when the contents of a slot are altered by the dragging a PartControl in or out of the slot.  signal should be caught and the slot contents set using SetPart accordingly
+    mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
+
 private:
+    void            EmitNullSlotContentsAlteredSignal();
+
     ShipSlotType    m_slot_type;
     double          m_x_position_fraction, m_y_position_fraction;   // position on hull image where slot should be shown, as a fraction of that image's size
     PartControl*    m_part_control;
@@ -718,7 +732,15 @@ void SlotControl::SetPart(const PartType* part_type) {
     if (part_type) {
         m_part_control = new PartControl(part_type);
         AttachChild(m_part_control);
+        GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);
+
+        GG::Connect(m_part_control->DoubleClickedSignal,
+                    boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));   // double click clears slot
     }
+}
+
+void SlotControl::EmitNullSlotContentsAlteredSignal() {
+    SlotContentsAlteredSignal(0);
 }
 
 
@@ -732,7 +754,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void            SetPart(const std::string& part_name, unsigned int slot);
@@ -741,7 +762,8 @@ public:
     void            SetHull(const HullType* hull);
     //@}
 
-    mutable boost::signal<void ()> DesignChangedSignal; //!< emitted when the design is changed
+    mutable boost::signal<void ()>                  DesignChangedSignal;    //!< emitted when the design is changed
+    mutable boost::signal<void (const PartType*)>   PartTypeClickedSignal;
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
@@ -775,40 +797,8 @@ DesignWnd::MainPanel::MainPanel(int w, int h) :
     m_design_description(0),
     m_confirm_button(0),
     m_clear_button(0)
-{}
-
-void DesignWnd::MainPanel::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    if (wnds.empty())
-        return;
-
-    std::list<GG::Wnd*>::iterator wnds_it;
-    std::list<GG::Wnd*>::iterator wnds_end = wnds.end();
-    std::list<GG::Wnd*>::iterator wnds_next = wnds.begin();
-
-    // scan through list to find a PartControl to accept
-    while (wnds_next != wnds_end) {
-        wnds_it = wnds_next++;
-
-        // check if this wnd is an acceptable PartControl
-        GG::Wnd* wnd = *wnds_it;
-        if (wnd->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
-            PartControl* accepted_part_control = dynamic_cast<PartControl*>(wnd);
-
-            if (accepted_part_control) {
-                if (accepted_part_control->Part())
-                    break;  // quit loop without erasing this control from the list, to indicate that it is accepted
-            } else {
-                throw std::runtime_error("DesignWnd::MainPanel::AcceptDrops was passed a Wnd with a drag drop data type for part controls but which wasn't actually a PartControl");
-            }
-        }
-
-        // current part wasn't accepted, so remove from list of accepted wnds
-        wnds.erase(wnds_it);
-    }
-
-    // remove rest of list, as nothing else will be accepted (or have reached the end of the list).
-    wnds_it = wnds_next;
-    wnds.erase(wnds_it, wnds_end);
+{
+    EnableChildClipping();
 }
 
 void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -834,17 +824,18 @@ void DesignWnd::MainPanel::SetHull(const std::string& hull_name) {
 
 void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     m_hull = hull;
-    delete m_background_image;
+    DeleteChild(m_background_image);
     m_background_image = 0;
     if (m_hull) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::HullTexture(hull->Name());
         m_background_image = new GG::StaticGraphic(0, 0, ClientWidth(), ClientHeight(), texture,
-                                                   GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE);
+                                                   GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        AttachChild(m_background_image);
     }
     Populate();
 }
 
-void DesignWnd::MainPanel::Populate() {
+void DesignWnd::MainPanel::Populate( ){
     for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it)
         delete *it;
     m_slots.clear();
@@ -862,13 +853,15 @@ void DesignWnd::MainPanel::Populate() {
         boost::function<void (const PartType*)> set_part_func =
             boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i);
         GG::Connect(slot_control->SlotContentsAlteredSignal, set_part_func);
+        GG::Connect(slot_control->PartTypeClickedSignal, PartTypeClickedSignal);
     }
+    DoLayout();
 }
 
 void DesignWnd::MainPanel::DoLayout() {
     GG::Pt background_size = ClientSize();
     if (m_background_image) {
-        m_background_image->SizeMove(ClientUpperLeft(), ClientLowerRight());
+        m_background_image->Resize(ClientSize());
         background_size = m_background_image->Size();   // should be texture size, not graphic size (texture can be smaller than graphic)
     }
 
@@ -940,10 +933,12 @@ DesignWnd::DesignWnd(int w, int h) :
     m_part_palette = new PartPalette(500, 200);
     AttachChild(m_part_palette);
     GG::Connect(m_part_palette->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
+    //GG::Connect(m_part_palette->PartTypeDoubleClickedSignal, &AddPart, this);
     m_part_palette->MoveTo(GG::Pt(0, 200));
 
     m_main_panel = new MainPanel(500, 350);
     AttachChild(m_main_panel);
+    GG::Connect(m_main_panel->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
     m_main_panel->MoveTo(GG::Pt(400, 300));
 
     // TEMPORARY
@@ -1041,12 +1036,13 @@ void DesignWnd::SetDesignHull(const std::string& hull) {
     if (hull == m_selected_hull)
         return; // nothing to do...
 
-    m_main_panel->SetHull(m_selected_hull);
-
     TempUISoundDisabler sound_disabler;
 
     // set new hull
     m_selected_hull = hull;
+
+    m_main_panel->SetHull(m_selected_hull);
+
 
     // clear old parts and lists
     m_parts_lists.clear();
