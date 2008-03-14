@@ -263,12 +263,16 @@ const std::vector<HullType::Slot>& HullType::Slots() const {
     return m_slots;
 }
 
+const Condition::ConditionBase* HullType::Location() const {
+    return m_location;
+}
+
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& HullType::Effects() const {
     return m_effects;
 }
 
-const Condition::ConditionBase* HullType::Location() const {
-    return m_location;
+const std::string& HullType::Graphic() const {
+    return m_graphic;
 }
 
 

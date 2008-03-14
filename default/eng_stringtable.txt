@@ -1411,6 +1411,9 @@ None
 DESIGN_WND_PART_PALETTE_TITLE
 Ship Parts
 
+DESIGN_WND_MAIN_PANEL_TITLE
+Design Details
+
 # Ship Slot Types
 
 SL_EXTERNAL

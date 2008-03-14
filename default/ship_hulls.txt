@@ -14,9 +14,9 @@ Hull
     buildcost = 10
     buildtime = 4
     slots = [
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
+        Slot type = External position = (0.1, 0.1)
+        Slot type = External position = (0.3, 0.1)
+        Slot type = External position = (0.5, 0.1)
     ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Small.png"
@@ -28,11 +28,11 @@ Hull
     buildcost = 20
     buildtime = 5
     slots = [
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = Internal position = (0.8, 0.8)
+        Slot type = External position = (0.1, 0.1)
+        Slot type = External position = (0.3, 0.1)
+        Slot type = External position = (0.5, 0.1)
+        Slot type = External position = (0.7, 0.1)
+        Slot type = Internal position = (0.4, 0.4)
     ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Large.png"
@@ -44,13 +44,13 @@ Hull
     buildcost = 30
     buildtime = 6
     slots = [
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = Internal position = (0.8, 0.8)
-        Slot type = Internal position = (0.8, 0.8)
+        Slot type = External position = (0.0, 0.1)
+        Slot type = External position = (0.2, 0.1)
+        Slot type = External position = (0.4, 0.1)
+        Slot type = External position = (0.6, 0.1)
+        Slot type = External position = (0.8, 0.1)
+        Slot type = Internal position = (0.4, 0.4)
+        Slot type = Internal position = (0.6, 0.4)
     ]
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = 

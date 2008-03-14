@@ -576,11 +576,13 @@ class SlotControl : public GG::Control {
 public:
     /** \name Structors */ //@{
     SlotControl();
-    SlotControl(ShipSlotType slot_type);
+    SlotControl(double x, double y, ShipSlotType slot_type);
     //@}
 
     /** \name Accessors */ //@{
     ShipSlotType    SlotType() const;
+    double          XPositionFraction() const;
+    double          YPositionFraction() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -598,20 +600,25 @@ public:
     mutable boost::signal<void (const PartType*)> SlotContentsAlteredSignal;    //!< emitted when the contents of a slot are altered by the dragging a PartControl in or out of the slot.  signal should be caught and the slot contents set using SetPart accordingly
 private:
     ShipSlotType    m_slot_type;
+    double          m_x_position_fraction, m_y_position_fraction;   // position on hull image where slot should be shown, as a fraction of that image's size
     PartControl*    m_part_control;
 };
 
 SlotControl::SlotControl() :
     GG::Control(0, 0, PartControl::SIZE, PartControl::SIZE, GG::CLICKABLE),
     m_slot_type(INVALID_SHIP_SLOT_TYPE),
+    m_x_position_fraction(0.4),
+    m_y_position_fraction(0.4),
     m_part_control(0)
 {
     SetDragDropDataType("");
 }
 
-SlotControl::SlotControl(ShipSlotType slot_type) :
+SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     GG::Control(0, 0, PartControl::SIZE, PartControl::SIZE, GG::CLICKABLE),
     m_slot_type(slot_type),
+    m_x_position_fraction(x),
+    m_y_position_fraction(y),
     m_part_control(0)
 {
     SetDragDropDataType("");
@@ -621,11 +628,19 @@ ShipSlotType SlotControl::SlotType() const {
     return m_slot_type;
 }
 
+double SlotControl::XPositionFraction() const {
+    return m_x_position_fraction;
+}
+
+double SlotControl::YPositionFraction() const {
+    return m_y_position_fraction;
+}
+
 void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
     if (wnds.empty())
         return;
 
-    GG::Wnd* accepted_wnd = 0;
+    PartControl* accepted_part_control = 0;
 
     std::list<GG::Wnd*>::iterator wnds_it;
     std::list<GG::Wnd*>::iterator wnds_end = wnds.end();
@@ -638,8 +653,18 @@ void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
         // check if this wnd is an acceptable PartControl
         GG::Wnd* wnd = *wnds_it;
         if (wnd->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
-            accepted_wnd = wnd;
-            break;
+
+            accepted_part_control = dynamic_cast<PartControl*>(wnd);
+
+            if (accepted_part_control) {
+                const PartType* part_type = accepted_part_control->Part();
+                if (part_type && part_type->CanMountInSlotType(m_slot_type))
+                    break;  // quit loop without erasing this control from the list, to indicate that it is accepted
+                else
+                    accepted_part_control = 0;
+            } else {
+                throw std::runtime_error("SlotControl::AcceptDrops was passed a Wnd with a drag drop data type for part controls but which wasn't actually a PartControl");
+            }
         }
 
         // current part wasn't accepted, so remove from list of accepted wnds
@@ -650,19 +675,10 @@ void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
     wnds_it = wnds_next;
     wnds.erase(wnds_it, wnds_end);
 
-    if (!accepted_wnd)
+    if (!accepted_part_control)
         return;
 
-    PartControl* part_control = dynamic_cast<PartControl*>(accepted_wnd);
-    if (!part_control) {
-        Logger().errorStream() << "SlotControl::AcceptDrops accepted a control which wasn't a PartControl...?";
-        return;
-    }
-
-    const PartType* part = part_control->Part();
-    delete part_control;    // will recreate new PartControl to represent part when SetPart is called
-
-    SlotContentsAlteredSignal(part);
+    SlotContentsAlteredSignal(accepted_part_control->Part());
 }
 
 void SlotControl::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
@@ -670,8 +686,9 @@ void SlotControl::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG:
         return;
     const GG::Wnd* wnd = wnds.front();
     const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
-    if (!part_control)
+    if (part_control != m_part_control)
         return;
+    DeleteChild(m_part_control);
     m_part_control = 0;
     SlotContentsAlteredSignal(0);
 }
@@ -685,40 +702,9 @@ void SlotControl::DragDropLeave() {
 void SlotControl::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
+    // TODO: Render differently depending on ShipSlotType
 
-    //// use GL to draw the lines
-    //glDisable(GL_TEXTURE_2D);
-    //GLint initial_modes[2];
-    //glGetIntegerv(GL_POLYGON_MODE, initial_modes);
-
-    //// draw background
-    //glPolygonMode(GL_BACK, GL_FILL);
-    //glBegin(GL_POLYGON);
-    //    glColor(ClientUI::WndColor());
-    //    glVertex2i(ul.x, ul.y);
-    //    glVertex2i(lr.x, ul.y);
-    //    glVertex2i(lr.x, lr.y);
-    //    glVertex2i(ul.x, lr.y);
-    //    glVertex2i(ul.x, ul.y);
-    //glEnd();
-
-    //// draw outer border on pixel inside of the outer edge of the window
-    //glPolygonMode(GL_BACK, GL_LINE);
-    //glBegin(GL_POLYGON);
-    //    glColor(ClientUI::WndOuterBorderColor());
-    //    glVertex2i(ul.x, ul.y);
-    //    glVertex2i(lr.x, ul.y);
-    //    glVertex2i(lr.x, lr.y);
-    //    glVertex2i(ul.x, lr.y);
-    //    glVertex2i(ul.x, ul.y);
-    //glEnd();
-
-    //// reset this to whatever it was initially
-    //glPolygonMode(GL_BACK, initial_modes[1]);
-
-    //glEnable(GL_TEXTURE_2D);
-
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 2);
 }
 
 void SlotControl::SetPart(const std::string& part_name) {
@@ -728,8 +714,11 @@ void SlotControl::SetPart(const std::string& part_name) {
 void SlotControl::SetPart(const PartType* part_type) {
     if (m_part_control)
         delete m_part_control;
-    m_part_control = new PartControl(part_type);
-    AttachChild(m_part_control);
+    m_part_control = 0;
+    if (part_type) {
+        m_part_control = new PartControl(part_type);
+        AttachChild(m_part_control);
+    }
 }
 
 
@@ -738,28 +727,158 @@ void SlotControl::SetPart(const PartType* part_type) {
 //////////////////////////////////////////////////
 class DesignWnd::MainPanel : public CUIWnd {
 public:
-    //! \name Signal Types //!@{
-    typedef boost::signal<void ()>  DesignChangedSignalType;    //!< emitted when the design is changed
-    //@}
-
     /** \name Structors */ //@{
     MainPanel(int w, int h);
     //@}
 
     /** \name Mutators */ //@{
-    void        SetPart(const std::string& part_name);
-    void        SetPart(const PartType* part);
-    void        SetHull(const std::string& hull_name);
-    void        SetHull(const HullType* hull);
-    //@}
-private:
-    std::vector<boost::shared_ptr<SlotControl> >    m_slots;
+    virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    GG::Edit*   m_design_name;
-    GG::Edit*   m_design_description;
-    GG::Button* m_confirm_button;
-    GG::Button* m_clear_button;
+    void            SetPart(const std::string& part_name, unsigned int slot);
+    void            SetPart(const PartType* part, unsigned int slot);
+    void            SetHull(const std::string& hull_name);
+    void            SetHull(const HullType* hull);
+    //@}
+
+    mutable boost::signal<void ()> DesignChangedSignal; //!< emitted when the design is changed
+
+private:
+    // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
+    typedef void (DesignWnd::MainPanel::*SetPartFuncPtrType)(const PartType* part, unsigned int slot);
+    static SetPartFuncPtrType const s_set_part_func_ptr;
+
+    void            Populate();
+    void            DoLayout();
+
+    const HullType*             m_hull;
+
+    GG::StaticGraphic*          m_background_image;
+
+    std::vector<SlotControl*>   m_slots;
+
+    GG::Edit*                   m_design_name;
+    GG::Edit*                   m_design_description;
+    GG::Button*                 m_confirm_button;
+    GG::Button*                 m_clear_button;
 };
+
+// static
+DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_func_ptr = &DesignWnd::MainPanel::SetPart;
+
+DesignWnd::MainPanel::MainPanel(int w, int h) :
+    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    m_hull(0),
+    m_background_image(0),
+    m_slots(),
+    m_design_name(0),
+    m_design_description(0),
+    m_confirm_button(0),
+    m_clear_button(0)
+{}
+
+void DesignWnd::MainPanel::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    if (wnds.empty())
+        return;
+
+    std::list<GG::Wnd*>::iterator wnds_it;
+    std::list<GG::Wnd*>::iterator wnds_end = wnds.end();
+    std::list<GG::Wnd*>::iterator wnds_next = wnds.begin();
+
+    // scan through list to find a PartControl to accept
+    while (wnds_next != wnds_end) {
+        wnds_it = wnds_next++;
+
+        // check if this wnd is an acceptable PartControl
+        GG::Wnd* wnd = *wnds_it;
+        if (wnd->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
+            PartControl* accepted_part_control = dynamic_cast<PartControl*>(wnd);
+
+            if (accepted_part_control) {
+                if (accepted_part_control->Part())
+                    break;  // quit loop without erasing this control from the list, to indicate that it is accepted
+            } else {
+                throw std::runtime_error("DesignWnd::MainPanel::AcceptDrops was passed a Wnd with a drag drop data type for part controls but which wasn't actually a PartControl");
+            }
+        }
+
+        // current part wasn't accepted, so remove from list of accepted wnds
+        wnds.erase(wnds_it);
+    }
+
+    // remove rest of list, as nothing else will be accepted (or have reached the end of the list).
+    wnds_it = wnds_next;
+    wnds.erase(wnds_it, wnds_end);
+}
+
+void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    CUIWnd::SizeMove(ul, lr);
+    DoLayout();
+}
+
+void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot) {
+    SetPart(GetPartType(part_name), slot);
+}
+
+void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
+    if (slot < 0 || slot > m_slots.size()) {
+        Logger().errorStream() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
+        return;
+    }
+    m_slots[slot]->SetPart(part);
+}
+
+void DesignWnd::MainPanel::SetHull(const std::string& hull_name) {
+    SetHull(GetHullType(hull_name));
+}
+
+void DesignWnd::MainPanel::SetHull(const HullType* hull) {
+    m_hull = hull;
+    delete m_background_image;
+    m_background_image = 0;
+    if (m_hull) {
+        boost::shared_ptr<GG::Texture> texture = ClientUI::HullTexture(hull->Name());
+        m_background_image = new GG::StaticGraphic(0, 0, ClientWidth(), ClientHeight(), texture,
+                                                   GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE);
+    }
+    Populate();
+}
+
+void DesignWnd::MainPanel::Populate() {
+    for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it)
+        delete *it;
+    m_slots.clear();
+
+    if (!m_hull)
+        return;
+
+    const std::vector<HullType::Slot>& hull_slots = m_hull->Slots();
+
+    for (std::vector<HullType::Slot>::size_type i = 0; i != hull_slots.size(); ++i) {
+        const HullType::Slot& slot = hull_slots[i];
+        SlotControl* slot_control = new SlotControl(slot.x, slot.y, slot.type);
+        m_slots.push_back(slot_control);
+        AttachChild(slot_control);
+        boost::function<void (const PartType*)> set_part_func =
+            boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i);
+        GG::Connect(slot_control->SlotContentsAlteredSignal, set_part_func);
+    }
+}
+
+void DesignWnd::MainPanel::DoLayout() {
+    GG::Pt background_size = ClientSize();
+    if (m_background_image) {
+        m_background_image->SizeMove(ClientUpperLeft(), ClientLowerRight());
+        background_size = m_background_image->Size();   // should be texture size, not graphic size (texture can be smaller than graphic)
+    }
+
+    for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it) {
+        SlotControl* slot = *it;
+        int x = static_cast<int>(slot->XPositionFraction() * background_size.x);
+        int y = static_cast<int>(slot->YPositionFraction() * background_size.y);
+        slot->MoveTo(GG::Pt(x, y));
+    }
+}
 
 
 //////////////////////////////////////////////////
@@ -814,15 +933,21 @@ DesignWnd::DesignWnd(int w, int h) :
 
     // connect, then select, so that signal from selection causes parts lists to be set up
     GG::Connect(m_hulls_list->SelChangedSignal, SelectHullFunctor(this, hull_names_by_row_index));
-    m_hulls_list->Select(0);
 
-    m_detail_panel = new EncyclopediaDetailPanel(500, 300);
+    m_detail_panel = new EncyclopediaDetailPanel(350, 150);
     AttachChild(m_detail_panel);
 
-    m_part_palette = new PartPalette(500, 300);
+    m_part_palette = new PartPalette(500, 200);
     AttachChild(m_part_palette);
     GG::Connect(m_part_palette->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
-    m_part_palette->MoveTo(GG::Pt(0, 400));
+    m_part_palette->MoveTo(GG::Pt(0, 200));
+
+    m_main_panel = new MainPanel(500, 350);
+    AttachChild(m_main_panel);
+    m_main_panel->MoveTo(GG::Pt(400, 300));
+
+    // TEMPORARY
+    m_hulls_list->Select(0);
 }
 
 void DesignWnd::Reset() {
@@ -915,6 +1040,8 @@ void DesignWnd::HullSelected(const std::string& hull_name) {
 void DesignWnd::SetDesignHull(const std::string& hull) {
     if (hull == m_selected_hull)
         return; // nothing to do...
+
+    m_main_panel->SetHull(m_selected_hull);
 
     TempUISoundDisabler sound_disabler;
 

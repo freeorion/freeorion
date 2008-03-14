@@ -159,6 +159,8 @@ public:
                         Location() const;       ///< returns the condition that determines the locations where ShipDesign containing hull can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                         Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part hull has
+
+    const std::string&  Graphic() const;        ///< returns the image that represents the hull on the design screen
     //@}
 
 private:
