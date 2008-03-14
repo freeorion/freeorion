@@ -59,11 +59,24 @@ private:
     class FlareRect : public Ogre::ManualObject
     {
     public:
-        FlareRect(const std::string& material_name);
+        explicit FlareRect(const std::string& material_name);
         void Resize(Ogre::Real left, Ogre::Real top, Ogre::Real right, Ogre::Real bottom);
 
     private:
         std::string m_material_name;
+    };
+
+    struct SelectedObject
+    {
+        struct SelectedObjectImpl;
+
+        SelectedObject();
+        explicit SelectedObject(Ogre::MovableObject* object);
+        bool operator<(const SelectedObject& rhs) const;
+
+        static SelectedObject Key(Ogre::MovableObject* object);
+
+        boost::shared_ptr<SelectedObjectImpl> m_impl;
     };
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
@@ -90,7 +103,7 @@ private:
     Ogre::SceneNode* m_currently_selected_scene_node;
     SelectionRect* m_selection_rect;
     Ogre::Vector3 m_lookat_point;
-    std::set<Ogre::MovableObject*> m_current_selections;
+    std::set<SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.

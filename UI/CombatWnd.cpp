@@ -153,6 +153,49 @@ void CombatWnd::FlareRect::Resize(Ogre::Real left, Ogre::Real top, Ogre::Real ri
 }
 
 ////////////////////////////////////////////////////////////
+// SelectedObject
+////////////////////////////////////////////////////////////
+struct CombatWnd::SelectedObject::SelectedObjectImpl
+{
+    SelectedObjectImpl() :
+        m_object(0)
+        {}
+    explicit SelectedObjectImpl(Ogre::MovableObject* object) :
+        m_object(object)
+        {
+            m_object->getParentSceneNode()->showBoundingBox(true);
+        }
+    ~SelectedObjectImpl()
+        {
+            if (!m_object)
+                return;
+            m_object->getParentSceneNode()->showBoundingBox(false);
+        }
+
+    Ogre::MovableObject* m_object;
+};
+
+// SelectedObject
+CombatWnd::SelectedObject::SelectedObject() :
+    m_impl(new SelectedObjectImpl)
+{}
+
+CombatWnd::SelectedObject::SelectedObject(Ogre::MovableObject* object) :
+    m_impl(new SelectedObjectImpl(object))
+{}
+
+bool CombatWnd::SelectedObject::operator<(const SelectedObject& rhs) const
+{ return m_impl->m_object < rhs.m_impl->m_object; }
+
+CombatWnd::SelectedObject CombatWnd::SelectedObject::Key(Ogre::MovableObject* object)
+{
+    SelectedObject retval;
+    retval.m_impl->m_object = object;
+    return retval;
+}
+
+
+////////////////////////////////////////////////////////////
 // CombatWnd
 ////////////////////////////////////////////////////////////
 CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
@@ -203,6 +246,9 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     // Initialise, parse scripts etc
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
+    m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_NONE);//STENCIL_MODULATIVE);
+
     m_scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(m_selection_rect);
 
     Ogre::SceneNode* star_node = m_scene_manager->getRootSceneNode()->createChildSceneNode();
@@ -222,9 +268,9 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star_billboard_set->setVisible(true);
     star_node->attachObject(star_billboard_set);
 
-    // TODO: Place other textures whose alpha must be scaled in other billboard sets.
-
+#if 0
     m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1");
+#endif
 
     m_camera->setNearClipDistance(NEAR_CLIP);
     m_camera->setFarClipDistance(FAR_CLIP);
@@ -285,9 +331,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     durgha_node->attachObject(entity);
     durgha_node->setPosition(250, 250, 0);
 
-    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
-    m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_MODULATIVE);
-
     Ogre::Light* star = m_scene_manager->createLight("Star");
     star->setType(Ogre::Light::LT_POINT);
     star->setPosition(Ogre::Vector3(0.0, 0.0, 0.0));
@@ -342,18 +385,15 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
             assert(clicked_scene_node);
             if (mod_keys & GG::MOD_KEY_CTRL) {
-                std::set<Ogre::MovableObject*>::iterator it = m_current_selections.find(movable_object);
-                if (it == m_current_selections.end()) {
-                    movable_object->getParentSceneNode()->showBoundingBox(true); // TODO: Replace.
-                    m_current_selections.insert(movable_object);
-                } else {
-                    (*it)->getParentSceneNode()->showBoundingBox(false); // TODO: Replace.
+                std::set<SelectedObject>::iterator it =
+                    m_current_selections.find(SelectedObject::Key(movable_object));
+                if (it == m_current_selections.end())
+                    m_current_selections.insert(SelectedObject(movable_object));
+                else
                     m_current_selections.erase(it);
-                }
             } else {
                 DeselectAll();
-                movable_object->getParentSceneNode()->showBoundingBox(true); // TODO: Replace.
-                m_current_selections.insert(movable_object);
+                m_current_selections.insert(SelectedObject(movable_object));
                 m_currently_selected_scene_node = clicked_scene_node;
             }
         } else {
@@ -471,7 +511,7 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
         Ogre::Real star_back_brightness_factor =
             BRIGHTNESS_AT_MAX_FOVY + center_nearness_factor * (1.0 - BRIGHTNESS_AT_MAX_FOVY);
         // Raise the factor to a (smallish) power to create some nonlinearity in the scaling.
-        star_back_brightness_factor = Ogre::Math::Sqr(star_back_brightness_factor);
+        star_back_brightness_factor = Ogre::Math::Pow(star_back_brightness_factor, 1.5);
         m_star_back_billboard->setColour(Ogre::ColourValue(1.0, 1.0, 1.0, star_back_brightness_factor));
     }
 
@@ -535,13 +575,10 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
         DeselectAll();
     Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
     for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
-        std::pair<std::set<Ogre::MovableObject*>::iterator, bool> insertion_result = m_current_selections.insert(*it);
-        if (insertion_result.second) {
-            (*it)->getParentSceneNode()->showBoundingBox(true); // TODO: Remove.
-        } else {
-            (*insertion_result.first)->getParentSceneNode()->showBoundingBox(false); // TODO: Remove.
+        std::pair<std::set<SelectedObject>::iterator, bool> insertion_result =
+            m_current_selections.insert(SelectedObject(*it));
+        if (!insertion_result.second)
             m_current_selections.erase(insertion_result.first);
-        }
     }
 }
 
@@ -559,10 +596,5 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 
 void CombatWnd::DeselectAll()
 {
-    for (std::set<Ogre::MovableObject*>::iterator it = m_current_selections.begin(); it != m_current_selections.end(); ++it) {
-        // TODO: Come up with a system for ensuring that the pointers in m_current_selections are not left dangling, so
-        // that deselection code like that below doesn't crash the app.
-        (*it)->getParentSceneNode()->showBoundingBox(false); // TODO: Replace.
-    }
     m_current_selections.clear();
 }
