@@ -28,10 +28,10 @@ Hull
     buildcost = 20
     buildtime = 5
     slots = [
-        Slot type = External position = (0.1, 0.1)
-        Slot type = External position = (0.3, 0.1)
-        Slot type = External position = (0.5, 0.1)
-        Slot type = External position = (0.7, 0.1)
+        Slot type = External position = (0.2, 0.2)
+        Slot type = External position = (0.4, 0.2)
+        Slot type = External position = (0.6, 0.2)
+        Slot type = External position = (0.8, 0.2)
         Slot type = Internal position = (0.4, 0.4)
     ]
     location = OwnedBy TheEmpire Source.Owner
@@ -67,16 +67,16 @@ Hull
     buildcost = 50
     buildtime = 8
     slots = [
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = External position = (0.5, 0.5)
-        Slot type = Internal position = (0.8, 0.8)
-        Slot type = Internal position = (0.8, 0.8)
-        Slot type = Internal position = (0.8, 0.8)
-        Slot type = Internal position = (0.8, 0.8)
+        Slot type = External position = (0.25, 0.2)
+        Slot type = External position = (0.35, 0.2)
+        Slot type = External position = (0.45, 0.2)
+        Slot type = External position = (0.55, 0.2)
+        Slot type = External position = (0.65, 0.2)
+        Slot type = External position = (0.75, 0.2)
+        Slot type = Internal position = (0.4, 0.4)
+        Slot type = Internal position = (0.5, 0.4)
+        Slot type = Internal position = (0.6, 0.4)
+        Slot type = Internal position = (0.7, 0.4)
     ]
     location = OwnedBy TheEmpire Source.Owner
     graphic = "ship_hull_icons/Huge.png"

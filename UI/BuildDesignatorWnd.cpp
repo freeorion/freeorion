@@ -442,9 +442,9 @@ private:
     std::map<GG::ListBox::Row*, BuildType>  m_build_types;
     GG::Pt                                  m_original_ul;
 
-    int m_build_location;
+    int                                     m_build_location;
 
-    int row_height;
+    int                                     m_row_height;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
@@ -476,9 +476,20 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
     m_buildable_items->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
-    row_height = ClientUI::Pts()*3/2;
-
+    m_row_height = ClientUI::Pts()*3/2;
     std::vector<int> col_widths = ColWidths();
+
+
+    //GG::ListBox::Row* header = new GG::ListBox::Row();
+    //boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    //GG::Clr clr = ClientUI::TextColor();
+    //header->push_back("item", font, clr);
+    //header->push_back("PP/turn", font, clr);
+    //header->push_back("turns", font, clr);
+    //header->push_back("description", font, clr);
+    //header->SetColWidths(col_widths);
+    //m_buildable_items->SetColHeaders(header);
+
 
     m_buildable_items->SetNumCols(static_cast<int>(col_widths.size()));
     m_buildable_items->LockColWidths();
@@ -607,7 +618,6 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id)
 void BuildDesignatorWnd::BuildSelector::Reset()
 {
     PopulateList();
-    //DoLayout();
 }
 
 void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_list)
@@ -756,7 +766,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->SetDragDropDataType(name);
 
             // icon
-            GG::Control* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
+            GG::Control* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
                 ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(icon);
@@ -773,7 +783,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // brief description
             std::string desc_text = UserString("BT_BUILDING");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -811,7 +821,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->SetDragDropDataType(boost::lexical_cast<std::string>(ship_design_id));
 
             // icon
-            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
+            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
                 ClientUI::GetTexture(ClientUI::ArtDir() / ship_design->Graphic()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
@@ -828,7 +838,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // brief description            
             std::string desc_text = UserString("BT_SHIP");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -858,7 +868,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->SetDragDropDataType("DEFENSE_BASE");
 
             // icon
-            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, row_height, 
+            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
                 ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "defensebase.png"),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
@@ -873,9 +883,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
             row->push_back(time_text, default_font, ClientUI::TextColor());
 
-            // brief description            
+            // brief description
             std::string desc_text = UserString("BT_ORBITAL");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -908,7 +918,7 @@ std::vector<int> BuildDesignatorWnd::BuildSelector::ColWidths()
 {
     std::vector<int> retval;
 
-    retval.push_back(row_height);           // icon
+    retval.push_back(m_row_height);           // icon
     retval.push_back(ClientUI::Pts()*18);   // name
     retval.push_back(ClientUI::Pts()*3);    // cost
     retval.push_back(ClientUI::Pts()*2);    // time

@@ -130,7 +130,7 @@ public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
         PartsListBoxRow(int w, int h);
-        virtual void    ChildrenDraggedAway(const std::list<Wnd*>& wnds, const Wnd* destination);
+        virtual void    ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination);
     };
 
     /** \name Structors */ //@{
@@ -171,12 +171,42 @@ PartsListBox::PartsListBoxRow::PartsListBoxRow(int w, int h) :
 {}
 
 void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
-    //std::vector<const PartType*> parts;
-    //std::vector<GG::Wnd*>
-    //for (GG::ListBox::Row::size_t i = GG::ListBox::Row::size_t(0); i < size(); ++i) {
-    //    const PartControl* control = dynamic_cast<const PartControl*>((*this)[i]);
-    //    parts.push_back(control->Part());
-    //}
+    Logger().debugStream() << "PartsListBoxRow::ChildrenDraggedAway";
+    if (wnds.empty())
+        return;
+    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list due because PartControls can only be dragged one-at-a-time
+    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
+    if (!control)
+        return;
+
+    GG::Control* dragged_control = 0;
+
+    // find control in row
+    unsigned int i = -1;
+    for (i = 0; i < size(); ++i) {
+        dragged_control = (*this)[i];
+        if (dragged_control == control)
+            break;
+        else
+            dragged_control = 0;
+    }
+
+    if (!dragged_control)
+        return;
+
+    PartControl* part_control = dynamic_cast<PartControl*>(dragged_control);
+    const PartType* part_type = 0;
+    if (part_control)
+        part_type = part_control->Part();
+
+    RemoveCell(i);
+    delete dragged_control;
+
+    if (part_type) {
+        part_control = new PartControl(part_type);
+        SetCell(i, part_control);
+        AttachChild(part_control);
+    }
 }
 
 PartsListBox::PartsListBox(int x, int y, int w, int h) :
@@ -611,7 +641,7 @@ public:
     mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
 
 private:
-    void            EmitNullSlotContentsAlteredSignal();
+    void            EmitNullSlotContentsAlteredSignal();            // emits SlotContentsAlteredSignal with PartType* = 0.  needed because boost::signal is noncopyable, so boost::bind can't be used to bind the parameter 0 to SlotContentsAlteredSignal::operator()
 
     ShipSlotType    m_slot_type;
     double          m_x_position_fraction, m_y_position_fraction;   // position on hull image where slot should be shown, as a fraction of that image's size
@@ -711,6 +741,8 @@ void SlotControl::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::P
 }
 
 void SlotControl::DragDropLeave() {
+    if (m_part_control)
+        m_part_control->Hide();
 }
 
 void SlotControl::Render() {
@@ -732,10 +764,10 @@ void SlotControl::SetPart(const PartType* part_type) {
     if (part_type) {
         m_part_control = new PartControl(part_type);
         AttachChild(m_part_control);
-        GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);
+        GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);                  // single click shows encyclopedia data
 
         GG::Connect(m_part_control->DoubleClickedSignal,
-                    boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));   // double click clears slot
+                    boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));    // double click clears slot
     }
 }
 
@@ -756,8 +788,15 @@ public:
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
-    void            SetPart(const std::string& part_name, unsigned int slot);
+    void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
     void            SetPart(const PartType* part, unsigned int slot);
+
+    /** attempts to add the specified part to the design, if possible.  will first attempt to add part to
+      * an empty slot of the appropriate type, and if no appropriate slots are available, may or may not move
+      * other parts around within the design to open up a compatible slot in which to add this part (and then
+      * add it).  may also do nothing. */
+    void            AddPart(const PartType* part);
+
     void            SetHull(const std::string& hull_name);
     void            SetHull(const HullType* hull);
     //@}
@@ -779,7 +818,9 @@ private:
 
     std::vector<SlotControl*>   m_slots;
 
+    GG::TextControl*            m_design_name_label;
     GG::Edit*                   m_design_name;
+    GG::TextControl*            m_design_description_label;
     GG::Edit*                   m_design_description;
     GG::Button*                 m_confirm_button;
     GG::Button*                 m_clear_button;
@@ -793,12 +834,42 @@ DesignWnd::MainPanel::MainPanel(int w, int h) :
     m_hull(0),
     m_background_image(0),
     m_slots(),
+    m_design_name_label(0),
     m_design_name(0),
+    m_design_description_label(0),
     m_design_description(0),
     m_confirm_button(0),
     m_clear_button(0)
 {
     EnableChildClipping();
+
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+    m_design_name_label = new GG::TextControl(0, 0, 10, 10, UserString("DESIGN_WND_DESIGN_NAME"), font, 
+                                              ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
+                                              GG::CLICKABLE | GG::ONTOP);
+    AttachChild(m_design_name_label);
+
+    m_design_name = new CUIEdit(0, 0, 10, UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
+                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::CLICKABLE | GG::ONTOP);
+    AttachChild(m_design_name);
+
+    m_design_description_label = new GG::TextControl(0, 0, 10, 10, UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font, 
+                                                     ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
+                                                     GG::CLICKABLE | GG::ONTOP);
+    AttachChild(m_design_description_label);
+
+    m_design_description = new CUIEdit(0, 0, 10, UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
+                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::CLICKABLE | GG::ONTOP);
+    AttachChild(m_design_description);
+
+    m_confirm_button = new CUIButton(0, 0, 10, UserString("DESIGN_WND_CONFIRM"), font, ClientUI::ButtonColor(),
+                                     ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
+    AttachChild(m_confirm_button);
+
+    m_clear_button = new CUIButton(0, 0, 10, UserString("DESIGN_WND_CLEAR"), font, ClientUI::ButtonColor(),
+                                   ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
+    AttachChild(m_clear_button);
 }
 
 void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -818,6 +889,10 @@ void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
     m_slots[slot]->SetPart(part);
 }
 
+void DesignWnd::MainPanel::AddPart(const PartType* part) {
+    // TODO: IMPLEMENT THIS
+}
+
 void DesignWnd::MainPanel::SetHull(const std::string& hull_name) {
     SetHull(GetHullType(hull_name));
 }
@@ -831,6 +906,7 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
         m_background_image = new GG::StaticGraphic(0, 0, ClientWidth(), ClientHeight(), texture,
                                                    GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_background_image);
+        MoveChildDown(m_background_image);
     }
     Populate();
 }
@@ -859,18 +935,74 @@ void DesignWnd::MainPanel::Populate( ){
 }
 
 void DesignWnd::MainPanel::DoLayout() {
-    GG::Pt background_size = ClientSize();
+    GG::Rect background_rect = GG::Rect(ClientUpperLeft(), ClientLowerRight());
     if (m_background_image) {
         m_background_image->Resize(ClientSize());
-        background_size = m_background_image->Size();   // should be texture size, not graphic size (texture can be smaller than graphic)
+        background_rect = m_background_image->RenderedArea();
     }
 
     for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it) {
         SlotControl* slot = *it;
-        int x = static_cast<int>(slot->XPositionFraction() * background_size.x);
-        int y = static_cast<int>(slot->YPositionFraction() * background_size.y);
+        int x = background_rect.Left() - slot->Width()/2 - ClientUpperLeft().x + static_cast<int>(slot->XPositionFraction() * background_rect.Width());
+        int y = background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + static_cast<int>(slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
     }
+
+    // position labels and text edit boxes for name and description and buttons to clear and confirm design
+
+    const int PTS = ClientUI::Pts();
+    const int PTS_WIDE = PTS / 2;           // guess at how wide per character the font needs
+    const int BUTTON_HEIGHT = PTS * 2;
+    const int LABEL_WIDTH = PTS_WIDE * 15;
+    const int PAD = 6;
+    const int MIN_EDIT_WIDTH = PTS_WIDE * 50;
+    const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long part class names
+    const int BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
+
+    int edit_right = ClientWidth();
+    int edit_height = BUTTON_HEIGHT;
+
+    if (m_confirm_button) {
+        GG::Pt lr = GG::Pt(ClientWidth(), BUTTON_HEIGHT) + GG::Pt(-PAD, PAD);
+        GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+        m_confirm_button->SizeMove(ul, lr);
+        edit_right = ul.x - PAD;
+    }
+    if (m_clear_button) {
+        GG::Pt lr = ClientSize() + GG::Pt(-PAD, -PAD);
+        GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+        m_clear_button->SizeMove(ul, lr);
+    }
+
+    if (m_design_name)
+        edit_height = m_design_name->Height();
+
+    int x = PAD, y = PAD;
+    if (m_design_name_label) {
+        GG::Pt ul = GG::Pt(x, y);
+        GG::Pt lr = ul + GG::Pt(LABEL_WIDTH, edit_height);
+        m_design_name_label->SizeMove(ul, lr);
+        x = lr.x + PAD;
+    }
+    if (m_design_name) {
+        GG::Pt ul = GG::Pt(x, y);
+        GG::Pt lr = GG::Pt(edit_right, y + edit_height);
+        m_design_name->SizeMove(ul, lr);
+        x = lr.x + PAD;
+    }
+
+
+    //if (x + label_width + MIN_NAME_EDIT_WIDTH > ClientWidth()) {
+    //    x = 0;
+    //    y = CONTROL_HEIGHT;
+    //}
+
+    //if (m_design_description_label) {
+    //    GG::Pt ul = (x, top);
+    //    x += m_design_description_label->MinSize
+    //}
+    //if (m_design_description)
+    //    ;
 }
 
 
@@ -930,16 +1062,16 @@ DesignWnd::DesignWnd(int w, int h) :
     m_detail_panel = new EncyclopediaDetailPanel(350, 150);
     AttachChild(m_detail_panel);
 
-    m_part_palette = new PartPalette(500, 200);
-    AttachChild(m_part_palette);
-    GG::Connect(m_part_palette->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
-    //GG::Connect(m_part_palette->PartTypeDoubleClickedSignal, &AddPart, this);
-    m_part_palette->MoveTo(GG::Pt(0, 200));
-
     m_main_panel = new MainPanel(500, 350);
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
     m_main_panel->MoveTo(GG::Pt(400, 300));
+
+    m_part_palette = new PartPalette(500, 200);
+    AttachChild(m_part_palette);
+    GG::Connect(m_part_palette->PartTypeClickedSignal, &EncyclopediaDetailPanel::SetItem, m_detail_panel);
+    GG::Connect(m_part_palette->PartTypeDoubleClickedSignal, &DesignWnd::MainPanel::AddPart, m_main_panel);
+    m_part_palette->MoveTo(GG::Pt(0, 200));
 
     // TEMPORARY
     m_hulls_list->Select(0);

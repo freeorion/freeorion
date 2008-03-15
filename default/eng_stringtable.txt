@@ -1414,6 +1414,18 @@ Ship Parts
 DESIGN_WND_MAIN_PANEL_TITLE
 Design Details
 
+DESIGN_WND_DESIGN_NAME
+Design Name
+
+DESIGN_WND_DESIGN_DESCRIPTION
+Description
+
+DESIGN_WND_CONFIRM
+Confirm New Design
+
+DESIGN_WND_CLEAR
+Clear Parts
+
 # Ship Slot Types
 
 SL_EXTERNAL
