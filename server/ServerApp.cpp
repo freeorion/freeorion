@@ -698,13 +698,13 @@ void ServerApp::ProcessTurns()
             (*it)->Reset();
         }
 
-    
+
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         delete it->second;
         it->second = NULL;
-    }   
+    }
 
     ++m_current_turn;
 

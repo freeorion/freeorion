@@ -91,6 +91,7 @@ private:
     const System&                   m_system;               //!< the System object associated with this SystemIcon
     GG::StaticGraphic*              m_disc_graphic;         //!< solid star disc graphic
     GG::StaticGraphic*              m_halo_graphic;         //!< transparent star halo graphic
+    GG::StaticGraphic*              m_tiny_graphic;         //!< alternate graphic shown when icon very small
     GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
     GG::StaticGraphic*              m_mouseover_indicator;  //!< shown when the mouse cursor is over the system
     bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator

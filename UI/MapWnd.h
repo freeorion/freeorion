@@ -31,6 +31,7 @@ namespace GG {
     class Texture;
     class MultiEdit;
     class WndEvent;
+    class StaticGraphic;
 }
 
 
@@ -213,6 +214,8 @@ private:
     std::set<FleetWnd*>         m_fleet_wnds;       //!< currently-open fleet wnds
     FleetWnd*                   m_active_fleet_wnd; //!< currently active FleetWnd is showing fleets.  Active FleetWnd chosen by clicking FleetButtons
     std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<int> >
+                                m_gaseous_substance;//!< surrounds systems and binds the galaxy together.  mapped from texture to set of system ids on which gas blob is centred
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
     ResearchWnd*                m_research_wnd;     //!< research screen
     ProductionWnd*              m_production_wnd;   //!< production screen

@@ -75,7 +75,7 @@ namespace {
     const int FLEET_LISTBOX_WIDTH =  250;
     const int FLEET_LISTBOX_HEIGHT = 150;
     const int CONTROL_MARGIN = 5; // gap to leave between controls in these windows
-    const std::string SHIP_DROP_TYPE_STRING = "FLeetWnd ShipRow";
+    const std::string SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
     const std::string FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
     class ShipDataPanel : public GG::Control
@@ -323,7 +323,7 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
 
     Refresh();
 }
-    
+
 bool FleetDataPanel::Selected() const
 {
     return m_selected;

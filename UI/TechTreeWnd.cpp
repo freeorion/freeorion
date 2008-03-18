@@ -553,7 +553,7 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
         if (GG::Wnd* parent = Parent()) {
             GG::Pt max_lr = parent->ClientLowerRight();
             new_lr.x = std::min(new_lr.x, max_lr.x);
-        }        
+        }
 
         Resize(new_lr - UpperLeft());
     } else {    // normal-dragging

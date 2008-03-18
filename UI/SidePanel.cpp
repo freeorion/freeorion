@@ -796,16 +796,16 @@ void SidePanel::PlanetPanel::DoLayout()
     const int INTERPANEL_SPACE = 3;
     int y = m_specials_panel->LowerRight().y - UpperLeft().y;
     int x = Width() - m_population_panel->Width();
-    
+
     if (m_population_panel->Parent() == this) {
         m_population_panel->MoveTo(GG::Pt(x, y));
         y += m_population_panel->Height() + INTERPANEL_SPACE;
     }
-    
+
     if (m_resource_panel->Parent() == this) {
         m_resource_panel->MoveTo(GG::Pt(x, y));
         y += m_resource_panel->Height() + INTERPANEL_SPACE;
-    }   
+    }
 
     if (m_buildings_panel->Parent() == this) {
         m_buildings_panel->MoveTo(GG::Pt(x, y));
@@ -1094,7 +1094,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout()
         panel->MoveTo(GG::Pt(0, y));
         y += panel->Height();   // may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
-    
+
     int available_height = y;
     GG::Wnd* parent = Parent();
     if (parent) {

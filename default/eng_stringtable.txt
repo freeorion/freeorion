@@ -1408,6 +1408,18 @@ Design Description
 DESIGN_NO_PART
 None
 
+DESIGN_WND_HULLS
+Empty Hulls
+
+DESIGN_WND_FINISHED_DESIGNS
+Finished Designs
+
+DESIGN_WND_SAVED_DESIGNS
+Saved Designs
+
+DESIGN_WND_TEMPLATES
+Design Templates
+
 DESIGN_WND_PART_PALETTE_TITLE
 Ship Parts
 

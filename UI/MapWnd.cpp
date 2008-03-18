@@ -633,8 +633,8 @@ void MapWnd::InitTurn(int turn_number)
     if (m_nebulae.empty()) {
         // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
         const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-        int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-                                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
+        int num_nebulae = MAX_NEBULAE * DENSITY_SCALE_FACTOR;/*RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
+                                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));*/
         m_nebulae.resize(num_nebulae);
         m_nebula_centers.resize(num_nebulae);
         SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
@@ -651,17 +651,13 @@ void MapWnd::InitTurn(int turn_number)
     // systems and starlanes
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
-
     m_system_icons.clear();
     m_starlanes.clear();
 
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
-        const int SYSTEM_ICON_SIZE = SystemIconSize();
-        GG::Pt icon_ul(static_cast<int>(systems[i]->X() * m_zoom_factor - SYSTEM_ICON_SIZE / 2.0), 
-                       static_cast<int>(systems[i]->Y() * m_zoom_factor - SYSTEM_ICON_SIZE / 2.0));
-        SystemIcon* icon = new SystemIcon(this, icon_ul.x, icon_ul.y, SYSTEM_ICON_SIZE, systems[i]->ID());
+        SystemIcon* icon = new SystemIcon(this, 0, 0, 10, systems[i]->ID());
         m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
@@ -671,6 +667,10 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
         GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
         GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
+
+        // gaseous substance around system
+        boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", systems[i]->ID());
+        m_gaseous_substance[gaseous_texture].push_back(systems[i]->ID());
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
@@ -1154,12 +1154,12 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 
 void MapWnd::DoSystemIconsLayout()
 {
-    // position and resize system icons
+    // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
 
-        GG::Pt icon_ul(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0), 
+        GG::Pt icon_ul(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0),
                        static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0));
         it->second->SizeMove(icon_ul, icon_ul + GG::Pt(SYSTEM_ICON_SIZE, SYSTEM_ICON_SIZE));
     }
@@ -1281,6 +1281,34 @@ void MapWnd::RenderBackgrounds()
                                 ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
                                             static_cast<int>(nebula_height * m_zoom_factor)));
     }
+
+    const Universe& universe = GetUniverse();
+    const float GAS_SIZE = ClientUI::SystemIconSize() * 16.0;
+    const float HALF_GAS_SIZE = GAS_SIZE / 2.0;
+    glColor(GG::Clr(255, 255, 255, 50));
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<int> >::iterator it = m_gaseous_substance.begin(); it != m_gaseous_substance.end(); ++it) {
+        const boost::shared_ptr<GG::Texture>& texture = it->first;
+        glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        std::vector<int>& sys_ids = it->second;
+        for (std::vector<int>::const_iterator sys_it = sys_ids.begin(); sys_it != sys_ids.end(); ++sys_it) {
+            const UniverseObject* obj = universe.Object(*sys_it);
+            if (!obj)
+                continue;
+            glLoadIdentity();
+            glTranslatef(static_cast<float>(obj->X() * m_zoom_factor + ClientUpperLeft().x), static_cast<float>(obj->Y() * m_zoom_factor + ClientUpperLeft().y), 0.0f);
+            glRotatef(*sys_it * 27.0f, 0.0f, 0.0f, 1.0f);
+            glScalef(m_zoom_factor, m_zoom_factor, 1.0f);
+            glBegin(GL_TRIANGLE_STRIP);
+                glTexCoord2f(0.0, 0.0); glVertex2i(-HALF_GAS_SIZE, -HALF_GAS_SIZE);
+                glTexCoord2f(1.0, 0.0); glVertex2i( HALF_GAS_SIZE, -HALF_GAS_SIZE);
+                glTexCoord2f(0.0, 1.0); glVertex2i(-HALF_GAS_SIZE,  HALF_GAS_SIZE);
+                glTexCoord2f(1.0, 1.0); glVertex2i( HALF_GAS_SIZE,  HALF_GAS_SIZE);
+            glEnd();
+        }
+    }
+    glLoadIdentity();
 }
 
 void MapWnd::RenderStarlanes()

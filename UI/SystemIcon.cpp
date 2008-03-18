@@ -69,6 +69,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
     m_system(*GetUniverse().Object<const System>(id)),
     m_disc_graphic(0),
     m_halo_graphic(0),
+    m_tiny_graphic(0),
     m_selection_indicator(0),
     m_mouseover_indicator(0),
     m_selected(false),
@@ -86,7 +87,7 @@ void SystemIcon::Init() {
 
     StarType star_type = m_system.Star();
 
-    // everything is resized at the bottom of this function
+    // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
 
     // disc graphic
@@ -98,7 +99,12 @@ void SystemIcon::Init() {
     // halo graphic
     boost::shared_ptr<GG::Texture> halo_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], m_system.ID());
     if (halo_texture)
-        m_halo_graphic = new GG::StaticGraphic(-DEFAULT_SIZE, -DEFAULT_SIZE, DEFAULT_SIZE, DEFAULT_SIZE, halo_texture, GG::GRAPHIC_FITGRAPHIC);
+        m_halo_graphic = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, halo_texture, GG::GRAPHIC_FITGRAPHIC);
+
+    // tiny texture for when disc graphic is too small
+    boost::shared_ptr<GG::Texture> tiny_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", "tiny_" + ClientUI::StarTypeFilePrefixes()[star_type], m_system.ID());
+    if (tiny_texture)
+        m_tiny_graphic = new  GG::StaticGraphic(0, 0, tiny_texture->Width(), tiny_texture->Height(), tiny_texture);
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
@@ -186,15 +192,30 @@ int SystemIcon::FleetButtonSize() const
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
-    if (m_disc_graphic)
-        m_disc_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
+    const int TINY_THRESHOLD = 8;
+    if (m_tiny_graphic && lr.x - ul.x < TINY_THRESHOLD) {
+        if (m_disc_graphic)
+            DetachChild(m_disc_graphic);
+        AttachChild(m_tiny_graphic);
+        GG::Pt tiny_size = m_tiny_graphic->Size();
+        GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
+        GG::Pt tiny_ul(middle.x - tiny_size.x / 2, middle.y - tiny_size.y / 2);
+        m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
+    } else {
+        if (m_disc_graphic) {
+            m_disc_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
+            AttachChild(m_disc_graphic);
+        }
+        if (m_tiny_graphic)
+            DetachChild(m_tiny_graphic);
+    }
 
     int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
-    GG::Pt ind_ul = GG::Pt((Width() - ind_size) / 2, (Height() - ind_size) / 2);
+    GG::Pt ind_ul((Width() - ind_size) / 2, (Height() - ind_size) / 2);
     GG::Pt ind_lr = ind_ul + GG::Pt(ind_size, ind_size);
 
     if (m_selection_indicator && m_selected)
-        m_selection_indicator->SizeMove(ind_ul, ind_lr);        
+        m_selection_indicator->SizeMove(ind_ul, ind_lr);
 
     if (m_mouseover_indicator)
         m_mouseover_indicator->SizeMove(ind_ul, ind_lr);
