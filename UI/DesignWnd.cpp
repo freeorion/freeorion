@@ -113,14 +113,7 @@ PartControl::PartControl(const PartType* part) :
     SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
 }
 
-void PartControl::Render() {
-    if (GG::GUI::GetGUI()->RenderingDragDropWnds())
-        m_icon->SetColor(GG::CLR_WHITE);
-    else if (GG::GUI::GetGUI()->DragDropWnd(this))
-        m_icon->SetColor(GG::CLR_ZERO);
-    else
-        m_icon->SetColor(GG::CLR_WHITE);
-}
+void PartControl::Render() {}
 
 void PartControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     ClickedSignal(m_part);
@@ -153,8 +146,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
     void            Populate();
 
     void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
@@ -214,6 +207,11 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::list<GG::Wnd*
 
     if (part_type) {
         part_control = new PartControl(part_type);
+        const PartsListBox* parent = dynamic_cast<const PartsListBox*>(Parent());
+        if (parent) {
+            GG::Connect(part_control->ClickedSignal,        parent->PartTypeClickedSignal);
+            GG::Connect(part_control->DoubleClickedSignal,  parent->PartTypeDoubleClickedSignal);
+        }
         SetCell(i, part_control);
     }
 }
@@ -233,10 +231,6 @@ const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const {
 
 const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const {
     return m_availabilities_shown;
-}
-
-void PartsListBox::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    wnds.clear();   // reject drops
 }
 
 void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -986,6 +980,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void    StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset);
+    virtual void    CancellingChildDragDrop(const std::list<GG::Wnd*>& wnds);
     virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
     virtual void    ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination);
     virtual void    DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
@@ -1038,6 +1034,32 @@ double SlotControl::XPositionFraction() const {
 
 double SlotControl::YPositionFraction() const {
     return m_y_position_fraction;
+}
+
+void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) {
+    if (!m_part_control)
+        return;
+
+    const PartControl* control = dynamic_cast<const PartControl*>(wnd);
+    if (!control)
+        return;
+
+    if (control == m_part_control)
+        m_part_control->Hide();
+}
+
+void SlotControl::CancellingChildDragDrop(const std::list<GG::Wnd*>& wnds) {
+    if (!m_part_control)
+        return;
+
+    for (std::list<GG::Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+        const PartControl* control = dynamic_cast<const PartControl*>(*it);
+        if (!control)
+            continue;
+
+        if (control == m_part_control)
+            m_part_control->Show();
+    }
 }
 
 void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
