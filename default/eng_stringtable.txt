@@ -1408,6 +1408,9 @@ Design Description
 DESIGN_NO_PART
 None
 
+DESIGN_WND_STARTS
+Design Starts
+
 DESIGN_WND_HULLS
 Empty Hulls
 
@@ -3509,26 +3512,30 @@ Colonists are kept in suspended animation during colonization journey, eliminati
 
 SH_EMPTY
 Empty Hull
+
 SH_EMPTY_DESC
 Cheap and fast, but can't mount any parts.
 
-
 SH_SMALL
 Small Hull
+
 SH_SMALL_DESC
 Few slots but high speed
 
 SH_MEDIUM
 Medium Hull
+
 SH_MEDIUM_DESC
 Moderate number of slots and moderate speed
 
 SH_LARGE
 Large Hull
+
 SH_LARGE_DESC
 Many slots but slow speed
 
 SH_HUGE
 Huge Hull
+
 SH_HUGE_DESC
 Very many slots but very slow speed

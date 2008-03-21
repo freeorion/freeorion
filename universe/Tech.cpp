@@ -340,6 +340,23 @@ std::vector<std::string> TechManager::CategoryNames() const
     return retval;
 }
 
+std::vector<std::string> TechManager::TechNames() const {
+    std::vector<std::string> retval;
+    iterator end_it = m_techs.get<NameIndex>().end();
+    for (TechManager::iterator it = begin(); it != end(); ++it)
+        retval.push_back((*it)->Name());
+    return retval;
+}
+
+std::vector<std::string> TechManager::TechNames(const std::string& name) const {
+    std::vector<std::string> retval;
+    category_iterator end_it = category_end(name);
+    for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it) {
+        retval.push_back((*it)->Name());
+    }
+    return retval;
+}
+
 std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs)
 {
     std::vector<const Tech*> retval;

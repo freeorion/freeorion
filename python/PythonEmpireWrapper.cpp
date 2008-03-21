@@ -9,6 +9,9 @@ namespace {
     // *Queue::Element.  This helper functions take an Element and returns the associated Tech.
     const Tech*         TechFromResearchQueueElement(const ResearchQueue::Element& element) { return element.tech; }
 
+    std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                    &TechManager::TechNames;
+    std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const =                  &TechManager::TechNames;
+
     // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
     // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
     // ResearchQueue::Element which is passed into TechFromResearchQueueElement, which reeturns a Tech*, which is
@@ -111,8 +114,8 @@ namespace FreeOrionPython {
             .def("__iter__",                        iterator<ResearchQueue>())  // ResearchQueue provides STL container-like interface to contained queue
             .def("__getitem__",                     &ResearchQueue::operator[],                     return_internal_reference<>())
             .def("__len__",                         &ResearchQueue::size)
-            .def("size",                            &ResearchQueue::size)
-            .def("empty",                           &ResearchQueue::empty)
+            .add_property("size",                   &ResearchQueue::size)
+            .add_property("empty",                  &ResearchQueue::empty)
             .def("inQueue",                         &ResearchQueue::InQueue)
             .def("inQueue",                         make_function(
                                                         boost::bind(&ResearchQueue::InQueue, _1, boost::bind(&GetTech, _2)),
@@ -124,6 +127,7 @@ namespace FreeOrionPython {
                                                         return_value_policy<return_by_value>(),
                                                         boost::mpl::vector<bool, const ResearchQueue*, const ResearchQueue::Element&>()
                                                     ))
+            .add_property("totalSpent",             &ResearchQueue::TotalRPsSpent)
         ;
 
         //////////////////////
@@ -148,14 +152,14 @@ namespace FreeOrionPython {
             .def_readonly("locationID",             &ProductionQueue::Element::location)
             .def_readonly("spending",               &ProductionQueue::Element::spending)
             .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
-            .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
         ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)
             .def("__iter__",                        iterator<ProductionQueue>())  // ProductionQueue provides STL container-like interface to contained queue
             .def("__getitem__",                     ProductionQueueOperatorSquareBrackets,          return_internal_reference<>())
             .def("__len__",                         &ProductionQueue::size)
-            .def("size",                            &ProductionQueue::size)
-            .def("empty",                           &ProductionQueue::empty)
+            .add_property("size",                   &ProductionQueue::size)
+            .add_property("empty",                  &ProductionQueue::empty)
+            .add_property("totalSpent",             &ProductionQueue::TotalPPsSpent)
         ;
 
 
@@ -175,5 +179,7 @@ namespace FreeOrionPython {
         ;
         def("getTech",                          &GetTech,                               return_value_policy<reference_existing_object>());
         def("getTechCategories",                &TechManager::CategoryNames,            return_value_policy<return_by_value>());
+        def("techs",                            TechNamesVoid,                          return_value_policy<return_by_value>());
+        def("techsInCategory",                  TechNamesCategory,                      return_value_policy<return_by_value>());
     }
 }

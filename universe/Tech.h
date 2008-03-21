@@ -178,6 +178,12 @@ public:
     /** returns the list of category names */
     std::vector<std::string>        CategoryNames() const;
 
+    /** returns list of all tech names */
+    std::vector<std::string>        TechNames() const;
+
+    /** returns list of names of techs in specified category */
+    std::vector<std::string>        TechNames(const std::string& name) const;
+
     /** returns all researchable techs */
     std::vector<const Tech*>        AllNextTechs(const std::set<std::string>& known_techs);
 
