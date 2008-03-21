@@ -1083,9 +1083,10 @@ void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
             accepted_part_control = dynamic_cast<PartControl*>(wnd);
 
             if (accepted_part_control) {
+
                 const PartType* part_type = accepted_part_control->Part();
-                if (part_type && part_type->CanMountInSlotType(m_slot_type))
-                    break;  // quit loop without erasing this control from the list, to indicate that it is accepted
+                if (part_type && part_type->CanMountInSlotType(m_slot_type) && accepted_part_control != m_part_control)
+                    break;  // quit loop without erasing this control from the list, to indicate that it is accepted, and isn't the part that was already here
                 else
                     accepted_part_control = 0;
             } else {
