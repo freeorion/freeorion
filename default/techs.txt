@@ -1305,7 +1305,7 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
-    graphic = ""
+    graphic = "icons/tech/organic_structures.png"
 
 Tech
     name = "CON_METRO_INFRA"
@@ -1579,7 +1579,7 @@ Tech
                 Source
             effects =
                 SetMaxConstruction value = Target.MaxConstruction + 5
-    graphic = ""
+    graphic = "icons/tech/subterranean_construction.png"
 
 Tech
     name = "ECO_MARKET_ECON"
