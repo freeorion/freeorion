@@ -469,9 +469,22 @@ void MapWnd::Render()
          it != m_galaxy_gas_quad_vertices.end();
          ++it) {
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        // This is provided here to ensure maximum backwards compatability with
+        // older hardware and GL drivers.  It can only work on a temporary
+        // basis, however, since GL 2.0 will soon be required for the use of
+        // Ogre, shaders, etc.  This note applies to all such uses of the ARB
+        // versions of GL functions and macros.
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
         glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
         glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
         glTexCoordPointer(2, GL_FLOAT, 0, 0);
         glDrawArrays(GL_QUADS, 0, it->second.m_size);
     }
@@ -498,9 +511,17 @@ void MapWnd::Render()
              it != m_star_halo_quad_vertices.end();
              ++it) {
             glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
             glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
             glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
             glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
             glTexCoordPointer(2, GL_FLOAT, 0, 0);
             glDrawArrays(GL_QUADS, 0, it->second.m_size);
         }
@@ -522,9 +543,17 @@ void MapWnd::Render()
              it != m_star_core_quad_vertices.end();
              ++it) {
             glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
             glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
             glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
             glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
             glTexCoordPointer(2, GL_FLOAT, 0, 0);
             glDrawArrays(GL_QUADS, 0, it->second.m_size);
         }
@@ -534,9 +563,17 @@ void MapWnd::Render()
              it != m_star_tiny_quad_vertices.end();
              ++it) {
             glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
             glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
             glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
             glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
             glTexCoordPointer(2, GL_FLOAT, 0, 0);
             glDrawArrays(GL_QUADS, 0, it->second.m_size);
         }
@@ -545,7 +582,11 @@ void MapWnd::Render()
 
     glPopMatrix();
 
+#ifdef FREEORION_WIN32
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#else
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1059,45 +1100,77 @@ void MapWnd::InitTurn(int turn_number)
              m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
          ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
         glDeleteBuffers(1, &it->second.m_name);
+#endif
     }
     m_star_core_quad_vertices.clear();
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
              m_star_halo_quad_vertices.begin();
          it != m_star_halo_quad_vertices.end();
          ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
         glDeleteBuffers(1, &it->second.m_name);
+#endif
     }
     m_star_halo_quad_vertices.clear();
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
              m_star_tiny_quad_vertices.begin();
          it != m_star_tiny_quad_vertices.end();
          ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
         glDeleteBuffers(1, &it->second.m_name);
+#endif
     }
     m_star_tiny_quad_vertices.clear();
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
              m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
         glDeleteBuffers(1, &it->second.m_name);
+#endif
     }
     m_galaxy_gas_quad_vertices.clear();
 
     if (m_star_texture_coords.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_star_texture_coords.m_name);
+#else
         glDeleteBuffers(1, &m_star_texture_coords.m_name);
+#endif
         m_star_texture_coords.m_name = 0;
     }
     if (m_starlane_vertices.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_vertices.m_name);
+#else
         glDeleteBuffers(1, &m_starlane_vertices.m_name);
+#endif
         m_starlane_vertices.m_name = 0;
     }
     if (m_starlane_supply_vertices.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_supply_vertices.m_name);
+#else
         glDeleteBuffers(1, &m_starlane_supply_vertices.m_name);
+#endif
         m_starlane_supply_vertices.m_name = 0;
     }
     if (m_starlane_supply_colors.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_supply_colors.m_name);
+#else
         glDeleteBuffers(1, &m_starlane_supply_colors.m_name);
+#endif
         m_starlane_supply_colors.m_name = 0;
     }
 
@@ -1108,12 +1181,21 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_star_core_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_core_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &name);
         glBindBuffer(GL_ARRAY_BUFFER, name);
         glBufferData(GL_ARRAY_BUFFER,
                      it->second.size() * sizeof(float),
                      &it->second[0],
                      GL_STATIC_DRAW);
+#endif
         m_star_core_quad_vertices[it->first].m_size = it->second.size() / 2;
     }
     for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
@@ -1121,12 +1203,21 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_star_halo_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_halo_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &name);
         glBindBuffer(GL_ARRAY_BUFFER, name);
         glBufferData(GL_ARRAY_BUFFER,
                      it->second.size() * sizeof(float),
                      &it->second[0],
                      GL_STATIC_DRAW);
+#endif
         m_star_halo_quad_vertices[it->first].m_size = it->second.size() / 2;
     }
     for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
@@ -1134,12 +1225,21 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_star_tiny_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_tiny_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &name);
         glBindBuffer(GL_ARRAY_BUFFER, name);
         glBufferData(GL_ARRAY_BUFFER,
                      it->second.size() * sizeof(float),
                      &it->second[0],
                      GL_STATIC_DRAW);
+#endif
         m_star_tiny_quad_vertices[it->first].m_size = it->second.size() / 2;
     }
     for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
@@ -1147,53 +1247,102 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_galaxy_gas_quad_vertices.end();
          ++it) {
         GLuint& name = m_galaxy_gas_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &name);
         glBindBuffer(GL_ARRAY_BUFFER, name);
         glBufferData(GL_ARRAY_BUFFER,
                      it->second.size() * sizeof(float),
                      &it->second[0],
                      GL_STATIC_DRAW);
+#endif
         m_galaxy_gas_quad_vertices[it->first].m_size = it->second.size() / 2;
     }
 
     if (!raw_star_texture_coords.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_star_texture_coords.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_star_texture_coords.size() * sizeof(float),
+                        &raw_star_texture_coords[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &m_star_texture_coords.m_name);
         glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_star_texture_coords.size() * sizeof(float),
                      &raw_star_texture_coords[0],
                      GL_STATIC_DRAW);
+#endif
         m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
     }
     if (!raw_starlane_vertices.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_vertices.size() * sizeof(float),
+                        &raw_starlane_vertices[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &m_starlane_vertices.m_name);
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_vertices.size() * sizeof(float),
                      &raw_starlane_vertices[0],
                      GL_STATIC_DRAW);
+#endif
         m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
     }
     if (!raw_starlane_supply_vertices.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_supply_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_supply_vertices.size() * sizeof(float),
+                        &raw_starlane_supply_vertices[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &m_starlane_supply_vertices.m_name);
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_supply_vertices.size() * sizeof(float),
                      &raw_starlane_supply_vertices[0],
                      GL_STATIC_DRAW);
+#endif
         m_starlane_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
     }
     if (!raw_starlane_supply_colors.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_supply_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_supply_colors.size() * sizeof(unsigned char),
+                        &raw_starlane_supply_colors[0],
+                        GL_STATIC_DRAW_ARB);
+#else
         glGenBuffers(1, &m_starlane_supply_colors.m_name);
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_supply_colors.size() * sizeof(unsigned char),
                      &raw_starlane_supply_colors[0],
                      GL_STATIC_DRAW);
+#endif
         m_starlane_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
     }
 
+#ifdef FREEORION_WIN32
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+#else
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
@@ -1675,7 +1824,11 @@ void MapWnd::RenderStarlanes()
         const float STARLANE_ALPHA = 0.7f;
         const double STARLANE_WIDTH = 2.5;
         glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
+#else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
+#endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
         glLineWidth(STARLANE_WIDTH);
         glLineStipple(1, 0xffff);
@@ -1693,9 +1846,17 @@ void MapWnd::RenderStarlanes()
         glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
         glLineWidth(LINE_SCALE);
         glEnableClientState(GL_COLOR_ARRAY);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+#else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+#endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+#else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+#endif
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
         glDrawArrays(GL_LINES, 0, m_starlane_supply_vertices.m_size);
         glDisableClientState(GL_COLOR_ARRAY);
