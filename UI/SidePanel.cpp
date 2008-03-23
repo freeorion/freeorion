@@ -243,7 +243,7 @@ namespace {
             gluQuadricOrientation(quad, GLU_OUTSIDE);
 
             glColor(GG::CLR_WHITE);
-            gluSphere(quad, r, 100, 100);
+            gluSphere(quad, r, 30, 30);
         }
     }
 
