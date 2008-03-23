@@ -25,6 +25,8 @@
 OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text/* = ""*/, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
     Control(0, 0, 1, 1, flags)
 {
+    // TODO: Have this make a single call per color.  Set up texture coord and vertex buffers (quads) for the glyphs.  Consider extending GG::Font to do similar.
+
     std::string str = format_text == "" ? system->Name() : boost::io::str(boost::format(format_text) % system->Name());
     int width = 0;
     const std::set<int>& owners = system->Owners();
@@ -67,9 +69,9 @@ void OwnerColoredSystemName::Render()
 SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
     GG::Control(x, y, w, w, GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
-    m_disc_graphic(0),
-    m_halo_graphic(0),
-    m_tiny_graphic(0),
+    m_disc_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.Star()], id)),
+    m_halo_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[m_system.Star()], id)),
+    m_tiny_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", "tiny_" + ClientUI::StarTypeFilePrefixes()[m_system.Star()], id)),
     m_selection_indicator(0),
     m_mouseover_indicator(0),
     m_selected(false),
@@ -85,26 +87,8 @@ void SystemIcon::Init() {
 
     SetText(m_system.Name());
 
-    StarType star_type = m_system.Star();
-
     // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
-
-    // disc graphic
-    boost::shared_ptr<GG::Texture> disc_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[star_type], m_system.ID());
-    m_disc_graphic = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, disc_texture, GG::GRAPHIC_FITGRAPHIC);
-    m_disc_graphic->SetColor(GG::CLR_WHITE);
-    AttachChild(m_disc_graphic);
-
-    // halo graphic
-    boost::shared_ptr<GG::Texture> halo_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[star_type], m_system.ID());
-    if (halo_texture)
-        m_halo_graphic = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, halo_texture, GG::GRAPHIC_FITGRAPHIC);
-
-    // tiny texture for when disc graphic is too small
-    boost::shared_ptr<GG::Texture> tiny_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", "tiny_" + ClientUI::StarTypeFilePrefixes()[star_type], m_system.ID());
-    if (tiny_texture)
-        m_tiny_graphic = new  GG::StaticGraphic(0, 0, tiny_texture->Width(), tiny_texture->Height(), tiny_texture);
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
@@ -121,7 +105,6 @@ SystemIcon::~SystemIcon()
 {
     AttachChild(m_selection_indicator);
     AttachChild(m_mouseover_indicator);
-    AttachChild(m_halo_graphic);
 }
 
 const System& SystemIcon::GetSystem() const
@@ -167,6 +150,15 @@ GG::Pt SystemIcon::FleetButtonCentre(int empire_id, bool moving) const
     return it->second->UpperLeft() + GG::Pt(HALF_SIZE, HALF_SIZE);
 }
 
+const boost::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
+{ return m_disc_texture; }
+
+const boost::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
+{ return m_halo_texture; }
+
+const boost::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
+{ return m_tiny_texture; }
+
 GG::Pt SystemIcon::NthFleetButtonUpperLeft(int n, bool moving) const
 {
     assert(n > 0);
@@ -192,23 +184,6 @@ int SystemIcon::FleetButtonSize() const
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
-    const int TINY_THRESHOLD = 8;
-    if (m_tiny_graphic && lr.x - ul.x < TINY_THRESHOLD) {
-        if (m_disc_graphic)
-            DetachChild(m_disc_graphic);
-        AttachChild(m_tiny_graphic);
-        GG::Pt tiny_size = m_tiny_graphic->Size();
-        GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
-        GG::Pt tiny_ul(middle.x - tiny_size.x / 2, middle.y - tiny_size.y / 2);
-        m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
-    } else {
-        if (m_disc_graphic) {
-            m_disc_graphic->SizeMove(GG::Pt(0, 0), lr - ul);
-            AttachChild(m_disc_graphic);
-        }
-        if (m_tiny_graphic)
-            DetachChild(m_tiny_graphic);
-    }
 
     int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
     GG::Pt ind_ul((Width() - ind_size) / 2, (Height() - ind_size) / 2);
@@ -219,21 +194,6 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
     if (m_mouseover_indicator)
         m_mouseover_indicator->SizeMove(ind_ul, ind_lr);
-
-    if (m_halo_graphic) {
-        double halo_size_factor = 1 + log10( static_cast<double>(Width()) / static_cast<double>(ClientUI::SystemIconSize()) );
-        if (halo_size_factor > 0.5) {
-            int halo_size = static_cast<int>(Width() * halo_size_factor);
-            //Logger().errorStream() << "Core Size: " << Width() << " halo size: " << halo_size;
-            GG::Pt halo_ul = GG::Pt((Width() - halo_size) / 2, (Height() - halo_size) / 2);
-            GG::Pt halo_lr = halo_ul + GG::Pt(halo_size, halo_size);
-            AttachChild(m_halo_graphic);
-            m_halo_graphic->SizeMove(halo_ul, halo_lr);
-            MoveChildDown(m_halo_graphic);
-        } else {
-            DetachChild(m_halo_graphic);
-        }
-    }
 
     PositionSystemName();
 

@@ -133,8 +133,6 @@ private:
     void UpdateMeterEstimates();            ///< re-estimates meter values based on orders given
     void UpdateEmpireResourcePools();       ///< recalculates production and predicted changes of player's empire's resource and population pools
 
-    struct StarlaneData;     ///< contains all the information necessary to render a single fleet movement line on the main map
-
     /** contains all the information necessary to render a single fleet movement line on the main map */
     struct MovementLineData
     {
@@ -151,7 +149,6 @@ private:
     void RenderBackgrounds();                       //!< renders the backgrounds onto the screen
     void RenderStarlanes();                         //!< renders the starlanes between the systems
     void RenderFleetMovementLines();                //!< renders the dashed lines indicating where each fleet is going
-    void MoveBackgrounds(const GG::Pt& move);       //!< scrolls the backgrounds at their respective rates
     void CorrectMapPosition(GG::Pt &move_to_pt);    //!< ensures that the map data are positioned sensibly
     void SystemDoubleClicked(int system_id);
     void SystemLeftClicked(int system_id);
@@ -204,8 +201,6 @@ private:
     std::vector<boost::shared_ptr<GG::Texture> >    m_nebulae;      //!< decorative nebula textures
     std::vector<GG::Pt>     m_nebula_centers;   //!< the centerpoints of each of the nebula textures
     std::vector<double>     m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
-    std::vector<double>     m_bg_position_X;    //!< array, the X position of the first full background image
-    std::vector<double>     m_bg_position_Y;    //!< array, the Y positions of the backgrounds
 
     int                         m_previously_selected_system;
 
@@ -214,8 +209,6 @@ private:
     std::set<FleetWnd*>         m_fleet_wnds;       //!< currently-open fleet wnds
     FleetWnd*                   m_active_fleet_wnd; //!< currently active FleetWnd is showing fleets.  Active FleetWnd chosen by clicking FleetButtons
     std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<int> >
-                                m_gaseous_substance;//!< surrounds systems and binds the galaxy together.  mapped from texture to set of system ids on which gas blob is centred
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
     ResearchWnd*                m_research_wnd;     //!< research screen
     ProductionWnd*              m_production_wnd;   //!< production screen
@@ -223,7 +216,7 @@ private:
     GG::MultiEdit*              m_chat_display;     //!< (read-only) MP-chat output multi-line edit box
     CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
     std::vector<FleetButton*>   m_moving_fleet_buttons; //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
-    std::set<StarlaneData>      m_starlanes;        //!< starlanes between systems
+
 
     std::map<Fleet*, MovementLineData>
                                 m_fleet_lines;          //!< lines used for moving fleets in the main map
@@ -231,14 +224,27 @@ private:
     MovementLineData            m_projected_fleet_line; //!< lines that show the projected path of the active fleet in the FleetWnd
 
     std::map<int, std::set<int> > m_empire_system_fleet_supply;     //!< map from empire id to set of systems that empire can provide fleet supply to this turn
-    std::map<int, std::set<std::pair<int, int> > >
-                                m_empire_fleet_supply_lanes;        //!< map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which fleet supply travels for that empire
 
     std::map<int, std::set<std::set<int> > >
                                 m_empire_resource_sharing_groups;   //!< map from empire id to set of sets of systems that can share resources for that empire
     std::map<int, std::set<std::pair<int, int> > >
                                 m_empire_resource_sharing_lanes;    //!< map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which inter-system resource sharing travels for that empire
 
+    // OpenGL buffers objects containing vertices, texture coordinates, etc.
+    struct GLBuffer
+    {
+        GLBuffer();
+        GLuint      m_name;
+        std::size_t m_size;
+    };
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_core_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_halo_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_tiny_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_galaxy_gas_quad_vertices;
+    GLBuffer m_star_texture_coords;
+    GLBuffer m_starlane_vertices;
+    GLBuffer m_starlane_supply_vertices;
+    GLBuffer m_starlane_supply_colors;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events

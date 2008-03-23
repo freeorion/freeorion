@@ -374,7 +374,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             if (!save_state_string.empty())
                 sss = &save_state_string;
             (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
-            players, *orders, sss));
+                                                players, *orders, sss));
         } else {
             (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
                                                 players, *orders, ui_data.get()));

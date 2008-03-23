@@ -1,3 +1,7 @@
+#ifdef FREEORION_WIN32
+#include <GL/glew.h>
+#endif
+
 #include "MapWnd.h"
 
 #include "ClientUI.h"
@@ -87,36 +91,42 @@ namespace {
         return true;
     }
 #endif
+
+    ////////////////////////////////////////////////
+    // StarlaneData
+    ////////////////////////////////////////////////
+    /* Note that an order is imposed on the two systems the starlane spans.  The
+       "source" system is the one with the lower pointer.  This is so
+       StarlaneDatas can be stored in a std::set and duplicates will not be a
+       problem. */
+    struct StarlaneData
+    {
+        StarlaneData() {}
+        StarlaneData(const System* src_system, const System* dst_system) : 
+            src(std::min(src_system, dst_system)), 
+            dst(std::max(src_system, dst_system)) 
+            {}
+        bool operator<(const StarlaneData& rhs) const 
+            {
+                if (src != rhs.src) 
+                    return src < rhs.src; 
+                if (dst != rhs.dst) 
+                    return dst < rhs.dst;
+                return false;
+            }
+    private:
+        const System* src;
+        const System* dst;
+    };
 }
 
-////////////////////////////////////////////////
-// MapWnd::StarlaneData
-////////////////////////////////////////////////
-/* Note that an order is imposed on the two systems the starlane spans.  The "source" system is the one with the lower pointer.
-   This is so StarlaneDatas can be stored in a std::set and duplicates will not be a problem. */
-struct MapWnd::StarlaneData
-{
-    StarlaneData() {}
-    StarlaneData(const System* src_system, const System* dst_system) : 
-        src(std::min(src_system, dst_system)), 
-        dst(std::max(src_system, dst_system)) 
-        {}
-    bool operator<(const StarlaneData& rhs) const 
-    {
-        if (src != rhs.src) 
-            return src < rhs.src; 
-        if (dst != rhs.dst) 
-            return dst < rhs.dst;
-        return false;
-    }
-
-    const System* Src() const { return src; }
-    const System* Dst() const { return dst; }
-
-private:
-    const System* src;
-    const System* dst;
-};
+////////////////////////////////////////////////////////////
+// MapWnd::GLBuffer
+////////////////////////////////////////////////////////////
+MapWnd::GLBuffer::GLBuffer() :
+    m_name(0),
+    m_size(0)
+{}
 
 ////////////////////////////////////////////////////////////
 // MapWndPopup
@@ -170,11 +180,13 @@ MapWnd::MapWnd() :
     m_disabled_accels_list(),
     m_backgrounds(NUM_BACKGROUNDS),
     m_bg_scroll_rate(NUM_BACKGROUNDS),
-    m_bg_position_X(NUM_BACKGROUNDS),
-    m_bg_position_Y(NUM_BACKGROUNDS),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
     m_active_fleet_wnd(0),
+    m_star_texture_coords(),
+    m_starlane_vertices(),
+    m_starlane_supply_vertices(),
+    m_starlane_supply_colors(),
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
@@ -303,19 +315,22 @@ MapWnd::MapWnd() :
 
     //set up background images
     m_backgrounds[0] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield1.png");
-    m_bg_position_X[0] = 10.0;
-    m_bg_position_Y[0] = 10.0;
     m_bg_scroll_rate[0] = 0.125;
+    glBindTexture(GL_TEXTURE_2D, m_backgrounds[0]->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     m_backgrounds[1] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield2.png");
-    m_bg_position_X[1] = 10.0;
-    m_bg_position_Y[1] = 10.0;
     m_bg_scroll_rate[1] = 0.25;
+    glBindTexture(GL_TEXTURE_2D, m_backgrounds[1]->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     m_backgrounds[2] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield3.png");
-    m_bg_position_X[2] = 10.0;
-    m_bg_position_Y[2] = 10.0;
     m_bg_scroll_rate[2] = 0.5;
+    glBindTexture(GL_TEXTURE_2D, m_backgrounds[2]->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // connect keyboard accelerators
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
@@ -432,8 +447,6 @@ MapWnd::FleetWndIter MapWnd::FleetWndEnd()
 void MapWnd::Render()
 {
     RenderBackgrounds();
-    RenderStarlanes();
-    RenderFleetMovementLines();
 
     int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
     if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
@@ -441,6 +454,101 @@ void MapWnd::Render()
         m_chat_display->Hide();
         g_chat_display_show_time = 0;
     }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+    glPushMatrix();
+    glLoadIdentity();
+    glScalef(m_zoom_factor, m_zoom_factor, 1.0);
+    glTranslatef(origin_offset.x / m_zoom_factor, origin_offset.y / m_zoom_factor, 0.0);
+
+    glColor4f(1.0, 1.0, 1.0, 50.0f / 255.0f);
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end();
+         ++it) {
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+        glDrawArrays(GL_QUADS, 0, it->second.m_size);
+    }
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_LINE_STIPPLE);
+    RenderStarlanes();
+    RenderFleetMovementLines();
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
+    glLineWidth(1.0);
+
+    glColor3f(1.0, 1.0, 1.0);
+
+    const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
+    if (0.5 < HALO_SCALE_FACTOR) {
+        glMatrixMode(GL_TEXTURE);
+        glTranslatef(0.5, 0.5, 0.0);
+        glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
+        glTranslatef(-0.5, -0.5, 0.0);
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+             it != m_star_halo_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+    }
+
+    // The use of "tiny" versions of the stars has been zeroed out here, because
+    // it doesn't work, and I can't figure out why.  The stars seem to look
+    // alright at far-out zoom levels, so I assume this will be fine to leave
+    // as-is.  However, I don't want to lose the code below, since it does
+    // approximately the right thing, and if the artists really can't live
+    // without the "tinies", we'll need the stuff below.
+#if 0
+    const double TINY_THRESHOLD = 8.0;
+    if (TINY_THRESHOLD < m_zoom_factor * ClientUI::SystemIconSize()) {
+#endif
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+             it != m_star_core_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+#if 0
+    } else {
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_tiny_quad_vertices.begin();
+             it != m_star_tiny_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+    }
+#endif
+
+    glPopMatrix();
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
@@ -575,7 +683,6 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
     m_dragged = true;
 }
@@ -633,8 +740,8 @@ void MapWnd::InitTurn(int turn_number)
     if (m_nebulae.empty()) {
         // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
         const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-        int num_nebulae = MAX_NEBULAE * DENSITY_SCALE_FACTOR;/*RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-                                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));*/
+        int num_nebulae = static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR);/*RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
+                                                                                 static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));*/
         m_nebulae.resize(num_nebulae);
         m_nebula_centers.resize(num_nebulae);
         SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
@@ -652,12 +759,75 @@ void MapWnd::InitTurn(int turn_number)
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
     m_system_icons.clear();
-    m_starlanes.clear();
 
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_tiny_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
+    std::vector<float> raw_star_texture_coords;
+    std::vector<float> raw_starlane_vertices;
+    std::vector<float> raw_starlane_supply_vertices;
+    std::vector<unsigned char> raw_starlane_supply_colors;
+
+    std::set<StarlaneData> starlane_pairs;
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
         SystemIcon* icon = new SystemIcon(this, 0, 0, 10, systems[i]->ID());
+        {
+            // See note above texture coords for why we're making coordinate
+            // sets that are 2x too big.
+            const System& system = icon->GetSystem();
+            double icon_size = ClientUI::SystemIconSize();
+            double icon_ul_x = system.X() - icon_size;
+            double icon_ul_y = system.Y() - icon_size;
+            double icon_lr_x = system.X() + icon_size;
+            double icon_lr_y = system.Y() + icon_size;
+            if (icon->DiscTexture()) {
+                glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+                std::vector<float>& core_vertices = raw_star_core_quad_vertices[icon->DiscTexture()];
+                core_vertices.push_back(icon_lr_x);
+                core_vertices.push_back(icon_ul_y);
+                core_vertices.push_back(icon_ul_x);
+                core_vertices.push_back(icon_ul_y);
+                core_vertices.push_back(icon_ul_x);
+                core_vertices.push_back(icon_lr_y);
+                core_vertices.push_back(icon_lr_x);
+                core_vertices.push_back(icon_lr_y);
+            }
+
+            if (icon->HaloTexture()) {
+                glBindTexture(GL_TEXTURE_2D, icon->HaloTexture()->OpenGLId());
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+                std::vector<float>& halo_vertices = raw_star_halo_quad_vertices[icon->HaloTexture()];
+                halo_vertices.push_back(icon_lr_x);
+                halo_vertices.push_back(icon_ul_y);
+                halo_vertices.push_back(icon_ul_x);
+                halo_vertices.push_back(icon_ul_y);
+                halo_vertices.push_back(icon_ul_x);
+                halo_vertices.push_back(icon_lr_y);
+                halo_vertices.push_back(icon_lr_x);
+                halo_vertices.push_back(icon_lr_y);
+            }
+
+            if (icon->TinyTexture()) {
+                glBindTexture(GL_TEXTURE_2D, icon->TinyTexture()->OpenGLId());
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+                std::vector<float>& tiny_vertices = raw_star_tiny_quad_vertices[icon->TinyTexture()];
+                tiny_vertices.push_back(icon_lr_x);
+                tiny_vertices.push_back(icon_ul_y);
+                tiny_vertices.push_back(icon_ul_x);
+                tiny_vertices.push_back(icon_ul_y);
+                tiny_vertices.push_back(icon_ul_x);
+                tiny_vertices.push_back(icon_lr_y);
+                tiny_vertices.push_back(icon_lr_x);
+                tiny_vertices.push_back(icon_lr_y);
+            }
+        }
         m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
@@ -669,16 +839,63 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
 
         // gaseous substance around system
-        boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", systems[i]->ID());
-        m_gaseous_substance[gaseous_texture].push_back(systems[i]->ID());
+        if (boost::shared_ptr<GG::Texture> gaseous_texture =
+            ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", systems[i]->ID())) {
+            glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            const double GAS_SIZE = ClientUI::SystemIconSize() * 16.0;
+            const double ROTATION = systems[i]->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const double COS_THETA = std::cos(ROTATION);
+            const double SIN_THETA = std::sin(ROTATION);
+            // This rotates the upper left and lower right corners CCW ROTATION
+            // radians, around systems[i].  The initial upper left and lower
+            // right corners are (-GAS_SIZE, -GAS_SIZE) and (GAS_SIZE,
+            // GAS_SIZE), in map coordinates respectively.  See note above
+            // texture coords for why we're making coordinate sets that are 2x
+            // too big.
+            double gas_ul_x = systems[i]->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
+            double gas_ul_y = systems[i]->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
+            double gas_lr_x = systems[i]->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
+            double gas_lr_y = systems[i]->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
+            std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
+            gas_vertices.push_back(gas_lr_x);
+            gas_vertices.push_back(gas_ul_y);
+            gas_vertices.push_back(gas_ul_x);
+            gas_vertices.push_back(gas_ul_y);
+            gas_vertices.push_back(gas_ul_x);
+            gas_vertices.push_back(gas_lr_y);
+            gas_vertices.push_back(gas_lr_x);
+            gas_vertices.push_back(gas_lr_y);
+        }
 
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
             if (!it->second) {
                 System* dest_system = universe.Object<System>(it->first);
-                m_starlanes.insert(StarlaneData(systems[i], dest_system));
+                if (starlane_pairs.insert(StarlaneData(systems[i], dest_system)).second) {
+                    raw_starlane_vertices.push_back(systems[i]->X());
+                    raw_starlane_vertices.push_back(systems[i]->Y());
+                    raw_starlane_vertices.push_back(dest_system->X());
+                    raw_starlane_vertices.push_back(dest_system->Y());
+                }
             }
         }
+    }
+
+    // Note these coordinates assume the texture is twice as large as it should
+    // be.  This allows us to use one set of texture coords for everything, even
+    // though the star-halo textures must be rendered at sizes as much as twice
+    // as large as the star-disc textures.
+    for (std::size_t i = 0; i < systems.size(); ++i) {
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(1.5);
     }
 
     DoSystemIconsLayout();
@@ -729,20 +946,39 @@ void MapWnd::InitTurn(int turn_number)
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
-    // determine sytems where fleets can delivery supply, and groups of systems that can exchange resources
+    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         int empire_id = it->first;
         Empire* empire = it->second;
 
         // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
+        std::set<std::pair<int, int> > fleet_supply_lanes;
         empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
-                                                     m_empire_fleet_supply_lanes[empire_id]);
+                                                     fleet_supply_lanes);
 
         // get sets of systems from and to which physical resources can be shared
         empire->GetSupplySystemGroupsAndStarlanesUsed(m_empire_resource_sharing_groups[empire_id],
                                                       m_empire_resource_sharing_lanes[empire_id]);
 
         empire->InitResourcePools(m_empire_resource_sharing_groups[empire_id]);
+
+        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
+            glColor(empire->Color());
+            const System* start_sys = universe.Object<System>(lane_it->first);
+            const System* end_sys = universe.Object<System>(lane_it->second);
+            raw_starlane_supply_vertices.push_back(start_sys->X());
+            raw_starlane_supply_vertices.push_back(start_sys->Y());
+            raw_starlane_supply_vertices.push_back(end_sys->X());
+            raw_starlane_supply_vertices.push_back(end_sys->Y());
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+        }
     }
 
     m_active_fleet_wnd = 0;
@@ -817,6 +1053,147 @@ void MapWnd::InitTurn(int turn_number)
     SelectSystem(m_side_panel->SystemID());
 
     empire->UpdateResourcePools();
+
+    // clear out all the old buffers
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_star_core_quad_vertices.begin();
+         it != m_star_core_quad_vertices.end();
+         ++it) {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_star_core_quad_vertices.clear();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_star_halo_quad_vertices.begin();
+         it != m_star_halo_quad_vertices.end();
+         ++it) {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_star_halo_quad_vertices.clear();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_star_tiny_quad_vertices.begin();
+         it != m_star_tiny_quad_vertices.end();
+         ++it) {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_star_tiny_quad_vertices.clear();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end();
+         ++it) {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_galaxy_gas_quad_vertices.clear();
+
+    if (m_star_texture_coords.m_name) {
+        glDeleteBuffers(1, &m_star_texture_coords.m_name);
+        m_star_texture_coords.m_name = 0;
+    }
+    if (m_starlane_vertices.m_name) {
+        glDeleteBuffers(1, &m_starlane_vertices.m_name);
+        m_starlane_vertices.m_name = 0;
+    }
+    if (m_starlane_supply_vertices.m_name) {
+        glDeleteBuffers(1, &m_starlane_supply_vertices.m_name);
+        m_starlane_supply_vertices.m_name = 0;
+    }
+    if (m_starlane_supply_colors.m_name) {
+        glDeleteBuffers(1, &m_starlane_supply_colors.m_name);
+        m_starlane_supply_colors.m_name = 0;
+    }
+
+
+    // create new buffers
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_star_core_quad_vertices.begin();
+         it != raw_star_core_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_star_core_quad_vertices[it->first].m_name;
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+        m_star_core_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_star_halo_quad_vertices.begin();
+         it != raw_star_halo_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_star_halo_quad_vertices[it->first].m_name;
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+        m_star_halo_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_star_tiny_quad_vertices.begin();
+         it != raw_star_tiny_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_star_tiny_quad_vertices[it->first].m_name;
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+        m_star_tiny_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_galaxy_gas_quad_vertices.begin();
+         it != raw_galaxy_gas_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_galaxy_gas_quad_vertices[it->first].m_name;
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+        m_galaxy_gas_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+
+    if (!raw_star_texture_coords.empty()) {
+        glGenBuffers(1, &m_star_texture_coords.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_star_texture_coords.size() * sizeof(float),
+                     &raw_star_texture_coords[0],
+                     GL_STATIC_DRAW);
+        m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
+    }
+    if (!raw_starlane_vertices.empty()) {
+        glGenBuffers(1, &m_starlane_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_vertices.size() * sizeof(float),
+                     &raw_starlane_vertices[0],
+                     GL_STATIC_DRAW);
+        m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
+    }
+    if (!raw_starlane_supply_vertices.empty()) {
+        glGenBuffers(1, &m_starlane_supply_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_supply_vertices.size() * sizeof(float),
+                     &raw_starlane_supply_vertices[0],
+                     GL_STATIC_DRAW);
+        m_starlane_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
+    }
+    if (!raw_starlane_supply_colors.empty()) {
+        glGenBuffers(1, &m_starlane_supply_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_supply_colors.size() * sizeof(unsigned char),
+                     &raw_starlane_supply_colors[0],
+                     GL_STATIC_DRAW);
+        m_starlane_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
+    }
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
@@ -829,7 +1206,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     GG::Pt ul = UpperLeft();
     GG::Pt map_move = data.map_upper_left - ul;
     OffsetMove(map_move);
-    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
@@ -844,7 +1220,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 
     m_nebulae.clear();
@@ -900,7 +1275,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt map_move = GG::Pt(static_cast<int>((current_x - x) * m_zoom_factor), 
                              static_cast<int>((current_y - y) * m_zoom_factor));
     OffsetMove(map_move);
-    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
@@ -915,7 +1289,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
 
@@ -1151,7 +1524,6 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     return false;
 }
 
-
 void MapWnd::DoSystemIconsLayout()
 {
     // position and resize system icons and gaseous substance
@@ -1230,7 +1602,6 @@ void MapWnd::Zoom(int delta)
     GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),
                     static_cast<int>((center_y + ul_offset_y) - ul_y));
     OffsetMove(map_move);
-    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
@@ -1245,29 +1616,41 @@ void MapWnd::Zoom(int delta)
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
 
 void MapWnd::RenderBackgrounds()
 {
-    double x, y;
     glColor3d(1.0, 1.0, 1.0);
+
+    GG::Pt origin_offset =
+        UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+    glMatrixMode(GL_TEXTURE);
+
     for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
-        int bg_width = m_backgrounds[i]->Width();
-        int bg_height = m_backgrounds[i]->Height();
-        int app_width = GG::GUI::GetGUI()->AppWidth();
-        int app_height = GG::GUI::GetGUI()->AppHeight();
-        x = std::fmod(m_bg_position_X[i], bg_width);
-        while (x < app_width + bg_width) {
-            y = std::fmod(m_bg_position_Y[i], bg_height);
-            while (y < app_height + bg_height) {
-                m_backgrounds[i]->OrthoBlit(GG::Pt(static_cast<int>(x - bg_width), static_cast<int>(y - bg_height)));
-                y += m_backgrounds[i]->Height();
-            }
-            x += m_backgrounds[i]->Width();
-        }
+        float texture_coords_per_pixel_x = 1.0 / m_backgrounds[i]->Width();
+        float texture_coords_per_pixel_y = 1.0 / m_backgrounds[i]->Height();
+        glScalef(texture_coords_per_pixel_x * Width(),
+                 texture_coords_per_pixel_y * Height(),
+                 1.0);
+        glTranslatef(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i],
+                     -texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i],
+                     0.0);
+        glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0);
+        glVertex2i(0, 0);
+        glTexCoord2f(0.0, 1.0);
+        glVertex2i(0, Height());
+        glTexCoord2f(1.0, 1.0);
+        glVertex2i(Width(), Height());
+        glTexCoord2f(1.0, 0.0);
+        glVertex2i(Width(), 0);
+        glEnd();
+        glLoadIdentity();
     }
+
+    glMatrixMode(GL_MODELVIEW);
 
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
         int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
@@ -1281,138 +1664,44 @@ void MapWnd::RenderBackgrounds()
                                 ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
                                             static_cast<int>(nebula_height * m_zoom_factor)));
     }
-
-    const Universe& universe = GetUniverse();
-    const float GAS_SIZE = ClientUI::SystemIconSize() * 16.0;
-    const float HALF_GAS_SIZE = GAS_SIZE / 2.0;
-    glColor(GG::Clr(255, 255, 255, 50));
-    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<int> >::iterator it = m_gaseous_substance.begin(); it != m_gaseous_substance.end(); ++it) {
-        const boost::shared_ptr<GG::Texture>& texture = it->first;
-        glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        std::vector<int>& sys_ids = it->second;
-        for (std::vector<int>::const_iterator sys_it = sys_ids.begin(); sys_it != sys_ids.end(); ++sys_it) {
-            const UniverseObject* obj = universe.Object(*sys_it);
-            if (!obj)
-                continue;
-            glLoadIdentity();
-            glTranslatef(static_cast<float>(obj->X() * m_zoom_factor + ClientUpperLeft().x), static_cast<float>(obj->Y() * m_zoom_factor + ClientUpperLeft().y), 0.0f);
-            glRotatef(*sys_it * 27.0f, 0.0f, 0.0f, 1.0f);
-            glScalef(m_zoom_factor, m_zoom_factor, 1.0f);
-            glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2f(0.0, 0.0); glVertex2i(-HALF_GAS_SIZE, -HALF_GAS_SIZE);
-                glTexCoord2f(1.0, 0.0); glVertex2i( HALF_GAS_SIZE, -HALF_GAS_SIZE);
-                glTexCoord2f(0.0, 1.0); glVertex2i(-HALF_GAS_SIZE,  HALF_GAS_SIZE);
-                glTexCoord2f(1.0, 1.0); glVertex2i( HALF_GAS_SIZE,  HALF_GAS_SIZE);
-            glEnd();
-        }
-    }
-    glLoadIdentity();
 }
 
 void MapWnd::RenderStarlanes()
 {
-    double LINE_SCALE = 3.0;   //std::max(1.0, 0.666 * m_zoom_factor);
-    double INNER_LINE_PORTION = 0.3;
-    double INNER_LINE_WIDTH = (LINE_SCALE / 2.0) * INNER_LINE_PORTION; // these are actually half-widths in either direction
-    double OUTER_LINE_WIDTH = (LINE_SCALE / 2.0);
-    double CENTER_ALPHA = 0.7;
-    double INNER_LINE_EDGE_ALPHA = 0.4;
-    double OUTER_LINE_EDGE_ALPHA = 0.0;
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    GG::Pt ul = ClientUpperLeft();
-
-    const Universe& universe = GetUniverse();
-    const EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    const Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-
-    glDisable(GL_TEXTURE_2D);
-
-    // render base starlanes
-    for (std::set<StarlaneData>::iterator it = m_starlanes.begin(); it != m_starlanes.end(); ++it) {
-        double center1[2] = {ul.x + it->Src()->X() * m_zoom_factor, ul.y + it->Src()->Y() * m_zoom_factor};
-        double center2[2] = {ul.x + it->Dst()->X() * m_zoom_factor, ul.y + it->Dst()->Y() * m_zoom_factor};
-        double lane_length = GetUniverse().LinearDistance(it->Src()->ID(), it->Dst()->ID());
-        double left_vec[2] = {-(center2[1] - center1[1]) / lane_length, (center2[0] - center1[0]) / lane_length};
-        double far_left1[2] = {center1[0] + OUTER_LINE_WIDTH * left_vec[0], center1[1] + OUTER_LINE_WIDTH * left_vec[1]};
-        double far_left2[2] = {center2[0] + OUTER_LINE_WIDTH * left_vec[0], center2[1] + OUTER_LINE_WIDTH * left_vec[1]};
-        double left1[2] = {center1[0] + INNER_LINE_WIDTH * left_vec[0], center1[1] + INNER_LINE_WIDTH * left_vec[1]};
-        double left2[2] = {center2[0] + INNER_LINE_WIDTH * left_vec[0], center2[1] + INNER_LINE_WIDTH * left_vec[1]};
-        double right1[2] = {center1[0] - INNER_LINE_WIDTH * left_vec[0], center1[1] - INNER_LINE_WIDTH * left_vec[1]};
-        double right2[2] = {center2[0] - INNER_LINE_WIDTH * left_vec[0], center2[1] - INNER_LINE_WIDTH * left_vec[1]};
-        double far_right1[2] = {center1[0] - OUTER_LINE_WIDTH * left_vec[0], center1[1] - OUTER_LINE_WIDTH * left_vec[1]};
-        double far_right2[2] = {center2[0] - OUTER_LINE_WIDTH * left_vec[0], center2[1] - OUTER_LINE_WIDTH * left_vec[1]};
-
-        GG::Clr color = GG::CLR_WHITE;
-
-        glBegin(GL_TRIANGLE_STRIP);
-        color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(far_left2);
-        glVertex2dv(far_left1);
-        color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(left2);
-        glVertex2dv(left1);
-        color.a = static_cast<unsigned char>(255 * CENTER_ALPHA);
-        glColor(color);
-        glVertex2dv(center2);
-        glVertex2dv(center1);
-        color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(right2);
-        glVertex2dv(right1);
-        color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(far_right2);
-        glVertex2dv(far_right1);
-        glEnd();
+    if (m_starlane_vertices.m_name) {
+        const float STARLANE_GRAY = 127.0f / 255.0f;
+        const float STARLANE_ALPHA = 0.7f;
+        const double STARLANE_WIDTH = 2.5;
+        glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+        glLineWidth(STARLANE_WIDTH);
+        glLineStipple(1, 0xffff);
+        glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
     }
 
-    // render fleet supply lines
-    const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
-    const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
-    const double RATE = 0.1;            // slow crawl
-    const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
-    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
-    LINE_SCALE = std::max(0.75, m_zoom_factor);
-
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
-    glLineWidth(LINE_SCALE);
-    // add series of vertices...
-
-    glBegin(GL_LINES);
-    for (std::map<int, std::set<std::pair<int, int> > >::const_iterator empire_it = m_empire_fleet_supply_lanes.begin(); empire_it != m_empire_fleet_supply_lanes.end(); ++empire_it) {
-        int empire_id = empire_it->first;
-        empire = manager.Lookup(empire_id);
-        glColor(empire->Color());
-        const std::set<std::pair<int, int> >& starlanes = empire_it->second;
-        for (std::set<std::pair<int, int> >::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
-            int lane_start_sys_id = lane_it->first;
-            const System* start_sys = universe.Object<System>(lane_start_sys_id);
-            double start_x = start_sys->X(), start_y = start_sys->Y();
-            GG::Pt start_screen_coords = ScreenCoordsFromUniversePosition(start_x, start_y);
-
-            int lane_end_sys_id = lane_it->second;
-            const System* end_sys = universe.Object<System>(lane_end_sys_id);
-            double end_x = end_sys->X(), end_y = end_sys->Y();
-            GG::Pt end_screen_coords = ScreenCoordsFromUniversePosition(end_x, end_y);
-
-            glVertex2d(start_screen_coords.x, start_screen_coords.y);
-            glVertex2d(end_screen_coords.x, end_screen_coords.y);
-        }
+    if (m_starlane_supply_vertices.m_name && m_starlane_supply_colors.m_name) {
+        // render fleet supply lines
+        const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
+        const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
+        const double RATE = 0.1;            // slow crawl
+        const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+        const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+        const double LINE_SCALE = std::max(0.75, m_zoom_factor);
+        glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
+        glLineWidth(LINE_SCALE);
+        glEnableClientState(GL_COLOR_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+        glDrawArrays(GL_LINES, 0, m_starlane_supply_vertices.m_size);
+        glDisableClientState(GL_COLOR_ARRAY);
     }
-    glEnd();
 
-    // add series of vertices...
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void MapWnd::RenderFleetMovementLines()
@@ -1427,13 +1716,10 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
-    double LINE_SCALE = std::max(1.0, 1.333 * m_zoom_factor);
+    double LINE_SCALE = std::max(1.0, m_zoom_factor);
 
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
     glLineWidth(LINE_SCALE);
+    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
@@ -1449,18 +1735,16 @@ void MapWnd::RenderFleetMovementLines()
         const std::list<MovePathNode>& path = move_line.path;
 
         // add starting vertex
-        GG::Pt screen_coords = ScreenCoordsFromUniversePosition(move_line.x, move_line.y);
-        glVertex2d(screen_coords.x, screen_coords.y);
+        glVertex2d(move_line.x, move_line.y);
 
         for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
             // add ending vertex for previous leg of path
-            screen_coords = ScreenCoordsFromUniversePosition(path_it->x, path_it->y);
-            glVertex2d(screen_coords.x, screen_coords.y);
+            glVertex2d(path_it->x, path_it->y);
 
             // if not done, add starting vertex for next leg of path
             std::list<MovePathNode>::const_iterator temp_it = path_it;
             if (++temp_it != path.end())
-                glVertex2d(screen_coords.x, screen_coords.y);
+                glVertex2d(path_it->x, path_it->y);
         }
         glEnd();
     }
@@ -1473,37 +1757,18 @@ void MapWnd::RenderFleetMovementLines()
         const std::list<MovePathNode>& path = m_projected_fleet_line.path;
 
         // add starting vertex
-        GG::Pt screen_coords = ScreenCoordsFromUniversePosition(m_projected_fleet_line.x, m_projected_fleet_line.y);
-        glVertex2d(screen_coords.x, screen_coords.y);
+        glVertex2d(m_projected_fleet_line.x, m_projected_fleet_line.y);
 
         for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
             // add ending vertex for previous leg of path
-            screen_coords = ScreenCoordsFromUniversePosition(path_it->x, path_it->y);
-            glVertex2d(screen_coords.x, screen_coords.y);
+            glVertex2d(path_it->x, path_it->y);
 
             // if not done, add starting vertex for next leg of path
             std::list<MovePathNode>::const_iterator temp_it = path_it;
             if (++temp_it != path.end())
-                glVertex2d(screen_coords.x, screen_coords.y);
+                glVertex2d(path_it->x, path_it->y);
         }
         glEnd();
-    }
-
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-    glEnable(GL_TEXTURE_2D);
-}
-
-void MapWnd::MoveBackgrounds(const GG::Pt& move)
-{   
-    double move_x, move_y;
-
-    for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
-        move_x = move.x * m_bg_scroll_rate[i];
-        move_y = move.y * m_bg_scroll_rate[i];
-        m_bg_position_X[i] += move_x;
-        m_bg_position_Y[i] += move_y;    
     }
 }
 
@@ -1793,7 +2058,6 @@ void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
 void MapWnd::HandleEmpireElimination(int empire_id)
 {
     m_empire_system_fleet_supply.erase(empire_id);
-    m_empire_fleet_supply_lanes.erase(empire_id);
     m_empire_resource_sharing_groups.erase(empire_id);
     m_empire_resource_sharing_lanes.erase(empire_id);
 }

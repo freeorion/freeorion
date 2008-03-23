@@ -52,7 +52,7 @@ common_sources = [
     'util/XMLDoc.cpp'
     ]
 
-if env['target_define'] == 'FREEORION_BUILD_SERVER':
+if 'FREEORION_BUILD_SERVER' in env['target_defines']:
     target_sources = [
         'combat/CombatSystem.cpp',
         'network/ServerNetworking.cpp',
@@ -65,7 +65,7 @@ if env['target_define'] == 'FREEORION_BUILD_SERVER':
         ]
     target = 'server'
 
-if env['target_define'] == 'FREEORION_BUILD_AI':
+if 'FREEORION_BUILD_AI' in env['target_defines']:
     target_sources = [
         'client/ClientApp.cpp',
         'client/ClientFSMEvents.cpp',
@@ -83,7 +83,14 @@ if env['target_define'] == 'FREEORION_BUILD_AI':
         ]
     target = 'ai'
 
-if env['target_define'] == 'FREEORION_BUILD_HUMAN':
+libs = []
+if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
+    # This is here so it doesn't get lost, but it is not part of the normal
+    # build -- it only exists to make small changes very quick by avoiding
+    # relinking the entire FreeOrion app.
+    #lib_obj = env.SharedObject(source = 'UI/MapWnd.cpp',
+    #                           CPPDEFINES = env['CPPDEFINES'] + env['target_defines'])
+    #libs.append(env.SharedLibrary('MapWnd', [lib_obj]))
     target_sources = [
         'client/ClientApp.cpp',
         'client/ClientFSMEvents.cpp',
@@ -99,7 +106,6 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/CUIDrawUtil.cpp',
         'UI/CUIStyle.cpp',
         'UI/CUIWnd.cpp',
-        'UI/CombatWnd.cpp',
         'UI/FleetButton.cpp',
         'UI/FleetWnd.cpp',
         'UI/GalaxySetupWnd.cpp',
@@ -107,6 +113,7 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
         'UI/InfoPanels.cpp',
         'UI/IntroScreen.cpp',
         'UI/LinkText.cpp',
+        'UI/CombatWnd.cpp',
         'UI/MapWnd.cpp',
         'UI/MultiplayerLobbyWnd.cpp',
         'UI/OptionsWnd.cpp',
@@ -128,6 +135,6 @@ if env['target_define'] == 'FREEORION_BUILD_HUMAN':
 objects = env.Object(common_sources)
 objects += [env.Object(target = source.split(".")[0] + '-' + target,
                        source = source,
-                       CPPDEFINES = env['CPPDEFINES'] + [env['target_define']])
+                       CPPDEFINES = env['CPPDEFINES'] + env['target_defines'])
             for source in target_sources]
-Return('objects')
+Return('objects', 'libs')

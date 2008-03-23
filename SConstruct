@@ -526,6 +526,7 @@ if str(Platform()) == 'win32':
         'GiGi',
         'GiGiSDL',
         'glu32',
+        'glew32',
         'jpeg',
         'kernel32',
         'log4cpp',
@@ -568,18 +569,20 @@ if str(Platform()) == 'win32':
 Export('env')
 
 # define server objects
-env['target_define'] = 'FREEORION_BUILD_SERVER'
-server_objects = SConscript(os.path.normpath('SConscript'))
+env['target_defines'] = ['FREEORION_BUILD_SERVER']
+server_objects, server_libs = SConscript(os.path.normpath('SConscript'))
 freeoriond = env.Program("freeoriond", server_objects)
 
 # define ai objects
-env['target_define'] = 'FREEORION_BUILD_AI'
-ai_objects = SConscript(os.path.normpath('SConscript'))
+env['target_defines'] = ['FREEORION_BUILD_AI']
+ai_objects, ai_libs = SConscript(os.path.normpath('SConscript'))
 freeorionca = env.Program("freeorionca", ai_objects)
 
 # define human objects
-env['target_define'] = 'FREEORION_BUILD_HUMAN'
-human_objects = SConscript(os.path.normpath('SConscript'))
+env['target_defines'] = ['FREEORION_BUILD_HUMAN']
+if str(Platform()) != 'win32':
+    env['target_defines'].append('GL_GLEXT_PROTOTYPES')
+human_objects, human_libs = SConscript(os.path.normpath('SConscript'))
 if str(Platform()) == 'win32':
     rc_file = open('win32_resources.rc', 'w')
     rc_file.write('IDI_ICON ICON "client/human/HumanClient.ico"')
@@ -589,7 +592,9 @@ if str(Platform()) == 'win32':
     env.Command('icon.rbj', 'win32_resources.res', ['cvtres /out:icon.rbj /machine:ix86 win32_resources.res'])
     freeorion = env.Program("freeorion", human_objects + ['icon.rbj'])
 else:
-    freeorion = env.Program("freeorion", human_objects)
+    env_copy = env.Copy()
+    env_copy.AppendUnique(LIBS = human_libs)
+    freeorion = env_copy.Program("freeorion", human_objects)
 
 # install target
 Alias('install', Install(env['bindir'], freeoriond))

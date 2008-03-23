@@ -50,6 +50,10 @@ public:
     const FleetButton*  GetFleetButton(Fleet* fleet) const;
     GG::Pt              FleetButtonCentre(int empire_id, bool moving) const;    //!< returns centre of fleetbutton owned by empire with id \a empire_id, or GG::Pt(INVALID_POSITION, INVALID_POSITION) if there is no such FleetButton for the specified empire.
 
+    const boost::shared_ptr<GG::Texture>& DiscTexture() const; //!< returns the solid star disc texture
+    const boost::shared_ptr<GG::Texture>& HaloTexture() const; //!< returns the transparent star halo texture
+    const boost::shared_ptr<GG::Texture>& TinyTexture() const; //!< returns the alternate texture shown when icon very small
+
     virtual bool        InWindow(const GG::Pt& pt) const;   //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
     //!@}
 
@@ -89,9 +93,9 @@ private:
     void FleetCreatedOrDestroyed(const Fleet&);
 
     const System&                   m_system;               //!< the System object associated with this SystemIcon
-    GG::StaticGraphic*              m_disc_graphic;         //!< solid star disc graphic
-    GG::StaticGraphic*              m_halo_graphic;         //!< transparent star halo graphic
-    GG::StaticGraphic*              m_tiny_graphic;         //!< alternate graphic shown when icon very small
+    boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture
+    boost::shared_ptr<GG::Texture>  m_halo_texture;         //!< transparent star halo texture
+    boost::shared_ptr<GG::Texture>  m_tiny_texture;         //!< alternate texture shown when icon very small
     GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
     GG::StaticGraphic*              m_mouseover_indicator;  //!< shown when the mouse cursor is over the system
     bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator

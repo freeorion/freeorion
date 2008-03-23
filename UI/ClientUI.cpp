@@ -468,16 +468,16 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     }
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix)
+boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)
 {
-    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first[(*prefixed_textures_and_dist.second)()];
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n)
+boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap/* = false*/)
 {
     assert(0 <= n);
-    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first.empty() ? 
         boost::shared_ptr<GG::Texture>() : 
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
@@ -525,7 +525,7 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     return retval;
 }
 
-ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)
+ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
 {
     namespace fs = boost::filesystem;
     assert(fs::is_directory(dir));
@@ -539,7 +539,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->leaf(), prefix))
-                    textures.push_back(ClientUI::GetTexture(*it));
+                    textures.push_back(ClientUI::GetTexture(*it, mipmap));
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
                 if (e.system_error() != EACCES)

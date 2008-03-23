@@ -1,3 +1,7 @@
+#ifdef FREEORION_WIN32
+#include <GL/glew.h>
+#endif
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -424,6 +428,11 @@ void HumanClientApp::SDLInit()
 
 void HumanClientApp::GLInit()
 {
+#ifdef FREEORION_WIN32
+    GLenum error = glewInit();
+    assert(error == GLEW_OK);
+#endif
+
     double ratio = AppWidth() / (float)(AppHeight());
 
     glEnable(GL_BLEND);
