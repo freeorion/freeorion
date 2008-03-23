@@ -118,45 +118,5 @@ void StringTable::Load()
     } else {
         Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed";
     }
-
-#if 0
-    string temp;
-    string temp2;
-    std::ifstream ifs;
-    try {
-        ifs.open(m_filename.c_str());
-    } catch (const exception& e) {
-        Logger().errorStream() << "Error opening StringTable file \"" << m_filename << "\": " << e.what();
-        return;        // handle exception by showing error msg and then get out!
-    }
-
-    getline(ifs, m_language);
-
-    //we now use 1 line for an identifier and one line per string
-    while(ifs.peek() != EOF) {
-        getline(ifs, temp);
-
-        //continue reading until we reach a pertinent line
-        // i.e. once that doesn't start with a # sign or a newline
-        while (temp.empty() || temp[0] == '#') {
-            // make sure we're not reading extraneous lines at the end of the file
-            if (ifs.peek() == EOF) {
-                return;
-            }
-            getline(ifs, temp);
-        }
-        getline(ifs, temp2);
-
-        HandleNewlines(temp2);
-
-        if (!m_strings.insert(make_pair(temp, temp2)).second) {
-            //found a duplicate or invalid key
-            Logger().errorStream() << "Duplicate string ID found: '" << (string)temp << "' in file: '" << m_filename << "'.  Ignoring duplicate.";
-        } 
-        /*else {
-            Logger().debugStream() << "Inserted(" << (string)temp << ", " << string(temp2) << ")";
-        }*/
-    }
-#endif
 }
 
