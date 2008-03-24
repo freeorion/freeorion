@@ -10,7 +10,11 @@ namespace {
     const Tech*         TechFromResearchQueueElement(const ResearchQueue::Element& element) { return element.tech; }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                    &TechManager::TechNames;
+    boost::function<std::vector<std::string>(const TechManager*)> TechNamesMemberFunc =                     TechNamesVoid;
+
     std::vector<std::string> (TechManager::*TechNamesCategory)(const std::string&) const =                  &TechManager::TechNames;
+    boost::function<std::vector<std::string>(const TechManager*, const std::string&)>
+                                                                  TechNamesCategoryMemberFunc =             TechNamesCategory;
 
     // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
     // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
@@ -30,8 +34,7 @@ namespace {
     bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                           &Empire::BuildableItem;
 
     const ProductionQueue::Element&
-                            (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =
-                                                                &ProductionQueue::operator[];
+                            (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =          &ProductionQueue::operator[];
 }
 
 namespace FreeOrionPython {
@@ -179,7 +182,15 @@ namespace FreeOrionPython {
         ;
         def("getTech",                          &GetTech,                               return_value_policy<reference_existing_object>());
         def("getTechCategories",                &TechManager::CategoryNames,            return_value_policy<return_by_value>());
-        def("techs",                            TechNamesVoid,                          return_value_policy<return_by_value>());
-        def("techsInCategory",                  TechNamesCategory,                      return_value_policy<return_by_value>());
+        def("techs",                            make_function(
+                                                    boost::bind(TechNamesMemberFunc, &(GetTechManager())),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<std::string> >()
+                                                ));
+        def("techsInCategory",                  make_function(
+                                                    boost::bind(TechNamesCategoryMemberFunc, &(GetTechManager()), _1),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<std::string>, const std::string&>()
+                                                ));
     }
 }

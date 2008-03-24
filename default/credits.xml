@@ -5,7 +5,6 @@
       <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programming, Game Design, Graphics"/>
       <PERSON name="Zach Laine"      nick="Tzlaine"         task="Programming Lead, Game Design"/>
       <PERSON name="Geoff Topping"   nick="Geoff the Medio" task="Game Design Lead, Programming"/>
-      <PERSON name="Kenneth Welch"   nick="LithiumMongoose" task="Audio Lead"/>
     </GROUP>
     <GROUP name ="PROGRAMMING">
       <PERSON name="Joseph Bissonnette"  nick="Oceanmachine"    task="Programming, Game Design"/>
@@ -53,10 +52,11 @@
       <PERSON name="Josh Combs"       nick="Josh"           task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
-      <PERSON name="Shannon Roberts" nick="Guiguibaah" task="Audio"/>
-      <PERSON name="Mejoff"          nick=""           task="Audio"/>
-      <PERSON name="Run_Lugge"       nick=""           task="Audio"/>
-      <PERSON name="_Robbob_"        nick=""           task="Audio"/>
+      <PERSON name="Kenneth Welch"   nick="LithiumMongoose" task="Audio"/>
+      <PERSON name="Shannon Roberts" nick="Guiguibaah"      task="Audio"/>
+      <PERSON name="Mejoff"          nick=""                task="Audio"/>
+      <PERSON name="Run_Lugge"       nick=""                task="Audio"/>
+      <PERSON name="_Robbob_"        nick=""                task="Audio"/>
     </GROUP>
     <GROUP name ="TRANSLATION">
       <PERSON name="Martin Wuttke" nick="The Silent One" task="German Translation, Graphics"/>
