@@ -81,6 +81,9 @@ public:
     mutable FleetButtonClickedSignalType    FleetButtonClickedSignal;
     //!@}
 
+    /** The size below which the "tiny" version of the star graphic is used, in pixels. */
+    static const int TINY_SIZE;
+
 private:
     void    Init(); //!< common constructor tasks
 
@@ -96,6 +99,7 @@ private:
     boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture
     boost::shared_ptr<GG::Texture>  m_halo_texture;         //!< transparent star halo texture
     boost::shared_ptr<GG::Texture>  m_tiny_texture;         //!< alternate texture shown when icon very small
+    GG::StaticGraphic*              m_tiny_graphic;
     GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
     GG::StaticGraphic*              m_mouseover_indicator;  //!< shown when the mouse cursor is over the system
     bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator

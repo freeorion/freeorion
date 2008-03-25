@@ -66,12 +66,16 @@ void OwnerColoredSystemName::Render()
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
+// static(s)
+const int SystemIcon::TINY_SIZE = 8;
+
 SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
     GG::Control(x, y, w, w, GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
     m_disc_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.Star()], id)),
     m_halo_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[m_system.Star()], id)),
     m_tiny_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", "tiny_" + ClientUI::StarTypeFilePrefixes()[m_system.Star()], id)),
+    m_tiny_graphic(0),
     m_selection_indicator(0),
     m_mouseover_indicator(0),
     m_selected(false),
@@ -89,6 +93,11 @@ void SystemIcon::Init() {
 
     // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
+
+    if (m_tiny_texture)
+        m_tiny_graphic = new GG::StaticGraphic(0, 0, m_tiny_texture->Width(), m_tiny_texture->Height(), m_tiny_texture);
+    AttachChild(m_tiny_graphic);
+    m_tiny_graphic->Hide();
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
@@ -184,6 +193,17 @@ int SystemIcon::FleetButtonSize() const
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
+
+    if (m_tiny_graphic && lr.x - ul.x < TINY_SIZE) {
+        GG::Pt tiny_size = m_tiny_graphic->Size();
+        GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
+        GG::Pt tiny_ul(static_cast<int>(middle.x - tiny_size.x / 2.0 + 0.5),
+                       static_cast<int>(middle.y - tiny_size.y / 2.0 + 0.5));
+        m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
+        m_tiny_graphic->Show();
+    } else {
+        m_tiny_graphic->Hide();
+    }
 
     int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
     GG::Pt ind_ul((Width() - ind_size) / 2, (Height() - ind_size) / 2);

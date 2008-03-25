@@ -529,16 +529,7 @@ void MapWnd::Render()
         glMatrixMode(GL_MODELVIEW);
     }
 
-    // The use of "tiny" versions of the stars has been zeroed out here, because
-    // it doesn't work, and I can't figure out why.  The stars seem to look
-    // alright at far-out zoom levels, so I assume this will be fine to leave
-    // as-is.  However, I don't want to lose the code below, since it does
-    // approximately the right thing, and if the artists really can't live
-    // without the "tinies", we'll need the stuff below.
-#if 0
-    const double TINY_THRESHOLD = 8.0;
-    if (TINY_THRESHOLD < m_zoom_factor * ClientUI::SystemIconSize()) {
-#endif
+    if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
         for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
              it != m_star_core_quad_vertices.end();
              ++it) {
@@ -557,28 +548,7 @@ void MapWnd::Render()
             glTexCoordPointer(2, GL_FLOAT, 0, 0);
             glDrawArrays(GL_QUADS, 0, it->second.m_size);
         }
-#if 0
-    } else {
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_tiny_quad_vertices.begin();
-             it != m_star_tiny_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-#endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-#endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
-        }
     }
-#endif
 
     glPopMatrix();
 
@@ -803,7 +773,6 @@ void MapWnd::InitTurn(int turn_number)
 
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_tiny_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
     std::vector<float> raw_star_texture_coords;
     std::vector<float> raw_starlane_vertices;
@@ -852,21 +821,6 @@ void MapWnd::InitTurn(int turn_number)
                 halo_vertices.push_back(icon_lr_y);
                 halo_vertices.push_back(icon_lr_x);
                 halo_vertices.push_back(icon_lr_y);
-            }
-
-            if (icon->TinyTexture()) {
-                glBindTexture(GL_TEXTURE_2D, icon->TinyTexture()->OpenGLId());
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-                std::vector<float>& tiny_vertices = raw_star_tiny_quad_vertices[icon->TinyTexture()];
-                tiny_vertices.push_back(icon_lr_x);
-                tiny_vertices.push_back(icon_ul_y);
-                tiny_vertices.push_back(icon_ul_x);
-                tiny_vertices.push_back(icon_ul_y);
-                tiny_vertices.push_back(icon_ul_x);
-                tiny_vertices.push_back(icon_lr_y);
-                tiny_vertices.push_back(icon_lr_x);
-                tiny_vertices.push_back(icon_lr_y);
             }
         }
         m_system_icons[systems[i]->ID()] = icon;
@@ -1119,17 +1073,6 @@ void MapWnd::InitTurn(int turn_number)
     }
     m_star_halo_quad_vertices.clear();
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
-             m_star_tiny_quad_vertices.begin();
-         it != m_star_tiny_quad_vertices.end();
-         ++it) {
-#ifdef FREEORION_WIN32
-        glDeleteBuffersARB(1, &it->second.m_name);
-#else
-        glDeleteBuffers(1, &it->second.m_name);
-#endif
-    }
-    m_star_tiny_quad_vertices.clear();
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
              m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it) {
@@ -1219,28 +1162,6 @@ void MapWnd::InitTurn(int turn_number)
                      GL_STATIC_DRAW);
 #endif
         m_star_halo_quad_vertices[it->first].m_size = it->second.size() / 2;
-    }
-    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
-             raw_star_tiny_quad_vertices.begin();
-         it != raw_star_tiny_quad_vertices.end();
-         ++it) {
-        GLuint& name = m_star_tiny_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
-        glGenBuffersARB(1, &name);
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
-        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
-                        it->second.size() * sizeof(float),
-                        &it->second[0],
-                        GL_STATIC_DRAW_ARB);
-#else
-        glGenBuffers(1, &name);
-        glBindBuffer(GL_ARRAY_BUFFER, name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     it->second.size() * sizeof(float),
-                     &it->second[0],
-                     GL_STATIC_DRAW);
-#endif
-        m_star_tiny_quad_vertices[it->first].m_size = it->second.size() / 2;
     }
     for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
              raw_galaxy_gas_quad_vertices.begin();

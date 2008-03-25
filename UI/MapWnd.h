@@ -239,7 +239,6 @@ private:
     };
     std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_tiny_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_galaxy_gas_quad_vertices;
     GLBuffer m_star_texture_coords;
     GLBuffer m_starlane_vertices;
