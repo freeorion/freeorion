@@ -651,14 +651,35 @@ void HullControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 //////////////////////////////////////////////////
 // BasesListBox                                  //
 //////////////////////////////////////////////////
-/** List of 
+/** List of starting points for designs, such as empty hulls, existing designs kept by this empire or seen 
+  * elsewhere in the universe, design template scripts or saved (on disk) designs from previous games.
   */
 class BasesListBox : public CUIListBox {
 public:
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(int w, int h);
-        //virtual void    ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination);
+        virtual void        Render();
+    protected:
+        GG::StaticGraphic*  m_graphic;
+    };
+
+    class HullAndPartsListBoxRow : public BasesListBoxRow {
+    public:
+        HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts);
+        std::string                Hull() const { return m_hull; }
+        std::vector<std::string>   Parts() const { return m_parts; }
+    private:
+        std::string                 m_hull;
+        std::vector<std::string>    m_parts;
+    };
+
+    class CompletedDesignListBoxRow : public BasesListBoxRow {
+    public:
+        CompletedDesignListBoxRow(int w, int h, int design_id);
+        int DesignID() const { return m_design_id; }
+    private:
+        int m_design_id;
     };
 
     /** \name Structors */ //@{
@@ -666,219 +687,170 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+    const std::pair<bool, bool>&    GetAvailabilitiesShown() const; //!< .first -> available items; .second -> unavailable items
     //@}
 
     /** \name Mutators */ //@{
-    //virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
-    void            Populate();
+    virtual void                    Populate();
 
-    void            ShowAvailability(bool available, bool refresh_list = true);
-    void            HideAvailability(bool available, bool refresh_list = true);
+    void                            ShowEmptyHulls(bool refresh_list = true);
+    void                            ShowCompletedDesigns(bool refresh_list = true);
+
+    void                            ShowAvailability(bool available, bool refresh_list = true);
+    void                            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
-    mutable boost::signal<void (const ShipDesign*)> DesignSelectedSignal;   //!< a design was selected.  design might be just an empty hull, or could have parts as well
+    mutable boost::signal<void (int)>
+                                    DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected
+    mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
+                                    DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected
 
 private:
-    std::pair<bool, bool>   m_availabilities_shown; // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+    void                            PopulateWithEmptyHulls();
+    void                            PopulateWithCompletedDesigns(int empire_id = -1);
+    //void                            PopulateWithSavedDesigns();
+    //void                            PopulateWithTemplates();
+
+    void                            PropegateDesignSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
+    void                            PropegateDesignComponentsSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
+
+    std::pair<bool, bool>           m_availabilities_shown;                             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
+    bool                            m_showing_empty_hulls, m_showing_completed_designs;
+    boost::signals::connection      m_select_signal_connection;
 };
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(int w, int h) :
-    CUIListBox::Row(w, h, "")    // drag_drop_data_type = "" implies not draggable row
+    CUIListBox::Row(w, h, "BasesListBoxRow"),
+    m_graphic(0)
 {}
 
-//void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
-//    Logger().debugStream() << "PartsListBoxRow::ChildrenDraggedAway";
-//    if (wnds.empty())
-//        return;
-//    const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list due because PartControls can only be dragged one-at-a-time
-//    const GG::Control* control = dynamic_cast<const GG::Control*>(wnd);
-//    if (!control)
-//        return;
-//
-//    GG::Control* dragged_control = 0;
-//
-//    // find control in row
-//    unsigned int i = -1;
-//    for (i = 0; i < size(); ++i) {
-//        dragged_control = (*this)[i];
-//        if (dragged_control == control)
-//            break;
-//        else
-//            dragged_control = 0;
-//    }
-//
-//    if (!dragged_control)
-//        return;
-//
-//    PartControl* part_control = dynamic_cast<PartControl*>(dragged_control);
-//    const PartType* part_type = 0;
-//    if (part_control)
-//        part_type = part_control->Part();
-//
-//    RemoveCell(i);
-//    delete dragged_control;
-//
-//    if (part_type) {
-//        part_control = new PartControl(part_type);
-//        SetCell(i, part_control);
-//        AttachChild(part_control);
-//    }
-//}
+void BasesListBox::BasesListBoxRow::Render() {
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 2);
+}
+
+BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts) :
+    BasesListBoxRow(w, h),
+    m_hull(hull),
+    m_parts(parts)
+{}
+
+BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(int w, int h, int design_id) :
+    BasesListBoxRow(w, h),
+    m_design_id(design_id)
+{}
 
 BasesListBox::BasesListBox(int x, int y, int w, int h) :
     CUIListBox(x, y, w, h),
-    m_availabilities_shown(std::make_pair(false, false))
+    m_availabilities_shown(std::make_pair(false, false)),
+    m_showing_empty_hulls(false),
+    m_showing_completed_designs(false)
 {}
 
-//const std::set<ShipPartClass>& PartsListBox::GetClassesShown() const {
-//    return m_part_classes_shown;
-//}
-//
-//const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const {
-//    return m_availabilities_shown;
-//}
-//
-//void PartsListBox::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
-//    wnds.clear();   // reject drops
-//}
-//
-//void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-//    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
-//
-//    // maybe later do something interesting with docking
-//    CUIListBox::SizeMove(ul, lr);
-//
-//    if (Visible() && old_size != GG::Wnd::Size()) {
-//        // determine how many columns can fit in the box now...
-//        const int PART_SIZE = PartControl::SIZE;
-//        const int TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
-//        const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / PART_SIZE);
-//
-//        if (NUM_COLUMNS != m_previous_num_columns)
-//            Populate();
-//    }
-//}
-//
-//void PartsListBox::Populate() {
-//    const int PART_SIZE = PartControl::SIZE;
-//    const int TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-//    const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / PART_SIZE);
-//
-//    const int empire_id = HumanClientApp::GetApp()->EmpireID();
-//    const Empire* empire = Empires().Lookup(empire_id);
-//    if (!empire)
-//        return;
-//    const PartTypeManager& manager = GetPartTypeManager();
-//
-//    int cur_col = NUM_COLUMNS;
-//    PartsListBoxRow* cur_row = 0;
-//
-//    // remove parts currently in rows of listbox
-//    Clear();
-//
-//    // loop through all possible parts
-//    for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
-//        const PartType* part = part_it->second;
-//
-//        // check whether this part should be shown in list
-//        ShipPartClass part_class = part->Class();
-//        if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end())
-//            continue;   // part of this class is not requested to be shown
-//        bool part_available = empire->ShipPartAvailable(part->Name());
-//        if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.second))
-//            continue;   // part is available but available parts shouldn't be shown, or part isn't available and not available parts shouldn't be shown
-//
-//        // part should be shown in list.
-//
-//        // check if current row is full, and make a new row if necessary
-//        if (cur_col >= NUM_COLUMNS) {
-//            if (cur_row)
-//                Insert(cur_row);
-//            cur_col = 0;
-//            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PART_SIZE);
-//        }
-//        ++cur_col;
-//
-//        // make new part control and add to row
-//        PartControl* control = new PartControl(part);
-//        GG::Connect(control->ClickedSignal,         PartsListBox::PartTypeClickedSignal);
-//        GG::Connect(control->DoubleClickedSignal,   PartsListBox::PartTypeDoubleClickedSignal);
-//        cur_row->push_back(control);
-//    }
-//    // add any incomplete rows
-//    if (cur_row)
-//        Insert(cur_row);
-//
-//    // keep track of how many columns are present now
-//    m_previous_num_columns = NUM_COLUMNS;
-//}
-//
-//void PartsListBox::ShowClass(ShipPartClass part_class, bool refresh_list) {
-//    if (m_part_classes_shown.find(part_class) == m_part_classes_shown.end()) {
-//        m_part_classes_shown.insert(part_class);
-//        if (refresh_list)
-//            Populate();
-//    }
-//}
-//
-//void PartsListBox::ShowAllClasses(bool refresh_list) {
-//    for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1))
-//        m_part_classes_shown.insert(part_class);
-//    if (refresh_list)
-//        Populate();
-//}
-//
-//void PartsListBox::HideClass(ShipPartClass part_class, bool refresh_list) {
-//    std::set<ShipPartClass>::iterator it = m_part_classes_shown.find(part_class);
-//    if (it != m_part_classes_shown.end()) {
-//        m_part_classes_shown.erase(it);
-//        if (refresh_list)
-//            Populate();
-//    }
-//}
-//
-//void PartsListBox::HideAllClasses(bool refresh_list) {
-//    m_part_classes_shown.clear();
-//    if (refresh_list)
-//        Populate();
-//}
-//
-//void PartsListBox::ShowAvailability(bool available, bool refresh_list) {
-//    if (available) {
-//        if (!m_availabilities_shown.first) {
-//            m_availabilities_shown.first = true;
-//            if (refresh_list)
-//                Populate();
-//        }
-//    } else {
-//        if (!m_availabilities_shown.second) {
-//            m_availabilities_shown.second = true;
-//            if (refresh_list)
-//                Populate();
-//        }
-//    }
-//}
-//
-//void PartsListBox::HideAvailability(bool available, bool refresh_list) {
-//    if (available) {
-//        if (m_availabilities_shown.first) {
-//            m_availabilities_shown.first = false;
-//            if (refresh_list)
-//                Populate();
-//        }
-//    } else {
-//        if (m_availabilities_shown.second) {
-//            m_availabilities_shown.second = false;
-//            if (refresh_list)
-//                Populate();
-//        }
-//    }
-//}
-//
-//
-//
-//
+void BasesListBox::Populate() {
+    Clear();
+    if (m_showing_empty_hulls) {
+        m_select_signal_connection.disconnect();
+        PopulateWithEmptyHulls();
+        m_select_signal_connection = GG::Connect(LeftClickedSignal, &BasesListBox::PropegateDesignComponentsSelectedSignal, this);
+    }
+    if (m_showing_completed_designs) {
+        m_select_signal_connection.disconnect();
+        PopulateWithCompletedDesigns();
+        m_select_signal_connection = GG::Connect(LeftClickedSignal, &BasesListBox::PropegateDesignSelectedSignal, this);
+    }
+}
+
+void BasesListBox::PopulateWithEmptyHulls() {
+    // TODO: Account for availabilities shown
+    const HullTypeManager& manager = GetHullTypeManager();
+    for (HullTypeManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(Width(), 100, it->first, std::vector<std::string>());
+        Insert(row);
+    }
+}
+
+void BasesListBox::PopulateWithCompletedDesigns(int empire_id) {
+    // TODO: Account for availabilities shown
+    if (empire_id == -1) {
+        // all empires / all known designs
+        ;
+    } else {
+        // specific empire's designs
+        ;
+    }
+}
+
+void BasesListBox::PropegateDesignSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
+    CompletedDesignListBoxRow* box_row = dynamic_cast<CompletedDesignListBoxRow*>(row);
+    if (!row) {
+        Logger().errorStream() << "BasesListBox::PropegateDesignSelectedSignal was passed an invalid row";
+        return;
+    }
+    DesignSelectedSignal(box_row->DesignID());
+}
+
+void BasesListBox::PropegateDesignComponentsSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
+    HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(row);
+    if (!row) {
+        Logger().errorStream() << "BasesListBox::PropegateDesignComponentsSelectedSignal was passed an invalid row";
+        return;
+    }
+    DesignComponentsSelectedSignal(box_row->Hull(), box_row->Parts());
+}
+
+void BasesListBox::ShowEmptyHulls(bool refresh_list) {
+    m_showing_empty_hulls = true;
+    m_showing_completed_designs = false;
+    if (refresh_list)
+        Populate();
+}
+
+void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
+    m_showing_empty_hulls = false;
+    m_showing_completed_designs = true;
+    if (refresh_list)
+        Populate();
+}
+
+const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const {
+    return m_availabilities_shown;
+}
+
+void BasesListBox::ShowAvailability(bool available, bool refresh_list) {
+    if (available) {
+        if (!m_availabilities_shown.first) {
+            m_availabilities_shown.first = true;
+            if (refresh_list)
+                Populate();
+        }
+    } else {
+        if (!m_availabilities_shown.second) {
+            m_availabilities_shown.second = true;
+            if (refresh_list)
+                Populate();
+        }
+    }
+}
+
+void BasesListBox::HideAvailability(bool available, bool refresh_list) {
+    if (available) {
+        if (m_availabilities_shown.first) {
+            m_availabilities_shown.first = false;
+            if (refresh_list)
+                Populate();
+        }
+    } else {
+        if (m_availabilities_shown.second) {
+            m_availabilities_shown.second = false;
+            if (refresh_list)
+                Populate();
+        }
+    }
+}
+
+
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
 //////////////////////////////////////////////////
@@ -890,18 +862,22 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            Reset();
     //@}
 
-    mutable boost::signal<void (const ShipDesign*)> DesignSelectedSignal;   //!< a design was selected.  design might be just an empty hull, or could have parts as well
-
+    mutable boost::signal<void (int)>
+                    DesignSelectedSignal;           //!< an existing complete design that is known to this empire was selected
+    mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
+                    DesignComponentsSelectedSignal; //!< a hull and a set of parts (which may be empty) was selected
 private:
     void            DoLayout();
 
     GG::TabWnd*     m_tabs;
-    BasesListBox*   m_hulls_list;
-    BasesListBox*   m_designs_list;
-    //GG::ListBox*    m_saved_designs_list;
-    //GG::ListBox*    m_templates_list;
+    BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
+    BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
+    //BasesListBox*   m_other_designs_list;   // designs seen by / known to this empire but not kept by this empire
+    //GG::ListBox*    m_saved_designs_list;   // hull and parts combinations saved to disk which can be used to create a new design
+    //GG::ListBox*    m_templates_list;       // automated design creation scripts
 };
 
 DesignWnd::BaseSelector::BaseSelector(int w, int h) :
@@ -917,11 +893,13 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
 
     m_hulls_list = new BasesListBox(0, 0, 10, 10);
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
-    GG::Connect(m_hulls_list->DesignSelectedSignal,         DesignWnd::BaseSelector::DesignSelectedSignal);
+    m_hulls_list->ShowEmptyHulls(false);
+    GG::Connect(m_hulls_list->DesignSelectedSignal,             DesignWnd::BaseSelector::DesignSelectedSignal);
 
     m_designs_list = new BasesListBox(0, 0, 10, 10);
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
-    GG::Connect(m_designs_list->DesignSelectedSignal,       DesignWnd::BaseSelector::DesignSelectedSignal);
+    m_hulls_list->ShowCompletedDesigns(false);
+    GG::Connect(m_designs_list->DesignComponentsSelectedSignal, DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
 
     //m_saved_designs_list = new CUIListBox(0, 0, 10, 10);
     m_tabs->AddWnd(new GG::TextControl(0, 0, 30, 20, UserString("DESIGN_NO_PART"),
@@ -939,6 +917,19 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
 void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
+}
+
+void DesignWnd::BaseSelector::Reset() {
+    //GG::Wnd* wnd = m_tabs->Wnds()[m_tabs->CurrentWnd()].first;
+    //if (wnd) {
+    //    BasesListBox* base_box = dynamic_cast<BasesListBox*>(wnd);
+    //    if (base_box)
+    //        base_box->Populate();
+    //}
+    if (m_hulls_list)
+        m_hulls_list->Populate();
+    if (m_designs_list)
+        m_designs_list->Populate();
 }
 
 void DesignWnd::BaseSelector::DoLayout() {
@@ -1169,6 +1160,7 @@ public:
 
     void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
     void            SetPart(const PartType* part, unsigned int slot);
+    void            SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
     /** attempts to add the specified part to the design, if possible.  will first attempt to add part to
       * an empty slot of the appropriate type, and if no appropriate slots are available, may or may not move
       * other parts around within the design to open up a compatible slot in which to add this part (and then
@@ -1178,6 +1170,9 @@ public:
     void            SetHull(const std::string& hull_name);                      //!< sets the design hull to the specified hull, displaying appropriate background image and creating appropriate SlotControls
     void            SetHull(const HullType* hull);
     void            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
+    void            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
+    void            SetDesignComponents(const std::string& hull,
+                                        const std::vector<std::string>& parts); //!< sets design hull and parts to those specified
 
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
     //@}
@@ -1273,6 +1268,12 @@ void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
     m_slots[slot]->SetPart(part);
 }
 
+void  DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
+    unsigned int num_parts = std::min(parts.size(), m_slots.size());
+    for (unsigned int i = 0; i < num_parts; ++i)
+        m_slots[i]->SetPart(parts[i]);
+}
+
 void DesignWnd::MainPanel::AddPart(const PartType* part) {
     // TODO: IMPLEMENT THIS
 }
@@ -1312,6 +1313,15 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     const std::vector<std::string>& parts_vec = ship_design->Parts();
     for (unsigned int i = 0; i < parts_vec.size() && i < m_slots.size(); ++i)
         m_slots[i]->SetPart(GetPartType(parts_vec[i]));
+}
+
+void DesignWnd::MainPanel::SetDesign(int design_id) {
+    SetDesign(GetShipDesign(design_id));
+}
+
+void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull, const std::vector<std::string>& parts) {
+    SetHull(hull);
+    SetParts(parts);
 }
 
 void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_types) {
@@ -1500,6 +1510,7 @@ DesignWnd::DesignWnd(int w, int h) :
     m_base_selector = new BaseSelector(250, 500);
     AttachChild(m_base_selector);
     GG::Connect(m_base_selector->DesignSelectedSignal,          &MainPanel::SetDesign,              m_main_panel);
+    GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
     m_base_selector->MoveTo(GG::Pt(0, 0));
 
     // TEMPORARY
@@ -1508,6 +1519,7 @@ DesignWnd::DesignWnd(int w, int h) :
 
 void DesignWnd::Reset() {
     m_part_palette->Reset();
+    m_base_selector->Reset();
 }
 
 void DesignWnd::Sanitize() {
