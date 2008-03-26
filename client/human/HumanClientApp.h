@@ -22,7 +22,7 @@ class HumanClientFSM;
 class MultiplayerLobbyWnd;
 
 /** the application framework class for the human player FreeOrion client. */
-class HumanClientApp : public ClientApp, public SDLGUI
+class HumanClientApp : public ClientApp, public GG::SDLGUI
 {
 public:
     class CleanQuit : public std::exception {};

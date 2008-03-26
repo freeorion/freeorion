@@ -16,6 +16,7 @@ class MultiMeterStatusBar;
 class MeterStatusBar;   // TODO: delete this line
 class MultiIconValueIndicator;
 class Meter;
+class ShipDesign;
 class Planet;
 class ResourceCenter;
 class PopCenter;
@@ -27,8 +28,7 @@ namespace GG {
     class StaticGraphic;
 }
 
-class PopulationPanel : public GG::Wnd
-{
+class PopulationPanel : public GG::Wnd {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ExpandCollapseSignalType;    ///< emitted when the panel is expanded or collapsed, so that container can reposition other panels whose location depends on this one's size
@@ -49,7 +49,7 @@ public:
     virtual void Render();
 
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
-    
+
     void Update();          ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void Refresh();         ///< updates, redoes layout, resizes indicator
 
@@ -71,7 +71,7 @@ private:
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population and health
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
-    
+
     GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
@@ -79,8 +79,7 @@ private:
     static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
 };
 
-class ResourcePanel : public GG::Wnd
-{
+class ResourcePanel : public GG::Wnd {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()>          ExpandCollapseSignalType;   ///< emitted when the panel is expanded or collapsed, so that container can reposition other panels whose location depends on this one's size
@@ -101,7 +100,7 @@ public:
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
-    
+
     void Update();  ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void Refresh(); ///< updates, redoes layout, resizes indicator
 
@@ -117,7 +116,7 @@ private:
 
     void PrimaryFocusDropListSelectionChanged(int selected);    ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
     void SecondaryFocusDropListSelectionChanged(int selected);  ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
-    
+
     ResourceCenter*         GetResourceCenter(); ///< returns the planet with ID m_planet_id
     const ResourceCenter*   GetResourceCenter() const;
 
@@ -128,7 +127,7 @@ private:
     StatisticIcon*              m_industry_stat;        ///< icon and number of industry production
     StatisticIcon*              m_research_stat;        ///< icon and number of research production
     StatisticIcon*              m_trade_stat;           ///< icon and number of trade production
-  
+
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
@@ -142,8 +141,7 @@ private:
     static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
 };
 
-class BuildingsPanel : public GG::Wnd
-{
+class BuildingsPanel : public GG::Wnd {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> ExpandCollapseSignalType;    ///< emitted when the panel is expanded or collapsed, so that container can reposition other panels whose location depends on this one's size
@@ -163,7 +161,7 @@ public:
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
-    
+
     void Refresh();                             ///< recreates indicators, redoes layout, resizes
 
     mutable ExpandCollapseSignalType ExpandCollapseSignal;
@@ -190,13 +188,12 @@ private:
 };
 
 /** Represents and allows some user interaction with a building */
-class BuildingIndicator : public GG::Wnd
-{
+class BuildingIndicator : public GG::Wnd {
 public:
     BuildingIndicator(int w, const BuildingType &type); ///< constructor for use when building is completed, shown without progress bar
     BuildingIndicator(int w, const BuildingType &type, int turns_left, int turns_completed,
                       double partial_turn);             ///< constructor for use when building is partially complete, to show progress bar
-    
+
     virtual void Render();
 
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
@@ -210,8 +207,8 @@ private:
     MultiTurnProgressBar*   m_progress_bar;
 };
 
-class SpecialsPanel : public GG::Wnd
-{
+/** Displays a set of specials attached to an UniverseObject */
+class SpecialsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     SpecialsPanel(int w, const UniverseObject &obj);   ///< basic ctor
@@ -225,12 +222,11 @@ public:
     /** \name Mutators */ //@{
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
-    
+
     void Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
     //@}
 
 private:
-    
     UniverseObject*         GetObject();        ///< returns the object with ID m_object_id
     const UniverseObject*   GetObject() const;
 
@@ -241,13 +237,41 @@ private:
     static const int EDGE_PAD = 2;
 };
 
+/** Represents a ShipDesign */
+class ShipDesignPanel : public GG::Control {
+public:
+    /** \name Structors */ //@{
+    ShipDesignPanel(int w, int h, int design_id);   ///< basic ctor
+    //@}
+
+    /** \name Accessors */ //@{
+    int                     DesignID() const {return m_design_id;}
+    //@}
+
+    /** \name Mutators */ //@{
+    virtual void            Render();
+    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+
+    void                    Update();           ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
+    //@}
+
+private:
+    const ShipDesign*       GetDesign();        ///< returns the ShipDesign with ID m_design_id
+    int                     m_design_id;        ///< id for the Object whose specials this panel displays
+
+protected:
+    GG::StaticGraphic*      m_graphic;
+    GG::TextControl*        m_name;
+
+    static const int EDGE_PAD = 2;
+};
+
 /** Display icon and number for various meter-related quantities associated with objects.  Typical use
     would be to display the resource production values for a planet (not the meter values) and the
     construction (a meter value), or the population (not a meter value) and health (a meter value).  
     Given a set of MeterType, the indicator will present the appropriate values for each.
 */
-class MultiIconValueIndicator : public GG::Wnd
-{
+class MultiIconValueIndicator : public GG::Wnd {
 public:
     MultiIconValueIndicator(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
     MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types);
@@ -273,8 +297,7 @@ private:
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a
     horizontal indicator for each meter. */
-class MultiMeterStatusBar : public GG::Wnd
-{
+class MultiMeterStatusBar : public GG::Wnd {
 public:
     MultiMeterStatusBar(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
 
@@ -303,4 +326,3 @@ private:
 };
 
 #endif
-

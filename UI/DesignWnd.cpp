@@ -4,6 +4,7 @@
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
+#include "InfoPanels.h"
 #include "EncyclopediaDetailPanel.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
@@ -619,6 +620,15 @@ public:
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
     public:
+        class HullPanel : public GG::Control {
+        public:
+            HullPanel(int w, int h, const std::string& hull);
+            virtual void                Render() {}
+        private:
+            GG::StaticGraphic*          m_graphic;
+            GG::TextControl*            m_name;
+            GG::TextControl*            m_cost_and_build_time;
+        };
         HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts);
         std::string                 Hull() const { return m_hull; }
         std::vector<std::string>    Parts() const { return m_parts; }
@@ -683,12 +693,34 @@ void BasesListBox::BasesListBoxRow::Render() {
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 2);
 }
 
+BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(int w, int h, const std::string& hull) :
+    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+    m_graphic(0),
+    m_name(0),
+    m_cost_and_build_time(0)
+{
+    const HullType* hull_type = GetHullType(hull);
+    if (hull_type) {
+        m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        AttachChild(m_graphic);
+        m_name = new GG::TextControl(0, 0, UserString(hull_type->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_NONE);
+        AttachChild(m_name);
+    }
+}
+
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts) :
     BasesListBoxRow(w, h),
     m_hull(hull),
     m_parts(parts)
 {
-    push_back(new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+    const HullType* hull_type = GetHullType(m_hull);
+    if (hull_type && m_parts.empty()) {
+        // contents are just a hull
+        push_back(new HullPanel(w, h, m_hull));
+    } else {
+        // contents are a hull and parts - need to do something fancier
+        push_back(new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+    }
 }
 
 BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(int w, int h, int design_id) :
@@ -699,7 +731,7 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(int w, int h,
     std::string hull = "";
     if (ship_design)
         hull = ship_design->Hull();
-    push_back(new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+    push_back(new ShipDesignPanel(w, h, design_id));
 }
 
 BasesListBox::BasesListBox(int x, int y, int w, int h) :
@@ -735,6 +767,7 @@ void BasesListBox::PopulateWithCompletedDesigns(int empire_id) {
         // all empires / all known designs
         ;
     } else {
+
         // specific empire's designs
         ;
     }

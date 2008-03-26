@@ -618,7 +618,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
-    
+
     int icon_size = ClientUI::Pts()*4/3;
     GG::DropDownList::Row* row;
     boost::shared_ptr<GG::Texture> texture;
@@ -659,7 +659,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
     GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
     GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
-    
+
     // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_FARMING),
                                        0, 3, false, false);
@@ -1752,8 +1752,8 @@ void SpecialsPanel::Render()
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    GG::Wnd* parent = Parent();
+    if (parent)
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1815,4 +1815,41 @@ const UniverseObject* SpecialsPanel::GetObject() const
     const UniverseObject* obj = GetUniverse().Object(m_object_id);
     if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
     return obj;
+}
+
+/////////////////////////////////////
+//        ShipDesignPanel          //
+/////////////////////////////////////
+ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
+    GG::Control(0, 0, w, h),
+    m_design_id(design_id),
+    m_graphic(0),
+    m_name(0)
+{
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (design) {
+        m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(design->Hull()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        AttachChild(m_graphic);
+        m_name = new GG::TextControl(0, 0, design->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE);
+        AttachChild(m_name);
+    }
+}
+
+void ShipDesignPanel::Render() {
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 2);
+}
+
+void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
+    GG::Wnd* parent = Parent();
+    if (parent)
+        parent->MouseWheel(pt, move, mod_keys);
+}
+
+void ShipDesignPanel::Update() {
+}
+
+const ShipDesign* ShipDesignPanel::GetDesign() {
+    return GetShipDesign(m_design_id);
 }
