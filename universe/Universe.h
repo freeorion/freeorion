@@ -151,7 +151,7 @@ public:
 
 
     const UniverseObject* DestroyedObject(int id) const;          ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
-    
+
     const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}    ///< returns the begin const_iterator for the destroyed objects from the universe
     const_iterator endDestroyed() const    {return m_destroyed_objects.end();}      ///< returns the end const_iterator for the destroyed objects from the universe
 

@@ -690,7 +690,7 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(int w, int h) :
 void BasesListBox::BasesListBoxRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 2);
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 1);
 }
 
 BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(int w, int h, const std::string& hull) :
@@ -756,7 +756,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
     // TODO: Account for availabilities shown
     const HullTypeManager& manager = GetHullTypeManager();
     for (HullTypeManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(Width(), 100, it->first, std::vector<std::string>());
+        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(Width()- ClientUI::ScrollWidth() - 5, 100, it->first, std::vector<std::string>());
         Insert(row);
     }
 }
@@ -765,11 +765,20 @@ void BasesListBox::PopulateWithCompletedDesigns(int empire_id) {
     // TODO: Account for availabilities shown
     if (empire_id == -1) {
         // all empires / all known designs
-        ;
+        const Universe& universe = GetUniverse();
+        for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
+            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(Width() - ClientUI::ScrollWidth() - 5, 100, it->first);
+            Insert(row);
+        }
     } else {
-
         // specific empire's designs
-        ;
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (empire) {
+            for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
+                CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(Width() - ClientUI::ScrollWidth() - 5, 100, *it);
+                Insert(row);
+            }
+        }
     }
 }
 
@@ -798,7 +807,7 @@ void BasesListBox::PropegateDoubleClickSignal(int index, GG::ListBox::Row* row) 
     }
 
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(row);
-    if (!cd_row) {
+    if (cd_row) {
         DesignSelectedSignal(cd_row->DesignID());
         return;
     }
@@ -877,6 +886,7 @@ public:
                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 private:
     void            DoLayout();
+    void            WndSelected(int index);
 
     GG::TabWnd*     m_tabs;
     BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
@@ -895,6 +905,7 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
     m_templates_list(0)*/
 {
     m_tabs = new GG::TabWnd(5, 2, 10, 10, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
+    GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
     AttachChild(m_tabs);
 
     m_hulls_list = new BasesListBox(0, 0, 10, 10);
@@ -919,14 +930,20 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
                                        GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                        ClientUI::TextColor()),
                    UserString("DESIGN_WND_TEMPLATES"));
-}
 
-void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    CUIWnd::SizeMove(ul, lr);
     DoLayout();
 }
 
+void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    CUIWnd::SizeMove(ul, lr);
+    if (old_size != Size())
+        DoLayout();
+}
+
 void DesignWnd::BaseSelector::Reset() {
+    if (!m_tabs)
+        return;
     GG::Wnd* wnd = m_tabs->CurrentWnd();
     if (wnd) {
         BasesListBox* base_box = dynamic_cast<BasesListBox*>(wnd);
@@ -936,12 +953,14 @@ void DesignWnd::BaseSelector::Reset() {
 }
 
 void DesignWnd::BaseSelector::DoLayout() {
-    if (m_tabs)
-        m_tabs->SizeMove(GG::Pt(5, 2), ClientSize() - GG::Pt(5, 2));
-    if (m_hulls_list)
-        m_hulls_list->Populate();
-    if (m_designs_list)
-        m_designs_list->Populate();
+    if (!m_tabs)
+        return;
+    m_tabs->SizeMove(GG::Pt(5, 2), ClientSize() - GG::Pt(5, 2));
+    WndSelected(m_tabs->CurrentWndIndex());
+}
+
+void DesignWnd::BaseSelector::WndSelected(int index) {
+    Reset();
 }
 
 //////////////////////////////////////////////////
@@ -1314,6 +1333,9 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
         SetHull(0);
         return;
     }
+
+    m_design_name->SetText(ship_design->Name());
+    m_design_description->SetText(ship_design->Description());
 
     const HullType* hull_type = ship_design->GetHull();
     SetHull(hull_type);

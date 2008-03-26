@@ -1821,7 +1821,7 @@ const UniverseObject* SpecialsPanel::GetObject() const
 //        ShipDesignPanel          //
 /////////////////////////////////////
 ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
-    GG::Control(0, 0, w, h),
+    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
     m_design_id(design_id),
     m_graphic(0),
     m_name(0)
@@ -1835,11 +1835,7 @@ ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
     }
 }
 
-void ShipDesignPanel::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 2);
-}
+void ShipDesignPanel::Render() {}
 
 void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
     GG::Wnd* parent = Parent();
