@@ -654,9 +654,11 @@ public:
     //@}
 
     mutable boost::signal<void (int)>
-                                    DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected
+                                    DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
-                                    DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected
+                                    DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+    mutable boost::signal<void (const HullType*)>
+                                    HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 
 private:
     void                            PopulateWithEmptyHulls();
@@ -664,12 +666,11 @@ private:
     //void                            PopulateWithSavedDesigns();
     //void                            PopulateWithTemplates();
 
-    void                            PropegateDesignSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
-    void                            PropegateDesignComponentsSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
+    void                            PropegateDoubleClickSignal(int index, GG::ListBox::Row* row);
+    void                            PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
 
     std::pair<bool, bool>           m_availabilities_shown;                             // first indicates whether available parts should be shown.  second indicates whether unavailable parts should be shown
     bool                            m_showing_empty_hulls, m_showing_completed_designs;
-    boost::signals::connection      m_select_signal_connection;
 };
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(int w, int h) :
@@ -706,20 +707,17 @@ BasesListBox::BasesListBox(int x, int y, int w, int h) :
     m_availabilities_shown(std::make_pair(true, false)),
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false)
-{}
+{
+    GG::Connect(DoubleClickedSignal,    &BasesListBox::PropegateDoubleClickSignal,  this);
+    GG::Connect(LeftClickedSignal,      &BasesListBox::PropegateLeftClickSignal,  this);
+}
 
 void BasesListBox::Populate() {
     Clear();
-    if (m_showing_empty_hulls) {
-        m_select_signal_connection.disconnect();
+    if (m_showing_empty_hulls)
         PopulateWithEmptyHulls();
-        m_select_signal_connection = GG::Connect(LeftClickedSignal, &BasesListBox::PropegateDesignComponentsSelectedSignal, this);
-    }
-    if (m_showing_completed_designs) {
-        m_select_signal_connection.disconnect();
+    if (m_showing_completed_designs)
         PopulateWithCompletedDesigns();
-        m_select_signal_connection = GG::Connect(LeftClickedSignal, &BasesListBox::PropegateDesignSelectedSignal, this);
-    }
 }
 
 void BasesListBox::PopulateWithEmptyHulls() {
@@ -742,22 +740,35 @@ void BasesListBox::PopulateWithCompletedDesigns(int empire_id) {
     }
 }
 
-void BasesListBox::PropegateDesignSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
-    CompletedDesignListBoxRow* box_row = dynamic_cast<CompletedDesignListBoxRow*>(row);
-    if (!box_row) {
-        Logger().errorStream() << "BasesListBox::PropegateDesignSelectedSignal was passed an invalid row";
-        return;
+void BasesListBox::PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
+    // determine type of row that was clicked, and emit appropriate signal
+
+    HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(row);
+    if (box_row) {
+        const std::string& hull_name = box_row->Hull();
+        const HullType* hull_type = GetHullType(hull_name);
+        const std::vector<std::string>& parts = box_row->Parts();
+        if (hull_type && parts.empty()) {
+            HullBrowsedSignal(hull_type);
+            return;
+        }
     }
-    DesignSelectedSignal(box_row->DesignID());
 }
 
-void BasesListBox::PropegateDesignComponentsSelectedSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
-    HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(row);
-    if (!box_row) {
-        Logger().errorStream() << "BasesListBox::PropegateDesignComponentsSelectedSignal was passed an invalid row";
+void BasesListBox::PropegateDoubleClickSignal(int index, GG::ListBox::Row* row) {
+    // determine type of row that was clicked, and emit appropriate signal
+
+    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(row);
+    if (hp_row) {
+        DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
         return;
     }
-    DesignComponentsSelectedSignal(box_row->Hull(), box_row->Parts());
+
+    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(row);
+    if (!cd_row) {
+        DesignSelectedSignal(cd_row->DesignID());
+        return;
+    }
 }
 
 void BasesListBox::ShowEmptyHulls(bool refresh_list) {
@@ -826,9 +837,11 @@ public:
     //@}
 
     mutable boost::signal<void (int)>
-                    DesignSelectedSignal;           //!< an existing complete design that is known to this empire was selected
+                    DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
-                    DesignComponentsSelectedSignal; //!< a hull and a set of parts (which may be empty) was selected
+                    DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+    mutable boost::signal<void (const HullType*)>
+                    HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 private:
     void            DoLayout();
 
@@ -855,6 +868,7 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
+    GG::Connect(m_hulls_list->HullBrowsedSignal,                DesignWnd::BaseSelector::HullBrowsedSignal);
 
     m_designs_list = new BasesListBox(0, 0, 10, 10);
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
@@ -1432,6 +1446,7 @@ DesignWnd::DesignWnd(int w, int h) :
     AttachChild(m_base_selector);
     GG::Connect(m_base_selector->DesignSelectedSignal,          &MainPanel::SetDesign,              m_main_panel);
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
+    GG::Connect(m_base_selector->HullBrowsedSignal,             &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     m_base_selector->MoveTo(GG::Pt(0, 0));
 }
 
