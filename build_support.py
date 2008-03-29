@@ -247,6 +247,7 @@ def CheckBGL(context, conf):
         return True
 
 def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
+    AppendPackagePaths('gg', context.env)
     AppendPackagePaths('boost', context.env)
     if not conf.CheckCXXHeader('boost/shared_ptr.hpp'):
         context.Message('Boost configuration... ')
