@@ -21,6 +21,7 @@
 #include <GG/StaticGraphic.h>
 #include <GG/TextControl.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
 
 
@@ -39,12 +40,16 @@ public:
 
     FleetDataPanel(int w, int h, const Fleet* fleet, int empire = -1, int system_id = -1, double x = 0.0, double y = 0.0);
     
+    virtual void DropsAcceptable(DropsAcceptableIter first,
+                                 DropsAcceptableIter last,
+                                 const GG::Pt& pt) const;
+
     bool Selected() const;
 
     virtual void Render();
     virtual void DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
     virtual void DragDropLeave();
-    virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt);
+    virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
     void Select(bool b);
 
     mutable boost::signal<void (Ship*, const std::vector<int>&)> NewFleetFromShipsSignal;
@@ -351,7 +356,7 @@ void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt
     Select(true);
     for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
         if (it->first->DragDropDataType() != SHIP_DROP_TYPE_STRING ||
-            !ValidShip(static_cast<ShipRow*>(it->first)->m_ship, m_x, m_y, m_system_id, m_empire)) {
+            !ValidShip(boost::polymorphic_downcast<ShipRow*>(it->first)->m_ship, m_x, m_y, m_system_id, m_empire)) {
             Select(false);
             break;
         }
@@ -363,27 +368,30 @@ void FleetDataPanel::DragDropLeave()
     Select(false);
 }
 
-void FleetDataPanel::AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first,
+                                     DropsAcceptableIter last,
+                                     const GG::Pt& pt) const
+{
+    for (DropsAcceptableIter it = first; it != last; ++it) {
+        if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+            const Ship* ship = boost::polymorphic_downcast<const ShipRow*>(it->first)->m_ship;
+            it->second = ValidShip(ship, m_x, m_y, m_system_id, m_empire);
+        }
+    }
+}
+
+void FleetDataPanel::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
 {
     std::vector<Ship*> ships;
     std::vector<int> ship_ids;
-    for (std::list<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-        if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-            ships.push_back(static_cast<ShipRow*>(*it)->m_ship);
-            ship_ids.push_back(ships.back()->ID());
-            if (!ValidShip(ships.back(), m_x, m_y, m_system_id, m_empire)) {
-                wnds.clear();
-                return;
-            }
-        } else {
-            wnds.clear();
-            return;
-        }
+    for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+        assert((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING);
+        ships.push_back(boost::polymorphic_downcast<ShipRow*>(*it)->m_ship);
+        ship_ids.push_back(ships.back()->ID());
     }
     if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
         NewFleetFromShipsSignal(ships[0], ship_ids);
     }
-    wnds.clear();
     Select(false);
 }
 
@@ -549,44 +557,48 @@ public:
 
     mutable boost::signal<void (Ship*, const std::vector<int>&)> NewFleetFromShipsSignal;
 
-    // HACK!  This is sort of a dirty trick, but we clear wnds here in all cases, even when we accept the dropped
-    // item(s).  This keeps things simpler than if we handled ListBox::DroppedRow signals, since all the Fleet- and
-    // Ship-display Wnds respond to changes in the system or fleet they display anyway.
-    virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+    virtual void DropsAcceptable(DropsAcceptableIter first,
+                                 DropsAcceptableIter last,
+                                 const GG::Pt& pt) const
     {
         int row_index = RowUnderPt(pt);
-        if (m_read_only || row_index < 0 || NumRows() <= row_index) {
-            wnds.clear();
-            return;
+        bool row_in_range = 0 <= row_index && row_index < NumRows();
+        const Fleet* target_fleet = row_in_range ?
+            boost::polymorphic_downcast<const FleetRow*>(&GetRow(row_index))->m_fleet :
+            0;
+        for (DropsAcceptableIter it = first; it != last; ++it) {
+            if (m_read_only || !row_in_range) {
+                it->second = false;
+            } else {
+                if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
+                    const Fleet* fleet = boost::polymorphic_downcast<const FleetRow*>(it->first)->m_fleet;
+                    it->second = ValidFleet(fleet, target_fleet);
+                } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+                    const Ship* ship = boost::polymorphic_downcast<const ShipRow*>(it->first)->m_ship;
+                    it->second = ValidShip(ship, target_fleet);
+                }
+            }
         }
+    }
 
-        Fleet* target_fleet = static_cast<FleetRow*>(&GetRow(row_index))->m_fleet;
-        assert(target_fleet);
+    virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
+    {
+        int row_index = RowUnderPt(pt);
+        assert(!m_read_only && 0 <= row_index && row_index < NumRows());
 
+        Fleet* target_fleet = boost::polymorphic_downcast<FleetRow*>(&GetRow(row_index))->m_fleet;
         std::vector<Fleet*> fleets;
         std::vector<Ship*> ships;
         std::vector<int> ship_ids;
-        for (std::list<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+        for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
             if ((*it)->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
-                fleets.push_back(static_cast<FleetRow*>(*it)->m_fleet);
-                if (!ValidFleet(fleets.back(), target_fleet)) {
-                    wnds.clear();
-                    return;
-                }
+                fleets.push_back(boost::polymorphic_downcast<FleetRow*>(*it)->m_fleet);
             } else if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                ships.push_back(static_cast<ShipRow*>(*it)->m_ship);
+                ships.push_back(boost::polymorphic_downcast<ShipRow*>(*it)->m_ship);
                 ship_ids.push_back(ships.back()->ID());
-                if (!ValidShip(ships.back(), target_fleet)) {
-                    wnds.clear();
-                    return;
-                }
-            } else {
-                wnds.clear();
-                return;
             }
         }
         assert(ships.empty() != fleets.empty());
-        wnds.clear();
 
         if (!fleets.empty()) {
             for (unsigned int i = 0; i < fleets.size(); ++i)
@@ -603,8 +615,6 @@ public:
                 }
             }
         } else if (!ships.empty()) {
-            if (!ValidShip(ships[0], target_fleet))
-                return;
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                 new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ships[0]->FleetID(), target_fleet->ID(),
                                        ship_ids)));
@@ -626,8 +636,8 @@ public:
         if (m_read_only || row_index < 0 || NumRows() <= row_index)
             return;
 
-        FleetRow* fleet_row = static_cast<FleetRow*>(&GetRow(row_index));
-        FleetDataPanel* fleet_data_panel = static_cast<FleetDataPanel*>((*fleet_row)[0]);
+        FleetRow* fleet_row = boost::polymorphic_downcast<FleetRow*>(&GetRow(row_index));
+        FleetDataPanel* fleet_data_panel = boost::polymorphic_downcast<FleetDataPanel*>((*fleet_row)[0]);
         if (!fleet_data_panel->Selected()) {
             bool valid_drop = true;
             bool fleets_seen = false;
@@ -635,12 +645,12 @@ public:
             for (std::map<Wnd*, GG::Pt>::const_iterator it = drag_drop_wnds.begin(); it != drag_drop_wnds.end(); ++it) {
                 if (it->first->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                     fleets_seen = true;
-                    if (!ValidFleet(static_cast<FleetRow*>(it->first)->m_fleet, fleet_row->m_fleet)) {
+                    if (!ValidFleet(boost::polymorphic_downcast<FleetRow*>(it->first)->m_fleet, fleet_row->m_fleet)) {
                         valid_drop = false;
                         break;
                     }
                 } else if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                    if (!ValidShip(static_cast<ShipRow*>(it->first)->m_ship, fleet_row->m_fleet)) {
+                    if (!ValidShip(boost::polymorphic_downcast<ShipRow*>(it->first)->m_ship, fleet_row->m_fleet)) {
                         valid_drop = false;
                         break;
                     }
@@ -668,7 +678,7 @@ private:
     void ClearSelection()
     {
         if (m_selected_fleet_row != -1)
-            static_cast<FleetDataPanel*>((*static_cast<FleetRow*>(&GetRow(m_selected_fleet_row)))[0])->Select(false);
+            boost::polymorphic_downcast<FleetDataPanel*>((*boost::polymorphic_downcast<FleetRow*>(&GetRow(m_selected_fleet_row)))[0])->Select(false);
         m_selected_fleet_row = -1;
     }
 
@@ -690,28 +700,33 @@ public:
 
     void SetFleet(Fleet* fleet) {m_fleet = fleet;}
 
-    // see comments above FleetsListBox::AcceptDrops()
-    virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+    virtual void DropsAcceptable(DropsAcceptableIter first,
+                                 DropsAcceptableIter last,
+                                 const GG::Pt& pt) const
     {
-        if (wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-            std::vector<int> ship_ids;
-            for (std::list<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-                if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
-                    ship_ids.push_back(static_cast<ShipRow*>(*it)->m_ship->ID());
-                }
-            }
-
-            ShipRow* ship_row = 0;
-            if (m_read_only || !(ship_row = dynamic_cast<ShipRow*>(wnds.front())) || !ValidShip(ship_row->m_ship, m_fleet)) {
-                wnds.clear();
-                return;
-            }
-
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(), ship_row->m_ship->FleetID(), 
-                                       m_fleet->ID(), ship_ids)));
+        for (DropsAcceptableIter it = first; it != last; ++it) {
+            const ShipRow* ship_row = 0;
+            it->second = !m_read_only &&
+                (ship_row = dynamic_cast<const ShipRow*>(it->first)) &&
+                ValidShip(ship_row->m_ship, m_fleet);
         }
-        wnds.clear();
+    }
+
+    virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
+    {
+        assert(wnds.front()->DragDropDataType() == SHIP_DROP_TYPE_STRING);
+        std::vector<int> ship_ids;
+        for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+            if ((*it)->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
+                ship_ids.push_back(boost::polymorphic_downcast<ShipRow*>(*it)->m_ship->ID());
+            }
+        }
+        ShipRow* ship_row = boost::polymorphic_downcast<ShipRow*>(wnds.front());
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new FleetTransferOrder(HumanClientApp::GetApp()->EmpireID(),
+                                            ship_row->m_ship->FleetID(),
+                                            m_fleet->ID(),
+                                            ship_ids)));
     }
 
 private:
@@ -829,7 +844,7 @@ void FleetDetailPanel::UniverseObjectDeleted(const UniverseObject *obj)
 void FleetDetailPanel::ShipSelectionChanged(const std::set<int>& rows)
 {
     for (int i = 0; i < m_ships_lb->NumRows(); ++i) {
-        ShipDataPanel* ship_panel = static_cast<ShipDataPanel*>(m_ships_lb->GetRow(i)[0]);
+        ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(m_ships_lb->GetRow(i)[0]);
         ship_panel->Select(rows.find(i) != rows.end());
     }
 }
@@ -1135,7 +1150,7 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
     m_fleet_detail_panel->SetFleet(fleet);
 
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
-        FleetDataPanel* fleet_panel = static_cast<FleetDataPanel*>(m_fleets_lb->GetRow(i)[0]);
+        FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(m_fleets_lb->GetRow(i)[0]);
         fleet_panel->Select(rows.find(i) != rows.end());
     }
 }
@@ -1322,7 +1337,7 @@ void FleetWnd::SystemChangedSlot()
     System::ConstObjectVec system_fleet_vec = system->FindObjects(OwnedVisitor<Fleet>(m_empire_id));
     std::set<const Fleet*> system_fleet_set;
     for (System::ConstObjectVec::iterator it = system_fleet_vec.begin(); it != system_fleet_vec.end(); ++it) {
-        system_fleet_set.insert(static_cast<const Fleet*>(*it));
+        system_fleet_set.insert(boost::polymorphic_downcast<const Fleet*>(*it));
     }
     for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
         system_fleet_set.erase(FleetInRow(i));

@@ -15,6 +15,7 @@
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
 #include <boost/function.hpp>
 
@@ -39,8 +40,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const PartType*     Part() { return m_part; }
-    const std::string&  PartName() { return m_part ? m_part->Name() : EMPTY_STRING; }
+    const PartType*     Part() const { return m_part; }
+    const std::string&  PartName() const { return m_part ? m_part->Name() : EMPTY_STRING; }
     //@}
 
     /** \name Mutators */ //@{
@@ -89,7 +90,7 @@ public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
         PartsListBoxRow(int w, int h);
-        virtual void    ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination);
+        virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
     };
 
     /** \name Structors */ //@{
@@ -129,7 +130,7 @@ PartsListBox::PartsListBoxRow::PartsListBoxRow(int w, int h) :
     CUIListBox::Row(w, h, "")    // drag_drop_data_type = "" implies not draggable row
 {}
 
-void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
     const GG::Wnd* wnd = wnds.front();  // should only be one wnd in list due because PartControls can only be dragged one-at-a-time
@@ -977,6 +978,10 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    virtual void DropsAcceptable(DropsAcceptableIter first,
+                                 DropsAcceptableIter last,
+                                 const GG::Pt& pt) const;
+
     ShipSlotType    SlotType() const;
     double          XPositionFraction() const;
     double          YPositionFraction() const;
@@ -984,9 +989,9 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset);
-    virtual void    CancellingChildDragDrop(const std::list<GG::Wnd*>& wnds);
-    virtual void    AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt);
-    virtual void    ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination);
+    virtual void    CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds);
+    virtual void    AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt);
+    virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
     virtual void    DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys);
     virtual void    DragDropLeave();
 
@@ -1031,6 +1036,29 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     SetDragDropDataType("");
 }
 
+void SlotControl::DropsAcceptable(DropsAcceptableIter first,
+                                  DropsAcceptableIter last,
+                                  const GG::Pt& pt) const
+{
+    bool acceptable_part_found = false;
+    for (DropsAcceptableIter it = first; it != last; ++it) {
+        if (!acceptable_part_found && it->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
+            const PartControl* part_control = boost::polymorphic_downcast<const PartControl*>(it->first);
+            const PartType* part_type = part_control->Part();
+            if (part_type &&
+                part_type->CanMountInSlotType(m_slot_type) &&
+                part_control != m_part_control) {
+                it->second = true;
+                acceptable_part_found = true;
+            } else {
+                it->second = false;
+            }
+        } else {
+            it->second = false;
+        }
+    }
+}
+
 ShipSlotType SlotControl::SlotType() const {
     return m_slot_type;
 }
@@ -1055,11 +1083,11 @@ void SlotControl::StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset
         m_part_control->Hide();
 }
 
-void SlotControl::CancellingChildDragDrop(const std::list<GG::Wnd*>& wnds) {
+void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) {
     if (!m_part_control)
         return;
 
-    for (std::list<GG::Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
+    for (std::vector<const GG::Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
         const PartControl* control = dynamic_cast<const PartControl*>(*it);
         if (!control)
             continue;
@@ -1069,53 +1097,12 @@ void SlotControl::CancellingChildDragDrop(const std::list<GG::Wnd*>& wnds) {
     }
 }
 
-void SlotControl::AcceptDrops(std::list<GG::Wnd*>& wnds, const GG::Pt& pt) {
-    if (wnds.empty())
-        return;
-
-    PartControl* accepted_part_control = 0;
-
-    std::list<GG::Wnd*>::iterator wnds_it;
-    std::list<GG::Wnd*>::iterator wnds_end = wnds.end();
-    std::list<GG::Wnd*>::iterator wnds_next = wnds.begin();
-
-    // scan through list to find a PartControl to accept
-    while (wnds_next != wnds_end) {
-        wnds_it = wnds_next++;
-
-        // check if this wnd is an acceptable PartControl
-        GG::Wnd* wnd = *wnds_it;
-        if (wnd->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
-
-            accepted_part_control = dynamic_cast<PartControl*>(wnd);
-
-            if (accepted_part_control) {
-
-                const PartType* part_type = accepted_part_control->Part();
-                if (part_type && part_type->CanMountInSlotType(m_slot_type) && accepted_part_control != m_part_control)
-                    break;  // quit loop without erasing this control from the list, to indicate that it is accepted, and isn't the part that was already here
-                else
-                    accepted_part_control = 0;
-            } else {
-                throw std::runtime_error("SlotControl::AcceptDrops was passed a Wnd with a drag drop data type for part controls but which wasn't actually a PartControl");
-            }
-        }
-
-        // current part wasn't accepted, so remove from list of accepted wnds
-        wnds.erase(wnds_it);
-    }
-
-    // remove rest of list, as nothing else will be accepted (or have reached the end of the list)
-    wnds_it = wnds_next;
-    wnds.erase(wnds_it, wnds_end);
-
-    if (!accepted_part_control)
-        return;
-
-    SlotContentsAlteredSignal(accepted_part_control->Part());
+void SlotControl::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
+    assert(wnds.size() == 1);
+    SlotContentsAlteredSignal(boost::polymorphic_downcast<const PartControl*>(*wnds.begin())->Part());
 }
 
-void SlotControl::ChildrenDraggedAway(const std::list<GG::Wnd*>& wnds, const GG::Wnd* destination) {
+void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
     if (wnds.empty())
         return;
     const GG::Wnd* wnd = wnds.front();

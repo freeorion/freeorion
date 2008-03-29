@@ -12,7 +12,9 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
+
 #include <cmath>
 
 
@@ -41,29 +43,36 @@ namespace {
             m_production_wnd(production_wnd),
             m_drop_point(-1)
         {}
-        // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
-        // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
-        // updating everything on drops anyway.
-        virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+
+        virtual void DropsAcceptable(DropsAcceptableIter first,
+                                     DropsAcceptableIter last,
+                                     const GG::Pt& pt) const
+        {
+            assert(std::distance(first, last) == 1);
+            for (DropsAcceptableIter it = first; it != last; ++it) {
+                it->second = it->first->DragDropDataType() == "PRODUCTION_QUEUE_ROW";
+            }
+        }
+
+        virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
         {
             assert(wnds.size() == 1);
-            if ((*wnds.begin())->DragDropDataType() == "PRODUCTION_QUEUE_ROW") {
-                GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
-                int original_row_idx = -1;
-                for (int i = 0; i < NumRows(); ++i) {
-                    if (&GetRow(i) == row) {
-                        original_row_idx = i;
-                        break;
-                    }
+            assert((*wnds.begin())->DragDropDataType() == "PRODUCTION_QUEUE_ROW");
+            GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
+            int original_row_idx = -1;
+            for (int i = 0; i < NumRows(); ++i) {
+                if (&GetRow(i) == row) {
+                    original_row_idx = i;
+                    break;
                 }
-                assert(original_row_idx != -1);
-                int row_idx = RowUnderPt(pt);
-                if (row_idx < 0 || row_idx > NumRows())
-                    row_idx = NumRows();
-                m_production_wnd->QueueItemMoved(row_idx, row);
             }
-            wnds.clear();
+            assert(original_row_idx != -1);
+            int row_idx = RowUnderPt(pt);
+            if (row_idx < 0 || row_idx > NumRows())
+                row_idx = NumRows();
+            m_production_wnd->QueueItemMoved(row_idx, row);
         }
+
         virtual void Render()
         {
             ListBox::Render();
@@ -395,7 +404,7 @@ void ProductionWnd::SelectSystem(int system)
 
 void ProductionWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), static_cast<QueueRow*>(row)->queue_index, row_idx)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), boost::polymorphic_downcast<QueueRow*>(row)->queue_index, row_idx)));
     UpdateQueue();
     ResetInfoPanel();
 }

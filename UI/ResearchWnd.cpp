@@ -12,7 +12,9 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
+
 #include <cmath>
 
 namespace {
@@ -42,29 +44,36 @@ namespace {
         {
             AllowDropType("RESEARCH_QUEUE_ROW");
         }
-        // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
-        // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
-        // updating everything on drops anyway.
-        virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+
+        virtual void DropsAcceptable(DropsAcceptableIter first,
+                                     DropsAcceptableIter last,
+                                     const GG::Pt& pt) const
+        {
+            assert(std::distance(first, last) == 1);
+            for (DropsAcceptableIter it = first; it != last; ++it) {
+                it->second = AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
+            }
+        }
+
+        virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
         {
             assert(wnds.size() == 1);
-            if (AllowedDropTypes().find((*wnds.begin())->DragDropDataType()) != AllowedDropTypes().end()) {
-                GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
-                int original_row_idx = -1;
-                for (int i = 0; i < NumRows(); ++i) {
-                    if (&GetRow(i) == row) {
-                        original_row_idx = i;
-                        break;
-                    }
+            GG::ListBox::Row* row =
+                boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
+            int original_row_idx = -1;
+            for (int i = 0; i < NumRows(); ++i) {
+                if (&GetRow(i) == row) {
+                    original_row_idx = i;
+                    break;
                 }
-                assert(original_row_idx != -1);
-                int row_idx = RowUnderPt(pt);
-                if (row_idx < 0 || row_idx > NumRows())
-                    row_idx = NumRows();
-                m_research_wnd->QueueItemMoved(row_idx, row);
             }
-            wnds.clear();
+            assert(original_row_idx != -1);
+            int row_idx = RowUnderPt(pt);
+            if (row_idx < 0 || row_idx > NumRows())
+                row_idx = NumRows();
+            m_research_wnd->QueueItemMoved(row_idx, row);
         }
+
         virtual void Render()
         {
             ListBox::Render();
