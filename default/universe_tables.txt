@@ -21,7 +21,7 @@ White                           0           0           0       0       0       
 Yellow                          0           0           0       0       0       0       0               0
 Orange                          0           0           0       0       0       0       0               0
 Red                             0           0           0       0       0       0       0               0
-Neutron                         5           5           0       0       0       0       20              0
+Neutron                         5           15          10      0       0       0       20              0
 Blackhole                       30          0           0       -5      -5      -5      10              -5
 
 <10x8>
@@ -40,46 +40,46 @@ Slot10                          10          20          10      0       0       
 <8x11>
 PlanetSizeModToPlanetTypeDist   Swamp    Toxic  Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
 NoWorld                         0        0      0       0           0       0       0       0       0       0               0
-Planetoid                       0        0      0       10          20      0       0       0       0       0               0
-Small                           0        0      0       10          10      0       0       0       0       0               0
-Medium                          5        0      0       0           0       5       5       10      10      0               0
-Large                           0        10     10      0           0       0       0       0       0       0               0
-Massive                         0        10     10      0           0       0       0       0       0       0               0
+Planetoid                       0        0      0       0           0       0       0       0       0       0               0
+Small                           0        0      0       0           0       0       0       0       0       0               0
+Medium                          10       10     10      10          10      10      10      10      10      0               0
+Large                           0        0      0       0           0       0       0       0       0       0               0
+Massive                         0        0      0       0           0       0       0       0       0       0               0
 Asteroid                        0        0      0       0           0       0       0       0       0       0               0
 GasGiant                        0        0      0       0           0       0       0       0       0       0               0
 
 <10x11>
 SlotModToPlanetTypeDist         Swamp   Toxic   Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
-Slot1                           0       5       20      30          15      -20     15      -5      -5      0               0
-Slot2                           20      15      20      10          10      -10     20      10      10      0               0
-Slot3                           10      0       5       0           0       0       15      30      25      0               0
-Slot4                           0       0       0       0           0       5       10      25      25      0               0
-Slot5                           5       5       0       0           0       5       0       10      10      0               0
-Slot6                           5       10      0       0           5       10      0       5       10      0               0
-Slot7                           0       0       0       0           10      10      0       0       0       0               0
-Slot8                           -5      0       -5      0           15      10      -5      -5      -5      0               0
-Slot9                           -10     -5      -10     -10         20      10      -10     -10     -10     0               0
-Slot10                          -20     -10     -20     -20         25      5       -20     -20     -20     0               0
+Slot1                           0       0       0       0           0       0       0       0       0       0               0
+Slot2                           0       0       0       0           0       0       0       0       0       0               0
+Slot3                           0       0       0       0           0       0       0       0       0       0               0
+Slot4                           0       0       0       0           0       0       0       0       0       0               0
+Slot5                           0       0       0       0           0       0       0       0       0       0               0
+Slot6                           0       0       0       0           0       0       0       0       0       0               0
+Slot7                           0       0       0       0           0       0       0       0       0       0               0
+Slot8                           -5      -5      -5      -5          -5      -5      -5      -5      -5      0               0
+Slot9                           -10     -10     -10     -10         -10     -10     -10     -10     -10     0               0
+Slot10                          -20     -20     -20     -20         -20     -20     -20     -20     -20     0               0
 
 <7x11>
 StarColorModToPlanetTypeDist    Swamp  Toxic   Inferno Radiated     Barren   Tundra  Desert  Terran  Ocean  AsteroidField   GasGiant
-Blue                            0      10      15      20           15      0       5       0       0       0               0
-White                           5      5       10      5            10      0       15      0       0       0               0
-Yellow                          20     0       0       0            0       5       20      30      25      0               0
-Orange                          5      5       0       0            10      10      0       0       5       0               0
-Red                             0      10      0       0            20      10      0       0       0       0               0
-Neutron                         -10    5       5       30           20      0       5       -30     -30     0               0
-Blackhole                       -10    -10     -10     15           30      0       -30     -30     -30     0               0
+Blue                            5      20      40      10           5        -8      -10     -10     2       0               0
+White                           39     20      0       -10          -10      -10     0       5       20      0               0
+Yellow                          4      -5      -10     -10          -5       4       18      40      18      0               0
+Orange                          -10    -10     -10     0            20       39      20      5       0       0               0
+Red                             -8     5       10      40           20       5       2       -10     -10     0               0
+Neutron                         -20    -20     -20     -20          -20      -20     -20     -20     -20     0               0
+Blackhole                       -30    -30     -30     -30          -30      -30     -30     -30     -30     0               0
 
 <3x7>
 UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole
-Young                           10      20      0       0       0       0       0
-Mature                          0        0      10      0       0       10      10
-Ancient                         0        0      0       10      10      20      20
+Young                           0        0      0       0       0       0       0
+Mature                          0        0      0       0       0       10      10
+Ancient                         0        0      0       0       0       20      20
 
 <1x7>
 BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole
-Base                            30      40      50      40      30      0       0
+Base                            33      33      33      33      33      0       0
 
 # This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why VeryMany has the lowest value.
 <1x6>
