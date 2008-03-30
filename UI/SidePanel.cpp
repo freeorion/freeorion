@@ -981,19 +981,18 @@ void SidePanel::PlanetPanel::ClickColonize()
         // if the ship now buils a fleet of its own, make sure that fleet appears
         // at a possibly opened FleetWnd
         Ship* ship = GetUniverse().Object<Ship>(ship_id);
-        Fleet* fleet= ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : NULL;
-        MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (fleet)
-            for ( MapWnd::FleetWndIter it = map_wnd->FleetWndBegin();it != map_wnd->FleetWndEnd();++it)
-            {
-                FleetWnd *fleet_wnd = *it;
+        Fleet* fleet = ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : NULL;
+        if (fleet) {
+            for (FleetUIManager::iterator it = FleetUIManager::GetFleetUIManager().begin(); it != FleetUIManager::GetFleetUIManager().end(); ++it) {
+                FleetWnd* fleet_wnd = *it;
                 if (fleet->SystemID() == fleet_wnd->SystemID()
-                   && !fleet_wnd->ContainsFleet(fleet->ID()))
+                    && !fleet_wnd->ContainsFleet(fleet->ID()))
                 {
                     fleet_wnd->AddFleet(GetUniverse().Object<Fleet>(fleet->ID()));
                     break;
                 }
             }
+        }
     }
 }
 

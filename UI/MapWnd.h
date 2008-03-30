@@ -65,14 +65,9 @@ public:
     SidePanel*     GetSidePanel() const;
     void           GetSaveGameUIData(SaveGameUIData& data) const;   //!< populates the relevant UI state that should be restored after a save-and-load cycle
     bool           InProductionViewMode() const;                    //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
-    bool           FleetWndsOpen() const;                           //!< returns true iff there is at least one open FleetWnd
 
     GG::Pt ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;    //!< returns the position on the screen that corresponds to the specified universe X and Y coordinates
     std::pair<double, double> UniversePositionFromScreenCoords(GG::Pt screen_coords) const; //!< returns the universe position (X and Y in pair) that corresponds to the specified screen coordinates
-
-    typedef std::set<FleetWnd*>::const_iterator FleetWndIter;
-    FleetWndIter   FleetWndBegin();
-    FleetWndIter   FleetWndEnd();
     //!@}
 
     //! \name Mutators //!@{
@@ -87,7 +82,6 @@ public:
 
     void           InitTurn(int turn_number);                       //!< called at the start of each turn
     void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
-    bool           CloseAllFleetWnds();                             //!< closes all open FleetWnds.  returns true if there was at least one open FleetWnd, otherwise false
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
     void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
@@ -206,8 +200,6 @@ private:
 
     double                      m_zoom_factor;      //!< current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
-    std::set<FleetWnd*>         m_fleet_wnds;       //!< currently-open fleet wnds
-    FleetWnd*                   m_active_fleet_wnd; //!< currently active FleetWnd is showing fleets.  Active FleetWnd chosen by clicking FleetButtons
     std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel
     ResearchWnd*                m_research_wnd;     //!< research screen

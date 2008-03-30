@@ -182,7 +182,6 @@ MapWnd::MapWnd() :
     m_bg_scroll_rate(NUM_BACKGROUNDS),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
-    m_active_fleet_wnd(0),
     m_star_texture_coords(),
     m_starlane_vertices(),
     m_starlane_supply_vertices(),
@@ -435,17 +434,14 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 bool MapWnd::InProductionViewMode() const
 { return m_in_production_view_mode; }
 
-bool MapWnd::FleetWndsOpen() const 
-{ return !m_fleet_wnds.empty(); }
-
-MapWnd::FleetWndIter MapWnd:: FleetWndBegin()
-{ return m_fleet_wnds.begin(); }
-
-MapWnd::FleetWndIter MapWnd::FleetWndEnd()
-{ return m_fleet_wnds.end(); }
-
 void MapWnd::Render()
 {
+    // HACK! This is placed here so we can be sure it is executed frequently
+    // (every time we render), and before we render any of the
+    // FleetWnds/FleetDetailWnds.  It doesn't necessarily belong in MapWnd at
+    // all.
+    FleetUIManager::GetFleetUIManager().CullEmptyWnds();
+
     RenderBackgrounds();
 
     int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
@@ -721,7 +717,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
 
     if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-        if (CloseAllFleetWnds())
+        if (FleetUIManager::GetFleetUIManager().CloseAll())
             return;
 
         if (m_side_panel->Visible()) {
@@ -975,8 +971,6 @@ void MapWnd::InitTurn(int turn_number)
             raw_starlane_supply_colors.push_back(empire->Color().a);
         }
     }
-
-    m_active_fleet_wnd = 0;
 
     MoveChildUp(m_side_panel);
 
@@ -1300,22 +1294,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     }
 }
 
-bool MapWnd::CloseAllFleetWnds()
-{
-    bool retval = 0 < m_fleet_wnds.size();
-    if (!retval) return retval;
-    
-    m_active_fleet_wnd = 0;
-
-    // TODO: close the currently open FleetWnd last, so that FleetWnd::LastPosition is preserved
-    while (0 < m_fleet_wnds.size()) {
-        FleetWnd* fleet_wnd = *m_fleet_wnds.begin();
-        fleet_wnd->Close(); // this erases fleet_wnd from m_fleet_wnds
-    }
-
-    return retval;
-}
-
 void MapWnd::ShowSystemNames()
 {
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
@@ -1579,7 +1557,7 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
-    if (event.Type() == GG::WndEvent::RClick && !FleetWndsOpen()) {
+    if (event.Type() == GG::WndEvent::RClick && FleetUIManager::GetFleetUIManager().empty()) {
         // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
         // Note that this enforces a one-close-per-click policy.
 
@@ -1900,7 +1878,7 @@ void MapWnd::SystemLeftClicked(int system_id)
 
 void MapWnd::SystemRightClicked(int system_id)
 {
-    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
             SetProjectedFleetMovement(0, std::list<System*>()) ;
         else
@@ -1911,7 +1889,7 @@ void MapWnd::SystemRightClicked(int system_id)
 
 void MapWnd::MouseEnteringSystem(int system_id)
 {
-    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         PlotFleetMovement(system_id, false);
     }
     SystemBrowsedSignal(system_id);
@@ -1924,17 +1902,19 @@ void MapWnd::MouseLeavingSystem(int system_id)
 
 void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 {
-    if (!m_active_fleet_wnd) return;
+    if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
+        return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::set<Fleet*> fleets = m_active_fleet_wnd->SelectedFleets();
+    std::set<Fleet*> fleets = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleets();
 
     // apply to all this-player-owned fleets in currently-active FleetWnd
     for (std::set<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
         Fleet* fleet = *it;
         // only give orders / plot prospective move paths of fleets owned by player
-        if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips())) continue;
+        if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips()))
+            continue;
 
         // plot empty move pathes if destination is not a known system
         if (system_id == UniverseObject::INVALID_OBJECT_ID) {
@@ -1978,27 +1958,15 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
     if (btn_fleets.empty())
         throw std::runtime_error("caught clicked signal for empty fleet button");
 
-    bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
-
     Fleet* fleet = btn_fleets[0];
 
     System* system = fleet->GetSystem();
     int owner = *(fleet->Owners().begin());
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open
-    FleetWnd* wnd_for_button = 0;
-    for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it) {
-        if ((*it)->ContainsFleet(fleet->ID())) {
-            wnd_for_button = *it;
-            break;
-        }
-    }
+    FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(fleet);
 
     if (!wnd_for_button) {
-        // there was no preexisting open FleetWnd for this button's fleets
-        if (!multiple_fleet_windows)
-            CloseAllFleetWnds();
-
         // get all fleets at this location.  may be in a system, in which case fleets are separated into
         // departing or stationary; or may be away from any system, moving
         std::vector<Fleet*> fleets;
@@ -2018,10 +1986,7 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         if (owner != HumanClientApp::GetApp()->EmpireID() || !system)
             read_only = true;
 
-        wnd_for_button = new FleetWnd(0, 0, fleets, 0, read_only);
-        m_fleet_wnds.insert(wnd_for_button);
-
-        GG::Connect(wnd_for_button->ClosingSignal, &MapWnd::FleetWndClosing, this);
+        wnd_for_button = FleetUIManager::GetFleetUIManager().NewFleetWnd(fleets, 0, read_only);
 
         // position new FleetWnd.  default to last user-set position...
         GG::Pt wnd_position = FleetWnd::LastPosition();
@@ -2036,14 +2001,12 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
             wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, 0));
         if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
             wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
-
-        GG::GUI::GetGUI()->Register(wnd_for_button);
      }
 
 
     // if active fleet wnd hasn't changed, cycle through fleets
-    if (m_active_fleet_wnd == wnd_for_button) {
-        std::set<Fleet*> selected_fleets = m_active_fleet_wnd->SelectedFleets();
+    if (FleetUIManager::GetFleetUIManager().ActiveFleetWnd() == wnd_for_button) {
+        std::set<Fleet*> selected_fleets = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleets();
 
         const UniverseObject* selected_fleet = 0;
 
@@ -2074,11 +2037,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
                 if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
                     // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
 
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
                 }
             } else {
                 // are assured there is at least one stationary fleet
@@ -2092,11 +2055,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
                 if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
                     // it wasn't found, or it was found at the end, so select the first stationary fleet
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
                 }
             }
         } else {
@@ -2112,29 +2075,17 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
             if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
                 // it wasn't found, or it was found at the end, so select the first moving fleet
-                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
             } else {
                 // it was found, and wasn't at the end, so select the next fleet after it
                 ++it;
-                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
             }
         }
     } else {
-        // make FleetWnd for clicked button the selected fleet wnd
-        m_active_fleet_wnd = wnd_for_button;
+        FleetUIManager::GetFleetUIManager().SetActiveFleetWnd(wnd_for_button);
     }
 
-}
-
-void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
-{
-    m_fleet_wnds.erase(fleet_wnd);
-    if (fleet_wnd == m_active_fleet_wnd) {
-        if (m_fleet_wnds.empty())
-            m_active_fleet_wnd = 0;
-        else
-            m_active_fleet_wnd = *(m_fleet_wnds.begin());
-    }
 }
 
 void MapWnd::HandleEmpireElimination(int empire_id)
