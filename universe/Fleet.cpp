@@ -389,6 +389,16 @@ bool Fleet::RemoveShip(int ship)
     return retval;
 }
 
+void Fleet::SetSystem(int sys)
+{
+    UniverseObject::SetSystem(sys);
+    for (iterator it = begin(); it != end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->SetSystem(sys);
+    }
+}
+
 void Fleet::MovementPhase()
 {
     if (m_moving_to != INVALID_OBJECT_ID) {

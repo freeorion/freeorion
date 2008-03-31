@@ -105,6 +105,7 @@ public:
     iterator begin();  ///< returns the begin iterator for the ships in the fleet
     iterator end();    ///< returns the end iterator for the ships in the fleet
 
+    virtual void SetSystem(int sys);
     virtual void MovementPhase();
     virtual void PopGrowthProductionResearchPhase();
     //@}
