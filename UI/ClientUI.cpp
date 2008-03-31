@@ -95,14 +95,17 @@ boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
     const ShipDesign* design = GetShipDesign(design_id);
     boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / design->Graphic(), true);
-    if (texture) return texture;
+    if (texture)
+        return texture;
     return ClientUI::GetTexture(ArtDir() / "icons" / "Scout.png", true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name)
 {
     const BuildingType* building_type = GetBuildingType(building_type_name);
-    const std::string graphic_name = building_type->Graphic();
+    std::string graphic_name = "";
+    if (building_type)
+        graphic_name = building_type->Graphic();
     if (graphic_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "building" / "generic_building.png", true);
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);
@@ -120,17 +123,20 @@ boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& categor
 boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
 {
     const Tech* tech = GetTechManager().GetTech(tech_name);
-    std::string texture_name = tech->Graphic();
-    if (texture_name.empty()) {
+    std::string texture_name = "";
+    if (tech)
+        texture_name = tech->Graphic();
+    if (texture_name.empty())
         return CategoryIcon(tech->Category());
-    }
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& special_name)
 {
     const Special* special = GetSpecial(special_name);
-    std::string texture_name = special->Graphic();
+    std::string texture_name = "";
+    if (special)
+        texture_name = special->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name);
@@ -139,7 +145,9 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& speci
 boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_name)
 {
     const PartType* part = GetPartType(part_name);
-    std::string texture_name = part->Graphic();
+    std::string texture_name = "";
+    if (part)
+        std::string texture_name = part->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name);
@@ -148,7 +156,9 @@ boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_nam
 boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
 {
     const HullType* hull = GetHullType(hull_name);
-    std::string texture_name = "";//hull->Graphic();
+    std::string texture_name = "";
+    if (hull)
+        texture_name = "";//hull->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name);

@@ -767,7 +767,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // icon
             GG::Control* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
-                ClientUI::GetTexture(ClientUI::ArtDir() / type->Graphic()),
+                ClientUI::BuildingTexture(type->Name()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(icon);
 
@@ -822,7 +822,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // icon
             GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
-                ClientUI::GetTexture(ClientUI::ArtDir() / ship_design->Graphic()),
+                ClientUI::ShipIcon(ship_design->ID()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
 
