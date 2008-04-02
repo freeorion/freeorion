@@ -152,18 +152,45 @@ void MapWndPopup::Close()
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData
 MapWnd::MovementLineData::MovementLineData() : 
-    colour(GG::CLR_ZERO), 
-    path(),
-    x(-100000.0),   // UniverseObject::INVALID_POSITION value respecified here to avoid unnecessary include dependency
-    y(-100000.0)
+    m_colour(GG::CLR_ZERO), 
+    m_path(),
+    m_button(0),
+    m_x(-100000.0),   // UniverseObject::INVALID_POSITION value respecified here to avoid unnecessary include dependency
+    m_y(-100000.0)
 {}
 
-MapWnd::MovementLineData::MovementLineData(double x_, double y_, const std::list<MovePathNode>& path_, GG::Clr colour_/* = GG::CLR_WHITE*/) :
-    colour(colour_),
-    path(path_),
-    x(x_),
-    y(y_)
+MapWnd::MovementLineData::MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
+    m_colour(colour),
+    m_path(path),
+    m_button(0),
+    m_x(x),
+    m_y(y)
 {}
+
+MapWnd::MovementLineData::MovementLineData(const FleetButton* button, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
+    m_colour(colour),
+    m_path(path),
+    m_button(button),
+    m_x(-100000.0),
+    m_y(-100000.0)
+{ assert(button); }
+
+GG::Clr MapWnd::MovementLineData::Colour() const
+{ return m_colour; }
+
+const std::list<MovePathNode>& MapWnd::MovementLineData::Path() const
+{ return m_path; }
+
+std::pair<double, double> MapWnd::MovementLineData::Start() const
+{
+    if (m_button) {
+        GG::Pt sz = m_button->Size();
+        GG::Pt fleet_screen_centre = m_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
+        return ClientUI::GetClientUI()->GetMapWnd()->UniversePositionFromScreenCoords(fleet_screen_centre);
+    } else {
+        return std::make_pair(m_x, m_y);
+    }
+}
 
 // MapWnd
 // static(s)
@@ -1437,14 +1464,6 @@ void MapWnd::SelectFleet(Fleet* fleet)
 void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 {
     assert(fleet_button);
-    GG::Pt cl_ul = ClientUpperLeft();
-    // determine location of fleet button on screen
-    GG::Pt sz = fleet_button->Size();
-    GG::Pt fleet_screen_centre = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
-
-    // convert fleet screen centre to corresponding universe location
-    std::pair<double, double> button_universe_position = UniversePositionFromScreenCoords(fleet_screen_centre);
-
     std::set<int> destinations; // keeps track of systems to which lines are being drawn for given fleet button
     for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
         Fleet* fleet = *it;
@@ -1455,7 +1474,7 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
             destinations.find(fleet->FinalDestinationID()) == destinations.end())
         {
             destinations.insert(fleet->FinalDestinationID());
-            m_fleet_lines[fleet] = MovementLineData(button_universe_position.first, button_universe_position.second, fleet->MovePath());
+            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
         } else {
             // fleet's destination already has a line from this button, or the destination is invalid.  If there is
             // another preexisting fleet line for this fleet, it is no longer needed.
@@ -1474,20 +1493,12 @@ void MapWnd::SetFleetMovement(Fleet* fleet)
         if (system) {
             // attempt draw line from fleet button location near system icon
             // get system icon
-            std::map<int, SystemIcon*>::const_iterator it = m_system_icons.find(system->ID());
-            if (it != m_system_icons.end()) {
+            std::map<int, SystemIcon*>::const_iterator it2 = m_system_icons.find(system->ID());
+            if (it2 != m_system_icons.end()) {
                 // get fleet button
-                const FleetButton* fleet_button = it->second->GetFleetButton(fleet);
+                const FleetButton* fleet_button = it2->second->GetFleetButton(fleet);
                 assert(fleet_button);
-
-                // determine centre of fleet button on screen
-                GG::Pt sz = fleet_button->Size();
-                GG::Pt fleet_screen_centre = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
-
-                // convert fleet screen centre to corresponding universe location
-                std::pair<double, double> universe_position = UniversePositionFromScreenCoords(fleet_screen_centre);
-
-                m_fleet_lines[fleet] = MovementLineData(universe_position.first, universe_position.second, fleet->MovePath());
+                m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
                 return;
             }
         }
@@ -1523,11 +1534,9 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
     // check if this MapWnd already has MovementLineData for this fleet
     std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
     if (it != m_fleet_lines.end()) {
-        // there is a fleet line already.  Its x and y are useful for the projected line, so it can be copied...
-        m_projected_fleet_line = it->second;
-        // and slightly tweaked
-        m_projected_fleet_line.colour = line_colour;
-        m_projected_fleet_line.path = path;
+        // there is a fleet line already.  Its x and y are useful for the projected line, so it can be copied and tweaked a bit
+        std::pair<double, double> start = it->second.Start();
+        m_projected_fleet_line = MovementLineData(start.first, start.second, path, line_colour);
     } else {
         // there is no preexisting fleet line.  need to make one from scratch
 
@@ -1539,15 +1548,7 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
             // get fleet button
             const FleetButton* fleet_button = it->second->GetFleetButton(fleet);
             assert(fleet_button);
-            
-            // determine centre of fleet button on screen
-            GG::Pt sz = fleet_button->Size();
-            GG::Pt fleet_screen_centre = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
-
-            // convert fleet screen centre to corresponding universe location
-            universe_position = UniversePositionFromScreenCoords(fleet_screen_centre);
-
-            m_projected_fleet_line = MovementLineData(universe_position.first, universe_position.second, path, line_colour);
+            m_projected_fleet_line = MovementLineData(fleet_button, path, line_colour);
         } else {
             // couldn't get a fleet button, so instead use fleet's own position
             m_projected_fleet_line = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
@@ -1785,25 +1786,25 @@ void MapWnd::RenderFleetMovementLines()
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
         const MovementLineData& move_line = it->second;
 
-        if (move_line.path.empty())
+        if (move_line.Path().empty())
             continue;
 
         // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
         // when the begining of a line segment starts offscreen
         glBegin(GL_LINES);
-        glColor(move_line.colour);
-        const std::list<MovePathNode>& path = move_line.path;
+        glColor(move_line.Colour());
 
         // add starting vertex
-        glVertex2d(move_line.x, move_line.y);
+        std::pair<double, double> start = move_line.Start();
+        glVertex2d(start.first, start.second);
 
-        for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
+        for (std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin(); path_it != move_line.Path().end(); ++path_it) {
             // add ending vertex for previous leg of path
             glVertex2d(path_it->x, path_it->y);
 
             // if not done, add starting vertex for next leg of path
             std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != path.end())
+            if (++temp_it != move_line.Path().end())
                 glVertex2d(path_it->x, path_it->y);
         }
         glEnd();
@@ -1811,21 +1812,21 @@ void MapWnd::RenderFleetMovementLines()
 
     // render projected move path
     glLineStipple(static_cast<int>(LINE_SCALE), PROJECTED_PATH_STIPPLE);
-    if (!m_projected_fleet_line.path.empty()) {
+    if (!m_projected_fleet_line.Path().empty()) {
         glBegin(GL_LINES);
-        glColor(m_projected_fleet_line.colour);
-        const std::list<MovePathNode>& path = m_projected_fleet_line.path;
+        glColor(m_projected_fleet_line.Colour());
 
         // add starting vertex
-        glVertex2d(m_projected_fleet_line.x, m_projected_fleet_line.y);
+        std::pair<double, double> start = m_projected_fleet_line.Start();
+        glVertex2d(start.first, start.second);
 
-        for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
+        for (std::list<MovePathNode>::const_iterator path_it = m_projected_fleet_line.Path().begin(); path_it != m_projected_fleet_line.Path().end(); ++path_it) {
             // add ending vertex for previous leg of path
             glVertex2d(path_it->x, path_it->y);
 
             // if not done, add starting vertex for next leg of path
             std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != path.end())
+            if (++temp_it != m_projected_fleet_line.Path().end())
                 glVertex2d(path_it->x, path_it->y);
         }
         glEnd();

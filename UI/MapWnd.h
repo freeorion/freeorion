@@ -131,10 +131,18 @@ private:
     struct MovementLineData
     {
         MovementLineData();
-        MovementLineData(double x_, double y_, const std::list<MovePathNode>& path_, GG::Clr colour_ = GG::CLR_WHITE);
-        GG::Clr colour;                 ///< colour in which to draw line
-        std::list<MovePathNode> path;   ///< path to draw
-        double x, y;                    ///< universe x and y at which to originate line (start point isn't in the path)
+        MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour = GG::CLR_WHITE);
+        MovementLineData(const FleetButton* button, const std::list<MovePathNode>& path, GG::Clr colour = GG::CLR_WHITE);
+
+        GG::Clr Colour() const;                      ///< colour in which to draw line
+        const std::list<MovePathNode>& Path() const; ///< path to draw
+        std::pair<double, double> Start() const;     ///< universe x and y at which to originate line (start point isn't in the path)
+
+    private:
+        GG::Clr m_colour;
+        std::list<MovePathNode> m_path;
+        const FleetButton* m_button;    ///< fleet button at which this movement path originates (if zero, m_x and m_y should be used instead)
+        double m_x, m_y;                ///< universe x and y at which to originate line (start point isn't in the path) (if m_button is nonzero, its galaxy position should be used instead)
     };
 
     void Zoom(int delta);                           //!< changes the zoomlevel of the main map
