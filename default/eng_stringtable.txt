@@ -2874,6 +2874,24 @@ Increases Planet Population
 FLEET_RANGE_DESC
 Improves Fleet Supply
 
+CON_TERRAFORM
+Terraforming
+
+CON_TERRAFORM_DESC
+Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical.  The precise method depends greatly on the type of planet to be changed and the desired result.  However in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust.  The process takes years.
+
+CON_TERRAFORM_SHORT_DESC
+Allows terraforming to improve planets
+
+CON_RAPID_TERRAFORM
+Rapid Terraforming
+
+CON_RAPID_TERRAFORM_DESC
+Advances in orbital deployment now enable any terrestrial planet in an inhabited system to be terraformed to any environmental preference. Nanites can accomplish the transformation in half the time of conventional methods.
+
+CON_RAPID_TERRAFORM_SHORT_DESC
+Allows rapid and remote terraforming to improve planets
+
 CON_GRAVITY_WELLS
 Controlled gravity wells
 

@@ -1271,6 +1271,8 @@ Tech
     unlock = []
     graphic = "icons/tech/orbital_construction.png"
 
+
+
 Tech
     name = "CON_ARCH_PSYCH"
     description = "CON_ARCH_PSYCH_DESC"
@@ -1483,6 +1485,36 @@ Tech
     ]
     unlock = []
     graphic = "icons/tech/n-dimensional_structures.png"
+Tech
+    name = "CON_TERRAFORM"
+    description = "CON_TERRAFORM_DESC"
+    short_description = "CON_TERRAFORM_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "PRO_PLANET_GEOL"
+        "GRO_PLANET_ECOL"
+    ]
+    unlock = []
+    graphic = "icons/tech/terraform.png"
+
+Tech
+    name = "CON_RAPID_TERRAFORM"
+    description = "CON_RAPID_TERRAFORM_DESC"
+    short_description = "CON_RAPID_TERRAFORM_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = [
+        "CON_TERRAFORM"
+        "PRO_NANOTECH_PROD"
+        "CON_ORBITAL_INFRA"
+    ]
+    unlock = []
+    graphic = "icons/tech/terraform_rapid.png"
 
 Tech
     name = "CON_GRAVITY_WELLS"
