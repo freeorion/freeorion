@@ -345,11 +345,13 @@ class StatisticIcon : public GG::Control
 public:
     /** \name Structors */ //@{
     StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture, 
-                  double value, int digits, bool integerize, bool showsign); ///< initializes with one value
+                  double value, int digits, bool integerize, bool showsign,
+                  GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< initializes with one value
     
     StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
-                  bool integerize0, bool integerize1, bool showsign0, bool showsign1);  ///< initializes with two values
+                  bool integerize0, bool integerize1, bool showsign0, bool showsign1,
+                  GG::Flags<GG::WndFlag> flags = GG::CLICKABLE);  ///< initializes with two values
     //@}
 
     /** \name Mutators */ //@{

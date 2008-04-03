@@ -930,8 +930,9 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
 // class StatisticIcon
 ///////////////////////////////////////
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
-                             double value, int digits, bool integerize, bool showsign) :
-    GG::Control(x, y, w, h),
+                             double value, int digits, bool integerize, bool showsign,
+                             GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+    GG::Control(x, y, w, h, flags),
     m_num_values(1),
     m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
     m_integerize(std::vector<bool>(1, integerize)), m_show_signs(std::vector<bool>(1, showsign)),
@@ -957,8 +958,9 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
 
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
-                             bool integerize0, bool integerize1, bool showsign0, bool showsign1) :
-    GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+                             bool integerize0, bool integerize1, bool showsign0, bool showsign1,
+                             GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+    GG::Control(x, y, w, h, flags),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
     m_integerize(std::vector<bool>(2, false)), m_show_signs(std::vector<bool>(2, false)),

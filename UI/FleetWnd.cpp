@@ -273,7 +273,7 @@ namespace {
             AttachChild(m_ship_name_text);
 
             m_ship_strength_stat = new StatisticIcon(h, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1, ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combatstrength.png"),
-                                                     0, 0, true, false);
+                                                     0, 0, true, false, GG::Flags<GG::WndFlag>());
             AttachChild(m_ship_strength_stat);
             m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
@@ -335,7 +335,7 @@ namespace {
                 design_name = "Scout";
             }
             m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
-            /*ClientUI::ShipIcon(design_name)*/ ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")), GG::GRAPHIC_FITGRAPHIC);
+                                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")), GG::GRAPHIC_FITGRAPHIC);
             AttachChild(m_ship_icon);
         }
 
@@ -354,7 +354,7 @@ namespace {
             if (damage_pts) {
                 if (!m_damage_stat) {
                     m_damage_stat = new StatisticIcon(x_position, SHIP_NAME_HT, STAT_ICON_WD, ICON_SZ, ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "damagemarker.png"),
-                                                      damage_pts, 0, true, false);
+                                                      damage_pts, 0, true, false, GG::Flags<GG::WndFlag>());
                     AttachChild(m_damage_stat);
                 }
                 x_position += m_damage_stat->Width(); // no icon spacing is needed after stat icons
@@ -481,10 +481,10 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
     if (m_fleet) {
         m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "3shipfleet.png"),
-                                             0, 0, true, false);
+                                             0, 0, true, false, GG::Flags<GG::WndFlag>());
         m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
                                                   ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combatstrength.png"),
-                                                  0, 0, true, false);
+                                                  0, 0, true, false, GG::Flags<GG::WndFlag>());
         AttachChild(m_num_ships_stat);
         AttachChild(m_fleet_strength_stat);
         m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
