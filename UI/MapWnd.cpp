@@ -487,7 +487,7 @@ void MapWnd::Render()
     glScalef(m_zoom_factor, m_zoom_factor, 1.0);
     glTranslatef(origin_offset.x / m_zoom_factor, origin_offset.y / m_zoom_factor, 0.0);
 
-    glColor4f(1.0, 1.0, 1.0, 50.0f / 255.0f);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it) {
@@ -1049,15 +1049,15 @@ void MapWnd::InitTurn(int turn_number)
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
-    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
-    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
-    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal, &MapWnd::RefreshTradeResourceIndicator, this, 0);
-    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal, &MapWnd::RefreshResearchResourceIndicator, this, 0);
-    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal, &MapWnd::RefreshIndustryResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
+    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
+    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
+    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
+    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
 
-    GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::RefreshPopulationIndicator, this, 1);
+    GG::Connect(empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
 
-    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal, &SidePanel::Refresh);
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
 
     //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
