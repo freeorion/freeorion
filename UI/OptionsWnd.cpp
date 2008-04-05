@@ -690,6 +690,7 @@ void OptionsWnd::Init()
     SoundFileOption("UI.sound.button-rollover", UserString("OPTIONS_SOUND_ROLLOVER"));
     SoundFileOption("UI.sound.fleet-button-click", UserString("OPTIONS_SOUND_FLEET_CLICK"));
     SoundFileOption("UI.sound.fleet-button-rollover", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption("UI.sound.system-icon-rollover", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
     SoundFileOption("UI.sound.turn-button-click", UserString("OPTIONS_SOUND_TURN"));
     SoundFileOption("UI.sound.planet-button-click", UserString("OPTIONS_SOUND_PLANET"));
     EndSection();

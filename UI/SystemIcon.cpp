@@ -10,6 +10,7 @@
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
+#include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -18,6 +19,10 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
+namespace {
+    bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
+    void PlaySystemIconRolloverSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
+}
 
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
@@ -247,6 +252,8 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
     if (m_name)
         m_name->Show();
+
+    PlaySystemIconRolloverSound();
 
     MouseEnteringSignal(m_system.ID());
 }

@@ -59,7 +59,7 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode())) {
-        if (State() != BN_ROLLOVER && PlaySounds())
+        if (State() != BN_ROLLOVER)
             PlayFleetButtonRolloverSound();
         SetState(BN_ROLLOVER);
     }

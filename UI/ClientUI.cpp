@@ -308,6 +308,7 @@ namespace {
         db.Add<std::string>("UI.sound.planet-button-click", "OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK", "button_click.wav");
         db.Add<std::string>("UI.sound.fleet-button-rollover", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.fleet-button-click", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK", "fleet_button_click.wav");
+        db.Add<std::string>("UI.sound.system-icon-rollover", "OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.sidepanel-open", "OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN", "sidepanel_open.wav");
         db.Add<std::string>("UI.sound.farming-focus", "OPTIONS_DB_UI_SOUND_FARMING_FOCUS", "farm_select.wav");
         db.Add<std::string>("UI.sound.industry-focus", "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS", "industry_select.wav");
