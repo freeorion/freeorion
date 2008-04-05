@@ -212,6 +212,9 @@ The sound file played when mouse moves over a fleet button.
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
 The sound file played when a fleet button is clicked.
 
+OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
+The sound file played when mouse moves over a system icon.
+
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 The sound file played when the system side-panel is opened.
 
@@ -879,6 +882,9 @@ Fleet Button Click
 
 OPTIONS_SOUND_FLEET_ROLLOVER
 Fleet Button Rollover
+
+OPTIONS_SOUND_SYSTEM_ROLLOVER
+System Icon Rollover
 
 OPTIONS_SOUND_WINDOW
 Window Sounds
