@@ -862,7 +862,7 @@ void MapWnd::InitTurn(int turn_number)
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-            const double GAS_SIZE = ClientUI::SystemIconSize() * 16.0;
+            const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
             const double ROTATION = systems[i]->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const double COS_THETA = std::cos(ROTATION);
             const double SIN_THETA = std::sin(ROTATION);
