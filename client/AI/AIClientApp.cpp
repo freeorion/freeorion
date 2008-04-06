@@ -80,6 +80,9 @@ void AIClientApp::Exit(int code)
 AIClientApp* AIClientApp::GetApp()
 { return s_app; }
 
+const AIBase* AIClientApp::GetAI()
+{ return m_AI; }
+
 void AIClientApp::Run()
 {
     m_AI = new PythonAI();
@@ -133,20 +136,30 @@ void AIClientApp::HandleMessage(const Message& msg)
         if (msg.SendingPlayer() == -1) {
             Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; "
                 "starting AI turn...";
-            bool single_player_game; // note that this is ignored
-            SaveGameUIData ui_data; // note that this is ignored
+            bool single_player_game;        // note that this is ignored
             bool loaded_game_data;
-            bool ui_data_available;
-            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info, Orders(), ui_data, loaded_game_data, ui_data_available);
-            if (loaded_game_data)
+            bool ui_data_available;         // ignored
+            SaveGameUIData ui_data;         // ignored
+            bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
+            std::string save_state_string;
+            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info, Orders(), loaded_game_data, ui_data_available, ui_data, state_string_available, save_state_string);
+            Logger().debugStream() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
+            if (loaded_game_data) {
+                Logger().debugStream() << "Message::GAME_START save_state_string: " << save_state_string;
+                m_AI->ResumeLoadedGame(save_state_string);
                 Orders().ApplyOrders();
+            } else {
+                Logger().debugStream() << "Message::GAME_START Starting New Game!";
+                m_AI->StartNewGame();
+            }
             m_AI->GenerateOrders();
         }
         break;
     }
 
     case Message::SAVE_GAME: {
-        Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders()));
+        Logger().debugStream() << "AIClientApp::HandleMessage Message::SAVE_GAME";
+        Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), m_AI->GetSaveStateString()));
         break;
     }
 

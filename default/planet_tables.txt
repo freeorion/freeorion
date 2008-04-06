@@ -9,28 +9,24 @@
 # ...
 
 <8x5>
-PlanetMaxPop                            Inhospitable    Terrible        Adequate        Superb  Optimal
-NoWorld                                 0               0               0               0       0
-Tiny                                    0               2               4               8       10
-Small                                   0               4               8               16      20
-Average                                 0               6               12              20      25
-Large                                   0               8               16              25      30
-Huge                                    0               10              20              30      35
-Asteroid                                0               0               0               0       0
-GasGiant                                0               0               0               0       0
+PlanetMaxPop                            Uninhabitable   Hostile     Poor        Adequate    Good
+NoWorld                                 0               0           0           0           0
+Tiny                                    0               0           0           2           5
+Small                                   0               0           0           4           10
+Average                                 0               0           0           6           15
+Large                                   0               0           0           8           20
+Huge                                    0               0           0           10          25
+Asteroid                                0               0           0           0           0
+GasGiant                                0               0           0           0           0
 
 <1x5>
-PlanetEnvHealthMod                      Inhospitable    Terrible        Adequate        Superb  Optimal
-Health                                  0               25              30              40      50     # max/current meter modifiers
+PlanetEnvHealthMod                      Uninhabitable   Hostile     Poor        Adequate    Good
+Health                                  0               10          15          20          25
 
 <1x5>
-PlanetEnvFarmingMod                     Inhospitable    Terrible        Adequate        Superb  Optimal
-Farming                                 -100            -30             -10             0       10
+PlanetEnvFarmingMod                     Uninhabitable   Hostile     Poor        Adequate    Good
+Farming                                 -100            -30         -10         -5          0
 
 <1x8>
-PlanetSizeIndustryMod                   NoWorld         Tiny            Small           Medium  Large   Huge    Asteroid    GasGiant
-Industry                                0               10              5               0       -5      -10     -50         -50
-
-<1x6>
-NutrientHealthMod                       LessThan1       LessThan2       LessThan4       4OrMore
-NutrientsDividedByPop                   -50             -10             0               10
+PlanetSizeIndustryMod                   NoWorld         Tiny        Small       Medium      Large       Huge        Asteroid    GasGiant
+Industry                                0               10          5           0           -5          -10         -50         -50

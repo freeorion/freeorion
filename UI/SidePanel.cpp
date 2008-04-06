@@ -243,7 +243,7 @@ namespace {
             gluQuadricOrientation(quad, GLU_OUTSIDE);
 
             glColor(GG::CLR_WHITE);
-            gluSphere(quad, r, 100, 100);
+            gluSphere(quad, r, 30, 30);
         }
     }
 
@@ -648,11 +648,11 @@ namespace {
                 const ShipDesign* design = s->Design();
 
                 if (!design) {
-                    Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->ShipDesignID();
+                    Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->DesignID();
                     continue;
                 }
                 
-                if (design->colonize) return s;
+                if (design->Colonize()) return s;
             }
         }
         return 0;   // no ships found...
@@ -796,16 +796,16 @@ void SidePanel::PlanetPanel::DoLayout()
     const int INTERPANEL_SPACE = 3;
     int y = m_specials_panel->LowerRight().y - UpperLeft().y;
     int x = Width() - m_population_panel->Width();
-    
+
     if (m_population_panel->Parent() == this) {
         m_population_panel->MoveTo(GG::Pt(x, y));
         y += m_population_panel->Height() + INTERPANEL_SPACE;
     }
-    
+
     if (m_resource_panel->Parent() == this) {
         m_resource_panel->MoveTo(GG::Pt(x, y));
         y += m_resource_panel->Height() + INTERPANEL_SPACE;
-    }   
+    }
 
     if (m_buildings_panel->Parent() == this) {
         m_buildings_panel->MoveTo(GG::Pt(x, y));
@@ -850,7 +850,7 @@ void SidePanel::PlanetPanel::Refresh()
 
     if (owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
-        m_button_colonize->SetText(UserString("PL_COLONIZE"));
+        m_button_colonize->SetText(UserString("PL_COLONIZE") + " " + boost::lexical_cast<std::string>(planet->GetMeter(METER_POPULATION)->Max()));
     
     } else if (planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);
@@ -869,13 +869,13 @@ void SidePanel::PlanetPanel::Refresh()
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
 {
     Planet *planet = GetPlanet();
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true)));
 }
 
 void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
     Planet *planet = GetPlanet();
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false)));
 } 
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -967,31 +967,31 @@ void SidePanel::PlanetPanel::ClickColonize()
             return;
         }
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID()));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID())));
     }
     else // cancel colonization
     {
-        const FleetColonizeOrder *col_order = dynamic_cast<const FleetColonizeOrder*>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
-        int ship_id = col_order?col_order->ShipID():UniverseObject::INVALID_OBJECT_ID;
+        boost::shared_ptr<FleetColonizeOrder> col_order =
+            boost::dynamic_pointer_cast<FleetColonizeOrder>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
+        int ship_id = col_order ? col_order->ShipID() : UniverseObject::INVALID_OBJECT_ID;
 
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     
         // if the ship now buils a fleet of its own, make sure that fleet appears
         // at a possibly opened FleetWnd
         Ship* ship = GetUniverse().Object<Ship>(ship_id);
-        Fleet* fleet= ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : NULL;
-        MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-        if (fleet)
-            for ( MapWnd::FleetWndIter it = map_wnd->FleetWndBegin();it != map_wnd->FleetWndEnd();++it)
-            {
-                FleetWnd *fleet_wnd = *it;
+        Fleet* fleet = ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : NULL;
+        if (fleet) {
+            for (FleetUIManager::iterator it = FleetUIManager::GetFleetUIManager().begin(); it != FleetUIManager::GetFleetUIManager().end(); ++it) {
+                FleetWnd* fleet_wnd = *it;
                 if (fleet->SystemID() == fleet_wnd->SystemID()
-                   && !fleet_wnd->ContainsFleet(fleet->ID()))
+                    && !fleet_wnd->ContainsFleet(fleet->ID()))
                 {
                     fleet_wnd->AddFleet(GetUniverse().Object<Fleet>(fleet->ID()));
                     break;
                 }
             }
+        }
     }
 }
 
@@ -1017,7 +1017,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             edit_wnd.Run();
             if (edit_wnd.Result() != "")
             {
-                HumanClientApp::GetApp()->Orders().IssueOrder(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
                 m_planet_name->SetText(planet->Name());
             }
             break;
@@ -1092,7 +1092,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout()
         panel->MoveTo(GG::Pt(0, y));
         y += panel->Height();   // may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
-    
+
     int available_height = y;
     GG::Wnd* parent = Parent();
     if (parent) {

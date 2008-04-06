@@ -323,8 +323,12 @@ boost::statechart::result PlayingGame::react(const Disconnection& d)
 boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerEliminated";
+    int empire_id;
+    std::string empire_name;
+    ExtractMessageData(msg.m_message, empire_id, empire_name);
+    Client().EmpireEliminatedSignal(empire_id);
     // TODO: replace this with something better
-    ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % msg.m_message.Text()));
+    ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % empire_name));
     return discard_event();
 }
 
@@ -433,11 +437,13 @@ boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.GameStart";
-    SaveGameUIData ui_data;
     bool loaded_game_data;
     bool ui_data_available;
+    SaveGameUIData ui_data;
+    bool save_state_string_available;
+    std::string save_state_string;      // ignored - used by AI but not by human client
     OrderSet orders;
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, orders, ui_data, loaded_game_data, ui_data_available);
+    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, orders, loaded_game_data, ui_data_available, ui_data, save_state_string_available, save_state_string);
     Client().StartGame();
     std::swap(Client().Orders(), orders);
     if (loaded_game_data) {
@@ -448,6 +454,13 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
     if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
         Client().Autosave(true);
     return transit<PlayingTurn>();
+}
+
+boost::statechart::result WaitingForTurnData::react(const SaveGame& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.SaveGame";
+    Client().HandleSaveGameDataRequest();
+    return discard_event();
 }
 
 

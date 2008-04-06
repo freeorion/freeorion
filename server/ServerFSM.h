@@ -281,7 +281,7 @@ struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEnd
 };
 
 
-/** The default substate of WaitingForTurnEnd in which a player has initiated a save and the server is waiting for all
+/** The substate of WaitingForTurnEnd in which a player has initiated a save and the server is waiting for all
     players to send their save data, after which the server will actually preform the save. */
 struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, WaitingForTurnEnd>
 {

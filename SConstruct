@@ -255,8 +255,8 @@ if not env.GetOption('clean'):
             if str(Platform()) == 'posix':
                 if env['multithreaded']:
                     if conf.CheckCHeader('pthread.h') and conf.CheckLib('pthread', 'pthread_create', autoadd = 0):
-                        env.AppendUnique(CCFLAGS = ' -pthread')
-                        env.AppendUnique(LINKFLAGS = ' -pthread')
+                        env.AppendUnique(CCFLAGS = '-pthread')
+                        env.AppendUnique(LINKFLAGS = '-pthread')
                     else:
                         Exit(1)
 
@@ -541,6 +541,7 @@ if str(Platform()) == 'win32':
         'GiGi',
         'GiGiOgre',
         'glu32',
+        'glew32',
         'jpeg',
         'kernel32',
         'log4cpp',
@@ -586,18 +587,20 @@ CreateOgrePluginsFile(['ogre_plugins.cfg'], ['ogre_plugins.cfg.in'], env)
 Export('env')
 
 # define server objects
-env['target_define'] = 'FREEORION_BUILD_SERVER'
-server_objects = SConscript(os.path.normpath('SConscript'))
+env['target_defines'] = ['FREEORION_BUILD_SERVER']
+server_objects, server_libs = SConscript(os.path.normpath('SConscript'))
 freeoriond = env.Program("freeoriond", server_objects)
 
 # define ai objects
-env['target_define'] = 'FREEORION_BUILD_AI'
-ai_objects = SConscript(os.path.normpath('SConscript'))
+env['target_defines'] = ['FREEORION_BUILD_AI']
+ai_objects, ai_libs = SConscript(os.path.normpath('SConscript'))
 freeorionca = env.Program("freeorionca", ai_objects)
 
 # define human objects
-env['target_define'] = 'FREEORION_BUILD_HUMAN'
-human_objects = SConscript(os.path.normpath('SConscript'))
+env['target_defines'] = ['FREEORION_BUILD_HUMAN']
+if str(Platform()) != 'win32':
+    env['target_defines'].append('GL_GLEXT_PROTOTYPES')
+human_objects, human_libs = SConscript(os.path.normpath('SConscript'))
 if str(Platform()) == 'win32':
     rc_file = open('win32_resources.rc', 'w')
     rc_file.write('IDI_ICON ICON "client/human/HumanClient.ico"')
@@ -607,13 +610,15 @@ if str(Platform()) == 'win32':
     env.Command('icon.rbj', 'win32_resources.res', ['cvtres /out:icon.rbj /machine:ix86 win32_resources.res'])
     freeorion = env.Program("freeorion", human_objects + ['icon.rbj'])
 else:
-    freeorion = env.Program("freeorion", human_objects)
+    env_copy = env.Copy()
+    env_copy.AppendUnique(LIBS = human_libs)
+    freeorion = env_copy.Program("freeorion", human_objects)
 
 # install target
 Alias('install', Install(env['bindir'], freeoriond))
 Alias('install', Install(env['bindir'], freeorionca))
 Alias('install', Install(env['bindir'], freeorion))
-Alias('install', Install(env['datadir'], ['default', 'DejaVuSans-BoldOblique.ttf', 'DejaVuSans-Bold.ttf', 'DejaVuSans-Oblique.ttf', 'DejaVuSans.ttf']))
+Alias('install', Install(env['datadir'], 'default'))
 
 deletions = [
     Delete(os.path.normpath(os.path.join(env['bindir'], str(freeoriond[0])))),

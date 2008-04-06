@@ -6,9 +6,20 @@
 
 #include <list>
 
-class System;
+////////////////////////////////////////////////
+// MovePathNode
+////////////////////////////////////////////////
+/** Contains info about a single notable point on the move path of a fleet or other UniverseObject. */
+struct MovePathNode {
+    MovePathNode(double x_, double y_, bool turn_end_, int eta_) :
+        x(x_), y(y_), turn_end(turn_end_), eta(eta_)
+    {}
+    double x, y;    ///< location in Universe of node
+    bool turn_end;  ///< true if the fleet will end a turn at this point
+    int eta;        ///< estimated turns to reach this node
+};
 
-/** */
+/** encapsulates data for a FreeOrion fleet.  Fleets are basically a group of ships that travel together. */
 class Fleet : public UniverseObject
 {
 private:
@@ -17,7 +28,7 @@ private:
 public:
     typedef ShipIDSet::iterator         iterator;         ///< an iterator to the ships in the fleet
     typedef ShipIDSet::const_iterator   const_iterator;   ///< a const iterator to the ships in the fleet
-   
+
     /** \name Structors */ //@{
     Fleet(); ///< default ctor
     Fleet(const std::string& name, double x, double y, int owner);
@@ -27,12 +38,22 @@ public:
     const_iterator begin() const;  ///< returns the begin const_iterator for the ships in the fleet
     const_iterator end() const;    ///< returns the end const_iterator for the ships in the fleet
 
+    const std::set<int>& ShipIDs() const;   ///< returns set of IDs of ships in fleet.
+
     virtual UniverseObject::Visibility GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
         If this fleet is currently at a system, that system will be the first one in the list. */
     const std::list<System*>& TravelRoute() const;
+
+    /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
+        specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
+        location, however the fleet's current location will not be on the list, even if it is currently in a system. */
+    std::list<MovePathNode> MovePath(const std::list<System*>& route) const;
+
+    /// Returns MovePath for fleet's current TravelRoute */
+    std::list<MovePathNode> MovePath() const;
 
     /// Returns the number of turns which must elapse before the fleet arrives at its final destination and the turns to the next system, respectively.
     std::pair<int, int> ETA() const;
@@ -84,6 +105,7 @@ public:
     iterator begin();  ///< returns the begin iterator for the ships in the fleet
     iterator end();    ///< returns the end iterator for the ships in the fleet
 
+    virtual void SetSystem(int sys);
     virtual void MovementPhase();
     virtual void PopGrowthProductionResearchPhase();
     //@}
@@ -94,7 +116,7 @@ public:
 private:
     void CalculateRoute() const;    // sets m_travel_route and m_travel_distance to their proper values based on the other member data
     void RecalculateFleetSpeed();   // recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
-    void GetVisibleRoute(std::list<System*>& travel_route, int moving_to);
+    void ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last_system);  // removes any systems on the route after the specified system
 
     ShipIDSet           m_ships;
     int                 m_moving_to;
@@ -131,7 +153,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_saving::value) {
         moving_to = (Universe::ALL_OBJECTS_VISIBLE || vis == FULL_VISIBILITY) ? m_moving_to : m_next_system;
         if (1 <= version) {
-            GetVisibleRoute(travel_route, moving_to);
+            ShortenRouteToEndAtSystem(travel_route, moving_to);
             travel_distance = m_travel_distance;
             if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != m_travel_route.size()) {
                 if (moving_to == m_moving_to)

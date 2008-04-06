@@ -1,100 +1,94 @@
-import foaiint
-
-# globals
-systems_being_explored = []
-
-
-# called when Python AI starts
-def InitFreeOrionAI():
-    foaiint.LogOutput("Initialized FreeOrion Python AI")
-    foaiint.LogOutput(foaiint.PlayerName())
+import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
+import pickle                       # Python object serialization library
+import ExplorationAI
+import ColonisationAI
 
 
-# called once per turn
-def GenerateOrders():
-    foaiint.LogOutput("Generating Orders")
+# global variable for test purposes.  code in generateOrders demonstrates that this value persists between
+# calls from c++ to functions defined in this module
+i = 0
+
+# global Python dict in which AI state information can be stored.  data will persist between calls to
+# generate orders.  a dict can be serialized to a string, which can be stored in a saved game.  the
+# string will then be returned when the saved game is loaded, and can be deserialized to restore AI
+# state from before the save.
+d = {}
+
+
+# called when Python AI starts, before any game new game starts or saved game is resumed
+def initFreeOrionAI():
+    global i
+    print "Initialized FreeOrion Python AI"
+
+
+# called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
+# and set up whatever is needed for AI to generate orders
+def startNewGame():
+    global d
+    print "New game started"
+    d = {"dict_key" : "dict_value"}
+
+
+# called when client receives a load game message
+def resumeLoadedGame(savedStateString):
+    global d
+    print "Resuming loaded game"
+    try:
+        d = pickle.loads(savedStateString)
+    except:
+        print "failed to parse saved state string"
+        d = {}
+
+
+# called when the game is about to be saved, to let the Python AI know it should save any AI state
+# information, such as plans or knowledge about the game from previous turns, in the state string so that 
+# they can be restored if the game is loaded
+def prepareForSave():
+    global d
+    print "Preparing for game save by serializing state"
+
+    # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
+    fo.setSaveStateString(pickle.dumps(d))
+
+
+# called when this player receives a chat message.  senderID is the player who sent the message, and 
+# messageText is the text of the sent message
+def handleChatMessage(senderID, messageText):
+    print "Received chat message - ignoring it"
+
+
+# called once per turn to tell the Python AI to generate and issue orders to control its empire.
+# at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
+# and can be sent to the server for processing.
+def generateOrders():
     
-    empire = foaiint.GetEmpire()
-    empire_id = foaiint.EmpireID()
-    universe = foaiint.GetUniverse()
-    
-    # get stationary fleets
-    fleet_ids_list = GetEmpireStationaryFleetIDs(empire_id)
-    foaiint.LogOutput("fleet_ids_list: " + str(fleet_ids_list))
+    turn = fo.currentTurn()
 
+    print ""
+    print "TURN: " + str(turn)
 
-    for fleet_id in fleet_ids_list:
-        fleet = universe.GetFleet(fleet_id)
-        if (fleet == None): continue
+    # split all fleets
+    empireID = fo.empireID()
+    universe = fo.getUniverse()
 
-        foaiint.LogOutput("Fleet: " + str(fleet_id));
+    for fleetID in universe.fleetIDs:
         
-        start_system_id = fleet.SystemID()
-        if (start_system_id == fleet.INVALID_OBJECT_ID): continue
+        fleet = universe.getFleet(fleetID)
+        if fleet == None: continue
+        if not fleet.whollyOwnedBy(empireID): continue
+        if fleet.numShips == 1: continue
 
-        foaiint.LogOutput("in system: " + str(start_system_id));
-        
-        system_ids_list = GetExplorableSystemIDs(start_system_id, empire_id)
+        for shipID in fleet.shipIDs:
+            if len(fleet.shipIDs) <= 1: break # don't use last ship
+            fo.issueNewFleetOrder(str(shipID), shipID)
 
-        foaiint.LogOutput("can explore: " + str(system_ids_list));
+        # ISSUNG A NEW_FLEET ORDER ON A 1-SHIP FLEET WILL CAUSE TROUBLE!
 
-        if (len(system_ids_list) > 0):
-            destination_id = system_ids_list[0]
-            foaiint.IssueFleetMoveOrder(fleet_id, destination_id)
-    
-    
-    foaiint.DoneTurn()
+    # call AI modules
+    ExplorationAI.generateExplorationOrders()
+    ColonisationAI.generateColonisationOrders()
 
-
-# returns list of systems ids known of by but not explored by empire_id,
-# that a ship located in start_system_id could reach via starlanes
-def GetExplorableSystemIDs(start_system_id, empire_id):
-    foaiint.LogOutput("GetExplorableSystemIDs")
-    universe = foaiint.GetUniverse()
-    object_ids_vec = universe.ObjectIDs()
-    empire = foaiint.GetEmpire(empire_id)
-    
-    system_ids_list = []
+    fo.doneTurn()
 
 
-    for obj_id in object_ids_vec:
-        foaiint.LogOutput("GetExplorableSystemIDs objedt id: " + str(obj_id))
-        
-        system = universe.GetSystem(obj_id)
-        if (system == None): continue
-
-        foaiint.LogOutput("...is a system")
-
-        if (empire.HasExploredSystem(obj_id)): continue
-
-        foaiint.LogOutput("...not explored")
-
-        if (not universe.SystemsConnected(obj_id, start_system_id, empire_id)): continue
-
-        foaiint.LogOutput("...is connected to start system " + str(start_system_id))
-        
-        system_ids_list = system_ids_list + [obj_id]
-    
-    return system_ids_list
-
-
-# returns list of staitionary fleet ids owned by empire_id
-def GetEmpireStationaryFleetIDs(empire_id):
-    foaiint.LogOutput("GetEmpireFleetIDs")
-    universe = foaiint.GetUniverse()
-    object_ids_vec = universe.ObjectIDs()
-    
-    fleet_ids_list = []
-
-    for obj_id in object_ids_vec:
-        fleet = universe.GetFleet(obj_id)
-        if (fleet == None): continue
-
-        if (not fleet.WhollyOwnedBy(empire_id)): continue
-
-        if (fleet.NextSystemID() != fleet.INVALID_OBJECT_ID): continue
-
-        fleet_ids_list = fleet_ids_list + [obj_id]
-
-    return fleet_ids_list
 

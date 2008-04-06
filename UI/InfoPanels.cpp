@@ -10,6 +10,7 @@
 #include "../Empire/Empire.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
@@ -56,10 +57,10 @@ namespace {
         void Initialize() {
             row_height = ClientUI::Pts()*3/2;
             const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
-            
+
             const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
             const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
-            
+
             m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_summary_title);
 
@@ -319,7 +320,6 @@ namespace {
             return GG::CLR_WHITE;
         }
     }
-
 }
 
 /////////////////////////////////////
@@ -611,7 +611,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
-    
+
     // expand / collapse button at top right    
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
@@ -619,7 +619,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
-    
+
     int icon_size = ClientUI::Pts()*4/3;
     GG::DropDownList::Row* row;
     boost::shared_ptr<GG::Texture> texture;
@@ -628,12 +628,12 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
     // focus-selection droplists
     std::vector<boost::shared_ptr<GG::Texture> > textures;
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "balanced.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "farming.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "mining.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "research.png"));
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"));
+    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "balanced.png"));
+    textures.push_back(ClientUI::MeterIcon(METER_FARMING));
+    textures.push_back(ClientUI::MeterIcon(METER_MINING));
+    textures.push_back(ClientUI::MeterIcon(METER_INDUSTRY));
+    textures.push_back(ClientUI::MeterIcon(METER_RESEARCH));
+    textures.push_back(ClientUI::MeterIcon(METER_TRADE));
 
     m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
@@ -660,7 +660,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
 
     GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
     GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
-    
+
     // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_FARMING),
                                        0, 3, false, false);
@@ -1079,6 +1079,7 @@ void ResourcePanel::PrimaryFocusDropListSelectionChanged(int selected)
         throw std::invalid_argument("PrimaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
         break;
     }
+    Sound::TempUISoundDisabler sound_disabler;
     PrimaryFocusChangedSignal(focus);
 }
 
@@ -1108,6 +1109,7 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
         throw std::invalid_argument("SecondaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
         break;
     }
+    Sound::TempUISoundDisabler sound_disabler;
     SecondaryFocusChangedSignal(focus);
 }
 
@@ -1751,8 +1753,8 @@ void SpecialsPanel::Render()
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    GG::Wnd* parent = Parent();
+    if (parent)
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1814,4 +1816,37 @@ const UniverseObject* SpecialsPanel::GetObject() const
     const UniverseObject* obj = GetUniverse().Object(m_object_id);
     if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
     return obj;
+}
+
+/////////////////////////////////////
+//        ShipDesignPanel          //
+/////////////////////////////////////
+ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
+    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+    m_design_id(design_id),
+    m_graphic(0),
+    m_name(0)
+{
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (design) {
+        m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(design->Hull()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        AttachChild(m_graphic);
+        m_name = new GG::TextControl(0, 0, design->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE);
+        AttachChild(m_name);
+    }
+}
+
+void ShipDesignPanel::Render() {}
+
+void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
+    GG::Wnd* parent = Parent();
+    if (parent)
+        parent->MouseWheel(pt, move, mod_keys);
+}
+
+void ShipDesignPanel::Update() {
+}
+
+const ShipDesign* ShipDesignPanel::GetDesign() {
+    return GetShipDesign(m_design_id);
 }

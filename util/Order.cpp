@@ -508,8 +508,7 @@ ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name,
     m_tech_name(tech_name),
     m_position(position),
     m_remove(false)
-{
-}
+{}
 
 void ResearchQueueOrder::ExecuteImpl() const
 {
@@ -635,6 +634,7 @@ void ProductionQueueOrder::ExecuteImpl() const
 ShipDesignOrder::ShipDesignOrder() :
     Order(),
     m_ship_design(),
+    m_design_id(UniverseObject::INVALID_OBJECT_ID),
     m_delete_design_from_empire(false),
     m_create_new_design(false)
 {}
@@ -642,6 +642,7 @@ ShipDesignOrder::ShipDesignOrder() :
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
     Order(empire),
     m_ship_design(),
+    m_design_id(existing_design_id_to_remember),
     m_delete_design_from_empire(false),
     m_create_new_design(false)
 {}
@@ -649,6 +650,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember)
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
     Order(empire),
     m_ship_design(),
+    m_design_id(design_id_to_erase),
     m_delete_design_from_empire(true),
     m_create_new_design(false)
 {}
@@ -656,6 +658,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy)
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
     Order(empire),
     m_ship_design(ship_design),
+    m_design_id(new_design_id),
     m_delete_design_from_empire(false),
     m_create_new_design(true)
 {}
@@ -671,12 +674,12 @@ void ShipDesignOrder::ExecuteImpl() const
         empire->RemoveShipDesign(m_design_id);
 
     } else if (m_create_new_design) {
-        if (m_ship_design.empire != EmpireID())
+        if (m_ship_design.DesignedByEmpire() != EmpireID())
             throw std::runtime_error("Tried to create a new ShipDesign designed by another empire");
 
         Universe& universe = GetUniverse();
 
-        // check if a design with this ID alreadyh exists
+        // check if a design with this ID already exists
         if (universe.GetShipDesign(m_design_id))
             throw std::runtime_error("Tried to create a new ShipDesign with an id of an already-existing ShipDesign");
         ShipDesign* new_ship_design = new ShipDesign(m_ship_design);
@@ -694,7 +697,7 @@ void ShipDesignOrder::ExecuteImpl() const
         bool known = false;
         for (std::vector<Ship*>::const_iterator it = ship_vec.begin(); it != ship_vec.end(); ++it) {
             if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != UniverseObject::NO_VISIBILITY) {
-                if ((*it)->ShipDesignID() == m_design_id) {
+                if ((*it)->DesignID() == m_design_id) {
                     known = true;
                     break;
                 }

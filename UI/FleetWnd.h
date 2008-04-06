@@ -10,58 +10,72 @@ class CUIListBox;
 class Fleet;
 class FleetDataPanel;
 class FleetDetailPanel;
+class FleetDetailWnd;
 class FleetsListBox;
 class Ship;
 class System;
 class UniverseObject;
 
-class FleetDetailWnd : public CUIWnd
+/** Manages the lifetimes of FleetWnds and FleetDetailWnds.  A 1-many
+    relationshp exists between FleetWnds and FleetDetailWnds, and this manager
+    ensures that:
+    - closing a FleetWnd closes all its associated FleetDetailWnds;
+    - opening a FleetDetailWnd does not result in two FleetDetailWnds showing the same fleet; and
+    - empty FleetWnds and FleetDetailWnds are closed.
+    These elements of functionality are very difficult to get right without an
+    external manager like this one -- most of the UI elements update themselves
+    when their underlying Fleet(s) change, and so any propagating changes to a
+    Fleet(s) tend to cause crashes (e.g. when an empty FleetDetailWnds is deleted
+    for being empty before its Fleet signals it to update). */
+class FleetUIManager
 {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (Fleet*)>    ClosingSignalType;    ///< emitted when the detail wnd is closing
-    typedef boost::signal<void (Fleet*)>    PanelEmptySignalType; ///< emitted when the detail wnd's fleet detail panel is empty
+    typedef std::set<FleetWnd*>::const_iterator iterator;
+
+    //! \name Accessors //@{
+    bool            empty() const;
+    iterator        begin() const;
+    iterator        end() const;
+    FleetWnd*       ActiveFleetWnd() const;
+    FleetWnd*       WndForFleet(Fleet* fleet) const;
+    std::size_t     OpenDetailWnds(FleetWnd* fleet_wnd) const;
     //@}
 
-    /** \name Slot Types */ //@{
-    typedef ClosingSignalType::slot_type    ClosingSlotType;      ///< type of functor(s) invoked on a ClosingSignalType
-    typedef PanelEmptySignalType::slot_type PanelEmptySlotType;   ///< type of functor(s) invoked on a PanelEmptySignalType
+    //! \name Mutators //@{
+    FleetWnd*       NewFleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
+                                GG::Flags<GG::WndFlag> flags =
+                                GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+    FleetDetailWnd* NewFleetDetailWnd(FleetWnd* fleet_wnd, Fleet* fleet, bool read_only,
+                                      GG::Flags<GG::WndFlag> flags =
+                                      GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
+
+    void            CullEmptyWnds();
+    void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
+    bool            CloseAll();
     //@}
 
-    /** \name Structors */ //@{
-    FleetDetailWnd(int x, int y, Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE); ///< basic ctor
-    ~FleetDetailWnd(); ///< virtual dtor
-    //@}
-
-    void CloseClicked();
-
-    mutable ClosingSignalType    ClosingSignal;
-    mutable PanelEmptySignalType PanelEmptySignal;
+    static FleetUIManager& GetFleetUIManager();
 
 private:
-    std::string TitleText() const;
+    FleetUIManager();
 
-    FleetDetailPanel* m_fleet_panel;
+    void FleetWndClosing(FleetWnd* fleet_wnd);
+    void FleetDetailWndClosing(FleetWnd* fleet_wnd, FleetDetailWnd* fleet_detail_wnd);
+
+    typedef std::map<FleetWnd*, std::set<FleetDetailWnd*> > FleetWndMap;
+
+    std::set<FleetWnd*> m_fleet_wnds;
+    FleetWndMap         m_fleet_and_detail_wnds;
+    FleetWnd*           m_active_fleet_wnd;
 };
 
-
+/** This is the top level Fleet UI element.  It shows a list of fleets, a
+    new-fleet drop target, and a detail view of the currently selectd fleet (a
+    FleetDetailPanel). */
 class FleetWnd : public MapWndPopup
 {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (Fleet*, FleetWnd*)> ShowingFleetSignalType;     ///< emitted to indicate to the rest of the UI that this window is showing the given fleet
-    typedef boost::signal<void (Fleet*)>            NotShowingFleetSignalType;  ///< emitted to indicate that this window is not showing the given fleet
-    typedef boost::signal<void (FleetWnd*)>         ClosingSignalType;          ///< emitted when the window is closing, due to last fleet being deleted, or being closed manually by user
-    //@}
-
-    /** \name Slot Types */ //@{
-    typedef ShowingFleetSignalType::slot_type       ShowingFleetSlotType;      ///< type of functor(s) invoked on a ShowingFleetSignalType
-    typedef NotShowingFleetSignalType::slot_type    NotShowingFleetSlotType;   ///< type of functor(s) invoked on a NotShowingFleetSignalType
-    //@}
-
     /** \name Structors */ //@{
-    /** constructs a fleet window for fleets in transit between systems */
-    FleetWnd(int x, int y, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
     ~FleetWnd(); ///< dtor
     //@}
 
@@ -77,10 +91,6 @@ public:
     void SelectFleet(Fleet* fleet); ///< selects the indicated fleet, bringing it into the fleet detail window
     //@}
 
-    mutable ShowingFleetSignalType      ShowingFleetSignal;
-    mutable NotShowingFleetSignalType   NotShowingFleetSignal;
-    mutable ClosingSignalType           ClosingSignal;
-    
     static GG::Pt LastPosition();    ///< returns the last position of the last FleetWnd that was closed
 
 protected:
@@ -89,36 +99,37 @@ protected:
     //@}
 
 private:
+    /** Basic ctor. */
+    FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+
     void        Init(const std::vector<Fleet*>& fleet_ids, int selected_fleet);
     void        FleetSelectionChanged(const std::set<int>& rows);
     void        FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
     void        FleetDoubleClicked(int row_idx, GG::ListBox::Row* row);
     void        FleetDeleted(int row_idx, GG::ListBox::Row* row);
-    void        FleetDetailWndClosing(Fleet* fleet);
     Fleet*      FleetInRow(int idx) const;
     std::string TitleText() const;
-    void        DeleteFleet(Fleet* fleet);
     void        CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>& ship_ids);
-    void        UniverseObjectDeleted(const UniverseObject *);
+    void        UniverseObjectDeleted(const UniverseObject *obj);
     void        SystemChangedSlot();
 
-    const int           m_empire_id;
-    int                 m_system_id;
-    const bool          m_read_only;
-    bool                m_moving_fleets;
+    mutable boost::signal<void (FleetWnd*)> ClosingSignal;
 
-    int                 m_current_fleet;
+    const int   m_empire_id;
+    int         m_system_id;
+    const bool  m_read_only;
+    bool        m_moving_fleets;
+    int         m_current_fleet;
 
-    std::map<Fleet*, FleetDetailWnd*> m_open_fleet_detail_wnds;
-
-    std::set<boost::signals::connection>                        m_misc_connections;
+    std::set<boost::signals::connection> m_misc_connections;
 
     FleetsListBox*      m_fleets_lb;
     FleetDataPanel*     m_new_fleet_drop_target;
     FleetDetailPanel*   m_fleet_detail_panel;
 
-    
     static GG::Pt s_last_position; ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
+
+    friend class FleetUIManager;
 };
 
 #endif // _FleetWnd_h_

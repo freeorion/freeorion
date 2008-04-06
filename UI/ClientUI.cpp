@@ -46,11 +46,11 @@ namespace fs = boost::filesystem;
 fs::path ClientUI::ArtDir()                    { return GetSettingsDir() / "data" / "art"; }
 fs::path ClientUI::SoundDir()                  { return GetSettingsDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                   { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
-std::string ClientUI::FontBold()               { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
-std::string ClientUI::FontItalic()             { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font-italic")).native_file_string(); }
-std::string ClientUI::FontBoldItalic()         { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.font-bold-italic")).native_file_string(); }
-std::string ClientUI::TitleFont()              { return (GetGlobalDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
+std::string ClientUI::Font()                   { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
+std::string ClientUI::FontBold()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
+std::string ClientUI::FontItalic()             { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-italic")).native_file_string(); }
+std::string ClientUI::FontBoldItalic()         { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold-italic")).native_file_string(); }
+std::string ClientUI::TitleFont()              { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
 
 int         ClientUI::Pts()                    { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()               { return GetOptionsDB().Get<int>("UI.title-font-size"); }
@@ -95,52 +95,73 @@ GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<Strea
 boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
     const ShipDesign* design = GetShipDesign(design_id);
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / "icons" / (design->name + ".png"), true);
-    if (texture) return texture;
+    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / design->Graphic(), true);
+    if (texture)
+        return texture;
     return ClientUI::GetTexture(ArtDir() / "icons" / "Scout.png", true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name)
 {
     const BuildingType* building_type = GetBuildingType(building_type_name);
-    const std::string graphic_name = building_type->Graphic();
+    std::string graphic_name = "";
+    if (building_type)
+        graphic_name = building_type->Graphic();
     if (graphic_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "building_icons" / "Generic_Building.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "building" / "generic_building.png", true);
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
 {
     std::string icon_filename;
-    if (category_name == "CONSTRUCTION_CATEGORY")
-        icon_filename = "construction.png";
-    if (category_name == "ECONOMICS_CATEGORY")
-        icon_filename = "economics.png";
-    if (category_name == "GROWTH_CATEGORY")
-        icon_filename = "growth.png";
-    if (category_name == "LEARNING_CATEGORY")
-        icon_filename = "learning.png";
-    if (category_name == "PRODUCTION_CATEGORY")
-        icon_filename = "production.png";
-    return ClientUI::GetTexture(ArtDir() / "tech_icons" / "categories" / icon_filename, true);
+    const TechCategory* category = GetTechCategory(category_name);
+    if (category)
+        icon_filename = category->graphic;
+    return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / icon_filename, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
 {
     const Tech* tech = GetTechManager().GetTech(tech_name);
-    std::string texture_name = tech->Graphic();
-    if (texture_name.empty()) {
+    std::string texture_name = "";
+    if (tech)
+        texture_name = tech->Graphic();
+    if (texture_name.empty())
         return CategoryIcon(tech->Category());
-    }
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& special_name)
 {
     const Special* special = GetSpecial(special_name);
-    std::string texture_name = special->Graphic();
+    std::string texture_name = "";
+    if (special)
+        texture_name = special->Graphic();
     if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "special_icons" / "Generic_Special.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_name)
+{
+    const PartType* part = GetPartType(part_name);
+    std::string texture_name = "";
+    if (part)
+        std::string texture_name = part->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
+{
+    const HullType* hull = GetHullType(hull_name);
+    std::string texture_name = "";
+    if (hull)
+        texture_name = "";//hull->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name);
 }
 
@@ -172,10 +193,28 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
     case METER_HEALTH:
         icon_filename = "health.png";
         break;
+    case METER_FUEL:
+        icon_filename = "fuel.png";
+        break;
+    case METER_SUPPLY:
+        icon_filename = "supply.png";
+        break;
+    case METER_STEALTH:
+        icon_filename = "stealth.png";
+        break;
+    case METER_DETECTION:
+        icon_filename = "detection.png";
+        break;
+    case METER_SHIELD:
+        icon_filename = "shield.png";
+        break;
+    case METER_DEFENSE:
+        icon_filename = "defense.png";
+        break;
     default:
         break;
     }
-    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / icon_filename, true);
+    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
 
 
@@ -191,12 +230,9 @@ GG::Clr     ClientUI::TechWndProgressBar()                   { return GetOptions
 
 GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
 {
-    const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
-    std::vector<std::string>::const_iterator it = std::find(tech_categories.begin(), tech_categories.end(), category_name);
-    if (it != tech_categories.end()) {
-        int category_index = std::distance(tech_categories.begin(), it) + 1;
-        return GetOptionsDB().Get<StreamableColor>("UI.tech-category-" + boost::lexical_cast<std::string>(category_index)).ToClr();
-    }
+    const TechCategory* category = GetTechCategory(category_name);
+    if (category)
+        return category->colour;
     return GG::Clr();
 }
 
@@ -273,6 +309,7 @@ namespace {
         db.Add<std::string>("UI.sound.planet-button-click", "OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK", "button_click.wav");
         db.Add<std::string>("UI.sound.fleet-button-rollover", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.fleet-button-click", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK", "fleet_button_click.wav");
+        db.Add<std::string>("UI.sound.system-icon-rollover", "OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER", "fleet_button_rollover.wav");
         db.Add<std::string>("UI.sound.sidepanel-open", "OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN", "sidepanel_open.wav");
         db.Add<std::string>("UI.sound.farming-focus", "OPTIONS_DB_UI_SOUND_FARMING_FOCUS", "farm_select.wav");
         db.Add<std::string>("UI.sound.industry-focus", "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS", "industry_select.wav");
@@ -321,31 +358,8 @@ namespace {
         // misc
         db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
         db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 0.3, RangedValidator<double>(0.2, 2));
+        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 1.0, RangedValidator<double>(0.2, 2));
         db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
-        
-        // tech category colors
-        const GG::Clr LEARNING_CATEGORY(93, 155, 246, 255);
-        const GG::Clr GROWTH_CATEGORY(116, 225, 107, 255);
-        const GG::Clr PRODUCTION_CATEGORY(240, 106, 106, 255);
-        const GG::Clr CONSTRUCTION_CATEGORY(241, 233, 87, 255);
-        const GG::Clr ECONOMICS_CATEGORY(255, 112, 247, 255);
-        const GG::Clr CATEGORY6(255, 85, 255, 255);
-        const GG::Clr CATEGORY7(85, 170, 255, 255);
-        const GG::Clr CATEGORY8(170, 255, 85, 255);
-        const GG::Clr CATEGORY9(85, 255, 170, 255);
-        const GG::Clr CATEGORY10(255, 170, 85, 255);
-
-        db.Add("UI.tech-category-1", "OPTIONS_DB_UI_TECH_CATEGORY_1", StreamableColor(LEARNING_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-2", "OPTIONS_DB_UI_TECH_CATEGORY_2", StreamableColor(GROWTH_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-3", "OPTIONS_DB_UI_TECH_CATEGORY_3", StreamableColor(PRODUCTION_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-4", "OPTIONS_DB_UI_TECH_CATEGORY_4", StreamableColor(CONSTRUCTION_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-5", "OPTIONS_DB_UI_TECH_CATEGORY_5", StreamableColor(ECONOMICS_CATEGORY), Validator<StreamableColor>());
-        db.Add("UI.tech-category-6", "OPTIONS_DB_UI_TECH_CATEGORY_6", StreamableColor(CATEGORY6), Validator<StreamableColor>());
-        db.Add("UI.tech-category-7", "OPTIONS_DB_UI_TECH_CATEGORY_7", StreamableColor(CATEGORY7), Validator<StreamableColor>());
-        db.Add("UI.tech-category-8", "OPTIONS_DB_UI_TECH_CATEGORY_8", StreamableColor(CATEGORY8), Validator<StreamableColor>());
-        db.Add("UI.tech-category-9", "OPTIONS_DB_UI_TECH_CATEGORY_9", StreamableColor(CATEGORY9), Validator<StreamableColor>());
-        db.Add("UI.tech-category-10", "OPTIONS_DB_UI_TECH_CATEGORY_10", StreamableColor(CATEGORY10), Validator<StreamableColor>());
 
         // UI behavior
         db.Add("UI.tooltip-delay", "OPTIONS_DB_UI_TOOLTIP_DELAY", 1000, RangedValidator<int>(0, 3000));
@@ -447,7 +461,7 @@ void ClientUI::ZoomToSystem(System* system)
     if (!system)
         return;
 
-    m_map_wnd->CenterOnSystem(system->ID());
+    m_map_wnd->CenterOnObject(system->ID());
     m_map_wnd->SelectSystem(system->ID());
 }
 
@@ -456,26 +470,22 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     if (!fleet)
         return;
 
-    m_map_wnd->CenterOnFleet(fleet->ID());
+    m_map_wnd->CenterOnObject(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
-    for (MapWnd::FleetWndIter it = m_map_wnd->FleetWndBegin(); it != m_map_wnd->FleetWndEnd(); ++it) {
-        if ((*it)->ContainsFleet(fleet->ID())) {
-            (*it)->SelectFleet(fleet);
-            break;
-        }
-    }
+    if (FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
+        fleet_wnd->SelectFleet(fleet);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix)
+boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)
 {
-    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first[(*prefixed_textures_and_dist.second)()];
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n)
+boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap/* = false*/)
 {
     assert(0 <= n);
-    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix);
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first.empty() ? 
         boost::shared_ptr<GG::Texture>() : 
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
@@ -510,14 +520,20 @@ void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
 
 boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
+    boost::shared_ptr<GG::Texture> retval;
     try {
-        return HumanClientApp::GetApp()->GetTexture(path.native_file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture(path.native_file_string(), mipmap);
     } catch(...) {
-        return HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
     }
+#ifdef FREEORION_MACOSX
+    if (!mipmap)
+        retval->SetFilters(GL_LINEAR, GL_LINEAR);
+#endif
+    return retval;
 }
 
-ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix)
+ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
 {
     namespace fs = boost::filesystem;
     assert(fs::is_directory(dir));
@@ -531,7 +547,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->leaf(), prefix))
-                    textures.push_back(ClientUI::GetTexture(*it));
+                    textures.push_back(ClientUI::GetTexture(*it, mipmap));
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
                 if (e.system_error() != EACCES)
@@ -624,6 +640,9 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
 {
     std::string text = "";
 
+    // minimum digits is 2.  Less can't always be displayed with powers of 1000 base
+    digits = std::max(digits, 2);
+
     // default result for sentinel value
     if (val == UNKNOWN_UI_DISPLAY_VALUE)
         return UserString("UNKNOWN_VALUE_SYMBOL");
@@ -631,13 +650,26 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     double mag = std::abs(val);
 
     // integerize?
-    if (integerize)
-        mag = floor(mag);
+    if (integerize) {
+        mag = floor(mag + 0.499); // round magnitude to nearest integer (with slight down bias)
+        if (mag == 0.0) return "0";
+    }
+
+    // early termination if magnitude is 0
+    if (mag == 0.0) {
+        std::string format;
+        format += "%1." + boost::lexical_cast<std::string>(digits - 1) + "f";
+        text += (boost::format(format) % mag).str();
+        return text;
+    }
 
     // prepend signs if neccessary
     int effectiveSign = EffectiveSign(val, integerize);
-    if (effectiveSign == -1) text += "-";
-    else if (showsign) text += "+";
+    if (effectiveSign == -1) {
+        text += "-";
+    } else {
+        if (showsign) text += "+";
+    }
 
     if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
     
@@ -646,15 +678,13 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
         text += boost::lexical_cast<std::string>(mag);
         return text;
     }
-    // minimum digits is 2.  Less can't always be displayed with powers of 1000 base
-    digits = std::max(digits, 2);
 
     // if value is effectively 0, avoid unnecessary later processing
     if (effectiveSign == 0) {
         if (integerize) {
-            text += "0";
+            text = "0";
         } else {
-            text += "0.0";
+            text = "0.0";
             for (int n = 2; n < digits; ++n) text += "0";  // fill in 0's to required number of digits
         }
         return text;
@@ -666,12 +696,12 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     // power of 10 of lowest digit to be included in number (limited by digits)
     int LDPow10 = pow10 - digits + 1; // = 1 for 234.4 and digits = 2 (10's)
 
-    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000
+    // Lowest Digit's (number of) Digits Above Next Lowest Power of 1000.  Can be 0, 1 or 2
     int LDDANLP1000;
     if (LDPow10 >= 0)
-        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.4);
+        LDDANLP1000 = (LDPow10 % 3);    // = 1 for 234.4 with 2 digits (23#.#)
     else
-        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##);
+        LDDANLP1000 = (LDPow10 % 3) + 3;// = 2 for 3.25 with 2 digits (3.2##)   (+3 ensure positive result)
 
     // Lowest Digit's Next Lower Power of 1000
     int LDNLP1000 = LDPow10 - LDDANLP1000;
@@ -688,7 +718,7 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     if (LDDANLP1000 == 0)
         unitPow10 = LDNLP1000;
     else
-        unitPow10 = LDNHP1000;        
+        unitPow10 = LDNHP1000;  
 
     if (integerize && unitPow10 < 0) unitPow10 = 0;
     if (pow10 < unitPow10) digitCor = -1;   // if value is less than the base unit, there will be a leading 0 using up one digit
@@ -711,7 +741,7 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     
     std::string format;
     format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." + 
-              boost::lexical_cast<std::string>(fractionDigits) + "f";
+                    boost::lexical_cast<std::string>(fractionDigits) + "f";
     text += (boost::format(format) % mag).str();
 
     // append base scale SI prefix (as postfix)

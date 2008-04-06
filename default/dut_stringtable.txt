@@ -1,0 +1,3147 @@
+Nederlands
+
+#This is the Dutch String Table file for FreeOrion
+#Translate this file to other languages.
+
+#################
+# Common        #
+#################
+
+#Anyone can use these for basic buttons
+
+APPNAME
+FreeOrion
+
+BROWSE_BTN
+Bladeren...
+
+OK
+OK
+
+CANCEL
+Annuleren
+
+DONE
+Klaar
+
+CLOSE
+Sluiten
+
+LOAD
+Laden
+
+SAVE
+Opslaan
+
+OPEN
+Openen
+
+OR
+of
+
+AND
+en
+
+YES
+Ja
+
+NO
+Nee
+
+NEW_GAME
+Genereren van Universum en Kunstmatige Intelligenties ...
+
+LOADING
+Laden ...
+
+SERVER_WONT_START
+De server kon niet gestart worden.
+
+SERVER_TIMEOUT
+De server reageert niet.
+
+SERVER_LOST
+De verbinding met de server is verbroken.
+
+SERVER_GAME_END
+De server zond een bericht dat het spel afgelopen is.
+
+PLAYER_DISCONNECTED
+Speler %1% heeft geen verbinding met de server meer.
+
+PLAYER_DEFEATED
+Je bent verslagen.
+
+PLAYER_VICTORIOUS
+Je bent victorieus.
+
+EMPIRE
+Rijk
+
+EMPIRE_DEFEATED
+Het %1% rijk is niet meer.
+
+ALL
+Alle
+
+UNKNOWN_SYSTEM
+Onbekend systeem
+
+RENAME
+Hernoemen
+
+ENTER_NEW_NAME
+Voer een nieuwe naam in
+
+UNKNOWN_VALUE_SYMBOL
+?
+
+DEFENSE_BASE
+Defensie Basis
+
+DEFENSE_BASE_DESCRIPTION
+Een defensie platform dat helpt met de defensie van de planeet waar het omheen zweeft.\n\nAanval: 1\nDefensie: 3
+
+CHAT_WHISPER
+fluister
+
+
+######################################
+# Command Line and OptionsDB Options #
+######################################
+
+COMMAND_LINE_USAGE
+Gebruik: 
+
+COMMAND_LINE_DEFAULT
+Standaard: 
+
+OPTIONS_DB_HELP
+Geef dit help bericht weer.
+
+OPTIONS_DB_GENERATE_CONFIG_XML
+Gebruikt alle instellingen van ieder bestaand config.xml bestand en de instellingen die op de commandoregel gegeven worden om een config.xml bestand te genereren. Dit overschrijft het huidige config.xml bestand, als het bestaat.
+
+OPTIONS_DB_MUSIC_OFF
+Deactiveert de muziek in het spel. 
+
+OPTIONS_DB_BG_MUSIC
+Stel de achtergrond muziek om af te spelen in.
+
+OPTIONS_DB_FULLSCREEN
+Start het spel in schermvullende modus.
+
+OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
+Tijdsinterval, in seconden, waarna het multiplayer chat venster verborgen zal worden als er niet aan toegevoegd wordt. Een waarde van 0 geeft aan dat het venster nooit moet verbergen.
+
+OPTIONS_DB_UI_CHAT_EDIT_HISTORY
+Het aantal uitgaande berichten dat bewaard moet worden in de geschiedenis van het chat invoerveld.
+
+OPTIONS_DB_FORCE_EXTERNAL_SERVER
+Forceer de client om de server niet te starten, zelfs als u een spel op localhost beheert, een enkele speler spel speelt, etc.
+
+OPTIONS_DB_UI_MAIN_MENU_X
+Positie van het midden van het introscherm hoofdmenu, als een gedeelte van de toepassing's totale breedte.
+
+OPTIONS_DB_UI_MAIN_MENU_Y
+Positie van het midden van het introscherm hoofdmenu, als een gedeelte van de toepassing's totale hoogte.
+
+OPTIONS_DB_APP_WIDTH
+Zet horizontale toepassing resolutie.
+
+OPTIONS_DB_APP_HEIGHT
+Zet verticale toepassing resolutie.
+
+OPTIONS_DB_COLOR_DEPTH
+Zet kleurdiepte van het scerm, in bits per pixel.
+
+OPTIONS_DB_SHOW_FPS
+Zet FPS weergave aan of uit.
+
+OPTIONS_DB_LIMIT_FPS
+Zet FPS limitering aan of uit. Limiet wordt ingesteld met max-fps optie.
+
+OPTIONS_DB_MAX_FPS
+Zet FPS limiet, indien geactiveerd. Limitering is geactiveerd met limit-fps.
+
+OPTIONS_DB_UI_SOUND_ENABLED
+Zet GebruikersInterface geluidseffecten aan of uit.
+
+OPTIONS_DB_UI_SOUND_VOLUME
+Het volume (0 tot 255) waarbij GebruikersInterface geluidseffecten afgespeeld moeten worden.
+
+OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER
+Het geluidsbestand dat afgespeeld moet worden als de muis over een knop verplaatst.
+
+OPTIONS_DB_UI_SOUND_BUTTON_CLICK
+Het geluidsbestand dat afgespeeld moet worden als er op een knop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
+Het geluidsbestand dat afgespeeld moet worden als er op de beurt knop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_LIST_SELECT
+Het geluidsbestand dat afgespeeld moet worden als er in een lijstbox of selectielijst een item geselecteerd wordt.
+
+OPTIONS_DB_UI_SOUND_ITEM_DROP
+Het geluidsbestand dat afgespeeld moet worden als een item in een lijstbox gestopt wordt.
+
+OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
+Het geluidsbestand dat afgespeeld moet worden als de lijst van een selectielijst geopend wordt.
+
+OPTIONS_DB_UI_SOUND_TEXT_TYPING
+Het geluidsbestand dat afgespeeld moet worden als de gebruiker tekst tytpt.
+
+OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
+Het geluidsbestand dat afgespeeld moet worden als een venster gemaximaliseerd wordt.
+
+OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
+Het geluidsbestand dat afgespeeld moet worden als een venster geminimaliseerd wordt.
+
+OPTIONS_DB_UI_SOUND_WINDOW_CLOSE
+Het geluidsbestand dat afgespeeld moet worden als een venster gesloten wordt.
+
+OPTIONS_DB_UI_SOUND_ALERT
+Het geluidsbestand dat afgespeeld moet worden als er een fout of ongeldige actie plaatsvindt.
+
+OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK
+Het geluidsbestand dat afgespeeld moet worden als er op een planeetknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
+Het geluidsbestand dat afgespeeld moet worden als de muis over een vlootknop verplaatst.
+
+OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
+Het geluidsbestand dat afgespeeld moet worden als er op een vlootknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
+Het geluidsbestand dat afgespeeld moet worden als de systeem zijpaneel geopend wordt.
+
+OPTIONS_DB_UI_SOUND_FARMING_FOCUS
+Het geluidsbestand dat afgespeeld moet worden als een agrarische focusknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
+Het geluidsbestand dat afgespeeld moet worden als een industriële focusknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
+Het geluidsbestand dat afgespeeld moet worden als een onderzoeks focusknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_MINING_FOCUS
+Het geluidsbestand dat afgespeeld moet worden als een mijnindustrie focusknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_TRADE_FOCUS
+Het geluidsbestand dat afgespeeld moet worden als een handel focusknop geklikt wordt.
+
+OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
+Het geluidsbestand dat afgespeeld moet worden als een balans focusknop geklikt wordt.
+
+OPTIONS_DB_UI_FONT
+Zet GebruikersInterface lettertype ondersteuningsbestand.
+
+OPTIONS_DB_UI_FONT_BOLD
+Zet GebruikersInterface vet lettertype ondersteuningsbestand.
+
+OPTIONS_DB_UI_FONT_ITALIC
+Zet GebruikersInterface cursief lettertype ondersteuningsbestand.
+
+OPTIONS_DB_UI_FONT_BOLD_ITALIC
+Zet GebruikersInterface vet en cursief lettertype ondersteuningsbestand.
+
+OPTIONS_DB_UI_FONT_SIZE
+Zet GebruikersInterface lettertypegrootte.
+
+OPTIONS_DB_UI_TITLE_FONT
+Zet GebruikersInterface titellettertype ondersteuningsbestand.
+
+OPTIONS_DB_UI_TITLE_FONT_SIZE
+Zet GebruikersInterface titellettertype grootte.
+
+OPTIONS_DB_UI_WND_COLOR
+Zet GebruikersInterface vensterkleur.
+
+OPTIONS_DB_UI_TEXT_COLOR
+Zet GebruikersInterface tekstkleur.
+
+OPTIONS_DB_UI_CTRL_COLOR
+Zet GebruikersInterface controle-elementkleur.
+
+OPTIONS_DB_UI_CTRL_BORDER_COLOR
+Zet GebruikersInterface controle-elemend rand kleur.
+
+OPTIONS_DB_UI_BUTTON_COLOR
+Zet GebruikersInterface klop kleur.
+
+OPTIONS_DB_UI_STATE_BUTTON_COLOR
+Zet GebruikersInterface knopstatus kleur.
+
+OPTIONS_DB_UI_SCROLL_TAB_COLOR
+Zet GebruikersInterface scrollbalk kleur.
+
+OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR
+Zet GebruikersInterface selectielijst interieur kleur.
+
+OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
+Zet GebruikersInterface selectielijst pijl kleur.
+
+OPTIONS_DB_UI_EDIT_HILITE
+Zet kleur van selectie oplichting in de GebruiksInterface bewerkingscontrole-elementen.
+
+OPTIONS_DB_UI_EDIT_INTERIOR
+Zet GebruikersInterface bewerkingscontrole-elementen interieur kleur.
+
+OPTIONS_DB_UI_MULTIEDIT_INTERIOR
+Zet GebruikersInterface multi-regel bewerkingscontrole-elementen interieur kleur.
+
+OPTIONS_DB_UI_STAT_INCREASE_COLOR
+Zet de kleur van toegenomen statistieken in de GebruikersInterface.
+
+OPTIONS_DB_UI_STAT_DECREASE_COLOR
+Zet de kleur van afgenomen statistieken in de GebruikersInterface.
+
+OPTIONS_DB_UI_SIDEPANEL_COLOR
+Zet de kleur van het zijpaneel.
+
+OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
+Zet GebruikersInterface buitenste rand kleur.
+
+OPTIONS_DB_UI_WND_BORDER_COLOR
+Zet GebruikersInterface rand kleur.
+
+OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
+Zet GebruikersInterface binnenste rand kleur.
+
+OPTIONS_DB_UI_KNOWN_TECH
+Zet kleur van bekende technologiën in de technologie boom.
+
+OPTIONS_DB_UI_KNOWN_TECH_BORDER
+Zet tekst en rand kleur van bekende technologiën in de technologie boom.
+
+OPTIONS_DB_UI_RESEARCHABLE_TECH
+Zet kleur van onderzoekbare technologiën in de technologie boom.
+
+OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
+Zet tekst en rand kleur van onderzoekbare technologiën in de technologie boom.
+
+OPTIONS_DB_UI_UNRESEARCHABLE_TECH
+Zet kleur van niet-onderzoekbare technologiën in de technologie boom.
+
+OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
+Zet tekst en rand kleur van niet-onderzoekbare technologiën in de technologie boom.
+
+OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
+Zet achtergrondkleur van de voortgangsbalk in de technologie boom.
+
+OPTIONS_DB_UI_TECH_PROGRESS
+Zet kleur van de voortgangsbalk in de technologie boom.
+
+OPTIONS_DB_UI_SCROLL_WIDTH
+Zet GebruikersInterface scroll breedte.
+
+OPTIONS_DB_UI_SYSTEM_ICON_SIZE
+Zet grootte van systeem iconen.
+
+OPTIONS_DB_UI_FLEET_BUTTON_SIZE
+Zet grootte van vlootknoppen (relatief ten opzichte van systeem iconen).
+
+OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
+Zet grootte van systeem selectie indicatoren (relatief te opzichte van systeem iconen).
+
+OPTIONS_DB_UI_TECH_CATEGORY_1
+Zet kleur van de eerste categorie van technologiën gedefinieerd in tech.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_2
+Zet kleur van de tweede categorie van technologiën gedefinieerd in tech.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_3
+Zet kleur van de derde categorie van technologiën gedefinieerd in tech.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_4
+Zet kleur van de vierde categorie van technologiën gedefinieerd in tech.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_5
+Zet kleur van de vijfde categorie van technologiën gedefinieerd in tech.xml.
+
+OPTIONS_DB_UI_TOOLTIP_DELAY
+Zet GebruikersInterface InfoTip popup vertaging, in ms.
+
+OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
+Indien waar, klikken op meerdere vloot knoppen zal meerdere vloot vensters gelijktijdig openen. Anders zal het openen van een vloot venster iedere andere huidig-geopende vloot venster sluiten.
+
+OPTIONS_DB_UI_FLEET_AUTOSELECT
+Auto-selecteer de bovenste vloot als u een vloot venster opent. Overweeg dit te gebruiken als u UI.multiple-fleet-windows gebruikt.
+
+OPTIONS_DB_UI_WINDOW_QUICKCLOSE
+Sluit open vensters zoals de vloot venster en het systeem zijpaneel als u op de hoofdkaart rechts-klikt.
+
+OPTIONS_DB_GAMESETUP_STARS
+Het aantal sterren om in de melkweg te genereren.
+
+OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
+De vorm van de melkweg om te genereren.
+
+OPTIONS_DB_GAMESETUP_GALAXY_AGE
+De leeftijd van de melkweg om te genereren.
+
+OPTIONS_DB_GAMESETUP_PLANET_DENSITY
+Het aantal planeten per systeem in de melkweg om te genereren.
+
+OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
+Het aantal sterrenbanen in de melkweg om te genereren.
+
+OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
+De frequentie van verschijning van specials in de melkweg om te genereren. 
+
+OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
+De horizontale afstand tussen technologiën in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
+
+OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
+De verticale afstand tussen technologiën in het onderzoeksvenster, in meerdere van de hoogte voor iedere enkele theorie technologie.
+
+OPTIONS_DB_SAVE_DIR
+De directorie waarin opgeslagen spellen opgeslagen en vanuit geladen worden. Directorienamen zijn relatief ten opzichte van de lokatie van het uitvoerbaar bestand.
+
+OPTIONS_DB_SETTINGS_DIR
+Zet de hoofddirectory voor spel ondersteuningsbestanden (instellingen en gegevensbestanden).
+
+OPTIONS_DB_LOG_LEVEL
+Zet het niveau op of boven welke log berichten uitgevoerd moeten worden (niveau in volgorde van afnemende luidruchtigheid: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
+
+OPTIONS_DB_STRINGTABLE_FILENAME
+Zet de taalspecifieke stringtabel bestandsnaam.
+
+OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
+Indien waar, zal automatisch opgeslagen worden tijdens enkele speler spellen.
+
+OPTIONS_DB_AUTOSAVE_MULTIPLAYER
+Indien waar, zal automatisch opgeslagen worden tijdens netwerkspellen.
+
+OPTIONS_DB_AUTOSAVE_TURNS
+Zet het aantal beurten die moeten verstrijken tussen een auto-opslaan.
+
+OPTIONS_DB_AUTOSAVE_SAVES
+Zet het aantal automatisch opgeslagen spellen die bewaard moeten blijven.
+
+OPTIONS_DB_MUSIC_VOLUME
+Het volume (0 tot 255) waarop de muziek afgespeeld moet worden.
+
+
+#################
+# File Dialog   #
+#################
+
+FILE_DLG_FILES
+Bestand(en):
+
+FILE_DLG_FILE_TYPES
+Type(s):
+
+FILE_DLG_MALFORMED_FILENAME
+Ongeldige bestandsnaam.
+
+FILE_DLG_OVERWRITE_PROMPT
+%1% bestaat.\nMag het overschreven worden?
+
+FILE_DLG_INVALID_FILENAME
+"%1%"\nis een ongeldige bestandsnaam.
+
+FILE_DLG_FILENAME_IS_A_DIRECTORY
+"%1%"\nis een directory.
+
+FILE_DLG_FILE_DOES_NOT_EXIST
+Bestand "%1%"\nbestaat niet.
+
+FILE_DLG_DEVICE_IS_NOT_READY
+Apparaat is niet gereed.
+
+
+#################
+# Color Dialog  #
+#################
+
+COLOR_DLG_NEW
+Nieuw
+
+COLOR_DLG_OLD
+Oud
+
+COLOR_DLG_RED
+R:
+
+COLOR_DLG_GREEN
+G:
+
+COLOR_DLG_BLUE
+B:
+
+COLOR_DLG_HUE
+T:
+
+COLOR_DLG_SATURATION
+V:
+
+COLOR_DLG_VALUE
+W:
+
+COLOR_DLG_ALPHA
+A:
+
+
+#################
+# Intro Screen  #
+#################
+
+#Window title####
+
+INTRO_WINDOW_TITLE
+FreeOrion Hoofdmenu
+
+
+#Button names####
+
+INTRO_BTN_SINGLE_PLAYER
+Enkele Speler
+
+INTRO_BTN_MULTI_PLAYER
+Netwerkspel
+
+INTRO_BTN_LOAD_GAME
+Laad spel
+
+INTRO_BTN_OPTIONS
+Opties
+
+INTRO_BTN_ABOUT
+Over FreeOrion
+
+INTRO_BTN_CREDITS
+Credits
+
+INTRO_BTN_EXIT
+Afsluiten
+
+
+#Error Messages####
+
+ERR_CONNECT_TIMED_OUT
+Verbinding met server leggen duurde te lang.
+
+ERR_VERSION_MISMATCH
+Kon niet met de server verbinden, omdat deze client verschillende versies van de volgende instellingen en bestanden gebruikt:
+
+
+########################
+# Server Setup Screen  #
+########################
+
+#Window title####
+
+SCONNECT_WINDOW_TITLE
+Verbinden met Server
+
+
+#Static labels####
+
+LAN_GAME_LABEL
+Lan spel op:
+INTERNET_GAME_LABEL
+Internet spel op:
+PLAYER_NAME_LABEL
+Naam van de speler:
+
+
+#Button names####
+
+HOST_GAME_BN
+Start een nieuw netwerkspel
+JOIN_GAME_BN
+Meld aan bij een bestaand netwerkspel
+REFRESH_LIST_BN
+Ververs lijst
+
+
+########################
+# Multiplayer Lobby    #
+########################
+
+#Window title####
+
+MPLOBBY_WINDOW_TITLE
+Netwerkspel Instellingen
+
+#Strings
+MPLOBBY_HOST_ABORTED_GAME
+De host speler heeft het instellen van dit spel gestopt.
+
+#Button names####
+
+NEW_GAME_BN
+Nieuw spel
+
+LOAD_GAME_BN
+Laad spel
+
+START_GAME_BN
+Start spel
+
+MULTIPLAYER_GAME_START_CONDITIONS
+Unieke namen en kleuren van rijken vereist
+
+
+########################
+# Galaxy Setup Screen  #
+########################
+
+#Window title####
+
+GSETUP_WINDOW_TITLE
+Melkwegconfiguratie
+
+#Strings
+GSETUP_GRAPHICS_FILES
+Grafische Bestanden
+
+GSETUP_EMPIRE_NAME
+Naam van het Rijk
+
+GSETUP_EMPIRE_COLOR
+Kleur van het Rijk
+
+
+#Drop-down list labels and choices####
+
+GSETUP_STARS
+Sterren
+GSETUP_SHAPE
+Melkweg Vorm
+GSETUP_AGE
+Melkweg Leeftijd
+GSETUP_STARLANE_FREQ
+Sterrenbaan Frequentie
+GSETUP_PLANET_DENSITY
+Planetendichtheid
+GSETUP_SPECIALS_FREQ
+Specials Frequentie
+
+GSETUP_2ARM
+Spiraal, 2-arm
+GSETUP_3ARM
+Spiraal, 3-arm
+GSETUP_4ARM
+Spiraal, 4-arm
+GSETUP_CLUSTER
+Cluster
+GSETUP_ELLIPTICAL
+Elliptisch
+GSETUP_IRREGULAR
+Onregelmatig
+GSETUP_RING
+Ring
+
+GSETUP_NONE
+Geen
+
+GSETUP_YOUNG
+Jong
+GSETUP_MATURE
+Volwassen
+GSETUP_ANCIENT
+Oud
+
+GSETUP_FEW
+Weinig
+GSETUP_SOME
+Enkele
+GSETUP_SEVERAL
+Meerdere
+GSETUP_MANY
+Veel
+GSETUP_VERY_MANY
+Heel Veel
+
+GSETUP_LOW
+Laag
+GSETUP_MEDIUM
+Gemiddeld
+GSETUP_HIGH
+Hoog
+
+GSETUP_RARE
+Zeldzaam
+GSETUP_UNCOMMON
+Ongewoon
+GSETUP_COMMON
+Gewoon
+
+
+#Error messages####
+
+GSETUP_ERR_NOEXIST
+bestaat niet.
+
+
+###########################
+# Empire Selection Screen #
+###########################
+
+#Window Title####
+
+ESELECT_WINDOW_TITLE
+Rijk Selectie
+
+
+#Static text####
+
+ESELECT_EMPIRE_NAME
+Naam van het Rijk:
+
+###########################
+# About Dialog		      #
+###########################
+
+#License button text####
+
+LICENSE
+Licentie
+
+ABOUT_WINDOW_TITLE
+Over FreeOrion
+
+CREDITS
+Credits
+
+VISION
+Visie
+
+FREEORION_VISION
+FreeOrion, een open source spel gebaseerd op Master of Orion, is een beurt-gebaseerd spel van epische ruimte strategie, dat voorbouwt op het klassieke '4X' model door natie-opbouw elementen zoals spellen als Europa Universalis 2 en een uitgebreide tactische gevechts engine erin te bouwen. Door z'n modulaire, open source ontwerp is er veel ruimte voor aanpassing van de spel engine en verhaal elementen door de gemeenschap, het FreeOrion team is toegewijd aan het bouwen van een levend en ademend universum in een 'grand campagne' model.
+
+
+###########################
+# Game Menu	              #
+###########################
+
+GAME_MENU_WINDOW_TITLE
+Menu
+
+GAME_MENU_SAVE
+Spel Opslaan
+
+GAME_MENU_LOAD
+Spel Laden
+
+GAME_MENU_RESIGN
+Opgeven
+
+GAME_MENU_SAVE_FILES
+Spelbestanden Opslaan
+
+###########################
+# Game Options            #
+###########################
+
+OPTIONS_TITLE
+Opties
+
+OPTIONS_AUTOSELECT_FLEET
+Auto-select eerste vloot
+
+OPTIONS_MULTIPLE_FLEET_WNDS
+Meerdere vloot vensters
+
+OPTIONS_QUICK_CLOSE_WNDS
+Snel-sluit vensters
+
+OPTIONS_MISC_UI
+Overige Gebruikersinterface Instellingen
+
+OPTIONS_SINGLEPLAYER
+Enkele speler
+
+OPTIONS_MULTIPLAYER
+Netwerkspel
+
+OPTIONS_AUTOSAVE_TO_KEEP
+Auto-opslaan acties om te bewaren
+
+OPTIONS_AUTOSAVE_TURNS_BETWEEN
+Beurtem tussen een auto-opslaan
+
+OPTIONS_LANGUAGE
+Taalbestand
+
+OPTIONS_FONTS
+Lettertypes
+
+OPTIONS_FONT_SIZES
+Letter Groottes
+
+OPTIONS_FONT_TEXT
+Tekst
+
+OPTIONS_FONT_TITLE
+Venster titels
+
+OPTIONS_TECH_SPACING
+Technologie plaatsingsafstand
+
+OPTIONS_HORIZONTAL
+Horizontaal
+
+OPTIONS_VERTICAL
+Verticaal
+
+OPTIONS_TOOLTIP_DELAY
+InfoTip vertraging (ms)
+
+OPTIONS_VIDEO_MODE
+Video Modus
+
+OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
+Activeert schermvullende modus, stelt schermresolutie in en stelt bits per pixel in een stap in; zet dit op "Aangepast" om de breedte, hoogte en bits per pixel handmatig in te stellen.
+
+OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
+Aangepast
+
+OPTIONS_VIDEO_SETTINGS
+Video Instellingen
+
+OPTIONS_APP_WIDTH
+Breedte
+
+OPTIONS_APP_HEIGHT
+Hoogte
+
+OPTIONS_COLOR_DEPTH
+Kleur bit-diepte
+
+OPTIONS_FULLSCREEN
+Schermvullend
+
+OPTIONS_SHOW_FPS
+FPS Weergeven
+
+OPTIONS_LIMIT_FPS
+FPS Limiet
+
+OPTIONS_MAX_FPS
+Max FPS
+
+OPTIONS_CHAT
+Chat
+
+OPTIONS_CHAT_HISTORY
+Chat geschiedenis
+
+OPTIONS_CHAT_HIDE
+Chat-verberg vertraging
+
+OPTIONS_MUSIC
+Muziek
+
+OPTIONS_UI_SOUNDS
+GebruikersInterface geluiden
+
+OPTIONS_BACKGROUND_MUSIC
+Muziek
+
+OPTIONS_SOUNDS
+Geluiden
+
+OPTIONS_SOUND_CLOSE
+Sluit venster
+
+OPTIONS_SOUND_MINIMIZE
+Minimalizeer venster
+
+OPTIONS_SOUND_MAXIMIZE
+Maximalizeer venster
+
+OPTIONS_SOUND_CLICK
+klik
+
+OPTIONS_SOUND_ROLLOVER
+Rolover
+
+OPTIONS_SOUND_FLEET_CLICK
+Vloot Knop Klik
+
+OPTIONS_SOUND_FLEET_ROLLOVER
+Vloot Knop Rolover
+
+OPTIONS_SOUND_WINDOW
+Venstergeluiden
+
+OPTIONS_SOUND_BUTTON
+Knopgeluiden
+
+OPTIONS_SOUND_FLEET
+Vloot Knop Geluiden
+
+OPTIONS_SOUND_ALERT
+Opgepast
+
+OPTIONS_SOUND_TYPING
+Typen
+
+OPTIONS_SOUND_TURN
+Beurt knop klik
+
+OPTIONS_SOUND_SIDEPANEL
+Zij-paneel openen
+
+OPTIONS_SOUND_PLANET
+Planeet klik
+
+OPTIONS_SOUND_FOCUS
+Focus Geluiden
+
+OPTIONS_SOUND_BALANCED
+Balans focus
+
+OPTIONS_SOUND_FARMING
+Agrarische focus
+
+OPTIONS_SOUND_INDUSTRY
+Industriële focus
+
+OPTIONS_SOUND_MINING
+Mijnindustrie focus
+
+OPTIONS_SOUND_RESEARCH
+Inderzoek focus
+
+OPTIONS_SOUND_LIST
+Lijst geluiden
+
+OPTIONS_SOUND_DROP
+Object plaatsing
+
+OPTIONS_SOUND_PULLDOWN
+Keuzelijst openen
+
+OPTIONS_SOUND_SELECT
+Lijst selectie
+
+OPTIONS_GENERAL_COLORS
+Algemeen
+
+OPTIONS_CONTROL_COLORS
+GebruikersInterface Interactie
+
+OPTIONS_FILL_COLOR
+Opvulling
+
+OPTIONS_BORDER_COLOR
+Rand
+
+OPTIONS_TEXT_COLOR
+Tekst
+
+OPTIONS_EDIT_COLORS
+Bewerking Interactie
+
+OPTIONS_HIGHLIGHT_COLOR
+Selectie oplichten
+
+OPTIONS_INTERIOR_COLOR
+Interieur
+
+OPTIONS_WINDOW_COLORS
+Venster
+
+OPTIONS_INNER_BORDER_COLOR
+Binnenrand
+
+OPTIONS_OUTER_BORDER_COLOR
+Buitenrand
+
+OPTIONS_PAGE_VIDEO
+Video
+
+OPTIONS_PAGE_AUDIO
+Audio
+
+OPTIONS_PAGE_AUTOSAVE
+Auto-opslaan
+
+OPTIONS_PAGE_UI
+GebruikersInterface
+
+OPTIONS_PAGE_COLORS
+Kleuren
+
+OPTIONS_PAGE_DIRECTORIES
+Directories
+
+OPTIONS_TECH_COLORS
+Technologiën
+
+OPTIONS_TEXT_AND_BORDER_COLOR
+Tekst en Rand
+
+OPTIONS_KNOWN_TECH_COLORS
+Bekende technologiën
+
+OPTIONS_RESEARCHABLE_TECH_COLORS
+Ondezoekbare technologiën
+
+OPTIONS_UNRESEARCHABLE_TECH_COLORS
+Niet-onderzoekbare technologiën
+
+OPTIONS_TECH_PROGRESS_COLORS
+Onderzoekvoortgangsbalk
+
+OPTIONS_PROGRESS_BAR_COLOR
+Balk
+
+OPTIONS_PROGRESS_BACKGROUND_COLOR
+Achtergrond
+
+OPTIONS_ANY_FILE
+Alle bestanden
+
+OPTIONS_FOLDER_SETTINGS
+Ondersteuningsbestanden
+
+OPTIONS_FOLDER_SAVE
+Opslag bestanden
+
+OPTIONS_LANGUAGE_FILE
+Taalbestanden
+
+OPTIONS_VOLUME_AND_MUSIC
+Volume En Muziek
+
+OPTIONS_MUSIC_FILE
+Muziekbestanden
+
+OPTIONS_SOUND_FILE
+Geluidbestanden
+
+
+#################
+# Main Map      #
+#################
+
+MAP_BTN_TURN_UPDATE
+Beurt 
+
+MAP_INDICATOR_FPS
+%1% FPS
+
+MAP_BTN_MENU
+Menu
+
+MAP_BTN_SITREP
+SitRap
+
+MAP_BTN_RESEARCH
+Onderzoek
+
+MAP_BTN_PRODUCTION
+Productie
+
+#################
+# SidePanel     #
+#################
+
+SIDE_PANEL
+Zijpaneel
+
+SP_SYSTEM_PRODUCTION
+Systeem Productie
+
+##Planet Panel#############
+PLANET_PANEL
+Planeet Paneel
+
+PL_ASTEROID_BELT
+Asteroïdengordel
+
+PL_UNINHABITED
+Onbewoond
+
+PL_SIZE
+Grootte
+
+PL_COLONIZE
+Koloniseren
+
+##Population Panel#########
+
+PP_POPULATION
+Populatie
+
+PP_HEALTH
+Gezondheid
+
+##Resources Panel##########
+
+RP_PRIMARY_FOCUS_TOOLTIP
+Primaire Focus: %1%
+
+RP_SECONDARY_FOCUS_TOOLTIP
+Secondaire Focus: %1%
+
+RP_FOOD
+Voedsel Productie
+
+RP_MINERALS
+Mineralen Productie
+
+RP_INDUSTRY
+Industriële Uitvoer
+
+RP_RESEARCH
+Onderzoek Uitvoer
+
+RP_TRADE
+Handelsniveau
+
+RP_CONSTRUCTION
+Constructie Infrastructuur
+
+## Buildings Panel##########
+
+BP_INCOMPLETE_BUILDING_TOOLTIP
+%1% (Incompleet)\n\n%2%
+
+BP_COMPLETE_BUILDING_TOOLTIP
+%1%\n\n%2%
+
+## General Tooltips#########
+
+TT_CURRENT
+Huidig
+
+TT_NEXT
+Volgende Beurt
+
+TT_CHANGE
+Verandering
+
+TT_MAX_METER
+Max Meter: %1%
+
+TT_BASIC_FOCUS_AND_UNIVERSE
+Basis Focus en Universum
+
+TT_TECH
+%1% Technologie <i>%2%</i>
+
+TT_BUILDING
+%1% Gebouw <i>%2%</i>
+
+TT_SPECIAL
+Speciaal <i>%1%</i>
+
+TT_UNKNOWN
+Onbekend
+
+## Misc. Sidepanel##########
+
+SP_UNKNOWN_SYSTEM
+Onbekend Systeem
+
+SP_SYSTEM_NAME
+%1%
+
+SP_RENAME_PLANET
+Hernoem Planeet
+
+SP_ENTER_NEW_PLANET_NAME
+Geef een nieuwe planeetnaam op
+
+SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
+Alle kolonisatieschippen in dit systeem hebben\nde opdracht gekregen om dit systeem te verlaten.\n\nEen van de vertrekkende koloniesatieschippen gebruiken?
+
+#################
+# Fleet Window  #
+#################
+
+FW_FLEET_AT
+Bij %1% Systeem
+
+FW_FLEET_MOVING_TO
+Verplaating naar %1%, Verwachte aankomsttijd %2%
+
+FW_FLEET_ETA_NEVER
+Nooit
+
+FW_FLEET_ETA_UNKNOWN
+Onbekend
+
+FW_SHIP_CLASS
+Schip Klasse 
+
+FW_UNKNOWN_DESIGN_NAME
+Onbekend
+
+# used to name new fleets when they are created
+FW_NEW_FLEET_NAME
+Nieuwe vloot
+
+# the name of the new fleet icon in the fleet listbox
+FW_NEW_FLEET_LABEL
+Nieuwe Vloot
+
+FW_EMPIRE_FLEETS
+%1% Vloten
+
+FW_HOME_FLEET
+Thuis Vloot
+
+# the name that is used for fleets the player does not control
+# Vertaling niet optimaal, maar dekt de vertaling het beste (volgens de VanDale).
+FW_FOREIGN_FLEET
+Allochtone vloot
+
+# the name that is used for ships the player does not control
+# Ned. commentaar zie hierboven.
+FW_FOREIGN_SHIP
+Allochtoon schip
+
+###############
+# TechTreeWnd #
+###############
+
+TECH_DISPLAY
+Weergave
+
+TECH_NAVIGATION
+Navigatie
+
+TECH_TOTAL_COST_STR
+%1% OP / %2% Beurt
+
+TECH_TURN_COST_STR
+%1% OP / %2% Beurt
+
+TECH_TURNS_LEFT_STR
+%1% Beurten
+
+TECH_TURNS_LEFT_NEVER
+Nooit
+
+TECH_DETAIL_TYPE_STR
+%1% %2%
+
+TECH_DETAIL_DESCRIPTION_STR
+%1%
+
+TECH_DETAIL_EFFECTS_STR
+\n\n<u>Effecten</u>\n\n%1%
+
+TECH_DETAIL_UNLOCKS_SECTION_STR
+\n\n<u>Opent</u>\n\n
+
+TECH_DETAIL_UNLOCKED_ITEM_STR
+%1%: %2%\n
+
+TECH_WND_TECH_COMPLETED
+VOLTOOID
+
+TECH_WND_TECH_QUEUED
+In wachtrij
+
+TECH_WND_TECH_INCOMPLETE
+Onvoltooid
+
+TECH_WND_TYPE_THEORIES
+Theorieën
+
+TECH_WND_TYPE_APPLICATIONS
+Toepassingen
+
+TECH_WND_TYPE_REFINEMENTS
+Verfijningen
+
+TECH_WND_STATUS_COMPLETED
+Voltooid
+
+TECH_WND_STATUS_RESEARCHABLE
+Onderzoekbaar
+
+TECH_WND_STATUS_UNRESEARCHABLE
+Niet-onderzoekbaar
+
+TECH_WND_REQUIRES
+Vereist
+
+TECH_WND_UNLOCKS
+Opent
+
+
+#######################
+# ProductionInfoPanel #
+#######################
+
+PRODUCTION_INFO_TOTAL_PS_LABEL
+Totaal Beschikbare Punten
+
+PRODUCTION_INFO_WASTED_PS_LABEL
+Verspilde Punten
+
+PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
+Projecten in Voortgang
+
+PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
+Ondergefinancierde Projecten
+
+PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
+Projecten in Wachtrij
+
+
+###############
+# ResearchWnd #
+###############
+
+RESEARCH_WND_TITLE
+Onderzoek
+
+RESEARCH_INFO_PANEL_TITLE
+Onderzoek
+
+RESEARCH_INFO_RP
+OP
+
+
+####################
+# BuildSelectorWnd #
+####################
+
+PRODUCTION_WND_BUILD_ITEMS_TITLE
+Bouwbare Objecten
+
+PRODUCTION_WND_CATEGORY_BT_BUILDING
+Gebouwen
+
+PRODUCTION_WND_CATEGORY_BT_SHIP
+Schepen
+
+PRODUCTION_WND_CATEGORY_BT_ORBITAL
+Orbitalen
+
+PRODUCTION_WND_AVAILABILITY_AVAILABLE
+Beschikbaar
+
+PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
+Onbeschikbaar
+
+PRODUCTION_TOTAL_COST_STR
+%1% PP / %2% Beurten
+
+PRODUCTION_TURN_COST_STR
+%1% PP / %2% Beurten
+
+PRODUCTION_TURNS_LEFT_STR
+%1% Beurten over
+
+PRODUCTION_TURNS_LEFT_NEVER
+Nooit
+
+PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
+%1%
+
+PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
+%1%\n\n<u>Effecten</u>\n\n%2%
+
+PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
+%1%\n\nAanval: %2%\nDefensie: %3%\nSnelheid: %4%
+
+PRODUCTION_DETAIL_NUMBER_TO_BUILD
+Kwantiteit
+
+PRODUCTION_DETAIL_ADD_TO_QUEUE
+Aan Wachtrij Toevoegen
+
+PRODUCTION_DETAIL_CENTER_ON_BUILD
+Centreer op Bouwen
+
+
+#################
+# ProductionWnd #
+#################
+
+PRODUCTION_WND_TITLE
+Productie
+
+PRODUCTION_INFO_PANEL_TITLE
+Productie
+
+PRODUCTION_INFO_PP
+PP
+
+PRODUCTION_QUEUE_MULTIPLES
+%1%x 
+
+
+####################
+# Combat Messages  #
+####################
+
+COMBAT_WINDOW_TITLE
+Gevechtsvenster
+
+COMBAT_BATTLE
+GEVECHT : 
+
+COMBAT_SYSTEM
+Het %1% Systeem
+
+COMBAT_MILITARY_SHIPS
+Militaire Schepen
+
+COMBAT_CIVILIAN_SHIPS
+Burgerschepen
+
+COMBAT_PLANETS
+Planeten
+
+COMBAT_REMAINING
+ Over
+
+COMBAT_RETREATED
+ Teruggetrokken
+
+COMBAT_DESTROYED
+ Vernietigd
+
+COMBAT_DEFENSELESS
+ Onweerbaar
+
+COMBAT_LOST
+ Verloren!
+
+
+####################
+# TurnProgress     #
+####################
+
+TURN_PROGRESS_WND
+Beurt Voortgang
+
+TURN_PROGRESS_PHASE_FLEET_MOVEMENT
+Vloten verplaatsing ...
+
+TURN_PROGRESS_PHASE_COMBAT
+Gevechten oplossen ...
+
+TURN_PROGRESS_PHASE_EMPIRE_GROWTH
+Productie en groei ..
+
+TURN_PROGRESS_PHASE_WAITING
+Wachten op spelers om hun beurt te beindigen ...
+
+TURN_PROGRESS_PHASE_ORDERS
+Orders uitvoeren ...
+
+TURN_PROGRESS_PHASE_DOWNLOADING
+Nieuwe spelstatus downloaden ...
+
+
+########################
+# SitRep Panel         #
+########################
+
+#Window title####
+
+SITREP_PANEL_TITLE
+Situatie Rapport
+
+
+####################
+# Sit Rep Entries  #
+####################
+
+SITREP_BASE_BUILT
+%planet% heeft de bouw van een defensiebasis voltooid.
+
+SITREP_SHIP_BUILT
+De %ship%, een nieuw schip, is geproduceerd in het %system% systeem.
+
+SITREP_BUILDING_BUILT
+%building% is geproduceerd op %planet%.
+
+SITREP_TECH_RESEARCHED
+%tech% is onderzocht.
+
+SITREP_COMBAT_SYSTEM_WON
+Een gevecht vond plaats in %system%. We zijn victorieus!
+
+SITREP_COMBAT_SYSTEM_LOST
+Een gevecht vond plaats in %system%. We zijn verslagen!
+
+SITREP_COMBAT_SYSTEM_NO_VICTOR
+Een gevecht vond plaats in %system%. De ontmoeting is niet helemaal uitgevochten.
+
+SITREP_PLANET_LOST_STARVED_TO_DEATH
+De gehele populatie van %planet% is uitgehongerd. De planeet is verloren!
+
+SITREP_PLANET_COLONIZED
+%planet% is gekoloniseerd in het %system% systeem.
+
+SITREP_FLEET_ARRIVED_AT_DESTINATION
+%fleet% arriveerde in het %system% systeem en wacht op verdere opdrachten.
+
+
+####################
+# Specials         #
+####################
+
+HOMEWORLD_SPECIAL
+Homeworld
+
+HOMEWORLD_SPECIAL_DESCRIPTION
+This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
+
+STARVATION_SPECIAL
+Starvation
+
+STARVATION_SPECIAL_DESCRIPTION
+This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
+
+ANCIENT_RUINS_SPECIAL
+Ancient Ruins
+
+ANCIENT_RUINS_SPECIAL_DESCRIPTION
+This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, giving a bonus to research.
+
+MINERALS_SPECIAL
+Mineral Rich
+
+MINERALS_SPECIAL_DESCRIPTION
+This planet has a rich natural deposit of minerals, boosting mining and trade.
+
+TUNNELS_SPECIAL
+Natural Tunnels
+
+TUNNELS_SPECIAL_DESCRIPTION
+This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
+
+TECHTONIC_INSTABILITY_SPECIAL
+Techtonically Unstable
+
+TECHTONIC_INSTABILITY_SPECIAL_DESC
+This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+
+SOLID_CORE_SPECIAL
+Solid Core
+
+SOLID_CORE_SPECIAL_DESC
+This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
+
+HIGH_AXIAL_TILT_SPECIAL
+High Axial Tilt
+
+HIGH_AXIAL_TILT_SPECIAL_DESC
+This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
+
+SLOW_ROTATION_SPECIAL
+Very Slow Rotation
+
+SLOW_ROTATION_SPECIAL_DESC
+This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth, food production and population capacity are reduced.
+
+TIDAL_LOCK_SPECIAL
+Tidally Locked Rotation
+
+TIDAL_LOCK_SPECIAL_DESC
+This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.
+
+ECCENTRIC_ORBIT_SPECIAL
+Eccentric Orbit
+
+ECCENTRIC_ORBIT_SPECIAL_DESC
+This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.
+
+#######################
+# Enumeration  values #
+#######################
+
+# UniverseObjectTypes
+
+OBJ_BUILDING
+building
+OBJ_SHIP
+ship
+OBJ_FLEET
+fleet
+OBJ_PLANET
+planet
+OBJ_POP_CENTER
+population center
+OBJ_PROD_CENTER
+production center
+OBJ_SYSTEM
+system
+
+
+# StarTypes
+
+STAR_BLUE
+blue
+STAR_WHITE
+white
+STAR_YELLOW
+yellow
+STAR_ORANGE
+orange
+STAR_RED
+red
+STAR_NEUTRON
+neutron
+STAR_BLACK
+black hole
+
+
+# PlanetTypes
+
+PT_SWAMP
+swamp
+PT_TOXIC
+toxic
+PT_INFERNO
+inferno
+PT_RADIATED
+radiated
+PT_BARREN
+barren
+PT_TUNDRA
+tundra
+PT_DESERT
+desert
+PT_TERRAN
+terran
+PT_OCEAN
+ocean
+PT_GAIA
+gaia
+PT_ASTEROIDS
+asteroids
+PT_GASGIANT
+gas giant
+
+
+# Planet Sizes
+
+SZ_NOWORLD
+Nothing to see here; move along.
+SZ_TINY
+tiny
+SZ_SMALL
+small
+SZ_MEDIUM
+medium
+SZ_LARGE
+large
+SZ_HUGE
+huge
+SZ_ASTEROIDS
+asteroids
+SZ_GASGIANT
+gas giant
+
+
+# PlanetEnvironments
+
+PE_UNINHABITABLE
+uninhabitable
+PE_TERRIBLE
+terrible
+PE_ADEQUATE
+adequate
+PE_SUPERB
+superb
+PE_OPTIMAL
+optimal
+
+
+# FocusTypes
+
+FOCUS_UNKNOWN
+unknown
+FOCUS_BALANCED
+balanced
+FOCUS_FARMING
+farming
+FOCUS_INDUSTRY
+industry
+FOCUS_MINING
+mining
+FOCUS_RESEARCH
+research
+FOCUS_TRADE
+trade
+  
+
+# MeterTypes
+
+METER_POPULATION
+population
+METER_FARMING
+farming
+METER_INDUSTRY
+industry
+METER_RESEARCH
+research
+METER_TRADE
+trade
+METER_MINING
+mining
+METER_CONSTRUCTION
+construction
+METER_HEALTH
+health
+
+
+# EmpireAffiliationTypes
+
+AFFIL_SELF
+self
+AFFIL_ENEMY
+enemy
+AFFIL_ALLY
+ally
+
+
+# UnlockableItemTypes
+
+UIT_BUILDING
+Building
+UIT_SHIP_COMPONENT
+Ship Component
+
+
+# TechTypes
+
+TT_THEORY
+Theory
+TT_APPLICATION
+Application
+TT_REFINEMENT
+Refinement
+
+
+# BuildTypes
+
+BT_NOT_BUILDING
+no build
+BT_BUILDING
+building
+BT_SHIP
+ship
+BT_ORBITAL
+orbital
+
+
+# StockpileTypes
+
+ST_FOOD
+food
+ST_MINERAL
+mineral
+ST_TRADE
+trade
+
+
+
+################################################
+# ValueRef, Effect, and Condition Descriptions #
+################################################
+
+# ValueRef
+
+DESC_VAR_PLANET
+planet
+
+DESC_VAR_SYSTEM
+system
+
+DESC_VAR_SOURCE
+source
+
+DESC_VAR_TARGET
+target
+
+DESC_VAR_PLANETSIZE
+planet size
+
+DESC_VAR_PLANETTYPE
+planet type
+
+DESC_VAR_PLANETENVIRONMENT
+planet environment
+
+DESC_VAR_OBJECTTYPE
+object type
+
+DESC_VAR_STARTYPE
+star type
+
+DESC_VAR_PRIMARYFOCUS
+primary focus
+
+DESC_VAR_SECONDARYFOCUS
+secondary focus
+
+DESC_VAR_CURRENTFARMING
+current farming
+
+DESC_VAR_MAXFARMING
+max farming
+
+DESC_VAR_CURRENTINDUSTRY
+current industry
+
+DESC_VAR_MAXINDUSTRY
+max industry
+
+DESC_VAR_CURRENTRESEARCH
+current research
+
+DESC_VAR_MAXRESEARCH
+max research
+
+DESC_VAR_CURRENTTRADE
+current trade
+
+DESC_VAR_MAXTRADE
+max trade
+
+DESC_VAR_CURRENTMINING
+current mining
+
+DESC_VAR_MAXMINING
+max mining
+
+DESC_VAR_CURRENTCONSTRUCTION
+current construction
+
+DESC_VAR_MAXCONSTRUCTION
+max construction
+
+DESC_VAR_CURRENTHEALTH
+current health
+
+DESC_VAR_MAXHEALTH
+max health
+
+DESC_VAR_CURRENTPOPULATION
+current population
+
+DESC_VAR_MAXPOPULATION
+max population
+
+DESC_VAR_TRADESTOCKPILE
+trade stockpile
+
+DESC_VAR_MINERALSTOCKPILE
+mineral stockpile
+
+DESC_VAR_FOODSTOCKPILE
+food stockpile
+
+DESC_VAR_TRADEPRODUCTION
+trade production
+
+DESC_VAR_FOODPRODUCTION
+food production
+
+DESC_VAR_MINERALPRODUCTION
+mineral production
+
+DESC_VAR_INDUSTRYPRODUCTION
+industry production
+
+DESC_VAR_RESEARCHPRODUCTION
+research production
+
+DESC_VAR_OWNER
+owner
+
+DESC_VAR_ID
+ID
+
+DESC_VAR_AGE
+age in turns
+
+DESC_VAR_CREATIONTURN
+turn of creation
+
+DESC_VAR_CURRENTTURN
+the current turn
+
+# this one is intentially left empty
+DESC_VALUE_REF_MULTIPART_VARIABLE0
+%1%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE1
+%1%'s %2%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE2
+%1%'s %2%'s %3%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE3
+%1%'s %2%'s %3%'s %4%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE4
+%1%'s %2%'s %3%'s %4%'s %5%
+
+DESC_VALUE_REF_MULTIPART_VARIABLE5
+%1%'s %2%'s %3%'s %4%'s %5%'s %6%
+
+# six is probably more than will be needed, but just in case ...
+DESC_VALUE_REF_MULTIPART_VARIABLE6
+%1%'s %2%'s %3%'s %4%'s %5%'s %6%'s %7%
+
+
+
+# Effects
+
+DESC_EFFECTS_GROUP_SCOPE
+Objects affected: Any object%1%
+
+DESC_EFFECTS_GROUP_SELF_SCOPE
+Objects affected: Source object only
+
+DESC_EFFECTS_GROUP_ACTIVATION
+Effect is active if the source is an object%1%
+
+DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
+Effect is always active
+
+DESC_EFFECTS_GROUP_SCOPE_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_ACTIVATION_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_EFFECT_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
+%1%\n
+
+DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
+Effects group %1%:\n%2%\n
+
+# SetMeter
+
+DESC_SIMPLE_SET_METER_MAX
+Max %1% %2%%3%
+
+DESC_SIMPLE_SET_METER_CURRENT
+Current %1% %2%%3%
+
+DESC_COMPLEX_SET_METER_MAX
+Set max %1% to %2%
+
+DESC_COMPLEX_SET_METER_CURRENT
+Set current %1% to %2%
+
+
+# others
+
+DESC_SET_EMPIRE_STOCKPILE
+Sets the stockpile of %1% of the object's owner to %2%
+
+DESC_SET_PLANET_TYPE
+Changes the planet's type to %1%
+
+DESC_SET_PLANET_SIZE
+Changes the planet's size to %1%
+
+DESC_ADD_OWNER
+Adds ownership by empire %1% to object
+
+DESC_REMOVE_OWNER
+Removes ownership by empire %1% from object
+
+DESC_DESTROY
+Destroys object
+
+DESC_ADD_SPECIAL
+Attaches %1% special to object
+
+DESC_REMOVE_SPECIAL
+Removes %1% special from object
+
+DESC_SET_STAR_TYPE
+Changes the star's type to %1%
+
+
+# SetTechAvailability
+
+DESC_TECH_AND_ITEMS_AFFECTED
+%1% and all the items it unlocks
+
+DESC_ITEMS_ONLY_AFFECTED
+the items unlocked by the %1% tech
+
+DESC_SET_TECH_AVAIL
+Makes %1% available to empire %2%
+
+DESC_SET_TECH_UNAVAIL
+Makes %1% unavailable to empire %2%
+
+
+# Conditions
+
+DESC_ALL
+ in the universe
+
+DESC_EMPIRE_AFFILIATION_SELF
+ that belongs to %1% empire
+
+DESC_EMPIRE_AFFILIATION_SELF_NOT
+ that does not belong to %1% empire
+
+DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
+ that belongs only to %1% empire
+
+DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
+ that does not belong only to %1% empire
+
+DESC_EMPIRE_AFFILIATION
+ that belongs to an %1% of %2% empire
+
+DESC_EMPIRE_AFFILIATION_NOT
+ that does not belong to an %1% of %2% empire
+
+DESC_EMPIRE_AFFILIATION_EXCLUSIVE
+ that belongs only to an %1% of %2% empire
+
+DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
+ that does not belong only to an %1% of %2% empire
+
+# this one is intentionally left empty
+DESC_SELF
+ that is the source object
+
+DESC_SELF_NOT
+ that is not the source object
+
+DESC_TYPE
+ that is a %1%
+
+DESC_TYPE_NOT
+ that is not a %1%
+
+DESC_BUILDING
+ that contains a %1% building
+
+DESC_BUILDING_NOT
+ that does't contain a %1% building
+
+DESC_SPECIAL
+ that has a %1% special
+
+DESC_SPECIAL_NOT
+ that doesn't have a %1% special
+
+DESC_CONTAINS
+ that contains an object%1%
+
+DESC_CONTAINS_NOT
+ that doesn't contain an object%1%
+
+DESC_PLANET_TYPE
+ that is a %1% planet
+
+DESC_PLANET_TYPE_NOT
+ that is not a %1% planet
+
+DESC_PLANET_SIZE
+ that is a %1% planet
+
+DESC_PLANET_SIZE_NOT
+ that is not a %1% planet
+
+DESC_PLANET_ENVIRONMENT
+ that is a %1% planet
+
+DESC_PLANET_ENVIRONMENT_NOT
+ that is not a %1% planet
+
+DESC_FOCUS_TYPE_PRIMARY
+ that has primary focus %1%
+
+DESC_FOCUS_TYPE_PRIMARY_NOT
+ that doesn't have primary focus %1%
+
+DESC_FOCUS_TYPE_SECONDARY
+ that has secondary focus %1%
+
+DESC_FOCUS_TYPE_SECONDARY_NOT
+ that doesn't have secondary focus %1%
+
+DESC_STAR_TYPE
+ that is a system with a %1% star
+
+DESC_STAR_TYPE_NOT
+ that is not a system with a %1% star
+
+DESC_CHANCE_PERCENTAGE
+ on a %1%%% chance
+
+DESC_CHANCE_PERCENTAGE_NOT
+ on a (100 - %1%)%% chance
+
+DESC_CHANCE
+ with a probability of %1%
+
+DESC_CHANCE_NOT
+ with a probability of 1 - %1%
+
+DESC_METER_VALUE_MAX
+ that has a max %1% between %2% and %3%
+
+DESC_METER_VALUE_MAX_NOT
+ that doesn't have a max %1% between %2% and %3%
+
+DESC_METER_VALUE_CURRENT
+ that has a current %1% between %2% and %3%
+
+DESC_METER_VALUE_CURRENT_NOT
+ that doesn't have a current %1% between %2% and %3%
+
+DESC_EMPIRE_STOCKPILE_VALUE
+ that belongs to an empire with a %1% stockpile between %2% and %3%
+
+DESC_EMPIRE_STOCKPILE_VALUE_NOT
+ that doesn't belong to an empire with a %1% stockpile between %2% and %3%
+
+DESC_VISIBLE_TO_SINGLE_EMPIRE
+ that is visible to the %1% empire
+
+DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
+ that is not visible to the %1% empire
+
+DESC_VISIBLE_TO_EMPIRES
+ that is visible to one of the %1% empires
+
+DESC_VISIBLE_TO_EMPIRES_NOT
+ that is not visible to one of the %1% empires
+
+DESC_WITHIN_DISTANCE
+ that is within %1% of any object%2%
+
+DESC_WITHIN_DISTANCE_NOT
+ that is not within %1% of any object%2%
+
+DESC_WITHIN_STARLANE_JUMPS
+ that is within %1% starlane jumps of any object%2%
+
+DESC_WITHIN_STARLANE_JUMPS_NOT
+ that is not within %1% starlane jumps of any object%2%
+
+DESC_AND_BETWEEN_OPERANDS
+ and
+
+DESC_OR_BETWEEN_OPERANDS
+ or
+
+DESC_TURN
+ when the current turn is between %1% and %2%
+
+DESC_TURN_NOT
+ when the current turn is not between %1% and %2%
+
+DESC_NUMBER_OF
+ that is one of %1% objects%2%
+
+DESC_NUMBER_OF_NOT
+ that is not one of %1% objects%2%
+
+DESC_CONTAINED_BY
+ that is contained by an object%1%
+
+DESC_CONTAINED_BY_NOT
+ that is not contained by an object%1%
+
+DESC_OWNER_HAS_TECH
+ that belongs to an empire that has the tech %1%
+
+DESC_OWNER_HAS_TECH_NOT
+ that does not belong to an empire that has the tech %1%
+
+DESC_NUMBER
+ if there are between %1% and %2% objects%3%
+
+DESC_NUMBER_NOT
+ if there are not between %1% and %2% objects%3%
+
+###################
+# Tech Categories #
+###################
+
+LEARNING_CATEGORY
+Learning
+PRODUCTION_CATEGORY
+Production
+CONSTRUCTION_CATEGORY
+Construction
+GROWTH_CATEGORY
+Growth
+ECONOMICS_CATEGORY
+Economics
+
+####################################
+# Misc / Debug Tech Stuff          #
+####################################
+
+TEST_TECH
+Test Tech
+
+TEST_TECH_DESC
+This is a test tech.  Research at your own risk, and don't be surprised, complain on the forums or post bug reports if weird things happen after you do.
+
+
+####################################
+# Theory Tech Names & Descriptions #
+####################################
+
+THEORY_SHORT_DESC
+Theoretical Prerequisite
+
+LRN_PHYS_BRAIN
+The Physical Brain
+
+LRN_PHYS_BRAIN_DESC
+The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+
+LRN_ALGO_ELEGANCE
+Algorithmic Elegance
+
+LRN_ALGO_ELEGANCE_DESC
+With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
+
+LRN_GAL_EXPLO
+Galactic Exploration
+
+LRN_GAL_EXPLO_DESC
+The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
+
+LRN_TRANSLING_THT
+Translinguistics
+
+LRN_TRANSLING_THT_DESC
+Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+
+LRN_PSIONICS
+Psionics
+
+LRN_PSIONICS_DESC
+Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
+
+LRN_ARTIF_MINDS
+Artificial Minds
+
+LRN_ARTIF_MINDS_DESC
+While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+
+LRN_XENOARCH
+Xenoarchaeology
+
+LRN_XENOARCH_DESC
+The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+
+LRN_GRAVITONICS
+Gravitonics
+
+LRN_GRAVITONICS_DESC
+Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+
+LRN_EVERYTHING
+Theory of Everything
+
+LRN_EVERYTHING_DESC
+Early, naive theories describe subsets of the four fundamental forces of nature: electromagnetism, the strong and weak nuclear forces, and gravity.  A complete framework expressing all forces as special cases of a single interaction represents a holy grail of science.  This theory describes the earliest moments of the universe, the most distorted depths of a singularity, the tightest windings of hidden dimensions and the final fate of the cosmos.  Yet still, there may "exist" layers of existence beyond what can be observed and described by science...
+
+LRN_FORCE_FIELD
+Force-Field Harmonics
+
+LRN_FORCE_FIELD_DESC
+Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles.  By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.
+
+LRN_MIND_VOID
+Mind of the Void
+
+LRN_MIND_VOID_DESC
+We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+
+LRN_TIME_MECH
+Temporal Mechanics
+
+LRN_TIME_MECH_DESC
+What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+
+LRN_NDIM_SUBSPACE
+N-Dimensional Subspace
+
+LRN_NDIM_SUBSPACE_DESC
+Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
+
+LRN_UNIF_CONC
+Unified Consciousness
+
+LRN_UNIF_CONC_DESC
+Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truely joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
+
+LRN_TRANSCEND
+Singularity of Transcendence
+
+LRN_TRANSCEND_DESC
+What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+
+GRO_PLANET_ECOL
+Planetary Ecology
+
+GRO_PLANET_ECOL_DESC
+Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.
+
+GRO_GENETIC_ENG
+Genetic Engineering
+
+GRO_GENETIC_ENG_DESC
+The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existant or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
+
+GRO_MEDICAL_PATH
+Medical Pathology
+
+GRO_MEDICAL_PATH_DESC
+Treatment of diseases and injuries requires thorough understanding of their causes.  
+
+GRO_INDUSTY_FARM
+Industrial Farming
+
+GRO_INDUSTY_FARM_DESC
+Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced socieites, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanims.
+
+GRO_ENV_ENCAPSUL
+Environmenal Encapsulation
+
+GRO_ENV_ENCAPSUL_DESC
+Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
+
+GRO_SYMBIOTIC_BIO
+Symbotic Biology
+
+GRO_SYMBIOTIC_BIO_DESC
+From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
+
+GRO_GENETIC_MED
+Genetic Medicine
+
+GRO_GENETIC_MED_DESC
+Traditional Genetic Engineering alters genetic codes and then implements or raises the modified organism.  Similar techniques may be applied to already matured individuals.  The goals of these treatments may be cosmetic or enhancing modifications, or corrective, preventative or time-critical medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.
+
+GRO_LIFECYCLE_MAN
+Lifecycle Manipulation
+
+GRO_LIFECYCLE_MAN_DESC
+Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphises, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
+
+GRO_XENO_GENETICS
+Xenological Genetics
+
+GRO_XENO_GENETICS_DESC
+Early genetics is limited by the available samples of naturally occuring organims on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revalations may be reached, spurring new developments in more familiar genetic systems.
+
+GRO_NANOTECH_MED
+Nanotech Medicine
+
+GRO_NANOTECH_MED_DESC
+While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
+
+GRO_ORBIT_FARMING
+Orbital Farming
+
+GRO_ORBIT_FARMING_DESC
+The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface, and surface farming must also compete with other land uses.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.  Food production may be increased dramatically.
+
+GRO_INDUSRY_CLONE
+Industrial Cloning
+
+GRO_INDUSRY_CLONE_DESC
+Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
+
+GRO_XENO_HYBRIDS
+Xenological Hybridization
+
+GRO_XENO_HYBRIDS_DESC
+Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
+
+GRO_NANO_CYBERNET
+Nanotech Cybernetics
+
+GRO_NANO_CYBERNET_DESC
+After applying nanotechnology to internally correct defects or injuries, the next step is to augment or replace natural biochemical systems with superior artificial replacements.  Rather than merely regrowing lost limbs or repairing damaged organs, augments are able to quickly grow new ones to suit their needs at any time.  Antiquated biological systems, from muscle tissue and tendons, down to organelles or enzymes may also be replaced, affording greatly increased strength, endurance and flexibility.
+
+GRO_ENERGY_META
+Pure-Energy Metabolism
+
+GRO_ENERGY_META_DESC
+The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
+
+PRO_MICROGRAV_MAN
+Microgravity Manufacturing
+
+PRO_MICROGRAV_MAN_DESC
+The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
+
+PRO_PLANET_GEOL
+Planetary Geology
+
+PRO_PLANET_GEOL_DESC
+Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
+
+PRO_ROBOTIC_PROD
+Robotic Production
+
+PRO_ROBOTIC_PROD_DESC
+Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
+
+PRO_FUSION_GEN
+Fusion Generation
+
+PRO_FUSION_GEN_DESC
+Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
+
+PRO_NANOTECH_PROD
+Nanotech Production
+
+PRO_NANOTECH_PROD_DESC
+Traditional production techniques are fundamentally limited by the size and form of the tools it employs.  As a product takes form, its outer layers may prevent direct access and manipulation of the inner structure, requiring inconvenient and inefficient adjustment to the order of assembly.  Further, the components of a larger product must be carefully formed and assembled to exacting specifications to ensure they will function as intended when combined.  By using nanotechnology to form a complete product in one step, directly from the stock materials, these limitations can be bypassed, dramatically improving efficiency and production speed.
+
+PRO_ORBITAL_GEN
+Orbital Generation
+
+PRO_ORBITAL_GEN_DESC
+Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.
+
+PRO_SENTIENT_AUTOMATION
+Sentient Automation
+
+PRO_SENTIENT_AUTOMATION_DESC
+As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
+
+PRO_FRC_FLD_ASSMB
+Force-Field Assembly
+
+PRO_FRC_FLD_ASSMB_DESC
+Whether effected through artificial means, or psychokinesis, or a combination thereof, remote manipulation represents a revolutionary improvement in assembly techniques.  At nanoscopic scales, fully controlled chemical reactions and custom assembled molecules become almost trivial.  At larger scales, up to and including manipulation of celestial bodies, locally reactionless and non-contact force impartion permit previously impossible non-destructive testing, and are particularly suited to manipulation within an enclosed or covered region, without compromising isolation seals, nor removing masses of previously obstructing matter.
+
+PRO_INTSTEL_COPRO
+Interstellar Co-Production
+
+PRO_INTSTEL_COPRO_DESC
+Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems.  Later planetary regional cooperation permits some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefitting from concentrated expertize and economy of scale.  Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility.  The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
+
+PRO_NDIM_ASSMB
+N-Dimensional Assembly
+
+PRO_NDIM_ASSMB_DESC
+The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existance is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
+
+PRO_SINGULAR_GEN
+Singularity Generation
+
+PRO_SINGULAR_GEN_DESC
+As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation do to annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than that with the accretion disk method, but can produce even greater output as well.
+
+PRO_MATENG_REPLIC
+Replication
+
+PRO_MATENG_REPLIC_DESC
+Previous iterations of assembly techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of smaller parts, be they prefabricated subsections, or individual atoms.  By converting pure energy directly into the desired material object, eliminating the need for precursor parts or supplied materials, the ultimate level of flexible and efficient assembly is achieved.
+
+PRO_ZERO_GEN
+Zero-Point Generation
+
+PRO_ZERO_GEN_DESC
+Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency.  By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available.  The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
+
+CON_ORBITAL_CON
+Orbital Construction
+
+CON_ORBITAL_CON_DESC
+On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
+
+CON_ARCH_PSYCH
+Architectural Psychology
+
+CON_ARCH_PSYCH_DESC
+The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed.  Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
+
+CON_INFRA_ECOL
+Infrastructure Ecology
+
+CON_INFRA_ECOL_DESC
+The basic infrastructure of an established planetary colony may seem to be created entirely by the colonizers, and to function only according to their designs.  In reality, however, the ecology of the planet on which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function.  Understanding the interaction between natural and artificial components, and the limits of the resources an ecological system can provide are essential to the development of an optimal and sustainable infrastructure for any colony.
+
+CON_ORGANIC_STRC
+Organic Structures
+
+CON_ORGANIC_STRC_DESC
+Buildings formed of inanitmate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
+
+CON_METRO_INFRA
+Metroplex Infrastructure
+
+CON_METRO_INFRA_DESC
+When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.   Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities.  Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.
+
+CON_TRANS_STRC
+Transforming Structures
+
+CON_TRANS_STRC_DESC
+A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebulding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
+
+CON_ARCH_MONOFILS
+Architectural Monofilaments
+
+CON_ARCH_MONOFILS_DESC
+Essentially unbreakable and merely a few atoms in diamater, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibative.
+
+CON_SELFGRAV_STRC
+Self-Gravitating Structures
+
+CON_SELFGRAV_STRC_DESC
+As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artifical mass is designed and built with its purpose in mind.
+
+CON_ASYMP_MATS
+Asymptotic Materials
+
+CON_ASYMP_MATS_DESC
+Once certain thresholds of performance are passed, measuring the physical properties of materials for relative comparison becomes impractical in any terms other than orders of magnitude or logarithmic scales.  Much like superconductivity in electronics, the tensile strength, toughness, density, elasticity, refractory index and other mechanical properties of materials may be controlled with effectively no limits.  With all previously significant limitations removed, structure designs are further unhindered, and may extend or change by similar order of magnitude scales.
+
+CON_STRC_INT_FLDS
+Structural Integrity Fields
+
+CON_STRC_INT_FLDS_DESC
+Advanced materials and architecture can greatly extend the practical size of rigid structures.  Eventually however, the stresses placed on load-bearing matter approach the magnitude of the strong nuclear force which holds atomic nuclei together, at which point alternative sources of support become essential.  Projected energy support fields may serve this purose, and replacing or augmenting fixed supports in this manner allows a drastic reduction in the necessary structural materials mass and volume.  As well, such methods may allow dynamic adjustment of reinforcement in response to rapidly changing stress patterns, whereas fixed supports must remain in place even when not being actively used.
+
+CON_CONTGRAV_ARCH
+Controlled Gravity Architecture
+
+CON_CONTGRAV_ARCH_DESC
+By fully controlling the orientation and strength of gravitational forces acting upon and existant within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down.  The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections.  Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas.  Such versatility permits great new functional designs for social, manufacturing or other uses.
+
+CON_GAL_INFRA
+Galactic Infrastructure
+
+CON_GAL_INFRA_DESC
+Integration and development of the infrastructures on highly productive worlds into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.  When completed, such a system functionally unifies the worlds of which it is composed.  Integrated transportation, housing, maintenance, and construction tools may be fluidly deployed wherever needed to optimally alter resource allocations or adjust to changes.
+
+CON_FRC_ENRG_STRC
+Force-Energy Structures
+
+CON_FRC_ENRG_STRC_DESC
+When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resiliance, portability and novel design possibilities.
+
+CON_ART_HEAVENLY
+Artificial Heavenly Bodies
+
+CON_ART_HEAVENLY_DESC
+When roughly the mass of a small moon or larger, it is no longer suffient to conceive of what is wrought as a "structure", "station" or "ship".  Rather, beyond this scale, the object becomes more like a heavenly body; its gravitational pull influences orbital motions, it may retain an thin atmosphere on its surface, and it may be orbitted by, rather than orbitting with, lesser structures.  At even larger scales, entire planets may be built, or rebuilt, or even new stars may be formed and ignited, broadcasting the power and determination of their creators throughout the universe.
+
+CON_TRANS_ARCH
+Transcendent Architecture
+
+CON_TRANS_ARCH_DESC
+The epitome of design unifies optimal functionality with elegance of form.  A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.
+
+CON_NDIM_STRC
+N-Dimensional Structures
+
+CON_NDIM_STRC_DESC
+Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design.  The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor.  As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.
+
+ECO_MARKET_ECON
+Market Economics
+
+ECO_MARKET_ECON_DESC
+The free exchange of goods and services between individuals and groups, whether by simple barter or through a commonly accepted credit currency, can be a effective and dynamic economic system.  In the idealized case, the market is fully self-regulating, with supply and demand forces pushing the economy towards optimally efficient resource use and worker employment.  As well, the opportunity for personal gain in such systems can be a powerful motivator for innovation and worker effort.  Caution must be observed however, as that same motivation can also lead to explotation and collusion amongst the priviledged and successful, which can negate and undo much of the system's proported benefits.
+
+ECO_PLANNED_ECON
+Planned Economics
+
+ECO_PLANNED_ECON_DESC
+By identifying and prioritizing needs and specific goals for society, then actively implementing the necessary steps to realize them, a focused and stable economic system may be achieved.  Whether the path taken is decided by high-level central planners or through distributed local bodies, in the ideal case all unnecessary diversions and waste are eliminated and all resources are focused on the top priorities.  As well, a collective purpose and effective planning eliminates innactivity and waste by ensuring a opportunity to contrbute for all workers.  Caution must be observed, however, as individuals may lack dedication to the communal goals or the specific plan to achieve them, which may undermine worker motivation.
+
+ECO_EXTERN_INTEG
+Externality Integration
+
+ECO_EXTERN_INTEG_DESC
+Unsophisticated economic systems feature decision-making based on factors affecting only the decision-makers directly.  Other factors, or externalities, that affect non-decision makers exclusively, are not considered, which has accordingly unexpected consequences, resulting in an overall loss of economic efficiency in an otherwise ideal system.  By integrating factors such as environmental degredation, tragedies of the commons, or consequences of networking effects, the overall economy can be brought closer to its theoretical ideal form.
+
+ECO_ECON_SPECTRO
+Economic Spectroscopy
+
+ECO_ECON_SPECTRO_DESC
+With careful analysis and well-formed models, a linearly independent set of basis states as a frequency parameterization of an economy may be constructed.  Cyclical economic trends and indicators of particular recurrance periods may then be studied independently, and may be amplitude- or phase-adjusted to achieve desired economic goals.  Such manipulations must be conducted with great caution however, as simultaneously phase-matched cyclical effects which initially appear to be unbounded growth will inevitably reach a peak, after which the economic collapse will be equally dramatic.
+
+ECO_INTSTEL_TRADE
+Interstellar Trade
+
+ECO_INTSTEL_TRADE_DESC
+Commerce between the stars can be seen as essentially equivalent to trade confined to a single planet or continent, aside from the scale of the distances involved.  While concepts such as trade routes, merchant guilds and piracy all remain in some form, effectively adapting methods of economic interchange and its regulation and control to space-based forms is nontrivial.  As in earlier times, the harnessing or misuse of these factors can have drastic effects on the economies that grow to depend on them.
+
+ECO_ENV_ADAPTION
+Environmental Adaptation
+
+ECO_ENV_ADAPTION_DESC
+When the colonization of space begins, the great variety of planetary environments that are encountered will seem to be nothing but a hindrance, as most environments are inhospitable to any given race, and population growth and expansion are thus limited.  However, as expantion continues and empires become established in multiple star systems, environmental diversity becomes increasingly beneficial if properly harnessed.  Each environment provides its own set of direct and indirect benefits, particularly for the creation or extraction of physical and conceptual commodities, which may then be traded and shared between systems.  By adapting the economic system of each world to best suit its unique characteristics, these benefits are maximized.
+
+ECO_GAL_MONEY_POL
+Galactic Monetary Policy
+
+ECO_GAL_MONEY_POL_DESC
+As interstellar trade expands, a transition is made between isolated planetary economies to integrated regional or imperial economies.  Inter-empire exchange rates, lending and trade policies and their consequent effects for seemingly dissociated regions become the most significant factors in the overall health of the galactic economy.  Accordingly, unilateral economic considerations must be tempered, and local issues considered only in the context of wider-ranging policies, in order to ensure economic prosperity for all.
+
+ECO_ECON_FLUIDITY
+Economic Fluidity
+
+ECO_ECON_FLUIDITY_DESC
+When the physical distance separating star systems is no longer matched by the perceived distance for those whose economic activity occurs between them, a paradigm shift occurs.  Previously, the interstellar economy could be thought of like a solid, with atomic local economies and rigid trade bonds between close neighbours.  With the perceptual shift, the economy of the empire undergoes a conceptual state change into a fluid.  Economic activity begins to flow freely between the stars, into previously unharness crevices, filling cracks, following new flow-channels and eliminating localized unstable asymmetry.
+
+ECO_PLANET_COLONY
+Planetary Colonialism
+
+ECO_PLANET_COLONY_DESC
+When an expending empire encoutners a planet that is rich in resources and which is populated by primitive native sentients, the opportunity arises to treat the planet as a colonial posession.  A large and well-adapted workforce is immediately available, and can often be a source of information about the non-obvious unique resources of the planet.  Care must be taken, however, to ensure that the native population, or at least its leaders, remains inclined to participate in the economic partnership, as former colonial workers can make an equally well-adapted rebel army.
+
+ECO_ECON_PRESCIEN
+Economic Prescience
+
+ECO_ECON_PRESCIEN_DESC
+Feedback control systems often consider the present, the past, and projected future states of a system when making correctional adjustments.  Making projections is error-prone to the point of uselessness, however, for any highly complex and non-deterministic systems of interacting sentients such as an economy or society.  To resolve this difficultly, precognitive projection can be employed to reveal many of the possible future time-paths and their relative probabilities, as well as the best adjustments to make to adjust these probablities as desired.  By this method, the unpredictable and often illogical choices of sentients may be isolated, and the economy can finally be described and controlled as well as a macroscopic physical system.
+
+ECO_STAB_HYPGROW
+Stabilized Hypergrowth
+
+ECO_STAB_HYPGROW_DESC
+Economic activity functions as a positive feedback into its own growth.  An exponential growth curve naturally follows from this in many cases, and economic growth is thus often described as a ratio of the economy's size.  Occasional bursts of hyperexponential growth intermittantly occur, but are unstable and followed by painful corrections.  However, through proper structuring and management, and careful cultivation of the necessary conditions for it to begin, indefinite hyperexponential growth may be maintained.
+
+ECO_ECON_HEGEMONY
+Economic Hegemony
+
+ECO_ECON_HEGEMONY_DESC
+An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
+
+#########################################
+# Tech Application Names & Descriptions #
+#########################################
+
+DOES_NOTHING_SHORT_DESC
+Useless: Does Nothing
+
+BUILDING_UNLOCK_SHORT_DESC
+Unlocks Building
+
+RESEARCH_SHORT_DESC
+Improves Research
+
+FARMING_SHORT_DESC
+Improves Farming
+
+MINING_SHORT_DESC
+Improves Mining
+
+INDUSTRY_SHORT_DESC
+Improves Industry
+
+TRADE_SHORT_DESC
+Improves Trade
+
+CONSTRUCTION_SHORT_DESC
+Improves Infrastructure
+
+POPULATION_SHORT_DESC
+Increases Planet Population
+
+CON_GRAVITY_WELLS
+Controlled gravity wells
+
+CON_GRAVITY_WELLS_DESC
+By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
+
+CON_MEGALITH
+Megalith Construction
+
+CON_MEGALITH_DESC
+Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
+
+CON_ORBITAL_FACT
+Orbital Factories
+
+CON_ORBITAL_FACT_DESC
+Since all colonies begin in space and raw materials are largely imported from off-world, the common Exodus practice of complete planet-fall for new colony ships is wasteful. The manufacturing work so badly needed for upstart colonies can be done more cheaply in orbit. Equipping new colonies with pre-built orbital factory kits helps them make use of the natural resource of low orbit.
+
+CON_PLANET_RING
+Planetary Ring
+
+CON_PLANET_RING_DESC
+Space elevators are now a relatively modest task. It now becomes possible to undertake their natural extension. By placing several elevators in a ring around a world like spokes in a wheel, and then connecting them together by enormous chains of satellites and space stations, a planetary ring can be created.
+
+CON_SPACE_ELEVATOR
+Space Elevator
+
+CON_SPACE_ELEVATOR_DESC
+Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit.  Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
+
+CON_SUBTER_CONST
+Subterranean Construction
+
+CON_SUBTER_CONST_DESC
+When space is at a premium, the holy grail of construction is the ability to build down as easily as up. Modern techniques finally make this possible.
+
+CON_ORBITAL_INFRA
+Orbital Infrastructure
+
+CON_ORBITAL_INFRA_DESC
+A well-developed general support infrastructure located in orbit permits great flexibility and rapid development of resource production capacity.
+
+ECO_COLONIAL_ECO
+Colonial Economic Blueprinting
+
+ECO_COLONIAL_ECO_DESC
+With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the precision of a physical building.  Upstart markets tap their raw potential for growth, without risk of being mired in traditionally immature "wild frontier" mentalities.
+
+ECO_COMM_UNION
+Commercial Union of the Colonies
+
+ECO_COMM_UNION_DESC
+The combination of applications as diverse as economic spectroscopy, bio-mimetics, digital psychology and advanced game theory produce a shift in the paradigm of economic thinking. The means to organize economic markets orders of magnitude above any previously envisioned becomes possible.
+
+ECO_DEEP_GREEN
+Deep Green
+
+ECO_DEEP_GREEN_DESC
+The quantum fractal nature of the equations of economic spectroscopy make all but the relatively superficial analyses impractical for most markets. However a massive computer designed from the ground up to handle the unusual algorithms, could supply an entire empire with economic foresight and stability.
+
+ECO_ECO_ETHER
+Economic Etherealization
+
+ECO_ECO_ETHER_DESC
+In the Exodus age of vast possibilities, the economic systems of most worlds have been slow to abandon the archaic paper and pencil, trading floor mentality. The final step in economic modernization is to dispense with out-dated, corporeal economic systems once and for all and transcend to a purer plane of digital information and virtual presence. This transition will boost the markets of all worlds, especially those largest.
+
+ECO_PARADISE
+Paradise Planet
+
+ECO_PARADISE_DESC
+The Paradise Planet is the ultimate tourist resort, a world whose entire economic structure has been converted to tourism and pleasure seeking. The benefits of such a planet would extend to the citizenry of distant worlds.
+
+ECO_SINKHOLE
+Economic Sinkholes
+
+ECO_SINKHOLE_DESC
+When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propegates out in all directions however, and is difficult or impossible to target selectively.
+
+GRO_SELF_ROTATING_CROPS
+Self-Rotating Crops
+
+GRO_SELF_ROTATING_CROPS_DESC
+High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvinating, plants every few growing seasons.\n\n+ 5 to max farming per 10 population on primary farming focused worlds.
+
+GRO_BIOTERROR
+Bioterror Facilites
+
+GRO_BIOTERROR_DESC
+I dunno... it makes people grow less.
+
+GRO_HABITATION_DOMES
+Habitation Domes
+
+GRO_HABITATION_DOMES_DESC
+While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habibation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.\n\nIncreases by +2 the maximum population of Terrible environment worlds with current construction of at least 20.
+
+GRO_CADUCEAN
+The Caducean Institute
+
+GRO_CADUCEAN_DESC
+A premiere centralized medical academy and research centre has benefits to health and population growth throughout an empire.  Adequately funding such an institute can greatly tax smaller economies, however, potentially limiting its attraction to large or economically powerfully empires.
+
+GRO_GENOME_BANK
+Genome Bank
+
+GRO_GENOME_BANK_DESC
+The unknown variables in genomic calculations for any given species remain severe for all but the simplest genetic repairs, not to mention the changes that a genetic modification can potentially have on a larger multi-species biosphere. To truly realize the benefits of genetic medicine, it is necessary to collect a massive genome database for all the species from all known worlds.
+
+GRO_LIVING_PLANET
+The Living Planet
+
+GRO_LIVING_PLANET_DESC
+Theoretically, it is possible to completely predict the ecology of a single planet by mapping out its entire web of biological interdependence, both sentient and non-sentient, in fractal algorithms. In practice however, this could only be realized by constructing a vast planet-spanning network running a computer program dedicated to regulating the planet's entire biosphere. This computer would become, in effect, the brain of a new type of life--A single planetary organism, with intelligent citizens as part of its fabric, subject to the greater will.
+
+GRO_ORBITAL_GARDENS
+Orbital Gardens
+
+GRO_ORBITAL_GARDENS_DESC
+A marvel of engineering and design, the Orbital Gardens feature samples of flora gathered from throughout the known galaxy, each cultivated within the wide range of artificial environments re-created within this small artificial moon.
+
+GRO_URBAN_FARM
+Urban Farming
+
+GRO_URBAN_FARM_DESC
+On industrialized worlds, where arable land is rare to non-existent, the capability to produce food in hydroponic or aeroponic environments tightly packed into multi-storey buildings becomes critical to maintain food output.
+
+LRN_STELLAR_TOMOGRAPHY
+Stellar Tomography
+
+LRN_STELLAR_TOMOGRAPHY_DESC
+A network of specialized satellites can use tomographic methods to reconstruct the activities occurs deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.\n\nProvides + 4 to research per 10 population on primary research focused worlds in systems with black holes.\nProvides +3 to planets in systems with neutron stars.\nProvides +2 to planets in systems with white or blue stars.\nProvides +1 to planets in systems with red, orange or yellow stars.
+
+LRN_AUTOLAB_I
+Basic Autolabs
+
+LRN_AUTOLAB_I_DESC
+Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
+
+LRN_THEORM_PROVER
+Automatic Theorm Prover
+
+LRN_THEORM_PROVER_DESC
+Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
+
+LRN_LIGHTHOUSE
+Interstellar Lighthouses
+
+LRN_LIGHTHOUSE_DESC
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+
+LRN_NAVIGATION
+Intersetaller Navigation
+
+LRN_NAVIGATION_DESC
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
+
+LRN_COLLECTIVE_NET
+Collective Thought Network
+
+LRN_COLLECTIVE_NET_DESC
+By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+
+LRN_DISTRIB_THOUGHT
+Distributed Thought Computing
+
+LRN_DISTRIB_THOUGHT_DESC
+The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.
+
+LRN_ENCLAVE_VOID
+Enclave of the Void
+
+LRN_ENCLAVE_VOID_DESC
+Study of the Void Mind could be accelerated by genetically engineering the populace of an entire world to be attuned to the Void. This new priestly class could transform the entire social structure of their world to better understand and channel the wisdom of the Void Mind to the entire empire.
+
+LRN_LOOKING_GLASS
+The Looking Glass
+
+LRN_LOOKING_GLASS_DESC
+A window into Space-Time, the Looking Glass will be the ultimate museum. Instead of excavating the ancient ruins of eras past, it is possible to simply open a window into time. Great leaders of the past would no longer be accessible only through books and holo-vids, but directly observable. Such a museum would gather flocks of both tourists and academicians.
+
+LRN_MONUMENT_EXODUS
+Monument to Exodus
+
+LRN_MONUMENT_EXODUS_DESC
+The greatest artists and engineers of an Exodus society are called together to produce a design for a fitting tribute to their accomplishments, and usher in the Exodus Age.
+
+LRN_PSICORP
+PsiCorp
+
+LRN_PSICORP_DESC
+It is now possible to identify the nascent psionic abilities inherent in rare individuals at birth. But to truly cultivate their gifts, it would be necessary to create an academy dedicated to psionics. Graduates of this academy, would comprise a highly trained task-force of Psi elite that could be assigned to research projects as conduits and amplifiers for the greatest researchers of an empire.
+
+PRO_AUTOFACTORY_I
+Basic Autofactories
+
+PRO_AUTOFACTORY_I_DESC
+Automated factories greatly increase industirial output without direct supervision, however it remains necessary to provide guidance to such labs regarding what needs to be produced.  A specailzed control centre is required to facilitate these exchanges, and the language in which they are conducted requires extensive research prior to implementation.  Consequently, the use of automated factories may only be practical for empires that conduct large amouts of research.  Conversely, empires with minimal research, but much existing production capacity, may find other production-enhancing methods more practical.
+
+PRO_HEAVY_MINING_I
+Heavy Mining Processors
+
+PRO_HEAVY_MINING_I_DESC
+When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is condusive, partially automated bulk mining activites can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilties.
+
+PRO_ENVIRO_MINING_I
+Environmentally-Conscious Mining
+
+PRO_ENVIRO_MINING_I_DESC
+Many mining methods are incompatiable with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionaly, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.\n\nIncreases minerals production by +2 per 10 population on primary mining focused worlds.\nIncreases minreals production by +1 per 10 population on primary balanced and secondary mining focused worlds.\nMultiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.
+
+PRO_ASTEROID_MINE
+Asteroid Mining
+
+PRO_ASTEROID_MINE_DESC
+Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.  The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
+
+PRO_ORBITAL_MINE
+Orbital Mining
+
+PRO_ORBITAL_MINE_DESC
+On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
+
+PRO_CORE_MINE
+Deep Core Mining
+
+PRO_CORE_MINE_DESC
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+
+PRO_ART_BLACK_HOLE
+Artificial Black Hole
+
+PRO_ART_BLACK_HOLE_DESC
+By carefully collapsing a singularity in a distant solar orbit, a conveniently located source of unlimited power would be possible. This would be a highly expensive and dangerous task, but with far reaching benefits.
+
+PRO_EXOBOTS
+Exobots
+
+PRO_EXOBOTS_DESC
+Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that lack the infrastructure and work force to dedicate to specialized factories. Every colony receives a standard issue team of exobots, boosting their construction during the early development phase.
+
+PRO_FUSION_PLANTS
+Fusion Plants
+
+PRO_FUSION_PLANTS_DESC
+Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
+
+PRO_HYPER_DAM
+Hyperspatial Dam
+
+PRO_HYPER_DAM_DESC
+Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
+
+PRO_MINI_SUN
+Miniature Sun
+
+PRO_MINI_SUN_DESC
+A magnetically contained, self-perpetuating fusion reaction could be safely built and placed in coincident orbit above a planet's night facing hemisphere. This new star would dominate the night sky, providing constant twilight on its planet-facing hemisphere, while its outward facing hemisphere would be harnessed as a massive fusion power plant.
+
+PRO_MINING_ENGINEERING
+Mining Engineering
+
+PRO_MINING_ENGINEERING_DESC
+Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.\n\nBonuses depend on planet type:\nBarren and Inferno recive +4 per 10 population of planet at mining focused worlds.\nDesert, Radiated and Toxic recive +2.\nTundra and Terran recive +1.\nOcean and Swap receive no bonus.\n\nLarge research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the popluations of these planet types.
+
+PRO_INDUSTRY_CENTRE_I
+Industrial Centres
+
+PRO_INDUSTRY_CENTRE_I_DESC
+Coordinating industrial activity between planets and star systems can be effectively accomplished at large centralized complexes.\n\nFacility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility.  Large industrial benefits come with large up-front cost, in both production resources and time, but with minimal research prerequisites, making facility useful for high-production strategies, but unattractive for research-focused empires.
+
+PRO_ENERGY_CONV
+Energy Conversion
+
+PRO_ENERGY_CONV_DESC
+At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
+
+
+########################################
+# Tech Refinement Names & Descriptions #
+########################################
+
+BUILDING_REFINE_SHORT_DESC
+Refines Building
+
+PRO_ASTEROID_MINE_II
+Advanced Asteroid Mines
+
+PRO_ASTEROID_MINE_II_DESC
+Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
+
+PRO_INDUSTRY_CENTRE_II
+Greater Industrial Centre
+
+PRO_INDUSTRY_CENTRE_II_DESC
+Improved centralized management of dispersed industrial activities increases the range and size of increased industiral output provided.
+
+PRO_INDUSTRY_CENTRE_III
+Supreme Industrial Centre
+
+PRO_INDUSTRY_CENTRE_III_DESC
+Additional experience and facilities improvements further extend the range and size of industrial output improvement.
+
+#################################
+# Building Names & Descriptions #
+#################################
+
+BLD_BIOTERROR_PROJECTOR
+Bioterror Projection Base
+
+BLD_BIOTERROR_PROJECTOR_DESC
+Projects negative health effects of minor biological warfare to nearby planets.\n\nPlanets within 2 starlane jumps owned by other empires receive -4 to max health.\nPlanets within 2 starlane jumps owned exclusively by the empire that builds the projector receive -1 to max health.\nRequires empire operating it to own at least one Bioterror Research Centre; otherwise produces no negative health effects on other empires' planets.
+
+BLD_BIOTERROR_LAB
+Bioterror Research Centre
+
+BLD_BIOTERROR_LAB_DESC
+Is required for Bioterror Projection Bases to affect other empires.\n\nCauses -2 to max health of planets in system where it is built, regardless of that planet's ownership.
+
+BLD_AUTOFACTORY_CONTROL
+Autofactory Control Centre
+
+BLD_AUTOFACTORY_CONTROL_DESC
+Provides +2 to max production output per 10 population on primary industry focused worlds.\nProvides additional +1 to max industry output per 10 population on secondary industry focused worlds.
+
+BLD_AUTOLAB_CONTROL
+Autolab Control Centre
+
+BLD_AUTOLAB_CONTROL_DESC
+Provides +2 to max research output per 10 population and -2 to max health on primary research focused worlds.\nProvides additional +1 to max research output per 10 population and -1 to max health on secondary research focused worlds.
+
+BLD_THEORM_PROVER
+Automatic Theorm Prover
+
+BLD_THEORM_PROVER_DESC
+Provides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.
+
+BLD_LIGHTHOUSE
+Interstellar Lighthouse
+
+BLD_LIGHTHOUSE_DESC
+Does nothing.  Maybe in future this could make certain ships go faster, or increase trade, or make starlanes more visible nearby (thereby indirectly increasing trade)...
+
+BLD_HEAVY_MINE_PROCESSOR
+Heavy Mining Processor
+
+BLD_HEAVY_MINE_PROCESSOR_DESC
+Provides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
+
+BLD_INDUSTRY_CENTRE
+Industrial Centre
+
+BLD_INDUSTRY_CENTRE_DESC
+Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\n<tech "PRO_INDUSTRY_CENTRE_II"> refinement increases bonus to +6 and increases distance to 200.\n\n<tech "PRO_INDUSTRY_CENTRE_III"> refinement further increases bonus to +7 and range to 300.
+
+BLD_ASTEROID_MINE
+Asteroid Mining Facility
+
+BLD_ASTEROID_MINE_DESC
+Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
+
+BLD_GRAVITY_WELLS
+Controlled Gravity Wells
+
+BLD_GRAVITY_WELLS_DESC
+A null gravity generator installed deep in the planet's core, greatly boosting industry and commerce in the system.
+
+BLD_MEGALITH
+Megalith
+
+BLD_MEGALITH_DESC
+A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscraper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul's empire.
+
+BLD_PLANET_RING
+Planetary Ring
+
+BLD_PLANET_RING_DESC
+A ring of satellites completely encircling a world, tethered to the planet's equator by spoke-like space elevators. These are used for housing, micro-gravity construction and inter-world trade.
+
+BLD_SPACE_ELEVATOR
+Space Elevator
+
+BLD_SPACE_ELEVATOR_DESC
+An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end. The space elevator boosts the trade for the entire system.
+
+BLD_COMM_UNION
+Commercial Union of the Colonies
+
+BLD_COMM_UNION_DESC
+The Commercial Union of the Colonies (CUC) is an organization with the means and will to monitor and regulate the entire galactic market. The first empire to complete the CUC gains an empire wide bonus to trade on all worlds.
+
+BLD_DEEP_GREEN
+Deep Green
+
+BLD_DEEP_GREEN_DESC
+A central economic forecast computer fed with data from all the economic markets of the known galaxy, it is capable of near perfect economic foresight and is used to boost all the markets in the empire.
+
+BLD_PARADISE
+Paradise Planet
+
+BLD_PARADISE_DESC
+A world whose entire infrastructure has been converted to tourism, giving an enormous boost to trade and tourism in the region, but eliminating almost all useful industrial and mining output.
+
+BLD_CADUCEAN
+The Caducean Institute
+
+BLD_CADUCEAN_DESC
+Available with The Caducean Institute.\n\nIncreases max health on all populated worlds by +2, non-stacking.
+
+BLD_GENOME_BANK
+Genome Bank
+
+BLD_GENOME_BANK_DESC
+The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease and in establishing farming colonies.
+
+BLD_LIVING_PLANET
+The Living Planet
+
+BLD_LIVING_PLANET_DESC
+Convert a planet into the Living Planet by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own. Industrial and mineral output are severely limited, however, as such activities upset the global harmonious balance.
+
+BLD_ORBITAL_GARDENS
+Orbital Gardens
+
+BLD_ORBITAL_GARDENS_DESC
+An enormous moon-like satellite in orbit above a world, the Orbital Gardens are a testament throughout the galaxy to your ability to harness your environment. Besides being an excellent tourist attraction, research conducted here helps boost farming on all worlds in your empire.
+
+BLD_COLLECTIVE_NET
+Collective Thought Network
+
+BLD_COLLECTIVE_NET_DESC
+By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+
+BLD_ENCLAVE_VOID
+Enclave of the Void
+
+BLD_ENCLAVE_VOID_DESC
+The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects. This world may never exceed industrial or mining output greater than 30.
+
+BLD_LOOKING_GLASS
+The Looking Glass
+
+BLD_LOOKING_GLASS_DESC
+A space-time museum of galactic fame. Both tourism and science benefit from its unfettered view of all history, as the ebb and flow of all time become as transparent as glass.
+
+BLD_MONUMENT_EXODUS
+Monument to Exodus
+
+BLD_MONUMENT_EXODUS_DESC
+A mighty orbiting sculpture visible from the ground and to passing ships. Your triumph over the starlanes will never be forgotten and your people will forever be emboldened to colonize new worlds. Increases population growth on all frontier worlds.
+
+BLD_PSICORP
+PsiCorp
+
+BLD_PSICORP_DESC
+An academy dedicated to identifying the psionically gifted citizens throughout the colonies and training them from birth to develop their abilities to the benefit of the most advanced research programs of the empire.
+
+BLD_ART_BLACK_HOLE
+Artificial Black Hole
+
+BLD_ART_BLACK_HOLE_DESC
+A constructed singularity in a distant orbit in one system. Its power is harnessed to advance industry for all nearby worlds.
+
+BLD_HYPER_DAM
+Hyperspatial Dam
+
+BLD_HYPER_DAM_DESC
+A tear in the fabric of the universe, safely controlled and harnessed. The hyperspatial dam serves as a source of nearly unlimited energy for the entire sector.
+
+BLD_MINI_SUN
+Miniature Sun
+
+BLD_MINI_SUN_DESC
+A miniature sun keeps the night sky above the world perpetually twilit. Besides being good for morale, the fusion reactor serves as a convenient source of energy for all planets in the system.
+
+BLD_REMOTE_CONST
+Remote Construction
+
+BLD_REMOTE_CONST_DESC
+A network of matter and construction. A team of construction workers and robots can assemble structures on distant worlds without the need for freighters or construction vessels. Only a small matter-terminal ship is needed. Quickly raises the industry on all worlds to that of an Established world.
+
+BLD_ECON_SINKHOLE
+Economic Sinkhole
+
+BLD_ECON_SINKHOLE_DESC
+An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.

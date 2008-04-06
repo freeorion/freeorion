@@ -13,7 +13,6 @@
 namespace {
     const int    SITREP_LB_MARGIN_X = 5;
     const int    SITREP_LB_MARGIN_Y = 5;
-
 }
 
 
@@ -86,7 +85,7 @@ void SitRepPanel::Update()
         LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         row->push_back(link_text);
-        m_sitreps_lb->Insert(row);                
+        m_sitreps_lb->Insert(row);
     }
 
     if (!m_sitreps_lb->Empty()) {

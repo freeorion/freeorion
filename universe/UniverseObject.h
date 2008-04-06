@@ -117,7 +117,7 @@ public:
 
     virtual void AddOwner(int id);                       ///< adds the Empire with ID \a id to the list of owners of this object
     virtual void RemoveOwner(int id);                    ///< removes the Empire with ID \a id to the list of owners of this object
-    void SetSystem(int sys);                             ///< assigns this object to a System
+    virtual void SetSystem(int sys);                     ///< assigns this object to a System
     virtual void AddSpecial(const std::string& name);    ///< adds the Special \a name to this object, if it is not already present
     virtual void RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
    

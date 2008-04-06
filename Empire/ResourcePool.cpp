@@ -4,12 +4,23 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 
-#include <GG/SignalsAndSlots.h>
-
 //////////////////////////////////////////////////
 // ResourcePool
 //////////////////////////////////////////////////
+ResourcePool::ResourcePool() :
+    m_resource_centers(),
+    m_supply_system_groups(),
+    m_stockpile_system_id(UniverseObject::INVALID_OBJECT_ID),
+    m_stockpile(-1.0),
+    m_max_stockpile(-1.0),
+    m_production(-1.0),
+    m_type(INVALID_RESOURCE_TYPE)
+{}
+
 ResourcePool::ResourcePool(ResourceType type) :
+    m_resource_centers(),
+    m_supply_system_groups(),
+    m_stockpile_system_id(UniverseObject::INVALID_OBJECT_ID),
     m_stockpile(0.0),
     m_max_stockpile(200.0), // change to 0.0 later when effects can alter the max stockpile
     m_production(0.0),
@@ -58,6 +69,14 @@ void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resour
     m_resource_centers = resource_center_vec;
 }
 
+void ResourcePool::SetSystemSupplyGroups(const std::set<std::set<int> >& supply_system_groups) {
+    m_supply_system_groups = supply_system_groups;
+}
+
+void ResourcePool::SetStockpileSystem(int stockpile_system_id) {
+    m_stockpile_system_id = stockpile_system_id;
+}
+
 void ResourcePool::Update()
 {
     // sum production from all ResourceCenters for resource point type appropriate for this pool
@@ -74,9 +93,9 @@ void ResourcePool::Update()
 //////////////////////////////////////////////////
 namespace {
     bool PopCenterLess(PopCenter* elem1, PopCenter* elem2)
-	{
-	    return elem1->MeterPoints(METER_POPULATION) < elem2->MeterPoints(METER_POPULATION);
-	}
+    {
+        return elem1->MeterPoints(METER_POPULATION) < elem2->MeterPoints(METER_POPULATION);
+    }
 }
 
 PopulationPool::PopulationPool() :

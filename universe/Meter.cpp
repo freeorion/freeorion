@@ -1,6 +1,6 @@
 #include "Meter.h"
 
-#include "../util/MultiplayerCommon.h"
+#include <algorithm>
 
 const double Meter::METER_MIN = 0.0;
 const double Meter::METER_MAX = 100.0;
@@ -12,8 +12,7 @@ Meter::Meter() :
     m_initial_max(METER_MIN),
     m_previous_current(METER_MIN),
     m_previous_max(METER_MIN)
-{
-}
+{}
 
 Meter::Meter(double current, double max) :
     m_current(current),
@@ -22,8 +21,7 @@ Meter::Meter(double current, double max) :
     m_initial_max(METER_MIN),
     m_previous_current(METER_MIN),
     m_previous_max(METER_MIN)
-{
-}
+{}
 
 Meter::Meter(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max) :
     m_current(current),
@@ -32,9 +30,7 @@ Meter::Meter(double current, double max, double initial_current, double initial_
     m_initial_max(initial_max),
     m_previous_current(previous_current),
     m_previous_max(previous_max)
-{
-}
-
+{}
 
 double Meter::Current() const
 {

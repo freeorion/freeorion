@@ -150,7 +150,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
                                          const CUIButton::ClickedSlotType& cancel_callback) : 
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
            (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
-           GG::CLICKABLE),
+           GG::ONTOP | GG::CLICKABLE),
     m_handling_lobby_update(false),
     m_host(host),
     m_chat_box(0),

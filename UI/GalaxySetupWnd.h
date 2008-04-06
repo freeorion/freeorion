@@ -80,7 +80,7 @@ private:
     CUIDropDownList*      m_starlane_freq_list;  //!< The frequency of starlanes in the galaxy
     CUIDropDownList*      m_planet_density_list; //!< The density of planets in each system
     CUIDropDownList*      m_specials_freq_list;  //!< The frequency of specials in systems and on planets
-    
+
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };
 

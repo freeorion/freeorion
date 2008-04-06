@@ -17,6 +17,10 @@ ClientApp::ClientApp() :
     m_empire_id(-1),
     m_current_turn(INVALID_GAME_TURN)
 {
+#ifdef FREEORION_BUILD_HUMAN
+    EmpireEliminatedSignal.connect(boost::bind(&Universe::HandleEmpireElimination, &m_universe, _1));
+#endif
+
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of ClientApp");
     s_app = this;
@@ -95,6 +99,13 @@ int ClientApp::GetNewObjectID()
     return boost::lexical_cast<int>(msg.Text());
 }
 
+int ClientApp::GetNewDesignID()
+{
+    Message msg;
+    m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_player_id), msg);
+    return boost::lexical_cast<int>(msg.Text());
+}
+
 ClientApp* ClientApp::GetApp()
 { return s_app; }
 
@@ -115,10 +126,3 @@ int& ClientApp::EmpireIDRef()
 
 int& ClientApp::CurrentTurnRef()
 { return m_current_turn; }
-
-int ClientApp::GetNewDesignID()
-{
-    Message msg;
-    m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_player_id), msg);
-    return boost::lexical_cast<int>(msg.Text());
-}

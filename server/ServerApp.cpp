@@ -35,15 +35,6 @@
 
 namespace fs = boost::filesystem;
 
-namespace {
-#ifdef FREEORION_WIN32
-    const std::string AI_CLIENT_EXE = "freeorionca.exe";
-#else
-    const fs::path BIN_DIR = GetBinDir();
-    const std::string AI_CLIENT_EXE = (BIN_DIR / "freeorionca").native_file_string();
-#endif
-}
-
 ////////////////////////////////////////////////
 // PlayerSaveGameData
 ////////////////////////////////////////////////
@@ -51,11 +42,12 @@ PlayerSaveGameData::PlayerSaveGameData() :
     m_empire(0)
 {}
 
-PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data) :
+PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string) :
     m_name(name),
     m_empire(empire),
     m_orders(orders),
-    m_ui_data(ui_data)
+    m_ui_data(ui_data),
+    m_save_state_string(save_state_string)
 {}
 
 
@@ -121,8 +113,14 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
     m_ai_clients.clear();
     m_ai_IDs.clear();
 
-    int ai_client_base_number = time(0) % 999; // get a random number from which to start numbering the AI clients
+    int ai_client_base_number = 1;
     int i = 0;
+
+#ifdef FREEORION_WIN32
+    const std::string AI_CLIENT_EXE = "freeorionca.exe";
+#else
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").native_file_string();
+#endif
     for (std::vector<PlayerSetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
         // TODO: add other command line args to AI client invocation as needed
         std::string player_name = "AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i);
@@ -135,7 +133,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE;
-        m_ai_clients.push_back(Process(AI_CLIENT_EXE, args));
+        m_ai_clients[player_name] = Process(AI_CLIENT_EXE, args);
         Logger().debugStream() << "done starting " << AI_CLIENT_EXE;
     }
 }
@@ -168,8 +166,8 @@ void ServerApp::Run()
 
 void ServerApp::CleanupAIs()
 {
-    for (unsigned int i = 0; i < m_ai_clients.size(); ++i) {
-        m_ai_clients[i].Kill();
+    for (std::map<std::string, Process>::iterator it = m_ai_clients.begin(); it != m_ai_clients.end(); ++it) {
+        it->second.Kill();
     }
 }
 
@@ -194,6 +192,7 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     case Message::CLIENT_SAVE_DATA:      m_fsm.process_event(ClientSaveData(msg, player_connection)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
     case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
+    case Message::REQUEST_NEW_DESIGN_ID: m_fsm.process_event(RequestDesignID(msg, player_connection)); break;
     default:
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \""
                                      << msg.Type() << "\".  Terminating connection.";
@@ -253,6 +252,7 @@ void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
 
 void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
 {
+    // multiplayer load
     std::set<int> used_save_game_data;
     std::map<int, int> player_id_to_save_game_data_index;
     for (std::map<int, PlayerSetupData>::const_iterator it = lobby_data->m_players.begin(); it != lobby_data->m_players.end(); ++it) {
@@ -346,16 +346,39 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // compile map of PlayerInfo for each player, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
-                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
-                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
-                                          (*it)->Host());
+        // extract connection struct and info from it
+        boost::shared_ptr<PlayerConnection> player_connection = *it;
+        std::string player_name =           player_connection->PlayerName();
+        int player_id =                     player_connection->ID();
+        const Empire* player_empire =       GetPlayerEmpire(player_id);
+        int player_empire_id =              player_empire->EmpireID();
+        bool player_is_host =               player_connection->Host();
+        bool player_is_AI =                 m_ai_IDs.find(player_id) != m_ai_IDs.end();
+        // store in PlayerInfo struct
+        players[player_id] = PlayerInfo(player_name, player_empire_id, player_is_AI, player_is_host);
     }
 
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        Empire* empire = GetPlayerEmpire((*it)->ID());
-        (*it)->SendMessage(GameStartMessage((*it)->ID(), m_single_player_game, empire->EmpireID(), m_current_turn, m_empires, m_universe,
-                                            players, *player_data_by_empire[empire]->m_orders, player_data_by_empire[empire]->m_ui_data.get()));
+        // extract info needed for GameStartMessage for this player
+        int player_id =                             (*it)->ID();
+        Empire* empire =                            GetPlayerEmpire(player_id);
+        int empire_id =                             empire->EmpireID();
+        bool player_is_AI =                         players[player_id].AI;
+        boost::shared_ptr<OrderSet> orders =        player_data_by_empire[empire]->m_orders;
+        boost::shared_ptr<SaveGameUIData> ui_data = player_data_by_empire[empire]->m_ui_data;
+        std::string save_state_string =             player_data_by_empire[empire]->m_save_state_string;
+        // send load game messages to human and AI players.  AIs might have something useful in save_state_string,
+        // but clients are assumed to only use the ui_data struct
+        if (player_is_AI) {
+            std::string* sss = 0;   // I first tried making PlayerSaveGameData::m_save_string_data a boost::shared_ptr<std::string>, but the compiler didn't like this, and refused to allow the struct to be serialized.  Consequently, the raw data is now contained in the struct, and this test to see if there is anything in the string is done instead of the more elegant system used to check of ui_data is available.
+            if (!save_state_string.empty())
+                sss = &save_state_string;
+            (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
+                                                players, *orders, sss));
+        } else {
+            (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe,
+                                                players, *orders, ui_data.get()));
+        }
     }
 
     m_losers.clear();
@@ -434,24 +457,26 @@ void ServerApp::ProcessTurns()
     }    
 
     // filter FleetColonizeOrder for later processing
-    std::map<int,std::vector<FleetColonizeOrder*> > colonize_order_map;
+    typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
+    ColonizeOrderMap colonize_order_map;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         pOrderSet = it->second;
 
         // filter FleetColonizeOrder and sort them per planet
-        FleetColonizeOrder *order;
-        for ( order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it)
-            if((order=dynamic_cast<FleetColonizeOrder*>(order_it->second)))
+        boost::shared_ptr<FleetColonizeOrder> order;
+        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
+            if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second)))
             {
-                std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = colonize_order_map.find(order->PlanetID());
+                ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
                 if(it == colonize_order_map.end())
                 {
-                    colonize_order_map.insert(std::pair<int,std::vector<FleetColonizeOrder*> >(order->PlanetID(),std::vector<FleetColonizeOrder*>()));
+                    colonize_order_map.insert(std::make_pair(order->PlanetID(),std::vector<boost::shared_ptr<FleetColonizeOrder> >()));
                     it = colonize_order_map.find(order->PlanetID());
                 }
                 it->second.push_back(order);
             }
+        }
     }
 
     // colonization apply be the following rules
@@ -459,7 +484,7 @@ void ServerApp::ProcessTurns()
     // 2 - if there are more than one empire then
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
-    for (std::map<int,std::vector<FleetColonizeOrder*> >::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it)
+    for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it)
     {
         Planet *planet = GetUniverse().Object<Planet>(it->first);
 
@@ -622,8 +647,16 @@ void ServerApp::ProcessTurns()
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it)
-        it->second->UpdateResourcePool();
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        Empire* empire = it->second;
+
+        std::set<std::set<int> > system_supply_groups;
+        std::set<std::pair<int, int> > supply_starlane_traversals;  // don't need this info, but need somewhere to put the output of GetSupplySystemGroupsAndStarlanesUsed
+        empire->GetSupplySystemGroupsAndStarlanesUsed(system_supply_groups, supply_starlane_traversals);
+
+        empire->InitResourcePools(system_supply_groups);
+        empire->UpdateResourcePools();
+    }
 
     // consume distributed resources on queues
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -665,13 +698,13 @@ void ServerApp::ProcessTurns()
             (*it)->Reset();
         }
 
-    
+
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
         delete it->second;
         it->second = NULL;
-    }   
+    }
 
     ++m_current_turn;
 
@@ -694,22 +727,32 @@ void ServerApp::ProcessTurns()
         } 
     }
 
-    // TODO: This needs to remove buildings, fleets, ships, etc., not just remove ownership of them
     // clean up defeated empires
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         // remove the empire from play
         Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->second));
-        for (unsigned int j = 0; j < object_vec.size(); ++j)
+        for (unsigned int j = 0; j < object_vec.size(); ++j) {
             object_vec[j]->RemoveOwner(it->second);
+            // TODO: Consider just removing ownership from Buildings, and making
+            // them capturable by colonizing a planet.
+            if (object_vec[j]->Owners().empty() &&
+                (universe_object_cast<Building*>(object_vec[j]) ||
+                 universe_object_cast<Ship*>(object_vec[j]) ||
+                 universe_object_cast<Fleet*>(object_vec[j])))
+                GetUniverse().Destroy(object_vec[j]->ID());
+        }
     }
 
+    std::map<std::string, Process> processes_copy = m_ai_clients;
     // notify all players of the eliminated players
     for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
         for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-            if ((*player_it)->ID() == it->first)
+            if ((*player_it)->ID() == it->first) {
+                m_ai_clients.erase((*player_it)->PlayerName());
                 (*player_it)->SendMessage(EndGameMessage((*player_it)->ID(), Message::YOU_ARE_DEFEATED));
-            else
-                (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), Empires().Lookup(it->second)->Name()));
+            } else {
+                (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), it->second, Empires().Lookup(it->second)->Name()));
+            }
         }
     }
 

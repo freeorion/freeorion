@@ -55,7 +55,7 @@ LOADING
 Loading ...
 
 SERVER_WONT_START
-The server could not be started.
+The server could not be started.\n\nNote for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.
 
 SERVER_TIMEOUT
 The server is not responding.
@@ -212,6 +212,9 @@ The sound file played when mouse moves over a fleet button.
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
 The sound file played when a fleet button is clicked.
 
+OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
+The sound file played when mouse moves over a system icon.
+
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 The sound file played when the system side-panel is opened.
 
@@ -359,6 +362,21 @@ Sets color of the fourth category of techs defined in techs.xml.
 OPTIONS_DB_UI_TECH_CATEGORY_5
 Sets color of the fifth category of techs defined in techs.xml.
 
+OPTIONS_DB_UI_TECH_CATEGORY_6
+Sets color of the sixth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_7
+Sets color of the seventh category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_8
+Sets color of the eighth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_9
+Sets color of the ninth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_10
+Sets color of the tenth category of techs defined in techs.xml.
+
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip popup delay, in ms.
 
@@ -378,7 +396,7 @@ OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
 The shape of the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-The shape of the galaxy to be generated.
+The age of the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 The number of planets per system in the galaxy to be generated.
@@ -791,13 +809,13 @@ OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
 
 OPTIONS_VIDEO_MODE
-Video Mode
+Video Mode  (restart for changes to take effect)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Enables fullscreen mode, sets screen resolution, and sets bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Custom
+Custom Windowed
 
 OPTIONS_VIDEO_SETTINGS
 Video Settings
@@ -864,6 +882,9 @@ Fleet Button Click
 
 OPTIONS_SOUND_FLEET_ROLLOVER
 Fleet Button Rollover
+
+OPTIONS_SOUND_SYSTEM_ROLLOVER
+System Icon Rollover
 
 OPTIONS_SOUND_WINDOW
 Window Sounds
@@ -1038,6 +1059,9 @@ Research
 MAP_BTN_PRODUCTION
 Production
 
+MAP_BTN_DESIGN
+Design
+
 #################
 # SidePanel     #
 #################
@@ -1188,6 +1212,9 @@ FW_EMPIRE_FLEETS
 FW_HOME_FLEET
 Home Fleet
 
+FW_BATTLE_FLEET
+Battle Fleet
+
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
 Foreign fleet
@@ -1207,10 +1234,10 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / %2% Turns
+%1% RP / Turn @ %2% Turns
 
 TECH_TURN_COST_STR
-%1% RP / %2% Turns
+%1% RP / Turn @ %2% Turns
 
 TECH_TURNS_LEFT_STR
 %1% Turns
@@ -1219,7 +1246,7 @@ TECH_TURNS_LEFT_NEVER
 Never
 
 TECH_DETAIL_TYPE_STR
-%1% %2%
+%1% %2% - %3%
 
 TECH_DETAIL_DESCRIPTION_STR
 %1%
@@ -1324,10 +1351,10 @@ PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Unavailable
 
 PRODUCTION_TOTAL_COST_STR
-%1% PP / %2% Turns
+%1% PP / Turn @ %2% Turns
 
 PRODUCTION_TURN_COST_STR
-%1% PP / %2% Turns
++%1% PP
 
 PRODUCTION_TURNS_LEFT_STR
 %1% Turns left
@@ -1369,6 +1396,147 @@ PP
 
 PRODUCTION_QUEUE_MULTIPLES
 %1%x 
+
+
+###############
+#  DesignWnd  #
+###############
+
+DESIGN_ADD_TEST
+Add Test Design
+
+DESIGN_NAME_DEFAULT
+Custom Ship Design
+
+DESIGN_DESCRIPTION_DEFAULT
+Design Description
+
+DESIGN_NO_PART
+None
+
+DESIGN_WND_STARTS
+Design Starts
+
+DESIGN_WND_HULLS
+Empty Hulls
+
+DESIGN_WND_FINISHED_DESIGNS
+Finished Designs
+
+DESIGN_WND_SAVED_DESIGNS
+Saved Designs
+
+DESIGN_WND_TEMPLATES
+Design Templates
+
+DESIGN_WND_PART_PALETTE_TITLE
+Ship Parts
+
+DESIGN_WND_MAIN_PANEL_TITLE
+Design Details
+
+DESIGN_WND_DESIGN_NAME
+Design Name
+
+DESIGN_WND_DESIGN_DESCRIPTION
+Description
+
+DESIGN_WND_CONFIRM
+Confirm New Design
+
+DESIGN_WND_CLEAR
+Clear Parts
+
+# Ship Slot Types
+
+SL_EXTERNAL
+External
+
+SL_INTERNAL
+Internal
+
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Short Range
+
+PC_MISSILES
+Missiles
+
+PC_FIGHTERS
+Fighters
+
+PC_POINT_DEFENSE
+Point Defense
+
+PC_SHIELD
+Shields
+
+PC_ARMOUR
+Armour
+
+PC_DETECTION
+Detection
+
+PC_STEALTH
+Stealth
+
+PC_FUEL
+Fuel
+
+PC_COLONY
+Colonization
+
+
+####################
+#   Encyclopedia   #
+####################
+
+# types of things that can be shown in encyclopedia
+ENC_SHIP_PART
+Ship Part
+
+ENC_SHIP_HULL
+Ship Hull
+
+ENC_TECH
+Technology
+
+ENC_SHIP_DESIGN
+Ship Design
+
+ENC_SPECIAL
+Special
+
+ENC_BUILDING
+Building
+
+# type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
+# for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
+# %1% may be an empty string for most general types of things that can be shown.
+ENC_DETAIL_TYPE_STR
+<i>%1% %2%</i>
+
+ENC_PP
+PP
+
+ENC_RP
+RP
+
+# indication of cost to produce or research thing that is shown.  May be omitted if thing shown can't
+# be produced or research (eg. specials)
+# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
+# %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
+# %3% will be the minimum number of turns it takes to produce or research the thing shown
+END_COST_AND_TURNS_STR
+%1% %2% / Turn @ %3% Turns
+
+# autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
+# provide an appropriate heading to appear before the autogenerated text.
+END_EFFECTS_STR
+\n\n<u>Effects</u>\n\n%1%
+
 
 
 ####################
@@ -1490,12 +1658,6 @@ Homeworld
 HOMEWORLD_SPECIAL_DESCRIPTION
 This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
 
-STARVATION_SPECIAL
-Starvation
-
-STARVATION_SPECIAL_DESCRIPTION
-This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
-
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
@@ -1610,8 +1772,6 @@ PT_TERRAN
 terran
 PT_OCEAN
 ocean
-PT_GAIA
-gaia
 PT_ASTEROIDS
 asteroids
 PT_GASGIANT
@@ -1642,14 +1802,14 @@ gas giant
 
 PE_UNINHABITABLE
 uninhabitable
-PE_TERRIBLE
-terrible
+PE_HOSTILE
+hostile
+PE_POOR
+poor
 PE_ADEQUATE
 adequate
-PE_SUPERB
-superb
-PE_OPTIMAL
-optimal
+PE_GOOD
+good
 
 
 # FocusTypes
@@ -1688,6 +1848,18 @@ METER_CONSTRUCTION
 construction
 METER_HEALTH
 health
+METER_FUEL
+fuel
+METER_SUPPLY
+supply
+METER_STEALTH
+stealth
+METER_DETECTION
+detection
+METER_SHIELD
+shield
+METER_DEFENSE
+defense
 
 
 # EmpireAffiliationTypes
@@ -1704,9 +1876,10 @@ ally
 
 UIT_BUILDING
 Building
-UIT_SHIP_COMPONENT
-Ship Component
-
+UIT_SHIP_PART
+Ship Part
+UIT_SHIP_HULL
+Ship Hull
 
 # TechTypes
 
@@ -1827,6 +2000,42 @@ current population
 
 DESC_VAR_MAXPOPULATION
 max population
+
+DESC_VAR_CURRENTFUEL
+current fuel
+
+DESC_VAR_MAXFUEL
+max fuel
+
+DESC_VAR_CURRENTSUPPLY
+current supply
+
+DESC_VAR_MAXSUPPLY
+max supply
+
+DESC_VAR_CURRENTSTEALTH
+current stealth
+
+DESC_VAR_MAXSTEALTH
+max stealth
+
+DESC_VAR_CURRENTDETECTION
+current detection
+
+DESC_VAR_MAXDETECTION
+max detection
+
+DESC_VAR_CURRENTSHIELD
+current shield
+
+DESC_VAR_MAXSHIELD
+max shield
+
+DESC_VAR_CURRENTDEFENSE
+current defense
+
+DESC_VAR_MAXDEFENSE
+max defense
 
 DESC_VAR_TRADESTOCKPILE
 trade stockpile
@@ -2181,16 +2390,8 @@ GROWTH_CATEGORY
 Growth
 ECONOMICS_CATEGORY
 Economics
-
-####################################
-# Misc / Debug Tech Stuff          #
-####################################
-
-TEST_TECH
-Test Tech
-
-TEST_TECH_DESC
-This is a test tech.  Research at your own risk, and don't be surprised, complain on the forums or post bug reports if weird things happen after you do.
+SHIPS_CATEGORY
+Ships
 
 
 ####################################
@@ -2211,12 +2412,6 @@ Algorithmic Elegance
 
 LRN_ALGO_ELEGANCE_DESC
 With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
-
-LRN_GAL_EXPLO
-Galactic Exploration
-
-LRN_GAL_EXPLO_DESC
-The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
 
 LRN_TRANSLING_THT
 Translinguistics
@@ -2626,12 +2821,37 @@ Economic Hegemony
 ECO_ECON_HEGEMONY_DESC
 An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
+SHP_SPACE_TACTICS
+Space Tactics
+
+SHP_SPACE_TACTICS_DESC
+Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
+
+SHP_GAL_EXPLO
+Galactic Exploration
+
+SHP_GAL_EXPLO_DESC
+The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
+
+SHP_NAVIGATION
+Interstellar Navigation
+
+SHP_NAVIGATION_DESC
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
+
+
 #########################################
 # Tech Application Names & Descriptions #
 #########################################
 
 DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
+
+SHIP_PART_UNLOCK_SHORT_DESC
+Unlocks Ship Part
+
+SHIP_HULL_UNLOCK_SHORT_DESC
+Unlocks Ship Hull
 
 BUILDING_UNLOCK_SHORT_DESC
 Unlocks Building
@@ -2656,6 +2876,27 @@ Improves Infrastructure
 
 POPULATION_SHORT_DESC
 Increases Planet Population
+
+FLEET_RANGE_DESC
+Improves Fleet Supply
+
+CON_TERRAFORM
+Terraforming
+
+CON_TERRAFORM_DESC
+Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical.  The precise method depends greatly on the type of planet to be changed and the desired result.  However in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust.  The process takes years.
+
+CON_TERRAFORM_SHORT_DESC
+Allows terraforming to improve planets
+
+CON_RAPID_TERRAFORM
+Rapid Terraforming
+
+CON_RAPID_TERRAFORM_DESC
+Advances in orbital deployment now enable any terrestrial planet in an inhabited system to be terraformed to any environmental preference. Nanites can accomplish the transformation in half the time of conventional methods.
+
+CON_RAPID_TERRAFORM_SHORT_DESC
+Allows rapid and remote terraforming to improve planets
 
 CON_GRAVITY_WELLS
 Controlled gravity wells
@@ -2745,7 +2986,7 @@ GRO_BIOTERROR
 Bioterror Facilites
 
 GRO_BIOTERROR_DESC
-I dunno... it makes people grow less.
+A research centre created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict but as a weapon of terror it is unsurpassed, a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sows despair beyond the affected area, however care must be taken when developing such organisms to ensure they are not accidental released furthermore utter secrecy is required at the risk of damaging relations with other empires and our own people.
 
 GRO_HABITATION_DOMES
 Habitation Domes
@@ -2795,23 +3036,11 @@ Basic Autolabs
 LRN_AUTOLAB_I_DESC
 Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
 
-LRN_THEORM_PROVER
-Automatic Theorm Prover
+LRN_THEOREM_PROVER
+Automatic Theorem Prover
 
-LRN_THEORM_PROVER_DESC
+LRN_THEOREM_PROVER_DESC
 Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
-
-LRN_LIGHTHOUSE
-Interstellar Lighthouses
-
-LRN_LIGHTHOUSE_DESC
-Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
-
-LRN_NAVIGATION
-Intersetaller Navigation
-
-LRN_NAVIGATION_DESC
-Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
 
 LRN_COLLECTIVE_NET
 Collective Thought Network
@@ -2933,6 +3162,77 @@ Energy Conversion
 PRO_ENERGY_CONV_DESC
 At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
 
+PRO_NEUTRONIUM_EXTRACTION
+Neutronium Extraction
+
+PRO_NEUTRONIUM_EXTRACTION_DESC
+The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter.  This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
+
+SHP_LIGHTHOUSE
+Interstellar Lighthouses
+
+SHP_LIGHTHOUSE_DESC
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+
+SHP_FLEET_LOGISTICS
+Fleet Logistics
+
+SHP_FLEET_LOGISTICS_DESC
+Gives planets ability to resupply fleets in systems several starlane jumps away.
+
+SHP_SUSPENDED_ANIMATION
+Suspended Animation
+
+SHP_SUSPENDED_ANIMATION_DESC
+Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently.  Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space.  With this technique, the capacity of colony ships can be greatly increased.
+
+SHP_ION_CANNON
+Ion Cannon
+
+SHP_ION_CANNON_DESC
+Unlocks Ion Cannon ship part.
+
+SHP_NUCLEAR_MISSILE
+Nuclear Missile
+
+SHP_NUCLEAR_MISSILE_DESC
+Unlocks Nuclear Missile ship part.
+
+SHP_DEFLECTOR
+Deflector Shield
+
+SHP_DEFLECTOR_DESC
+Unlocks Deflector Shield ship part.
+
+SHP_RADAR
+Active Radar
+
+SHP_RADAR_DESC
+Unlocks Active Radar ship part.
+
+SHP_DEUTERIUM_TANK
+Deuterium Tank
+
+SHP_DEUTERIUM_TANK_DESC
+Unlocks Deuterium Tank ship part.
+
+SHP_MEDIUM_HULL
+Medium Ship Hulls
+
+SHP_MEDIUM_HULL_DESC
+Medium Ship Hulls
+
+SHP_LARGE_HULL
+Large Ship Hulls
+
+SHP_LARGE_HULL_DESC
+Large Ship Hulls
+
+SHP_HUGE_HULL
+Huge Ship Hulls
+
+SHP_HUGE_HULL_DESC
+Huge Ship Hulls
 
 ########################################
 # Tech Refinement Names & Descriptions #
@@ -2962,6 +3262,18 @@ Additional experience and facilities improvements further extend the range and s
 #################################
 # Building Names & Descriptions #
 #################################
+
+BLD_IMERIAL_PALACE
+Imperial Palace
+
+BLD_IMERIAL_PALACE_DESC
+Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +5 to max construction.
+
+BLD_SHIPYARD_BASE
+Shipyard
+
+BLD_SHIPYARD_BASE_DESC
+Orbital production facility for assembly of interstellar military-grade spacecraft.  Allows production of ships in the system where it is located.  Can be upgraded by producing additional buildings in the same system.
 
 BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
@@ -2997,7 +3309,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Does nothing.  Maybe in future this could make certain ships go faster, or increase trade, or make starlanes more visible nearby (thereby indirectly increasing trade)...
+Increases by 1 starlane jump the supply meter of all planets - regardless of owner - within 200 distance units.
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor
@@ -3009,7 +3321,11 @@ BLD_INDUSTRY_CENTRE
 Industrial Centre
 
 BLD_INDUSTRY_CENTRE_DESC
-Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\n<tech "PRO_INDUSTRY_CENTRE_II"> refinement increases bonus to +6 and increases distance to 200.\n\n<tech "PRO_INDUSTRY_CENTRE_III"> refinement further increases bonus to +7 and range to 300.
+'''Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.
+
+[[tech PRO_INDUSTRY_CENTRE_II]] refinement increases bonus to +6 and increases distance to 200.
+
+[[tech PRO_INDUSTRY_CENTRE_III]] refinement further increases bonus to +7 and range to 300.'''
 
 BLD_ASTEROID_MINE
 Asteroid Mining Facility
@@ -3142,3 +3458,108 @@ Economic Sinkhole
 
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
+
+##############
+# Ship Parts #
+##############
+
+SR_LASER
+Laser
+SR_LASER_DESC
+Lower power and mass
+
+SR_ION_CANNON
+Ion Cannon
+SR_ION_CANNON_DESC
+Moderate power and mass
+
+LR_NUCLEAR_MISSILE
+Nuclear Missile
+
+LR_NUCLEAR_MISSILE_DESC
+Long range moderate power
+
+DT_ACTIVE_RADAR
+Active Radar
+
+DT_ACTIVE_RADAR_DESC
+Moderate power detection with large stealth penalty to mounting ship.
+
+FU_DEUTERIUM_TANK
+Deuterium Tank
+
+FU_DEUTERIUM_TANK_DESC
+Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
+
+FU_ANTIMATTER_TANK
+Antimatter Tank
+
+FU_ANTIMATTER_TANK_DESC
+Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
+
+ST_EM_DAMPER
+Electromagnetic Damper
+
+ST_EM_DAMPER_DESC
+Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
+
+AR_LEAD_PLATE
+Lead Armour Plating
+AR_LEAD_PLATE_DESC
+Weak defense with large mass
+
+SH_DEFENSE_GRID
+Defense Grid
+SH_DEFENSE_GRID_DESC
+Weak defense with no extra mass
+
+SH_DEFLECTOR
+Deflector Shield
+SH_DEFLECTOR_DESC
+Strong defense with small mass
+
+CO_COLONY_POD
+Colony Pod
+
+CO_COLONY_POD_DESC
+Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
+
+CO_SUSPEND_ANIM_POD
+Cryonic Colony Pod
+
+CO_SUSPEND_ANIM_POD_DESC
+Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
+
+##############
+# Ship Hulls #
+##############
+
+SH_EMPTY
+Empty Hull
+
+SH_EMPTY_DESC
+Cheap and fast, but can't mount any parts.
+
+SH_SMALL
+Small Hull
+
+SH_SMALL_DESC
+Few slots but high speed
+
+SH_MEDIUM
+Medium Hull
+
+SH_MEDIUM_DESC
+Moderate number of slots and moderate speed
+
+SH_LARGE
+Large Hull
+
+SH_LARGE_DESC
+Many slots but slow speed
+
+SH_HUGE
+Huge Hull
+
+SH_HUGE_DESC
+Very many slots but very slow speed

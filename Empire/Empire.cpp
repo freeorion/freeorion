@@ -21,10 +21,9 @@
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/connected_components.hpp>
 
-
-using std::find;
-using boost::lexical_cast;
 
 namespace {
     const double EPSILON = 1.0e-5;
@@ -113,12 +112,6 @@ namespace {
         }
     }
 
-    struct reverseComparator {
-        bool operator()(int a, int b) {
-            return a > b;
-        }
-    };
-
     void LoadShipNames(std::vector<std::string>& names)
     {
         boost::filesystem::ifstream ifs(GetSettingsDir() / "shipnames.txt");
@@ -199,6 +192,12 @@ ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
             return it;
     }
     return end();
+}
+
+const ResearchQueue::Element& ResearchQueue::operator[](int i) const
+{
+    assert(0 <= i && i < static_cast<int>(m_queue.size()));
+    return m_queue[i];
 }
 
 ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
@@ -334,12 +333,9 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject()
     return end();
 }
 
-
-////////////////////////////////////////
-// ProductionQueue                    //
-////////////////////////////////////////
-
-// ProductionQueue::ProductionItem
+/////////////////////////////////////
+// ProductionQueue::ProductionItem //
+/////////////////////////////////////
 ProductionQueue::ProductionItem::ProductionItem()
 {}
 
@@ -356,13 +352,15 @@ ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int desig
 {
     if (build_type == BT_SHIP) {
         const ShipDesign* ship_design = GetShipDesign(design_id);
-        name = ship_design->name;
+        name = ship_design->Name();
     } else {
         name = "???";
     }
 }
 
-// ProductionQueue::Elemnt
+//////////////////////////////
+// ProductionQueue::Element //
+//////////////////////////////
 ProductionQueue::Element::Element() :
     ordered(0),
     remaining(0),
@@ -402,7 +400,9 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
     turns_left_to_completion(-1)
 {}
 
-// ProductionQueue
+/////////////////////
+// ProductionQueue //
+/////////////////////
 ProductionQueue::ProductionQueue() :
     m_projects_in_progress(0),
     m_total_PPs_spent(0.0)
@@ -608,44 +608,47 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
 }
 
 
-////////////////////////////////////////
-// class Empire                       //
-////////////////////////////////////////
+////////////
+// Empire //
+////////////
 Empire::Empire() :
     m_id(-1),
-    m_homeworld_id(-1),
-    m_mineral_resource_pool(RE_MINERALS),
-    m_food_resource_pool(RE_FOOD),
-    m_research_resource_pool(RE_RESEARCH),
-    m_industry_resource_pool(RE_INDUSTRY),
-    m_trade_resource_pool(RE_TRADE),
+    m_homeworld_id(UniverseObject::INVALID_OBJECT_ID),
+    m_resource_pools(),
     m_population_pool(),
     m_food_total_distributed(0),
     m_maintenance_total_cost(0)
-{}
+{
+    m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
+    m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
+    m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
+    m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
+    m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+}
 
 Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
     m_id(ID),
     m_name(name),
     m_player_name(player_name),
     m_color(color), 
-    m_homeworld_id(homeworld_id), 
-    m_mineral_resource_pool(RE_MINERALS),
-    m_food_resource_pool(RE_FOOD),
-    m_research_resource_pool(RE_RESEARCH),
-    m_industry_resource_pool(RE_INDUSTRY),
-    m_trade_resource_pool(RE_TRADE),
+    m_homeworld_id(homeworld_id),
+    m_resource_pools(),
     m_population_pool(),
     m_food_total_distributed(0),
     m_maintenance_total_cost(0)
-{}
+{
+    m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
+    m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
+    m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
+    m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
+    m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+}
 
 Empire::~Empire()
 {
     ClearSitRep();
 }
 
-/** Misc Accessors */
 const std::string& Empire::Name() const
 {
     return m_name;
@@ -726,8 +729,7 @@ const std::set<std::string>& Empire::AvailableBuildingTypes() const
 
 bool Empire::BuildingTypeAvailable(const std::string& name) const
 {
-    Empire::BuildingTypeItr item = m_available_building_types.find(name);
-    return item != m_available_building_types.end();
+    return m_available_building_types.find(name) != m_available_building_types.end();
 }
 
 const std::set<int>& Empire::ShipDesigns() const
@@ -748,13 +750,48 @@ std::set<int> Empire::AvailableShipDesigns() const
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const
 {
-    /* currently any ship design is available, but in future this will need to determine if 
-       the specific design is buildable */
-    return ShipDesignKept(ship_design_id);
+    // if design isn't kept by this empire, it can't be built
+    if (!ShipDesignKept(ship_design_id))
+        return false;
+
+    const ShipDesign* design = GetShipDesign(ship_design_id);
+    if (!design) return false;
+
+    // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech 
+    // requirements might prevent it from being built.
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+        std::string name = *it;
+        if (name == "")
+            continue;   // empty slot can't be unavailable
+        if (!ShipPartAvailable(name))
+            return false;
+    }
+    if (!ShipHullAvailable(design->Hull()))
+        return false;
+
+    // if there are no reasons the design isn't available, then by default it is available
+    return true;
 }
 
 bool Empire::ShipDesignKept(int ship_design_id) const {
     return (m_ship_designs.find(ship_design_id) != m_ship_designs.end());
+}
+
+const std::set<std::string>& Empire::AvailableShipParts() const {
+    return m_available_part_types;
+}
+
+bool Empire::ShipPartAvailable(const std::string& name) const {
+    return m_available_part_types.find(name) != m_available_part_types.end();
+}
+
+const std::set<std::string>& Empire::AvailableShipHulls() const {
+    return m_available_hull_types;
+}
+
+bool Empire::ShipHullAvailable(const std::string& name) const {
+    return m_available_hull_types.find(name) != m_available_hull_types.end();
 }
 
 const ProductionQueue& Empire::GetProductionQueue() const
@@ -791,7 +828,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
         const ShipDesign* ship_design = GetShipDesign(design_id);
         if (!ship_design)
             break;
-        return std::make_pair(ship_design->cost, 5); // v0.3 only
+        return std::make_pair(ship_design->Cost(), ship_design->BuildTime());
     }
     default:
         break;
@@ -812,11 +849,10 @@ std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Prod
 
 bool Empire::HasExploredSystem(int ID) const
 {
-    Empire::SystemIDItr item = find(ExploredBegin(), ExploredEnd(), ID);
-    return (item != ExploredEnd());
+    return (m_explored_systems.find(ID) != m_explored_systems.end());
 }
 
-bool Empire::BuildableItem(BuildType build_type, std::string name, int location) const
+bool Empire::BuildableItem(BuildType build_type, const std::string& name, int location) const
 {
     // special case to check for ships being passed with names, not design ids
     if (build_type == BT_SHIP)
@@ -853,7 +889,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
 {
     // special case to check for buildings or orbitals being passed with ids, not names
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING OR BT_ORBITAL with a design id number, but these types are tracked by name");
+        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING or BT_ORBITAL with a design id number, but these types are tracked by name");
 
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
 
@@ -869,14 +905,8 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         // design must be known to this empire
         const ShipDesign* ship_design = GetShipDesign(design_id);
         if (!ship_design) return false;
-
-        // the design must be available
-        if (!ShipDesignAvailable(design_id)) return false;
-
-        // this empire must be only owner of the build location
-        if (!( build_location->Owners().size() == 1 && *build_location->Owners().begin() == m_id)) return false;
-
-        return true;
+        // ...and the specified location must be a valid production location for this design
+        return ship_design->ProductionLocation(m_id, location);
 
     } else {
         throw std::invalid_argument("Empire::BuildableItem was passed an invalid BuildType");
@@ -899,60 +929,344 @@ int Empire::NumSitRepEntries() const
     return m_sitrep_entries.size();
 }
 
-const std::map<const System*, int>& Empire::GetSupplyableSystems()
+void Empire::GetSupplyUnobstructedSystems(std::set<int>& unobstructed_system_ids) const
 {
-    Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
-    //erase previous result - TODO erase only after begin turn
-    m_sup_systems.clear();
-    std::multimap<const int, const System*, reverseComparator> sortedSystems;
-    //find all ResourceCenter and add it to pop_vec
-    for (unsigned i = 0; i < object_vec.size(); i++){
-        if (dynamic_cast<ResourceCenter*>(object_vec[i])){
-            //TODO add supply rating information from system, when is implemented
-            const System* sys = object_vec[i]->GetSystem();
-            sortedSystems.insert(std::pair<const int, const System*>(3, sys));
-            //TODO add real count
-            m_sup_systems.insert(std::pair<const System*, int>(sys, 1000));
-        }
-    }
-    //process wave until reach all systems
-    //TODO remove interupted supply route system - enemy fleet and colony
-    while (!sortedSystems.empty()){
-        std::multimap<const int, const System*, reverseComparator>::iterator it = sortedSystems.begin();
-        System::const_lane_iterator end = it->second->end_lanes();
-        for (System::const_lane_iterator csi = it->second->begin_lanes(); csi!= end; csi++) {
-            const System* system = dynamic_cast<const System*>(GetUniverse().Object(csi->first));
-            bool add = HasExploredSystem(csi->first);
-            if (add) {
-                System::ConstObjectVec fleets = system->FindObjects(StationaryFleetVisitor());
-                System::ConstObjectVec::iterator end = fleets.end();
-                for (System::ConstObjectVec::iterator it=fleets.begin();it!=end;it++) {
-                    //empire isn't beetween owner of fleet
-                    if (!((*it)->Owners().count(m_id))) {
-                        add = false;
-                        break;
-                    }
-                }
-            }
-            //test if system isn`t allready added or is end of wave or isn`t explored
-            if (add && m_sup_systems.insert(std::pair<const System*, int>(system, 1000)).second && it->first) {
-                //OK, new system, lets wave flow
-                sortedSystems.insert(std::pair<const int, const System*>(it->first-1, system));
-            } else if (add) {
-                //TODO implements how many can system produce supply
-                if (m_sup_systems[system] > 1000){
-                    m_sup_systems[system] = 1000;
-                }
+    unobstructed_system_ids.clear();
+
+    // find "unobstructed" systems that can propegate fleet supply routes
+    const std::vector<System*> all_systems = GetUniverse().FindObjects<System>();
+
+    for (std::vector<System*>::const_iterator it = all_systems.begin(); it != all_systems.end(); ++it) {
+        const System* system = *it;
+        int system_id = system->ID();
+
+        // to be unobstructed, systems must both:
+        // be explored by this empire...
+        if (m_explored_systems.find(system_id) == m_explored_systems.end())
+            continue;
+
+        // ...and ( contain a friendly fleet *or* not contain a hostile fleet )
+        bool blocked = false;
+        std::vector<const Fleet*> fleets = system->FindObjects<Fleet>();
+        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            const Fleet* fleet = *it;
+
+            // check if this emprie owns this fleet.
+            if (fleet->OwnedBy(m_id)) {
+                // this empire owns this fleet.  the system is unobstructed regardless of what else is here
+                blocked = false;
+                break;
+            } else {
+                // this empire doesn't own this fleet.  the system might be obstructed, but need to check the
+                // rest of the fleets to be sure.  TODO: deal with other affiliations, like neutral empires or
+                // allies of this empire
+                blocked = true;
             }
         }
-        sortedSystems.erase(it);
+        if (!blocked)
+            unobstructed_system_ids.insert(system_id);
     }
-    return m_sup_systems;
 }
 
-/**************************************
-(const) Iterators over our various lists
-***************************************/
+void Empire::GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const
+{
+    system_supply_ranges.clear();
+
+    // determine all objects owned by this empire which might be able to distribute fleet supplies.  as of this
+    // writing, this is just Planets, but if other objects get the ability to distribute fleet supplies, this
+    // should be expanded to them as well
+    Universe::ObjectVec owned_planets = GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id));
+    for (Universe::ObjectVec::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
+        const UniverseObject* obj = *it;
+
+        // check if object has a supply meter
+        const Meter* supply_meter = obj->GetMeter(METER_SUPPLY);
+        if (!supply_meter) continue;
+
+        // ensure object is within a system, from which it can distribute supplies
+        int system_id = obj->SystemID();
+        if (system_id == UniverseObject::INVALID_OBJECT_ID) continue;   // TODO: consider future special case if current object is itself a system
+
+        // get supply range for next turn for this object
+        int supply_range = static_cast<int>(floor(obj->ProjectedCurrentMeter(METER_SUPPLY)));
+
+        // if this object can provide more supply than the best previously checked object in this system, record its range as the new best for the system
+        std::map<int, int>::iterator system_it = system_supply_ranges.find(system_id);     // try to find a previous entry for this system's supply range
+        if (system_it == system_supply_ranges.end() || supply_range > system_it->second) { // if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
+            system_supply_ranges[system_id] = supply_range;
+        }
+    }
+}
+
+void Empire::GetSupplyableSystemsAndStarlanesUsed(std::set<int>& supplyable_system_ids, std::set<std::pair<int, int> >& supply_starlane_traversals) const
+{
+    supplyable_system_ids.clear();
+    supply_starlane_traversals.clear();
+
+    std::set<int> unobstructed_systems;
+    GetSupplyUnobstructedSystems(unobstructed_systems);
+
+    std::map<int, int> system_supply_ranges;                    // map from system id to that system's (best known) fleet supply range in starlane jumps
+
+    // initialize system_supply_ranges with systems' own supply ranges
+    GetSystemSupplyRanges(system_supply_ranges);
+
+
+    // propegate system supply ranges to adjacent unobstructed systems, subtracting one jump for each step
+    // of propegation, out until the additional range reaches zero
+
+    // insert all initial supplying systems into list of systems to process
+    std::list<int> propegating_systems_list;    // working list of systems to propegate supply from
+    for (std::map<int, int>::const_iterator it = system_supply_ranges.begin(); it != system_supply_ranges.end(); ++it)
+        propegating_systems_list.push_back(it->first);
+
+    // iterate through list of accessible systems, processing each in order it was added (like breadth first
+    // search) until no systems are left able to further propregate
+    std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
+    std::list<int>::iterator sys_list_end = propegating_systems_list.end();
+    while (sys_list_it != sys_list_end) {
+        int cur_sys_id = *sys_list_it;
+        int cur_sys_range = system_supply_ranges[cur_sys_id];
+
+        if (cur_sys_range <= 0) {
+            // can't propegate any further
+            ++sys_list_it;
+            continue;
+        }
+
+        // can propegate further, if adjacent systems have smaller supply range than one less than this system's range
+        const System* system = GetUniverse().Object<System>(cur_sys_id);
+        System::StarlaneMap starlanes = system->VisibleStarlanes(m_id);
+        for (System::StarlaneMap::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
+            int lane_end_sys_id = lane_it->first;
+
+            if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) continue; // can't propegate here
+
+            // compare next system's supply range to this system's supply range.  propegate if necessary.
+            std::map<int, int>::const_iterator lane_end_sys_it = system_supply_ranges.find(lane_end_sys_id);
+            if (lane_end_sys_it == system_supply_ranges.end() || system_supply_ranges[lane_end_sys_id] <= cur_sys_range) {
+                // next system has no supply yet, or its range equal to or smaller than this system's
+
+                // update next system's range, if propegating from this system would make it larger
+                if (lane_end_sys_it == system_supply_ranges.end() || system_supply_ranges[lane_end_sys_id] < cur_sys_range - 1) {
+                    // update with new range
+                    system_supply_ranges[lane_end_sys_id] = cur_sys_range - 1;
+                    // add next system to list of systems to propegate further
+                    propegating_systems_list.push_back(lane_end_sys_id);
+                }
+
+                // regardless of whether propegating from current to next system increased its range, add the
+                // traversed lane to show redundancies in supply network to player
+                supply_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+            }
+        }
+        ++sys_list_it;
+        sys_list_end = propegating_systems_list.end();
+    }
+
+    // convert supply ranges info into output set of supplyable systems
+    for (std::map<int, int>::const_iterator it = system_supply_ranges.begin(); it != system_supply_ranges.end(); ++it)
+        supplyable_system_ids.insert(it->first);
+}
+
+void Empire::GetSupplySystemGroupsAndStarlanesUsed(std::set<std::set<int> >& supply_system_groups, std::set<std::pair<int, int> >& supply_starlane_traversals) const {
+    // need to get a set of sets of systems that can exchange resources.  some sets may be just one system,
+    // in which resources can be exchanged between UniverseObjects producing or consuming them, but which 
+    // can't exchange with any other systems.
+
+    supply_system_groups.clear();
+    supply_starlane_traversals.clear();
+
+    // systems through which supply can propegate
+    std::set<int> unobstructed_systems;
+    GetSupplyUnobstructedSystems(unobstructed_systems);
+
+    // map from system id to that system's inherent supply range
+    std::map<int, int> system_supply_ranges;
+    GetSystemSupplyRanges(system_supply_ranges);
+
+    // map from system id to set of systems that are connected to it directly
+    std::map<int, std::set<int> > supply_groups_map;
+
+    // all systems that can supply another system or within themselves, or can be supplied by another system.
+    // need to keep track of this so that only these systems are put into the boost adjacency graph.  if
+    // additional systems were put in, they would be returned as being in their own "connected" component and
+    // would have to be filtered out of the results before being returned
+    std::set<int> all_supply_exchanging_systems;
+
+
+    // loop through systems, getting set of systems that can be supplied by each.  (may be an empty set for
+    // some systems that cannot supply within themselves, or may contain only source systesm, or could contain
+    // multiple other systsms)
+    for (std::set<int>::const_iterator source_sys_it = unobstructed_systems.begin(); source_sys_it != unobstructed_systems.end(); ++source_sys_it) {
+        int source_sys_id = *source_sys_it;
+
+        // skip systems that don't have any supply to propegate.
+        std::map<int, int>::const_iterator system_supply_it = system_supply_ranges.find(source_sys_id);
+        if (system_supply_it == system_supply_ranges.end() || system_supply_it->second == 0)
+            continue;
+
+        // skip systems that can't propegate supply, even if they have supply to propegate
+        std::set<int>::const_iterator unobstructed_systems_it = unobstructed_systems.find(source_sys_id);
+        if (unobstructed_systems_it == unobstructed_systems.end())
+            continue;
+
+
+        // system can supply itself, so store this fact
+        supply_groups_map[source_sys_id].insert(source_sys_id);
+
+
+        // add source system to start of list of systems to propegate supply to
+        std::list<int> propegating_systems_list;
+        propegating_systems_list.push_back(source_sys_id);
+
+        // set up map from system_id to number of supply jumps further supply can propegate from that system.
+        // this ensures that supply propegation is limited in distance, and doesn't back-propegate
+        std::map<int, int> propegating_system_supply_ranges;
+        // initialize with source supply range
+        propegating_system_supply_ranges[source_sys_id] = system_supply_it->second;
+
+
+        // iterate through list of accessible systems, processing each in order it was added (like breadth first
+        // search) adding adjacent systems as appropriate, until no systems are left able to further propregate
+        std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
+        std::list<int>::iterator sys_list_end = propegating_systems_list.end();
+        while (sys_list_it != sys_list_end) {
+            int cur_sys_id = *sys_list_it;
+
+            // get additional supply range this system can propegate
+            int cur_sys_range = propegating_system_supply_ranges[cur_sys_id];
+
+            // skip system if it can't propegate futher
+            if (cur_sys_range <= 0) {
+                ++sys_list_it;
+                continue;
+            }
+
+            // attempt to propegate to unobstructed adjacent systems
+            const System* system = GetUniverse().Object<System>(cur_sys_id);
+            System::StarlaneMap starlanes = system->VisibleStarlanes(m_id);
+            for (System::StarlaneMap::const_iterator lane_it = starlanes.begin(); lane_it != starlanes.end(); ++lane_it) {
+                int lane_end_sys_id = lane_it->first;
+
+                // ensure this adjacent system is unobstructed
+                if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) continue; // can't propegate here
+
+                // compare next system's supply range to this system's supply range.  propegate if necessary.
+                std::map<int, int>::const_iterator lane_end_sys_it = propegating_system_supply_ranges.find(lane_end_sys_id);
+                if (lane_end_sys_it == propegating_system_supply_ranges.end() || propegating_system_supply_ranges[lane_end_sys_id] <= cur_sys_range) {
+                    // next system has no supply yet, or its range equal to or smaller than this system's
+
+                    int next_sys_range = cur_sys_range - 1;
+
+                    // if propegating from this system would make it longer, update next system's range
+                    if (lane_end_sys_it == propegating_system_supply_ranges.end() || propegating_system_supply_ranges[lane_end_sys_id] < next_sys_range) {
+                        // update with new range
+                        propegating_system_supply_ranges[lane_end_sys_id] = next_sys_range;
+                        // add next system to list of systems to propegate further
+                        propegating_systems_list.push_back(lane_end_sys_id);
+                    }
+
+                    // regardless of whether propegating from current to next system increased its range, add the
+                    // traversed lane to show redundancies in supply network to player
+                    supply_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+                }
+            }
+            ++sys_list_it;
+            sys_list_end = propegating_systems_list.end();
+        }
+
+        // for debug purposes, output the propegated supply
+        //Logger().debugStream() << "source system " << source_sys_id << " propegated ranges:";
+        //for (std::map<int, int>::const_iterator pssr_it = propegating_system_supply_ranges.begin(); pssr_it != propegating_system_supply_ranges.end(); ++pssr_it)
+        //    Logger().debugStream() << "....system id: " << pssr_it->first << " range: " << pssr_it->second;
+
+        all_supply_exchanging_systems.insert(source_sys_id);
+        // have now propegated supply as far as it can go from this source.  store results
+        for (std::map<int, int>::const_iterator pssr_it = propegating_system_supply_ranges.begin(); pssr_it != propegating_system_supply_ranges.end(); ++pssr_it) {
+            int cur_sys_id = pssr_it->first;
+            supply_groups_map[source_sys_id].insert(cur_sys_id);    // source system can share with current system
+            all_supply_exchanging_systems.insert(cur_sys_id);
+        }
+    }
+
+    if (supply_groups_map.empty()) return;  // need to avoid going to boost graph stuff below, which doesn't seem to like being fed empty graphs...
+
+
+    // Need to merge interconnected supply groups into as few sets of mutually-supply-exchanging systems
+    // as possible.  This requires finding the connected components of an undirected graph, where the node
+    // adjacency are the directly-connected systems determined above.
+
+    // create graph
+    boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> graph;
+
+    // boost expects vertex labels to range from 0 to num vertices - 1, so need to map from system id
+    // to graph id and back when accessing vertices
+    std::vector<int> graph_id_to_sys_id;
+    graph_id_to_sys_id.reserve(all_supply_exchanging_systems.size());
+
+    std::map<int, int> sys_id_to_graph_id;
+    int graph_id = 0;
+    for (std::set<int>::const_iterator sys_it = all_supply_exchanging_systems.begin(); sys_it != all_supply_exchanging_systems.end(); ++sys_it, ++graph_id) {
+        int sys_id = *sys_it;
+        //const UniverseObject* sys = GetUniverse().Object(sys_id);
+        //std::string name = sys->Name();
+        //Logger().debugStream() << "supply-exchanging system: " << name;
+
+        boost::add_vertex(graph);   // should add with index = graph_id
+
+        graph_id_to_sys_id.push_back(sys_id);
+        sys_id_to_graph_id[sys_id] = graph_id;
+    }
+
+    // add edges for all direct connections between systems
+    for (std::map<int, std::set<int> >::const_iterator maps_it = supply_groups_map.begin(); maps_it != supply_groups_map.end(); ++maps_it) {
+        int start_graph_id = sys_id_to_graph_id[maps_it->first];
+        const std::set<int>& set = maps_it->second;
+        for(std::set<int>::const_iterator set_it = set.begin(); set_it != set.end(); ++set_it) {
+            int end_graph_id = sys_id_to_graph_id[*set_it];
+            boost::add_edge(start_graph_id, end_graph_id, graph);
+
+            //int sys_id1 = graph_id_to_sys_id[start_graph_id];
+            //const UniverseObject* sys1 = GetUniverse().Object(sys_id1);
+            //std::string name1 = sys1->Name();
+            //int sys_id2 = graph_id_to_sys_id[end_graph_id];
+            //const UniverseObject* sys2 = GetUniverse().Object(sys_id2);
+            //std::string name2 = sys2->Name();
+
+            //Logger().debugStream() << "added edge to graph: " << name1 << " and " << name2;
+        }
+    }
+
+    // declare storage and fill with the component id (group id of connected systems) for each graph vertex
+    std::vector<int> components(boost::num_vertices(graph));
+    boost::connected_components(graph, &components[0]);
+
+    //for (std::vector<int>::size_type i = 0; i != components.size(); ++i) {
+    //    int sys_id = graph_id_to_sys_id[i];
+    //    const UniverseObject* sys = GetUniverse().Object(sys_id);
+    //    std::string name = sys->Name();
+    //    std::cout << "ssytem " << name <<" is in component " << components[i] << std::endl;
+    //}
+    //std::cout << std::endl;
+
+    // convert results back from graph id to system id, and into desired output format
+    // output: std::set<std::set<int> >& supply_system_groups
+
+    // first, sort into a map from component id to set of system ids in component
+    std::map<int, std::set<int> > component_sets_map;
+    for (std::size_t graph_id = 0; graph_id != components.size(); ++graph_id) {
+        int label = components[graph_id];
+        int sys_id = graph_id_to_sys_id[graph_id];
+        component_sets_map[label].insert(sys_id);
+    }
+
+    // copy sets in map into set of sets
+    for (std::map<int, std::set<int> >::const_iterator map_it = component_sets_map.begin(); map_it != component_sets_map.end(); ++map_it) {
+        supply_system_groups.insert(map_it->second);
+    }
+}
+
 Empire::TechItr Empire::TechBegin() const
 {
     return m_techs.begin();
@@ -971,13 +1285,9 @@ Empire::TechItr Empire::AvailableBuildingTypeEnd() const
     return m_available_building_types.end();
 }
 
-Empire::SystemIDItr Empire::ExploredBegin()  const
+const std::set<int>& Empire::ExploredSystems() const
 {
-    return m_explored_systems.begin();
-}
-Empire::SystemIDItr Empire::ExploredEnd() const
-{
-    return m_explored_systems.end();
+    return m_explored_systems;
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const
@@ -993,6 +1303,7 @@ Empire::SitRepItr Empire::SitRepBegin() const
 {
     return m_sitrep_entries.begin();
 }
+
 Empire::SitRepItr Empire::SitRepEnd() const
 {
     return m_sitrep_entries.end();
@@ -1000,7 +1311,73 @@ Empire::SitRepItr Empire::SitRepEnd() const
 
 double Empire::ProductionPoints() const
 {
-    return std::min(m_industry_resource_pool.Available(), m_mineral_resource_pool.Available());
+    return std::min(GetResourcePool(RE_INDUSTRY)->Available(), GetResourcePool(RE_MINERALS)->Available());
+}
+
+const ResourcePool* Empire::GetResourcePool(ResourceType resource_type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
+    if (it == m_resource_pools.end())
+        return 0;
+    return it->second.get();
+}
+
+double Empire::ResourceStockpile(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceStockpile passed invalid ResourceType");
+    return it->second->Stockpile();
+}
+
+double Empire::ResourceMaxStockpile(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceMaxStockpile passed invalid ResourceType");
+    return it->second->MaxStockpile();
+}
+
+double Empire::ResourceProduction(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceProduction passed invalid ResourceType");
+    return it->second->Production();
+}
+
+double Empire::ResourceAvailable(ResourceType type) const
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::ResourceAvailable passed invalid ResourceType");
+    return it->second->Available();
+}
+
+const PopulationPool& Empire::GetPopulationPool() const
+{
+    return m_population_pool;
+}
+
+double Empire::Population() const
+{
+    return m_population_pool.Population();
+}
+
+void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::SetResourceStockpile passed invalid ResourceType");
+    return it->second->SetStockpile(stockpile);
+}
+
+void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
+{
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
+    if (it == m_resource_pools.end())
+        throw std::invalid_argument("Empire::SetResourceMaxStockpile passed invalid ResourceType");
+    return it->second->SetMaxStockpile(max);
 }
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
@@ -1019,7 +1396,7 @@ void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
             m_research_queue.erase(it);
         m_research_queue.insert(m_research_queue.begin() + pos, tech);
     }
-    m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
+    m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
 }
 
 void Empire::RemoveTechFromQueue(const Tech* tech)
@@ -1027,7 +1404,7 @@ void Empire::RemoveTechFromQueue(const Tech* tech)
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
-        m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
+        m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
     }
 }
 
@@ -1187,13 +1564,34 @@ void Empire::AddTech(const std::string& name)
 void Empire::UnlockItem(const ItemSpec& item)
 {
     // TODO: handle other types (such as ship components) as they are implemented
-    if (item.type == UIT_BUILDING)
+    switch (item.type) {
+    case UIT_BUILDING:
         AddBuildingType(item.name);
+        break;
+    case UIT_SHIP_PART:
+        AddPartType(item.name);
+        break;
+    case UIT_SHIP_HULL:
+        AddHullType(item.name);
+        break;
+    default:
+        Logger().errorStream() << "Empire::UnlockItem : passed ItemSpec with unrecognized UnlockableItemType";
+    }
 }
 
 void Empire::AddBuildingType(const std::string& name)
 {
     m_available_building_types.insert(name);
+}
+
+void Empire::AddPartType(const std::string& name)
+{
+    m_available_part_types.insert(name);
+}
+
+void Empire::AddHullType(const std::string& name)
+{
+    m_available_hull_types.insert(name);
 }
 
 void Empire::AddExploredSystem(int ID)
@@ -1231,11 +1629,6 @@ void Empire::AddShipDesign(int ship_design_id)
     }
 }
 
-void Empire::RemoveShipDesign(int ship_design_id)
-{
-        m_ship_designs.erase(ship_design_id);
-}
-
 int Empire::AddShipDesign(ShipDesign* ship_design)
 {
     Universe& universe = GetUniverse();
@@ -1253,17 +1646,26 @@ int Empire::AddShipDesign(ShipDesign* ship_design)
     // design is apparently new, so add it to the universe and put its new id in the empire's set of designs
     int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
 
-    if (new_design_id == UniverseObject::INVALID_OBJECT_ID)
-        throw std::runtime_error("Unable to get new design id");
+    if (new_design_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "Unable to get new design id";
+        return new_design_id;
+    }
 
     bool success = universe.InsertShipDesignID(ship_design, new_design_id);
 
-    if (!success)
-        throw std::runtime_error("Unable to add new design to universe");
+    if (!success) {
+        Logger().errorStream() << "Unable to add new design to universe";
+        return UniverseObject::INVALID_OBJECT_ID;
+    }
 
     m_ship_designs.insert(new_design_id);
 
     return new_design_id;
+}
+
+void Empire::RemoveShipDesign(int ship_design_id)
+{
+        m_ship_designs.erase(ship_design_id);
 }
 
 void Empire::AddSitRepEntry(SitRepEntry* entry)
@@ -1299,7 +1701,7 @@ void Empire::ClearSitRep()
 void Empire::CheckResearchProgress()
 {
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
-    // m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
+    // m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
     std::vector<const Tech*> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
         const Tech* tech = it->tech;
@@ -1324,7 +1726,7 @@ void Empire::CheckResearchProgress()
             m_research_queue.erase(temp_it);
     }
     // can uncomment following line when / if research stockpiling is enabled...
-    // m_research_resource_pool.SetStockpile(m_industry_resource_pool.Available() - m_research_queue.TotalRPsSpent());
+    // m_resource_pools[RE_RESEARCH]->SetStockpile(m_resource_pools[RE_RESEARCH]->Available() - m_research_queue.TotalRPsSpent());
 }
 
 void Empire::CheckProductionProgress()
@@ -1378,7 +1780,7 @@ void Empire::CheckProductionProgress()
                 int ship_id = universe.Insert(ship);
 #if 0
                 const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.design_id);
-                std::string ship_name(ship_design->name);
+                std::string ship_name(ship_design->Name());
                 ship_name += boost::lexical_cast<std::string>(ship_id);
                 ship->Rename(ship_name);
 #else
@@ -1416,19 +1818,19 @@ void Empire::CheckProductionProgress()
         m_production_queue.erase(*it);
     }
 
-    m_mineral_resource_pool.SetStockpile(m_mineral_resource_pool.Available() - m_production_queue.TotalPPsSpent());
+    m_resource_pools[RE_MINERALS]->SetStockpile(m_resource_pools[RE_MINERALS]->Available() - m_production_queue.TotalPPsSpent());
     // can uncomment following line when / if industry stockpiling is allowed...
-    // m_industry_resource_pool.SetStockpile(m_industry_resource_pool.Available() - m_production_queue.TotalPPsSpent());
+    // m_resource_pools[RE_INDUSTRY]->SetStockpile(m_resource_pools[RE_INDUSTRY]->Available() - m_production_queue.TotalPPsSpent());
 }
 
 void Empire::CheckTradeSocialProgress()
 {
-    m_trade_resource_pool.SetStockpile(m_trade_resource_pool.Available() - m_maintenance_total_cost);
+    m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->Available() - m_maintenance_total_cost);
 }
 
 void Empire::CheckGrowthFoodProgress()
 {
-    m_food_resource_pool.SetStockpile(m_food_resource_pool.Available() - m_food_total_distributed);
+    m_resource_pools[RE_FOOD]->SetStockpile(m_resource_pools[RE_FOOD]->Available() - m_food_total_distributed);
 }
 
 void Empire::SetColor(const GG::Clr& color)
@@ -1446,7 +1848,7 @@ void Empire::SetPlayerName(const std::string& player_name)
     m_player_name = player_name;
 }
 
-void Empire::UpdateResourcePool()
+void Empire::InitResourcePools(const std::set<std::set<int> >& system_supply_groups)
 {
     Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
     std::vector<ResourceCenter*> res_vec;
@@ -1455,19 +1857,48 @@ void Empire::UpdateResourcePool()
     for (unsigned int i = 0; i < object_vec.size(); ++i)
     {
         if (ResourceCenter* rc = dynamic_cast<ResourceCenter*>(object_vec[i]))
-	        res_vec.push_back(rc);
-	    if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
-	        pop_vec.push_back(pc);
+            res_vec.push_back(rc);
+        if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
+            pop_vec.push_back(pc);
     }
 
-    m_mineral_resource_pool.SetResourceCenters(res_vec);
-    m_food_resource_pool.SetResourceCenters(res_vec);
-    m_research_resource_pool.SetResourceCenters(res_vec);
-    m_industry_resource_pool.SetResourceCenters(res_vec);
-    m_trade_resource_pool.SetResourceCenters(res_vec);
+    m_resource_pools[RE_MINERALS]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_FOOD]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_RESEARCH]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_INDUSTRY]->SetResourceCenters(res_vec);
+    m_resource_pools[RE_TRADE]->SetResourceCenters(res_vec);
 
     m_population_pool.SetPopCenters(pop_vec);
 
+
+    // inform the blockadeable resource pools about systems that can share
+    m_resource_pools[RE_MINERALS]->SetSystemSupplyGroups(system_supply_groups);
+    m_resource_pools[RE_FOOD]->SetSystemSupplyGroups(system_supply_groups);
+    m_resource_pools[RE_INDUSTRY]->SetSystemSupplyGroups(system_supply_groups);
+
+    // set non-blockadeable resrouce pools to share resources between all systems
+    std::set<std::set<int> > sets_set;
+    std::set<int> all_systems_set;
+    const std::vector<System*> all_systems_vec = GetUniverse().FindObjects<System>();
+    for (std::vector<System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
+        all_systems_set.insert((*it)->ID());
+    sets_set.insert(all_systems_set);
+    m_resource_pools[RE_RESEARCH]->SetSystemSupplyGroups(sets_set);
+    m_resource_pools[RE_TRADE]->SetSystemSupplyGroups(sets_set);
+
+    // set stockpile location
+    m_resource_pools[RE_MINERALS]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_FOOD]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_RESEARCH]->SetStockpileSystem(CapitolID());
+    m_resource_pools[RE_TRADE]->SetStockpileSystem(CapitolID());
+}
+
+void Empire::UpdateResourcePools()
+{
+    // updating queues, spending, distribution and growth each update their respective pools,
+    // (as well as the ways in which the resources are used, which needs to be done
+    // simultaneously to keep things consistent)
     UpdateResearchQueue();
     UpdateProductionQueue();
     UpdateTradeSpending();
@@ -1477,23 +1908,23 @@ void Empire::UpdateResourcePool()
 
 void Empire::UpdateResearchQueue()
 {
-    m_research_resource_pool.Update();
-    m_research_queue.Update(this, m_research_resource_pool.Available(), m_research_progress);
-    m_research_resource_pool.ChangedSignal();
+    m_resource_pools[RE_RESEARCH]->Update();
+    m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->Available(), m_research_progress);
+    m_resource_pools[RE_RESEARCH]->ChangedSignal();
 }
 
 void Empire::UpdateProductionQueue()
 {
-    m_mineral_resource_pool.Update();
-    m_industry_resource_pool.Update();
+    m_resource_pools[RE_MINERALS]->Update();
+    m_resource_pools[RE_INDUSTRY]->Update();
     m_production_queue.Update(this, ProductionPoints(), m_production_progress);
-    m_mineral_resource_pool.ChangedSignal();
-    m_industry_resource_pool.ChangedSignal();
+    m_resource_pools[RE_MINERALS]->ChangedSignal();
+    m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
 
 void Empire::UpdateTradeSpending()
 {
-    m_trade_resource_pool.Update(); // recalculate total trade production
+    m_resource_pools[RE_TRADE]->Update(); // recalculate total trade production
 
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
     m_maintenance_total_cost = 0.0;
@@ -1506,25 +1937,24 @@ void Empire::UpdateTradeSpending()
         if (building->Operating())
             m_maintenance_total_cost += GetBuildingType(building->BuildingTypeName())->MaintenanceCost();
     }
-    m_trade_resource_pool.ChangedSignal();
+    m_resource_pools[RE_TRADE]->ChangedSignal();
 }
 
 void Empire::UpdateFoodDistribution()
 {
-    m_food_resource_pool.Update();  // recalculate total food production
+    m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
-    double available_food = GetFoodResPool().Available();
+    double available_food = m_resource_pools[RE_FOOD]->Available();
     m_food_total_distributed = 0.0;
 
-    std::vector<PopCenter*> pop_centers = GetPopulationPool().PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
+    std::vector<PopCenter*> pop_centers = m_population_pool.PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
     std::vector<PopCenter*>::iterator pop_it;
-    std::vector<ResourceCenter*> resource_centers = GetFoodResPool().ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
+    std::vector<ResourceCenter*> resource_centers = m_resource_pools[RE_FOOD]->ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
     std::vector<ResourceCenter*>::iterator res_it;
 
     // compile map of food production of ResourceCenters, indexed by center's id
     std::map<int, double> fp_map;
-    for (res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it)
-    {
+    for (res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it) {
         ResourceCenter *center = *res_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
@@ -1532,13 +1962,12 @@ void Empire::UpdateFoodDistribution()
     }
 
     // first pass: give food to PopCenters that produce food, limited by their food need and their food production
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
 
-        double need = obj->MeterPoints(METER_FARMING);  // basic need is current population - prevents starvation
+        double need = obj->MeterPoints(METER_POPULATION);   // basic need is current population - prevents starvation
         
         // determine if, and if so how much, food this center produces locally
         double food_prod = 0.0;
@@ -1556,76 +1985,43 @@ void Empire::UpdateFoodDistribution()
 
     //Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
-    // second pass: give food to PopCenters limited by their food need only: prevent starvation if possible
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
+    // second pass: give as much food as needed to PopCenters to maintain current population
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
 
-        double need = obj->MeterPoints(METER_FARMING);
+        double need = obj->MeterPoints(METER_POPULATION);
         double has = center->AvailableFood();
         double addition = std::min(need - has, available_food);
 
         center->SetAvailableFood(center->AvailableFood() + addition);
         available_food -= addition;
+
         m_food_total_distributed += addition;
     }
 
-    /* third pass: give food to PopCenters limited by their twice their basic food need (the most a planet
-       can consume on one turn) or their local production if it is less than twice the basic need, but more
-       than they already have.  (Don't take any food away if production is less than already allocated.) */
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
+    // third pass: give as much food as needed to PopCenters to allow max possible growth
+    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
+        obj = 0;    // to quiet warning about unused varaible
 
-        double basic_need = obj->MeterPoints(METER_FARMING);
-        double full_need = 2 * basic_need;
-        double has = center->AvailableFood();
+        double addition = center->FuturePopGrowthMax();
 
-        double food_prod = 0.0;
-        std::map<int, double>::iterator fp_map_it = fp_map.find(obj->ID());
-        if (fp_map_it != fp_map.end())
-            food_prod = fp_map_it->second;
-
-        double addition = 0.0;
-        if (food_prod > has)
-            addition = std::min(available_food, std::min(full_need - has, food_prod - has));
-
-        center->SetAvailableFood(has + addition);
+        center->SetAvailableFood(center->AvailableFood() + addition);
         available_food -= addition;
-        m_food_total_distributed += addition;
-    }
 
-    // fourth pass: give food to PopCenters limited by twice their food need only: allow full growth rate    
-    for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it)
-    {
-        PopCenter *center = *pop_it;
-        UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
-        assert(obj);
-
-        double basic_need = obj->MeterPoints(METER_FARMING);
-        double full_need = 2*basic_need;
-        double has = center->AvailableFood();
-        double addition = std::min(full_need - has, available_food);
-
-        center->SetAvailableFood(has + addition);
-        available_food -= addition;
         m_food_total_distributed += addition;
     }
 
     // after changing food distribution, population growth predictions may need to be redone
     // by calling UpdatePopulationGrowth()  
 
-    m_food_resource_pool.ChangedSignal();
+    m_resource_pools[RE_FOOD]->ChangedSignal();
 }
 
-/** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
-  * Assumes UpdateFoodDistribution() has been called to determine food allocations to each planet (which
-  * are a factor in the growth prediction calculation).
-  */
 void Empire::UpdatePopulationGrowth()
 {
     m_population_pool.Update();

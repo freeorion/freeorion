@@ -29,12 +29,14 @@ struct SaveGameUIData;
 struct PlayerSaveGameData
 {
     PlayerSaveGameData(); ///< default ctor
-    PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders, const boost::shared_ptr<SaveGameUIData>& ui_data); ///< ctor
+    PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders,
+        const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string); ///< ctor
 
-    std::string                       m_name;
-    Empire*                           m_empire;
-    boost::shared_ptr<OrderSet>       m_orders;
-    boost::shared_ptr<SaveGameUIData> m_ui_data;
+    std::string                         m_name;
+    Empire*                             m_empire;
+    boost::shared_ptr<OrderSet>         m_orders;
+    boost::shared_ptr<SaveGameUIData>   m_ui_data;
+    std::string                         m_save_state_string;
 
 private:
     friend class boost::serialization::access;
@@ -130,7 +132,8 @@ private:
    
     int                       m_current_turn;         ///< current turn number
 
-    std::vector<Process>      m_ai_clients;           ///< AI client child processes
+    std::map<std::string, Process>
+                              m_ai_clients;           ///< AI client child processes
     std::set<int>             m_ai_IDs;               ///< player IDs of AI clients
 
     bool                      m_single_player_game;   ///< true when the game being played is single-player
@@ -162,7 +165,8 @@ void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_empire)
         & BOOST_SERIALIZATION_NVP(m_orders)
-        & BOOST_SERIALIZATION_NVP(m_ui_data);
+        & BOOST_SERIALIZATION_NVP(m_ui_data)
+        & BOOST_SERIALIZATION_NVP(m_save_state_string);
 }
 
 #endif // _ServerApp_h_

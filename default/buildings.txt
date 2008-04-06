@@ -1,5 +1,35 @@
 
 BuildingType
+    name = "BLD_IMERIAL_PALACE"
+    description = "BLD_IMERIAL_PALACE_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxConstruction Target.MaxConstruction + 2
+    graphic = ""
+
+
+BuildingType
+    name = "BLD_SHIPYARD_BASE"
+    description = "BLD_SHIPYARD_BASE_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxConstruction Target.MaxConstruction + 2
+    graphic = ""
+    
+
+BuildingType
     name = "BLD_BIOTERROR_LAB"
     description = "BLD_BIOTERROR_LAB_DESC"
     buildcost = 1
@@ -11,7 +41,7 @@ BuildingType
             scope = Source
             activation = Source
             effects = SetMaxHealth Target.MaxHealth - 2
-    graphic = ""
+    graphic = "icons/building/bioterror_lab.png"
 
 BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
@@ -47,7 +77,7 @@ BuildingType
             stackinggroup = "BIOTERROR_PROJECTOR_OTHER"
             effects = SetMaxHealth Target.MaxHealth - 4
     ]            
-    graphic = ""
+    graphic = "icons/building/bioterror_projector.png"
 
 BuildingType
     name = "BLD_AUTOLAB_CONTROL"
@@ -81,7 +111,7 @@ BuildingType
                 SetMaxHealth Target.MaxHealth - 1
             ]
     ]            
-    graphic = ""
+    graphic = "icons/building/autolab_control_centre.png"
 
 BuildingType
     name = "BLD_AUTOFACTORY_CONTROL"
@@ -109,7 +139,7 @@ BuildingType
             stackinggroup = "AUTOFACTORY_STACK_SECONDARY"
             effects = SetMaxIndustry Target.MaxIndustry + 1
     ]            
-    graphic = ""
+    graphic = "icons/building/autofactory_control_centre.png"
 
 BuildingType
     name = "BLD_THEORM_PROVER"
@@ -149,9 +179,13 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = Not All
-            activation = Not All
-            effects = SetMaxFarming Target.MaxFarming        
+            scope = And [
+                Planet
+                WithinDistance distance = 200 condition = Source                
+            ]
+            activation = Source
+            stackinggroup = "LIGHTHOUSE_STACK"
+            effects = SetMaxSupply Target.MaxSupply + 1
     graphic = ""
 
 BuildingType
@@ -182,7 +216,7 @@ BuildingType
                 SetMaxMining Target.MaxMining + 2
             ]
     ]
-    graphic = ""
+    graphic = "icons/building/heavy_mining_processor.png"
 
 BuildingType
     name = "BLD_INDUSTRY_CENTRE"
@@ -249,7 +283,8 @@ BuildingType
                 ]
                 PrimaryFocus Mining
             ]
-            activation = OwnerHasTech "PRO_ASTEROID_MINE_I"
+            activation = OwnerHasTech "PRO_ASTEROID_MINE"
+            stackinggroup = "ASTEROID_LOCAL_EFFECT"
             effects = SetMaxMining Target.MaxMining + 4
 
         EffectsGroup
@@ -261,7 +296,8 @@ BuildingType
                 PrimaryFocus Mining
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE_II"
-            effects = SetMaxMining Target.MaxMining + 4
+            stackinggroup = "ASTEROID_LOCAL_EFFECT"
+            effects = SetMaxMining Target.MaxMining + 8
 
     ]
     graphic = ""
@@ -300,7 +336,7 @@ BuildingType
             effects =
                 SetMaxConstruction value = Target.MaxConstruction + 3
     ]
-    graphic = ""
+    graphic = "icons/building/megalith.png"
 
 BuildingType
     name = "BLD_COLLECTIVE_NET"
@@ -522,7 +558,7 @@ BuildingType
             activation = Source
             stackinggroup = "BLD_CADUCEAN"
             effects = SetMaxHealth value = Target.MaxHealth + 2
-    graphic = ""
+    graphic = "icons/building/the_caducean_institute.png"
 
 BuildingType
     name = "BLD_LIVING_PLANET"
@@ -703,7 +739,7 @@ BuildingType
             stackinggroup = "BLD_MONUMENT_EXODUS_EFFECT"
             effects =
                 SetCurrentHealth value = Target.MaxHealth + 10
-    graphic = ""
+    graphic = "icons/building/monument_to_exodus.png"
 
 BuildingType
     name = "BLD_PSICORP"
@@ -809,7 +845,7 @@ BuildingType
             stackinggroup = "BLD_MINI_SUN_EFFECT"
             effects =
                 SetMaxIndustry value = Target.MaxIndustry + 4
-    graphic = ""
+    graphic = "icons/building/miniature_sun.png"
 
 BuildingType
     name = "BLD_ECON_SINKHOLE"
@@ -828,4 +864,4 @@ BuildingType
             stackinggroup = "BLD_ECON_SINKHOLE_EFFECT"
             effects =
                 SetMaxTrade value = Target.MaxTrade - 10
-    graphic = ""
+    graphic = "icons/building/economic_sinkhole.png"

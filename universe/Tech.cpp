@@ -16,6 +16,7 @@ std::string DumpIndent();
 
 extern int g_indent;
 
+
 struct store_tech_impl
 {
     template <class T1, class T2, class T3>
@@ -33,6 +34,21 @@ struct store_tech_impl
             throw std::runtime_error(error_str.c_str());
         }
         techs.insert(tech);
+    }
+};
+
+struct store_category_impl
+{
+    template <class T1, class T2>
+    struct result {typedef void type;};
+    template <class T>
+    void operator()(std::map<std::string, TechCategory*>& categories, const T& category) const
+    {
+        if (categories.find(category->name) != categories.end()) {
+            std::string error_str = "ERROR: More than one tech category in techs.txt name " + category->name;
+            throw std::runtime_error(error_str.c_str());
+        }
+        categories[category->name] = category;
     }
 };
 
@@ -88,6 +104,7 @@ namespace {
     }
 
     const phoenix::function<store_tech_impl> store_tech_;
+    const phoenix::function<store_category_impl> store_category_;
 }
 
 
@@ -265,12 +282,35 @@ std::string ItemSpec::Dump() const
 {
     std::string retval = "Item type = ";
     switch (type) {
-    case UIT_BUILDING:       retval += "Building"; break;
-    case UIT_SHIP_COMPONENT: retval += "ShipComponent"; break;
-    default: retval += "?"; break;
+    case UIT_BUILDING:  retval += "Building"; break;
+    case UIT_SHIP_PART: retval += "ShipPart"; break;
+    case UIT_SHIP_HULL: retval += "ShipHull"; break;
+    default:            retval += "?"; break;
     }
     retval += " name = \"" + name + "\"\n";
     return retval;
+}
+
+///////////////////////////////////////////////////////////
+// TechCategory                               //
+///////////////////////////////////////////////////////////
+TechCategory::TechCategory() :
+    name(""),
+    graphic(""),
+    colour(GG::CLR_WHITE)
+{}
+
+TechCategory::TechCategory(const std::string& name_, const std::string& graphic_, const GG::Clr& colour_) :
+    name(name_),
+    graphic(graphic_),
+    colour(colour_)
+{
+    //Logger().debugStream() << "TechCategory::TechCategory(" << name << ", " << graphic << ", [" 
+    //                           << static_cast<unsigned int>(colour.r) << ", "
+    //                           << static_cast<unsigned int>(colour.g) << ", "
+    //                           << static_cast<unsigned int>(colour.b) << ", "
+    //                           << static_cast<unsigned int>(colour.a)
+    //                       << "])";
 }
 
 
@@ -286,9 +326,35 @@ const Tech* TechManager::GetTech(const std::string& name)
     return it == m_techs.get<NameIndex>().end() ? 0 : *it;
 }
 
-const std::vector<std::string>& TechManager::CategoryNames() const
+const TechCategory* TechManager::GetTechCategory(const std::string& name)
 {
-    return m_categories;
+    std::map<std::string, TechCategory*>::const_iterator it = m_categories.find(name);
+    return it == m_categories.end() ? 0 : it->second;
+}
+
+std::vector<std::string> TechManager::CategoryNames() const
+{
+    std::vector<std::string> retval;
+    for (std::map<std::string, TechCategory*>::const_iterator it = m_categories.begin(); it != m_categories.end(); ++it)
+        retval.push_back(it->first);
+    return retval;
+}
+
+std::vector<std::string> TechManager::TechNames() const {
+    std::vector<std::string> retval;
+    iterator end_it = m_techs.get<NameIndex>().end();
+    for (TechManager::iterator it = begin(); it != end(); ++it)
+        retval.push_back((*it)->Name());
+    return retval;
+}
+
+std::vector<std::string> TechManager::TechNames(const std::string& name) const {
+    std::vector<std::string> retval;
+    category_iterator end_it = category_end(name);
+    for (TechManager::category_iterator it = category_begin(name); it != category_end(name); ++it) {
+        retval.push_back((*it)->Name());
+    }
+    return retval;
 }
 
 std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& known_techs)
@@ -362,19 +428,22 @@ TechManager::TechManager()
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
-              as_lower_d[*(tech_p[store_tech_(var(m_techs), var(categories_seen_in_techs), arg1)]
-                           | tech_category_p[push_back_(var(m_categories), arg1)])],
+              as_lower_d[*(
+                            tech_p[store_tech_(var(m_techs), var(categories_seen_in_techs), arg1)] |
+                            category_p[store_category_(var(m_categories), arg1)]
+                          )]
+              >> end_p,
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);
 
     std::set<std::string> empty_defined_categories;
-    for (unsigned int i = 0; i < m_categories.size(); ++i) {
-        std::set<std::string>::iterator it = categories_seen_in_techs.find(m_categories[i]);
-        if (it == categories_seen_in_techs.end()) {
-            empty_defined_categories.insert(m_categories[i]);
+    for (std::map<std::string, TechCategory*>::iterator map_it = m_categories.begin(); map_it != m_categories.end(); ++map_it) {
+        std::set<std::string>::iterator set_it = categories_seen_in_techs.find(map_it->first);
+        if (set_it == categories_seen_in_techs.end()) {
+            empty_defined_categories.insert(map_it->first);
         } else {
-            categories_seen_in_techs.erase(it);
+            categories_seen_in_techs.erase(set_it);
         }
     }
 
@@ -565,4 +634,9 @@ TechManager& GetTechManager()
 const Tech* GetTech(const std::string& name)
 {
     return GetTechManager().GetTech(name);
+}
+
+const TechCategory* GetTechCategory(const std::string& name)
+{
+    return GetTechManager().GetTechCategory(name);
 }

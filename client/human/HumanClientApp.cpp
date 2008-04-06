@@ -1,3 +1,7 @@
+#ifdef FREEORION_WIN32
+#include <GL/glew.h>
+#endif
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
@@ -177,7 +181,8 @@ std::map<int, int> HumanClientApp::PendingColonizationOrders() const
 {
     std::map<int, int> retval;
     for (OrderSet::const_iterator it = Orders().begin(); it != Orders().end(); ++it) {
-        if (const FleetColonizeOrder* order = dynamic_cast<const FleetColonizeOrder*>(it->second)) {
+        if (boost::shared_ptr<FleetColonizeOrder> order =
+            boost::dynamic_pointer_cast<FleetColonizeOrder>(it->second)) {
             retval[order->PlanetID()] = it->first;
         }
     }

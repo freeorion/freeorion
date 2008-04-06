@@ -24,9 +24,7 @@ namespace {
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
     m_fleet_id(INVALID_OBJECT_ID)
-{
-    InsertMeter(METER_FUEL, Meter());
-}
+{}
 
 Ship::Ship(int empire_id, int design_id) :
     m_design_id(design_id),
@@ -37,31 +35,33 @@ Ship::Ship(int empire_id, int design_id) :
 
     AddOwner(empire_id);
 
-    InsertMeter(METER_FUEL, Meter());
+    Init();
 }
 
-const ShipDesign* Ship::Design() const
-{
+void Ship::Init() {
+    InsertMeter(METER_FUEL, Meter());
+    InsertMeter(METER_SHIELD, Meter());
+    InsertMeter(METER_DETECTION, Meter());
+    InsertMeter(METER_STEALTH, Meter());
+}
+
+const ShipDesign* Ship::Design() const {
     return GetShipDesign(m_design_id);
 }
 
-int Ship::ShipDesignID() const
-{
+int Ship::DesignID() const {
     return m_design_id;
 }
 
-int Ship::FleetID() const
-{
+int Ship::FleetID() const {
     return m_fleet_id;
 }
 
-Fleet* Ship::GetFleet() const
-{
+Fleet* Ship::GetFleet() const {
     return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Fleet>(m_fleet_id);
 }
 
-UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
-{
+UniverseObject::Visibility Ship::GetVisibility(int empire_id) const {
     UniverseObject::Visibility vis = NO_VISIBILITY;
 
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
@@ -72,18 +72,15 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const
     return retval;
 }
 
-bool Ship::IsArmed() const
-{
-    return Design()->attack > 0;
+bool Ship::IsArmed() const {
+    return Design()->Attack() > 0;
 }
 
-double Ship::Speed() const
-{
-    return Design()->speed;
+double Ship::Speed() const {
+    return Design()->Speed();
 }
 
-const std::string& Ship::PublicName(int empire_id) const
-{
+const std::string& Ship::PublicName(int empire_id) const {
     // Disclose real ship name only to fleet owners. Rationale: a player who doesn't know the design for a particular
     // ship can easily guess it if the ship's name is "Scout"
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
@@ -92,13 +89,11 @@ const std::string& Ship::PublicName(int empire_id) const
         return UserString("FW_FOREIGN_SHIP");
 }
 
-UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const
-{
+UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
     return visitor.Visit(const_cast<Ship* const>(this));
 }
 
-double Ship::ProjectedCurrentMeter(MeterType type) const
-{
+double Ship::ProjectedCurrentMeter(MeterType type) const {
     const Meter* fuel = GetMeter(METER_FUEL);
     Meter copy;
 
@@ -115,20 +110,16 @@ double Ship::ProjectedCurrentMeter(MeterType type) const
     }
 }
 
-void Ship::MovementPhase()
-{
+void Ship::MovementPhase() {
 }
 
-void Ship::PopGrowthProductionResearchPhase()
-{
-    GrowFuelMeter(GetMeter(METER_FUEL));
+void Ship::PopGrowthProductionResearchPhase() {
+    GrowFuelMeter(GetMeter(METER_FUEL));    // get a little free fuel each turn
 }
 
-bool Ship::AdjustFuel(double amount)
-{
+bool Ship::AdjustFuel(double amount) {
     double new_fuel = GetMeter(METER_FUEL)->Current() + amount;
     if (new_fuel > GetMeter(METER_FUEL)->Max() || new_fuel < Meter::METER_MIN) return false;
     GetMeter(METER_FUEL)->SetCurrent(new_fuel);
     return true;
 }
-

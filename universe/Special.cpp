@@ -1,6 +1,5 @@
 #include "Special.h"
 
-#include "../universe/Parser.h"
 #include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -65,7 +64,8 @@ namespace {
             using namespace phoenix;
             parse_info<const char*> result =
                 parse(input.c_str(),
-                      as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]],
+                      as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]]
+                      >> end_p,
                       skip_p);
             if (!result.full)
                 ReportError(std::cerr, input.c_str(), result);
@@ -89,10 +89,7 @@ Special::Special(const std::string& name, const std::string& description,
     m_description(description),
     m_effects(effects),
     m_graphic(graphic)
-{
-    if (m_graphic == "")
-        m_graphic = "special_icons/Generic_Special.png";
-}
+{}
 
 const std::string& Special::Name() const
 {

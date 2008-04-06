@@ -319,13 +319,7 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
 
     double value = m_value->Eval(source, target);
     Empire* empire = Empires().Lookup(*source->Owners().begin());
-    if (m_stockpile == RE_FOOD) {
-        empire->GetFoodResPool().SetStockpile(value);
-    } else if (m_stockpile == RE_MINERALS) {
-        empire->GetMineralResPool().SetStockpile(value);
-    } else if (m_stockpile == RE_TRADE) {
-        empire->GetTradeResPool().SetStockpile(value);
-    }
+    empire->SetResourceStockpile(m_stockpile, value);
 }
 
 std::string SetEmpireStockpile::Description() const

@@ -6,6 +6,7 @@
 #define BOOST_SPIRIT_CLOSURE_LIMIT PHOENIX_LIMIT
 
 #include "Enums.h"
+#include "ShipDesign.h"     // because HullType::Slot are stored by vale in vector passed to HullType constructor
 
 #include <boost/spirit.hpp>
 #include <boost/spirit/attribute.hpp>
@@ -16,6 +17,7 @@
 #include <set>
 #include <string>
 
+#include <GG/Clr.h>
 
 ////////////////////////////////////////////////////////////
 // Forward Declarations                                   //
@@ -30,7 +32,9 @@ namespace Effect {
 class Special;
 class BuildingType;
 class Tech;
+struct TechCategory;
 struct ItemSpec;
+
 
 ////////////////////////////////////////////////////////////
 // Scanner                                                //
@@ -59,6 +63,14 @@ struct NameClosure : boost::spirit::closure<NameClosure, std::string>
     member1 this_;
 };
 
+struct ColourClosure : boost::spirit::closure<ColourClosure, GG::Clr, unsigned int, unsigned int, unsigned int, unsigned int>
+{
+    member1 this_;
+    member2 r;
+    member3 g;
+    member4 b;
+    member5 a;
+};
 
 ////////////////////////////////////////////////////////////
 // Condition Parser                                       //
@@ -112,6 +124,14 @@ struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::st
     member5 graphic;
 };
 
+struct CategoryClosure : boost::spirit::closure<CategoryClosure, TechCategory*, std::string, std::string, GG::Clr>
+{
+    member1 this_;
+    member2 name;
+    member3 graphic;
+    member4 colour;
+};
+
 struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std::string, std::string,
                                             std::string, TechType, double, int,
                                             std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
@@ -131,9 +151,47 @@ struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std
     member12 graphic;
 };
 
+struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
+                                            double, double, int, std::vector<ShipSlotType>,
+                                            Condition::ConditionBase*,
+                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                            std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 part_class;
+    member5 power;
+    member6 cost;
+    member7 build_time;
+    member8 mountable_slot_types;
+    member9 location;
+    member10 effects_groups;
+    member11 graphic;
+};
+
+struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double, int,
+                                            std::vector<HullType::Slot>, Condition::ConditionBase*,
+                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                            std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 speed;
+    member5 cost;
+    member6 build_time;
+    member7 slots;
+    member8 location;
+    member9 effects_groups;
+    member10 graphic;
+};
+
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
 extern boost::spirit::rule<Scanner, SpecialClosure::context_t> special_p;
-extern boost::spirit::rule<Scanner, NameClosure::context_t> tech_category_p;
+extern boost::spirit::rule<Scanner, CategoryClosure::context_t> category_p;
 extern boost::spirit::rule<Scanner, TechClosure::context_t> tech_p;
+extern boost::spirit::rule<Scanner, PartClosure::context_t> part_p;
+extern boost::spirit::rule<Scanner, HullClosure::context_t> hull_p;
 
 #endif // _Parser_h_

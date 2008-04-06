@@ -39,9 +39,13 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_34&quot;;C:\Python25\include;../../../network/"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
+				StringPooling="true"
+				MinimalRebuild="true"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="2"
 				DisableLanguageExtensions="false"
 				ForceConformanceInForLoopScope="true"
 				RuntimeTypeInfo="true"
@@ -62,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib SDL.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib dotgen.lib gd.lib graph.lib pathplan.lib libexpat.lib png.lib jpeg.lib python25.lib boost_python-vc80-mt-1_34.lib"
+				AdditionalDependencies="GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc80-mt-1_34.lib"
 				OutputFile="../../../freeorionca.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs"
@@ -573,6 +577,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\default\AI\ColonisationAI.py"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\default\AI\ExplorationAI.py"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\default\AI\FreeOrionAI.py"
 					>
 				</File>
@@ -590,6 +602,34 @@
 				</File>
 				<File
 					RelativePath="..\..\..\AI\ReferenceAI.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="python"
+				>
+				<File
+					RelativePath="..\..\..\Python\PythonEmpireWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Python\PythonEnumWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Python\PythonLoggingWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Python\PythonSetWrapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Python\PythonUniverseWrapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\Python\PythonWrappers.h"
 					>
 				</File>
 			</Filter>

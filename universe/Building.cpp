@@ -131,10 +131,7 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_location(location),
     m_effects(effects),
     m_graphic(graphic)
-{
-    if (m_graphic == "")
-       m_graphic = "building_icons/Generic_Building.png";
-}
+{}
 
 const std::string& BuildingType::Name() const
 {
@@ -225,13 +222,8 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     locations.insert(loc);
 
     m_location->Eval(source, locations, non_locations, Condition::TARGETS);
-        
-    return !(locations.empty());
-}
 
-void BuildingType::AddEffects(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
-{
-    std::copy(effects.begin(), effects.end(), m_effects.end());
+    return !(locations.empty());
 }
 
 CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const {
@@ -281,7 +273,8 @@ BuildingTypeManager::BuildingTypeManager()
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
-              as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]],
+              as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]]
+              >> end_p,
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);

@@ -207,7 +207,7 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category)
     GG::Clr cat_colour = ClientUI::CategoryColor(category);
     SetBorderColor(cat_colour);
     AdjustBrightness(cat_colour, -50);
-    SetColor(cat_colour);        
+    SetColor(cat_colour);
     SetBorderThick(2);
 }
 
@@ -744,13 +744,112 @@ void CUIMultiEdit::Render()
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
 
     FlatRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, color_to_use, 1);
 
     SetColor(GG::CLR_ZERO);
     MultiEdit::Render();
     SetColor(color);
+}
+
+///////////////////////////////////////
+// class CUILinkTextMultiEdit
+///////////////////////////////////////
+CUILinkTextMultiEdit::CUILinkTextMultiEdit(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::MultiEditStyle> style,
+                                           const boost::shared_ptr<GG::Font>& font,
+                                           GG::Clr color, GG::Clr text_color, 
+                                           GG::Clr interior, GG::Flags<GG::WndFlag> flags) :
+    CUIMultiEdit(x, y, w, h, str, style, font, color, text_color, interior, flags),
+    TextLinker(),
+    m_already_setting_text_so_dont_link(false)
+{}
+
+const std::vector<GG::Font::LineData>& CUILinkTextMultiEdit::GetLineData() const
+{
+    return CUIMultiEdit::GetLineData();
+}
+
+const boost::shared_ptr<GG::Font>& CUILinkTextMultiEdit::GetFont() const
+{
+    return CUIMultiEdit::GetFont();
+}
+
+GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
+{
+    return CUIMultiEdit::TextUpperLeft();
+}
+
+GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
+{
+    return CUIMultiEdit::TextLowerRight();
+}
+
+const std::string& CUILinkTextMultiEdit::WindowText() const
+{
+    return CUIMultiEdit::WindowText();
+}
+
+void CUILinkTextMultiEdit::Render()
+{
+    CUIMultiEdit::Render();
+    TextLinker::Render_();
+}
+
+void CUILinkTextMultiEdit::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    CUIMultiEdit::LButtonDown(pt, mod_keys);
+    TextLinker::LButtonDown_(pt, mod_keys);
+}
+
+void CUILinkTextMultiEdit::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    CUIMultiEdit::LButtonUp(pt, mod_keys);
+    TextLinker::LButtonUp_(pt, mod_keys);
+}
+
+void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    CUIMultiEdit::LClick(pt, mod_keys);
+    TextLinker::LClick_(pt, mod_keys);
+}
+
+void CUILinkTextMultiEdit::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    CUIMultiEdit::MouseHere(pt, mod_keys);
+    TextLinker::MouseHere_(pt + ScrollPosition(), mod_keys);
+}
+
+void CUILinkTextMultiEdit::MouseLeave()
+{
+    CUIMultiEdit::MouseLeave();
+    TextLinker::MouseLeave_();
+}
+
+void CUILinkTextMultiEdit::SetText(const std::string& str)
+{
+    // MultiEdit have scrollbars that are adjusted every time the text is set.  Adjusting scrollbars also requires
+    // setting text, because the space for the text is added or removed when scrollbars are shown or hidden.
+    // Since highlighting links on rollover also involves setting text, there are a lot of potentially unnecessary
+    // calls to SetText and FindLinks.  This check for whether text is already being set eliminates many of those
+    // calls when they aren't necessary, since the results will be overridden later anyway by the outermost (or
+    // lowest on stack, or first ) call to SetText
+    if (!m_already_setting_text_so_dont_link) {
+        m_already_setting_text_so_dont_link = true;
+        CUIMultiEdit::SetText(str);
+        FindLinks();
+        m_already_setting_text_so_dont_link = false;
+        return;
+    } else {
+        CUIMultiEdit::SetText(str);
+    }
+    //CUIMultiEdit::SetText(str);
+    //FindLinks();
+}
+
+void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)
+{
+    MultiEdit::PreserveTextPositionOnNextSetText();
+    CUIMultiEdit::SetText(str);
 }
 
 ///////////////////////////////////////
@@ -816,8 +915,9 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
 // class StatisticIcon
 ///////////////////////////////////////
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
-                             double value, int digits, bool integerize, bool showsign) :
-    GG::Control(x, y, w, h),
+                             double value, int digits, bool integerize, bool showsign,
+                             GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+    GG::Control(x, y, w, h, flags),
     m_num_values(1),
     m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
     m_integerize(std::vector<bool>(1, integerize)), m_show_signs(std::vector<bool>(1, showsign)),
@@ -843,8 +943,9 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
 
 StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
-                             bool integerize0, bool integerize1, bool showsign0, bool showsign1) :
-    GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+                             bool integerize0, bool integerize1, bool showsign0, bool showsign1,
+                             GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+    GG::Control(x, y, w, h, flags),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
     m_integerize(std::vector<bool>(2, false)), m_show_signs(std::vector<bool>(2, false)),

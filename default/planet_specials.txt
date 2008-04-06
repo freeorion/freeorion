@@ -9,7 +9,7 @@ Special
             SetMaxResearch value = Source.MaxResearch + 3
             SetMaxConstruction value = Source.MaxConstruction - 3
         ]
-    graphic = "icons/specials_tiny/eccentric_orbit.png"
+    graphic = "icons/specials_huge/eccentric_orbit.png"
 
 Special
     name = "TIDAL_LOCK_SPECIAL"
@@ -21,7 +21,7 @@ Special
             SetMaxConstruction value = Source.MaxConstruction - 5
             SetMaxIndustry value = Source.MaxIndustry + 5
         ]
-    graphic = "icons/specials_tiny/tidal_lock.png"
+    graphic = "icons/specials_huge/tidal_lock.png"
 
 Special
     name = "SLOW_ROTATION_SPECIAL"
@@ -34,7 +34,7 @@ Special
             SetMaxConstruction value = Source.MaxConstruction - 5
             SetMaxPopulation value = Source.MaxPopulation * 0.5
         ]
-    graphic = "icons/specials_tiny/slow_rotation.png"
+    graphic = "icons/specials_huge/slow_rotation.png"
 
 Special
     name = "HIGH_AXIAL_TILT_SPECIAL"
@@ -43,7 +43,7 @@ Special
         scope = Source
         activation = Source
         effects = SetMaxConstruction value = Source.MaxConstruction - 8
-    graphic = "icons/specials_tiny/high_axial_tilt.png"
+    graphic = "icons/specials_huge/high_axial_tilt.png"
 
 Special
     name = "SOLID_CORE_SPECIAL"
@@ -55,7 +55,7 @@ Special
             SetMaxFarming value = Source.MaxFarming - 5
             SetMaxHealth value = Source.MaxHealth - 5
         ]
-    graphic = "icons/specials_tiny/solid_core.png"
+    graphic = "icons/specials_huge/solid_core.png"
 
 Special
     name = "TECHTONIC_INSTABILITY_SPECIAL"
@@ -64,7 +64,7 @@ Special
         scope = Source
         activation = Source
         effects = SetMaxConstruction value = Source.MaxConstruction - 5
-    graphic = "icons/specials_tiny/techtonic_instability.png"
+    graphic = "icons/specials_huge/techtonic_instability.png"
 
 Special
     name = "ANCIENT_RUINS_SPECIAL"
@@ -73,7 +73,7 @@ Special
         scope = Source
         activation = Source
         effects = SetMaxResearch value = Source.MaxResearch + 4
-    graphic = "icons/specials_tiny/ancient_ruins.png"
+    graphic = "icons/specials_huge/ancient_ruins.png"
 
 Special
     name = "MINERALS_SPECIAL"
@@ -85,7 +85,7 @@ Special
             SetMaxMining value = Source.MaxMining + 3
             SetMaxTrade value = Source.MaxTrade + 1
         ]
-    graphic = "icons/specials_tiny/minerals.png"
+    graphic = "icons/specials_huge/minerals.png"
 
 Special
     name = "TUNNELS_SPECIAL"
@@ -94,4 +94,4 @@ Special
         scope = Source
         activation = Source
         effects = SetMaxPopulation value = Source.MaxPopulation + 3
-    graphic = "icons/specials_tiny/tunnels.png"
+    graphic = "icons/specials_huge/tunnels.png"

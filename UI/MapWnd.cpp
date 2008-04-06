@@ -1,3 +1,7 @@
+#ifdef FREEORION_WIN32
+#include <GL/glew.h>
+#endif
+
 #include "MapWnd.h"
 
 #include "ClientUI.h"
@@ -13,6 +17,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../util/Random.h"
+#include "DesignWnd.h"
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
 #include "SidePanel.h"
@@ -86,37 +91,42 @@ namespace {
         return true;
     }
 #endif
+
+    ////////////////////////////////////////////////
+    // StarlaneData
+    ////////////////////////////////////////////////
+    /* Note that an order is imposed on the two systems the starlane spans.  The
+       "source" system is the one with the lower pointer.  This is so
+       StarlaneDatas can be stored in a std::set and duplicates will not be a
+       problem. */
+    struct StarlaneData
+    {
+        StarlaneData() {}
+        StarlaneData(const System* src_system, const System* dst_system) : 
+            src(std::min(src_system, dst_system)), 
+            dst(std::max(src_system, dst_system)) 
+            {}
+        bool operator<(const StarlaneData& rhs) const 
+            {
+                if (src != rhs.src) 
+                    return src < rhs.src; 
+                if (dst != rhs.dst) 
+                    return dst < rhs.dst;
+                return false;
+            }
+    private:
+        const System* src;
+        const System* dst;
+    };
 }
 
-
-////////////////////////////////////////////////
-// MapWnd::StarlaneData
-////////////////////////////////////////////////
-/* Note that an order is imposed on the two systems the starlane spans.  The "source" system is the one with the lower pointer.
-   This is so StarlaneDatas can be stored in a std::set and duplicates will not be a problem. */
-struct MapWnd::StarlaneData
-{
-    StarlaneData() {}
-    StarlaneData(const System* src_system, const System* dst_system) : 
-        src(std::min(src_system, dst_system)), 
-        dst(std::max(src_system, dst_system)) 
-        {}
-    bool operator<(const StarlaneData& rhs) const 
-    {
-        if (src != rhs.src) 
-            return src < rhs.src; 
-        if (dst != rhs.dst) 
-            return dst < rhs.dst;
-        return false;
-    }
-
-    const System* Src() const { return src; }
-    const System* Dst() const { return dst; }
-
-private:
-    const System* src;
-    const System* dst;
-};
+////////////////////////////////////////////////////////////
+// MapWnd::GLBuffer
+////////////////////////////////////////////////////////////
+MapWnd::GLBuffer::GLBuffer() :
+    m_name(0),
+    m_size(0)
+{}
 
 ////////////////////////////////////////////////////////////
 // MapWndPopup
@@ -140,6 +150,49 @@ void MapWndPopup::Close()
 ////////////////////////////////////////////////
 // MapWnd
 ////////////////////////////////////////////////
+// MapWnd::MovementLineData
+MapWnd::MovementLineData::MovementLineData() : 
+    m_colour(GG::CLR_ZERO), 
+    m_path(),
+    m_button(0),
+    m_x(-100000.0),   // UniverseObject::INVALID_POSITION value respecified here to avoid unnecessary include dependency
+    m_y(-100000.0)
+{}
+
+MapWnd::MovementLineData::MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
+    m_colour(colour),
+    m_path(path),
+    m_button(0),
+    m_x(x),
+    m_y(y)
+{}
+
+MapWnd::MovementLineData::MovementLineData(const FleetButton* button, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
+    m_colour(colour),
+    m_path(path),
+    m_button(button),
+    m_x(-100000.0),
+    m_y(-100000.0)
+{ assert(button); }
+
+GG::Clr MapWnd::MovementLineData::Colour() const
+{ return m_colour; }
+
+const std::list<MovePathNode>& MapWnd::MovementLineData::Path() const
+{ return m_path; }
+
+std::pair<double, double> MapWnd::MovementLineData::Start() const
+{
+    if (m_button) {
+        GG::Pt sz = m_button->Size();
+        GG::Pt fleet_screen_centre = m_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
+        return ClientUI::GetClientUI()->GetMapWnd()->UniversePositionFromScreenCoords(fleet_screen_centre);
+    } else {
+        return std::make_pair(m_x, m_y);
+    }
+}
+
+// MapWnd
 // static(s)
 const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
@@ -154,11 +207,12 @@ MapWnd::MapWnd() :
     m_disabled_accels_list(),
     m_backgrounds(NUM_BACKGROUNDS),
     m_bg_scroll_rate(NUM_BACKGROUNDS),
-    m_bg_position_X(NUM_BACKGROUNDS),
-    m_bg_position_Y(NUM_BACKGROUNDS),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
-    m_active_fleet_wnd(0),
+    m_star_texture_coords(),
+    m_starlane_vertices(),
+    m_starlane_supply_vertices(),
+    m_starlane_supply_colors(),
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
@@ -193,6 +247,11 @@ MapWnd::MapWnd() :
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
+    m_design_wnd = new DesignWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_design_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    GG::GUI::GetGUI()->Register(m_design_wnd);
+    m_design_wnd->Hide();
+
     // turn button
     m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
@@ -211,8 +270,13 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
 
+    button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_DESIGN") );
+    m_toolbar->AttachChild(m_btn_design);
+    GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
+
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
 
@@ -277,19 +341,22 @@ MapWnd::MapWnd() :
 
     //set up background images
     m_backgrounds[0] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield1.png");
-    m_bg_position_X[0] = 10.0;
-    m_bg_position_Y[0] = 10.0;
     m_bg_scroll_rate[0] = 0.125;
+    glBindTexture(GL_TEXTURE_2D, m_backgrounds[0]->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     m_backgrounds[1] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield2.png");
-    m_bg_position_X[1] = 10.0;
-    m_bg_position_Y[1] = 10.0;
     m_bg_scroll_rate[1] = 0.25;
+    glBindTexture(GL_TEXTURE_2D, m_backgrounds[1]->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     m_backgrounds[2] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield3.png");
-    m_bg_position_X[2] = 10.0;
-    m_bg_position_Y[2] = 10.0;
     m_bg_scroll_rate[2] = 0.5;
+    glBindTexture(GL_TEXTURE_2D, m_backgrounds[2]->OpenGLId());
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // connect keyboard accelerators
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
@@ -303,6 +370,7 @@ MapWnd::MapWnd() :
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2), &MapWnd::ToggleSitRep, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3), &MapWnd::ToggleResearch, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4), &MapWnd::ToggleProduction, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5), &MapWnd::ToggleDesign, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10), &MapWnd::ShowMenu, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s), &MapWnd::CloseSystemView, this);
 
@@ -335,6 +403,8 @@ MapWnd::MapWnd() :
     boost::shared_ptr<GG::BrowseInfoWnd> browser_wnd(new BrowseFoo());
     GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
 #endif
+
+    Connect(ClientApp::GetApp()->EmpireEliminatedSignal, &MapWnd::HandleEmpireElimination, this);
 }
 
 MapWnd::~MapWnd()
@@ -342,17 +412,40 @@ MapWnd::~MapWnd()
     delete m_toolbar;
     delete m_research_wnd;
     delete m_production_wnd;
+    delete m_design_wnd;
     RemoveAccelerators();
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
-{ return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());}
+{
+    return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+}
 
 double MapWnd::ZoomFactor() const
-{ return m_zoom_factor; }
+{
+    return m_zoom_factor;
+}
+
+GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
+{
+    GG::Pt cl_ul = ClientUpperLeft();
+    int x = static_cast<int>((universe_x * m_zoom_factor) + cl_ul.x);
+    int y = static_cast<int>((universe_y * m_zoom_factor) + cl_ul.y);
+    return GG::Pt(x, y);
+}
+
+std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const
+{
+    GG::Pt cl_ul = ClientUpperLeft();
+    double x = (screen_coords - cl_ul).x / m_zoom_factor;
+    double y = (screen_coords - cl_ul).y / m_zoom_factor;
+    return std::pair<double, double>(x, y);
+}
 
 SidePanel* MapWnd::GetSidePanel() const
-{ return m_side_panel; }
+{
+    return m_side_panel;
+}
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
@@ -368,20 +461,15 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 bool MapWnd::InProductionViewMode() const
 { return m_in_production_view_mode; }
 
-bool MapWnd::FleetWndsOpen() const 
-{ return !m_fleet_wnds.empty(); }
-
-MapWnd::FleetWndIter MapWnd:: FleetWndBegin()
-{ return m_fleet_wnds.begin(); }
-
-MapWnd::FleetWndIter MapWnd::FleetWndEnd()
-{ return m_fleet_wnds.end(); }
-
 void MapWnd::Render()
 {
+    // HACK! This is placed here so we can be sure it is executed frequently
+    // (every time we render), and before we render any of the
+    // FleetWnds/FleetDetailWnds.  It doesn't necessarily belong in MapWnd at
+    // all.
+    FleetUIManager::GetFleetUIManager().CullEmptyWnds();
+
     RenderBackgrounds();
-    RenderStarlanes();
-    RenderFleetMovementLines();
 
     int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
     if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
@@ -389,9 +477,115 @@ void MapWnd::Render()
         m_chat_display->Hide();
         g_chat_display_show_time = 0;
     }
+
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+    glPushMatrix();
+    glLoadIdentity();
+    glScalef(m_zoom_factor, m_zoom_factor, 1.0);
+    glTranslatef(origin_offset.x / m_zoom_factor, origin_offset.y / m_zoom_factor, 0.0);
+
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end();
+         ++it) {
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        // This is provided here to ensure maximum backwards compatability with
+        // older hardware and GL drivers.  It can only work on a temporary
+        // basis, however, since GL 2.0 will soon be required for the use of
+        // Ogre, shaders, etc.  This note applies to all such uses of the ARB
+        // versions of GL functions and macros.
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+        glDrawArrays(GL_QUADS, 0, it->second.m_size);
+    }
+
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_LINE_SMOOTH);
+    glEnable(GL_LINE_STIPPLE);
+    RenderStarlanes();
+    RenderFleetMovementLines();
+    glEnable(GL_TEXTURE_2D);
+    glDisable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
+    glLineWidth(1.0);
+
+    glColor3f(1.0, 1.0, 1.0);
+
+    const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
+    if (0.5 < HALO_SCALE_FACTOR) {
+        glMatrixMode(GL_TEXTURE);
+        glTranslatef(0.5, 0.5, 0.0);
+        glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
+        glTranslatef(-0.5, -0.5, 0.0);
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+             it != m_star_halo_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+    }
+
+    if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+             it != m_star_core_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+    }
+
+    glPopMatrix();
+
+#ifdef FREEORION_WIN32
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#else
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-void MapWnd::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_TAB: { // auto-complete current chat edit word
@@ -508,10 +702,12 @@ void MapWnd::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
     }
 }
 
-void MapWnd::LButtonDown (const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
-{ m_drag_offset = pt - ClientUpperLeft(); }
+void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    m_drag_offset = pt - ClientUpperLeft();
+}
 
-void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
@@ -521,18 +717,17 @@ void MapWnd::LDrag (const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> 
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
     m_dragged = true;
 }
 
-void MapWnd::LButtonUp (const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     m_dragged = false;
 }
 
-void MapWnd::LClick (const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = GG::Pt(-1, -1);
     if (!m_dragged && !m_in_production_view_mode) {
@@ -549,7 +744,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // if these fail, go ahead with the context-sensitive popup menu . Note that this enforces a one-close-per-click policy.
 
     if (GetOptionsDB().Get<bool>("UI.window-quickclose")) {
-        if (CloseAllFleetWnds())
+        if (FleetUIManager::GetFleetUIManager().CloseAll())
             return;
 
         if (m_side_panel->Visible()) {
@@ -579,8 +774,8 @@ void MapWnd::InitTurn(int turn_number)
     if (m_nebulae.empty()) {
         // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
         const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-        int num_nebulae = RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-                                       static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));
+        int num_nebulae = static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR);/*RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
+                                                                                 static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));*/
         m_nebulae.resize(num_nebulae);
         m_nebula_centers.resize(num_nebulae);
         SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
@@ -592,23 +787,68 @@ void MapWnd::InitTurn(int turn_number)
 
     // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
     m_fleet_lines.clear();
-    m_projected_fleet_lines = MovementLineData();
+    m_projected_fleet_line = MovementLineData();
 
     // systems and starlanes
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
-    }
     m_system_icons.clear();
-    m_starlanes.clear();
 
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
+    std::vector<float> raw_star_texture_coords;
+    std::vector<float> raw_starlane_vertices;
+    std::vector<float> raw_starlane_supply_vertices;
+    std::vector<unsigned char> raw_starlane_supply_colors;
+
+    std::set<StarlaneData> starlane_pairs;
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
-        SystemIcon* icon = new SystemIcon(systems[i]->ID(), m_zoom_factor);
+        SystemIcon* icon = new SystemIcon(this, 0, 0, 10, systems[i]->ID());
+        {
+            // See note above texture coords for why we're making coordinate
+            // sets that are 2x too big.
+            const System& system = icon->GetSystem();
+            double icon_size = ClientUI::SystemIconSize();
+            double icon_ul_x = system.X() - icon_size;
+            double icon_ul_y = system.Y() - icon_size;
+            double icon_lr_x = system.X() + icon_size;
+            double icon_lr_y = system.Y() + icon_size;
+            if (icon->DiscTexture()) {
+                glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+                std::vector<float>& core_vertices = raw_star_core_quad_vertices[icon->DiscTexture()];
+                core_vertices.push_back(icon_lr_x);
+                core_vertices.push_back(icon_ul_y);
+                core_vertices.push_back(icon_ul_x);
+                core_vertices.push_back(icon_ul_y);
+                core_vertices.push_back(icon_ul_x);
+                core_vertices.push_back(icon_lr_y);
+                core_vertices.push_back(icon_lr_x);
+                core_vertices.push_back(icon_lr_y);
+            }
+
+            if (icon->HaloTexture()) {
+                glBindTexture(GL_TEXTURE_2D, icon->HaloTexture()->OpenGLId());
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+                std::vector<float>& halo_vertices = raw_star_halo_quad_vertices[icon->HaloTexture()];
+                halo_vertices.push_back(icon_lr_x);
+                halo_vertices.push_back(icon_ul_y);
+                halo_vertices.push_back(icon_ul_x);
+                halo_vertices.push_back(icon_ul_y);
+                halo_vertices.push_back(icon_ul_x);
+                halo_vertices.push_back(icon_lr_y);
+                halo_vertices.push_back(icon_lr_x);
+                halo_vertices.push_back(icon_lr_y);
+            }
+        }
         m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
-        icon->Refresh();
         GG::Connect(icon->LeftClickedSignal, &MapWnd::SystemLeftClicked, this);
         GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
         GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
@@ -616,16 +856,69 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
         GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
 
+        // gaseous substance around system
+        if (boost::shared_ptr<GG::Texture> gaseous_texture =
+            ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", systems[i]->ID())) {
+            glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+            const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
+            const double ROTATION = systems[i]->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const double COS_THETA = std::cos(ROTATION);
+            const double SIN_THETA = std::sin(ROTATION);
+            // This rotates the upper left and lower right corners CCW ROTATION
+            // radians, around systems[i].  The initial upper left and lower
+            // right corners are (-GAS_SIZE, -GAS_SIZE) and (GAS_SIZE,
+            // GAS_SIZE), in map coordinates respectively.  See note above
+            // texture coords for why we're making coordinate sets that are 2x
+            // too big.
+            double gas_ul_x = systems[i]->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
+            double gas_ul_y = systems[i]->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
+            double gas_lr_x = systems[i]->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
+            double gas_lr_y = systems[i]->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
+            std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
+            gas_vertices.push_back(gas_lr_x);
+            gas_vertices.push_back(gas_ul_y);
+            gas_vertices.push_back(gas_ul_x);
+            gas_vertices.push_back(gas_ul_y);
+            gas_vertices.push_back(gas_ul_x);
+            gas_vertices.push_back(gas_lr_y);
+            gas_vertices.push_back(gas_lr_x);
+            gas_vertices.push_back(gas_lr_y);
+        }
+
         // system's starlanes
         for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
             if (!it->second) {
                 System* dest_system = universe.Object<System>(it->first);
-                m_starlanes.insert(StarlaneData(systems[i], dest_system));
+                if (starlane_pairs.insert(StarlaneData(systems[i], dest_system)).second) {
+                    raw_starlane_vertices.push_back(systems[i]->X());
+                    raw_starlane_vertices.push_back(systems[i]->Y());
+                    raw_starlane_vertices.push_back(dest_system->X());
+                    raw_starlane_vertices.push_back(dest_system->Y());
+                }
             }
         }
-    }        
+    }
 
-    // fleets not in systems
+    // Note these coordinates assume the texture is twice as large as it should
+    // be.  This allows us to use one set of texture coords for everything, even
+    // though the star-halo textures must be rendered at sizes as much as twice
+    // as large as the star-disc textures.
+    for (std::size_t i = 0; i < systems.size(); ++i) {
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(1.5);
+    }
+
+    DoSystemIconsLayout();
+
+    // remove old fleet buttons for fleets not in systems
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         DeleteChild(m_moving_fleet_buttons[i]);
     }
@@ -643,42 +936,68 @@ void MapWnd::InitTurn(int turn_number)
     while (it != end_it) {
         SortedFleetMap::iterator local_end_it = position_sorted_fleets.upper_bound(it->first);
         std::map<int, std::vector<int> > IDs_by_empire_color;
-        for (; it != local_end_it; ++it) {
+
+        for (; it != local_end_it; ++it)
             IDs_by_empire_color[*it->second->Owners().begin()].push_back(it->second->ID());
-        }
+
+        // create new fleetbutton for this cluster of fleets
         for (std::map<int, std::vector<int> >::iterator ID_it = IDs_by_empire_color.begin(); ID_it != IDs_by_empire_color.end(); ++ID_it) {
-            FleetButton* fb = new FleetButton(Empires().Lookup(ID_it->first)->Color(), ID_it->second, m_zoom_factor);
+            FleetButton* fb = new FleetButton(Empires().Lookup(ID_it->first)->Color(), ID_it->second);
             m_moving_fleet_buttons.push_back(fb);
             AttachChild(fb);
-            SetFleetMovement(fb);
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }
-
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    // position fleetbuttons
+    DoMovingFleetButtonsLayout();
+    // create movement lines (after positioning buttons, so lines will originate from button location)
+    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+        SetFleetMovement(*it);
 
 
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
+    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
+    // population is available for currently uncolonized planets
+    UpdateMeterEstimates();
 
-    // determine level of supply each empire can provide to each system
-    m_system_supply.clear();
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+
+    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* empire = it->second;
         int empire_id = it->first;
-        const std::map<const System*, int>& supplyable_systems = empire->GetSupplyableSystems();
-        
-        for (std::map<const System*, int>::const_iterator it = supplyable_systems.begin(); it != supplyable_systems.end(); ++it) {
-            int system_id = it->first->ID();
-            int supply_level_for_current_empire = it->second;
-            std::map<int, int>& system_empire_supply_map = m_system_supply[system_id];
+        Empire* empire = it->second;
 
-            system_empire_supply_map[empire_id] = supply_level_for_current_empire;
+        // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
+        std::set<std::pair<int, int> > fleet_supply_lanes;
+        empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
+                                                     fleet_supply_lanes);
+
+        // get sets of systems from and to which physical resources can be shared
+        empire->GetSupplySystemGroupsAndStarlanesUsed(m_empire_resource_sharing_groups[empire_id],
+                                                      m_empire_resource_sharing_lanes[empire_id]);
+
+        empire->InitResourcePools(m_empire_resource_sharing_groups[empire_id]);
+
+        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
+            glColor(empire->Color());
+            const System* start_sys = universe.Object<System>(lane_it->first);
+            const System* end_sys = universe.Object<System>(lane_it->second);
+            raw_starlane_supply_vertices.push_back(start_sys->X());
+            raw_starlane_supply_vertices.push_back(start_sys->Y());
+            raw_starlane_supply_vertices.push_back(end_sys->X());
+            raw_starlane_supply_vertices.push_back(end_sys->Y());
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
         }
     }
-
-    m_active_fleet_wnd = 0;
 
     MoveChildUp(m_side_panel);
 
@@ -704,6 +1023,7 @@ void MapWnd::InitTurn(int turn_number)
 
     m_research_wnd->Hide();
     m_production_wnd->Hide();
+    m_design_wnd->Hide();
     m_in_production_view_mode = false;
 
     m_chat_edit->Hide();
@@ -729,15 +1049,15 @@ void MapWnd::InitTurn(int turn_number)
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
-    GG::Connect(empire->GetFoodResPool().ChangedSignal, &MapWnd::RefreshFoodResourceIndicator, this, 0);
-    GG::Connect(empire->GetMineralResPool().ChangedSignal, &MapWnd::RefreshMineralsResourceIndicator, this, 0);
-    GG::Connect(empire->GetTradeResPool().ChangedSignal, &MapWnd::RefreshTradeResourceIndicator, this, 0);
-    GG::Connect(empire->GetResearchResPool().ChangedSignal, &MapWnd::RefreshResearchResourceIndicator, this, 0);
-    GG::Connect(empire->GetIndustryResPool().ChangedSignal, &MapWnd::RefreshIndustryResourceIndicator, this, 0);
+    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
+    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
+    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
+    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
+    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
 
-    GG::Connect(empire->GetPopulationPool().ChangedSignal, &MapWnd::RefreshPopulationIndicator, this, 1);
+    GG::Connect(empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
 
-    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal, &SidePanel::Refresh);
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
 
     //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
     //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
@@ -748,37 +1068,235 @@ void MapWnd::InitTurn(int turn_number)
     DetachChild(m_side_panel);
     SelectSystem(m_side_panel->SystemID());
 
-    empire->UpdateResourcePool();
+    empire->UpdateResourcePools();
+
+    // clear out all the old buffers
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_star_core_quad_vertices.begin();
+         it != m_star_core_quad_vertices.end();
+         ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
+        glDeleteBuffers(1, &it->second.m_name);
+#endif
+    }
+    m_star_core_quad_vertices.clear();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_star_halo_quad_vertices.begin();
+         it != m_star_halo_quad_vertices.end();
+         ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
+        glDeleteBuffers(1, &it->second.m_name);
+#endif
+    }
+    m_star_halo_quad_vertices.clear();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
+             m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end();
+         ++it) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &it->second.m_name);
+#else
+        glDeleteBuffers(1, &it->second.m_name);
+#endif
+    }
+    m_galaxy_gas_quad_vertices.clear();
+
+    if (m_star_texture_coords.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_star_texture_coords.m_name);
+#else
+        glDeleteBuffers(1, &m_star_texture_coords.m_name);
+#endif
+        m_star_texture_coords.m_name = 0;
+    }
+    if (m_starlane_vertices.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_vertices.m_name);
+#else
+        glDeleteBuffers(1, &m_starlane_vertices.m_name);
+#endif
+        m_starlane_vertices.m_name = 0;
+    }
+    if (m_starlane_supply_vertices.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_supply_vertices.m_name);
+#else
+        glDeleteBuffers(1, &m_starlane_supply_vertices.m_name);
+#endif
+        m_starlane_supply_vertices.m_name = 0;
+    }
+    if (m_starlane_supply_colors.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_supply_colors.m_name);
+#else
+        glDeleteBuffers(1, &m_starlane_supply_colors.m_name);
+#endif
+        m_starlane_supply_colors.m_name = 0;
+    }
+
+
+    // create new buffers
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_star_core_quad_vertices.begin();
+         it != raw_star_core_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_star_core_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_star_core_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_star_halo_quad_vertices.begin();
+         it != raw_star_halo_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_star_halo_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_star_halo_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
+             raw_galaxy_gas_quad_vertices.begin();
+         it != raw_galaxy_gas_quad_vertices.end();
+         ++it) {
+        GLuint& name = m_galaxy_gas_quad_vertices[it->first].m_name;
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        it->second.size() * sizeof(float),
+                        &it->second[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &name);
+        glBindBuffer(GL_ARRAY_BUFFER, name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     it->second.size() * sizeof(float),
+                     &it->second[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_galaxy_gas_quad_vertices[it->first].m_size = it->second.size() / 2;
+    }
+
+    if (!raw_star_texture_coords.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_star_texture_coords.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_star_texture_coords.size() * sizeof(float),
+                        &raw_star_texture_coords[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &m_star_texture_coords.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_star_texture_coords.size() * sizeof(float),
+                     &raw_star_texture_coords[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
+    }
+    if (!raw_starlane_vertices.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_vertices.size() * sizeof(float),
+                        &raw_starlane_vertices[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &m_starlane_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_vertices.size() * sizeof(float),
+                     &raw_starlane_vertices[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
+    }
+    if (!raw_starlane_supply_vertices.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_supply_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_supply_vertices.size() * sizeof(float),
+                        &raw_starlane_supply_vertices[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &m_starlane_supply_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_supply_vertices.size() * sizeof(float),
+                     &raw_starlane_supply_vertices[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_starlane_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
+    }
+    if (!raw_starlane_supply_colors.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_supply_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_supply_colors.size() * sizeof(unsigned char),
+                        &raw_starlane_supply_colors[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &m_starlane_supply_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_supply_colors.size() * sizeof(unsigned char),
+                     &raw_starlane_supply_colors[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_starlane_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
+    }
+
+#ifdef FREEORION_WIN32
+    glBindBufferARB(GL_ARRAY_BUFFER, 0);
+#else
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
 {
     m_zoom_factor = data.map_zoom_factor;
 
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System& system = it->second->GetSystem();
-        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SystemIconSize() / 2) * m_zoom_factor), 
-                       static_cast<int>((system.Y() - ClientUI::SystemIconSize() / 2) * m_zoom_factor));
-        it->second->SizeMove(icon_ul, 
-                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SystemIconSize() * m_zoom_factor + 0.5), 
-                                    static_cast<int>(icon_ul.y + ClientUI::SystemIconSize() * m_zoom_factor + 0.5)));
-    }
-
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
-        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
-        double x = fleet->X();
-        double y = fleet->Y();
-        GG::Pt button_ul(static_cast<int>((x - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * m_zoom_factor), 
-                         static_cast<int>((y - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul, 
-                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor + 0.5), 
-                                                   static_cast<int>(button_ul.y + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor + 0.5)));
-    }
+    DoSystemIconsLayout();
+    DoMovingFleetButtonsLayout();
 
     GG::Pt ul = UpperLeft();
     GG::Pt map_move = data.map_upper_left - ul;
     OffsetMove(map_move);
-    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
@@ -793,31 +1311,14 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 
     m_nebulae.clear();
     m_nebula_centers.clear();
     for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
-        m_nebulae.push_back(GG::GUI::GetGUI()->GetTexture(data.map_nebulae[i].filename));
+        m_nebulae.push_back(ClientUI::GetTexture(data.map_nebulae[i].filename));
         m_nebula_centers.push_back(data.map_nebulae[i].center);
     }
-}
-
-bool MapWnd::CloseAllFleetWnds()
-{
-    bool retval = 0 < m_fleet_wnds.size();
-    if (!retval) return retval;
-    
-    m_active_fleet_wnd = 0;
-
-    // TODO: close the currently open FleetWnd last, so that FleetWnd::LastPosition is preserved
-    while (0 < m_fleet_wnds.size()) {
-        FleetWnd* fleet_wnd = *m_fleet_wnds.begin();
-        fleet_wnd->Close(); // this erases fleet_wnd from m_fleet_wnds
-    }
-
-    return retval;
 }
 
 void MapWnd::ShowSystemNames()
@@ -849,7 +1350,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt map_move = GG::Pt(static_cast<int>((current_x - x) * m_zoom_factor), 
                              static_cast<int>((current_y - y) * m_zoom_factor));
     OffsetMove(map_move);
-    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
@@ -864,20 +1364,7 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
-}
-
-void MapWnd::CenterOnSystem(int systemID)
-{
-    if (System* system = GetUniverse().Object<System>(systemID))
-        CenterOnSystem(system);
-}
-
-void MapWnd::CenterOnFleet(int fleetID)
-{
-    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleetID))
-        CenterOnFleet(fleet);
 }
 
 void MapWnd::ShowTech(const std::string& tech_name)
@@ -894,14 +1381,22 @@ void MapWnd::ShowBuildingType(const std::string& building_type_name)
     //m_production_wnd->building_type_name);
 }
 
-void MapWnd::CenterOnSystem(System* system)
-{ CenterOnMapCoord(system->X(), system->Y()); }
+void MapWnd::CenterOnObject(int id)
+{
+    if (UniverseObject* obj = GetUniverse().Object(id))
+        CenterOnMapCoord(obj->X(), obj->Y());
+}
 
-void MapWnd::CenterOnFleet(Fleet* fleet)
-{ CenterOnMapCoord(fleet->X(), fleet->Y()); }
+void MapWnd::CenterOnObject(const UniverseObject* obj)
+{
+    if (!obj) return;
+    CenterOnMapCoord(obj->X(), obj->Y());
+}
 
 void MapWnd::ReselectLastSystem()
-{ SelectSystem(m_previously_selected_system); }
+{
+    SelectSystem(m_previously_selected_system);
+}
 
 void MapWnd::SelectSystem(int system_id)
 {
@@ -968,20 +1463,21 @@ void MapWnd::SelectFleet(Fleet* fleet)
 
 void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 {
-    std::set<int> destinations;
-    for (unsigned int i = 0; i < fleet_button->Fleets().size(); ++i) {
-        Fleet* fleet = fleet_button->Fleets()[i];
-        GG::Pt cl_ul = ClientUpperLeft();
+    assert(fleet_button);
+    std::set<int> destinations; // keeps track of systems to which lines are being drawn for given fleet button
+    for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
+        Fleet* fleet = *it;
+
+        // ensure the fleet has a valid destination, and that there isn't already a movement line to that location
         if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
             fleet->FinalDestinationID() != fleet->SystemID() &&
-            destinations.find(fleet->FinalDestinationID()) == destinations.end()) {
+            destinations.find(fleet->FinalDestinationID()) == destinations.end())
+        {
             destinations.insert(fleet->FinalDestinationID());
-            GG::Pt sz = fleet_button->Size();
-            GG::Pt fleet_center = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
-            m_fleet_lines[fleet] = MovementLineData((fleet_center - cl_ul).x / m_zoom_factor,
-                                                    (fleet_center - cl_ul).y / m_zoom_factor,
-                                                    fleet->TravelRoute());
+            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
         } else {
+            // fleet's destination already has a line from this button, or the destination is invalid.  If there is
+            // another preexisting fleet line for this fleet, it is no longer needed.
             m_fleet_lines.erase(fleet);
         }
     }
@@ -989,43 +1485,80 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 
 void MapWnd::SetFleetMovement(Fleet* fleet)
 {
-    GG::Pt ul = ClientUpperLeft();
+    assert(fleet);
+    
     std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
     if (it != m_fleet_lines.end()) {
-        m_fleet_lines[fleet].destinations = fleet->TravelRoute();
-    }
+        const System* system = fleet->GetSystem();
+        if (system) {
+            // attempt draw line from fleet button location near system icon
+            // get system icon
+            std::map<int, SystemIcon*>::const_iterator it2 = m_system_icons.find(system->ID());
+            if (it2 != m_system_icons.end()) {
+                // get fleet button
+                const FleetButton* fleet_button = it2->second->GetFleetButton(fleet);
+                assert(fleet_button);
+                m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
+                return;
+            }
+        }
+
+        // else if any of the above failed...
+
+        // draw line from fleet's centre
+        m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
+    }    
 }
 
 void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route)
 {
-    if (!fleet || travel_route.empty() ||
-        travel_route.size() == 2 && travel_route.front() == travel_route.back()) {
-        m_projected_fleet_lines = MovementLineData();
+    if (!fleet || travel_route.empty()) {
+        // no route to display - set projected line to default empty MovementLineData
+        m_projected_fleet_line = MovementLineData();
+        return;
+    }
+
+    std::list<MovePathNode> path = fleet->MovePath(travel_route);
+
+    if (path.empty()) {
+        // no route to display
+        m_projected_fleet_line = MovementLineData();
+        return;
+    }
+
+    GG::Clr line_colour = Empires().Lookup(*fleet->Owners().begin())->Color();
+
+    // get starting location for fleet line
+    std::pair<double, double> universe_position;
+
+    // check if this MapWnd already has MovementLineData for this fleet
+    std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
+    if (it != m_fleet_lines.end()) {
+        // there is a fleet line already.  Its x and y are useful for the projected line, so it can be copied and tweaked a bit
+        std::pair<double, double> start = it->second.Start();
+        m_projected_fleet_line = MovementLineData(start.first, start.second, path, line_colour);
     } else {
-        std::list<System*> route = travel_route;
-        if (route.front() == fleet->GetSystem())
-            route.pop_front();
-        std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
-        GG::Clr line_color = Empires().Lookup(*fleet->Owners().begin())->Color();
-        if (it != m_fleet_lines.end()) {
-            m_projected_fleet_lines = m_fleet_lines[fleet];
-            m_projected_fleet_lines.destinations = route;
-            m_projected_fleet_lines.color = line_color;
+        // there is no preexisting fleet line.  need to make one from scratch
+
+        // -> need fleet position on screen
+
+        // attempt to get system icon
+        std::map<int, SystemIcon*>::const_iterator it = m_system_icons.find(fleet->SystemID());
+        if (it != m_system_icons.end()) {
+            // get fleet button
+            const FleetButton* fleet_button = it->second->GetFleetButton(fleet);
+            assert(fleet_button);
+            m_projected_fleet_line = MovementLineData(fleet_button, path, line_colour);
         } else {
-            GG::Pt cl_ul = ClientUpperLeft();
-            const FleetButton* fleet_button = m_system_icons[fleet->SystemID()]->GetFleetButton(fleet);
-            GG::Pt sz = fleet_button->Size();
-            GG::Pt fleet_center = fleet_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
-            m_projected_fleet_lines = MovementLineData((fleet_center - cl_ul).x / m_zoom_factor,
-                                                       (fleet_center - cl_ul).y / m_zoom_factor,
-                                                       route, line_color);
+            // couldn't get a fleet button, so instead use fleet's own position
+            m_projected_fleet_line = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
         }
     }
 }
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
-    if (event.Type() == GG::WndEvent::RClick && !FleetWndsOpen()) {
+    if (event.Type() == GG::WndEvent::RClick && FleetUIManager::GetFleetUIManager().empty()) {
         // Attempt to close the SidePanel (if open); if this fails, just let Wnd w handle it.  
         // Note that this enforces a one-close-per-click policy.
 
@@ -1038,6 +1571,42 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         }
     }
     return false;
+}
+
+void MapWnd::DoSystemIconsLayout()
+{
+    // position and resize system icons and gaseous substance
+    const int SYSTEM_ICON_SIZE = SystemIconSize();
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        const System& system = it->second->GetSystem();
+
+        GG::Pt icon_ul(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0),
+                       static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0));
+        it->second->SizeMove(icon_ul, icon_ul + GG::Pt(SYSTEM_ICON_SIZE, SYSTEM_ICON_SIZE));
+    }
+}
+
+void MapWnd::DoMovingFleetButtonsLayout()
+{
+    const int FLEET_BUTTON_SIZE = FleetButtonSize();
+    // position and resize unattached (to system icons) fleet icons
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
+
+        GG::Pt button_ul(static_cast<int>(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0), 
+                         static_cast<int>(fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0));
+        m_moving_fleet_buttons[i]->SizeMove(button_ul, button_ul + GG::Pt(FLEET_BUTTON_SIZE, FLEET_BUTTON_SIZE));
+    }
+}
+
+int MapWnd::SystemIconSize() const
+{
+    return static_cast<int>(ClientUI::SystemIconSize() * m_zoom_factor);
+}
+
+int MapWnd::FleetButtonSize() const
+{
+    return static_cast<int>(SystemIconSize() * ClientUI::FleetButtonSize());
 }
 
 void MapWnd::Zoom(int delta)
@@ -1075,30 +1644,13 @@ void MapWnd::Zoom(int delta)
     else
         ShowSystemNames();
 
-    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System& system = it->second->GetSystem();
-        GG::Pt icon_ul(static_cast<int>((system.X() - ClientUI::SystemIconSize() / 2.0) * m_zoom_factor), 
-                       static_cast<int>((system.Y() - ClientUI::SystemIconSize() / 2.0) * m_zoom_factor));
-        it->second->SizeMove(icon_ul,
-                             GG::Pt(static_cast<int>(icon_ul.x + ClientUI::SystemIconSize() * m_zoom_factor), 
-                                    static_cast<int>(icon_ul.y + ClientUI::SystemIconSize() * m_zoom_factor)));
-    }
+    DoSystemIconsLayout();
+    DoMovingFleetButtonsLayout();
 
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
-        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
-        double x = fleet->X();
-        double y = fleet->Y();
-        GG::Pt button_ul(static_cast<int>((x - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2.0) * m_zoom_factor), 
-                         static_cast<int>((y - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2.0) * m_zoom_factor));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul,
-                                            GG::Pt(static_cast<int>(button_ul.x + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor), 
-                                                   static_cast<int>(button_ul.y + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * m_zoom_factor)));
-    }
-
+    // translate map and UI widgets to account for the change in upper left due to zooming
     GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),
                     static_cast<int>((center_y + ul_offset_y) - ul_y));
     OffsetMove(map_move);
-    MoveBackgrounds(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
     m_chat_edit->OffsetMove(-map_move);
@@ -1113,29 +1665,41 @@ void MapWnd::Zoom(int delta)
     m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
-    MoveBackgrounds(final_move);
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
 
 void MapWnd::RenderBackgrounds()
 {
-    double x, y;
     glColor3d(1.0, 1.0, 1.0);
+
+    GG::Pt origin_offset =
+        UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+    glMatrixMode(GL_TEXTURE);
+
     for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
-        int bg_width = m_backgrounds[i]->Width();
-        int bg_height = m_backgrounds[i]->Height();
-        int app_width = GG::GUI::GetGUI()->AppWidth();
-        int app_height = GG::GUI::GetGUI()->AppHeight();
-        x = std::fmod(m_bg_position_X[i], bg_width);
-        while (x < app_width + bg_width) {
-            y = std::fmod(m_bg_position_Y[i], bg_height);
-            while (y < app_height + bg_height) {
-                m_backgrounds[i]->OrthoBlit(GG::Pt(static_cast<int>(x - bg_width), static_cast<int>(y - bg_height)));
-                y += m_backgrounds[i]->Height();
-            }
-            x += m_backgrounds[i]->Width();
-        }
+        float texture_coords_per_pixel_x = 1.0 / m_backgrounds[i]->Width();
+        float texture_coords_per_pixel_y = 1.0 / m_backgrounds[i]->Height();
+        glScalef(texture_coords_per_pixel_x * Width(),
+                 texture_coords_per_pixel_y * Height(),
+                 1.0);
+        glTranslatef(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i],
+                     -texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i],
+                     0.0);
+        glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
+        glBegin(GL_QUADS);
+        glTexCoord2f(0.0, 0.0);
+        glVertex2i(0, 0);
+        glTexCoord2f(0.0, 1.0);
+        glVertex2i(0, Height());
+        glTexCoord2f(1.0, 1.0);
+        glVertex2i(Width(), Height());
+        glTexCoord2f(1.0, 0.0);
+        glVertex2i(Width(), 0);
+        glEnd();
+        glLoadIdentity();
     }
+
+    glMatrixMode(GL_MODELVIEW);
 
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
         int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
@@ -1153,83 +1717,52 @@ void MapWnd::RenderBackgrounds()
 
 void MapWnd::RenderStarlanes()
 {
-    double LINE_SCALE = 3.0;   //std::max(1.0, 0.666 * m_zoom_factor);
-    double INNER_LINE_PORTION = 0.3;
-    double INNER_LINE_WIDTH = (LINE_SCALE / 2.0) * INNER_LINE_PORTION; // these are actually half-widths in either direction
-    double OUTER_LINE_WIDTH = (LINE_SCALE / 2.0);
-    double CENTER_ALPHA = 0.7;
-    double INNER_LINE_EDGE_ALPHA = 0.4;
-    double OUTER_LINE_EDGE_ALPHA = 0.0;
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-
-    glDisable(GL_TEXTURE_2D);
-
-    GG::Pt ul = ClientUpperLeft();
-    for (std::set<StarlaneData>::iterator it = m_starlanes.begin(); it != m_starlanes.end(); ++it) {
-        double center1[2] = {ul.x + it->Src()->X() * m_zoom_factor, ul.y + it->Src()->Y() * m_zoom_factor};
-        double center2[2] = {ul.x + it->Dst()->X() * m_zoom_factor, ul.y + it->Dst()->Y() * m_zoom_factor};
-        double lane_length = GetUniverse().LinearDistance(it->Src()->ID(), it->Dst()->ID());
-        double left_vec[2] = {-(center2[1] - center1[1]) / lane_length, (center2[0] - center1[0]) / lane_length};
-        double far_left1[2] = {center1[0] + OUTER_LINE_WIDTH * left_vec[0], center1[1] + OUTER_LINE_WIDTH * left_vec[1]};
-        double far_left2[2] = {center2[0] + OUTER_LINE_WIDTH * left_vec[0], center2[1] + OUTER_LINE_WIDTH * left_vec[1]};
-        double left1[2] = {center1[0] + INNER_LINE_WIDTH * left_vec[0], center1[1] + INNER_LINE_WIDTH * left_vec[1]};
-        double left2[2] = {center2[0] + INNER_LINE_WIDTH * left_vec[0], center2[1] + INNER_LINE_WIDTH * left_vec[1]};
-        double right1[2] = {center1[0] - INNER_LINE_WIDTH * left_vec[0], center1[1] - INNER_LINE_WIDTH * left_vec[1]};
-        double right2[2] = {center2[0] - INNER_LINE_WIDTH * left_vec[0], center2[1] - INNER_LINE_WIDTH * left_vec[1]};
-        double far_right1[2] = {center1[0] - OUTER_LINE_WIDTH * left_vec[0], center1[1] - OUTER_LINE_WIDTH * left_vec[1]};
-        double far_right2[2] = {center2[0] - OUTER_LINE_WIDTH * left_vec[0], center2[1] - OUTER_LINE_WIDTH * left_vec[1]};
-
-        GG::Clr color = GG::CLR_WHITE;
-        // if systems on both sides of starlane can be supplied, mark lane with this client's empire colour
-        // TODO: add way to mark lanes multiple colours
-        int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-        int system1 = it->Src()->ID(), system2 = it->Dst()->ID();
-        
-        std::map<int, std::map<int, int> >::const_iterator it1 = m_system_supply.find(system1);
-        std::map<int, std::map<int, int> >::const_iterator it2 = m_system_supply.find(system2);
-        std::map<int, std::map<int, int> >::const_iterator end = m_system_supply.end();
-        if (it1 != end && it2 != end) {
-            std::map<int, int>::const_iterator it1a = it1->second.find(this_client_empire_id);
-            std::map<int, int>::const_iterator it2a = it2->second.find(this_client_empire_id);
-            std::map<int, int>::const_iterator end1 = it1->second.end();
-            std::map<int, int>::const_iterator end2 = it2->second.end();
-
-            if (it1a != end1 && it2a != end2)
-                color = empire->Color();
-        }
-
-        // old version that coloured starlanes based on system ownership
-        //if (it->Src()->Owners().size() == 1 && it->Dst()->Owners().size() == 1 &&
-        //    *it->Src()->Owners().begin() == *it->Dst()->Owners().begin()) {
-        //    color = Empires().Lookup(*it->Src()->Owners().begin())->Color();
-        //}
-
-        glBegin(GL_TRIANGLE_STRIP);
-        color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(far_left2);
-        glVertex2dv(far_left1);
-        color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(left2);
-        glVertex2dv(left1);
-        color.a = static_cast<unsigned char>(255 * CENTER_ALPHA);
-        glColor(color);
-        glVertex2dv(center2);
-        glVertex2dv(center1);
-        color.a = static_cast<unsigned char>(255 * INNER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(right2);
-        glVertex2dv(right1);
-        color.a = static_cast<unsigned char>(255 * OUTER_LINE_EDGE_ALPHA);
-        glColor(color);
-        glVertex2dv(far_right2);
-        glVertex2dv(far_right1);
-        glEnd();
+    if (m_starlane_vertices.m_name) {
+        const float STARLANE_GRAY = 127.0f / 255.0f;
+        const float STARLANE_ALPHA = 0.7f;
+        const double STARLANE_WIDTH = 2.5;
+        glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
+#endif
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+        glLineWidth(STARLANE_WIDTH);
+        glLineStipple(1, 0xffff);
+        glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
     }
 
-    glEnable(GL_TEXTURE_2D);
+    if (m_starlane_supply_vertices.m_name && m_starlane_supply_colors.m_name) {
+        // render fleet supply lines
+        const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
+        const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
+        const double RATE = 0.1;            // slow crawl
+        const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+        const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+        const double LINE_SCALE = std::max(0.75, m_zoom_factor);
+        glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
+        glLineWidth(LINE_SCALE);
+        glEnableClientState(GL_COLOR_ARRAY);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+#endif
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+#endif
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+        glDrawArrays(GL_LINES, 0, m_starlane_supply_vertices.m_size);
+        glDisableClientState(GL_COLOR_ARRAY);
+    }
+
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void MapWnd::RenderFleetMovementLines()
@@ -1244,66 +1777,59 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
-    double LINE_SCALE = std::max(1.0, 1.333 * m_zoom_factor);
+    double LINE_SCALE = std::max(1.0, m_zoom_factor);
 
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
     glLineWidth(LINE_SCALE);
+    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
 
     GG::Pt ul = ClientUpperLeft();
     for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
-        if (it->first->UnknownRoute())
+        const MovementLineData& move_line = it->second;
+
+        if (move_line.Path().empty())
             continue;
 
         // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
         // when the begining of a line segment starts offscreen
         glBegin(GL_LINES);
-        glColor(it->second.color);
-        const std::list<System*>& destinations = it->second.destinations;
-        glVertex2d(ul.x + it->second.x * m_zoom_factor, ul.y + it->second.y * m_zoom_factor);
-        for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
-            if (it->first->SystemID() == (*dest_it)->ID())
-                continue;
-            glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
-            std::list<System*>::const_iterator temp_it = dest_it;
-            if (++temp_it != destinations.end())
-                glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
+        glColor(move_line.Colour());
+
+        // add starting vertex
+        std::pair<double, double> start = move_line.Start();
+        glVertex2d(start.first, start.second);
+
+        for (std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin(); path_it != move_line.Path().end(); ++path_it) {
+            // add ending vertex for previous leg of path
+            glVertex2d(path_it->x, path_it->y);
+
+            // if not done, add starting vertex for next leg of path
+            std::list<MovePathNode>::const_iterator temp_it = path_it;
+            if (++temp_it != move_line.Path().end())
+                glVertex2d(path_it->x, path_it->y);
         }
         glEnd();
     }
 
+    // render projected move path
     glLineStipple(static_cast<int>(LINE_SCALE), PROJECTED_PATH_STIPPLE);
-    if (!m_projected_fleet_lines.destinations.empty()) {
+    if (!m_projected_fleet_line.Path().empty()) {
         glBegin(GL_LINES);
-        glColor(m_projected_fleet_lines.color);
-        const std::list<System*>& destinations = m_projected_fleet_lines.destinations;
-        glVertex2d(ul.x + m_projected_fleet_lines.x * m_zoom_factor, ul.y + m_projected_fleet_lines.y * m_zoom_factor);
-        for (std::list<System*>::const_iterator dest_it = destinations.begin(); dest_it != destinations.end(); ++dest_it) {
-            glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
-            std::list<System*>::const_iterator temp_it = dest_it;
-            if (++temp_it != destinations.end())
-                glVertex2d(ul.x + (*dest_it)->X() * m_zoom_factor, ul.y + (*dest_it)->Y() * m_zoom_factor);
+        glColor(m_projected_fleet_line.Colour());
+
+        // add starting vertex
+        std::pair<double, double> start = m_projected_fleet_line.Start();
+        glVertex2d(start.first, start.second);
+
+        for (std::list<MovePathNode>::const_iterator path_it = m_projected_fleet_line.Path().begin(); path_it != m_projected_fleet_line.Path().end(); ++path_it) {
+            // add ending vertex for previous leg of path
+            glVertex2d(path_it->x, path_it->y);
+
+            // if not done, add starting vertex for next leg of path
+            std::list<MovePathNode>::const_iterator temp_it = path_it;
+            if (++temp_it != m_projected_fleet_line.Path().end())
+                glVertex2d(path_it->x, path_it->y);
         }
         glEnd();
-    }
-
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-    glEnable(GL_TEXTURE_2D);
-}
-
-void MapWnd::MoveBackgrounds(const GG::Pt& move)
-{   
-    double move_x, move_y;
-
-    for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
-        move_x = move.x * m_bg_scroll_rate[i];
-        move_y = move.y * m_bg_scroll_rate[i];
-        m_bg_position_X[i] += move_x;
-        m_bg_position_Y[i] += move_y;    
     }
 }
 
@@ -1340,7 +1866,7 @@ void MapWnd::SystemDoubleClicked(int system_id)
     if (!m_in_production_view_mode) {
         if (!m_production_wnd->Visible())
             ToggleProduction();
-        CenterOnSystem(system_id);
+        CenterOnObject(system_id);
         m_production_wnd->SelectSystem(system_id);
     }
 }
@@ -1353,7 +1879,7 @@ void MapWnd::SystemLeftClicked(int system_id)
 
 void MapWnd::SystemRightClicked(int system_id)
 {
-    if (!m_in_production_view_mode && m_active_fleet_wnd) {
+    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
             SetProjectedFleetMovement(0, std::list<System*>()) ;
         else
@@ -1364,8 +1890,8 @@ void MapWnd::SystemRightClicked(int system_id)
 
 void MapWnd::MouseEnteringSystem(int system_id)
 {
-    if (!m_in_production_view_mode && m_active_fleet_wnd) {
-        PlotFleetMovement(system_id, false);        
+    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
+        PlotFleetMovement(system_id, false);
     }
     SystemBrowsedSignal(system_id);
 }
@@ -1377,16 +1903,19 @@ void MapWnd::MouseLeavingSystem(int system_id)
 
 void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 {
-    if (!m_active_fleet_wnd) return;
+    if (!FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
+        return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::set<Fleet*> fleets = m_active_fleet_wnd->SelectedFleets();
+    std::set<Fleet*> fleets = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleets();
 
+    // apply to all this-player-owned fleets in currently-active FleetWnd
     for (std::set<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
         Fleet* fleet = *it;
         // only give orders / plot prospective move paths of fleets owned by player
-        if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips())) continue;
+        if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips()))
+            continue;
 
         // plot empty move pathes if destination is not a known system
         if (system_id == UniverseObject::INVALID_OBJECT_ID) {
@@ -1412,7 +1941,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()) {
-            HumanClientApp::GetApp()->Orders().IssueOrder(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id));
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id)));
             if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
                 SetFleetMovement(fleet);
         }
@@ -1430,27 +1959,15 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
     if (btn_fleets.empty())
         throw std::runtime_error("caught clicked signal for empty fleet button");
 
-    bool multiple_fleet_windows = GetOptionsDB().Get<bool>("UI.multiple-fleet-windows");
-
     Fleet* fleet = btn_fleets[0];
 
     System* system = fleet->GetSystem();
     int owner = *(fleet->Owners().begin());
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open
-    FleetWnd* wnd_for_button = 0;
-    for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it) {
-        if ((*it)->ContainsFleet(fleet->ID())) {
-            wnd_for_button = *it;
-            break;
-        }
-    }
+    FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(fleet);
 
     if (!wnd_for_button) {
-        // there was no preexisting open FleetWnd for this button's fleets
-        if (!multiple_fleet_windows)
-            CloseAllFleetWnds();
-
         // get all fleets at this location.  may be in a system, in which case fleets are separated into
         // departing or stationary; or may be away from any system, moving
         std::vector<Fleet*> fleets;
@@ -1470,10 +1987,7 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         if (owner != HumanClientApp::GetApp()->EmpireID() || !system)
             read_only = true;
 
-        wnd_for_button = new FleetWnd(0, 0, fleets, 0, read_only);
-        m_fleet_wnds.insert(wnd_for_button);
-
-        GG::Connect(wnd_for_button->ClosingSignal, &MapWnd::FleetWndClosing, this);
+        wnd_for_button = FleetUIManager::GetFleetUIManager().NewFleetWnd(fleets, 0, read_only);
 
         // position new FleetWnd.  default to last user-set position...
         GG::Pt wnd_position = FleetWnd::LastPosition();
@@ -1488,14 +2002,12 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
             wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, 0));
         if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
             wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
-
-        GG::GUI::GetGUI()->Register(wnd_for_button);
      }
 
 
     // if active fleet wnd hasn't changed, cycle through fleets
-    if (m_active_fleet_wnd == wnd_for_button) {
-        std::set<Fleet*> selected_fleets = m_active_fleet_wnd->SelectedFleets();
+    if (FleetUIManager::GetFleetUIManager().ActiveFleetWnd() == wnd_for_button) {
+        std::set<Fleet*> selected_fleets = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleets();
 
         const UniverseObject* selected_fleet = 0;
 
@@ -1526,11 +2038,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
                 if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
                     // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
 
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
                 }
             } else {
                 // are assured there is at least one stationary fleet
@@ -1544,11 +2056,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
                 if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
                     // it wasn't found, or it was found at the end, so select the first stationary fleet
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
                 }
             }
         } else {
@@ -1564,29 +2076,24 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
             if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
                 // it wasn't found, or it was found at the end, so select the first moving fleet
-                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
             } else {
                 // it was found, and wasn't at the end, so select the next fleet after it
                 ++it;
-                m_active_fleet_wnd->SelectFleet(dynamic_cast<Fleet*>(*it));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
             }
         }
     } else {
-        // make FleetWnd for clicked button the selected fleet wnd
-        m_active_fleet_wnd = wnd_for_button;
+        FleetUIManager::GetFleetUIManager().SetActiveFleetWnd(wnd_for_button);
     }
 
 }
 
-void MapWnd::FleetWndClosing(FleetWnd* fleet_wnd)
+void MapWnd::HandleEmpireElimination(int empire_id)
 {
-    m_fleet_wnds.erase(fleet_wnd);
-    if (fleet_wnd == m_active_fleet_wnd) {
-        if (m_fleet_wnds.empty())
-            m_active_fleet_wnd = 0;
-        else
-            m_active_fleet_wnd = *(m_fleet_wnds.begin());
-    }
+    m_empire_system_fleet_supply.erase(empire_id);
+    m_empire_resource_sharing_groups.erase(empire_id);
+    m_empire_resource_sharing_lanes.erase(empire_id);
 }
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
@@ -1594,9 +2101,8 @@ void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 
 void MapWnd::RegisterPopup( MapWndPopup* popup )
 {
-    if (popup) {
+    if (popup)
         m_popups.push_back(popup);
-    }
 }
 
 void MapWnd::RemovePopup( MapWndPopup* popup )
@@ -1614,6 +2120,7 @@ void MapWnd::Cleanup()
     RemoveAccelerators();
     m_research_wnd->Hide();
     m_production_wnd->Hide();
+    m_design_wnd->Hide();
     m_in_production_view_mode = false;
     m_toolbar->Hide();
     m_FPS->Hide();
@@ -1632,6 +2139,7 @@ void MapWnd::Sanitize()
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
+    m_design_wnd->Sanitize();
     m_previously_selected_system = UniverseObject::INVALID_OBJECT_ID;
 }
 
@@ -1642,6 +2150,11 @@ bool MapWnd::ReturnToMap()
     if (m_research_wnd->Visible()) {
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
+    }
+    if (m_design_wnd->Visible()) {
+        m_design_wnd->Hide();
+        HumanClientApp::GetApp()->MoveDown(m_design_wnd);
+        EnableAlphaNumAccels();
     }
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
@@ -1679,7 +2192,7 @@ bool MapWnd::EndTurn()
 
 bool MapWnd::ToggleSitRep()
 {
-    m_projected_fleet_lines = MovementLineData();
+    m_projected_fleet_line = MovementLineData();
     if (m_sitrep_panel->Visible()) {
         DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
@@ -1687,6 +2200,11 @@ bool MapWnd::ToggleSitRep()
         // hide other "competing" windows
         m_research_wnd->Hide();
         HumanClientApp::GetApp()->MoveDown(m_research_wnd);
+        if (m_design_wnd->Visible()) {
+            m_design_wnd->Hide();
+            HumanClientApp::GetApp()->MoveDown(m_design_wnd);
+            EnableAlphaNumAccels();
+        }
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
@@ -1706,12 +2224,16 @@ bool MapWnd::ToggleSitRep()
 
 bool MapWnd::ToggleResearch()
 {
-    m_projected_fleet_lines = MovementLineData();
+    m_projected_fleet_line = MovementLineData();
     if (m_research_wnd->Visible()) {
         m_research_wnd->Hide();
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
+        if (m_design_wnd->Visible()) {
+            m_design_wnd->Hide();
+            EnableAlphaNumAccels();
+        }
         m_production_wnd->Hide();
         if (m_in_production_view_mode) {
             m_in_production_view_mode = false;
@@ -1730,7 +2252,7 @@ bool MapWnd::ToggleResearch()
 
 bool MapWnd::ToggleProduction()
 {
-    m_projected_fleet_lines = MovementLineData();
+    m_projected_fleet_line = MovementLineData();
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
@@ -1742,6 +2264,10 @@ bool MapWnd::ToggleProduction()
         m_sitrep_panel->Hide();
         DetachChild(m_sitrep_panel);
         m_research_wnd->Hide();
+        if (m_design_wnd->Visible()) {
+            m_design_wnd->Hide();
+            EnableAlphaNumAccels();
+        }
 
         // show the production window
         m_production_wnd->Show();
@@ -1758,10 +2284,38 @@ bool MapWnd::ToggleProduction()
     return true;
 }
 
+bool MapWnd::ToggleDesign()
+{
+    m_projected_fleet_line = MovementLineData();
+    if (m_design_wnd->Visible()) {
+        m_design_wnd->Hide();
+        EnableAlphaNumAccels();
+    } else {
+        // hide other "competing" windows
+        m_sitrep_panel->Hide();
+        m_research_wnd->Hide();
+        m_production_wnd->Hide();
+        if (m_in_production_view_mode) {
+            m_in_production_view_mode = false;
+            ShowAllPopups();
+            if (!m_side_panel->Visible())
+                m_side_panel->SetSystem(m_side_panel->SystemID());
+        }
+
+        // show the design window
+        m_design_wnd->Show();
+        GG::GUI::GetGUI()->MoveUp(m_design_wnd);
+        GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
+        DisableAlphaNumAccels();
+        m_design_wnd->Reset();
+    }
+    return true;
+}
+
 bool MapWnd::ShowMenu()
 {
     if (!m_menu_showing) {
-        m_projected_fleet_lines = MovementLineData();
+        m_projected_fleet_line = MovementLineData();
         m_menu_showing = true;
         InGameMenu menu;
         menu.Run();
@@ -1792,34 +2346,34 @@ bool MapWnd::KeyboardZoomOut()
 void MapWnd::RefreshFoodResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
-    m_food->SetValue(empire->GetFoodResPool().Stockpile()); // set first value to stockpiled food
 
-    double production = empire->GetFoodResPool().Production();
+    m_food->SetValue(empire->ResourceStockpile(RE_FOOD)); // set first value to stockpiled food
+
+    double production = empire->ResourceProduction(RE_FOOD);
     double spent = empire->TotalFoodDistributed();
-    
+
     m_food->SetValue(production - spent, 1);    // set second (bracketed) value to predicted stockpile change
 }
 
 void MapWnd::RefreshMineralsResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
-    m_mineral->SetValue(empire->GetMineralResPool().Stockpile());
 
-    double production = empire->GetMineralResPool().Production();
+    m_mineral->SetValue(empire->ResourceStockpile(RE_MINERALS));
+
+    double production = empire->ResourceProduction(RE_MINERALS);
     double spent = empire->GetProductionQueue().TotalPPsSpent();
-    
+
     m_mineral->SetValue(production - spent, 1);
 }
 
 void MapWnd::RefreshTradeResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    
-    m_trade->SetValue(empire->GetTradeResPool().Stockpile());
 
-    double production = empire->GetTradeResPool().Production();
+    m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
+
+    double production = empire->ResourceProduction(RE_TRADE);
     double spent = empire->TotalTradeSpending();
 
     m_trade->SetValue(production - spent, 1);
@@ -1828,13 +2382,13 @@ void MapWnd::RefreshTradeResourceIndicator()
 void MapWnd::RefreshResearchResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    m_research->SetValue(empire->GetResearchResPool().Production());
+    m_research->SetValue(empire->ResourceProduction(RE_RESEARCH));
 }
 
 void MapWnd::RefreshIndustryResourceIndicator()
 {
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
-    m_industry->SetValue(empire->GetIndustryResPool().Production());
+    m_industry->SetValue(empire->ResourceProduction(RE_INDUSTRY));
 }
 
 void MapWnd::RefreshPopulationIndicator()
@@ -1852,7 +2406,35 @@ void MapWnd::UpdateMetersAndResourcePools()
 
 void MapWnd::UpdateMeterEstimates()
 {
+    // add this player ownership to all planets that the player can see but which aren't currently colonized.
+    // this way, any effects the player knows about that would act on those planets if the player colonized them
+    // include those planets in their scope.  This lets effects from techs the player knows alter the max
+    // population of planet that is displayed to the player, even if those effects have a condition that causes
+    // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
+    // tech that should only benefit him/herself)
+    
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+
+    // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
+    // the current player's ownership to all, while remembering which planets this is done to
+    std::vector<Planet*> unowned_planets;
+    std::vector<Planet*> all_planets = HumanClientApp::GetApp()->GetUniverse().FindObjects<Planet>();
+    Universe::InhibitUniverseObjectSignals(true);
+    for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
+         Planet* planet = *it;
+         if (planet->Owners().empty()) {
+             unowned_planets.push_back(planet);
+             planet->AddOwner(player_id);
+         }
+    }
+
+    // update meter estimates with temporary ownership
     GetUniverse().UpdateMeterEstimates();
+
+    // remove temporary ownership added above
+    for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
+        (*it)->RemoveOwner(player_id);
+    Universe::InhibitUniverseObjectSignals(false);
 }
 
 void MapWnd::UpdateEmpireResourcePools()
@@ -1861,7 +2443,7 @@ void MapWnd::UpdateEmpireResourcePools()
     /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
        update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which
        updates the empire resource pool indicators of the MapWnd. */
-    empire->UpdateResourcePool();
+    empire->UpdateResourcePools();
 
     // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
     m_side_panel->Refresh();
@@ -1874,7 +2456,7 @@ bool MapWnd::ZoomToHomeSystem()
     if (id != UniverseObject::INVALID_OBJECT_ID) {
         UniverseObject *object = GetUniverse().Object(id);
         if (!object) return false;
-        CenterOnSystem(object->SystemID());
+        CenterOnObject(object->SystemID());
         SelectSystem(object->SystemID());
     }
 
@@ -1893,7 +2475,7 @@ bool MapWnd::ZoomToPrevOwnedSystem()
     }
 
     if (m_current_owned_system != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnSystem(m_current_owned_system);
+        CenterOnObject(m_current_owned_system);
         SelectSystem(m_current_owned_system);
     }
 
@@ -1914,7 +2496,7 @@ bool MapWnd::ZoomToNextOwnedSystem()
     }
 
     if (m_current_owned_system != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnSystem(m_current_owned_system);
+        CenterOnObject(m_current_owned_system);
         SelectSystem(m_current_owned_system);
     }
 
@@ -1932,7 +2514,7 @@ bool MapWnd::ZoomToPrevIdleFleet()
     }
 
     if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnFleet(m_current_fleet);
+        CenterOnObject(m_current_fleet);
         SelectFleet(m_current_fleet);
     }
 
@@ -1952,7 +2534,7 @@ bool MapWnd::ZoomToNextIdleFleet()
     }
 
     if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnFleet(m_current_fleet);
+        CenterOnObject(m_current_fleet);
         SelectFleet(m_current_fleet);
     }
 
@@ -1970,7 +2552,7 @@ bool MapWnd::ZoomToPrevFleet()
     }
 
     if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnFleet(m_current_fleet);
+        CenterOnObject(m_current_fleet);
         SelectFleet(m_current_fleet);
     }
 
@@ -1990,7 +2572,7 @@ bool MapWnd::ZoomToNextFleet()
     }
 
     if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnFleet(m_current_fleet);
+        CenterOnObject(m_current_fleet);
         SelectFleet(m_current_fleet);
     }
 
@@ -2073,13 +2655,6 @@ void MapWnd::RemoveAccelerators()
 #endif
 }
 
-/* Disables keyboard accelerators that use an alphanumeric key
-   without modifiers. This is useful if a keyboard input is required,
-   so that the keys aren't interpreted as an accelerator.
-   @note Repeated calls of DisableAlphaNumAccels have to be followed by the
-   same number of calls to EnableAlphaNumAccels to re-enable the
-   accelerators.
-*/
 void MapWnd::DisableAlphaNumAccels()
 {
     for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
@@ -2098,7 +2673,6 @@ void MapWnd::DisableAlphaNumAccels()
     }
 }
 
-// Re-enable accelerators disabled by DisableAlphaNumAccels
 void MapWnd::EnableAlphaNumAccels()
 {
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();

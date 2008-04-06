@@ -63,11 +63,11 @@ public:
     void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
-    boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix);
+    boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
 
     /** Loads texture \a n % N from the set of files starting with \a prefix in directory \a dir, where N is the number
         of files found in \a dir with prefix \a prefix. */
-    boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n);
+    boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap = false);
     //!@}
     
     static ClientUI*    GetClientUI();   //!< returns a pointer to the singleton ClientUI class
@@ -143,6 +143,10 @@ public:
                         SpecialTexture(const std::string& special_name);
     static boost::shared_ptr<GG::Texture>
                         MeterIcon(MeterType meter_type);
+    static boost::shared_ptr<GG::Texture>
+                        PartTexture(const std::string& part_name);
+    static boost::shared_ptr<GG::Texture>
+                        HullTexture(const std::string& hull_name);
 
     // research screen
     static GG::Clr      KnownTechFillColor();
@@ -163,7 +167,7 @@ public:
 private:
     typedef std::pair<std::vector<boost::shared_ptr<GG::Texture> >, boost::shared_ptr<SmallIntDistType> > TexturesAndDist;
     typedef std::map<std::string, TexturesAndDist> PrefixedTextures;
-    TexturesAndDist PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix);
+    TexturesAndDist PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap);
 
     MapWnd*           m_map_wnd;           //!< the galaxy map
 

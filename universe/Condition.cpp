@@ -1122,14 +1122,8 @@ bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const 
     if (target->Owners().size() != 1)
         return false;
     Empire* empire = Empires().Lookup(*target->Owners().begin());
-    if (m_stockpile == RE_FOOD) {
-        double stockpile = empire->GetFoodResPool().Stockpile();
-        return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
-    } else if (m_stockpile == RE_MINERALS) {
-        double stockpile = empire->GetMineralResPool().Stockpile();
-        return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
-    } else if (m_stockpile == RE_TRADE) {
-        double stockpile = empire->GetTradeResPool().Stockpile();
+    if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
+        double stockpile = empire->ResourceStockpile(m_stockpile);
         return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
     }
     return false;

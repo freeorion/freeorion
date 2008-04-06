@@ -12,14 +12,9 @@ public:
     ~PythonAI();
     //@}
 
-    void GenerateOrders();
-    void HandleChatMessage(int sender_id, const std::string& msg);
-
-private:
-    typedef boost::python::handle<PyObject>     PyHANDLE;
-    typedef boost::python::object               PyOBJECT;
-    typedef boost::python::error_already_set    PyERROR;
-
-    PyOBJECT main_module;
-    PyOBJECT dict;
+    virtual void                GenerateOrders();
+    virtual void                HandleChatMessage(int sender_id, const std::string& msg);
+    virtual void                StartNewGame();
+    virtual void                ResumeLoadedGame(const std::string& save_state_string);
+    virtual const std::string&  GetSaveStateString();
 };

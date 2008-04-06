@@ -514,7 +514,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     drop_list->SetStyle(GG::LIST_NOSORT);
     std::set<std::string> filenames;
     fs::directory_iterator end_it;
-    for (fs::directory_iterator it(fs::initial_path()); it != end_it; ++it) {
+    for (fs::directory_iterator it(GetSettingsDir()); it != end_it; ++it) {
         try {
             if (fs::exists(*it)) {
                 std::string filename = it->leaf();
@@ -581,7 +581,7 @@ void OptionsWnd::ResolutionOption()
     // create controls
     GG::ListBox::Row* row = new GG::ListBox::Row();
     const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
-    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
+    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
     GG::TextControl* drop_list_text_control = new GG::TextControl(0, 0, UserString("OPTIONS_VIDEO_MODE"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 1, 0, LAYOUT_MARGIN);
@@ -675,6 +675,7 @@ void OptionsWnd::Init()
     SoundFileOption("UI.sound.button-rollover", UserString("OPTIONS_SOUND_ROLLOVER"));
     SoundFileOption("UI.sound.fleet-button-click", UserString("OPTIONS_SOUND_FLEET_CLICK"));
     SoundFileOption("UI.sound.fleet-button-rollover", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption("UI.sound.system-icon-rollover", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
     SoundFileOption("UI.sound.turn-button-click", UserString("OPTIONS_SOUND_TURN"));
     SoundFileOption("UI.sound.planet-button-click", UserString("OPTIONS_SOUND_PLANET"));
     EndSection();

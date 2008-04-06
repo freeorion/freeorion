@@ -25,30 +25,20 @@ namespace {
 // SystemIcon::FleetButton
 ////////////////////////////////////////////////
 
-FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs, double zoom) : 
+FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs) : 
     Button(0, 0, 1, 1, "", boost::shared_ptr<GG::Font>(), color),
-    m_orientation()
+    m_orientation(SHAPE_RIGHT)
 {
     Universe& universe = GetUniverse();
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {
         Fleet* fleet = universe.Object<Fleet>(fleet_IDs[i]);
         m_fleets.push_back(fleet);
     }
-    Fleet* fleet = m_fleets.back();
-    double x = fleet->X();
-    double y = fleet->Y();
-    GG::Pt button_ul(static_cast<int>((x - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * zoom), 
-                     static_cast<int>((y - ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() / 2) * zoom));
-    SizeMove(GG::Pt(button_ul.x, button_ul.y),
-             GG::Pt(static_cast<int>(button_ul.x + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * zoom + 0.5), 
-                    static_cast<int>(button_ul.y + ClientUI::SystemIconSize() * ClientUI::FleetButtonSize() * zoom + 0.5)));
-
-    m_orientation = GetUniverse().Object<System>(fleet->NextSystemID())->X() - fleet->X() < 0 ? SHAPE_LEFT : SHAPE_RIGHT;
 }
 
-FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs, ShapeOrientation orientation) : 
+FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs) :
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color),
-    m_orientation(orientation)
+    m_orientation(SHAPE_RIGHT)
 {
     Universe& universe = GetUniverse();
     for (unsigned int i = 0; i < fleet_IDs.size(); ++i) {

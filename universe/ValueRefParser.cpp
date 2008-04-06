@@ -70,7 +70,8 @@ namespace {
 
         variable_container =
             str_p("planet")
-            | "system";
+            | "system"
+            | "fleet";
 
         SpecializedVarDefinition();
 
@@ -136,7 +137,18 @@ namespace {
             | "maxhealth"
             | "currentpopulation"
             | "maxpopulation"
-            | "tradestockpile"
+            | "maxfuel"
+            | "currentfuel"
+            | "maxsupply"
+            | "currentsupply"
+            | "maxstealth"
+            | "currentstealth"
+            | "maxdetection"
+            | "currentdetection"
+            | "maxshield"
+            | "currentshield"
+            | "maxdefense"
+            | "currentdefense"
             | "mineralstockpile"
             | "foodstockpile"
             | "tradeproduction"

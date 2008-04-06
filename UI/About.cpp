@@ -41,7 +41,7 @@ About::About():
     AttachChild(layout);
 
     // Read in the copyright info from a file
-    boost::filesystem::ifstream fin(GetGlobalDir() / "default" / "COPYING");
+    boost::filesystem::ifstream fin(GetGlobalDir() / "default" / "COPYING");    // this is not GetSettingsDir() / "COPYING" because if a mod or scenario is loaded that changes the settings directory, the copyright notice should be unchanged
     if (!fin.is_open()) return;
     std::string temp_str;
     while (!fin.eof())

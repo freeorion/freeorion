@@ -11,18 +11,21 @@ const Skip skip_p;
 const function<push_back_impl> push_back_ = push_back_impl();
 const function<insert_impl> insert_ = insert_impl();
 
-rule<Scanner, NameClosure::context_t> name_p;
-rule<Scanner, NameClosure::context_t> file_name_p;
+rule<Scanner, NameClosure::context_t>   name_p;
+rule<Scanner, NameClosure::context_t>   file_name_p;
+rule<Scanner, ColourClosure::context_t> colour_p;
 
-symbols<PlanetSize> planet_size_p;
-symbols<PlanetType> planet_type_p;
-symbols<PlanetEnvironment> planet_environment_type_p;
-symbols<UniverseObjectType> universe_object_type_p;
-symbols<StarType> star_type_p;
-symbols<FocusType> focus_type_p;
-symbols<EmpireAffiliationType> affiliation_type_p;
-symbols<UnlockableItemType> unlockable_item_type_p;
-symbols<TechType> tech_type_p;
+symbols<PlanetSize>             planet_size_p;
+symbols<PlanetType>             planet_type_p;
+symbols<PlanetEnvironment>      planet_environment_type_p;
+symbols<UniverseObjectType>     universe_object_type_p;
+symbols<StarType>               star_type_p;
+symbols<FocusType>              focus_type_p;
+symbols<EmpireAffiliationType>  affiliation_type_p;
+symbols<UnlockableItemType>     unlockable_item_type_p;
+symbols<TechType>               tech_type_p;
+symbols<ShipPartClass>          part_class_p;
+symbols<ShipSlotType>           slot_type_p;
 
 namespace {
     bool Init()
@@ -31,7 +34,14 @@ namespace {
             lexeme_d['"' >> (*(alnum_p | '_'))[name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
 
         file_name_p =
-            lexeme_d['"' >> (*(alnum_p | '_' | '-'  | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
+            lexeme_d['"' >> (*(alnum_p | '_' | '-' | '/' | '.'))[file_name_p.this_ = construct_<std::string>(arg1, arg2)] >> '"'];
+
+        colour_p =
+            ('(' >> limit_d(0u, 255u)[uint_p[colour_p.r = arg1]] >> ','
+                 >> limit_d(0u, 255u)[uint_p[colour_p.g = arg1]] >> ','
+                 >> limit_d(0u, 255u)[uint_p[colour_p.b = arg1]] >> ','
+                 >> limit_d(0u, 255u)[uint_p[colour_p.a = arg1]] >> ')')
+            [colour_p.this_ = construct_<GG::Clr>(colour_p.r, colour_p.g, colour_p.b, colour_p.a)];
 
         planet_size_p.add
             ("tiny", SZ_TINY)
@@ -52,16 +62,15 @@ namespace {
             ("desert", PT_DESERT)
             ("terran", PT_TERRAN)
             ("ocean", PT_OCEAN)
-            ("gaia", PT_GAIA)
             ("asteroids", PT_ASTEROIDS)
             ("gasgiant", PT_GASGIANT);
 
         planet_environment_type_p.add
             ("uninhabitable", PE_UNINHABITABLE)
-            ("terrible", PE_TERRIBLE)
+            ("hostile", PE_HOSTILE)
+            ("poor", PE_POOR)
             ("adequate", PE_ADEQUATE)
-            ("superb", PE_SUPERB)
-            ("optimal", PE_OPTIMAL);
+            ("good", PE_GOOD);
 
         universe_object_type_p.add
             ("building", OBJ_BUILDING)
@@ -82,27 +91,44 @@ namespace {
             ("blackhole", STAR_BLACK);
 
         focus_type_p.add
-            ("unknown", FOCUS_UNKNOWN)
-            ("balanced", FOCUS_BALANCED)
-            ("farming", FOCUS_FARMING)
-            ("industry", FOCUS_INDUSTRY)
-            ("mining", FOCUS_MINING)
-            ("research", FOCUS_RESEARCH)
-            ("trade", FOCUS_TRADE);
+            ("unknown",     FOCUS_UNKNOWN)
+            ("balanced",    FOCUS_BALANCED)
+            ("farming",     FOCUS_FARMING)
+            ("industry",    FOCUS_INDUSTRY)
+            ("mining",      FOCUS_MINING)
+            ("research",    FOCUS_RESEARCH)
+            ("trade",       FOCUS_TRADE);
 
         affiliation_type_p.add
-            ("theempire", AFFIL_SELF)
-            ("enemyof", AFFIL_ENEMY)
-            ("allyof", AFFIL_ALLY);
+            ("theempire",   AFFIL_SELF)
+            ("enemyof",     AFFIL_ENEMY)
+            ("allyof",      AFFIL_ALLY);
 
         unlockable_item_type_p.add
-            ("building", UIT_BUILDING)
-            ("shipcomponent", UIT_SHIP_COMPONENT);
+            ("building",    UIT_BUILDING)
+            ("shippart",    UIT_SHIP_PART)
+            ("shiphull",    UIT_SHIP_HULL);
 
         tech_type_p.add
-            ("theory", TT_THEORY)
+            ("theory",      TT_THEORY)
             ("application", TT_APPLICATION)
-            ("refinement", TT_REFINEMENT);
+            ("refinement",  TT_REFINEMENT);
+
+        part_class_p.add
+            ("shortrange",      PC_SHORT_RANGE)
+            ("missiles",        PC_MISSILES)
+            ("fighters",        PC_FIGHTERS)
+            ("pointdefense",    PC_POINT_DEFENSE)
+            ("shield",          PC_SHIELD)
+            ("armour",          PC_ARMOUR)
+            ("detection",       PC_DETECTION)
+            ("stealth",         PC_STEALTH)
+            ("fuel",            PC_FUEL)
+            ("colony",          PC_COLONY);
+
+        slot_type_p.add
+            ("external",    SL_EXTERNAL)
+            ("internal",    SL_INTERNAL);
 
         return true;
     }

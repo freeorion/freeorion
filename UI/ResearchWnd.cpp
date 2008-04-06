@@ -12,7 +12,9 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
+
 #include <cmath>
 
 namespace {
@@ -42,29 +44,36 @@ namespace {
         {
             AllowDropType("RESEARCH_QUEUE_ROW");
         }
-        // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
-        // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
-        // updating everything on drops anyway.
-        virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+
+        virtual void DropsAcceptable(DropsAcceptableIter first,
+                                     DropsAcceptableIter last,
+                                     const GG::Pt& pt) const
+        {
+            assert(std::distance(first, last) == 1);
+            for (DropsAcceptableIter it = first; it != last; ++it) {
+                it->second = AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
+            }
+        }
+
+        virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
         {
             assert(wnds.size() == 1);
-            if (AllowedDropTypes().find((*wnds.begin())->DragDropDataType()) != AllowedDropTypes().end()) {
-                GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
-                int original_row_idx = -1;
-                for (int i = 0; i < NumRows(); ++i) {
-                    if (&GetRow(i) == row) {
-                        original_row_idx = i;
-                        break;
-                    }
+            GG::ListBox::Row* row =
+                boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
+            int original_row_idx = -1;
+            for (int i = 0; i < NumRows(); ++i) {
+                if (&GetRow(i) == row) {
+                    original_row_idx = i;
+                    break;
                 }
-                assert(original_row_idx != -1);
-                int row_idx = RowUnderPt(pt);
-                if (row_idx < 0 || row_idx > NumRows())
-                    row_idx = NumRows();
-                m_research_wnd->QueueItemMoved(row_idx, row);
             }
-            wnds.clear();
+            assert(original_row_idx != -1);
+            int row_idx = RowUnderPt(pt);
+            if (row_idx < 0 || row_idx > NumRows())
+                row_idx = NumRows();
+            m_research_wnd->QueueItemMoved(row_idx, row);
         }
+
         virtual void Render()
         {
             ListBox::Render();
@@ -291,7 +300,7 @@ void ResearchWnd::CenterOnTech(const std::string& tech_name)
 
 void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx)));
     UpdateQueue();
     ResetInfoPanel();
 }
@@ -347,7 +356,7 @@ void ResearchWnd::ResetInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
-    double RPs = empire->GetResearchResPool().Production();
+    double RPs = empire->ResourceProduction(RE_RESEARCH);
     double total_queue_cost = queue.TotalRPsSpent();
     ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
     double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
@@ -366,7 +375,7 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
     if (!queue.InQueue(tech)) {
-        HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
         UpdateQueue();
         ResetInfoPanel();
         m_tech_tree_wnd->Update();
@@ -382,7 +391,7 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
     for (std::vector<const Tech*>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
         const Tech* tech = *it;
         if (!queue.InQueue(tech))
-            orders.IssueOrder(new ResearchQueueOrder(id, tech->Name(), -1));
+            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(id, tech->Name(), -1)));
     }
     
     UpdateQueue();
@@ -392,7 +401,7 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
 
 void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name()));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name())));
     UpdateQueue();
     ResetInfoPanel();
     m_tech_tree_wnd->Update();

@@ -48,10 +48,10 @@ void ReferenceAI::GenerateOrders()
         const ShipDesign *design = ship->Design();
         
         // give orders according to type of ship in fleet
-        if (design->name == "Scout") {
+        if (design->Name() == "Scout") {
             Explore(fleet);
 
-        } else if (design->name == "Colony Ship") {
+        } else if (design->Name() == "Colony Ship") {
             ColonizeSomewhere(fleet);
 
         }

@@ -10,8 +10,13 @@
 
 class Empire;
 
-
-/** a production center decoration for a UniverseObject. */
+/** The ResourceCenter class is an abstract base class for anything in the FreeOrion gamestate that generates
+ *  resources (food, minerals, etc.).  Most likely, such an object will also be a subclass of UniverseObject.
+ *  
+ *  Planet is the most obvious class to inherit ResourceCenter, but other classes could be made from it as well
+ *  (e.g., a trade-ship or mining vessel, or a non-Planet UniverseObject- and PopCenter- derived object of some 
+ *  sort.
+ */
 class ResourceCenter
 {
 public:
@@ -26,8 +31,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    FocusType      PrimaryFocus() const     {return m_primary;}
-    FocusType      SecondaryFocus() const   {return m_secondary;}
+    FocusType       PrimaryFocus() const     {return m_primary;}
+    FocusType       SecondaryFocus() const   {return m_secondary;}
 
     virtual double  ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
     virtual double  MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value)
@@ -37,14 +42,14 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void     SetPrimaryFocus(FocusType focus);
-    void     SetSecondaryFocus(FocusType focus);
+    void            SetPrimaryFocus(FocusType focus);
+    void            SetSecondaryFocus(FocusType focus);
 
-    virtual void ApplyUniverseTableMaxMeterAdjustments();
-    virtual void PopGrowthProductionResearchPhase();
+    virtual void    ApplyUniverseTableMaxMeterAdjustments();
+    virtual void    PopGrowthProductionResearchPhase();
 
     /// Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
-    void Reset();
+    void            Reset();
     //@}
 
 protected:

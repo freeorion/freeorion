@@ -12,7 +12,9 @@
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
+
 #include <cmath>
 
 
@@ -41,29 +43,36 @@ namespace {
             m_production_wnd(production_wnd),
             m_drop_point(-1)
         {}
-        // HACK!  This is sort of a dirty trick, but we return false here in all cases, even when we accept the dropped
-        // item.  This keeps things simpler than if we handled ListBox::DroppedRow signals, since we are explicitly
-        // updating everything on drops anyway.
-        virtual void AcceptDrops(std::list<Wnd*>& wnds, const GG::Pt& pt)
+
+        virtual void DropsAcceptable(DropsAcceptableIter first,
+                                     DropsAcceptableIter last,
+                                     const GG::Pt& pt) const
+        {
+            assert(std::distance(first, last) == 1);
+            for (DropsAcceptableIter it = first; it != last; ++it) {
+                it->second = it->first->DragDropDataType() == "PRODUCTION_QUEUE_ROW";
+            }
+        }
+
+        virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
         {
             assert(wnds.size() == 1);
-            if ((*wnds.begin())->DragDropDataType() == "PRODUCTION_QUEUE_ROW") {
-                GG::ListBox::Row* row = static_cast<GG::ListBox::Row*>(*wnds.begin());
-                int original_row_idx = -1;
-                for (int i = 0; i < NumRows(); ++i) {
-                    if (&GetRow(i) == row) {
-                        original_row_idx = i;
-                        break;
-                    }
+            assert((*wnds.begin())->DragDropDataType() == "PRODUCTION_QUEUE_ROW");
+            GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
+            int original_row_idx = -1;
+            for (int i = 0; i < NumRows(); ++i) {
+                if (&GetRow(i) == row) {
+                    original_row_idx = i;
+                    break;
                 }
-                assert(original_row_idx != -1);
-                int row_idx = RowUnderPt(pt);
-                if (row_idx < 0 || row_idx > NumRows())
-                    row_idx = NumRows();
-                m_production_wnd->QueueItemMoved(row_idx, row);
             }
-            wnds.clear();
+            assert(original_row_idx != -1);
+            int row_idx = RowUnderPt(pt);
+            if (row_idx < 0 || row_idx > NumRows())
+                row_idx = NumRows();
+            m_production_wnd->QueueItemMoved(row_idx, row);
         }
+
         virtual void Render()
         {
             ListBox::Render();
@@ -142,7 +151,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, build, turn_cost, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueBuildPanel(w, build, build.spending, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
         Resize(panel->Size());
         push_back(panel);
 
@@ -152,7 +161,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn) :
+    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(0, 0, w, 10, GG::Flags<GG::WndFlag>()),
         m_build(build),
         m_in_progress(build.spending),
@@ -186,7 +195,7 @@ namespace {
             name_text = UserString(build.item.name);
         } else if (build.item.build_type == BT_SHIP) {
             graphic = ClientUI::ShipIcon(build.item.design_id);
-            name_text = GetShipDesign(build.item.design_id)->name;
+            name_text = GetShipDesign(build.item.design_id)->Name();
         } else if (build.item.build_type == BT_ORBITAL) {
             graphic = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "base1.png"); // this is a kludge for v0.3 only
             name_text = UserString(build.item.name);
@@ -218,7 +227,7 @@ namespace {
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
-        
+
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, turns, turns_completed, 
                                                   partially_complete_turn, ClientUI::TechWndProgressBar(),
                                                   ClientUI::TechWndProgressBarBackground(), clr);
@@ -226,12 +235,12 @@ namespace {
 
         top += m_progress_bar->Height() + MARGIN;
 
-        std::string turns_cost_text = str(format(UserString("PRODUCTION_TURN_COST_STR")) % turn_cost % turns);
+        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % turn_spending);
         m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
-                                                   turns_cost_text, font, clr, GG::FORMAT_LEFT);
+                                                   turn_spending_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
-        
+
 
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
@@ -395,7 +404,7 @@ void ProductionWnd::SelectSystem(int system)
 
 void ProductionWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), static_cast<QueueRow*>(row)->queue_index, row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), boost::polymorphic_downcast<QueueRow*>(row)->queue_index, row_idx)));
     UpdateQueue();
     ResetInfoPanel();
 }
@@ -436,12 +445,12 @@ void ProductionWnd::ResetInfoPanel()
        or free up excess minerals.  Signalling that the MineralResPool has changed causes the
        MapWnd to be signalled that that pool has changed, which causes the resource indicator
        to be updated (which polls the ProductionQueue to determine how many PPs are being spent) */
-    empire->GetMineralResPool().ChangedSignal();
+    empire->GetResourcePool(RE_MINERALS)->ChangedSignal();
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location)));
     UpdateQueue();
     ResetInfoPanel();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
@@ -449,7 +458,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string&
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location)));
     UpdateQueue();
     ResetInfoPanel();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
@@ -457,14 +466,14 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true)));
     UpdateQueue();
     ResetInfoPanel();
 }
 
 void ProductionWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx));
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), row_idx)));
     UpdateQueue();      ///< rebuild on-screen queue
     ResetInfoPanel();
 }

@@ -16,16 +16,14 @@ using boost::lexical_cast;
 
 
 // static(s)
-const double UniverseObject::INVALID_POSITION  = -100000.0;
-const int    UniverseObject::INVALID_OBJECT_ID = -1;
-const int    UniverseObject::MAX_ID            = 2000000000;
-// using big negative number to allow for potential negative object ages, which might be useful in the even of time
-// travel.
-const int UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;
-const int UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
+const double    UniverseObject::INVALID_POSITION  = -100000.0;
+const int       UniverseObject::INVALID_OBJECT_ID = -1;
+const int       UniverseObject::MAX_ID            = 2000000000;
+const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using big negative number to allow for potential negative object ages, which might be useful in the event of time travel.
+const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() : 
-    StateChangedSignal(Universe::InhibitUniverseObjectSignals()),
+    StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
@@ -37,7 +35,7 @@ UniverseObject::UniverseObject() :
 
 UniverseObject::UniverseObject(const std::string name, double x, double y, 
                                const std::set<int>& owners/* = std::set<int>()*/) : 
-    StateChangedSignal(Universe::InhibitUniverseObjectSignals()),
+    StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
     m_name(name),
     m_x(x),
@@ -134,7 +132,7 @@ double UniverseObject::MeterPoints(MeterType type) const
 
 double UniverseObject::ProjectedMeterPoints(MeterType type) const
 {
-    Logger().errorStream() << "UniverseObject::ProjectedMeterPoints";
+    // Note that this is the default implementation.  Derived classes might do something different.
     return MeterPoints(type);
 }
 
