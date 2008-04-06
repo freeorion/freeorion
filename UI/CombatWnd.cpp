@@ -1,6 +1,9 @@
 #include "CombatWnd.h"
 
 #include "ClientUI.h"
+#include "../universe/System.h"
+#include "../universe/Planet.h"
+#include "../universe/Predicates.h"
 #include "../util/Version.h"
 
 #include <OgreBillboard.h>
@@ -21,24 +24,41 @@
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
 
-    const double SYSTEM_WIDTH = 1000.0;
+    const double SYSTEM_RADIUS = 1000.0;
     const double STAR_RADIUS = 80.0;
-    const double MEDIUM_PLANET_RADIUS = 5.0;
 
     const double NEAR_CLIP = 0.01;
-    const double FAR_CLIP = 1000.0;
+    const double FAR_CLIP = 2000.0;
 
-    const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_WIDTH;
+    const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
     const double MIN_ZOOM_IN_DISTANCE = 0.5;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
         assert(orbit < 10);
-        return SYSTEM_WIDTH / 10 * (orbit + 1) - 20.0;
+        return SYSTEM_RADIUS / 10 * (orbit + 1) - 20.0;
+    }
+
+    Ogre::Real PlanetRadius(PlanetSize size)
+    {
+        Ogre::Real retval = 0;
+        switch (size) {
+        case INVALID_PLANET_SIZE: retval = 0.0; break;
+        case SZ_NOWORLD:          retval = 0.0; break;
+        case SZ_TINY:             retval = 2.0; break;
+        case SZ_SMALL:            retval = 3.5; break;
+        default:
+        case SZ_MEDIUM:           retval = 5.0; break;
+        case SZ_LARGE:            retval = 7.0; break;
+        case SZ_HUGE:             retval = 9.0; break;
+        case SZ_ASTEROIDS:        retval = 0.0; break;
+        case SZ_GASGIANT:         retval = 11.0; break; // this one goes to eleven
+        case NUM_PLANET_SIZES:    retval = 0.0; break;
+        };
+        return retval;
     }
 
     // TODO: These are for testing only.
-    const double EARTH_TO_SUN = OrbitRadius(2); // third orbit
     const double MEDIUM_SHIP_LENGTH = 0.5;
 
     Ogre::Vector3 Project(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
@@ -74,6 +94,19 @@ namespace {
 
         return retval;
     }
+
+    std::string PlanetNodeMaterial(PlanetType type)
+    {
+        if (type == PT_GASGIANT)
+            return "gas_giant";
+        else if (type == PT_RADIATED || type == PT_BARREN)
+            return "atmosphereless_planet";
+        else if (type != PT_ASTEROIDS && type != INVALID_PLANET_TYPE)
+            return "planet";
+        else
+            return "don't create";
+    }
+
 }
 
 ////////////////////////////////////////////////////////////
@@ -195,6 +228,10 @@ CombatWnd::SelectedObject CombatWnd::SelectedObject::Key(Ogre::MovableObject* ob
 }
 
 
+PlanetType g_planet_type = PT_TERRAN;
+Ogre::Entity* planet_entity = 0;
+Ogre::Entity* atmosphere_entity = 0;
+Ogre::SceneNode* planet_node = 0;
 ////////////////////////////////////////////////////////////
 // CombatWnd
 ////////////////////////////////////////////////////////////
@@ -207,7 +244,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_viewport(viewport),
     m_ray_scene_query(m_scene_manager->createRayQuery(Ogre::Ray())),
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
-    m_distance_to_lookat_point(SYSTEM_WIDTH / 2.0),
+    m_distance_to_lookat_point(SYSTEM_RADIUS / 2.0),
     m_pitch(-Ogre::Math::HALF_PI),
     m_yaw(0.0),
     m_last_pos(),
@@ -268,73 +305,45 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star_billboard_set->setVisible(true);
     star_node->attachObject(star_billboard_set);
 
-#if 0
-    m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1");
-#endif
+    Ogre::Light* star = m_scene_manager->createLight("Star");
+    star->setType(Ogre::Light::LT_POINT);
+    star->setPosition(Ogre::Vector3(0.0, 0.0, 0.0));
+    star->setAttenuation(SYSTEM_RADIUS * 0.51, 1.0, 0.0, 0.0);
+
+    m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1", 50.0);
 
     m_camera->setNearClipDistance(NEAR_CLIP);
     m_camera->setFarClipDistance(FAR_CLIP);
 
+    // look at the star initially
+    m_currently_selected_scene_node = star_node;
     UpdateCameraPosition();
 
     //////////////////////////////////////////////////////////////////
     // NOTE: Below is temporary code for combat system prototyping! //
     //////////////////////////////////////////////////////////////////
 
-    // Load the "Durgha" ship mesh
-    Ogre::MeshPtr m = Ogre::MeshManager::getSingleton().load(
-        "durgha.mesh",
-        Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+    // a system that looks much like the solar system
+    std::vector<Planet*> planets;
+    planets.push_back(new Planet(PT_INFERNO, SZ_SMALL));
+    planets.push_back(new Planet(PT_TOXIC, SZ_LARGE));
+    planets.push_back(new Planet(PT_TERRAN, SZ_LARGE));
+    planets.push_back(new Planet(PT_DESERT, SZ_MEDIUM));
+    planets.push_back(new Planet(PT_ASTEROIDS, SZ_ASTEROIDS));
+    planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
+    planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
+    planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
+    planets.push_back(new Planet(PT_BARREN, SZ_TINY));
+    planets.push_back(new Planet(PT_BARREN, SZ_HUGE));
 
-    Ogre::SceneNode* planet_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("planet node");
-    planet_node->setPosition(EARTH_TO_SUN, 0.0, 0.0);
-    planet_node->setScale(MEDIUM_PLANET_RADIUS, MEDIUM_PLANET_RADIUS, MEDIUM_PLANET_RADIUS);
+    System system;
+    system.SetStarType(STAR_BLUE);
+    for (std::size_t i = 0; i < planets.size(); ++i) {
+        GetUniverse().InsertID(planets[i], i);
+        system.Insert(i, i);
+    }
 
-    // light comes from the star, and the star is at the origin
-    Ogre::Vector3 light_dir = planet_node->getPosition();
-    light_dir.normalise();
-
-    Ogre::Entity* entity = m_scene_manager->createEntity("planet", "sphere.mesh");
-    entity->setMaterialName("planet");
-    assert(entity->getNumSubEntities() == 1u);
-    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-    entity->setCastShadows(true);
-    planet_node->attachObject(entity);
-
-    entity = m_scene_manager->createEntity("atmosphere", "sphere.mesh");
-    entity->setMaterialName("atmosphere");
-    assert(entity->getNumSubEntities() == 1u);
-    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-    planet_node->attachObject(entity);
-
-    // Put a few Durghas into the scene
-    entity = m_scene_manager->createEntity("lead durgha", "durgha.mesh");
-    entity->setCastShadows(true);
-    Ogre::SceneNode* lead_durgha_node = m_scene_manager->getRootSceneNode()->createChildSceneNode("lead durgha node");
-    lead_durgha_node->setDirection(0, -1, 0);
-    lead_durgha_node->yaw(Ogre::Radian(Ogre::Math::PI));
-    lead_durgha_node->attachObject(entity);
-    lead_durgha_node->setPosition(EARTH_TO_SUN * 0.9, 0.0, 0.0);
-
-    Ogre::Vector3 bbox_size = entity->getBoundingBox().getSize();
-    Ogre::Real bbox_max = std::max(bbox_size.x, std::max(bbox_size.y, bbox_size.z));
-    Ogre::Real durgha_scale = MEDIUM_SHIP_LENGTH / bbox_max;
-    lead_durgha_node->setScale(durgha_scale, durgha_scale, durgha_scale);
-
-    // look at the planet initially
-    m_currently_selected_scene_node = lead_durgha_node;
-    UpdateCameraPosition();
-
-    entity = m_scene_manager->createEntity("wing durgha 1", "durgha.mesh");
-    entity->setCastShadows(true);
-    Ogre::SceneNode* durgha_node = lead_durgha_node->createChildSceneNode("wing durgha 1 node");
-    durgha_node->attachObject(entity);
-    durgha_node->setPosition(250, 250, 0);
-
-    Ogre::Light* star = m_scene_manager->createLight("Star");
-    star->setType(Ogre::Light::LT_POINT);
-    star->setPosition(Ogre::Vector3(0.0, 0.0, 0.0));
-    star->setAttenuation(SYSTEM_WIDTH * 0.51, 1.0, 0.0, 0.0);
+    InitCombat(system);
 }
 
 CombatWnd::~CombatWnd()
@@ -343,6 +352,68 @@ CombatWnd::~CombatWnd()
     m_scene_manager->destroyQuery(m_ray_scene_query);
     m_scene_manager->destroyQuery(m_volume_scene_query);
     delete m_selection_rect;
+
+    // TODO: delete m_planet_nodes (or maybe all nodes via some Ogre function?)
+}
+
+void CombatWnd::InitCombat(const System& system)
+{
+    // TODO: move all of this to the ctor after prototyping is complete
+
+    // create planets
+    for (System::const_orbit_iterator it = system.begin(); it != system.end(); ++it) {
+        if (const Planet* planet = GetUniverse().Object<Planet>(it->second)) {
+            std::string material_name = PlanetNodeMaterial(planet->Type());
+            if (material_name == "don't create")
+                continue;
+
+            std::string planet_name = "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+
+            Ogre::SceneNode* node =
+                m_scene_manager->getRootSceneNode()->createChildSceneNode(planet_name + " node");
+            node->setPosition(OrbitRadius(it->first), 0.0, 0.0);
+            Ogre::Real planet_radius = PlanetRadius(planet->Size());
+            node->setScale(planet_radius, planet_radius, planet_radius);
+
+            // light comes from the star, and the star is at the origin
+            Ogre::Vector3 light_dir = node->getPosition();
+            light_dir.normalise();
+
+            if (material_name == "gas_giant") {
+                Ogre::Entity* entity = entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                entity->setMaterialName("gas_giant_core");
+                assert(entity->getNumSubEntities() == 1u);
+                entity->setCastShadows(true);
+                node->attachObject(entity);
+
+                entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
+                entity->setMaterialName(material_name);
+                entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+                node->attachObject(entity);
+            } else {
+                Ogre::Entity* entity = entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                entity->setMaterialName(material_name);
+                assert(entity->getNumSubEntities() == 1u);
+                entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+                entity->setCastShadows(true);
+                node->attachObject(entity);
+
+                if (material_name == "planet") {
+                    entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
+                    entity->setMaterialName("atmosphere");
+                    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+                    node->attachObject(entity);
+                }
+            }
+
+            m_planet_nodes[it->first] = node;
+        }
+    }
+
+    // create starlane entrance points
+    for (System::const_lane_iterator it = system.begin_lanes(); it != system.begin_lanes(); ++it) {
+        // TODO
+    }
 }
 
 void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -488,6 +559,21 @@ void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod
 
 void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
+    const PlanetType CYCLE[3] = {PT_TERRAN, PT_BARREN, PT_GASGIANT};
+    static int cycle_index = 0;
+    if (0) {//key == GG::GGK_SPACE) {
+        cycle_index = (cycle_index + 1) % 3;
+        g_planet_type = CYCLE[cycle_index];
+        planet_node->detachObject(atmosphere_entity);
+        if (g_planet_type == PT_TERRAN) {
+            planet_entity->setMaterialName("planet");
+            planet_node->attachObject(atmosphere_entity);
+        } else if (g_planet_type == PT_BARREN) {
+            planet_entity->setMaterialName("atmosphereless_planet");
+        } else if (g_planet_type == PT_GASGIANT) {
+            planet_entity->setMaterialName("gas_giant");
+        }
+    }
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
 }

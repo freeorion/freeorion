@@ -19,5 +19,5 @@ void main()
     diffuse = dot(light_vec, normal);
     tex_coord = vec2(gl_MultiTexCoord0);
 
-    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+    gl_Position = ftransform();
 }

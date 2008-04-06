@@ -19,6 +19,7 @@ namespace Ogre {
     class Viewport;
     class PlaneBoundedVolumeListSceneQuery;
 }
+class System;
 
 class CombatWnd :
     public GG::Wnd,
@@ -29,6 +30,8 @@ public:
                Ogre::Camera* camera,
                Ogre::Viewport* viewport);
     virtual ~CombatWnd();
+
+    void InitCombat(const System& system);
 
     virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
@@ -105,6 +108,11 @@ private:
     Ogre::Vector3 m_lookat_point;
     std::set<SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
+
+    // The scene nodes representing planets in the system, indexed by orbit number.
+    std::map<int, Ogre::SceneNode*> m_planet_nodes;
+    // The scene nodes representing starlane entrance points in the system.
+    std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };
