@@ -228,10 +228,6 @@ CombatWnd::SelectedObject CombatWnd::SelectedObject::Key(Ogre::MovableObject* ob
 }
 
 
-PlanetType g_planet_type = PT_TERRAN;
-Ogre::Entity* planet_entity = 0;
-Ogre::Entity* atmosphere_entity = 0;
-Ogre::SceneNode* planet_node = 0;
 ////////////////////////////////////////////////////////////
 // CombatWnd
 ////////////////////////////////////////////////////////////
@@ -245,8 +241,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_ray_scene_query(m_scene_manager->createRayQuery(Ogre::Ray())),
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
     m_distance_to_lookat_point(SYSTEM_RADIUS / 2.0),
-    m_pitch(-Ogre::Math::HALF_PI),
-    m_yaw(0.0),
+    m_pitch(0.0),
+    m_roll(0.0),
     m_last_pos(),
     m_selection_drag_start(INVALID_SELECTION_DRAG_POS),
     m_selection_drag_stop(INVALID_SELECTION_DRAG_POS),
@@ -380,7 +376,7 @@ void CombatWnd::InitCombat(const System& system)
             light_dir.normalise();
 
             if (material_name == "gas_giant") {
-                Ogre::Entity* entity = entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
                 entity->setMaterialName("gas_giant_core");
                 assert(entity->getNumSubEntities() == 1u);
                 entity->setCastShadows(true);
@@ -391,7 +387,7 @@ void CombatWnd::InitCombat(const System& system)
                 entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
                 node->attachObject(entity);
             } else {
-                Ogre::Entity* entity = entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
                 entity->setMaterialName(material_name);
                 assert(entity->getNumSubEntities() == 1u);
                 entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
@@ -494,13 +490,13 @@ void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
         Ogre::Radian delta_pitch =
             -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
         m_pitch += delta_pitch;
-        if (m_pitch < Ogre::Radian(-Ogre::Math::HALF_PI))
-            m_pitch = Ogre::Radian(-Ogre::Math::HALF_PI);
+        if (m_pitch < Ogre::Radian(0.0))
+            m_pitch = Ogre::Radian(0.0);
         if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
             m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
-        Ogre::Radian delta_yaw =
+        Ogre::Radian delta_roll =
             -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
-        m_yaw += delta_yaw;
+        m_roll += delta_roll;
 
         UpdateCameraPosition();
 
@@ -559,21 +555,6 @@ void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod
 
 void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
-    const PlanetType CYCLE[3] = {PT_TERRAN, PT_BARREN, PT_GASGIANT};
-    static int cycle_index = 0;
-    if (0) {//key == GG::GGK_SPACE) {
-        cycle_index = (cycle_index + 1) % 3;
-        g_planet_type = CYCLE[cycle_index];
-        planet_node->detachObject(atmosphere_entity);
-        if (g_planet_type == PT_TERRAN) {
-            planet_entity->setMaterialName("planet");
-            planet_node->attachObject(atmosphere_entity);
-        } else if (g_planet_type == PT_BARREN) {
-            planet_entity->setMaterialName("atmosphereless_planet");
-        } else if (g_planet_type == PT_GASGIANT) {
-            planet_entity->setMaterialName("gas_giant");
-        }
-    }
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
 }
@@ -612,8 +593,8 @@ void CombatWnd::UpdateCameraPosition()
 {
     m_camera->setPosition(m_lookat_point);
     m_camera->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Z);
+    m_camera->roll(m_roll);
     m_camera->pitch(m_pitch);
-    m_camera->yaw(m_yaw);
     m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_lookat_point));
 }
 

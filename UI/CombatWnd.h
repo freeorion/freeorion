@@ -98,7 +98,7 @@ private:
 
     Ogre::Real m_distance_to_lookat_point;
     Ogre::Radian m_pitch;
-    Ogre::Radian m_yaw;
+    Ogre::Radian m_roll;
     GG::Pt m_last_pos;
     GG::Pt m_selection_drag_start;
     GG::Pt m_selection_drag_stop;
