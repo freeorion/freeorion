@@ -64,6 +64,7 @@ PartControl::PartControl(const PartType* part) :
     m_icon(0),
     m_part(part)
 {
+    //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
     m_icon = new GG::StaticGraphic(0, 0, SIZE, SIZE, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Show();
     AttachChild(m_icon);
@@ -158,8 +159,7 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     if (part_control)
         part_type = part_control->Part();
 
-    RemoveCell(i);
-    delete dragged_control;
+    RemoveCell(i);  // Wnd that accepts drop takes ownership of dragged-away control
 
     if (part_type) {
         part_control = new PartControl(part_type);
@@ -1099,7 +1099,15 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
 
 void SlotControl::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt) {
     assert(wnds.size() == 1);
-    SlotContentsAlteredSignal(boost::polymorphic_downcast<const PartControl*>(*wnds.begin())->Part());
+
+    const GG::Wnd* wnd = *(wnds.begin());
+    const PartControl* control = boost::polymorphic_downcast<const PartControl*>(wnd);
+    const PartType* part_type = control->Part();
+
+    delete control;
+
+    //Logger().debugStream() << "SlotControl::AcceptDrops part_type: " << (part_type ? part_type->Name() : "no part");
+    SlotContentsAlteredSignal(part_type);
 }
 
 void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) {
@@ -1109,8 +1117,7 @@ void SlotControl::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const G
     const PartControl* part_control = dynamic_cast<const PartControl*>(wnd);
     if (part_control != m_part_control)
         return;
-    DeleteChild(m_part_control);
-    m_part_control = 0;
+    m_part_control = 0; // SlotContentsAlteredSignal is connected to this->SetPart, which will delete m_part_control if it is not null.  The drop-accepting Wnd is responsible for deleting the accepted Wnd, so setting m_part_control = 0 here prevents this->SetPart from deleting it prematurely
     SlotContentsAlteredSignal(0);
 }
 
@@ -1142,9 +1149,10 @@ void SlotControl::SetPart(const std::string& part_name) {
 }
 
 void SlotControl::SetPart(const PartType* part_type) {
-    if (m_part_control)
+    if (m_part_control) {
         delete m_part_control;
-    m_part_control = 0;
+        m_part_control = 0;
+    }
     if (part_type) {
         m_part_control = new PartControl(part_type);
         AttachChild(m_part_control);
@@ -1275,6 +1283,7 @@ void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int sl
 }
 
 void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
+    Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot < 0 || slot > m_slots.size()) {
         Logger().errorStream() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
