@@ -467,9 +467,13 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     // apply external and internal parts' location conditions to potential location
     for (std::vector<std::string>::const_iterator part_it = m_parts.begin(); part_it != m_parts.end(); ++part_it) {
-        const PartType* part = GetPartType(*part_it);
+        std::string part_name = *part_it;
+        if (part_name.empty())
+            continue;       // empty slots don't limit build location
+
+        const PartType* part = GetPartType(part_name);
         if (!part)
-            throw std::runtime_error("ShipDesign couldn't get one of its own parts...?");
+            throw std::runtime_error("ShipDesign couldn't get one of its own part: '" + part_name + "'");
         part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
         if (locations.empty())
             return false;
