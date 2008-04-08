@@ -26,7 +26,7 @@ private:
 
     void    DoLayout();
 
-    void    AddDesign();                                               ///< adds current design to those stored by this empire, allowing ships of this design to be produced
+    void    AddDesign();    ///< adds current design to those stored by this empire, allowing ships of this design to be produced
 
     EncyclopediaDetailPanel*    m_detail_panel;
     BaseSelector*               m_base_selector;

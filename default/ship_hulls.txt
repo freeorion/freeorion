@@ -19,7 +19,7 @@ Hull
         Slot type = External position = (0.5, 0.1)
     ]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_hull_icons/Small.png"
+    graphic = ""
 
 Hull
     name = "SH_MEDIUM"
@@ -35,7 +35,7 @@ Hull
         Slot type = Internal position = (0.4, 0.4)
     ]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_hull_icons/Large.png"
+    graphic = ""
 
 Hull
     name = "SH_LARGE"
@@ -58,7 +58,7 @@ Hull
             scope = All
             activation = All
             effects = SetMaxMining Target.MaxMining + 2
-    graphic = "ship_hull_icons/Large.png"
+    graphic = ""
 
 Hull
     name = "SH_HUGE"
@@ -79,4 +79,4 @@ Hull
         Slot type = Internal position = (0.7, 0.4)
     ]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "ship_hull_icons/Huge.png"
+    graphic = ""

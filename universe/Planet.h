@@ -7,7 +7,79 @@
 #include "PopCenter.h"
 #include "ResourceCenter.h"
 
-/** a class representing a FreeOrion planet.*/
+
+/** A type that is implicitly convertible to and from double, but which is not
+    implicitly convertible among other numeric types. */
+class TypesafeDouble
+{
+public:
+    TypesafeDouble() : m_value(0.0) {}
+    TypesafeDouble(double d) : m_value(d) {}
+    operator double () const { return m_value; }
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        { ar & BOOST_SERIALIZATION_NVP(m_value); }
+
+private:
+    double m_value;
+};
+
+class Day;
+
+/** A value type representing a "year".  A "year" is arbitrarily defined to be 4
+    turns. */
+class Year : public TypesafeDouble
+{
+public:
+    Year() : TypesafeDouble() {}
+    Year(double d) : TypesafeDouble(d) {}
+    explicit Year(Day d);
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+};
+
+/** A value type representing a "day".  A "day" is arbitrarily defined to be
+    1/360 of a "year", and 1/90 of a turn. */
+class Day : public TypesafeDouble
+{
+public:
+    Day() : TypesafeDouble() {}
+    Day(double d) : TypesafeDouble(d) {}
+    explicit Day(Year y) : TypesafeDouble(y * 360.0) {}
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+};
+
+/** A value type used to represent an angle in radians. */
+class Radian : public TypesafeDouble
+{
+public:
+    Radian() : TypesafeDouble() {}
+    Radian(double d) : TypesafeDouble(d) {}
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+};
+
+/** A value type used to represent an angle in degrees. */
+class Degree : public TypesafeDouble
+{
+public:
+    Degree() : TypesafeDouble() {}
+    Degree(double d) : TypesafeDouble(d) {}
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        { ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(TypesafeDouble); }
+};
+
+/** a class representing a FreeOrion planet. */
 class Planet :
     public UniverseObject,
     public PopCenter,
@@ -23,6 +95,12 @@ public:
     PlanetType           Type() const {return m_type;}
     PlanetSize           Size() const {return m_size;}
     PlanetEnvironment    Environment() const;
+
+    Year   OrbitalPeriod() const;
+    Radian InitialOrbitalPosition() const;
+    Day    RotationalPeriod() const;
+    Degree AxialTilt() const;
+
     const std::set<int>& Buildings() const {return m_buildings;}
 
     double AvailableTrade() const; ///< returns the trade available at this planet for use in building maintenance
@@ -51,9 +129,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void MovementPhase( );
-    virtual void ApplyUniverseTableMaxMeterAdjustments( );
-    virtual void PopGrowthProductionResearchPhase( );
+    virtual void MovementPhase();
+    virtual void ApplyUniverseTableMaxMeterAdjustments();
+    virtual void PopGrowthProductionResearchPhase();
 
     virtual Meter*  GetMeter(MeterType type)    {return UniverseObject::GetMeter(type);}
 
@@ -65,6 +143,14 @@ public:
 
     void SetType(PlanetType type);        ///< sets the type of this Planet to \a type
     void SetSize(PlanetSize size);        ///< sets the size of this Planet to \a size
+
+    /** randomly generates an orbital period based on the orbit this planet is
+        in, and whether it is tidally locked. */
+    void SetOrbitalPeriod(int orbit, bool tidal_lock);
+
+    void SetRotationalPeriod(Day days);   ///< sets the rotational period of this planet
+    void SetHighAxialTilt();              ///< randomly generates a new, high axial tilt
+
     void AddBuilding(int building_id);    ///< adds the building to the planet
     bool RemoveBuilding(int building_id); ///< removes the building from the planet; returns false if no such building was found
     bool DeleteBuilding(int building_id); ///< removes the building from the planet and deletes it; returns false if no such building was found
@@ -101,6 +187,11 @@ private:
 
     PlanetType    m_type;
     PlanetSize    m_size;
+    Year          m_orbital_period;
+    Radian        m_initial_orbital_position;
+    Day           m_rotational_period;
+    Degree        m_axial_tilt;
+
     std::set<int> m_buildings;
     double        m_available_trade;
    
@@ -132,6 +223,10 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_size)
+        & BOOST_SERIALIZATION_NVP(m_orbital_period)
+        & BOOST_SERIALIZATION_NVP(m_initial_orbital_position)
+        & BOOST_SERIALIZATION_NVP(m_rotational_period)
+        & BOOST_SERIALIZATION_NVP(m_axial_tilt)
         & BOOST_SERIALIZATION_NVP(m_just_conquered);
     if (Universe::ALL_OBJECTS_VISIBLE ||
         vis == FULL_VISIBILITY) {
