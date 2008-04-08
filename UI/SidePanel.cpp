@@ -56,12 +56,9 @@ namespace {
 
             planet_type = lexical_cast<PlanetType>(elem.Child("planet_type").Text());
             filename = elem.Child("filename").Text();
-            RPM = lexical_cast<double>(elem.Child("RPM").Text());
-            axis_angle = lexical_cast<double>(elem.Child("axis_angle").Text());
             shininess = lexical_cast<double>(elem.Child("shininess").Text());
 
             // ensure proper bounds
-            axis_angle = std::max(-75.0, std::min(axis_angle, 88.0)); // these values ensure that GLUT-sphere artifacting does not show itself
             shininess = std::max(0.0, std::min(shininess, 128.0));
         }
 
@@ -70,16 +67,12 @@ namespace {
             XMLElement retval("RotatingPlanetData");
             retval.AppendChild(XMLElement("planet_type", lexical_cast<std::string>(planet_type)));
             retval.AppendChild(XMLElement("filename", filename));
-            retval.AppendChild(XMLElement("RPM", lexical_cast<std::string>(RPM)));
-            retval.AppendChild(XMLElement("axis_angle", lexical_cast<std::string>(axis_angle)));
             retval.AppendChild(XMLElement("shininess", lexical_cast<std::string>(shininess)));
             return retval;
         }
 
         PlanetType planet_type; ///< the type of planet for which this data may be used
         std::string filename;   ///< the filename of the image used to texture a rotating image
-        double RPM;             ///< the rotation of this planet, in revolutions per minute (may be negative, which will cause CW rotation)
-        double axis_angle;      ///< the angle, in degrees, of the axis on which the planet rotates, measured CCW from straight up (may be negative)
         double shininess;       ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
     };
 
@@ -294,7 +287,7 @@ namespace {
         return light_colors;
     }
 
-    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double initial_rotation, double RPM, double axis_tilt, double shininess, StarType star_type)
+    void RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double initial_rotation, double RPM, double axial_tilt, double shininess, StarType star_type)
     {
         glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT | GL_SCISSOR_BIT);
         HumanClientApp::GetApp()->Exit2DMode();
@@ -323,7 +316,7 @@ namespace {
 
         glTranslated(center.x, center.y, -(diameter / 2 + 1));
         glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
-        glRotated(axis_tilt, 0.0, 1.0, 0.0);  // axis tilt
+        glRotated(axial_tilt, 0.0, 1.0, 0.0);  // axial tilt
         double intensity = GetRotatingPlanetAmbientIntensity();
         GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0);
         intensity = GetRotatingPlanetDiffuseIntensity();
@@ -487,10 +480,10 @@ private:
 class RotatingPlanetControl : public GG::Control
 {
 public:
-    RotatingPlanetControl(int x, int y, PlanetSize size, StarType star_type, const RotatingPlanetData& planet_data) :
-        GG::Control(x, y, PlanetDiameter(size), PlanetDiameter(size), GG::Flags<GG::WndFlag>()),
+    RotatingPlanetControl(int x, int y, const Planet& planet, StarType star_type, const RotatingPlanetData& planet_data) :
+        GG::Control(x, y, PlanetDiameter(planet.Size()), PlanetDiameter(planet.Size()), GG::Flags<GG::WndFlag>()),
         m_planet_data(planet_data),
-        m_size(size),
+        m_planet(planet),
         m_surface_texture(ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true)),
         m_atmosphere_texture(),
         m_initial_rotation(RandZeroToOne()),
@@ -509,13 +502,15 @@ public:
     virtual void Render()
     {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
+        // these values ensure that wierd GLUT-sphere artifacts do not show themselves
+        double axial_tilt = std::max(-75.0, std::min(static_cast<double>(m_planet.AxialTilt()), 88.0));
         RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Width(), m_surface_texture, m_initial_rotation,
-                     SizeRotationFactor(m_size) * m_planet_data.RPM, m_planet_data.axis_angle, m_planet_data.shininess, m_star_type);
+                     1.0 / m_planet.RotationalPeriod(), axial_tilt, m_planet_data.shininess, m_star_type);
         if (m_atmosphere_texture) {
             int texture_w = m_atmosphere_texture->DefaultWidth();
             int texture_h = m_atmosphere_texture->DefaultHeight();
-            double x_scale = PlanetDiameter(m_size) / static_cast<double>(texture_w);
-            double y_scale = PlanetDiameter(m_size) / static_cast<double>(texture_h);
+            double x_scale = PlanetDiameter(m_planet.Size()) / static_cast<double>(texture_w);
+            double y_scale = PlanetDiameter(m_planet.Size()) / static_cast<double>(texture_h);
             glColor4ub(255, 255, 255, m_atmosphere_alpha);
             m_atmosphere_texture->OrthoBlit(GG::Pt(static_cast<int>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
                                                    static_cast<int>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale)),
@@ -531,22 +526,8 @@ public:
     }
 
 private:
-    double SizeRotationFactor(PlanetSize size) const
-    {
-        switch (size) {
-        case SZ_TINY:     return 2.0;
-        case SZ_SMALL:    return 1.5;
-        case SZ_MEDIUM:   return 1.0;
-        case SZ_LARGE:    return 0.75;
-        case SZ_HUGE:     return 0.5;
-        case SZ_GASGIANT: return 0.25;
-        default:          return 1.0;
-        }
-        return 1.0;
-    }
-
     RotatingPlanetData              m_planet_data;
-    PlanetSize                      m_size;
+    const Planet&                   m_planet;
     boost::shared_ptr<GG::Texture>  m_surface_texture;
     boost::shared_ptr<GG::Texture>  m_atmosphere_texture;
     int                             m_atmosphere_alpha;
@@ -707,8 +688,9 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
             hash_value ^= hash_value >> 6;
             hash_value += ~(hash_value << 11);
             hash_value ^= hash_value >> 16;
-            m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet.Size(), star_type,
-                                                                  it->second[hash_value % num_planets_of_type]);
+            m_rotating_planet_graphic =
+                new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet, star_type,
+                                          it->second[hash_value % num_planets_of_type]);
             AttachChild(m_rotating_planet_graphic);
         }
     }

@@ -84,22 +84,16 @@
     <RotatingPlanetData>
       <planet_type>PT_SWAMP</planet_type>
       <filename>planets/Swamp01.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_SWAMP</planet_type>
       <filename>planets/Swamp02.png</filename>
-      <RPM>1.2</RPM>
-      <axis_angle>20.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_SWAMP</planet_type>
       <filename>planets/Swamp03.png</filename>
-      <RPM>0.8</RPM>
-      <axis_angle>2.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
 
@@ -107,22 +101,16 @@
     <RotatingPlanetData>
       <planet_type>PT_TOXIC</planet_type>
       <filename>planets/Toxic01.png</filename>
-      <RPM>-0.35</RPM>
-      <axis_angle>0.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_TOXIC</planet_type>
       <filename>planets/Toxic02.png</filename>
-      <RPM>0.07</RPM>
-      <axis_angle>-20.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_TOXIC</planet_type>
       <filename>planets/Toxic03.png</filename>
-      <RPM>0.6</RPM>
-      <axis_angle>30.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
 
@@ -130,22 +118,16 @@
     <RotatingPlanetData>
       <planet_type>PT_INFERNO</planet_type>
       <filename>planets/Inferno01.png</filename>
-      <RPM>2.2</RPM>
-      <axis_angle>-13.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_INFERNO</planet_type>
       <filename>planets/Inferno02.png</filename>
-      <RPM>3.0</RPM>
-      <axis_angle>9.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_INFERNO</planet_type>
       <filename>planets/Inferno03.png</filename>
-      <RPM>2.7</RPM>
-      <axis_angle>16.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
 
@@ -153,22 +135,16 @@
     <RotatingPlanetData>
       <planet_type>PT_RADIATED</planet_type>
       <filename>planets/Radiated01.png</filename>
-      <RPM>1.2</RPM>
-      <axis_angle>-15.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_RADIATED</planet_type>
       <filename>planets/Radiated02.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>0.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_RADIATED</planet_type>
       <filename>planets/Radiated03.png</filename>
-      <RPM>0.9</RPM>
-      <axis_angle>55.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
 
@@ -176,29 +152,21 @@
     <RotatingPlanetData>
       <planet_type>PT_BARREN</planet_type>
       <filename>planets/Barren01.png</filename>
-      <RPM>0.4</RPM>
-      <axis_angle>16.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_BARREN</planet_type>
       <filename>planets/Barren02.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>-50.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_BARREN</planet_type>
       <filename>planets/Barren03.png</filename>
-      <RPM>0.7</RPM>
-      <axis_angle>29.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_BARREN</planet_type>
       <filename>planets/Barren01.png</filename>
-      <RPM>0.6</RPM>
-      <axis_angle>70.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
 
@@ -206,22 +174,16 @@
     <RotatingPlanetData>
       <planet_type>PT_TUNDRA</planet_type>
       <filename>planets/Tundra01.png</filename>
-      <RPM>0.9</RPM>
-      <axis_angle>7.0</axis_angle>
       <shininess>25.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_TUNDRA</planet_type>
       <filename>planets/Tundra02.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>16.0</axis_angle>
       <shininess>25.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_TUNDRA</planet_type>
       <filename>planets/Tundra03.png</filename>
-      <RPM>0.7</RPM>
-      <axis_angle>26.0</axis_angle>
       <shininess>20.0</shininess>
     </RotatingPlanetData>
 
@@ -229,22 +191,16 @@
     <RotatingPlanetData>
       <planet_type>PT_DESERT</planet_type>
       <filename>planets/Desert01.png</filename>
-      <RPM>0.7</RPM>
-      <axis_angle>0.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_DESERT</planet_type>
       <filename>planets/Desert02.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>12.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_DESERT</planet_type>
       <filename>planets/Desert03.png</filename>
-      <RPM>0.8</RPM>
-      <axis_angle>-6.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
 
@@ -252,22 +208,16 @@
     <RotatingPlanetData>
       <planet_type>PT_TERRAN</planet_type>
       <filename>planets/Terran01.png</filename>
-      <RPM>1.2</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>20.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_TERRAN</planet_type>
       <filename>planets/Terran02.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>15.0</axis_angle>
       <shininess>20.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_TERRAN</planet_type>
       <filename>planets/Terran03.png</filename>
-      <RPM>0.9</RPM>
-      <axis_angle>7.0</axis_angle>
       <shininess>20.0</shininess>
     </RotatingPlanetData>
 
@@ -275,22 +225,16 @@
     <RotatingPlanetData>
       <planet_type>PT_OCEAN</planet_type>
       <filename>planets/Ocean01.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>0.0</axis_angle>
       <shininess>40.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_OCEAN</planet_type>
       <filename>planets/Ocean02.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>8.0</axis_angle>
       <shininess>40.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_OCEAN</planet_type>
       <filename>planets/Ocean03.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>17.0</axis_angle>
       <shininess>40.0</shininess>
     </RotatingPlanetData>
 
@@ -298,78 +242,56 @@
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant01.png</filename>
-      <RPM>1.5</RPM>
-      <axis_angle>3.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant02.png</filename>
-      <RPM>0.8</RPM>
-      <axis_angle>15.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant03.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant04.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant05.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant06.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant07.png</filename>
-      <RPM>1.1</RPM>
-      <axis_angle>21.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant08.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>26.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant09.png</filename>
-      <RPM>1.1</RPM>
-      <axis_angle>23.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant10.png</filename>
-      <RPM>1.0</RPM>
-      <axis_angle>29.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     <RotatingPlanetData>
       <planet_type>PT_GASGIANT</planet_type>
       <filename>planets/GasGiant11.png</filename>
-      <RPM>1.2</RPM>
-      <axis_angle>20.0</axis_angle>
       <shininess>0.0</shininess>
     </RotatingPlanetData>
     

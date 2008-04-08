@@ -6,6 +6,7 @@
 #include "Fleet.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Random.h"
 #include "Predicates.h"
 #include "Ship.h"
 #include "System.h"
@@ -20,6 +21,9 @@
 using boost::lexical_cast;
 
 namespace {
+    // high tilt is arbitrarily taken to mean 35 degrees or more
+    const double HIGH_TILT_THERSHOLD = 35.0;
+
     DataTableMap& PlanetDataTables() {
         static DataTableMap map;
         if (map.empty()) {
@@ -46,14 +50,44 @@ namespace {
         double new_cur = std::min(meter->Max(), meter->Current() + delta);
         meter->SetCurrent(new_cur);
     }
+
+    double SizeRotationFactor(PlanetSize size)
+    {
+        switch (size) {
+        case SZ_TINY:     return 1.5;
+        case SZ_SMALL:    return 1.25;
+        case SZ_MEDIUM:   return 1.0;
+        case SZ_LARGE:    return 0.75;
+        case SZ_HUGE:     return 0.5;
+        case SZ_GASGIANT: return 0.25;
+        default:          return 1.0;
+        }
+        return 1.0;
+    }
 }
 
+
+////////////////////////////////////////////////////////////
+// Year
+////////////////////////////////////////////////////////////
+Year::Year(Day d) :
+    TypesafeDouble(d / 360.0)
+{}
+
+
+////////////////////////////////////////////////////////////
+// Planet
+////////////////////////////////////////////////////////////
 Planet::Planet() :
     UniverseObject(),
     PopCenter(0),
     ResourceCenter(),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
+    m_orbital_period(1.0),
+    m_initial_orbital_position(0.0),
+    m_rotational_period(1.0),
+    m_axial_tilt(23.0),
     m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
@@ -71,6 +105,10 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     ResourceCenter(),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
+    m_orbital_period(1.0),
+    m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159),
+    m_rotational_period(1.0),
+    m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
     m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
@@ -83,6 +121,12 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     Planet::Init();
     SetType(type);
     SetSize(size);
+
+    const double SPIN_STD_DEV = 0.1;
+    const double REVERSE_SPIN_CHANCE = 0.01;
+    m_rotational_period = RandGaussian(1.0, SPIN_STD_DEV) / SizeRotationFactor(m_size);
+    if (RandZeroToOne() < REVERSE_SPIN_CHANCE)
+        m_rotational_period = -m_rotational_period;
 }
 
 void Planet::Init() {
@@ -94,14 +138,22 @@ void Planet::Init() {
 }
 
 PlanetEnvironment Planet::Environment() const
-{
-    return Environment(m_type);
-}
+{ return Environment(m_type); }
+
+Year Planet::OrbitalPeriod() const
+{ return m_orbital_period; }
+
+Radian Planet::InitialOrbitalPosition() const
+{ return m_initial_orbital_position; }
+
+Day Planet::RotationalPeriod() const
+{ return m_rotational_period; }
+
+Degree Planet::AxialTilt() const
+{ return m_axial_tilt; }
 
 double Planet::AvailableTrade() const
-{
-    return m_available_trade;
-}
+{ return m_available_trade; }
 
 double Planet::BuildingCosts() const
 {
@@ -251,6 +303,31 @@ void Planet::SetSize(PlanetSize size)
     GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_size = size;
     StateChangedSignal();
+}
+
+void Planet::SetOrbitalPeriod(int orbit, bool tidal_lock)
+{
+    const double BASE_PERIOD = 1.0;
+    const double BASE_DISTANCE = 3.0;
+    const double MAX_VARIATION = 0.33;
+    // orbits are 0-based, but the 0th orbit is 1 unit out, not 0 units out
+    const double DISTANCE = orbit + 1.0;
+
+    double period = BASE_PERIOD / (DISTANCE / BASE_DISTANCE);
+    double random_scale_factor = 1.0 - MAX_VARIATION + 2 * MAX_VARIATION * RandZeroToOne();
+    m_orbital_period = period * random_scale_factor;
+
+    if (tidal_lock)
+        SetRotationalPeriod(Day(m_orbital_period));
+}
+
+void Planet::SetRotationalPeriod(Day days)
+{ m_rotational_period = days; }
+
+void Planet::SetHighAxialTilt()
+{
+    const double MAX_TILT = 90.0;
+    m_axial_tilt = HIGH_TILT_THERSHOLD + RandZeroToOne() * (MAX_TILT - HIGH_TILT_THERSHOLD);
 }
 
 void Planet::AddBuilding(int building_id)

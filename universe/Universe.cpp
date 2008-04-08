@@ -2067,14 +2067,24 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 
             Planet* planet = new Planet(planet_type, planet_size);
 
+            bool tidal_lock = false;
             if (planet_type != PT_ASTEROIDS && planet_type != PT_GASGIANT && !special_names.empty() && RandZeroToOne() < planetary_special_chance) {
                 std::set<std::string>::const_iterator name_it = special_names.begin();
                 std::advance(name_it, specials_dist());
                 planet->AddSpecial(*name_it);
+
+                if (*name_it == "TIDAL_LOCK_SPECIAL")
+                    tidal_lock = true;
+                else if (*name_it == "SLOW_ROTATION_SPECIAL")
+                    planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
+                else if (*name_it == "HIGH_AXIAL_TILT_SPECIAL")
+                    planet->SetHighAxialTilt();
             }
 
             Insert(planet); // add planet to universe map
             system->Insert(planet, orbit);  // add planet to system map
+
+            planet->SetOrbitalPeriod(orbit, tidal_lock);
         }
     }
 #else
