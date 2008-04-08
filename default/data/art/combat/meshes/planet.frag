@@ -6,7 +6,6 @@ varying vec3 specular;
 varying vec2 tex_coord;
 
 const float TERMINATOR = 0.3;
-const float INV_TERMINATOR = 1.0 / (2.0 * TERMINATOR);
 
 void main()
 {
@@ -22,7 +21,7 @@ void main()
         color = texture2D(night_texture, tex_coord).rgb * (1.0 - clouds);
     if (abs(diffuse) < TERMINATOR) {
         vec3 nighttime = texture2D(night_texture, tex_coord).rgb * (1.0 - clouds);
-        color = mix(nighttime, daytime, (diffuse + TERMINATOR) * INV_TERMINATOR);
+        color = mix(nighttime, daytime, (diffuse + TERMINATOR) / (2.0 * TERMINATOR));
     }
 
     gl_FragColor = vec4(color, 1.0);
