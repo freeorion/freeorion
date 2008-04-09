@@ -746,6 +746,7 @@ BasesListBox::BasesListBox(int x, int y, int w, int h) :
 }
 
 void BasesListBox::Populate() {
+    // TODO: Fix memory leak with Clear(), and perhaps redo this so that scrolling isn't reset?
     Clear();
     if (m_showing_empty_hulls)
         PopulateWithEmptyHulls();
@@ -1566,6 +1567,8 @@ DesignWnd::DesignWnd(int w, int h) :
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
     GG::Connect(m_base_selector->HullBrowsedSignal,             &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     m_base_selector->MoveTo(GG::Pt(0, 0));
+
+    GG::Connect(this->EmpireDesignsChangedSignal,               &BaseSelector::Reset,               m_base_selector);
 }
 
 void DesignWnd::Reset() {
@@ -1637,6 +1640,8 @@ void DesignWnd::AddDesign() {
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+
+    EmpireDesignsChangedSignal();
 
     Logger().debugStream() << "Added new design: " << design->Name();
 
