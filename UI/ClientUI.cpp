@@ -93,11 +93,16 @@ GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<Strea
 // content texture getters
 boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
+    std::string graphic_name = "";
     const ShipDesign* design = GetShipDesign(design_id);
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / design->Graphic(), true);
-    if (texture)
-        return texture;
-    return ClientUI::GetTexture(ArtDir() / "icons" / "Scout.png", true);
+    if (design)
+        graphic_name = design->Graphic();
+    if (graphic_name.empty()) {
+        const HullType* hull_type = design->GetHull();
+        if (hull_type)
+            return ClientUI::HullTexture(hull_type->Name());
+    }
+    return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name)

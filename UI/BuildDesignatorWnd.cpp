@@ -344,8 +344,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
                                   % UserString(building_type->Description())
                                   % EffectsDescription(building_type->Effects()));
         }
-        if (!building_type->Graphic().empty())
-            graphic = ClientUI::GetTexture(ClientUI::ArtDir() / building_type->Graphic());
+        graphic = ClientUI::BuildingTexture(building_type->Name());
     } else if (m_build_type == BT_SHIP) {
         assert(empire);
         const ShipDesign* design = GetShipDesign(m_item_design_id);
@@ -358,7 +357,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
                               % design->Attack()
                               % design->Defense()
                               % design->Speed());
-        graphic = ClientUI::GetTexture(ClientUI::ArtDir() / design->Graphic());
+        graphic = ClientUI::ShipIcon(design->ID());
     } else if (m_build_type == BT_ORBITAL) {
         turns = DEFENSE_BASE_BUILD_TURNS;
         cost_per_turn = DEFENSE_BASE_BUILD_COST;
