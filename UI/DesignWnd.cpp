@@ -1223,8 +1223,9 @@ private:
     typedef void (DesignWnd::MainPanel::*SetPartFuncPtrType)(const PartType* part, unsigned int slot);
     static SetPartFuncPtrType const s_set_part_func_ptr;
 
-    void            Populate();
-    void            DoLayout();
+    void            Populate();                     //!< creates and places SlotControls for current hull
+    void            DoLayout();                     //!< positions buttons, text entry boxes and SlotControls
+    void            DesignChanged();                //!< responds to the design being changed
 
     const HullType*             m_hull;
 
@@ -1281,11 +1282,15 @@ DesignWnd::MainPanel::MainPanel(int w, int h) :
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->ClickedSignal, DesignConfirmedSignal);
+    m_confirm_button->Disable(true);
 
     m_clear_button = new CUIButton(0, 0, 10, UserString("DESIGN_WND_CLEAR"), font, ClientUI::ButtonColor(),
                                    ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->ClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
+
+
+    GG::Connect(this->DesignChangedSignal, &DesignWnd::MainPanel::DesignChanged, this);
 }
 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
@@ -1332,18 +1337,20 @@ void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int sl
 }
 
 void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
-    Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
+    //Logger().debugStream() << "DesignWnd::MainPanel::SetPart(" << (part ? part->Name() : "no part") << ", slot " << slot << ")";
     if (slot < 0 || slot > m_slots.size()) {
         Logger().errorStream() << "DesignWnd::MainPanel::SetPart specified nonexistant slot";
         return;
     }
     m_slots[slot]->SetPart(part);
+    DesignChangedSignal();
 }
 
 void  DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
     unsigned int num_parts = std::min(parts.size(), m_slots.size());
     for (unsigned int i = 0; i < num_parts; ++i)
         m_slots[i]->SetPart(parts[i]);
+    DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::AddPart(const PartType* part) {
@@ -1353,6 +1360,7 @@ void DesignWnd::MainPanel::AddPart(const PartType* part) {
 void DesignWnd::MainPanel::ClearParts() {
     for (unsigned int i = 0; i < m_slots.size(); ++i)
         m_slots[i]->SetPart(0);
+    DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::SetHull(const std::string& hull_name) {
@@ -1371,6 +1379,7 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     }
     Populate();
     DoLayout();
+    DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
@@ -1388,6 +1397,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     const std::vector<std::string>& parts_vec = ship_design->Parts();
     for (unsigned int i = 0; i < parts_vec.size() && i < m_slots.size(); ++i)
         m_slots[i]->SetPart(GetPartType(parts_vec[i]));
+    DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::SetDesign(int design_id) {
@@ -1511,6 +1521,13 @@ void DesignWnd::MainPanel::DoLayout() {
         int y = background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + static_cast<int>(slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
     }
+}
+
+void DesignWnd::MainPanel::DesignChanged() {
+    if (m_hull && !(m_hull->Name()).empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
+        m_confirm_button->Disable(false);
+    else
+        m_confirm_button->Disable(true);
 }
 
 
