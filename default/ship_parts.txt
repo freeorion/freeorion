@@ -40,7 +40,7 @@ Part
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/lead_armor_plating.png"
 
 Part
     name = "SH_DEFENSE_GRID"
@@ -51,7 +51,7 @@ Part
     buildtime = 0
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/defense_grid.png"
 
 Part
     name = "SH_DEFLECTOR"
@@ -62,7 +62,7 @@ Part
     buildtime = 2
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/deflector_shield.png"
 
 Part
     name = "DT_ACTIVE_RADAR"
