@@ -109,8 +109,9 @@ private:
     std::set<SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
 
-    // The scene nodes representing planets in the system, indexed by orbit number.
-    std::map<int, Ogre::SceneNode*> m_planet_nodes;
+    // The scene nodes representing planets in the system and the materials
+    // created to show them, indexed by orbit number.
+    std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > > m_planet_assets;
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
 

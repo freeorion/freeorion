@@ -160,8 +160,9 @@ public:
 
     static GG::Clr      CategoryColor(const std::string& category_name);
 
-    static std::map<StarType, std::string>& StarTypeFilePrefixes();
-    static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();
+    static std::map<PlanetType, std::string>& PlanetTypeFilePrefixes();
+    static std::map<StarType, std::string>&   StarTypeFilePrefixes();
+    static std::map<StarType, std::string>&   HaloStarTypeFilePrefixes();
     //!@}
 
 private:
