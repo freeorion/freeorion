@@ -49,7 +49,7 @@ Part
     power = 1
     buildcost = 4
     buildtime = 0
-    mountableSlotTypes = Internal
+    mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/defense_grid.png"
 
