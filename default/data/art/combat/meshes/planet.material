@@ -91,7 +91,8 @@ material atmosphere
 
             fragment_program_ref planet_atmosphere_frag
             {
-                param_named atmosphere_color float4 0.501 0.684 1.0 0.5
+                param_named atmosphere_color float4 0.501 0.684 1.0 0.45
+                param_named atmosphere_edge_color float4 0.501 0.684 1.0 0.65
             }
         }
     }
