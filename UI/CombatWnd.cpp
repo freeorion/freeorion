@@ -21,6 +21,7 @@
 
 #include <GG/GUI.h>
 
+#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -111,6 +112,16 @@ namespace {
             return "planet";
         else
             return "don't create";
+    }
+
+    std::string AtmosphereNameFromBaseName(const std::string& base_name)
+    {
+        std::string retval =
+            base_name.substr(0, base_name.size() - 2) +
+            "_atmosphere_" +
+            base_name.substr(base_name.size() - 2, 2);
+        boost::algorithm::to_lower(retval);
+        return retval;
     }
 }
 
@@ -326,16 +337,16 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     // a system that looks much like the solar system
     std::vector<Planet*> planets;
-    planets.push_back(new Planet(PT_INFERNO, SZ_SMALL));
+    planets.push_back(new Planet(PT_SWAMP, SZ_SMALL));
     planets.push_back(new Planet(PT_TOXIC, SZ_LARGE));
     planets.push_back(new Planet(PT_TERRAN, SZ_LARGE));
-    planets.push_back(new Planet(PT_DESERT, SZ_MEDIUM));
-    planets.push_back(new Planet(PT_ASTEROIDS, SZ_ASTEROIDS));
+    planets.push_back(new Planet(PT_INFERNO, SZ_MEDIUM));
+    planets.push_back(new Planet(PT_RADIATED, SZ_LARGE));
+    planets.push_back(new Planet(PT_BARREN, SZ_SMALL));
+    planets.push_back(new Planet(PT_TUNDRA, SZ_MEDIUM));
     planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
-    planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
-    planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
-    planets.push_back(new Planet(PT_BARREN, SZ_TINY));
-    planets.push_back(new Planet(PT_BARREN, SZ_HUGE));
+    planets.push_back(new Planet(PT_DESERT, SZ_TINY));
+    planets.push_back(new Planet(PT_OCEAN, SZ_HUGE));
 
     System system;
     system.SetStarType(STAR_BLUE);
@@ -454,14 +465,8 @@ void CombatWnd::InitCombat(const System& system)
                 if (material_name == "planet") {
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "CloudGloss.png");
                     entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
-                    std::string new_atmosphere_material_name =
-                        "atmosphere_" + boost::lexical_cast<std::string>(it->first);
-                    Ogre::MaterialPtr atmosphere_material =
-                        Ogre::MaterialManager::getSingleton().getByName("atmosphere");
-                    atmosphere_material = atmosphere_material->clone(new_atmosphere_material_name);
-                    m_planet_assets[it->first].second.push_back(atmosphere_material);
-                    atmosphere_material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-                    entity->setMaterialName(new_atmosphere_material_name);
+                    entity->setMaterialName(AtmosphereNameFromBaseName(base_name));
+                    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
                     node->attachObject(entity);
                 }
             }

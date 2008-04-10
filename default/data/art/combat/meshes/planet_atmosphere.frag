@@ -11,9 +11,6 @@ varying float below_surface_dot_product;
 
 void main()
 {
-    if (!sun_intensity)
-        discard;
-
     // As a first pass, add in the atmosphere glow that exists only below the
     // surface -- between sphere_radius and subsurface_radius.
     float alpha_factor_1 = atmosphere_color.w;
