@@ -12,7 +12,7 @@ void main()
 {
     const float sphere_radius = 1.0;
     const float atmosphere_radius = 1.03;
-    const float subsurface_radius = 0.99;
+    const float subsurface_radius = 0.5;
 
     vec4 vertex = vec4(gl_Vertex.xyz * atmosphere_radius, 1.0);
 
