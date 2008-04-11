@@ -376,7 +376,7 @@ void CombatWnd::InitCombat(const System& system)
     // build list of available planet textures, by type
     std::map<PlanetType, std::vector<std::string> > planet_textures;
     namespace fs = boost::filesystem;
-    fs::path dir = ClientUI::ArtDir() / "combat" / "meshes";
+    fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
     assert(fs::is_directory(dir));
     fs::directory_iterator end_it;
     for (std::map<PlanetType, std::string>::const_iterator type_it =
