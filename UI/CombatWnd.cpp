@@ -35,7 +35,7 @@ namespace {
     const double STAR_RADIUS = 80.0;
 
     const double NEAR_CLIP = 0.01;
-    const double FAR_CLIP = 2000.0;
+    const double FAR_CLIP = 3020.0;
 
     const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
     const double MIN_ZOOM_IN_DISTANCE = 0.5;
@@ -373,28 +373,69 @@ void CombatWnd::InitCombat(const System& system)
 {
     // TODO: move all of this to the ctor after prototyping is complete
 
-    // build list of available planet textures, by type
-    std::map<PlanetType, std::vector<std::string> > planet_textures;
-    namespace fs = boost::filesystem;
-    fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
-    assert(fs::is_directory(dir));
-    fs::directory_iterator end_it;
-    for (std::map<PlanetType, std::string>::const_iterator type_it =
-             ClientUI::PlanetTypeFilePrefixes().begin();
-         type_it != ClientUI::PlanetTypeFilePrefixes().end();
-         ++type_it) {
-        std::vector<std::string>& current_textures = planet_textures[type_it->first];
+    // build list of available star textures, by type
+    std::set<std::string> star_textures;
+    {
+        namespace fs = boost::filesystem;
+        fs::path dir = ClientUI::ArtDir() / "combat" / "backgrounds";
+        assert(fs::is_directory(dir));
+        fs::directory_iterator end_it;
+        std::string type_str = ClientUI::StarTypeFilePrefixes()[system.Star()];
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) &&
                     !fs::is_directory(*it) &&
-                    boost::algorithm::starts_with(it->leaf(), type_it->second)) {
-                    current_textures.push_back(it->leaf().substr(0, type_it->second.size() + 2));
+                    boost::algorithm::starts_with(it->leaf(), type_str)) {
+                    star_textures.insert(it->leaf().substr(0, type_str.size() + 2));
                 }
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
                 if (e.system_error() != EACCES)
                     throw;
+            }
+        }
+    }
+
+    // pick and assign star textures
+    {
+        std::string base_name = *std::advance(star_textures.begin(), system.ID() % star_textures.size());
+        Ogre::MaterialPtr back_material =
+            Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
+        Ogre::Technique* technique = back_material->getTechnique(0);
+        technique->getPass(0)->getTextureUnitState(0)->setTextureName(base_name + "back.png");
+        technique->getPass(1)->getTextureUnitState(0)->setTextureName(base_name + "rainbow.png");
+        technique->getPass(2)->getTextureUnitState(0)->setTextureName(base_name + "rays.png");
+        technique->getPass(3)->getTextureUnitState(0)->setTextureName(base_name + "horizontal_flare.png");
+        Ogre::MaterialPtr core_material =
+            Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
+        technique = core_material->getTechnique(0);
+        technique->getPass(0)->getTextureUnitState(0)->setTextureName(base_name + "core.png");
+    }
+
+    // build list of available planet textures, by type
+    std::map<PlanetType, std::set<std::string> > planet_textures;
+    {
+        namespace fs = boost::filesystem;
+        fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
+        assert(fs::is_directory(dir));
+        fs::directory_iterator end_it;
+        for (std::map<PlanetType, std::string>::const_iterator type_it =
+                 ClientUI::PlanetTypeFilePrefixes().begin();
+             type_it != ClientUI::PlanetTypeFilePrefixes().end();
+             ++type_it) {
+            std::vector<std::string>& current_textures = planet_textures[type_it->first];
+            for (fs::directory_iterator it(dir); it != end_it; ++it) {
+                try {
+                    if (fs::exists(*it) &&
+                        !fs::is_directory(*it) &&
+                        boost::algorithm::starts_with(it->leaf(), type_it->second)) {
+                        current_textures.insert(it->leaf().substr(0, type_it->second.size() + 2));
+                    }
+                } catch (const fs::filesystem_error& e) {
+                    // ignore files for which permission is denied, and rethrow other exceptions
+                    if (e.system_error() != EACCES)
+                        throw;
+                }
             }
         }
     }
