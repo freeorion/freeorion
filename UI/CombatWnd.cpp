@@ -398,7 +398,7 @@ void CombatWnd::InitCombat(const System& system)
 
     // pick and assign star textures
     {
-        std::string base_name = *std::advance(star_textures.begin(), system.ID() % star_textures.size());
+        std::string base_name = *boost::next(star_textures.begin(), system.ID() % star_textures.size());
         Ogre::MaterialPtr back_material =
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
         Ogre::Technique* technique = back_material->getTechnique(0);
@@ -423,7 +423,7 @@ void CombatWnd::InitCombat(const System& system)
                  ClientUI::PlanetTypeFilePrefixes().begin();
              type_it != ClientUI::PlanetTypeFilePrefixes().end();
              ++type_it) {
-            std::vector<std::string>& current_textures = planet_textures[type_it->first];
+            std::set<std::string>& current_textures = planet_textures[type_it->first];
             for (fs::directory_iterator it(dir); it != end_it; ++it) {
                 try {
                     if (fs::exists(*it) &&
@@ -465,6 +465,10 @@ void CombatWnd::InitCombat(const System& system)
             Ogre::Vector3 light_dir = node->getPosition();
             light_dir.normalise();
 
+            std::string base_name =
+                *boost::next(planet_textures[planet->Type()].begin(),
+                             planet->ID() % planet_textures[planet->Type()].size());
+
             if (material_name == "gas_giant") {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
                 entity->setMaterialName("gas_giant_core");
@@ -480,14 +484,10 @@ void CombatWnd::InitCombat(const System& system)
                 material = material->clone(new_material_name);
                 m_planet_assets[it->first].second.push_back(material);
                 material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-                std::string base_name =
-                    planet_textures[planet->Type()][planet->ID() % planet_textures[planet->Type()].size()];
                 material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(base_name + ".png");
                 entity->setMaterialName(new_material_name);
                 node->attachObject(entity);
             } else {
-                std::string base_name =
-                    planet_textures[planet->Type()][planet->ID() % planet_textures[planet->Type()].size()];
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
