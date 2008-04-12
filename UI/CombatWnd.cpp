@@ -40,6 +40,10 @@ namespace {
     const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
     const double MIN_ZOOM_IN_DISTANCE = 0.5;
 
+    const int ALPHA_OBJECTS_QUEUE = Ogre::RENDER_QUEUE_7;
+    const int STAR_CORE_QUEUE = ALPHA_OBJECTS_QUEUE + 1;
+    const int SELECTION_RECT_QUEUE = Ogre::RENDER_QUEUE_OVERLAY - 1;
+
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
         assert(orbit < 10);
@@ -133,7 +137,7 @@ CombatWnd::SelectionRect::SelectionRect() :
 {
     setUseIdentityProjection(true);
     setUseIdentityView(true);
-    setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
+    setRenderQueueGroup(SELECTION_RECT_QUEUE);
     setUseIdentityProjection(true);
     setUseIdentityView(true);
     setQueryFlags(0);
@@ -168,38 +172,6 @@ void CombatWnd::SelectionRect::Resize(const GG::Pt& pt1, const GG::Pt& pt2)
     setBoundingBox(box);
 }
 
-
-////////////////////////////////////////////////////////////
-// FlareRect
-////////////////////////////////////////////////////////////
-CombatWnd::FlareRect::FlareRect(const std::string& material_name) :
-    ManualObject("FlareRect"),
-    m_material_name(material_name)
-{
-    setUseIdentityProjection(true);
-    setUseIdentityView(true);
-    setRenderQueueGroup(Ogre::RENDER_QUEUE_9);
-    setQueryFlags(0);
-}
-
-void CombatWnd::FlareRect::Resize(Ogre::Real left, Ogre::Real top, Ogre::Real right, Ogre::Real bottom)
-{
-    clear();
-    begin(m_material_name, Ogre::RenderOperation::OT_TRIANGLE_FAN);
-    position(right, top, -1);
-    textureCoord(1.0, 0.0);
-    position(left, top, -1);
-    textureCoord(0.0, 0.0);
-    position(left, bottom, -1);
-    textureCoord(0.0, 1.0);
-    position(right, bottom, -1);
-    textureCoord(1.0, 1.0);
-    end();
-
-    Ogre::AxisAlignedBox box;
-    box.setInfinite();
-    setBoundingBox(box);
-}
 
 ////////////////////////////////////////////////////////////
 // SelectedObject
@@ -302,7 +274,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     Ogre::SceneNode* star_node = m_scene_manager->getRootSceneNode()->createChildSceneNode();
     Ogre::BillboardSet* star_billboard_set = m_scene_manager->createBillboardSet("StarBackBillboardSet");
-    star_billboard_set->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+    star_billboard_set->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
     star_billboard_set->setMaterialName("backgrounds/star_back");
     star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
     m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
@@ -310,7 +282,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star_node->attachObject(star_billboard_set);
 
     star_billboard_set = m_scene_manager->createBillboardSet("StarCoreBillboardSet");
-    star_billboard_set->setRenderQueueGroup(Ogre::RENDER_QUEUE_9);
+    star_billboard_set->setRenderQueueGroup(STAR_CORE_QUEUE);
     star_billboard_set->setMaterialName("backgrounds/star_core");
     star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
     star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
@@ -478,6 +450,7 @@ void CombatWnd::InitCombat(const System& system)
                 node->attachObject(entity);
 
                 entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
+                entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
                 Ogre::MaterialPtr material =
@@ -507,6 +480,7 @@ void CombatWnd::InitCombat(const System& system)
                 if (material_name == "planet") {
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "CloudGloss.png");
                     entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
+                    entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                     entity->setMaterialName(AtmosphereNameFromBaseName(base_name));
                     entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
                     node->attachObject(entity);

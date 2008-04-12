@@ -59,16 +59,6 @@ private:
         void Resize(const GG::Pt& pt1, const GG::Pt& pt2);
     };
 
-    class FlareRect : public Ogre::ManualObject
-    {
-    public:
-        explicit FlareRect(const std::string& material_name);
-        void Resize(Ogre::Real left, Ogre::Real top, Ogre::Real right, Ogre::Real bottom);
-
-    private:
-        std::string m_material_name;
-    };
-
     struct SelectedObject
     {
         struct SelectedObjectImpl;
