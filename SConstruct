@@ -500,6 +500,7 @@ if str(Platform()) == 'win32':
     flags = [
         #env['debug'] and '/Od' or '/Ox',
         code_generation_flag,
+        '/O2',
         '/EHsc',
         '/W3',
         '/Zc:forScope',
@@ -512,7 +513,8 @@ if str(Platform()) == 'win32':
     env.AppendUnique(CPPDEFINES = [
         (env['debug'] and '_DEBUG' or 'NDEBUG'),
         'WIN32',
-        '_WINDOWS'
+        '_WINDOWS',
+        '_MBCS'
         ])
     if env['dynamic']:
         env.AppendUnique(CPPDEFINES = [
