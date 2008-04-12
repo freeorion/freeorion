@@ -9,7 +9,7 @@ void main()
 {
     vec4 ec_position = gl_ModelViewMatrix * gl_Vertex;
     vec3 normal = normalize(gl_NormalMatrix * gl_Normal);
-    vec3 light_vec = normalize(gl_NormalMatrix * -light_dir);
+    vec3 light_vec = normalize(gl_NormalMatrix * light_dir);
     vec3 reflect_vec = reflect(-light_vec, normal);
     vec3 view_vec = normalize(vec3(-ec_position));
 

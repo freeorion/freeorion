@@ -19,7 +19,7 @@ void main()
     vec4 vertex = vec4(gl_Vertex.xyz * atmosphere_radius, 1.0);
 
     vec3 normal = normalize(gl_NormalMatrix * normalize(gl_Normal));
-    vec3 light_vec = normalize(gl_NormalMatrix * -light_dir);
+    vec3 light_vec = normalize(gl_NormalMatrix * light_dir);
 
     sun_intensity = max(dot(normal, light_vec), 0.0);
 

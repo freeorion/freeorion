@@ -462,8 +462,9 @@ void CombatWnd::InitCombat(const System& system)
             node->setPosition(position);
 
             // light comes from the star, and the star is at the origin
-            Ogre::Vector3 light_dir = node->getPosition();
+            Ogre::Vector3 light_dir = -node->getPosition();
             light_dir.normalise();
+            light_dir = node->getOrientation().Inverse() * light_dir;
 
             std::string base_name =
                 *boost::next(planet_textures[planet->Type()].begin(),
