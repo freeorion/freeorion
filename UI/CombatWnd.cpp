@@ -40,7 +40,8 @@ namespace {
     const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
     const double MIN_ZOOM_IN_DISTANCE = 0.5;
 
-    const int ALPHA_OBJECTS_QUEUE = Ogre::RENDER_QUEUE_7;
+    const int STAR_BACK_QUEUE = Ogre::RENDER_QUEUE_7;
+    const int ALPHA_OBJECTS_QUEUE = STAR_BACK_QUEUE + 1;
     const int STAR_CORE_QUEUE = ALPHA_OBJECTS_QUEUE + 1;
     const int SELECTION_RECT_QUEUE = Ogre::RENDER_QUEUE_OVERLAY - 1;
 
@@ -274,7 +275,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     Ogre::SceneNode* star_node = m_scene_manager->getRootSceneNode()->createChildSceneNode();
     Ogre::BillboardSet* star_billboard_set = m_scene_manager->createBillboardSet("StarBackBillboardSet");
-    star_billboard_set->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
+    star_billboard_set->setRenderQueueGroup(STAR_BACK_QUEUE);
     star_billboard_set->setMaterialName("backgrounds/star_back");
     star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
     m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
