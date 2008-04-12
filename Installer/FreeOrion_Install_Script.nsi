@@ -56,6 +56,7 @@ Section "MainSection" SEC01
   File "..\..\vcredist_x86.exe"
   ExecWait "$INSTDIR\vcredist_x86.exe /q"
   File /r /x .svn "..\default"
+  File "..\glew32.dll"
   File "..\alut.dll"
   File "..\boost_python-vc80-mt-1_34.dll"
   File "..\devil.dll"
