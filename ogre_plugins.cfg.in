@@ -7,5 +7,3 @@ PluginFolder=.
 Plugin=%(plugin1)s
 Plugin=%(plugin2)s
 Plugin=%(plugin3)s
-Plugin=%(plugin4)s
-Plugin=%(plugin5)s

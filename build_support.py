@@ -261,9 +261,7 @@ def CreateOgrePluginsFile(target, source, env):
     values = {
         'plugin1' : 'RenderSystem_GL' + env['SHLIBSUFFIX'],
         'plugin2' : 'Plugin_ParticleFX' + env['SHLIBSUFFIX'],
-        'plugin3' : 'Plugin_BSPSceneManager' + env['SHLIBSUFFIX'],
-        'plugin4' : 'Plugin_OctreeSceneManager' + env['SHLIBSUFFIX'],
-        'plugin5' : 'Plugin_CgProgramManager' + env['SHLIBSUFFIX']
+        'plugin3' : 'Plugin_OctreeSceneManager' + env['SHLIBSUFFIX']
     }
     for tgt, src in zip(target, source):
         pc = open(str(tgt), 'w')
