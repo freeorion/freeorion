@@ -148,7 +148,10 @@ private:
     void Zoom(int delta);                           //!< changes the zoomlevel of the main map
     void DoMovingFleetButtonsLayout();              //!< does layout of fleet buttons for moving fleets
     void DoSystemIconsLayout();                     //!< does layout of system icons
-    void RenderBackgrounds();                       //!< renders the backgrounds onto the screen
+    void RenderStarfields();                        //!< renders the background starfiends
+    void RenderNebulae();                           //!< renders nebulae
+    void RenderGalaxyGas();                         //!< renders gassy substance to make shape of galaxy
+    void RenderSystems();                           //!< renders stars and halos
     void RenderStarlanes();                         //!< renders the starlanes between the systems
     void RenderFleetMovementLines();                //!< renders the dashed lines indicating where each fleet is going
     void CorrectMapPosition(GG::Pt &move_to_pt);    //!< ensures that the map data are positioned sensibly

@@ -469,7 +469,7 @@ void MapWnd::Render()
     // all.
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
 
-    RenderBackgrounds();
+    RenderStarfields();
 
     int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
     if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
@@ -478,39 +478,17 @@ void MapWnd::Render()
         g_chat_display_show_time = 0;
     }
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
     GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
     glPushMatrix();
     glLoadIdentity();
     glScalef(m_zoom_factor, m_zoom_factor, 1.0);
     glTranslatef(origin_offset.x / m_zoom_factor, origin_offset.y / m_zoom_factor, 0.0);
 
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
-         it != m_galaxy_gas_quad_vertices.end();
-         ++it) {
-        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-        // This is provided here to ensure maximum backwards compatability with
-        // older hardware and GL drivers.  It can only work on a temporary
-        // basis, however, since GL 2.0 will soon be required for the use of
-        // Ogre, shaders, etc.  This note applies to all such uses of the ARB
-        // versions of GL functions and macros.
-#ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
-#else
-        glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-#endif
-        glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
-#else
-        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-#endif
-        glTexCoordPointer(2, GL_FLOAT, 0, 0);
-        glDrawArrays(GL_QUADS, 0, it->second.m_size);
-    }
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    RenderGalaxyGas();
+    RenderNebulae();
 
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
@@ -522,67 +500,12 @@ void MapWnd::Render()
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.0);
 
-    glColor3f(1.0, 1.0, 1.0);
-
-    const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
-    if (0.5 < HALO_SCALE_FACTOR) {
-        glMatrixMode(GL_TEXTURE);
-        glTranslatef(0.5, 0.5, 0.0);
-        glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
-        glTranslatef(-0.5, -0.5, 0.0);
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-             it != m_star_halo_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-#endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-#endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
-        }
-        glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
-    }
-
-    if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-             it != m_star_core_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-#endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-#endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
-        }
-    }
-
-    glPopMatrix();
-
-#ifdef FREEORION_WIN32
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-#else
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
+    RenderSystems();
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glPopMatrix();
 }
 
 void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
@@ -1668,7 +1591,7 @@ void MapWnd::Zoom(int delta)
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
 
-void MapWnd::RenderBackgrounds()
+void MapWnd::RenderStarfields()
 {
     glColor3d(1.0, 1.0, 1.0);
 
@@ -1700,7 +1623,13 @@ void MapWnd::RenderBackgrounds()
     }
 
     glMatrixMode(GL_MODELVIEW);
+}
 
+void MapWnd::RenderNebulae()
+{
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glPushMatrix();
+    glLoadIdentity();
     for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
         int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
         int nebula_height = m_nebulae[i]->Height() / 3;
@@ -1713,6 +1642,96 @@ void MapWnd::RenderBackgrounds()
                                 ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
                                             static_cast<int>(nebula_height * m_zoom_factor)));
     }
+    glPopMatrix();
+}
+
+void MapWnd::RenderGalaxyGas()
+{
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end();
+         ++it) {
+        glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+        // This is provided here to ensure maximum backwards compatability with
+        // older hardware and GL drivers.  It can only work on a temporary
+        // basis, however, since GL 2.0 will soon be required for the use of
+        // Ogre, shaders, etc.  This note applies to all such uses of the ARB
+        // versions of GL functions and macros.
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+        glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+        glDrawArrays(GL_QUADS, 0, it->second.m_size);
+    }
+}
+
+void MapWnd::RenderSystems()
+{
+    glColor4f(1.0, 1.0, 1.0, 1.0);
+
+    const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
+    if (0.5 < HALO_SCALE_FACTOR) {
+        glMatrixMode(GL_TEXTURE);
+        glTranslatef(0.5, 0.5, 0.0);
+        glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
+        glTranslatef(-0.5, -0.5, 0.0);
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+             it != m_star_halo_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+        glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+    }
+
+    if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
+        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+             it != m_star_core_quad_vertices.end();
+             ++it) {
+            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+            glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        }
+    }
+
+
+#ifdef FREEORION_WIN32
+    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#else
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
 void MapWnd::RenderStarlanes()
