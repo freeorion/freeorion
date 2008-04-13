@@ -79,6 +79,7 @@ namespace {
     {
         db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
         db.Add("UI.chat-edit-history", "OPTIONS_DB_UI_CHAT_EDIT_HISTORY", 50, RangedValidator<int>(0, 1000));
+        db.Add("UI.galaxy-gas-background", "OPTIONS_DB_GALAXY_MAP_GAS", true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1647,6 +1648,8 @@ void MapWnd::RenderNebulae()
 
 void MapWnd::RenderGalaxyGas()
 {
+    if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
+        return;
     glColor4f(1.0, 1.0, 1.0, 1.0);
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
