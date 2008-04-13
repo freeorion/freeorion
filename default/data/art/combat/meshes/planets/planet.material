@@ -251,8 +251,8 @@ material terran_atmosphere_01 : atmosphere
         {
             fragment_program_ref
             {
-                param_named atmosphere_color float4 0.501 0.684 1.0 0.45
-                param_named atmosphere_edge_color float4 0.501 0.684 1.0 0.65
+                param_named atmosphere_color float4 0.501 0.684 1.0 0.65
+                param_named atmosphere_edge_color float4 0.601 0.784 1.0 1
             }
         }
     }
