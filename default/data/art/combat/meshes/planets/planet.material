@@ -38,6 +38,16 @@ fragment_program gas_giant_frag glsl
     source gas_giant.frag
 }
 
+material 01_-_Default
+{
+	technique
+	{
+        pass
+        {
+        }
+    }
+}
+
 material planet
 {
 	technique
