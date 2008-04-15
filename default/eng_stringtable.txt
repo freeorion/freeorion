@@ -815,10 +815,10 @@ OPTIONS_VIDEO_MODE
 Video Mode  (restart for changes to take effect)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Enables fullscreen mode, sets screen resolution, and sets bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
+Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Custom Windowed
+Custom
 
 OPTIONS_VIDEO_SETTINGS
 Video Settings
@@ -3308,8 +3308,8 @@ Autolab Control Centre
 BLD_AUTOLAB_CONTROL_DESC
 Provides +2 to max research output per 10 population and -2 to max health on primary research focused worlds.\nProvides additional +1 to max research output per 10 population and -1 to max health on secondary research focused worlds.
 
-BLD_THEORM_PROVER
-Automatic Theorm Prover
+BLD_THEOREM_PROVER
+Automatic Theorem Prover
 
 BLD_THEORM_PROVER_DESC
 Provides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.

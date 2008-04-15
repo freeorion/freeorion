@@ -29,7 +29,7 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""icons/ship_parts/nuclear_missile.png"
+    graphic = "icons/ship_parts/nuclear_missile.png"
 
 Part
     name = "AR_LEAD_PLATE"
