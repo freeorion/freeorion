@@ -660,7 +660,7 @@ Tech
     researchturns = 1
     prerequisites = "GRO_PLANET_ECOL"
     unlock = Item type = Building name = "BLD_LIVING_PLANET"
-    graphic = ""
+    graphic = "icons/tech/the_living_planet.png"
 
 Tech
     name = "GRO_ORBITAL_GARDENS"

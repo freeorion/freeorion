@@ -29,7 +29,7 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = ""icons/ship_parts/nuclear_missile.png"
 
 Part
     name = "AR_LEAD_PLATE"
@@ -84,7 +84,7 @@ Part
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/deuterium_tank.png"
 
 Part
     name = "FU_ANTIMATTER_TANK"
@@ -95,7 +95,7 @@ Part
     buildtime = 6
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/antimatter_tank.png"
 
 Part
     name = "ST_EM_DAMPER"
