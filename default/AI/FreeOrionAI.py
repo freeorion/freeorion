@@ -1,54 +1,76 @@
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
 import pickle                       # Python object serialization library
+import AIstate
+import FleetUtils
 import ExplorationAI
 import ColonisationAI
+# import ProductionAI
 
-
-# global variable for test purposes.  code in generateOrders demonstrates that this value persists between
-# calls from c++ to functions defined in this module
-i = 0
-
-# global Python dict in which AI state information can be stored.  data will persist between calls to
-# generate orders.  a dict can be serialized to a string, which can be stored in a saved game.  the
-# string will then be returned when the saved game is loaded, and can be deserialized to restore AI
-# state from before the save.
-d = {}
+# AIstate
+foAIstate = None
 
 
 # called when Python AI starts, before any game new game starts or saved game is resumed
 def initFreeOrionAI():
-    global i
     print "Initialized FreeOrion Python AI"
 
 
 # called when a new game is started (but not when a game is loaded).  should clear any pre-existing state
 # and set up whatever is needed for AI to generate orders
 def startNewGame():
-    global d
     print "New game started"
-    d = {"dict_key" : "dict_value"}
+
+    empireID = fo.empireID()
+    universe = fo.getUniverse()
+
+    # initialise AIstate
+    global foAIstate
+    foAIstate = AIstate.AIstate()
+    print "Initialised foAIstate class"
+
+    # split all fleets
+    for fleetID in universe.fleetIDs: FleetUtils.splitFleet(fleetID)
+
+    # assign roles to ships
+    shipIDs = []
+    
+    for fleetID in universe.fleetIDs:
+        fleet = universe.getFleet(fleetID)
+        
+        if not fleet.whollyOwnedBy(empireID): continue        
+        for ID in fleet.shipIDs: shipIDs = shipIDs + [ID]
+    
+    for shipID in shipIDs:
+        ship = universe.getShip(shipID)
+        foAIstate.addShipRole(ship.design.id, FleetUtils.assessShipRole(shipID))
+        # print str(ship.design.id) + ": " + FleetUtils.assessShipRole(shipID)
+
+    # assign roles to fleets
+    for fleetID in universe.fleetIDs:
+        if not fleet.whollyOwnedBy(empireID): continue
+        foAIstate.addFleetRole(fleetID, FleetUtils.assessFleetRole(fleetID))
+        # print str(fleetID) + ": " + FleetUtils.assessFleetRole(fleetID)
 
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):
-    global d
     print "Resuming loaded game"
     try:
-        d = pickle.loads(savedStateString)
+        foAIstate = AIstate.AIstate()
+        # foAIstate = pickle.loads(savedStateString)
     except:
         print "failed to parse saved state string"
-        d = {}
+        foAIstate = AIstate.AIstate()
 
 
 # called when the game is about to be saved, to let the Python AI know it should save any AI state
 # information, such as plans or knowledge about the game from previous turns, in the state string so that 
 # they can be restored if the game is loaded
 def prepareForSave():
-    global d
     print "Preparing for game save by serializing state"
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
-    fo.setSaveStateString(pickle.dumps(d))
+    fo.setSaveStateString(pickle.dumps(foAIstate))
 
 
 # called when this player receives a chat message.  senderID is the player who sent the message, and 
@@ -62,33 +84,16 @@ def handleChatMessage(senderID, messageText):
 # and can be sent to the server for processing.
 def generateOrders():
     
-    turn = fo.currentTurn()
-
     print ""
-    print "TURN: " + str(turn)
+    print "TURN: " + str(fo.currentTurn())
 
-    # split all fleets
-    empireID = fo.empireID()
-    universe = fo.getUniverse()
-
-    for fleetID in universe.fleetIDs:
-        
-        fleet = universe.getFleet(fleetID)
-        if fleet == None: continue
-        if not fleet.whollyOwnedBy(empireID): continue
-        if fleet.numShips == 1: continue
-
-        for shipID in fleet.shipIDs:
-            if len(fleet.shipIDs) <= 1: break # don't use last ship
-            fo.issueNewFleetOrder(str(shipID), shipID)
-
-        # ISSUNG A NEW_FLEET ORDER ON A 1-SHIP FLEET WILL CAUSE TROUBLE!
+    # pre-turn cleanup
+    foAIstate.cleanFleetRoles()
+    # ...missions
 
     # call AI modules
     ExplorationAI.generateExplorationOrders()
     ColonisationAI.generateColonisationOrders()
+    # ProductionAI.generateProductionOrders()
 
     fo.doneTurn()
-
-
-

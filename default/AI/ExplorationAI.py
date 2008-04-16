@@ -1,70 +1,58 @@
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
-
-
-exploreMissions = {}
-
+import FreeOrionAI as foAI
+import FleetUtils
 
 def generateExplorationOrders():
-    print "Generating Exploration Orders"
 
-    # retreive objects from freeOrionAIInterface that can be used to access the gamestate
+    # retreive objects from freeOrionAIInterface
     empire = fo.getEmpire()
     empireID = fo.empireID()
-    universe = fo.getUniverse()    
-    global exploreMissions
 
-    homeSystemID = getHomeSystemID(empire, universe)
-    fleetIDs = getEmpireStationaryFleetIDs(empireID)
-    systemIDs = getExplorableSystemIDs(homeSystemID, empireID)
-     
-    # print "stationary fleet IDs: " + str(fleetIDs)
-    # print "explorable systems: " + str(systemIDs)
+    # get explorable systems and scouting fleets
+    systemIDs = getExplorableSystemIDs(getHomeSystemID(empire), empireID)
 
-    # order stationary fleets to explore
-    for fleetID in fleetIDs:
+    removeInvalidExploreMissions(empire)
 
-        removeInvalidExploreMissions(exploreMissions, empire, universe)
+    mFleetIDs = FleetUtils.getEmpireFleetIDsByRole(empireID, "MT_EXPLORATION")
+    fleetIDs = FleetUtils.extractFleetIDsWithoutMission(mFleetIDs)
+
+    # order fleets to explore
+    for fleetID in fleetIDs:        
              
         # if fleet already has a mission, continue
-        if exploreMissions.has_key(fleetID): continue
+        if foAI.foAIstate.hasMission("MT_EXPLORATION", fleetID): continue
         
         # else send fleet to a system
         for systemID in systemIDs:
             
             # if system is already being explored, continue
-            if dictHasValue(exploreMissions, systemID): continue
+            if foAI.foAIstate.hasTarget("MT_EXPLORATION", systemID): continue
 
-            # send fleet, register an explore mission
+            # send fleet, register an exploration mission
             fo.issueFleetMoveOrder(fleetID, systemID)
-            exploreMissions[fleetID] = systemID
+            foAI.foAIstate.addMission("MT_EXPLORATION", [fleetID, systemID])
             break
 
-    print "Systems being explored (fleet|system): " + str(exploreMissions)
+    print "Scouts: " + str(FleetUtils.getEmpireFleetIDsByRole(empireID, "MT_EXPLORATION"))
+    print "Systems being explored (fleet|system): " + str(foAI.foAIstate.getMissions("MT_EXPLORATION"))
 
 
 
 
 
+def getHomeSystemID(empire):
+    "returns the systemID of the home world"
 
-def dictHasValue(dictionary, value):
+    universe = fo.getUniverse()
+    homeworld = universe.getPlanet(empire.homeworldID)
 
-    for entry in dictionary:
-        if dictionary[entry] == value: return True
-
-    return False
-
-
-# returns the systemID of the home world
-def getHomeSystemID(empire, universe):
-    
-    homeworldObject = universe.getPlanet(empire.homeworldID)
-
-    return homeworldObject.systemID
+    return homeworld.systemID
 
 
 # returns list of systems ids known of by but not explored by empireID,
 # that a ship located in startSystemID could reach via starlanes
 def getExplorableSystemIDs(startSystemID, empireID):
+    "returns explorable systems"
 
     universe = fo.getUniverse()
     objectIDs = universe.allObjectIDs
@@ -82,49 +70,28 @@ def getExplorableSystemIDs(startSystemID, empireID):
     return systemIDs
 
 
-# returns list of staitionary fleet ids owned by empireID
-def getEmpireStationaryFleetIDs(empireID):
+def removeInvalidExploreMissions(empire):
+    "removes missions if fleet is destroyed or system already explored"
+
+    print "Removing invalid exploration missions:"
+
     universe = fo.getUniverse()
-    objectIDs = universe.allObjectIDs
+    exploreMissions = foAI.foAIstate.getMissions("MT_EXPLORATION")
 
-    fleetIDs = []
-
-    for objectID in objectIDs:
-        fleet = universe.getFleet(objectID)
-        if (fleet == None): continue
-
-        if (not fleet.whollyOwnedBy(empireID)): continue    
-
-        # has no target
-        if (fleet.nextSystemID != universe.invalidObjectID): continue
-
-        # is at a sytem
-        if fleet.systemID == universe.invalidObjectID: continue
-
-        fleetIDs = fleetIDs + [objectID]
-
-    return fleetIDs
-
-
-def removeInvalidExploreMissions(exploreMissions, empire, universe):
-
-    removeMissions = []
-
+    # look for invalid missions
     for fleetID in exploreMissions:
 
-        # system explored? => delete mission
         if empire.hasExploredSystem(exploreMissions[fleetID]):
-            removeMissions.append(fleetID)
+            foAI.foAIstate.removeMission("MT_EXPLORATION", fleetID)
+            # print "removed mission " + str(fleetID)
             continue
 
-        # fleet not there (or from a different empire)? => delete mission
         fleet = universe.getFleet(fleetID)
         
         if (fleet == None):
-            removeMissions.append(fleetID)
+            foAI.foAIstate.removeMission("MT_EXPLORATION", fleetID)
             continue
         
-        if not (fleet.whollyOwnedBy(empire.empireID)): removeMissions.append(fleetID)
-
-    for fleetID in removeMissions: del exploreMissions[fleetID]
+        if not (fleet.whollyOwnedBy(empire.empireID)):
+            foAI.foAIstate.removeMission("MT_EXPLORATION", fleetID)
 
