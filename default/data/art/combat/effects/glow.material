@@ -84,7 +84,7 @@ material effects/glow/horizontal_pass_1
             fragment_program_ref horizontal_pass_1_frag
             {
         		param_named source int 0
-                param_named texture_width float 512.0
+                param_named texture_width float 1024.0
             }
             texture_unit
             {
@@ -103,7 +103,7 @@ material effects/glow/horizontal_pass_2 : effects/glow/horizontal_pass_1
         {
             fragment_program_ref
             {
-                param_named texture_width float 128.0
+                param_named texture_width float 256.0
             }
         }
     }
@@ -117,7 +117,7 @@ material effects/glow/horizontal_pass_3 : effects/glow/horizontal_pass_1
         {
             fragment_program_ref
             {
-                param_named texture_width float 32.0
+                param_named texture_width float 64.0
             }
         }
     }
@@ -132,32 +132,22 @@ material effects/glow/horizontal_pass_4 : effects/glow/horizontal_pass_1
             fragment_program_ref horizontal_pass_4_frag
             {
         		param_named source int 0
+                param_named texture_width float 16.0
             }
         }
     }
 }
 
-material effects/glow/vertical_pass_1
+material effects/glow/vertical_pass_1 : effects/glow/horizontal_pass_1
 {
 	technique
 	{
         pass
         {
-			cull_hardware none
-			cull_software none
-			depth_check off
-            vertex_program_ref fullscreen_quad_vert
-            {
-            }
             fragment_program_ref vertical_pass_1_frag
             {
         		param_named source int 0
-                param_named texture_width float 512.0
-            }
-            texture_unit
-            {
-                tex_address_mode clamp
-                filtering linear linear none
+                param_named texture_width float 1024.0
             }
         }
     }
@@ -171,7 +161,7 @@ material effects/glow/vertical_pass_2 : effects/glow/vertical_pass_1
         {
             fragment_program_ref
             {
-                param_named texture_width float 128.0
+                param_named texture_width float 256.0
             }
         }
     }
@@ -185,7 +175,7 @@ material effects/glow/vertical_pass_3 : effects/glow/vertical_pass_1
         {
             fragment_program_ref
             {
-                param_named texture_width float 32.0
+                param_named texture_width float 64.0
             }
         }
     }
@@ -200,6 +190,7 @@ material effects/glow/vertical_pass_4 : effects/glow/vertical_pass_1
             fragment_program_ref vertical_pass_4_frag
             {
         		param_named source int 0
+                param_named texture_width float 16.0
             }
         }
     }

@@ -4,15 +4,15 @@ compositor effects/glow
     {
         texture scene target_width target_height PF_A8R8G8B8
         texture glow_geometry target_width target_height PF_A8R8G8B8
-        texture scene_combined 1024 1024 PF_FLOAT16_RGB
-        texture horizontal_pass_1 1024 1024 PF_FLOAT16_RGB
-        texture horizontal_pass_2 256 256 PF_FLOAT16_RGB
-        texture horizontal_pass_3 64 64 PF_FLOAT16_RGB
-        texture horizontal_pass_4 16 16 PF_FLOAT16_RGB
-        texture vertical_pass_1 1024 1024 PF_FLOAT16_RGB
-        texture vertical_pass_2 256 256 PF_FLOAT16_RGB
-        texture vertical_pass_3 64 64 PF_FLOAT16_RGB
-        texture vertical_pass_4 16 16 PF_FLOAT16_RGB
+        texture scene_combined 1024 768 PF_FLOAT16_RGB
+        texture horizontal_pass_1 1024 768 PF_FLOAT16_RGB
+        texture horizontal_pass_2 256 192 PF_FLOAT16_RGB
+        texture horizontal_pass_3 64 48 PF_FLOAT16_RGB
+        texture horizontal_pass_4 16 12 PF_FLOAT16_RGB
+        texture vertical_pass_1 1024 768 PF_FLOAT16_RGB
+        texture vertical_pass_2 256 192 PF_FLOAT16_RGB
+        texture vertical_pass_3 64 48 PF_FLOAT16_RGB
+        texture vertical_pass_4 16 12 PF_FLOAT16_RGB
 
         target scene
         {
