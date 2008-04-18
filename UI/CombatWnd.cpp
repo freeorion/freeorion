@@ -9,6 +9,7 @@
 #include <OgreBillboard.h>
 #include <OgreBillboardSet.h>
 #include <OgreCamera.h>
+#include <OgreCompositorManager.h>
 #include <OgreConfigFile.h>
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
@@ -44,6 +45,9 @@ namespace {
     const int ALPHA_OBJECTS_QUEUE = STAR_BACK_QUEUE + 1;
     const int STAR_CORE_QUEUE = ALPHA_OBJECTS_QUEUE + 1;
     const int SELECTION_RECT_QUEUE = Ogre::RENDER_QUEUE_OVERLAY - 1;
+
+    const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
+    const Ogre::uint32 GLOWING_OBJECTS_MASK = 1 << 1;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -268,6 +272,9 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     // Initialise, parse scripts etc
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
+    Ogre::CompositorManager::getSingleton().addCompositor(m_viewport, "effects/glow");
+    Ogre::CompositorManager::getSingleton().setCompositorEnabled(m_viewport, "effects/glow", true);
+
     m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
     m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_NONE);//STENCIL_MODULATIVE);
 
@@ -280,6 +287,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
     m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
     star_billboard_set->setVisible(true);
+    star_billboard_set->setVisibilityFlags(REGULAR_OBJECTS_MASK);
     star_node->attachObject(star_billboard_set);
 
     star_billboard_set = m_scene_manager->createBillboardSet("StarCoreBillboardSet");
@@ -288,6 +296,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
     star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
     star_billboard_set->setVisible(true);
+    star_billboard_set->setVisibilityFlags(GLOWING_OBJECTS_MASK);
     star_node->attachObject(star_billboard_set);
 
     Ogre::Light* star = m_scene_manager->createLight("Star");
@@ -337,6 +346,7 @@ CombatWnd::~CombatWnd()
     m_scene_manager->destroyQuery(m_ray_scene_query);
     m_scene_manager->destroyQuery(m_volume_scene_query);
     delete m_selection_rect;
+    Ogre::CompositorManager::getSingleton().removeCompositor(m_viewport, "effects/glow");
 
     // TODO: delete nodes and materials in m_planet_assets (or maybe everything
     // via some Ogre function?)
@@ -448,10 +458,12 @@ void CombatWnd::InitCombat(const System& system)
                 entity->setMaterialName("gas_giant_core");
                 assert(entity->getNumSubEntities() == 1u);
                 entity->setCastShadows(true);
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 node->attachObject(entity);
 
                 entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
                 entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
                 Ogre::MaterialPtr material =
@@ -464,6 +476,7 @@ void CombatWnd::InitCombat(const System& system)
                 node->attachObject(entity);
             } else {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
                 Ogre::MaterialPtr material =
@@ -482,6 +495,7 @@ void CombatWnd::InitCombat(const System& system)
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "CloudGloss.png");
                     entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
                     entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
+                    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                     entity->setMaterialName(AtmosphereNameFromBaseName(base_name));
                     entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
                     node->attachObject(entity);
