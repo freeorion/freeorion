@@ -1835,6 +1835,14 @@ ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
     }
 }
 
+void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Control::SizeMove(ul, lr);
+    if (m_graphic)
+        m_graphic->Resize(Size());
+    if (m_name)
+        m_name->Resize(GG::Pt(Width(), m_name->Height()));
+}
+
 void ShipDesignPanel::Render() {}
 
 void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {

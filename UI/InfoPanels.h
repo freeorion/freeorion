@@ -249,6 +249,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void            Render();
     virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 

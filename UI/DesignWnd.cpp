@@ -816,7 +816,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
     const bool showing_unavailable = m_availabilities_shown.second;
     //Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
     const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
-    //Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
+    Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
 
     //Logger().debugStream() << "... hulls in list: ";
     //for (std::set<std::string>::const_iterator it = m_hulls_in_list.begin(); it != m_hulls_in_list.end(); ++it)
@@ -831,7 +831,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
         const std::string& hull_name = it->first;
 
         // add or retain in list 1) all hulls if no empire is specified, or 
-        //                       2) hulls of appropriat eavailablility for set empire
+        //                       2) hulls of appropriate availablility for set empire
         if (!empire ||
             (showing_available && empire->ShipHullAvailable(hull_name)) ||
             (showing_unavailable && !empire->ShipHullAvailable(hull_name)))
@@ -900,18 +900,62 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 
     if (empire) {
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
-            // add or retain in list all designs kept by this empire that have the appropriate availability
+            int design_id = *it;
+
+            // add or retain in list designs of appropriate availablility retained by current empire
+            if ((showing_available && empire->ShipDesignAvailable(design_id)) ||
+                (showing_unavailable && !empire->ShipDesignAvailable(design_id)))
+            {
+                // add or retain design in list
+                if (m_designs_in_list.find(design_id) == m_designs_in_list.end())
+                    designs_to_add.insert(design_id);
+            } else {
+                // remove or don't add design to list
+                if (m_designs_in_list.find(design_id) != m_designs_in_list.end())
+                    designs_to_remove.insert(design_id);
+            }
         }
     } else {
         // all empires / all known designs
         for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
+            int design_id = it->first;
+            // add or retain design in list
+            if (m_designs_in_list.find(design_id) == m_designs_in_list.end())
+                designs_to_add.insert(design_id);
         }
     }
 
-    //CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(Width() - ClientUI::ScrollWidth() - 5, 100, *it);
-    //Insert(row);
-    //CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(Width() - ClientUI::ScrollWidth() - 5, 100, it->first);
-    //Insert(row);
+    // loop through list, removing rows as appropriate
+    for (int i = 0; i != this->NumRows();) {
+        //Logger().debugStream() << " row index: " << i;
+        const CompletedDesignListBoxRow* row = dynamic_cast<const CompletedDesignListBoxRow*>(&GetRow(i));
+        if (!row) {
+            ++i;
+            continue;
+        }
+        int current_row_design_id = row->DesignID();
+        //Logger().debugStream() << " current row hull: " << current_row_design_id;
+        if (designs_to_remove.find(current_row_design_id) != designs_to_remove.end()) {
+            //Logger().debugStream() << " ... removing";
+            m_designs_in_list.erase(current_row_design_id);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
+            Row* erased_row = Erase(i);
+            delete erased_row;
+        } else {
+            ++i;
+            continue;
+        }
+    }
+
+    // loop through designs to add, adding to list
+    const GG::Pt row_size = ListRowSize();
+    for (std::set<int>::const_iterator it = designs_to_add.begin(); it != designs_to_add.end(); ++it) {
+        int design_id = *it;
+        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+        Insert(row);
+        row->Resize(row_size);
+
+        m_designs_in_list.insert(design_id);
+    }
 }
 
 void BasesListBox::PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
