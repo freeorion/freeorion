@@ -25,8 +25,8 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.tech-layout-horz-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING", 0.75, RangedValidator<double>(0.1, 10.0));
-        db.Add("UI.tech-layout-vert-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING", 1.0, RangedValidator<double>(0.1, 10.0));
+        db.Add("UI.tech-layout-horz-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING", 0.75, RangedStepValidator<double>(0.05, 0.1, 10.0));
+        db.Add("UI.tech-layout-vert-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING", 1.0, RangedStepValidator<double>(0.05, 0.1, 10.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
