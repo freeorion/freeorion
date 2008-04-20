@@ -2,6 +2,7 @@
 
 #include "MultiplayerCommon.h"
 #include "OptionValidators.h"
+#include "AppInterface.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -382,17 +383,22 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
     if (option_value != "") {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
 
-        if (it == m_options.end())
-            throw std::runtime_error("Option \"" + option_name + "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date.");
+        if (it == m_options.end()) {
+            Logger().errorStream() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  You may need to delete your config.xml if it is out of date";
+            return;
+        }
 
         Option& option = it->second;
-        if (option.value.empty())
-            throw std::runtime_error("The value member of option \"" + option.name + "\" in config.xml is undefined.");
+        if (option.value.empty()) {
+            Logger().errorStream() << "The value member of option \"" << option.name << "\" in config.xml is undefined.";
+            return;
+        }
 
         try {
             option.FromString(option_value);
         } catch (const std::exception& e) {
-            throw std::runtime_error("OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" + option_name + "\": " + e.what());
+            Logger().errorStream() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" << option_name << "\": " << e.what();
+            return;
         }
     }
 
