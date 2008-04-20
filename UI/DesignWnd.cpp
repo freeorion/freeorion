@@ -1908,23 +1908,28 @@ DesignWnd::DesignWnd(int w, int h) :
     TempUISoundDisabler sound_disabler;
     EnableChildClipping(true);
 
-    m_detail_panel = new EncyclopediaDetailPanel(500, 150);
-    AttachChild(m_detail_panel);
-    m_detail_panel->MoveTo(GG::Pt(250, 0));
+    int base_selector_width = 300;
+    int pedia_height = 200;
+    int main_height = 350;
+    int main_bottom = pedia_height + main_height;
 
-    m_main_panel = new MainPanel(500, 250);
+    m_detail_panel = new EncyclopediaDetailPanel(ClientWidth() - base_selector_width, pedia_height);
+    AttachChild(m_detail_panel);
+    m_detail_panel->MoveTo(GG::Pt(base_selector_width, 0));
+
+    m_main_panel = new MainPanel(ClientWidth() - base_selector_width, main_height);
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal,            &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
-    m_main_panel->MoveTo(GG::Pt(250, 150));
+    m_main_panel->MoveTo(GG::Pt(base_selector_width, pedia_height));
 
-    m_part_palette = new PartPalette(500, 200);
+    m_part_palette = new PartPalette(ClientWidth() - base_selector_width, ClientHeight() - main_bottom);
     AttachChild(m_part_palette);
     GG::Connect(m_part_palette->PartTypeClickedSignal,          &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     GG::Connect(m_part_palette->PartTypeDoubleClickedSignal,    &DesignWnd::MainPanel::AddPart,     m_main_panel);
-    m_part_palette->MoveTo(GG::Pt(250, 400));
+    m_part_palette->MoveTo(GG::Pt(base_selector_width, main_bottom));
 
-    m_base_selector = new BaseSelector(250, 500);
+    m_base_selector = new BaseSelector(base_selector_width, ClientHeight());
     AttachChild(m_base_selector);
     GG::Connect(m_base_selector->DesignSelectedSignal,          &MainPanel::SetDesign,              m_main_panel);
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
@@ -2014,5 +2019,4 @@ void DesignWnd::AddDesign() {
     //    Logger().debugStream() << "Shipdesign: " << it->second->Name();
 }
 
-void DesignWnd::DoLayout() {
-}
+
