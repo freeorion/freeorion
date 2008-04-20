@@ -2016,7 +2016,9 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_tech_navigator->TechClickedSignal, &TechTreeWnd::CenterOnTech, this);
     m_layout_panel->AttachChild(m_tech_navigator);
 
-    m_tech_tree_controls = new TechTreeControls(1, NAVIGATOR_AND_DETAIL_HEIGHT, m_layout_panel->Width() - ClientUI::ScrollWidth()*4);
+    m_tech_tree_controls = new TechTreeControls(1, NAVIGATOR_AND_DETAIL_HEIGHT, m_layout_panel->Width() - ClientUI::ScrollWidth());
+    m_tech_tree_controls->MoveTo(GG::Pt(1, m_layout_panel->Height() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
+
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
     // connect category button clicks to update display
     for (unsigned int i = 0; i < m_tech_tree_controls->m_category_buttons.size() - 1; ++i)
