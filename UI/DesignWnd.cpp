@@ -922,7 +922,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
     const bool showing_unavailable = m_availabilities_shown.second;
     //Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
     const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
-    Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
+    //Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
 
     //Logger().debugStream() << "... hulls in list: ";
     //for (std::set<std::string>::const_iterator it = m_hulls_in_list.begin(); it != m_hulls_in_list.end(); ++it)
