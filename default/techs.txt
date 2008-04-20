@@ -316,7 +316,7 @@ Tech
     researchturns = 1
     prerequisites = "LRN_PHYS_BRAIN"
     unlock = Item type = Building name = "BLD_COLLECTIVE_NET"
-    graphic = ""
+    graphic = "icons/tech/collective_thought_network.png"
 
 Tech
     name = "LRN_DISTRIB_THOUGHT"
@@ -352,7 +352,7 @@ Tech
     researchturns = 1
     prerequisites = "LRN_MIND_VOID"
     unlock = Item type = Building name = "BLD_ENCLAVE_VOID"
-    graphic = ""
+    graphic = "icons/tech/enclave_of_the_void.png"
 
 Tech
     name = "LRN_LOOKING_GLASS"
@@ -660,7 +660,7 @@ Tech
     researchturns = 1
     prerequisites = "GRO_PLANET_ECOL"
     unlock = Item type = Building name = "BLD_LIVING_PLANET"
-    graphic = ""
+    graphic = "icons/tech/the_living_planet.png"
 
 Tech
     name = "GRO_ORBITAL_GARDENS"
@@ -1338,7 +1338,7 @@ Tech
         "CON_ORGANIC_STRC"
     ]
     unlock = []
-    graphic = ""
+    graphic = "icons/tech/transforming_structures.png"
 
 Tech
     name = "CON_ARCH_MONOFILS"
@@ -1408,7 +1408,7 @@ Tech
         "LRN_GRAVITONICS"
     ]
     unlock = []
-    graphic = ""
+    graphic = "icons/tech/controlled_gravity_architecture.png"
 
 Tech
     name = "CON_GAL_INFRA"
@@ -1526,7 +1526,7 @@ Tech
     researchturns = 1
     prerequisites = "CON_CONTGRAV_ARCH"
     unlock = Item type = Building name = "BLD_GRAVITY_WELLS"
-    graphic = ""
+    graphic = "icons/tech/controlled_gravity_wells.png"
 
 Tech
     name = "CON_MEGALITH"
@@ -1861,7 +1861,7 @@ Tech
                 SetMaxTrade value = Target.MaxTrade + 5
                 SetMaxConstruction value = Target.MaxConstruction - 2
             ]
-    graphic = ""
+    graphic = "icons/tech/economic_etherealization.png"
 
 Tech
     name = "ECO_PARADISE"
@@ -1873,7 +1873,7 @@ Tech
     researchturns = 1
     prerequisites = "ECO_ENV_ADAPTION"
     unlock = Item type = Building name = "BLD_PARADISE"
-    graphic = ""
+    graphic = "icons/tech/paradise_planet.png"
 
 Tech
     name = "ECO_SINKHOLE"

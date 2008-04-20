@@ -19,6 +19,8 @@ public:
     void    Render();
     //@}
 
+    mutable boost::signal<void ()>  EmpireDesignsChangedSignal; //!< emitted when a new design is created or an old design is forgotten
+
 private:
     class BaseSelector;     // has tabs to pick empty hull, previously-saved design or an autodesign template to start new design
     class PartPalette;      // shows parts that can be clicked for detailed or dragged on slots in design

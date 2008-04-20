@@ -94,11 +94,16 @@ GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<Strea
 // content texture getters
 boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
+    std::string graphic_name = "";
     const ShipDesign* design = GetShipDesign(design_id);
-    boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ArtDir() / design->Graphic(), true);
-    if (texture)
-        return texture;
-    return ClientUI::GetTexture(ArtDir() / "icons" / "Scout.png", true);
+    if (design)
+        graphic_name = design->Graphic();
+    if (graphic_name.empty()) {
+        const HullType* hull_type = design->GetHull();
+        if (hull_type)
+            return ClientUI::HullTexture(hull_type->Name());
+    }
+    return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& building_type_name)
@@ -140,7 +145,7 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& speci
         texture_name = special->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
-    return ClientUI::GetTexture(ArtDir() / texture_name);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_name)
@@ -148,10 +153,10 @@ boost::shared_ptr<GG::Texture> ClientUI::PartTexture(const std::string& part_nam
     const PartType* part = GetPartType(part_name);
     std::string texture_name = "";
     if (part)
-        std::string texture_name = part->Graphic();
+        texture_name = part->Graphic();
     if (texture_name.empty())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", true);
-    return ClientUI::GetTexture(ArtDir() / texture_name);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "ship_parts" / "generic_part.png", false);
+    return ClientUI::GetTexture(ArtDir() / texture_name, false);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name)
@@ -159,10 +164,10 @@ boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_nam
     const HullType* hull = GetHullType(hull_name);
     std::string texture_name = "";
     if (hull)
-        texture_name = "";//hull->Graphic();
+        texture_name = hull->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "hulls_design" / "generic_hull.png", true);
-    return ClientUI::GetTexture(ArtDir() / texture_name);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)

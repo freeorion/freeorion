@@ -714,6 +714,8 @@ void OptionsWnd::Init()
     IntOption("UI.chat-edit-history", UserString("OPTIONS_CHAT_HISTORY"));
     IntOption("UI.chat-hide-interval", UserString("OPTIONS_CHAT_HIDE"));
     EndSection();
+    BeginSection(UserString("OPTIONS_GALAXY_MAP"));
+    BoolOption("UI.galaxy-gas-background", UserString("OPTIONS_GALAXY_MAP_GAS"));
     EndPage();
 
     // Colors tab

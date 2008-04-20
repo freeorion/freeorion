@@ -198,10 +198,10 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                WithinDistance distance = 100 condition = Source
-                OwnedExclusivelyBy TheEmpire Source.Owner
                 PrimaryFocus Mining
                 Planet type = [Barren Toxic Inferno Radiated]
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                WithinDistance distance = 100 condition = Source
             ]
             activation = OwnerHasTech "PRO_HEAVY_MINING_I"
             stackinggroup = "HEAVY_MINE_PROCESSOR_STACK"
@@ -228,9 +228,9 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                WithinDistance distance = 100 condition = Source
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 PrimaryFocus Industry
+                WithinDistance distance = 100 condition = Source
             ]
             activation = And [
                 OwnerHasTech "PRO_INDUSTRY_CENTRE_I"
@@ -241,9 +241,9 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                WithinDistance distance = 200 condition = Source
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 PrimaryFocus Industry
+                WithinDistance distance = 200 condition = Source
             ]
             activation = And [
                 OwnerHasTech "PRO_INDUSTRY_CENTRE_II"
@@ -324,11 +324,11 @@ BuildingType
         EffectsGroup
             scope =
                 And [
+                    PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    CurrentConstruction low = 30 high = 999
                     WithinStarlaneJumps jumps = 1 condition =
                         Source
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    PopulationCenter
-                    CurrentConstruction low = 30 high = 999
                 ]
             activation =
                 Source
@@ -398,10 +398,10 @@ BuildingType
         EffectsGroup
             scope =
                 And [
+                    PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     WithinStarlaneJumps jumps = 0 condition =
                         Source
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    PopulationCenter
                 ]
             activation =
                 Source
@@ -474,8 +474,8 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PrimaryFocus focus = Trade
                 ]
             activation =
@@ -496,8 +496,8 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                 ]
             activation =
                 Source
@@ -571,8 +571,8 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                 ]
             activation =
                 PrimaryFocus focus = Research
@@ -647,8 +647,8 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     Or [
                         PrimaryFocus focus = Research
                         SecondaryFocus focus = Research
@@ -689,8 +689,8 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     Or [
                         PrimaryFocus focus = Research
                         SecondaryFocus focus = Research
@@ -730,8 +730,8 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     CurrentPopulation low = 0 high = 5
                 ]
             activation =
@@ -752,9 +752,9 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                     PrimaryFocus focus = Research
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                 ]
             activation =
                 Source
@@ -774,11 +774,11 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    WithinStarlaneJumps jumps = 1 condition =
-                        Source
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                     PrimaryFocus focus = Industry
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    WithinStarlaneJumps jumps = 1 condition =
+                        Source
                 ]
             activation =
                 Source
@@ -798,11 +798,11 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    WithinDistance distance = 50 condition =
-                        Source
-                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                     PrimaryFocus focus = Industry
+                    OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
+                    WithinDistance distance = 50 condition =
+                        Source
                 ]
             activation =
                 Source
@@ -812,11 +812,11 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    WithinDistance distance = 30 condition =
-                        Source
                     PopulationCenter
                     Not
                         Star type = BlackHole
+                    WithinDistance distance = 30 condition =
+                        Source
                 ]
             activation =
                 Source
@@ -836,9 +836,9 @@ BuildingType
         EffectsGroup
             scope =
                 And [
+                    PopulationCenter
                     WithinStarlaneJumps jumps = 0 condition =
                         Source
-                    PopulationCenter
                 ]
             activation =
                 Source

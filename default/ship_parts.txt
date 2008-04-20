@@ -29,7 +29,7 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/nuclear_missile.png"
 
 Part
     name = "AR_LEAD_PLATE"
@@ -40,7 +40,7 @@ Part
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/lead_armor_plating.png"
 
 Part
     name = "SH_DEFENSE_GRID"
@@ -49,9 +49,9 @@ Part
     power = 1
     buildcost = 4
     buildtime = 0
-    mountableSlotTypes = Internal
+    mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/defense_grid.png"
 
 Part
     name = "SH_DEFLECTOR"
@@ -62,7 +62,7 @@ Part
     buildtime = 2
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/deflector_shield.png"
 
 Part
     name = "DT_ACTIVE_RADAR"
@@ -84,7 +84,7 @@ Part
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/deuterium_tank.png"
 
 Part
     name = "FU_ANTIMATTER_TANK"
@@ -95,7 +95,7 @@ Part
     buildtime = 6
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/antimatter_tank.png"
 
 Part
     name = "ST_EM_DAMPER"
