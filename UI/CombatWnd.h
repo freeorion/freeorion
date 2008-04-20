@@ -73,8 +73,10 @@ private:
     };
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
+    virtual bool frameEnded(const Ogre::FrameEvent& event);
 
     void UpdateCameraPosition();
+    void UpdateStarFromCameraPosition();
     void EndShiftDrag();
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
@@ -104,6 +106,11 @@ private:
     std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > > m_planet_assets;
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
+
+    Ogre::Real m_initial_left_horizontal_flare_scroll;
+    Ogre::Real m_initial_right_horizontal_flare_scroll;
+    Ogre::Real m_left_horizontal_flare_scroll_offset;
+    Ogre::Real m_right_horizontal_flare_scroll_offset;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };

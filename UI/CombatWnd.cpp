@@ -244,6 +244,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_selection_rect(new SelectionRect),
     m_lookat_point(0, 0, 0),
     m_star_back_billboard(0),
+    m_initial_left_horizontal_flare_scroll(0.0),
+    m_initial_right_horizontal_flare_scroll(0.0),
+    m_left_horizontal_flare_scroll_offset(0.0),
+    m_right_horizontal_flare_scroll_offset(0.0),
     m_exit(false)
 {
     Ogre::Root::getSingleton().addFrameListener(this);
@@ -288,6 +292,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
     star_billboard_set->setVisible(true);
     star_billboard_set->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+    m_initial_left_horizontal_flare_scroll =
+        star_billboard_set->getMaterial()->getTechnique(0)->getPass(3)->getTextureUnitState(0)->getTextureUScroll();
+    m_initial_right_horizontal_flare_scroll =
+        star_billboard_set->getMaterial()->getTechnique(0)->getPass(4)->getTextureUnitState(0)->getTextureUScroll();
     star_node->attachObject(star_billboard_set);
 
     star_billboard_set = m_scene_manager->createBillboardSet("StarCoreBillboardSet");
@@ -389,6 +397,7 @@ void CombatWnd::InitCombat(const System& system)
         technique->getPass(1)->getTextureUnitState(0)->setTextureName(base_name + "rainbow.png");
         technique->getPass(2)->getTextureUnitState(0)->setTextureName(base_name + "rays.png");
         technique->getPass(3)->getTextureUnitState(0)->setTextureName(base_name + "horizontal_flare.png");
+        technique->getPass(4)->getTextureUnitState(0)->setTextureName(base_name + "horizontal_flare.png");
         Ogre::MaterialPtr core_material =
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
         technique = core_material->getTechnique(0);
@@ -666,26 +675,18 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
         UpdateCameraPosition();
     }
 
-    // update star
-    {
-        Ogre::Vector3 star_direction = Ogre::Vector3(0.0, 0.0, 0.0) - m_camera->getPosition();
-        star_direction.normalise();
-        Ogre::Radian angle_at_view_center_to_star =
-            Ogre::Math::ACos(m_camera->getDirection().dotProduct(star_direction));
-        Ogre::Real BRIGHTNESS_AT_MAX_FOVY = 0.25;
-        Ogre::Real center_nearness_factor =
-            1.0 - angle_at_view_center_to_star.valueRadians() / (m_camera->getFOVy() / 2.0).valueRadians();
-        Ogre::Real star_back_brightness_factor =
-            BRIGHTNESS_AT_MAX_FOVY + center_nearness_factor * (1.0 - BRIGHTNESS_AT_MAX_FOVY);
-        // Raise the factor to a (smallish) power to create some nonlinearity in the scaling.
-        star_back_brightness_factor = Ogre::Math::Pow(star_back_brightness_factor, 1.5);
-        m_star_back_billboard->setColour(Ogre::ColourValue(1.0, 1.0, 1.0, star_back_brightness_factor));
-    }
-
 #if 0 // TODO: Remove this; it only here for profiling the number of triangles rendered.
     Ogre::RenderTarget::FrameStats stats = Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
     std::cout << "tris: " << stats.triangleCount << " batches: " << stats.batchCount << std::endl;
 #endif
+    return !m_exit;
+}
+
+bool CombatWnd::frameEnded(const Ogre::FrameEvent& event)
+{
+    Ogre::CompositorPtr glow_compositor = Ogre::CompositorManager::getSingleton().getByName("effects/glow");
+    
+
     return !m_exit;
 }
 
@@ -696,6 +697,141 @@ void CombatWnd::UpdateCameraPosition()
     m_camera->roll(m_roll);
     m_camera->pitch(m_pitch);
     m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_lookat_point));
+    UpdateStarFromCameraPosition();
+}
+
+void CombatWnd::UpdateStarFromCameraPosition()
+{
+    // Determine occlusion of the horizontal midline across the star by objects in the scene.
+    const Ogre::Vector3 RIGHT = m_camera->getRealRight();
+    const Ogre::Vector3 CAMERA_POS = m_camera->getRealPosition();
+    const Ogre::Vector3 SUN_CENTER(0.0, 0.0, 0.0);
+
+    const int SAMPLES_PER_SIDE = 2;
+    const int TOTAL_SAMPLES = 5;
+    Ogre::MaterialPtr core_material =
+        Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
+    const Ogre::Real STAR_CORE_SCALE_FACTOR =
+        core_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureUScale();
+    // HACK! The currently-used star cores only cover part of the texture.  Here, we adjust for this, so that the edge
+    // of the star as it appears onscreen is actually what we use for the star radius below.
+    const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 155.0 / 250.0;
+    const Ogre::Real SAMPLE_INCREMENT = STAR_RADIUS * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
+
+    bool occlusions[TOTAL_SAMPLES];
+    // left side positions
+    for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
+        Ogre::Vector3 direction = SUN_CENTER + (SAMPLES_PER_SIDE - i) * SAMPLE_INCREMENT * -RIGHT - CAMERA_POS;
+        Ogre::Ray ray(CAMERA_POS, direction);
+        m_ray_scene_query->setRay(ray);
+        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+        occlusions[i] = false;
+        if (result.begin() != result.end()) {
+            Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+            occlusions[i] = distance_squared < direction.squaredLength();
+        }
+    }
+
+    // center position
+    {
+        Ogre::Vector3 direction = SUN_CENTER - CAMERA_POS;
+        Ogre::Ray center_ray(CAMERA_POS, direction);
+        m_ray_scene_query->setRay(center_ray);
+        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+        occlusions[SAMPLES_PER_SIDE] = false;
+        if (result.begin() != result.end()) {
+            Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+            occlusions[SAMPLES_PER_SIDE] = distance_squared < direction.squaredLength();
+        }
+    }
+
+    // right side positions
+    for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
+        Ogre::Vector3 direction = SUN_CENTER + (i + 1) * SAMPLE_INCREMENT * RIGHT - CAMERA_POS;
+        Ogre::Ray ray(CAMERA_POS, direction);
+        m_ray_scene_query->setRay(ray);
+        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+        occlusions[SAMPLES_PER_SIDE + 1 + i] = false;
+        if (result.begin() != result.end()) {
+            Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+            occlusions[SAMPLES_PER_SIDE + 1 + i] = distance_squared < direction.squaredLength();
+        }
+    }
+
+    unsigned int occlusion_index = 0;
+    for (int i = 0; i < TOTAL_SAMPLES; ++i) {
+        occlusion_index += occlusions[i] << (TOTAL_SAMPLES - 1 - i);
+    }
+    typedef boost::tuple<int, int, float> OcclusionParams;
+    const OcclusionParams OCCLUSION_PARAMS[32] = {
+        OcclusionParams(2, 2, 1.0),
+        OcclusionParams(2, 2, 1.0),
+        OcclusionParams(2, 2, 1.0),
+        OcclusionParams(2, 2, 0.8),
+
+        OcclusionParams(1, 3, 0.8),
+        OcclusionParams(1, 1, 0.4),
+        OcclusionParams(1, 1, 0.4),
+        OcclusionParams(1, 1, 0.4),
+
+        OcclusionParams(2, 2, 1.0),
+        OcclusionParams(2, 2, 0.8),
+        OcclusionParams(2, 2, 0.8),
+        OcclusionParams(2, 2, 0.6),
+
+        OcclusionParams(3, 3, 0.4),
+        OcclusionParams(0, 3, 0.4),
+        OcclusionParams(0, 4, 0.4),
+        OcclusionParams(0, 0, 0.2),
+
+        OcclusionParams(2, 2, 1.0),
+        OcclusionParams(2, 2, 0.8),
+        OcclusionParams(2, 2, 0.8),
+        OcclusionParams(2, 2, 0.6),
+
+        OcclusionParams(3, 3, 0.4),
+        OcclusionParams(1, 3, 0.4),
+        OcclusionParams(1, 1, 0.2),
+        OcclusionParams(1, 1, 0.2),
+
+        OcclusionParams(2, 2, 0.8),
+        OcclusionParams(2, 2, 0.6),
+        OcclusionParams(2, 2, 0.4),
+        OcclusionParams(2, 2, 0.4),
+
+        OcclusionParams(3, 3, 0.4),
+        OcclusionParams(3, 3, 0.2),
+        OcclusionParams(4, 4, 0.2),
+        OcclusionParams(-1, -1, 0.0)
+    };
+
+    OcclusionParams occlusion_params = OCCLUSION_PARAMS[occlusion_index];
+    m_left_horizontal_flare_scroll_offset = (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
+    m_right_horizontal_flare_scroll_offset = -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
+    if (occlusion_params.get<0>() < 0)
+        m_left_horizontal_flare_scroll_offset = 1.0;
+    if (occlusion_params.get<1>() < 0)
+        m_right_horizontal_flare_scroll_offset = 1.0;
+
+    Ogre::Vector3 star_direction = Ogre::Vector3(0.0, 0.0, 0.0) - m_camera->getPosition();
+    star_direction.normalise();
+    Ogre::Radian angle_at_view_center_to_star =
+        Ogre::Math::ACos(m_camera->getDirection().dotProduct(star_direction));
+    Ogre::Real BRIGHTNESS_AT_MAX_FOVY = 0.25;
+    Ogre::Real center_nearness_factor =
+        1.0 - angle_at_view_center_to_star.valueRadians() / (m_camera->getFOVy() / 2.0).valueRadians();
+    Ogre::Real star_back_brightness_factor =
+        BRIGHTNESS_AT_MAX_FOVY + center_nearness_factor * (1.0 - BRIGHTNESS_AT_MAX_FOVY);
+    // Raise the factor to a (smallish) power to create some nonlinearity in the scaling.
+    star_back_brightness_factor = Ogre::Math::Pow(star_back_brightness_factor, 1.5);
+    m_star_back_billboard->setColour(Ogre::ColourValue(1.0, 1.0, 1.0, star_back_brightness_factor));
+
+    Ogre::MaterialPtr back_material =
+        Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
+    back_material->getTechnique(0)->getPass(3)->getTextureUnitState(0)->setTextureUScroll(
+        m_initial_left_horizontal_flare_scroll + m_left_horizontal_flare_scroll_offset);
+    back_material->getTechnique(0)->getPass(4)->getTextureUnitState(0)->setTextureUScroll(
+        m_initial_right_horizontal_flare_scroll + m_right_horizontal_flare_scroll_offset);
 }
 
 void CombatWnd::EndShiftDrag()

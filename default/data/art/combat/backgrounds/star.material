@@ -45,12 +45,32 @@ material backgrounds/star_back
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
+            depth_check off
 
             texture_unit
             {
-                texture blue01horizontal_flare.png
-                scale 1.5 0.05
+                texture blue01horizontal_flare.png 0
+                scale 0.5 0.05
+                scroll 0.5 0
                 tex_address_mode clamp
+                filtering linear linear none
+            }
+        }
+
+        pass
+        {
+            lighting off
+            scene_blend src_alpha dest_alpha
+            depth_write off
+            depth_check off
+
+            texture_unit
+            {
+                texture blue01horizontal_flare.png 0
+                scale -0.5 0.05
+                scroll 0.5 0
+                tex_address_mode clamp
+                filtering linear linear none
             }
         }
     }
