@@ -13,7 +13,7 @@
 #include <boost/format.hpp>
 
 
-#define TEST_COMBAT_WND_ON_STARTUP 0
+#define TEST_COMBAT_WND_ON_STARTUP 1
 
 namespace {
     const bool TRACE_EXECUTION = false;

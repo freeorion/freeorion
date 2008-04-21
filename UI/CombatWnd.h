@@ -72,6 +72,8 @@ private:
         boost::shared_ptr<SelectedObjectImpl> m_impl;
     };
 
+    class StencilOpQueueListener;
+
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
 
@@ -111,6 +113,8 @@ private:
     Ogre::Real m_initial_right_horizontal_flare_scroll;
     Ogre::Real m_left_horizontal_flare_scroll_offset;
     Ogre::Real m_right_horizontal_flare_scroll_offset;
+
+    StencilOpQueueListener* m_stencil_op_frame_listener;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };

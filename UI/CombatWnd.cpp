@@ -15,6 +15,8 @@
 #include <OgreMaterialManager.h>
 #include <OgreMeshManager.h>
 #include <OgreRoot.h>
+#include <OgreRenderQueueListener.h>
+#include <OgreRenderSystem.h>
 #include <OgreRenderTarget.h>
 #include <OgreSceneManager.h>
 #include <OgreSceneQuery.h>
@@ -22,6 +24,7 @@
 
 #include <GG/GUI.h>
 
+#include <boost/cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/cerrno.hpp>
@@ -48,6 +51,16 @@ namespace {
 
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
     const Ogre::uint32 GLOWING_OBJECTS_MASK = 1 << 1;
+
+    const int BEGIN_STENCIL_OP_RENDER_QUEUE =                          Ogre::RENDER_QUEUE_MAIN + 1;
+    const int SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE =        BEGIN_STENCIL_OP_RENDER_QUEUE + 0;
+    const int SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE =      BEGIN_STENCIL_OP_RENDER_QUEUE + 1;
+    const int SELECTION_HILITING_FULL_OUTLINE_HILITING_RENDER_QUEUE =  BEGIN_STENCIL_OP_RENDER_QUEUE + 2;
+    const int SELECTION_HILITING_FULL_INTERIOR_HILITING_RENDER_QUEUE = BEGIN_STENCIL_OP_RENDER_QUEUE + 3;
+    const int END_STENCIL_OP_RENDER_QUEUE =                            BEGIN_STENCIL_OP_RENDER_QUEUE + 4;
+
+    const Ogre::uint32 OUTLINE_SELECTION_HILITING_STENCIL_VALUE = 1 << 0;
+    const Ogre::uint32 FULL_SELECTION_HILITING_STENCIL_VALUE    = 1 << 1;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -181,24 +194,50 @@ void CombatWnd::SelectionRect::Resize(const GG::Pt& pt1, const GG::Pt& pt2)
 ////////////////////////////////////////////////////////////
 // SelectedObject
 ////////////////////////////////////////////////////////////
+// SelectedObjectImpl
 struct CombatWnd::SelectedObject::SelectedObjectImpl
 {
     SelectedObjectImpl() :
-        m_object(0)
+        m_object(0),
+        m_core_entity(0),
+        m_outline_entity(0),
+        m_scene_node(0),
+        m_scene_manager(0)
         {}
     explicit SelectedObjectImpl(Ogre::MovableObject* object) :
-        m_object(object)
+        m_object(object),
+        m_core_entity(0),
+        m_outline_entity(0),
+        m_scene_node(0),
+        m_scene_manager(0)
         {
-            m_object->getParentSceneNode()->showBoundingBox(true);
+            m_scene_node = object->getParentSceneNode();
+            assert(m_scene_node);
+            m_scene_manager = m_scene_node->getCreator();
+            assert(m_scene_manager);
+            m_core_entity =
+                boost::polymorphic_downcast<Ogre::Entity*>(m_scene_node->getAttachedObject(0));
+            m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE);
+            m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
+            m_outline_entity->setRenderQueueGroup(SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE);
+            m_outline_entity->setMaterialName("effects/selection/outline_hiliting");
+            m_outline_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+            m_scene_node->attachObject(m_outline_entity);
         }
     ~SelectedObjectImpl()
         {
-            if (!m_object)
-                return;
-            m_object->getParentSceneNode()->showBoundingBox(false);
+            if (m_object) {
+                m_core_entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
+                m_scene_node->detachObject(m_outline_entity);
+                m_scene_manager->destroyEntity(m_outline_entity);
+            }
         }
 
     Ogre::MovableObject* m_object;
+    Ogre::Entity* m_core_entity;
+    Ogre::Entity* m_outline_entity;
+    Ogre::SceneNode* m_scene_node;
+    Ogre::SceneManager* m_scene_manager;
 };
 
 // SelectedObject
@@ -219,6 +258,70 @@ CombatWnd::SelectedObject CombatWnd::SelectedObject::Key(Ogre::MovableObject* ob
     retval.m_impl->m_object = object;
     return retval;
 }
+
+
+////////////////////////////////////////////////////////////
+// StencilOpQueueListener
+////////////////////////////////////////////////////////////
+class CombatWnd::StencilOpQueueListener :
+    public Ogre::RenderQueueListener
+{
+public:
+    StencilOpQueueListener() : m_stencil_dirty(false) {}
+
+    virtual void renderQueueStarted(Ogre::uint8 queue_group_id, const Ogre::String&, bool&)
+        {
+            Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
+
+            // Note that this assumes that all the selection hiliting-related queues will come after
+            // Ogre::RENDER_QUEUE_MAIN.
+            if (queue_group_id == Ogre::RENDER_QUEUE_MAIN)
+                m_stencil_dirty = true;
+
+            if (BEGIN_STENCIL_OP_RENDER_QUEUE <= queue_group_id && queue_group_id < END_STENCIL_OP_RENDER_QUEUE) {
+                if (m_stencil_dirty) {
+                    render_system->clearFrameBuffer(Ogre::FBT_STENCIL);
+                    m_stencil_dirty = false;
+                }
+                render_system->setStencilCheckEnabled(true);
+            }
+
+            if (queue_group_id == SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE) { // outlined object
+                render_system->setStencilBufferParams(
+                    Ogre::CMPF_ALWAYS_PASS,
+                    OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
+            } else if (queue_group_id == SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE) { // outline object's selection hiliting
+                render_system->setStencilBufferParams(
+                    Ogre::CMPF_NOT_EQUAL,
+                    OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
+            } else if (queue_group_id == SELECTION_HILITING_FULL_OUTLINE_HILITING_RENDER_QUEUE) { // fully-hilited object's outline selection hiliting
+                render_system->setStencilBufferParams(
+                    Ogre::CMPF_ALWAYS_PASS,
+                    FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
+            } else if (queue_group_id == SELECTION_HILITING_FULL_INTERIOR_HILITING_RENDER_QUEUE) { // fully-hilited object's interior selection hiliting
+                render_system->setStencilBufferParams(
+                    Ogre::CMPF_EQUAL,
+                    FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
+                    Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_ZERO, false);
+            }
+        }
+
+    virtual void renderQueueEnded(Ogre::uint8 queue_group_id, const Ogre::String&, bool&)
+        {
+            Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
+            if (BEGIN_STENCIL_OP_RENDER_QUEUE <= queue_group_id && queue_group_id < END_STENCIL_OP_RENDER_QUEUE)
+                render_system->setStencilCheckEnabled(false);
+
+            if (END_STENCIL_OP_RENDER_QUEUE <= queue_group_id)
+                render_system->setStencilBufferParams();
+        }
+
+private:
+    bool m_stencil_dirty;
+};
 
 
 ////////////////////////////////////////////////////////////
@@ -248,9 +351,11 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_initial_right_horizontal_flare_scroll(0.0),
     m_left_horizontal_flare_scroll_offset(0.0),
     m_right_horizontal_flare_scroll_offset(0.0),
+    m_stencil_op_frame_listener(new StencilOpQueueListener),
     m_exit(false)
 {
     Ogre::Root::getSingleton().addFrameListener(this);
+    m_scene_manager->addRenderQueueListener(m_stencil_op_frame_listener);
 
     m_ray_scene_query->setSortByDistance(true);
 
@@ -351,6 +456,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 CombatWnd::~CombatWnd()
 {
     Ogre::Root::getSingleton().removeFrameListener(this);
+    m_scene_manager->removeRenderQueueListener(m_stencil_op_frame_listener);
     m_scene_manager->destroyQuery(m_ray_scene_query);
     m_scene_manager->destroyQuery(m_volume_scene_query);
     delete m_selection_rect;
