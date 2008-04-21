@@ -44,7 +44,6 @@ material effects/selection/outline_hiliting
     }
 }
 
-
 material effects/selection/filled_hiliting_1 : effects/selection/outline_hiliting
 {
     technique

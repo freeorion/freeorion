@@ -52,15 +52,17 @@ namespace {
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
     const Ogre::uint32 GLOWING_OBJECTS_MASK = 1 << 1;
 
-    const int BEGIN_STENCIL_OP_RENDER_QUEUE =                          Ogre::RENDER_QUEUE_MAIN + 1;
-    const int SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE =        BEGIN_STENCIL_OP_RENDER_QUEUE + 0;
-    const int SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE =      BEGIN_STENCIL_OP_RENDER_QUEUE + 1;
-    const int SELECTION_HILITING_FULL_OUTLINE_HILITING_RENDER_QUEUE =  BEGIN_STENCIL_OP_RENDER_QUEUE + 2;
-    const int SELECTION_HILITING_FULL_INTERIOR_HILITING_RENDER_QUEUE = BEGIN_STENCIL_OP_RENDER_QUEUE + 3;
-    const int END_STENCIL_OP_RENDER_QUEUE =                            BEGIN_STENCIL_OP_RENDER_QUEUE + 4;
+    const int BEGIN_STENCIL_OP_RENDER_QUEUE =                     Ogre::RENDER_QUEUE_MAIN + 1;
+    const int SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE =   BEGIN_STENCIL_OP_RENDER_QUEUE + 0;
+    const int SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE = BEGIN_STENCIL_OP_RENDER_QUEUE + 1;
+    const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE =          BEGIN_STENCIL_OP_RENDER_QUEUE + 2;
+    const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE =          BEGIN_STENCIL_OP_RENDER_QUEUE + 3;
+    const int END_STENCIL_OP_RENDER_QUEUE =                       BEGIN_STENCIL_OP_RENDER_QUEUE + 4;
 
     const Ogre::uint32 OUTLINE_SELECTION_HILITING_STENCIL_VALUE = 1 << 0;
     const Ogre::uint32 FULL_SELECTION_HILITING_STENCIL_VALUE    = 1 << 1;
+
+    const int USE_FILLED_SELECTION = 1;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -201,6 +203,7 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
         m_object(0),
         m_core_entity(0),
         m_outline_entity(0),
+        m_fill_entity(0),
         m_scene_node(0),
         m_scene_manager(0)
         {}
@@ -208,6 +211,7 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
         m_object(object),
         m_core_entity(0),
         m_outline_entity(0),
+        m_fill_entity(0),
         m_scene_node(0),
         m_scene_manager(0)
         {
@@ -218,11 +222,24 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
             m_core_entity =
                 boost::polymorphic_downcast<Ogre::Entity*>(m_scene_node->getAttachedObject(0));
             m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE);
+
             m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
-            m_outline_entity->setRenderQueueGroup(SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE);
-            m_outline_entity->setMaterialName("effects/selection/outline_hiliting");
+            m_outline_entity->setRenderQueueGroup(USE_FILLED_SELECTION ?
+                                                  SELECTION_HILITING_FILLED_1_RENDER_QUEUE :
+                                                  SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE);
+            m_outline_entity->setMaterialName(USE_FILLED_SELECTION ?
+                                              "effects/selection/filled_hiliting_1" :
+                                              "effects/selection/outline_hiliting");
             m_outline_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
             m_scene_node->attachObject(m_outline_entity);
+
+            if (USE_FILLED_SELECTION) {
+                m_fill_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting fill");
+                m_fill_entity->setRenderQueueGroup(SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
+                m_fill_entity->setMaterialName("effects/selection/filled_hiliting_2");
+                m_fill_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                m_scene_node->attachObject(m_fill_entity);
+            }
         }
     ~SelectedObjectImpl()
         {
@@ -230,12 +247,17 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
                 m_core_entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
                 m_scene_node->detachObject(m_outline_entity);
                 m_scene_manager->destroyEntity(m_outline_entity);
+                if (USE_FILLED_SELECTION) {
+                    m_scene_node->detachObject(m_fill_entity);
+                    m_scene_manager->destroyEntity(m_fill_entity);
+                }
             }
         }
 
     Ogre::MovableObject* m_object;
     Ogre::Entity* m_core_entity;
     Ogre::Entity* m_outline_entity;
+    Ogre::Entity* m_fill_entity;
     Ogre::SceneNode* m_scene_node;
     Ogre::SceneManager* m_scene_manager;
 };
@@ -296,12 +318,12 @@ public:
                     Ogre::CMPF_NOT_EQUAL,
                     OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
                     Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_FULL_OUTLINE_HILITING_RENDER_QUEUE) { // fully-hilited object's outline selection hiliting
+            } else if (queue_group_id == SELECTION_HILITING_FILLED_1_RENDER_QUEUE) { // fully-hilited object's outline selection hiliting
                 render_system->setStencilBufferParams(
                     Ogre::CMPF_ALWAYS_PASS,
                     FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
                     Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_FULL_INTERIOR_HILITING_RENDER_QUEUE) { // fully-hilited object's interior selection hiliting
+            } else if (queue_group_id == SELECTION_HILITING_FILLED_2_RENDER_QUEUE) { // fully-hilited object's interior selection hiliting
                 render_system->setStencilBufferParams(
                     Ogre::CMPF_EQUAL,
                     FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
