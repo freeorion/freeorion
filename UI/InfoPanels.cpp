@@ -781,8 +781,6 @@ void ResourcePanel::DoExpandCollapseLayout()
         for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
             int x = icon_size*n*7/2;
 
-            Logger().errorStream() << "resource x: " << x;
-
             if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
             std::multimap<double, StatisticIcon*>::iterator it2 = --it;
@@ -1363,10 +1361,8 @@ void MilitaryPanel::DoExpandCollapseLayout()
 
         // position and reattach icons to be shown
         int n = 0;
-        for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end();) {
+        for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it) {
             int x = icon_size*n*7/2;
-
-            Logger().errorStream() << "military x: " << x;
 
             if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
