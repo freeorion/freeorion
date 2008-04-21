@@ -1924,6 +1924,18 @@ Tech
     graphic = "icons/tech/stellar_navigation.png"
 
 Tech
+    name = "SHP_BASE_SHIPYARD"
+    description = "SHP_BASE_SHIPYARD_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "PRO_MICROGRAV_MAN"
+    unlock = Item type = Building name = "BLD_SHIPYARD_BASE"
+    graphic = ""
+
+Tech
     name = "SHP_LIGHTHOUSE"
     description = "SHP_LIGHTHOUSE_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"

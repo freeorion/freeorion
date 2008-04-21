@@ -142,8 +142,8 @@ BuildingType
     graphic = "icons/building/autofactory_control_centre.png"
 
 BuildingType
-    name = "BLD_THEORM_PROVER"
-    description = "BLD_THEORM_PROVER_DESC"
+    name = "BLD_THEOREM_PROVER"
+    description = "BLD_THEOREM_PROVER_DESC"
     buildcost = 1
     buildtime = 1
     maintenancecost = 1

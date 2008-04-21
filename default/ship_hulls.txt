@@ -4,7 +4,10 @@ Hull
     speed = 120
     buildcost = 1
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     graphic = ""
 
 Hull
@@ -18,7 +21,10 @@ Hull
         Slot type = External position = (0.40, 0.40)
         Slot type = External position = (0.60, 0.40)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     graphic = ""
 
 Hull
@@ -34,7 +40,10 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     graphic = ""
 
 Hull
@@ -52,7 +61,10 @@ Hull
         Slot type = Internal position = (0.30, 0.75)
         Slot type = Internal position = (0.50, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     effectsgroups = 
         EffectsGroup
             scope = All
@@ -78,5 +90,8 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
         Slot type = Internal position = (0.55, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     graphic = ""
