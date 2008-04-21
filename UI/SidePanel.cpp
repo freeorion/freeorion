@@ -424,6 +424,7 @@ private:
     HilitingType            m_hiliting;
     PopulationPanel*        m_population_panel;         ///< contains info about population and health
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
+    MilitaryPanel*          m_military_panel;           ///< contains icons representing military-related meters
     BuildingsPanel*         m_buildings_panel;          ///< contains icons representing buildings
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
 };
@@ -652,6 +653,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     m_hiliting(HILITING_NONE),
     m_population_panel(0),
     m_resource_panel(0),
+    m_military_panel(0),
     m_buildings_panel(0),
     m_specials_panel(0)
 {
@@ -710,6 +712,10 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     GG::Connect(m_resource_panel->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
     GG::Connect(m_resource_panel->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
+    m_military_panel = new MilitaryPanel(w - MAX_PLANET_DIAMETER, planet);
+    AttachChild(m_military_panel);
+    GG::Connect(m_military_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+
     m_buildings_panel = new BuildingsPanel(w - MAX_PLANET_DIAMETER, 4, planet);
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
@@ -750,6 +756,7 @@ SidePanel::PlanetPanel::~PlanetPanel()
 
     delete m_population_panel;
     delete m_resource_panel;
+    delete m_military_panel;
     delete m_buildings_panel;
     delete m_specials_panel;
 }
@@ -789,6 +796,11 @@ void SidePanel::PlanetPanel::DoLayout()
         y += m_resource_panel->Height() + INTERPANEL_SPACE;
     }
 
+    if (m_military_panel->Parent() == this) {
+        m_military_panel->MoveTo(GG::Pt(x, y));
+        y += m_military_panel->Height() + INTERPANEL_SPACE;
+    }
+
     if (m_buildings_panel->Parent() == this) {
         m_buildings_panel->MoveTo(GG::Pt(x, y));
         y += m_buildings_panel->Height();
@@ -822,12 +834,15 @@ void SidePanel::PlanetPanel::Refresh()
         AttachChild(m_env_size);
         DetachChild(m_population_panel);
         DetachChild(m_resource_panel);
+        DetachChild(m_military_panel);
     } else {
         DetachChild(m_env_size);
         AttachChild(m_population_panel);
         m_population_panel->Refresh();
         AttachChild(m_resource_panel);
         m_resource_panel->Refresh();
+        AttachChild(m_military_panel);
+        m_military_panel->Refresh();
     }
 
     if (owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {

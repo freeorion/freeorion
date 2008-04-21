@@ -1105,7 +1105,7 @@ Population
 PP_HEALTH
 Health
 
-##Resources Panel##########
+## Resources Panel ##########
 
 RP_PRIMARY_FOCUS_TOOLTIP
 Primary Focus: %1%
@@ -1130,6 +1130,23 @@ Trade Level
 
 RP_CONSTRUCTION
 Construction Infrastructure
+
+## Military Panel ##########
+
+MP_SUPPLY
+Fleet Supply
+
+MP_SHIELD
+Planetary Shield
+
+MP_DEFENSE
+Planetary Defense
+
+MP_DETECTION
+Detection
+
+MP_STEALTH
+Stealth
 
 ## Buildings Panel##########
 

@@ -137,6 +137,16 @@ namespace {
                 m_summary_title->SetText(UserString("RP_CONSTRUCTION"));break;
             case METER_HEALTH:
                 m_summary_title->SetText(UserString("PP_HEALTH"));      break;
+            case METER_SUPPLY:
+                m_summary_title->SetText(UserString("MP_SUPPLY"));      break;
+            case METER_SHIELD:
+                m_summary_title->SetText(UserString("MP_SHIELD"));      break;
+            case METER_DEFENSE:
+                m_summary_title->SetText(UserString("MP_DEFENSE"));     break;
+            case METER_DETECTION:
+                m_summary_title->SetText(UserString("MP_DETECTION"));   break;
+            case METER_STEALTH:
+                m_summary_title->SetText(UserString("MP_STEALTH"));     break;
             default:
                 m_summary_title->SetText("");                           break;
             }
@@ -219,7 +229,7 @@ namespace {
                 m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
             }
         }
-                
+
         MeterType m_meter_type;
         const UniverseObject* m_obj;
         const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& m_meter_map;
@@ -330,7 +340,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     m_popcenter_id(obj.ID()),
     m_pop_stat(0), m_health_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
-    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE))
+    m_expand_button(0)
 {
     SetText("PopulationPanel");
 
@@ -338,6 +348,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an UniverseObject that is not a PopCenter");
 
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
@@ -380,7 +391,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     std::map<int, bool>::iterator it = s_expanded_map.find(m_popcenter_id);
     if (it == s_expanded_map.end())
         s_expanded_map[m_popcenter_id] = false; // if not, default to collapsed state
-    
+
     Refresh();
 }
 
@@ -417,7 +428,7 @@ void PopulationPanel::DoExpandCollapseLayout()
         // detach / hide meter bars and large resource indicators
         DetachChild(m_multi_meter_status_bar);
         DetachChild(m_multi_icon_value_indicator);
-      
+
         AttachChild(m_pop_stat);
         AttachChild(m_health_stat);
 
@@ -602,7 +613,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_multi_meter_status_bar(0),
     m_primary_focus_drop(0),
     m_secondary_focus_drop(0),
-    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
+    m_expand_button(0)
 {
     SetText("ResourcePanel");
 
@@ -610,8 +621,8 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
-
     // expand / collapse button at top right    
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
@@ -664,6 +675,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_FARMING),
                                        0, 3, false, false);
     AttachChild(m_farming_stat);
+
     m_mining_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_MINING),
                                       0, 3, false, false);
     AttachChild(m_mining_stat);
@@ -700,7 +712,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     std::map<int, bool>::iterator it = s_expanded_map.find(m_rescenter_id);
     if (it == s_expanded_map.end())
         s_expanded_map[m_rescenter_id] = false; // if not, default to collapsed state
-    
+
     Refresh();
 }
 
@@ -763,19 +775,21 @@ void ResourcePanel::DoExpandCollapseLayout()
         // initially detach all...
         for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.begin(); it != res_prod_icon_map.end(); ++it)
             DetachChild(it->second);
-                
+
         // position and reattach icons to be shown
         int n = 0;
         for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
             int x = icon_size*n*7/2;
 
+            Logger().errorStream() << "resource x: " << x;
+
             if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
-            
+
             std::multimap<double, StatisticIcon*>::iterator it2 = --it;
-            
+
             StatisticIcon* icon = it2->second;
             AttachChild(icon);
-            icon->MoveTo(GG::Pt(n * icon_size*7/2, 0));
+            icon->MoveTo(GG::Pt(x, 0));
             icon->Show();
 
             n++;
@@ -790,7 +804,7 @@ void ResourcePanel::DoExpandCollapseLayout()
         // attach / show focus selector drops
         m_secondary_focus_drop->Show();
         AttachChild(m_secondary_focus_drop);
-        
+
         m_primary_focus_drop->Show();
         AttachChild(m_primary_focus_drop);
 
@@ -943,7 +957,7 @@ void ResourcePanel::Update()
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, obj, *meter_map));
         m_mining_stat->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(METER_MINING, browse_wnd);
-    
+
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map));
         m_industry_stat->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(METER_INDUSTRY, browse_wnd);
@@ -1110,6 +1124,307 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
     }
     TempUISoundDisabler sound_disabler;
     SecondaryFocusChangedSignal(focus);
+}
+
+
+/////////////////////////////////////
+//         MilitaryPanel           //
+/////////////////////////////////////
+std::map<int, bool> MilitaryPanel::s_expanded_map;
+
+MilitaryPanel::MilitaryPanel(int w, const Planet &plt) :
+    Wnd(0, 0, w, ClientUI::Pts()*9, GG::CLICKABLE),
+    m_planet_id(plt.ID()),
+    m_fleet_supply_stat(0),
+    m_shield_stat(0),
+    m_defense_stat(0),
+    m_detection_stat(0),
+    m_stealth_stat(0),
+    m_multi_icon_value_indicator(0),
+    m_multi_meter_status_bar(0),
+    m_expand_button(0)
+{
+    SetText("MilitaryPanel");
+
+    // expand / collapse button at top right    
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    AttachChild(m_expand_button);
+    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
+    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
+    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+    GG::Connect(m_expand_button->ClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
+
+    int icon_size = ClientUI::Pts()*4/3;
+
+    // small meter indicators - for use when panel is collapsed
+    m_fleet_supply_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_SUPPLY),
+                                            0, 3, false, false);
+    AttachChild(m_fleet_supply_stat);
+
+    m_shield_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_SHIELD),
+                                      0, 3, false, false);
+    AttachChild(m_shield_stat);
+
+    m_defense_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_DEFENSE),
+                                       0, 3, false, false);
+    AttachChild(m_defense_stat);
+
+    m_detection_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_DETECTION),
+                                         0, 3, false, false);
+    AttachChild(m_detection_stat);
+
+    m_stealth_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_STEALTH),
+                                       0, 3, false, false);
+    AttachChild(m_stealth_stat);
+
+
+    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    m_fleet_supply_stat->SetBrowseModeTime(tooltip_delay);
+    m_shield_stat->SetBrowseModeTime(tooltip_delay);
+    m_defense_stat->SetBrowseModeTime(tooltip_delay);
+    m_detection_stat->SetBrowseModeTime(tooltip_delay);
+    m_stealth_stat->SetBrowseModeTime(tooltip_delay);
+
+
+    // meter and production indicators
+    std::vector<MeterType> meters;
+    meters.push_back(METER_SUPPLY);     meters.push_back(METER_SHIELD);     meters.push_back(METER_DEFENSE);
+    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
+
+    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       plt,    meters);
+    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   plt,    meters);
+
+    // determine if this panel has been created yet.
+    std::map<int, bool>::iterator it = s_expanded_map.find(m_planet_id);
+    if (it == s_expanded_map.end())
+        s_expanded_map[m_planet_id] = false; // if not, default to collapsed state
+
+    Refresh();
+}
+
+MilitaryPanel::~MilitaryPanel()
+{
+    // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
+    delete m_fleet_supply_stat;
+    delete m_shield_stat;
+    delete m_defense_stat;
+    delete m_detection_stat;
+    delete m_stealth_stat;
+
+    delete m_multi_icon_value_indicator;
+    delete m_multi_meter_status_bar;
+
+    // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
+}
+
+void MilitaryPanel::ExpandCollapse(bool expanded)
+{
+    if (expanded == s_expanded_map[m_planet_id]) return; // nothing to do
+    s_expanded_map[m_planet_id] = expanded;
+
+    DoExpandCollapseLayout();
+}
+
+void MilitaryPanel::Render()
+{
+    if (Height() < 1) return;   // don't render if empty
+    // Draw outline and background...
+
+    // copied from CUIWnd
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::Pt cl_ul = ClientUpperLeft();
+    GG::Pt cl_lr = ClientLowerRight();
+
+    // use GL to draw the lines
+    glDisable(GL_TEXTURE_2D);
+    GLint initial_modes[2];
+    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
+
+    // draw background
+    glPolygonMode(GL_BACK, GL_FILL);
+    glBegin(GL_POLYGON);
+        glColor(ClientUI::WndColor());
+        glVertex2i(ul.x, ul.y);
+        glVertex2i(lr.x, ul.y);
+        glVertex2i(lr.x, lr.y);
+        glVertex2i(ul.x, lr.y);
+        glVertex2i(ul.x, ul.y);
+    glEnd();
+
+    // draw outer border on pixel inside of the outer edge of the window
+    glPolygonMode(GL_BACK, GL_LINE);
+    glBegin(GL_POLYGON);
+        glColor(ClientUI::WndOuterBorderColor());
+        glVertex2i(ul.x, ul.y);
+        glVertex2i(lr.x, ul.y);
+        glVertex2i(lr.x, lr.y);
+        glVertex2i(ul.x, lr.y);
+        glVertex2i(ul.x, ul.y);
+    glEnd();
+
+    // reset this to whatever it was initially
+    glPolygonMode(GL_BACK, initial_modes[1]);
+
+    glEnable(GL_TEXTURE_2D);
+}
+
+void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{
+    GG::Wnd *parent;
+    if((parent = Parent()))
+        parent->MouseWheel(pt, move, mod_keys);
+}
+
+void MilitaryPanel::Update()
+{
+    const Planet* plt = GetPlanet();
+    const Universe& universe = GetUniverse();
+    const UniverseObject* obj = static_cast<const UniverseObject*>(plt);
+
+
+    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
+    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_planet_id);
+    if (map_it != effect_accounting_map.end())
+        meter_map = &(map_it->second);
+
+    // meter bar displays and production stats
+    m_multi_meter_status_bar->Update();
+    m_multi_icon_value_indicator->Update();
+
+    m_fleet_supply_stat->SetValue(plt->ProjectedMeterPoints(METER_SUPPLY));
+    m_shield_stat->SetValue(plt->ProjectedMeterPoints(METER_SHIELD));
+    m_defense_stat->SetValue(plt->ProjectedMeterPoints(METER_DEFENSE));
+    m_detection_stat->SetValue(plt->ProjectedMeterPoints(METER_DETECTION));
+    m_stealth_stat->SetValue(plt->ProjectedMeterPoints(METER_STEALTH));
+
+    // tooltips
+    if (meter_map) {
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SUPPLY, obj, *meter_map));
+        m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SHIELD, obj, *meter_map));
+        m_shield_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_SHIELD, browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DEFENSE, obj, *meter_map));
+        m_defense_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_DEFENSE, browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DETECTION, obj, *meter_map));
+        m_detection_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_DETECTION, browse_wnd);
+
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_STEALTH, obj, *meter_map));
+        m_stealth_stat->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(METER_STEALTH, browse_wnd);
+    }
+}
+
+void MilitaryPanel::Refresh()
+{
+    Update();
+    DoExpandCollapseLayout();
+}
+
+void MilitaryPanel::ExpandCollapseButtonPressed()
+{
+    ExpandCollapse(!s_expanded_map[m_planet_id]);
+}
+
+void MilitaryPanel::DoExpandCollapseLayout()
+{
+    int icon_size = ClientUI::Pts()*4/3;
+
+    // update size of panel and position and visibility of widgets
+    if (!s_expanded_map[m_planet_id]) {
+
+        // detach / hide meter bars and large resource indicators
+        DetachChild(m_multi_meter_status_bar);
+        DetachChild(m_multi_icon_value_indicator);
+
+
+        // determine which two resource icons to display while collapsed: the two with the highest production
+        const Planet* plt = GetPlanet();
+
+        // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
+        std::vector<StatisticIcon*> meter_icons;
+        meter_icons.push_back(m_fleet_supply_stat);
+        meter_icons.push_back(m_shield_stat);
+        meter_icons.push_back(m_defense_stat);
+        meter_icons.push_back(m_detection_stat);
+        meter_icons.push_back(m_stealth_stat);
+
+        // initially detach all...
+        for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it)
+            DetachChild(*it);
+
+        // position and reattach icons to be shown
+        int n = 0;
+        for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end();) {
+            int x = icon_size*n*7/2;
+
+            Logger().errorStream() << "military x: " << x;
+
+            if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
+
+            StatisticIcon* icon = *it;
+            AttachChild(icon);
+            icon->MoveTo(GG::Pt(x, 0));
+            icon->Show();
+
+            n++;
+        }
+
+        Resize(GG::Pt(Width(), icon_size));
+    } else {
+        // detach statistic icons
+        DetachChild(m_fleet_supply_stat);   DetachChild(m_shield_stat);     DetachChild(m_defense_stat);
+        DetachChild(m_detection_stat);      DetachChild(m_stealth_stat);
+
+        // attach and show meter bars and large resource indicators
+        int top = UpperLeft().y;
+
+        AttachChild(m_multi_icon_value_indicator);
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(EDGE_PAD, EDGE_PAD));
+        m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
+
+        AttachChild(m_multi_meter_status_bar);
+        m_multi_meter_status_bar->MoveTo(GG::Pt(EDGE_PAD, m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+        m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
+
+        MoveChildUp(m_expand_button);
+
+        Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
+    }
+
+    // update appearance of expand/collapse button
+    if (s_expanded_map[m_planet_id]) {
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), 0, 0, 32, 32));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), 0, 0, 32, 32));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), 0, 0, 32, 32));
+    } else {
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+    }
+
+    ExpandCollapseSignal();}
+
+Planet* MilitaryPanel::GetPlanet()
+{
+    Planet* plt = GetUniverse().Object<Planet>(m_planet_id);
+    if (!plt) throw std::runtime_error("MilitaryPanel tried to get a planet with an invalid m_planet_id");
+    return plt;
+}
+
+const ResourceCenter* MilitaryPanel::GetPlanet() const
+{
+    const Planet* plt = GetUniverse().Object<Planet>(m_planet_id);
+    if (!plt) throw std::runtime_error("MilitaryPanel tried to get a planet with an invalid m_planet_id");
+    return plt;
 }
 
 
@@ -1365,13 +1680,14 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     m_planet_id(plt.ID()),
     m_columns(columns),
     m_building_indicators(),
-    m_expand_button(new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE))
+    m_expand_button(0)
 {
     SetText("BuildingsPanel");
 
     if (m_columns < 1) throw std::invalid_argument("Attempted to create a BuidingsPanel with less than 1 column");
 
     // expand / collapse button at top right    
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
