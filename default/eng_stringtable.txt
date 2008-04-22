@@ -162,10 +162,10 @@ OPTIONS_DB_SHOW_FPS
 Toggles FPS display on or off.
 
 OPTIONS_DB_LIMIT_FPS
-Toggles FPS limiting on or off.  Limit is set with with max-fps option.
+Toggles FPS limiting on or off.  Limit is set with Max FPS option.
 
 OPTIONS_DB_MAX_FPS
-Toggles FPS limit, if enabled.  Limiting is toggled with limit-fps.
+Toggles FPS limit, if enabled.  Limiting is toggled with Limit FPS.
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Toggles UI sound effects on or off.
