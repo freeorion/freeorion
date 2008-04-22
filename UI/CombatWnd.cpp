@@ -64,6 +64,8 @@ namespace {
 
     const int USE_FILLED_SELECTION = 1;
 
+    const Ogre::uint32 UNSELECTABLE_OBJECT_MASK = 1 << 0;
+
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
         assert(orbit < 10);
@@ -88,9 +90,6 @@ namespace {
         };
         return retval;
     }
-
-    // TODO: These are for testing only.
-    const double MEDIUM_SHIP_LENGTH = 0.5;
 
     Ogre::Vector3 Project(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
     {
@@ -231,6 +230,7 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
                                               "effects/selection/filled_hiliting_1" :
                                               "effects/selection/outline_hiliting");
             m_outline_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+            m_outline_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
             m_scene_node->attachObject(m_outline_entity);
 
             if (USE_FILLED_SELECTION) {
@@ -238,6 +238,7 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
                 m_fill_entity->setRenderQueueGroup(SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
                 m_fill_entity->setMaterialName("effects/selection/filled_hiliting_2");
                 m_fill_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                m_fill_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
                 m_scene_node->attachObject(m_fill_entity);
             }
         }
@@ -380,6 +381,9 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_scene_manager->addRenderQueueListener(m_stencil_op_frame_listener);
 
     m_ray_scene_query->setSortByDistance(true);
+
+    m_volume_scene_query->setQueryMask(~UNSELECTABLE_OBJECT_MASK);
+    m_ray_scene_query->setQueryMask(~UNSELECTABLE_OBJECT_MASK);
 
     // Load resource paths from config file
     Ogre::ConfigFile cf;
