@@ -22,7 +22,7 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
-            scope = Source
+            scope = Contains Source
             activation = Source
             effects = SetMaxStealth Target.MaxStealth - 10
         EffectsGroup

@@ -604,7 +604,7 @@ void Universe::UpdateMeterEstimates()
                 info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
                 info.meter_change = meter->Max() - Meter::METER_MIN;
                 info.running_meter_total = meter->Max();
-                
+
                 m_effect_accounting_map[object_id][type].push_back(info);
             }
         }
@@ -621,6 +621,10 @@ void Universe::UpdateMeterEstimates()
     // Apply and record effect meter adjustments
     ExecuteMeterEffects(effects_targets_map, &effects_causes_map);
 
+    // clamp all meters to valid range of max values, and so current is less than max
+    for (const_iterator it = begin(); it != end(); ++it)
+        it->second->ClampMeters();
+
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
@@ -633,7 +637,7 @@ void Universe::UpdateMeterEstimates()
             EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(object_id);
             if (dis_it == m_effect_discrepancy_map.end()) continue;
 
-            // apply all meters' discrapancies
+            // apply all meters' discrepancies
             std::map<MeterType, double>& meter_map = dis_it->second;
             for(std::map<MeterType, double>::iterator meter_it = meter_map.begin(); meter_it != meter_map.end(); ++meter_it) {
                 MeterType type = meter_it->first;
@@ -644,7 +648,7 @@ void Universe::UpdateMeterEstimates()
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
-                    Logger().debugStream() << "object " << object_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+                    //Logger().debugStream() << "object " << object_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
 
                     meter->AdjustMax(discrepancy);
 
@@ -652,16 +656,12 @@ void Universe::UpdateMeterEstimates()
                     info.cause_type = ECT_UNKNOWN_CAUSE;
                     info.meter_change = discrepancy;
                     info.running_meter_total = meter->Max();
-                    
+
                     m_effect_accounting_map[object_id][type].push_back(info);
                 }
             }
         }
     }
-
-    ///////////////////////////
-    // do current meter growth ?
-    ///////////////////////////
 }
 
 void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
@@ -758,7 +758,6 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
 
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
-    EffectsAndCausesMap::const_iterator causes_it;
 
     for (EffectsAndTargetsMap::const_iterator targets_it = effects_targets_map.begin(); targets_it != effects_targets_map.end(); ++targets_it) {
         Effect::EffectsGroup::TargetSet targets = targets_it->second.second;
@@ -776,9 +775,11 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
         EffectsCauseType cause_type = INVALID_EFFECTS_GROUP_CAUSE_TYPE;
         std::string specific_cause = "";
         if (effects_causes_map) {
-            causes_it = effects_causes_map->find(effects_group);
-            if (causes_it == effects_causes_map->end())
-                Logger().debugStream() << "something funky's going on...";
+            EffectsAndCausesMap::const_iterator causes_it = effects_causes_map->find(effects_group);
+            if (causes_it == effects_causes_map->end()) {
+                Logger().debugStream() << "ExecuteMeterEffects: something funky's going on...";
+                continue;
+            }
             cause_type = causes_it->second.second.first;        // see definition of Universe::EffectsAndCausesMapElem
             specific_cause = causes_it->second.second.second;
         }
@@ -794,7 +795,7 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
             if (effects_causes_map) {
                 // determine meter to be altered by this effect
                 MeterType meter_type = meter_effect->GetMeterType();
-                
+
                 // record pre-effect meter values
                 for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
                     UniverseObject* target = *target_it;
@@ -807,7 +808,7 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
                     info.cause_type = ECT_UNKNOWN_CAUSE;    // need to get this somehow ...
                     info.specific_cause = "";               // ... and this.
                     info.running_meter_total = meter->Max();    // using as temp storage for max value before effects are applied
-                    
+
                     // add accounting for this effect to end of vector
                     m_effect_accounting_map[target->ID()][meter_type].push_back(info);
                 }
@@ -826,12 +827,12 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
 
                     // update accounting info with meter change and new total
                     info.meter_change = meter->Max() - info.running_meter_total;    // change is new max minus old max (stored in temp value with misleading name)
-                    info.running_meter_total = meter->Max();        // replacing temp stored value with new meter total
+                    info.running_meter_total = meter->Max();                        // replace temp stored value with new meter total
                     info.cause_type = cause_type;
                     info.specific_cause = specific_cause;
                 }
 
-            } else {                
+            } else {
                 // just apply effect
                 effects_group->Execute(source, targets, i);
             }
@@ -844,9 +845,6 @@ void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, Ef
                 affected_targets.insert(*object_it);
             }
         }
-
-        if (effects_causes_map)
-            ++causes_it;
     }
 }
 

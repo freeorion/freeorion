@@ -12,8 +12,6 @@
 using boost::lexical_cast;
 #include <stdexcept>
 
-#include <stdexcept>
-
 
 // static(s)
 const double    UniverseObject::INVALID_POSITION  = -100000.0;
@@ -116,10 +114,10 @@ const Meter* UniverseObject::GetMeter(MeterType type) const
 
 double UniverseObject::ProjectedCurrentMeter(MeterType type) const
 {
-        std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
-        if (it == m_meters.end())
-            throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
-        return it->second.Current();    // default to no growth
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
+    return it->second.Current();    // default to no growth
 }
 
 double UniverseObject::MeterPoints(MeterType type) const
@@ -209,7 +207,7 @@ Meter* UniverseObject::GetMeter(MeterType type)
     return 0;
 }
 
-void UniverseObject::AddOwner(int id)    
+void UniverseObject::AddOwner(int id)
 {
     m_owners.insert(id); 
     /* TODO: if adding an owner to an object gives an the added owner an observer in, or ownership of
@@ -241,11 +239,8 @@ void UniverseObject::RemoveSpecial(const std::string& name)
 
 void UniverseObject::ResetMaxMeters()
 {
-    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-        if (Meter* meter = GetMeter(i)) {
-            meter->ResetMax();
-        }
-    }
+    for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+        it->second.ResetMax();
 }
 
 void UniverseObject::ApplyUniverseTableMaxMeterAdjustments()
@@ -253,9 +248,6 @@ void UniverseObject::ApplyUniverseTableMaxMeterAdjustments()
 
 void UniverseObject::ClampMeters()
 {
-    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-        if (Meter* meter = GetMeter(i)) {
-            meter->Clamp();
-        }
-    }
+    for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+        it->second.Clamp();
 }

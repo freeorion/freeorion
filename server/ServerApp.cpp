@@ -638,13 +638,14 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // Update meters, do other effects stuff
+    // Update meters
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();   // zero all meters
-        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
+        it->second->ResetMaxMeters();                           // zero all meters
+        it->second->ApplyUniverseTableMaxMeterAdjustments();    // apply non-effects max meter modifications, including focus mods
     }
-    GetUniverse().ApplyEffects();       // apply effects, futher altering meters (and also non-meter effects)
-
+    GetUniverse().ApplyEffects();                               // apply effects, futher altering meters (and also non-meter effects)
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
+        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {

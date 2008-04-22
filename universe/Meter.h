@@ -34,7 +34,7 @@ public:
     void SetMax(double max);                ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
     void AdjustCurrent(double adjustment);  ///< adds \a current to the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
     void AdjustMax(double max);             ///< adds \a max to the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void Clamp();                           ///< clamps Current() to the range [METER_MIN, Max()]
+    void Clamp();                           ///< clamps Max() to the range [METER_MIN, METER_MAX] and clamps Current() to the range [METER_MIN, Max()]
 
     void Reset();                           ///< sets all members to METER_MIN
     /** Sets all members */
