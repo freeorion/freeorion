@@ -224,6 +224,19 @@ Tech
     graphic = "icons/tech/singularity_of_transcendence.png"
 
 Tech
+    name = "LRN_OBSERVATORY_I"
+    description = "LRN_OBSERVATORY_I_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = "SHP_RADAR"
+    unlock = Item type = Building name = "BLD_OBSERVATORY"
+    graphic = ""
+
+
+Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
     description = "LRN_STELLAR_TOMOGRAPHY_DESC"
     short_description = "RESEARCH_SHORT_DESC"

@@ -2853,7 +2853,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
 
         // grant empire access to some initial buildings, ship parts and hulls
-        empire->AddBuildingType("BLD_IMERIAL_PALACE");
+        empire->AddBuildingType("BLD_IMPERIAL_PALACE");
 
         empire->AddPartType("SR_LASER");
         empire->AddPartType("SH_DEFENSE_GRID");

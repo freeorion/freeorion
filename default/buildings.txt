@@ -1,7 +1,7 @@
 
 BuildingType
-    name = "BLD_IMERIAL_PALACE"
-    description = "BLD_IMERIAL_PALACE_DESC"
+    name = "BLD_IMPERIAL_PALACE"
+    description = "BLD_IMPERIAL_PALACE_DESC"
     buildcost = 1
     buildtime = 1
     maintenancecost = 1
@@ -13,6 +13,28 @@ BuildingType
             effects = SetMaxConstruction Target.MaxConstruction + 2
     graphic = ""
 
+BuildingType
+    name = "BLD_OBSERVATORY"
+    description = "BLD_OBSERVATORY_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxStealth Target.MaxStealth - 10
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
+                WithinDistance distance = 200 condition = Source
+            ]
+            activation = Source
+            effects = SetMaxDetection Target.MaxDetection + 10
+        ]
+    graphic = ""
 
 BuildingType
     name = "BLD_SHIPYARD_BASE"
@@ -27,7 +49,6 @@ BuildingType
             activation = Source
             effects = SetMaxConstruction Target.MaxConstruction + 2
     graphic = ""
-    
 
 BuildingType
     name = "BLD_BIOTERROR_LAB"
@@ -181,7 +202,8 @@ BuildingType
         EffectsGroup
             scope = And [
                 Planet
-                WithinDistance distance = 200 condition = Source                
+                OwnedBy TheEmpire Source.Owner
+                WithinDistance distance = 200 condition = Source
             ]
             activation = Source
             stackinggroup = "LIGHTHOUSE_STACK"

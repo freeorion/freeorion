@@ -1558,6 +1558,9 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
 
 void Empire::AddTech(const std::string& name)
 {
+    const Tech* tech = GetTech(name);
+    if (!tech)
+        Logger().errorStream() << "Empire::AddTech given and invalid tech: " << name;;
     m_techs.insert(name);
 }
 
@@ -1581,21 +1584,33 @@ void Empire::UnlockItem(const ItemSpec& item)
 
 void Empire::AddBuildingType(const std::string& name)
 {
+    const BuildingType* building_type = GetBuildingType(name);
+    if (!building_type)
+        Logger().errorStream() << "Empire::AddBuildingType given an invalid building type name: " << name;
     m_available_building_types.insert(name);
 }
 
 void Empire::AddPartType(const std::string& name)
 {
+    const PartType* part_type = GetPartType(name);
+    if (!part_type)
+        Logger().errorStream() << "Empire::AddPartType given an invalid part type name: " << name;
     m_available_part_types.insert(name);
 }
 
 void Empire::AddHullType(const std::string& name)
 {
+    const HullType* hull_type = GetHullType(name);
+    if (!hull_type)
+        Logger().errorStream() << "Empire::AddHullType given an invalid hull type name: " << name;
     m_available_hull_types.insert(name);
 }
 
 void Empire::AddExploredSystem(int ID)
 {
+    const System* system = GetUniverse().Object<System>(ID);
+    if (!system)
+        Logger().errorStream() << "Empire::AddExploredSystem given an invalid system id: " << ID;
     m_explored_systems.insert(ID);
 }
 
