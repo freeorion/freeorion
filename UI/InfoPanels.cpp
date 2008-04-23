@@ -210,6 +210,14 @@ namespace {
                     text += boost::io::str(FlexibleFormat(UserString("TT_SPECIAL")) % UserString(info_it->specific_cause));
                     break;
 
+                case ECT_SHIP_HULL:
+                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_HULL")) % UserString(info_it->specific_cause));
+                    break;
+
+                case ECT_SHIP_PART:
+                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % UserString(info_it->specific_cause));
+                    break;
+
                 case ECT_UNKNOWN_CAUSE:
                 default:
                     text += UserString("TT_UNKNOWN");

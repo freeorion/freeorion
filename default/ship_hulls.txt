@@ -8,6 +8,12 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 3
+
     graphic = ""
 
 Hull
@@ -25,6 +31,11 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 3
     graphic = ""
 
 Hull
@@ -44,6 +55,11 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 5
     graphic = ""
 
 Hull
@@ -67,9 +83,9 @@ Hull
     ]
     effectsgroups = 
         EffectsGroup
-            scope = All
-            activation = All
-            effects = SetMaxMining Target.MaxMining + 2
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 3
     graphic = ""
 
 Hull
@@ -94,4 +110,9 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 1
     graphic = ""

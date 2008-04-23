@@ -260,6 +260,7 @@ namespace {
         }
         return retval;
     }
+
 }
 
 /////////////////////////////////////////////
@@ -670,53 +671,89 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, E
     if (effects_causes_map)
         effects_causes_map->clear();
 
-    // get effects groups from specials
+    // 1) EffectsGroups from Specials
     for (Universe::const_iterator it = begin(); it != end(); ++it) {
-        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
-             special_it != it->second->Specials().end();
-             ++special_it) {
+        int object_id = it->first;
+        const std::set<std::string>& specials = it->second->Specials();
+        for (std::set<std::string>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const Special* special = GetSpecial(*special_it);
             assert(special);
-            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
-                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-                if (effects_causes_map)
-                    effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(it->first, std::make_pair(ECT_SPECIAL, special->Name()))));
-            }
+
+            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), object_id, ECT_SPECIAL, special->Name(),
+                                                 effects_targets_map, effects_causes_map);
         }
     }
 
-    // get effects groups from techs
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
+    // 2) EffectsGroups from Specials
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        const Empire* empire = it->second;
+        for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             assert(tech);
-            for (unsigned int i = 0; i < tech->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = tech->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->second->CapitolID(), Effect::EffectsGroup::TargetSet()));
-                tech->Effects()[i]->GetTargetSet(it->second->CapitolID(), map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-                if (effects_causes_map)
-                    effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(it->second->CapitolID(), std::make_pair(ECT_TECH, tech->Name()))));
-            }
+
+            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitolID(), ECT_TECH, tech->Name(),
+                                                 effects_targets_map, effects_causes_map);
         }
     }
 
-    // get effects groups from buildings
+    // 3) EffectsGroups from Buildings
     std::vector<Building*> buildings = FindObjects<Building>();
-    for (unsigned int i = 0; i < buildings.size(); ++i) {
-        const BuildingType* building_type = buildings[i]->GetBuildingType();
+    for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+        const Building* building = *building_it;
+        const BuildingType* building_type = building->GetBuildingType();
         assert(building_type);
-        for (unsigned int j = 0; j < building_type->Effects().size(); ++j) {
-            boost::shared_ptr<const Effect::EffectsGroup> effect = building_type->Effects()[j];
-            EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
-            building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
-            effects_targets_map.insert(map_elem);
-            if (effects_causes_map)
-                effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(buildings[i]->ID(), std::make_pair(ECT_BUILDING, building_type->Name()))));
+
+        StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
+                                             effects_targets_map, effects_causes_map);
+    }
+
+    // 4) EffectsGroups from Ship Hull and Ship Parts
+    std::vector<Ship*> ships = FindObjects<Ship>();
+    for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+        const Ship* ship = *ship_it;
+        assert(ship);
+        const ShipDesign* ship_design = ship->Design();
+        assert(design);
+
+        const HullType* hull_type = ship_design->GetHull();
+        assert(hull_type);
+
+        StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
+                                             effects_targets_map, effects_causes_map);
+
+        const std::vector<std::string>& parts = ship_design->Parts();
+        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+            const std::string& part = *part_it;
+            if (part.empty())
+                continue;
+            const PartType* part_type = GetPartType(*part_it);
+            assert(part_type);
+
+            StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
+                                                 effects_targets_map, effects_causes_map);
         }
+    }
+}
+
+void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
+                                          int object_id, EffectsCauseType effect_cause_type, const std::string& specific_cause_name,
+                                          EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
+{
+    // process all effects groups in set provided
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
+    for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
+        boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
+
+        // get target set and store in map from effects group to (source object, target set) pair
+        EffectsAndTargetsMapElem map_elem(effects_group, std::make_pair(object_id, Effect::EffectsGroup::TargetSet()));
+        effects_group->GetTargetSet(object_id, map_elem.second.second);
+        effects_targets_map.insert(map_elem);
+
+        // also record, for this effects group, the source object id and the details of this special that caused this effects group to exist
+        if (effects_causes_map)
+            effects_causes_map->insert(EffectsAndCausesMapElem(effects_group, std::make_pair(object_id,
+                                                                                             std::make_pair(effect_cause_type,
+                                                                                                            specific_cause_name))));
     }
 }
 

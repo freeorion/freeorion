@@ -330,6 +330,10 @@ protected:
         \a effects_causes_map is provided (nonzero pointer) then this map will be simultaneously populated with
         information about the causes of each effects group. */
     void    GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map = 0);
+    /** Used by GetEffectsAndTargets to process a vector of effects groups and store targets and causes info in respective maps*/
+    void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
+                                                 int object_id, EffectsCauseType effect_cause_type, const std::string& specific_cause_name,
+                                                 EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map);
 
     void    ExecuteEffects(EffectsAndTargetsMap& effects_targets_map);                      ///< executes all effects
 

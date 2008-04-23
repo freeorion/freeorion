@@ -61,8 +61,7 @@ const HullType* GetHullType(const std::string& name) {
     return GetHullTypeManager().GetHullType(name);
 }
 
-const ShipDesign* GetShipDesign(int ship_design_id)
-{
+const ShipDesign* GetShipDesign(int ship_design_id) {
     return GetUniverse().GetShipDesign(ship_design_id);
 }
 

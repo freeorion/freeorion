@@ -31,15 +31,15 @@ public:
 
     virtual             UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double      ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+    virtual double      ProjectedCurrentMeter(MeterType type) const;                            ///< returns expected value of  specified meter current value on the next turn
     //@}
 
-    /** \name Mutators */ //@{   
-    void            SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
-    virtual void    MovementPhase();
-    virtual void    PopGrowthProductionResearchPhase();
+    /** \name Mutators */ //@{
+    void                SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
+    virtual void        MovementPhase();
+    virtual void        PopGrowthProductionResearchPhase();
 
-    bool            AdjustFuel(double amount);  ///< Adds \a amount of fuel to ship's fuel meter.  Returns true unless deduction would cause ship to have negative fuel, or more fuel than it can carry
+    bool                AdjustFuel(double amount);                                              ///< Adds \a amount of fuel to ship's fuel meter.  Returns true unless deduction would cause ship to have negative fuel, or more fuel than it can carry
     //@}
 
 protected:

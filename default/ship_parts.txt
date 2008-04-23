@@ -73,6 +73,11 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxDetection Target.MaxDetection + 10
     graphic = ""
 
 Part
@@ -84,6 +89,11 @@ Part
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 5
     graphic = "icons/ship_parts/deuterium_tank.png"
 
 Part
@@ -95,6 +105,11 @@ Part
     buildtime = 6
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 10
     graphic = "icons/ship_parts/antimatter_tank.png"
 
 Part
@@ -106,6 +121,11 @@ Part
     buildtime = 6
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxStealth Target.MaxStealth + 5
     graphic = ""
 
 Part

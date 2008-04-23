@@ -8,7 +8,10 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = Source
+            scope = And [
+                Contains Source
+                Planet
+            ]
             activation = Source
             effects = SetMaxConstruction Target.MaxConstruction + 2
     graphic = ""

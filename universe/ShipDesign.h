@@ -246,28 +246,28 @@ public:
     int         BuildTime() const;
     /////// TEMPORARY ///////
 
-    const std::string&              Hull() const;               ///< returns name of hull on which design is based
-    const HullType*                 GetHull() const;            ///< returns HullType on which design is based
+    const std::string&              Hull() const;                           ///< returns name of hull on which design is based
+    const HullType*                 GetHull() const;                        ///< returns HullType on which design is based
 
     const std::vector<std::string>& Parts() const;                          ///< returns vector of names of all parts in design
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;    ///< returns vector of names of parts in slots of indicated type
 
-    const std::string&              Graphic() const;            ///< returns filename of graphic for design
-    const std::string&              Model() const;              ///< returns filename of 3D model that represents ships of design
+    const std::string&              Graphic() const;                        ///< returns filename of graphic for design
+    const std::string&              Model() const;                          ///< returns filename of 3D model that represents ships of design
     //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
 
     /** \name Mutators */ //@{
-    void                    SetID(int id);                      ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
-    void                    Rename(const std::string& name);    ///< renames this design to \a name
+    void                            SetID(int id);                          ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    void                            Rename(const std::string& name);        ///< renames this design to \a name
     //@}
 
     ///< returns true if the \a hull and parts vectors passed make a valid ShipDesign
-    static bool             ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
+    static bool                     ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
 
     ///< returns true if the \a design passed is a valid ShipDesign in terms of its hull and parts.  does not check any other member variables
-    static bool             ValidDesign(const ShipDesign& design);
+    static bool                     ValidDesign(const ShipDesign& design);
 
 
 private:
