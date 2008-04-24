@@ -27,6 +27,7 @@
 #include <boost/cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/assign/list_of.hpp>
 #include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -44,27 +45,41 @@ namespace {
     const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
     const double MIN_ZOOM_IN_DISTANCE = 0.5;
 
-    const int STAR_BACK_QUEUE = Ogre::RENDER_QUEUE_7;
-    const int ALPHA_OBJECTS_QUEUE = STAR_BACK_QUEUE + 1;
-    const int STAR_CORE_QUEUE = ALPHA_OBJECTS_QUEUE + 1;
-    const int SELECTION_RECT_QUEUE = Ogre::RENDER_QUEUE_OVERLAY - 1;
-
+    // visibility masks
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
     const Ogre::uint32 GLOWING_OBJECTS_MASK = 1 << 1;
 
-    const int BEGIN_STENCIL_OP_RENDER_QUEUE =                     Ogre::RENDER_QUEUE_MAIN + 1;
-    const int SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE =   BEGIN_STENCIL_OP_RENDER_QUEUE + 0;
-    const int SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE = BEGIN_STENCIL_OP_RENDER_QUEUE + 1;
-    const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE =          BEGIN_STENCIL_OP_RENDER_QUEUE + 2;
-    const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE =          BEGIN_STENCIL_OP_RENDER_QUEUE + 3;
-    const int END_STENCIL_OP_RENDER_QUEUE =                       BEGIN_STENCIL_OP_RENDER_QUEUE + 4;
+    // queue groups
+    const int SELECTION_HILITING_OBJECT_RENDER_QUEUE =   Ogre::RENDER_QUEUE_MAIN + 1;
 
+    const int STAR_BACK_QUEUE =                          Ogre::RENDER_QUEUE_6 + 0;
+    const int STAR_CORE_QUEUE =                          Ogre::RENDER_QUEUE_6 + 1;
+    const int ALPHA_OBJECTS_QUEUE =                      Ogre::RENDER_QUEUE_6 + 2;
+
+    const int SELECTION_HILITING_OUTLINED_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 0;
+    const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 1;
+    const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 2;
+
+    const int SELECTION_RECT_QUEUE =                     Ogre::RENDER_QUEUE_OVERLAY - 1;
+
+    const std::set<int> STENCIL_OP_RENDER_QUEUES =
+        boost::assign::list_of
+        (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
+        (SELECTION_HILITING_OUTLINED_RENDER_QUEUE)
+        (SELECTION_HILITING_FILLED_1_RENDER_QUEUE)
+        (SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
+
+    // stencil masks
     const Ogre::uint32 OUTLINE_SELECTION_HILITING_STENCIL_VALUE = 1 << 0;
     const Ogre::uint32 FULL_SELECTION_HILITING_STENCIL_VALUE    = 1 << 1;
 
-    const int USE_FILLED_SELECTION = 1;
-
+    // query masks
     const Ogre::uint32 UNSELECTABLE_OBJECT_MASK = 1 << 0;
+
+    // Set this to true to see object selection as a translucent shell around
+    // the entire object; set it to false to see selected objects merely
+    // outlined.
+    const bool USE_FILLED_SELECTION = true;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -220,12 +235,12 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
             assert(m_scene_manager);
             m_core_entity =
                 boost::polymorphic_downcast<Ogre::Entity*>(m_scene_node->getAttachedObject(0));
-            m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE);
+            m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OBJECT_RENDER_QUEUE);
 
             m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
             m_outline_entity->setRenderQueueGroup(USE_FILLED_SELECTION ?
                                                   SELECTION_HILITING_FILLED_1_RENDER_QUEUE :
-                                                  SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE);
+                                                  SELECTION_HILITING_OUTLINED_RENDER_QUEUE);
             m_outline_entity->setMaterialName(USE_FILLED_SELECTION ?
                                               "effects/selection/filled_hiliting_1" :
                                               "effects/selection/outline_hiliting");
@@ -301,7 +316,7 @@ public:
             if (queue_group_id == Ogre::RENDER_QUEUE_MAIN)
                 m_stencil_dirty = true;
 
-            if (BEGIN_STENCIL_OP_RENDER_QUEUE <= queue_group_id && queue_group_id < END_STENCIL_OP_RENDER_QUEUE) {
+            if (STENCIL_OP_RENDER_QUEUES.find(queue_group_id) != STENCIL_OP_RENDER_QUEUES.end()) {
                 if (m_stencil_dirty) {
                     render_system->clearFrameBuffer(Ogre::FBT_STENCIL);
                     m_stencil_dirty = false;
@@ -309,22 +324,22 @@ public:
                 render_system->setStencilCheckEnabled(true);
             }
 
-            if (queue_group_id == SELECTION_HILITING_OUTLINED_OBJECT_RENDER_QUEUE) { // outlined object
+            if (queue_group_id == SELECTION_HILITING_OBJECT_RENDER_QUEUE) { // outlined object
                 render_system->setStencilBufferParams(
                     Ogre::CMPF_ALWAYS_PASS,
                     OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
                     Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_OUTLINED_HILITING_RENDER_QUEUE) { // outline object's selection hiliting
+            } else if (queue_group_id == SELECTION_HILITING_OUTLINED_RENDER_QUEUE) { // outline object's selection hiliting
                 render_system->setStencilBufferParams(
                     Ogre::CMPF_NOT_EQUAL,
                     OUTLINE_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
                     Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_FILLED_1_RENDER_QUEUE) { // fully-hilited object's outline selection hiliting
+            } else if (queue_group_id == SELECTION_HILITING_FILLED_1_RENDER_QUEUE) { // fully-hilited object's stencil-writing pass
                 render_system->setStencilBufferParams(
                     Ogre::CMPF_ALWAYS_PASS,
                     FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
                     Ogre::SOP_KEEP, Ogre::SOP_KEEP, Ogre::SOP_REPLACE, false);
-            } else if (queue_group_id == SELECTION_HILITING_FILLED_2_RENDER_QUEUE) { // fully-hilited object's interior selection hiliting
+            } else if (queue_group_id == SELECTION_HILITING_FILLED_2_RENDER_QUEUE) { // fully-hilited object's rendering pass
                 render_system->setStencilBufferParams(
                     Ogre::CMPF_EQUAL,
                     FULL_SELECTION_HILITING_STENCIL_VALUE, 0xFFFFFFFF,
@@ -335,10 +350,10 @@ public:
     virtual void renderQueueEnded(Ogre::uint8 queue_group_id, const Ogre::String&, bool&)
         {
             Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
-            if (BEGIN_STENCIL_OP_RENDER_QUEUE <= queue_group_id && queue_group_id < END_STENCIL_OP_RENDER_QUEUE)
+            if (STENCIL_OP_RENDER_QUEUES.find(queue_group_id) != STENCIL_OP_RENDER_QUEUES.end())
                 render_system->setStencilCheckEnabled(false);
 
-            if (END_STENCIL_OP_RENDER_QUEUE <= queue_group_id)
+            if (*STENCIL_OP_RENDER_QUEUES.rbegin() <= queue_group_id)
                 render_system->setStencilBufferParams();
         }
 
