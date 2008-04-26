@@ -3,11 +3,13 @@
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "InGameMenu.h"
-#include "OptionsWnd.h" // TODO: Remove this when the InGameMenu is in use.
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../util/OptionsDB.h"
 #include "../util/Version.h"
+
+#include "OptionsWnd.h" // TODO: Remove this later, once the InGameMenu is in use for F10 presses instead.
 
 #include <OgreBillboard.h>
 #include <OgreBillboardSet.h>
@@ -77,11 +79,6 @@ namespace {
 
     // query masks
     const Ogre::uint32 UNSELECTABLE_OBJECT_MASK = 1 << 0;
-
-    // Set this to true to see object selection as a translucent shell around
-    // the entire object; set it to false to see selected objects merely
-    // outlined.
-    const bool USE_FILLED_SELECTION = false;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -163,6 +160,15 @@ namespace {
         boost::algorithm::to_lower(retval);
         return retval;
     }
+
+    void AddOptions(OptionsDB& db)
+    {
+        db.Add("combat.enable-glow", "OPTIONS_DB_COMBAT_ENABLE_GLOW",
+               true, Validator<bool>());
+        db.Add("combat.filled-selection", "OPTIONS_DB_COMBAT_FILLED_SELECTION",
+               false, Validator<bool>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ////////////////////////////////////////////////////////////
@@ -242,18 +248,20 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
 
             m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OBJECT_RENDER_QUEUE);
 
+            const bool FILLED = GetOptionsDB().Get<bool>("combat.filled-selection");
+
             m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
-            m_outline_entity->setRenderQueueGroup(USE_FILLED_SELECTION ?
+            m_outline_entity->setRenderQueueGroup(FILLED ?
                                                   SELECTION_HILITING_FILLED_1_RENDER_QUEUE :
                                                   SELECTION_HILITING_OUTLINED_RENDER_QUEUE);
-            m_outline_entity->setMaterialName(USE_FILLED_SELECTION ?
+            m_outline_entity->setMaterialName(FILLED ?
                                               "effects/selection/filled_hiliting_1" :
                                               "effects/selection/outline_hiliting");
             m_outline_entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
             m_outline_entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
             m_scene_node->attachObject(m_outline_entity);
 
-            if (USE_FILLED_SELECTION) {
+            if (FILLED) {
                 m_fill_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting fill");
                 m_fill_entity->setRenderQueueGroup(SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
                 m_fill_entity->setMaterialName("effects/selection/filled_hiliting_2");
@@ -268,7 +276,7 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
                 m_core_entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
                 m_scene_node->detachObject(m_outline_entity);
                 m_scene_manager->destroyEntity(m_outline_entity);
-                if (USE_FILLED_SELECTION) {
+                if (GetOptionsDB().Get<bool>("combat.filled-selection")) {
                     m_scene_node->detachObject(m_fill_entity);
                     m_scene_manager->destroyEntity(m_fill_entity);
                 }
@@ -423,7 +431,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
     Ogre::CompositorManager::getSingleton().addCompositor(m_viewport, "effects/glow");
-    Ogre::CompositorManager::getSingleton().setCompositorEnabled(m_viewport, "effects/glow", true);
 
     m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
     m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_NONE);//STENCIL_MODULATIVE);
@@ -841,6 +848,9 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 
     Ogre::RenderTarget::FrameStats stats = Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
     m_fps_text->SetText(boost::lexical_cast<std::string>(stats.lastFPS) + " FPS");
+
+    Ogre::CompositorManager::getSingleton().setCompositorEnabled(
+        m_viewport, "effects/glow", GetOptionsDB().Get<bool>("combat.enable-glow"));
 
     return !m_exit;
 }

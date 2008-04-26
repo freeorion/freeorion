@@ -757,6 +757,12 @@ void OptionsWnd::Init()
     EndSection();
     EndPage();
 
+    // combat settings tab
+    BeginPage(UserString("OPTIONS_PAGE_COMBAT"));
+    BoolOption("combat.enable-glow", UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
+    BoolOption("combat.filled-selection", UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
+    EndPage();
+
     // Misc. settings tab
     BeginPage(UserString("OPTIONS_PAGE_AUTOSAVE"));
     BoolOption("autosave.single-player", UserString("OPTIONS_SINGLEPLAYER"));
