@@ -79,7 +79,7 @@ namespace {
     // Set this to true to see object selection as a translucent shell around
     // the entire object; set it to false to see selected objects merely
     // outlined.
-    const bool USE_FILLED_SELECTION = true;
+    const bool USE_FILLED_SELECTION = false;
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -213,6 +213,7 @@ void CombatWnd::SelectionRect::Resize(const GG::Pt& pt1, const GG::Pt& pt2)
 // SelectedObjectImpl
 struct CombatWnd::SelectedObject::SelectedObjectImpl
 {
+
     SelectedObjectImpl() :
         m_object(0),
         m_core_entity(0),
@@ -233,8 +234,10 @@ struct CombatWnd::SelectedObject::SelectedObjectImpl
             assert(m_scene_node);
             m_scene_manager = m_scene_node->getCreator();
             assert(m_scene_manager);
-            m_core_entity =
-                boost::polymorphic_downcast<Ogre::Entity*>(m_scene_node->getAttachedObject(0));
+            m_core_entity = boost::polymorphic_downcast<Ogre::Entity*>(m_object);
+
+            std::cout << "SelectedObjectImpl() m_core_entity \"" << m_core_entity->getName() << "\"" << std::endl;
+
             m_core_entity->setRenderQueueGroup(SELECTION_HILITING_OBJECT_RENDER_QUEUE);
 
             m_outline_entity = m_core_entity->clone(m_core_entity->getName() + " hiliting outline");
@@ -289,13 +292,6 @@ CombatWnd::SelectedObject::SelectedObject(Ogre::MovableObject* object) :
 
 bool CombatWnd::SelectedObject::operator<(const SelectedObject& rhs) const
 { return m_impl->m_object < rhs.m_impl->m_object; }
-
-CombatWnd::SelectedObject CombatWnd::SelectedObject::Key(Ogre::MovableObject* object)
-{
-    SelectedObject retval;
-    retval.m_impl->m_object = object;
-    return retval;
-}
 
 
 ////////////////////////////////////////////////////////////
@@ -611,6 +607,7 @@ void CombatWnd::InitCombat(const System& system)
 
             if (material_name == "gas_giant") {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                m_primary_entities[node] = entity;
                 entity->setMaterialName("gas_giant_core");
                 assert(entity->getNumSubEntities() == 1u);
                 entity->setCastShadows(true);
@@ -632,6 +629,7 @@ void CombatWnd::InitCombat(const System& system)
                 node->attachObject(entity);
             } else {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                m_primary_entities[node] = entity;
                 entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
@@ -695,29 +693,30 @@ void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
 void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS)
-        EndShiftDrag();
+        EndSelectionDrag();
 }
 
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS) {
         SelectObjectsInVolume(mod_keys & GG::MOD_KEY_CTRL);
-        EndShiftDrag();
+        EndSelectionDrag();
     } else if (!m_mouse_dragged) {
         if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
             Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
+            movable_object = m_primary_entities[clicked_scene_node];
             assert(clicked_scene_node);
-            if (mod_keys & GG::MOD_KEY_CTRL) {
-                std::set<SelectedObject>::iterator it =
-                    m_current_selections.find(SelectedObject::Key(movable_object));
-                if (it == m_current_selections.end())
-                    m_current_selections.insert(SelectedObject(movable_object));
-                else
-                    m_current_selections.erase(it);
+            std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
+                m_current_selections.find(movable_object);
+            if (it == m_current_selections.end()) {
+                if (!(mod_keys & GG::MOD_KEY_CTRL)) {
+                    DeselectAll();
+                    m_currently_selected_scene_node = clicked_scene_node;
+                }
+                m_current_selections[movable_object] = SelectedObject(movable_object);
             } else {
-                DeselectAll();
-                m_current_selections.insert(SelectedObject(movable_object));
-                m_currently_selected_scene_node = clicked_scene_node;
+                if (mod_keys & GG::MOD_KEY_CTRL)
+                    m_current_selections.erase(it);
             }
         } else {
             DeselectAll();
@@ -981,7 +980,7 @@ void CombatWnd::UpdateStarFromCameraPosition()
         m_initial_right_horizontal_flare_scroll + m_right_horizontal_flare_scroll_offset);
 }
 
-void CombatWnd::EndShiftDrag()
+void CombatWnd::EndSelectionDrag()
 {
     m_selection_drag_start = INVALID_SELECTION_DRAG_POS;
     m_selection_rect->setVisible(false);
@@ -1025,10 +1024,12 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
         DeselectAll();
     Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
     for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
-        std::pair<std::set<SelectedObject>::iterator, bool> insertion_result =
-            m_current_selections.insert(SelectedObject(*it));
-        if (!insertion_result.second)
-            m_current_selections.erase(insertion_result.first);
+        Ogre::MovableObject* object = m_primary_entities[(*it)->getParentSceneNode()];
+        std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(object);
+        if (object_it != m_current_selections.end())
+            m_current_selections.erase(object_it);
+        else
+            m_current_selections[object] = SelectedObject(*it);
     }
 }
 

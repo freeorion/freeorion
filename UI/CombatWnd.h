@@ -67,8 +67,6 @@ private:
         explicit SelectedObject(Ogre::MovableObject* object);
         bool operator<(const SelectedObject& rhs) const;
 
-        static SelectedObject Key(Ogre::MovableObject* object);
-
         boost::shared_ptr<SelectedObjectImpl> m_impl;
     };
 
@@ -79,7 +77,7 @@ private:
 
     void UpdateCameraPosition();
     void UpdateStarFromCameraPosition();
-    void EndShiftDrag();
+    void EndSelectionDrag();
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
     void DeselectAll();
@@ -100,7 +98,7 @@ private:
     Ogre::SceneNode* m_currently_selected_scene_node;
     SelectionRect* m_selection_rect;
     Ogre::Vector3 m_lookat_point;
-    std::set<SelectedObject> m_current_selections;
+    std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
 
     // The scene nodes representing planets in the system and the materials
@@ -108,6 +106,8 @@ private:
     std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > > m_planet_assets;
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
+
+    std::map<Ogre::SceneNode*, Ogre::Entity*> m_primary_entities;
 
     Ogre::Real m_initial_left_horizontal_flare_scroll;
     Ogre::Real m_initial_right_horizontal_flare_scroll;
