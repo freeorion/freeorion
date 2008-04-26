@@ -545,16 +545,16 @@ void ServerApp::ProcessTurns()
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
     }
-        
+
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         // save for possible SitRep generation after moving...
         const Fleet* fleet = GetUniverse().Object<Fleet>(it->first);
         int eta = -1;
         if (fleet)
             eta = fleet->ETA().first;
-        
+
         it->second->MovementPhase();
-        
+
         // SitRep for fleets having arrived at destinations, to all owners of those fleets
         if (fleet) {
             if (eta == 1) {
@@ -651,11 +651,11 @@ void ServerApp::ProcessTurns()
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
         Empire* empire = it->second;
 
-        std::set<std::set<int> > system_supply_groups;
-        std::set<std::pair<int, int> > supply_starlane_traversals;  // don't need this info, but need somewhere to put the output of GetSupplySystemGroupsAndStarlanesUsed
-        empire->GetSupplySystemGroupsAndStarlanesUsed(system_supply_groups, supply_starlane_traversals);
-
-        empire->InitResourcePools(system_supply_groups);
+        empire->UpdateSupplyUnobstructedSystems();
+        empire->UpdateSystemSupplyRanges();
+        empire->UpdateFleetSupply();
+        empire->UpdateResourceSupply();
+        empire->InitResourcePools();
         empire->UpdateResourcePools();
     }
 

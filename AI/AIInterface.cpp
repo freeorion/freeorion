@@ -50,12 +50,6 @@ const std::string& AIBase::GetSaveStateString() {
 namespace {
     // stuff used in AIInterface, but not needed to be visible outside this file
 
-    // fleet and resource supply distribution
-    std::map<int, std::set<int> >                   s_empire_system_fleet_supply;       // map from empire id to set of systems that empire can provide fleet supply to this turn
-    std::map<int, std::set<std::pair<int, int> > >  s_empire_fleet_supply_lanes;        // map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which fleet supply travels for that empire
-    std::map<int, std::set<std::set<int> > >        s_empire_resource_sharing_groups;   // map from empire id to set of sets of systems that can share resources for that empire
-    std::map<int, std::set<std::pair<int, int> > >  s_empire_resource_sharing_lanes;    // map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which inter-system resource sharing travels for that empire
-
     // start of turn initialization for meters
     void InitMeterEstimatesAndDiscrepancies() {
         Universe& universe = AIClientApp::GetApp()->GetUniverse();
@@ -65,7 +59,7 @@ namespace {
     // start of turn initialization for Empire ResourcePools.  determines where supplies can be delivered, and 
     // between which systems resources can be exchanged (which is necessary to know before resource pools can be
     // updated
-    void InitResourcePools() {
+    void InitResourcePoolsAndSupply() {
         EmpireManager& manager = AIClientApp::GetApp()->Empires();
 
         // determine sytems where fleets can delivery supply, and groups of systems that can exchange resources
@@ -73,15 +67,11 @@ namespace {
             int empire_id = it->first;
             Empire* empire = it->second;
 
-            // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
-            empire->GetSupplyableSystemsAndStarlanesUsed(s_empire_system_fleet_supply[empire_id],
-                                                         s_empire_fleet_supply_lanes[empire_id]);
-
-            // get sets of systems from and to which physical resources can be shared
-            empire->GetSupplySystemGroupsAndStarlanesUsed(s_empire_resource_sharing_groups[empire_id],
-                                                          s_empire_resource_sharing_lanes[empire_id]);
-
-            empire->InitResourcePools(s_empire_resource_sharing_groups[empire_id]);
+            empire->UpdateSupplyUnobstructedSystems();
+            empire->UpdateSystemSupplyRanges();
+            empire->UpdateFleetSupply();
+            empire->UpdateResourceSupply();
+            empire->InitResourcePools();
         }
     }
 }
@@ -173,7 +163,7 @@ namespace AIInterface {
     void InitTurn() {
         InitMeterEstimatesAndDiscrepancies();
         UpdateMeterEstimates();
-        InitResourcePools();
+        InitResourcePoolsAndSupply();
         UpdateResourcePoolsAndQueues();
     }
 

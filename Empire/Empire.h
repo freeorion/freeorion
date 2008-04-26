@@ -205,22 +205,9 @@ private:
 };
 
 /**
-* Class to maintain the state of a single empire.  
-* This class keeps track of the following information:
-*   - color
-*   - name
-*   - player name
-*   - numeric ID
-*   - accumulated research progress
-*   - accumulated production progress
-*   - list of technologies
-*   - list of explored systems
-*   - list of ship designs
-*   - list of sitrep entries
-*
-* In both the client and server, Empires are managed by a subclass of EmpireManager, and can be accessed from
-* other modules by using the EmpireManager::Lookup() method to obtain a pointer.
-*/ 
+  * Class to maintain the state of a single empire. In both the client and server, Empires are managed by a subclass of
+  * EmpireManager, and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer.
+  */
 class Empire 
 {
 public:
@@ -238,92 +225,73 @@ public:
     typedef std::list<SitRepEntry*>::const_iterator SitRepItr;
     //@}
 
-    /** \name Constructors */ //@{
-    ///< Creates an empire with the given properties.
-    /**
-     * Initializes the empire's fields to the specified values.  All lists
-     * (planets, fleets, owned planets, visible fleets, technologies, explored
-     * systems, sitrep entries) will be empty after creation
-     */
-    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id); 
-
-    //@}
-    /** \name Destructors */ //@{
+    /** \name Structors */ //@{
+    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id);    ///< basic constructor
     ~Empire();
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  Name() const;           ///< Returns the Empire's name
-    const std::string&  PlayerName() const;     ///< Returns the Empire's player's name
+    const std::string&      Name() const;                                           ///< Returns the Empire's name
+    const std::string&      PlayerName() const;                                     ///< Returns the Empire's player's name
 
-    int                 EmpireID() const;       ///< Returns the Empire's unique numeric ID
+    int                     EmpireID() const;                                       ///< Returns the Empire's unique numeric ID
 
-    const GG::Clr&      Color() const;          ///< Returns the Empire's color
+    const GG::Clr&          Color() const;                                          ///< Returns the Empire's color
 
-    int                 HomeworldID() const;    ///< Returns the numeric ID of the empire's homeworld
-    int                 CapitolID() const;      ///< Returns the numeric ID of the empire's capitol
+    int                     HomeworldID() const;                                    ///< Returns the numeric ID of the empire's homeworld
+    int                     CapitolID() const;                                      ///< Returns the numeric ID of the empire's capitol
 
-    const std::set<std::string>&    AvailableTechs() const;                 ///< Returns the set of all available techs.
-    const std::set<std::string>&    AvailableBuildingTypes() const;         ///< Returns the set of all available building types.
-    std::set<int>                   AvailableShipDesigns() const;           ///< Returns the set of ship design ids of this empire that the empire can actually build
-    const std::set<int>&            ShipDesigns() const;                    ///< Returns the set of all ship design ids of this empire
-    const std::set<std::string>&    AvailableShipParts() const;             ///< Returns the set of ship part names this empire that the empire can currently build
-    const std::set<std::string>&    AvailableShipHulls() const;             ///< Returns the set of ship hull names that that the empire can currently build
+    const std::set<std::string>&    AvailableTechs() const;                         ///< Returns the set of all available techs.
+    const std::set<std::string>&    AvailableBuildingTypes() const;                 ///< Returns the set of all available building types.
+    std::set<int>                   AvailableShipDesigns() const;                   ///< Returns the set of ship design ids of this empire that the empire can actually build
+    const std::set<int>&            ShipDesigns() const;                            ///< Returns the set of all ship design ids of this empire
+    const std::set<std::string>&    AvailableShipParts() const;                     ///< Returns the set of ship part names this empire that the empire can currently build
+    const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
 
-    bool                ResearchableTech(const std::string& name) const;    ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
-    const               ResearchQueue& GetResearchQueue() const;            ///< Returns the queue of techs being or queued to be researched.
-    double              ResearchStatus(const std::string& name) const;      ///< Returns the RPs spent towards tech \a name if it has partial research progress, -1.0 if it is unresearched or already available.
-    bool                TechResearched(const std::string& name) const;      ///< Returns true iff this tech has been completely researched.
-    TechStatus          GetTechStatus(const std::string& name) const;       ///< Returns the status (researchable, researched, unresearchable) for this tech for this
+    bool                    ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
+    const                   ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
+    double                  ResearchStatus(const std::string& name) const;          ///< Returns the RPs spent towards tech \a name if it has partial research progress, -1.0 if it is unresearched or already available.
+    bool                    TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
+    TechStatus              GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
 
-    bool                BuildingTypeAvailable(const std::string& name) const;   ///< Returns true if the given building type is known to this empire, false if it is not
-    bool                ShipDesignAvailable(int ship_design_id) const;          ///< Returns true iff this ship design can be built by this empire.  If no such ship design exists, returns false
-    bool                ShipDesignKept(int ship_design_id) const;               ///< Returns true iff the given ship design id is in the set of design ids of this empire.  That is, it has been added to this empire.
-    bool                ShipPartAvailable(const std::string& name) const;       ///< Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
-    bool                ShipHullAvailable(const std::string& name) const;       ///< Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
+    bool                    BuildingTypeAvailable(const std::string& name) const;   ///< Returns true if the given building type is known to this empire, false if it is not
+    bool                    ShipDesignAvailable(int ship_design_id) const;          ///< Returns true iff this ship design can be built by this empire.  If no such ship design exists, returns false
+    bool                    ShipDesignKept(int ship_design_id) const;               ///< Returns true iff the given ship design id is in the set of design ids of this empire.  That is, it has been added to this empire.
+    bool                    ShipPartAvailable(const std::string& name) const;       ///< Returns true iff this ship part can be built by this empire.  If no such ship part exists, returns false
+    bool                    ShipHullAvailable(const std::string& name) const;       ///< Returns true iff this ship hull can be built by this empire.  If no such ship hull exists, returns false
 
-    const               ProductionQueue& GetProductionQueue() const;        ///< Returns the queue of items being or queued to be produced.
-    double              ProductionStatus(int i) const;                      ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
+    const                   ProductionQueue& GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
+    double                  ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
-    ///< Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
+    ///< Returns the maximum cost per turn and the minimum number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
     std::pair<double, int>  ProductionCostAndTime(BuildType build_type, std::string name) const;
-    ///< Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
+    ///< Returns the maximum cost per turn and the minimum number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
     std::pair<double, int>  ProductionCostAndTime(BuildType build_type, int design_id = UniverseObject::INVALID_OBJECT_ID) const;
-    ///< Returns the cost per turn and the number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
+    ///< Returns the maximum cost per turn and the minimum number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
     std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const;
 
-    bool                BuildableItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                BuildableItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
-    bool                BuildableItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can produce the specified item at the specified location.
+    bool                    BuildableItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
+    bool                    BuildableItem(BuildType build_type, int design_id, int location) const;            ///< Returns true iff this empire can produce the specified item at the specified location.
+    bool                    BuildableItem(const ProductionQueue::ProductionItem& item, int location) const;    ///< Returns true iff this empire can produce the specified item at the specified location.
 
-    bool                HasExploredSystem(int ID) const;                    ///< Returns true if the given item is in the appropriate list, false if it is not.
+    bool                    HasExploredSystem(int ID) const;                                ///< returns  true if the given item is in the appropriate list, false if it is not.
 
-    int                 NumSitRepEntries() const;                           ///< Returns the number of entries in the SitRep.
+    int                     NumSitRepEntries() const;                                       ///< number of entries in the SitRep.
 
-    /** clears and sets passed parameters, which are
-      * first:  set of system ids where fleets can be supplied by this empire
-      * second: starlanes along which fleet supply can flow.  entries are directed, so the same starlane
-      *         could appear twice - once for each direction.  the first value is the start and the second
-      *         value is the end of the lane traversals that can carry fleet supplies. */
-    void GetSupplyableSystemsAndStarlanesUsed(std::set<int>& supplyable_system_ids, 
-                                              std::set<std::pair<int, int> >& supply_starlane_traversals) const;
+    const std::set<int>&                    FleetSupplyableSystemIDs() const;               ///< returns set of system ids where fleets can be supplied by this empire (as determined by object supply meters and rules of supply proegation and blockade)
+    const std::set<std::pair<int, int> >&   FleetSupplyStarlaneTraversals() const;          ///< returns set of directed starlane traversals along which supply can flow.  results are pairs of system ids of start and end system of traversal
+    const std::map<int, int>&               FleetSupplyRanges() const;                      ///< returns map from system id to number of starlane jumps away the system can deliver fleet supply
 
-    /** clears and sets passed parameters, which are
-      * first:  set sets of system ids that are able to share resources between and within eachother
-      * second: starlanes along which resources can be exchanged.  entries are directed, so the same starlane
-      *         could appear twice - once for each direction.  the first value is the start and the second
-      *         value is the end of the lane traversals that can carry resources between systems. */
-    void GetSupplySystemGroupsAndStarlanesUsed(std::set<std::set<int> >& supply_system_groups, std::set<std::pair<int, int> >& supply_starlane_traversals) const;
+    const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share food, industry and minerals (systems in separate groups are blockaded or otherwise separated)
+    const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (food, industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
+    const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
 
-    /** modifies passed parameter, which is the set of system ids where fleet supply can be propegated from
-      * one starlane to the next, or where supply can be delivered if a supply route can reach the system.
-      */
-    void GetSupplyUnobstructedSystems(std::set<int>& unobstructed_system_ids) const;
+    const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propegate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
 
     /** modifies passed parameter, which is a map from system id to the range, in starlane jumps that the
       * system can send supplies.
       */
-    void GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
+    void                    GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
 
     const std::set<int>&    ExploredSystems() const;            ///< returns set of ids of systems that this empire has explored
 
@@ -355,21 +323,21 @@ public:
     /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
         it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
         is placed at the end of the queue. If \a tech is already available, no action is taken. */
-    void PlaceTechInQueue(const Tech* tech, int pos = -1);
+    void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
 
-    void RemoveTechFromQueue(const Tech* tech);                 ///< Removes \a tech from the research queue, if it is in the research queue already.
-
-    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
-        queue.size() <= pos, the build is placed at the end of the queue. */
-    void PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
+    void                    RemoveTechFromQueue(const Tech* tech);                 ///< Removes \a tech from the research queue, if it is in the research queue already.
 
     /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
         queue.size() <= pos, the build is placed at the end of the queue. */
-    void PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
+    void                    PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
 
     /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
         queue.size() <= pos, the build is placed at the end of the queue. */
-    void PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
+    void                    PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
+
+    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
+        queue.size() <= pos, the build is placed at the end of the queue. */
+    void                    PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
 
     void                    SetBuildQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
     void                    MoveBuildWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
@@ -378,7 +346,7 @@ public:
     /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
         as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
         queue of their current empire */
-    void ConquerBuildsAtLocation(int location_id);
+    void                    ConquerBuildsAtLocation(int location_id);
 
     void                    AddTech(const std::string& name);               ///< Inserts the given Tech into the Empire's list of available technologies.
     void                    UnlockItem(const ItemSpec& item);               ///< Adds a given buildable item (Building, Ship Component, etc.) to the list of available buildable items.
@@ -400,16 +368,19 @@ public:
      *  references to SitRepEntries lying around when this happens.
      *  You \a must pass in a dynamically allocated sitrep entry
      */
-    void AddSitRepEntry(SitRepEntry* entry);
+    void                    AddSitRepEntry(SitRepEntry* entry);
 
-    /**
-      */
-    void ClearSitRep();///< Clears all sitrep entries;
+    void                    ClearSitRep();                                  ///< Clears all sitrep entries
 
     void                    RemoveTech(const std::string& name);            ///< Removes the given Tech from the empire's list
     void                    LockItem(const ItemSpec& item);                 ///< Removes a given buildable item (Building, ShipComponent, etc.) from the list of available buildable items.
     void                    RemoveBuildingType(const std::string& name);    ///< Removes the given BuildingType from the empire's list
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
+
+    void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.
+    void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply (fleet or resource)
+    void                    UpdateFleetSupply();                            ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateResourceSupply();                         ///< Calculates groups of systems of this empire which can exchange resources and starlane traversals used to do so.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
 
     /** Checks for production projects that have been completed, and places them at their respective
       * production sites.  Which projects have been completed is determined by the results of
@@ -419,11 +390,11 @@ public:
       * minerals stockpile to account for any excess not used or any shortfall that was made up by
       * taking from the stockpile 
       */
-    void CheckProductionProgress();
+    void                    CheckProductionProgress();
 
     /** Checks for tech projects that have been completed, and adds them to the known techs list.
       */
-    void CheckResearchProgress();
+    void                    CheckResearchProgress();
 
     /** Eventually : Will check for social projects that have been completed and/or
       * process ongoing social projects... (not sure exactly what form "social projects" will take
@@ -431,11 +402,11 @@ public:
       * production and expenditures.
       * Currently: Deducts cost of maintenance of buildings from empire's trade stockpile
       */
-    void CheckTradeSocialProgress();
+    void                    CheckTradeSocialProgress();
 
     /** Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects
       */
-    void CheckGrowthFoodProgress();
+    void                    CheckGrowthFoodProgress();
 
     void                    SetColor(const GG::Clr& color);                 ///< Mutator for empire color
     void                    SetName(const std::string& name);               ///< Mutator for empire name
@@ -446,8 +417,9 @@ public:
 
     /** Determines ResourceCenters that can provide resources for this empire and sets
       * the supply groups used for each ResourcePool as appropriate for each resource.
+      * call UpdateResourceSupply before calling this.
       */
-    void InitResourcePools(const std::set<std::set<int> >& system_supply_groups);
+    void                    InitResourcePools();
 
     /** Resets production of resources and calculates spending (on each item in queues and 
       * overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
@@ -456,24 +428,24 @@ public:
       * from queue, processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions.
       */
-    void UpdateResourcePools();
+    void                    UpdateResourcePools();
 
     /** Calls Update() on empire's research queue, which recalculates the RPs spent on and
       * number of turns left for each tech in the queue.
       */
-    void UpdateResearchQueue();
+    void                    UpdateResearchQueue();
 
     /** Calls Update() on empire's production queue, which recalculates the PPs spent on and
       * number of turns left for each project in the queue.
       */
-    void UpdateProductionQueue();
+    void                    UpdateProductionQueue();
 
     /** Eventually: Calls appropriate subsystem Update to calculate trade spent on social projects
       * and maintenance of buildings.  Later call to CheckTradeSocialProgress() will then have the
       * correct allocations of trade.
       * Currently: Sums maintenance costs of all buildings owned by empire, sets m_maintenance_total_cost
       */
-    void UpdateTradeSpending();
+    void                    UpdateTradeSpending();
 
     /** Allocates available food to PopCenters.  Doesn't actually distribute food; just calculates how
       * how much food each PopCenter gets.  Sets m_food_total_distributed to indicate how much food
@@ -482,83 +454,65 @@ public:
       * update population growth estimates, so UpdatePopulationGrowth() may need to be called after calling
       * this function.
       */
-    void UpdateFoodDistribution();
+    void                    UpdateFoodDistribution();
 
     /** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
       * Assumes UpdateFoodDistribution() has been called to determine food allocations to each planet (which
       * are a factor in the growth prediction calculation).
       */
-    void UpdatePopulationGrowth();
+    void                    UpdatePopulationGrowth();
     //@}
 
 private:
-    ///< Empire's unique numeric id
-    int m_id;
+    int                             m_id;                       ///< Empire's unique numeric id
+    std::string                     m_name;                     ///< Empire's name
+    std::string                     m_player_name;              ///< Empire's Player's name
+    GG::Clr                         m_color;                    ///< Empire's color
+    int                             m_homeworld_id;             ///< the ID of the empire's homeworld
 
-    ///< Empire's name
-    std::string m_name;
+    std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
 
-    ///< Empire's Player's name
-    std::string m_player_name;
+    ResearchQueue                   m_research_queue;           ///< the queue of techs being or waiting to be researched
+    std::map<std::string, double>   m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
 
-    ///< Empire's color
-    GG::Clr m_color;
+    ProductionQueue                 m_production_queue;         ///< the queue of items being or waiting to be built
+    std::vector<double>             m_production_progress;      ///< progress of partially-completed builds; completed items are removed
 
-    ///< the ID of the empire's homeworld
-    int m_homeworld_id;
+    std::set<std::string>           m_available_building_types; ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
+    std::set<std::string>           m_available_part_types;     ///< list of acquired ship PartType.  These are string names referencing PartType objects
+    std::set<std::string>           m_available_hull_types;     ///< list of acquired ship HullType.  These are string names referencing HullType objects
+    std::set<int>                   m_explored_systems;         ///< systems you've explored
+    std::set<int>                   m_ship_designs;             ///< The Empire's ship designs, indexed by design id
 
-    ///< list of acquired technologies.  These are string names referencing Tech objects
-    std::set<std::string> m_techs;
+    std::list<SitRepEntry*>         m_sitrep_entries;           ///< The Empire's sitrep entries
 
-    ///< the queue of techs being or waiting to be researched
-    ResearchQueue m_research_queue;
-
-    ///< progress of partially-researched techs; fully researched techs are removed
-    std::map<std::string, double> m_research_progress;
-
-    ///< the queue of items being or waiting to be built
-    ProductionQueue m_production_queue;
-
-    ///< progress of partially-completed builds; completed items are removed
-    std::vector<double> m_production_progress;
-
-    ///< list of acquired BuildingType.  These are string names referencing BuildingType objects
-    std::set<std::string> m_available_building_types;
-
-    ///< list of acquired ship PartType.  These are string names referencing PartType objects
-    std::set<std::string> m_available_part_types;
-
-    ///< list of acquired ship HullType.  These are string names referencing HullType objects
-    std::set<std::string> m_available_hull_types;
-
-    ///< systems you've explored
-    std::set<int> m_explored_systems;
-
-    ///< The Empire's ship designs, indexed by design id
-    std::set<int> m_ship_designs;
-
-    ///< The Empire's sitrep entries
-    std::list<SitRepEntry*> m_sitrep_entries;
-
-    ///< The Empire resource & population pools
-    std::map<ResourceType, boost::shared_ptr<ResourcePool> > m_resource_pools;
-
-    PopulationPool m_population_pool;
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >    m_resource_pools;
+    PopulationPool                                              m_population_pool;
 
     /** set by UpdateFoodDistribution() to indicate how much food the empire will distribute this turn.  Unlike
       * the Research and Production subsystems, food distribution only requires a single function and doesn't
       * have its own queue class.  So, instead of GetFoodQueue().TotalFoodDistributed(), one just calls
       * Empire::TotalFoodDistributed(), which returns this value.
       */
-    double m_food_total_distributed;
+    double                          m_food_total_distributed;
 
     /** MAYBE TEMPORARY: Until social projects and/or consequences of unpaid maintenance is implemented.
       * Total maintenance on buildings owned by this empire.  Set by UpdateTradeSpending(), used
       * by CheckTradeSocialProgress() to deduct maintenance cost from trade stockpile
       */
-    double m_maintenance_total_cost;
+    double                          m_maintenance_total_cost;
 
-    std::map<std::string, int> m_ship_names_used; // map from name to number of times used
+    std::map<std::string, int>      m_ship_names_used;          ///< map from name to number of times used
+
+    // cached calculation results, returned by reference
+    std::set<int>                   m_fleet_supplyable_system_ids;
+    std::set<std::pair<int, int> >  m_fleet_supply_starlane_traversals;
+    std::map<int, int>              m_fleet_supply_system_ranges;
+    std::set<std::set<int> >        m_resource_supply_groups;
+    std::set<std::pair<int, int> >  m_resource_supply_starlane_traversals;
+    std::map<int, int>              m_resource_supply_system_ranges;
+    std::set<int>                   m_supply_unobstructed_systems;
+
 
     friend class boost::serialization::access;
     Empire();

@@ -888,22 +888,19 @@ void MapWnd::InitTurn(int turn_number)
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
+
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         int empire_id = it->first;
         Empire* empire = it->second;
 
-        // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
-        std::set<std::pair<int, int> > fleet_supply_lanes;
-        empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
-                                                     fleet_supply_lanes);
+        empire->UpdateSupplyUnobstructedSystems();
+        empire->UpdateSystemSupplyRanges();
+        empire->UpdateFleetSupply();
+        empire->UpdateResourceSupply();
+        empire->InitResourcePools();
 
-        // get sets of systems from and to which physical resources can be shared
-        empire->GetSupplySystemGroupsAndStarlanesUsed(m_empire_resource_sharing_groups[empire_id],
-                                                      m_empire_resource_sharing_lanes[empire_id]);
-
-        empire->InitResourcePools(m_empire_resource_sharing_groups[empire_id]);
-
+        const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
             glColor(empire->Color());
             const System* start_sys = universe.Object<System>(lane_it->first);
@@ -2112,11 +2109,7 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 }
 
 void MapWnd::HandleEmpireElimination(int empire_id)
-{
-    m_empire_system_fleet_supply.erase(empire_id);
-    m_empire_resource_sharing_groups.erase(empire_id);
-    m_empire_resource_sharing_lanes.erase(empire_id);
-}
+{}
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 { m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj))); }
@@ -2434,7 +2427,7 @@ void MapWnd::UpdateMeterEstimates()
     // population of planet that is displayed to the player, even if those effects have a condition that causes
     // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
     // tech that should only benefit him/herself)
-    
+
     int player_id = HumanClientApp::GetApp()->PlayerID();
 
     // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this

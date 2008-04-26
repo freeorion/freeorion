@@ -8,10 +8,7 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = And [
-                Contains Source
-                Planet
-            ]
+            scope = Contains Source
             activation = Source
             effects = SetMaxConstruction Target.MaxConstruction + 2
     graphic = ""
@@ -48,7 +45,7 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = Source
+            scope = Contains Source
             activation = Source
             effects = SetMaxConstruction Target.MaxConstruction + 2
     graphic = ""
@@ -62,7 +59,7 @@ BuildingType
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = Source
+            scope = Contains Source
             activation = Source
             effects = SetMaxHealth Target.MaxHealth - 2
     graphic = "icons/building/bioterror_lab.png"

@@ -179,34 +179,56 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
 std::pair<int, int> Fleet::ETA() const
 {
-    std::pair<int, int> retval;
-    if (UnknownRoute()) {
-        retval.first = ETA_UNKNOWN;
-    } else if (m_next_system == UniverseObject::INVALID_OBJECT_ID) {
-        retval.first = 0;
-    } else {
-        CalculateRoute();
-        if (m_speed > 0.0) {
-            retval.first = static_cast<int>(std::ceil(m_travel_distance / m_speed));
+    // if route is unknown, ETA is unknown
+    if (UnknownRoute())
+        return std::make_pair(ETA_UNKNOWN, ETA_UNKNOWN);
 
-            if (!m_travel_route.empty()) {
-                std::list<System*>::iterator next_system_it = m_travel_route.begin();
-                if (SystemID() == m_travel_route.front()->ID())
-                    ++next_system_it;
-                assert(next_system_it != m_travel_route.end());
-                System* next = *next_system_it;
-                if (next == m_travel_route.back()) {
-                    retval.second = retval.first;
-                } else {
-                    double x = next->X() - X();
-                    double y = next->Y() - Y();
-                    retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / m_speed));
-                }
-            }
+    // if next system is an invalid system id, the fleet isn't moving, so ETA is 0
+    if (m_next_system == UniverseObject::INVALID_OBJECT_ID)
+        return std::make_pair(0, 0);
+
+    // if fleet can't move, ETA is never
+    if (m_speed <= 0.0)
+        return std::make_pair(ETA_NEVER, ETA_NEVER);
+
+    // otherwise, need to do calcuations to determine ETA
+    std::pair<int, int> retval(ETA_NEVER, ETA_NEVER);
+
+    CalculateRoute();
+
+    // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
+    const Universe& universe = GetUniverse();
+    double fuel = Meter::METER_MAX;
+    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+        const Ship* ship = universe.Object<Ship>(*ship_it);
+        assert(ship);
+        fuel = std::min(fuel, ship->MeterPoints(METER_FUEL));
+    }
+
+    //// if fleet has no fuel, it can't move
+    //if (fuel < 1.0)
+    //    return std::make_pair(ETA_NEVER, ETA_NEVER);
+
+    // if fuel doesn't limit speed, ETA is just distance / speed
+    retval.first = static_cast<int>(std::ceil(m_travel_distance / m_speed));
+    if (retval.first > 500)
+        retval.first = ETA_NEVER;   // avoid overly-large ETA numbers
+
+    if (!m_travel_route.empty()) {
+        std::list<System*>::iterator next_system_it = m_travel_route.begin();
+        if (SystemID() == m_travel_route.front()->ID())
+            ++next_system_it;
+        assert(next_system_it != m_travel_route.end());
+        System* next = *next_system_it;
+        if (next == m_travel_route.back()) {
+            retval.second = retval.first;
         } else {
-            retval.first = ETA_NEVER;
+            double x = next->X() - X();
+            double y = next->Y() - Y();
+            retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / m_speed));
         }
     }
+
     return retval;
 }
 

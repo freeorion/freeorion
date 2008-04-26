@@ -79,10 +79,8 @@ public:
 
     struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
     typedef boost::property<vertex_system_pointer_t, System*,
-                            boost::property<boost::vertex_index_t, int> > 
-    vertex_property_t; ///< a system graph property map type
-    typedef boost::property<boost::edge_weight_t, double> 
-    edge_property_t; ///< a system graph property map type
+                            boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
+    typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
     typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for sequences over the objects in the universe
     typedef ObjectMap::iterator                  iterator;         ///< an iterator for sequences over the objects in the universe
@@ -145,23 +143,20 @@ public:
 
     iterator                                    begin();
     iterator                                    end();
-
-    const_iterator                              begin() const;          ///< returns the begin const_iterator for the objects in the universe
-    const_iterator                              end() const;            ///< returns the end const_iterator for the objects in the universe
-
-
-    const UniverseObject*                       DestroyedObject(int id) const;              ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
-
-    const_iterator beginDestroyed() const  {return m_destroyed_objects.begin();}            ///< returns the begin const_iterator for the destroyed objects from the universe
-    const_iterator endDestroyed() const    {return m_destroyed_objects.end();}              ///< returns the end const_iterator for the destroyed objects from the universe
+    const_iterator                              begin() const;                  ///< returns the begin const_iterator for the objects in the universe
+    const_iterator                              end() const;                    ///< returns the end const_iterator for the objects in the universe
 
 
-    const ShipDesign*                           GetShipDesign(int ship_design_id) const;    ///< returns the ship design with id \a ship_design id, or 0 if non exists
+    const UniverseObject*                       DestroyedObject(int id) const;  ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
+    const_iterator                              beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
+    const_iterator                              endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
 
-    ship_design_iterator beginShipDesigns() const   {return m_ship_designs.begin();}        ///< returns the begin iterator for ship designs
-    ship_design_iterator endShipDesigns() const     {return m_ship_designs.end();}          ///< returns the end iterator for ship designs
 
-    double                                      LinearDistance(int system1_id, int system2_id) const;   ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+    const ShipDesign*                           GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
+    ship_design_iterator                        beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
+    ship_design_iterator                        endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
+
+    double                                      LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
     /** returns the sequence of systems, including \a system1 and \a system2, that defines the shortest path from \a
         system1 to \a system2, and the distance travelled to get there.  If no such path exists, the list will be empty.
@@ -184,9 +179,9 @@ public:
     bool                                        SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns true iff \a system is reachable from another system (i.e. it has at least one known starlane to it).
-        This does not guarantee that the system is reachable from any other system, as two separate groups of locally
-        but not globally internonnected systems may exist. The starlanes considered depend on their visiblity for 
-        empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range
+        This does not guarantee that the system is reachable from any specific other system, as two separate groups
+        of locally but not globally internonnected systems may exist. The starlanes considered depend on their visiblity
+        for empire \a empire_id, or without regard to visibility if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range
         This function will throw if the system ID is out of range. */
     bool                                        SystemReachable(int system_id, int empire_id = ALL_EMPIRES) const;
 
@@ -223,17 +218,23 @@ public:
         \note Unvierse gains ownership of \a ship_design once inserted. */
     bool                InsertShipDesignID(ShipDesign* ship_design, int id);
 
-    /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases, and places starting fleets.  Uses predefined galaxy shapes.  */
+    /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases,
+      * and places starting fleets.  Uses predefined galaxy shapes.
+      */
     void                CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
                                        SpecialsFrequency specials_freq, int players, int ai_players, 
                                        const std::map<int, PlayerSetupData>& player_setup_data);
 
-    /** Applies all Effects from Buildings, Specials, Techs, etc. */
-    void                ApplyEffects();
+    void                ApplyEffects();                         ///< Applies all Effects from Buildings, Specials, Techs, etc.
 
-    void                InitMeterEstimatesAndDiscrepancies();  ///< determines discrepancies and stores in m_effect_discrepancy_map, using UpdateMeterEstimates() in process
+    /** determines discrepancies and stores in m_effect_discrepancy_map, using UpdateMeterEstimates() in process
+      */
+    void                InitMeterEstimatesAndDiscrepancies();
 
-    void                UpdateMeterEstimates();    ///< based on orders given up to this point, and known universe, estimates what meter maxes will be next turn, and updates them accordingly
+    /** Based on (known, if in a client) universe and any orders given so far this turn, estimates what meter maxes will be
+      * next turn, and updates the predicted values accordingly.
+      */
+    void                UpdateMeterEstimates();
 
     /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
     void                RebuildEmpireViewSystemGraphs();
@@ -242,15 +243,10 @@ public:
         removes the object from any containing UniverseObjects, though leaves the object's own records of what contained it intact, so that
         this information may be retained for later reference */
     void                Destroy(int id);
+    bool                Delete(int id);                         ///< removes from the universe (whether existing or destroyed) and deletes the object with ID number \a id; returns true if such an object was found, false otherwise
+    void                EffectDestroy(int id);                  ///< marks an object for destruction by the Destroy effect.
 
-    /** removes from the universe (whether existing or destroyed) and deletes the object with ID number \a id; returns true if such an object was found, false otherwise*/
-    bool                Delete(int id);
-
-    /** marks an object for destruction by the Destroy effect. */
-    void                EffectDestroy(int id);
-
-    /** cleans up internal storage of now-invalidated empire ID */
-    void                HandleEmpireElimination(int empire_id);
+    void                HandleEmpireElimination(int empire_id); ///< cleans up internal storage of now-invalidated empire ID
 
     /** sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
     static void         InhibitUniverseObjectSignals(bool inhibit = true);
@@ -261,7 +257,6 @@ public:
     static double       UniverseWidth();
 
     int                 GenerateObjectID();  ///< generates an object ID for a future object. Usually used by the server to service new ID requests
-
     int                 GenerateDesignID();  ///< generates adesign ID for a new (ship) design. Usually used by the server to service new ID requests
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
@@ -278,8 +273,7 @@ protected:
 
     // declare main graph types, including properties declared above
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-                                  vertex_property_t, edge_property_t>
-    SystemGraph;
+                                  vertex_property_t, edge_property_t> SystemGraph;
 
     // declare types for iteration over graph
     typedef SystemGraph::vertex_iterator   VertexIterator;
@@ -377,15 +371,15 @@ protected:
     EffectDiscrepancyMap        m_effect_discrepancy_map;       ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
 
 
-    int             m_last_allocated_object_id;
-    int             m_last_allocated_design_id;
+    int                         m_last_allocated_object_id;
+    int                         m_last_allocated_design_id;
 
-    std::set<int>   m_marked_destroyed;                         ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
+    std::set<int>               m_marked_destroyed;             ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
 
-    static double   s_universe_width;
+    static double               s_universe_width;
 
 private:
-    static bool     s_inhibit_universe_object_signals;
+    static bool                 s_inhibit_universe_object_signals;
 
     void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);
 
