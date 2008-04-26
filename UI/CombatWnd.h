@@ -20,6 +20,7 @@ namespace Ogre {
     class PlaneBoundedVolumeListSceneQuery;
 }
 class System;
+class FPSIndicator;
 
 class CombatWnd :
     public GG::Wnd,
@@ -115,6 +116,10 @@ private:
     Ogre::Real m_right_horizontal_flare_scroll_offset;
 
     StencilOpQueueListener* m_stencil_op_frame_listener;
+
+    FPSIndicator* m_fps_text;
+
+    bool m_menu_showing;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };

@@ -1,6 +1,9 @@
 #include "CombatWnd.h"
 
 #include "ClientUI.h"
+#include "CUIControls.h"
+#include "InGameMenu.h"
+#include "OptionsWnd.h" // TODO: Remove this when the InGameMenu is in use.
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
@@ -31,7 +34,6 @@
 #include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-
 
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
@@ -386,6 +388,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_left_horizontal_flare_scroll_offset(0.0),
     m_right_horizontal_flare_scroll_offset(0.0),
     m_stencil_op_frame_listener(new StencilOpQueueListener),
+    m_fps_text(new FPSIndicator(5, 5)),
+    m_menu_showing(false),
     m_exit(false)
 {
     Ogre::Root::getSingleton().addFrameListener(this);
@@ -462,6 +466,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     // look at the star initially
     m_currently_selected_scene_node = star_node;
     UpdateCameraPosition();
+
+    AttachChild(m_fps_text);
 
     //////////////////////////////////////////////////////////////////
     // NOTE: Below is temporary code for combat system prototyping! //
@@ -812,6 +818,18 @@ void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
+
+    if (key == GG::GGK_F10 && !mod_keys && !m_menu_showing) {
+        m_menu_showing = true;
+#if 0 // TODO: Use the full in-game menu when the code is a bit more developed.
+        InGameMenu menu;
+        menu.Run();
+#else
+        OptionsWnd options_wnd;
+        options_wnd.Run();
+#endif
+        m_menu_showing = false;
+    }
 }
 
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
@@ -821,18 +839,14 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
         UpdateCameraPosition();
     }
 
-#if 0 // TODO: Remove this; it only here for profiling the number of triangles rendered.
     Ogre::RenderTarget::FrameStats stats = Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
-    std::cout << "tris: " << stats.triangleCount << " batches: " << stats.batchCount << std::endl;
-#endif
+    m_fps_text->SetText(boost::lexical_cast<std::string>(stats.lastFPS) + " FPS");
+
     return !m_exit;
 }
 
 bool CombatWnd::frameEnded(const Ogre::FrameEvent& event)
 {
-    Ogre::CompositorPtr glow_compositor = Ogre::CompositorManager::getSingleton().getByName("effects/glow");
-    
-
     return !m_exit;
 }
 
