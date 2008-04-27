@@ -80,9 +80,13 @@ private:
 
     Ogre::SceneManager* m_scene_manager;
     Ogre::Camera* m_camera;
+    Ogre::SceneNode* m_camera_node;
     Ogre::Viewport* m_viewport;
     Ogre::RaySceneQuery* m_ray_scene_query;
     Ogre::PlaneBoundedVolumeListSceneQuery* m_volume_scene_query;
+
+    Ogre::Animation* m_camera_animation;
+    Ogre::AnimationState* m_camera_animation_state;
 
     Ogre::Real m_distance_to_lookat_point;
     Ogre::Radian m_pitch;
@@ -91,7 +95,7 @@ private:
     GG::Pt m_selection_drag_start;
     GG::Pt m_selection_drag_stop;
     bool m_mouse_dragged;
-    Ogre::SceneNode* m_currently_selected_scene_node;
+    Ogre::SceneNode* m_lookat_scene_node;
     GG::Rect m_selection_rect;
     Ogre::Vector3 m_lookat_point;
     std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
