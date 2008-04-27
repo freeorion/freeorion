@@ -104,6 +104,30 @@ const std::set<std::string>& UniverseObject::Specials() const
     return m_specials;
 }
 
+std::vector<UniverseObject*> UniverseObject::FindObjects() const
+{
+    return std::vector<UniverseObject*>();
+}
+
+std::vector<int> UniverseObject::FindObjectIDs() const
+{
+    return std::vector<int>();
+}
+
+bool UniverseObject::Contains(int object_id) const
+{
+    return false;
+}
+
+bool UniverseObject::ContainedBy(int object_id) const
+{
+    const UniverseObject* object = GetUniverse().Object(object_id);
+    if (object)
+        return object->Contains(m_id);
+    else
+        return false;
+}
+
 const Meter* UniverseObject::GetMeter(MeterType type) const
 {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);

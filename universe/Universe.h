@@ -82,24 +82,24 @@ public:
                             boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
     typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
-    typedef ObjectMap::const_iterator            const_iterator;   ///< a const_iterator for sequences over the objects in the universe
-    typedef ObjectMap::iterator                  iterator;         ///< an iterator for sequences over the objects in the universe
+    typedef ObjectMap::const_iterator           const_iterator;         ///< a const_iterator for sequences over the objects in the universe
+    typedef ObjectMap::iterator                 iterator;               ///< an iterator for sequences over the objects in the universe
 
-    typedef ShipDesignMap::const_iterator        ship_design_iterator;  ///< const iterator over ship designs created by players that are known by this client
+    typedef ShipDesignMap::const_iterator       ship_design_iterator;   ///< const iterator over ship designs created by players that are known by this client
 
-    typedef std::vector<const UniverseObject*>   ConstObjectVec;   ///< the return type of FindObjects()
-    typedef std::vector<UniverseObject*>         ObjectVec;        ///< the return type of the non-const FindObjects()
-    typedef std::vector<int>                     ObjectIDVec;      ///< the return type of FindObjectIDs()
+    typedef std::vector<const UniverseObject*>  ConstObjectVec;         ///< the return type of FindObjects()
+    typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of the non-const FindObjects()
+    typedef std::vector<int>                    ObjectIDVec;            ///< the return type of FindObjectIDs()
 
     //!< contains info about a single effect's alterations to a meter
     struct EffectAccountingInfo
     {
-        EffectAccountingInfo();         // default ctor
-        int source_id;                  // source object of effect
-        int caused_by_empire_id;        // empire that causes effect to occur, if applicable.  Tech effects are caused by the empire that researched them
-        EffectsCauseType cause_type;    // is the effect due to a tech, building, special, or unknown cause?
-        std::string specific_cause;     // what tech, building or special was the cause?
-        double meter_change;            // net change on meter due to this effect, as best known by client's empire
+        EffectAccountingInfo();         ///< default ctor
+        int source_id;                  ///< source object of effect
+        int caused_by_empire_id;        ///< empire that causes effect to occur, if applicable.  Tech effects are caused by the empire that researched them
+        EffectsCauseType cause_type;    ///< is the effect due to a tech, building, special, or unknown cause?
+        std::string specific_cause;     ///< what tech, building or special was the cause?
+        double meter_change;            ///< net change on meter due to this effect, as best known by client's empire
         double running_meter_total; 
     };
     typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;    //!< Effect accounting info for all meters
@@ -111,43 +111,32 @@ public:
 
 
     /** \name Structors */ //@{
-    Universe(); ///< default ctor
-    const Universe& operator=(Universe& rhs); ///< assignment operator (move semantics)
-    virtual ~Universe(); ///< dtor
+    Universe();                                     ///< default ctor
+    const Universe& operator=(Universe& rhs);       ///< assignment operator (move semantics)
+    virtual ~Universe();                            ///< dtor
     //@}
 
     /** \name Accessors */ //@{
     const UniverseObject*                       Object(int id) const;   ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
     UniverseObject*                             Object(int id);         ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
-
     template <class T> const T*                 Object(int id) const;   ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
     template <class T> T*                       Object(int id);         ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
 
-    /** returns all the objects that match \a visitor */
-    ConstObjectVec                              FindObjects(const UniverseObjectVisitor& visitor) const;
+    ConstObjectVec                              FindObjects(const UniverseObjectVisitor& visitor) const;        ///< returns all the objects that match \a visitor
+    ObjectVec                                   FindObjects(const UniverseObjectVisitor& visitor);              ///< returns all the objects that match \a visitor
+    template <class T> std::vector<const T*>    FindObjects() const;                                            ///< returns all the objects of type T
+    template <class T> std::vector<T*>          FindObjects();                                                  ///< returns all the objects of type T
 
-    /** returns all the objects that match \a visitor */
-    ObjectVec                                   FindObjects(const UniverseObjectVisitor& visitor);
-
-    /** returns all the objects of type T. */
-    template <class T> std::vector<const T*>    FindObjects() const;
-
-    /** returns all the objects of type T. */
-    template <class T> std::vector<T*>          FindObjects();
-
-    /** returns the IDs of all the objects that match \a visitor */
-    ObjectIDVec                                 FindObjectIDs(const UniverseObjectVisitor& visitor) const;
-
-    /** returns the IDs of all the objects of type T. */
-    template <class T> ObjectIDVec              FindObjectIDs() const;
+    ObjectIDVec                                 FindObjectIDs(const UniverseObjectVisitor& visitor) const;      ///< returns the IDs of all the objects that match \a visitor
+    template <class T> ObjectIDVec              FindObjectIDs() const;                                          ///< returns the IDs of all the objects of type T
 
     iterator                                    begin();
     iterator                                    end();
-    const_iterator                              begin() const;                  ///< returns the begin const_iterator for the objects in the universe
-    const_iterator                              end() const;                    ///< returns the end const_iterator for the objects in the universe
+    const_iterator                              begin() const;                                                  ///< returns the begin const_iterator for the objects in the universe
+    const_iterator                              end() const;                                                    ///< returns the end const_iterator for the objects in the universe
 
 
-    const UniverseObject*                       DestroyedObject(int id) const;  ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
+    const UniverseObject*                       DestroyedObject(int id) const;                                  ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
     const_iterator                              beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
     const_iterator                              endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
 
@@ -201,13 +190,13 @@ public:
     /** \name Mutators */ //@{
     /** inserts object \a obj into the universe; returns the ID number assigned to the object, or -1 on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
-        passing it to Insert().*/
+        passing it to Insert(). */
     int                 Insert(UniverseObject* obj);
 
     /** inserts object \a obj of given ID into the universe; returns true on proper insert, or false on failure.
         \note Universe gains ownership of \a obj once it is inserted; the caller should \a never delete \a obj after
         passing it to InsertID().
-        Useful mostly for times when ID needs to be consistant on client and server*/
+        Useful mostly for times when ID needs to be consistant on client and server */
     bool                InsertID(UniverseObject* obj, int id);
 
     /** Inserts \a ship_design into the universe; returns the ship design ID assigned to it, or -1 on failure.
@@ -219,8 +208,7 @@ public:
     bool                InsertShipDesignID(ShipDesign* ship_design, int id);
 
     /** generates systems and planets, assigns homeworlds and populates them with people, industry and bases,
-      * and places starting fleets.  Uses predefined galaxy shapes.
-      */
+      * and places starting fleets.  Uses predefined galaxy shapes. */
     void                CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
                                        SpecialsFrequency specials_freq, int players, int ai_players, 
                                        const std::map<int, PlayerSetupData>& player_setup_data);
@@ -236,12 +224,10 @@ public:
       * in universe have their meter(s) updated.  If \a object_id is a valid object id, just that object's meter(s) are updated,
       * unless \a update_contained_object is true, in which case all objects contained within the object with id \a object_id
       * also have their meters updated.  If \a meter_type is INVALID_METER_TYPE, all meter types are updated, but if
-      * \a meter_type is a valid meter type, just that type of meter is updated.
-      */
+      * \a meter_type is a valid meter type, just that type of meter is updated. */
     void                UpdateMeterEstimates(int object_id, MeterType meter_type = INVALID_METER_TYPE, bool update_contained_objects = false);
-    /** Calls 3-parameter UpdateMeterEstimates with object_id = UniverseObject::INVALID_METER_TYPE
-      */
-    void                UpdateMeterEstimates(MeterType meter_type = INVALID_METER_TYPE, bool update_contained_objects = false);
+
+    void                UpdateMeterEstimates();                 ///< Calls 3-parameter UpdateMeterEstimates for all objects and all MeterTypes
 
     /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
     void                RebuildEmpireViewSystemGraphs();

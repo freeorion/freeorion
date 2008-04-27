@@ -169,6 +169,29 @@ double Planet::BuildingCosts() const
     return retval;
 }
 
+bool Planet::Contains(int object_id) const
+{
+    return m_buildings.find(object_id) != m_buildings.end();
+}
+
+std::vector<UniverseObject*> Planet::FindObjects() const
+{
+    Universe& universe = GetUniverse();
+    std::vector<UniverseObject*> retval;
+    // add buildings on this planet
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
+        retval.push_back(universe.Object(*it));
+    return retval;
+}
+
+std::vector<int> Planet::FindObjectIDs() const
+{
+    std::vector<int> retval;
+    // add buildings on this planet
+    std::copy(m_buildings.begin(), m_buildings.end(), std::back_inserter(retval));
+    return retval;
+}
+
 UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility

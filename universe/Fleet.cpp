@@ -267,9 +267,27 @@ int Fleet::NumShips() const
     return m_ships.size();
 }
 
-bool Fleet::ContainsShip(int id) const
+bool Fleet::Contains(int object_id) const
 {
-    return m_ships.find(id) != m_ships.end();
+    return m_ships.find(object_id) != m_ships.end();
+}
+
+std::vector<UniverseObject*> Fleet::FindObjects() const
+{
+    Universe& universe = GetUniverse();
+    std::vector<UniverseObject*> retval;
+    // add ships in this fleet
+    for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it)
+        retval.push_back(universe.Object(*it));
+    return retval;
+}
+
+std::vector<int> Fleet::FindObjectIDs() const
+{
+    std::vector<int> retval;
+    // add ships in this fleet
+    std::copy(m_ships.begin(), m_ships.end(), std::back_inserter(retval));
+    return retval;
 }
 
 bool Fleet::UnknownRoute() const

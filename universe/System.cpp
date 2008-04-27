@@ -93,6 +93,34 @@ bool System::HasWormholeTo(int id) const
    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
+std::vector<UniverseObject*> System::FindObjects() const
+{
+    Universe& universe = GetUniverse();
+    std::vector<UniverseObject*> retval;
+    // add objects contained in this system, and objects contained in those objects
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        UniverseObject* object = universe.Object(it->second);
+        retval.push_back(object);
+        std::vector<UniverseObject*> contained_objects = object->FindObjects();
+        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(retval));
+    }
+    return retval;
+}
+
+std::vector<int> System::FindObjectIDs() const
+{
+    Universe& universe = GetUniverse();
+    std::vector<int> retval;
+    // add objects contained in this system, and objects contained in those objects
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        UniverseObject* object = universe.Object(it->second);
+        retval.push_back(it->second);
+        std::vector<int> contained_objects = object->FindObjectIDs();
+        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(retval));
+    }
+    return retval;
+}
+
 System::ObjectIDVec System::FindObjectIDs(const UniverseObjectVisitor& visitor) const
 {
     const Universe& universe = GetUniverse();
@@ -135,6 +163,15 @@ System::const_orbit_iterator System::begin() const
 System::const_orbit_iterator System::end() const
 {
     return m_objects.end();
+}
+
+bool System::Contains(int object_id) const
+{
+    const UniverseObject* object = GetUniverse().Object(object_id);
+    if (object)
+        return (ID() == object->SystemID());
+    else
+        return false;
 }
 
 std::pair<System::const_orbit_iterator, System::const_orbit_iterator> System::orbit_range(int o) const

@@ -99,6 +99,8 @@ namespace FreeOrionPython {
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
             .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
             .add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
+            .def("Contains",                    &UniverseObject::Contains)
+            .def("ContainedBy",                 &UniverseObject::ContainedBy)
         ;
 
         ///////////////////
@@ -111,7 +113,6 @@ namespace FreeOrionPython {
             .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
             .add_property("numShips",                   &Fleet::NumShips)
-            .def("containsShipID",                      &Fleet::ContainsShip)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
         ;
 

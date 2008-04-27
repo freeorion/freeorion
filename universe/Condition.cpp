@@ -31,22 +31,6 @@ namespace {
         }
         return retval;
     }
-
-    bool Contains(UniverseObject* a, UniverseObject* b)
-    {
-        if (const System* system = universe_object_cast<const System*>(a)) {
-            if (b->SystemID() == system->ID())
-                return true;
-        } else if (const Planet* planet = universe_object_cast<const Planet*>(a)) {
-            if (planet->ContainsBuilding(b->ID()))
-                return true;
-        } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(a)) {
-            if (fleet->ContainsShip(b->ID()))
-                return true;
-        }
-        return false;
-    }
-
 }
 
 ///////////////////////////////////////////////////////////
@@ -553,7 +537,7 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
             // from_set to to_set.
             // As soon as one contained condition target is found, object may be transferred.
             for ( ; contained_it != contained_end; ++contained_it) {
-                if (::Contains(*container_it, *contained_it)) {
+                if ((*container_it)->Contains((*contained_it)->ID())) {
                     to_set.insert(*container_it);
                     from_set.erase(container_it);
                     break;  // don't need to check any more possible contained objects for this non_target set object
@@ -566,9 +550,8 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
             // be trasferred.  Only after all condition targets are verified not to be contained can object
             // be transferred.
             for ( ; contained_it != contained_end; ++contained_it) {
-                if (::Contains(*container_it, *contained_it)) {
+                if ((*container_it)->Contains((*contained_it)->ID()))
                     break;
-                }
             }
             // if the end of the condition_targets was reached, no condition targets were contained, so 
             // this targets object can be transferred to the non_targets set
@@ -626,13 +609,13 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
 
         ObjectSet::const_iterator container_it = condition_targets.begin();
         ObjectSet::const_iterator container_end = condition_targets.end();
-        
+
         if (search_domain == NON_TARGETS) {
             // non_targets (from_set) objects need to be contained by at least one condition_target to be 
             // transferred from from_set to to_set.
             // As soon as one containing condition target is found, object may be transferred.
             for ( ; container_it != container_end; ++container_it) {
-                if (::Contains(*container_it, *contained_it)) {
+                if ((*container_it)->Contains((*contained_it)->ID())) {
                     to_set.insert(*contained_it);
                     from_set.erase(contained_it);
                     break;  // don't need to check any more possible container objects for this non_target set object
@@ -645,9 +628,8 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
             // be trasferred.  Only after all condition targets are verified not to contain can object
             // be transferred.
             for ( ; container_it != container_end; ++container_it) {
-                if (::Contains(*container_it, *contained_it)) {
+                if ((*container_it)->Contains((*contained_it)->ID()))
                     break;
-                }
             }
             // if the end of the condition_targets was reached, no condition targets contained, so 
             // this targets object can be transferred to the non_targets set

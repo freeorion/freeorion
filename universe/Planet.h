@@ -106,8 +106,9 @@ public:
     double                              AvailableTrade() const;                         ///< returns the trade available at this planet for use in building maintenance
     double                              BuildingCosts() const;                          ///< returns the cost in trade for the upkeep of all currently-enabled buildings
 
-    /** Returns true iff this Planet contains a building with ID \a id. */
-    bool                                ContainsBuilding(int id) const {return m_buildings.find(id) != m_buildings.end();}
+    virtual bool                        Contains(int object_id) const;                  ///< returns true iff this Planet contains a building with ID \a id.
+    virtual std::vector<UniverseObject*>FindObjects() const;                            ///< returns objects contained within this object
+    virtual std::vector<int>            FindObjectIDs() const;                          ///< returns ids of objects contained within this object
 
     bool                                IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 

@@ -70,15 +70,23 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int                     ID() const;            ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    const std::string&      Name() const;          ///< returns the name of this object; some valid objects will have no name
-    double                  X() const;             ///< the X-coordinate of this object
-    double                  Y() const;             ///< the Y-coordinate of this object
-    const std::set<int>&    Owners() const;        ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-    int                     SystemID() const;      ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    System*                 GetSystem() const;     ///< returns system in which this object can be found, or null if the object is not within any system
+    int                     ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    const std::string&      Name() const;                       ///< returns the name of this object; some valid objects will have no name
+    double                  X() const;                          ///< the X-coordinate of this object
+    double                  Y() const;                          ///< the Y-coordinate of this object
+    const std::set<int>&    Owners() const;                     ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
+    int                     SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    System*                 GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
-                            Specials() const;      ///< returns the set of names of the Specials attached to this object
+                            Specials() const;                   ///< returns the set of names of the Specials attached to this object
+
+    virtual std::vector<UniverseObject*>
+                            FindObjects() const;                ///< returns objects contained within this object
+    virtual std::vector<int>
+                            FindObjectIDs() const;              ///< returns ids of objects contained within this object
+
+    virtual bool            Contains(int object_id) const;                  ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
+    virtual bool            ContainedBy(int object_id) const;               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
     const Meter*            GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual double          ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
@@ -90,7 +98,8 @@ public:
     bool                    WhollyOwnedBy(int empire) const;    ///< returns true iff the empire with id \a empire is the only owner of this object
 
     virtual Visibility      GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual const std::string& PublicName(int empire_id) const; ///< returns the name of this objectas it appears to empire \a empire_id
+    virtual const std::string&
+                            PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
@@ -127,17 +136,16 @@ public:
 
     /** sets max meter value(s) for meter(s) in this UniverseObject to Meter::METER_MIN.  This should be done before any
       * Effects that alter meter(s) act on the object.  if \a meter_type is INVALID_METER_TYPE, all meters are reset.  if
-      * \a meter_type is a valid meter type, just that meter is reset.
-      */
+      * \a meter_type is a valid meter type, just that meter is reset. */
     void                    ResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE);
 
     /** adjusts max meter value(s) for meter(s) in this UniverseObject, based on its own properties (ie. not due to effects).
       * if \a meter_type is INVALID_METER_TYPE, all meter(s) are adjusted.  If \a meter_type is a valid meter type, just that 
-      * meter is adjusted.
-      */
+      * meter is adjusted. */
     virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
 
-    /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Max() falls outisde the range [Meter::METER_MIN, METER::METER_MAX]and that no Meter's Current() value exceed its Max() value. */
+    /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Max() falls outisde the range
+      * [Meter::METER_MIN, METER::METER_MAX]and that no Meter's Current() value exceed its Max() value. */
     void                    ClampMeters();
 
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research

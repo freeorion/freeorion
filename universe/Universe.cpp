@@ -260,7 +260,6 @@ namespace {
         }
         return retval;
     }
-
 }
 
 /////////////////////////////////////////////
@@ -580,21 +579,78 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     }
 }
 
-void Universe::UpdateMeterEstimates(MeterType meter_type, bool update_contained_objects)
+void Universe::UpdateMeterEstimates()
 {
-    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, meter_type, update_contained_objects);
+    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, INVALID_METER_TYPE, false);
 }
 
 void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool update_contained_objects)
 {
-    //std::vector<int>
+    // compile array of objects to update meter estimates for, while clearing the effect accounting of meters / objects
+    // that will be updated.
 
-    m_effect_accounting_map.clear();
+    std::vector<UniverseObject*> objects;
+    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+        // update all objects.  (in this case, value of parameter updated_contained_objects is irrelivant and is ignored)
+        for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
+            UniverseObject* cur_object = obj_it->second;
+            int cur_object_id = obj_it->first;
 
-    // for all objects to see if they have meters that need to be processed
-    for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
-        UniverseObject* obj = obj_it->second;
-        int object_id = obj_it->first;
+            // if updating all meter types, add all objects and clear effect accounting for all its meters
+            if (meter_type == INVALID_METER_TYPE) {
+                objects.push_back(cur_object);
+                m_effect_accounting_map[cur_object_id].clear();
+            } else {
+                // only add objects and clear accounting if objects actually have the relevant meter,
+                // and then only clear the accounting for that meter
+                if (const Meter* meter = cur_object->GetMeter(meter_type))
+                    objects.push_back(cur_object);
+                    m_effect_accounting_map[cur_object_id][meter_type].clear();
+            }
+        }
+
+    } else {
+        // update specified object and (if applicable) its contents
+
+        // add specified object, if it exists and (if applicable) has the appropriate meter
+        UniverseObject* object = Object(object_id);
+        if (!object) {
+            Logger().errorStream() << "Universe::UpdateMeterEstimates pass an invalid object id";
+            return;
+        }
+        if (meter_type == INVALID_METER_TYPE) {
+            // add object and clear effect accounting for all its meters
+            objects.push_back(object);
+            m_effect_accounting_map[object->ID()].clear();
+        } else if (const Meter* meter = object->GetMeter(meter_type)) {
+            // add object and clear effect accounting for just the relevant meter
+            objects.push_back(object);
+            m_effect_accounting_map[object->ID()][meter_type].clear();
+        }
+
+        // add contained objects, if applicable (due to contained objects being requested, and them having the appropriate meter)
+        if (update_contained_objects) {
+            std::vector<UniverseObject*> contained_objects = object->FindObjects();
+            for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it) {
+                object = *it;
+                if (meter_type == INVALID_METER_TYPE) {
+                    // add object and clear effect accounting for all its meters
+                    objects.push_back(object);
+                    m_effect_accounting_map[object->ID()].clear();
+                } else if (const Meter* meter = object->GetMeter(meter_type)) {
+                    // add object and clear effect accounting for just the relevant meter
+                    objects.push_back(object);
+                    m_effect_accounting_map[object->ID()][meter_type].clear();
+                }
+            }
+        }
+    }
+
+
+    // update meter estimates for indicated MeterType for all relevant objects...
+    for (std::vector<UniverseObject*>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
+        UniverseObject* obj = *obj_it;
+        int obj_id = obj->ID();
 
         // Reset max meters to METER_MIN
         obj->ResetMaxMeters(meter_type);
@@ -602,10 +658,19 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
         // Apply non-effect focus mods from tables
         obj->ApplyUniverseTableMaxMeterAdjustments(meter_type);
 
-        // record value of max meters after applying universe table adjustments
-        for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
-            Meter* meter = obj->GetMeter(type);
-            if (meter) {
+        // record value of max meter(s) after applying universe table adjustments
+        MeterType start, end;
+        if (meter_type == INVALID_METER_TYPE) {
+            // record data for all meters
+            start = MeterType(0);
+            end = NUM_METER_TYPES;
+        } else {
+            // record for only relevant meter type
+            start = meter_type;
+            end = MeterType(meter_type + 1);
+        }
+        for (MeterType type = start; type != end; type = MeterType(type + 1)) {
+            if (Meter* meter = obj->GetMeter(type)) {
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
                 info.caused_by_empire_id = -1;
@@ -613,36 +678,41 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
                 info.meter_change = meter->Max() - Meter::METER_MIN;
                 info.running_meter_total = meter->Max();
 
-                m_effect_accounting_map[object_id][type].push_back(info);
+                m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
-
-        // reset current meters to value at star of turn (before growth or effects changes)
     }
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     EffectsAndTargetsMap effects_targets_map;
     EffectsAndCausesMap effects_causes_map;
-    GetEffectsAndTargets(effects_targets_map, &effects_causes_map);
+    GetEffectsAndTargets(effects_targets_map, &effects_causes_map);     // TODO: make act only on contents of objects vector
 
     // Apply and record effect meter adjustments
-    ExecuteMeterEffects(effects_targets_map, &effects_causes_map);
+    ExecuteMeterEffects(effects_targets_map, &effects_causes_map);      // TODO: make act only on contents of objects vector
 
-    // clamp all meters to valid range of max values, and so current is less than max
-    for (const_iterator it = begin(); it != end(); ++it)
-        it->second->ClampMeters();
+    // clamp meters to valid range of max values, and so current is less than max
+    for (std::vector<UniverseObject*>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
+        UniverseObject* obj = *obj_it;
+        // currently this clamps all meters, even if not all meters are being processed by this function...
+        // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
+        // updated should have no effect
+        obj->ClampMeters();
+    }
+
+    // TODO: make following act only on contents of objects vector
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty()) {
-        for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
-            UniverseObject* obj = obj_it->second;
-            int object_id = obj_it->first;
+        for (std::vector<UniverseObject*>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
+            UniverseObject* obj = *obj_it;
+            int obj_id = obj->ID();
 
             // check if this object has any discrepancies
-            EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(object_id);
+            EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
             if (dis_it == m_effect_discrepancy_map.end()) continue;
 
             // apply all meters' discrepancies
@@ -656,7 +726,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
-                    //Logger().debugStream() << "object " << object_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+                    //Logger().debugStream() << "object " << obj_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
 
                     meter->AdjustMax(discrepancy);
 
@@ -665,7 +735,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
                     info.meter_change = discrepancy;
                     info.running_meter_total = meter->Max();
 
-                    m_effect_accounting_map[object_id][type].push_back(info);
+                    m_effect_accounting_map[obj_id][type].push_back(info);
                 }
             }
         }
@@ -720,7 +790,7 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, E
         const Ship* ship = *ship_it;
         assert(ship);
         const ShipDesign* ship_design = ship->Design();
-        assert(design);
+        assert(ship_design);
 
         const HullType* hull_type = ship_design->GetHull();
         assert(hull_type);
