@@ -620,7 +620,6 @@ void CombatWnd::InitCombat(const System& system)
 
             if (material_name == "gas_giant") {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
-                m_primary_entities[node] = entity;
                 entity->setMaterialName("gas_giant_core");
                 assert(entity->getNumSubEntities() == 1u);
                 entity->setCastShadows(true);
@@ -630,6 +629,7 @@ void CombatWnd::InitCombat(const System& system)
                 entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
                 entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                 entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
                 Ogre::MaterialPtr material =
@@ -642,7 +642,6 @@ void CombatWnd::InitCombat(const System& system)
                 node->attachObject(entity);
             } else {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
-                m_primary_entities[node] = entity;
                 entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
@@ -663,6 +662,7 @@ void CombatWnd::InitCombat(const System& system)
                     entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
                     entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                    entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
                     entity->setMaterialName(AtmosphereNameFromBaseName(base_name));
                     entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
                     node->attachObject(entity);
@@ -717,7 +717,6 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     } else if (!m_mouse_dragged) {
         if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
             Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
-            movable_object = m_primary_entities[clicked_scene_node];
             assert(clicked_scene_node);
             std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
                 m_current_selections.find(movable_object);
@@ -1048,12 +1047,11 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
         DeselectAll();
     Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
     for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
-        Ogre::MovableObject* object = m_primary_entities[(*it)->getParentSceneNode()];
-        std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(object);
+        std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(*it);
         if (object_it != m_current_selections.end())
             m_current_selections.erase(object_it);
         else
-            m_current_selections[object] = SelectedObject(*it);
+            m_current_selections[*it] = SelectedObject(*it);
     }
 }
 

@@ -108,8 +108,6 @@ private:
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
 
-    std::map<Ogre::SceneNode*, Ogre::Entity*> m_primary_entities;
-
     Ogre::Real m_initial_left_horizontal_flare_scroll;
     Ogre::Real m_initial_right_horizontal_flare_scroll;
     Ogre::Real m_left_horizontal_flare_scroll_offset;
