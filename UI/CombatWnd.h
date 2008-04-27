@@ -34,6 +34,8 @@ public:
 
     void InitCombat(const System& system);
 
+    virtual void Render();
+
     virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -53,13 +55,6 @@ public:
     virtual void KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
 
 private:
-    class SelectionRect : public Ogre::ManualObject
-    {
-    public:
-        SelectionRect();
-        void Resize(const GG::Pt& pt1, const GG::Pt& pt2);
-    };
-
     struct SelectedObject
     {
         struct SelectedObjectImpl;
@@ -97,7 +92,7 @@ private:
     GG::Pt m_selection_drag_stop;
     bool m_mouse_dragged;
     Ogre::SceneNode* m_currently_selected_scene_node;
-    SelectionRect* m_selection_rect;
+    GG::Rect m_selection_rect;
     Ogre::Vector3 m_lookat_point;
     std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;

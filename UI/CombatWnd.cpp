@@ -64,8 +64,6 @@ namespace {
     const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 1;
     const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 2;
 
-    const int SELECTION_RECT_QUEUE =                     Ogre::RENDER_QUEUE_OVERLAY - 1;
-
     const std::set<int> STENCIL_OP_RENDER_QUEUES =
         boost::assign::list_of
         (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
@@ -170,50 +168,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
-
-////////////////////////////////////////////////////////////
-// SelectionRect
-////////////////////////////////////////////////////////////
-CombatWnd::SelectionRect::SelectionRect() :
-    ManualObject("SelectionRect")
-{
-    setUseIdentityProjection(true);
-    setUseIdentityView(true);
-    setRenderQueueGroup(SELECTION_RECT_QUEUE);
-    setUseIdentityProjection(true);
-    setUseIdentityView(true);
-    setQueryFlags(0);
-}
-
-void CombatWnd::SelectionRect::Resize(const GG::Pt& pt1, const GG::Pt& pt2)
-{
-    const float APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
-    const float APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
-
-    float left = std::min(pt1.x, pt2.x) / APP_WIDTH;
-    float right = std::max(pt1.x, pt2.x) / APP_WIDTH;
-    float top = std::min(pt1.y, pt2.y) / APP_HEIGHT;
-    float bottom = std::max(pt1.y, pt2.y) / APP_HEIGHT;
-
-    left = left * 2 - 1;
-    right = right * 2 - 1;
-    top = 1 - top * 2;
-    bottom = 1 - bottom * 2;
-
-    clear();
-    begin("", Ogre::RenderOperation::OT_LINE_STRIP);
-    position(left, top, -1);
-    position(right, top, -1);
-    position(right, bottom, -1);
-    position(left, bottom, -1);
-    position(left, top, -1);
-    end();
-
-    Ogre::AxisAlignedBox box;
-    box.setInfinite();
-    setBoundingBox(box);
-}
-
 
 ////////////////////////////////////////////////////////////
 // SelectedObject
@@ -388,7 +342,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_selection_drag_stop(INVALID_SELECTION_DRAG_POS),
     m_mouse_dragged(false),
     m_currently_selected_scene_node(0),
-    m_selection_rect(new SelectionRect),
+    m_selection_rect(),
     m_lookat_point(0, 0, 0),
     m_star_back_billboard(0),
     m_initial_left_horizontal_flare_scroll(0.0),
@@ -434,8 +388,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
     m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_NONE);//STENCIL_MODULATIVE);
-
-    m_scene_manager->getRootSceneNode()->createChildSceneNode()->attachObject(m_selection_rect);
 
     Ogre::SceneNode* star_node = m_scene_manager->getRootSceneNode()->createChildSceneNode();
     Ogre::BillboardSet* star_billboard_set = m_scene_manager->createBillboardSet("StarBackBillboardSet");
@@ -509,7 +461,6 @@ CombatWnd::~CombatWnd()
     m_scene_manager->removeRenderQueueListener(m_stencil_op_frame_listener);
     m_scene_manager->destroyQuery(m_ray_scene_query);
     m_scene_manager->destroyQuery(m_volume_scene_query);
-    delete m_selection_rect;
     Ogre::CompositorManager::getSingleton().removeCompositor(m_viewport, "effects/glow");
 
     // TODO: delete nodes and materials in m_planet_assets (or maybe everything
@@ -679,6 +630,19 @@ void CombatWnd::InitCombat(const System& system)
     }
 }
 
+void CombatWnd::Render()
+{
+    if (m_selection_rect.ul != m_selection_rect.lr) {
+        glColor4f(1.0, 1.0, 1.0, 0.5);
+        glBegin(GL_LINE_LOOP);
+        glVertex2i(m_selection_rect.lr.x, m_selection_rect.ul.y);
+        glVertex2i(m_selection_rect.ul.x, m_selection_rect.ul.y);
+        glVertex2i(m_selection_rect.ul.x, m_selection_rect.lr.y);
+        glVertex2i(m_selection_rect.lr.x, m_selection_rect.lr.y);
+        glEnd();
+    }
+}
+
 void CombatWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_last_pos = pt;
@@ -693,11 +657,10 @@ void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
         delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y) {
         if (m_selection_drag_start == INVALID_SELECTION_DRAG_POS) {
             m_selection_drag_start = pt;
-            m_selection_rect->setVisible(true);
-            m_selection_rect->clear();
+            m_selection_rect = GG::Rect();
         } else {
             m_selection_drag_stop = pt;
-            m_selection_rect->Resize(m_selection_drag_start, m_selection_drag_stop);
+            m_selection_rect = GG::Rect(m_selection_drag_start, m_selection_drag_stop);
         }
         m_mouse_dragged = true;
     }
@@ -1006,7 +969,7 @@ void CombatWnd::UpdateStarFromCameraPosition()
 void CombatWnd::EndSelectionDrag()
 {
     m_selection_drag_start = INVALID_SELECTION_DRAG_POS;
-    m_selection_rect->setVisible(false);
+    m_selection_rect = GG::Rect();
 }
 
 void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
