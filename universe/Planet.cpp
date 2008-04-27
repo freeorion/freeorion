@@ -447,13 +447,13 @@ void Planet::MovementPhase()
 {
 }
 
-void Planet::ApplyUniverseTableMaxMeterAdjustments()
+void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
-    ResourceCenter::ApplyUniverseTableMaxMeterAdjustments();
-    PopCenter::ApplyUniverseTableMaxMeterAdjustments();
+    ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
+    PopCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
 }
 
-void Planet::PopGrowthProductionResearchPhase( )
+void Planet::PopGrowthProductionResearchPhase()
 {
     // do not do production if planet was just conquered
     if (m_just_conquered)

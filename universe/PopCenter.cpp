@@ -170,13 +170,16 @@ double PopCenter::ProjectedMeterPoints(MeterType type) const
     }
 }
 
-void PopCenter::ApplyUniverseTableMaxMeterAdjustments()
+void PopCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
     UniverseObject* object = GetObjectSignal();
     assert(object);
-    // determine meter maxes; they should have been previously reset to 0, then adjusted by Specials, Building effects, etc.
-    GetMeter(METER_POPULATION)->AdjustMax(MaxPopModFromObject(object));
-    GetMeter(METER_HEALTH)->AdjustMax(MaxHealthModFromObject(object));
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_POPULATION)
+        GetMeter(METER_POPULATION)->AdjustMax(MaxPopModFromObject(object));
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_HEALTH)
+        GetMeter(METER_HEALTH)->AdjustMax(MaxHealthModFromObject(object));
 }
 
 void PopCenter::PopGrowthProductionResearchPhase()

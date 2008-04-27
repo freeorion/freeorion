@@ -580,8 +580,15 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     }
 }
 
-void Universe::UpdateMeterEstimates()
+void Universe::UpdateMeterEstimates(MeterType meter_type, bool update_contained_objects)
 {
+    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, meter_type, update_contained_objects);
+}
+
+void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool update_contained_objects)
+{
+    //std::vector<int>
+
     m_effect_accounting_map.clear();
 
     // for all objects to see if they have meters that need to be processed
@@ -590,10 +597,10 @@ void Universe::UpdateMeterEstimates()
         int object_id = obj_it->first;
 
         // Reset max meters to METER_MIN
-        obj->ResetMaxMeters();
+        obj->ResetMaxMeters(meter_type);
 
         // Apply non-effect focus mods from tables
-        obj->ApplyUniverseTableMaxMeterAdjustments();
+        obj->ApplyUniverseTableMaxMeterAdjustments(meter_type);
 
         // record value of max meters after applying universe table adjustments
         for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
@@ -1972,8 +1979,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     // Apply non-effect meter adjustments
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();   // zero all meters
-        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
+        it->second->ResetMaxMeters();                           // zero all meters
+        it->second->ApplyUniverseTableMaxMeterAdjustments();    // apply non-effects max meter modifications, including focus mods
     }
 
     // Apply effects for 1st turn

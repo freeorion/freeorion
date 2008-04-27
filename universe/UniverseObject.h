@@ -125,13 +125,17 @@ public:
         a turn. */
     virtual void            MovementPhase() = 0;
 
-    /** sets all the max meter values for all meters in this UniverseObject to Meter::METER_MIN.  This should be done before any
-        Effects act on the object. */
-    void                    ResetMaxMeters();
+    /** sets max meter value(s) for meter(s) in this UniverseObject to Meter::METER_MIN.  This should be done before any
+      * Effects that alter meter(s) act on the object.  if \a meter_type is INVALID_METER_TYPE, all meters are reset.  if
+      * \a meter_type is a valid meter type, just that meter is reset.
+      */
+    void                    ResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE);
 
-    /** adjusts the max meter values for all meters in this UniverseObject, based on its own properties.  This does not include
-        Effects acting on the object, which should already have been executed before this function is called. */
-    virtual void            ApplyUniverseTableMaxMeterAdjustments();
+    /** adjusts max meter value(s) for meter(s) in this UniverseObject, based on its own properties (ie. not due to effects).
+      * if \a meter_type is INVALID_METER_TYPE, all meter(s) are adjusted.  If \a meter_type is a valid meter type, just that 
+      * meter is adjusted.
+      */
+    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
 
     /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Max() falls outisde the range [Meter::METER_MIN, METER::METER_MAX]and that no Meter's Current() value exceed its Max() value. */
     void                    ClampMeters();

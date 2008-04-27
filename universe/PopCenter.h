@@ -38,13 +38,13 @@ public:
     DensityType             PopDensity() const;                                 ///< returns the density of this center, based on its population
     double                  AvailableFood() const {return m_available_food;}    ///< returns the amount of food which is currently available
 
-    virtual double          ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
-    virtual double          MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
-    virtual double          ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
+    virtual double          ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
+    virtual double          MeterPoints(MeterType type) const;                  ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
+    virtual double          ProjectedMeterPoints(MeterType type) const;         ///< returns expected "true amount" associated with a meter on the next turn
 
-    double  FuturePopGrowth() const;    ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
-    double  FuturePopGrowthMax() const; ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
-    double  FutureHealthGrowth() const; ///< predicts by which amount the health meter will grow next turn
+    double                  FuturePopGrowth() const;                            ///< predicts by which amount the population will grow next turn, AvailableFood might limit growth rate
+    double                  FuturePopGrowthMax() const;                         ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
+    double                  FutureHealthGrowth() const;                         ///< predicts by which amount the health meter will grow next turn
     //@}
 
     /** \name Mutators */ //@{
@@ -52,32 +52,32 @@ public:
     /** adjusts the population by \a pop, down to a minimum of 0.0, or up to a maximum of MaxPop().  This function 
         returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
         adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
-    double          AdjustPop(double pop);
+    double                  AdjustPop(double pop);
 
-    void            SetRace(int race)                       {m_race = race;}   ///< sets the race of the population to \a race
-    void            SetAvailableFood(double available_food) {m_available_food = available_food;}   ///< sets the amount of food which is currently available
+    void                    SetRace(int race)                       {m_race = race;}                        ///< sets the race of the population to \a race
+    void                    SetAvailableFood(double available_food) {m_available_food = available_food;}    ///< sets the amount of food which is currently available
 
-    virtual void    ApplyUniverseTableMaxMeterAdjustments();
-    virtual void    PopGrowthProductionResearchPhase();
+    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
+    virtual void            PopGrowthProductionResearchPhase();
 
-    void            Reset(double max_pop_mod, double max_health_mod);   ///< Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.
+    void                    Reset(double max_pop_mod, double max_health_mod);   ///< Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.
     //@}
 
 protected:
-    mutable GetObjectSignalType GetObjectSignal; ///< the UniverseObject-retreiving signal object for this PopCenter
+    mutable GetObjectSignalType GetObjectSignal;                                ///< the UniverseObject-retreiving signal object for this PopCenter
 
-    void Init(double max_pop_mod, double max_health_mod);    ///< initialization that needs to be called by derived class after derived class is constructed
+    void                    Init(double max_pop_mod, double max_health_mod);    ///< initialization that needs to be called by derived class after derived class is constructed
 
 private:
-    PopCenter(); ///< default ctor
+    PopCenter();                ///< default ctor
 
-    virtual const Meter*    GetMeter(MeterType type) const = 0; ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual Meter*          GetMeter(MeterType type) = 0;       ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual const Meter*    GetMeter(MeterType type) const = 0;                 ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual Meter*          GetMeter(MeterType type) = 0;                       ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    virtual void InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
+    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 
-    int     m_race; ///< the id of the race that occupies this planet
-    double  m_available_food;
+    int         m_race;         ///< the id of the race that occupies this planet
+    double      m_available_food;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -237,13 +237,20 @@ void UniverseObject::RemoveSpecial(const std::string& name)
     m_specials.erase(name);
 }
 
-void UniverseObject::ResetMaxMeters()
+void UniverseObject::ResetMaxMeters(MeterType meter_type)
 {
-    for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-        it->second.ResetMax();
+    if (meter_type == INVALID_METER_TYPE) {
+        for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+            it->second.ResetMax();
+    } else {
+        if (Meter* meter = GetMeter(meter_type))
+            meter->ResetMax();
+        else
+            Logger().errorStream() << "UniverseObject::ResetMaxMeters called with MeterType this object does not have";
+    }
 }
 
-void UniverseObject::ApplyUniverseTableMaxMeterAdjustments()
+void UniverseObject::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {}
 
 void UniverseObject::ClampMeters()
