@@ -40,14 +40,14 @@
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
 
-    const double SYSTEM_RADIUS = 1000.0;
-    const double STAR_RADIUS = 80.0;
+    const Ogre::Real SYSTEM_RADIUS = 1000.0;
+    const Ogre::Real STAR_RADIUS = 80.0;
 
-    const double NEAR_CLIP = 0.01;
-    const double FAR_CLIP = 3020.0;
+    const Ogre::Real NEAR_CLIP = 0.01;
+    const Ogre::Real FAR_CLIP = 3020.0;
 
-    const double MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
-    const double MIN_ZOOM_IN_DISTANCE = 0.5;
+    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
+    const Ogre::Real MIN_ZOOM_IN_DISTANCE = 0.5;
 
     // visibility masks
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
@@ -770,6 +770,12 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
+    Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
+    if (m_currently_selected_scene_node)
+        bounding_sphere = m_currently_selected_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
+    const Ogre::Real EFFECTIVE_MIN_DISTANCE =
+        std::max(bounding_sphere.getRadius() * Ogre::Real(1.05), MIN_ZOOM_IN_DISTANCE);
+
     Ogre::Real move_incr = m_distance_to_lookat_point * 0.25;
     Ogre::Real scale_factor = 1.0;
     if (mod_keys & GG::MOD_KEY_SHIFT)
@@ -777,8 +783,8 @@ void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod
     if (mod_keys & GG::MOD_KEY_CTRL)
         scale_factor /= 4.0;
     Ogre::Real total_move = move_incr * scale_factor * -move;
-    if (m_distance_to_lookat_point + total_move < MIN_ZOOM_IN_DISTANCE)
-        total_move += MIN_ZOOM_IN_DISTANCE - (m_distance_to_lookat_point + total_move);
+    if (m_distance_to_lookat_point + total_move < EFFECTIVE_MIN_DISTANCE)
+        total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_lookat_point + total_move);
     else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_lookat_point + total_move)
         total_move -= (m_distance_to_lookat_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
     m_distance_to_lookat_point += total_move;
