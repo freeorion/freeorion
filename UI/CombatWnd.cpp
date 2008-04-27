@@ -354,6 +354,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_menu_showing(false),
     m_exit(false)
 {
+    GG::Connect(GetOptionsDB().OptionChangedSignal("combat.enable-glow"), &CombatWnd::UpdateStarFromCameraPosition, this);
+
     Ogre::Root::getSingleton().addFrameListener(this);
     m_scene_manager->addRenderQueueListener(m_stencil_op_frame_listener);
 
@@ -811,8 +813,11 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     Ogre::RenderTarget::FrameStats stats = Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
     m_fps_text->SetText(boost::lexical_cast<std::string>(stats.lastFPS) + " FPS");
 
-    Ogre::CompositorManager::getSingleton().setCompositorEnabled(
-        m_viewport, "effects/glow", GetOptionsDB().Get<bool>("combat.enable-glow"));
+    const bool ENABLE_GLOW = GetOptionsDB().Get<bool>("combat.enable-glow");
+    Ogre::CompositorManager::getSingleton().setCompositorEnabled(m_viewport, "effects/glow", ENABLE_GLOW);
+    Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
+    material->getTechnique(0)->getPass(3)->setDepthCheckEnabled(!ENABLE_GLOW);
+    material->getTechnique(0)->getPass(4)->setDepthCheckEnabled(!ENABLE_GLOW);
 
     return !m_exit;
 }
@@ -834,116 +839,123 @@ void CombatWnd::UpdateCameraPosition()
 
 void CombatWnd::UpdateStarFromCameraPosition()
 {
-    // Determine occlusion of the horizontal midline across the star by objects in the scene.
-    const Ogre::Vector3 RIGHT = m_camera->getRealRight();
-    const Ogre::Vector3 CAMERA_POS = m_camera->getRealPosition();
-    const Ogre::Vector3 SUN_CENTER(0.0, 0.0, 0.0);
+    // Determine occlusion of the horizontal midline across the star by objects
+    // in the scene.  This is only enabled if glow in in play, since the effect
+    // doesn't look right when glow is not used.
+    if (GetOptionsDB().Get<bool>("combat.enable-glow")) {
+        const Ogre::Vector3 RIGHT = m_camera->getRealRight();
+        const Ogre::Vector3 CAMERA_POS = m_camera->getRealPosition();
+        const Ogre::Vector3 SUN_CENTER(0.0, 0.0, 0.0);
 
-    const int SAMPLES_PER_SIDE = 2;
-    const int TOTAL_SAMPLES = 5;
-    Ogre::MaterialPtr core_material =
-        Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
-    const Ogre::Real STAR_CORE_SCALE_FACTOR =
-        core_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureUScale();
-    // HACK! The currently-used star cores only cover part of the texture.  Here, we adjust for this, so that the edge
-    // of the star as it appears onscreen is actually what we use for the star radius below.
-    const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 155.0 / 250.0;
-    const Ogre::Real SAMPLE_INCREMENT = STAR_RADIUS * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
+        const int SAMPLES_PER_SIDE = 2;
+        const int TOTAL_SAMPLES = 5;
+        Ogre::MaterialPtr core_material =
+            Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
+        const Ogre::Real STAR_CORE_SCALE_FACTOR =
+            core_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureUScale();
+        // HACK! The currently-used star cores only cover part of the texture.  Here, we adjust for this, so that the edge
+        // of the star as it appears onscreen is actually what we use for the star radius below.
+        const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 155.0 / 250.0;
+        const Ogre::Real SAMPLE_INCREMENT = STAR_RADIUS * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
 
-    bool occlusions[TOTAL_SAMPLES];
-    // left side positions
-    for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
-        Ogre::Vector3 direction = SUN_CENTER + (SAMPLES_PER_SIDE - i) * SAMPLE_INCREMENT * -RIGHT - CAMERA_POS;
-        Ogre::Ray ray(CAMERA_POS, direction);
-        m_ray_scene_query->setRay(ray);
-        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
-        occlusions[i] = false;
-        if (result.begin() != result.end()) {
-            Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
-            occlusions[i] = distance_squared < direction.squaredLength();
+        bool occlusions[TOTAL_SAMPLES];
+        // left side positions
+        for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
+            Ogre::Vector3 direction = SUN_CENTER + (SAMPLES_PER_SIDE - i) * SAMPLE_INCREMENT * -RIGHT - CAMERA_POS;
+            Ogre::Ray ray(CAMERA_POS, direction);
+            m_ray_scene_query->setRay(ray);
+            Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+            occlusions[i] = false;
+            if (result.begin() != result.end()) {
+                Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+                occlusions[i] = distance_squared < direction.squaredLength();
+            }
         }
-    }
 
-    // center position
-    {
-        Ogre::Vector3 direction = SUN_CENTER - CAMERA_POS;
-        Ogre::Ray center_ray(CAMERA_POS, direction);
-        m_ray_scene_query->setRay(center_ray);
-        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
-        occlusions[SAMPLES_PER_SIDE] = false;
-        if (result.begin() != result.end()) {
-            Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
-            occlusions[SAMPLES_PER_SIDE] = distance_squared < direction.squaredLength();
+        // center position
+        {
+            Ogre::Vector3 direction = SUN_CENTER - CAMERA_POS;
+            Ogre::Ray center_ray(CAMERA_POS, direction);
+            m_ray_scene_query->setRay(center_ray);
+            Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+            occlusions[SAMPLES_PER_SIDE] = false;
+            if (result.begin() != result.end()) {
+                Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+                occlusions[SAMPLES_PER_SIDE] = distance_squared < direction.squaredLength();
+            }
         }
-    }
 
-    // right side positions
-    for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
-        Ogre::Vector3 direction = SUN_CENTER + (i + 1) * SAMPLE_INCREMENT * RIGHT - CAMERA_POS;
-        Ogre::Ray ray(CAMERA_POS, direction);
-        m_ray_scene_query->setRay(ray);
-        Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
-        occlusions[SAMPLES_PER_SIDE + 1 + i] = false;
-        if (result.begin() != result.end()) {
-            Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
-            occlusions[SAMPLES_PER_SIDE + 1 + i] = distance_squared < direction.squaredLength();
+        // right side positions
+        for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
+            Ogre::Vector3 direction = SUN_CENTER + (i + 1) * SAMPLE_INCREMENT * RIGHT - CAMERA_POS;
+            Ogre::Ray ray(CAMERA_POS, direction);
+            m_ray_scene_query->setRay(ray);
+            Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+            occlusions[SAMPLES_PER_SIDE + 1 + i] = false;
+            if (result.begin() != result.end()) {
+                Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+                occlusions[SAMPLES_PER_SIDE + 1 + i] = distance_squared < direction.squaredLength();
+            }
         }
+
+        unsigned int occlusion_index = 0;
+        for (int i = 0; i < TOTAL_SAMPLES; ++i) {
+            occlusion_index += occlusions[i] << (TOTAL_SAMPLES - 1 - i);
+        }
+        typedef boost::tuple<int, int, float> OcclusionParams;
+        const OcclusionParams OCCLUSION_PARAMS[32] = {
+            OcclusionParams(2, 2, 1.0),
+            OcclusionParams(2, 2, 1.0),
+            OcclusionParams(2, 2, 1.0),
+            OcclusionParams(2, 2, 0.8),
+
+            OcclusionParams(1, 3, 0.8),
+            OcclusionParams(1, 1, 0.4),
+            OcclusionParams(1, 1, 0.4),
+            OcclusionParams(1, 1, 0.4),
+
+            OcclusionParams(2, 2, 1.0),
+            OcclusionParams(2, 2, 0.8),
+            OcclusionParams(2, 2, 0.8),
+            OcclusionParams(2, 2, 0.6),
+
+            OcclusionParams(3, 3, 0.4),
+            OcclusionParams(0, 3, 0.4),
+            OcclusionParams(0, 4, 0.4),
+            OcclusionParams(0, 0, 0.2),
+
+            OcclusionParams(2, 2, 1.0),
+            OcclusionParams(2, 2, 0.8),
+            OcclusionParams(2, 2, 0.8),
+            OcclusionParams(2, 2, 0.6),
+
+            OcclusionParams(3, 3, 0.4),
+            OcclusionParams(1, 3, 0.4),
+            OcclusionParams(1, 1, 0.2),
+            OcclusionParams(1, 1, 0.2),
+
+            OcclusionParams(2, 2, 0.8),
+            OcclusionParams(2, 2, 0.6),
+            OcclusionParams(2, 2, 0.4),
+            OcclusionParams(2, 2, 0.4),
+
+            OcclusionParams(3, 3, 0.4),
+            OcclusionParams(3, 3, 0.2),
+            OcclusionParams(4, 4, 0.2),
+            OcclusionParams(-1, -1, 0.0)
+        };
+
+        OcclusionParams occlusion_params = OCCLUSION_PARAMS[occlusion_index];
+        m_left_horizontal_flare_scroll_offset = (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
+        m_right_horizontal_flare_scroll_offset = -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
+        if (occlusion_params.get<0>() < 0)
+            m_left_horizontal_flare_scroll_offset = 1.0;
+        if (occlusion_params.get<1>() < 0)
+            m_right_horizontal_flare_scroll_offset = 1.0;
+    } else {
+        m_left_horizontal_flare_scroll_offset = 0.0;
+        m_right_horizontal_flare_scroll_offset = 0.0;
     }
-
-    unsigned int occlusion_index = 0;
-    for (int i = 0; i < TOTAL_SAMPLES; ++i) {
-        occlusion_index += occlusions[i] << (TOTAL_SAMPLES - 1 - i);
-    }
-    typedef boost::tuple<int, int, float> OcclusionParams;
-    const OcclusionParams OCCLUSION_PARAMS[32] = {
-        OcclusionParams(2, 2, 1.0),
-        OcclusionParams(2, 2, 1.0),
-        OcclusionParams(2, 2, 1.0),
-        OcclusionParams(2, 2, 0.8),
-
-        OcclusionParams(1, 3, 0.8),
-        OcclusionParams(1, 1, 0.4),
-        OcclusionParams(1, 1, 0.4),
-        OcclusionParams(1, 1, 0.4),
-
-        OcclusionParams(2, 2, 1.0),
-        OcclusionParams(2, 2, 0.8),
-        OcclusionParams(2, 2, 0.8),
-        OcclusionParams(2, 2, 0.6),
-
-        OcclusionParams(3, 3, 0.4),
-        OcclusionParams(0, 3, 0.4),
-        OcclusionParams(0, 4, 0.4),
-        OcclusionParams(0, 0, 0.2),
-
-        OcclusionParams(2, 2, 1.0),
-        OcclusionParams(2, 2, 0.8),
-        OcclusionParams(2, 2, 0.8),
-        OcclusionParams(2, 2, 0.6),
-
-        OcclusionParams(3, 3, 0.4),
-        OcclusionParams(1, 3, 0.4),
-        OcclusionParams(1, 1, 0.2),
-        OcclusionParams(1, 1, 0.2),
-
-        OcclusionParams(2, 2, 0.8),
-        OcclusionParams(2, 2, 0.6),
-        OcclusionParams(2, 2, 0.4),
-        OcclusionParams(2, 2, 0.4),
-
-        OcclusionParams(3, 3, 0.4),
-        OcclusionParams(3, 3, 0.2),
-        OcclusionParams(4, 4, 0.2),
-        OcclusionParams(-1, -1, 0.0)
-    };
-
-    OcclusionParams occlusion_params = OCCLUSION_PARAMS[occlusion_index];
-    m_left_horizontal_flare_scroll_offset = (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
-    m_right_horizontal_flare_scroll_offset = -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
-    if (occlusion_params.get<0>() < 0)
-        m_left_horizontal_flare_scroll_offset = 1.0;
-    if (occlusion_params.get<1>() < 0)
-        m_right_horizontal_flare_scroll_offset = 1.0;
 
     Ogre::Vector3 star_direction = Ogre::Vector3(0.0, 0.0, 0.0) - m_camera->getPosition();
     star_direction.normalise();
