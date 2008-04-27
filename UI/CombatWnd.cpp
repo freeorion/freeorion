@@ -746,8 +746,12 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
                                                              pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
             std::pair<bool, Ogre::Real> intersection =
                 Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
-            if (intersection.first)
-                LookAt(ray.getPoint(intersection.second));
+            const Ogre::Real MAX_DISTANCE_SQ = SYSTEM_RADIUS * SYSTEM_RADIUS;
+            if (intersection.first) {
+                Ogre::Vector3 intersection_point = ray.getPoint(intersection.second);
+                if (intersection_point.squaredLength() < MAX_DISTANCE_SQ)
+                    LookAt(intersection_point);
+            }
         }
     }
 }
@@ -835,6 +839,7 @@ void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod
     else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_look_at_point + total_move)
         total_move -= (m_distance_to_look_at_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
     m_distance_to_look_at_point += total_move;
+    UpdateCameraPosition();
 }
 
 void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
