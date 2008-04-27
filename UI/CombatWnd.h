@@ -71,6 +71,8 @@ private:
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
 
+    void LookAt(Ogre::SceneNode* look_at_node);
+    void LookAt(const Ogre::Vector3& look_at_point);
     void UpdateCameraPosition();
     void UpdateStarFromCameraPosition();
     void EndSelectionDrag();
@@ -88,16 +90,16 @@ private:
     Ogre::Animation* m_camera_animation;
     Ogre::AnimationState* m_camera_animation_state;
 
-    Ogre::Real m_distance_to_lookat_point;
+    Ogre::Real m_distance_to_look_at_point;
     Ogre::Radian m_pitch;
     Ogre::Radian m_roll;
     GG::Pt m_last_pos;
     GG::Pt m_selection_drag_start;
     GG::Pt m_selection_drag_stop;
     bool m_mouse_dragged;
-    Ogre::SceneNode* m_lookat_scene_node;
+    Ogre::SceneNode* m_look_at_scene_node;
     GG::Rect m_selection_rect;
-    Ogre::Vector3 m_lookat_point;
+    Ogre::Vector3 m_look_at_point;
     std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
 

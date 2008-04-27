@@ -338,16 +338,16 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
     m_camera_animation(m_scene_manager->createAnimation("CameraTrack", CAMERA_RECENTER_TIME)),
     m_camera_animation_state(m_scene_manager->createAnimationState("CameraTrack")),
-    m_distance_to_lookat_point(SYSTEM_RADIUS / 2.0),
+    m_distance_to_look_at_point(SYSTEM_RADIUS / 2.0),
     m_pitch(0.0),
     m_roll(0.0),
     m_last_pos(),
     m_selection_drag_start(INVALID_SELECTION_DRAG_POS),
     m_selection_drag_stop(INVALID_SELECTION_DRAG_POS),
     m_mouse_dragged(false),
-    m_lookat_scene_node(0),
+    m_look_at_scene_node(0),
     m_selection_rect(),
-    m_lookat_point(0, 0, 0),
+    m_look_at_point(0, 0, 0),
     m_star_back_billboard(0),
     m_initial_left_horizontal_flare_scroll(0.0),
     m_initial_right_horizontal_flare_scroll(0.0),
@@ -436,7 +436,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_camera_animation_state->setLoop(false);
 
     // look at the star initially
-    m_lookat_scene_node = star_node;
+    m_look_at_scene_node = star_node;
     UpdateCameraPosition();
 
     AttachChild(m_fps_text);
@@ -685,6 +685,30 @@ void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         EndSelectionDrag();
 }
 
+void CombatWnd::LookAt(Ogre::SceneNode* look_at_node)
+{
+    m_look_at_scene_node = look_at_node;
+    LookAt(m_look_at_scene_node->getWorldPosition());
+}
+
+void CombatWnd::LookAt(const Ogre::Vector3& look_at_point)
+{
+    const Ogre::Vector3 DISTANCE = look_at_point - m_look_at_point;
+    m_look_at_point = look_at_point;
+    UpdateCameraPosition();
+    m_camera_animation_state->setTimePosition(0.0);
+    Ogre::NodeAnimationTrack* track = m_camera_animation->createNodeTrack(0, m_camera_node);
+    const int STEPS = 8;
+    const Ogre::Real TIME_INCREMENT = CAMERA_RECENTER_TIME / STEPS;
+    const Ogre::Vector3 DISTANCE_INCREMENT = DISTANCE / STEPS;
+    // the loop extends an extra 2 steps in either direction, to
+    // ensure smoothness (since splines are being used)
+    for (int i = -2; i < STEPS + 2; ++i) {
+        Ogre::TransformKeyFrame* key = track->createNodeKeyFrame(i * TIME_INCREMENT);
+        key->setTranslate(look_at_point - DISTANCE + i * DISTANCE_INCREMENT);
+    }
+}
+
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS) {
@@ -697,23 +721,8 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
                 m_current_selections.find(movable_object);
             if (it == m_current_selections.end()) {
-                if (!(mod_keys & GG::MOD_KEY_CTRL)) {
+                if (!(mod_keys & GG::MOD_KEY_CTRL))
                     DeselectAll();
-                    const Ogre::Vector3 DISTANCE =
-                        clicked_scene_node->getWorldPosition() - m_lookat_scene_node->getWorldPosition();
-                    m_lookat_scene_node = clicked_scene_node;
-                    m_camera_animation_state->setTimePosition(0.0);
-                    Ogre::NodeAnimationTrack* track = m_camera_animation->createNodeTrack(0, m_camera_node);
-                    const int STEPS = 8;
-                    const Ogre::Real TIME_INCREMENT = CAMERA_RECENTER_TIME / STEPS;
-                    const Ogre::Vector3 DISTANCE_INCREMENT = DISTANCE / STEPS;
-                    // the loop extends an extra 2 steps in either direction, to
-                    // ensure smoothness (since splines are being used)
-                    for (int i = -2; i < STEPS + 2; ++i) {
-                        Ogre::TransformKeyFrame* key = track->createNodeKeyFrame(i * TIME_INCREMENT);
-                        key->setTranslate(m_lookat_scene_node->getWorldPosition() - DISTANCE + i * DISTANCE_INCREMENT);
-                    }
-                }
                 m_current_selections[movable_object] = SelectedObject(movable_object);
             } else {
                 if (mod_keys & GG::MOD_KEY_CTRL)
@@ -727,6 +736,20 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
+    if (!m_mouse_dragged) {
+        if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
+            Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
+            assert(clicked_scene_node);
+            LookAt(clicked_scene_node);
+        } else {
+            Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
+                                                             pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
+            std::pair<bool, Ogre::Real> intersection =
+                Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
+            if (intersection.first)
+                LookAt(ray.getPoint(intersection.second));
+        }
+    }
 }
 
 void CombatWnd::MButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -795,23 +818,23 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
-    if (m_lookat_scene_node)
-        bounding_sphere = m_lookat_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
+    if (m_look_at_scene_node)
+        bounding_sphere = m_look_at_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
     const Ogre::Real EFFECTIVE_MIN_DISTANCE =
         std::max(bounding_sphere.getRadius() * Ogre::Real(1.05), MIN_ZOOM_IN_DISTANCE);
 
-    Ogre::Real move_incr = m_distance_to_lookat_point * 0.25;
+    Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
     Ogre::Real scale_factor = 1.0;
     if (mod_keys & GG::MOD_KEY_SHIFT)
         scale_factor *= 2.0;
     if (mod_keys & GG::MOD_KEY_CTRL)
         scale_factor /= 4.0;
     Ogre::Real total_move = move_incr * scale_factor * -move;
-    if (m_distance_to_lookat_point + total_move < EFFECTIVE_MIN_DISTANCE)
-        total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_lookat_point + total_move);
-    else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_lookat_point + total_move)
-        total_move -= (m_distance_to_lookat_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
-    m_distance_to_lookat_point += total_move;
+    if (m_distance_to_look_at_point + total_move < EFFECTIVE_MIN_DISTANCE)
+        total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_look_at_point + total_move);
+    else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_look_at_point + total_move)
+        total_move -= (m_distance_to_look_at_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
+    m_distance_to_look_at_point += total_move;
 }
 
 void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
@@ -834,11 +857,6 @@ void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 {
-    if (m_lookat_scene_node) {
-        m_lookat_point = m_lookat_scene_node->getWorldPosition();
-        UpdateCameraPosition();
-    }
-
     Ogre::RenderTarget::FrameStats stats =
         Ogre::Root::getSingleton().getRenderTarget("FreeOrion " + FreeOrionVersionString())->getStatistics();
     m_fps_text->SetText(boost::lexical_cast<std::string>(stats.lastFPS) + " FPS");
@@ -863,12 +881,12 @@ bool CombatWnd::frameEnded(const Ogre::FrameEvent& event)
 
 void CombatWnd::UpdateCameraPosition()
 {
-    m_camera_node->setPosition(m_lookat_point);
+    m_camera_node->setPosition(m_look_at_point);
     m_camera->setPosition(Ogre::Vector3::ZERO);
     m_camera->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Z);
     m_camera->roll(m_roll);
     m_camera->pitch(m_pitch);
-    m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_lookat_point));
+    m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_look_at_point));
     UpdateStarFromCameraPosition();
 }
 
