@@ -88,9 +88,9 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
     # This is here so it doesn't get lost, but it is not part of the normal
     # build -- it only exists to make small changes very quick by avoiding
     # relinking the entire FreeOrion app.
-    #lib_obj = env.SharedObject(source = 'UI/MapWnd.cpp',
+    #lib_obj = env.SharedObject(source = 'UI/CombatWnd.cpp',
     #                           CPPDEFINES = env['CPPDEFINES'] + env['target_defines'])
-    #libs.append(env.SharedLibrary('MapWnd', [lib_obj]))
+    #libs.append(env.SharedLibrary('CombatWnd', [lib_obj]))
     target_sources = [
         'client/ClientApp.cpp',
         'client/ClientFSMEvents.cpp',
@@ -128,7 +128,29 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/TurnProgressWnd.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp',
-        'UI/EncyclopediaDetailPanel.cpp'
+        'UI/EncyclopediaDetailPanel.cpp',
+        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugShape.cpp',
+        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugLines.cpp',
+        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugContact.cpp',
+        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugDrawer.cpp',
+        'UI/Collisions/src/OgreBulletCollisionsRay.cpp',
+        'UI/Collisions/src/OgreBulletCollisionsWorld.cpp',
+        'UI/Collisions/src/Utils/OgreBulletCollisionsMeshToShapeConverter.cpp',
+        'UI/Collisions/src/OgreBulletCollisionsShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsMinkowskiSumShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsConeShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsConvexHullShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsBoxShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsTriangleShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsTrimeshShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsSphereShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsCompoundShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsMultiSphereShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsCylinderShape.cpp',
+        'UI/Collisions/src/Shapes/OgreBulletCollisionsStaticPlaneShape.cpp',
+        'UI/Collisions/src/OgreBulletCollisionsPrecompiled.cpp',
+        'UI/Collisions/src/OgreBulletCollisionsObject.cpp',
+        'UI/Collisions/src/OgreBulletCollisionsObjectState.cpp'
         ]
     target = 'human'
 

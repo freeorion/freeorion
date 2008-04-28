@@ -51,6 +51,9 @@ options.Add('with_ogre_libdir', 'Specify exact library dir for Ogre library')
 options.Add('with_log4cpp', 'Root directory of Log4cpp installation')
 options.Add('with_log4cpp_include', 'Specify exact include dir for Log4cpp headers')
 options.Add('with_log4cpp_libdir', 'Specify exact library dir for Log4cpp library')
+options.Add('with_bullet', 'Root directory of Bullet installation')
+options.Add('with_bullet_include', 'Specify exact include dir for Bullet headers')
+options.Add('with_bullet_libdir', 'Specify exact library dir for Bullet library')
 options.Add('with_openal', 'Root directory of OpenAL installation')
 options.Add('with_openal_include', 'Specify exact include dir for OpenAL headers')
 options.Add('with_openal_libdir', 'Specify exact library dir for OpenAL library')
@@ -352,6 +355,27 @@ int main() {
         ##########################
 
         found_it_with_pkg_config = False
+
+        # Bullet physics library
+        AppendPackagePaths('bullet', env)
+        found_it_with_pkg_config = False
+        if pkg_config:
+            if conf.CheckPkg('bullet', bullet_version):
+                env.ParseConfig('pkg-config --cflags --libs bullet')
+                found_it_with_pkg_config = True
+        if not found_it_with_pkg_config:
+            if str(Platform()) == 'win32':
+                env.AppendUnique(LIBS = [
+                    'BulletCollision.lib'
+                    ])
+            else:
+                if conf.CheckLibWithHeader('bulletmath', 'LinearMath/btVector3.h', 'C++', 'btVector3();', False):
+                    env.AppendUnique(LIBS = [
+                        'bulletcollision',
+                        'bulletmath'
+                        ])
+                else:
+                    Exit(1)
 
         # OpenAL & ALUT/FreeALUT
         AppendPackagePaths('openal', env)
