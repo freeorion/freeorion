@@ -625,6 +625,8 @@ Empire Name
 GSETUP_EMPIRE_COLOR
 Empire Color
 
+GSETUP_NUMBER_AIS
+Number of AI Players
 
 #Drop-down list labels and choices####
 

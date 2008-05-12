@@ -20,7 +20,7 @@ namespace {
     const int PANEL_CONTROL_SPACING = 33;
     const int GAL_SETUP_PANEL_HT = PANEL_CONTROL_SPACING * 6;
     const int GAL_SETUP_WND_WD = 645;
-    const int GAL_SETUP_WND_HT = 326;
+    const int GAL_SETUP_WND_HT = 29 + (PANEL_CONTROL_SPACING * 4) + GAL_SETUP_PANEL_HT;
     const GG::Pt PREVIEW_SZ(248, 186);
     const bool ALLOW_NO_STARLANES = false;
 
@@ -289,35 +289,51 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_empire_name_edit(0),
     m_empire_color_label(0),
     m_empire_color_selector(0),
+    m_number_ais_label(0),
+    m_number_ais_spin(0),
     m_preview_image(0),
     m_ok(0),
     m_cancel(0)
 {
     TempUISoundDisabler sound_disabler;
+    int ypos;
 
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 4);
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
-    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
-    m_empire_color_selector = new EmpireColorSelector(ClientUI::Pts() + 4);
-    m_empire_color_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2));
-    m_empire_color_selector->Select(0);
-    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
-    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y,
-                                     LABELS_WIDTH, "Human");
+
+    // empire name
+    ypos = m_galaxy_setup_panel->LowerRight().y;
+    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, "Human");
     m_empire_name_label->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
     m_empire_name_edit->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
-    m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, 7);
+    // empire color
+    ypos += PANEL_CONTROL_SPACING;
+    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_empire_color_selector = new EmpireColorSelector(ClientUI::Pts() + 4);
+    m_empire_color_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2));
+    m_empire_color_selector->Select(0);
 
+    // number of AIs
+    ypos += PANEL_CONTROL_SPACING;
+    m_number_ais_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_number_ais_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, 75, 4, 1, 1, 20, true);
+    m_number_ais_label->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_number_ais_label->Height()) / 2));
+    m_number_ais_spin->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_number_ais_spin->Height()) / 2));
+
+    m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, 7);
+ 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image =  new GG::StaticGraphic(m_preview_ul.x, m_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC); // create a blank graphic
-
-    m_ok = new CUIButton(10, m_empire_color_selector->LowerRight().y + 10, 75, UserString("OK"));
-    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, m_empire_color_selector->LowerRight().y + 10, 75, UserString("CANCEL"));
+ 
+    ypos += PANEL_CONTROL_SPACING + 5;
+    m_ok = new CUIButton(10, ypos, 75, UserString("OK"));
+    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, ypos, 75, UserString("CANCEL"));
 
     Init();
 }
@@ -330,6 +346,11 @@ const std::string& GalaxySetupWnd::EmpireName() const
 GG::Clr GalaxySetupWnd::EmpireColor() const
 {
     return m_empire_color_selector->CurrentColor();
+}
+
+int GalaxySetupWnd::NumberAIs() const
+{
+    return m_number_ais_spin->Value();
 }
 
 void GalaxySetupWnd::Render()
@@ -366,6 +387,8 @@ void GalaxySetupWnd::AttachSignalChildren()
     AttachChild(m_empire_name_edit);
     AttachChild(m_empire_color_label);
     AttachChild(m_empire_color_selector);
+    AttachChild(m_number_ais_label);
+    AttachChild(m_number_ais_spin);
     AttachChild(m_preview_image);
     AttachChild(m_ok);
     AttachChild(m_cancel);
@@ -378,6 +401,8 @@ void GalaxySetupWnd::DetachSignalChildren()
     DetachChild(m_empire_name_edit);
     DetachChild(m_empire_color_label);
     DetachChild(m_empire_color_selector);
+    DetachChild(m_number_ais_label);
+    DetachChild(m_number_ais_spin);
     DetachChild(m_preview_image);
     DetachChild(m_ok);
     DetachChild(m_cancel);

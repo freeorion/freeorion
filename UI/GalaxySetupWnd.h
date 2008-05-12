@@ -101,6 +101,7 @@ public:
     const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
     const std::string&      EmpireName() const;
     GG::Clr                 EmpireColor() const;
+    int                     NumberAIs() const;
     //!@}
 
     /** \name Mutators*/ //!@{
@@ -124,6 +125,8 @@ private:
     CUIEdit*              m_empire_name_edit;
     GG::TextControl*      m_empire_color_label;
     EmpireColorSelector*  m_empire_color_selector;
+    GG::TextControl*      m_number_ais_label;
+    CUISpin<int>*         m_number_ais_spin;
     GG::StaticGraphic*    m_preview_image;         //!< The galaxy shape preview image
     CUIButton*            m_ok;                    //!< OK button
     CUIButton*            m_cancel;                //!< Cancel button
