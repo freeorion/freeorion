@@ -78,7 +78,7 @@ Part
             scope = Source
             activation = Source
             effects = SetMaxDetection Target.MaxDetection + 10
-    graphic = ""
+    graphic = "icons/ship_parts/active_radar.png"
 
 Part
     name = "FU_DEUTERIUM_TANK"
@@ -126,7 +126,7 @@ Part
             scope = Source
             activation = Source
             effects = SetMaxStealth Target.MaxStealth + 5
-    graphic = ""
+    graphic = "icons/ship_parts/electromagnetic_damper.png"
 
 Part
     name = "CO_COLONY_POD"

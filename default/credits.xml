@@ -18,7 +18,7 @@
       <PERSON name="Mike Dotterer"       nick="maelstrom512"    task="Programming"/>
       <PERSON name="qk-gen"              nick=""                task="Programming"/>
       <PERSON name="Adrian Schweizer"    nick="LaplaceOperator" task="Programming"/>
-      <PERSON name="Karl Chen"		 nick="quarl"           task="Programming"/>
+      <PERSON name="Karl Chen"	     nick="quarl"           task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"   nick="Aquitaine"  task="Game Design"/>
@@ -51,6 +51,13 @@
       <PERSON name="Karel Kalvoda"    nick="Solid Liquid"   task="Graphics"/>
       <PERSON name="J. W. Bjerk"      nick="eleazar"        task="Graphics, Game Design"/>
       <PERSON name="Josh Combs"       nick="Josh"           task="Graphics"/>
+      <PERSON name="Thomas Meschede"  nick="ssalamass"      task="Graphics"/>
+      <PERSON name="Michael T. Young" nick="shrinkshooter"  task="Graphics"/>
+      <PERSON name="Redcap"           nick=""               task="Graphics"/>
+
+
+
+
     </GROUP>
     <GROUP name ="AUDIO">
       <PERSON name="Kenneth Welch"   nick="LithiumMongoose" task="Audio"/>
