@@ -282,13 +282,55 @@ bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire
 
 
 /////////////////////////////////////////////
+// struct Universe::SourcedEffectsGroup
+/////////////////////////////////////////////
+Universe::SourcedEffectsGroup::SourcedEffectsGroup() :
+    source_object_id(UniverseObject::INVALID_OBJECT_ID),
+    effects_group()
+{}
+Universe::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const Effect::EffectsGroup>& effects_group_) :
+    source_object_id(source_object_id_),
+    effects_group(effects_group_)
+{}
+
+bool Universe::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const
+{
+    return (this->source_object_id < right.source_object_id ||
+        !(this->source_object_id < right.source_object_id) && this->effects_group < right.effects_group);
+}
+
+ /////////////////////////////////////////////
+// struct Universe::EffectCause
+/////////////////////////////////////////////
+Universe::EffectCause::EffectCause() :
+    cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),
+    specific_cause()
+{}
+
+Universe::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_) :
+    cause_type(cause_type_),
+    specific_cause(specific_cause_)
+{}
+
+/////////////////////////////////////////////
+// struct Universe::EffectTargetAndCause
+/////////////////////////////////////////////
+Universe::EffectTargetAndCause::EffectTargetAndCause() :
+    target_set(),
+    effect_cause()
+{}
+
+Universe::EffectTargetAndCause::EffectTargetAndCause(const Effect::EffectsGroup::TargetSet& target_set_, const EffectCause& effect_cause_) :
+    target_set(target_set_),
+    effect_cause(effect_cause_)
+{}
+
+/////////////////////////////////////////////
 // struct Universe::EffectAccountingInfo
 /////////////////////////////////////////////
 Universe::EffectAccountingInfo::EffectAccountingInfo() :
+    EffectCause(),
     source_id(UniverseObject::INVALID_OBJECT_ID),
-    caused_by_empire_id(-1),
-    cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),
-    specific_cause(""),
     meter_change(0.0),
     running_meter_total(Meter::METER_MIN)
 {}
@@ -586,33 +628,35 @@ void Universe::UpdateMeterEstimates()
 
 void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool update_contained_objects)
 {
-    // compile array of objects to update meter estimates for, while clearing the effect accounting of meters / objects
-    // that will be updated.
+    // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
+    // in the (known) universe.  also clear effect accounting for meters that are to be updated.
+    std::vector<int> objects;
 
-    std::vector<UniverseObject*> objects;
+
     if (object_id == UniverseObject::INVALID_OBJECT_ID) {
-        // update all objects.  (in this case, value of parameter updated_contained_objects is irrelivant and is ignored)
+        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
+
         for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
             UniverseObject* cur_object = obj_it->second;
             int cur_object_id = obj_it->first;
 
             // if updating all meter types, add all objects and clear effect accounting for all its meters
             if (meter_type == INVALID_METER_TYPE) {
-                objects.push_back(cur_object);
+                objects.push_back(cur_object_id);
                 m_effect_accounting_map[cur_object_id].clear();
             } else {
                 // only add objects and clear accounting if objects actually have the relevant meter,
                 // and then only clear the accounting for that meter
                 if (const Meter* meter = cur_object->GetMeter(meter_type))
-                    objects.push_back(cur_object);
+                    objects.push_back(cur_object_id);
                     m_effect_accounting_map[cur_object_id][meter_type].clear();
             }
         }
 
     } else {
-        // update specified object and (if applicable) its contents
+        // update meters of specified object, and contained objects if updated_contained_objects is true
 
-        // add specified object, if it exists and (if applicable) has the appropriate meter
+        // add specified object, if it exists and has the appropriate meter
         UniverseObject* object = Object(object_id);
         if (!object) {
             Logger().errorStream() << "Universe::UpdateMeterEstimates pass an invalid object id";
@@ -620,37 +664,39 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
         }
         if (meter_type == INVALID_METER_TYPE) {
             // add object and clear effect accounting for all its meters
-            objects.push_back(object);
-            m_effect_accounting_map[object->ID()].clear();
+            objects.push_back(object_id);
+            m_effect_accounting_map[object_id].clear();
         } else if (const Meter* meter = object->GetMeter(meter_type)) {
             // add object and clear effect accounting for just the relevant meter
-            objects.push_back(object);
-            m_effect_accounting_map[object->ID()][meter_type].clear();
+            objects.push_back(object_id);
+            m_effect_accounting_map[object_id][meter_type].clear();
         }
 
-        // add contained objects, if applicable (due to contained objects being requested, and them having the appropriate meter)
+        // add contained objects with the appropriate meter if updated_contained_objects is true
         if (update_contained_objects) {
-            std::vector<UniverseObject*> contained_objects = object->FindObjects();
+            std::vector<UniverseObject*> contained_objects = object->FindObjects(); // get all contained objects
             for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it) {
                 object = *it;
                 if (meter_type == INVALID_METER_TYPE) {
                     // add object and clear effect accounting for all its meters
-                    objects.push_back(object);
-                    m_effect_accounting_map[object->ID()].clear();
+                    int object_id = object->ID();
+                    objects.push_back(object_id);
+                    m_effect_accounting_map[object_id].clear();
                 } else if (const Meter* meter = object->GetMeter(meter_type)) {
                     // add object and clear effect accounting for just the relevant meter
-                    objects.push_back(object);
-                    m_effect_accounting_map[object->ID()][meter_type].clear();
+                    int object_id = object->ID();
+                    objects.push_back(object_id);
+                    m_effect_accounting_map[object_id][meter_type].clear();
                 }
             }
         }
     }
 
 
-    // update meter estimates for indicated MeterType for all relevant objects...
-    for (std::vector<UniverseObject*>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
-        UniverseObject* obj = *obj_it;
-        int obj_id = obj->ID();
+    // update meter estimates for indicated MeterType for all relevant objects
+    for (std::vector<int>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
+        int obj_id = *obj_it;
+        UniverseObject* obj = Object(obj_id);
 
         // Reset max meters to METER_MIN
         obj->ResetMaxMeters(meter_type);
@@ -673,7 +719,6 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
             if (Meter* meter = obj->GetMeter(type)) {
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
-                info.caused_by_empire_id = -1;
                 info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
                 info.meter_change = meter->Max() - Meter::METER_MIN;
                 info.running_meter_total = meter->Max();
@@ -685,16 +730,15 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    EffectsAndTargetsMap effects_targets_map;
-    EffectsAndCausesMap effects_causes_map;
-    GetEffectsAndTargets(effects_targets_map, &effects_causes_map);     // TODO: make act only on contents of objects vector
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map, objects);
 
     // Apply and record effect meter adjustments
-    ExecuteMeterEffects(effects_targets_map, &effects_causes_map);      // TODO: make act only on contents of objects vector
+    ExecuteMeterEffects(targets_causes_map);      // TODO: make act only on contents of objects vector
 
     // clamp meters to valid range of max values, and so current is less than max
-    for (std::vector<UniverseObject*>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
-        UniverseObject* obj = *obj_it;
+    for (std::vector<int>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
+        UniverseObject* obj = Object(*obj_it);
         // currently this clamps all meters, even if not all meters are being processed by this function...
         // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
         // updated should have no effect
@@ -707,9 +751,9 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty()) {
-        for (std::vector<UniverseObject*>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
-            UniverseObject* obj = *obj_it;
-            int obj_id = obj->ID();
+        for (std::vector<int>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
+            int obj_id = *obj_it;
+            UniverseObject* obj = Object(obj_id);
 
             // check if this object has any discrepancies
             EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
@@ -742,22 +786,26 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
     }
 }
 
-void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
+void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 {
-    effects_targets_map.clear();
-    if (effects_causes_map)
-        effects_causes_map->clear();
+    targets_causes_map.clear();
 
+    std::vector<int> all_objects = FindObjectIDs<UniverseObject>();
+    GetEffectsAndTargets(targets_causes_map, all_objects);
+}
+
+void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
+{
     // 1) EffectsGroups from Specials
     for (Universe::const_iterator it = begin(); it != end(); ++it) {
-        int object_id = it->first;
+        int source_object_id = it->first;
         const std::set<std::string>& specials = it->second->Specials();
         for (std::set<std::string>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const Special* special = GetSpecial(*special_it);
             assert(special);
 
-            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), object_id, ECT_SPECIAL, special->Name(),
-                                                 effects_targets_map, effects_causes_map);
+            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), source_object_id, ECT_SPECIAL, special->Name(),
+                                                 target_objects, targets_causes_map);
         }
     }
 
@@ -769,7 +817,7 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, E
             assert(tech);
 
             StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitolID(), ECT_TECH, tech->Name(),
-                                                 effects_targets_map, effects_causes_map);
+                                                 target_objects, targets_causes_map);
         }
     }
 
@@ -781,7 +829,7 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, E
         assert(building_type);
 
         StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
-                                             effects_targets_map, effects_causes_map);
+                                             target_objects, targets_causes_map);
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
@@ -791,12 +839,11 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, E
         assert(ship);
         const ShipDesign* ship_design = ship->Design();
         assert(ship_design);
-
         const HullType* hull_type = ship_design->GetHull();
         assert(hull_type);
 
         StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
-                                             effects_targets_map, effects_causes_map);
+                                             target_objects, targets_causes_map);
 
         const std::vector<std::string>& parts = ship_design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
@@ -807,53 +854,63 @@ void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, E
             assert(part_type);
 
             StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
-                                                 effects_targets_map, effects_causes_map);
+                                                 target_objects, targets_causes_map);
         }
     }
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
-                                          int object_id, EffectsCauseType effect_cause_type, const std::string& specific_cause_name,
-                                          EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
+                                                    int source_object_id, EffectsCauseType effect_cause_type,
+                                                    const std::string& specific_cause_name,
+                                                    const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
+    Effect::EffectsGroup::TargetSet potential_target_set;
+    for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
+        potential_target_set.insert(Object(*it));
+
+    Effect::EffectsGroup::TargetSet target_set;
+
     // process all effects groups in set provided
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
-
-        // get target set and store in map from effects group to (source object, target set) pair
-        EffectsAndTargetsMapElem map_elem(effects_group, std::make_pair(object_id, Effect::EffectsGroup::TargetSet()));
-        effects_group->GetTargetSet(object_id, map_elem.second.second);
-        effects_targets_map.insert(map_elem);
-
-        // also record, for this effects group, the source object id and the details of this special that caused this effects group to exist
-        if (effects_causes_map)
-            effects_causes_map->insert(EffectsAndCausesMapElem(effects_group, std::make_pair(object_id,
-                                                                                             std::make_pair(effect_cause_type,
-                                                                                                            specific_cause_name))));
+        SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);     // combine effects group and source object id into sourced effects group
+        EffectCause effect_cause(effect_cause_type, specific_cause_name);               // combine cause type and specific cause into effect cause
+        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);// get set of target objects for this effects group from potential targets specified
+        EffectTargetAndCause target_and_cause(target_set, effect_cause);                // combine target set and effect cause
+        targets_causes_map[sourced_effects_group] = target_and_cause;                   // store effect cause and targets info in map, indexed by sourced effects group
     }
 }
 
-void Universe::ExecuteEffects(EffectsAndTargetsMap& effects_targets_map)
+void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
-    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
-        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
-        Effect::EffectsGroup::TargetSet targets(it->second.second);
+    for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+        // if other EffectsGroups with the same stacking group have affected some of the targets in
+        // the scope of the current EffectsGroup, skip them
+
+        const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+        const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
+
+         const EffectTargetAndCause& targets_and_cause = targets_it->second;
+        Effect::EffectsGroup::TargetSet targets = targets_and_cause.target_set;
+
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
 
+
         // execute the Effects in the EffectsGroup
-        it->first->Execute(it->second.first, targets);
+        effects_group->Execute(sourced_effects_group.source_object_id, targets);
+
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (it->first->StackingGroup() != "") {
-            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
+        if (effects_group->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
                 affected_targets.insert(*object_it);
             }
@@ -865,99 +922,80 @@ void Universe::ExecuteEffects(EffectsAndTargetsMap& effects_targets_map)
     }
 }
 
-void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
+void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
-    if (effects_causes_map)
-        assert(effects_targets_map.size() == effects_causes_map->size());
-
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
+    for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+        // if other EffectsGroups with the same stacking group have affected some of the targets in
+        // the scope of the current EffectsGroup, skip them
 
-    for (EffectsAndTargetsMap::const_iterator targets_it = effects_targets_map.begin(); targets_it != effects_targets_map.end(); ++targets_it) {
-        Effect::EffectsGroup::TargetSet targets = targets_it->second.second;
-        const boost::shared_ptr<const Effect::EffectsGroup>& effects_group = targets_it->first;
+        const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+        const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
 
-        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(targets_it->first->StackingGroup());
+         const EffectTargetAndCause& targets_and_cause = targets_it->second;
+        Effect::EffectsGroup::TargetSet targets = targets_and_cause.target_set;
+
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
 
-        // if doing effect accounting, get cause of effect
-        EffectsCauseType cause_type = INVALID_EFFECTS_GROUP_CAUSE_TYPE;
-        std::string specific_cause = "";
-        if (effects_causes_map) {
-            EffectsAndCausesMap::const_iterator causes_it = effects_causes_map->find(effects_group);
-            if (causes_it == effects_causes_map->end()) {
-                Logger().debugStream() << "ExecuteMeterEffects: something funky's going on...";
-                continue;
-            }
-            cause_type = causes_it->second.second.first;        // see definition of Universe::EffectsAndCausesMapElem
-            specific_cause = causes_it->second.second.second;
-        }
 
         // execute only the SetMeter effects in the EffectsGroup
-        int source = targets_it->second.first;
         const std::vector<Effect::EffectBase*>& effects = effects_group->EffectsList();
         for (unsigned int i = 0; i < effects.size(); ++i) {
             const Effect::SetMeter* meter_effect = dynamic_cast<Effect::SetMeter*>(effects[i]);
             if (!meter_effect) continue;
 
-            // do effect accounting
-            if (effects_causes_map) {
-                // determine meter to be altered by this effect
-                MeterType meter_type = meter_effect->GetMeterType();
+            // determine meter to be altered by this effect
+            MeterType meter_type = meter_effect->GetMeterType();
 
-                // record pre-effect meter values
-                for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-                    UniverseObject* target = *target_it;
-                    const Meter* meter = target->GetMeter(meter_type);
-                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                    // create new accounting info for this effect on this target/meter
-                    EffectAccountingInfo info;
-                    info.source_id = source;
-                    info.cause_type = ECT_UNKNOWN_CAUSE;    // need to get this somehow ...
-                    info.specific_cause = "";               // ... and this.
-                    info.running_meter_total = meter->Max();    // using as temp storage for max value before effects are applied
+            // record pre-effect meter values
+            for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                UniverseObject* target = *target_it;
+                const Meter* meter = target->GetMeter(meter_type);
+                if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                    // add accounting for this effect to end of vector
-                    m_effect_accounting_map[target->ID()][meter_type].push_back(info);
-                }
+                // accounting info for this effect on this meter
+                EffectAccountingInfo info;
+                info.cause_type =           targets_and_cause.effect_cause.cause_type;
+                info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+                info.source_id =            sourced_effects_group.source_object_id;
+                info.running_meter_total =  meter->Max();
 
-                // apply effect to targets
-                effects_group->Execute(source, targets, i);
+                // add accounting for this effect to end of vector
+                m_effect_accounting_map[target->ID()][meter_type].push_back(info);
+            }
 
-                // find change in meter due to effect: equal to post-meter minus pre-meter value
-                for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-                    UniverseObject* target = *target_it;
-                    const Meter* meter = target->GetMeter(meter_type);
-                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                    // retreive info for this effect
-                    EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
+            // apply meter-altering effect to targets
+            effects_group->Execute(sourced_effects_group.source_object_id, targets, i);
 
-                    // update accounting info with meter change and new total
-                    info.meter_change = meter->Max() - info.running_meter_total;    // change is new max minus old max (stored in temp value with misleading name)
-                    info.running_meter_total = meter->Max();                        // replace temp stored value with new meter total
-                    info.cause_type = cause_type;
-                    info.specific_cause = specific_cause;
-                }
 
-            } else {
-                // just apply effect
-                effects_group->Execute(source, targets, i);
+            // find change in meter due to effect: equal to post-meter minus pre-meter value
+            for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                UniverseObject* target = *target_it;
+                const Meter* meter = target->GetMeter(meter_type);
+                if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                // retreive info for this effect
+                EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
+
+                // update accounting info with meter change and new total
+                info.meter_change = meter->Max() - info.running_meter_total;
+                info.running_meter_total = meter->Max();
             }
         }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (targets_it->first->StackingGroup() != "") {
-            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[targets_it->first->StackingGroup()];
-            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
+        if (effects_group->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it)
                 affected_targets.insert(*object_it);
-            }
         }
     }
 }
@@ -968,8 +1006,8 @@ void Universe::ApplyEffects()
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    EffectsAndTargetsMap effects_targets_map;
-    GetEffectsAndTargets(effects_targets_map);
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map);
 
     // reset max meter state that is affected by the application of effects
     for (const_iterator it = begin(); it != end(); ++it) {
@@ -977,7 +1015,7 @@ void Universe::ApplyEffects()
         it->second->ApplyUniverseTableMaxMeterAdjustments();
     }
 
-    ExecuteEffects(effects_targets_map);
+    ExecuteEffects(targets_causes_map);
 }
 
 void Universe::RebuildEmpireViewSystemGraphs()
@@ -1086,17 +1124,17 @@ void Universe::EffectDestroy(int id)
 
 void Universe::HandleEmpireElimination(int empire_id)
 {
-    for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
-        // ever meter has a value at the start of the turn, and a value after updating with known effects
-        for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
-            for (std::size_t i = 0; i < meter_type_it->second.size(); ) {
-                if (meter_type_it->second[i].caused_by_empire_id == empire_id)
-                    meter_type_it->second.erase(meter_type_it->second.begin() + i);
-                else
-                    ++i;
-            }
-        }
-    }
+    //for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
+    //    // ever meter has a value at the start of the turn, and a value after updating with known effects
+    //    for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
+    //        for (std::size_t i = 0; i < meter_type_it->second.size(); ) {
+    //            if (meter_type_it->second[i].caused_by_empire_id == empire_id)
+    //                meter_type_it->second.erase(meter_type_it->second.begin() + i);
+    //            else
+    //                ++i;
+    //        }
+    //    }
+    //}
 }
 
 bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {

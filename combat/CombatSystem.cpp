@@ -190,7 +190,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 
     // index to empire_combat_forces
     std::vector<int> combat_assets;
-    
+
     for(unsigned int e=0; e < assets.size(); e++)
     {
         CombatAssetsHitPoints cahp;
@@ -202,7 +202,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
             for(Fleet::iterator shp_it = flt->begin(); shp_it != flt->end(); ++shp_it)
             {
                 Ship *shp = GetUniverse().Object<Ship>(*shp_it);
-        
+
                 if(shp->IsArmed())
                     cahp.combat_ships    .push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
                 else   
@@ -371,11 +371,11 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         ?combat_assets[0]:-1;
 
     for(int e=0;e<static_cast<int>(empire_combat_forces.size());e++)
-    {   
+    {
         //remove defense bases of defenseless planets
         for(unsigned int i=0; i<empire_combat_forces[e].defenseless_planets.size(); i++)
             empire_combat_forces[e].defenseless_planets[i]->AdjustDefBases(-empire_combat_forces[e].defenseless_planets[i]->DefBases());
-    
+
         //adjust defense bases of planets
         for(unsigned int i=0; i<empire_combat_forces[e].planets.size(); i++)
         {

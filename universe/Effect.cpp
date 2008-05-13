@@ -77,7 +77,7 @@ EffectsGroup::~EffectsGroup()
     }
 }
 
-void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
 {
     Universe& universe = GetUniverse();
     UniverseObject* source = universe.Object(source_id);
@@ -96,11 +96,17 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 
     // evaluate the scope condition
     targets.clear();
-    non_targets.clear();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        non_targets.insert(it->second);
-    }
+    non_targets = potential_targets;
     m_scope->Eval(source, targets, non_targets);
+}
+
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
+{
+    Universe& universe = GetUniverse();
+    Condition::ObjectSet potential_targets;
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+        potential_targets.insert(it->second);
+    GetTargetSet(source_id, targets, potential_targets);
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const

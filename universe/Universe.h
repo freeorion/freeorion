@@ -68,7 +68,7 @@ class System;
 */
 class Universe
 {
-protected:
+private:
     typedef std::map<int, UniverseObject*>  ObjectMap;          ///< container type used to hold the objects in the universe; keyed by ID number
     typedef std::map<int, std::set<int> >   ObjectKnowledgeMap; ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
     typedef std::map<int, ShipDesign*>      ShipDesignMap;      ///< container type used to hold ShipDesigns created by players, keyed by design id number
@@ -91,18 +91,41 @@ public:
     typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of the non-const FindObjects()
     typedef std::vector<int>                    ObjectIDVec;            ///< the return type of FindObjectIDs()
 
-    //!< contains info about a single effect's alterations to a meter
-    struct EffectAccountingInfo
-    {
-        EffectAccountingInfo();         ///< default ctor
-        int source_id;                  ///< source object of effect
-        int caused_by_empire_id;        ///< empire that causes effect to occur, if applicable.  Tech effects are caused by the empire that researched them
-        EffectsCauseType cause_type;    ///< is the effect due to a tech, building, special, or unknown cause?
-        std::string specific_cause;     ///< what tech, building or special was the cause?
-        double meter_change;            ///< net change on meter due to this effect, as best known by client's empire
-        double running_meter_total; 
+
+    /** Combination of an EffectsGroup and the id of a source object. */
+    typedef struct SourcedEffectsGroup {
+        SourcedEffectsGroup();
+        SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const Effect::EffectsGroup>& effects_group_);
+        bool operator<(const SourcedEffectsGroup& right) const;
+        int                                             source_object_id;
+        boost::shared_ptr<const Effect::EffectsGroup>   effects_group;
     };
-    typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;    //!< Effect accounting info for all meters
+    /** Description of cause of an effect: the general cause type, and the specific cause.  eg. Building and a particular BuildingType. */
+    typedef struct EffectCause {
+        EffectCause();
+        EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_);
+        EffectsCauseType                                cause_type;         ///< general type of effect cause, eg. tech, building, special...
+        std::string                                     specific_cause;     ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
+    };
+    /** Combination of targets and cause for an effects group. */
+    typedef struct EffectTargetAndCause {
+        EffectTargetAndCause();
+        EffectTargetAndCause(const Effect::EffectsGroup::TargetSet& target_set_, const EffectCause& effect_cause_);
+        Effect::EffectsGroup::TargetSet                 target_set;
+        EffectCause                                     effect_cause;
+    };
+    /** Map from (effects group and source object) to target set of for that effects group with that source object. */
+    typedef std::map<SourcedEffectsGroup, EffectTargetAndCause> EffectsTargetsCausesMap;
+
+    /** Accounting information about what the causes are and changes produced by effects groups acting on meters of objects. */
+    struct EffectAccountingInfo : public EffectCause {
+        EffectAccountingInfo();                                                 ///< default ctor
+        int                                             source_id;              ///< source object of effect
+        double                                          meter_change;           ///< net change on meter due to this effect, as best known by client's empire
+        double                                          running_meter_total;    ///< meter total as of this effect.
+    };
+    /** Effect accounting information for all meters of all objects that are acted on by effects. */
+    typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;
 
 
     /** \name Signal Types */ //@{
@@ -213,7 +236,7 @@ public:
                                        SpecialsFrequency specials_freq, int players, int ai_players, 
                                        const std::map<int, PlayerSetupData>& player_setup_data);
 
-    void                ApplyEffects();                         ///< Applies all Effects from Buildings, Specials, Techs, etc.
+    void                ApplyEffects();                         ///< Executes Effects from Buildings, Specials, Techs, Ship Parts, Ship Hulls
 
     /** determines discrepancies and stores in m_effect_discrepancy_map, using UpdateMeterEstimates() in process
       */
@@ -236,8 +259,11 @@ public:
         removes the object from any containing UniverseObjects, though leaves the object's own records of what contained it intact, so that
         this information may be retained for later reference */
     void                Destroy(int id);
-    bool                Delete(int id);                         ///< removes from the universe (whether existing or destroyed) and deletes the object with ID number \a id; returns true if such an object was found, false otherwise
-    void                EffectDestroy(int id);                  ///< marks an object for destruction by the Destroy effect.
+    void                EffectDestroy(int id);                  ///< used by the Destroy effect to mark an object for destruction later during turn processing. (objects can't be destroyed immediately as other effects might depend on their existance)
+
+    /** permanently deletes object with ID number \a id.  no information about this object is retained in the Universe.  Can be performed on
+      * objects wether or not the have been destroyed.  returns true if such an object was found, false otherwise. */
+    bool                Delete(int id);
 
     void                HandleEmpireElimination(int empire_id); ///< cleans up internal storage of now-invalidated empire ID
 
@@ -261,7 +287,7 @@ public:
         custom boost::serialization classes that implement empire-dependent visibility. */
     static int s_encoding_empire;
 
-protected:
+private:
     typedef std::vector< std::vector<double> > DistanceMatrix;
 
     // declare main graph types, including properties declared above
@@ -294,40 +320,36 @@ protected:
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
 
-    // effects processing stuff
-    /** Multimap from effects group to pairs (one per effect in the effects group), consisting of source object
-        ID and the set of targets to which the effects should be applied.  EffectsGroup does not contain any info
-        about its source object, so it needs to be stored here. */
-    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMapElem;
-    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, Effect::EffectsGroup::TargetSet> > EffectsAndTargetsMap;
 
     /** Discrepancy between meter's value at start of turn, and the value that this client calculate that the
-        meter should have with the knowledge available -> the unknown factor affecting the meter. */
+        meter should have with the knowledge available -> the unknown factor affecting the meter.  This is used
+        when generating effect accounting, in the case where the expected and actual meter values don't match. */
     typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;
 
-    /** Multimap from effects group to pairs (one per effect in the effects group), consistent of source object
-        ID and another pair, consisting of the type of cause for the effect (eg. special, building, tech) and the
-        name of the specific cause.  Specific cause is the name of the tech, building type or special that contains
-        the effects group.  The causes should be stored in the same order as the targets in a simultaneously built
-        EffectsAndTargetsMap, allowing a particular effects group's targets and cause info to be looked up together. */
-    typedef std::pair<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, std::pair<EffectsCauseType, std::string> > > EffectsAndCausesMapElem;
-    typedef std::multimap<boost::shared_ptr<const Effect::EffectsGroup>, std::pair<int, std::pair<EffectsCauseType, std::string> > > EffectsAndCausesMap;
+    /** Clears \a effects_targets_map, and then populates with all EffectsGroups and their targets in
+      * the known universe.  If \a effects_causes_map is provided (nonzero pointer) then this map will be simultaneously
+      * populated with information about the causes of each effects group. */
+    void    GetEffectsAndTargets(EffectsTargetsCausesMap& effects_targets_map);
 
-    /** Populates \a effects_targets_map with all EffectsGroups and their targets in the known universe.  If
-        \a effects_causes_map is provided (nonzero pointer) then this map will be simultaneously populated with
-        information about the causes of each effects group. */
-    void    GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map = 0);
-    /** Used by GetEffectsAndTargets to process a vector of effects groups and store targets and causes info in respective maps*/
+    /** Removes entries in \a effects_targets_map about effects groups acting on objects in \a target_objects, and then 
+      * repopulates for EffectsGroups that act on at least one of the objects in \a target_objects.  If \a effects_causes_map
+      * is provided (nonzero pointer) then this map will be simultaneously populated with information about the causes of
+      * each effects group. */
+    void    GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects);
+
+    /** Used by GetEffectsAndTargets to process a vector of effects groups.  Stores target set of specified \a effects_groups and 
+      * \a source_object_id in \a targets_causes_map */
     void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
-                                                 int object_id, EffectsCauseType effect_cause_type, const std::string& specific_cause_name,
-                                                 EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map);
+                                                 int source_object_id, EffectsCauseType effect_cause_type,
+                                                 const std::string& specific_cause_name,
+                                                 const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map);
 
-    void    ExecuteEffects(EffectsAndTargetsMap& effects_targets_map);                      ///< executes all effects
+    /** Executes all effects.  Does not store effect accounting information.  For use on server when processing turns. */
+    void    ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map);
 
-    /** Executes only meter-altering effects; ignores other effects.  If \a effects_causes_map is provided
-        (nonzero pointer) then its contents will be used to records effect details in m_effect_accounting_map;
-        if it is not provided, then no effect accounting is done. */
-    void    ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map = 0);
+    /** Executes only meter-altering effects; ignores other effects..  Stores effect accounting information in
+      * \a targets_causes_map */
+    void    ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map);
 
 
     void    GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);     ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
@@ -370,8 +392,6 @@ protected:
     std::set<int>               m_marked_destroyed;             ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
 
     static double               s_universe_width;
-
-private:
     static bool                 s_inhibit_universe_object_signals;
 
     void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);

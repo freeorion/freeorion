@@ -380,11 +380,11 @@ void FleetColonizeOrder::ExecuteImpl() const
     m_colony_fleet_id = fleet->ID(); // record the fleet in which the colony ship started
     m_colony_fleet_name = fleet->Name();
 
-    // Remove colony ship from fleet; if colony ship is only ship in fleet, delete the fleet.
+    // Remove colony ship from fleet; if colony ship is only ship in fleet, destroy the fleet.
     // This leaves the ship in existence, and in its starting system, but not in any fleet;
     // this situation will be resolved by either ServerExecute() or UndoImpl().
     if (fleet->NumShips() == 1) {
-        universe.Delete(fleet->ID());
+        universe.Destroy(fleet->ID());
     } else {
         fleet->RemoveShip(m_ship);
     }
@@ -397,7 +397,7 @@ bool FleetColonizeOrder::UndoImpl() const
     // same time.
 
     Universe& universe = GetUniverse();
-    
+
     Planet* planet = universe.Object<Planet>(m_planet);
     Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
     Ship* ship = universe.Object<Ship>(m_ship);

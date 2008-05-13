@@ -57,7 +57,7 @@ namespace {
     {
         double retval = 0.0;
         if (const Planet* planet = universe_object_cast<const Planet*>(object)) {
-            retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Environment()];
+            retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Size()];
         }
         return retval;
     }

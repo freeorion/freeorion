@@ -162,7 +162,7 @@ namespace {
 
             const Meter* meter = m_obj->GetMeter(m_meter_type);
             if (!meter) return;
-            
+
             // determine if meter_map contains info about the meter that this MeterBrowseWnd is describing
             std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = m_meter_map.find(m_meter_type);
             if (meter_it == m_meter_map.end() || meter_it->second.empty())
@@ -175,7 +175,7 @@ namespace {
             for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
                 const UniverseObject* source = GetUniverse().Object(info_it->source_id);
 
-                int empire_id = info_it->caused_by_empire_id;
+                int empire_id = -1;
                 const Empire* empire = 0;
                 const Building* building = 0;
                 const Planet* planet = 0;
@@ -187,7 +187,8 @@ namespace {
                     break;
 
                 case ECT_TECH:
-                    if (empire_id >= 0) {
+                    if (source->Owners().size() == 1) {
+                        empire_id = *(source->Owners().begin());
                         empire = EmpireManager().Lookup(empire_id);
                         if (empire)
                             name = empire->Name();
@@ -231,7 +232,7 @@ namespace {
                 else if (info_it->meter_change < 0.0)
                     clr = ClientUI::StatDecrColor();
                 GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, 
-                                                             GG::RgbaTag(clr) + DoubleToString(info_it->meter_change, 2, false, true) + "</rgba>",
+                                                             GG::RgbaTag(clr) + DoubleToString(info_it->meter_change, 3, false, true) + "</rgba>",
                                                              font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
                 AttachChild(value);
                 m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
