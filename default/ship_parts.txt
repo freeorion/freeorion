@@ -150,4 +150,4 @@ Part
     mountableSlotTypes = Internal
     location = And [OwnedBy TheEmpire Source.Owner
                     CurrentPopulation low = 3 high = 999]
-    graphic = ""
+    graphic = "icons/ship_parts/cryonic_colony_pod.png"
