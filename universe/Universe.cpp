@@ -841,33 +841,30 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
-    // *********************************************************************************************************
-    // *** Commented out temporarily, until issues with colonizing causing crashes in effects code are fixed ***
-    // *********************************************************************************************************
-    //std::vector<Ship*> ships = FindObjects<Ship>();
-    //for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-    //    const Ship* ship = *ship_it;
-    //    assert(ship);
-    //    const ShipDesign* ship_design = ship->Design();
-    //    assert(ship_design);
-    //    const HullType* hull_type = ship_design->GetHull();
-    //    assert(hull_type);
+    std::vector<Ship*> ships = FindObjects<Ship>();
+    for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+        const Ship* ship = *ship_it;
+        assert(ship);
+        const ShipDesign* ship_design = ship->Design();
+        assert(ship_design);
+        const HullType* hull_type = ship_design->GetHull();
+        assert(hull_type);
 
-    //    StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
-    //                                         target_objects, targets_causes_map);
+        StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
+                                             target_objects, targets_causes_map);
 
-    //    const std::vector<std::string>& parts = ship_design->Parts();
-    //    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-    //        const std::string& part = *part_it;
-    //        if (part.empty())
-    //            continue;
-    //        const PartType* part_type = GetPartType(*part_it);
-    //        assert(part_type);
+        const std::vector<std::string>& parts = ship_design->Parts();
+        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+            const std::string& part = *part_it;
+            if (part.empty())
+                continue;
+            const PartType* part_type = GetPartType(*part_it);
+            assert(part_type);
 
-    //        StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
-    //                                             target_objects, targets_causes_map);
-    //    }
-    //}
+            StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
+                                                 target_objects, targets_causes_map);
+        }
+    }
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,

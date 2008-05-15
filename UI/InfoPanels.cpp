@@ -6,6 +6,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Building.h"
+#include "../universe/Ship.h"
 #include "../universe/Special.h"
 #include "../Empire/Empire.h"
 #include "ClientUI.h"
@@ -179,6 +180,7 @@ namespace {
                 const Empire* empire = 0;
                 const Building* building = 0;
                 const Planet* planet = 0;
+                const Ship* ship = 0;
                 std::string text = "", name = "";
 
                 switch (info_it->cause_type) {
@@ -212,11 +214,17 @@ namespace {
                     break;
 
                 case ECT_SHIP_HULL:
-                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_HULL")) % UserString(info_it->specific_cause));
+                    ship = dynamic_cast<const Ship*>(source);
+                    if (ship)
+                        name = ship->Name();
+                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_HULL")) % name % UserString(info_it->specific_cause));
                     break;
 
                 case ECT_SHIP_PART:
-                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % UserString(info_it->specific_cause));
+                    ship = dynamic_cast<const Ship*>(source);
+                    if (ship)
+                        name = ship->Name();
+                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % name % UserString(info_it->specific_cause));
                     break;
 
                 case ECT_UNKNOWN_CAUSE:
