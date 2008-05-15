@@ -2421,6 +2421,11 @@ void MapWnd::UpdateMetersAndResourcePools()
 
 void MapWnd::UpdateMeterEstimates()
 {
+    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, false);
+}
+
+void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
+{
     // add this player ownership to all planets that the player can see but which aren't currently colonized.
     // this way, any effects the player knows about that would act on those planets if the player colonized them
     // include those planets in their scope.  This lets effects from techs the player knows alter the max

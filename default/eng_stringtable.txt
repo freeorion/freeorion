@@ -1182,10 +1182,10 @@ TT_BUILDING
 %1% Building <i>%2%</i>
 
 TT_SHIP_HULL
-%1% Ship Hull <i>%2%</i>
+Ship <i>%1%</i> Hull <i>%2%</i>
 
 TT_SHIP_PART
-%1% Ship Part <i>%2%</i>
+Ship <i>%1%</i> Part <i>%2%</i>
 
 TT_SPECIAL
 Special <i>%1%</i>

@@ -242,15 +242,17 @@ public:
       */
     void                InitMeterEstimatesAndDiscrepancies();
 
-    /** Based on (known subset of, if in a client) universe and any orders given so far this turn, estimates what meter maxes
-      * will be next turn, and updates the predicted values accordingly.  If \a object_id is INVALID_OBJECT_ID, all objects
-      * in universe have their meter(s) updated.  If \a object_id is a valid object id, just that object's meter(s) are updated,
-      * unless \a update_contained_object is true, in which case all objects contained within the object with id \a object_id
-      * also have their meters updated.  If \a meter_type is INVALID_METER_TYPE, all meter types are updated, but if
-      * \a meter_type is a valid meter type, just that type of meter is updated. */
+    /** Based on (known subset of, if in a client) universe and any orders given so far this turn, updates estimated meter maxes
+      * for next turn for the objects with ids indicated in \a objects_vec.  If \a meter_type is INVALID_METER_TYPE, all meter types
+      * are updated, but if \a meter_type is a valid meter type, just that type of meter is updated. */
+    void                UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterType meter_type = INVALID_METER_TYPE);
+
+    /** Updates indicated object's indicated meter, and if applicable, the indicated meters of objects contained within the indicated object 
+      * If \a object_id is UniverseObject::INVALID_OBJECT_ID, then all objects' meters are updated.  If \a meter_type is INVALID_METER_TYPE, 
+      * then all meter types are updated. */
     void                UpdateMeterEstimates(int object_id, MeterType meter_type = INVALID_METER_TYPE, bool update_contained_objects = false);
 
-    void                UpdateMeterEstimates();                 ///< Calls 3-parameter UpdateMeterEstimates for all objects and all MeterTypes
+    void                UpdateMeterEstimates();                 ///< Updates all meters for all (known) objects
 
     /** Reconstructs the per-empire system graph views needed to calculate routes based on visibility. */
     void                RebuildEmpireViewSystemGraphs();
@@ -350,6 +352,10 @@ private:
     /** Executes only meter-altering effects; ignores other effects..  Stores effect accounting information in
       * \a targets_causes_map */
     void    ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map);
+
+    /** Does actual updating of meter estimates after the public function have processed objects_vec or whatever they were passed and
+      * cleared the relevant effect accounting for those objects and meters. */
+    void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type = INVALID_METER_TYPE);
 
 
     void    GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);     ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector

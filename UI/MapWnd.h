@@ -90,42 +90,43 @@ public:
     mutable SystemRightClickedSignalType SystemRightClickedSignal;
     mutable SystemBrowsedSignalType      SystemBrowsedSignal;
 
-    void CenterOnMapCoord(double x, double y);          //!< centers the map on map position (x, y)
-    void CenterOnObject(int id);                        //!< centers the map on object with id \a id
-    void CenterOnObject(const UniverseObject* obj);     //!< centers the map on object \a id
-    void ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
-    void ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
-    void SelectSystem(int systemID);            //!< catches emitted signals from the system icons, and allows programmatic selection of planets
-    void ReselectLastSystem();                  //!< re-selects the most recently selected system, if a valid one exists
-    void SelectFleet(int fleetID);              //!< allows programmatic selection of fleets
-    void SelectFleet(Fleet* fleet);             //!< allows programmatic selection of fleets
+    void            CenterOnMapCoord(double x, double y);           //!< centers the map on map position (x, y)
+    void            CenterOnObject(int id);                         //!< centers the map on object with id \a id
+    void            CenterOnObject(const UniverseObject* obj);      //!< centers the map on object \a id
+    void            ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
+    void            ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
+    void            SelectSystem(int systemID);                     //!< catches emitted signals from the system icons, and allows programmatic selection of planets
+    void            ReselectLastSystem();                           //!< re-selects the most recently selected system, if a valid one exists
+    void            SelectFleet(int fleetID);                       //!< allows programmatic selection of fleets
+    void            SelectFleet(Fleet* fleet);                      //!< allows programmatic selection of fleets
 
-    void SetFleetMovement(FleetButton* fleet_button);   //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
-    void SetFleetMovement(Fleet* fleet);                //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
-    void SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route);   //!< creates specially-coloured projected fleet movement line for specified fleet following the specified route.  Move line originates from the fleet's button location.
+    void            SetFleetMovement(FleetButton* fleet_button);    //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
+    void            SetFleetMovement(Fleet* fleet);                 //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
+    void            SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route);   //!< creates specially-coloured projected fleet movement line for specified fleet following the specified route.  Move line originates from the fleet's button location.
 
-    void RegisterPopup(MapWndPopup* popup);     //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
-    void RemovePopup(MapWndPopup* popup);       //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
-    void Cleanup();                             //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
-    void Sanitize();                            //!< sanitizes the MapWnd after a game
+    void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
+    void            Cleanup();                                      //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
+    void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
     static const int SIDE_PANEL_WIDTH;
 
 protected:
-    virtual bool   EventFilter(GG::Wnd* w, const GG::WndEvent& event);
+    virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
-    void RefreshFoodResourceIndicator();    ///< gets stockpile and expected change and updates resource indicator
-    void RefreshMineralsResourceIndicator();
-    void RefreshTradeResourceIndicator();
-    void RefreshResearchResourceIndicator();
-    void RefreshIndustryResourceIndicator();
-    void RefreshPopulationIndicator();
+    void            RefreshFoodResourceIndicator();                 ///< gets stockpile and expected change and updates resource indicator
+    void            RefreshMineralsResourceIndicator();
+    void            RefreshTradeResourceIndicator();
+    void            RefreshResearchResourceIndicator();
+    void            RefreshIndustryResourceIndicator();
+    void            RefreshPopulationIndicator();
 
-    void UpdateMetersAndResourcePools();
-    void UpdateMeterEstimates();            ///< re-estimates meter values based on orders given
-    void UpdateEmpireResourcePools();       ///< recalculates production and predicted changes of player's empire's resource and population pools
+    void            UpdateMetersAndResourcePools();
+    void            UpdateMeterEstimates();                         ///< re-estimates meter values of all known objects based on orders given
+    void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false); ///< re-estimates meter values of specified objects based on orders given
+    void            UpdateEmpireResourcePools();                    ///< recalculates production and predicted changes of player's empire's resource and population pools
 
     /** contains all the information necessary to render a single fleet movement line on the main map */
     struct MovementLineData
