@@ -581,8 +581,11 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
 
 void Universe::InitMeterEstimatesAndDiscrepancies()
 {
-    // clear old discrepancies
+    // clear old discrepancies and accounting
     m_effect_discrepancy_map.clear();
+    m_effect_accounting_map.clear();
+
+    Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
@@ -590,6 +593,10 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     // determine meter max discrepancies
     for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
         UniverseObject* obj = Object(obj_it->first);    // object that has some meters
+        if (!obj) {
+            Logger().errorStream() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
+            continue;
+        }
         std::map<MeterType, std::vector<EffectAccountingInfo> >& meters_map = obj_it->second;
 
         // every meter has a value at the start of the turn, and a value after updating with known effects
@@ -632,6 +639,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
     // in the (known) universe.  also clear effect accounting for meters that are to be updated.
     std::vector<int> objects;
 
+    Logger().debugStream() << "Universe::UpdateMeterEstimates";
 
     if (object_id == UniverseObject::INVALID_OBJECT_ID) {
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
@@ -691,7 +699,6 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
             }
         }
     }
-
 
     // update meter estimates for indicated MeterType for all relevant objects
     for (std::vector<int>::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it) {
@@ -796,6 +803,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
 {
+    Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 1) EffectsGroups from Specials
     for (Universe::const_iterator it = begin(); it != end(); ++it) {
         int source_object_id = it->first;
@@ -833,30 +841,33 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
-    std::vector<Ship*> ships = FindObjects<Ship>();
-    for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-        const Ship* ship = *ship_it;
-        assert(ship);
-        const ShipDesign* ship_design = ship->Design();
-        assert(ship_design);
-        const HullType* hull_type = ship_design->GetHull();
-        assert(hull_type);
+    // *********************************************************************************************************
+    // *** Commented out temporarily, until issues with colonizing causing crashes in effects code are fixed ***
+    // *********************************************************************************************************
+    //std::vector<Ship*> ships = FindObjects<Ship>();
+    //for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+    //    const Ship* ship = *ship_it;
+    //    assert(ship);
+    //    const ShipDesign* ship_design = ship->Design();
+    //    assert(ship_design);
+    //    const HullType* hull_type = ship_design->GetHull();
+    //    assert(hull_type);
 
-        StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
-                                             target_objects, targets_causes_map);
+    //    StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
+    //                                         target_objects, targets_causes_map);
 
-        const std::vector<std::string>& parts = ship_design->Parts();
-        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-            const std::string& part = *part_it;
-            if (part.empty())
-                continue;
-            const PartType* part_type = GetPartType(*part_it);
-            assert(part_type);
+    //    const std::vector<std::string>& parts = ship_design->Parts();
+    //    for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+    //        const std::string& part = *part_it;
+    //        if (part.empty())
+    //            continue;
+    //        const PartType* part_type = GetPartType(*part_it);
+    //        assert(part_type);
 
-            StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
-                                                 target_objects, targets_causes_map);
-        }
-    }
+    //        StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
+    //                                             target_objects, targets_causes_map);
+    //    }
+    //}
 }
 
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
@@ -924,6 +935,7 @@ void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
+    Logger().debugStream() << "Universe::ExecuteMeterEffects";
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
