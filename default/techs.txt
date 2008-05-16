@@ -1378,7 +1378,7 @@ Tech
         "CON_ORBITAL_CON"
     ]
     unlock = []
-    graphic = ""
+    graphic = "icons/tech/self-gravitating_structures.png"
 
 Tech
     name = "CON_ASYMP_MATS"
