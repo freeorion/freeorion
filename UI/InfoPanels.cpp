@@ -199,7 +199,7 @@ namespace {
                     break;
 
                 case ECT_BUILDING:
-                    building = dynamic_cast<const Building*>(source);
+                    building = universe_object_cast<const Building*>(source);
                     if (building) {
                         planet = building->GetPlanet();
                         if (planet) {
@@ -214,14 +214,14 @@ namespace {
                     break;
 
                 case ECT_SHIP_HULL:
-                    ship = dynamic_cast<const Ship*>(source);
+                    ship = universe_object_cast<const Ship*>(source);
                     if (ship)
                         name = ship->Name();
                     text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_HULL")) % name % UserString(info_it->specific_cause));
                     break;
 
                 case ECT_SHIP_PART:
-                    ship = dynamic_cast<const Ship*>(source);
+                    ship = universe_object_cast<const Ship*>(source);
                     if (ship)
                         name = ship->Name();
                     text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % name % UserString(info_it->specific_cause));

@@ -1366,7 +1366,7 @@ void SidePanel::SetSystemImpl()
         std::vector<const UniverseObject*> owned_planets;
         for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it)
             if ((*it)->WhollyOwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                owned_planets.push_back(dynamic_cast<const UniverseObject*>(*it));
+                owned_planets.push_back(universe_object_cast<const UniverseObject*>(*it));
 
         std::vector<MeterType> meter_types;
         meter_types.push_back(METER_FARMING);   meter_types.push_back(METER_MINING);    meter_types.push_back(METER_INDUSTRY);

@@ -1993,8 +1993,9 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         if (system) {
             const System::ObjectVec owned_fleets = system->FindObjects(OwnedVisitor<Fleet>(owner));
             for (System::ObjectVec::const_iterator it = owned_fleets.begin(); it != owned_fleets.end(); ++it) {
-                Fleet* owned_fleet = dynamic_cast<Fleet*>(*it);
-                if (owned_fleet) fleets.push_back(owned_fleet);
+                Fleet* owned_fleet = universe_object_cast<Fleet*>(*it);
+                if (owned_fleet)
+                    fleets.push_back(owned_fleet);
             }
         } else {
             std::copy(btn_fleets.begin(), btn_fleets.end(), std::back_inserter(fleets));
@@ -2035,7 +2036,7 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         } else if (selected_fleets.size() > 1) {
             return; // don't mess up user's carefully selected fleets
         } else {
-            selected_fleet = dynamic_cast<UniverseObject*>(*(selected_fleets.begin()));
+            selected_fleet = universe_object_cast<UniverseObject*>(*(selected_fleets.begin()));
         }
 
         if (system) {
@@ -2057,11 +2058,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
                 if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
                     // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
 
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(departing_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
                 }
             } else {
                 // are assured there is at least one stationary fleet
@@ -2075,11 +2076,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
                 if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
                     // it wasn't found, or it was found at the end, so select the first stationary fleet
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(stationary_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
                 }
             }
         } else {
@@ -2095,11 +2096,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
             if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
                 // it wasn't found, or it was found at the end, so select the first moving fleet
-                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(btn_fleets.front()));
             } else {
                 // it was found, and wasn't at the end, so select the next fleet after it
                 ++it;
-                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
             }
         }
     } else {
@@ -2426,7 +2427,52 @@ void MapWnd::UpdateMeterEstimates()
 
 void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 {
-    // add this player ownership to all planets that the player can see but which aren't currently colonized.
+    Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
+
+    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
+        std::vector<int> object_ids;
+        const Universe& universe = GetUniverse();
+        for (Universe::const_iterator obj_it = universe.begin(); obj_it != universe.end(); ++obj_it)
+            object_ids.push_back(obj_it->first);
+
+        UpdateMeterEstimates(object_ids);
+        return;
+    }
+
+    // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
+    // in the (known) universe.  also clear effect accounting for meters that are to be updated.
+    std::set<int> objects_set;
+    std::list<int> objects_list;
+    objects_list.push_back(object_id);
+
+    for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
+        int cur_object_id = *list_it;
+
+        UniverseObject* cur_object = GetUniverse().Object(cur_object_id);
+        if (!cur_object) {
+            Logger().errorStream() << "MapWnd::UpdateMeterEstimates tried to get an invalid object...";
+            return;
+        }
+
+        // add current object to list
+        objects_set.insert(cur_object_id);
+
+
+        // add contained objects within current object to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
+        if (update_contained_objects) {
+            const std::vector<UniverseObject*> contained_objects = cur_object->FindObjects(); // get all contained objects
+            for (std::vector<UniverseObject*>::const_iterator cont_it = contained_objects.begin(); cont_it != contained_objects.end(); ++cont_it)
+                objects_list.push_back((*cont_it)->ID());
+        }
+    }
+    std::vector<int> objects_vec;
+    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
+    UpdateMeterEstimates(objects_vec);
+}
+
+void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
+    // add this player ownership to all planets in the objects_vec that aren't currently colonized.
     // this way, any effects the player knows about that would act on those planets if the player colonized them
     // include those planets in their scope.  This lets effects from techs the player knows alter the max
     // population of planet that is displayed to the player, even if those effects have a condition that causes
@@ -2437,22 +2483,23 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 
     // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
     // the current player's ownership to all, while remembering which planets this is done to
-    std::vector<Planet*> unowned_planets;
-    std::vector<Planet*> all_planets = HumanClientApp::GetApp()->GetUniverse().FindObjects<Planet>();
+    std::set<Planet*> unowned_planets;
     Universe::InhibitUniverseObjectSignals(true);
-    for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
-         Planet* planet = *it;
+    for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+         Planet* planet = GetUniverse().Object<Planet>(*it);
+         if (!planet)
+             continue;
          if (planet->Owners().empty()) {
-             unowned_planets.push_back(planet);
+             unowned_planets.insert(planet);
              planet->AddOwner(player_id);
          }
     }
 
     // update meter estimates with temporary ownership
-    GetUniverse().UpdateMeterEstimates();
+    GetUniverse().UpdateMeterEstimates(objects_vec);
 
     // remove temporary ownership added above
-    for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
+    for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
         (*it)->RemoveOwner(player_id);
     Universe::InhibitUniverseObjectSignals(false);
 }
