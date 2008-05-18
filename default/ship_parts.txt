@@ -7,7 +7,7 @@ Part
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/laser.png"
 
 Part
     name = "SR_ION_CANNON"
@@ -18,7 +18,7 @@ Part
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/ship_parts/ion_cannon.png"
 
 Part
     name = "LR_NUCLEAR_MISSILE"
