@@ -603,7 +603,7 @@ void OptionsWnd::ResolutionOption()
     font_row->SetText(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
     drop_list->Insert(font_row);
     for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
-        font_row = new CUISimpleDropDownListRow(*it + " " + UserString("OPTIONS_FULLSCREEN"));
+        font_row = new CUISimpleDropDownListRow(*it);
         font_row->SetText(*it);
         drop_list->Insert(font_row);
     }
