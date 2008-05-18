@@ -231,8 +231,9 @@ MapWnd::MapWnd() :
 
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
-    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
-    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+    //GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);                        // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
@@ -2418,6 +2419,23 @@ void MapWnd::UpdateMetersAndResourcePools()
 {
     UpdateMeterEstimates();
     UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateMetersAndResourcePools(const std::vector<int>& objects_vec)
+{
+    UpdateMeterEstimates(objects_vec);
+    UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_objects)
+{
+    UpdateMeterEstimates(object_id, update_contained_objects);
+    UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools()
+{
+    UpdateMetersAndResourcePools(m_side_panel->SystemID(), true);
 }
 
 void MapWnd::UpdateMeterEstimates()

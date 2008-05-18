@@ -30,12 +30,6 @@ class SidePanel : public GG::Wnd
 public:
     class PlanetPanel;
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (int)> PlanetSelectedSignalType; ///< emitted when a rotating planet in the side panel is clicked by the user
-    typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
-    typedef boost::signal<void ()> ResourceCenterChangedSignalType; ///< emitted when the a planet's resourcecenter has changed
-    //@}
-
     /** \name Structors */ //@{
     SidePanel(int x, int y, int w, int h);
     ~SidePanel();
@@ -66,9 +60,9 @@ public:
     static const int MAX_PLANET_DIAMETER; // size of a huge planet, in on-screen pixels
     static const int MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
 
-    mutable PlanetSelectedSignalType PlanetSelectedSignal;
-    mutable SystemSelectedSignalType SystemSelectedSignal;
-    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal;
+    mutable boost::signal<void (int)>   PlanetSelectedSignal;           ///< emitted when a rotating planet in the side panel is clicked by the user
+    mutable boost::signal<void (int)>   SystemSelectedSignal;           ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
+    mutable boost::signal<void ()>      ResourceCenterChangedSignal;    ///< emitted when a planet's resourcecenter has changed, including when focus is chanaged
 
 private:
     class PlanetPanelContainer;

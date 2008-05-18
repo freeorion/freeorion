@@ -149,13 +149,16 @@ double UniverseObject::MeterPoints(MeterType type) const
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::MeterPoints was passed a MeterType that this UniverseObject does not have");
-    return it->second.Current();    // default to meter value
+    return it->second.InitialCurrent();
 }
 
 double UniverseObject::ProjectedMeterPoints(MeterType type) const
 {
     // Note that this is the default implementation.  Derived classes might do something different.
-    return MeterPoints(type);
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::ProjectedMeterPoints was passed a MeterType that this UniverseObject does not have");
+    return it->second.Current();
 }
 
 void UniverseObject::InsertMeter(MeterType meter_type, const Meter& meter)

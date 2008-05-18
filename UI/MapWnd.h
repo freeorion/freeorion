@@ -123,11 +123,14 @@ private:
     void            RefreshIndustryResourceIndicator();
     void            RefreshPopulationIndicator();
 
-    void            UpdateMetersAndResourcePools();
-    void            UpdateMeterEstimates();                         ///< re-estimates meter values of all known objects based on orders given
-    void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false); ///< re-estimates meter values of specified objects
-    void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                  ///< re-estimates meter values of specified objects
-    void            UpdateEmpireResourcePools();                    ///< recalculates production and predicted changes of player's empire's resource and population pools
+    void            UpdateMetersAndResourcePools();                                                     ///< update meter estimates and resource pool amounts for this client's empire
+    void            UpdateMetersAndResourcePools(const std::vector<int>& objects_vec);                  ///< update meter estimates for indicated objects, and resource pool amounts for this client's empire
+    void            UpdateMetersAndResourcePools(int object_id, bool update_contained_objects = false); ///< update meter esimtates for indiacted objects, and resource pool amounts for this client's empire
+    void            UpdateSidePanelSystemObjectMetersAndResourcePools();                                ///< update meter estimates for objects contained within the current system shown in the sidepanel, or all objects if there is no system shown
+    void            UpdateMeterEstimates();                                                             ///< re-estimates meter values of all known objects based on orders given
+    void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);         ///< re-estimates meter values of specified objects
+    void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                          ///< re-estimates meter values of specified objects
+    void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
 
     /** contains all the information necessary to render a single fleet movement line on the main map */
     struct MovementLineData

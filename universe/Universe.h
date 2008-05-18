@@ -238,8 +238,8 @@ public:
 
     void                ApplyEffects();                         ///< Executes Effects from Buildings, Specials, Techs, Ship Parts, Ship Hulls
 
-    /** determines discrepancies and stores in m_effect_discrepancy_map, using UpdateMeterEstimates() in process
-      */
+    /** for all objects and meters, determines discrepancies between actual meter maxes and what the known universe should produce,
+      * and and stores in m_effect_discrepancy_map. */
     void                InitMeterEstimatesAndDiscrepancies();
 
     /** Based on (known subset of, if in a client) universe and any orders given so far this turn, updates estimated meter maxes

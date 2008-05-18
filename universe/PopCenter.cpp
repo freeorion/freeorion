@@ -124,10 +124,10 @@ double PopCenter::ProjectedCurrentMeter(MeterType type) const
 {
     switch (type) {
     case METER_POPULATION:
-        return GetMeter(METER_POPULATION)->Current() + FuturePopGrowth();
+        return GetMeter(METER_POPULATION)->InitialCurrent() + FuturePopGrowth();
         break;
     case METER_HEALTH:
-        return GetMeter(METER_HEALTH)->Current() + FutureHealthGrowth();
+        return GetMeter(METER_HEALTH)->InitialCurrent() + FutureHealthGrowth();
         break;
     default:
         const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
@@ -143,7 +143,7 @@ double PopCenter::MeterPoints(MeterType type) const
     switch (type) {
     case METER_POPULATION:
     case METER_HEALTH:
-        return GetMeter(type)->Current();    // health and population point values are equal to meter values
+        return GetMeter(type)->InitialCurrent();    // health and population point values are equal to meter values
         break;
     default:
         const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
@@ -203,7 +203,7 @@ void PopCenter::PopGrowthProductionResearchPhase()
         //object->RemoveSpecial("STARVATION_SPECIAL");
         //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
     }
-    health->AdjustCurrent(health->Current() * (((health->Max() + 1.0) - health->Current()) / (health->Max() + 1.0)));
+    health->AdjustCurrent(health->InitialCurrent() * (((health->InitialMax() + 1.0) - health->InitialCurrent()) / (health->InitialMax() + 1.0)));
 }
 
 void PopCenter::Reset(double max_pop_mod, double max_health_mod)

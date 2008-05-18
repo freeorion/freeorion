@@ -258,7 +258,7 @@ double Planet::MeterPoints(MeterType type) const
     case METER_DEFENSE:
     case METER_DETECTION:
     case METER_STEALTH:
-        return GetMeter(type)->Current();
+        return GetMeter(type)->InitialCurrent();
         break;
     default:
         return UniverseObject::MeterPoints(type);

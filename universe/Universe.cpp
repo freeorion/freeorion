@@ -622,7 +622,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             info.cause_type = ECT_UNKNOWN_CAUSE;
             info.meter_change = discrepancy;
             info.running_meter_total = meter->Max();
-            
+
             m_effect_accounting_map[object_id][type].push_back(info);
         }
     }
@@ -725,6 +725,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         obj->ApplyUniverseTableMaxMeterAdjustments(meter_type);
 
         // record value of max meter(s) after applying universe table adjustments
+        // also set current meter value to initial current value, so that any previous clamping of current won't
+        // alter the apparent "this turn" current value.
         MeterType start, end;
         if (meter_type == INVALID_METER_TYPE) {
             // record data for all meters
@@ -737,6 +739,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         }
         for (MeterType type = start; type != end; type = MeterType(type + 1)) {
             if (Meter* meter = obj->GetMeter(type)) {
+                meter->SetCurrent(meter->InitialCurrent());
+
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
                 info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
@@ -757,13 +761,6 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     // Apply and record effect meter adjustments
     ExecuteMeterEffects(targets_causes_map);      // TODO: make act only on contents of objects vector
 
-    // clamp meters to valid range of max values, and so current is less than max
-    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
-        // currently this clamps all meters, even if not all meters are being processed by this function...
-        // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
-        // updated should have no effect
-        Object(*obj_it)->ClampMeters();
-    }
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -802,6 +799,14 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
                 }
             }
         }
+    }
+
+    // clamp meters to valid range of max values, and so current is less than max
+    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+        // currently this clamps all meters, even if not all meters are being processed by this function...
+        // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
+        // updated should have no effect
+        Object(*obj_it)->ClampMeters();
     }
 }
 

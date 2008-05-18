@@ -138,10 +138,10 @@ double ResourceCenter::MeterPoints(MeterType type) const
     case METER_INDUSTRY:
     case METER_RESEARCH:
     case METER_TRADE:
-        return GetPopMeter()->Current() / 10.0 * GetMeter(type)->Current();
+        return GetPopMeter()->InitialCurrent() / 10.0 * GetMeter(type)->InitialCurrent();
         break;
     case METER_CONSTRUCTION:
-        return GetMeter(METER_CONSTRUCTION)->Current();
+        return GetMeter(METER_CONSTRUCTION)->InitialCurrent();
         break;
     default:
         const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
@@ -161,7 +161,7 @@ double ResourceCenter::ProjectedMeterPoints(MeterType type) const
     case METER_RESEARCH:
     case METER_TRADE:
         // TODO: get projected current population instead of using just current population
-        return GetPopMeter()->Current() / 10.0 * ProjectedCurrentMeter(type);
+        return GetPopMeter()->InitialCurrent() / 10.0 * ProjectedCurrentMeter(type);
         break;
     case METER_CONSTRUCTION:
         return ProjectedCurrentMeter(METER_CONSTRUCTION);

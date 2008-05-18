@@ -62,16 +62,6 @@ double Meter::PreviousMax() const
     return m_previous_max;
 }
 
-double Meter::DeltaCurrent() const
-{
-    return m_initial_current - m_previous_current;
-}
-
-double Meter::DeltaMax() const
-{
-    return m_initial_max - m_previous_max;
-}
-
 void Meter::ResetMax()
 {
     m_max = METER_MIN;
