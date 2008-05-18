@@ -23,37 +23,37 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    double                      Scale() const;
-    std::set<std::string>       GetCategoriesShown() const;
-    std::set<TechType>          GetTechTypesShown() const;
-    std::set<TechStatus>        GetTechStatusesShown() const;
+    double                  Scale() const;
+    std::set<std::string>   GetCategoriesShown() const;
+    std::set<TechType>      GetTechTypesShown() const;
+    std::set<TechStatus>    GetTechStatusesShown() const;
     //@}
 
     //! \name Mutators //@{
-    void Update();
-    void Clear();
-    void Reset();
-    void SetScale(double scale);
+    void                    Update();
+    void                    Clear();
+    void                    Reset();
+    void                    SetScale(double scale);
 
-    void ShowCategory(const std::string& category);
-    void ShowAllCategories();
-    void HideCategory(const std::string& category);
-    void HideAllCategories();
-    void ToggleCategory(const std::string& category);
-    void ToggleAllCategories();
+    void                    ShowCategory(const std::string& category);
+    void                    ShowAllCategories();
+    void                    HideCategory(const std::string& category);
+    void                    HideAllCategories();
+    void                    ToggleCategory(const std::string& category);
+    void                    ToggleAllCategories();
 
-    void ShowStatus(const TechStatus status);
-    void HideStatus(const TechStatus status);
-    void ToggleStatus(const TechStatus status);
+    void                    ShowStatus(const TechStatus status);
+    void                    HideStatus(const TechStatus status);
+    void                    ToggleStatus(const TechStatus status);
 
-    void ShowType(const TechType type);
-    void HideType(const TechType type);
-    void ToggleType(const TechType type);
+    void                    ShowType(const TechType type);
+    void                    HideType(const TechType type);
+    void                    ToggleType(const TechType type);
 
-    void CenterOnTech(const Tech* tech);
+    void                    CenterOnTech(const Tech* tech);
     //@}
 
-    static const int NAVIGATOR_AND_DETAIL_HEIGHT = 200;
+    static const int        NAVIGATOR_AND_DETAIL_HEIGHT = 200;
 
     mutable TechBrowsedSignalType               TechBrowsedSignal;
     mutable TechClickedSignalType               TechSelectedSignal;
@@ -65,15 +65,17 @@ private:
     class TechDetailPanel;
     class TechNavigator;
     class LayoutPanel;
+    class TechListBox;
 
-    void TechBrowsedSlot(const Tech* tech);
-    void TechClickedSlot(const Tech* tech);
-    void TechDoubleClickedSlot(const Tech* tech);
+    void                    TechBrowsedSlot(const Tech* tech);
+    void                    TechClickedSlot(const Tech* tech);
+    void                    TechDoubleClickedSlot(const Tech* tech);
 
     TechTreeControls*       m_tech_tree_controls;
     TechDetailPanel*        m_tech_detail_panel;
     TechNavigator*          m_tech_navigator;
-    LayoutPanel*            m_layout_panel;    
+    LayoutPanel*            m_layout_panel;
+    TechListBox*            m_tech_list;
 };
 
 #endif // _TechTreeWnd_h_

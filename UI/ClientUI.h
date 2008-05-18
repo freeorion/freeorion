@@ -40,7 +40,7 @@ public:
     ClientUI();     //!< construction (calls Initialize())
     ~ClientUI();    //!< destruction (calls Cleanup())
     //!@}
-    
+
     //! \name Accessors //!@{
     MapWnd* GetMapWnd();                                //!< Returns the main map window (may be null).
     void GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
@@ -69,7 +69,7 @@ public:
         of files found in \a dir with prefix \a prefix. */
     boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap = false);
     //!@}
-    
+
     static ClientUI*    GetClientUI();   //!< returns a pointer to the singleton ClientUI class
 
     /** shows a message dialog box with the given message; if \a play_alert_sound is true, and UI sound effects are
@@ -93,9 +93,9 @@ public:
     static int          Pts();             //!< default point size
     static std::string  TitleFont();       //!< The default font to use for the window title
     static int          TitlePts();        //!< default point size to use for window title
-    
+
     static GG::Clr      TextColor();       //!< color of UI text
-    
+
     // generic UI windows
     static GG::Clr      WndColor();            //!< color of a UI window
     static GG::Clr      WndBorderColor();      //!< color of window borders
@@ -112,7 +112,7 @@ public:
 
     static GG::Clr      ScrollTabColor();
     static  int         ScrollWidth();
-    
+
     static GG::Clr      DropDownListIntColor();
     static GG::Clr      DropDownListArrowColor();
 

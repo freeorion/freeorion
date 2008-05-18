@@ -715,41 +715,6 @@ void HullControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
   */
 class BasesListBox : public CUIListBox {
 public:
-    class BasesListBoxRow : public CUIListBox::Row {
-    public:
-        BasesListBoxRow(int w, int h);
-        virtual void                    Render();
-        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    };
-
-    class HullAndPartsListBoxRow : public BasesListBoxRow {
-    public:
-        class HullPanel : public GG::Control {
-        public:
-            HullPanel(int w, int h, const std::string& hull);
-            virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-            virtual void                    Render() {}
-        private:
-            GG::StaticGraphic*              m_graphic;
-            GG::TextControl*                m_name;
-            GG::TextControl*                m_cost_and_build_time;
-        };
-        HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts);
-        const std::string&              Hull() const { return m_hull; }
-        const std::vector<std::string>& Parts() const { return m_parts; }
-    private:
-        std::string                     m_hull;
-        std::vector<std::string>        m_parts;
-    };
-
-    class CompletedDesignListBoxRow : public BasesListBoxRow {
-    public:
-        CompletedDesignListBoxRow(int w, int h, int design_id);
-        int                             DesignID() const { return m_design_id; }
-    private:
-        int                             m_design_id;
-    };
-
     /** \name Structors */ //@{
     BasesListBox(int x, int y, int w, int h);
     //@}
@@ -794,6 +759,41 @@ private:
 
     std::set<int>                   m_designs_in_list;
     std::set<std::string>           m_hulls_in_list;
+
+    class BasesListBoxRow : public CUIListBox::Row {
+    public:
+        BasesListBoxRow(int w, int h);
+        virtual void                    Render();
+        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    };
+
+    class HullAndPartsListBoxRow : public BasesListBoxRow {
+    public:
+        class HullPanel : public GG::Control {
+        public:
+            HullPanel(int w, int h, const std::string& hull);
+            virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+            virtual void                    Render() {}
+        private:
+            GG::StaticGraphic*              m_graphic;
+            GG::TextControl*                m_name;
+            GG::TextControl*                m_cost_and_build_time;
+        };
+        HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts);
+        const std::string&              Hull() const { return m_hull; }
+        const std::vector<std::string>& Parts() const { return m_parts; }
+    private:
+        std::string                     m_hull;
+        std::vector<std::string>        m_parts;
+    };
+
+    class CompletedDesignListBoxRow : public BasesListBoxRow {
+    public:
+        CompletedDesignListBoxRow(int w, int h, int design_id);
+        int                             DesignID() const { return m_design_id; }
+    private:
+        int                             m_design_id;
+    };
 };
 
 BasesListBox::BasesListBoxRow::BasesListBoxRow(int w, int h) :
@@ -1072,10 +1072,8 @@ void BasesListBox::PropegateLeftClickSignal(int index, GG::ListBox::Row* row, co
         const std::string& hull_name = box_row->Hull();
         const HullType* hull_type = GetHullType(hull_name);
         const std::vector<std::string>& parts = box_row->Parts();
-        if (hull_type && parts.empty()) {
+        if (hull_type && parts.empty())
             HullBrowsedSignal(hull_type);
-            return;
-        }
     }
 }
 
