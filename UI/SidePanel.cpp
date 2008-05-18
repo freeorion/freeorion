@@ -456,7 +456,7 @@ public:
 
     /** \name Mutators */ //@{
     PlanetPanel* GetPlanetPanel(int n) {return m_planet_panels[n];}
-    
+
     void RefreshAllPlanetPanels();  ///< updates data displayed in info panels and redoes layout
     //@}
 
@@ -1286,7 +1286,7 @@ void SidePanel::SetSystemImpl()
     m_system_name->Clear();
 
     DeleteChild(m_star_graphic);    m_star_graphic = 0;
-    
+
     // disconnect any existing system signals
     while (!m_system_connections.empty()) {
         m_system_connections.begin()->disconnect();
@@ -1383,7 +1383,12 @@ void SidePanel::SetSystemImpl()
             m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
         }
 
-        m_system_resource_summary->Update();
+        if(m_system_resource_summary->Empty()) {
+            DetachChild(m_system_resource_summary);
+        } else {
+            AttachChild(m_system_resource_summary);
+            m_system_resource_summary->Update();
+        }
     }
 }
 

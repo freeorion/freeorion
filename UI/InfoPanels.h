@@ -311,22 +311,24 @@ public:
     MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types);
     MultiIconValueIndicator(int w); ///< initializes with no icons shown
 
-    virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    bool            Empty();
 
-    void Update();
+    virtual void    Render();
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
-    void SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
+    void            Update();
+
+    void            SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
 
 private:
-    std::vector<StatisticIcon*> m_icons;
+    std::vector<StatisticIcon*>         m_icons;
 
-    std::vector<MeterType> m_meter_types;
-    std::vector<const UniverseObject*> m_obj_vec;
+    std::vector<MeterType>              m_meter_types;
+    std::vector<const UniverseObject*>  m_obj_vec;
 
-    static const int EDGE_PAD = 6;
-    static const int ICON_SPACING = 12;
-    static const int ICON_WIDTH = 24;
+    static const int                    EDGE_PAD = 6;
+    static const int                    ICON_SPACING = 12;
+    static const int                    ICON_WIDTH = 24;
 };
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a

@@ -1499,6 +1499,11 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w) :
     SetText("MultiIconValueIndicator");
 }
 
+bool MultiIconValueIndicator::Empty()
+{
+    return m_obj_vec.empty();
+}
+
 void MultiIconValueIndicator::Render()
 {
     GG::Pt ul = UpperLeft();
