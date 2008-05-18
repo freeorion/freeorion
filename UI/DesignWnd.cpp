@@ -658,54 +658,6 @@ void DesignWnd::PartPalette::Reset() {
     m_parts_list->Populate();
 }
 
-//////////////////////////////////////////////////
-// HullControl                                  //
-//////////////////////////////////////////////////
-/** UI representation of a ship hull, displayed a BasesListBox.
-  */
-class HullControl : public GG::Control {
-public:
-    /** \name Structors */ //@{
-    HullControl(int w, int h, const HullType* hull_type);
-    //@}
-
-    /** \name Accessors */ //@{
-    const HullType*     Hull() { return m_hull; }
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual void        Render();
-    virtual void        LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    //@}
-
-    mutable boost::signal<void (const HullType*)> ClickedSignal;
-
-    static const int SIZE = 64;
-private:
-    GG::StaticGraphic*  m_graphic;
-    GG::TextControl*    m_name;
-    const HullType*     m_hull;
-};
-
-HullControl::HullControl(int w, int h, const HullType* hull) :
-    GG::Control(0, 0, w, h, GG::CLICKABLE),
-    m_graphic(0),
-    m_name(0),
-    m_hull(hull)
-{
-    //m_icon = new GG::StaticGraphic(0, 0, SIZE, SIZE, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    //m_icon->Show();
-    //AttachChild(m_icon);
-    SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
-}
-
-void HullControl::Render() {
-
-}
-
-void HullControl::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    ClickedSignal(m_hull);
-}
 
 //////////////////////////////////////////////////
 // BasesListBox                                  //

@@ -617,7 +617,7 @@ private:
 };
 
 TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
-    CUIWnd("", 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd("", 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_tech(0)
 {
     const int PTS = ClientUI::Pts();
@@ -2050,10 +2050,6 @@ private:
             virtual void    Render();
             virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
         private:
-            static const int    PAD = 3;
-            static const int    NAME_WIDTH = 40;
-            static const int    COST_WIDTH = 30;
-
             const Tech*         m_tech;
             GG::StaticGraphic*  m_icon;
             GG::TextControl*    m_name;
@@ -2064,7 +2060,7 @@ private:
 };
 
 TechTreeWnd::TechListBox::TechRow::TechListBoxPanel::TechListBoxPanel(int w, int h, const Tech* tech) :
-    GG::Control(0, 0, w, h),
+    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
     m_tech(tech),
     m_icon(0),
     m_name(0),
@@ -2074,20 +2070,26 @@ TechTreeWnd::TechListBox::TechRow::TechListBoxPanel::TechListBoxPanel(int w, int
     if (!tech)
         return;
 
-    m_icon = new GG::StaticGraphic(1, 1, h, h, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
+    const int PAD = 3;
+    const int NAME_WIDTH = ClientUI::Pts() * 20;
+    const int COST_WIDTH = ClientUI::Pts() * 20;
+
+    const int HEIGHT = h - 6;   // for some reason, full height isn't available...
+
+    m_icon = new GG::StaticGraphic(1, 1, HEIGHT, HEIGHT, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
     AttachChild(m_icon);
-    int left = h + PAD;
+    int left = HEIGHT + PAD;
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
-    m_name = new GG::TextControl(left, 0, NAME_WIDTH, h, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_name = new GG::TextControl(left, 1, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     m_name->ClipText(true);
     AttachChild(m_name);
     left += NAME_WIDTH + PAD;
 
     std::string cost_str = boost::io::str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
-    m_cost = new GG::TextControl(left, 0, COST_WIDTH, h, cost_str, font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_cost = new GG::TextControl(left, 1, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_cost);
 }
 
@@ -2107,9 +2109,9 @@ TechTreeWnd::TechListBox::TechRow::TechRow(int w, int h, const Tech* tech) :
     CUIListBox::Row(w, h, "TechListBox::TechRow"),
     m_tech(tech)
 {
-    push_back(new TechListBoxPanel(w, h, m_tech));
+    GG::Control* panel = new TechListBoxPanel(w, h, m_tech);
+    push_back(panel);
 }
-
 
 TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
     CUIListBox(x, y, w, h),
@@ -2168,13 +2170,13 @@ void TechTreeWnd::TechListBox::Populate()
     // remove techs in listbox
     Clear();
 
-    const int ROW_HEIGHT = ClientUI::Pts() * 2;
+    const int ROW_HEIGHT = ClientUI::Pts() * 2 + 5;
 
     TechManager& manager = GetTechManager();
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
         if (TechVisible(tech))
-            Insert(new TechRow(Width(), ROW_HEIGHT, tech));
+            Insert(new TechRow(Width() - ClientUI::ScrollWidth() - 6, ROW_HEIGHT, tech));
     }
 }
 
@@ -2279,16 +2281,16 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_layout_panel->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
     GG::Connect(m_layout_panel->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
     GG::Connect(m_layout_panel->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
-    AttachChild(m_layout_panel);
+    //AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(0, 0, w, h);
     GG::Connect(m_tech_list->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
     GG::Connect(m_tech_list->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
-    //AttachChild(m_tech_list);
+    AttachChild(m_tech_list);
 
     m_tech_detail_panel = new TechDetailPanel(m_layout_panel->ClientWidth() - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
-    m_layout_panel->AttachChild(m_tech_detail_panel);
+    AttachChild(m_tech_detail_panel);
 
     m_tech_navigator = new TechNavigator(NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     m_tech_navigator->MoveTo(GG::Pt(m_tech_detail_panel->Width(), 1));
