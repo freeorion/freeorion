@@ -835,26 +835,26 @@ void TechTreeWnd::TechDetailPanel::Reset()
 
     m_tech_name_text->SetText(UserString(m_tech->Name()));
     using boost::io::str;
-    using boost::format;
 
-    m_summary_text->SetText("<i>" + str(format(UserString("TECH_DETAIL_TYPE_STR"))
-        % UserString(m_tech->Category())
-        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
-        % str(format(UserString(m_tech->ShortDescription())))) + "</i>");
+    m_summary_text->SetText("<i>" + str(FlexibleFormat(UserString("TECH_DETAIL_TYPE_STR"))
+                                        % UserString(m_tech->Category())
+                                        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
+                                        % UserString(m_tech->ShortDescription()))
+                            + "</i>");
 
     m_summary_text->SetColor(ClientUI::CategoryColor(m_tech->Category()));
  
-    m_cost_text->SetText(str(format(UserString("TECH_TOTAL_COST_STR"))
-        % static_cast<int>(m_tech->ResearchCost() + 0.5)
-        % m_tech->ResearchTurns()));
+    m_cost_text->SetText(str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR"))
+                             % static_cast<int>(m_tech->ResearchCost() + 0.5)
+                             % m_tech->ResearchTurns()));
 
 
-    std::string description_str = str(format(UserString("TECH_DETAIL_DESCRIPTION_STR"))
+    std::string description_str = str(FlexibleFormat(UserString("TECH_DETAIL_DESCRIPTION_STR"))
                                       % UserString(m_tech->Description()));
 
 
     if (!m_tech->Effects().empty()) {
-        description_str += str(format(UserString("TECH_DETAIL_EFFECTS_STR"))
+        description_str += str(FlexibleFormat(UserString("TECH_DETAIL_EFFECTS_STR"))
                                % EffectsDescription(m_tech->Effects()));
     }
 
@@ -863,7 +863,7 @@ void TechTreeWnd::TechDetailPanel::Reset()
     if (!unlocked_items.empty())
         description_str += UserString("TECH_DETAIL_UNLOCKS_SECTION_STR");
     for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
-        description_str += str(format(UserString("TECH_DETAIL_UNLOCKED_ITEM_STR"))
+        description_str += str(FlexibleFormat(UserString("TECH_DETAIL_UNLOCKED_ITEM_STR"))
                                % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
                                % UserString(unlocked_items[i].name));
     }
@@ -2035,82 +2035,78 @@ private:
 
     class TechRow : public CUIListBox::Row {
     public:
-        TechRow(int w, int h, const Tech* tech);
-        const Tech* GetTech() { return m_tech; }
+        TechRow(int w, const Tech* tech);
+        const Tech*                 GetTech() { return m_tech; }
+        virtual void                Render();
+        static std::vector<int>     ColWidths(int total_width);
 
     private:
-        class TechListBoxPanel;
-        TechListBoxPanel*   m_panel;
-        const Tech*         m_tech;
-
-        class TechListBoxPanel : public GG::Control {
-        public:
-            TechListBoxPanel(int w, int h, const Tech* tech);
-            const Tech*     GetTech() { return m_tech; }
-            virtual void    Render();
-            virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-        private:
-            const Tech*         m_tech;
-            GG::StaticGraphic*  m_icon;
-            GG::TextControl*    m_name;
-            GG::TextControl*    m_cost;
-            GG::TextControl*    m_description;
-        };
+        const Tech*     m_tech;
     };
 };
 
-TechTreeWnd::TechListBox::TechRow::TechListBoxPanel::TechListBoxPanel(int w, int h, const Tech* tech) :
-    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
-    m_tech(tech),
-    m_icon(0),
-    m_name(0),
-    m_cost(0),
-    m_description(0)
-{
-    if (!tech)
-        return;
-
-    const int PAD = 3;
-    const int NAME_WIDTH = ClientUI::Pts() * 20;
-    const int COST_WIDTH = ClientUI::Pts() * 20;
-
-    const int HEIGHT = h - 6;   // for some reason, full height isn't available...
-
-    m_icon = new GG::StaticGraphic(1, 1, HEIGHT, HEIGHT, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-    m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
-    AttachChild(m_icon);
-    int left = HEIGHT + PAD;
-
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-
-    m_name = new GG::TextControl(left, 1, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    m_name->ClipText(true);
-    AttachChild(m_name);
-    left += NAME_WIDTH + PAD;
-
-    std::string cost_str = boost::io::str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
-    m_cost = new GG::TextControl(left, 1, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    AttachChild(m_cost);
-}
-
-void TechTreeWnd::TechListBox::TechRow::TechListBoxPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
-    GG::Wnd* parent = Parent();
-    if (parent)
-        parent->MouseWheel(pt, move, mod_keys);
-}
-
-void TechTreeWnd::TechListBox::TechRow::TechListBoxPanel::Render() {
+void TechTreeWnd::TechListBox::TechRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 1);
 }
 
-TechTreeWnd::TechListBox::TechRow::TechRow(int w, int h, const Tech* tech) :
-    CUIListBox::Row(w, h, "TechListBox::TechRow"),
+std::vector<int> TechTreeWnd::TechListBox::TechRow::ColWidths(int total_width) {
+    const int GRAPHIC_WIDTH = ClientUI::Pts() * 2;
+    const int NAME_WIDTH = ClientUI::Pts() * 18;
+    const int COST_WIDTH = ClientUI::Pts() * 2;
+    const int TIME_WIDTH = ClientUI::Pts() * 2;
+    const int DESC_WIDTH = std::max(1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH);
+    std::vector<int> retval;
+    retval.push_back(GRAPHIC_WIDTH);
+    retval.push_back(NAME_WIDTH);
+    retval.push_back(COST_WIDTH);
+    retval.push_back(TIME_WIDTH);
+    retval.push_back(DESC_WIDTH);
+    return retval;
+}
+
+TechTreeWnd::TechListBox::TechRow::TechRow(int w, const Tech* tech) :
+    CUIListBox::Row(w, ClientUI::Pts() * 2 + 5, "TechListBox::TechRow"),
     m_tech(tech)
 {
-    GG::Control* panel = new TechListBoxPanel(w, h, m_tech);
-    push_back(panel);
+    if (!tech)
+        return;
+
+    std::vector<int> col_widths = ColWidths(w);
+    const int GRAPHIC_WIDTH = col_widths[0];
+    const int NAME_WIDTH = col_widths[1];
+    const int COST_WIDTH = col_widths[2];
+    const int TIME_WIDTH = col_widths[3];
+    const int DESC_WIDTH = col_widths[4];
+    const int HEIGHT = GRAPHIC_WIDTH;
+
+    GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, GRAPHIC_WIDTH, HEIGHT, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
+    push_back(graphic);
+
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+    GG::TextControl* name = new GG::TextControl(0, 0, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    name->ClipText(true);
+    push_back(name);
+
+    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(m_tech->ResearchCost() + 0.5));
+    GG::TextControl* cost = new GG::TextControl(0, 0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(cost);
+
+    std::string time_str = boost::lexical_cast<std::string>(m_tech->ResearchTurns());
+    GG::TextControl* time = new GG::TextControl(0, 0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(time);
+
+    using boost::io::str;
+    std::string desc_str = "<i>" + str(FlexibleFormat(UserString("TECH_DETAIL_TYPE_STR"))
+                                       % UserString(m_tech->Category())
+                                       % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
+                                       % UserString(m_tech->ShortDescription()))
+                           + "</i>";
+    GG::TextControl* desc = new GG::TextControl(0, 0, DESC_WIDTH, HEIGHT, desc_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(desc);
 }
 
 TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
@@ -2139,6 +2135,14 @@ TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
     m_tech_types_shown.insert(TT_THEORY);
     m_tech_types_shown.insert(TT_APPLICATION);
     m_tech_types_shown.insert(TT_REFINEMENT);
+
+    std::vector<int> col_widths = TechRow::ColWidths(w - ClientUI::ScrollWidth() - 6);
+    SetNumCols(col_widths.size());
+    LockColWidths();
+    for (unsigned int i = 0; i < col_widths.size(); ++i) {
+        SetColWidth(i, col_widths[i]);
+        SetColAlignment(i, GG::ALIGN_LEFT);
+    }
 }
 
 std::set<std::string> TechTreeWnd::TechListBox::GetCategoriesShown() const
@@ -2170,13 +2174,11 @@ void TechTreeWnd::TechListBox::Populate()
     // remove techs in listbox
     Clear();
 
-    const int ROW_HEIGHT = ClientUI::Pts() * 2 + 5;
-
     TechManager& manager = GetTechManager();
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
         if (TechVisible(tech))
-            Insert(new TechRow(Width() - ClientUI::ScrollWidth() - 6, ROW_HEIGHT, tech));
+            Insert(new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech));
     }
 }
 
