@@ -138,7 +138,7 @@ Part
     mountableSlotTypes = Internal
     location = And [OwnedBy TheEmpire Source.Owner
                     CurrentPopulation low = 3 high = 999]
-    graphic = ""
+    graphic = "icons/ship_parts/colony_pod.png"
 
 Part
     name = "CO_SUSPEND_ANIM_POD"
