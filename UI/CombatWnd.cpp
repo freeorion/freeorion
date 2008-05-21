@@ -152,11 +152,21 @@ namespace {
             return "don't create";
     }
 
-    std::string AtmosphereNameFromBaseName(const std::string& base_name)
+    std::string AtmosphereMaterialName(const std::string& base_name)
     {
         std::string retval =
             base_name.substr(0, base_name.size() - 2) +
             "_atmosphere_" +
+            base_name.substr(base_name.size() - 2, 2);
+        boost::algorithm::to_lower(retval);
+        return retval;
+    }
+
+    std::string PlanetMaterialName(const std::string& base_name)
+    {
+        std::string retval =
+            base_name.substr(0, base_name.size() - 2) +
+            "_planet_" +
             base_name.substr(base_name.size() - 2, 2);
         boost::algorithm::to_lower(retval);
         return retval;
@@ -610,7 +620,9 @@ void CombatWnd::InitCombat(const System& system)
                 std::string new_material_name =
                     material_name + "_" + boost::lexical_cast<std::string>(it->first);
                 Ogre::MaterialPtr material =
-                    Ogre::MaterialManager::getSingleton().getByName(material_name);
+                    Ogre::MaterialManager::getSingleton().getByName(material_name == "planet" ?
+                                                                    PlanetMaterialName(base_name) :
+                                                                    material_name);
                 material = material->clone(new_material_name);
                 m_planet_assets[it->first].second.push_back(material);
                 assert(entity->getNumSubEntities() == 1u);
@@ -627,8 +639,14 @@ void CombatWnd::InitCombat(const System& system)
                     entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                     entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-                    entity->setMaterialName(AtmosphereNameFromBaseName(base_name));
-                    entity->getSubEntity(0)->getMaterial()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+                    std::string new_material_name =
+                        material_name + "_atmosphere_" + boost::lexical_cast<std::string>(it->first);
+                    Ogre::MaterialPtr material =
+                        Ogre::MaterialManager::getSingleton().getByName(AtmosphereMaterialName(base_name));
+                    material = material->clone(new_material_name);
+                    m_planet_assets[it->first].second.push_back(material);
+                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+                    entity->setMaterialName(new_material_name);
                     node->attachObject(entity);
                 }
             }

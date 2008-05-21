@@ -1,5 +1,6 @@
 // -*- C++ -*-
 uniform sampler2D day_texture, night_texture, cloud_gloss_texture;
+uniform vec4 cloud_color;
 
 varying float diffuse;
 varying vec3 specular;
@@ -10,11 +11,11 @@ const float TERMINATOR = 0.3;
 void main()
 {
     vec2 cg = texture2D(cloud_gloss_texture, tex_coord).rg;
-    float clouds = cg.r;
+    float clouds = cg.r * cloud_color.a;
     float gloss = cg.g;
 
     vec3 daytime = texture2D(day_texture, tex_coord).rgb * diffuse + specular * gloss;
-    daytime = mix(daytime, vec3(abs(diffuse)), clouds);
+    daytime = mix(daytime, abs(diffuse) * cloud_color.rgb, clouds);
 
     vec3 color = daytime;
     if (diffuse < -TERMINATOR)

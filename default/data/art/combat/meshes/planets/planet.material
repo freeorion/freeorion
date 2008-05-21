@@ -38,10 +38,12 @@ fragment_program gas_giant_frag glsl
     source gas_giant.frag
 }
 
+// This is here just to quiet Ogre warnings.  This material is referenced in
+// the sphere.mesh file, but is never used.
 material 01_-_Default
 {
-	technique
-	{
+    technique
+    {
         pass
         {
         }
@@ -50,8 +52,8 @@ material 01_-_Default
 
 material planet
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             vertex_program_ref planet_vert
@@ -64,6 +66,7 @@ material planet
                 param_named day_texture int 0
                 param_named night_texture int 1
                 param_named cloud_gloss_texture int 2
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
 
             texture_unit
@@ -86,8 +89,8 @@ material planet
 
 material atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             scene_blend alpha_blend
@@ -110,8 +113,8 @@ material atmosphere
 
 material atmosphereless_planet
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             vertex_program_ref atmosphereless_planet_vert
@@ -140,8 +143,8 @@ material atmosphereless_planet
 
 material gas_giant_core
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             lighting off
@@ -152,8 +155,8 @@ material gas_giant_core
 
 material gas_giant
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             scene_blend alpha_blend
@@ -178,10 +181,118 @@ material gas_giant
     }
 }
 
+
+////////////////////////////////////////////////////////////////////////////////
+// planet materials
+////////////////////////////////////////////////////////////////////////////////
+
+material swamp_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+material toxic_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+material inferno_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+material tundra_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+material desert_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+material terran_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+material ocean_planet_01 : planet
+{
+    technique
+    {
+        pass
+        {
+            fragment_program_ref
+            {
+                param_named cloud_color float4 1.0 1.0 1.0 1.0
+            }
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+// atmosphere materials
+////////////////////////////////////////////////////////////////////////////////
+
 material swamp_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
@@ -195,8 +306,8 @@ material swamp_atmosphere_01 : atmosphere
 
 material toxic_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
@@ -210,8 +321,8 @@ material toxic_atmosphere_01 : atmosphere
 
 material inferno_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
@@ -225,8 +336,8 @@ material inferno_atmosphere_01 : atmosphere
 
 material tundra_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
@@ -240,8 +351,8 @@ material tundra_atmosphere_01 : atmosphere
 
 material desert_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
@@ -255,8 +366,8 @@ material desert_atmosphere_01 : atmosphere
 
 material terran_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
@@ -270,8 +381,8 @@ material terran_atmosphere_01 : atmosphere
 
 material ocean_atmosphere_01 : atmosphere
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref
