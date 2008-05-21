@@ -2056,12 +2056,17 @@ std::vector<int> TechTreeWnd::TechListBox::TechRow::ColWidths(int total_width) {
     const int NAME_WIDTH = ClientUI::Pts() * 18;
     const int COST_WIDTH = ClientUI::Pts() * 2;
     const int TIME_WIDTH = ClientUI::Pts() * 2;
-    const int DESC_WIDTH = std::max(1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH);
+    const int CATEGORY_WIDTH = ClientUI::Pts() * 8;
+    const int TYPE_WIDTH = ClientUI::Pts() * 8;
+
+    const int DESC_WIDTH = std::max(1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH - CATEGORY_WIDTH - TYPE_WIDTH);
     std::vector<int> retval;
     retval.push_back(GRAPHIC_WIDTH);
     retval.push_back(NAME_WIDTH);
     retval.push_back(COST_WIDTH);
     retval.push_back(TIME_WIDTH);
+    retval.push_back(CATEGORY_WIDTH);
+    retval.push_back(TYPE_WIDTH);
     retval.push_back(DESC_WIDTH);
     return retval;
 }
@@ -2075,11 +2080,13 @@ TechTreeWnd::TechListBox::TechRow::TechRow(int w, const Tech* tech) :
 
     std::vector<int> col_widths = ColWidths(w);
     const int GRAPHIC_WIDTH = col_widths[0];
-    const int NAME_WIDTH = col_widths[1];
-    const int COST_WIDTH = col_widths[2];
-    const int TIME_WIDTH = col_widths[3];
-    const int DESC_WIDTH = col_widths[4];
-    const int HEIGHT = GRAPHIC_WIDTH;
+    const int NAME_WIDTH =      col_widths[1];
+    const int COST_WIDTH =      col_widths[2];
+    const int TIME_WIDTH =      col_widths[3];
+    const int CATEGORY_WIDTH =  col_widths[4];
+    const int TYPE_WIDTH =      col_widths[5];
+    const int DESC_WIDTH =      col_widths[6];
+    const int HEIGHT =          GRAPHIC_WIDTH;
 
     GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, GRAPHIC_WIDTH, HEIGHT, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
@@ -2087,26 +2094,29 @@ TechTreeWnd::TechListBox::TechRow::TechRow(int w, const Tech* tech) :
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
-    GG::TextControl* name = new GG::TextControl(0, 0, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    name->ClipText(true);
-    push_back(name);
+    GG::TextControl* text = new GG::TextControl(0, 0, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text->ClipText(true);
+    push_back(text);
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(m_tech->ResearchCost() + 0.5));
-    GG::TextControl* cost = new GG::TextControl(0, 0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    push_back(cost);
+    text = new GG::TextControl(0, 0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
 
     std::string time_str = boost::lexical_cast<std::string>(m_tech->ResearchTurns());
-    GG::TextControl* time = new GG::TextControl(0, 0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    push_back(time);
+    text = new GG::TextControl(0, 0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
 
-    using boost::io::str;
-    std::string desc_str = "<i>" + str(FlexibleFormat(UserString("TECH_DETAIL_TYPE_STR"))
-                                       % UserString(m_tech->Category())
-                                       % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
-                                       % UserString(m_tech->ShortDescription()))
-                           + "</i>";
-    GG::TextControl* desc = new GG::TextControl(0, 0, DESC_WIDTH, HEIGHT, desc_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-    push_back(desc);
+    std::string category_str = UserString(m_tech->Category());
+    text = new GG::TextControl(0, 0, CATEGORY_WIDTH, HEIGHT, category_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+
+    std::string type_str = UserString(boost::lexical_cast<std::string>(m_tech->Type()));
+    text = new GG::TextControl(0, 0, TYPE_WIDTH, HEIGHT, type_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+
+    std::string desc_str = UserString(m_tech->ShortDescription());
+    text = new GG::TextControl(0, 0, DESC_WIDTH, HEIGHT, desc_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
 }
 
 TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
