@@ -918,7 +918,7 @@ void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
         const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
         const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
 
-         const EffectTargetAndCause& targets_and_cause = targets_it->second;
+        const EffectTargetAndCause& targets_and_cause = targets_it->second;
         Effect::EffectsGroup::TargetSet targets = targets_and_cause.target_set;
 
         std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
@@ -959,7 +959,7 @@ void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
         const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
         const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
 
-         const EffectTargetAndCause& targets_and_cause = targets_it->second;
+        const EffectTargetAndCause& targets_and_cause = targets_it->second;
         Effect::EffectsGroup::TargetSet targets = targets_and_cause.target_set;
 
         std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
@@ -2111,24 +2111,17 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
-    // Apply non-effect meter adjustments
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();                           // zero all meters
-        it->second->ApplyUniverseTableMaxMeterAdjustments();    // apply non-effects max meter modifications, including focus mods
-    }
-
     // Apply effects for 1st turn
     ApplyEffects();
 
     // update initial and previous meter values
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ClampMeters();  // limit current meters by max meters
+        it->second->ClampMeters();  // limit max meters to allowed range of values
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
-                meter->m_previous_current = meter->m_current;
-                meter->m_previous_max = meter->m_max;
-                meter->m_initial_current = meter->m_current;
-                meter->m_initial_max = meter->m_max;
+                // set all meter current and max values to initial max value
+                double max = meter->Max();
+                meter->Set(max, max, max, max, max, max);
             }
         }
     }
@@ -2993,40 +2986,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
         home_planet->SetPrimaryFocus(FOCUS_BALANCED);
         home_planet->SetSecondaryFocus(FOCUS_BALANCED);
-        home_planet->ResetMaxMeters();
-        home_planet->ApplyUniverseTableMaxMeterAdjustments();
-        Effect::EffectsGroup::TargetSet target_set;
-        target_set.insert(home_planet);
-        Special* special = GetSpecial("HOMEWORLD_SPECIAL");
-        assert(special);
-        for (unsigned int j = 0; j < special->Effects().size(); ++j) {
-            special->Effects()[j]->Execute(home_planet->ID(), target_set);
-        }
-        home_planet->AdjustPop(home_planet->GetMeter(METER_HEALTH)->Max());
-        home_planet->GetMeter(METER_HEALTH)->SetCurrent(home_planet->GetMeter(METER_HEALTH)->Max());
-        home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max());
-        home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max());
-        home_planet->GetMeter(METER_INDUSTRY)->SetCurrent(home_planet->GetMeter(METER_INDUSTRY)->Max());
-        home_planet->GetMeter(METER_MINING)->SetCurrent(home_planet->GetMeter(METER_MINING)->Max());
-        home_planet->GetMeter(METER_RESEARCH)->SetCurrent(home_planet->GetMeter(METER_RESEARCH)->Max());
-        home_planet->GetMeter(METER_TRADE)->SetCurrent(home_planet->GetMeter(METER_TRADE)->Max());
-        home_planet->AdjustDefBases(3);
-
-        home_planet->GetMeter(METER_HEALTH)->m_initial_current = home_planet->GetMeter(METER_HEALTH)->Current();
-        home_planet->GetMeter(METER_HEALTH)->m_initial_max = home_planet->GetMeter(METER_HEALTH)->Max();
-        home_planet->GetMeter(METER_CONSTRUCTION)->m_initial_current = home_planet->GetMeter(METER_CONSTRUCTION)->Current();
-        home_planet->GetMeter(METER_CONSTRUCTION)->m_initial_max = home_planet->GetMeter(METER_CONSTRUCTION)->Max();
-        home_planet->GetMeter(METER_FARMING)->m_initial_current = home_planet->GetMeter(METER_FARMING)->Current();
-        home_planet->GetMeter(METER_FARMING)->m_initial_max = home_planet->GetMeter(METER_FARMING)->Max();
-        home_planet->GetMeter(METER_INDUSTRY)->m_initial_current = home_planet->GetMeter(METER_INDUSTRY)->Current();
-        home_planet->GetMeter(METER_INDUSTRY)->m_initial_max = home_planet->GetMeter(METER_INDUSTRY)->Max();
-        home_planet->GetMeter(METER_MINING)->m_initial_current = home_planet->GetMeter(METER_MINING)->Current();
-        home_planet->GetMeter(METER_MINING)->m_initial_max = home_planet->GetMeter(METER_MINING)->Max();
-        home_planet->GetMeter(METER_RESEARCH)->m_initial_current = home_planet->GetMeter(METER_RESEARCH)->Current();
-        home_planet->GetMeter(METER_RESEARCH)->m_initial_max = home_planet->GetMeter(METER_RESEARCH)->Max();
-        home_planet->GetMeter(METER_TRADE)->m_initial_current = home_planet->GetMeter(METER_TRADE)->Current();
-        home_planet->GetMeter(METER_TRADE)->m_initial_max = home_planet->GetMeter(METER_TRADE)->Max();
-
 
         // grant empire access to some initial buildings, ship parts and hulls
         empire->AddBuildingType("BLD_IMPERIAL_PALACE");
@@ -3097,16 +3056,16 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         Ship* ship = 0;
         int ship_id = -1;
 
-        // 5 scouts for The Silent One ot explore with
-        for (int n = 0; n < 5; ++n) {
+        // scouts for The Silent One to explore with
+        for (int n = 0; n < 2; ++n) {
             ship = new Ship(empire_id, scout_design_id);
             ship->Rename(empire->NewShipName());
             ship_id = Insert(ship);
             home_fleet->AddShip(ship_id);
         }
 
-        // 10 colony ships for The Silent One to test colonization
-        for (int n = 0; n < 10; ++n) {
+        // colony ships for The Silent One to test colonization
+        for (int n = 0; n < 1; ++n) {
             ship = new Ship(empire_id, colony_ship_design_id);
             ship->Rename(empire->NewShipName());
             ship_id = Insert(ship);

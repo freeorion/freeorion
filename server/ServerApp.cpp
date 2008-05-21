@@ -677,14 +677,9 @@ void ServerApp::ProcessTurns()
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // limit current meters by max meters
-        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-            if (Meter* meter = it->second->GetMeter(i)) {
-                meter->m_previous_current = meter->m_initial_current;
-                meter->m_previous_max = meter->m_initial_max;
-                meter->m_initial_current = meter->m_current;
-                meter->m_initial_max = meter->m_max;
-            }
-        }
+        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+            if (Meter* meter = it->second->GetMeter(i))
+                meter->BackPropegate();
     }
 
 

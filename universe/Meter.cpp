@@ -62,6 +62,14 @@ double Meter::PreviousMax() const
     return m_previous_max;
 }
 
+void Meter::BackPropegate()
+{
+    m_previous_current =    m_initial_current;
+    m_previous_max =        m_initial_max;
+    m_initial_current =     m_current;
+    m_initial_max =         m_max;
+}
+
 void Meter::ResetMax()
 {
     m_max = METER_MIN;

@@ -27,6 +27,8 @@ public:
     double  PreviousCurrent() const;            ///< returns the current value of the meter, as it was at the beginning of last turn
     double  PreviousMax() const;                ///< returns the maximum value of the meter, as it was at the beginning of last turn
 
+    void    BackPropegate();                    ///< sets previous current and max to initial current and max, and then sets initial current and max to current and max
+
     void    ResetMax();                         ///< sets the max value of the Meter to METER_MIN, during max value recalculation
     void    SetCurrent(double current);         ///< sets the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
     void    SetMax(double max);                 ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
@@ -49,9 +51,6 @@ private:
     double      m_initial_max;
     double      m_previous_current;
     double      m_previous_max;
-
-    friend class ServerApp;
-    friend class Universe;
 
     friend class boost::serialization::access;
     template <class Archive>
