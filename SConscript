@@ -128,29 +128,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/TurnProgressWnd.cpp',
         'universe/Universe.cpp',
         'util/AppInterface.cpp',
-        'UI/EncyclopediaDetailPanel.cpp',
-        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugShape.cpp',
-        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugLines.cpp',
-        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugContact.cpp',
-        'UI/Collisions/src/Debug/OgreBulletCollisionsDebugDrawer.cpp',
-        'UI/Collisions/src/OgreBulletCollisionsRay.cpp',
-        'UI/Collisions/src/OgreBulletCollisionsWorld.cpp',
-        'UI/Collisions/src/Utils/OgreBulletCollisionsMeshToShapeConverter.cpp',
-        'UI/Collisions/src/OgreBulletCollisionsShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsMinkowskiSumShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsConeShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsConvexHullShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsBoxShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsTriangleShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsTrimeshShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsSphereShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsCompoundShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsMultiSphereShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsCylinderShape.cpp',
-        'UI/Collisions/src/Shapes/OgreBulletCollisionsStaticPlaneShape.cpp',
-        'UI/Collisions/src/OgreBulletCollisionsPrecompiled.cpp',
-        'UI/Collisions/src/OgreBulletCollisionsObject.cpp',
-        'UI/Collisions/src/OgreBulletCollisionsObjectState.cpp'
+        'UI/EncyclopediaDetailPanel.cpp'
         ]
     target = 'human'
 

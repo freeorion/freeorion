@@ -28,6 +28,8 @@
 #include <OgreSceneQuery.h>
 #include <OgreSubEntity.h>
 
+#include <btBulletCollisionCommon.h>
+
 #include <GG/GUI.h>
 
 #include <boost/cast.hpp>
@@ -49,6 +51,10 @@ namespace {
 
     const Ogre::Real MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
     const Ogre::Real MIN_ZOOM_IN_DISTANCE = 0.5;
+
+    // collision dection system params
+    btVector3 WORLD_AABB_MIN(-SYSTEM_RADIUS, -SYSTEM_RADIUS, -SYSTEM_RADIUS / 10.0);
+	btVector3 WORLD_AABB_MAX(SYSTEM_RADIUS, SYSTEM_RADIUS, SYSTEM_RADIUS / 10.0);
 
     // visibility masks
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
@@ -169,6 +175,38 @@ namespace {
             "_planet_" +
             base_name.substr(base_name.size() - 2, 2);
         boost::algorithm::to_lower(retval);
+        return retval;
+    }
+
+    btVector3 ToCollisionVector(const Ogre::Vector3& vec)
+    { return btVector3(vec.x, vec.y, vec.z); }
+
+    Ogre::Vector3 FromCollisionVector(const btVector3& vec)
+    { return Ogre::Vector3(vec.x(), vec.y(), vec.z()); }
+
+    struct RayIntersectionHit
+    {
+        RayIntersectionHit() : m_object(0) {}
+        Ogre::MovableObject* m_object;
+        Ogre::Vector3 m_point;
+        Ogre::Vector3 m_normal;
+    };
+
+    RayIntersectionHit RayIntersection(btCollisionWorld& world, const Ogre::Ray& ray)
+    {
+        RayIntersectionHit retval;
+        btCollisionWorld::ClosestRayResultCallback
+            collision_results(ToCollisionVector(ray.getOrigin()),
+                              ToCollisionVector(ray.getPoint(FAR_CLIP)));
+        world.rayTest(collision_results.m_rayFromWorld,
+                      collision_results.m_rayToWorld,
+                      collision_results);
+        if (collision_results.HasHit()) {
+            retval.m_object = reinterpret_cast<Ogre::MovableObject*>(
+                collision_results.m_collisionObject->getUserPointer());
+            retval.m_point = FromCollisionVector(collision_results.m_hitPointWorld);
+            retval.m_normal = FromCollisionVector(collision_results.m_hitNormalWorld);
+        }
         return retval;
     }
 
@@ -344,7 +382,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_camera(camera),
     m_camera_node(m_scene_manager->getRootSceneNode()->createChildSceneNode()),
     m_viewport(viewport),
-    m_ray_scene_query(m_scene_manager->createRayQuery(Ogre::Ray())),
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
     m_camera_animation(m_scene_manager->createAnimation("CameraTrack", CAMERA_RECENTER_TIME)),
     m_camera_animation_state(m_scene_manager->createAnimationState("CameraTrack")),
@@ -359,6 +396,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_selection_rect(),
     m_look_at_point(0, 0, 0),
     m_star_back_billboard(0),
+    m_collision_configuration(0),
+    m_collision_dispatcher(0),
+    m_collision_broadphase(0),
+    m_collision_world(0),
     m_initial_left_horizontal_flare_scroll(0.0),
     m_initial_right_horizontal_flare_scroll(0.0),
     m_left_horizontal_flare_scroll_offset(0.0),
@@ -374,10 +415,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     Ogre::Root::getSingleton().addFrameListener(this);
     m_scene_manager->addRenderQueueListener(m_stencil_op_frame_listener);
 
-    m_ray_scene_query->setSortByDistance(true);
-
     m_volume_scene_query->setQueryMask(~UNSELECTABLE_OBJECT_MASK);
-    m_ray_scene_query->setQueryMask(~UNSELECTABLE_OBJECT_MASK);
 
     // Load resource paths from config file
     Ogre::ConfigFile cf;
@@ -445,11 +483,19 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_camera_animation_state->setEnabled(true);
     m_camera_animation_state->setLoop(false);
 
+    // set up collision detection system
+    m_collision_configuration = new btDefaultCollisionConfiguration;
+    m_collision_dispatcher = new btCollisionDispatcher(m_collision_configuration);
+    m_collision_broadphase = new bt32BitAxisSweep3(WORLD_AABB_MIN, WORLD_AABB_MAX);
+    m_collision_world =
+        new btCollisionWorld(m_collision_dispatcher, m_collision_broadphase, m_collision_configuration);
+
     // look at the star initially
     m_look_at_scene_node = star_node;
     UpdateCameraPosition();
 
     AttachChild(m_fps_text);
+
 
     //////////////////////////////////////////////////////////////////
     // NOTE: Below is temporary code for combat system prototyping! //
@@ -482,9 +528,15 @@ CombatWnd::~CombatWnd()
 {
     Ogre::Root::getSingleton().removeFrameListener(this);
     m_scene_manager->removeRenderQueueListener(m_stencil_op_frame_listener);
-    m_scene_manager->destroyQuery(m_ray_scene_query);
     m_scene_manager->destroyQuery(m_volume_scene_query);
     Ogre::CompositorManager::getSingleton().removeCompositor(m_viewport, "effects/glow");
+
+    m_collision_shapes.clear();
+    m_collision_objects.clear();
+    delete m_collision_world;
+    delete m_collision_broadphase;
+    delete m_collision_dispatcher;
+    delete m_collision_configuration;
 
     // TODO: delete nodes and materials in m_planet_assets (or maybe everything
     // via some Ogre function?)
@@ -592,6 +644,16 @@ void CombatWnd::InitCombat(const System& system)
                 *boost::next(planet_textures[planet->Type()].begin(),
                              planet->ID() % planet_textures[planet->Type()].size());
 
+            // set up a sphere in the collision detection system
+            m_collision_shapes.push_back(new btSphereShape(planet_radius));
+            m_collision_objects.push_back(new btCollisionObject);
+            btMatrix3x3 identity;
+            identity.setIdentity();
+            m_collision_objects.back().getWorldTransform().setBasis(identity);
+            m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(position));
+            m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
+            m_collision_world->addCollisionObject(&m_collision_objects.back());
+
             if (material_name == "gas_giant") {
                 Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
                 entity->setMaterialName("gas_giant_core");
@@ -599,6 +661,8 @@ void CombatWnd::InitCombat(const System& system)
                 entity->setCastShadows(true);
                 entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                 node->attachObject(entity);
+
+                m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
 
                 entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
                 entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
@@ -632,6 +696,8 @@ void CombatWnd::InitCombat(const System& system)
                 entity->setMaterialName(new_material_name);
                 entity->setCastShadows(true);
                 node->attachObject(entity);
+
+                m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
 
                 if (material_name == "planet") {
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "CloudGloss.png");
@@ -939,11 +1005,10 @@ void CombatWnd::UpdateStarFromCameraPosition()
         for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
             Ogre::Vector3 direction = SUN_CENTER + (SAMPLES_PER_SIDE - i) * SAMPLE_INCREMENT * -RIGHT - CAMERA_POS;
             Ogre::Ray ray(CAMERA_POS, direction);
-            m_ray_scene_query->setRay(ray);
-            Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+            RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
             occlusions[i] = false;
-            if (result.begin() != result.end()) {
-                Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+            if (hit.m_object) {
+                Ogre::Real distance_squared = (hit.m_point - CAMERA_POS).squaredLength();
                 occlusions[i] = distance_squared < direction.squaredLength();
             }
         }
@@ -952,11 +1017,10 @@ void CombatWnd::UpdateStarFromCameraPosition()
         {
             Ogre::Vector3 direction = SUN_CENTER - CAMERA_POS;
             Ogre::Ray center_ray(CAMERA_POS, direction);
-            m_ray_scene_query->setRay(center_ray);
-            Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+            RayIntersectionHit hit = RayIntersection(*m_collision_world, center_ray);
             occlusions[SAMPLES_PER_SIDE] = false;
-            if (result.begin() != result.end()) {
-                Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+            if (hit.m_object) {
+                Ogre::Real distance_squared = (hit.m_point - CAMERA_POS).squaredLength();
                 occlusions[SAMPLES_PER_SIDE] = distance_squared < direction.squaredLength();
             }
         }
@@ -965,11 +1029,10 @@ void CombatWnd::UpdateStarFromCameraPosition()
         for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
             Ogre::Vector3 direction = SUN_CENTER + (i + 1) * SAMPLE_INCREMENT * RIGHT - CAMERA_POS;
             Ogre::Ray ray(CAMERA_POS, direction);
-            m_ray_scene_query->setRay(ray);
-            Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
+            RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
             occlusions[SAMPLES_PER_SIDE + 1 + i] = false;
-            if (result.begin() != result.end()) {
-                Ogre::Real distance_squared = (result.begin()->movable->getParentSceneNode()->getWorldPosition() - CAMERA_POS).squaredLength();
+            if (hit.m_object) {
+                Ogre::Real distance_squared = (hit.m_point - CAMERA_POS).squaredLength();
                 occlusions[SAMPLES_PER_SIDE + 1 + i] = distance_squared < direction.squaredLength();
             }
         }
@@ -1108,14 +1171,10 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
 
 Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 {
-    Ogre::MovableObject* retval = 0;
     Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
                                                      pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
-    m_ray_scene_query->setRay(ray);
-    Ogre::RaySceneQueryResult& result = m_ray_scene_query->execute();
-    if (result.begin() != result.end())
-        retval = result.begin()->movable;
-    return retval;
+    RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
+    return hit.m_object;
 }
 
 void CombatWnd::DeselectAll()

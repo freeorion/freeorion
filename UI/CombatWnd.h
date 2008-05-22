@@ -9,6 +9,8 @@
 
 #include <GG/Wnd.h>
 
+#include <boost/ptr_container/ptr_vector.hpp>
+
 
 namespace Ogre {
     class Camera;
@@ -21,6 +23,13 @@ namespace Ogre {
 }
 class System;
 class FPSIndicator;
+
+class btDefaultCollisionConfiguration;
+class btCollisionDispatcher;
+class bt32BitAxisSweep3;
+class btCollisionWorld;
+class btCollisionShape;
+class btCollisionObject;
 
 class CombatWnd :
     public GG::Wnd,
@@ -84,7 +93,6 @@ private:
     Ogre::Camera* m_camera;
     Ogre::SceneNode* m_camera_node;
     Ogre::Viewport* m_viewport;
-    Ogre::RaySceneQuery* m_ray_scene_query;
     Ogre::PlaneBoundedVolumeListSceneQuery* m_volume_scene_query;
 
     Ogre::Animation* m_camera_animation;
@@ -108,6 +116,14 @@ private:
     std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > > m_planet_assets;
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
+
+    // The collision detection system
+    btDefaultCollisionConfiguration* m_collision_configuration;
+    btCollisionDispatcher* m_collision_dispatcher;
+    bt32BitAxisSweep3* m_collision_broadphase;
+    btCollisionWorld* m_collision_world;
+    boost::ptr_vector<btCollisionShape> m_collision_shapes;
+    boost::ptr_vector<btCollisionObject> m_collision_objects;
 
     Ogre::Real m_initial_left_horizontal_flare_scroll;
     Ogre::Real m_initial_right_horizontal_flare_scroll;
