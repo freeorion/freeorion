@@ -137,6 +137,9 @@ Time interval, in seconds, after which the multiplayer chat window will disappea
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
 The number of outgoing messages to keep in the chat edit box history.
 
+OPTIONS_DB_GALAXY_MAP_GAS
+Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
@@ -159,10 +162,10 @@ OPTIONS_DB_SHOW_FPS
 Toggles FPS display on or off.
 
 OPTIONS_DB_LIMIT_FPS
-Toggles FPS limiting on or off.  Limit is set with with max-fps option.
+Toggles FPS limiting on or off.  Limit is set with Max FPS option.
 
 OPTIONS_DB_MAX_FPS
-Toggles FPS limit, if enabled.  Limiting is toggled with limit-fps.
+Toggles FPS limit, if enabled.  Limiting is toggled with Limit FPS.
 
 OPTIONS_DB_UI_SOUND_ENABLED
 Toggles UI sound effects on or off.
@@ -211,6 +214,9 @@ The sound file played when mouse moves over a fleet button.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
 The sound file played when a fleet button is clicked.
+
+OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
+The sound file played when mouse moves over a system icon.
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 The sound file played when the system side-panel is opened.
@@ -556,8 +562,10 @@ Verbindung zum Server
 
 LAN_GAME_LABEL
 Lan Spiel an:
+
 INTERNET_GAME_LABEL
 Internet Spiel an:
+
 PLAYER_NAME_LABEL
 Spielername
 
@@ -566,8 +574,10 @@ Spielername
 
 HOST_GAME_BN
 Ein neues Spiel ausrichten
+
 JOIN_GAME_BN
 Einem Spiel beitreten
+
 REFRESH_LIST_BN
 Aktualisieren
 
@@ -619,34 +629,48 @@ Name des Imperiums
 GSETUP_EMPIRE_COLOR
 Farbe des Imperiums
 
+GSETUP_NUMBER_AIS
+Anzahl an KI Spielern
+
 
 #Drop-down list labels and choices####
 
 GSETUP_STARS
 Sterne
+
 GSETUP_SHAPE
 Galaxieform
+
 GSETUP_AGE
 Galaxiealter
+
 GSETUP_STARLANE_FREQ
 Sternstrassen
+
 GSETUP_PLANET_DENSITY
 Planetendichte
+
 GSETUP_SPECIALS_FREQ
 Specials
 
 GSETUP_2ARM
 Spirale, 2-armig
+
 GSETUP_3ARM
 Spirale, 3-armig
+
 GSETUP_4ARM
 Spirale, 4-armig
+
 GSETUP_CLUSTER
 Haufen
+
 GSETUP_ELLIPTICAL
 Ellipse
+
 GSETUP_IRREGULAR
 Chaos
+
 GSETUP_RING
 Ring
 
@@ -655,33 +679,43 @@ Keine
 
 GSETUP_YOUNG
 Jung
+
 GSETUP_MATURE
 Alt
+
 GSETUP_ANCIENT
 Uralt
 
 GSETUP_FEW
 Ein paar
+
 GSETUP_SOME
 Wenige
+
 GSETUP_SEVERAL
 Einige
+
 GSETUP_MANY
 Viele
+
 GSETUP_VERY_MANY
 Sehr viele
 
 GSETUP_LOW
 Niedrig
+
 GSETUP_MEDIUM
 Mittel
+
 GSETUP_HIGH
 Hoch
 
 GSETUP_RARE
 Kaum
+
 GSETUP_UNCOMMON
 Selten
+
 GSETUP_COMMON
 Gelegentlich
 
@@ -847,6 +881,12 @@ Chat Vergangenheit
 OPTIONS_CHAT_HIDE
 Chat Versteckdauer
 
+OPTIONS_GALAXY_MAP
+Galaxy Map
+
+OPTIONS_GALAXY_MAP_GAS
+Galaxy map gas rendering
+
 OPTIONS_MUSIC
 Musik
 
@@ -879,6 +919,9 @@ Fleet Button Click
 
 OPTIONS_SOUND_FLEET_ROLLOVER
 Fleet Button Rollover
+
+OPTIONS_SOUND_SYSTEM_ROLLOVER
+System Icon Rollover
 
 OPTIONS_SOUND_WINDOW
 Allgemein
@@ -1099,22 +1142,39 @@ RP_SECONDARY_FOCUS_TOOLTIP
 Secondary Focus: %1%
 
 RP_FOOD
-Food Production
+Produktion Nahrung
 
 RP_MINERALS
-Minerals Production
+Produktion Mineralien
 
 RP_INDUSTRY
-Industrial Output
+Industriekapazität
 
 RP_RESEARCH
-Research Output
+Forschungskapazität
 
 RP_TRADE
-Trade Level
+Handelsvolumen
 
 RP_CONSTRUCTION
-Construction Infrastructure
+Konstruktion Infrastruktur
+
+## Military Panel ##########
+
+MP_SUPPLY
+Flt.Unterst.
+
+MP_SHIELD
+Planetarer Schild
+
+MP_DEFENSE
+Planetare Verteid.
+
+MP_DETECTION
+Erkennung
+
+MP_STEALTH
+Tarnung
 
 ## Buildings Panel##########
 
@@ -1127,36 +1187,42 @@ BP_COMPLETE_BUILDING_TOOLTIP
 ## General Tooltips#########
 
 TT_CURRENT
-Current
+Derzeit
 
 TT_NEXT
-Next Turn
+Nächste Runde
 
 TT_CHANGE
-Change
+Änderung
 
 TT_MAX_METER
 Max Meter: %1%
 
 TT_BASIC_FOCUS_AND_UNIVERSE
-Basic Focus and Universe
+Basis-Fokus und Universum
 
 TT_TECH
 %1% Tech <i>%2%</i>
 
 TT_BUILDING
-%1% Building <i>%2%</i>
+%1% Gebäude <i>%2%</i>
+
+TT_SHIP_HULL
+Schiff <i>%1%</i> Hülle <i>%2%</i>
+
+TT_SHIP_PART
+Schiff <i>%1%</i> Teil <i>%2%</i>
 
 TT_SPECIAL
-Special <i>%1%</i>
+Spezial <i>%1%</i>
 
 TT_UNKNOWN
-Unknown
+Unbekannt
 
 ## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
-unbekanntes System
+Unbekanntes System
 
 SP_SYSTEM_NAME
 %1%
@@ -1293,7 +1359,7 @@ Ermöglicht
 #######################
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Insgesamt verfügbare Punkte
+Insg. verfügbare Punkte
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
@@ -1408,11 +1474,14 @@ Design Beschreibung
 DESIGN_NO_PART
 Nichts
 
+DESIGN_WND_STARTS
+Design Starten
+
 DESIGN_WND_HULLS
 Leerer Rumpf
 
 DESIGN_WND_FINISHED_DESIGNS
-Beende Designs
+Fertige Designs
 
 DESIGN_WND_SAVED_DESIGNS
 Gespeicherte Designs
@@ -1711,16 +1780,22 @@ Der Orbit dieses Planeten ist sehr exzentrisch; der Unterschied zwischen seiner 
 
 OBJ_BUILDING
 Gebäude
+
 OBJ_SHIP
 Schiff
+
 OBJ_FLEET
 Flotte
+
 OBJ_PLANET
 Planet
+
 OBJ_POP_CENTER
 Bevölkerungszentrum
+
 OBJ_PROD_CENTER
 Produktionszentrum
+
 OBJ_SYSTEM
 System
 
@@ -1729,16 +1804,22 @@ System
 
 STAR_BLUE
 blau
+
 STAR_WHITE
 weiß
+
 STAR_YELLOW
 gelb
+
 STAR_ORANGE
 orange
+
 STAR_RED
 rot
+
 STAR_NEUTRON
 Neutronenstern
+
 STAR_BLACK
 schwarzes Loch
 
@@ -1747,24 +1828,34 @@ schwarzes Loch
 
 PT_SWAMP
 sumpfig
+
 PT_TOXIC
 toxisch
+
 PT_INFERNO
 vulkanisch
+
 PT_RADIATED
 verstrahlt
+
 PT_BARREN
 unfruchtbar
+
 PT_TUNDRA
 arktisch
+
 PT_DESERT
 arid
+
 PT_TERRAN
 erdähnlich
+
 PT_OCEAN
 ozeanisch
+
 PT_ASTEROIDS
 Asteroiden
+
 PT_GASGIANT
 Gasriese
 
@@ -1773,18 +1864,25 @@ Gasriese
 
 SZ_NOWORLD
 Es gibt nichts zu sehen; weitergehen.
+
 SZ_TINY
 winzig
+
 SZ_SMALL
 klein
+
 SZ_MEDIUM
 mittel
+
 SZ_LARGE
 groß
+
 SZ_HUGE
 gewaltig
+
 SZ_ASTEROIDS
 Asteroiden
+
 SZ_GASGIANT
 Gasriese
 
@@ -1793,12 +1891,16 @@ Gasriese
 
 PE_UNINHABITABLE
 unbewohnbar
+
 PE_HOSTILE
 schrecklich
+
 PE_POOR
 poor
+
 PE_ADEQUATE
 angemessen
+
 PE_GOOD
 gut
 
@@ -1807,16 +1909,22 @@ gut
 
 FOCUS_UNKNOWN
 unbekannt
+
 FOCUS_BALANCED
 ausgeglichen
+
 FOCUS_FARMING
 Landwirtschaft
+
 FOCUS_INDUSTRY
 Industrie
+
 FOCUS_MINING
 Bergbau
+
 FOCUS_RESEARCH
 Forschung
+
 FOCUS_TRADE
 Handel
   
@@ -1825,30 +1933,43 @@ Handel
 
 METER_POPULATION
 Bevölkerung
+
 METER_FARMING
 Landwirtschaft
+
 METER_INDUSTRY
 Industrie
+
 METER_RESEARCH
 Forschung
+
 METER_TRADE
 Handel
+
 METER_MINING
 Bergbau
+
 METER_CONSTRUCTION
 Konstruktion
+
 METER_HEALTH
 Gesundheit
+
 METER_FUEL
 Treibstoff
+
 METER_SUPPLY
 Supply
+
 METER_STEALTH
 Tarnung
+
 METER_DETECTION
 Erkennung
+
 METER_SHIELD
 Schilde
+
 METER_DEFENSE
 Verteid.
 
@@ -1857,8 +1978,10 @@ Verteid.
 
 AFFIL_SELF
 Eigenes
+
 AFFIL_ENEMY
 Gegner
+
 AFFIL_ALLY
 Verbündeter
 
@@ -1867,8 +1990,10 @@ Verbündeter
 
 UIT_BUILDING
 Gebäude
+
 UIT_SHIP_PART
 Schiffteil
+
 UIT_SHIP_HULL
 Schiffsrumpf
 
@@ -1876,8 +2001,10 @@ Schiffsrumpf
 
 TT_THEORY
 Theorie
+
 TT_APPLICATION
 Anwendung
+
 TT_REFINEMENT
 Spezifikation
 
@@ -1886,10 +2013,13 @@ Spezifikation
 
 BT_NOT_BUILDING
 nichts
+
 BT_BUILDING
 Gebäude
+
 BT_SHIP
 Schiff
+
 BT_ORBITAL
 Orbital
 
@@ -1898,8 +2028,10 @@ Orbital
 
 ST_FOOD
 Nahrung
+
 ST_MINERAL
 Mineralien
+
 ST_TRADE
 Handel
 
@@ -2390,7 +2522,7 @@ Schiffe
 ####################################
 
 THEORY_SHORT_DESC
-Theoretical Prerequisite
+Theoret. Vorraussetzung
 
 LRN_PHYS_BRAIN
 Das physikalische Gehirn
@@ -2871,6 +3003,24 @@ Increases Planet Population
 FLEET_RANGE_DESC
 Improves Fleet Supply
 
+CON_TERRAFORM
+Terraforming
+
+CON_TERRAFORM_DESC
+Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical.  The precise method depends greatly on the type of planet to be changed and the desired result.  However in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust.  The process takes years.
+
+CON_TERRAFORM_SHORT_DESC
+Allows terraforming to improve planets
+
+CON_RAPID_TERRAFORM
+Rapid Terraforming
+
+CON_RAPID_TERRAFORM_DESC
+Advances in orbital deployment now enable any terrestrial planet in an inhabited system to be terraformed to any environmental preference. Nanites can accomplish the transformation in half the time of conventional methods.
+
+CON_RAPID_TERRAFORM_SHORT_DESC
+Allows rapid and remote terraforming to improve planets
+
 CON_GRAVITY_WELLS
 Schwerkraftgeneratoren
 
@@ -3141,6 +3291,12 @@ Neutronium Extraction
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter.  This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
+SHP_BASE_SHIPYARD
+Basic Shipyard
+
+SHP_BASE_SHIPYARD_DESC
+Rudimentary orbital ship production facility allows new interstellar space ships to be produced in the system where it is built.
+
 SHP_LIGHTHOUSE
 Interstellar Lighthouses
 
@@ -3236,10 +3392,19 @@ Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen ei
 # Building Names & Descriptions #
 #################################
 
-BLD_IMERIAL_PALACE
+BLD_OBSERVATORY
+Observatory
+
+BLD_OBSERVATORY_DESC
+'''The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more reasily detected by friendly planets within range of the Observatory.
+
+Gives +10 to Detection to all friendly planets within distance 200.
+Decreases Stealth on planet where built by 10.'''
+
+BLD_IMPERIAL_PALACE
 Imperialer Palast
 
-BLD_IMERIAL_PALACE_DESC
+BLD_IMEPRIAL_PALACE_DESC
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +5 to max construction.
 
 BLD_SHIPYARD_BASE
@@ -3294,7 +3459,7 @@ BLD_INDUSTRY_CENTRE
 Lokales Industriezentrum
 
 BLD_INDUSTRY_CENTRE_DESC
-Wird durch lokale Industriezentren verfügbar.\n\nErzeugt anfänglich +5 Industrie für Planeten mit Fokus auf Industrie (nicht kumulativ), die innerhalb eines Radius von 100 des Zentrums liegen.\n\nDie Erweiterung "erweitertes lokales Industriezentrum" erhöht den Bonus auf +6 und erhöht den Radius auf 200.\n\nDie Erweiterung "hochentwickeltes lokales Industriezentrum" erhöht den Bonus auf +7 und den Radius auf 300.
+'''Wird durch lokale Industriezentren verfügbar.\n\nErzeugt anfänglich +5 Industrie für Planeten mit Fokus auf Industrie (nicht kumulativ), die innerhalb eines Radius von 100 des Zentrums liegen.\n\nDie Erweiterung "erweitertes lokales Industriezentrum" erhöht den Bonus auf +6 und erhöht den Radius auf 200.\n\nDie Erweiterung "hochentwickeltes lokales Industriezentrum" erhöht den Bonus auf +7 und den Radius auf 300.
 
 [[tech PRO_INDUSTRY_CENTRE_II]] refinement increases bonus to +6 and increases distance to 200.
 
@@ -3438,56 +3603,61 @@ Ein ökonomischer Abfluss stört aktiv den Handel in seiner Umgebung. Der Effekt b
 
 SR_LASER
 Laser
+
 SR_LASER_DESC
-Lower power and mass
+Wenig Durchschlagskraft und Masse
 
 SR_ION_CANNON
-Ion Cannon
+Ionenkanone
+
 SR_ION_CANNON_DESC
-Moderate power and mass
+Akzeptable Durchschlagskraft und Masse
 
 LR_NUCLEAR_MISSILE
-Nuclear Missile
+Atomare Rakete
 
 LR_NUCLEAR_MISSILE_DESC
-Long range moderate power
+Hohe Reichweite und akzeptable Durchschlagskraft
 
 DT_ACTIVE_RADAR
-Active Radar
+Aktiver Radar
 
 DT_ACTIVE_RADAR_DESC
 Moderate power detection with large stealth penalty to mounting ship.
 
 FU_DEUTERIUM_TANK
-Deuterium Tank
+Deuterium-Tank
 
 FU_DEUTERIUM_TANK_DESC
 Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
 
 FU_ANTIMATTER_TANK
-Antimatter Tank
+Antimaterien-Tank
 
 FU_ANTIMATTER_TANK_DESC
 Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
 
 ST_EM_DAMPER
-Electromagnetic Damper
+Elektromagnetische Dämpfung
 
 ST_EM_DAMPER_DESC
 Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
 
 AR_LEAD_PLATE
-Lead Armour Plating
+Panzer aus Blei
+
 AR_LEAD_PLATE_DESC
 Weak defense with large mass
 
 SH_DEFENSE_GRID
 Defense Grid
+
 SH_DEFENSE_GRID_DESC
 Weak defense with no extra mass
 
 SH_DEFLECTOR
-Deflector Shield
+Deflektor-Schild
+
 SH_DEFLECTOR_DESC
 Strong defense with small mass
 
@@ -3509,26 +3679,30 @@ Colonists are kept in suspended animation during colonization journey, eliminati
 
 SH_EMPTY
 Leerer Rumpf
+
 SH_EMPTY_DESC
 Billig und schnell, jedoch keine Slots
 
-
 SH_SMALL
 Kleiner Rumpf
+
 SH_SMALL_DESC
 Wenige Slots aber hohe Geschwindigkeit
 
 SH_MEDIUM
 Medium Hull
+
 SH_MEDIUM_DESC
 Einige Slots und normale Geschwindigkeit
 
 SH_LARGE
 Large Hull
+
 SH_LARGE_DESC
 Viele Slots aber niedrige Geschwindigkeit
 
 SH_HUGE
 Huge Hull
+
 SH_HUGE_DESC
 Sehr viele Slots aber sehr niedrige Geschwindigkeit
