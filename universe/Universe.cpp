@@ -296,7 +296,7 @@ Universe::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const 
 bool Universe::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const
 {
     return (this->source_object_id < right.source_object_id ||
-        !(this->source_object_id < right.source_object_id) && this->effects_group < right.effects_group);
+        (this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group);
 }
 
  /////////////////////////////////////////////
