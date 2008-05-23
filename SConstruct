@@ -366,7 +366,8 @@ int main() {
         if not found_it_with_pkg_config:
             if str(Platform()) == 'win32':
                 env.AppendUnique(LIBS = [
-                    'BulletCollision.lib'
+                    'libbulletcollision.lib',
+                    'libbulletmath.lib'
                     ])
             else:
                 if conf.CheckLibWithHeader('bulletmath', 'LinearMath/btVector3.h', 'C++', 'btVector3();', False):
@@ -560,7 +561,10 @@ if str(Platform()) == 'win32':
         '_USRDLL',
         '_WINDLL'
         ])
-    env.AppendUnique(LINKFLAGS = ['/SUBSYSTEM:CONSOLE', '/DEBUG'])
+    env.AppendUnique(LINKFLAGS = [
+        '/SUBSYSTEM:CONSOLE',
+        '/DEBUG'
+        ])
     env.AppendUnique(LIBS = [
         'comdlg32',
         'gdi32',
