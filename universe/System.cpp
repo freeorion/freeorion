@@ -231,67 +231,107 @@ int System::Insert(UniverseObject* obj)
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
+    Logger().debugStream() << "System::Insert(UniverseObject* obj, int orbit)";
+
     if (!obj)
         throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
+    int obj_id = obj->ID();
+
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-    obj->SetSystem(ID());
-    obj->MoveTo(X(), Y());
-    return Insert(obj->ID(), orbit);
+
+    obj->MoveTo(X(), Y());      // ensure object is physically at same location in universe as this system
+    obj->SetSystem(this->ID()); // should do nothing if object is already in this system, but just to ensure things are consistent...
+
+    // ensure object isn't already in this system (as far as the system is concerned).  If the system already
+    // thinks the object is here, just return its current orbit and don't change anything.
+    for (orbit_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (it->second == obj_id) {
+            return it->first;
+        }
+    }
+
+    // ensure this system has enough orbits to contain object
+    if (m_orbits <= orbit)
+        m_orbits = orbit + 1;
+
+    // record object in this system's record of objects in each orbit
+    std::pair<int, int> insertion(orbit, obj_id);
+    m_objects.insert(insertion);
+
+
+    // special cases for if object is a planet or fleet
+    if (Planet* planet = universe_object_cast<Planet*>(obj))
+        UpdateOwnership();
+    else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
+        FleetAddedSignal(*fleet);
+
+    StateChangedSignal();
+
+    return orbit;
 }
 
 int System::Insert(int obj_id, int orbit)
 {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-    if (!GetUniverse().Object(obj_id))
+    UniverseObject* object = GetUniverse().Object(obj_id);
+    if (!object)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
-    if (m_orbits <= orbit)
-        m_orbits = orbit + 1;
-    std::pair<int, int> insertion(orbit, obj_id);
-    bool already_in_system = false;
-    for (orbit_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->second == obj_id) {
-            already_in_system = true;
-            break;
-        }
-    }
-    if (!already_in_system) {
-        m_objects.insert(insertion);
-        if (GetUniverse().Object<Planet>(obj_id))
-            UpdateOwnership();
-        if (Fleet *fleet = GetUniverse().Object<Fleet>(obj_id))
-            FleetAddedSignal(*fleet);
-        StateChangedSignal();
-    }
-    return orbit;
+
+    return Insert(object, orbit);
 }
 
-bool System::Remove(int id)
+void System::Remove(UniverseObject* obj)
 {
-    bool retval = false;
+    Logger().debugStream() << "System::Remove( " << obj->Name() <<" )";
+
+    // ensure object and its contents are all removed from system
+    std::vector<UniverseObject*> contained_objects = obj->FindObjects();
+    for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it)
+        this->Remove(*it);
+
+
+    if (obj->SystemID() != this->ID())
+        Logger().debugStream() << "System::Remove tried to remove an object whose system id was not this system.  Its current system id is: " << obj->SystemID();
+
+
+    // locate object in this system's map of objects, and erase if present
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->second == id) {
+        Logger().debugStream() << "..system object id " << it->second;
+        if (it->second == obj->ID()) {
             m_objects.erase(it);
-            retval = true;
-            if (GetUniverse().Object<Planet>(id))
+
+            obj->SetSystem(INVALID_OBJECT_ID);
+
+            Logger().debugStream() << "....erased from system";
+
+            // UI bookeeping
+            if (Planet* planet = universe_object_cast<Planet*>(obj))
                 UpdateOwnership();
-            if (Fleet *fleet = GetUniverse().Object<Fleet>(id))
-                FleetRemovedSignal(*fleet);
+            else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
+                FleetAddedSignal(*fleet);
             StateChangedSignal();
-            break;
+
+            return; // assuming object isn't in system twice...
         }
     }
-    return retval;
+
+
+    // didn't find object
+    Logger().errorStream() << "System::Remove didn't find object in system";
+}
+
+void System::Remove(int id)
+{
+    Remove(GetUniverse().Object(id));
 }
 
 void System::SetStarType(StarType type)
 {
     m_star = type;
-    if (m_star <= INVALID_STAR_TYPE)
-        m_star = STAR_BLUE;
-    if (NUM_STAR_TYPES <= m_star)
-        m_star = STAR_BLACK;
+    if (m_star <= INVALID_STAR_TYPE || NUM_STAR_TYPES <= m_star)
+        Logger().errorStream() << "System::SetStarType set star type to " << boost::lexical_cast<std::string>(type);
     StateChangedSignal();
 }
 

@@ -189,20 +189,7 @@ void PopCenter::PopGrowthProductionResearchPhase()
     Meter* pop = GetMeter(METER_POPULATION);
     Meter* health = GetMeter(METER_HEALTH);
 
-    GetMeter(METER_POPULATION)->AdjustCurrent(FuturePopGrowth());
-    if (AvailableFood() < pop->Current()) { // starvation
-        //object->AddSpecial("STARVATION_SPECIAL");
-        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][0]);
-    } else if (m_available_food < 2 * pop->Current()) { // "minimal" nutrient levels
-        //object->RemoveSpecial("STARVATION_SPECIAL");
-        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][1]);
-    } else if (m_available_food < 4 * pop->Current()) { // "normal" nutrient levels
-        //object->RemoveSpecial("STARVATION_SPECIAL");
-        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][2]);
-    } else { // food orgy!
-        //object->RemoveSpecial("STARVATION_SPECIAL");
-        //health->AdjustMax(PlanetDataTables()["NutrientHealthMod"][0][3]);
-    }
+    pop->AdjustCurrent(FuturePopGrowth());
     health->AdjustCurrent(health->InitialCurrent() * (((health->InitialMax() + 1.0) - health->InitialCurrent()) / (health->InitialMax() + 1.0)));
 }
 

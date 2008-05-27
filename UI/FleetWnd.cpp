@@ -376,14 +376,15 @@ namespace {
             }
         }
 
-        const Ship* const m_ship;
-        GG::StaticGraphic* m_ship_icon;
-        GG::TextControl* m_ship_name_text;
-        StatisticIcon* m_ship_strength_stat;
-        StatisticIcon* m_damage_stat;
-        GG::StaticGraphic* m_colonizer_icon;
-        bool m_selected;
-        boost::signals::connection m_ship_connection;
+        const Ship* const           m_ship;
+        GG::StaticGraphic*          m_ship_icon;
+        GG::TextControl*            m_ship_name_text;
+        StatisticIcon*              m_ship_strength_stat;
+        StatisticIcon*              m_damage_stat;
+        StatisticIcon*              m_fuel_stat;
+        GG::StaticGraphic*          m_colonizer_icon;
+        bool                        m_selected;
+        boost::signals::connection  m_ship_connection;
     };
 
     /** A ListBox::Row subclass used to represent fleets in FleetsListBox's. */
@@ -1056,18 +1057,41 @@ std::string FleetDetailPanel::DestinationText() const
     System* dest = m_fleet->FinalDestination();
     System* current = m_fleet->GetSystem();
     if (dest && dest != current) {
-        std::pair<int, int> eta = m_fleet->ETA();
-        if (eta.first > 0) {
-            retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) % (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) % eta.first);
-            if (eta.first != eta.second)
-                retval += "(" + boost::lexical_cast<std::string>(eta.second) + ")";
-        } else if (eta.first == Fleet::ETA_UNKNOWN) {
-            retval = boost::io::str(boost::format(UserString("FW_FLEET_MOVING_TO")) %
-                                    (dest->Name().empty() ? UserString("UNKNOWN_SYSTEM") : dest->Name()) %
-                                    UserString(eta.first == Fleet::ETA_UNKNOWN ? "FW_FLEET_ETA_UNKNOWN" : "FW_FLEET_ETA_NEVER"));
-        }
+        std::pair<int, int> eta = m_fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
+
+        // name of final destination
+        std::string dest_name = dest->Name();
+        if (dest_name.empty())
+            dest_name = UserString("UNKNOWN_SYSTEM");
+
+        // next system on path
+        std::string next_eta_text;
+        if (eta.second == Fleet::ETA_UNKNOWN)
+            next_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
+        else if (eta.second == Fleet::ETA_NEVER)
+            next_eta_text = UserString("FW_FLEET_ETA_NEVER");
+        else if (eta.second == Fleet::ETA_OUT_OF_RANGE)
+            next_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+        else
+            next_eta_text = boost::lexical_cast<std::string>(eta.second);
+
+        // final destination
+        std::string final_eta_text;
+        if (eta.first == Fleet::ETA_UNKNOWN)
+            final_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
+        else if (eta.first == Fleet::ETA_NEVER)
+            final_eta_text = UserString("FW_FLEET_ETA_NEVER");
+        else if (eta.first == Fleet::ETA_OUT_OF_RANGE)
+            final_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+        else
+            final_eta_text = boost::lexical_cast<std::string>(eta.first);
+
+
+        retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) %
+                                            dest_name % final_eta_text % next_eta_text);
+
     } else if (current) {
-        retval = boost::io::str(boost::format(UserString("FW_FLEET_AT")) % current->Name());
+        retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_AT")) % current->Name());
     }
     return retval;
 }

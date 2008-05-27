@@ -116,20 +116,24 @@ public:
 
     /** \name Mutators */ //@{
     /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
-        particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this).*/
+        particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this),
+        and obj->MoveTo( this system's position )*/
     int                     Insert(UniverseObject* obj);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-        objects should be inserted with this function.  This function calls obj->SetSystem(this).  \throw
-        std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
+        objects should be inserted with this function.  This function calls obj->SetSystem(this) and obj->MoveTo( here )
+        \throw std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
     int                     Insert(UniverseObject* obj, int orbit);
 
     /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
         objects should be inserted with this function. */
     int                     Insert(int obj_id, int orbit);
 
-    /** removes the object with ID number \a id from the system, and returns it; returns 0 if there is no such object*/
-    bool                    Remove(int id);
+    /** removes object \a obj from this system. */
+    void                    Remove(UniverseObject* obj);
+
+    /** removes the object with ID number \a id from this system. */
+    void                    Remove(int id);
 
     void                    SetStarType(StarType type);     ///< sets the type of the star in this Systems to \a StarType
     void                    AddStarlane(int id);            ///< adds a starlane between this system and the system with ID number \a id.  \note Adding a starlane to a system to which there is already a wormhole erases the wormhole; you may want to check for a wormhole before calling this function.

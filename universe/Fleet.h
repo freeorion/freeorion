@@ -11,12 +11,13 @@
 ////////////////////////////////////////////////
 /** Contains info about a single notable point on the move path of a fleet or other UniverseObject. */
 struct MovePathNode {
-    MovePathNode(double x_, double y_, bool turn_end_, int eta_) :
-        x(x_), y(y_), turn_end(turn_end_), eta(eta_)
+    MovePathNode(double x_, double y_, bool turn_end_, int eta_, int id_) :
+        x(x_), y(y_), turn_end(turn_end_), eta(eta_), object_id(id_)
     {}
     double x, y;    ///< location in Universe of node
     bool turn_end;  ///< true if the fleet will end a turn at this point
     int eta;        ///< estimated turns to reach this node
+    int object_id;  ///< id of object (most likely a system) located at this node, or INVALID_OBJECT_ID if there is no object here
 };
 
 /** encapsulates data for a FreeOrion fleet.  Fleets are basically a group of ships that travel together. */
@@ -52,7 +53,8 @@ public:
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
     std::list<MovePathNode>             MovePath(const std::list<System*>& route) const;
     std::list<MovePathNode>             MovePath() const;                   ///< Returns MovePath for fleet's current TravelRoute
-    std::pair<int, int>                 ETA() const;                        ///< Returns the number of turns which must elapse before the fleet arrives at its final destination and the turns to the next system, respectively.
+    std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
+    std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
     int                                 FinalDestinationID() const;         ///< Returns ID of system that this fleet is moving to.
     System*                             FinalDestination() const;           ///< Returns system that this fleet is moving to (may be null).
     int                                 PreviousSystemID() const;           ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
@@ -86,12 +88,17 @@ public:
     iterator                end();                                          ///< returns the end iterator for the ships in the fleet
 
     virtual void            SetSystem(int sys);
+    virtual void            Move(double x, double y);
+    virtual void            MoveTo(UniverseObject* object);
+    virtual void            MoveTo(double x, double y);
+
     virtual void            MovementPhase();
     virtual void            PopGrowthProductionResearchPhase();
     //@}
 
-    static const int            ETA_NEVER;
-    static const int            ETA_UNKNOWN;
+    static const int            ETA_NEVER;                                  ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
+    static const int            ETA_UNKNOWN;                                ///< returned when ETA can't be determined
+    static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
 private:
     void                    CalculateRoute() const;                         ///< sets m_travel_route and m_travel_distance to their proper values based on the other member data
@@ -107,7 +114,12 @@ private:
     int                         m_prev_system;                              ///< the next system in the route, if any
     int                         m_next_system;                              ///< the previous system in the route, if any 
 
-    mutable std::list<System*>  m_travel_route;                             ///< Note that this may contain a single null ptr, indicating that the route is unknown, but needs not be recomputed.
+    /** list of systems on travel route of fleet from current position to destination.  If the fleet is
+      * currently in a system, that will be the first system on the list.  Otherwise, the first system on
+      * the list will be the next system the fleet will reach along its path.  The list may also contain a
+      * single null pointer, which indicates that the route is unknown.  The list may also be empty, which
+      * indicates that it has not yet been caluclated, and CalculateRoute should be called. */
+    mutable std::list<System*>  m_travel_route;
     mutable double              m_travel_distance;
 
     friend class boost::serialization::access;

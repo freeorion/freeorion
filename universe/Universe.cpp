@@ -98,7 +98,7 @@ namespace {
                 return i;
         }
 
-        throw std::out_of_range("SystemGraphIndex cannot be found due to invalid system ID");
+        throw std::out_of_range("SystemGraphIndex cannot be found due to invalid system ID " + boost::lexical_cast<std::string>(system_id));
         return -1;
     }
 
@@ -585,7 +585,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     m_effect_discrepancy_map.clear();
     m_effect_accounting_map.clear();
 
-    Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
+    //Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
@@ -635,8 +635,6 @@ void Universe::UpdateMeterEstimates()
 
 void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool update_contained_objects)
 {
-    Logger().debugStream() << "Universe::UpdateMeterEstimates";
-
     if (object_id == UniverseObject::INVALID_OBJECT_ID) {
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         std::vector<int> object_ids;
@@ -820,7 +818,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
 {
-    Logger().debugStream() << "Universe::GetEffectsAndTargets";
+    //Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 1) EffectsGroups from Specials
     for (Universe::const_iterator it = begin(); it != end(); ++it) {
         int source_object_id = it->first;
@@ -949,7 +947,7 @@ void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
-    Logger().debugStream() << "Universe::ExecuteMeterEffects";
+    //Logger().debugStream() << "Universe::ExecuteMeterEffects";
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
@@ -1092,7 +1090,7 @@ void Universe::Destroy(int id)
         m_objects.erase(id);
         m_destroyed_objects[id] = obj;
     } else {
-        Logger().debugStream() << "Universe::Destroy called for nonexistant object with id: " << id;
+        Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << id;
     }
 
     s_inhibit_universe_object_signals = false;
@@ -2858,6 +2856,11 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
     homeworlds.clear();
 
     std::vector<System*> sys_vec = FindObjects<System>();
+    Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
+    for (std::vector<System*>::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        const System* sys = *it;
+        Logger().debugStream() << "... sys ptr: " << sys << " name: " << (sys ? sys->Name() : "no system!?") << " id: " << (sys ? boost::lexical_cast<std::string>(sys->ID()) : "none?!");
+    }
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
@@ -2872,9 +2875,20 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         do {
             too_close = false;
             system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
+            Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
             system = sys_vec[system_index];
+            Logger().debugStream() << "... system ptr: " << system << " name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
+
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
+                Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
                 System* existing_system = Object(homeworlds[j])->GetSystem();
+                Logger().debugStream() << ".... existing system ptr: " << existing_system;
+
+                if (!existing_system) {
+                    Logger().errorStream() << "couldn't find existing system!";
+                    continue;
+                }
+
                 double x_dist = existing_system->X() - system->X();
                 double y_dist = existing_system->Y() - system->Y();
                 if (x_dist * x_dist + y_dist * y_dist < MIN_HOME_SYSTEM_SEPARATION * MIN_HOME_SYSTEM_SEPARATION) {

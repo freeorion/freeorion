@@ -14,7 +14,8 @@ using boost::lexical_cast;
 #include <cmath>
 
 namespace {
-    const double MAX_SHIP_SPEED = 500.0; // max allowed speed of ship movement
+    const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement
+    const double FLEET_MOVEMENT_EPSILON = 1.0e-5;   // how close a fleet needs to be to a system to have arrived in the system
 
     inline bool SystemNotReachable(System* system, int empire_id) {
         return !GetUniverse().SystemReachable(system->ID(), empire_id);
@@ -22,8 +23,9 @@ namespace {
 }
 
 // static(s)
-const int Fleet::ETA_NEVER = -1;
-const int Fleet::ETA_UNKNOWN = -2;
+const int Fleet::ETA_UNKNOWN = (1 << 30);
+const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
+const int Fleet::ETA_NEVER = (1 << 30) - 2;
 
 Fleet::Fleet() : 
     UniverseObject(),
@@ -103,133 +105,197 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
     if (route.empty()) return retval;                                       // nowhere to go => empty path
     if (route.size() == 2 && route.front() == route.back()) return retval;  // nowhere to go => empty path
-    if (this->Speed() < 1.0e-5) return retval;                              // unable to move (epsilon taken from Fleet::MovementPhase())
 
-    MovePathNode cur_pos(this->X(), this->Y(), true, 0);    // initialize to initial position of fleet.
-
-    int running_eta = 1;    // turns to each node
-    double this_turn_travel_dist_left = this->Speed();
-    
-    // simulate moving fleet to each stop along path in sequence, remembering nodes at each stop and 
-    // each time a turn's travel distance runs out
-    for(std::list<System*>::const_iterator next_sys_it = route.begin(); next_sys_it != route.end(); ++next_sys_it) {
-
-        const System* next_sys = *next_sys_it;
-
-        if (GetSystem() && GetSystem() == next_sys) continue;   // don't add system fleet starts in to the path
-
-
-        // get direction and distance to next system
-        double x_dist = next_sys->X() - cur_pos.x;
-        double y_dist = next_sys->Y() - cur_pos.y;
-        double next_sys_dist = std::sqrt(x_dist * x_dist + y_dist * y_dist);
-        double unit_vec_x = x_dist / next_sys_dist;
-        double unit_vec_y = y_dist / next_sys_dist;
-        
-        
-        // take turn-travel-distance steps until next system is reached
-        while (next_sys_dist > 1.0e-5) {   // epsilon taken from Fleet::MovementPhase()
-
-            if (next_sys_dist > this_turn_travel_dist_left) {
-                // system is further away than the fleet can travel this turn -> take the rest of this turn's movement
-
-                // set current position to position after this turn's movement
-                double step_vec_x = unit_vec_x * this_turn_travel_dist_left;
-                double step_vec_y = unit_vec_y * this_turn_travel_dist_left;
-                cur_pos.x += step_vec_x;
-                cur_pos.y += step_vec_y;
-                cur_pos.turn_end = true;    // new position is at the end of a turn's movement
-                cur_pos.eta = running_eta;
-
-                // add new node to list
-                retval.push_back(cur_pos);
-
-                // update distance to next system to account for this turn's movement
-                next_sys_dist -= this_turn_travel_dist_left;
-
-                // next turn, can move a full turn's movement
-                this_turn_travel_dist_left = this->Speed();
-
-                ++running_eta;
-
-            } else {
-                // system can be reached this turn
-
-                // set current position to system's position
-                cur_pos.x = next_sys->X();
-                cur_pos.y = next_sys->Y();
-                cur_pos.turn_end = false;
-                cur_pos.eta = running_eta;
-
-                // add new node to list
-                retval.push_back(cur_pos);
-
-                // update distance that can still be travelled this turn
-                this_turn_travel_dist_left -= next_sys_dist;
-
-                // have arrived at system ensure inner loop ends and next system is fetched
-                next_sys_dist = 0.0;
-
-                // TO DO: Account for fuel use.  If fleet has insufficient fuel, it can't move towards the next system
-            }
-        }
+    if (this->Speed() < FLEET_MOVEMENT_EPSILON) {                           // can't move => ETA is never
+        retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_NEVER, this->SystemID()));
+        return retval;
     }
-    return retval;
-}
 
-std::pair<int, int> Fleet::ETA() const
-{
-    // if route is unknown, ETA is unknown
-    if (UnknownRoute())
-        return std::make_pair(ETA_UNKNOWN, ETA_UNKNOWN);
-
-    // if next system is an invalid system id, the fleet isn't moving, so ETA is 0
-    if (m_next_system == UniverseObject::INVALID_OBJECT_ID)
-        return std::make_pair(0, 0);
-
-    // if fleet can't move, ETA is never
-    if (m_speed <= 0.0)
-        return std::make_pair(ETA_NEVER, ETA_NEVER);
-
-    // otherwise, need to do calcuations to determine ETA
-    std::pair<int, int> retval(ETA_NEVER, ETA_NEVER);
-
-    CalculateRoute();
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
+    // and determine the maximum amount of fuel that can be stored by the ship in the fleet that
+    // can store the least amount of fuel
     const Universe& universe = GetUniverse();
-    double fuel = Meter::METER_MAX;
+    double fuel = Meter::METER_MAX, max_fuel = Meter::METER_MAX;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = universe.Object<Ship>(*ship_it);
         assert(ship);
-        fuel = std::min(fuel, ship->MeterPoints(METER_FUEL));
+        const Meter* meter = ship->GetMeter(METER_FUEL);
+        assert(meter);
+        fuel = std::min(fuel, meter->Current());
+        max_fuel = std::min(max_fuel, meter->Max());
     }
 
-    //// if fleet has no fuel, it can't move
-    //if (fuel < 1.0)
-    //    return std::make_pair(ETA_NEVER, ETA_NEVER);
 
-    // if fuel doesn't limit speed, ETA is just distance / speed
-    retval.first = static_cast<int>(std::ceil(m_travel_distance / m_speed));
-    if (retval.first > 500)
-        retval.first = ETA_NEVER;   // avoid overly-large ETA numbers
+    // determine all systems where fleet(s) can be resupplied if fuel runs out
+    std::set<int> fleet_supplied_systems;
+    const std::set<int>& owners = this->Owners();
+    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+        const Empire* empire = Empires().Lookup(*it);
+        std::set<int> empire_fleet_supplied_systems;
+        if (empire)
+            empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
+        fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
+    }
 
-    if (!m_travel_route.empty()) {
-        std::list<System*>::iterator next_system_it = m_travel_route.begin();
-        if (SystemID() == m_travel_route.front()->ID())
-            ++next_system_it;
-        assert(next_system_it != m_travel_route.end());
-        System* next = *next_system_it;
-        if (next == m_travel_route.back()) {
-            retval.second = retval.first;
+
+    // node for initial position of fleet
+    MovePathNode cur_pos(this->X(), this->Y(), true, 0, this->SystemID());
+    retval.push_back(cur_pos);
+
+
+    // get current system of fleet, if it is in a system, and next system reached in path
+    const System* cur_system = 0;
+    std::list<System*>::const_iterator route_it = route.begin();
+    if ((*route_it)->ID() == SystemID()) {
+        cur_system = *route_it;
+        ++route_it;
+    }
+    if (route_it == route.end())
+        return retval;
+    const System* next_system = *route_it;
+
+    MovePathNode next_sys_pos(next_system->X(), next_system->Y(), false, -1, next_system->SystemID());
+
+
+    double dist_to_next_system = std::sqrt((next_sys_pos.x - cur_pos.x)*(next_sys_pos.x - cur_pos.x) + (next_sys_pos.y - cur_pos.y)*(next_sys_pos.y - cur_pos.y));
+    double turn_dist_remaining = m_speed;                           // additional distance that can be travelled in current turn of fleet movement being simulated
+    bool new_turn = true;                                           // does / should the next update iteration be the start of a new turn?
+
+
+    // count turns to get to destination by simulating movement steps, accounting for fuel needs and resupply
+
+    const int TOO_LONG = 200;                                       // limit on turns to simulate
+    int turns_taken = 0;
+
+    while (turns_taken <= TOO_LONG) {
+        // check for arrival at next system on path
+        if (dist_to_next_system < FLEET_MOVEMENT_EPSILON) {
+            // update current system and position, and next system and position
+            cur_system = next_system;
+
+            cur_pos.x = next_system->X();
+            cur_pos.y = next_system->Y();
+            cur_pos.eta = turns_taken;
+            cur_pos.turn_end = false;
+            cur_pos.object_id = next_system->ID();
+
+            retval.push_back(cur_pos);
+
+            ++route_it;
+            if (route_it == route.end())
+                break;
+
+            next_system = *route_it;
+            next_sys_pos.x = next_system->X();
+            next_sys_pos.y = next_system->Y();
+            next_sys_pos.eta = ETA_UNKNOWN;
+            next_sys_pos.turn_end = false;
+            next_sys_pos.object_id = next_system->ID();
+
+            dist_to_next_system = std::sqrt((next_sys_pos.x - cur_pos.x)*(next_sys_pos.x - cur_pos.x) + (next_sys_pos.y - cur_pos.y)*(next_sys_pos.y - cur_pos.y));
+        }
+
+
+        // if this iteration is the start of a new simulated turn, distance to be travelled this turn is reset and turns taken incremented
+        if (new_turn) {
+            ++turns_taken;
+            cur_pos.eta = turns_taken;
+            turn_dist_remaining = m_speed;
+        }
+
+
+        // if this iteration starts at a system, the fleet must have fuel to start the next starlane jump.  if the fleet
+        // doesn't have enough fuel to jump, it may be able to be resupplied by spending a turn in this sytem
+        if (cur_system) {
+            if (fuel >= 1.0) {
+                fuel -= 1.0;                // can start next jump this turn.  turn_dist_remaining is unchanged
+                new_turn = false;
+            } else {
+                turn_dist_remaining = 0.0;  // can't progress this turn due to lack of fuel
+
+                // if a new turn started this update, the fleet has a chance to get fuel by waiting for a full turn in current system
+                if (new_turn) {
+                    // determine if current system is one where fuel can be supplied
+                    std::set<int>::const_iterator it = fleet_supplied_systems.find(cur_system->ID());
+                    if (it != fleet_supplied_systems.end()) {
+                        // fleet supply is available, so give it
+                        fuel = max_fuel;
+                        // turn_dist_remaining is zero, so new_turn will remain true; must wait a full turn without moving to refuel
+                    } else {
+                        // started a new turn with insufficient fuel to move, and can't get any more fuel by waiting, so can never get to destination.
+                        turns_taken = ETA_OUT_OF_RANGE;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        // move ship as far as it can go this turn, or to next system, whichever is closer, and deduct distance travelled from distance
+        // travellable this turn
+        if (turn_dist_remaining >= FLEET_MOVEMENT_EPSILON) {
+            double dist_travelled_this_step = std::min(turn_dist_remaining, dist_to_next_system);
+
+            double x_dist = next_sys_pos.x - cur_pos.x;
+            double y_dist = next_sys_pos.y - cur_pos.y;
+            // dist_to_next_system = std::sqrt(x_dist * x_dist + y_dist * y_dist);  // should already equal this distance, so don't need to recalculate
+            double unit_vec_x = x_dist / dist_to_next_system;
+            double unit_vec_y = y_dist / dist_to_next_system;
+
+            cur_pos.x += unit_vec_x*dist_travelled_this_step;
+            cur_pos.y += unit_vec_y*dist_travelled_this_step;
+
+            turn_dist_remaining -= dist_travelled_this_step;
+            dist_to_next_system -= dist_travelled_this_step;
+
+            if (dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON && dist_to_next_system >= FLEET_MOVEMENT_EPSILON)
+                cur_system = 0;
+        }
+
+
+        // if fleet can't move, must wait until next turn for another chance to move
+        if (turn_dist_remaining < FLEET_MOVEMENT_EPSILON) {
+            turn_dist_remaining = 0.0;  // to prevent any possible precision-related errors
+            new_turn = true;
         } else {
-            double x = next->X() - X();
-            double y = next->Y() - Y();
-            retval.second = static_cast<int>(std::ceil(std::sqrt(x * x + y * y) / m_speed));
+            new_turn = false;
         }
     }
 
+    if (turns_taken >= TOO_LONG) {
+        next_sys_pos.eta = turns_taken;
+        next_sys_pos.turn_end = true;
+        retval.push_back(next_sys_pos);
+    }
+
     return retval;
+}
+
+
+std::pair<int, int> Fleet::ETA() const
+{
+    return ETA(MovePath());
+}
+
+std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const
+{
+    // check that path exists.  if empty, there was no valid route or some other problem prevented pathing
+    if (move_path.empty())
+        return std::make_pair(ETA_UNKNOWN, ETA_UNKNOWN);
+
+    // check for single node in path.  return the single node's eta as both .first and .second (likely indicates that fleet couldn't move)
+    if (move_path.size() == 1) {
+        const MovePathNode& node = *move_path.begin();
+        return std::make_pair(node.eta, node.eta);
+    }
+
+    // general case: there is a multi-node path.  return the second (first after initial position of fleet) and last nodes' ETAs
+    std::list<MovePathNode>::const_iterator it = move_path.begin();
+    ++it;
+    const MovePathNode& first = *it;
+    const MovePathNode& last = *move_path.rbegin();
+    return std::make_pair(last.eta, first.eta);
 }
 
 int Fleet::FinalDestinationID() const
@@ -431,6 +497,7 @@ bool Fleet::RemoveShip(int ship)
 
 void Fleet::SetSystem(int sys)
 {
+    Logger().debugStream() << "Fleet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
     for (iterator it = begin(); it != end(); ++it) {
         UniverseObject* obj = GetUniverse().Object(*it);
@@ -439,80 +506,166 @@ void Fleet::SetSystem(int sys)
     }
 }
 
+void Fleet::Move(double x, double y)
+{
+    // move fleet itself
+    UniverseObject::Move(x, y);
+    // move ships in fleet
+    for (iterator it = begin(); it != end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->Move(x, y);
+    }
+}
+
+void Fleet::MoveTo(UniverseObject* object)
+{
+    Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
+    UniverseObject::MoveTo(object);
+    // move ships in fleet
+    for (iterator it = begin(); it != end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->MoveTo(object);
+    }
+}
+
+void Fleet::MoveTo(double x, double y)
+{
+    Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
+    // move fleet itself
+    UniverseObject::MoveTo(x, y);
+    // move ships in fleet
+    for (iterator it = begin(); it != end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->MoveTo(x, y);
+    }
+}
+
 void Fleet::MovementPhase()
 {
-    if (m_moving_to != INVALID_OBJECT_ID) {
-        if (m_travel_route.empty())
-            CalculateRoute();
+    Logger().debugStream() << "Fleet::MovementPhase this: " << this;
 
-        if (System* current_system = GetSystem()) {
-            if (current_system == m_travel_route.front())
-                m_travel_route.pop_front();
-            current_system->Remove(ID());
-            SetSystem(INVALID_OBJECT_ID);
-            for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-                current_system->Remove(*it);
-                Ship* ship = GetUniverse().Object<Ship>(*it);
-                if (ship) ship->SetSystem(INVALID_OBJECT_ID);
+    // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
+    // and determine the maximum amount of fuel that can be stored by the ship in the fleet that
+    // can store the least amount of fuel
+    Universe& universe = GetUniverse();
+    double fuel = Meter::METER_MAX;
+    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+        const Ship* ship = universe.Object<Ship>(*ship_it);
+        assert(ship);
+        const Meter* meter = ship->GetMeter(METER_FUEL);
+        assert(meter);
+        fuel = std::min(fuel, meter->Current());
+    }
+
+    System* current_system = GetSystem();
+
+    // if currently in a system, and don't have enough fuel to jump to next system or aren't
+    // ordered to move, can be supplied fuel this turn
+    if (current_system && (fuel < 1.0 || m_moving_to == INVALID_OBJECT_ID)) {
+        // search for this system in systems where fleet(s) can be resupplied if fuel runs out
+
+        // get all supplyable systems
+        std::set<int> fleet_supplied_systems;
+        const std::set<int>& owners = this->Owners();
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+            const Empire* empire = Empires().Lookup(*it);
+            std::set<int> empire_fleet_supplied_systems;
+            if (empire)
+                empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
+            fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
+        }
+
+        // give fuel to ships, if fleet is supplyable at this location
+        if (fleet_supplied_systems.find(current_system->ID()) != fleet_supplied_systems.end()) {
+            for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+                Ship* ship = universe.Object<Ship>(*ship_it);
+                assert(ship);
+                Meter* meter = ship->GetMeter(METER_FUEL);
+                assert(meter);
+                meter->SetCurrent(meter->Max());
+            }
+        }
+        return; // can't move fleet this turn
+    }
+
+    if (m_moving_to == INVALID_OBJECT_ID)
+        return;
+
+    if (m_travel_route.empty())
+        CalculateRoute();
+
+    if (current_system && current_system == m_travel_route.front())
+        m_travel_route.pop_front();
+
+    // Fleet has a destination to move to, and all ships in fleet can move at least to
+    // the next system or a full turn's movement along a starlane, whichever is less
+
+    System* next_system = m_travel_route.front();
+    double movement_left = m_speed;
+    while (movement_left > FLEET_MOVEMENT_EPSILON) {
+        double direction_x = next_system->X() - X();
+        double direction_y = next_system->Y() - Y();
+        double distance = std::sqrt(direction_x*direction_x + direction_y*direction_y);
+
+        // if starting update in a system, need at least one unit of fuel to start a jump
+        if (current_system) {
+            if (fuel < 1.0) {
+                movement_left = 0;
+                break;  // done movement this turn
+            } else {
+                fuel -= 1;  // local tracking of total fleet fuel, so individual ships don't need to be re-checked each update
+                // deduct fuel from ships to make next leg of jump
+                for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+                    Ship* ship = universe.Object<Ship>(*ship_it);
+                    assert(ship);
+                    Meter* meter = ship->GetMeter(METER_FUEL);
+                    assert(meter);
+                    meter->AdjustCurrent(-1.0);
+                }
             }
         }
 
-        System* next_system = m_travel_route.front();
-        double movement_left = m_speed;
-        while (movement_left) {
-            double direction_x = next_system->X() - X();
-            double direction_y = next_system->Y() - Y();
-            double distance = std::sqrt(direction_x * direction_x + direction_y * direction_y);
-            if (distance <= movement_left) {
-                m_travel_route.pop_front();
-                if (m_travel_route.empty()) {
-                    MoveTo(next_system->X(), next_system->Y());
-                    next_system->Insert(this);
-                    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-                        UniverseObject* ship = GetUniverse().Object(*it);
-                        ship->MoveTo(X(), Y());
-                        next_system->Insert(ship);
-                    }
-                    movement_left = 0.0;
-                    m_moving_to = m_prev_system = m_next_system = INVALID_OBJECT_ID;
-                    m_travel_route.clear();
-                    m_travel_distance = 0.0;
-                } else {
-                    MoveTo(next_system->X(), next_system->Y());
-                    next_system = m_travel_route.front();
-                    movement_left -= distance;
-                    m_prev_system = m_next_system;
-                    m_next_system = m_travel_route.front()->ID();
-                    m_travel_distance -= distance;
-                    // if we're "at" this system (within some epsilon), insert this fleet into the system
-                    if (std::abs(movement_left) < 1.0e-5) {
-                        next_system->Insert(this);
-                        for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-                            UniverseObject* ship = GetUniverse().Object(*it);
-                            ship->MoveTo(X(), Y());
-                            next_system->Insert(ship);
-                        }
-                        movement_left = 0.0;
-                    } else {
-                        for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-                            UniverseObject* ship = GetUniverse().Object(*it);
-                            ship->MoveTo(X(), Y());
-                        }
-                    }
-                }
+
+        if (distance <= movement_left) {
+            // can jump all the way to the next system
+
+            m_travel_route.pop_front();
+            if (m_travel_route.empty()) {
+                // next system is final destination.  insert self into it and explore.
+
+                next_system->Insert(this);
+
+                movement_left = 0.0;
+                m_moving_to = m_prev_system = m_next_system = INVALID_OBJECT_ID;
+                m_travel_route.clear();
+                m_travel_distance = 0.0;
 
                 // explore new system
                 Empire* empire = Empires().Lookup(*Owners().begin()); // assumes one owner empire per fleet
-                empire->AddExploredSystem(m_travel_route.empty() ? SystemID() : m_prev_system);
+                empire->AddExploredSystem(SystemID());
+
+                break;  // done movement this turn
+
             } else {
-                Move(direction_x / distance * movement_left, direction_y / distance * movement_left);
-                for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-                    UniverseObject* ship = GetUniverse().Object(*it);
-                    ship->MoveTo(X(), Y());
-                }
+                // next system is not final destination, so can keep moving after, if there is enough fuel in fleet
+
+                next_system = m_travel_route.front();
+                movement_left -= distance;
+                m_prev_system = m_next_system;
+                m_next_system = m_travel_route.front()->ID();
                 m_travel_distance -= distance;
-                movement_left = 0.0;
+                MoveTo(next_system);
+                current_system = next_system;
             }
+
+        } else {
+            // can't make it all the way to the next system.  go as far towards it as possible
+            Move(direction_x / distance * movement_left, direction_y / distance * movement_left);
+            m_travel_distance -= distance;
+            movement_left = 0.0;
         }
     }
 }

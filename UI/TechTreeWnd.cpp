@@ -2079,7 +2079,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(int w, const Tech* tech) :
         return;
 
     std::vector<int> col_widths = ColWidths(w);
-    const int GRAPHIC_WIDTH = col_widths[0];
+    const int GRAPHIC_WIDTH =   col_widths[0];
     const int NAME_WIDTH =      col_widths[1];
     const int COST_WIDTH =      col_widths[2];
     const int TIME_WIDTH =      col_widths[3];

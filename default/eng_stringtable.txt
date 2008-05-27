@@ -1218,13 +1218,16 @@ FW_FLEET_AT
 At %1% System
 
 FW_FLEET_MOVING_TO
-Moving to %1%, ETA %2%
+Moving to %1%, ETA %2% (%3%)
 
 FW_FLEET_ETA_NEVER
 Never
 
 FW_FLEET_ETA_UNKNOWN
 Unknown
+
+FW_FLEET_ETA_OUT_OF_RANGE
+Out of Range
 
 FW_SHIP_CLASS
 Ship Class 

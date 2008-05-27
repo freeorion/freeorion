@@ -212,17 +212,32 @@ void UniverseObject::Move(double x, double y)
 {
     if (m_x + x < 0.0 || Universe::UniverseWidth() < m_x + x || m_y + y < 0.0 || Universe::UniverseWidth() < m_y + y)
         throw std::runtime_error("UniverseObject::Move : Attempted to move object \"" + m_name + "\" off the map area.");
-    m_x += x;
-    m_y += y;
-    StateChangedSignal();
+    UniverseObject::MoveTo(m_x + x, m_y + y);
+}
+
+void UniverseObject::MoveTo(int object_id)
+{
+    UniverseObject::MoveTo(GetUniverse().Object(object_id));
+}
+
+void UniverseObject::MoveTo(UniverseObject* object)
+{
+    if (!object)
+        throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
+
+    UniverseObject::MoveTo(object->X(), object->Y());
 }
 
 void UniverseObject::MoveTo(double x, double y)
 {
+    Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
     if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
         throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
+
     m_x = x;
     m_y = y;
+    if (System* system = GetSystem())
+        system->Remove(this);
     StateChangedSignal();
 }
 
@@ -250,8 +265,11 @@ void UniverseObject::RemoveOwner(int id)
 
 void UniverseObject::SetSystem(int sys)
 {
-    m_system_id = sys;
-    StateChangedSignal();
+    Logger().debugStream() << "UniverseObject::SetSystem(int sys)";
+    if (sys != m_system_id) {
+        m_system_id = sys;
+        StateChangedSignal();
+    }
 }
 
 void UniverseObject::AddSpecial(const std::string& name)

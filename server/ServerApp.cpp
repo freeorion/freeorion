@@ -578,7 +578,7 @@ void ServerApp::ProcessTurns()
     {
         std::vector<CombatAssets> empire_combat_forces;
         System* system = *it;
-      
+
         std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
         if (flt_vec.empty()) continue;  // skip systems with not fleets, as these can't have combat
 

@@ -1824,8 +1824,11 @@ void MapWnd::RenderFleetMovementLines()
 
             // if not done, add starting vertex for next leg of path
             std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != move_line.Path().end())
+            if (++temp_it != move_line.Path().end()) {
+                if (path_it->eta >= Fleet::ETA_NEVER)   // includes ETA_NEVER, ETA_UNKNOWN and ETA_OUT_OF_RANGE
+                    break;  // don't render additional legs of path that aren't reachable
                 glVertex2d(path_it->x, path_it->y);
+            }
         }
         glEnd();
     }
@@ -1846,8 +1849,11 @@ void MapWnd::RenderFleetMovementLines()
 
             // if not done, add starting vertex for next leg of path
             std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != m_projected_fleet_line.Path().end())
+            if (++temp_it != m_projected_fleet_line.Path().end()) {
+                if (path_it->eta >= Fleet::ETA_NEVER)
+                    break;  // don't render additional legs of path that aren't reachable
                 glVertex2d(path_it->x, path_it->y);
+            }
         }
         glEnd();
     }

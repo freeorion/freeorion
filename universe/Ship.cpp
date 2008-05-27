@@ -89,17 +89,10 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 
 double Ship::ProjectedCurrentMeter(MeterType type) const {
     return UniverseObject::ProjectedCurrentMeter(type);
-    //switch (type) {
-    //case METER_FUEL:
-    //    return GetMeter(METER_FUEL)->Current();
-    //    break;
-    //default:
-    //    return UniverseObject::ProjectedCurrentMeter(type);
-    //    break;
-    //}
 }
 
 void Ship::MovementPhase() {
+    // Fleet::MovementPhase moves ships within fleet around and deals with ship fuel consumption
 }
 
 void Ship::PopGrowthProductionResearchPhase() {
