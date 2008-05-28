@@ -235,10 +235,18 @@ int System::Insert(UniverseObject* obj, int orbit)
 
     if (!obj)
         throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
+
     int obj_id = obj->ID();
 
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
+
+
+    // ensure object and its contents are all inserted
+    std::vector<UniverseObject*> contained_objects = obj->FindObjects();
+    for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it)
+        this->Insert(*it, orbit);
+
 
     obj->MoveTo(X(), Y());      // ensure object is physically at same location in universe as this system
     obj->SetSystem(this->ID()); // should do nothing if object is already in this system, but just to ensure things are consistent...

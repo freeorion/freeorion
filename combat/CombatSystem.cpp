@@ -398,44 +398,13 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
             for(unsigned int i=0; i<empire_combat_forces[e].planets.size(); i++)
                 empire_combat_forces[e].planets[i].first->Conquer(empire_combat_forces[victor].owner->EmpireID());
         }
-        // set target system of retreating ships (only if a victor exists)
-        // if there is no target system all retreating ships are destroyed
+
+        // all retreating ships are destroyed
         if(victor!=-1 && victor!=e && empire_combat_forces[e].retreated_ships.size()>0)
         {
-            const System *sys=NULL;
-
-            // retreat to nearest non-hostile system
-            std::map<double, System*> neighbors = GetUniverse().ImmediateNeighbors(system_id, e);
-            for (std::map<double, System*>::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                if (it->second->Owners().empty() || it->second->Owners().find(empire_combat_forces[e].owner->EmpireID()) != it->second->Owners().end()) {
-                    sys = it->second;
-                    break;
-                }
-            }
-            if(sys==NULL) 
-            {
-                for(unsigned int i=0; i<empire_combat_forces[e].retreated_ships.size(); i++)
-                    empire_combat_forces[e].destroyed_ships.push_back(empire_combat_forces[e].retreated_ships[i]);
-                empire_combat_forces[e].retreated_ships.clear();
-            }
-            else
-            {
-                std::set<Fleet*> flt_set;
-                for(unsigned int i=0; i<empire_combat_forces[e].retreated_ships.size(); i++)
-                    flt_set.insert(empire_combat_forces[e].retreated_ships[i]->GetFleet());
-
-                for(std::set<Fleet*>::iterator it = flt_set.begin(); it != flt_set.end(); ++it)
-                {
-                    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(system_id, sys->ID(), e);
-                    (*it)->SetRoute(route.first, route.second);
-                    (*it)->GetSystem()->Remove((*it)->ID());
-                    for(Fleet::iterator shp_it = (*it)->begin(); shp_it != (*it)->end(); ++shp_it)
-                    {
-                        Ship *shp = GetUniverse().Object<Ship>(*shp_it);
-                        shp->GetSystem()->Remove(shp->ID());
-                    }
-                }
-            }
+            for(unsigned int i=0; i<empire_combat_forces[e].retreated_ships.size(); i++)
+                empire_combat_forces[e].destroyed_ships.push_back(empire_combat_forces[e].retreated_ships[i]);
+            empire_combat_forces[e].retreated_ships.clear();
         }
 
         //remove destroyed ships
