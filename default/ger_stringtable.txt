@@ -76,7 +76,7 @@ PLAYER_VICTORIOUS
 Sie haben gewonnen.
 
 EMPIRE
-Empire
+Imperium
 
 EMPIRE_DEFEATED
 Imperium %1% wurde ausgelöscht.
@@ -103,7 +103,7 @@ DEFENSE_BASE_DESCRIPTION
 Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
 
 CHAT_WHISPER
-whisper
+flüstern
 
 
 ######################################
@@ -117,7 +117,7 @@ COMMAND_LINE_DEFAULT
 Default: 
 
 OPTIONS_DB_HELP
-Print this help message.
+Diese Hilfe ausgeben.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
@@ -467,7 +467,7 @@ FILE_DLG_FILENAME_IS_A_DIRECTORY
 "%1%"\nist ein Verzeichnis.
 
 FILE_DLG_FILE_DOES_NOT_EXIST
-Datei "%1%"\n gibt es nicht.
+Datei "%1%"\n existiert nicht.
 
 FILE_DLG_DEVICE_IS_NOT_READY
 Gerät ist nicht bereit.
@@ -1162,7 +1162,7 @@ Konstruktion Infrastruktur
 ## Military Panel ##########
 
 MP_SUPPLY
-Flt.Unterst.
+Flotten Supply
 
 MP_SHIELD
 Planetarer Schild
@@ -2971,37 +2971,37 @@ DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
 
 SHIP_PART_UNLOCK_SHORT_DESC
-Unlocks Ship Part
+Ermöglicht Schiffsteil
 
 SHIP_HULL_UNLOCK_SHORT_DESC
-Unlocks Ship Hull
+Ermöglicht Schiffsrumpf
 
 BUILDING_UNLOCK_SHORT_DESC
-Unlocks Building
+Ermöglicht Gebäude
 
 RESEARCH_SHORT_DESC
-Improves Research
+Verbessert Forschung
 
 FARMING_SHORT_DESC
-Improves Farming
+Verbessert Farming
 
 MINING_SHORT_DESC
-Improves Mining
+Verbessert Bergbau
 
 INDUSTRY_SHORT_DESC
-Improves Industry
+Verbessert Industrie
 
 TRADE_SHORT_DESC
-Improves Trade
+Verbessert Handel
 
 CONSTRUCTION_SHORT_DESC
-Improves Infrastructure
+Verbessert Infrastruktur
 
 POPULATION_SHORT_DESC
-Increases Planet Population
+Erhöht Planeten-Bevölkerung
 
 FLEET_RANGE_DESC
-Improves Fleet Supply
+Erhöht Flottenunterstützung
 
 CON_TERRAFORM
 Terraforming
@@ -3226,13 +3226,13 @@ PRO_ASTEROID_MINE_DESC
 Die erste Anwendung der Methoden des Asteroidenbergbau ermöglicht einen moderaten Bonus auf die Rohstoffproduktion in Systemen mit zur Ausbeutung geeigneten Asteroidengürteln.  Auf allen Planeten des Systems erhöht sich die Rohstoffproduktion, so dass auch Planeten, deren Umwelt den Bergbau erschwert, große Rohstofferträge pro Bevölkerungseinheit erbringen.  Normalerweise ist ein grosser Bergbauertrag pro Bevölkerungseinheit auf Planeten mit niedriger Bevölkerungskapazität beschränkt, was den tatsächlichen Rohstoffertrag einschränkt.
 
 PRO_ORBITAL_MINE
-Orbital Mining
+Orbitaler Bergbau
 
 PRO_ORBITAL_MINE_DESC
 On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
 
 PRO_CORE_MINE
-Deep Core Mining
+Tiefenbergbau
 
 PRO_CORE_MINE_DESC
 The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
@@ -3334,34 +3334,34 @@ SHP_DEFLECTOR_DESC
 Unlocks Deflector Shield ship part.
 
 SHP_RADAR
-Active Radar
+Aktiver Radar
 
 SHP_RADAR_DESC
-Unlocks Active Radar ship part.
+Ermöglicht das Schiffsteil Aktiver Radar.
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
 
 SHP_DEUTERIUM_TANK_DESC
-Unlocks Deuterium Tank ship part.
+Ermöglicht Schiffsteil Deuterium Tank.
 
 SHP_MEDIUM_HULL
-Mitl Ship Hulls
+Mittl. Schiffsrumpf
 
 SHP_MEDIUM_HULL_DESC
-Medium Ship Hulls
+Mittlerer Schiffsrumpf BlaBla
 
 SHP_LARGE_HULL
-Large Ship Hulls
+Großer Schiffsrumpf
 
 SHP_LARGE_HULL_DESC
-Large Ship Hulls
+Großer Schiffsrumpf BlaBla
 
 SHP_HUGE_HULL
-Huge Ship Hulls
+Rießiger Schiffsrumpf
 
 SHP_HUGE_HULL_DESC
-Huge Ship Hulls
+Rießiger Schiffsrumpf BlaBla
 
 ########################################
 # Tech Refinement Names & Descriptions #
@@ -3393,7 +3393,7 @@ Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen ei
 #################################
 
 BLD_OBSERVATORY
-Observatory
+Observatorium
 
 BLD_OBSERVATORY_DESC
 '''The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more reasily detected by friendly planets within range of the Observatory.
