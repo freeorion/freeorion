@@ -68,6 +68,7 @@
       <PERSON name="Myckel Habets"        nick="Myckel"             task="Dutch Translation"/>
       <PERSON name="Martin Roth"          nick="Captain Rage"       task="Swedish Translation"/>
       <PERSON name="Markus Sinner"        nick="kroddn"             task="German Translation"/>
-    </GROUP>
+      <PERSON name="Fran Valenzuela"      nick="Synyestro"          task="Spanish Translation"/>
+      </GROUP>
   </CREDITS>
 </XMLDoc>
