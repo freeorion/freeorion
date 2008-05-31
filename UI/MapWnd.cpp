@@ -1386,29 +1386,19 @@ void MapWnd::SelectFleet(Fleet* fleet)
 void MapWnd::SetFleetMovement(FleetButton* fleet_button)
 {
     assert(fleet_button);
-    std::set<int> destinations; // keeps track of systems to which lines are being drawn for given fleet button
     for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
         Fleet* fleet = *it;
 
-        // ensure the fleet has a valid destination, and that there isn't already a movement line to that location
-        if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
-            fleet->FinalDestinationID() != fleet->SystemID() &&
-            destinations.find(fleet->FinalDestinationID()) == destinations.end())
-        {
-            destinations.insert(fleet->FinalDestinationID());
+        // ensure the fleet has a valid destination
+        if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && fleet->FinalDestinationID() != fleet->SystemID())
             m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
-        } else {
-            // fleet's destination already has a line from this button, or the destination is invalid.  If there is
-            // another preexisting fleet line for this fleet, it is no longer needed.
-            m_fleet_lines.erase(fleet);
-        }
     }
 }
 
 void MapWnd::SetFleetMovement(Fleet* fleet)
 {
     assert(fleet);
-    
+
     std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
     if (it != m_fleet_lines.end()) {
         const System* system = fleet->GetSystem();
@@ -1737,12 +1727,13 @@ void MapWnd::RenderSystems()
 
 void MapWnd::RenderStarlanes()
 {
+    const float STARLANE_GRAY = 127.0f / 255.0f;
+    const float STARLANE_ALPHA = 0.7f;
+    const double STARLANE_WIDTH = 2.5;
+
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     if (m_starlane_vertices.m_name) {
-        const float STARLANE_GRAY = 127.0f / 255.0f;
-        const float STARLANE_ALPHA = 0.7f;
-        const double STARLANE_WIDTH = 2.5;
         glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
@@ -1763,8 +1754,8 @@ void MapWnd::RenderStarlanes()
         const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
         const double LINE_SCALE = std::max(0.75, m_zoom_factor);
-        glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
-        glLineWidth(LINE_SCALE);
+        glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
+        glLineWidth(STARLANE_WIDTH);
         glEnableClientState(GL_COLOR_ARRAY);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
@@ -1787,76 +1778,71 @@ void MapWnd::RenderStarlanes()
 
 void MapWnd::RenderFleetMovementLines()
 {
+    const double STARLANE_WIDTH = 2.5;
+    glLineWidth(STARLANE_WIDTH);
+
+    // standard movement line stipple
     const GLushort PATTERN = 0xF0F0;
     const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
     const double RATE = 0.25;
-    const double PROJECTED_PATH_RATE = 0.35;
     const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+
+    // render standard movement lines
+    glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
+    for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
+        RenderMovementLine(it->second);
+
+
+    // projected movement line stipple
+    const double PROJECTED_PATH_RATE = 0.35;
     const int PROJECTED_PATH_SHIFT =
         static_cast<int>(GG::GUI::GetGUI()->Ticks() * PROJECTED_PATH_RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
-    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
-    double LINE_SCALE = std::max(1.0, m_zoom_factor);
 
-    glLineWidth(LINE_SCALE);
-    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
+    //// render projected move path
+    glLineStipple(static_cast<int>(STARLANE_WIDTH), PROJECTED_PATH_STIPPLE);
+    RenderMovementLine(m_projected_fleet_line);
+}
 
-    GG::Pt ul = ClientUpperLeft();
-    for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
-        const MovementLineData& move_line = it->second;
+void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
+    if (move_line.Path().empty() || move_line.Path().size() == 1)
+        return;
 
-        if (move_line.Path().empty())
-            continue;
+    // get starting vertex
+    std::pair<double, double> start = move_line.Start();
+    double prev_vertex_x = start.first, prev_vertex_y = start.second;
 
-        // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
-        // when the begining of a line segment starts offscreen
-        glBegin(GL_LINES);
-        glColor(move_line.Colour());
+    bool started = false;
 
-        // add starting vertex
-        std::pair<double, double> start = move_line.Start();
-        glVertex2d(start.first, start.second);
+    // draw lines connecting starting to second vertex, second to third, etc, 
+    std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin();
+    ++path_it;
+    for (; path_it != move_line.Path().end(); ++path_it) {
 
-        for (std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin(); path_it != move_line.Path().end(); ++path_it) {
-            // add ending vertex for previous leg of path
-            glVertex2d(path_it->x, path_it->y);
+        // if this vertex can be reached, add vertices for line from previous to this vertex
+        if (path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
+            break;  // don't render additional legs of path that aren't reachable
 
-            // if not done, add starting vertex for next leg of path
-            std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != move_line.Path().end()) {
-                if (path_it->eta >= Fleet::ETA_NEVER)   // includes ETA_NEVER, ETA_UNKNOWN and ETA_OUT_OF_RANGE
-                    break;  // don't render additional legs of path that aren't reachable
-                glVertex2d(path_it->x, path_it->y);
-            }
+        if (!started) {
+            // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
+            // when the begining of a line segment starts offscreen
+            glBegin(GL_LINES);
+            glColor(move_line.Colour());
+            started = true;
         }
-        glEnd();
+
+        glVertex2d(prev_vertex_x, prev_vertex_y);
+        glVertex2d(path_it->x, path_it->y);
+
+        // and update previous vertex for next iteration
+        prev_vertex_x = path_it->x;
+        prev_vertex_y = path_it->y;
     }
 
-    // render projected move path
-    glLineStipple(static_cast<int>(LINE_SCALE), PROJECTED_PATH_STIPPLE);
-    if (!m_projected_fleet_line.Path().empty()) {
-        glBegin(GL_LINES);
-        glColor(m_projected_fleet_line.Colour());
-
-        // add starting vertex
-        std::pair<double, double> start = m_projected_fleet_line.Start();
-        glVertex2d(start.first, start.second);
-
-        for (std::list<MovePathNode>::const_iterator path_it = m_projected_fleet_line.Path().begin(); path_it != m_projected_fleet_line.Path().end(); ++path_it) {
-            // add ending vertex for previous leg of path
-            glVertex2d(path_it->x, path_it->y);
-
-            // if not done, add starting vertex for next leg of path
-            std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != m_projected_fleet_line.Path().end()) {
-                if (path_it->eta >= Fleet::ETA_NEVER)
-                    break;  // don't render additional legs of path that aren't reachable
-                glVertex2d(path_it->x, path_it->y);
-            }
-        }
+    if (started)
         glEnd();
-    }
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)

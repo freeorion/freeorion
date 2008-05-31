@@ -103,12 +103,13 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 {
     std::list<MovePathNode> retval = std::list<MovePathNode>();
 
-    if (route.empty()) return retval;                                       // nowhere to go => empty path
-    if (route.size() == 2 && route.front() == route.back()) return retval;  // nowhere to go => empty path
-
-    if (this->Speed() < FLEET_MOVEMENT_EPSILON) {                           // can't move => ETA is never
+    if (route.empty())
+        return retval;                                      // nowhere to go => empty path
+    if (route.size() == 2 && route.front() == route.back())
+        return retval;                                      // nowhere to go => empty path
+    if (this->Speed() < FLEET_MOVEMENT_EPSILON) {
         retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_NEVER, this->SystemID()));
-        return retval;
+        return retval;                                      // can't move => path is just this system with explanitory ETA
     }
 
 
@@ -139,9 +140,15 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     }
 
 
+    // determine if, given fuel available and supplyable systems, fleet will ever be able to move
+    if (fuel < 1.0 && this->GetSystem() && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
+        retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_OUT_OF_RANGE, this->SystemID()));
+        return retval;                                      // can't move => path is just this system with explanitory ETA
+    }
+
+
     // node for initial position of fleet
     MovePathNode cur_pos(this->X(), this->Y(), true, 0, this->SystemID());
-    retval.push_back(cur_pos);
 
 
     // get current system of fleet, if it is in a system, and next system reached in path
@@ -169,6 +176,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     int turns_taken = 0;
 
     while (turns_taken <= TOO_LONG) {
+        cur_pos.eta = turns_taken;
+        cur_pos.turn_end = new_turn;
+        if (!cur_system)
+            cur_pos.object_id = INVALID_OBJECT_ID;
+
         // check for arrival at next system on path
         if (dist_to_next_system < FLEET_MOVEMENT_EPSILON) {
             // update current system and position, and next system and position
@@ -176,31 +188,35 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
             cur_pos.x = next_system->X();
             cur_pos.y = next_system->Y();
-            cur_pos.eta = turns_taken;
-            cur_pos.turn_end = false;
+            // cur_pos.turn_end                     // set previously; don't want to modify here
+            // cur_pos.turns_taken                  // set previously; don't want to modify here
             cur_pos.object_id = next_system->ID();
 
-            retval.push_back(cur_pos);
-
             ++route_it;
-            if (route_it == route.end())
+            if (route_it == route.end()) {
+                cur_pos.turn_end = true;
+                retval.push_back(cur_pos);
                 break;
+            } else {
+                retval.push_back(cur_pos);
+            }
 
             next_system = *route_it;
             next_sys_pos.x = next_system->X();
             next_sys_pos.y = next_system->Y();
-            next_sys_pos.eta = ETA_UNKNOWN;
-            next_sys_pos.turn_end = false;
+            next_sys_pos.eta = ETA_UNKNOWN;         // will be set later
+            next_sys_pos.turn_end = false;          // may be set later
             next_sys_pos.object_id = next_system->ID();
 
             dist_to_next_system = std::sqrt((next_sys_pos.x - cur_pos.x)*(next_sys_pos.x - cur_pos.x) + (next_sys_pos.y - cur_pos.y)*(next_sys_pos.y - cur_pos.y));
+        } else {
+            retval.push_back(cur_pos);
         }
 
 
         // if this iteration is the start of a new simulated turn, distance to be travelled this turn is reset and turns taken incremented
         if (new_turn) {
             ++turns_taken;
-            cur_pos.eta = turns_taken;
             turn_dist_remaining = m_speed;
         }
 
@@ -264,11 +280,15 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     }
 
     if (turns_taken >= TOO_LONG) {
-        next_sys_pos.eta = turns_taken;
-        next_sys_pos.turn_end = true;
-        retval.push_back(next_sys_pos);
+        cur_pos.eta = turns_taken;
+        cur_pos.turn_end = true;
+        retval.push_back(cur_pos);
     }
 
+    Logger().debugStream() << "MovePath size: " << retval.size();
+    for (std::list<MovePathNode>::const_iterator it = retval.begin(); it != retval.end(); ++it)
+        Logger().debugStream() << " .. (" << it->x << ", " << it->y << ")  eta: " << it->eta << "  end turn?: " << boost::lexical_cast<std::string>(it->turn_end) <<
+                                  "  object id: " << it->object_id;
     return retval;
 }
 
@@ -290,12 +310,18 @@ std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const
         return std::make_pair(node.eta, node.eta);
     }
 
-    // general case: there is a multi-node path.  return the second (first after initial position of fleet) and last nodes' ETAs
-    std::list<MovePathNode>::const_iterator it = move_path.begin();
-    ++it;
-    const MovePathNode& first = *it;
-    const MovePathNode& last = *move_path.rbegin();
-    return std::make_pair(last.eta, first.eta);
+    // general case: there is a multi-node path.  return the ETA of the first object node, and the ETA of the last node
+    int last_stop_eta = move_path.rbegin()->eta;
+    int first_stop_eta = last_stop_eta;
+    for (std::list<MovePathNode>::const_iterator it = ++(move_path.begin()); it != move_path.end(); ++it) {
+        const MovePathNode& node = *it;
+        if (node.object_id != INVALID_OBJECT_ID) {
+            first_stop_eta = node.eta;
+            break;
+        }
+    }
+
+    return std::make_pair(last_stop_eta, first_stop_eta);
 }
 
 int Fleet::FinalDestinationID() const
