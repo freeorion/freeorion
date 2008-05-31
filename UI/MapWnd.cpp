@@ -1388,10 +1388,7 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
     assert(fleet_button);
     for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
         Fleet* fleet = *it;
-
-        // ensure the fleet has a valid destination
-        if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID && fleet->FinalDestinationID() != fleet->SystemID())
-            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
+        m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
     }
 }
 
@@ -1419,7 +1416,7 @@ void MapWnd::SetFleetMovement(Fleet* fleet)
 
         // draw line from fleet's centre
         m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
-    }    
+    }
 }
 
 void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route)
@@ -1952,11 +1949,8 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         }
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
-        if (execute_move && !route.empty()) {
+        if (execute_move && !route.empty())
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id)));
-            if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
-                SetFleetMovement(fleet);
-        }
 
         // show route on map
         SetProjectedFleetMovement(fleet, route);
