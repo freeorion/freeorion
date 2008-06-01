@@ -468,7 +468,7 @@ void Planet::ResetIsAboutToBeColonized()
 
 void Planet::SetSystem(int sys)
 {
-    Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
+    //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
     // set system of buildings on this planet.  TODO: THIS
     //for (iterator it = begin(); it != end(); ++it) {
@@ -492,7 +492,7 @@ void Planet::Move(double x, double y)
 
 void Planet::MoveTo(UniverseObject* object)
 {
-    Logger().debugStream() << "Planet::MoveTo(const UniverseObject* object)";
+    //Logger().debugStream() << "Planet::MoveTo(const UniverseObject* object)";
     UniverseObject::MoveTo(object);
     // move buildings  TODO: THIS
     //for (iterator it = begin(); it != end(); ++it) {
@@ -504,7 +504,7 @@ void Planet::MoveTo(UniverseObject* object)
 
 void Planet::MoveTo(double x, double y)
 {
-    Logger().debugStream() << "Planet::MoveTo(double x, double y)";
+    //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
     // move buildings  TODO: THIS

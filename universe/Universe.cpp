@@ -1062,15 +1062,15 @@ void Universe::Destroy(int id)
     // remove object from any containing UniverseObject
     if (it != m_objects.end()) {
         obj = it->second;
-        Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
+        //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
         // get and record set of empires that can presently see this object
         std::set<int> knowing_empires;
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
             int empire_id = emp_it->first;
-            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj)) {
+            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
                 knowing_empires.insert(empire_id);
-                Logger().debugStream() << "..visible to empire: " << empire_id;
+                //Logger().debugStream() << "..visible to empire: " << empire_id;
             }
         }
         m_destroyed_object_knowers[id] = knowing_empires;
@@ -2856,11 +2856,11 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
     homeworlds.clear();
 
     std::vector<System*> sys_vec = FindObjects<System>();
-    Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
-    for (std::vector<System*>::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        const System* sys = *it;
-        Logger().debugStream() << "... sys ptr: " << sys << " name: " << (sys ? sys->Name() : "no system!?") << " id: " << (sys ? boost::lexical_cast<std::string>(sys->ID()) : "none?!");
-    }
+    //Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
+    //for (std::vector<System*>::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+    //    const System* sys = *it;
+    //    Logger().debugStream() << "... sys ptr: " << sys << " name: " << (sys ? sys->Name() : "no system!?") << " id: " << (sys ? boost::lexical_cast<std::string>(sys->ID()) : "none?!");
+    //}
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
@@ -2875,14 +2875,14 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         do {
             too_close = false;
             system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
-            Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
+            //Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
             system = sys_vec[system_index];
-            Logger().debugStream() << "... system ptr: " << system << " name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
+            //Logger().debugStream() << "... system ptr: " << system << " name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
 
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
-                Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
+                //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
                 System* existing_system = Object(homeworlds[j])->GetSystem();
-                Logger().debugStream() << ".... existing system ptr: " << existing_system;
+                //Logger().debugStream() << ".... existing system ptr: " << existing_system;
 
                 if (!existing_system) {
                     Logger().errorStream() << "couldn't find existing system!";

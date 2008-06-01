@@ -285,10 +285,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         retval.push_back(cur_pos);
     }
 
-    Logger().debugStream() << "MovePath size: " << retval.size();
-    for (std::list<MovePathNode>::const_iterator it = retval.begin(); it != retval.end(); ++it)
-        Logger().debugStream() << " .. (" << it->x << ", " << it->y << ")  eta: " << it->eta << "  end turn?: " << boost::lexical_cast<std::string>(it->turn_end) <<
-                                  "  object id: " << it->object_id;
+    //Logger().debugStream() << "MovePath size: " << retval.size();
+    //for (std::list<MovePathNode>::const_iterator it = retval.begin(); it != retval.end(); ++it)
+    //    Logger().debugStream() << " .. (" << it->x << ", " << it->y << ")  eta: " << it->eta << "  end turn?: " << boost::lexical_cast<std::string>(it->turn_end) <<
+    //                              "  object id: " << it->object_id;
     return retval;
 }
 
@@ -523,7 +523,7 @@ bool Fleet::RemoveShip(int ship)
 
 void Fleet::SetSystem(int sys)
 {
-    Logger().debugStream() << "Fleet::MoveTo(UniverseObject* object)";
+    //Logger().debugStream() << "Fleet::SetSystem(int sys)";
     UniverseObject::SetSystem(sys);
     for (iterator it = begin(); it != end(); ++it) {
         UniverseObject* obj = GetUniverse().Object(*it);
@@ -546,7 +546,7 @@ void Fleet::Move(double x, double y)
 
 void Fleet::MoveTo(UniverseObject* object)
 {
-    Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
+    //Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
     UniverseObject::MoveTo(object);
     // move ships in fleet
     for (iterator it = begin(); it != end(); ++it) {
@@ -558,7 +558,7 @@ void Fleet::MoveTo(UniverseObject* object)
 
 void Fleet::MoveTo(double x, double y)
 {
-    Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
+    //Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
     // move fleet itself
     UniverseObject::MoveTo(x, y);
     // move ships in fleet
@@ -571,7 +571,7 @@ void Fleet::MoveTo(double x, double y)
 
 void Fleet::MovementPhase()
 {
-    Logger().debugStream() << "Fleet::MovementPhase this: " << this;
+    //Logger().debugStream() << "Fleet::MovementPhase this: " << this;
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
     // and determine the maximum amount of fuel that can be stored by the ship in the fleet that

@@ -231,7 +231,7 @@ int System::Insert(UniverseObject* obj)
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
-    Logger().debugStream() << "System::Insert(UniverseObject* obj, int orbit)";
+    //Logger().debugStream() << "System::Insert(UniverseObject* obj, int orbit)";
 
     if (!obj)
         throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
@@ -292,7 +292,7 @@ int System::Insert(int obj_id, int orbit)
 
 void System::Remove(UniverseObject* obj)
 {
-    Logger().debugStream() << "System::Remove( " << obj->Name() <<" )";
+    //Logger().debugStream() << "System::Remove( " << obj->Name() <<" )";
 
     // ensure object and its contents are all removed from system
     std::vector<UniverseObject*> contained_objects = obj->FindObjects();
@@ -306,13 +306,13 @@ void System::Remove(UniverseObject* obj)
 
     // locate object in this system's map of objects, and erase if present
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        Logger().debugStream() << "..system object id " << it->second;
+        //Logger().debugStream() << "..system object id " << it->second;
         if (it->second == obj->ID()) {
             m_objects.erase(it);
 
             obj->SetSystem(INVALID_OBJECT_ID);
 
-            Logger().debugStream() << "....erased from system";
+            //Logger().debugStream() << "....erased from system";
 
             // UI bookeeping
             if (Planet* planet = universe_object_cast<Planet*>(obj))

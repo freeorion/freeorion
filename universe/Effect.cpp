@@ -116,7 +116,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 
     // execute effects on targets
     for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
-        Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
+        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
         for (unsigned int i = 0; i < m_effects.size(); ++i) {
             m_effects[i]->Execute(source, *it);
         }

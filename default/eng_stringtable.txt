@@ -55,7 +55,9 @@ LOADING
 Loading ...
 
 SERVER_WONT_START
-The server could not be started.\n\nNote for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.
+'''The server could not be started.
+
+Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
 
 SERVER_TIMEOUT
 The server is not responding.
@@ -95,6 +97,9 @@ Enter new name
 
 UNKNOWN_VALUE_SYMBOL
 ?
+
+ERROR
+ERROR
 
 DEFENSE_BASE
 Defense Base
@@ -716,7 +721,7 @@ ESELECT_EMPIRE_NAME
 Empire Name:
 
 ###########################
-# About Dialog		      #
+# About Dialog            #
 ###########################
 
 #License button text####
@@ -737,7 +742,7 @@ FREEORION_VISION
 FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model. 
 
 ###########################
-# Game Menu	              #
+# Game Menu               #
 ###########################
 
 GAME_MENU_WINDOW_TITLE

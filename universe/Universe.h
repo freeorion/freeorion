@@ -417,7 +417,9 @@ template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap objects;
+    ObjectMap destroyed_objects;
     if (Archive::is_saving::value) {
+        // existing objects
         for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
             if (Universe::ALL_OBJECTS_VISIBLE ||
                 it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
@@ -426,18 +428,34 @@ void Universe::serialize(Archive& ar, const unsigned int version)
                 objects.insert(*it);
             }
         }
+        // destroyed objects
+        for (ObjectMap::const_iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
+            if (Universe::ALL_OBJECTS_VISIBLE) {
+                destroyed_objects.insert(*it);
+                continue;
+            }
+            ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
+            if (know_it == m_destroyed_object_knowers.end())
+                continue;
+            const std::set<int>& knowers = know_it->second;
+            if (knowers.find(s_encoding_empire) != knowers.end())
+                destroyed_objects.insert(*it);
+        }
     }
+    // ship designs
     ShipDesignMap ship_designs;
     if (Archive::is_saving::value)
         GetShipDesignsToSerialize(objects, ship_designs);
 
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(destroyed_objects)
         & BOOST_SERIALIZATION_NVP(ship_designs)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
     if (Archive::is_loading::value) {
         m_objects = objects;
+        m_destroyed_objects = destroyed_objects;
         m_ship_designs = ship_designs;
         InitializeSystemGraph();
     }

@@ -230,7 +230,7 @@ void UniverseObject::MoveTo(UniverseObject* object)
 
 void UniverseObject::MoveTo(double x, double y)
 {
-    Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
+    //Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
     if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
         throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
 
@@ -265,7 +265,7 @@ void UniverseObject::RemoveOwner(int id)
 
 void UniverseObject::SetSystem(int sys)
 {
-    Logger().debugStream() << "UniverseObject::SetSystem(int sys)";
+    //Logger().debugStream() << "UniverseObject::SetSystem(int sys)";
     if (sys != m_system_id) {
         m_system_id = sys;
         StateChangedSignal();
