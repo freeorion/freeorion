@@ -82,7 +82,7 @@ EMPIRE_DEFEATED
 %1%-imperiet har gått under.
 
 ALL
-Alla
+Samtliga
 
 UNKNOWN_SYSTEM
 Okänt system
@@ -393,22 +393,22 @@ OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
 OPTIONS_DB_GAMESETUP_STARS
-The number of stars in the galaxy to be generated.
+Antalet stjärnor i galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-The shape of the galaxy to be generated.
+Formen på galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-The age of the galaxy to be generated.
+Galaxens ålder som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-The number of planets per system in the galaxy to be generated.
+Antalet planeter per system i galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-The number of starlanes in the galaxy to be generated.
+Antalet stjärnfarleder i galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-The frequency of specials appearing in the galaxy to be generated.
+Förekomsten av specialare i galaxen som kommer att genereras.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
@@ -458,13 +458,13 @@ FILE_DLG_MALFORMED_FILENAME
 Ogiltigt filnamn.
 
 FILE_DLG_OVERWRITE_PROMPT
-%1% existerar.\nOK att skriva över den?
+%1% existerar redan.\nVill du skriva över den?
 
 FILE_DLG_INVALID_FILENAME
 "%1%"\när ett ogiltigt filnamn.
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
-"%1%"\nis a directory.
+"%1%"\när en katalog.
 
 FILE_DLG_FILE_DOES_NOT_EXIST
 Fil "%1%"\nexisterar inte.
@@ -542,10 +542,10 @@ Avsluta
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Timed out while attempting to connect to server
+Kunde inte få något svar från servern
 
 ERR_VERSION_MISMATCH
-Cannot connect to server, because this client is using different versions of the following settings and/or source files: 
+Kan inte ansluta till servern eftersom denna klient använder en annan version av följande inställningar och/eller källfiler: 
 
 
 ########################
@@ -561,9 +561,9 @@ Anslut till server
 #Static labels####
 
 LAN_GAME_LABEL
-Lan game at:
+Lan-spel på:
 INTERNET_GAME_LABEL
-Internet game at:
+Internet-spel på:
 PLAYER_NAME_LABEL
 Spelarens namn
 
@@ -811,10 +811,10 @@ OPTIONS_VERTICAL
 Lodrät
 
 OPTIONS_TOOLTIP_DELAY
-Tooltip delay (ms)
+Fördröjning av inforuta (ms)
 
 OPTIONS_VIDEO_MODE
-Video Mode  (restart for changes to take effect)
+Bildskärmsläge  (kräver omstart)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
@@ -853,13 +853,13 @@ OPTIONS_CHAT_HISTORY
 Chatthistorik
 
 OPTIONS_CHAT_HIDE
-Chat-hide delay
+Fördröjning när chattfönstret döljs
 
 OPTIONS_GALAXY_MAP
 Galaxkarta
 
 OPTIONS_GALAXY_MAP_GAS
-Galaxy map gas rendering
+Gasrenderingar till galaxkartan
 
 OPTIONS_MUSIC
 Musik
@@ -1081,7 +1081,7 @@ SIDE_PANEL
 Sidpanel
 
 SP_SYSTEM_PRODUCTION
-System Production
+Systemproduktion
 
 ##Planet Panel#############
 PLANET_PANEL
@@ -1153,7 +1153,7 @@ Stealth
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
-%1% (Incomplete)\n\n%2%
+%1% (Påbörjad)\n\n%2%
 
 BP_COMPLETE_BUILDING_TOOLTIP
 %1%\n\n%2%
@@ -1208,7 +1208,7 @@ SP_ENTER_NEW_PLANET_NAME
 Ange nytt namn på planet
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-All colony ships in this system have been\ngiven orders to leave the system.\n\nUse one of the departing colony ships?
+Alla koloniskepp i detta system har getts\norder om att lämna systemet.\n\nVill du använda ett av dessa avgående skepp?
 
 #################
 # Fleet Window  #
@@ -1367,31 +1367,31 @@ FP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Buildable Items
+Tillverkningsbara föremål
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
-Buildings
+Byggnader
 
 PRODUCTION_WND_CATEGORY_BT_SHIP
-Ships
+Skepp
 
 PRODUCTION_WND_CATEGORY_BT_ORBITAL
-Orbitals
+Orbitaler
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
-Available
+Tillgängliga
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
-Unavailable
+Otillgängliga
 
 PRODUCTION_TOTAL_COST_STR
-%1% PP / Turn @ %2% Turns
+%1% PP / drag @ %2% drag
 
 PRODUCTION_TURN_COST_STR
 +%1% PP
 
 PRODUCTION_TURNS_LEFT_STR
-%1% Turns left
+%1% drag kvar
 
 PRODUCTION_TURNS_LEFT_NEVER
 Aldrig
@@ -1403,16 +1403,16 @@ PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
 %1%\n\n<u>Effects</u>\n\n%2%
 
 PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-%1%\n\nAttack: %2%\nDefense: %3%\nSpeed: %4%
+%1%\n\nAttack: %2%\nFörsvar: %3%\nHastighet: %4%
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Quantity
+Mängd
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-Add to Queue
+Lägg till i kö
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
-Center on Build
+Centrera tillverkning
 
 
 #################
@@ -1420,10 +1420,10 @@ Center on Build
 #################
 
 PRODUCTION_WND_TITLE
-Production
+Produktion
 
 PRODUCTION_INFO_PANEL_TITLE
-Production
+Produktion
 
 PRODUCTION_INFO_PP
 PP
@@ -1437,16 +1437,16 @@ PRODUCTION_QUEUE_MULTIPLES
 ###############
 
 DESIGN_ADD_TEST
-Add Test Design
+Lägg till prototypritning
 
 DESIGN_NAME_DEFAULT
-Custom Ship Design
+Användardefinierad skeppsritning
 
 DESIGN_DESCRIPTION_DEFAULT
-Design Description
+Beskrivning utav ritning
 
 DESIGN_NO_PART
-None
+Ingen
 
 DESIGN_WND_STARTS
 Design Starts
@@ -1467,60 +1467,60 @@ DESIGN_WND_PART_PALETTE_TITLE
 Ship Parts
 
 DESIGN_WND_MAIN_PANEL_TITLE
-Design Details
+Ritningsdetaljer
 
 DESIGN_WND_DESIGN_NAME
-Design Name
+Ritningsnamn
 
 DESIGN_WND_DESIGN_DESCRIPTION
-Description
+Beskrivning
 
 DESIGN_WND_CONFIRM
-Confirm New Design
+Bekräfta ny ritning
 
 DESIGN_WND_CLEAR
-Clear Parts
+Rensa från delar
 
 # Ship Slot Types
 
 SL_EXTERNAL
-External
+Extern
 
 SL_INTERNAL
-Internal
+Intern
 
 
 # Ship Part Classes
 
 PC_SHORT_RANGE
-Short Range
+Kortvidd
 
 PC_MISSILES
-Missiles
+Missiler
 
 PC_FIGHTERS
-Fighters
+Jaktskepp
 
 PC_POINT_DEFENSE
 Point Defense
 
 PC_SHIELD
-Shields
+Sköldar
 
 PC_ARMOUR
-Armour
+Bepansring
 
 PC_DETECTION
-Detection
+Detektion
 
 PC_STEALTH
-Stealth
+Smygteknik
 
 PC_FUEL
-Fuel
+Bränsle
 
 PC_COLONY
-Colonization
+Kolonisering
 
 
 ####################
@@ -1529,13 +1529,13 @@ Colonization
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART
-Ship Part
+Skeppsdel
 
 ENC_SHIP_HULL
-Ship Hull
+Skeppsskrov
 
 ENC_TECH
-Technology
+Teknologi
 
 ENC_SHIP_DESIGN
 Ship Design
@@ -1605,7 +1605,7 @@ COMBAT_DESTROYED
  Förintad
 
 COMBAT_DEFENSELESS
-Försvarslös
+ Försvarslös
 
 COMBAT_LOST
  Förlorade!
@@ -3590,31 +3590,31 @@ Colonists are kept in suspended animation during colonization journey, eliminati
 ##############
 
 SH_EMPTY
-Empty Hull
+Tomt skrov
 
 SH_EMPTY_DESC
-Cheap and fast, but can't mount any parts.
+Billigt och snabbt, men kan inte installera några delar
 
 SH_SMALL
-Small Hull
+Litet skrov
 
 SH_SMALL_DESC
-Few slots but high speed
+Fåtal platser men hög hastighet
 
 SH_MEDIUM
-Medium Hull
+Mellanstort skrov
 
 SH_MEDIUM_DESC
-Moderate number of slots and moderate speed
+Måttligt antal platser och måttlig hastighet
 
 SH_LARGE
-Large Hull
+Stort skrov
 
 SH_LARGE_DESC
-Many slots but slow speed
+Många platser men låg hastighet
 
 SH_HUGE
-Huge Hull
+Enormt skrov
 
 SH_HUGE_DESC
-Very many slots but very slow speed
+Väldigt många platser men väldigt långsam hastighet
