@@ -67,7 +67,11 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const {
 }
 
 bool Ship::IsArmed() const {
-    return Design()->Attack() > 0;
+    return Design()->IsArmed();
+}
+
+bool Ship::CanColonize() const {
+    return Design()->CanColonize();
 }
 
 double Ship::Speed() const {

@@ -27,6 +27,7 @@ public:
     virtual const std::string&          PublicName(int empire_id) const;
 
     bool                                IsArmed() const;
+    bool                                CanColonize() const;
     double                              Speed() const;
 
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;

@@ -225,6 +225,25 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     DoFleetButtonLayout();
 }
 
+void SystemIcon::ManualRender(double halo_scale_factor)
+{
+    if (!Visible())
+        return;
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    if (0.5 < halo_scale_factor && m_halo_texture) {
+        GG::Pt size = lr - ul;
+        GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+        GG::Pt middle = ul + half_size;
+        GG::Pt halo_size = GG::Pt(size.x*halo_scale_factor, size.y*halo_scale_factor);
+        GG::Pt halo_half_size = GG::Pt(halo_size.x / 2, halo_size.y / 2);
+        GG::Pt halo_ul = middle - halo_half_size;
+        GG::Pt halo_lr = halo_ul + halo_size;
+        m_halo_texture->OrthoBlit(halo_ul, halo_lr);
+    }
+    if (m_disc_texture)
+        m_disc_texture->OrthoBlit(ul, lr);
+}
+
 void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())

@@ -10,8 +10,8 @@ class Fleet;
 class FleetButton;
 class System;
 namespace GG {
-class StaticGraphic;
-class TextControl;
+    class StaticGraphic;
+    class TextControl;
 }
 
 /** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). */
@@ -60,6 +60,7 @@ public:
     //! \name Mutators //!@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render() {}
+    void            ManualRender(double halo_scale_factor); //!< Draw disc and halo textures
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);

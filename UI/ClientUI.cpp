@@ -85,6 +85,35 @@ GG::Clr     ClientUI::StatDecrColor()          { return GetOptionsDB().Get<Strea
 
 int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
 double      ClientUI::FleetButtonSize()                 { return GetOptionsDB().Get<double>("UI.fleet-button-size"); }
+
+boost::shared_ptr<GG::Texture> ClientUI::FleetHeadIcon(const Fleet* fleet)
+{
+    if (!fleet) {
+        Logger().errorStream() << "ClientUI::FleetHeadIcon requested icon of null fleet";
+        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-monster.png", true);
+    }
+    if (fleet->HasColonyShips())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-colony.png", true);
+    if (fleet->HasArmedShips())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-warship.png", true);
+    // else
+    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-scout.png", true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::FleetSizeIcon(const Fleet* fleet)
+{
+    if (!fleet) {
+        Logger().errorStream() << "ClientUI::FleetSizeIcon requested icon of null fleet";
+        return FleetSizeIcon(1u);
+    }
+    return FleetSizeIcon(fleet->NumShips());
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::FleetSizeIcon(unsigned int fleet_size)
+{
+    return ClientUI::GetModuloTexture(ArtDir() / "icons" / "fleet", "tail-", fleet_size, true);
+}
+
 double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
 
 // SidePanel
@@ -493,6 +522,12 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
     return prefixed_textures_and_dist.first.empty() ? 
         boost::shared_ptr<GG::Texture>() : 
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
+}
+
+std::vector<boost::shared_ptr<GG::Texture> > ClientUI::GetPrefixedTextures(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)
+{
+    TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
+    return prefixed_textures_and_dist.first;
 }
 
 void ClientUI::InitTurn(int turn_number)

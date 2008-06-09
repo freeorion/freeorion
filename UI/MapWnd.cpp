@@ -80,6 +80,7 @@ namespace {
         db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
         db.Add("UI.chat-edit-history", "OPTIONS_DB_UI_CHAT_EDIT_HISTORY", 50, RangedValidator<int>(0, 1000));
         db.Add("UI.galaxy-gas-background", "OPTIONS_DB_GALAXY_MAP_GAS", true, Validator<bool>());
+        db.Add("UI.optimized-system-rendering", "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING", true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -195,7 +196,6 @@ std::pair<double, double> MapWnd::MovementLineData::Start() const
 
 // MapWnd
 // static(s)
-const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
 double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 360;
@@ -206,8 +206,8 @@ MapWnd::MapWnd() :
             static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5), 
             GG::CLICKABLE | GG::DRAGABLE),
     m_disabled_accels_list(),
-    m_backgrounds(NUM_BACKGROUNDS),
-    m_bg_scroll_rate(NUM_BACKGROUNDS),
+    m_backgrounds(),
+    m_bg_scroll_rate(),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
     m_star_texture_coords(),
@@ -341,24 +341,10 @@ MapWnd::MapWnd() :
 
     m_menu_showing = false;
 
-    //set up background images
-    m_backgrounds[0] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield1.png");
-    m_bg_scroll_rate[0] = 0.125;
-    glBindTexture(GL_TEXTURE_2D, m_backgrounds[0]->OpenGLId());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //clear background images
+    m_backgrounds.clear();
+    m_bg_scroll_rate.clear();
 
-    m_backgrounds[1] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield2.png");
-    m_bg_scroll_rate[1] = 0.25;
-    glBindTexture(GL_TEXTURE_2D, m_backgrounds[1]->OpenGLId());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    m_backgrounds[2] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield3.png");
-    m_bg_scroll_rate[2] = 0.5;
-    glBindTexture(GL_TEXTURE_2D, m_backgrounds[2]->OpenGLId());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // connect keyboard accelerators
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
@@ -707,6 +693,20 @@ void MapWnd::InitTurn(int turn_number)
         for (int i = 0; i < num_nebulae; ++i) {
             m_nebulae[i] = ClientUI::GetClientUI()->GetRandomTexture(ClientUI::ArtDir(), "nebula");
             m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
+        }
+    }
+
+    // set up backgrounds on first turn
+    if (m_backgrounds.empty()) {
+        std::vector<boost::shared_ptr<GG::Texture> > starfield_textures = ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir(), "starfield", false);
+        double scroll_rate = 1.0;
+        for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = starfield_textures.begin(); it != starfield_textures.end(); ++it) {
+            scroll_rate *= 0.5;
+            m_backgrounds.push_back(*it);
+            m_bg_scroll_rate.push_back(scroll_rate);
+            glBindTexture(GL_TEXTURE_2D, (*it)->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         }
     }
 
@@ -1585,7 +1585,7 @@ void MapWnd::RenderStarfields()
         UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
     glMatrixMode(GL_TEXTURE);
 
-    for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
+    for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
         float texture_coords_per_pixel_x = 1.0 / m_backgrounds[i]->Width();
         float texture_coords_per_pixel_y = 1.0 / m_backgrounds[i]->Height();
         glScalef(texture_coords_per_pixel_x * Width(),
@@ -1663,63 +1663,73 @@ void MapWnd::RenderGalaxyGas()
 
 void MapWnd::RenderSystems()
 {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-
     const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
-    if (0.5 < HALO_SCALE_FACTOR) {
-        glMatrixMode(GL_TEXTURE);
-        glTranslatef(0.5, 0.5, 0.0);
-        glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
-        glTranslatef(-0.5, -0.5, 0.0);
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-             it != m_star_halo_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+
+    if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
+        glColor4f(1.0, 1.0, 1.0, 1.0);
+
+        if (0.5 < HALO_SCALE_FACTOR) {
+            glMatrixMode(GL_TEXTURE);
+            glTranslatef(0.5, 0.5, 0.0);
+            glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
+            glTranslatef(-0.5, -0.5, 0.0);
+            for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+                 it != m_star_halo_quad_vertices.end();
+                 ++it) {
+                glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
 #ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+                glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
+                glVertexPointer(2, GL_FLOAT, 0, 0);
 #ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+                glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
 #endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+                glTexCoordPointer(2, GL_FLOAT, 0, 0);
+                glDrawArrays(GL_QUADS, 0, it->second.m_size);
+            }
+            glLoadIdentity();
+            glMatrixMode(GL_MODELVIEW);
         }
+
+        if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
+            for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+                 it != m_star_core_quad_vertices.end();
+                 ++it) {
+                glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+                glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+                glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+                glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+                glTexCoordPointer(2, GL_FLOAT, 0, 0);
+                glDrawArrays(GL_QUADS, 0, it->second.m_size);
+            }
+        }
+
+
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
+    } else {
+        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glPushMatrix();
         glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+            it->second->ManualRender(HALO_SCALE_FACTOR);
+        glPopMatrix();
     }
-
-    if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-             it != m_star_core_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-#endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-#endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
-        }
-    }
-
-
-#ifdef FREEORION_WIN32
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-#else
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
 }
 
 void MapWnd::RenderStarlanes()
@@ -2248,7 +2258,6 @@ bool MapWnd::ToggleResearch()
         // show the research window
         m_research_wnd->Show();
         GG::GUI::GetGUI()->MoveUp(m_research_wnd);
-        m_research_wnd->Reset();
     }
     return true;
 }

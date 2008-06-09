@@ -237,11 +237,13 @@ public:
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
     double                          BattleSpeed() const;        ///< returns design speed on the battle map
 
+    bool                            CanColonize() const;
+    bool                            IsArmed() const;
+
     /////// TEMPORARY ///////
     double      Defense() const;
     double      Speed() const;
     double      Attack() const;
-    bool        Colonize() const;
     double      Cost() const;
     int         BuildTime() const;
     /////// TEMPORARY ///////

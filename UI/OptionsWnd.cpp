@@ -731,6 +731,7 @@ void OptionsWnd::Init()
     EndSection();
     BeginSection(UserString("OPTIONS_GALAXY_MAP"));
     BoolOption("UI.galaxy-gas-background", UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption("UI.optimized-system-rendering", UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
     EndPage();
 
     // Colors tab

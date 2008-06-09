@@ -42,25 +42,25 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    MapWnd* GetMapWnd();                                //!< Returns the main map window (may be null).
-    void GetSaveGameUIData(SaveGameUIData& data) const; //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    MapWnd* GetMapWnd();                                    //!< Returns the main map window (may be null).
+    void GetSaveGameUIData(SaveGameUIData& data) const;     //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
 
     //! \name Mutators //!@{
-    void InitTurn(int turn_number);      //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
-    void RestoreFromSaveData(const SaveGameUIData& elem); ///< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
+    void InitTurn(int turn_number);                         //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
+    void RestoreFromSaveData(const SaveGameUIData& elem);   //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 
-    void ShowMap();       //!< Makes the Map Screen visible
+    void ShowMap();                     //!< Makes the Map Screen visible
 
-    bool ZoomToPlanet(int id);  //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
-    bool ZoomToSystem(int id);  //!< Zooms to a particular system on the galaxy map
-    bool ZoomToFleet(int id);   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-    bool ZoomToShip(int id);    //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
-    bool ZoomToTech(const std::string& tech_name); //!< Opens the technology screen and presents a description of the given technology
+    bool ZoomToPlanet(int id);          //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
+    bool ZoomToSystem(int id);          //!< Zooms to a particular system on the galaxy map
+    bool ZoomToFleet(int id);           //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool ZoomToShip(int id);            //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    bool ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
     bool ZoomToBuildingType(const std::string& building_type_name); //!< Opens the building type screen and presents a description of the given building type
-    bool ZoomToEncyclopediaEntry(const std::string& str); //!< Opens the encyclodedia screen and presents the entry for the given item
-    void ZoomToSystem(System* system); //!< Zooms to a particular system on the galaxy map
-    void ZoomToFleet(Fleet* fleet);    //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia screen and presents the entry for the given item
+    void ZoomToSystem(System* system);  //!< Zooms to a particular system on the galaxy map
+    void ZoomToFleet(Fleet* fleet);     //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
     boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
@@ -68,42 +68,45 @@ public:
     /** Loads texture \a n % N from the set of files starting with \a prefix in directory \a dir, where N is the number
         of files found in \a dir with prefix \a prefix. */
     boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap = false);
+
+    /** Returns all textures in the set of files starting with \a prefix in directory \a dir. */
+    std::vector<boost::shared_ptr<GG::Texture> > GetPrefixedTextures(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
     //!@}
 
-    static ClientUI*    GetClientUI();   //!< returns a pointer to the singleton ClientUI class
+    static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
 
     /** shows a message dialog box with the given message; if \a play_alert_sound is true, and UI sound effects are
         currently enabled, the default alert sound will be played as the message box opens */
     static void MessageBox(const std::string& message, bool play_alert_sound = false);
 
-    static void GenerateSitRepText(SitRepEntry *sit_rep); ///< generates a SitRep string from \a sit_rep.
+    static void GenerateSitRepText(SitRepEntry *sit_rep);   //!< generates a SitRep string from \a sit_rep.
 
     /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true; loads default
         missing.png if name isn't found. */
     static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
     //!@{
-    static boost::filesystem::path ArtDir();   //!< directory holding artwork
-    static boost::filesystem::path SoundDir(); //!< directory holding sound and music
+    static boost::filesystem::path ArtDir();    //!< directory holding artwork
+    static boost::filesystem::path SoundDir();  //!< directory holding sound and music
 
-    static std::string  Font();            //!< The default font to use
-    static std::string  FontBold();        //!< The default bold font to use
-    static std::string  FontItalic();      //!< The default italic font to use
-    static std::string  FontBoldItalic();  //!< The default bold and italic font to use
-    static int          Pts();             //!< default point size
-    static std::string  TitleFont();       //!< The default font to use for the window title
-    static int          TitlePts();        //!< default point size to use for window title
+    static std::string  Font();                 //!< The default font to use
+    static std::string  FontBold();             //!< The default bold font to use
+    static std::string  FontItalic();           //!< The default italic font to use
+    static std::string  FontBoldItalic();       //!< The default bold and italic font to use
+    static int          Pts();                  //!< default point size
+    static std::string  TitleFont();            //!< The default font to use for the window title
+    static int          TitlePts();             //!< default point size to use for window title
 
-    static GG::Clr      TextColor();       //!< color of UI text
+    static GG::Clr      TextColor();            //!< color of UI text
 
     // generic UI windows
-    static GG::Clr      WndColor();            //!< color of a UI window
-    static GG::Clr      WndBorderColor();      //!< color of window borders
-    static GG::Clr      WndOuterBorderColor(); //!< color of the outermost border
-    static GG::Clr      WndInnerBorderColor(); //!< color of the innermost border
+    static GG::Clr      WndColor();             //!< color of a UI window
+    static GG::Clr      WndBorderColor();       //!< color of window borders
+    static GG::Clr      WndOuterBorderColor();  //!< color of the outermost border
+    static GG::Clr      WndInnerBorderColor();  //!< color of the innermost border
 
     // controls
-    static GG::Clr      CtrlColor();           //!< color of UI controls
+    static GG::Clr      CtrlColor();            //!< color of UI controls
     static GG::Clr      CtrlBorderColor();
 
     static GG::Clr      ButtonColor();
@@ -120,12 +123,20 @@ public:
     static GG::Clr      EditIntColor();
     static GG::Clr      MultieditIntColor();
 
-    static GG::Clr      StatIncrColor();   //!< used to color increasing stats text (eg "+2")
-    static GG::Clr      StatDecrColor();   //!< used to color decreasing stats text (eg "-3")
+    static GG::Clr      StatIncrColor();        //!< used to color increasing stats text (eg "+2")
+    static GG::Clr      StatDecrColor();        //!< used to color decreasing stats text (eg "-3")
 
-    static int          SystemIconSize();                //!< the width/height of a System/Icon at zoom = 1.0
-    static double       FleetButtonSize();               //!< the width/height of a FleetButton, relative to the size of a SystemIcon
-    static double       SystemSelectionIndicatorSize();  //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
+    static int          SystemIconSize();                       //!< the width/height of a System/Icon at zoom = 1.0
+    static double       SystemSelectionIndicatorSize();         //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
+
+    static double       FleetButtonSize();                      //!< the width/height of a FleetButton, relative to the size of a SystemIcon
+
+    boost::shared_ptr<GG::Texture>
+                        FleetHeadIcon(const Fleet* fleet);      //!< the "head" icon for \a fleet
+    boost::shared_ptr<GG::Texture>
+                        FleetSizeIcon(const Fleet* fleet);      //!< the "size" icon for \a fleet
+    boost::shared_ptr<GG::Texture>
+                        FleetSizeIcon(unsigned int fleet_size); //!< the "size" icon for a fleet of size \a fleet_size
 
     // SidePanel
     static GG::Clr      SidePanelColor();

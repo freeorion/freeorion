@@ -145,6 +145,9 @@ The number of outgoing messages to keep in the chat edit box history.
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
 
+OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
+Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
@@ -865,6 +868,9 @@ Galaxy Map
 
 OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
+
+OPTIONS_OPTIMIZED_SYSTEM_RENDERING
+Optimized system rendering
 
 OPTIONS_MUSIC
 Music

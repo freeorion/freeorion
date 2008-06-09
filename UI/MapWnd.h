@@ -206,14 +206,14 @@ private:
     void ShowAllPopups();
 
     void FleetWndClosing(FleetWnd* fleet_wnd);
-    void HandleEmpireElimination(int empire_id); //!< cleans up internal storage of now-invalidated empire ID
+    void HandleEmpireElimination(int empire_id);    //!< cleans up internal storage of now-invalidated empire ID
 
-    std::set<GG::Key> m_disabled_accels_list;   //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
+    std::set<GG::Key> m_disabled_accels_list;       //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;  //!< starfield backgrounds
     std::vector<boost::shared_ptr<GG::Texture> >    m_nebulae;      //!< decorative nebula textures
-    std::vector<GG::Pt>     m_nebula_centers;   //!< the centerpoints of each of the nebula textures
-    std::vector<double>     m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
+    std::vector<GG::Pt>     m_nebula_centers;       //!< the centerpoints of each of the nebula textures
+    std::vector<double>     m_bg_scroll_rate;       //!< array, the rates at which each background scrolls
 
     int                         m_previously_selected_system;
 
@@ -226,13 +226,10 @@ private:
     DesignWnd*                  m_design_wnd;       //!< design screen
     GG::MultiEdit*              m_chat_display;     //!< (read-only) MP-chat output multi-line edit box
     CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
-    std::vector<FleetButton*>   m_moving_fleet_buttons; //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
 
-
-    std::map<Fleet*, MovementLineData>
-                                m_fleet_lines;          //!< lines used for moving fleets in the main map
-
-    MovementLineData            m_projected_fleet_line; //!< lines that show the projected path of the active fleet in the FleetWnd
+    std::vector<FleetButton*>           m_moving_fleet_buttons;     //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
+    std::map<Fleet*, MovementLineData>  m_fleet_lines;              //!< lines used for moving fleets in the main map
+    MovementLineData                    m_projected_fleet_line;     //!< lines that show the projected path of the active fleet in the FleetWnd
 
     // OpenGL buffers objects containing vertices, texture coordinates, etc.
     struct GLBuffer
@@ -265,7 +262,6 @@ private:
 
     FPSIndicator*               m_FPS;
 
-    static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;
     static double s_max_scale_factor;
 

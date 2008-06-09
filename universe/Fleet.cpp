@@ -354,6 +354,14 @@ bool Fleet::HasArmedShips() const
     return false;
 }
 
+bool Fleet::HasColonyShips() const
+{
+    for (Fleet::const_iterator it = begin(); it != end(); it++) {   
+        if (GetUniverse().Object<Ship>(*it)->CanColonize())
+            return true;
+    }
+    return false;}
+
 int Fleet::NumShips() const
 {
     return m_ships.size();

@@ -362,7 +362,7 @@ namespace {
                 DeleteChild(m_damage_stat);
                 m_damage_stat = 0;
             }
-            if (m_ship->Design() && design->Colonize()) {
+            if (m_ship->Design() && design->CanColonize()) {
                 if (!m_colonizer_icon) {
                     m_colonizer_icon = new GG::StaticGraphic(x_position, SHIP_NAME_HT, ICON_SZ, ICON_SZ, 
                                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "colonymarker.png"),
@@ -630,7 +630,7 @@ void FleetDataPanel::Refresh()
             Ship* ship = GetUniverse().Object<Ship>(*it);
             const ShipDesign* design = ship->Design();
             if (design) {
-                if (design->Colonize())
+                if (design->CanColonize())
                     contains_colony_ship = true;
                 attack_strength += static_cast<int>(design->Attack());
                 attack_factor_unknown = false;

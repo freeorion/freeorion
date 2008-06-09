@@ -634,7 +634,7 @@ namespace {
                     continue;
                 }
                 
-                if (design->Colonize()) return s;
+                if (design->CanColonize()) return s;
             }
         }
         return 0;   // no ships found...
