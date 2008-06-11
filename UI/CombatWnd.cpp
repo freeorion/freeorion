@@ -1163,12 +1163,16 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
         DeselectAll();
     Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
     for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
-        // TODO: if (object-center is inside bounding volume) {
-        std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(*it);
-        if (object_it != m_current_selections.end())
-            m_current_selections.erase(object_it);
-        else
-            m_current_selections[*it] = SelectedObject(*it);
+        // This if statement ensures that the center of the object is in the
+        // volume, so we don't pick parts of objects' bounding rects that don't
+        // actually contain any of the mesh itself.
+        if (volume.intersects(Ogre::Sphere((*it)->getWorldBoundingBox().getCenter(), 0.001))) {
+            std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(*it);
+            if (object_it != m_current_selections.end())
+                m_current_selections.erase(object_it);
+            else
+                m_current_selections[*it] = SelectedObject(*it);
+        }
     }
 }
 
