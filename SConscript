@@ -112,6 +112,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/InfoPanels.cpp',
         'UI/IntroScreen.cpp',
         'UI/LinkText.cpp',
+        'UI/CollisionMeshConverter.cpp',
         'UI/CombatWnd.cpp',
         'UI/MapWnd.cpp',
         'UI/MultiplayerLobbyWnd.cpp',

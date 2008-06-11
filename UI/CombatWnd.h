@@ -24,12 +24,13 @@ namespace Ogre {
 class System;
 class FPSIndicator;
 
-class btDefaultCollisionConfiguration;
-class btCollisionDispatcher;
 class bt32BitAxisSweep3;
+class btCollisionDispatcher;
 class btCollisionWorld;
 class btCollisionShape;
 class btCollisionObject;
+class btDefaultCollisionConfiguration;
+class btTriangleMesh;
 
 class CombatWnd :
     public GG::Wnd,
@@ -88,6 +89,7 @@ private:
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
     void DeselectAll();
+    void AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y);
 
     Ogre::SceneManager* m_scene_manager;
     Ogre::Camera* m_camera;
@@ -116,6 +118,9 @@ private:
     std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > > m_planet_assets;
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
+    // The scene nodes representing ships in the system and their associated
+    // collision meshes, indexed by ship object id.
+    std::map<int, std::pair<Ogre::SceneNode*, btTriangleMesh*> > m_ship_assets;
 
     // The collision detection system
     btDefaultCollisionConfiguration* m_collision_configuration;

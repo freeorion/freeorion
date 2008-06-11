@@ -1,6 +1,7 @@
 #include "CombatWnd.h"
 
 #include "ClientUI.h"
+#include "CollisionMeshConverter.h"
 #include "CUIControls.h"
 #include "InGameMenu.h"
 #include "../universe/System.h"
@@ -54,7 +55,7 @@ namespace {
 
     // collision dection system params
     btVector3 WORLD_AABB_MIN(-SYSTEM_RADIUS, -SYSTEM_RADIUS, -SYSTEM_RADIUS / 10.0);
-	btVector3 WORLD_AABB_MAX(SYSTEM_RADIUS, SYSTEM_RADIUS, SYSTEM_RADIUS / 10.0);
+    btVector3 WORLD_AABB_MAX(SYSTEM_RADIUS, SYSTEM_RADIUS, SYSTEM_RADIUS / 10.0);
 
     // visibility masks
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
@@ -522,6 +523,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     }
 
     InitCombat(system);
+
+    AddShip("durgha.mesh", 250.0, 250.0);
 }
 
 CombatWnd::~CombatWnd()
@@ -540,6 +543,7 @@ CombatWnd::~CombatWnd()
 
     // TODO: delete nodes and materials in m_planet_assets (or maybe everything
     // via some Ogre function?)
+    // TODO: free resources held in m_ship_assets
 }
 
 void CombatWnd::InitCombat(const System& system)
@@ -964,9 +968,7 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 }
 
 bool CombatWnd::frameEnded(const Ogre::FrameEvent& event)
-{
-    return !m_exit;
-}
+{ return !m_exit; }
 
 void CombatWnd::UpdateCameraPosition()
 {
@@ -1161,6 +1163,7 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
         DeselectAll();
     Ogre::SceneQueryResult& result = m_volume_scene_query->execute();
     for (Ogre::SceneQueryResultMovableList::iterator it = result.movables.begin(); it != result.movables.end(); ++it) {
+        // TODO: if (object-center is inside bounding volume) {
         std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(*it);
         if (object_it != m_current_selections.end())
             m_current_selections.erase(object_it);
@@ -1178,6 +1181,34 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 }
 
 void CombatWnd::DeselectAll()
+{ m_current_selections.clear(); }
+
+void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y)
 {
-    m_current_selections.clear();
+    Ogre::Entity* entity = m_scene_manager->createEntity("ship_" + mesh_name, mesh_name);
+    entity->setCastShadows(true);
+    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+    Ogre::SceneNode* node =
+        m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
+    node->attachObject(entity);
+
+    node->setPosition(x, y, 0.0);
+
+    CollisionMeshConverter collision_mesh_converter(entity);
+    btTriangleMesh* collision_mesh = 0;
+    btBvhTriangleMeshShape* collision_shape = 0;
+    boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
+
+    // TODO: use ship's ID
+    m_ship_assets[0] = std::make_pair(node, collision_mesh);
+
+    m_collision_shapes.push_back(collision_shape);
+    m_collision_objects.push_back(new btCollisionObject);
+    btMatrix3x3 identity;
+    identity.setIdentity();
+    m_collision_objects.back().getWorldTransform().setBasis(identity);
+    m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(node->getPosition()));
+    m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
+    m_collision_world->addCollisionObject(&m_collision_objects.back());
+    m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
 }
