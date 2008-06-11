@@ -534,6 +534,12 @@ CombatWnd::~CombatWnd()
     m_scene_manager->destroyQuery(m_volume_scene_query);
     Ogre::CompositorManager::getSingleton().removeCompositor(m_viewport, "effects/glow");
 
+    for (std::map<int, std::pair<Ogre::SceneNode*, btTriangleMesh*> >::iterator it = m_ship_assets.begin();
+         it != m_ship_assets.end(); ++it) {
+        // TODO: either delete these SceneNodes, or use an Ogre clear-everything function
+        delete it->second.second;
+    }
+
     m_collision_shapes.clear();
     m_collision_objects.clear();
     delete m_collision_world;
@@ -543,7 +549,6 @@ CombatWnd::~CombatWnd()
 
     // TODO: delete nodes and materials in m_planet_assets (or maybe everything
     // via some Ogre function?)
-    // TODO: free resources held in m_ship_assets
 }
 
 void CombatWnd::InitCombat(const System& system)
