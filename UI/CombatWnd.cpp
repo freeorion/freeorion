@@ -1201,6 +1201,10 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
         m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
     node->attachObject(entity);
 
+    // TOOD: This is only here because the Durgha model is upside down.  Remove
+    // it when this is fixed.
+    node->yaw(Ogre::Radian(Ogre::Math::PI));
+
     node->setPosition(x, y, 0.0);
 
     CollisionMeshConverter collision_mesh_converter(entity);
@@ -1215,7 +1219,9 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
     m_collision_objects.push_back(new btCollisionObject);
     btMatrix3x3 identity;
     identity.setIdentity();
-    m_collision_objects.back().getWorldTransform().setBasis(identity);
+    // TOOD: Remove z-flip scaling when models are right.
+    btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
+    m_collision_objects.back().getWorldTransform().setBasis(scaled);
     m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(node->getPosition()));
     m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
     m_collision_world->addCollisionObject(&m_collision_objects.back());
