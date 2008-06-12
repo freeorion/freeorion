@@ -29,6 +29,8 @@ material effects/selection/outline_hiliting
             scene_blend src_alpha dest_alpha
             depth_write off
             lighting off
+            cull_hardware none
+            cull_software none
 
             vertex_program_ref hiliting_vert
             {
