@@ -50,6 +50,9 @@ public:
     void                    HideType(const TechType type);
     void                    ToggleType(const TechType type);
 
+    void                    ShowTreeView();
+    void                    ShowListView();
+
     void                    CenterOnTech(const Tech* tech);
     //@}
 

@@ -234,15 +234,21 @@ PythonAI::~PythonAI() {
 }
 
 void PythonAI::GenerateOrders() {
+    Logger().debugStream() << "PythonAI::GenerateOrders : initializing turn";
     AIInterface::InitTurn();
     try {
         // call Python function that generates orders for current turn
+        //Logger().debugStream() << "PythonAI::GenerateOrders : getting generate orders object";
         object generateOrdersPythonFunction = s_ai_module.attr("generateOrders");
+        //Logger().debugStream() << "PythonAI::GenerateOrders : generating orders";
         generateOrdersPythonFunction();
     } catch (error_already_set err) {
         PyErr_Print();
+        //Logger().debugStream() << "PythonAI::GenerateOrders : python error caught and printed";
         AIInterface::DoneTurn();
+        //Logger().debugStream() << "PythonAI::GenerateOrders : done with error";
     }
+    //Logger().debugStream() << "PythonAI::GenerateOrders : done successfully";
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {

@@ -98,7 +98,7 @@ std::size_t FleetUIManager::OpenDetailWnds(FleetWnd* fleet_wnd) const
 }
 
 FleetWnd* FleetUIManager::NewFleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
-                                       GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
+                                      GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
 {
     if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"))
         CloseAll();
@@ -110,7 +110,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(std::vector<Fleet*> fleets, int selected_f
 }
 
 FleetDetailWnd* FleetUIManager::NewFleetDetailWnd(FleetWnd* fleet_wnd, Fleet* fleet, bool read_only,
-                                                   GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE*/)
+                                                  GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE*/)
 {
     assert(fleet_wnd);
     assert(m_fleet_wnds.find(fleet_wnd) != m_fleet_wnds.end());
@@ -533,9 +533,7 @@ void FleetDataPanel::DragDropLeave()
     Select(false);
 }
 
-void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first,
-                                     DropsAcceptableIter last,
-                                     const GG::Pt& pt) const
+void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const
 {
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (it->first->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
@@ -1091,7 +1089,7 @@ std::string FleetDetailPanel::DestinationText() const
                                             dest_name % final_eta_text % next_eta_text);
 
     } else if (current) {
-        retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_AT")) % current->Name());
+        retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % current->Name());
     }
     return retval;
 }
@@ -1208,7 +1206,7 @@ FleetWnd::FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_onl
 
 FleetWnd::~FleetWnd()
 {
-    ClientUI::GetClientUI()->GetMapWnd()->SetProjectedFleetMovement(0, std::list<System*>());
+    ClientUI::GetClientUI()->GetMapWnd()->ClearProjectedFleetMovementLines();
     ClosingSignal(this);
 }
 
@@ -1391,7 +1389,19 @@ Fleet* FleetWnd::FleetInRow(int idx) const
 std::string FleetWnd::TitleText() const
 {
     Fleet* existing_fleet = FleetInRow(0);
-    return boost::io::str(boost::format(UserString("FW_EMPIRE_FLEETS")) % Empires().Lookup(*existing_fleet->Owners().begin())->Name());
+
+    if (!existing_fleet)
+        return UserString("FW_NO_FLEET");
+
+    const System* system = GetUniverse().Object<System>(m_system_id);
+
+    if (system)
+        return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
+                              Empires().Lookup(*existing_fleet->Owners().begin())->Name() %
+                              system->Name());
+    else
+        return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS")) %
+                              Empires().Lookup(*existing_fleet->Owners().begin())->Name());
 }
 
 void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>& ship_ids)

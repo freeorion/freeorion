@@ -47,7 +47,7 @@ public:
 
     //! \name Accessors //!@{
     const System&       GetSystem() const;
-    const FleetButton*  GetFleetButton(Fleet* fleet) const;
+    const FleetButton*  GetFleetButton(const Fleet* fleet) const;
     GG::Pt              FleetButtonCentre(int empire_id, bool moving) const;    //!< returns centre of fleetbutton owned by empire with id \a empire_id, or GG::Pt(INVALID_POSITION, INVALID_POSITION) if there is no such FleetButton for the specified empire.
 
     const boost::shared_ptr<GG::Texture>& DiscTexture() const; //!< returns the solid star disc texture

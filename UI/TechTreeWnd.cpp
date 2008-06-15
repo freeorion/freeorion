@@ -374,12 +374,14 @@ private:
     std::vector<CUIButton*>             m_category_buttons;
     std::map<TechType, CUIButton*>      m_tech_type_buttons;
     std::map<TechStatus, CUIButton*>    m_tech_status_buttons;
+    CUIButton*                          m_list_view_button;
+    CUIButton*                          m_tree_view_button;
 
     friend class TechTreeWnd;               // so TechTreeWnd can access buttons
 };
 
 TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
-CUIWnd(UserString("TECH_DISPLAY"), x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP)
+    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP)
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
@@ -415,6 +417,14 @@ CUIWnd(UserString("TECH_DISPLAY"), x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | G
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
         it->second->MarkSelectedGray();
 
+    // create buttons to switch between tree and list views
+    m_list_view_button = new CUIButton(0, 0, 80, UserString("TECH_WND_LIST_VIEW"));
+    m_list_view_button->MarkNotSelected();
+    AttachChild(m_list_view_button);
+    m_tree_view_button = new CUIButton(0, 30, 80, UserString("TECH_WND_TREE_VIEW"));
+    m_tree_view_button->MarkSelectedGray();
+    AttachChild(m_tree_view_button);
+
     EnableChildClipping(true);
     DoButtonLayout();
     Resize(GG::Pt(Width(), MinSize().y));
@@ -439,6 +449,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
 
+    // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
     for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin(); it != m_category_buttons.end(); ++it) {
         ++col;
@@ -446,13 +457,16 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
             ++row;
             col = 0;
         }
-        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD+ row*m_row_offset);
+        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         (*it)->SizeMove(ul, lr);
     }
 
+    // rowbreak after category buttons, before type and status buttons
     col = -1;
-    m_category_button_rows = ++row;  // rowbreak after category buttons, before type and status buttons
+    m_category_button_rows = ++row;
+
+    // place type buttons: fill each row completely before starting next row
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin(); it != m_tech_type_buttons.end(); ++it) {
         ++col;
         if (col >= m_buttons_per_row) {
@@ -465,10 +479,12 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
     }
 
     // if all six status + type buttons can't fit on one row put an extra row break between them
-    if (m_buttons_per_row < 6) {
+    if (m_buttons_per_row < static_cast<int>(m_tech_type_buttons.size() + m_tech_status_buttons.size())) {
         col = -1;
         ++row;
     }
+
+    // place status buttons: fill each row completely before starting next row
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it) {
         ++col;
         if (col >= m_buttons_per_row) {
@@ -480,6 +496,24 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
         it->second->SizeMove(ul, lr);
     }
 
+    // rowbreak after status buttons, before view toggles
+    col = 0;
+    ++row;
+
+    // place view type buttons buttons
+    GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_list_view_button->SizeMove(ul, lr);
+    ++col;
+    if (col >= m_buttons_per_row) {
+        ++row;
+        col = 0;
+    }
+    ul = GG::Pt(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_tree_view_button->SizeMove(ul, lr);
+
+    // keep track of layout.  Used to draw lines between groups of buttons when rendering
     if (m_buttons_per_row == 1)
         m_status_or_type_button_rows = 3;   // three rows, one button per row
     else if (m_buttons_per_row == 2)
@@ -1681,6 +1715,10 @@ void TechTreeWnd::LayoutPanel::Clear()
 void TechTreeWnd::LayoutPanel::Reset()
 {
     Layout(true);
+    TechManager& manager = GetTechManager();
+    TechManager::iterator it = manager.begin();
+    if (it != manager.end())
+        CenterOnTech(*it);
 }
 
 void TechTreeWnd::LayoutPanel::SetScale(double scale)
@@ -2293,13 +2331,12 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_layout_panel->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
     GG::Connect(m_layout_panel->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
     GG::Connect(m_layout_panel->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
-    //AttachChild(m_layout_panel);
+    AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(0, 0, w, h);
     GG::Connect(m_tech_list->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
     GG::Connect(m_tech_list->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
-    AttachChild(m_tech_list);
 
     m_tech_detail_panel = new TechDetailPanel(m_layout_panel->ClientWidth() - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     AttachChild(m_tech_detail_panel);
@@ -2324,6 +2361,10 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_tree_controls->m_tech_type_buttons.begin();
                                                   it != m_tech_tree_controls->m_tech_type_buttons.end(); ++it)
         GG::Connect(it->second->ClickedSignal, ToggleTechTypeFunctor(this, it->first));
+    // connect view type selectors
+    GG::Connect(m_tech_tree_controls->m_tree_view_button->ClickedSignal, &TechTreeWnd::ShowTreeView, this);
+    GG::Connect(m_tech_tree_controls->m_list_view_button->ClickedSignal, &TechTreeWnd::ShowListView, this);
+
     AttachChild(m_tech_tree_controls);
 }
 
@@ -2500,6 +2541,24 @@ void TechTreeWnd::ToggleType(TechType type)
     } else {
         HideType(type);
     }
+}
+
+void TechTreeWnd::ShowTreeView()
+{
+    AttachChild(m_layout_panel);
+    MoveChildDown(m_layout_panel);
+    DetachChild(m_tech_list);
+    m_tech_tree_controls->m_list_view_button->MarkNotSelected();
+    m_tech_tree_controls->m_tree_view_button->MarkSelectedGray();
+}
+
+void TechTreeWnd::ShowListView()
+{
+    AttachChild(m_tech_list);
+    MoveChildDown(m_tech_list);
+    DetachChild(m_layout_panel);
+    m_tech_tree_controls->m_list_view_button->MarkSelectedGray();
+    m_tech_tree_controls->m_tree_view_button->MarkNotSelected();
 }
 
 void TechTreeWnd::SetScale(double scale)

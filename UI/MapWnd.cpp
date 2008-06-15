@@ -194,6 +194,46 @@ std::pair<double, double> MapWnd::MovementLineData::Start() const
     }
 }
 
+// MapWnd::FleetETAMapIndicator
+class MapWnd::FleetETAMapIndicator : public GG::Wnd
+{
+public:
+    FleetETAMapIndicator(double x, double y, int eta);
+    virtual void    Render();
+private:
+    double              m_x, m_y;
+    GG::TextControl*    m_text;
+};
+
+MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) :
+    GG::Wnd(0, 0, 1, 1, GG::Flags<GG::WndFlag>()),
+    m_x(x),
+    m_y(y),
+    m_text(0)
+{
+    std::string eta_text;
+    if (eta == Fleet::ETA_UNKNOWN)
+        eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
+    else if (eta == Fleet::ETA_NEVER)
+        eta_text = UserString("FW_FLEET_ETA_NEVER");
+    else if (eta == Fleet::ETA_OUT_OF_RANGE)
+        eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+    else
+        eta_text = boost::lexical_cast<std::string>(eta);
+
+    m_text = new GG::TextControl(0, 0, eta_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                 ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    Resize(m_text->Size());
+    AttachChild(m_text);
+}
+
+void MapWnd::FleetETAMapIndicator::Render()
+{
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
+}
+
 // MapWnd
 // static(s)
 double    MapWnd::s_min_scale_factor = 0.35;
@@ -202,8 +242,8 @@ const int MapWnd::SIDE_PANEL_WIDTH = 360;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5), 
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5), 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
             GG::CLICKABLE | GG::DRAGABLE),
     m_disabled_accels_list(),
     m_backgrounds(),
@@ -712,7 +752,7 @@ void MapWnd::InitTurn(int turn_number)
 
     // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
     m_fleet_lines.clear();
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
 
     // systems and starlanes
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
@@ -774,12 +814,12 @@ void MapWnd::InitTurn(int turn_number)
         m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
-        GG::Connect(icon->LeftClickedSignal, &MapWnd::SystemLeftClicked, this);
-        GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
-        GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
-        GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
-        GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
-        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
+        GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
+        GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
+        GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
+        GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
+        GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
+        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
 
         // gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gaseous_texture =
@@ -877,7 +917,7 @@ void MapWnd::InitTurn(int turn_number)
     DoMovingFleetButtonsLayout();
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
-        SetFleetMovement(*it);
+        SetFleetMovementLine(*it);
 
 
     // update effect accounting and meter estimates
@@ -924,7 +964,8 @@ void MapWnd::InitTurn(int turn_number)
     MoveChildUp(m_side_panel);
 
     // set turn button to current turn
-    m_turn_update->SetText( UserString("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
+    m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
+                                          boost::lexical_cast<std::string>(turn_number)));
     MoveChildUp(m_turn_update);
 
     // are there any sitreps to show?
@@ -981,8 +1022,6 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
 
-    //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
-    //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
     m_toolbar->Show();
     m_FPS->Show();
@@ -1383,7 +1422,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     }
 }
 
-void MapWnd::SetFleetMovement(FleetButton* fleet_button)
+void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
 {
     assert(fleet_button);
     for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
@@ -1392,38 +1431,44 @@ void MapWnd::SetFleetMovement(FleetButton* fleet_button)
     }
 }
 
-void MapWnd::SetFleetMovement(Fleet* fleet)
+void MapWnd::SetFleetMovementLine(const Fleet* fleet)
 {
-    assert(fleet);
+    if (!fleet) {
+        Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed a null fleet pointer";
+        return;
+    }
 
-    std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
-    if (it != m_fleet_lines.end()) {
-        const System* system = fleet->GetSystem();
-        if (system) {
-            // attempt draw line from fleet button location near system icon
-            // get system icon
-            std::map<int, SystemIcon*>::const_iterator it2 = m_system_icons.find(system->ID());
-            if (it2 != m_system_icons.end()) {
-                // get fleet button
-                const FleetButton* fleet_button = it2->second->GetFleetButton(fleet);
-                assert(fleet_button);
-                m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
+    if (const System* system = fleet->GetSystem()) {
+        // if fleet is in a system, draw movement line from fleet button near system icon.
+
+        // get system icon
+        std::map<int, SystemIcon*>::const_iterator icon_it = m_system_icons.find(system->ID());
+        if (icon_it != m_system_icons.end()) {
+            const SystemIcon* icon = icon_it->second;
+            // get fleet button
+            const FleetButton* fleet_button = icon->GetFleetButton(fleet);
+
+            if (!fleet_button) {
+                Logger().errorStream() << "MapWnd::SetFleetMovement couldn't get a fleet button for a fleet in a system";
                 return;
             }
+
+            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
         }
-
-        // else if any of the above failed...
-
-        // draw line from fleet's centre
+    } else {
+        // fleet is not in a system, so fleet button is located at fleet's actual location, so can just
+        // create movement line starting at fleet's actual universe position
         m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
     }
 }
 
-void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route)
+void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route)
 {
-    if (!fleet || travel_route.empty()) {
-        // no route to display - set projected line to default empty MovementLineData
-        m_projected_fleet_line = MovementLineData();
+    if (!fleet)
+        return;
+
+    if (travel_route.empty()) {
+        RemoveProjectedFleetMovementLine(fleet);
         return;
     }
 
@@ -1431,7 +1476,7 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
 
     if (path.empty()) {
         // no route to display
-        m_projected_fleet_line = MovementLineData();
+        RemoveProjectedFleetMovementLine(fleet);
         return;
     }
 
@@ -1441,11 +1486,11 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
     std::pair<double, double> universe_position;
 
     // check if this MapWnd already has MovementLineData for this fleet
-    std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
+    std::map<const Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
     if (it != m_fleet_lines.end()) {
         // there is a fleet line already.  Its x and y are useful for the projected line, so it can be copied and tweaked a bit
         std::pair<double, double> start = it->second.Start();
-        m_projected_fleet_line = MovementLineData(start.first, start.second, path, line_colour);
+        m_projected_fleet_lines[fleet] = MovementLineData(start.first, start.second, path, line_colour);
     } else {
         // there is no preexisting fleet line.  need to make one from scratch
 
@@ -1457,12 +1502,37 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
             // get fleet button
             const FleetButton* fleet_button = it->second->GetFleetButton(fleet);
             assert(fleet_button);
-            m_projected_fleet_line = MovementLineData(fleet_button, path, line_colour);
+            m_projected_fleet_lines[fleet] = MovementLineData(fleet_button, path, line_colour);
         } else {
             // couldn't get a fleet button, so instead use fleet's own position
-            m_projected_fleet_line = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
+            m_projected_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
         }
     }
+}
+
+void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route)
+{
+    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
+        SetProjectedFleetMovementLine(*it, travel_route);
+}
+
+void MapWnd::RemoveProjectedFleetMovementLine(const Fleet* fleet)
+{
+    std::map<const Fleet*, MovementLineData>::iterator it = m_projected_fleet_lines.find(fleet);
+    if (it != m_projected_fleet_lines.end())
+        m_projected_fleet_lines.erase(it);
+}
+
+void MapWnd::ClearProjectedFleetMovementLines()
+{
+    m_projected_fleet_lines.clear();
+    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator map_it = m_projected_fleet_eta_map_indicators.begin();
+         map_it != m_projected_fleet_eta_map_indicators.end(); ++map_it)
+    {
+        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = map_it->second.begin(); vec_it != map_it->second.end(); ++vec_it)
+            DeleteChild(*vec_it);
+    }
+    m_projected_fleet_eta_map_indicators.clear();
 }
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
@@ -1797,7 +1867,7 @@ void MapWnd::RenderFleetMovementLines()
 
     // render standard movement lines
     glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
-    for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
+    for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 
 
@@ -1808,9 +1878,10 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
 
-    //// render projected move path
+    //// render projected move lines
     glLineStipple(static_cast<int>(STARLANE_WIDTH), PROJECTED_PATH_STIPPLE);
-    RenderMovementLine(m_projected_fleet_line);
+    for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
+        RenderMovementLine(it->second);
 }
 
 void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
@@ -1900,7 +1971,7 @@ void MapWnd::SystemRightClicked(int system_id)
 {
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
-            SetProjectedFleetMovement(0, std::list<System*>()) ;
+            ClearProjectedFleetMovementLines();
         else
             PlotFleetMovement(system_id, true);
     }
@@ -1909,9 +1980,8 @@ void MapWnd::SystemRightClicked(int system_id)
 
 void MapWnd::MouseEnteringSystem(int system_id)
 {
-    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
+    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         PlotFleetMovement(system_id, false);
-    }
     SystemBrowsedSignal(system_id);
 }
 
@@ -1938,7 +2008,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
         // plot empty move pathes if destination is not a known system
         if (system_id == UniverseObject::INVALID_OBJECT_ID) {
-            SetProjectedFleetMovement(fleet, std::list<System*>()) ;
+            RemoveProjectedFleetMovementLine(fleet);
             continue;
         }
 
@@ -1962,8 +2032,8 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         if (execute_move && !route.empty())
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id)));
 
-        // show route on map
-        SetProjectedFleetMovement(fleet, route);
+        // display projected move line 
+        SetProjectedFleetMovementLine(fleet, route);
     }
 }
 
@@ -2110,18 +2180,20 @@ void MapWnd::HandleEmpireElimination(int empire_id)
 {}
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
-{ m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj))); }
+{
+    m_fleet_lines.erase(universe_object_cast<const Fleet*>(obj));
+}
 
-void MapWnd::RegisterPopup( MapWndPopup* popup )
+void MapWnd::RegisterPopup(MapWndPopup* popup)
 {
     if (popup)
         m_popups.push_back(popup);
 }
 
-void MapWnd::RemovePopup( MapWndPopup* popup )
+void MapWnd::RemovePopup(MapWndPopup* popup)
 {
     if (popup) {
-        std::list<MapWndPopup*>::iterator it = std::find( m_popups.begin(), m_popups.end(), popup );
+        std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
         if (it != m_popups.end())
             m_popups.erase(it);
     }
@@ -2205,7 +2277,7 @@ bool MapWnd::EndTurn()
 
 bool MapWnd::ToggleSitRep()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_sitrep_panel->Visible()) {
         DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
@@ -2237,7 +2309,7 @@ bool MapWnd::ToggleSitRep()
 
 bool MapWnd::ToggleResearch()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_research_wnd->Visible()) {
         m_research_wnd->Hide();
     } else {
@@ -2264,7 +2336,7 @@ bool MapWnd::ToggleResearch()
 
 bool MapWnd::ToggleProduction()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
@@ -2298,7 +2370,7 @@ bool MapWnd::ToggleProduction()
 
 bool MapWnd::ToggleDesign()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_design_wnd->Visible()) {
         m_design_wnd->Hide();
         EnableAlphaNumAccels();
@@ -2327,7 +2399,7 @@ bool MapWnd::ToggleDesign()
 bool MapWnd::ShowMenu()
 {
     if (!m_menu_showing) {
-        m_projected_fleet_line = MovementLineData();
+        ClearProjectedFleetMovementLines();
         m_menu_showing = true;
         InGameMenu menu;
         menu.Run();

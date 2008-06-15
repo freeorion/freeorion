@@ -1064,7 +1064,7 @@ Sound files
 #################
 
 MAP_BTN_TURN_UPDATE
-Turn
+Turn %1%
 
 MAP_INDICATOR_FPS
 %1% FPS
@@ -1225,8 +1225,8 @@ All colony ships in this system have been\ngiven orders to leave the system.\n\n
 # Fleet Window  #
 #################
 
-FW_FLEET_AT
-At %1% System
+FW_FLEET_HOLDING_AT
+Holding at %1% System
 
 FW_FLEET_MOVING_TO
 Moving to %1%, ETA %2% (%3%)
@@ -1254,6 +1254,9 @@ New fleet
 FW_NEW_FLEET_LABEL
 New Fleet
 
+FW_EMPIRE_FLEETS_AT_SYSTEM
+%1% Fleets At %2% System
+
 FW_EMPIRE_FLEETS
 %1% Fleets
 
@@ -1270,6 +1273,9 @@ Foreign fleet
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
 Foreign ship
+
+FW_NO_FLEET
+No Fleet
 
 ###############
 # TechTreeWnd #
@@ -1334,6 +1340,12 @@ Researchable
 
 TECH_WND_STATUS_UNRESEARCHABLE
 Unresearchable
+
+TECH_WND_LIST_VIEW
+List View
+
+TECH_WND_TREE_VIEW
+Tree View
 
 TECH_WND_REQUIRES
 Requires

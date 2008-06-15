@@ -40,7 +40,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
         Logger().fatal("The AI client should not be executed directly!");
         Exit(1);
     }
-        
+
     // read command line args
     SetPlayerName(argv[1]);
 
@@ -119,6 +119,7 @@ void AIClientApp::Run()
 
 void AIClientApp::HandleMessage(const Message& msg)
 {
+    //Logger().debugStream() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
     case Message::JOIN_GAME: {
         if (msg.SendingPlayer() == -1) {
@@ -158,22 +159,26 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::SAVE_GAME: {
-        Logger().debugStream() << "AIClientApp::HandleMessage Message::SAVE_GAME";
+        //Logger().debugStream() << "AIClientApp::HandleMessage Message::SAVE_GAME";
         Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), m_AI->GetSaveStateString()));
+        //Logger().debugStream() << "AIClientApp::HandleMessage sent save data message";
         break;
     }
 
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == -1) {
+            //Logger().debugStream() << "AIClientApp::HandleMessage : extracting turn update message data";
             ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info);
+            //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";
             m_AI->GenerateOrders();
+            //Logger().debugStream() << "AIClientApp::HandleMessage : done handling turn update message";
         }
         break;
     }
 
-    case Message::TURN_PROGRESS: 
+    case Message::TURN_PROGRESS:
         break;
-          
+
     case Message::END_GAME: {
         Exit(0);
         break;
@@ -181,12 +186,13 @@ void AIClientApp::HandleMessage(const Message& msg)
 
     case Message::HUMAN_PLAYER_CHAT:
         break;
-       
+
     default: {
         Logger().errorStream() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;
     }
     }
+    //Logger().debugStream() << "AIClientApp::HandleMessage done";
 }
 
 void AIClientApp::StartTurn()

@@ -126,7 +126,7 @@ const System& SystemIcon::GetSystem() const
     return m_system;
 }
 
-const FleetButton* SystemIcon::GetFleetButton(Fleet* fleet) const
+const FleetButton* SystemIcon::GetFleetButton(const Fleet* fleet) const
 {
     std::map<int, FleetButton*>::const_iterator it = m_stationary_fleet_markers.find(*fleet->Owners().begin());
     if (it != m_stationary_fleet_markers.end()) {
@@ -402,11 +402,11 @@ void SystemIcon::CreateFleetButtons()
         
         std::map<int, FleetButton*>::iterator button_it = m_stationary_fleet_markers.find(empire_id);
         if (button_it != m_stationary_fleet_markers.end())
-            map_wnd->SetFleetMovement(button_it->second);
-        
+            map_wnd->SetFleetMovementLine(button_it->second);
+
         button_it = m_moving_fleet_markers.find(empire_id);
         if (button_it != m_moving_fleet_markers.end())
-            map_wnd->SetFleetMovement(button_it->second);
+            map_wnd->SetFleetMovementLine(button_it->second);
     }
 }
 

@@ -215,10 +215,10 @@ void FleetMoveOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-    
+
     Fleet* fleet = universe.Object<Fleet>(FleetID());
     System* system = universe.Object<System>(DestinationSystemID());
-    
+
     // perform sanity checks
     if (!fleet) throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
     if (!system) throw std::runtime_error("Non-system destination ID specified in fleet move order.");
