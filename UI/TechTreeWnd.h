@@ -30,7 +30,7 @@ public:
     //@}
 
     //! \name Mutators //@{
-    void                    Update();
+    void                    Update(const Tech* tech = 0);
     void                    Clear();
     void                    Reset();
     void                    SetScale(double scale);

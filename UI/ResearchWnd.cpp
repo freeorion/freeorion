@@ -288,8 +288,8 @@ ResearchWnd::ResearchWnd(int w, int h) :
 void ResearchWnd::Reset()
 {
     m_tech_tree_wnd->Reset();
-    ResetInfoPanel();
     UpdateQueue();
+    UpdateInfoPanel();
     m_queue_lb->BringRowIntoView(0);
 }
 
@@ -297,6 +297,7 @@ void ResearchWnd::Update()
 {
     m_tech_tree_wnd->Update();
     UpdateQueue();
+    UpdateInfoPanel();
 }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
@@ -308,7 +309,7 @@ void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx)));
     UpdateQueue();
-    ResetInfoPanel();
+    UpdateInfoPanel();
 }
 
 void ResearchWnd::Sanitize()
@@ -358,7 +359,7 @@ void ResearchWnd::UpdateQueue()
         m_queue_lb->BringRowIntoView(first_visible_queue_row);
 }
 
-void ResearchWnd::ResetInfoPanel()
+void ResearchWnd::UpdateInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
@@ -373,7 +374,6 @@ void ResearchWnd::ResetInfoPanel()
        determine how many RPs are being spent).  If/when RP are stockpilable, this might matter,
        so then the following line should be uncommented.*/
     //empire->GetResearchResPool().ChangedSignal(); 
-
 }
 
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
@@ -383,7 +383,7 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     if (!queue.InQueue(tech)) {
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
         UpdateQueue();
-        ResetInfoPanel();
+        UpdateInfoPanel();
         m_tech_tree_wnd->Update();
     }
 }
@@ -399,9 +399,9 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
         if (!queue.InQueue(tech))
             orders.IssueOrder(OrderPtr(new ResearchQueueOrder(id, tech->Name(), -1)));
     }
-    
+
     UpdateQueue();
-    ResetInfoPanel();
+    UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 
@@ -409,7 +409,7 @@ void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name())));
     UpdateQueue();
-    ResetInfoPanel();
+    UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 
