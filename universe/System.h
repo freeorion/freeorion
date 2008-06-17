@@ -39,9 +39,6 @@ public:
     typedef StarlaneMap::iterator               lane_iterator;          ///< iterator for starlanes and wormholes
     typedef StarlaneMap::const_iterator         const_lane_iterator;    ///< const_iterator for starlanes and wormholes
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (const Fleet&)>  FleetSignalType;        ///< emitted when a fleet is inserted or removed from a system
-
     /** \name Structors */ //@{
     System();       ///< default ctor
 
@@ -106,12 +103,12 @@ public:
     const_lane_iterator     end_lanes() const;              ///< end iterator for all starlanes and wormholes terminating in this system
 
     virtual UniverseObject::Visibility
-                            GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+                            GetVisibility(int empire_id) const;     ///< returns the visibility status of this universe object relative to the input empire.
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
-    mutable FleetSignalType FleetAddedSignal;               ///< returns the fleet added signal object for this System
-    mutable FleetSignalType FleetRemovedSignal;             ///< returns the fleet removed changed signal object for this System
+    mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal; ///< fleet is inserted into system
+    mutable boost::signal<void (Fleet& fleet)> FleetRemovedSignal;  ///< fleet is removed from system
     //@}
 
     /** \name Mutators */ //@{

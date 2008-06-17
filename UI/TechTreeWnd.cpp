@@ -388,7 +388,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     for (unsigned int i = 0; i < cats.size(); ++i) {
         m_category_buttons.push_back(new CUIButton(0, 0, 20, UserString(cats[i])));
         AttachChild(m_category_buttons.back());
-        m_category_buttons.back()->MarkSelectedTechCategoryColor(cats[i]);
+        m_category_buttons.back()->MarkNotSelected();
     }
     // and one for "ALL"
     m_category_buttons.push_back(new CUIButton(0, 0, 20, UserString("ALL")));
@@ -404,7 +404,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     AttachChild(m_tech_type_buttons[TT_REFINEMENT]);
     // colour
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin(); it != m_tech_type_buttons.end(); ++it)
-        it->second->MarkSelectedGray();
+        it->second->MarkNotSelected();
 
     // create a button for each tech status
     m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(0, 0, 20, UserString("TECH_WND_STATUS_UNRESEARCHABLE"));
@@ -415,14 +415,14 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     AttachChild(m_tech_status_buttons[TS_COMPLETE]);
     // colour
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
-        it->second->MarkSelectedGray();
+        it->second->MarkNotSelected();
 
     // create buttons to switch between tree and list views
     m_list_view_button = new CUIButton(0, 0, 80, UserString("TECH_WND_LIST_VIEW"));
     m_list_view_button->MarkNotSelected();
     AttachChild(m_list_view_button);
     m_tree_view_button = new CUIButton(0, 30, 80, UserString("TECH_WND_TREE_VIEW"));
-    m_tree_view_button->MarkSelectedGray();
+    m_tree_view_button->MarkNotSelected();
     AttachChild(m_tree_view_button);
 
     EnableChildClipping(true);
@@ -1795,6 +1795,8 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
         GG::Pt client_size = ClientSize();
         m_hscroll->ScrollTo(center_point.x - client_size.x / 2);
         m_vscroll->ScrollTo(center_point.y - client_size.y / 2);
+    } else {
+        Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << (tech ? tech->Name() : "Null tech pointer") << " due to lack of such a tech panel";
     }
 }
 
@@ -1923,6 +1925,14 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     if (keep_position) {
         m_vscroll->ScrollTo(final_position.y);
         m_hscroll->ScrollTo(final_position.x);
+    } else {
+        // find a tech to centre view on
+        for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+            if (TechVisible(*it)) {
+                CenterOnTech(*it);
+                break;
+            }
+        }
     }
 
     // ensure that the scrolls stay on top
@@ -2348,6 +2358,7 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
 
     m_tech_tree_controls = new TechTreeControls(1, NAVIGATOR_AND_DETAIL_HEIGHT, m_layout_panel->Width() - ClientUI::ScrollWidth());
     m_tech_tree_controls->MoveTo(GG::Pt(1, m_layout_panel->Height() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
+    AttachChild(m_tech_tree_controls);
 
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
     // connect category button clicks to update display
@@ -2365,7 +2376,13 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_tech_tree_controls->m_tree_view_button->ClickedSignal, &TechTreeWnd::ShowTreeView, this);
     GG::Connect(m_tech_tree_controls->m_list_view_button->ClickedSignal, &TechTreeWnd::ShowListView, this);
 
-    AttachChild(m_tech_tree_controls);
+    ShowAllCategories();
+    for (TechStatus status = TechStatus(0); status != NUM_TECH_STATUSES; status = TechStatus(status + 1))
+        ShowStatus(status);
+    for (TechType type = TechType(0); type != NUM_TECH_TYPES; type = TechType(type + 1))
+        ShowType(type);
+
+    ShowTreeView();
 }
 
 double TechTreeWnd::Scale() const
@@ -2391,6 +2408,7 @@ std::set<TechStatus> TechTreeWnd::GetTechStatusesShown() const
 void TechTreeWnd::Update()
 {
     m_layout_panel->Update();
+    m_tech_list->Reset();
 }
 
 void TechTreeWnd::Clear()
@@ -2431,7 +2449,7 @@ void TechTreeWnd::ShowAllCategories()
         m_layout_panel->ShowCategory(*cats_it);
         m_tech_list->ShowCategory(*cats_it);
         CUIButton* button = m_tech_tree_controls->m_category_buttons[i];
-        button->MarkSelectedTechCategoryColor(cats[i]);
+        button->MarkSelectedTechCategoryColor(*cats_it);
     }
 }
 
@@ -2550,6 +2568,7 @@ void TechTreeWnd::ShowTreeView()
     DetachChild(m_tech_list);
     m_tech_tree_controls->m_list_view_button->MarkNotSelected();
     m_tech_tree_controls->m_tree_view_button->MarkSelectedGray();
+    MoveChildUp(m_tech_tree_controls);
 }
 
 void TechTreeWnd::ShowListView()
@@ -2559,6 +2578,7 @@ void TechTreeWnd::ShowListView()
     DetachChild(m_layout_panel);
     m_tech_tree_controls->m_list_view_button->MarkSelectedGray();
     m_tech_tree_controls->m_tree_view_button->MarkNotSelected();
+    MoveChildUp(m_tech_tree_controls);
 }
 
 void TechTreeWnd::SetScale(double scale)
@@ -2570,13 +2590,13 @@ void TechTreeWnd::CenterOnTech(const Tech* tech)
 {
     // ensure tech is visible
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-
+    if (empire)
+        ShowStatus(empire->GetTechStatus(tech->Name()));
     ShowCategory(tech->Category());
-    ShowStatus(empire->GetTechStatus(tech->Name()));
     ShowType(tech->Type());
 
     // centre on it
-    m_layout_panel->ShowTech(tech);
+    //m_layout_panel->ShowTech(tech);   // show tech is detail window.  not really necessary for centring
     m_layout_panel->CenterOnTech(tech);
 }
 

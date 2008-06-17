@@ -16,7 +16,7 @@ using boost::lexical_cast;
 
 
 
-System::System() : 
+System::System() :
    UniverseObject(),
    m_star(INVALID_STAR_TYPE),
    m_orbits(0)
@@ -33,7 +33,7 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
    if (m_orbits < 0)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
 }
-   
+
 System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes, 
                const std::string& name, double x, double y, const std::set<int>& owners/* = std::set<int>()*/) : 
    UniverseObject(name, x, y, owners),
@@ -46,11 +46,10 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
    if (m_orbits < 0)
       throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
 }
-   
+
 System::~System()
-{
-}
-   
+{}
+
 StarType System::Star() const
 {
     return m_star;
@@ -272,7 +271,7 @@ int System::Insert(UniverseObject* obj, int orbit)
     if (Planet* planet = universe_object_cast<Planet*>(obj))
         UpdateOwnership();
     else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
-        FleetAddedSignal(*fleet);
+        FleetInsertedSignal(*fleet);
 
     StateChangedSignal();
 
@@ -318,7 +317,8 @@ void System::Remove(UniverseObject* obj)
             if (Planet* planet = universe_object_cast<Planet*>(obj))
                 UpdateOwnership();
             else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
-                FleetAddedSignal(*fleet);
+                FleetRemovedSignal(*fleet);
+
             StateChangedSignal();
 
             return; // assuming object isn't in system twice...

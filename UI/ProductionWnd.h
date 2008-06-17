@@ -31,6 +31,7 @@ public:
     void Render();
 
     void Reset();
+    void Update();
     void CenterOnBuild(int queue_idx);
     void SelectSystem(int system);
     void SelectPlanet(int planet);

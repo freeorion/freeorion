@@ -998,8 +998,9 @@ void MapWnd::InitTurn(int turn_number)
     else
         ShowSystemNames();
 
-    // center the map on player's home system at the start of the game (if we're at the default start position, the odds are very good that this is a fresh game)
+    // if we're at the default start position, the odds are very good that this is a fresh game
     if (ClientUpperLeft() == GG::Pt()) {
+        // center the map on player's home system at the start of the game
         int capitol_id = empire->CapitolID();
         UniverseObject *obj = universe.Object(capitol_id);
         if (obj) {
@@ -1008,6 +1009,9 @@ void MapWnd::InitTurn(int turn_number)
             // default to centred on whole universe if there is no capitol
             CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
         }
+
+        // default the tech tree to be centred on something interesting
+        m_research_wnd->Reset();
     }
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
@@ -1878,7 +1882,7 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
 
-    //// render projected move lines
+    //// render projected move liens
     glLineStipple(static_cast<int>(STARLANE_WIDTH), PROJECTED_PATH_STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
@@ -2032,7 +2036,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         if (execute_move && !route.empty())
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id)));
 
-        // display projected move line 
+        // show route on map
         SetProjectedFleetMovementLine(fleet, route);
     }
 }
@@ -2362,8 +2366,6 @@ bool MapWnd::ToggleProduction()
         DetachChild(m_side_panel);
 
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
-
-        m_production_wnd->Reset();
     }
     return true;
 }

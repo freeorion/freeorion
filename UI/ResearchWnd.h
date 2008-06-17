@@ -21,6 +21,7 @@ public:
 
     /** \name Mutators */ //@{
     void Reset();
+    void Update();
     void CenterOnTech(const std::string& tech_name);
     void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
     void Sanitize();

@@ -14,7 +14,9 @@ namespace GG {
     class TextControl;
 }
 
-/** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). */
+/** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). 
+    This class is derived from GG::Control because GG::ListBox::Row accepts GG::Control but not GG::Wnd being
+    added to them.  OwnerColoredSystemName are added to the list of systems on the SidePanel. */
 class OwnerColoredSystemName : public GG::Control
 {
 public:
@@ -68,7 +70,9 @@ public:
     virtual void    MouseLeave();
     void            SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 
-    void            Refresh();                      //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
+    void            Refresh();                      //!< Resets system name text and calls RefreshFleetButtons().  Should be called after an icon is attached to the map
+    void            RefreshFleetButtons();          //!< Recreates all fleet buttons and fleet move lines from them
+
     void            DoFleetButtonLayout();          //!< arranges and resizes fleet buttons
     void            ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
     void            ShowName();                     //!< enables the system name text
@@ -91,10 +95,11 @@ private:
     GG::Pt  NthFleetButtonUpperLeft(int n, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown, not empire id
     int     FleetButtonSize() const;                            //!< returns absolute size of fleetbuttons at current zoom level
 
-    void CreateFleetButtons();
+    void    FleetInserted(Fleet& fleet);
+    void    FleetRemoved(Fleet& fleet);
+    void    FleetStateChanged();
 
     void PositionSystemName();
-    void FleetCreatedOrDestroyed(const Fleet&);
 
     const System&                   m_system;               //!< the System object associated with this SystemIcon
     boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture
@@ -107,8 +112,10 @@ private:
     OwnerColoredSystemName*         m_name;                 //!< the control that holds the name of the system
     bool                            m_showing_name;         //!< is the icon supposed to show its name?
 
-    std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
-    std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
+    std::map<int, FleetButton*>     m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
+    std::map<int, FleetButton*>     m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
+
+    std::map<const Fleet*, boost::signals::connection>  m_fleet_state_change_signals;
 
     struct FleetButtonClickedFunctor
     {

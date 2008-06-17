@@ -293,6 +293,12 @@ void ResearchWnd::Reset()
     m_queue_lb->BringRowIntoView(0);
 }
 
+void ResearchWnd::Update()
+{
+    m_tech_tree_wnd->Update();
+    UpdateQueue();
+}
+
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 {
     m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));

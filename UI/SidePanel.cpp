@@ -545,7 +545,7 @@ namespace {
     {
         return static_cast<int>(ClientUI::Pts()*3/2);
     }
-  
+
     boost::shared_ptr<GG::Texture> IconPopulation() {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "pop.png"        );}
     boost::shared_ptr<GG::Texture> IconIndustry  () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "industry.png"   );}
     boost::shared_ptr<GG::Texture> IconTrade     () {return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "trade.png"      );}
@@ -1277,37 +1277,30 @@ void SidePanel::RefreshImpl()
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
     m_planet_panel_container->RefreshAllPlanetPanels();
 }
+
 void SidePanel::SetSystemImpl()
 {
     TempUISoundDisabler sound_disabler;
 
-    m_fleet_icons.clear();
     m_planet_panel_container->Clear();
     m_system_name->Clear();
 
     DeleteChild(m_star_graphic);    m_star_graphic = 0;
 
-    // disconnect any existing system signals
-    while (!m_system_connections.empty()) {
-        m_system_connections.begin()->disconnect();
-        m_system_connections.erase(m_system_connections.begin());
-    }
-    while (!m_fleet_connections.empty()) {
-        m_fleet_connections.begin()->second.disconnect();
-        m_fleet_connections.erase(m_fleet_connections.begin());
-    }
+    // disconnect any existing system and fleet signals
+    for (std::set<boost::signals::connection>::iterator it = m_system_connections.begin(); it != m_system_connections.end(); ++it)
+        it->disconnect();
+    m_system_connections.clear();
+    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_connections.begin(); it != m_fleet_connections.end(); ++it)
+        it->second.disconnect();
+    m_fleet_connections.clear();
 
-    if (s_system)
-    {
-        m_system_connections.insert(GG::Connect(s_system->FleetAddedSignal, &SidePanel::SystemFleetAdded, this));
-        m_system_connections.insert(GG::Connect(s_system->FleetRemovedSignal, &SidePanel::SystemFleetRemoved, this));
-
+    if (s_system) {
         std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
         GG::ListBox::Row *select_row = 0;
 
         int system_names_in_droplist = 0;
-        for (unsigned int i = 0; i < sys_vec.size(); i++) 
-        {
+        for (unsigned int i = 0; i < sys_vec.size(); i++) {
             GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
 
             if (sys_vec[i]->Name().length()==0) {
@@ -1323,7 +1316,7 @@ void SidePanel::SetSystemImpl()
             } else {
                 row->push_back(new OwnerColoredSystemName(sys_vec[i], HumanClientApp::GetApp()->GetFont(ClientUI::Font(), SystemNameFontSize()), UserString("SP_SYSTEM_NAME")));
             }
-            
+
             m_system_name->Insert(row);
             ++system_names_in_droplist;
 
@@ -1337,8 +1330,7 @@ void SidePanel::SetSystemImpl()
         m_system_name->SetDropHeight(drop_height);
 
         for (int i = 0; i < m_system_name->NumRows(); i++) {
-            if (select_row == &m_system_name->GetRow(i))
-            {
+            if (select_row == &m_system_name->GetRow(i)) {
                 m_system_name->Select(i);
                 break;
             }
@@ -1353,12 +1345,6 @@ void SidePanel::SetSystemImpl()
 
         AttachChild(m_star_graphic);
         MoveChildDown(m_star_graphic);
-
-        // TODO: add fleet icons
-        std::pair<System::const_orbit_iterator, System::const_orbit_iterator> range = s_system->non_orbit_range();
-        std::vector<const Fleet*> flt_vec = s_system->FindObjects<Fleet>();
-        for (unsigned int i = 0; i < flt_vec.size(); i++) 
-            m_fleet_connections.insert(std::pair<int, boost::signals::connection>(flt_vec[i]->ID(), GG::Connect(flt_vec[i]->StateChangedSignal, &SidePanel::FleetsChanged, this)));
 
         // add planets
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
@@ -1459,26 +1445,3 @@ void SidePanel::SetSystem(int system_id)
     }
 }
 
-void SidePanel::SystemFleetAdded(const Fleet& flt)
-{
-    m_fleet_connections.insert(std::pair<int, boost::signals::connection>(flt.ID(), GG::Connect(flt.StateChangedSignal, &SidePanel::FleetsChanged, this)));
-    FleetsChanged();
-}
-
-void SidePanel::SystemFleetRemoved(const Fleet& flt)
-{
-    std::map<int, boost::signals::connection>::iterator map_it = m_fleet_connections.find(flt.ID());
-    if (map_it != m_fleet_connections.end()) {
-        map_it->second.disconnect();
-        m_fleet_connections.erase(map_it);
-    }
-    FleetsChanged();
-}
-
-void SidePanel::FleetsChanged()
-{
-    // may need to add or remove colonize buttons
-    m_planet_panel_container->RefreshAllPlanetPanels();
-
-    // TODO: if there are fleet status indicators on the SidePanel, update them
-}

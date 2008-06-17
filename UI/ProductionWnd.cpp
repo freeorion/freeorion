@@ -387,6 +387,11 @@ void ProductionWnd::Reset()
     m_build_designator_wnd->Reset();
 }
 
+void ProductionWnd::Update()
+{
+    Reset();
+}
+
 void ProductionWnd::CenterOnBuild(int queue_idx)
 {
     m_build_designator_wnd->CenterOnBuild(queue_idx);
