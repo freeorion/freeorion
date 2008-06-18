@@ -1806,14 +1806,14 @@ namespace Delauney {
     public:
         int num;
         double sortVal;
-        
         SortValInt(int n, double s);
     };
+
     SortValInt::SortValInt(int n, double s) {
         num = n;
         sortVal = s;
     };
-    
+
     // list of three interger array indices, and some additional info about the triangle that the corresponding
     // points make up, such as the circumcentre and radius, and a function to find if another point is in the
     // circumcircle
@@ -1866,7 +1866,7 @@ namespace Delauney {
         y1 = points[vert1].y;
         y2 = points[vert2].y;
         y3 = points[vert3].y;
-            
+
         // calculate circumcircle and circumcentre of triangle
         a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
             
@@ -1881,11 +1881,11 @@ namespace Delauney {
         b =   (    (x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) +
                 (x2 * x2 + y2 * y2) * (x3 * y1 - x1 * y3) +
                 (x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
-            
+
         // make sure nothing funky's going on...
         if (std::abs(a) < 0.01)
             throw std::runtime_error("Attempted to find circumcircle for a triangle with vertices in a line.");
-                    
+
         // finish!
         centre.x = Sx / a;
         centre.y = Sy / a;
@@ -1908,7 +1908,7 @@ namespace Delauney {
     // runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
     // returns the list of triangles produced
     std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
-    
+
     // does Delauney Triangulation to generate starlanes
     std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
 
@@ -1922,18 +1922,18 @@ namespace Delauney {
         // list of indices in vector of points extracted from removed triangles that need to be retriangulated
         std::list<Delauney::SortValInt> pointNumList;
         double vx, vy, mag;  // vector components, magnitude
-    
+
         // ensure a useful list of systems was passed...
         if (systems.empty())
             throw std::runtime_error("Attempted to run Delauney Triangulation on empty array of systems");
-    
+
         // extract systems positions, and store in vector.  Can't use actual systems data since
         // systems have position limitations which would interfere with algorithm    
         theSize = static_cast<int>(systems.size());
         for (n = 0; n < theSize; n++) {        
             points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));    
         }
-    
+
         // add points for covering triangle.  the point positions should be big enough to form a triangle
         // that encloses all the systems of the galaxy (or at least one whose circumcircle covers all points)
         points.push_back(Delauney::DTPoint(-1.0, -1.0));
@@ -1943,12 +1943,11 @@ namespace Delauney {
         // initialize triList.  algorithm adds and removes triangles from this list, and the resulting 
         // list is returned (so should be deleted externally)
         triList = new std::list<Delauney::DTTriangle>;
-        
+
         // add last three points into the first triangle, the "covering triangle"
         theSize = static_cast<int>(points.size());
         triList->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
-    
-        
+
         // loop through "real" points (from systems, not the last three added to make the covering triangle)
         for (n = 0; n < theSize - 3; n++) {
             pointNumList.clear();
@@ -1956,7 +1955,7 @@ namespace Delauney {
             // check each triangle in list, to see if the new point lies in its circumcircle.  if so, delete
             // the triangle and add its vertices to a list 
             itCur = triList->begin();
-            itEnd = triList->end();        
+            itEnd = triList->end();
             while (itCur != itEnd) {
                 // get current triangle
                 Delauney::DTTriangle& tri = *itCur;
@@ -1968,7 +1967,7 @@ namespace Delauney {
                     // so would duplicate an index already in the list
                     for (c = 0; c < 3; c++) {
                         num = (tri.getVerts())[c];  // store "current point"
-                        
+
                         // get sorting value to order points clockwise circumferentially around point n
                         // vector from point n to current point
                         vx = points[num].x - points[n].x;
@@ -2023,19 +2022,19 @@ namespace Delauney {
 
             // add triangle for last and first points and n
             triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
-            
+
             num = (*itCur2).num;
             ++itCur2;
             while (itCur2 != itEnd2) {
-                num2 = num;                
+                num2 = num;
                 num = (*itCur2).num;
-                
+
                 triList->push_front(Delauney::DTTriangle(n, num2, num, points));
-                
+
                 ++itCur2;
             } // end while
-            
-        } // end for        
+
+        } // end for
         return triList;
     } // end function
 } // end namespace
@@ -2995,6 +2994,12 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         System* home_system = home_planet->GetSystem();
         home_system->AddOwner(empire_id);
+
+        // give homeworld's a shipyard so players can build ships immediately
+        Building* shipyard = new Building(empire_id, "BLD_SHIPYARD_BASE", UniverseObject::INVALID_OBJECT_ID);
+        int shipyard_id = Insert(shipyard);
+        home_planet->AddBuilding(shipyard_id);
+
 
         // create population and industry on home planet
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");

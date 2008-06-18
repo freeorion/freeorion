@@ -159,7 +159,6 @@ public:
 
     void                                AddBuilding(int building_id);       ///< adds the building to the planet
     bool                                RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
-    bool                                DeleteBuilding(int building_id);    ///< removes the building from the planet and deletes it; returns false if no such building was found
 
     void                                SetAvailableTrade(double trade);    ///< sets the trade available at this planet for use in building maintenance
 

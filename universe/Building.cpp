@@ -54,7 +54,7 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
     m_operating(true),
     m_planet_id(planet_id)
 {
-   AddOwner(empire_id);
+    AddOwner(empire_id);
 }
 
 const BuildingType* Building::GetBuildingType() const
@@ -100,12 +100,10 @@ void Building::SetPlanetID(int planet_id)
 }
 
 void Building::MovementPhase()
-{
-}
+{}
 
 void Building::PopGrowthProductionResearchPhase()
 {}
-
 
 BuildingType::BuildingType() :
     m_name(""),
@@ -230,20 +228,20 @@ CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_i
     Empire* from_empire = Empires().Lookup(from_empire_id);
     if (!from_empire)
         throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid from_empire_id");
-    
+
     Empire* to_empire = Empires().Lookup(to_empire_id);
     if (!to_empire)
         throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid to_empire_id");
-    
+
     UniverseObject* location = GetUniverse().Object(location_id);
     if (!location)
         throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid location_id");
-    
+
     if (as_production_item) {
         Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_CAPTURE for production item";
         return CR_CAPTURE;
     }
-    
+
     Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_DESTROY";
     return CR_DESTROY;
 }

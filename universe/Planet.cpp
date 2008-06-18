@@ -378,17 +378,6 @@ bool Planet::RemoveBuilding(int building_id)
     return false;
 }
 
-bool Planet::DeleteBuilding(int building_id)
-{
-    if (m_buildings.find(building_id) != m_buildings.end()) {
-        GetUniverse().Delete(building_id);
-        m_buildings.erase(building_id);
-        StateChangedSignal();
-        return true;
-    }
-    return false;
-}
-
 void Planet::SetAvailableTrade(double trade)
 {
     m_available_trade = trade;
@@ -408,11 +397,11 @@ void Planet::RemoveOwner(int id)
     // check if Empire(id) is owner of at least one other planet
     std::vector<Planet*>::const_iterator plt_it;
     int count_planets = 0;
-    for(plt_it=planets.begin();plt_it != planets.end();++plt_it)
+    for(plt_it = planets.begin(); plt_it != planets.end(); ++plt_it)
         if((*plt_it)->Owners().find(id) != (*plt_it)->Owners().end())
             count_planets++;
 
-    if(count_planets==1)
+    if(count_planets == 1)
         system->UniverseObject::RemoveOwner(id);
 
     UniverseObject::RemoveOwner(id);

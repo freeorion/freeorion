@@ -1036,10 +1036,10 @@ void MapWnd::InitTurn(int turn_number)
     empire->UpdateResourcePools();
 
     m_research_wnd->Update();
+    m_production_wnd->Update();
 
     // clear out all the old buffers
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
-             m_star_core_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
          ++it) {
 #ifdef FREEORION_WIN32
