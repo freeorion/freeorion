@@ -2347,8 +2347,6 @@ bool MapWnd::ToggleProduction()
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
         ShowAllPopups();
-        if (!m_side_panel->Visible())
-            m_side_panel->SetSystem(m_side_panel->SystemID());
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
@@ -2368,6 +2366,12 @@ bool MapWnd::ToggleProduction()
         DetachChild(m_side_panel);
 
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
+
+        // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
+        if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
+                if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
+                    m_production_wnd->SelectSystem(obj->SystemID());
     }
     return true;
 }

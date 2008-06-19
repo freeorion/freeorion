@@ -1285,7 +1285,6 @@ void SidePanel::SetSystemImpl()
     m_planet_panel_container->Clear();
     m_system_name->Clear();
 
-    DeleteChild(m_star_graphic);    m_star_graphic = 0;
 
     // disconnect any existing system and fleet signals
     for (std::set<boost::signals::connection>::iterator it = m_system_connections.begin(); it != m_system_connections.end(); ++it)
@@ -1336,6 +1335,9 @@ void SidePanel::SetSystemImpl()
             }
         }
 
+
+        // top right star graphic
+        DeleteChild(m_star_graphic);
         boost::shared_ptr<GG::Texture> graphic = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars_sidepanel", ClientUI::StarTypeFilePrefixes()[s_system->Star()], s_system->ID());
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         textures.push_back(graphic);
@@ -1375,6 +1377,9 @@ void SidePanel::SetSystemImpl()
             AttachChild(m_system_resource_summary);
             m_system_resource_summary->Update();
         }
+    } else { // (!s_system)
+        DetachChild(m_star_graphic);
+        DetachChild(m_system_resource_summary);
     }
 }
 

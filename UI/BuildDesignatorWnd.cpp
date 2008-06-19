@@ -1061,6 +1061,7 @@ void BuildDesignatorWnd::SelectSystem(int system)
         if (system != m_side_panel->SystemID()) {
             m_build_location = UniverseObject::INVALID_OBJECT_ID;
         }
+        m_side_panel->SetSystem(system);
         SelectDefaultPlanet(system);
     }
 }
@@ -1214,11 +1215,21 @@ void BuildDesignatorWnd::SelectDefaultPlanet(int system)
     m_side_panel->SetValidSelectionPredicate(boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID())));
     std::map<int, int>::iterator it = m_system_default_planets.find(system);
     if (it != m_system_default_planets.end()) {
+        // if a planet has previously been selected in this system, re-select it
         m_side_panel->SelectPlanet(it->second);
     } else {
-        System::ObjectVec owned_planets =
-            GetUniverse().Object<System>(system)->FindObjects(OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID()));
+        // find a planet to select from those owned by this client's player
+        const System* sys = GetUniverse().Object<System>(system);
+        if (!sys) {
+            Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system;
+            return;
+        }
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        System::ConstObjectVec owned_planets = sys->FindObjects(OwnedVisitor<Planet>(empire_id));
+
         if (!owned_planets.empty()) {
+            // pick planet with max population of those owned by this player in this system
             int planet_id = owned_planets[0]->ID();
             double max_pop = owned_planets[0]->GetMeter(METER_POPULATION)->Current();
             for (unsigned int i = 1; i < owned_planets.size(); ++i) {
