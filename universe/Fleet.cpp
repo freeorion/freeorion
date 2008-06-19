@@ -15,7 +15,7 @@ using boost::lexical_cast;
 
 namespace {
     const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement
-    const double FLEET_MOVEMENT_EPSILON = 1.0e-5;   // how close a fleet needs to be to a system to have arrived in the system
+    const double FLEET_MOVEMENT_EPSILON = 1.0e-1;   // how close a fleet needs to be to a system to have arrived in the system
 
     inline bool SystemNotReachable(System* system, int empire_id) {
         return !GetUniverse().SystemReachable(system->ID(), empire_id);
@@ -112,21 +112,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         return retval;                                      // can't move => path is just this system with explanitory ETA
     }
 
-
-    // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
-    // and determine the maximum amount of fuel that can be stored by the ship in the fleet that
-    // can store the least amount of fuel
-    const Universe& universe = GetUniverse();
-    double fuel = Meter::METER_MAX, max_fuel = Meter::METER_MAX;
-    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        const Ship* ship = universe.Object<Ship>(*ship_it);
-        assert(ship);
-        const Meter* meter = ship->GetMeter(METER_FUEL);
-        assert(meter);
-        fuel = std::min(fuel, meter->Current());
-        max_fuel = std::min(max_fuel, meter->Max());
-    }
-
+    double fuel = Fuel();
+    double max_fuel = MaxFuel();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     std::set<int> fleet_supplied_systems;
@@ -322,6 +309,43 @@ std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const
     }
 
     return std::make_pair(last_stop_eta, first_stop_eta);
+}
+
+double Fleet::Fuel() const
+{
+    if (NumShips() < 1)
+        return 0.0;
+
+    // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
+    const Universe& universe = GetUniverse();
+    double fuel = Meter::METER_MAX;
+    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+        const Ship* ship = universe.Object<Ship>(*ship_it);
+        assert(ship);
+        const Meter* meter = ship->GetMeter(METER_FUEL);
+        assert(meter);
+        fuel = std::min(fuel, meter->Current());
+    }
+    return fuel;
+}
+
+double Fleet::MaxFuel() const
+{
+    if (NumShips() < 1)
+        return 0.0;
+
+    // determine the maximum amount of fuel that can be stored by the ship in the fleet that
+    // can store the least amount of fuel
+    const Universe& universe = GetUniverse();
+    double max_fuel = Meter::METER_MAX;
+    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+        const Ship* ship = universe.Object<Ship>(*ship_it);
+        assert(ship);
+        const Meter* meter = ship->GetMeter(METER_FUEL);
+        assert(meter);
+        max_fuel = std::min(max_fuel, meter->Max());
+    }
+    return max_fuel;
 }
 
 int Fleet::FinalDestinationID() const
@@ -622,6 +646,7 @@ void Fleet::MovementPhase()
                 meter->SetCurrent(meter->Max());
             }
         }
+
         return; // can't move fleet this turn
     }
 

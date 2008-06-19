@@ -199,7 +199,7 @@ public:
     };
 
     FleetDataPanel(int w, int h, const Fleet* fleet, int empire = -1, int system_id = -1, double x = 0.0, double y = 0.0);
-    
+
     virtual void DropsAcceptable(DropsAcceptableIter first,
                                  DropsAcceptableIter last,
                                  const GG::Pt& pt) const;
@@ -230,6 +230,7 @@ private:
     GG::TextControl* m_fleet_name_text;
     StatisticIcon* m_num_ships_stat;
     StatisticIcon* m_fleet_strength_stat;
+    StatisticIcon* m_fuel_stat;
     GG::StaticGraphic* m_damage_icon;
     GG::StaticGraphic* m_colonizer_icon;
     bool m_selected;
@@ -471,6 +472,7 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
                                           GG::FORMAT_RIGHT | GG::FORMAT_VCENTER)),
     m_num_ships_stat(0),
     m_fleet_strength_stat(0),
+    m_fuel_stat(0),
     m_damage_icon(0),
     m_colonizer_icon(0),
     m_selected(false)
@@ -483,11 +485,18 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
         m_num_ships_stat = new StatisticIcon(h, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
                                              ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "3shipfleet.png"),
                                              0, 0, true, false, GG::Flags<GG::WndFlag>());
+        AttachChild(m_num_ships_stat);
+
         m_fleet_strength_stat = new StatisticIcon(h + STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
                                                   ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combatstrength.png"),
                                                   0, 0, true, false, GG::Flags<GG::WndFlag>());
-        AttachChild(m_num_ships_stat);
         AttachChild(m_fleet_strength_stat);
+
+        m_fuel_stat = new StatisticIcon(h + 2*STAT_ICON_WD, FLEET_NAME_HT, STAT_ICON_WD, h - FLEET_NAME_HT - 1,
+                                        ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "fuel.png"),
+                                        0, 0, true, false, GG::Flags<GG::WndFlag>());
+        AttachChild(m_fuel_stat);
+
         m_fleet_connection = GG::Connect(m_fleet->StateChangedSignal, &FleetDataPanel::Refresh, this);
     }
 
@@ -619,7 +628,9 @@ void FleetDataPanel::Refresh()
     SetFleetIcon();
     if (m_fleet) {
         m_fleet_name_text->SetText(m_fleet->Name());
+
         m_num_ships_stat->SetValue(m_fleet->NumShips());
+
         int attack_strength = 0;
         bool damaged_ships = false;
         bool contains_colony_ship = false;
@@ -637,9 +648,12 @@ void FleetDataPanel::Refresh()
         }
         m_fleet_strength_stat->SetValue(attack_factor_unknown ? UNKNOWN_UI_DISPLAY_VALUE : attack_strength);
 
+        m_fuel_stat->SetValue(m_fleet->Fuel());
+
+
         const int ICON_SPACING = 5;
         const int ICON_SZ = Height() - FLEET_NAME_HT - 1;
-        int x_position = m_fleet_strength_stat->LowerRight().x - ClientUpperLeft().x + ICON_SPACING;
+        int x_position = m_fuel_stat->LowerRight().x - ClientUpperLeft().x + ICON_SPACING;
         if (damaged_ships) {
             if (!m_damage_icon) {
                 m_damage_icon = new GG::StaticGraphic(x_position, FLEET_NAME_HT, ICON_SZ, ICON_SZ, 

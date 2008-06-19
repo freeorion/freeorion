@@ -55,6 +55,8 @@ public:
     std::list<MovePathNode>             MovePath() const;                   ///< Returns MovePath for fleet's current TravelRoute
     std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
+    double                              Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
+    double                              MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
     int                                 FinalDestinationID() const;         ///< Returns ID of system that this fleet is moving to.
     System*                             FinalDestination() const;           ///< Returns system that this fleet is moving to (may be null).
     int                                 PreviousSystemID() const;           ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
