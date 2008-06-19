@@ -28,8 +28,7 @@ using std::vector;
 #  include <iostream>
 #endif
 
-// TEMPORARY!  This should go into some sort of external config file that the server uses for game rules like this I
-// will be coding such a class in the near future
+// TEMPORARY!
 const int INITIAL_COLONY_POP = 1;
 
 /////////////////////////////////////////////////////
@@ -228,13 +227,19 @@ void FleetMoveOrder::ExecuteImpl() const
         throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
                                  " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
 
-    // TODO:  check destination validity (once ship range is decided on)
-
-    // set the movement route
+    // convert list of ids to list of System
     std::list<System*> route;
     for (unsigned int i = 0; i < m_route.size(); ++i) {
         route.push_back(universe.Object<System>(m_route[i]));
     }
+
+    // check destination validity: disallow movement that's out of range
+    std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route));
+    if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
+        Logger().debugStream() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
+        return;
+    }
+
     fleet->SetRoute(route, m_route_length);
 }
 
