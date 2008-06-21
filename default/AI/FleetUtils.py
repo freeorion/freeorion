@@ -67,10 +67,12 @@ def getShipIDWithRole(fleetID, shipRole):
             return shipID
 
 
-def getEmpireFleetIDs(empireID):
+def getEmpireFleetIDs():
     "returns all fleetIDs of an empire"
     
     universe = fo.getUniverse()
+    empireID = fo.empireID()
+
     fleetIDs = universe.fleetIDs
     empireFleetIDs = []
 
@@ -86,10 +88,12 @@ def getEmpireFleetIDs(empireID):
     return empireFleetIDs
 
 
-def getEmpireFleetIDsByRole(empireID, fleetRole):
+def getEmpireFleetIDsByRole(fleetRole):
     "returns a list with fleetIDs that have the specified role"
 
-    fleetIDs = getEmpireFleetIDs(empireID)
+    empireID = fo.empireID()
+
+    fleetIDs = getEmpireFleetIDs()
     fleetIDsWithRole = []
 
     for fleetID in fleetIDs:

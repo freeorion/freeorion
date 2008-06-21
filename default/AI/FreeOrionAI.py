@@ -4,6 +4,8 @@ import AIstate
 import FleetUtils
 import ExplorationAI
 import ColonisationAI
+# import TacticsAI
+import PriorityAI
 # import ProductionAI
 
 # AIstate
@@ -90,10 +92,14 @@ def generateOrders():
     # pre-turn cleanup
     foAIstate.cleanFleetRoles()
     # ...missions
+    # ...demands/priorities
 
     # call AI modules
+    PriorityAI.calculatePriorities()
+
     ExplorationAI.generateExplorationOrders()
     ColonisationAI.generateColonisationOrders()
-    # ProductionAI.generateProductionOrders()
+#    ProductionAI.generateProductionOrders()
+#    TacticsAI.generateTacticOrders()
 
     fo.doneTurn()
