@@ -825,13 +825,6 @@ void SidePanel::PlanetPanel::Refresh()
 {
     const Planet *planet = GetPlanet();
 
-    const System* system = planet->GetSystem();
-    //const std::vector<const Ship*> ships = system->FindObjects<Ship>();
-    //Logger().debugStream() << "SidePanel::PlanetPanel::Refresh() ships in system: ";
-    //for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it)
-    //    Logger().debugStream() << "... " << (*it)->Name();
-
-
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
     if (planet->Owners().empty() || planet->IsAboutToBeColonized()) {

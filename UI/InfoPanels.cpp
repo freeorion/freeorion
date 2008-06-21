@@ -1362,7 +1362,6 @@ void MilitaryPanel::DoExpandCollapseLayout()
 
 
         // determine which two resource icons to display while collapsed: the two with the highest production
-        const Planet* plt = GetPlanet();
 
         // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
         std::vector<StatisticIcon*> meter_icons;

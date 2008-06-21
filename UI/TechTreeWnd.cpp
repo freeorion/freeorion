@@ -1733,7 +1733,6 @@ void TechTreeWnd::LayoutPanel::Render()
 
 void TechTreeWnd::LayoutPanel::Update(const Tech* tech)
 {
-    TechManager& manager = GetTechManager();
     if (!tech) {
         // update all tech panels
         for (std::map<const Tech*, TechPanel*>::iterator tech_it = m_techs.begin(); tech_it != m_techs.end(); ++tech_it)

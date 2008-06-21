@@ -1763,7 +1763,6 @@ void DesignWnd::MainPanel::DoLayout() {
     const int BUTTON_HEIGHT = PTS * 2;
     const int LABEL_WIDTH = PTS_WIDE * 15;
     const int PAD = 6;
-    const int MIN_EDIT_WIDTH = PTS_WIDE * 50;
     const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long part class names
     const int BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
 

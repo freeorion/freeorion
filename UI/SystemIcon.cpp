@@ -244,7 +244,8 @@ void SystemIcon::ManualRender(double halo_scale_factor)
         GG::Pt size = lr - ul;
         GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
         GG::Pt middle = ul + half_size;
-        GG::Pt halo_size = GG::Pt(size.x*halo_scale_factor, size.y*halo_scale_factor);
+        GG::Pt halo_size = GG::Pt(static_cast<int>(size.x * halo_scale_factor),
+                                  static_cast<int>(size.y * halo_scale_factor));
         GG::Pt halo_half_size = GG::Pt(halo_size.x / 2, halo_size.y / 2);
         GG::Pt halo_ul = middle - halo_half_size;
         GG::Pt halo_lr = halo_ul + halo_size;

@@ -932,9 +932,7 @@ void MapWnd::InitTurn(int turn_number)
 
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        int empire_id = it->first;
         Empire* empire = it->second;
-
         empire->UpdateSupplyUnobstructedSystems();
         empire->UpdateSystemSupplyRanges();
         empire->UpdateFleetSupply();
@@ -1836,7 +1834,6 @@ void MapWnd::RenderStarlanes()
         const double RATE = 0.1;            // slow crawl
         const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
-        const double LINE_SCALE = std::max(0.75, m_zoom_factor);
         glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
         glLineWidth(STARLANE_WIDTH);
         glEnableClientState(GL_COLOR_ARRAY);

@@ -64,9 +64,7 @@ namespace {
 
         // determine sytems where fleets can delivery supply, and groups of systems that can exchange resources
         for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-            int empire_id = it->first;
             Empire* empire = it->second;
-
             empire->UpdateSupplyUnobstructedSystems();
             empire->UpdateSystemSupplyRanges();
             empire->UpdateFleetSupply();

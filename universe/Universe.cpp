@@ -665,7 +665,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
             // add object and clear effect accounting for all its meters
             objects_set.insert(cur_object_id);
             m_effect_accounting_map[cur_object_id].clear();
-        } else if (const Meter* meter = cur_object->GetMeter(meter_type)) {
+        } else if (cur_object->GetMeter(meter_type)) {
             // add object and clear effect accounting for just the relevant meter
             objects_set.insert(cur_object_id);
             m_effect_accounting_map[cur_object_id][meter_type].clear();
@@ -698,7 +698,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterTy
         for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
             int cur_object_id = *obj_it;
             UniverseObject* cur_object = Object(cur_object_id);
-            if (const Meter* meter = cur_object->GetMeter(meter_type)) {
+            if (cur_object->GetMeter(meter_type)) {
                 m_effect_accounting_map[cur_object_id][meter_type].clear();
                 objects_set.insert(cur_object_id);
             }
