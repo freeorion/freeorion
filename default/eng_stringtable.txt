@@ -418,6 +418,15 @@ The number of starlanes in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 The frequency of specials appearing in the galaxy to be generated.
 
+OPTIONS_DB_GAMESETUP_EMPIRE_NAME
+The name used in the game for your empire.
+
+OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
+The color used in the game for your empire.
+
+OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
+The number of AI opponents you will play in the game.
+
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
 
