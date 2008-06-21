@@ -230,10 +230,14 @@ int System::Insert(UniverseObject* obj)
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
-    //Logger().debugStream() << "System::Insert(UniverseObject* obj, int orbit)";
-
     if (!obj)
         throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
+
+    //Logger().debugStream() << "System::Insert(" << obj->Name() <<", " << orbit << ")";
+    //Logger().debugStream() << "..initial objects in system: ";
+    //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+    //    Logger().debugStream() << "...." << GetUniverse().Object(it->second)->Name();
+    //Logger().debugStream() << "..initial object systemid: " << obj->SystemID();
 
     int obj_id = obj->ID();
 
@@ -247,7 +251,7 @@ int System::Insert(UniverseObject* obj, int orbit)
         this->Insert(*it, orbit);
 
 
-    obj->MoveTo(X(), Y());      // ensure object is physically at same location in universe as this system
+    obj->MoveTo(this);          // ensure object is physically at same location in universe as this system
     obj->SetSystem(this->ID()); // should do nothing if object is already in this system, but just to ensure things are consistent...
 
     // ensure object isn't already in this system (as far as the system is concerned).  If the system already
@@ -291,7 +295,10 @@ int System::Insert(int obj_id, int orbit)
 
 void System::Remove(UniverseObject* obj)
 {
-    //Logger().debugStream() << "System::Remove( " << obj->Name() <<" )";
+    //Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
+    //Logger().debugStream() << "..objects in system: ";
+    //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+    //    Logger().debugStream() << ".... " << GetUniverse().Object(it->second)->Name();
 
     // ensure object and its contents are all removed from system
     std::vector<UniverseObject*> contained_objects = obj->FindObjects();
@@ -326,8 +333,9 @@ void System::Remove(UniverseObject* obj)
     }
 
 
-    // didn't find object
-    Logger().errorStream() << "System::Remove didn't find object in system";
+    // didn't find object.  this doesn't necessarily indicate a problem, as removing objects from
+    // systems may be done redundantly when inserting or moving objects that contain other objects
+    Logger().debugStream() << "System::Remove didn't find object in system";
 }
 
 void System::Remove(int id)

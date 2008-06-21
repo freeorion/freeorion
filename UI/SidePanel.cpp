@@ -617,7 +617,7 @@ namespace {
 
             // reject fleets that are moving
             if (!flt_vec[i]->Accept(StationaryFleetVisitor(*flt_vec[i]->Owners().begin()))) continue;
-            
+
             // check if any of the ship in this fleet is a colony ship
             for (Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it) {
                 Ship* s = GetUniverse().Object<Ship>(*it);
@@ -627,16 +627,24 @@ namespace {
                     continue;
                 }
 
+                //Logger().debugStream() << "FindColonyShip examining ship " << s->Name();
+
                 const ShipDesign* design = s->Design();
 
                 if (!design) {
                     Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->DesignID();
                     continue;
                 }
-                
-                if (design->CanColonize()) return s;
+
+                //Logger().debugStream() << "... ship design name " << design->Name();
+
+                if (design->CanColonize()) {
+                    //Logger().debugStream() << "SidePanel:FindcolonyShip returning " << s->Name();
+                    return s;
+                }
             }
         }
+        //Logger().debugStream() << "FindcolonyShip returning null";
         return 0;   // no ships found...
     }
 }
@@ -742,8 +750,11 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
 
     const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
 
-    if (System* system = plt->GetSystem())
-        GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+    // connecting system's StateChangedSignal to this->Refresh() should be redundant, as
+    // the sidepanel's Refresh will be called when that signal is emitted, which will refresh
+    // all the PlanetPanel in the SidePanel
+    //if (System* system = plt->GetSystem())
+    //    GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
     GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 
     Refresh();
@@ -814,6 +825,13 @@ void SidePanel::PlanetPanel::Refresh()
 {
     const Planet *planet = GetPlanet();
 
+    const System* system = planet->GetSystem();
+    //const std::vector<const Ship*> ships = system->FindObjects<Ship>();
+    //Logger().debugStream() << "SidePanel::PlanetPanel::Refresh() ships in system: ";
+    //for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it)
+    //    Logger().debugStream() << "... " << (*it)->Name();
+
+
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
     if (planet->Owners().empty() || planet->IsAboutToBeColonized()) {
@@ -848,11 +866,11 @@ void SidePanel::PlanetPanel::Refresh()
     if (owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("PL_COLONIZE") + " " + boost::lexical_cast<std::string>(planet->GetMeter(METER_POPULATION)->Max()));
-    
+
     } else if (planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("CANCEL"));
-    
+
     } else {
         DetachChild(m_button_colonize);
     }
@@ -950,19 +968,20 @@ void SidePanel::PlanetPanel::ClickColonize()
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
     if (it == pending_colonization_orders.end()) // colonize
     {
-        Ship *ship=FindColonyShip(planet->SystemID());
-        if (ship==0)
-            throw std::runtime_error("SidePanel::PlanetPanel::ClickColonize ship not found!");
+        Ship* ship = FindColonyShip(planet->SystemID());
+        if (!ship) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize ship not found!";
+            return;
+        }
 
-        if (!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin())))
-        {
+        if (!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin()))) {
             GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
                                    GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::WndColor(),ClientUI::CtrlBorderColor(),ClientUI::CtrlColor(),ClientUI::TextColor(),2,
                                    UserString("YES"),UserString("NO"));
             dlg.Run();
 
-            if (dlg.Result()!=0)
-            return;
+            if (dlg.Result() != 0)
+                return;
         }
 
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID())));
@@ -974,7 +993,7 @@ void SidePanel::PlanetPanel::ClickColonize()
         int ship_id = col_order ? col_order->ShipID() : UniverseObject::INVALID_OBJECT_ID;
 
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
-    
+
         // if the ship now buils a fleet of its own, make sure that fleet appears
         // at a possibly opened FleetWnd
         Ship* ship = GetUniverse().Object<Ship>(ship_id);
@@ -1247,9 +1266,9 @@ SidePanel::~SidePanel()
         m_system_connections.begin()->disconnect();
         m_system_connections.erase(m_system_connections.begin());
     }
-    while (!m_fleet_connections.empty()) {
-        m_fleet_connections.begin()->second.disconnect();
-        m_fleet_connections.erase(m_fleet_connections.begin());
+    while (!m_fleet_state_change_signals.empty()) {
+        m_fleet_state_change_signals.begin()->second.disconnect();
+        m_fleet_state_change_signals.erase(m_fleet_state_change_signals.begin());
     }
     s_side_panels.erase(this);
 }
@@ -1267,6 +1286,7 @@ void SidePanel::Render()
 
 void SidePanel::Refresh()
 {
+    //Logger().debugStream() << "SidePanel::Refresh";
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->RefreshImpl();
 }
@@ -1290,11 +1310,24 @@ void SidePanel::SetSystemImpl()
     for (std::set<boost::signals::connection>::iterator it = m_system_connections.begin(); it != m_system_connections.end(); ++it)
         it->disconnect();
     m_system_connections.clear();
-    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_connections.begin(); it != m_fleet_connections.end(); ++it)
+    for (std::map<const Fleet*, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();
-    m_fleet_connections.clear();
+    m_fleet_state_change_signals.clear();
+
 
     if (s_system) {
+        // connect state changed signals for fleets in system
+        std::vector<const Fleet*> fleets = s_system->FindObjects<Fleet>();
+        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
+            m_fleet_state_change_signals[*it] = GG::Connect((*it)->StateChangedSignal, &SidePanel::FleetStateChanged, this);
+
+        // connect system signals
+        //m_system_connections.insert(GG::Connect(s_system->StateChangedSignal,   &SidePanel::Refresh));
+        m_system_connections.insert(GG::Connect(s_system->FleetInsertedSignal,  &SidePanel::FleetInserted,  this));
+        m_system_connections.insert(GG::Connect(s_system->FleetRemovedSignal,   &SidePanel::FleetRemoved,   this));
+
+
+        //populate droplist of system names
         std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
         GG::ListBox::Row *select_row = 0;
 
@@ -1348,7 +1381,7 @@ void SidePanel::SetSystemImpl()
         AttachChild(m_star_graphic);
         MoveChildDown(m_star_graphic);
 
-        // add planets
+        // add panels for planets
         std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
         std::vector<const UniverseObject*> owned_planets;
@@ -1407,6 +1440,28 @@ void SidePanel::NextButtonClicked()
 void SidePanel::PlanetSelected(int planet_id)
 {
     PlanetSelectedSignal(planet_id);
+}
+
+void SidePanel::FleetInserted(Fleet& fleet)
+{
+    m_fleet_state_change_signals[&fleet].disconnect();  // in case already present
+    m_fleet_state_change_signals[&fleet] = GG::Connect(fleet.StateChangedSignal, &SidePanel::FleetStateChanged, this);
+    Refresh();
+}
+
+void SidePanel::FleetRemoved(Fleet& fleet)
+{
+    std::map<const Fleet*, boost::signals::connection>::iterator it = m_fleet_state_change_signals.find(&fleet);
+    if (it != m_fleet_state_change_signals.end()) {
+        it->second.disconnect();
+        m_fleet_state_change_signals.erase(it);
+    }
+    Refresh();
+}
+
+void SidePanel::FleetStateChanged()
+{
+    Refresh();
 }
 
 int SidePanel::PlanetPanels() const

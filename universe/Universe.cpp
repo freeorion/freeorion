@@ -1088,6 +1088,7 @@ void Universe::Destroy(int id)
 
         // remove from existing objects set and insert into destroyed objects set
         m_objects.erase(id);
+        UniverseObjectDeleteSignal(obj);
         m_destroyed_objects[id] = obj;
     } else {
         Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << id;

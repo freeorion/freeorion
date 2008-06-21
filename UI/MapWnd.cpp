@@ -2187,7 +2187,28 @@ void MapWnd::HandleEmpireElimination(int empire_id)
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 {
-    m_fleet_lines.erase(universe_object_cast<const Fleet*>(obj));
+    const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+    if (fleet) {
+        std::map<const Fleet*, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet);
+        if (it1 != m_fleet_lines.end())
+            m_fleet_lines.erase(it1);
+
+        std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it2 = m_fleet_eta_map_indicators.find(fleet);
+        if (it2 != m_fleet_eta_map_indicators.end()) {
+            // clear all ETA indicators
+            m_fleet_eta_map_indicators.erase(it2);
+        }
+
+        std::map<const Fleet*, MovementLineData>::iterator it3 = m_projected_fleet_lines.find(fleet);
+        if (it3 != m_projected_fleet_lines.end())
+            m_projected_fleet_lines.erase(it3);
+
+        std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it4 = m_projected_fleet_eta_map_indicators.find(fleet);
+        if (it4 != m_projected_fleet_eta_map_indicators.end()) {
+            // clear all ETA indicators
+            m_projected_fleet_eta_map_indicators.erase(it4);
+        }
+    }
 }
 
 void MapWnd::RegisterPopup(MapWndPopup* popup)
@@ -2520,7 +2541,7 @@ void MapWnd::UpdateMeterEstimates()
 
 void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 {
-    Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
+    //Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
 
     if (object_id == UniverseObject::INVALID_OBJECT_ID) {
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.

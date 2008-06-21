@@ -74,6 +74,10 @@ private:
     void                NextButtonClicked();
     void                PlanetSelected(int planet_id);
 
+    void                FleetInserted(Fleet& fleet);
+    void                FleetRemoved(Fleet& fleet);
+    void                FleetStateChanged();
+
     CUIDropDownList*            m_system_name;
     GG::Button*                 m_button_prev;
     GG::Button*                 m_button_next;
@@ -87,8 +91,8 @@ private:
     static const System*        s_system;
     static std::set<SidePanel*> s_side_panels;
 
-    std::set<boost::signals::connection>        m_system_connections;
-    std::map<int, boost::signals::connection>   m_fleet_connections;
+    std::set<boost::signals::connection>                m_system_connections;
+    std::map<const Fleet*, boost::signals::connection>  m_fleet_state_change_signals;
 
     static const int            EDGE_PAD = 4;
 };

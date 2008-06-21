@@ -963,7 +963,7 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
     *m_ship_status_text << "";
     m_ships_lb->Clear();
     m_ships_lb->SetFleet(fleet);
-    
+
     m_fleet = fleet;
 
     if (m_fleet) {

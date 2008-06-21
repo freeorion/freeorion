@@ -93,7 +93,9 @@ SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
 
 void SystemIcon::Init() {
     // state change signals for system itself and fleets in it
-    Connect(m_system.StateChangedSignal, &SystemIcon::Refresh, this);
+    Connect(m_system.StateChangedSignal,    &SystemIcon::Refresh,       this);
+    Connect(m_system.FleetInsertedSignal,   &SystemIcon::FleetInserted, this);
+    Connect(m_system.FleetRemovedSignal,    &SystemIcon::FleetRemoved,  this);
 
     std::vector<const Fleet*> fleets = m_system.FindObjects<Fleet>();
     for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)

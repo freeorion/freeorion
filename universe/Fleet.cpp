@@ -578,14 +578,12 @@ void Fleet::Move(double x, double y)
 
 void Fleet::MoveTo(UniverseObject* object)
 {
-    //Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
-    UniverseObject::MoveTo(object);
-    // move ships in fleet
-    for (iterator it = begin(); it != end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
-        obj->MoveTo(object);
+    if (!object) {
+        Logger().errorStream() << "Fleet::MoveTo a null object!?";
+        return;
     }
+    //Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
+    Fleet::MoveTo(object->X(), object->Y());
 }
 
 void Fleet::MoveTo(double x, double y)
