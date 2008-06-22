@@ -59,14 +59,7 @@ namespace {
             assert(wnds.size() == 1);
             assert((*wnds.begin())->DragDropDataType() == "PRODUCTION_QUEUE_ROW");
             GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
-            int original_row_idx = -1;
-            for (int i = 0; i < NumRows(); ++i) {
-                if (&GetRow(i) == row) {
-                    original_row_idx = i;
-                    break;
-                }
-            }
-            assert(original_row_idx != -1);
+            assert(std::find(Begin(), End(), row) != End());
             int row_idx = RowUnderPt(pt);
             if (row_idx < 0 || row_idx > NumRows())
                 row_idx = NumRows();

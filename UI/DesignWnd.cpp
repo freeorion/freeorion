@@ -837,8 +837,9 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
         const GG::Pt row_size = ListRowSize();
-        for (int i = 0; i < NumRows(); ++i)
-            GetRow(i).Resize(row_size);
+        for (GG::ListBox::iterator it = Begin(); it != End(); ++it) {
+            (*it)->Resize(row_size);
+        }
     }
 }
 

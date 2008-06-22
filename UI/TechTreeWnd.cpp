@@ -20,6 +20,8 @@
 #include <boost/format.hpp>
 #include <algorithm>
 
+#include <boost/timer.hpp>
+
 
 namespace {
     // command-line options
@@ -1030,8 +1032,8 @@ void TechTreeWnd::TechNavigator::DoLayout()
 {
     m_lb->Resize(ClientSize() - GG::Pt(2*LB_MARGIN_X, 2*LB_MARGIN_Y));
 
-    for (int i = 0; i < m_lb->NumRows(); ++i) {
-        GG::ListBox::Row& row = m_lb->GetRow(i);
+    for (GG::ListBox::iterator it = m_lb->Begin(); it != m_lb->End(); ++it) {
+        GG::ListBox::Row& row = **it;
         GG::Pt size = GG::Pt(m_lb->Width() - 4*LB_MARGIN_X, row.Height());
         row.Resize(size);
         GG::Control* control = row.at(0);
@@ -1894,6 +1896,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     // default edge properties
     agedgeattr(graph, "tailclip", "false");
 
+    Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
+
     std::map<std::string, Agnode_t*> name_to_node_map;
     TechManager& manager = GetTechManager();
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
@@ -1915,7 +1919,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         }
     }
 
+    Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
+
     gvLayout(gvc, graph, "dot");
+
+    Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
     // create new tech panels and new dependency arcs
     m_dependency_arcs.clear();
@@ -1967,6 +1975,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     gvFreeContext(gvc);
 
     agclose(graph);
+
+    Logger().debugStream() << "Tech Tree Layout Done";
 
     if (keep_position) {
         m_vscroll->ScrollTo(final_position.y);
@@ -2278,12 +2288,28 @@ void TechTreeWnd::TechListBox::Populate()
     // remove techs in listbox
     Clear();
 
+    Logger().debugStream() << "Tech List Box Populating";
+
     TechManager& manager = GetTechManager();
+    double creation_elapsed = 0.0;
+    double insertion_elapsed = 0.0;
+    boost::timer creation_timer;
+    boost::timer insertion_timer;
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
-        if (TechVisible(tech))
-            Insert(new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech));
+        if (TechVisible(tech)) {
+            creation_timer.restart();
+            TechRow* tr = new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech);
+            creation_elapsed += creation_timer.elapsed();
+            insertion_timer.restart();
+            Insert(tr);
+            insertion_elapsed += insertion_timer.elapsed();
+        }
     }
+
+    Logger().debugStream() << "Tech List Box Done Populating";
+    Logger().debugStream() << "    Creation time=" << (creation_elapsed * 1000);
+    Logger().debugStream() << "    Insertion time=" << (insertion_elapsed * 1000);
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(const std::string& category)

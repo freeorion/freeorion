@@ -18,6 +18,7 @@
 #  define BOOST_MSVC -1
 #endif
 
+#include <boost/cast.hpp>
 #include <boost/serialization/vector.hpp>
 
 #include <GG/Button.h>
@@ -306,9 +307,9 @@ void MultiplayerLobbyWnd::LobbyExit(int player_id)
 {
     std::string player_name = m_lobby_data.m_players[player_id].m_player_name;
     m_lobby_data.m_players.erase(player_id);
-    for (int i = 0; i < m_players_lb->NumRows(); ++i) {
-        if (player_name == m_players_lb->GetRow(i)[0]->WindowText()) {
-            delete m_players_lb->Erase(i);
+    for (GG::ListBox::iterator it = m_players_lb->Begin(); it != m_players_lb->End(); ++it) {
+        if (player_name == (**it)[0]->WindowText()) {
+            delete m_players_lb->Erase(it);
             break;
         }
     }
@@ -363,9 +364,8 @@ void MultiplayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new
 void MultiplayerLobbyWnd::PlayerDataChanged()
 {
     m_lobby_data.m_players.clear();
-    for (int i = 0; i < m_players_lb->NumRows(); ++i) {
-        const PlayerRow* row = dynamic_cast<const PlayerRow*>(&m_players_lb->GetRow(i));
-        assert(row);
+    for (GG::ListBox::iterator it = m_players_lb->Begin(); it != m_players_lb->End(); ++it) {
+        const PlayerRow* row = boost::polymorphic_downcast<const PlayerRow*>(*it);
         m_lobby_data.m_players[row->m_player_data.m_player_id] = row->m_player_data;
     }
     if (m_host)
@@ -431,8 +431,8 @@ bool MultiplayerLobbyWnd::PlayerDataAcceptable() const
 {
     std::set<std::string> empire_names;
     std::set<unsigned int> empire_colors;
-    for (int i = 0; i < m_players_lb->NumRows(); ++i) {
-        const PlayerRow& row = dynamic_cast<const PlayerRow&>(m_players_lb->GetRow(i));
+    for (GG::ListBox::iterator it = m_players_lb->Begin(); it != m_players_lb->End(); ++it) {
+        const PlayerRow& row = dynamic_cast<const PlayerRow&>(**it);
         if (row.m_player_data.m_empire_name.empty())
             return false;
         empire_names.insert(row.m_player_data.m_empire_name);

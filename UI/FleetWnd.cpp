@@ -1017,8 +1017,9 @@ void FleetDetailPanel::UniverseObjectDeleted(const UniverseObject *obj)
 
 void FleetDetailPanel::ShipSelectionChanged(const std::set<int>& rows)
 {
-    for (int i = 0; i < m_ships_lb->NumRows(); ++i) {
-        ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(m_ships_lb->GetRow(i)[0]);
+    std::size_t i = 0;
+    for (GG::ListBox::iterator it = m_ships_lb->Begin(); it != m_ships_lb->End(); ++it, ++i) {
+        ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((**it)[0]);
         ship_panel->Select(rows.find(i) != rows.end());
     }
 }
@@ -1280,8 +1281,9 @@ void FleetWnd::AddFleet(Fleet* fleet)
 
 void FleetWnd::SelectFleet(Fleet* fleet)
 {
-    for (int i = 0; i < m_fleets_lb->NumRows(); i++) {
-        FleetRow* row = dynamic_cast<FleetRow*>(&m_fleets_lb->GetRow(i));
+    std::size_t i = 0;
+    for (GG::ListBox::iterator it = m_fleets_lb->Begin(); it != m_fleets_lb->End(); ++it, ++i) {
+        FleetRow* row = dynamic_cast<FleetRow*>(*it);
         if (row && row->m_fleet == fleet) {
             m_fleets_lb->DeselectAll();
             m_fleets_lb->SelectRow(i);
@@ -1338,8 +1340,9 @@ void FleetWnd::FleetSelectionChanged(const std::set<int>& rows)
     Fleet* fleet = 0 <= m_current_fleet ? FleetInRow(m_current_fleet) : 0;
     m_fleet_detail_panel->SetFleet(fleet);
 
-    for (int i = 0; i < m_fleets_lb->NumRows(); ++i) {
-        FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(m_fleets_lb->GetRow(i)[0]);
+    std::size_t i = 0;
+    for (GG::ListBox::iterator it = m_fleets_lb->Begin(); it != m_fleets_lb->End(); ++it, ++i) {
+        FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>((**it)[0]);
         fleet_panel->Select(rows.find(i) != rows.end());
     }
 }

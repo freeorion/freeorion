@@ -1354,8 +1354,9 @@ void SidePanel::SetSystemImpl()
         int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
         m_system_name->SetDropHeight(drop_height);
 
-        for (int i = 0; i < m_system_name->NumRows(); i++) {
-            if (select_row == &m_system_name->GetRow(i)) {
+        std::size_t i = 0;
+        for (GG::ListBox::iterator it = m_system_name->Begin(); it != m_system_name->End(); ++it, ++i) {
+            if (select_row == *it) {
                 m_system_name->Select(i);
                 break;
             }
