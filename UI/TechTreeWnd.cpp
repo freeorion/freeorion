@@ -2128,15 +2128,6 @@ public:
     mutable boost::signal<void (const Tech*)>   TechDoubleClickedSignal;    ///< emitted when a technology is double-clicked
 
 private:
-    void    Populate();
-
-    void    PropegateDoubleClickSignal(int index, GG::ListBox::Row* row);
-    void    PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
-
-    std::set<std::string>   m_categories_shown;
-    std::set<TechType>      m_tech_types_shown;
-    std::set<TechStatus>    m_tech_statuses_shown;
-
     class TechRow : public CUIListBox::Row {
     public:
         TechRow(int w, const Tech* tech);
@@ -2147,6 +2138,15 @@ private:
     private:
         const Tech*     m_tech;
     };
+
+    void    Populate();
+    void    PropegateDoubleClickSignal(int index, GG::ListBox::Row* row);
+    void    PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
+
+    std::set<std::string> m_categories_shown;
+    std::set<TechType>    m_tech_types_shown;
+    std::set<TechStatus>  m_tech_statuses_shown;
+    std::vector<TechRow*> m_all_tech_rows;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {
@@ -2232,6 +2232,8 @@ TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
     GG::Connect(DoubleClickedSignal,    &TechListBox::PropegateDoubleClickSignal,   this);
     GG::Connect(LeftClickedSignal,      &TechListBox::PropegateLeftClickSignal,     this);
 
+    SetStyle(GG::LIST_NOSORT);
+
     // show all categories...
     m_categories_shown.clear();
     const std::vector<std::string> categories = GetTechManager().CategoryNames();
@@ -2285,24 +2287,37 @@ void TechTreeWnd::TechListBox::Populate()
     if (!Visible())
         return;
 
-    // remove techs in listbox
-    Clear();
-
     Logger().debugStream() << "Tech List Box Populating";
 
-    TechManager& manager = GetTechManager();
     double creation_elapsed = 0.0;
     double insertion_elapsed = 0.0;
     boost::timer creation_timer;
     boost::timer insertion_timer;
-    for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        const Tech* tech = *it;
-        if (TechVisible(tech)) {
+    // HACK! This caching of TechRows works only if there are no "hidden" techs
+    // that are added to the manager mid-game.
+    TechManager& manager = GetTechManager();
+    if (m_all_tech_rows.empty()) {
+        for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+            const Tech* tech = *it;
             creation_timer.restart();
-            TechRow* tr = new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech);
+            m_all_tech_rows.push_back(new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech));
             creation_elapsed += creation_timer.elapsed();
+        }
+    }
+
+    // remove techs in listbox, then reset the rest of its state
+    for (reverse_iterator it = RBegin(); it != REnd(); ) {
+        Erase((++it).base());
+    }
+    Clear();
+
+    for (std::vector<TechRow*>::iterator it = m_all_tech_rows.begin();
+         it != m_all_tech_rows.end();
+         ++it) {
+        TechRow* tech_row = *it;
+        if (TechVisible(tech_row->GetTech())) {
             insertion_timer.restart();
-            Insert(tr);
+            Insert(*it);
             insertion_elapsed += insertion_timer.elapsed();
         }
     }
