@@ -102,6 +102,8 @@ namespace FreeOrionPython {
             .def("resourceAvailable",               &Empire::ResourceAvailable)
 
             .def("population",                      &Empire::Population)
+
+            .add_property("fleetSupplyableSystems", make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
         ;
 
 

@@ -22,15 +22,16 @@ namespace {
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
-    bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;}
+    bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
     unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
+}
 
-namespace FreeOrionPython {
+    namespace FreeOrionPython {
     using boost::python::def;
     using boost::python::class_;
     using boost::python::bases;
@@ -114,6 +115,8 @@ namespace FreeOrionPython {
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
             .add_property("numShips",                   &Fleet::NumShips)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
+            .add_property("fuel",                       &Fleet::Fuel)
+            .add_property("maxFuel",                    &Fleet::MaxFuel)
         ;
 
         //////////////////

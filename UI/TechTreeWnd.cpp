@@ -1231,7 +1231,9 @@ public:
     void Reset();                       ///< redo layout, recentre on a tech
     void SetScale(double scale);
     void ShowCategory(const std::string& category);
+    void ShowAllCategories();
     void HideCategory(const std::string& category);
+    void HideAllCategories();
     void ShowType(TechType type);
     void HideType(TechType type);
     void ShowStatus(TechStatus status);
@@ -1790,6 +1792,14 @@ void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
     }
 }
 
+void TechTreeWnd::LayoutPanel::ShowAllCategories()
+{
+    const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    for (std::vector<std::string>::const_iterator it = all_cats.begin(); it != all_cats.end(); ++it)
+        m_categories_shown.insert(*it);
+    Layout(true);
+}
+
 void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
 {
     std::set<std::string>::iterator it = m_categories_shown.find(category);
@@ -1797,6 +1807,12 @@ void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
         m_categories_shown.erase(it);
         Layout(true);
     }
+}
+
+void TechTreeWnd::LayoutPanel::HideAllCategories()
+{
+    m_categories_shown.clear();
+    Layout(true);
 }
 
 void TechTreeWnd::LayoutPanel::ShowType(TechType type) {
@@ -1923,6 +1939,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
     gvLayout(gvc, graph, "dot");
 
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+
     Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
     // create new tech panels and new dependency arcs
@@ -1953,9 +1971,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
                 }
                 points.push_back(Spline(temp));
             }
-            const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
-            TechStatus arc_type = empire->GetTechStatus(to->Name());
+            TechStatus arc_type = TS_RESEARCHABLE;
+            if (empire)
+                arc_type = empire->GetTechStatus(to->Name());
             m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
         }
     }
@@ -1998,16 +2017,22 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
 bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
 {
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return true;
+
+    // check that tech's type, category and status are all visible
+
     if (m_tech_types_shown.find(tech->Type()) == m_tech_types_shown.end())
         return false;
 
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
+    // all tests pass, so tech is visible
     return true;
 }
 
@@ -2114,7 +2139,9 @@ public:
     void    Reset();
 
     void    ShowCategory(const std::string& category);
+    void    ShowAllCategories();
     void    HideCategory(const std::string& category);
+    void    HideAllCategories();
     void    ShowType(TechType type);
     void    HideType(TechType type);
     void    ShowStatus(TechStatus status);
@@ -2335,6 +2362,14 @@ void TechTreeWnd::TechListBox::ShowCategory(const std::string& category)
     }
 }
 
+void TechTreeWnd::TechListBox::ShowAllCategories()
+{
+    const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    for (std::vector<std::string>::const_iterator it = all_cats.begin(); it != all_cats.end(); ++it)
+        m_categories_shown.insert(*it);
+    Populate();
+}
+
 void TechTreeWnd::TechListBox::HideCategory(const std::string& category)
 {
     std::set<std::string>::iterator it = m_categories_shown.find(category);
@@ -2342,6 +2377,12 @@ void TechTreeWnd::TechListBox::HideCategory(const std::string& category)
         m_categories_shown.erase(it);
         Populate();
     }
+}
+
+void TechTreeWnd::TechListBox::HideAllCategories()
+{
+    m_categories_shown.clear();
+    Populate();
 }
 
 void TechTreeWnd::TechListBox::ShowType(TechType type)
@@ -2380,16 +2421,22 @@ void TechTreeWnd::TechListBox::HideStatus(TechStatus status)
 
 bool TechTreeWnd::TechListBox::TechVisible(const Tech* tech)
 {
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return true;
+
+    // check that tech's type, category and status are all visible
+
     if (m_tech_types_shown.find(tech->Type()) == m_tech_types_shown.end())
         return false;
 
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
+    // all tests pass, so tech is visible
     return true;
 }
 
@@ -2530,11 +2577,12 @@ void TechTreeWnd::ShowCategory(const std::string& category)
 
 void TechTreeWnd::ShowAllCategories()
 {
+    m_layout_panel->ShowAllCategories();
+    m_tech_list->ShowAllCategories();
+
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_layout_panel->ShowCategory(*cats_it);
-        m_tech_list->ShowCategory(*cats_it);
         CUIButton* button = m_tech_tree_controls->m_category_buttons[i];
         button->MarkSelectedTechCategoryColor(*cats_it);
     }
@@ -2558,11 +2606,12 @@ void TechTreeWnd::HideCategory(const std::string& category)
 
 void TechTreeWnd::HideAllCategories()
 {
+    m_layout_panel->HideAllCategories();
+    m_tech_list->HideAllCategories();
+
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_layout_panel->HideCategory(*cats_it);
-        m_tech_list->HideCategory(*cats_it);
         m_tech_tree_controls->m_category_buttons[i]->MarkNotSelected();
     }
 }
