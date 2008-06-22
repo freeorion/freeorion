@@ -1795,6 +1795,8 @@ void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
 void TechTreeWnd::LayoutPanel::ShowAllCategories()
 {
     const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    if (all_cats.size() == m_categories_shown.size())
+        return;
     for (std::vector<std::string>::const_iterator it = all_cats.begin(); it != all_cats.end(); ++it)
         m_categories_shown.insert(*it);
     Layout(true);
@@ -1811,6 +1813,8 @@ void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
 
 void TechTreeWnd::LayoutPanel::HideAllCategories()
 {
+    if (m_categories_shown.empty())
+        return;
     m_categories_shown.clear();
     Layout(true);
 }
@@ -2365,6 +2369,8 @@ void TechTreeWnd::TechListBox::ShowCategory(const std::string& category)
 void TechTreeWnd::TechListBox::ShowAllCategories()
 {
     const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    if (all_cats.size() == m_categories_shown.size())
+        return;
     for (std::vector<std::string>::const_iterator it = all_cats.begin(); it != all_cats.end(); ++it)
         m_categories_shown.insert(*it);
     Populate();
@@ -2381,6 +2387,8 @@ void TechTreeWnd::TechListBox::HideCategory(const std::string& category)
 
 void TechTreeWnd::TechListBox::HideAllCategories()
 {
+    if (m_categories_shown.empty())
+        return;
     m_categories_shown.clear();
     Populate();
 }

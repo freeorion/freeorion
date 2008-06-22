@@ -20,6 +20,8 @@ namespace {
     const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
     const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
+    const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
+
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
     bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
@@ -102,6 +104,7 @@ namespace {
             .add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
             .def("Contains",                    &UniverseObject::Contains)
             .def("ContainedBy",                 &UniverseObject::ContainedBy)
+            .def("getMeter",                    ObjectGetMeter,                             return_value_policy<reference_existing_object>())
         ;
 
         ///////////////////
