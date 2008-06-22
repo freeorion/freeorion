@@ -1734,9 +1734,8 @@ void TechTreeWnd::LayoutPanel::Render()
 void TechTreeWnd::LayoutPanel::Update(const Tech* tech)
 {
     if (!tech) {
-        // update all tech panels
-        for (std::map<const Tech*, TechPanel*>::iterator tech_it = m_techs.begin(); tech_it != m_techs.end(); ++tech_it)
-            tech_it->second->Update();
+        // redo entire layout
+        Layout(true);
     } else {
         // update just specified tech's panel
         std::map<const Tech*, TechPanel*>::iterator tech_it = m_techs.find(tech);
