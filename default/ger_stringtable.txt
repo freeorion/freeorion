@@ -1240,17 +1240,20 @@ Alle Kolonieschiffe in diesem System haben\nBefehl erhalten, das System zu\nverl
 # Fleet Window  #
 #################
 
-FW_FLEET_AT
-Im %1% System
+FW_FLEET_HOLDING_AT
+Hält in System %1% 
 
 FW_FLEET_MOVING_TO
-Fliegt nach %1%, ETA %2%
+Fliegt nach %1%, ETA %2% (%3%)
 
 FW_FLEET_ETA_NEVER
 Nie
 
 FW_FLEET_ETA_UNKNOWN
 Unbekannt
+
+FW_FLEET_ETA_OUT_OF_RANGE
+Ausser Reichweite
 
 FW_SHIP_CLASS
 Schiffsklasse
@@ -1266,14 +1269,17 @@ Neue Flotte
 FW_NEW_FLEET_LABEL
 Neue Flotte
 
+FW_EMPIRE_FLEETS_AT_SYSTEM
+%1% Floote in System %2%
+
 FW_EMPIRE_FLEETS
 %1% Flotten
 
 FW_HOME_FLEET
-Home Fleet
+Heim-Flotte
 
 FW_BATTLE_FLEET
-Battle Fleet
+Schlacht-Flotte
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
