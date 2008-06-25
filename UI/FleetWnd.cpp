@@ -601,17 +601,10 @@ void FleetDataPanel::SetFleetIcon()
         } else if (m_fleet->NumShips() == 1) {
             Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
             const ShipDesign* design = ship->Design();
-            std::string design_name;
-            if (design) {
-                design_name = design->Name();
-                std::string::size_type space = design_name.find(' ');
-                if (space != std::string::npos) {
-                    design_name[space] = '_';
-                }
-            } else {
-                design_name = "Scout";
-            }
-            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png"));
+            if (design)
+                icon = ClientUI::ShipIcon(design->ID());
+            else
+                icon = ClientUI::ShipIcon(-1);  // default icon
         }
     } else { // the "new fleet" data panel
         icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "newfleet.png");

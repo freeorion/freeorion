@@ -204,8 +204,8 @@ namespace {
         std::vector<int> predecessors(boost::num_vertices(graph));
         for (unsigned int i = 0; i < boost::num_vertices(graph); ++i)
             predecessors[i] = i;
-        
-        
+
+
         // do the actual path finding using verbose boost magic...
         try {
             boost::queue<int> buf;
@@ -234,7 +234,7 @@ namespace {
             // add start system to path, as it wasn't added by traversing predecessors array
             retval.first.push_front(pointer_property_map[system1_index]);
         }
-        
+
         return retval;
     }
 

@@ -1816,7 +1816,8 @@ void Empire::CheckProductionProgress()
                 Logger().debugStream() << "New Fleet created on turn: " << fleet->CreationTurn();
 
                 // add ship
-                Ship *ship = new Ship(m_id, m_production_queue[i].item.design_id);
+                Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id);
+
                 int ship_id = universe.Insert(ship);
 #if 0
                 const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.design_id);

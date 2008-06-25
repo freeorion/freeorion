@@ -21,6 +21,17 @@ namespace {
     const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
     const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
+    void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                  &Universe::UpdateMeterEstimates;
+
+    std::vector<int>        LeastJumpsPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
+        std::pair<std::list<System*>, int> path = universe->LeastJumpsPath(start_sys, end_sys, empire_id);
+        std::vector<int> retval;
+        for (std::list<System*>::const_iterator it = path.first.begin(); it != path.first.end(); ++it)
+            retval.push_back((*it)->ID());
+        return retval;
+    }
+    boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =         &LeastJumpsPath;
+
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
     boost::function<double(const UniverseObject*, MeterType)> InitialCurrentMeterValueFromObject =
@@ -94,7 +105,16 @@ namespace {
             // put as part of universe class so one doesn't need a UniverseObject object in python to access these
             .def_readonly("invalidObjectID",    &UniverseObject::INVALID_OBJECT_ID)
             .def_readonly("invalidObjectAge",   &UniverseObject::INVALID_OBJECT_AGE)
+
+            .def("updateMeterEstimates",        UpdateMeterEstimatesVoidFunc)
+
+            .def("leastJumpsPath",              make_function(
+                                                    LeastJumpsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
+                                                ))
         ;
+
 
         ////////////////////
         // UniverseObject //
