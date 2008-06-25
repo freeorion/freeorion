@@ -1,6 +1,6 @@
 # -*- Python -*-
 
-freeorion_version = 'v0.3.9'
+freeorion_version = 'v0.3.10'
 
 gigi_version = '0.6.0'
 
