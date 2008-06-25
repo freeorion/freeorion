@@ -3357,7 +3357,7 @@ BLD_IMPERIAL_PALACE
 Imperial Palace
 
 BLD_IMPERIAL_PALACE_DESC
-Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +5 to max construction.
+Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +2 to max construction.
 
 BLD_SHIPYARD_BASE
 Shipyard

@@ -770,7 +770,7 @@ GAME_MENU_WINDOW_TITLE
 Menü
 
 GAME_MENU_SAVE
-Spiel speichern
+Spiel sichern
 
 GAME_MENU_LOAD
 Spiel laden
@@ -1353,6 +1353,12 @@ Erforschbar
 TECH_WND_STATUS_UNRESEARCHABLE
 Nicht erforschbar
 
+TECH_WND_LIST_VIEW
+Listenansicht
+
+TECH_WND_TREE_VIEW
+Baumansicht
+
 TECH_WND_REQUIRES
 Benötigt
 
@@ -1851,7 +1857,7 @@ PT_TUNDRA
 arktisch
 
 PT_DESERT
-arid
+Wüste
 
 PT_TERRAN
 erdähnlich
@@ -1902,7 +1908,7 @@ PE_HOSTILE
 schrecklich
 
 PE_POOR
-poor
+armseelig
 
 PE_ADEQUATE
 angemessen
@@ -2233,13 +2239,13 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Objects affected: Any object%1%
+beinflusste Objekte: Jedes Objekt%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Objects affected: Source object only
+beinflusste Objekte: nur das Quell-Objekt
 
 DESC_EFFECTS_GROUP_ACTIVATION
-Effect is active if the source is an object%1%
+Effekt aktiv, wenn die Quelle ein Objekt ist%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is always active
@@ -3159,6 +3165,12 @@ Stellartomographie
 LRN_STELLAR_TOMOGRAPHY_DESC
 Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im inneren eines Sterns rekonstruieren.  Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.\n\nErhöht die Forschung um +4 auf Forschung pro 10 Bevölkerung auf Planeten mit Primärfokus Forschung in Systemen mit schwarzem Loch.\nIn Systemen mit Neutronenstern beträgt der Bonus +3.\nBei Systemen mit blauen oder weißem Stern beträgt der Bonus +2.\nIn Systemen mit rotem, orangenem oder gelbem Stern beträgt der Bonus +1.
 
+LRN_OBSERVATORY_I
+Observatorium
+
+LRN_OBSERVATORY_I_DESC
+The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
+
 LRN_AUTOLAB_I
 Autolabs
 
@@ -3410,8 +3422,9 @@ Decreases Stealth on planet where built by 10.'''
 BLD_IMPERIAL_PALACE
 Imperialer Palast
 
-BLD_IMEPRIAL_PALACE_DESC
-Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +5 to max construction.
+BLD_IMPERIAL_PALACE_DESC
+Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +2 to max construction.
+
 
 BLD_SHIPYARD_BASE
 Shipyard
@@ -3443,10 +3456,10 @@ Autolab - Kontrollzentrum
 BLD_AUTOLAB_CONTROL_DESC
 Wird durch KI - Autolabs verfügbar.\n\nGewährt einen Bonus von +2 auf maximale Forschung pro 10 Bevölkerungseinheiten und -2 auf maximale Gesundheit auf Planeten mit Primärfokus Forschung.\n Auf Planeten mit Sekundärfokus Forschung beträgt der Bonus +1.
 
-BLD_THEORM_PROVER
+BLD_THEOREM_PROVER
 Automatisierter Thesencomputer
 
-BLD_THEORM_PROVER_DESC
+BLD_THEOREM_PROVER_DESC
 Wird durch den automatisierten Thesencomputer verfügbar.\n\nGewährt einen Bonus von +5 auf maximale Forschung pro 10 Bevölkerungseinheiten auf Planeten mit Primärfokus Forschung (nicht kumulativ).\nAuf Planeten mit Sekundärfokus Forschung beträgt der Bonus +1.
 
 BLD_LIGHTHOUSE
@@ -3668,13 +3681,13 @@ SH_DEFLECTOR_DESC
 Strong defense with small mass
 
 CO_COLONY_POD
-Colon
+Besiedlungsmodul
 
 CO_COLONY_POD_DESC
 Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
 
 CO_SUSPEND_ANIM_POD
-Cryonic Colony Pod
+Kryonisches Besiedlungsmodul
 
 CO_SUSPEND_ANIM_POD_DESC
 Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
