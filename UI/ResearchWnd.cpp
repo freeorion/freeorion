@@ -281,7 +281,8 @@ void ResearchWnd::UpdateQueue()
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->spending, it->turns_left));
     }
 
-    m_queue_lb->BringRowIntoView(--m_queue_lb->end());
+    if (!m_queue_lb->Empty())
+        m_queue_lb->BringRowIntoView(--m_queue_lb->end());
     if (m_queue_lb->NumRows() <= original_queue_length)
         m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
 }
