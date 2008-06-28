@@ -165,11 +165,10 @@ namespace {
     {
         DropListIndexSetOptionFunctor(const std::string& option_name, CUIDropDownList* drop_list) :
             m_option_name(option_name), m_drop_list(drop_list) {}
-        void operator()(int index)
+        void operator()(GG::DropDownList::iterator it)
             {
-                const GG::ListBox::Row* row = m_drop_list->CurrentItem();
-                assert(row);
-                GetOptionsDB().Set<std::string>(m_option_name, row->WindowText());
+                assert(it != m_drop_list->end());
+                GetOptionsDB().Set<std::string>(m_option_name, (*it)->WindowText());
             }
         const std::string m_option_name;
         CUIDropDownList* m_drop_list;
@@ -180,7 +179,7 @@ namespace {
         ResolutionDropListIndexSetOptionFunctor(CUIDropDownList* drop_list, CUISpin<int>* width_spin, CUISpin<int>* height_spin, CUISpin<int>* color_depth_spin, CUIStateButton* fullscreen_button) :
             m_drop_list(drop_list), m_width_spin(width_spin), m_height_spin(height_spin), m_color_depth_spin(color_depth_spin), m_fullscreen_button(fullscreen_button)
             {
-                const GG::ListBox::Row* row = m_drop_list->CurrentItem();
+                const GG::ListBox::Row* row = *m_drop_list->CurrentItem();
                 if (row && row->WindowText() != UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
                     m_width_spin->Disable(true);
                     m_height_spin->Disable(true);
@@ -189,9 +188,9 @@ namespace {
                         m_fullscreen_button->Disable(true);
                 }
             }
-        void operator()(int index)
+        void operator()(GG::ListBox::iterator it)
             {
-                const GG::ListBox::Row* row = m_drop_list->CurrentItem();
+                const GG::ListBox::Row* row = *it;
                 assert(row);
                 if (row->WindowText() == UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
                     m_width_spin->Disable(false);
@@ -630,7 +629,8 @@ void OptionsWnd::ResolutionOption()
     limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
 
 #ifdef FREEORION_WIN32
-    GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
+    GG::Connect(drop_list->SelChangedSignal,
+                ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
 #else
     // HACK! These lines are only here to quiet "unused variable" warnings.
     width_spin = 0;

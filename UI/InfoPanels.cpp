@@ -1081,10 +1081,10 @@ ResourceCenter* ResourcePanel::GetResourceCenter()
     return res;
 }
 
-void ResourcePanel::PrimaryFocusDropListSelectionChanged(int selected)
+void ResourcePanel::PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected)
 {
     FocusType focus;
-    switch (selected) {
+    switch (m_primary_focus_drop->IteratorToIndex(selected)) {
     case 0:
         focus = FOCUS_BALANCED;
         break;
@@ -1111,10 +1111,10 @@ void ResourcePanel::PrimaryFocusDropListSelectionChanged(int selected)
     PrimaryFocusChangedSignal(focus);
 }
 
-void ResourcePanel::SecondaryFocusDropListSelectionChanged(int selected)
+void ResourcePanel::SecondaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected)
 {
     FocusType focus;
-    switch (selected) {
+    switch (m_secondary_focus_drop->IteratorToIndex(selected)) {
     case 0:
         focus = FOCUS_BALANCED;
         break;

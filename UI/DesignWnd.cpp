@@ -697,8 +697,8 @@ public:
                                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 
 private:
-    void                            PropegateDoubleClickSignal(int index, GG::ListBox::Row* row);
-    void                            PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
+    void                            PropagateDoubleClickSignal(GG::ListBox::iterator it);
+    void                            PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt);
 
     GG::Pt                          ListRowSize();
 
@@ -824,8 +824,8 @@ BasesListBox::BasesListBox(int x, int y, int w, int h) :
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false)
 {
-    GG::Connect(DoubleClickedSignal,    &BasesListBox::PropegateDoubleClickSignal,  this);
-    GG::Connect(LeftClickedSignal,      &BasesListBox::PropegateLeftClickSignal,  this);
+    GG::Connect(DoubleClickedSignal,    &BasesListBox::PropagateDoubleClickSignal,  this);
+    GG::Connect(LeftClickedSignal,      &BasesListBox::PropagateLeftClickSignal,  this);
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const {
@@ -837,7 +837,7 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
         const GG::Pt row_size = ListRowSize();
-        for (GG::ListBox::iterator it = Begin(); it != End(); ++it) {
+        for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
             (*it)->Resize(row_size);
         }
     }
@@ -914,23 +914,17 @@ void BasesListBox::PopulateWithEmptyHulls() {
 
 
     // loop through list, removing rows as appropriate
-    for (int i = 0; i != this->NumRows();) {
+    for (iterator it = begin(); it != end(); ) {
+        iterator temp_it = it++;
         //Logger().debugStream() << " row index: " << i;
-        const HullAndPartsListBoxRow* row = dynamic_cast<const HullAndPartsListBoxRow*>(&GetRow(i));
-        if (!row) {
-            ++i;
-            continue;
-        }
-        const std::string& current_row_hull = row->Hull();
-        //Logger().debugStream() << " current row hull: " << current_row_hull;
-        if (hulls_to_remove.find(current_row_hull) != hulls_to_remove.end()) {
-            //Logger().debugStream() << " ... removing";
-            m_hulls_in_list.erase(current_row_hull);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
-            Row* erased_row = Erase(i);
-            delete erased_row;
-        } else {
-            ++i;
-            continue;
+        if (const HullAndPartsListBoxRow* row = dynamic_cast<const HullAndPartsListBoxRow*>(*temp_it)) {
+            const std::string& current_row_hull = row->Hull();
+            //Logger().debugStream() << " current row hull: " << current_row_hull;
+            if (hulls_to_remove.find(current_row_hull) != hulls_to_remove.end()) {
+                //Logger().debugStream() << " ... removing";
+                m_hulls_in_list.erase(current_row_hull);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
+                delete Erase(temp_it);
+            }
         }
     }
 
@@ -985,23 +979,18 @@ void BasesListBox::PopulateWithCompletedDesigns() {
     }
 
     // loop through list, removing rows as appropriate
-    for (int i = 0; i != this->NumRows();) {
+    for (iterator it = begin(); it != end(); ) {
+        iterator temp_it = it++;
         //Logger().debugStream() << " row index: " << i;
-        const CompletedDesignListBoxRow* row = dynamic_cast<const CompletedDesignListBoxRow*>(&GetRow(i));
-        if (!row) {
-            ++i;
-            continue;
-        }
-        int current_row_design_id = row->DesignID();
-        //Logger().debugStream() << " current row hull: " << current_row_design_id;
-        if (designs_to_remove.find(current_row_design_id) != designs_to_remove.end()) {
-            //Logger().debugStream() << " ... removing";
-            m_designs_in_list.erase(current_row_design_id);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
-            Row* erased_row = Erase(i);
-            delete erased_row;
-        } else {
-            ++i;
-            continue;
+        if (const CompletedDesignListBoxRow* row =
+            dynamic_cast<const CompletedDesignListBoxRow*>(*temp_it)) {
+            int current_row_design_id = row->DesignID();
+            //Logger().debugStream() << " current row hull: " << current_row_design_id;
+            if (designs_to_remove.find(current_row_design_id) != designs_to_remove.end()) {
+                //Logger().debugStream() << " ... removing";
+                m_designs_in_list.erase(current_row_design_id);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
+                delete Erase(temp_it);
+            }
         }
     }
 
@@ -1017,10 +1006,10 @@ void BasesListBox::PopulateWithCompletedDesigns() {
     }
 }
 
-void BasesListBox::PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
+void BasesListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
-    HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(row);
+    HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
     if (box_row) {
         const std::string& hull_name = box_row->Hull();
         const HullType* hull_type = GetHullType(hull_name);
@@ -1030,16 +1019,16 @@ void BasesListBox::PropegateLeftClickSignal(int index, GG::ListBox::Row* row, co
     }
 }
 
-void BasesListBox::PropegateDoubleClickSignal(int index, GG::ListBox::Row* row) {
+void BasesListBox::PropagateDoubleClickSignal(GG::ListBox::iterator it) {
     // determine type of row that was clicked, and emit appropriate signal
 
-    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(row);
+    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
     if (hp_row) {
         DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
         return;
     }
 
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(row);
+    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
     if (cd_row) {
         DesignSelectedSignal(cd_row->DesignID());
         return;

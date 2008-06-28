@@ -71,8 +71,9 @@ private:
     void Init();
     void AttachSignalChildren();
     void DetachSignalChildren();
-    void SettingChanged(int);
-    void ShapeChanged(int index);
+    void SettingChanged_(int);
+    void SettingChanged(GG::ListBox::iterator);
+    void ShapeChanged(GG::ListBox::iterator it);
 
     CUISpin<int>*         m_stars_spin;          //!< The number of stars to include in the galaxy
     CUIDropDownList*      m_galaxy_shapes_list;  //!< The possible shapes for the galaxy

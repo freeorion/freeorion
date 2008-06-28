@@ -12,10 +12,10 @@ class TechTreeWnd : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (const Tech*)>               TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
-    typedef boost::signal<void (const Tech*)>               TechClickedSignalType;              ///< emitted when the mouse rolls over a technology
-    typedef boost::signal<void (const Tech*)>               TechDoubleClickedSignalType;        ///< emitted when a technology is double-clicked
-    typedef boost::signal<void (std::vector<const Tech*>)>  AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
+    typedef boost::signal<void (const Tech*)>                      TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
+    typedef boost::signal<void (const Tech*)>                      TechClickedSignalType;              ///< emitted when the mouse rolls over a technology
+    typedef boost::signal<void (const Tech*)>                      TechDoubleClickedSignalType;        ///< emitted when a technology is double-clicked
+    typedef boost::signal<void (const std::vector<const Tech*>&)>  AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
     //@}
 
     /** \name Structors */ //@{

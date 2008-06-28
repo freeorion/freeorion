@@ -119,6 +119,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/OptionsWnd.cpp',
         'UI/DesignWnd.cpp',
         'UI/ProductionWnd.cpp',
+        'UI/QueueListBox.cpp',
         'UI/ResearchWnd.cpp',
         'UI/ServerConnectWnd.cpp',
         'UI/SidePanel.cpp',

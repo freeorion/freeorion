@@ -3,6 +3,7 @@
 #define _ServerConnectWnd_h_
 
 #include "CUIWnd.h"
+#include "CUIControls.h"
 #include "../network/ClientNetworking.h"
 
 #include <string>
@@ -41,7 +42,7 @@ private:
     void PopulateServerList();
     void RefreshServerList();
     void HostOrJoinClicked(int idx);
-    void ServerSelected(const std::set<int>& selections);
+    void ServerSelected(const GG::ListBox::SelectionSet& selections);
     void IPAddressEdited(const std::string& str);
     void NameEdited(const std::string& str);
     void OkClicked();

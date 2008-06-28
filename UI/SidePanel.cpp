@@ -23,8 +23,9 @@
 #include <GG/Scroll.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
-#include <boost/filesystem/fstream.hpp>
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #include <fstream>
 
@@ -1354,10 +1355,9 @@ void SidePanel::SetSystemImpl()
         int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
         m_system_name->SetDropHeight(drop_height);
 
-        std::size_t i = 0;
-        for (GG::ListBox::iterator it = m_system_name->Begin(); it != m_system_name->End(); ++it, ++i) {
+        for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it) {
             if (select_row == *it) {
-                m_system_name->Select(i);
+                m_system_name->Select(it);
                 break;
             }
         }
@@ -1410,25 +1410,31 @@ void SidePanel::SetSystemImpl()
     }
 }
 
-void SidePanel::SystemSelectionChanged(int selection)
+void SidePanel::SystemSelectionChanged(GG::DropDownList::iterator it)
 {
     int system_id = UniverseObject::INVALID_OBJECT_ID;
-    if (0 <= selection && selection < m_system_name->NumRows())
-        system_id = static_cast<const SystemRow&>(m_system_name->GetRow(selection)).m_system_id;
+    if (it != m_system_name->end())
+        system_id = boost::polymorphic_downcast<const SystemRow*>(*it)->m_system_id;
     if (SystemID() != system_id)
         SystemSelectedSignal(system_id);
 }
 
 void SidePanel::PrevButtonClicked()
 {
-    int selected = m_system_name->CurrentItemIndex();
-    m_system_name->Select(selected ? selected - 1 : m_system_name->NumRows() - 1);
+    assert(!m_system_name->Empty());
+    GG::DropDownList::iterator selected = m_system_name->CurrentItem();
+    if (selected == m_system_name->begin())
+        selected = m_system_name->end();
+    m_system_name->Select(--selected);
 }
 
 void SidePanel::NextButtonClicked()
 {
-    int selected = m_system_name->CurrentItemIndex();
-    m_system_name->Select((selected < m_system_name->NumRows() - 1) ? selected + 1 : 0);
+    assert(!m_system_name->Empty());
+    GG::DropDownList::iterator selected = m_system_name->CurrentItem();
+    if (++selected == m_system_name->end())
+        selected = m_system_name->begin();
+    m_system_name->Select(selected);
 }
 
 void SidePanel::PlanetSelected(int planet_id)

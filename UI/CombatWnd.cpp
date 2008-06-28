@@ -171,7 +171,7 @@ void CombatWnd::UpdateCombatTurnProgress(const std::string& message) {
     doc.ReadDoc(stream);          
 
     CombatUpdateMessage msg(doc.root_node.Child("combat-update-message"));
-    int r;
+    std::size_t r;
     for (r = 0; r < m_combats_lb->NumRows(); r++)
         if (static_cast<CombatInfoRow&>(m_combats_lb->GetRow(r)).System() == msg.m_system) {
             static_cast<CombatInfoRow&>(m_combats_lb->GetRow(r)).Update(msg);

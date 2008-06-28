@@ -102,12 +102,12 @@ private:
     /** Basic ctor. */
     FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
-    void        Init(const std::vector<Fleet*>& fleet_ids, int selected_fleet);
-    void        FleetSelectionChanged(const std::set<int>& rows);
-    void        FleetRightClicked(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
-    void        FleetDoubleClicked(int row_idx, GG::ListBox::Row* row);
-    void        FleetDeleted(int row_idx, GG::ListBox::Row* row);
-    Fleet*      FleetInRow(int idx) const;
+    void        Init(const std::vector<Fleet*>& fleets, int selected_fleet);
+    void        FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
+    void        FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void        FleetDoubleClicked(GG::ListBox::iterator it);
+    void        FleetDeleted(GG::ListBox::iterator it);
+    Fleet*      FleetInRow(GG::ListBox::iterator it) const;
     std::string TitleText() const;
     void        CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>& ship_ids);
     void        UniverseObjectDeleted(const UniverseObject *obj);
@@ -115,11 +115,11 @@ private:
 
     mutable boost::signal<void (FleetWnd*)> ClosingSignal;
 
-    const int   m_empire_id;
-    int         m_system_id;
-    const bool  m_read_only;
-    bool        m_moving_fleets;
-    int         m_current_fleet;
+    const int             m_empire_id;
+    int                   m_system_id;
+    const bool            m_read_only;
+    bool                  m_moving_fleets;
+    GG::ListBox::iterator m_current_fleet;
 
     std::set<boost::signals::connection> m_misc_connections;
 

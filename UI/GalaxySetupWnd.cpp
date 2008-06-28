@@ -190,7 +190,7 @@ void GalaxySetupPanel::Init()
 {
     AttachSignalChildren();
 
-    GG::Connect(m_stars_spin->ValueChangedSignal, &GalaxySetupPanel::SettingChanged, this);
+    GG::Connect(m_stars_spin->ValueChangedSignal, &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
     GG::Connect(m_galaxy_ages_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
     GG::Connect(m_starlane_freq_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
@@ -268,16 +268,17 @@ void GalaxySetupPanel::DetachSignalChildren()
     DetachChild(m_specials_freq_list);
 }
 
-void GalaxySetupPanel::SettingChanged(int)
+void GalaxySetupPanel::SettingChanged_(int)
 {
     TempUISoundDisabler sound_disabler;
     SettingsChangedSignal();
 }
 
-void GalaxySetupPanel::ShapeChanged(int index)
-{
-    ImageChangedSignal(m_textures[index]);
-}
+void GalaxySetupPanel::SettingChanged(GG::DropDownList::iterator)
+{ SettingChanged_(0); }
+
+void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
+{ ImageChangedSignal(m_textures[m_galaxy_shapes_list->IteratorToIndex(it)]); }
 
 
 ////////////////////////////////////////////////
@@ -443,7 +444,8 @@ void GalaxySetupWnd::OkClicked()
     GetOptionsDB().Set("GameSetup.planet-density", m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("GameSetup.specials-frequency", m_galaxy_setup_panel->GetSpecialsFrequency());
     GetOptionsDB().Set("GameSetup.empire-name", EmpireName());
-    GetOptionsDB().Set("GameSetup.empire-color", m_empire_color_selector->CurrentItemIndex());
+    GetOptionsDB().Set("GameSetup.empire-color",
+                       static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
     GetOptionsDB().Set("GameSetup.ai-players", m_number_ais_spin->Value());
 
     // Save the changes:

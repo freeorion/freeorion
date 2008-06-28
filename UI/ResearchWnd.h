@@ -6,7 +6,7 @@
 
 #include <GG/ListBox.h>
 
-class CUIListBox;
+class QueueListBox;
 class Tech;
 class TechTreeWnd;
 class ProductionInfoPanel;
@@ -23,7 +23,7 @@ public:
     void Reset();
     void Update();
     void CenterOnTech(const std::string& tech_name);
-    void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
+    void QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void Sanitize();
 
     void Render();
@@ -33,13 +33,13 @@ private:
     void UpdateQueue();
     void UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propegates to the mapwnd to update indicator)
     void AddTechToQueueSlot(const Tech* tech);
-    void AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec);
-    void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);
-    void QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
-    void QueueItemDoubleClickedSlot(int row_idx, GG::ListBox::Row* row);
+    void AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec);
+    void QueueItemDeletedSlot(GG::ListBox::iterator it);
+    void QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
+    void QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
     ProductionInfoPanel* m_research_info_panel;
-    CUIListBox*          m_queue_lb;
+    QueueListBox*        m_queue_lb;
     TechTreeWnd*         m_tech_tree_wnd;
 };
 

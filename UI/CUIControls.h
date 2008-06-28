@@ -411,7 +411,7 @@ public:
     //@}
 
 private:
-    void SelectionChanged(int i);
+    void SelectionChanged(GG::DropDownList::iterator it);
 };
 
 /** A control used to pick arbitrary colors using GG::ColorDlg. */

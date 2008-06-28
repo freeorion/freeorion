@@ -69,7 +69,7 @@ private:
 
     void                RefreshImpl();
     void                SetSystemImpl();
-    void                SystemSelectionChanged(int selection);
+    void                SystemSelectionChanged(GG::DropDownList::iterator it);
     void                PrevButtonClicked();
     void                NextButtonClicked();
     void                PlanetSelected(int planet_id);

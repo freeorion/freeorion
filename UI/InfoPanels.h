@@ -5,6 +5,7 @@
 #include "../universe/Enums.h"
 
 #include <GG/Button.h>
+#include <GG/DropDownList.h>
 
 class PopulationPanel;
 class ResourcePanel;
@@ -104,8 +105,8 @@ private:
     void                    ExpandCollapseButtonPressed();      ///< toggles panel expanded or collapsed
     void                    DoExpandCollapseLayout();           ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    void                    PrimaryFocusDropListSelectionChanged(int selected);     ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
-    void                    SecondaryFocusDropListSelectionChanged(int selected);   ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
+    void                    PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);     ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
+    void                    SecondaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);   ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
 
     ResourceCenter*         GetResourceCenter();        ///< returns the planet with ID m_planet_id
     const ResourceCenter*   GetResourceCenter() const;

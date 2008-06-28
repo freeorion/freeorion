@@ -1032,7 +1032,7 @@ void TechTreeWnd::TechNavigator::DoLayout()
 {
     m_lb->Resize(ClientSize() - GG::Pt(2*LB_MARGIN_X, 2*LB_MARGIN_Y));
 
-    for (GG::ListBox::iterator it = m_lb->Begin(); it != m_lb->End(); ++it) {
+    for (GG::ListBox::iterator it = m_lb->begin(); it != m_lb->end(); ++it) {
         GG::ListBox::Row& row = **it;
         GG::Pt size = GG::Pt(m_lb->Width() - 4*LB_MARGIN_X, row.Height());
         row.Resize(size);
@@ -2171,8 +2171,8 @@ private:
     };
 
     void    Populate();
-    void    PropegateDoubleClickSignal(int index, GG::ListBox::Row* row);
-    void    PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt);
+    void    PropagateDoubleClickSignal(GG::ListBox::iterator it);
+    void    PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt);
 
     std::set<std::string> m_categories_shown;
     std::set<TechType>    m_tech_types_shown;
@@ -2260,8 +2260,8 @@ TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
     m_tech_types_shown(),
     m_tech_statuses_shown()
 {
-    GG::Connect(DoubleClickedSignal,    &TechListBox::PropegateDoubleClickSignal,   this);
-    GG::Connect(LeftClickedSignal,      &TechListBox::PropegateLeftClickSignal,     this);
+    GG::Connect(DoubleClickedSignal,    &TechListBox::PropagateDoubleClickSignal,   this);
+    GG::Connect(LeftClickedSignal,      &TechListBox::PropagateLeftClickSignal,     this);
 
     SetStyle(GG::LIST_NOSORT);
 
@@ -2337,7 +2337,7 @@ void TechTreeWnd::TechListBox::Populate()
     }
 
     // remove techs in listbox, then reset the rest of its state
-    for (reverse_iterator it = RBegin(); it != REnd(); ) {
+    for (reverse_iterator it = rbegin(); it != rend(); ) {
         Erase((++it).base());
     }
     Clear();
@@ -2354,8 +2354,8 @@ void TechTreeWnd::TechListBox::Populate()
     }
 
     Logger().debugStream() << "Tech List Box Done Populating";
-    Logger().debugStream() << "    Creation time=" << (creation_elapsed * 1000);
-    Logger().debugStream() << "    Insertion time=" << (insertion_elapsed * 1000);
+    Logger().debugStream() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
+    Logger().debugStream() << "    Insertion time=" << (insertion_elapsed * 1000) << "ms";
 }
 
 void TechTreeWnd::TechListBox::ShowCategory(const std::string& category)
@@ -2448,18 +2448,18 @@ bool TechTreeWnd::TechListBox::TechVisible(const Tech* tech)
     return true;
 }
 
-void TechTreeWnd::TechListBox::PropegateLeftClickSignal(int index, GG::ListBox::Row* row, const GG::Pt& pt) {
+void TechTreeWnd::TechListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
-    TechRow* tech_row = dynamic_cast<TechRow*>(row);
+    TechRow* tech_row = dynamic_cast<TechRow*>(*it);
     if (tech_row)
         TechClickedSignal(tech_row->GetTech());
 }
 
-void TechTreeWnd::TechListBox::PropegateDoubleClickSignal(int index, GG::ListBox::Row* row) {
+void TechTreeWnd::TechListBox::PropagateDoubleClickSignal(GG::ListBox::iterator it) {
     // determine type of row that was clicked, and emit appropriate signal
 
-    TechRow* tech_row = dynamic_cast<TechRow*>(row);
+    TechRow* tech_row = dynamic_cast<TechRow*>(*it);
     if (tech_row)
         TechDoubleClickedSignal(tech_row->GetTech());
 }
