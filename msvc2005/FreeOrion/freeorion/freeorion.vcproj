@@ -572,6 +572,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\UI\QueueListBox.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\UI\QueueListBox.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\Ui\ResearchWnd.cpp"
 					>
 				</File>
