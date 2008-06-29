@@ -467,9 +467,7 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
     m_x(x),
     m_y(y),
     m_fleet_icon(0),
-    m_fleet_name_text(new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
-                                          GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
-                                          GG::FORMAT_RIGHT | GG::FORMAT_VCENTER)),
+    m_fleet_name_text(0),
     m_num_ships_stat(0),
     m_fleet_strength_stat(0),
     m_fuel_stat(0),
@@ -479,6 +477,9 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
 {
     EnableChildClipping();
 
+    m_fleet_name_text = new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
+                                            GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
+                                            GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_name_text);
 
     if (m_fleet) {
@@ -611,7 +612,7 @@ void FleetDataPanel::SetFleetIcon()
     }
 
     if (icon) {
-        m_fleet_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, FLEET_ICON_SZ, FLEET_ICON_SZ, icon, GG::GRAPHIC_FITGRAPHIC);
+        m_fleet_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, FLEET_ICON_SZ, FLEET_ICON_SZ, icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_fleet_icon);
     }
 }

@@ -20,6 +20,33 @@ namespace {
     inline bool SystemNotReachable(System* system, int empire_id) {
         return !GetUniverse().SystemReachable(system->ID(), empire_id);
     }
+
+    void ResupplyFleetIfPossible(Fleet* fleet) {
+        if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            return;
+        Universe& universe = GetUniverse();
+
+        // get all supplyable systems
+        std::set<int> fleet_supplied_systems;
+        const std::set<int>& owners = fleet->Owners();
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+            std::set<int> empire_fleet_supplied_systems;
+            if (const Empire* empire = Empires().Lookup(*it))
+                empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
+            fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
+        }
+
+        // give fuel to ships, if fleet is supplyable at this location
+        if (fleet_supplied_systems.find(fleet->SystemID()) != fleet_supplied_systems.end()) {
+            for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
+                Ship* ship = universe.Object<Ship>(*ship_it);
+                assert(ship);
+                Meter* meter = ship->GetMeter(METER_FUEL);
+                assert(meter);
+                meter->SetCurrent(meter->Max());
+            }
+        }
+    }
 }
 
 // static(s)
@@ -91,6 +118,9 @@ const std::string& Fleet::PublicName(int empire_id) const
 const std::list<System*>& Fleet::TravelRoute() const
 {
     CalculateRoute();
+    //Logger().debugStream() << "fleet travel route: ";
+    //for (std::list<System*>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it)
+    //    Logger().debugStream() << "... " << (*it)->Name();
     return m_travel_route;
 }
 
@@ -115,16 +145,25 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     double fuel = Fuel();
     double max_fuel = MaxFuel();
 
+    //Logger().debugStream() << "Fleet " << this->Name() << "MovePath fuel: " << fuel << " sys id: " << this->SystemID();
+
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     std::set<int> fleet_supplied_systems;
     const std::set<int>& owners = this->Owners();
+    //Logger().debugStream()<< " ... owners.size: " << owners.size();
     for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+        //Logger().debugStream() << " ... ... owner: " << *it;
         const Empire* empire = Empires().Lookup(*it);
         std::set<int> empire_fleet_supplied_systems;
         if (empire)
             empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
+        //Logger().debugStream() << " ... ... supplied systems size: " << empire_fleet_supplied_systems.size();
         fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
     }
+
+    //Logger().debugStream() << " ... all supplyable systems: ";
+    //for (std::set<int>::const_iterator it = fleet_supplied_systems.begin(); it != fleet_supplied_systems.end(); ++it)
+    //    Logger().debugStream() << "sys id: " << *it;
 
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
@@ -325,6 +364,7 @@ double Fleet::Fuel() const
         const Meter* meter = ship->GetMeter(METER_FUEL);
         assert(meter);
         fuel = std::min(fuel, meter->Current());
+        Logger().debugStream() << "ship " << ship->Name() << " has fuel: " << meter->Current();
     }
     return fuel;
 }
@@ -361,7 +401,10 @@ int Fleet::NextSystemID() const
 { return m_next_system; }
 
 double Fleet::Speed() const
-{ return m_speed; }
+{
+    Logger().debugStream() << "Fleet " << this->Name() << " has speed: " << m_speed;
+    return m_speed;
+}
 
 bool Fleet::CanChangeDirectionEnRoute() const
 {
@@ -601,128 +644,122 @@ void Fleet::MoveTo(double x, double y)
 
 void Fleet::MovementPhase()
 {
-    //Logger().debugStream() << "Fleet::MovementPhase this: " << this;
+    //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
-    // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
-    // and determine the maximum amount of fuel that can be stored by the ship in the fleet that
-    // can store the least amount of fuel
-    Universe& universe = GetUniverse();
-    double fuel = Meter::METER_MAX;
-    for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        const Ship* ship = universe.Object<Ship>(*ship_it);
-        assert(ship);
-        const Meter* meter = ship->GetMeter(METER_FUEL);
-        assert(meter);
-        fuel = std::min(fuel, meter->Current());
+    std::list<MovePathNode> move_path = this->MovePath();
+
+    if (move_path.empty()) {
+        ResupplyFleetIfPossible(this);
+        //Logger().debugStream() << "Fleet::MovementPhase: Fleet has empty move path.  aborting.";
+        return;
     }
+
+    //Logger().debugStream() << "Fleet::MovementPhase move path:";
+    //for (std::list<MovePathNode>::const_iterator it = move_path.begin(); it != move_path.end(); ++it)
+    //    Logger().debugStream() << "... (" << it->x << ", " << it->y << ") at object id: " << it->object_id << " eta: " << it->eta << (it->turn_end ? " (end of turn)" : " (during turn)");
+
 
     System* current_system = GetSystem();
+    int cur_sys_id = SystemID();
+    Universe& universe = GetUniverse();
 
-    // if currently in a system, and don't have enough fuel to jump to next system or aren't
-    // ordered to move, can be supplied fuel this turn
-    if (current_system && (fuel < 1.0 || m_moving_to == INVALID_OBJECT_ID)) {
-        // search for this system in systems where fleet(s) can be resupplied if fuel runs out
 
-        // get all supplyable systems
-        std::set<int> fleet_supplied_systems;
-        const std::set<int>& owners = this->Owners();
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-            const Empire* empire = Empires().Lookup(*it);
-            std::set<int> empire_fleet_supplied_systems;
-            if (empire)
-                empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
-            fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
-        }
-
-        // give fuel to ships, if fleet is supplyable at this location
-        if (fleet_supplied_systems.find(current_system->ID()) != fleet_supplied_systems.end()) {
-            for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-                Ship* ship = universe.Object<Ship>(*ship_it);
-                assert(ship);
-                Meter* meter = ship->GetMeter(METER_FUEL);
-                assert(meter);
-                meter->SetCurrent(meter->Max());
-            }
-        }
-
-        return; // can't move fleet this turn
+    if (move_path.size() == 1) {
+        //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path has only one entry.  doing nothing";
+        ResupplyFleetIfPossible(this);  // just in case MovePath messed up...
+        return;
     }
 
-    if (m_moving_to == INVALID_OBJECT_ID)
+
+    std::list<MovePathNode>::const_iterator it = move_path.begin();
+    std::list<MovePathNode>::const_iterator next_it = it;   next_it++;
+    // is the ship stuck in a system for a whole turn?
+    if (current_system && (                                             // in a system
+            next_it == move_path.end() ||                               // there is no system after the current one in the path... so won't be moving
+            next_it->eta > 1 || (                                       // more than one turn to reach next node.  (shouldn't be possible, but just in case...)
+                it->object_id != UniverseObject::INVALID_OBJECT_ID &&   // the current and next nodes have the same system id, that is an actual system.  thus won't be moving this turn.
+                it->object_id == next_it->object_id
+            )
+        ))
+    {
+        // ship won't move this turn.
+        ResupplyFleetIfPossible(this);
         return;
+    }
 
-    if (m_travel_route.empty())
-        CalculateRoute();
+    Empire* empire = 0;
+    if (!Owners().empty())
+        empire = Empires().Lookup(*Owners().begin()); // assumes one owner empire per fleet
 
-    if (current_system && current_system == m_travel_route.front())
-        m_travel_route.pop_front();
+    double fuel_consumed = 0.0;
 
-    // Fleet has a destination to move to, and all ships in fleet can move at least to
-    // the next system or a full turn's movement along a starlane, whichever is less
+    for (it = move_path.begin(); it != move_path.end(); ++it) {
+        next_it = it;   ++next_it;
 
-    System* next_system = m_travel_route.front();
-    double movement_left = m_speed;
-    while (movement_left > FLEET_MOVEMENT_EPSILON) {
-        double direction_x = next_system->X() - X();
-        double direction_y = next_system->Y() - Y();
-        double distance = std::sqrt(direction_x*direction_x + direction_y*direction_y);
+        System* system = universe.Object<System>(it->object_id);
 
-        // if starting update in a system, need at least one unit of fuel to start a jump
-        if (current_system) {
-            if (fuel < 1.0) {
-                movement_left = 0;
-                break;  // done movement this turn
+        //Logger().debugStream() << "... node " << (system ? system->Name() : "no system");
+
+        // is this system the last node reached this turn?  either it's an end of turn node that's not the
+        // starting node, or there are no more nodes after this one on path
+        bool node_is_next_stop = it != move_path.begin() && (it->turn_end || next_it == move_path.end());
+        //if (node_is_next_stop) Logger().debugStream() << "... ...is next stop";
+
+        if (system) {                               // is node a system?
+            if (empire)
+                empire->AddExploredSystem(it->object_id);   // node is a system.  explore it
+
+            m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
+
+
+            if (node_is_next_stop) {                    // is system the last node reached this turn?
+                system->Insert(this);                       // fleet ends turn at this node.  insert fleet into system
+                //Logger().debugStream() << "... ... inserted fleet into system";
+                break;
             } else {
-                fuel -= 1;  // local tracking of total fleet fuel, so individual ships don't need to be re-checked each update
-                // deduct fuel from ships to make next leg of jump
-                for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-                    Ship* ship = universe.Object<Ship>(*ship_it);
-                    assert(ship);
-                    Meter* meter = ship->GetMeter(METER_FUEL);
-                    assert(meter);
-                    meter->AdjustCurrent(-1.0);
-                }
+                fuel_consumed += 1.0;                       // fleet will continue past this system this turn.  fuel is consumed to do so.
+                //Logger().debugStream() << "... ...fuel consumed";
+            }
+        } else {
+            if (node_is_next_stop) {                    // node is not a system, but is it the last node reached this turn?
+                MoveTo(it->x, it->y);                       // fleet ends turn at this node.  move fleet here
+                //Logger().debugStream() << "... ... moved fleet to position";
+
+                // find next system
+                break;
             }
         }
+    }
 
+    cur_sys_id = SystemID();
 
-        if (distance <= movement_left) {
-            // can jump all the way to the next system
+    //Logger().debugStream() << "Fleet::MovementPhase rest of move path:";
+    //for (std::list<MovePathNode>::const_iterator it2 = it; it2 != move_path.end(); ++it2)
+    //    Logger().debugStream() << "... (" << it2->x << ", " << it2->y << ") at object id: " << it2->object_id << " eta: " << it2->eta << (it2->turn_end ? " (end of turn)" : " (during turn)");
 
-            m_travel_route.pop_front();
-            if (m_travel_route.empty()) {
-                // next system is final destination.  insert self into it and explore.
-
-                next_system->Insert(this);
-
-                movement_left = 0.0;
-                m_moving_to = m_prev_system = m_next_system = INVALID_OBJECT_ID;
-                m_travel_route.clear();
-                m_travel_distance = 0.0;
-
-                // explore new system
-                Empire* empire = Empires().Lookup(*Owners().begin()); // assumes one owner empire per fleet
-                empire->AddExploredSystem(SystemID());
-
-                break;  // done movement this turn
-
-            } else {
-                // next system is not final destination, so can keep moving after, if there is enough fuel in fleet
-
-                next_system = m_travel_route.front();
-                movement_left -= distance;
-                m_prev_system = m_next_system;
-                m_next_system = m_travel_route.front()->ID();
-                m_travel_distance -= distance;
-                MoveTo(next_system);
-                current_system = next_system;
+    // update next system
+    if (m_moving_to != cur_sys_id && next_it != move_path.end() && it != move_path.end()) {
+        //Logger().debugStream() << "scanning rest of path...";
+        // find next system on path
+        for (; next_it != move_path.end(); ++next_it) {
+            if (universe.Object<System>(next_it->object_id)) {
+                //Logger().debugStream() << "___ setting m_next_system to " << next_it->object_id;
+                m_next_system = next_it->object_id;
             }
+        }
+    } else {
+        m_moving_to = m_next_system = m_prev_system = UniverseObject::INVALID_OBJECT_ID;
+    }
 
-        } else {
-            // can't make it all the way to the next system.  go as far towards it as possible
-            Move(direction_x / distance * movement_left, direction_y / distance * movement_left);
-            m_travel_distance -= distance;
-            movement_left = 0.0;
+
+    // consume fuel
+    if (fuel_consumed > 0.0) {
+        for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
+            Ship* ship = universe.Object<Ship>(*ship_it);
+            assert(ship);
+            Meter* meter = ship->GetMeter(METER_FUEL);
+            assert(meter);
+            meter->AdjustCurrent(-fuel_consumed);
         }
     }
 }
@@ -742,9 +779,10 @@ void Fleet::PopGrowthProductionResearchPhase()
 
 void Fleet::CalculateRoute() const
 {
+    //Logger().debugStream() << "Fleet::CalculateRoute";
     if (m_moving_to != INVALID_OBJECT_ID && m_travel_route.empty()) {
         m_travel_distance = 0.0;
-        if (SystemID() == m_prev_system) { // if we haven't actually left yet, we have to move from whichever system we are at now
+        if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) { // if we haven't actually left yet, we have to move from whichever system we are at now
             std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(m_prev_system, m_moving_to, *Owners().begin());
             m_travel_route = path.first;
             m_travel_distance = path.second;
@@ -805,7 +843,7 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last
     } else {
         visible_end_it = m_travel_route.end();
     }
-    
+
     int fleet_owner = -1;
     const std::set<int>& owners = Owners();
     if (owners.size() == 1)

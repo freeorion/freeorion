@@ -717,6 +717,32 @@ void MapWnd::InitTurn(int turn_number)
     SetAccelerators();
 
     Universe& universe = GetUniverse();
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire) {
+        Logger().errorStream() << "MapWnd::InitTurn couldn't get an empire!";
+        return;
+    }
+
+
+    // update effect accounting and meter estimates
+    universe.InitMeterEstimatesAndDiscrepancies();
+
+    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
+    // population is available for currently uncolonized planets
+    UpdateMeterEstimates();
+
+
+    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        Empire* empire = it->second;
+        empire->UpdateSupplyUnobstructedSystems();
+        empire->UpdateSystemSupplyRanges();
+        empire->UpdateFleetSupply();
+        empire->UpdateResourceSupply();
+        empire->InitResourcePools();
+    }
+
 
     Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
                   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
@@ -883,6 +909,30 @@ void MapWnd::InitTurn(int turn_number)
 
     DoSystemIconsLayout();
 
+
+    // create animated lines indicating fleet supply flow
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
+        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
+            glColor(empire->Color());
+            const System* start_sys = universe.Object<System>(lane_it->first);
+            const System* end_sys = universe.Object<System>(lane_it->second);
+            raw_starlane_supply_vertices.push_back(start_sys->X());
+            raw_starlane_supply_vertices.push_back(start_sys->Y());
+            raw_starlane_supply_vertices.push_back(end_sys->X());
+            raw_starlane_supply_vertices.push_back(end_sys->Y());
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+        }
+    }
+
+
     // remove old fleet buttons for fleets not in systems
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         DeleteChild(m_moving_fleet_buttons[i]);
@@ -920,44 +970,6 @@ void MapWnd::InitTurn(int turn_number)
         SetFleetMovementLine(*it);
 
 
-    // update effect accounting and meter estimates
-    universe.InitMeterEstimatesAndDiscrepancies();
-
-    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
-    // population is available for currently uncolonized planets
-    UpdateMeterEstimates();
-
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-
-
-    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
-    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* empire = it->second;
-        empire->UpdateSupplyUnobstructedSystems();
-        empire->UpdateSystemSupplyRanges();
-        empire->UpdateFleetSupply();
-        empire->UpdateResourceSupply();
-        empire->InitResourcePools();
-
-        const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
-        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
-            glColor(empire->Color());
-            const System* start_sys = universe.Object<System>(lane_it->first);
-            const System* end_sys = universe.Object<System>(lane_it->second);
-            raw_starlane_supply_vertices.push_back(start_sys->X());
-            raw_starlane_supply_vertices.push_back(start_sys->Y());
-            raw_starlane_supply_vertices.push_back(end_sys->X());
-            raw_starlane_supply_vertices.push_back(end_sys->Y());
-            raw_starlane_supply_colors.push_back(empire->Color().r);
-            raw_starlane_supply_colors.push_back(empire->Color().g);
-            raw_starlane_supply_colors.push_back(empire->Color().b);
-            raw_starlane_supply_colors.push_back(empire->Color().a);
-            raw_starlane_supply_colors.push_back(empire->Color().r);
-            raw_starlane_supply_colors.push_back(empire->Color().g);
-            raw_starlane_supply_colors.push_back(empire->Color().b);
-            raw_starlane_supply_colors.push_back(empire->Color().a);
-        }
-    }
 
     MoveChildUp(m_side_panel);
 
@@ -967,13 +979,11 @@ void MapWnd::InitTurn(int turn_number)
     MoveChildUp(m_turn_update);
 
     // are there any sitreps to show?
-    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    assert(empire);
     m_sitrep_panel->Update();
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
     m_sitrep_panel->Update();
-    if (empire->NumSitRepEntries()) {
+    if (empire && empire->NumSitRepEntries()) {
         AttachChild(m_sitrep_panel);
         MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
@@ -1901,10 +1911,15 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
     std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin();
     ++path_it;
     for (; path_it != move_line.Path().end(); ++path_it) {
-
         // if this vertex can be reached, add vertices for line from previous to this vertex
         if (path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
             break;  // don't render additional legs of path that aren't reachable
+
+        double cur_vertex_x = path_it->x, cur_vertex_y = path_it->y;
+
+        // skip zero-length line segments since they seem to cause problems...
+        if (cur_vertex_x == prev_vertex_x && cur_vertex_y == prev_vertex_y)
+            continue;
 
         if (!started) {
             // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
@@ -1914,12 +1929,12 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
             started = true;
         }
 
-        glVertex2d(prev_vertex_x, prev_vertex_y);
-        glVertex2d(path_it->x, path_it->y);
+        glVertex2d(prev_vertex_x,   prev_vertex_y);
+        glVertex2d(cur_vertex_x,    cur_vertex_y);
 
         // and update previous vertex for next iteration
-        prev_vertex_x = path_it->x;
-        prev_vertex_y = path_it->y;
+        prev_vertex_x = cur_vertex_x;
+        prev_vertex_y = cur_vertex_y;
     }
 
     if (started)

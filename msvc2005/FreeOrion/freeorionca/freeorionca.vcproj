@@ -577,18 +577,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\default\AI\ColonisationAI.py"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\default\AI\ExplorationAI.py"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\default\AI\FreeOrionAI.py"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\AI\PythonAI.cpp"
 					>
 				</File>
