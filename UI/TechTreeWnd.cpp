@@ -2337,8 +2337,9 @@ void TechTreeWnd::TechListBox::Populate()
     }
 
     // remove techs in listbox, then reset the rest of its state
-    for (reverse_iterator it = rbegin(); it != rend(); ) {
-        Erase((++it).base());
+    for (iterator it = begin(); it != end(); ) {
+        iterator temp_it = it++;
+        Erase(temp_it);
     }
     Clear();
 
