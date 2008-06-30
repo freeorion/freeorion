@@ -138,7 +138,7 @@ namespace {
         int left = MARGIN;
 
         if (graphic)
-            m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, graphic, GG::GRAPHIC_FITGRAPHIC);
+            m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         else
             m_icon = 0;
 

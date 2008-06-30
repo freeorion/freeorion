@@ -44,17 +44,24 @@ namespace {
 // Building                                    //
 /////////////////////////////////////////////////
 Building::Building() :
+    UniverseObject(),
     m_building_type(""),
     m_operating(true),
     m_planet_id(INVALID_OBJECT_ID)
 {}
 
 Building::Building(int empire_id, const std::string& building_type, int planet_id) :
+    UniverseObject(),
     m_building_type(building_type),
     m_operating(true),
     m_planet_id(planet_id)
 {
     AddOwner(empire_id);
+    const BuildingType* type = GetBuildingType();
+    if (type)
+        Rename(type->Name());
+    else
+        Rename(UserString("ENC_BUILDING"));
 }
 
 const BuildingType* Building::GetBuildingType() const
