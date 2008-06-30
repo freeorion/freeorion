@@ -1817,6 +1817,7 @@ void Empire::CheckProductionProgress()
 
                 // add ship
                 Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id);
+                ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);  // ensures ship starts with some fuel.  will be clamped to max value after effects are applied to set that max value appropriately
 
                 int ship_id = universe.Insert(ship);
 #if 0

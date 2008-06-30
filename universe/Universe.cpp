@@ -445,6 +445,7 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
 
 double Universe::LinearDistance(int system1_id, int system2_id) const
 {
+    //Logger().debugStream() << "LinearDistance(" << system1_id << ", " << system2_id << ")";
     int system1_index = SystemGraphIndex(m_system_graph, system1_id);
     int system2_index = SystemGraphIndex(m_system_graph, system2_id);
     return m_system_distances.at(std::max(system1_index, system2_index)).at(std::min(system1_index, system2_index));
@@ -577,6 +578,46 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
         }
     }
     return retval;
+}
+
+void Universe::ApplyAllEffectsAndUpdateMeters()
+{
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map);
+
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->ApplyUniverseTableMaxMeterAdjustments();
+    }
+
+    ExecuteEffects(targets_causes_map);
+
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    }
+}
+
+void Universe::ApplyMeterEffectsAndUpdateMeters()
+{
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map);
+
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->ApplyUniverseTableMaxMeterAdjustments();
+    }
+
+    ExecuteMeterEffects(targets_causes_map);
+
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    }
 }
 
 void Universe::InitMeterEstimatesAndDiscrepancies()
@@ -722,9 +763,11 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         // Apply non-effect focus mods from tables
         obj->ApplyUniverseTableMaxMeterAdjustments(meter_type);
 
-        // record value of max meter(s) after applying universe table adjustments
-        // also set current meter value to initial current value, so that any previous clamping of current won't
-        // alter the apparent "this turn" current value.
+        // record value(s) of max meter(s) after applying universe table adjustments.
+        // also set current meter value to initial current value.  this ensures that the
+        // projected current value will be based on the actual initial current value this
+        // turn, rather than the altered current value that may be different after meter
+        // effects were applied and meters were clamped.
         MeterType start, end;
         if (meter_type == INVALID_METER_TYPE) {
             // record data for all meters
@@ -907,6 +950,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
 void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
+    m_marked_destroyed.clear();
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
@@ -1022,24 +1066,6 @@ void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
                 affected_targets.insert(*object_it);
         }
     }
-}
-
-void Universe::ApplyEffects()
-{
-    m_marked_destroyed.clear();
-
-    // cache all activation and scoping condition results before applying Effects, since the application of
-    // these Effects may affect the activation and scoping evaluations
-    EffectsTargetsCausesMap targets_causes_map;
-    GetEffectsAndTargets(targets_causes_map);
-
-    // reset max meter state that is affected by the application of effects
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->ApplyUniverseTableMaxMeterAdjustments();
-    }
-
-    ExecuteEffects(targets_causes_map);
 }
 
 void Universe::RebuildEmpireViewSystemGraphs()
@@ -2110,7 +2136,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
     // Apply effects for 1st turn
-    ApplyEffects();
+    ApplyAllEffectsAndUpdateMeters();
 
     // update initial and previous meter values
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {

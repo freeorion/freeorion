@@ -236,7 +236,16 @@ public:
                                        SpecialsFrequency specials_freq, int players, int ai_players, 
                                        const std::map<int, PlayerSetupData>& player_setup_data);
 
-    void                ApplyEffects();                         ///< Executes Effects from Buildings, Specials, Techs, Ship Parts, Ship Hulls
+    /** determines all effectsgroups' target sets, resets meters and applies universe table adjustments.  then executes
+      * all effects on all objects (meter effects and non-meter effects, including destroying objects).  then clamps
+      * meter values so max is within acceptable range, and current is within range limited by max. */
+    void                ApplyAllEffectsAndUpdateMeters();
+
+    /** determines all effectsgroups' target sets, resets meters and applies universe table adjustments.  then executes
+      * only SetMeter effects on all objects.  then clamps meter values so max is within acceptable range, and current
+      * is within range limited by max. */
+    void                ApplyMeterEffectsAndUpdateMeters();
+
 
     /** for all objects and meters, determines discrepancies between actual meter maxes and what the known universe should produce,
       * and and stores in m_effect_discrepancy_map. */
@@ -350,7 +359,7 @@ private:
     void    ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map);
 
     /** Executes only meter-altering effects; ignores other effects..  Stores effect accounting information in
-      * \a targets_causes_map */
+      * \a targets_causes_map.  Can be used on server or on clients to determine meter values after effects are applied */
     void    ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map);
 
     /** Does actual updating of meter estimates after the public function have processed objects_vec or whatever they were passed and

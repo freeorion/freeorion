@@ -638,14 +638,9 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // Update meters
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();                           // zero all meters
-        it->second->ApplyUniverseTableMaxMeterAdjustments();    // apply non-effects max meter modifications, including focus mods
-    }
-    GetUniverse().ApplyEffects();                               // apply effects, futher altering meters (and also non-meter effects)
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it)
-        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    // execute all effects and update meters prior to production, research, etc.
+    GetUniverse().ApplyAllEffectsAndUpdateMeters();
+
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
@@ -669,40 +664,51 @@ void ServerApp::ProcessTurns()
     }
 
 
+    // re-execute all meter-related effects after production, so that new UniverseObjects created during production
+    // will have effects applied to them this turn, allowing (for example) ships to have max fuel meters greater than
+    // 0 on the turn they are created.
+    GetUniverse().ApplyMeterEffectsAndUpdateMeters();
+
+
     // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
     GetUniverse().RebuildEmpireViewSystemGraphs();
-
-
     // Population growth or loss, health meter growth, resource current meter growth
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();  // limit current meters by max meters
+    }
+
+
+    // copy latest updated current meter values to initial current values, and initial current values
+    // to previous values, so that clients will have this information based on values after all changes
+    // that occured this turn.
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
             if (Meter* meter = it->second->GetMeter(i))
                 meter->BackPropegate();
     }
 
 
-    // find planets which have starved to death
+    // create sitreps for starved planets
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
-    for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it)
-        if ((*it)->Owners().size()>0 && (*it)->MeterPoints(METER_POPULATION) == 0.0)
-        {
+    for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it) {
+        if ((*it)->Owners().size()>0 && (*it)->MeterPoints(METER_POPULATION) == 0.0) {
             // add some information to sitrep
             Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(), (*it)->ID()));
             (*it)->Reset();
         }
+    }
 
 
     // loop and free all orders
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         delete it->second;
-        it->second = NULL;
+        it->second = 0;
     }
 
+
     ++m_current_turn;
+
 
     // indicate that the clients are waiting for their new Universes
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
