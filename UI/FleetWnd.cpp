@@ -226,13 +226,13 @@ private:
 
     boost::signals::connection m_fleet_connection;
 
-    GG::StaticGraphic* m_fleet_icon;
-    GG::TextControl* m_fleet_name_text;
-    StatisticIcon* m_num_ships_stat;
-    StatisticIcon* m_fleet_strength_stat;
-    StatisticIcon* m_fuel_stat;
-    GG::StaticGraphic* m_damage_icon;
-    GG::StaticGraphic* m_colonizer_icon;
+    GG::StaticGraphic*  m_fleet_icon;
+    GG::TextControl*    m_fleet_name_text;
+    StatisticIcon*      m_num_ships_stat;
+    StatisticIcon*      m_fleet_strength_stat;
+    StatisticIcon*      m_fuel_stat;
+    GG::StaticGraphic*  m_damage_icon;
+    GG::StaticGraphic*  m_colonizer_icon;
     bool m_selected;
 };
 
@@ -263,6 +263,7 @@ namespace {
                                                  ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER)),
             m_ship_strength_stat(0),
             m_damage_stat(0),
+            m_fuel_stat(0),
             m_colonizer_icon(0),
             m_selected(false)
         {
@@ -277,6 +278,11 @@ namespace {
                                                      0, 0, true, false, GG::Flags<GG::WndFlag>());
             AttachChild(m_ship_strength_stat);
             m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+            m_fuel_stat = new StatisticIcon(h + 2*STAT_ICON_WD, SHIP_NAME_HT, STAT_ICON_WD, h - SHIP_NAME_HT - 1,
+                                            ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "fuel.png"),
+                                            0, 0, true, false, GG::Flags<GG::WndFlag>());
+            AttachChild(m_fuel_stat);
 
             Refresh();
         }
@@ -324,19 +330,13 @@ namespace {
         void SetShipIcon()
         {
             const int ICON_OFFSET = (Size().y - SHIP_ICON_SZ) / 2;
-            std::string design_name;
+            boost::shared_ptr<GG::Texture> icon;
             const ShipDesign* design = m_ship->Design();
-            if (design) {
-                design_name = design->Name();
-                std::string::size_type space = design_name.find(' ');
-                if (space != std::string::npos) {
-                    design_name[space] = '_';
-                }
-            } else {
-                design_name = "Scout";
-            }
-            m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, 
-                                                ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / (design_name + ".png")), GG::GRAPHIC_FITGRAPHIC);
+            if (design)
+                icon = ClientUI::ShipIcon(design->ID());
+            else
+                icon = ClientUI::ShipIcon(-1);  // default icon
+            m_ship_icon = new GG::StaticGraphic(ICON_OFFSET, ICON_OFFSET, SHIP_ICON_SZ, SHIP_ICON_SZ, icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_ship_icon);
         }
 
@@ -347,10 +347,11 @@ namespace {
             SetShipIcon();
             m_ship_name_text->SetText(m_ship->Name());
             m_ship_strength_stat->SetValue(design ? design->Attack() : UNKNOWN_UI_DISPLAY_VALUE);
+            m_fuel_stat->SetValue(m_ship->MeterPoints(METER_FUEL));
 
             const int ICON_SPACING = 5;
             const int ICON_SZ = Height() - SHIP_NAME_HT - 1;
-            int x_position = m_ship_strength_stat->LowerRight().x - ClientUpperLeft().x + ICON_SPACING;
+            int x_position = m_fuel_stat->LowerRight().x - ClientUpperLeft().x + ICON_SPACING;
             int damage_pts = 0; // TODO: acount for damaged ships once damage system is in place
             if (damage_pts) {
                 if (!m_damage_stat) {
