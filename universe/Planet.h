@@ -117,7 +117,7 @@ public:
     int DefBases() const {return m_def_bases;}
     // V0.3 ONLY!!!!
     /////////////////////////////////////////////////////////////////////////////
-   
+
     virtual UniverseObject::Visibility  GetVisibility(int empire_id) const;             ///< returns the visibility status of this universe object relative to the input empire.
 
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
@@ -193,7 +193,7 @@ private:
 
     std::set<int>   m_buildings;
     double          m_available_trade;
-   
+
     bool            m_just_conquered;
 
     bool            m_is_about_to_be_colonized;
@@ -214,8 +214,19 @@ template <class Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {
     Visibility vis;
-    if (Archive::is_saving::value)
+    std::set<int> buildings;
+    if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
+
+        const Universe& universe = GetUniverse();
+        for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+            int obj_id = *it;
+            const UniverseObject* obj = universe.Object(obj_id);
+            if (obj->GetVisibility(Universe::s_encoding_empire) != NO_VISIBILITY)
+                buildings.insert(obj_id);
+        }
+    }
+
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PopCenter)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourceCenter)
@@ -226,14 +237,15 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_initial_orbital_position)
         & BOOST_SERIALIZATION_NVP(m_rotational_period)
         & BOOST_SERIALIZATION_NVP(m_axial_tilt)
-        & BOOST_SERIALIZATION_NVP(m_just_conquered);
-    if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == FULL_VISIBILITY) {
-        ar  & BOOST_SERIALIZATION_NVP(m_buildings)
-            & BOOST_SERIALIZATION_NVP(m_available_trade)
+        & BOOST_SERIALIZATION_NVP(m_just_conquered)
+        & BOOST_SERIALIZATION_NVP(buildings);
+    if (Universe::ALL_OBJECTS_VISIBLE || vis == FULL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(m_available_trade)
             & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
             & BOOST_SERIALIZATION_NVP(m_def_bases);
     }
+    if (Archive::is_loading::value)
+        m_buildings = buildings;
 }
 
 #endif // _Planet_h_

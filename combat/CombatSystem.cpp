@@ -128,7 +128,7 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 CombatUpdateMessage GenerateCombatUpdateMessage(int victor_id, int system_id, const std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 {
     CombatUpdateMessage cmb_upd_msg;
-  
+
     cmb_upd_msg.m_system = GetUniverse().Object(system_id)->Name();
     for(unsigned int e=0;e<empire_combat_forces.size();e++)
     {

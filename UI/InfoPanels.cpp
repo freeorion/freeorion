@@ -1806,7 +1806,14 @@ void BuildingsPanel::Update()
 
     // get existing / finished buildings and use them to create building indicators
     for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-        const BuildingType* building_type = universe.Object<Building>(*it)->GetBuildingType();
+        const Building* building = universe.Object<Building>(*it);
+        if (!building) {
+            Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << *it << " on planet " << plt->Name();
+            const UniverseObject* obj = universe.Object(*it);
+            Logger().errorStream() << "... trying to get object as generic UniverseObject: " << (obj ? obj->Name() : " unavailable!");
+            continue;
+        }
+        const BuildingType* building_type = building->GetBuildingType();
         BuildingIndicator* ind = new BuildingIndicator(indicator_size, *building_type);
         m_building_indicators.push_back(ind);
     }

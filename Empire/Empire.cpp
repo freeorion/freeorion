@@ -1517,7 +1517,7 @@ void Empire::RemoveBuildFromQueue(int index)
 void Empire::ConquerBuildsAtLocation(int location_id) {
     if (location_id == UniverseObject::INVALID_OBJECT_ID)
         throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: tried to conquer build items located at an invalid location");
-    
+
     Logger().debugStream() << "Empire::ConquerBuildsAtLocationFromEmpire: conquering items located at " << location_id << " to empire " << m_id;
     /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
         as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
@@ -1538,22 +1538,22 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
                 ++queue_it;
                 continue; // skip projects with wrong location
             }
-            
+
             ProductionQueue::ProductionItem item = elem.item;
-            
+
             if (item.build_type == BT_BUILDING) {
                 std::string name = item.name;
                 const BuildingType* type = GetBuildingType(name);
                 if (!type)
                     throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: ProductionQueue item had an invalid BuildingType name");
-                
+
                 CaptureResult result = type->GetCaptureResult(from_empire_id, m_id, location_id, true);
-                
+
                 if (result == CR_DESTROY) {
                     // item removed from current queue, NOT added to conquerer's queue
                     queue_it = queue.erase(queue_it);
                     status.erase(status.begin() + i);
-                    
+
                 } else if (result == CR_CAPTURE) {
                     // item removed from current queue, added to conquerer's queue
                     ProductionQueue::Element build(item, elem.ordered, elem.remaining, location_id);
@@ -1563,7 +1563,7 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
 
                     queue_it = queue.erase(queue_it);
                     status.erase(status.begin() + i);
-                    
+
                 } else if (result == INVALID_CAPTURE_RESULT) {
                     throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: BuildingType had an invalid CaptureResult");
                 } else {

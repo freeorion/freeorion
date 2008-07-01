@@ -64,6 +64,15 @@ namespace {
         }
         return 1.0;
     }
+
+    /* Removes all owners from UniverseObject \a obj */
+    void RemoveOwners(UniverseObject* obj) {
+        if (!obj) return;
+        // RemoveOwner will change owners, invalidating iterators over owners, so iterate over temp set
+        std::set<int> temp_owner = obj->Owners();
+        for(std::set<int>::const_iterator own_it = temp_owner.begin(); own_it != temp_owner.end(); ++own_it)
+            obj->RemoveOwner(*own_it);
+    }
 }
 
 
@@ -195,7 +204,11 @@ std::vector<int> Planet::FindObjectIDs() const
 UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility
-    return GetSystem()->GetVisibility(empire_id);
+    const System* system = GetSystem();
+    if (system)
+        return system->GetVisibility(empire_id);
+    else
+        return NO_VISIBILITY;
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
@@ -428,17 +441,48 @@ void Planet::Conquer(int conquerer)
     if (!empire)
         throw std::invalid_argument("Planet::Conquer: attempted to conquer a planet with an invalid conquerer.");
 
+    // deal with things on production queue located at this planet
     empire->ConquerBuildsAtLocation(ID());
 
-    // TODO: Something with buildings on planet (not on queue, as above)
+    // deal with UniverseObjects (eg. buildings) located on this planet
+    std::vector<UniverseObject*> contained_objects = this->FindObjects();
+    for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it) {
+        UniverseObject* obj = *it;
 
-    // RemoveOwner will change owners, invalidating iterators over owners, so iterate over temp set
-    std::set<int> temp_owner(Owners());
-    for(std::set<int>::const_iterator own_it = temp_owner.begin(); own_it != temp_owner.end(); ++own_it) {
-        // remove previous owner who has lost ownership due to other empire conquering planet
-        RemoveOwner(*own_it);
+        // get current owner of object
+        int owner = -1;
+        const std::set<int>& owners = obj->Owners();
+        if (!owners.empty())
+            owner = *(owners.begin());
+
+        // Buildings:
+        if (Building* building = universe_object_cast<Building*>(obj)) {
+            const BuildingType* type = building->GetBuildingType();
+
+            // determine what to do with building of this type...
+            const CaptureResult cap_result = type->GetCaptureResult(owner, conquerer, this->ID(), false);
+
+            if (cap_result == CR_CAPTURE) {
+                // remove existing owners and replace with conquerer
+                RemoveOwners(obj);
+                obj->AddOwner(conquerer);
+            } else if (cap_result == CR_DESTROY) {
+                // destroy object
+                Logger().debugStream() << "Planet::Conquer destroying object: " << obj->Name();
+                GetUniverse().Destroy(obj->ID());
+                obj = 0;
+            } else if (cap_result == CR_RETAIN) {
+                // do nothing
+            } else if (cap_result == CR_SHARE) {
+                // add conquerer, but retain any previous owners
+                obj->AddOwner(conquerer);
+            }
+        }
+
+        // TODO: deal with any other UniverseObject subclasses...?
     }
 
+    RemoveOwners(this);
     AddOwner(conquerer);
 }
 

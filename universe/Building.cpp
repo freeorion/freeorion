@@ -89,6 +89,14 @@ Planet* Building::GetPlanet() const
     return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
 }
 
+UniverseObject::Visibility Building::GetVisibility(int empire_id) const {
+    const Planet* planet = GetPlanet();
+    if (planet)
+        return planet->GetVisibility(empire_id);
+    else
+        return NO_VISIBILITY;
+}
+
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<Building* const>(this));
@@ -232,24 +240,13 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 }
 
 CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const {
-    Empire* from_empire = Empires().Lookup(from_empire_id);
-    if (!from_empire)
-        throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid from_empire_id");
+    //Empire*         from_empire =   Empires().Lookup(from_empire_id);
+    Empire*         to_empire =     Empires().Lookup(to_empire_id);
+    UniverseObject* location =      GetUniverse().Object(location_id);
 
-    Empire* to_empire = Empires().Lookup(to_empire_id);
-    if (!to_empire)
-        throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid to_empire_id");
-
-    UniverseObject* location = GetUniverse().Object(location_id);
-    if (!location)
-        throw std::invalid_argument("BuildingType::GetCaptureResult called with invalid location_id");
-
-    if (as_production_item) {
-        Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_CAPTURE for production item";
+    if (as_production_item && location && to_empire)
         return CR_CAPTURE;
-    }
 
-    Logger().debugStream() << "BuildingType::GetCaptureResult: returning CR_DESTROY";
     return CR_DESTROY;
 }
 
