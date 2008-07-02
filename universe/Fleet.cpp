@@ -879,9 +879,9 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last
 std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_fleet_id) {
     // TODO: Change returned name based on passed ship designs.  eg. return "colony fleet" if
     // ships are colony ships, or "battle fleet" if ships are armed.
-    std::string number_text = "";
-    if (new_fleet_id != UniverseObject::INVALID_OBJECT_ID)
-        number_text = " " + boost::lexical_cast<std::string>(new_fleet_id);
-    return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % number_text);
+    if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
+        return UserString("NEW_FLEET_NAME_NO_NUMBER");
+
+    return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % boost::lexical_cast<std::string>(new_fleet_id));
 }
 

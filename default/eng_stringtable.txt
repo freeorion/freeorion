@@ -113,10 +113,12 @@ Defense: 3'''
 CHAT_WHISPER
 whisper
 
-# used to generate a name for new fleets when they are created
+# used to generate names for new fleets when they are created
 NEW_FLEET_NAME
-New fleet%1%
+New Fleet %1%
 
+NEW_FLEET_NAME_NO_NUMBER
+New Fleet
 
 ######################################
 # Command Line and OptionsDB Options #

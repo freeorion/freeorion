@@ -1808,10 +1808,7 @@ void Empire::CheckProductionProgress()
                 // create new fleet with new ship
                 Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
                 int fleet_id = universe.Insert(fleet);
-                // TODO: What is the mechanism for determining new fleet name?
-                std::string fleet_name("New fleet ");
-                fleet_name += boost::lexical_cast<std::string>(fleet_id);
-                fleet->Rename(fleet_name);
+
                 system->Insert(fleet);
                 Logger().debugStream() << "New Fleet created on turn: " << fleet->CreationTurn();
 
@@ -1829,6 +1826,11 @@ void Empire::CheckProductionProgress()
                 ship->Rename(NewShipName());
 #endif
                 fleet->AddShip(ship_id);
+
+                // rename fleet, given its id and the ship that is in it
+                std::vector<int> ship_ids;  ship_ids.push_back(ship_id);
+                fleet->Rename(Fleet::GenerateFleetName(ship_ids, fleet_id));
+
                 Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 
                 // add sitrep
