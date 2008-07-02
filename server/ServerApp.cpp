@@ -414,13 +414,19 @@ int ServerApp::GetEmpirePlayerID(int empire_id) const
 }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{ m_turn_sequence[empire_id] = 0; }
+{
+    m_turn_sequence[empire_id] = 0;
+}
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
-{ m_turn_sequence.erase(empire_id); }
+{
+    m_turn_sequence.erase(empire_id);
+}
 
 void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
-{ m_turn_sequence[empire_id] = order_set; }
+{
+    m_turn_sequence[empire_id] = order_set;
+}
 
 bool ServerApp::AllOrdersReceived()
 {
@@ -434,8 +440,8 @@ bool ServerApp::AllOrdersReceived()
 
 void ServerApp::ProcessTurns()
 {
-    Empire                    *pEmpire;
-    OrderSet                  *pOrderSet;
+    Empire                    *empire;
+    OrderSet                  *order_set;
     OrderSet::const_iterator  order_it;
 
     // Now all orders, then process turns
@@ -446,26 +452,26 @@ void ServerApp::ProcessTurns()
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
         }
 
-        pEmpire = Empires().Lookup(it->first);
-        pEmpire->ClearSitRep();
-        pOrderSet = it->second;
-     
+        empire = Empires().Lookup(it->first);
+        empire->ClearSitRep();
+        order_set = it->second;
+
         // execute order set
-        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
+        for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
             order_it->second->Execute();
         }
-    }    
+    }
 
     // filter FleetColonizeOrder for later processing
     typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
     ColonizeOrderMap colonize_order_map;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-        pOrderSet = it->second;
+        order_set = it->second;
 
         // filter FleetColonizeOrder and sort them per planet
         boost::shared_ptr<FleetColonizeOrder> order;
-        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
+        for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
             if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second)))
             {
                 ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
@@ -491,8 +497,8 @@ void ServerApp::ProcessTurns()
         // only one empire?
         if (it->second.size()==1) {
             it->second[0]->ServerExecute();
-            pEmpire = Empires().Lookup( it->second[0]->EmpireID() );
-            pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+            empire = Empires().Lookup( it->second[0]->EmpireID() );
+            empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
             const System *system = GetUniverse().Object<System>(planet->SystemID());
 
@@ -531,8 +537,8 @@ void ServerApp::ProcessTurns()
             for (int i=0;i<static_cast<int>(it->second.size());i++)
                 if (winner==i) {
                     it->second[i]->ServerExecute();
-                    pEmpire = Empires().Lookup( it->second[i]->EmpireID() );
-                    pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+                    empire = Empires().Lookup( it->second[i]->EmpireID() );
+                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
                 }
                 else
                     it->second[i]->Undo();
@@ -560,8 +566,8 @@ void ServerApp::ProcessTurns()
             if (eta == 1) {
                 std::set<int> owners_set = fleet->Owners();
                 for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
-                    pEmpire = Empires().Lookup( *owners_it );
-                    pEmpire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+                    empire = Empires().Lookup( *owners_it );
+                    empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
                 }
             }
         }
@@ -628,9 +634,10 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // if a combat happened, give the human user a chance to look at the results
-    if (combat_happend)
-        Sleep(1500);
+    // commenting out this delay because human client isn't currently displaying combats anyway...
+    //// if a combat happened, give the human user a chance to look at the results
+    //if (combat_happend)
+    //    Sleep(1500);
 
     // process production and growth phase
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {

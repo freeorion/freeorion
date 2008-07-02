@@ -99,6 +99,9 @@ public:
     virtual void            PopGrowthProductionResearchPhase();
     //@}
 
+    /* returns a name for a fleet based on the specified \a ship_ids */
+    static std::string      GenerateFleetName(const std::vector<int>& ship_ids, int new_fleet_id = UniverseObject::INVALID_OBJECT_ID);
+
     static const int            ETA_NEVER;                                  ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
     static const int            ETA_UNKNOWN;                                ///< returned when ETA can't be determined
     static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route

@@ -75,22 +75,6 @@ PopCenter::DensityType PopCenter::PopDensity() const
     return retval;
 }
 
-double PopCenter::AdjustPop(double pop)
-{
-    double max_pop = GetMeter(METER_POPULATION)->Max();
-    double cur_pop = GetMeter(METER_POPULATION)->Current();
-
-    double retval = 0.0;
-    double new_val = cur_pop + pop;
-    GetMeter(METER_POPULATION)->SetCurrent(new_val);
-    if (new_val < Meter::METER_MIN) {
-        retval = new_val;
-    } else if (max_pop < new_val) {
-        retval = new_val - max_pop;
-    }
-    return retval;
-}
-
 double PopCenter::FuturePopGrowth() const
 {
     double max = GetMeter(METER_POPULATION)->Max();

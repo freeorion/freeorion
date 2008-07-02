@@ -111,15 +111,15 @@ namespace {
             double change = next - current;
             double meter_max = meter->Max();
 
-            m_current_value->SetText(DoubleToString(current, 2, false, false));
-            m_next_turn_value->SetText(DoubleToString(next, 2, false, false));
+            m_current_value->SetText(DoubleToString(current, 3, false, false));
+            m_next_turn_value->SetText(DoubleToString(next, 3, false, false));
             GG::Clr clr = ClientUI::TextColor();
             if (change > 0.0)
                 clr = ClientUI::StatIncrColor();
             else if (change < 0.0)
                 clr = ClientUI::StatDecrColor();
-            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 2, false, true) + "</rgba>");
-            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % DoubleToString(meter_max, 2, false, false)));
+            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>");
+            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % DoubleToString(meter_max, 3, false, false)));
 
             switch (m_meter_type) {
             case METER_POPULATION:

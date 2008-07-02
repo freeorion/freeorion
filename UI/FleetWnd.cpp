@@ -1446,8 +1446,7 @@ void FleetWnd::CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>&
         return;
     }
 
-    std::string fleet_name =
-        UserString("FW_NEW_FLEET_NAME") + boost::lexical_cast<std::string>(new_fleet_id);
+    std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
     Fleet* new_fleet = 0;
     if (system) {

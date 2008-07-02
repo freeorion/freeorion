@@ -341,13 +341,14 @@ void FleetColonizeOrder::ServerExecute() const
     Universe& universe = GetUniverse();
     universe.Delete(m_ship);
     Planet* planet = universe.Object<Planet>(m_planet);
+
     planet->SetPrimaryFocus(FOCUS_BALANCED);
     planet->SetSecondaryFocus(FOCUS_BALANCED);
-    planet->ResetMaxMeters();
-    planet->ApplyUniverseTableMaxMeterAdjustments();
-    planet->AdjustPop(INITIAL_COLONY_POP);
-    planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
+
+    planet->GetMeter(METER_POPULATION)->SetCurrent(INITIAL_COLONY_POP);
+    planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
     planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
+
     planet->AddOwner(EmpireID());
 }
 
@@ -410,8 +411,22 @@ bool FleetColonizeOrder::UndoImpl() const
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
     if (!fleet || fleet->SystemID() != ship->SystemID()) {
         System* system = planet->GetSystem();
-        int new_fleet_id = !fleet ? m_colony_fleet_id : GetNewObjectID();
-        fleet = new Fleet(!fleet ? m_colony_fleet_name : "Colony Fleet", system->X(), system->Y(), EmpireID());
+
+        int         new_fleet_id =      m_colony_fleet_id;
+        std::string new_fleet_name =    m_colony_fleet_name;
+
+        if (fleet && (fleet->SystemID() != ship->SystemID())) {
+            // fleet still exists, but it or ship are no longer in the same system, so 
+            // need to create a new fleet for the ship in the system it is in
+
+            // new id for new fleet
+            new_fleet_id = GetNewObjectID();
+            // name for new fleet
+            std::vector<int> ship_ids;  ship_ids.push_back(m_ship);
+            new_fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);  // potential bug?!  Client and Server might be using different languge files, meaning the client will see fleet name in its set language on the turn of the undo, but will see a different language fleet name on the next turn which is permanently set by the server undo
+        }
+
+        fleet = new Fleet(new_fleet_name, system->X(), system->Y(), EmpireID());
         if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
             throw std::runtime_error("FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID");
         universe.InsertID(fleet, new_fleet_id);

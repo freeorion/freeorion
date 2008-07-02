@@ -48,12 +48,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-
-    /** adjusts the population by \a pop, down to a minimum of 0.0, or up to a maximum of MaxPop().  This function 
-        returns the (positive) pop surplus, or the (negative) pop deficit that would result from 
-        adjusting the population by \a pop points, or 0 if the adjustment falls within [0.0, MaxPop()]*/
-    double                  AdjustPop(double pop);
-
     void                    SetRace(int race)                       {m_race = race;}                        ///< sets the race of the population to \a race
     void                    SetAvailableFood(double available_food) {m_available_food = available_food;}    ///< sets the amount of food which is currently available
 

@@ -120,6 +120,12 @@ const std::string& UserString(const std::string& str)
     return GetStringTable().String(str);
 }
 
+boost::format FlexibleFormat(const std::string &string_to_format) {
+    boost::format retval(string_to_format);
+    retval.exceptions(boost::io::all_error_bits ^ (boost::io::too_many_args_bit | boost::io::too_few_args_bit));
+    return retval;
+}
+
 std::string RomanNumber(unsigned int n)
 {
     static const char N[] = "IVXLCDM??";

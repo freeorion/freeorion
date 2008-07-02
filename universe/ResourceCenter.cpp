@@ -82,20 +82,18 @@ namespace {
 }
 
 ResourceCenter::ResourceCenter()
-{
-}
+{}
 
 ResourceCenter::~ResourceCenter()
-{
-}
+{}
 
 void ResourceCenter::Init()
 {
-    InsertMeter(METER_FARMING, Meter());
-    InsertMeter(METER_MINING, Meter());
-    InsertMeter(METER_INDUSTRY, Meter());
-    InsertMeter(METER_RESEARCH, Meter());
-    InsertMeter(METER_TRADE, Meter());
+    InsertMeter(METER_FARMING,      Meter());
+    InsertMeter(METER_MINING,       Meter());
+    InsertMeter(METER_INDUSTRY,     Meter());
+    InsertMeter(METER_RESEARCH,     Meter());
+    InsertMeter(METER_TRADE,        Meter());
     InsertMeter(METER_CONSTRUCTION, Meter());
     Reset();
 }

@@ -9,6 +9,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/format.hpp>
 
 #include <set>
 #include <vector>
@@ -28,6 +29,9 @@ int PriorityValue(const std::string& name);
 
 /** Returns a language-specific string for the key-string \a str */
 const std::string& UserString(const std::string& str);
+
+/** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
+boost::format FlexibleFormat(const std::string &string_to_format);
 
 /** Returns the stringified form of \a n as a roman number.  "Only" defined for 1 <= n <= 3999, as we can't display the
     symbol for 5000. */

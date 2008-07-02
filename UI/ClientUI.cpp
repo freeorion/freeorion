@@ -660,12 +660,6 @@ std::istream& operator>>(std::istream& is, StreamableColor& clr)
     return is;
 }
 
-boost::format FlexibleFormat(const std::string &string_to_format) {
-    boost::format retval(string_to_format);
-    retval.exceptions(boost::io::all_error_bits ^ (boost::io::too_many_args_bit | boost::io::too_few_args_bit));
-    return retval;
-}
-
 const double SMALL_UI_DISPLAY_VALUE = 1.0e-6;
 const double LARGE_UI_DISPLAY_VALUE = 9.99999999e+9;
 const double UNKNOWN_UI_DISPLAY_VALUE = std::numeric_limits<double>::infinity();
@@ -724,7 +718,7 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     }
 
     if (mag > LARGE_UI_DISPLAY_VALUE) mag = LARGE_UI_DISPLAY_VALUE;
-    
+
     // if digits 0 or negative, return full precision value
     if (digits < 1) {
         text += boost::lexical_cast<std::string>(mag);

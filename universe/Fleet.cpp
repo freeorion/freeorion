@@ -13,6 +13,8 @@ using boost::lexical_cast;
 #include <stdexcept>
 #include <cmath>
 
+#include <boost/format.hpp>
+
 namespace {
     const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement
     const double FLEET_MOVEMENT_EPSILON = 1.0e-1;   // how close a fleet needs to be to a system to have arrived in the system
@@ -873,3 +875,13 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last
     if (travel_route.empty() && !m_travel_route.empty())
         travel_route.push_back(0);
 }
+
+std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_fleet_id) {
+    // TODO: Change returned name based on passed ship designs.  eg. return "colony fleet" if
+    // ships are colony ships, or "battle fleet" if ships are armed.
+    std::string number_text = "";
+    if (new_fleet_id != UniverseObject::INVALID_OBJECT_ID)
+        number_text = " " + boost::lexical_cast<std::string>(new_fleet_id);
+    return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % number_text);
+}
+

@@ -212,9 +212,6 @@ struct StreamableColor
 std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
 std::istream& operator>>(std::istream& is, StreamableColor& clr);
 
-/** Wraps boost::format such that it won't crash if passed the wrong number of arguments */
-boost::format FlexibleFormat(const std::string &string_to_format);
-
 extern const double SMALL_UI_DISPLAY_VALUE;
 extern const double LARGE_UI_DISPLAY_VALUE;
 extern const double UNKNOWN_UI_DISPLAY_VALUE;
