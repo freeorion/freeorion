@@ -427,30 +427,47 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap objects;
     ObjectMap destroyed_objects;
+    ObjectKnowledgeMap destroyed_object_knowers;
     if (Archive::is_saving::value) {
         // existing objects
         for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-            if (Universe::ALL_OBJECTS_VISIBLE ||
+            if (Universe::ALL_OBJECTS_VISIBLE || s_encoding_empire == ALL_EMPIRES ||
                 it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
                 universe_object_cast<System*>(it->second))
             {
                 objects.insert(*it);
             }
         }
+
         // destroyed objects
-        for (ObjectMap::const_iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
-            if (Universe::ALL_OBJECTS_VISIBLE) {
-                destroyed_objects.insert(*it);
-                continue;
+        if (Universe::ALL_OBJECTS_VISIBLE || s_encoding_empire == ALL_EMPIRES) {
+            // serialize all destroyed objects
+            destroyed_objects = m_destroyed_objects;
+        } else {
+            // only serialize objects known about by s_encoding_emprie
+            for (ObjectMap::const_iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
+                ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
+                if (know_it == m_destroyed_object_knowers.end())
+                    continue;   // no empires know about this destroyed object
+                const std::set<int>& knowers = know_it->second;
+                if (knowers.find(s_encoding_empire) != knowers.end()) {
+                    //Logger().debugStream() << "empire " << s_encoding_empire << " knows about destroyed object object " << know_it->first;
+                    destroyed_objects.insert(*it);
+                }
             }
-            ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
-            if (know_it == m_destroyed_object_knowers.end())
-                continue;
-            const std::set<int>& knowers = know_it->second;
-            if (knowers.find(s_encoding_empire) != knowers.end())
-                destroyed_objects.insert(*it);
         }
+
+        // who knows about destroyed objects?  this data is only serialized when all encoding is for
+        // all empires.  this way it is saved as part of a saved game, but isn't sent out to players.
+        // we don't want to tell all players what destroyed objects other players know about, or worry
+        // about who knows who knows what objects were destroyed, so instead, no players get any info
+        // about who knows what was destroyed.  (players can tell whether they know something was
+        // destroyed by checking whether they got the object in the Universe's destroyed objects, so
+        // that info doesn't need to be sent with turn updates...)
+        if (s_encoding_empire == ALL_EMPIRES)
+            destroyed_object_knowers = m_destroyed_object_knowers;
     }
+
     // ship designs
     ShipDesignMap ship_designs;
     if (Archive::is_saving::value)
@@ -459,15 +476,30 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
         & BOOST_SERIALIZATION_NVP(destroyed_objects)
+        & BOOST_SERIALIZATION_NVP(destroyed_object_knowers)
         & BOOST_SERIALIZATION_NVP(ship_designs)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
+
     if (Archive::is_loading::value) {
         m_objects = objects;
         m_destroyed_objects = destroyed_objects;
+        m_destroyed_object_knowers = destroyed_object_knowers;
         m_ship_designs = ship_designs;
         InitializeSystemGraph();
     }
+
+    //Logger().debugStream() << "Universe::serialize destroyed objects at end: ";
+    //for (ObjectMap::const_iterator it = destroyed_objects.begin(); it != destroyed_objects.end(); ++it) {
+    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
+    //}
+    //Logger().debugStream() << "Universe::serialize destroyed object knowers at end: ";
+    //for (ObjectKnowledgeMap::const_iterator know_it = destroyed_object_knowers.begin(); know_it != destroyed_object_knowers.end(); ++know_it) {
+    //    Logger().debugStream() << " ... object id: " << know_it->first << " known by: ";
+    //    const std::set<int>& knowers = know_it->second;
+    //    for (std::set<int>::const_iterator it = knowers.begin(); it != knowers.end(); ++it)
+    //        Logger().debugStream() << " ... ... " << *it;
+    //}
 }
 
 template <class T> 
