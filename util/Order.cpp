@@ -342,14 +342,19 @@ void FleetColonizeOrder::ServerExecute() const
     universe.Delete(m_ship);
     Planet* planet = universe.Object<Planet>(m_planet);
 
-    planet->SetPrimaryFocus(FOCUS_BALANCED);
-    planet->SetSecondaryFocus(FOCUS_BALANCED);
+    planet->SetPrimaryFocus(FOCUS_FARMING);
+    planet->SetSecondaryFocus(FOCUS_FARMING);
 
     planet->GetMeter(METER_POPULATION)->SetCurrent(INITIAL_COLONY_POP);
     planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
-    planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
+    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
 
     planet->AddOwner(EmpireID());
+
+    Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
+    for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
+        if (const Meter* meter = planet->GetMeter(meter_type))
+            Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
 }
 
 void FleetColonizeOrder::ExecuteImpl() const

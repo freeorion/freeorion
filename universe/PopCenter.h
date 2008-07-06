@@ -38,6 +38,8 @@ public:
     DensityType             PopDensity() const;                                 ///< returns the density of this center, based on its population
     double                  AvailableFood() const {return m_available_food;}    ///< returns the amount of food which is currently available
 
+    virtual const Meter*    GetMeter(MeterType type) const = 0;                 ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+
     virtual double          ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
     virtual double          MeterPoints(MeterType type) const;                  ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
     virtual double          ProjectedMeterPoints(MeterType type) const;         ///< returns expected "true amount" associated with a meter on the next turn
@@ -65,7 +67,6 @@ protected:
 private:
     PopCenter();                ///< default ctor
 
-    virtual const Meter*    GetMeter(MeterType type) const = 0;                 ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual Meter*          GetMeter(MeterType type) = 0;                       ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
 
     virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions

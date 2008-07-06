@@ -1986,6 +1986,7 @@ void Empire::UpdateTradeSpending()
 
 void Empire::UpdateFoodDistribution()
 {
+    Logger().debugStream() << "Food distribution for empire " << EmpireID();
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
     double available_food = m_resource_pools[RE_FOOD]->Available();
@@ -2002,7 +2003,7 @@ void Empire::UpdateFoodDistribution()
         ResourceCenter *center = *res_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
-        fp_map[obj->ID()] = obj->MeterPoints(METER_FARMING);
+        fp_map[obj->ID()] = obj->GetMeter(METER_FARMING)->Current();
     }
 
     // first pass: give food to PopCenters that produce food, limited by their food need and their food production
@@ -2011,8 +2012,8 @@ void Empire::UpdateFoodDistribution()
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
 
-        double need = obj->MeterPoints(METER_POPULATION);   // basic need is current population - prevents starvation
-        
+        double need = obj->GetMeter(METER_POPULATION)->Current();   // basic need is current population - prevents starvation
+
         // determine if, and if so how much, food this center produces locally
         double food_prod = 0.0;
         std::map<int, double>::iterator fp_map_it = fp_map.find(obj->ID());
@@ -2022,12 +2023,14 @@ void Empire::UpdateFoodDistribution()
         // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
         double allocation = std::min(available_food, std::min(need, food_prod));
 
+        Logger().debugStream() << "allocating " << allocation << " food to " << obj->Name() << " for own production and need";
+
         center->SetAvailableFood(allocation);
         m_food_total_distributed += allocation;
         available_food -= allocation;
     }
 
-    //Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
+    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
     // second pass: give as much food as needed to PopCenters to maintain current population
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
@@ -2035,30 +2038,41 @@ void Empire::UpdateFoodDistribution()
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
 
-        double need = obj->MeterPoints(METER_POPULATION);
+        double need = obj->GetMeter(METER_POPULATION)->Current();
         double has = center->AvailableFood();
         double addition = std::min(need - has, available_food);
+        double new_allocation = std::max(0.0, has + addition);
 
-        center->SetAvailableFood(center->AvailableFood() + addition);
+        Logger().debugStream() << "allocating " << new_allocation << " food to " << obj->Name() << " to maintain population";
+
+        center->SetAvailableFood(new_allocation);
         available_food -= addition;
 
         m_food_total_distributed += addition;
     }
+
+    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
     // third pass: give as much food as needed to PopCenters to allow max possible growth
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
         PopCenter *center = *pop_it;
         UniverseObject *obj = dynamic_cast<UniverseObject*>(center);    // can't use universe_object_cast<UniverseObject*> because ResourceCenter is not derived from UniverseObject
         assert(obj);
-        obj = 0;    // to quiet warning about unused varaible
 
+        double has = center->AvailableFood();
         double addition = center->FuturePopGrowthMax();
+        double new_allocation = std::max(0.0, has + addition);
 
-        center->SetAvailableFood(center->AvailableFood() + addition);
+        Logger().debugStream() << "allocating " << new_allocation << " food to " << obj->Name() << " for max possible growth";
+
+        center->SetAvailableFood(new_allocation);
         available_food -= addition;
 
         m_food_total_distributed += addition;
     }
+
+    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
+
 
     // after changing food distribution, population growth predictions may need to be redone
     // by calling UpdatePopulationGrowth()  

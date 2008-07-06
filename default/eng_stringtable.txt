@@ -1206,8 +1206,8 @@ Next Turn
 TT_CHANGE
 Change
 
-TT_MAX_METER
-Max Meter: %1%
+TT_METER
+Meter: %1% / %2%
 
 TT_BASIC_FOCUS_AND_UNIVERSE
 Basic Focus and Universe

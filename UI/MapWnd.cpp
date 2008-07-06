@@ -339,7 +339,7 @@ MapWnd::MapWnd() :
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_population);
-   
+
     m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0,3,true,false);
@@ -717,6 +717,11 @@ void MapWnd::InitTurn(int turn_number)
     SetAccelerators();
 
     Universe& universe = GetUniverse();
+
+    Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
+    for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
+        Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
+
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {

@@ -105,10 +105,11 @@ namespace {
         void UpdateSummary() {
             const Meter* meter = m_obj->GetMeter(m_meter_type);
             if (!meter) return;
-            
+
             double current = m_obj->MeterPoints(m_meter_type);
             double next = m_obj->ProjectedMeterPoints(m_meter_type);
             double change = next - current;
+            double meter_cur = meter->Current();
             double meter_max = meter->Max();
 
             m_current_value->SetText(DoubleToString(current, 3, false, false));
@@ -119,7 +120,9 @@ namespace {
             else if (change < 0.0)
                 clr = ClientUI::StatDecrColor();
             m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>");
-            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_MAX_METER")) % DoubleToString(meter_max, 3, false, false)));
+            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
+                                                  DoubleToString(meter_cur, 3, false, false) %
+                                                  DoubleToString(meter_max, 3, false, false)));
 
             switch (m_meter_type) {
             case METER_POPULATION:

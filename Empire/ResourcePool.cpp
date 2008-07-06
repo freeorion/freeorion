@@ -92,9 +92,9 @@ void ResourcePool::Update()
 // PopulationPool
 //////////////////////////////////////////////////
 namespace {
-    bool PopCenterLess(PopCenter* elem1, PopCenter* elem2)
+    bool PopCenterLess(const PopCenter* elem1, const PopCenter* elem2)
     {
-        return elem1->MeterPoints(METER_POPULATION) < elem2->MeterPoints(METER_POPULATION);
+        return elem1->GetMeter(METER_POPULATION)->Current() < elem2->GetMeter(METER_POPULATION)->Current();
     }
 }
 
@@ -130,8 +130,10 @@ void PopulationPool::Update()
     double m_future_population = 0.0;
     // sum population from all PopCenters in this pool
     for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it) {
-        m_population += (*it)->MeterPoints(METER_POPULATION);
-        m_future_population += (*it)->ProjectedMeterPoints(METER_POPULATION);
+        const PopCenter* center = (*it);
+        const Meter* meter = center->GetMeter(METER_POPULATION);
+        m_population += meter->InitialCurrent();
+        m_future_population += meter->Current();
     }
     m_growth = m_future_population - m_population;
     ChangedSignal();
