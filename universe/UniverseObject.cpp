@@ -12,8 +12,6 @@
 using boost::lexical_cast;
 #include <stdexcept>
 
-#include <stdexcept>
-
 
 // static(s)
 const double    UniverseObject::INVALID_POSITION  = -100000.0;
@@ -106,6 +104,30 @@ const std::set<std::string>& UniverseObject::Specials() const
     return m_specials;
 }
 
+std::vector<UniverseObject*> UniverseObject::FindObjects() const
+{
+    return std::vector<UniverseObject*>();
+}
+
+std::vector<int> UniverseObject::FindObjectIDs() const
+{
+    return std::vector<int>();
+}
+
+bool UniverseObject::Contains(int object_id) const
+{
+    return false;
+}
+
+bool UniverseObject::ContainedBy(int object_id) const
+{
+    const UniverseObject* object = GetUniverse().Object(object_id);
+    if (object)
+        return object->Contains(m_id);
+    else
+        return false;
+}
+
 const Meter* UniverseObject::GetMeter(MeterType type) const
 {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
@@ -116,10 +138,10 @@ const Meter* UniverseObject::GetMeter(MeterType type) const
 
 double UniverseObject::ProjectedCurrentMeter(MeterType type) const
 {
-        std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
-        if (it == m_meters.end())
-            throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
-        return it->second.Current();    // default to no growth
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
+    return it->second.Current();    // default to no growth
 }
 
 double UniverseObject::MeterPoints(MeterType type) const
@@ -127,13 +149,16 @@ double UniverseObject::MeterPoints(MeterType type) const
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::MeterPoints was passed a MeterType that this UniverseObject does not have");
-    return it->second.Current();    // default to meter value
+    return it->second.InitialCurrent();
 }
 
 double UniverseObject::ProjectedMeterPoints(MeterType type) const
 {
     // Note that this is the default implementation.  Derived classes might do something different.
-    return MeterPoints(type);
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::ProjectedMeterPoints was passed a MeterType that this UniverseObject does not have");
+    return it->second.Current();
 }
 
 void UniverseObject::InsertMeter(MeterType meter_type, const Meter& meter)
@@ -187,17 +212,32 @@ void UniverseObject::Move(double x, double y)
 {
     if (m_x + x < 0.0 || Universe::UniverseWidth() < m_x + x || m_y + y < 0.0 || Universe::UniverseWidth() < m_y + y)
         throw std::runtime_error("UniverseObject::Move : Attempted to move object \"" + m_name + "\" off the map area.");
-    m_x += x;
-    m_y += y;
-    StateChangedSignal();
+    UniverseObject::MoveTo(m_x + x, m_y + y);
+}
+
+void UniverseObject::MoveTo(int object_id)
+{
+    UniverseObject::MoveTo(GetUniverse().Object(object_id));
+}
+
+void UniverseObject::MoveTo(UniverseObject* object)
+{
+    if (!object)
+        throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
+
+    UniverseObject::MoveTo(object->X(), object->Y());
 }
 
 void UniverseObject::MoveTo(double x, double y)
 {
+    //Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
     if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
         throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
+
     m_x = x;
     m_y = y;
+    if (System* system = GetSystem())
+        system->Remove(this);
     StateChangedSignal();
 }
 
@@ -209,7 +249,7 @@ Meter* UniverseObject::GetMeter(MeterType type)
     return 0;
 }
 
-void UniverseObject::AddOwner(int id)    
+void UniverseObject::AddOwner(int id)
 {
     m_owners.insert(id); 
     /* TODO: if adding an owner to an object gives an the added owner an observer in, or ownership of
@@ -225,8 +265,11 @@ void UniverseObject::RemoveOwner(int id)
 
 void UniverseObject::SetSystem(int sys)
 {
-    m_system_id = sys;
-    StateChangedSignal();
+    //Logger().debugStream() << "UniverseObject::SetSystem(int sys)";
+    if (sys != m_system_id) {
+        m_system_id = sys;
+        StateChangedSignal();
+    }
 }
 
 void UniverseObject::AddSpecial(const std::string& name)
@@ -239,23 +282,24 @@ void UniverseObject::RemoveSpecial(const std::string& name)
     m_specials.erase(name);
 }
 
-void UniverseObject::ResetMaxMeters()
+void UniverseObject::ResetMaxMeters(MeterType meter_type)
 {
-    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-        if (Meter* meter = GetMeter(i)) {
+    if (meter_type == INVALID_METER_TYPE) {
+        for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+            it->second.ResetMax();
+    } else {
+        if (Meter* meter = GetMeter(meter_type))
             meter->ResetMax();
-        }
+        else
+            Logger().errorStream() << "UniverseObject::ResetMaxMeters called with MeterType this object does not have";
     }
 }
 
-void UniverseObject::ApplyUniverseTableMaxMeterAdjustments()
+void UniverseObject::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {}
 
 void UniverseObject::ClampMeters()
 {
-    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-        if (Meter* meter = GetMeter(i)) {
-            meter->Clamp();
-        }
-    }
+    for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+        it->second.Clamp();
 }

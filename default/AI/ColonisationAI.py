@@ -1,17 +1,16 @@
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
+import AIstate
 import FleetUtils
 
 # Evaluation uses only size and hospitality score
 # later: specials, exploration, distance
 
-
-# constants
-minimalColoniseValue = 4 # minimal value a planet must have to be colonised; right now a size 2 terran planet
+# TODO: do NOT pass universe, empire etc.
 
 
 # globals
-colonisablePlanets = []  # !!! move into AIstate
+colonisablePlanetIDs = []  # !!! move into AIstate
 
 
 # main function
@@ -21,22 +20,22 @@ def generateColonisationOrders():
     empireID = fo.empireID()
     universe = fo.getUniverse()
 
-    # get colonyships
-    allColonyFleetIDs = FleetUtils.getEmpireFleetIDsByRole(empireID, "MT_COLONISATION")
+    # get colony fleets
+    allColonyFleetIDs = FleetUtils.getEmpireFleetIDsByRole("MT_COLONISATION")
     colonyFleetIDs = FleetUtils.extractFleetIDsWithoutMission(allColonyFleetIDs)
 
-    removeInvalidMissions(universe)
+    removeInvalidMissions()
 
     print "Colony Fleets: " + str(allColonyFleetIDs)
     print "Current colonise missions: " + str(foAI.foAIstate.getMissions("MT_COLONISATION"))
     
     # get planets
-    systemIDs = getExploredSystemIDs(empire, universe)
-    planetIDs = getPlanetsInSystemsIDs(systemIDs, universe)
+    systemIDs = getExploredSystemIDs()
+    planetIDs = getPlanetsInSystemsIDs(systemIDs)
 
-    removeAlreadyOwnedPlanetIDs(planetIDs, empireID, universe)
+    removeAlreadyOwnedPlanetIDs(planetIDs)
 
-    evaluatedPlanets = assignColonisationValues(planetIDs, universe)
+    evaluatedPlanets = assignColonisationValues(planetIDs)
     removeLowValuePlanets(evaluatedPlanets)
 
     sortedPlanets = evaluatedPlanets.items()
@@ -46,20 +45,22 @@ def generateColonisationOrders():
     for evaluationPair in sortedPlanets: print "ID|Score: " + str(evaluationPair)
 
     # export planets for other AI modules
-    global colonisablePlanets
-    colonisablePlanets = sortedPlanets   # !!! move into AIstate?
+    global colonisablePlanetIDs
+    colonisablePlanetIDs = sortedPlanets   # !!! move into AIstate?
 
     # send Colony Ships, colonise if at target system
-    sendColonyShips(colonyFleetIDs, sortedPlanets, universe)
-    coloniseTargetPlanets(universe)
+    sendColonyShips(colonyFleetIDs, sortedPlanets)
+    coloniseTargetPlanets()
 
 
 
 
-def removeInvalidMissions(universe):
+def removeInvalidMissions():
     "deletes invalid colonisation missions"
 
     print "Removing invalid colonisation missions:"
+
+    universe = fo.getUniverse()
 
     missions = foAI.foAIstate.getMissions("MT_COLONISATION")
 
@@ -84,9 +85,12 @@ def removeInvalidMissions(universe):
             foAI.foAIstate.removeMission("MT_COLONISATION", fleetID)
           
 
-def getExploredSystemIDs(empire, universe):
+def getExploredSystemIDs():
     "retrieves all systems explored by the empire"
      
+    empire = fo.getEmpire()
+    universe = fo.getUniverse()
+
     systemIDs = []
     objectIDs = universe.allObjectIDs
 
@@ -99,8 +103,10 @@ def getExploredSystemIDs(empire, universe):
     return systemIDs
 
 
-def getPlanetsInSystemsIDs(systemIDs, universe):
+def getPlanetsInSystemsIDs(systemIDs):
     "creates a list with all planets known to the empire"
+
+    universe = fo.getUniverse()
 
     planetIDs = []
     objectIDs = universe.allObjectIDs
@@ -115,8 +121,11 @@ def getPlanetsInSystemsIDs(systemIDs, universe):
     return planetIDs
 
 
-def removeAlreadyOwnedPlanetIDs(planetIDs, empireID, universe):
+def removeAlreadyOwnedPlanetIDs(planetIDs):
     "removes planets that already are being colonised or owned"
+
+    empireID = fo.empireID()
+    universe = fo.getUniverse()
 
     coloniseMissions = foAI.foAIstate.getMissions("MT_COLONISATION")
     deletePlanets = []
@@ -139,29 +148,35 @@ def removeAlreadyOwnedPlanetIDs(planetIDs, empireID, universe):
         # print "removed planet " + str(ID)
 
 
-def assignColonisationValues(planetIDs, universe):
+def assignColonisationValues(planetIDs):
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
+
+    universe = fo.getUniverse()
 
     planetValues = {}
 
     for planetID in planetIDs:
-        planetValues[planetID] = evaluatePlanet(planetID, universe)
+        planetValues[planetID] = evaluatePlanet(planetID)
 
     return planetValues
 
 
-def evaluatePlanet(planetID, universe):
+def evaluatePlanet(planetID):
     "returns the colonisation value of a planet"
+
+    universe = fo.getUniverse()
 
     planet = universe.getPlanet(planetID)
     if (planet == None): return 0
     
-    return getPlanetHospitality(planetID, universe) * planet.size
+    return getPlanetHospitality(planetID) * planet.size
     # planet size ranges from 1-5
 
 
-def getPlanetHospitality(planetID, universe):
+def getPlanetHospitality(planetID):
     "returns a value depending on the planet type"
+
+    universe = fo.getUniverse()
 
     planet = universe.getPlanet(planetID)
     if planet == None: return 0
@@ -182,14 +197,16 @@ def removeLowValuePlanets(evaluatedPlanets):
     removeIDs = []
 
     for planetID in evaluatedPlanets.iterkeys():      
-        if (evaluatedPlanets[planetID] < minimalColoniseValue):
+        if (evaluatedPlanets[planetID] < AIstate.minimalColoniseValue):
             removeIDs.append(planetID)
 
     for ID in removeIDs: del evaluatedPlanets[ID]
 
   
-def sendColonyShips(colonyFleetIDs, evaluatedPlanets, universe):
+def sendColonyShips(colonyFleetIDs, evaluatedPlanets):
     "sends a list of colony ships to a list of planet_value_pairs"
+
+    universe = fo.getUniverse()
 
     i = 0
 
@@ -212,8 +229,10 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets, universe):
         i=i+1
 
 
-def coloniseTargetPlanets(universe):
+def coloniseTargetPlanets():
     "checks if a colonyship has arrived at its destination; colonises planet and removes mission"
+
+    universe = fo.getUniverse()
 
     coloniseMissions = foAI.foAIstate.getMissions("MT_COLONISATION")
 

@@ -30,62 +30,58 @@ class SidePanel : public GG::Wnd
 public:
     class PlanetPanel;
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (int)> PlanetSelectedSignalType; ///< emitted when a rotating planet in the side panel is clicked by the user
-    typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
-    typedef boost::signal<void ()> ResourceCenterChangedSignalType; ///< emitted when the a planet's resourcecenter has changed
-    //@}
-
     /** \name Structors */ //@{
     SidePanel(int x, int y, int w, int h);
     ~SidePanel();
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool InWindow(const GG::Pt& pt) const;
+    virtual bool        InWindow(const GG::Pt& pt) const;
 
-    int                PlanetPanels() const;
-    const PlanetPanel* GetPlanetPanel(int n) const;
-    int                SystemID() const;
-    int                PlanetID() const; ///< returns the id of the currently-selected planet, if any
+    int                 PlanetPanels() const;
+    const PlanetPanel*  GetPlanetPanel(int n) const;
+    int                 SystemID() const;
+    int                 PlanetID() const; ///< returns the id of the currently-selected planet, if any
     //@}
 
     /** \name Mutators */ //@{
-    virtual void  Render();
+    virtual void        Render();
 
-    static void   Refresh();    ///< causes all sidepanels to refresh / update indicators
+    static void         Refresh();    ///< causes all sidepanels to refresh / update indicators
 
-    void          SelectPlanet(int planet_id); ///< selects the planet with id \a planet_id within the current system, if such a planet exists
+    void                SelectPlanet(int planet_id); ///< selects the planet with id \a planet_id within the current system, if such a planet exists
 
     /** sets the predicate that determines what planets can be selected in the side panel.  If none is set, planet selection is disabled. */
-    void          SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
+    void                SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
     //@}
 
-    static void   SetSystem(int system_id); ///< sets the system currently being viewed in all side panels
+    static void         SetSystem(int system_id); ///< sets the system currently being viewed in all side panels
 
-    static const int MAX_PLANET_DIAMETER; // size of a huge planet, in on-screen pixels
-    static const int MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
+    static const int            MAX_PLANET_DIAMETER; // size of a huge planet, in on-screen pixels
+    static const int            MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
 
-    mutable PlanetSelectedSignalType PlanetSelectedSignal;
-    mutable SystemSelectedSignalType SystemSelectedSignal;
-    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal;
+    mutable boost::signal<void (int)>   PlanetSelectedSignal;           ///< emitted when a rotating planet in the side panel is clicked by the user
+    mutable boost::signal<void (int)>   SystemSelectedSignal;           ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
+    mutable boost::signal<void ()>      ResourceCenterChangedSignal;    ///< emitted when a planet's resourcecenter has changed, including when focus is chanaged
 
 private:
     class PlanetPanelContainer;
 
-    void RefreshImpl();
-    void SetSystemImpl();
-    void SystemSelectionChanged(int selection);
-    void SystemFleetAdded(const Fleet& flt);
-    void SystemFleetRemoved(const Fleet& flt);
-    void FleetsChanged();
-    void PrevButtonClicked();
-    void NextButtonClicked();
-    void PlanetSelected(int planet_id);
+    void                RefreshImpl();
+    void                SetSystemImpl();
+    void                SystemSelectionChanged(GG::DropDownList::iterator it);
+    void                PrevButtonClicked();
+    void                NextButtonClicked();
+    void                PlanetSelected(int planet_id);
 
-    CUIDropDownList     *m_system_name;
-    GG::Button          *m_button_prev, *m_button_next;
-    GG::DynamicGraphic  *m_star_graphic;
+    void                FleetInserted(Fleet& fleet);
+    void                FleetRemoved(Fleet& fleet);
+    void                FleetStateChanged();
+
+    CUIDropDownList*            m_system_name;
+    GG::Button*                 m_button_prev;
+    GG::Button*                 m_button_next;
+    GG::DynamicGraphic*         m_star_graphic;
 
     std::vector<GG::SubTexture> m_fleet_icons;
 
@@ -95,10 +91,10 @@ private:
     static const System*        s_system;
     static std::set<SidePanel*> s_side_panels;
 
-    std::set<boost::signals::connection> m_system_connections;
-    std::map<int, boost::signals::connection> m_fleet_connections;
+    std::set<boost::signals::connection>                m_system_connections;
+    std::map<const Fleet*, boost::signals::connection>  m_fleet_state_change_signals;
 
-    static const int EDGE_PAD = 4;
+    static const int            EDGE_PAD = 4;
 };
 
 #endif // _SidePanel_h_

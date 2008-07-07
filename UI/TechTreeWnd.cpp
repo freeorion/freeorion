@@ -21,13 +21,15 @@
 #include <boost/format.hpp>
 #include <algorithm>
 
+#include <boost/timer.hpp>
+
 
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.tech-layout-horz-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING", 0.75, RangedValidator<double>(0.1, 10.0));
-        db.Add("UI.tech-layout-vert-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING", 1.0, RangedValidator<double>(0.1, 10.0));
+        db.Add("UI.tech-layout-horz-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING", 0.5, RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.tech-layout-vert-spacing", "OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING", 1.0, RangedStepValidator<double>(0.25, 0.25, 10.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -375,19 +377,21 @@ private:
     std::vector<CUIButton*>             m_category_buttons;
     std::map<TechType, CUIButton*>      m_tech_type_buttons;
     std::map<TechStatus, CUIButton*>    m_tech_status_buttons;
+    CUIButton*                          m_list_view_button;
+    CUIButton*                          m_tree_view_button;
 
     friend class TechTreeWnd;               // so TechTreeWnd can access buttons
 };
 
 TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
-    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE)
+    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, 10, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP)
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     for (unsigned int i = 0; i < cats.size(); ++i) {
         m_category_buttons.push_back(new CUIButton(0, 0, 20, UserString(cats[i])));
         AttachChild(m_category_buttons.back());
-        m_category_buttons.back()->MarkSelectedTechCategoryColor(cats[i]);
+        m_category_buttons.back()->MarkNotSelected();
     }
     // and one for "ALL"
     m_category_buttons.push_back(new CUIButton(0, 0, 20, UserString("ALL")));
@@ -403,7 +407,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     AttachChild(m_tech_type_buttons[TT_REFINEMENT]);
     // colour
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin(); it != m_tech_type_buttons.end(); ++it)
-        it->second->MarkSelectedGray();
+        it->second->MarkNotSelected();
 
     // create a button for each tech status
     m_tech_status_buttons[TS_UNRESEARCHABLE] = new CUIButton(0, 0, 20, UserString("TECH_WND_STATUS_UNRESEARCHABLE"));
@@ -414,7 +418,15 @@ TechTreeWnd::TechTreeControls::TechTreeControls(int x, int y, int w) :
     AttachChild(m_tech_status_buttons[TS_COMPLETE]);
     // colour
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it)
-        it->second->MarkSelectedGray();
+        it->second->MarkNotSelected();
+
+    // create buttons to switch between tree and list views
+    m_list_view_button = new CUIButton(0, 0, 80, UserString("TECH_WND_LIST_VIEW"));
+    m_list_view_button->MarkNotSelected();
+    AttachChild(m_list_view_button);
+    m_tree_view_button = new CUIButton(0, 30, 80, UserString("TECH_WND_TREE_VIEW"));
+    m_tree_view_button->MarkNotSelected();
+    AttachChild(m_tree_view_button);
 
     EnableChildClipping(true);
     DoButtonLayout();
@@ -440,6 +452,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
     m_row_offset = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
 
+    // place category buttons: fill each row completely before starting next row
     int row = 0, col = -1;
     for (std::vector<CUIButton*>::iterator it = m_category_buttons.begin(); it != m_category_buttons.end(); ++it) {
         ++col;
@@ -447,13 +460,16 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
             ++row;
             col = 0;
         }
-        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD+ row*m_row_offset);
+        GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         (*it)->SizeMove(ul, lr);
     }
 
+    // rowbreak after category buttons, before type and status buttons
     col = -1;
-    m_category_button_rows = ++row;  // rowbreak after category buttons, before type and status buttons
+    m_category_button_rows = ++row;
+
+    // place type buttons: fill each row completely before starting next row
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_type_buttons.begin(); it != m_tech_type_buttons.end(); ++it) {
         ++col;
         if (col >= m_buttons_per_row) {
@@ -466,10 +482,12 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
     }
 
     // if all six status + type buttons can't fit on one row put an extra row break between them
-    if (m_buttons_per_row < 6) {
+    if (m_buttons_per_row < static_cast<int>(m_tech_type_buttons.size() + m_tech_status_buttons.size())) {
         col = -1;
         ++row;
     }
+
+    // place status buttons: fill each row completely before starting next row
     for (std::map<TechStatus, CUIButton*>::iterator it = m_tech_status_buttons.begin(); it != m_tech_status_buttons.end(); ++it) {
         ++col;
         if (col >= m_buttons_per_row) {
@@ -481,6 +499,24 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout()
         it->second->SizeMove(ul, lr);
     }
 
+    // rowbreak after status buttons, before view toggles
+    col = 0;
+    ++row;
+
+    // place view type buttons buttons
+    GG::Pt ul(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_list_view_button->SizeMove(ul, lr);
+    ++col;
+    if (col >= m_buttons_per_row) {
+        ++row;
+        col = 0;
+    }
+    ul = GG::Pt(UPPER_LEFT_PAD + col*m_col_offset, UPPER_LEFT_PAD + row*m_row_offset);
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_tree_view_button->SizeMove(ul, lr);
+
+    // keep track of layout.  Used to draw lines between groups of buttons when rendering
     if (m_buttons_per_row == 1)
         m_status_or_type_button_rows = 3;   // three rows, one button per row
     else if (m_buttons_per_row == 2)
@@ -618,7 +654,7 @@ private:
 };
 
 TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
-    CUIWnd("", 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd("", 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_tech(0)
 {
     const int PTS = ClientUI::Pts();
@@ -836,26 +872,26 @@ void TechTreeWnd::TechDetailPanel::Reset()
 
     m_tech_name_text->SetText(UserString(m_tech->Name()));
     using boost::io::str;
-    using boost::format;
 
-    m_summary_text->SetText("<i>" + str(format(UserString("TECH_DETAIL_TYPE_STR"))
-        % UserString(m_tech->Category())
-        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
-        % str(format(UserString(m_tech->ShortDescription())))) + "</i>");
+    m_summary_text->SetText("<i>" + str(FlexibleFormat(UserString("TECH_DETAIL_TYPE_STR"))
+                                        % UserString(m_tech->Category())
+                                        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
+                                        % UserString(m_tech->ShortDescription()))
+                            + "</i>");
 
     m_summary_text->SetColor(ClientUI::CategoryColor(m_tech->Category()));
  
-    m_cost_text->SetText(str(format(UserString("TECH_TOTAL_COST_STR"))
-        % static_cast<int>(m_tech->ResearchCost() + 0.5)
-        % m_tech->ResearchTurns()));
+    m_cost_text->SetText(str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR"))
+                             % static_cast<int>(m_tech->ResearchCost() + 0.5)
+                             % m_tech->ResearchTurns()));
 
 
-    std::string description_str = str(format(UserString("TECH_DETAIL_DESCRIPTION_STR"))
+    std::string description_str = str(FlexibleFormat(UserString("TECH_DETAIL_DESCRIPTION_STR"))
                                       % UserString(m_tech->Description()));
 
 
     if (!m_tech->Effects().empty()) {
-        description_str += str(format(UserString("TECH_DETAIL_EFFECTS_STR"))
+        description_str += str(FlexibleFormat(UserString("TECH_DETAIL_EFFECTS_STR"))
                                % EffectsDescription(m_tech->Effects()));
     }
 
@@ -864,7 +900,7 @@ void TechTreeWnd::TechDetailPanel::Reset()
     if (!unlocked_items.empty())
         description_str += UserString("TECH_DETAIL_UNLOCKS_SECTION_STR");
     for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
-        description_str += str(format(UserString("TECH_DETAIL_UNLOCKED_ITEM_STR"))
+        description_str += str(FlexibleFormat(UserString("TECH_DETAIL_UNLOCKED_ITEM_STR"))
                                % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
                                % UserString(unlocked_items[i].name));
     }
@@ -997,8 +1033,8 @@ void TechTreeWnd::TechNavigator::DoLayout()
 {
     m_lb->Resize(ClientSize() - GG::Pt(2*LB_MARGIN_X, 2*LB_MARGIN_Y));
 
-    for (int i = 0; i < m_lb->NumRows(); ++i) {
-        GG::ListBox::Row& row = m_lb->GetRow(i);
+    for (GG::ListBox::iterator it = m_lb->begin(); it != m_lb->end(); ++it) {
+        GG::ListBox::Row& row = **it;
         GG::Pt size = GG::Pt(m_lb->Width() - 4*LB_MARGIN_X, row.Height());
         row.Resize(size);
         GG::Control* control = row.at(0);
@@ -1166,8 +1202,8 @@ class TechTreeWnd::LayoutPanel : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (const Tech*)>      TechBrowsedSignalType;       ///< emitted when a technology is single-clicked
-    typedef boost::signal<void (const Tech*)>      TechClickedSignalType;       ///< emitted when the mouse rolls over a technology
+    typedef boost::signal<void (const Tech*)>      TechBrowsedSignalType;       ///< emitted when the mouse rolls over a technology
+    typedef boost::signal<void (const Tech*)>      TechClickedSignalType;       ///< emitted when a technology is single-clicked
     typedef boost::signal<void (const Tech*)>      TechDoubleClickedSignalType; ///< emitted when a technology is double-clicked
     //@}
 
@@ -1176,7 +1212,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual GG::Pt ClientLowerRight() const;
+    virtual GG::Pt          ClientLowerRight() const;
 
     double                  Scale() const;
     std::set<std::string>   GetCategoriesShown() const;
@@ -1191,12 +1227,14 @@ public:
     //! \name Mutators //@{
     virtual void Render();
 
-    void Update();
-    void Clear();
-    void Reset();
+    void Update(const Tech* tech = 0);  ///< update indicated \a tech panel or all panels if \a tech is 0, without without redoing layout
+    void Clear();                       ///< remove all tech panels
+    void Reset();                       ///< redo layout, recentre on a tech
     void SetScale(double scale);
     void ShowCategory(const std::string& category);
+    void ShowAllCategories();
     void HideCategory(const std::string& category);
+    void HideAllCategories();
     void ShowType(TechType type);
     void HideType(TechType type);
     void ShowStatus(TechStatus status);
@@ -1266,7 +1304,7 @@ public:
     typedef boost::signal<void (const Tech*)>      TechDoubleClickedSignalType; ///< emitted when a technology is double-clicked
     //@}
 
-    TechPanel(const Tech* tech, bool selected, std::set<std::string> categories_shown, std::set<TechType> types_shown, std::set<TechStatus> statuses_shown, double scale = 1.0);
+    TechPanel(const Tech* tech, bool selected, double scale = 1.0);
 
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual void Render();
@@ -1274,6 +1312,9 @@ public:
     virtual void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {ZoomedSignal(move);}
+
+    void Update();
+
     mutable boost::signal<void (int)> ZoomedSignal;
 
     void Select(bool select);
@@ -1297,9 +1338,7 @@ private:
     bool                  m_selected;
 };
 
-TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
-                                               std::set<std::string> categories_shown, std::set<TechType> types_shown,
-                                               std::set<TechStatus> statuses_shown, double scale/* = 1.0*/) :
+TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, double scale/* = 1.0*/) :
     GG::Wnd(0, 0, 1, 1, GG::CLICKABLE),
     m_tech(tech),
     m_scale(scale),
@@ -1309,10 +1348,6 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     m_progress_text(0),
     m_selected(selected)
 {
-    const int FONT_PTS = std::max(static_cast<const int>(ClientUI::Pts() * m_scale + 0.5), 3);
-
-    GG::Pt UPPER_TECH_TEXT_OFFSET(4, 2);
-    GG::Pt LOWER_TECH_TEXT_OFFSET(4, 0);
     GG::Pt size;
     if (m_tech->Type() == TT_THEORY) {
         size = GG::Pt(static_cast<int>(THEORY_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<int>(THEORY_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
@@ -1323,78 +1358,56 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected,
     }
     Resize(size);
 
-    UPPER_TECH_TEXT_OFFSET = GG::Pt(static_cast<int>(UPPER_TECH_TEXT_OFFSET.x * m_scale), static_cast<int>(UPPER_TECH_TEXT_OFFSET.y * m_scale));
-    LOWER_TECH_TEXT_OFFSET = GG::Pt(static_cast<int>(LOWER_TECH_TEXT_OFFSET.x * m_scale), static_cast<int>(LOWER_TECH_TEXT_OFFSET.y * m_scale));
 
-    using boost::io::str;
-    using boost::format;
-    bool known_tech = false;
-    bool queued_tech = false;
-    bool researchable_tech = false;
+    const int FONT_PTS = std::max(static_cast<const int>(ClientUI::Pts() * m_scale + 0.5), 3);
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), FONT_PTS);
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire->TechResearched(m_tech->Name())) {
-        known_tech = true;
-    } else {
-        ResearchQueue queue = empire->GetResearchQueue();
-        if (queue.InQueue(m_tech))
-            queued_tech = true;
-        double rps_spent = empire->ResearchStatus(m_tech->Name());
-        if (0.0 <= rps_spent) {
-            m_progress = rps_spent / (m_tech->ResearchTurns() * m_tech->ResearchCost());
-            assert(0.0 <= m_progress && m_progress <= 1.0);
-        }
-        researchable_tech = empire->ResearchableTech(m_tech->Name());
-    }
-    if (known_tech) {
-        m_fill_color = ClientUI::KnownTechFillColor();
-        m_text_and_border_color = ClientUI::KnownTechTextAndBorderColor();
-    } else if (researchable_tech) {
-        m_fill_color = ClientUI::ResearchableTechFillColor();
-        m_text_and_border_color = ClientUI::ResearchableTechTextAndBorderColor();
-    } else {
-        m_fill_color = ClientUI::UnresearchableTechFillColor();
-        m_text_and_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
-    }
-
+    // tech icon
     int graphic_size = size.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) - 2;
     m_icon = new GG::StaticGraphic(1, 1, graphic_size, graphic_size, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
     m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
+    AttachChild(m_icon);
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), FONT_PTS);
+
+    // tech name text
+    GG::Pt UPPER_TECH_TEXT_OFFSET(4, 2);
+    GG::Pt LOWER_TECH_TEXT_OFFSET(4, 0);
+    UPPER_TECH_TEXT_OFFSET = GG::Pt(static_cast<int>(UPPER_TECH_TEXT_OFFSET.x * m_scale), static_cast<int>(UPPER_TECH_TEXT_OFFSET.y * m_scale));
+    LOWER_TECH_TEXT_OFFSET = GG::Pt(static_cast<int>(LOWER_TECH_TEXT_OFFSET.x * m_scale), static_cast<int>(LOWER_TECH_TEXT_OFFSET.y * m_scale));
 
     int text_left = m_icon->LowerRight().x + static_cast<int>(4 * m_scale);
     m_tech_name_text = new GG::TextControl(text_left, UPPER_TECH_TEXT_OFFSET.y,
-                                           Width() - m_icon->LowerRight().x - static_cast<int>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), font->Lineskip(),
-                                           UserString(m_tech->Name()), font, m_text_and_border_color, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+                                           Width() - m_icon->LowerRight().x - static_cast<int>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale),
+                                           font->Lineskip(), UserString(m_tech->Name()), font,
+                                           m_text_and_border_color, GG::FORMAT_TOP | GG::FORMAT_LEFT);
     m_tech_name_text->ClipText(true);
-    AttachChild(m_icon);
     AttachChild(m_tech_name_text);
 
-    std::string cost_str;
-    if (!known_tech)
-        cost_str = str(format(UserString("TECH_TOTAL_COST_STR")) % static_cast<int>(m_tech->ResearchCost() + 0.5) % m_tech->ResearchTurns());
+
+    // cost text box
     m_tech_cost_text = new GG::TextControl(text_left, 0,
-                                           Width() - text_left, Height() - LOWER_TECH_TEXT_OFFSET.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
-                                           cost_str, font, m_text_and_border_color, GG::FORMAT_BOTTOM | GG::FORMAT_LEFT);
+                                           Width() - text_left,
+                                           Height() - LOWER_TECH_TEXT_OFFSET.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
+                                           "Tech Cost Text", font, m_text_and_border_color,
+                                           GG::FORMAT_BOTTOM | GG::FORMAT_LEFT);
     AttachChild(m_tech_cost_text);
 
+
+    // progress text box
     GG::Rect progress_panel = ProgressPanelRect(UpperLeft(), LowerRight());
-    std::string progress_str;
-    if (known_tech)
-        progress_str = UserString("TECH_WND_TECH_COMPLETED");
-    else if (queued_tech)
-        progress_str = UserString("TECH_WND_TECH_QUEUED");
-    else if (m_progress)
-        progress_str = UserString("TECH_WND_TECH_INCOMPLETE");
-    m_progress_text = new GG::TextControl(static_cast<int>(progress_panel.ul.x - PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), progress_panel.ul.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
+    m_progress_text = new GG::TextControl(progress_panel.ul.x - static_cast<int>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale),
+                                          progress_panel.ul.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
                                           progress_panel.Width(), progress_panel.Height(),
-                                          progress_str, font, m_text_and_border_color);
+                                          "Progress Panel", font, m_text_and_border_color);
     AttachChild(m_progress_text);
 
+
+    // constrain long text that would otherwise overflow planel boundaries
     EnableChildClipping(true);
 
-    Select(m_selected);
+
+    // set text box text
+    Update();
 }
 
 bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const
@@ -1457,6 +1470,69 @@ void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
     //m_toggle_button->SetSelected(m_selected);
 }
 
+void TechTreeWnd::LayoutPanel::TechPanel::Update()
+{
+    bool known_tech = false;
+    bool queued_tech = false;
+    bool researchable_tech = false;
+
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire) {
+        // determine if tech is known, researchable or queued
+        if (empire->TechResearched(m_tech->Name())) {
+            known_tech = true;
+        } else {
+            ResearchQueue queue = empire->GetResearchQueue();
+            if (queue.InQueue(m_tech))
+                queued_tech = true;
+            double rps_spent = empire->ResearchStatus(m_tech->Name());
+            if (0.0 <= rps_spent) {
+                m_progress = rps_spent / (m_tech->ResearchTurns() * m_tech->ResearchCost());
+                assert(0.0 <= m_progress && m_progress <= 1.0);
+            }
+            researchable_tech = empire->ResearchableTech(m_tech->Name());
+        }
+    } else { // (!empire)
+        researchable_tech = true;
+    }
+
+
+    // set colours according to whether tech is known, researchable or queued
+    if (known_tech) {
+        m_fill_color = ClientUI::KnownTechFillColor();
+        m_text_and_border_color = ClientUI::KnownTechTextAndBorderColor();
+    } else if (researchable_tech) {
+        m_fill_color = ClientUI::ResearchableTechFillColor();
+        m_text_and_border_color = ClientUI::ResearchableTechTextAndBorderColor();
+    } else {
+        m_fill_color = ClientUI::UnresearchableTechFillColor();
+        m_text_and_border_color = ClientUI::UnresearchableTechTextAndBorderColor();
+    }
+
+
+    // update cost text
+    std::string cost_str;
+    if (!known_tech)
+        cost_str = boost::io::str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR")) %
+                                  static_cast<int>(m_tech->ResearchCost() + 0.5) %
+                                  m_tech->ResearchTurns());
+    m_tech_cost_text->SetText(cost_str);
+
+
+    // update progress text
+    std::string progress_str;
+    if (known_tech)
+        progress_str = UserString("TECH_WND_TECH_COMPLETED");
+    else if (queued_tech)
+        progress_str = UserString("TECH_WND_TECH_QUEUED");
+    else if (m_progress)
+        progress_str = UserString("TECH_WND_TECH_INCOMPLETE");
+    m_progress_text->SetText(progress_str);
+
+
+    Select(m_selected);
+}
+
 GG::Rect TechTreeWnd::LayoutPanel::TechPanel::ProgressPanelRect(const GG::Pt& ul, const GG::Pt& lr)
 {
     GG::Rect retval;
@@ -1498,7 +1574,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
     m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), ZBOFFSET, ZBSIZE, "+", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
-        
+
     m_zoom_out_button = new CUIButton(m_zoom_in_button->UpperLeft().x - LEFT, 
                                       m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
 
@@ -1660,9 +1736,17 @@ void TechTreeWnd::LayoutPanel::Render()
     GG::GUI::RenderWindow(m_hscroll);
 }
 
-void TechTreeWnd::LayoutPanel::Update()
+void TechTreeWnd::LayoutPanel::Update(const Tech* tech)
 {
-    Layout(true);
+    if (!tech) {
+        // redo entire layout
+        Layout(true);
+    } else {
+        // update just specified tech's panel
+        std::map<const Tech*, TechPanel*>::iterator tech_it = m_techs.find(tech);
+        if (tech_it != m_techs.end())
+            tech_it->second->Update();
+    }
 }
 
 void TechTreeWnd::LayoutPanel::Clear()
@@ -1671,17 +1755,21 @@ void TechTreeWnd::LayoutPanel::Clear()
     m_hscroll->ScrollTo(0);
     m_vscroll->SizeScroll(0, 1, 1, 1);
     m_hscroll->SizeScroll(0, 1, 1, 1);
-    for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
+
+    // delete all panels
+    for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it)
         delete it->second;
-    }
     m_techs.clear();
+
     m_dependency_arcs.clear();
+
     m_selected_tech = 0;
 }
 
 void TechTreeWnd::LayoutPanel::Reset()
 {
-    Layout(true);
+    // regenerate graph of panels and dependency lines
+    Layout(false);
 }
 
 void TechTreeWnd::LayoutPanel::SetScale(double scale)
@@ -1705,6 +1793,16 @@ void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
     }
 }
 
+void TechTreeWnd::LayoutPanel::ShowAllCategories()
+{
+    const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    if (all_cats.size() == m_categories_shown.size())
+        return;
+    for (std::vector<std::string>::const_iterator it = all_cats.begin(); it != all_cats.end(); ++it)
+        m_categories_shown.insert(*it);
+    Layout(true);
+}
+
 void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
 {
     std::set<std::string>::iterator it = m_categories_shown.find(category);
@@ -1712,6 +1810,14 @@ void TechTreeWnd::LayoutPanel::HideCategory(const std::string& category)
         m_categories_shown.erase(it);
         Layout(true);
     }
+}
+
+void TechTreeWnd::LayoutPanel::HideAllCategories()
+{
+    if (m_categories_shown.empty())
+        return;
+    m_categories_shown.clear();
+    Layout(true);
 }
 
 void TechTreeWnd::LayoutPanel::ShowType(TechType type) {
@@ -1758,6 +1864,8 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
         GG::Pt client_size = ClientSize();
         m_hscroll->ScrollTo(center_point.x - client_size.x / 2);
         m_vscroll->ScrollTo(center_point.y - client_size.y / 2);
+    } else {
+        Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << (tech ? tech->Name() : "Null tech pointer") << " due to lack of such a tech panel";
     }
 }
 
@@ -1809,6 +1917,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     // default edge properties
     agedgeattr(graph, "tailclip", "false");
 
+    Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
+
     std::map<std::string, Agnode_t*> name_to_node_map;
     TechManager& manager = GetTechManager();
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
@@ -1830,7 +1940,13 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         }
     }
 
+    Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
+
     gvLayout(gvc, graph, "dot");
+
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+
+    Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
     // create new tech panels and new dependency arcs
     m_dependency_arcs.clear();
@@ -1838,7 +1954,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     for (Agnode_t* node = agfstnode(graph); node; node = agnxtnode(graph, node)) {
         const Tech* tech = GetTech(node->name);
         assert(tech);
-        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, m_categories_shown, m_tech_types_shown, m_tech_statuses_shown, m_scale);
+        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, m_scale);
         m_techs[tech]->MoveTo(GG::Pt(static_cast<int>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN_X),
                                      static_cast<int>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN_Y)));
         m_layout_surface->AttachChild(m_techs[tech]);
@@ -1860,9 +1976,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
                 }
                 points.push_back(Spline(temp));
             }
-            const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-            
-            TechStatus arc_type = empire->GetTechStatus(to->Name());
+
+            TechStatus arc_type = TS_RESEARCHABLE;
+            if (empire)
+                arc_type = empire->GetTechStatus(to->Name());
             m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
         }
     }
@@ -1883,9 +2000,19 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
     agclose(graph);
 
+    Logger().debugStream() << "Tech Tree Layout Done";
+
     if (keep_position) {
         m_vscroll->ScrollTo(final_position.y);
         m_hscroll->ScrollTo(final_position.x);
+    } else {
+        // find a tech to centre view on
+        for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+            if (TechVisible(*it)) {
+                CenterOnTech(*it);
+                break;
+            }
+        }
     }
 
     // ensure that the scrolls stay on top
@@ -1895,16 +2022,22 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
 bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
 {
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return true;
+
+    // check that tech's type, category and status are all visible
+
     if (m_tech_types_shown.find(tech->Type()) == m_tech_types_shown.end())
         return false;
 
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
+    // all tests pass, so tech is visible
     return true;
 }
 
@@ -1990,6 +2123,350 @@ void TechTreeWnd::LayoutPanel::TreeZoomOutClicked()
     TreeZoomedSlot(-1);
 }
 
+
+//////////////////////////////////////////////////
+// TechTreeWnd::TechListBox                     //
+//////////////////////////////////////////////////
+class TechTreeWnd::TechListBox : public CUIListBox
+{
+public:
+    /** \name Structors */ //@{
+    TechListBox(int x, int y, int w, int h);
+    //@}
+
+    /** \name Accessors */ //@{
+    std::set<std::string>   GetCategoriesShown() const;
+    std::set<TechType>      GetTechTypesShown() const;
+    std::set<TechStatus>    GetTechStatusesShown() const;
+    //@}
+
+    //! \name Mutators //@{
+    void    Reset();
+
+    void    ShowCategory(const std::string& category);
+    void    ShowAllCategories();
+    void    HideCategory(const std::string& category);
+    void    HideAllCategories();
+    void    ShowType(TechType type);
+    void    HideType(TechType type);
+    void    ShowStatus(TechStatus status);
+    void    HideStatus(TechStatus status);
+
+    bool    TechVisible(const Tech* tech);
+    //@}
+
+    mutable boost::signal<void (const Tech*)>   TechBrowsedSignal;          ///< emitted when the mouse rolls over a technology
+    mutable boost::signal<void (const Tech*)>   TechClickedSignal;          ///< emitted when a technology is single-clicked
+    mutable boost::signal<void (const Tech*)>   TechDoubleClickedSignal;    ///< emitted when a technology is double-clicked
+
+private:
+    class TechRow : public CUIListBox::Row {
+    public:
+        TechRow(int w, const Tech* tech);
+        const Tech*                 GetTech() { return m_tech; }
+        virtual void                Render();
+        static std::vector<int>     ColWidths(int total_width);
+
+    private:
+        const Tech*     m_tech;
+    };
+
+    void    Populate();
+    void    PropagateDoubleClickSignal(GG::ListBox::iterator it);
+    void    PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt);
+
+    std::set<std::string> m_categories_shown;
+    std::set<TechType>    m_tech_types_shown;
+    std::set<TechStatus>  m_tech_statuses_shown;
+    std::vector<TechRow*> m_all_tech_rows;
+};
+
+void TechTreeWnd::TechListBox::TechRow::Render() {
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 1);
+}
+
+std::vector<int> TechTreeWnd::TechListBox::TechRow::ColWidths(int total_width) {
+    const int GRAPHIC_WIDTH = ClientUI::Pts() * 2;
+    const int NAME_WIDTH = ClientUI::Pts() * 18;
+    const int COST_WIDTH = ClientUI::Pts() * 2;
+    const int TIME_WIDTH = ClientUI::Pts() * 2;
+    const int CATEGORY_WIDTH = ClientUI::Pts() * 8;
+    const int TYPE_WIDTH = ClientUI::Pts() * 8;
+
+    const int DESC_WIDTH = std::max(1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH - CATEGORY_WIDTH - TYPE_WIDTH);
+    std::vector<int> retval;
+    retval.push_back(GRAPHIC_WIDTH);
+    retval.push_back(NAME_WIDTH);
+    retval.push_back(COST_WIDTH);
+    retval.push_back(TIME_WIDTH);
+    retval.push_back(CATEGORY_WIDTH);
+    retval.push_back(TYPE_WIDTH);
+    retval.push_back(DESC_WIDTH);
+    return retval;
+}
+
+TechTreeWnd::TechListBox::TechRow::TechRow(int w, const Tech* tech) :
+    CUIListBox::Row(w, ClientUI::Pts() * 2 + 5, "TechListBox::TechRow"),
+    m_tech(tech)
+{
+    if (!tech)
+        return;
+
+    std::vector<int> col_widths = ColWidths(w);
+    const int GRAPHIC_WIDTH =   col_widths[0];
+    const int NAME_WIDTH =      col_widths[1];
+    const int COST_WIDTH =      col_widths[2];
+    const int TIME_WIDTH =      col_widths[3];
+    const int CATEGORY_WIDTH =  col_widths[4];
+    const int TYPE_WIDTH =      col_widths[5];
+    const int DESC_WIDTH =      col_widths[6];
+    const int HEIGHT =          GRAPHIC_WIDTH;
+
+    GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, GRAPHIC_WIDTH, HEIGHT, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
+    push_back(graphic);
+
+    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+
+    GG::TextControl* text = new GG::TextControl(0, 0, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    text->ClipText(true);
+    push_back(text);
+
+    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(m_tech->ResearchCost() + 0.5));
+    text = new GG::TextControl(0, 0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+
+    std::string time_str = boost::lexical_cast<std::string>(m_tech->ResearchTurns());
+    text = new GG::TextControl(0, 0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+
+    std::string category_str = UserString(m_tech->Category());
+    text = new GG::TextControl(0, 0, CATEGORY_WIDTH, HEIGHT, category_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+
+    std::string type_str = UserString(boost::lexical_cast<std::string>(m_tech->Type()));
+    text = new GG::TextControl(0, 0, TYPE_WIDTH, HEIGHT, type_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+
+    std::string desc_str = UserString(m_tech->ShortDescription());
+    text = new GG::TextControl(0, 0, DESC_WIDTH, HEIGHT, desc_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    push_back(text);
+}
+
+TechTreeWnd::TechListBox::TechListBox(int x, int y, int w, int h) :
+    CUIListBox(x, y, w, h),
+    m_categories_shown(),
+    m_tech_types_shown(),
+    m_tech_statuses_shown()
+{
+    GG::Connect(DoubleClickedSignal,    &TechListBox::PropagateDoubleClickSignal,   this);
+    GG::Connect(LeftClickedSignal,      &TechListBox::PropagateLeftClickSignal,     this);
+
+    SetStyle(GG::LIST_NOSORT);
+
+    // show all categories...
+    m_categories_shown.clear();
+    const std::vector<std::string> categories = GetTechManager().CategoryNames();
+    for (std::vector<std::string>::const_iterator it = categories.begin(); it != categories.end(); ++it)
+        m_categories_shown.insert(*it);
+
+    // show all statuses
+    m_tech_statuses_shown.clear();
+    m_tech_statuses_shown.insert(TS_UNRESEARCHABLE);
+    m_tech_statuses_shown.insert(TS_RESEARCHABLE);
+    m_tech_statuses_shown.insert(TS_COMPLETE);
+
+    // show all types
+    m_tech_types_shown.clear();
+    m_tech_types_shown.insert(TT_THEORY);
+    m_tech_types_shown.insert(TT_APPLICATION);
+    m_tech_types_shown.insert(TT_REFINEMENT);
+
+    std::vector<int> col_widths = TechRow::ColWidths(w - ClientUI::ScrollWidth() - 6);
+    SetNumCols(col_widths.size());
+    LockColWidths();
+    for (unsigned int i = 0; i < col_widths.size(); ++i) {
+        SetColWidth(i, col_widths[i]);
+        SetColAlignment(i, GG::ALIGN_LEFT);
+    }
+}
+
+std::set<std::string> TechTreeWnd::TechListBox::GetCategoriesShown() const
+{
+    return m_categories_shown;
+}
+
+std::set<TechType> TechTreeWnd::TechListBox::GetTechTypesShown() const
+{
+    return m_tech_types_shown;
+}
+
+std::set<TechStatus> TechTreeWnd::TechListBox::GetTechStatusesShown() const
+{
+    return m_tech_statuses_shown;
+}
+
+void TechTreeWnd::TechListBox::Reset()
+{
+    Populate();
+}
+
+void TechTreeWnd::TechListBox::Populate()
+{
+    // abort of not visible to see results
+    if (!Visible())
+        return;
+
+    Logger().debugStream() << "Tech List Box Populating";
+
+    double creation_elapsed = 0.0;
+    double insertion_elapsed = 0.0;
+    boost::timer creation_timer;
+    boost::timer insertion_timer;
+    // HACK! This caching of TechRows works only if there are no "hidden" techs
+    // that are added to the manager mid-game.
+    TechManager& manager = GetTechManager();
+    if (m_all_tech_rows.empty()) {
+        for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+            const Tech* tech = *it;
+            creation_timer.restart();
+            m_all_tech_rows.push_back(new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech));
+            creation_elapsed += creation_timer.elapsed();
+        }
+    }
+
+    // remove techs in listbox, then reset the rest of its state
+    for (iterator it = begin(); it != end(); ) {
+        iterator temp_it = it++;
+        Erase(temp_it);
+    }
+    Clear();
+
+    for (std::vector<TechRow*>::iterator it = m_all_tech_rows.begin();
+         it != m_all_tech_rows.end();
+         ++it) {
+        TechRow* tech_row = *it;
+        if (TechVisible(tech_row->GetTech())) {
+            insertion_timer.restart();
+            Insert(*it);
+            insertion_elapsed += insertion_timer.elapsed();
+        }
+    }
+
+    Logger().debugStream() << "Tech List Box Done Populating";
+    Logger().debugStream() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
+    Logger().debugStream() << "    Insertion time=" << (insertion_elapsed * 1000) << "ms";
+}
+
+void TechTreeWnd::TechListBox::ShowCategory(const std::string& category)
+{
+    if (m_categories_shown.find(category) == m_categories_shown.end()) {
+        m_categories_shown.insert(category);
+        Populate();
+    }
+}
+
+void TechTreeWnd::TechListBox::ShowAllCategories()
+{
+    const std::vector<std::string> all_cats = GetTechManager().CategoryNames();
+    if (all_cats.size() == m_categories_shown.size())
+        return;
+    for (std::vector<std::string>::const_iterator it = all_cats.begin(); it != all_cats.end(); ++it)
+        m_categories_shown.insert(*it);
+    Populate();
+}
+
+void TechTreeWnd::TechListBox::HideCategory(const std::string& category)
+{
+    std::set<std::string>::iterator it = m_categories_shown.find(category);
+    if (it != m_categories_shown.end()) {
+        m_categories_shown.erase(it);
+        Populate();
+    }
+}
+
+void TechTreeWnd::TechListBox::HideAllCategories()
+{
+    if (m_categories_shown.empty())
+        return;
+    m_categories_shown.clear();
+    Populate();
+}
+
+void TechTreeWnd::TechListBox::ShowType(TechType type)
+{
+    if (m_tech_types_shown.find(type) == m_tech_types_shown.end()) {
+        m_tech_types_shown.insert(type);
+        Populate();
+    }
+}
+
+void TechTreeWnd::TechListBox::HideType(TechType type)
+{
+    std::set<TechType>::iterator it = m_tech_types_shown.find(type);
+    if (it != m_tech_types_shown.end()) {
+        m_tech_types_shown.erase(it);
+        Populate();
+    }
+}
+
+void TechTreeWnd::TechListBox::ShowStatus(TechStatus status)
+{
+    if (m_tech_statuses_shown.find(status) == m_tech_statuses_shown.end()) {
+        m_tech_statuses_shown.insert(status);
+        Populate();
+    }
+}
+
+void TechTreeWnd::TechListBox::HideStatus(TechStatus status)
+{
+    std::set<TechStatus>::iterator it = m_tech_statuses_shown.find(status);
+    if (it != m_tech_statuses_shown.end()) {
+        m_tech_statuses_shown.erase(it);
+        Populate();
+    }
+}
+
+bool TechTreeWnd::TechListBox::TechVisible(const Tech* tech)
+{
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return true;
+
+    // check that tech's type, category and status are all visible
+
+    if (m_tech_types_shown.find(tech->Type()) == m_tech_types_shown.end())
+        return false;
+
+    if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
+        return false;
+
+    if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
+        return false;
+
+    // all tests pass, so tech is visible
+    return true;
+}
+
+void TechTreeWnd::TechListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt) {
+    // determine type of row that was clicked, and emit appropriate signal
+
+    TechRow* tech_row = dynamic_cast<TechRow*>(*it);
+    if (tech_row)
+        TechClickedSignal(tech_row->GetTech());
+}
+
+void TechTreeWnd::TechListBox::PropagateDoubleClickSignal(GG::ListBox::iterator it) {
+    // determine type of row that was clicked, and emit appropriate signal
+
+    TechRow* tech_row = dynamic_cast<TechRow*>(*it);
+    if (tech_row)
+        TechDoubleClickedSignal(tech_row->GetTech());
+}
+
+
 //////////////////////////////////////////////////
 // TechTreeWnd                                  //
 //////////////////////////////////////////////////
@@ -1997,7 +2474,8 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Wnd(0, 0, w, h, GG::CLICKABLE),
     m_tech_detail_panel(0),
     m_tech_navigator(0),
-    m_layout_panel(0)
+    m_layout_panel(0),
+    m_tech_list(0)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -2009,15 +2487,23 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     GG::Connect(m_layout_panel->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
     AttachChild(m_layout_panel);
 
+    m_tech_list = new TechListBox(0, 0, w, h);
+    GG::Connect(m_tech_list->TechBrowsedSignal, &TechTreeWnd::TechBrowsedSlot, this);
+    GG::Connect(m_tech_list->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
+    GG::Connect(m_tech_list->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
+
     m_tech_detail_panel = new TechDetailPanel(m_layout_panel->ClientWidth() - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
-    m_layout_panel->AttachChild(m_tech_detail_panel);
+    AttachChild(m_tech_detail_panel);
 
     m_tech_navigator = new TechNavigator(NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
     m_tech_navigator->MoveTo(GG::Pt(m_tech_detail_panel->Width(), 1));
     GG::Connect(m_tech_navigator->TechClickedSignal, &TechTreeWnd::CenterOnTech, this);
     m_layout_panel->AttachChild(m_tech_navigator);
 
-    m_tech_tree_controls = new TechTreeControls(1, NAVIGATOR_AND_DETAIL_HEIGHT, m_layout_panel->Width() - ClientUI::ScrollWidth()*4);
+    m_tech_tree_controls = new TechTreeControls(1, NAVIGATOR_AND_DETAIL_HEIGHT, m_layout_panel->Width() - ClientUI::ScrollWidth());
+    m_tech_tree_controls->MoveTo(GG::Pt(1, m_layout_panel->Height() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
+    AttachChild(m_tech_tree_controls);
+
     const std::vector<std::string>& tech_categories = GetTechManager().CategoryNames();
     // connect category button clicks to update display
     for (unsigned int i = 0; i < m_tech_tree_controls->m_category_buttons.size() - 1; ++i)
@@ -2030,7 +2516,17 @@ TechTreeWnd::TechTreeWnd(int w, int h) :
     for (std::map<TechType, CUIButton*>::iterator it = m_tech_tree_controls->m_tech_type_buttons.begin();
                                                   it != m_tech_tree_controls->m_tech_type_buttons.end(); ++it)
         GG::Connect(it->second->ClickedSignal, ToggleTechTypeFunctor(this, it->first));
-    m_layout_panel->AttachChild(m_tech_tree_controls);
+    // connect view type selectors
+    GG::Connect(m_tech_tree_controls->m_tree_view_button->ClickedSignal, &TechTreeWnd::ShowTreeView, this);
+    GG::Connect(m_tech_tree_controls->m_list_view_button->ClickedSignal, &TechTreeWnd::ShowListView, this);
+
+    ShowAllCategories();
+    for (TechStatus status = TechStatus(0); status != NUM_TECH_STATUSES; status = TechStatus(status + 1))
+        ShowStatus(status);
+    for (TechType type = TechType(0); type != NUM_TECH_TYPES; type = TechType(type + 1))
+        ShowType(type);
+
+    ShowTreeView();
 }
 
 double TechTreeWnd::Scale() const
@@ -2053,9 +2549,10 @@ std::set<TechStatus> TechTreeWnd::GetTechStatusesShown() const
     return m_layout_panel->GetTechStatusesShown();
 }
 
-void TechTreeWnd::Update()
+void TechTreeWnd::Update(const Tech* tech)
 {
-    m_layout_panel->Update();
+    m_layout_panel->Update(tech);
+    // no list update available or needed as of this writing
 }
 
 void TechTreeWnd::Clear()
@@ -2068,12 +2565,14 @@ void TechTreeWnd::Clear()
 void TechTreeWnd::Reset()
 {
     m_layout_panel->Reset();
+    m_tech_list->Reset();
 }
 
 void TechTreeWnd::ShowCategory(const std::string& category)
 {
     m_layout_panel->ShowCategory(category);
-    
+    m_tech_list->ShowCategory(category);
+
     // colour category button with its category colour
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
@@ -2088,18 +2587,21 @@ void TechTreeWnd::ShowCategory(const std::string& category)
 
 void TechTreeWnd::ShowAllCategories()
 {
+    m_layout_panel->ShowAllCategories();
+    m_tech_list->ShowAllCategories();
+
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_layout_panel->ShowCategory(*cats_it);
         CUIButton* button = m_tech_tree_controls->m_category_buttons[i];
-        button->MarkSelectedTechCategoryColor(cats[i]);
+        button->MarkSelectedTechCategoryColor(*cats_it);
     }
 }
 
 void TechTreeWnd::HideCategory(const std::string& category)
 {
     m_layout_panel->HideCategory(category);
+    m_tech_list->HideCategory(category);
 
     // colour category button to default colour, to indicate non-selection
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
@@ -2114,10 +2616,12 @@ void TechTreeWnd::HideCategory(const std::string& category)
 
 void TechTreeWnd::HideAllCategories()
 {
+    m_layout_panel->HideAllCategories();
+    m_tech_list->HideAllCategories();
+
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
     int i = 0;
     for (std::vector<std::string>::const_iterator cats_it = cats.begin(); cats_it != cats.end(); ++cats_it, ++i) {
-        m_layout_panel->HideCategory(*cats_it);
         m_tech_tree_controls->m_category_buttons[i]->MarkNotSelected();
     }
 }
@@ -2147,7 +2651,8 @@ void TechTreeWnd::ToggleCategory(const std::string& category)
 void TechTreeWnd::ShowStatus(TechStatus status)
 {
     m_layout_panel->ShowStatus(status);
-    
+    m_tech_list->ShowStatus(status);
+
     CUIButton* button = m_tech_tree_controls->m_tech_status_buttons[status];
     button->MarkSelectedGray();
 }
@@ -2155,6 +2660,7 @@ void TechTreeWnd::ShowStatus(TechStatus status)
 void TechTreeWnd::HideStatus(TechStatus status)
 {
     m_layout_panel->HideStatus(status);
+    m_tech_list->HideStatus(status);
 
     CUIButton* button = m_tech_tree_controls->m_tech_status_buttons[status];
     button->MarkNotSelected();
@@ -2174,6 +2680,7 @@ void TechTreeWnd::ToggleStatus(TechStatus status)
 void TechTreeWnd::ShowType(TechType type)
 {
     m_layout_panel->ShowType(type);
+    m_tech_list->ShowType(type);
 
     CUIButton* button = m_tech_tree_controls->m_tech_type_buttons[type];
     button->MarkSelectedGray();
@@ -2182,6 +2689,7 @@ void TechTreeWnd::ShowType(TechType type)
 void TechTreeWnd::HideType(TechType type)
 {
     m_layout_panel->HideType(type);
+    m_tech_list->HideType(type);
 
     CUIButton* button = m_tech_tree_controls->m_tech_type_buttons[type];
     button->MarkNotSelected();
@@ -2199,6 +2707,26 @@ void TechTreeWnd::ToggleType(TechType type)
     }
 }
 
+void TechTreeWnd::ShowTreeView()
+{
+    AttachChild(m_layout_panel);
+    MoveChildDown(m_layout_panel);
+    DetachChild(m_tech_list);
+    m_tech_tree_controls->m_list_view_button->MarkNotSelected();
+    m_tech_tree_controls->m_tree_view_button->MarkSelectedGray();
+    MoveChildUp(m_tech_tree_controls);
+}
+
+void TechTreeWnd::ShowListView()
+{
+    AttachChild(m_tech_list);
+    MoveChildDown(m_tech_list);
+    DetachChild(m_layout_panel);
+    m_tech_tree_controls->m_list_view_button->MarkSelectedGray();
+    m_tech_tree_controls->m_tree_view_button->MarkNotSelected();
+    MoveChildUp(m_tech_tree_controls);
+}
+
 void TechTreeWnd::SetScale(double scale)
 {
     m_layout_panel->SetScale(scale);
@@ -2208,13 +2736,13 @@ void TechTreeWnd::CenterOnTech(const Tech* tech)
 {
     // ensure tech is visible
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-
+    if (empire)
+        ShowStatus(empire->GetTechStatus(tech->Name()));
     ShowCategory(tech->Category());
-    ShowStatus(empire->GetTechStatus(tech->Name()));
     ShowType(tech->Type());
 
     // centre on it
-    m_layout_panel->ShowTech(tech);
+    //m_layout_panel->ShowTech(tech);   // show tech is detail window.  not really necessary for centring
     m_layout_panel->CenterOnTech(tech);
 }
 

@@ -18,32 +18,31 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const ShipDesign*   Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
-    int                 DesignID() const;   ///< returns the design id of the ship
-    int                 FleetID() const;    ///< returns the ID of the fleet the ship is residing in
-    Fleet*              GetFleet() const;   ///< returns the ID of the fleet the ship is residing in
+    const ShipDesign*                   Design() const;                     ///< returns the design of the ship, containing engine type, weapons, etc.
+    int                                 DesignID() const;                   ///< returns the design id of the ship
+    int                                 FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
+    Fleet*                              GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
 
-    virtual             UniverseObject::Visibility GetVisibility(int empire_id) const;
-    virtual             const std::string& PublicName(int empire_id) const;
+    virtual UniverseObject::Visibility  GetVisibility(int empire_id) const;
+    virtual const std::string&          PublicName(int empire_id) const;
 
-    bool                IsArmed() const;
-    double              Speed() const;
+    bool                                IsArmed() const;
+    bool                                CanColonize() const;
+    double                              Speed() const;
 
-    virtual             UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+    virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double      ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+    virtual double                      ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
     //@}
 
-    /** \name Mutators */ //@{   
-    void            SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
-    virtual void    MovementPhase();
-    virtual void    PopGrowthProductionResearchPhase();
-
-    bool            AdjustFuel(double amount);  ///< Adds \a amount of fuel to ship's fuel meter.  Returns true unless deduction would cause ship to have negative fuel, or more fuel than it can carry
+    /** \name Mutators */ //@{
+    void                                SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
+    virtual void                        MovementPhase();
+    virtual void                        PopGrowthProductionResearchPhase();
     //@}
 
 protected:
-    void Init();
+    void                                Init();
 
 private:
     int m_design_id;

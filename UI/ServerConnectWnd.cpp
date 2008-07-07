@@ -1,7 +1,6 @@
 #include "ServerConnectWnd.h"
 
 #include "ClientUI.h"
-#include "CUIControls.h"
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -126,7 +125,7 @@ void ServerConnectWnd::Init()
     PopulateServerList();
     if (m_servers_lb->NumRows()) {
         m_host_or_join_radio_group->SetCheck(1);
-        m_servers_lb->SelectRow(0);
+        m_servers_lb->SelectRow(m_servers_lb->begin());
     }
 }
 
@@ -151,7 +150,7 @@ void ServerConnectWnd::HostOrJoinClicked(int idx)
     EnableDisableControls();
 }
 
-void ServerConnectWnd::ServerSelected(const std::set<int>& selections)
+void ServerConnectWnd::ServerSelected(const GG::ListBox::SelectionSet& selections)
 {
     if (!selections.empty())
         *m_IP_address_edit << "";
@@ -178,7 +177,7 @@ void ServerConnectWnd::OkClicked()
     } else {
         m_result.second = *m_IP_address_edit;
         if (m_result.second == "")
-            m_result.second = m_servers_lb->GetRow(*m_servers_lb->Selections().begin())[0]->WindowText();
+            m_result.second = (***m_servers_lb->Selections().begin())[0]->WindowText();
     }
     CUIWnd::CloseClicked();
 }

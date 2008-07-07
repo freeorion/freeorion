@@ -124,7 +124,9 @@ public:
     virtual boost::any Validate(const std::string& str) const
     {
         T val = boost::lexical_cast<T>(str);
-        if (val < m_min || val > m_max || std::abs(details::mod<T>(val - m_origin, m_step_size)) > std::numeric_limits<T>::epsilon())
+        if (val < m_min || val > m_max ||
+            std::abs(details::mod<T>(val - m_origin, m_step_size)) > std::numeric_limits<T>::epsilon() &&
+            std::abs(m_step_size - details::mod<T>(val - m_origin, m_step_size)) > std::numeric_limits<T>::epsilon())
             throw boost::bad_lexical_cast();
         return boost::any(val);
     }

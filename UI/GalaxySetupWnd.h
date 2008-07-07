@@ -71,8 +71,9 @@ private:
     void Init();
     void AttachSignalChildren();
     void DetachSignalChildren();
-    void SettingChanged(int);
-    void ShapeChanged(int index);
+    void SettingChanged_(int);
+    void SettingChanged(GG::ListBox::iterator);
+    void ShapeChanged(GG::ListBox::iterator it);
 
     CUISpin<int>*         m_stars_spin;          //!< The number of stars to include in the galaxy
     CUIDropDownList*      m_galaxy_shapes_list;  //!< The possible shapes for the galaxy
@@ -101,6 +102,7 @@ public:
     const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
     const std::string&      EmpireName() const;
     GG::Clr                 EmpireColor() const;
+    int                     NumberAIs() const;
     //!@}
 
     /** \name Mutators*/ //!@{
@@ -124,6 +126,8 @@ private:
     CUIEdit*              m_empire_name_edit;
     GG::TextControl*      m_empire_color_label;
     EmpireColorSelector*  m_empire_color_selector;
+    GG::TextControl*      m_number_ais_label;
+    CUISpin<int>*         m_number_ais_spin;
     GG::StaticGraphic*    m_preview_image;         //!< The galaxy shape preview image
     CUIButton*            m_ok;                    //!< OK button
     CUIButton*            m_cancel;                //!< Cancel button

@@ -3,25 +3,27 @@ import freeOrionAIInterface as fo
 
 # TO DO:
 # hide gs_etc functions
+# move enumerators in their own module
 
 # AI enumerators
 missionTypes =       ["MT_NONE", "MT_EXPLORATION", "MT_COLONISATION", "MT_MOVE", "MT_MERGE", "MT_ATTACK", "MT_GUARD"]
 
 # fleetRoles = ... <> conversion to/from missionType?
 
+# ship Roles   # MOVE
 militaryRoles =      ["SR_ATTACK", "SR_LONGRANGE", "SR_MISSILES", "SR_POINTDEFENSE"]
 civilianRoles =      ["SR_EXPLORATION", "SR_COLONISATION"]
 shipRoles =          ["SR_NONE"] + militaryRoles + civilianRoles
 
-priorityResources =  ["PR_FOOD", "PR_MINERALS", "PR_PRODUCTION", "PR_RESEARCH", "PR_TRADE"]
-priorityProduction = ["PR_EXPLORATION", "PR_COLONISATION", "PR_MILITARY", "PR_BUILDINGS"]
-priorityResearch =   ["PR_LEARNING", "PR_GROWTH", "PR_PRODUCTION", "PR_CONSTRUCTION", "PR_ECONOMICS", "PR_SHIPS"]
-priorityTypes =      ["PR_NONE"] + priorityResources + priorityProduction + priorityResearch
+
+# global variables
+foodStockpileSize = 1     # food stored per population
+minimalColoniseValue = 4  # minimal value for a planet to be colonised, now a size 2 terran world
 
 
 # AIstate class
 class AIstate:
-    "stores, saves and loads AI gamestate"
+    "stores AI gamestate"
 
     # def startTurn (cleans missions, fleetroles, calls colonisable planets + priorities)
     # def endTurn
@@ -59,14 +61,17 @@ class AIstate:
     def removeFleetRole(self, fleetID): gs_removeFleetRole(self, fleetID)
     def cleanFleetRoles(self): gs_cleanFleetRoles(self)
 
-    # colonisable planets (should be set at start of turn)
-    # (hide?) setColonisablePlanets
+    # common variables
+    # def explorableSystems
+#     def colonisablePlanets (should be set at start of turn)
+    # def 
     # getColonisablePlanets (deepcopy!)
 
     # demands (should be set at start of turn)
     def setPriority(self, priorityType, value): gs_setPriority(self, priorityType, value)
     def getPriority(self, priorityType): return gs_getPriority(self, priorityType)
     def getAllPriorities(self): return gs_getAllPriorities(self)
+    def printPriorities(self): gs_printPriorities(self)
 
     # constructor / destructor
     def __init__(self):
@@ -324,7 +329,7 @@ def gs_getPriority(self, priorityType):
     "returns the priority value of the specified type"
 
     if priorityType in self.__priorityByType__:
-        return self.__priorityByType__[priorityType]
+        return copy.deepcopy(self.__priorityByType__[priorityType])
 
     return 0
     # todo: check for valid types
@@ -334,3 +339,10 @@ def gs_getAllPriorities(self):
     "returns a dictionary with all priority values"
 
     return copy.deepcopy(self.__priorityByType__)
+
+def gs_printPriorities(self):
+    "prints all priorities"
+
+    for priority in self.__priorityByType__:
+        print priority + ": " + str(self.__priorityByType__[priority])
+

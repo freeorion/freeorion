@@ -3,6 +3,7 @@
 #include "../util/AppInterface.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "QueueListBox.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
@@ -29,86 +30,6 @@ namespace {
     {
         QueueRow(int w, const Tech* tech_, bool in_progress, int turns_left);
         const Tech* const tech;
-    };
-
-    //////////////////////////////////////////////////
-    // QueueListBox
-    //////////////////////////////////////////////////
-    class QueueListBox : public CUIListBox
-    {
-    public:
-        QueueListBox(int x, int y, int w, int h, ResearchWnd* research_wnd) :
-            CUIListBox(x, y, w, h),
-            m_research_wnd(research_wnd),
-            m_drop_point(-1)
-        {
-            AllowDropType("RESEARCH_QUEUE_ROW");
-        }
-
-        virtual void DropsAcceptable(DropsAcceptableIter first,
-                                     DropsAcceptableIter last,
-                                     const GG::Pt& pt) const
-        {
-            assert(std::distance(first, last) == 1);
-            for (DropsAcceptableIter it = first; it != last; ++it) {
-                it->second = AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
-            }
-        }
-
-        virtual void AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& pt)
-        {
-            assert(wnds.size() == 1);
-            GG::ListBox::Row* row =
-                boost::polymorphic_downcast<GG::ListBox::Row*>(*wnds.begin());
-            int original_row_idx = -1;
-            for (int i = 0; i < NumRows(); ++i) {
-                if (&GetRow(i) == row) {
-                    original_row_idx = i;
-                    break;
-                }
-            }
-            assert(original_row_idx != -1);
-            int row_idx = RowUnderPt(pt);
-            if (row_idx < 0 || row_idx > NumRows())
-                row_idx = NumRows();
-            m_research_wnd->QueueItemMoved(row_idx, row);
-        }
-
-        virtual void Render()
-        {
-            ListBox::Render();
-            if (m_drop_point != -1) {
-                GG::ListBox::Row& row = GetRow(m_drop_point == NumRows() ? NumRows() - 1 : m_drop_point);
-                GG::Control* panel = row[0];
-                GG::Pt ul = row.UpperLeft(), lr = row.LowerRight();
-                if (m_drop_point == NumRows())
-                    ul.y = lr.y;
-                ul.x = panel->UpperLeft().x;
-                lr.x = panel->LowerRight().x;
-                GG::FlatRectangle(ul.x, ul.y - 1, lr.x, ul.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
-            }
-        }
-        virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
-        {
-            if (drag_drop_wnds.size() == 1 && AllowedDropTypes().find(drag_drop_wnds.begin()->first->DragDropDataType()) != AllowedDropTypes().end()) {
-                m_drop_point = RowUnderPt(pt);
-                if (m_drop_point < 0)
-                    m_drop_point = 0;
-                if (NumRows() < m_drop_point)
-                    m_drop_point = NumRows();
-            } else {
-                m_drop_point = -1;
-            }
-            ListBox::DragDropHere(pt, drag_drop_wnds, mod_keys);
-        }
-        virtual void DragDropLeave()
-        {
-            m_drop_point = -1;
-            ListBox::DragDropLeave();
-        }
-    private:
-        ResearchWnd* m_research_wnd;
-        int          m_drop_point;
     };
 
     //////////////////////////////////////////////////
@@ -266,7 +187,8 @@ ResearchWnd::ResearchWnd(int w, int h) :
 {
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, 200, UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
-    m_queue_lb = new QueueListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), this);
+    m_queue_lb = new QueueListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), "RESEARCH_QUEUE_ROW");
+    GG::Connect(m_queue_lb->QueueItemMoved, &ResearchWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, 6);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
@@ -288,9 +210,16 @@ ResearchWnd::ResearchWnd(int w, int h) :
 void ResearchWnd::Reset()
 {
     m_tech_tree_wnd->Reset();
-    ResetInfoPanel();
     UpdateQueue();
-    m_queue_lb->BringRowIntoView(0);
+    UpdateInfoPanel();
+    m_queue_lb->BringRowIntoView(m_queue_lb->begin());
+}
+
+void ResearchWnd::Update()
+{
+    m_tech_tree_wnd->Update();
+    UpdateQueue();
+    UpdateInfoPanel();
 }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
@@ -298,11 +227,14 @@ void ResearchWnd::CenterOnTech(const std::string& tech_name)
     m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
 }
 
-void ResearchWnd::QueueItemMoved(int row_idx, GG::ListBox::Row* row)
+void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name(), row_idx)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
+                                        boost::polymorphic_downcast<QueueRow*>(row)->tech->Name(),
+                                        position)));
     UpdateQueue();
-    ResetInfoPanel();
+    UpdateInfoPanel();
 }
 
 void ResearchWnd::Sanitize()
@@ -340,19 +272,22 @@ void ResearchWnd::UpdateQueue()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
-    int first_visible_queue_row = m_queue_lb->FirstRowShown();
-    int original_queue_length = m_queue_lb->NumRows();
+    std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
+    std::size_t original_queue_length = m_queue_lb->NumRows();
     m_queue_lb->Clear();
     const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
+
     for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->spending, it->turns_left));
     }
-    m_queue_lb->BringRowIntoView(m_queue_lb->NumRows() - 1);
+
+    if (!m_queue_lb->Empty())
+        m_queue_lb->BringRowIntoView(--m_queue_lb->end());
     if (m_queue_lb->NumRows() <= original_queue_length)
-        m_queue_lb->BringRowIntoView(first_visible_queue_row);
+        m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
 }
 
-void ResearchWnd::ResetInfoPanel()
+void ResearchWnd::UpdateInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
@@ -367,7 +302,6 @@ void ResearchWnd::ResetInfoPanel()
        determine how many RPs are being spent).  If/when RP are stockpilable, this might matter,
        so then the following line should be uncommented.*/
     //empire->GetResearchResPool().ChangedSignal(); 
-
 }
 
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
@@ -377,12 +311,12 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     if (!queue.InQueue(tech)) {
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
         UpdateQueue();
-        ResetInfoPanel();
+        UpdateInfoPanel();
         m_tech_tree_wnd->Update();
     }
 }
 
-void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
+void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec)
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
@@ -393,26 +327,29 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(std::vector<const Tech*> tech_vec)
         if (!queue.InQueue(tech))
             orders.IssueOrder(OrderPtr(new ResearchQueueOrder(id, tech->Name(), -1)));
     }
-    
+
     UpdateQueue();
-    ResetInfoPanel();
+    UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 
-void ResearchWnd::QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row)
+void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), dynamic_cast<QueueRow*>(row)->tech->Name())));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
+                                        boost::polymorphic_downcast<QueueRow*>(*it)->tech->Name())));
     UpdateQueue();
-    ResetInfoPanel();
+    UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 
-void ResearchWnd::QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt)
+void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
 {
-    m_tech_tree_wnd->CenterOnTech(dynamic_cast<QueueRow*>(row)->tech);
+    m_tech_tree_wnd->CenterOnTech(boost::polymorphic_downcast<QueueRow*>(*it)->tech);
 }
 
-void ResearchWnd::QueueItemDoubleClickedSlot(int row_idx, GG::ListBox::Row* row)
+void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 {
-    delete m_queue_lb->Erase(row_idx);
+    // TOOD: Confirm (optionally?) if progress has already been made on this tech.
+    delete m_queue_lb->Erase(it);
 }

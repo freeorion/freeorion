@@ -212,6 +212,9 @@ Het geluidsbestand dat afgespeeld moet worden als de muis over een vlootknop ver
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
 Het geluidsbestand dat afgespeeld moet worden als er op een vlootknop geklikt wordt.
 
+OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
+Het geluidsbestand dat afgespeeld moet worden als de muis over een systeem icoon verplaatst.
+
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Het geluidsbestand dat afgespeeld moet worden als de systeem zijpaneel geopend wordt.
 
@@ -219,7 +222,7 @@ OPTIONS_DB_UI_SOUND_FARMING_FOCUS
 Het geluidsbestand dat afgespeeld moet worden als een agrarische focusknop geklikt wordt.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Het geluidsbestand dat afgespeeld moet worden als een industriële focusknop geklikt wordt.
+Het geluidsbestand dat afgespeeld moet worden als een industriÃ«le focusknop geklikt wordt.
 
 OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
 Het geluidsbestand dat afgespeeld moet worden als een onderzoeks focusknop geklikt wordt.
@@ -309,22 +312,22 @@ OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
 Zet GebruikersInterface binnenste rand kleur.
 
 OPTIONS_DB_UI_KNOWN_TECH
-Zet kleur van bekende technologiën in de technologie boom.
+Zet kleur van bekende technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Zet tekst en rand kleur van bekende technologiën in de technologie boom.
+Zet tekst en rand kleur van bekende technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH
-Zet kleur van onderzoekbare technologiën in de technologie boom.
+Zet kleur van onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
-Zet tekst en rand kleur van onderzoekbare technologiën in de technologie boom.
+Zet tekst en rand kleur van onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH
-Zet kleur van niet-onderzoekbare technologiën in de technologie boom.
+Zet kleur van niet-onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
-Zet tekst en rand kleur van niet-onderzoekbare technologiën in de technologie boom.
+Zet tekst en rand kleur van niet-onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
 Zet achtergrondkleur van de voortgangsbalk in de technologie boom.
@@ -345,19 +348,34 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Zet grootte van systeem selectie indicatoren (relatief te opzichte van systeem iconen).
 
 OPTIONS_DB_UI_TECH_CATEGORY_1
-Zet kleur van de eerste categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de eerste categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_2
-Zet kleur van de tweede categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de tweede categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_3
-Zet kleur van de derde categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de derde categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_4
-Zet kleur van de vierde categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de vierde categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_5
-Zet kleur van de vijfde categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de vijfde categorie van technologiÃ«n gedefinieerd in tech.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_6
+Sets color of the sixth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_7
+Sets color of the seventh category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_8
+Sets color of the eighth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_9
+Sets color of the ninth category of techs defined in techs.xml.
+
+OPTIONS_DB_UI_TECH_CATEGORY_10
+Sets color of the tenth category of techs defined in techs.xml.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Zet GebruikersInterface InfoTip popup vertaging, in ms.
@@ -390,10 +408,10 @@ OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 De frequentie van verschijning van specials in de melkweg om te genereren. 
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-De horizontale afstand tussen technologiën in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
+De horizontale afstand tussen technologiÃ«n in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-De verticale afstand tussen technologiën in het onderzoeksvenster, in meerdere van de hoogte voor iedere enkele theorie technologie.
+De verticale afstand tussen technologiÃ«n in het onderzoeksvenster, in meerdere van de hoogte voor iedere enkele theorie technologie.
 
 OPTIONS_DB_SAVE_DIR
 De directorie waarin opgeslagen spellen opgeslagen en vanuit geladen worden. Directorienamen zijn relatief ten opzichte van de lokatie van het uitvoerbaar bestand.
@@ -713,7 +731,6 @@ Visie
 FREEORION_VISION
 FreeOrion, een open source spel gebaseerd op Master of Orion, is een beurt-gebaseerd spel van epische ruimte strategie, dat voorbouwt op het klassieke '4X' model door natie-opbouw elementen zoals spellen als Europa Universalis 2 en een uitgebreide tactische gevechts engine erin te bouwen. Door z'n modulaire, open source ontwerp is er veel ruimte voor aanpassing van de spel engine en verhaal elementen door de gemeenschap, het FreeOrion team is toegewijd aan het bouwen van een levend en ademend universum in een 'grand campagne' model.
 
-
 ###########################
 # Game Menu	              #
 ###########################
@@ -792,13 +809,13 @@ OPTIONS_TOOLTIP_DELAY
 InfoTip vertraging (ms)
 
 OPTIONS_VIDEO_MODE
-Video Modus
+Video Modus (herstart om veranderingen te gebruiken)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Activeert schermvullende modus, stelt schermresolutie in en stelt bits per pixel in een stap in; zet dit op "Aangepast" om de breedte, hoogte en bits per pixel handmatig in te stellen.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Aangepast
+Aangepast venster
 
 OPTIONS_VIDEO_SETTINGS
 Video Instellingen
@@ -865,6 +882,9 @@ Vloot Knop Klik
 
 OPTIONS_SOUND_FLEET_ROLLOVER
 Vloot Knop Rolover
+
+OPTIONS_SOUND_SYSTEM_ROLLOVER
+Systeem Icoon Rolover
 
 OPTIONS_SOUND_WINDOW
 Venstergeluiden
@@ -978,13 +998,13 @@ OPTIONS_TEXT_AND_BORDER_COLOR
 Tekst en Rand
 
 OPTIONS_KNOWN_TECH_COLORS
-Bekende technologiën
+Bekende technologiÃ«n
 
 OPTIONS_RESEARCHABLE_TECH_COLORS
-Ondezoekbare technologiën
+Ondezoekbare technologiÃ«n
 
 OPTIONS_UNRESEARCHABLE_TECH_COLORS
-Niet-onderzoekbare technologiën
+Niet-onderzoekbare technologiÃ«n
 
 OPTIONS_TECH_PROGRESS_COLORS
 Onderzoekvoortgangsbalk
@@ -1038,6 +1058,9 @@ Onderzoek
 
 MAP_BTN_PRODUCTION
 Productie
+
+MAP_BTN_DESIGN
+Ontwerp
 
 #################
 # SidePanel     #
@@ -1189,13 +1212,14 @@ FW_EMPIRE_FLEETS
 FW_HOME_FLEET
 Thuis Vloot
 
-# the name that is used for fleets the player does not control
-# Vertaling niet optimaal, maar dekt de vertaling het beste (volgens de VanDale).
+FW_BATTLE_FLEET
+Battle Fleet
+
+# the name that is used for fleets the player does not control .Vertaling niet optimaal, maar dekt de vertaling het beste (volgens de VanDale).
 FW_FOREIGN_FLEET
 Allochtone vloot
 
-# the name that is used for ships the player does not control
-# Ned. commentaar zie hierboven.
+# the name that is used for ships the player does not control .Ned. commentaar zie hierboven.
 FW_FOREIGN_SHIP
 Allochtoon schip
 
@@ -1210,10 +1234,10 @@ TECH_NAVIGATION
 Navigatie
 
 TECH_TOTAL_COST_STR
-%1% OP / %2% Beurt
+%1% OP / Beurt @ %2% Beurten
 
 TECH_TURN_COST_STR
-%1% OP / %2% Beurt
+%1% OP / Beurt @ %2% Beurten
 
 TECH_TURNS_LEFT_STR
 %1% Beurten
@@ -1222,7 +1246,7 @@ TECH_TURNS_LEFT_NEVER
 Nooit
 
 TECH_DETAIL_TYPE_STR
-%1% %2%
+%1% %2% - %3%
 
 TECH_DETAIL_DESCRIPTION_STR
 %1%
@@ -1374,6 +1398,147 @@ PRODUCTION_QUEUE_MULTIPLES
 %1%x 
 
 
+###############
+#  DesignWnd  #
+###############
+
+DESIGN_ADD_TEST
+Testontwerp toevoegen
+
+DESIGN_NAME_DEFAULT
+Aangepast scheepsontwerp
+
+DESIGN_DESCRIPTION_DEFAULT
+Ontwerp beschrijving
+
+DESIGN_NO_PART
+Geen
+
+DESIGN_WND_STARTS
+Ontwerp start
+
+DESIGN_WND_HULLS
+Empty Hulls
+
+DESIGN_WND_FINISHED_DESIGNS
+Voltooide ontwerpen
+
+DESIGN_WND_SAVED_DESIGNS
+Opgeslagen ontwerpen
+
+DESIGN_WND_TEMPLATES
+Ontwerpsjablonen
+
+DESIGN_WND_PART_PALETTE_TITLE
+Scheepsonderdelen
+
+DESIGN_WND_MAIN_PANEL_TITLE
+Ontwerp details
+
+DESIGN_WND_DESIGN_NAME
+Ontwerp naam
+
+DESIGN_WND_DESIGN_DESCRIPTION
+Beschrijving
+
+DESIGN_WND_CONFIRM
+Bevestig nieuw ontwerp
+
+DESIGN_WND_CLEAR
+Onderelen wissen
+
+# Ship Slot Types
+
+SL_EXTERNAL
+Extern
+
+SL_INTERNAL
+Intern
+
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Kort bereik
+
+PC_MISSILES
+Raketten
+
+PC_FIGHTERS
+Fighters
+
+PC_POINT_DEFENSE
+Point Defense
+
+PC_SHIELD
+Schilden
+
+PC_ARMOUR
+Bepansering
+
+PC_DETECTION
+Detectie
+
+PC_STEALTH
+Stealth
+
+PC_FUEL
+Brandstof
+
+PC_COLONY
+Kolonizatie
+
+
+####################
+#   Encyclopedia   #
+####################
+
+# types of things that can be shown in encyclopedia
+ENC_SHIP_PART
+Scheepsonderdeel
+
+ENC_SHIP_HULL
+Ship Hull
+
+ENC_TECH
+Technologie
+
+ENC_SHIP_DESIGN
+Scheepsontwerp
+
+ENC_SPECIAL
+Speciaal
+
+ENC_BUILDING
+Gebouw
+
+# type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
+# for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
+# %1% may be an empty string for most general types of things that can be shown.
+ENC_DETAIL_TYPE_STR
+<i>%1% %2%</i>
+
+ENC_PP
+PP
+
+ENC_RP
+RP
+
+# indication of cost to produce or research thing that is shown.  May be omitted if thing shown can't
+# be produced or research (eg. specials)
+# %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
+# %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
+# %3% will be the minimum number of turns it takes to produce or research the thing shown
+END_COST_AND_TURNS_STR
+%1% %2% / Turn @ %3% Turns
+
+# autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
+# provide an appropriate heading to appear before the autogenerated text.
+END_EFFECTS_STR
+\n\n<u>Effects</u>\n\n%1%
+
+
+
 ####################
 # Combat Messages  #
 ####################
@@ -1488,70 +1653,64 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 ####################
 
 HOMEWORLD_SPECIAL
-Homeworld
+Thuiswereld
 
 HOMEWORLD_SPECIAL_DESCRIPTION
-This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
-
-STARVATION_SPECIAL
-Starvation
-
-STARVATION_SPECIAL_DESCRIPTION
-This planet is starving!  The people will not do anything as well as they normally do, except produce nutrients.
+Deze planeet is de geboorteplaats van je soort; je weet hoe je hem het beste moet gebruiken, en krijgt daardoor bonussen op alle planetaire statistieken.
 
 ANCIENT_RUINS_SPECIAL
-Ancient Ruins
+Oude Ruïnes
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, giving a bonus to research.
+Deze planeet bevat de ruÃ¯nes van een geavanceerde oude soort, die vergeten en niet in de geschiedenisboeken terug te vinden zijn, dit geeft een bonus in onderzoek.
 
 MINERALS_SPECIAL
-Mineral Rich
+Minerale Rijkdom
 
 MINERALS_SPECIAL_DESCRIPTION
-This planet has a rich natural deposit of minerals, boosting mining and trade.
+Deze planeet bevat een rijke hoeveelheid mineralen, geeft een bonus in mijnbouw en handel.
 
 TUNNELS_SPECIAL
-Natural Tunnels
+Natuurlijke Tunnels
 
 TUNNELS_SPECIAL_DESCRIPTION
-This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
+Deze planeet heeft een netwerk van natuurlijk gevormde tunnels, dit zorgt ervoor dat een groot gedeelte van de planeet makkelijker gecoloniseerd kan worden.
 
 TECHTONIC_INSTABILITY_SPECIAL
-Techtonically Unstable
+Techtonische Onstabiliteit
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+Deze planeet is techtonisch instabiel. Frequente aardbevingen, tsunamis, vulkaanuitbarstingen en onvoorspelbare ondersteuning onder de grond zorgen ervoor dat constructie en algemene infrastructuurontwikkeling moeilijk is.
 
 SOLID_CORE_SPECIAL
-Solid Core
+Solide Kern
 
 SOLID_CORE_SPECIAL_DESC
-This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
+De kern van deze planeet is vast en heeft een zwak magnetisch veld. De zonnewinden van de ster bereiken het oppervlak van de planeet ongefilterd, wat zorgt voor schade aan gezondheid en limiteert voedselproductie.
 
 HIGH_AXIAL_TILT_SPECIAL
-High Axial Tilt
+Hoge Axiale Tilt
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
+De rotatie-as van deze planeet heeft een hoge tilt relatief aan zijn orbitale vlak. Seizoen weer variaties zijn buitengewoon extreem en infrastructuurontwikkeling is significant beperkt.
 
 SLOW_ROTATION_SPECIAL
-Very Slow Rotation
+Zeer Langzame Rotatie
 
 SLOW_ROTATION_SPECIAL_DESC
-This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth, food production and population capacity are reduced.
+Deze planeet roteert heel langzaam om zijn as, waardoor lange dagen en nachten ontstaan. Infrastructuur groei, voedselproductie en populatiecapaciteit zijn gereduceerd.
 
 TIDAL_LOCK_SPECIAL
-Tidally Locked Rotation
+Getijde-vaste Rotatie
 
 TIDAL_LOCK_SPECIAL_DESC
-This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.
+De getijde van deze planeet is verbonden met de ster waar hij omheen draait. Zijn dag en jaar hebben dezelfde duur en een helft van de planeet is continue dag, de andere kant continue nacht. Infrastructuurgroei is vertraagd, maar zodra deze er is zal de industriÃ«le capaciteit voordelen hebben van de lokale stabiele oppervlaktecondities.
 
 ECCENTRIC_ORBIT_SPECIAL
-Eccentric Orbit
+Eccentrische Omloopbaan
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.
+De omloopbaan van deze planeet is zeer eccentrisch. Er is een groot verschil tussen de afstand met zijn ster gedurende het jaar. De hoeveelheid energie die de planeet van de ster ontvangt verschilt sterk gedurende het jaar. Deze fluctuerende condities beperken infrastructuurontwikkeling, maar geven een voordelig platform voor onderzoek.
 
 #######################
 # Enumeration  values #
@@ -1560,187 +1719,198 @@ This planet's orbit is very eccentric.  It has a large distance between its clos
 # UniverseObjectTypes
 
 OBJ_BUILDING
-building
+gebouw
 OBJ_SHIP
-ship
+schip
 OBJ_FLEET
-fleet
+vloot
 OBJ_PLANET
-planet
+planeet
 OBJ_POP_CENTER
-population center
+populatie centrum
 OBJ_PROD_CENTER
-production center
+productie centrum
 OBJ_SYSTEM
-system
+systeem
 
 
 # StarTypes
 
 STAR_BLUE
-blue
+blauw
 STAR_WHITE
-white
+wit
 STAR_YELLOW
-yellow
+geel
 STAR_ORANGE
-orange
+oranje
 STAR_RED
-red
+rood
 STAR_NEUTRON
-neutron
+neutronenster
 STAR_BLACK
-black hole
+zwart gat
 
 
 # PlanetTypes
 
 PT_SWAMP
-swamp
+moeras
 PT_TOXIC
-toxic
+giftig
 PT_INFERNO
 inferno
 PT_RADIATED
-radiated
+straling
 PT_BARREN
-barren
+onvruchtbaar
 PT_TUNDRA
 tundra
 PT_DESERT
-desert
+woestijn
 PT_TERRAN
-terran
+aarde
 PT_OCEAN
-ocean
-PT_GAIA
-gaia
+oceaan
 PT_ASTEROIDS
-asteroids
+asteroÃ¯den
 PT_GASGIANT
-gas giant
+gas reus
 
 
 # Planet Sizes
 
 SZ_NOWORLD
-Nothing to see here; move along.
+Niets te zien hier.
 SZ_TINY
-tiny
+zeer klein
 SZ_SMALL
-small
+klein
 SZ_MEDIUM
-medium
+gemiddeld
 SZ_LARGE
-large
+groot
 SZ_HUGE
-huge
+gigantisch
 SZ_ASTEROIDS
-asteroids
+asteroïden
 SZ_GASGIANT
-gas giant
+gas reus
 
 
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-uninhabitable
-PE_TERRIBLE
-terrible
+onbewoonbaar
+PE_HOSTILE
+vijandig
+PE_POOR
+arm
 PE_ADEQUATE
-adequate
-PE_SUPERB
-superb
-PE_OPTIMAL
-optimal
+voldoet
+PE_GOOD
+goed
 
 
 # FocusTypes
 
 FOCUS_UNKNOWN
-unknown
+onbekend
 FOCUS_BALANCED
-balanced
+gebalanceerd
 FOCUS_FARMING
-farming
+agrarisch
 FOCUS_INDUSTRY
-industry
+industrie
 FOCUS_MINING
-mining
+mijnindustrie
 FOCUS_RESEARCH
-research
+onderzoek
 FOCUS_TRADE
-trade
+handel
   
 
 # MeterTypes
 
 METER_POPULATION
-population
+populatie
 METER_FARMING
-farming
+agrarisch
 METER_INDUSTRY
-industry
+industrie
 METER_RESEARCH
-research
+onderzoek
 METER_TRADE
-trade
+handel
 METER_MINING
-mining
+mijnindustrie
 METER_CONSTRUCTION
-construction
+constructie
 METER_HEALTH
-health
+gezondheid
+METER_FUEL
+brandstof
+METER_SUPPLY
+voorraad
+METER_STEALTH
+stealth
+METER_DETECTION
+detectie
+METER_SHIELD
+schild
+METER_DEFENSE
+defensie
 
 
 # EmpireAffiliationTypes
 
 AFFIL_SELF
-self
+zelf
 AFFIL_ENEMY
-enemy
+vijandig
 AFFIL_ALLY
-ally
+bondgenoot
 
 
 # UnlockableItemTypes
 
 UIT_BUILDING
-Building
-UIT_SHIP_COMPONENT
-Ship Component
-
+Gebouw
+UIT_SHIP_PART
+Scheepsonderdeel
+UIT_SHIP_HULL
+Ship Hull
 
 # TechTypes
 
 TT_THEORY
-Theory
+Theorie
 TT_APPLICATION
-Application
+Toepassing
 TT_REFINEMENT
-Refinement
+Verfijning
 
 
 # BuildTypes
 
 BT_NOT_BUILDING
-no build
+geen bouw
 BT_BUILDING
-building
+gebouw
 BT_SHIP
-ship
+schip
 BT_ORBITAL
-orbital
+orbitaal
 
 
 # StockpileTypes
 
 ST_FOOD
-food
+voedsel
 ST_MINERAL
-mineral
+mineraal
 ST_TRADE
-trade
+handel
 
 
 
@@ -1751,124 +1921,160 @@ trade
 # ValueRef
 
 DESC_VAR_PLANET
-planet
+planeet
 
 DESC_VAR_SYSTEM
-system
+systeem
 
 DESC_VAR_SOURCE
-source
+bron
 
 DESC_VAR_TARGET
-target
+doel
 
 DESC_VAR_PLANETSIZE
-planet size
+planeet grootte
 
 DESC_VAR_PLANETTYPE
 planet type
 
 DESC_VAR_PLANETENVIRONMENT
-planet environment
+planet omgeving
 
 DESC_VAR_OBJECTTYPE
 object type
 
 DESC_VAR_STARTYPE
-star type
+ster type
 
 DESC_VAR_PRIMARYFOCUS
-primary focus
+primaire focus
 
 DESC_VAR_SECONDARYFOCUS
-secondary focus
+secondaire focus
 
 DESC_VAR_CURRENTFARMING
-current farming
+huidige agrarisch
 
 DESC_VAR_MAXFARMING
-max farming
+max agrarisch
 
 DESC_VAR_CURRENTINDUSTRY
-current industry
+huidige industrie
 
 DESC_VAR_MAXINDUSTRY
-max industry
+max industrie
 
 DESC_VAR_CURRENTRESEARCH
-current research
+huidige onderzoek
 
 DESC_VAR_MAXRESEARCH
-max research
+max onderzoek
 
 DESC_VAR_CURRENTTRADE
-current trade
+huidige handel
 
 DESC_VAR_MAXTRADE
-max trade
+max handel
 
 DESC_VAR_CURRENTMINING
-current mining
+huidige mijnbouw
 
 DESC_VAR_MAXMINING
-max mining
+max mijnbouw
 
 DESC_VAR_CURRENTCONSTRUCTION
-current construction
+huidige constructie
 
 DESC_VAR_MAXCONSTRUCTION
-max construction
+max constructie
 
 DESC_VAR_CURRENTHEALTH
-current health
+huidige gezondheid
 
 DESC_VAR_MAXHEALTH
-max health
+max gezondheid
 
 DESC_VAR_CURRENTPOPULATION
-current population
+huidige populatie
 
 DESC_VAR_MAXPOPULATION
-max population
+max populatie
+
+DESC_VAR_CURRENTFUEL
+huidige brandstof
+
+DESC_VAR_MAXFUEL
+max brandstof
+
+DESC_VAR_CURRENTSUPPLY
+huidige voorraad
+
+DESC_VAR_MAXSUPPLY
+max voorraad
+
+DESC_VAR_CURRENTSTEALTH
+huidige stealth
+
+DESC_VAR_MAXSTEALTH
+max stealth
+
+DESC_VAR_CURRENTDETECTION
+huidige detectie
+
+DESC_VAR_MAXDETECTION
+max detectie
+
+DESC_VAR_CURRENTSHIELD
+huidige schild
+
+DESC_VAR_MAXSHIELD
+max schild
+
+DESC_VAR_CURRENTDEFENSE
+huidige defensie
+
+DESC_VAR_MAXDEFENSE
+max defensie
 
 DESC_VAR_TRADESTOCKPILE
-trade stockpile
+handel voorraad
 
 DESC_VAR_MINERALSTOCKPILE
-mineral stockpile
+mineraal voorraad
 
 DESC_VAR_FOODSTOCKPILE
-food stockpile
+voedsel voorraad
 
 DESC_VAR_TRADEPRODUCTION
-trade production
+handel productie
 
 DESC_VAR_FOODPRODUCTION
-food production
+voedsel productie
 
 DESC_VAR_MINERALPRODUCTION
-mineral production
+mineraal productie
 
 DESC_VAR_INDUSTRYPRODUCTION
-industry production
+industrie productie
 
 DESC_VAR_RESEARCHPRODUCTION
-research production
+onderzoek productie
 
 DESC_VAR_OWNER
-owner
+eigenaar
 
 DESC_VAR_ID
 ID
 
 DESC_VAR_AGE
-age in turns
+leeftijd in beurten
 
 DESC_VAR_CREATIONTURN
-turn of creation
+beurt van creatie
 
 DESC_VAR_CURRENTTURN
-the current turn
+de huidige beurt
 
 # this one is intentially left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -1907,7 +2113,7 @@ DESC_EFFECTS_GROUP_ACTIVATION
 Effect is active if the source is an object%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effect is always active
+Effect is altijd actief
 
 DESC_EFFECTS_GROUP_SCOPE_DESC
 %1%\n
@@ -1930,13 +2136,13 @@ DESC_SIMPLE_SET_METER_MAX
 Max %1% %2%%3%
 
 DESC_SIMPLE_SET_METER_CURRENT
-Current %1% %2%%3%
+Huidige %1% %2%%3%
 
 DESC_COMPLEX_SET_METER_MAX
-Set max %1% to %2%
+Zet max %1% naar %2%
 
 DESC_COMPLEX_SET_METER_CURRENT
-Set current %1% to %2%
+Zet huidige %1% naar %2%
 
 
 # others
@@ -2175,25 +2381,17 @@ DESC_NUMBER_NOT
 ###################
 
 LEARNING_CATEGORY
-Learning
+Leren
 PRODUCTION_CATEGORY
-Production
+Productie
 CONSTRUCTION_CATEGORY
-Construction
+Constructie
 GROWTH_CATEGORY
-Growth
+Groei
 ECONOMICS_CATEGORY
-Economics
-
-####################################
-# Misc / Debug Tech Stuff          #
-####################################
-
-TEST_TECH
-Test Tech
-
-TEST_TECH_DESC
-This is a test tech.  Research at your own risk, and don't be surprised, complain on the forums or post bug reports if weird things happen after you do.
+Economie
+SHIPS_CATEGORY
+Schepen
 
 
 ####################################
@@ -2201,85 +2399,79 @@ This is a test tech.  Research at your own risk, and don't be surprised, complai
 ####################################
 
 THEORY_SHORT_DESC
-Theoretical Prerequisite
+Theoretisch Voorvereiste
 
 LRN_PHYS_BRAIN
-The Physical Brain
+Het Fysieke Brein
 
 LRN_PHYS_BRAIN_DESC
-The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+De structuren en hun functies in het brein worden bepaald. De electroschemische en quantum natuur van het denken en geheugen worden blootgelegd. Doordat de werking begrepen wordt, zijn aanpassing en versterking van breinfuncties mogelijk, en worden nieuwe ideeën bedacht over de grenzen van het denken, en over de expressie vervanging daarvan.
 
 LRN_ALGO_ELEGANCE
-Algorithmic Elegance
+Algoritmische Elegantie
 
 LRN_ALGO_ELEGANCE_DESC
-With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
-
-LRN_GAL_EXPLO
-Galactic Exploration
-
-LRN_GAL_EXPLO_DESC
-The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
+Met toenemende complexiteit van gegevens analyse problemen, traditionele metingen van de algoritme efficientie worden steeds minder bruikbaar door de beperkingen van onomkeerbare complexiteit. Op dit punt worden andere meetmethoden van algoritmische vorm en functie significant; esthetisch en metaforisch, de elegantie van de oplossing moet geoptimaliseerd worden.
 
 LRN_TRANSLING_THT
-Translinguistics
+Translinguïstiek
 
 LRN_TRANSLING_THT_DESC
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+Een minder intellect worstelt met, of accepteert de beperkingen van de taalt die ze geleerd hebben. Toerijkende intellectuelen bereiken en voelen een beperking door de concepten om dingen te verwoorden. Echt grote intellectuelen kunnen zich ontdoen van de ketens van de taal, vormen en analyseren gedachten over de rand van een verhevenheid. Maar mindere grote intellectuelen zullen geisoleerd en onbeduidend achterblijven, want zonder taal om gedachten over te brengen, hoe moeten zij hun inzichten delen?
 
 LRN_PSIONICS
 Psionics
 
 LRN_PSIONICS_DESC
-Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
+Door diepe introspectie of kunstmatige verbeteringen kan het brein eigenschappen ontwikkelen om directe interactie met het universum eromheen uit te voeren, daarmee beperkingen van het fysieke lichaam te omzijlen. Krachten als telepathie, empathie, helderziendheid, voorkennis, telekinese en psycho-energetica vervangen hun normaal biologische of technologische alternatieven. Toepassing van deze krachten, inclusief hersenspoelen, personaliteitsverandering en bezetenheid hebben diepe implicaties voor relaties tussen getallenteerde en niet-getallenteerde wezens.
 
 LRN_ARTIF_MINDS
-Artificial Minds
+Kunstmatig Verstand
 
 LRN_ARTIF_MINDS_DESC
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+Terwijl traditionele computers een bijna onmeetbare intelligentie en calculerend vermogen hebben, missen ze de essentiele kwaliteiten van het begrip dat ze bestaan, bewustzijn en waarneming. Met de ontwikkeling van echte kunstmatig verstand kunnen deze kwaliteiten gesynthetiseerd, aangepast en veranderd worden. Deze onderzoeken openen nieuwe onderzoekswegen in congnitieve wetenschappen en nieuwe metaparadigma's.
 
 LRN_XENOARCH
-Xenoarchaeology
+Xenoarchaeologie
 
 LRN_XENOARCH_DESC
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+De hedendaagse rijken, rassen en enkele-ster beschavingen zijn niet de eerste of enige wezens die in dit universum hebben geleefd. Overblijfselen, ruines en geruchten van oude beschavingen kunnen op verlaten planeten, levenloze astroiden of zwervend door de open ruimte gevonden worden. Het vinden en ontcijferen van dergelijke aanwijzingen heeft grote potentie om geheimen te onthullen, lessen te leren of waarschuwingen over vergeten kennis te geven.
 
 LRN_GRAVITONICS
-Gravitonics
+Gravitoniek
 
 LRN_GRAVITONICS_DESC
-Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+Analoog aan de "kleurlading" van quantum chromodynamiek, zijn er verschillende soorten gravitons. De gewone aantrekkingskracht graviton, de vaakgenoemde "anti-graviton", "rechts-graviton" en "links-graviton" kunnen gecombineerd worden om oppervlakten van tijd-ruimte te buigen en strekken. Deze manipulaties geven het gevoel van controle over de zwaartekracht en voorheen onmogelijke, zelfs theoretisch, structuren en handelingen worden nu mogelijk.
 
 LRN_EVERYTHING
-Theory of Everything
+Theorie van Alles
 
 LRN_EVERYTHING_DESC
-Early, naive theories describe subsets of the four fundamental forces of nature: electromagnetism, the strong and weak nuclear forces, and gravity.  A complete framework expressing all forces as special cases of a single interaction represents a holy grail of science.  This theory describes the earliest moments of the universe, the most distorted depths of a singularity, the tightest windings of hidden dimensions and the final fate of the cosmos.  Yet still, there may "exist" layers of existence beyond what can be observed and described by science...
+Vroege, naïve theoriën beschreven onderdelen van de vier fundamentele krachten van de natuur: elektromagnetisme, de sterke en zwakke kernkrachten en zwaartekracht. Een compleet raamwerk die alle krachten als speciale gevallen van een enkele interactie beschrijft is de heilige graal van de wetenschap. Deze theorie beschrijft de vroegste momenten van het universum, de meest verstoorde diepten van een singulariteit, de strakste draaiingen van verborgen dimensies en het uiteindelijke lot van de kosmos. Maar, er kunnen nog lagen van realiteit "bestaan" buiten hetgeen wat door de wetenschap kan worden geobserveerd en beschreven...
 
 LRN_FORCE_FIELD
-Force-Field Harmonics
+Krachtveld Harmoniciteit
 
 LRN_FORCE_FIELD_DESC
-Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles.  By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.
+Net zoals met Fourier analyse op geluid, kunnen elektromagnetisme, sterke en zwakke krachten uitgedrukt worden in harmonische superposities van quantumgolven van krachtdragende deeltjes. Door deze harmonische golven selectief te versterken, kunnen de krachten gemanilpuleerd worden om als schild, ondersteuning, opslag of als wapen gebruikt te worden.
 
 LRN_MIND_VOID
-Mind of the Void
+Gedachte van het Lege
 
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+We zijn niet alleen in de kosmos... maar waarom zou de zoektocht zo beperkt moeten zijn? Vele culturen hebben mythen, legendes of geloof in een hoger bewustzijn. Of het een liefhebbende of kwaadaardige God is, of een onafhankelijke observator, het is duidelijk dat iets, misschien wel het universum zelf op een bepaald niveau leeft, bewustzijn heeft en toekijkt.
 
 LRN_TIME_MECH
-Temporal Mechanics
+Tijdruimte Reizen
 
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+Wat is "nu", "toekomst" en "verleden"? Het dubbel-paradox van de speciale relativiteit of het theoretische "wormgat" suggereren vroege vormen van "tijdreizen". Directe maipulatie van tijdruimte en getijde golven staan toe dat deze effecten versterkt en gebruikt kunnen worden. Aanpassingen van de tijdlijn kunnen echter geen waarneembare veranderingen in het verleden van het door ons waarneembare universum teweeg brengen. Ze kunnen wel eeuwen samendrukken en korte momenten verlengen naar gewenste duur, beperkt door de gebruikte materiaalvoorraad en ons eigen geduld...
 
 LRN_NDIM_SUBSPACE
-N-Dimensional Subspace
+N-Dimensionale Subruimte
 
 LRN_NDIM_SUBSPACE_DESC
-Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
+Vroege superstring theoretici spraken over 10, 11 of 26 dimensionele universums, met alle behalve de 4 macrodimensies zo dicht "opgekrult" dat ze onzichtbaar zijn. Deze en andere dimensies kunnen nu ontwonden en geopend worden, waardoor de oppervlakte van het universum zichzelf uitstrekt en doordringt door materie naar en van een voorheen, door onze beperkte perceptie, verborgen bestaan kan schuiven, of bellen en lagen kan maken waar ervoor geen bestonden.
 
 LRN_UNIF_CONC
 Unified Consciousness
@@ -2294,22 +2486,22 @@ LRN_TRANSCEND_DESC
 What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_PLANET_ECOL
-Planetary Ecology
+Planetaire Ecologie
 
 GRO_PLANET_ECOL_DESC
-Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.
+Agrocultuur en medische wetenschappen kunnen overleving drastisch vergroten, waardoor de populatiegroei gedurende een tijd hyperexponentieel kan groeien. Uiteindelijk zullen nieuwe limieten voor de groeicapaciteit van een planeet en het interverbonden web van leven dat het ondersteunt verschijnen. Begrip van natuurlijke ecologie en zijn interactie met stressfactoren laten het systeem ondersteunen en de nakomende generaties er voordeel uit halen.
 
 GRO_GENETIC_ENG
-Genetic Engineering
+Genetische Modificatie
 
 GRO_GENETIC_ENG_DESC
-The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existant or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
+Het werkpallet van de genetica is zo gevarieerd als de vormen van leven van waar het deze leent. Genen kunnen verwijderd, gekopieerd en in andere genomen geintegreerd worden om transgenetische organismen te creëren met combinaties van eigenschappen die niet bestaan of mogelijk zijn in de natuur. Daarnaast is het mogelijk om, voordat de genen weer ingevoegd worden, de basiscodes direct aan te passen om zo totaal nieuwe genen te maken. De technieken zijn echter beperkt tot kleine aanpassingen van bestaande genen die beschikbaar zijn voor onderzoek.
 
 GRO_MEDICAL_PATH
-Medical Pathology
+Medische Pathologie
 
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.  
+Behandeling van ziekten en verwondingen vereist doordacht begrip van hun oorzaken.
 
 GRO_INDUSTY_FARM
 Industrial Farming
@@ -2324,40 +2516,40 @@ GRO_ENV_ENCAPSUL_DESC
 Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
 
 GRO_SYMBIOTIC_BIO
-Symbotic Biology
+Symbiotische Biologie
 
 GRO_SYMBIOTIC_BIO_DESC
-From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
+Sinds de eerste gedomesticeerde dieren en agrarische planten ontdeken gemeenschappen de voordelen van symbiotische relaties met andere soorten. Later worden bacteriën of natuurlijke parasieten vaak gebruikt voor medische doeleinden. In deze vroege vormen is echter (in ideale omstandigheden) de dominante soort in volledige controle over de relatie, met het andere organisme als alleen bedienend aan zijn eigenaar. Echte symbiose gebeurt alleen als beide organismen van elkaar kunnen profiteren, elkaar helpend en door samenwerking afhankelijk zijn van deze voordelen. Deze voordelige combinatie zal groter zijn dan de som van de losse gedeelten.
 
 GRO_GENETIC_MED
-Genetic Medicine
+Genetisch Medicijn
 
 GRO_GENETIC_MED_DESC
-Traditional Genetic Engineering alters genetic codes and then implements or raises the modified organism.  Similar techniques may be applied to already matured individuals.  The goals of these treatments may be cosmetic or enhancing modifications, or corrective, preventative or time-critical medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.
+Traditionele Genetische Modificatie past de genetische code aan, implementeert deze en groeit het aangepaste organisme op. Vergelijkbare technieken kunnen worden toegepast op reeds volwassen individuen. Doel van deze behandelingen kan cosmetisch, verbeterend, corrigerend, preventief of tijd-critisch medisch van aard zijn. Verminderen van de vertraging tussen aanpassing en resultaat van generaties naar maanden, dagen of uren heeft een overeenkomende toename in het bereik en kracht van mogelijke aanpassingen.
 
 GRO_LIFECYCLE_MAN
-Lifecycle Manipulation
+Levenscyclus Manipulatie
 
 GRO_LIFECYCLE_MAN_DESC
-Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphises, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
+Meeste complexe organismen gaan door een proces door verschillende fysiologische stadia gedurende een leven, zowel via duidelijk gescheiden metamorphoses als vage, continue verouderingsprocessen. In veel gevallen is een of meerdere van deze stadiums meer bruikbaar en gewenst dan andere. Door nauwkeurige controle van hormonale en mentale mechanismen wordt het mogelijk om de snelheid van elk stadium te versnellen of vertragen, waardoor volledig ontwikkelde en functionele individuen geproduceerd kunnen worden in een fractie van de natuurlijke tijdsspan. Die individuen blijven daarnaast ook oneindig functioneel, waardoor ze zo goed als onsterfelijk worden.
 
 GRO_XENO_GENETICS
-Xenological Genetics
+Xenologische Genetica
 
 GRO_XENO_GENETICS_DESC
-Early genetics is limited by the available samples of naturally occuring organims on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revalations may be reached, spurring new developments in more familiar genetic systems.
+Vroege genetica is beperkt door de beschikbaarheid van monsters van natuurlijk voorkomende organismen om modificaties op te baseren. Daarnaast zijn deze modificaties beperkt binnen de limieten van de fysische mechanismen voor de opslag, aanpassing en expressie van de genetische code in ontwikkelde individuen. Door equivalente systemen in compleet verschillende ecosystemen en organismen te onderzoeken kan meer inzicht en openbaringen verkregen verkregen worden, waardoor nieuwe ontwikkelingen in meer bekende genetische systemen versneld worden. 
 
 GRO_NANOTECH_MED
-Nanotech Medicine
+Nanotech Medicijn
 
 GRO_NANOTECH_MED_DESC
-While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
+Terwijl genetische aanpassingen de effecten van ongewenste of schadelijke mutaties of onjuiste biochemische balansen kan repareren of ongedaan maken, kunnen grote fysische trauma's en niet-genetische aangeboren afwijkingen alleen met fysische aanpassingen behandeld worden. Nanotechnologie kan gebruikt worden om dit te bereiken, met twee voordelen: Aanpassingen kunnen zonder invasieve operaties en bijbehordende secundaire schade en risico's gedaan worden, en de tijd voor de behandeling is sterk gereduceerd aangezien de gereedschappen om de taak te doen altijd op de juiste plaats en klaar voor gebruik zijn.
 
 GRO_ORBIT_FARMING
-Orbital Farming
+Orbitale Landbouw
 
 GRO_ORBIT_FARMING_DESC
-The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface, and surface farming must also compete with other land uses.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.  Food production may be increased dramatically.
+De primaire energiebron voor voedselproductie in meeste gemeenschappen is zonnestraling. Verankerd aan een planeet hebben boerderijen maar beperkte toegang tot deze energie, door een relatief kleine vaste instralingshoek op het planeetoppervlak, en het oppervlak waarmee de agrarische sector in competitie is voor ander landgebruik. Door voedselproductie in omloopbaand rond de planeet te brengen wordt een continue aanvoer van zonne-energie verkregen en wordt ongewenste spectrale filtratie door de planeet atmosfeer voorkomen. Voedselproductie kan gigantisch vergroot worden.
 
 GRO_INDUSRY_CLONE
 Industrial Cloning
@@ -2384,10 +2576,10 @@ GRO_ENERGY_META_DESC
 The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
 
 PRO_MICROGRAV_MAN
-Microgravity Manufacturing
+Microzwaartekracht Productie
 
 PRO_MICROGRAV_MAN_DESC
-The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
+De microzwaartekracht van een lage omloopbaan rond een planeet biedt veel potentie voor nieuwe productiehal ontwerpen, apparatuur ontwerpen en technieken die niet mogelijk zijn op een planeetoppervlakte. Vaste stoffen kunnen met minimale ondersteuning op hun plaats gehouden worden. Vloeistoffen en gassen verplaatsen zich vrij, gevormd door hun oppervlaktespanning, tenzij ze anders gemanipuleerd worden. Fabrieksapparatuur kan optimaal in 3 dimensies geplaatst worden. Indien op de juiste manier toegepast kunnen deze condities de efficientie en het productieproces sterk vergroten.
 
 PRO_PLANET_GEOL
 Planetary Geology
@@ -2396,16 +2588,16 @@ PRO_PLANET_GEOL_DESC
 Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
 
 PRO_ROBOTIC_PROD
-Robotic Production
+Robotische Productie
 
 PRO_ROBOTIC_PROD_DESC
-Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
+Hoewel de het initieel ontwerp hoge eisen stelt en de initiele implementatie van de fabrieken nog steeds supervisie vereisen, zal de vervanging van het bedieningspersoneel van het feitelijke productieproces vele bottlenecks elimineren. Robots werken continue, zonder doorlopende eisen voor meer economische compensatie. Robots hebben veel meer tolerantie voor gevaarlijke omgevingscondities in de fabriek en vereisen geen additionele leefruimte buiten de werkplek. Robots vervullen hun taak foutloos, of ten minste zo goed als ze worden opgedragen.
 
 PRO_FUSION_GEN
-Fusion Generation
+Fusie Generatie
 
 PRO_FUSION_GEN_DESC
-Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
+Explosieve of ongecontrolleerde thermonucleaire reacties zijn relatief eenvoudig te maken op de schaal van kleine tactische kernkoppen tot supergigantische stellaire ovens. Controlleerbare, stabiele en praktische energieproductie van dergelijke reacties is iets wat moeilijker. Het proces blijft aantrekkelijk doordat er een bijna-onbeperkte aanvoer van energie ontstaat die emissie-vrij verloopt.
 
 PRO_NANOTECH_PROD
 Nanotech Production
@@ -2629,36 +2821,82 @@ Economic Hegemony
 ECO_ECON_HEGEMONY_DESC
 An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
+SHP_SPACE_TACTICS
+Space Tactics
+
+SHP_SPACE_TACTICS_DESC
+Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
+
+SHP_GAL_EXPLO
+Galactische Ontdekkingsreizen
+
+SHP_GAL_EXPLO_DESC
+De Ontdekking van interstellair reizen via sterrenlanen kondigd een nieuw tijdperk voor de gemeenschap aan. Oude politieke onenigheden tussen kleine groepen worden insignificant als de gehele beschaving blootgesteld wordt aan het oneinige potentie van de sterren... voor groei en welvaart, of grote vernietiging.
+
+SHP_NAVIGATION
+Interstellar Navigation
+
+SHP_NAVIGATION_DESC
+Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
+
+
 #########################################
 # Tech Application Names & Descriptions #
 #########################################
 
 DOES_NOTHING_SHORT_DESC
-Useless: Does Nothing
+Waardeloos: Doet Niets
+
+SHIP_PART_UNLOCK_SHORT_DESC
+Ontsluit scheepsonderdeel
+
+SHIP_HULL_UNLOCK_SHORT_DESC
+Unlocks Ship Hull
 
 BUILDING_UNLOCK_SHORT_DESC
-Unlocks Building
+Ontsluit gebouw
 
 RESEARCH_SHORT_DESC
-Improves Research
+Verbetert Onderzoek
 
 FARMING_SHORT_DESC
-Improves Farming
+Verbetert Agrarisch
 
 MINING_SHORT_DESC
-Improves Mining
+Verbetert Mijnbouw
 
 INDUSTRY_SHORT_DESC
-Improves Industry
+Verbetert Industrie
 
 TRADE_SHORT_DESC
-Improves Trade
+Verbetert Handel
 
 CONSTRUCTION_SHORT_DESC
-Improves Infrastructure
+Verbetert Infrastructuur
 
 POPULATION_SHORT_DESC
-Increases Planet Population
+Vergroot Planeet Populatie
+
+FLEET_RANGE_DESC
+Verbetert Vloot Voorraad
+
+CON_TERRAFORM
+Terraforming
+
+CON_TERRAFORM_DESC
+Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical.  The precise method depends greatly on the type of planet to be changed and the desired result.  However in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust.  The process takes years.
+
+CON_TERRAFORM_SHORT_DESC
+Allows terraforming to improve planets
+
+CON_RAPID_TERRAFORM
+Rapid Terraforming
+
+CON_RAPID_TERRAFORM_DESC
+Advances in orbital deployment now enable any terrestrial planet in an inhabited system to be terraformed to any environmental preference. Nanites can accomplish the transformation in half the time of conventional methods.
+
+CON_RAPID_TERRAFORM_SHORT_DESC
+Allows rapid and remote terraforming to improve planets
 
 CON_GRAVITY_WELLS
 Controlled gravity wells
@@ -2745,10 +2983,10 @@ GRO_SELF_ROTATING_CROPS_DESC
 High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvinating, plants every few growing seasons.\n\n+ 5 to max farming per 10 population on primary farming focused worlds.
 
 GRO_BIOTERROR
-Bioterror Facilites
+Bioterreur Faciliteiten
 
 GRO_BIOTERROR_DESC
-I dunno... it makes people grow less.
+A research centre created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict but as a weapon of terror it is unsurpassed, a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sows despair beyond the affected area, however care must be taken when developing such organisms to ensure they are not accidental released furthermore utter secrecy is required at the risk of damaging relations with other empires and our own people.
 
 GRO_HABITATION_DOMES
 Habitation Domes
@@ -2798,23 +3036,11 @@ Basic Autolabs
 LRN_AUTOLAB_I_DESC
 Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
 
-LRN_THEORM_PROVER
-Automatic Theorm Prover
+LRN_THEOREM_PROVER
+Automatic Theorem Prover
 
-LRN_THEORM_PROVER_DESC
+LRN_THEOREM_PROVER_DESC
 Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
-
-LRN_LIGHTHOUSE
-Interstellar Lighthouses
-
-LRN_LIGHTHOUSE_DESC
-Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
-
-LRN_NAVIGATION
-Intersetaller Navigation
-
-LRN_NAVIGATION_DESC
-Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
 
 LRN_COLLECTIVE_NET
 Collective Thought Network
@@ -2936,6 +3162,77 @@ Energy Conversion
 PRO_ENERGY_CONV_DESC
 At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation. 
 
+PRO_NEUTRONIUM_EXTRACTION
+Neutronium Extraction
+
+PRO_NEUTRONIUM_EXTRACTION_DESC
+The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter.  This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
+
+SHP_LIGHTHOUSE
+Interstellar Lighthouses
+
+SHP_LIGHTHOUSE_DESC
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+
+SHP_FLEET_LOGISTICS
+Fleet Logistics
+
+SHP_FLEET_LOGISTICS_DESC
+Gives planets ability to resupply fleets in systems several starlane jumps away.
+
+SHP_SUSPENDED_ANIMATION
+Suspended Animation
+
+SHP_SUSPENDED_ANIMATION_DESC
+Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently.  Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space.  With this technique, the capacity of colony ships can be greatly increased.
+
+SHP_ION_CANNON
+Ion Cannon
+
+SHP_ION_CANNON_DESC
+Unlocks Ion Cannon ship part.
+
+SHP_NUCLEAR_MISSILE
+Nuclear Missile
+
+SHP_NUCLEAR_MISSILE_DESC
+Unlocks Nuclear Missile ship part.
+
+SHP_DEFLECTOR
+Deflector Shield
+
+SHP_DEFLECTOR_DESC
+Unlocks Deflector Shield ship part.
+
+SHP_RADAR
+Active Radar
+
+SHP_RADAR_DESC
+Ontsluit Actieve Radar scheepsonderdeel.
+
+SHP_DEUTERIUM_TANK
+Deuterium Tank
+
+SHP_DEUTERIUM_TANK_DESC
+Ontsluit Deuterium Tank scheepsonderdeel.
+
+SHP_MEDIUM_HULL
+Medium Ship Hulls
+
+SHP_MEDIUM_HULL_DESC
+Medium Ship Hulls
+
+SHP_LARGE_HULL
+Large Ship Hulls
+
+SHP_LARGE_HULL_DESC
+Large Ship Hulls
+
+SHP_HUGE_HULL
+Huge Ship Hulls
+
+SHP_HUGE_HULL_DESC
+Huge Ship Hulls
 
 ########################################
 # Tech Refinement Names & Descriptions #
@@ -2965,6 +3262,18 @@ Additional experience and facilities improvements further extend the range and s
 #################################
 # Building Names & Descriptions #
 #################################
+
+BLD_IMERIAL_PALACE
+Imperial Palace
+
+BLD_IMERIAL_PALACE_DESC
+Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +5 to max construction.
+
+BLD_SHIPYARD_BASE
+Shipyard
+
+BLD_SHIPYARD_BASE_DESC
+Orbital production facility for assembly of interstellar military-grade spacecraft.  Allows production of ships in the system where it is located.  Can be upgraded by producing additional buildings in the same system.
 
 BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
@@ -3000,7 +3309,7 @@ BLD_LIGHTHOUSE
 Interstellar Lighthouse
 
 BLD_LIGHTHOUSE_DESC
-Does nothing.  Maybe in future this could make certain ships go faster, or increase trade, or make starlanes more visible nearby (thereby indirectly increasing trade)...
+Increases by 1 starlane jump the supply meter of all planets - regardless of owner - within 200 distance units.
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor
@@ -3012,7 +3321,11 @@ BLD_INDUSTRY_CENTRE
 Industrial Centre
 
 BLD_INDUSTRY_CENTRE_DESC
-Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.\n\n<tech "PRO_INDUSTRY_CENTRE_II"> refinement increases bonus to +6 and increases distance to 200.\n\n<tech "PRO_INDUSTRY_CENTRE_III"> refinement further increases bonus to +7 and range to 300.
+'''Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.
+
+[[tech PRO_INDUSTRY_CENTRE_II]] refinement increases bonus to +6 and increases distance to 200.
+
+[[tech PRO_INDUSTRY_CENTRE_III]] refinement further increases bonus to +7 and range to 300.'''
 
 BLD_ASTEROID_MINE
 Asteroid Mining Facility
@@ -3145,3 +3458,108 @@ Economic Sinkhole
 
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
+
+##############
+# Ship Parts #
+##############
+
+SR_LASER
+Laser
+SR_LASER_DESC
+Lower power and mass
+
+SR_ION_CANNON
+Ion Cannon
+SR_ION_CANNON_DESC
+Moderate power and mass
+
+LR_NUCLEAR_MISSILE
+Nuclear Missile
+
+LR_NUCLEAR_MISSILE_DESC
+Long range moderate power
+
+DT_ACTIVE_RADAR
+Active Radar
+
+DT_ACTIVE_RADAR_DESC
+Moderate power detection with large stealth penalty to mounting ship.
+
+FU_DEUTERIUM_TANK
+Deuterium Tank
+
+FU_DEUTERIUM_TANK_DESC
+Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
+
+FU_ANTIMATTER_TANK
+Antimatter Tank
+
+FU_ANTIMATTER_TANK_DESC
+Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
+
+ST_EM_DAMPER
+Electromagnetic Damper
+
+ST_EM_DAMPER_DESC
+Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
+
+AR_LEAD_PLATE
+Lead Armour Plating
+AR_LEAD_PLATE_DESC
+Weak defense with large mass
+
+SH_DEFENSE_GRID
+Defense Grid
+SH_DEFENSE_GRID_DESC
+Weak defense with no extra mass
+
+SH_DEFLECTOR
+Deflector Shield
+SH_DEFLECTOR_DESC
+Strong defense with small mass
+
+CO_COLONY_POD
+Colony Pod
+
+CO_COLONY_POD_DESC
+Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
+
+CO_SUSPEND_ANIM_POD
+Cryonic Colony Pod
+
+CO_SUSPEND_ANIM_POD_DESC
+Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
+
+##############
+# Ship Hulls #
+##############
+
+SH_EMPTY
+Empty Hull
+
+SH_EMPTY_DESC
+Cheap and fast, but can't mount any parts.
+
+SH_SMALL
+Small Hull
+
+SH_SMALL_DESC
+Few slots but high speed
+
+SH_MEDIUM
+Medium Hull
+
+SH_MEDIUM_DESC
+Moderate number of slots and moderate speed
+
+SH_LARGE
+Large Hull
+
+SH_LARGE_DESC
+Many slots but slow speed
+
+SH_HUGE
+Huge Hull
+
+SH_HUGE_DESC
+Very many slots but very slow speed

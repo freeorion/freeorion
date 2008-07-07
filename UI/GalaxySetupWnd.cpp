@@ -21,9 +21,10 @@ namespace {
     const int PANEL_CONTROL_SPACING = 33;
     const int GAL_SETUP_PANEL_HT = PANEL_CONTROL_SPACING * 6;
     const int GAL_SETUP_WND_WD = 645;
-    const int GAL_SETUP_WND_HT = 326;
+    const int GAL_SETUP_WND_HT = 29 + (PANEL_CONTROL_SPACING * 4) + GAL_SETUP_PANEL_HT;
     const GG::Pt PREVIEW_SZ(248, 186);
     const bool ALLOW_NO_STARLANES = false;
+    const int MAX_AI_PLAYERS = 20;
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
@@ -33,6 +34,9 @@ namespace {
         db.Add("GameSetup.planet-density", "OPTIONS_DB_GAMESETUP_PLANET_DENSITY", PD_AVERAGE, RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
         db.Add("GameSetup.starlane-frequency", "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY", LANES_SEVERAL, RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
         db.Add("GameSetup.specials-frequency", "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY", SPECIALS_UNCOMMON, RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
+        db.Add("GameSetup.empire-name", "OPTIONS_DB_GAMESETUP_EMPIRE_NAME", std::string("Human"), Validator<std::string>());
+        db.Add("GameSetup.empire-color", "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR", 0, RangedValidator<int>(0, 100));
+        db.Add("GameSetup.ai-players", "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS", 4, RangedValidator<int>(1, MAX_AI_PLAYERS));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -187,7 +191,7 @@ void GalaxySetupPanel::Init()
 {
     AttachSignalChildren();
 
-    GG::Connect(m_stars_spin->ValueChangedSignal, &GalaxySetupPanel::SettingChanged, this);
+    GG::Connect(m_stars_spin->ValueChangedSignal, &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
     GG::Connect(m_galaxy_ages_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
     GG::Connect(m_starlane_freq_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
@@ -265,16 +269,17 @@ void GalaxySetupPanel::DetachSignalChildren()
     DetachChild(m_specials_freq_list);
 }
 
-void GalaxySetupPanel::SettingChanged(int)
+void GalaxySetupPanel::SettingChanged_(int)
 {
     Sound::TempUISoundDisabler sound_disabler;
     SettingsChangedSignal();
 }
 
-void GalaxySetupPanel::ShapeChanged(int index)
-{
-    ImageChangedSignal(m_textures[index]);
-}
+void GalaxySetupPanel::SettingChanged(GG::DropDownList::iterator)
+{ SettingChanged_(0); }
+
+void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
+{ ImageChangedSignal(m_textures[m_galaxy_shapes_list->IteratorToIndex(it)]); }
 
 
 ////////////////////////////////////////////////
@@ -290,35 +295,57 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_empire_name_edit(0),
     m_empire_color_label(0),
     m_empire_color_selector(0),
+    m_number_ais_label(0),
+    m_number_ais_spin(0),
     m_preview_image(0),
     m_ok(0),
     m_cancel(0)
 {
     Sound::TempUISoundDisabler sound_disabler;
+    int ypos;
 
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 4);
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
 
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
-    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
-    m_empire_color_selector = new EmpireColorSelector(ClientUI::Pts() + 4);
-    m_empire_color_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y + PANEL_CONTROL_SPACING + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2));
-    m_empire_color_selector->Select(0);
-    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y, LABELS_WIDTH, m_empire_color_selector->Height(), UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
-    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, m_galaxy_setup_panel->LowerRight().y,
-                                     LABELS_WIDTH, "Human");
+
+    // empire name
+    ypos = m_galaxy_setup_panel->LowerRight().y;
+    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
+    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
     m_empire_name_label->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
     m_empire_name_edit->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
-    m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, 7);
+    // empire color
+    ypos += PANEL_CONTROL_SPACING;
+    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
+    m_empire_color_selector = new EmpireColorSelector(ClientUI::Pts() + 4);
+    m_empire_color_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2));
+    m_empire_color_selector->Select(GetOptionsDB().Get<int>("GameSetup.empire-color"));
 
+    // number of AIs
+    ypos += PANEL_CONTROL_SPACING;
+    m_number_ais_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
+    m_number_ais_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, 75, GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 1, MAX_AI_PLAYERS, true);
+    m_number_ais_label->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_number_ais_label->Height()) / 2));
+    m_number_ais_spin->OffsetMove(GG::Pt(0, (PANEL_CONTROL_SPACING - m_number_ais_spin->Height()) / 2));
+
+    m_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - 7, 7);
+ 
     // create a temporary texture and static graphic
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image =  new GG::StaticGraphic(m_preview_ul.x, m_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC); // create a blank graphic
-
-    m_ok = new CUIButton(10, m_empire_color_selector->LowerRight().y + 10, 75, UserString("OK"));
-    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, m_empire_color_selector->LowerRight().y + 10, 75, UserString("CANCEL"));
+ 
+    ypos += PANEL_CONTROL_SPACING + 5;
+    m_ok = new CUIButton(10, ypos, 75, UserString("OK"));
+    m_cancel = new CUIButton(10 + m_ok->Size().x + 15, ypos, 75, UserString("CANCEL"));
 
     Init();
 }
@@ -331,6 +358,11 @@ const std::string& GalaxySetupWnd::EmpireName() const
 GG::Clr GalaxySetupWnd::EmpireColor() const
 {
     return m_empire_color_selector->CurrentColor();
+}
+
+int GalaxySetupWnd::NumberAIs() const
+{
+    return m_number_ais_spin->Value();
 }
 
 void GalaxySetupWnd::Render()
@@ -367,6 +399,8 @@ void GalaxySetupWnd::AttachSignalChildren()
     AttachChild(m_empire_name_edit);
     AttachChild(m_empire_color_label);
     AttachChild(m_empire_color_selector);
+    AttachChild(m_number_ais_label);
+    AttachChild(m_number_ais_spin);
     AttachChild(m_preview_image);
     AttachChild(m_ok);
     AttachChild(m_cancel);
@@ -379,6 +413,8 @@ void GalaxySetupWnd::DetachSignalChildren()
     DetachChild(m_empire_name_edit);
     DetachChild(m_empire_color_label);
     DetachChild(m_empire_color_selector);
+    DetachChild(m_number_ais_label);
+    DetachChild(m_number_ais_spin);
     DetachChild(m_preview_image);
     DetachChild(m_ok);
     DetachChild(m_cancel);
@@ -408,6 +444,10 @@ void GalaxySetupWnd::OkClicked()
     GetOptionsDB().Set("GameSetup.starlane-frequency", m_galaxy_setup_panel->GetStarlaneFrequency());
     GetOptionsDB().Set("GameSetup.planet-density", m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("GameSetup.specials-frequency", m_galaxy_setup_panel->GetSpecialsFrequency());
+    GetOptionsDB().Set("GameSetup.empire-name", EmpireName());
+    GetOptionsDB().Set("GameSetup.empire-color",
+                       static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
+    GetOptionsDB().Set("GameSetup.ai-players", m_number_ais_spin->Value());
 
     // Save the changes:
     boost::filesystem::ofstream ofs(GetConfigPath());

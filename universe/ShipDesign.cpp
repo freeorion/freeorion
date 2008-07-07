@@ -61,8 +61,7 @@ const HullType* GetHullType(const std::string& name) {
     return GetHullTypeManager().GetHullType(name);
 }
 
-const ShipDesign* GetShipDesign(int ship_design_id)
-{
+const ShipDesign* GetShipDesign(int ship_design_id) {
     return GetUniverse().GetShipDesign(ship_design_id);
 }
 
@@ -552,10 +551,33 @@ double ShipDesign::Attack() const {
     return total_attack;
 }
 
-bool ShipDesign::Colonize() const {
+bool ShipDesign::CanColonize() const {
+    const PartTypeManager& part_manager = GetPartTypeManager();
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+        const PartType* part = part_manager.GetPartType(*it);
+        if (part && part->Class() == PC_COLONY)
+            return true;
+    }
+
+    // KLUDGE!!! REMOVE THIS!!!
     if (m_name == "Colony Ship")
-        return true;    
+        return true;
+    // END KLUDGE!!!
+
     return false;
+}
+
+bool ShipDesign::IsArmed() const {
+    //const PartTypeManager& part_manager = GetPartTypeManager();
+    //for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+    //    const PartType* part = part_manager.GetPartType(*it);
+    //    if (part && part->Class() == PC_COLONY)   // TODO: check if any part is a weapon
+    //        return true;
+    //}
+
+    // KLUDGE!!! REMOVE THIS!!!
+    return Attack() > 0;
+    // END KLUDGE!!!
 }
 
 double ShipDesign::Cost() const {
@@ -563,8 +585,7 @@ double ShipDesign::Cost() const {
     double total_cost = 0.0;
 
     const PartTypeManager& part_manager = GetPartTypeManager();
-    std::vector<std::string> all_parts = Parts();
-    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         const PartType* part = part_manager.GetPartType(*it);
         if (part)
             total_cost += part->Cost();

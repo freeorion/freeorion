@@ -47,8 +47,8 @@ private:
 /** the application framework class for the FreeOrion server. */
 class ServerApp
 {
-public:                   
-    /** \name Structors */ //@{   
+public:
+    /** \name Structors */ //@{
     ServerApp();
     ~ServerApp();
     //@}
@@ -71,10 +71,10 @@ public:
     /** Removes an empire from turn processing. This is most likely called when an empire is eliminated from the game */
     void RemoveEmpireTurn(int empire_id);
 
-    /** Adds turn orders for the given empire for the current turn. pOrderSet will be freed when all processing is done for the turn */
-    void SetEmpireTurnOrders(int empire_id, OrderSet* pOrderSet);
+    /** Adds turn orders for the given empire for the current turn. order_set will be freed when all processing is done for the turn */
+    void SetEmpireTurnOrders(int empire_id, OrderSet* order_set);
 
-    /** Determines if all empired have submitted their orders for this turn It will loop the turn squence vector and check for a set pOrderSet. A pOrderSet 
+    /** Determines if all empired have submitted their orders for this turn It will loop the turn squence vector and check for a set order_set. A order_set 
      * of NULL indicates that the empire has not yet submitted their orders for the given turn */
     bool AllOrdersReceived();
 

@@ -10,6 +10,7 @@
 #include "../universe/System.h"
 #include "../universe/Special.h"
 
+#include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
 
 namespace {
@@ -20,17 +21,40 @@ namespace {
     const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
     const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
+    void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                  &Universe::UpdateMeterEstimates;
+
+    std::vector<int>        LeastJumpsPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
+        std::pair<std::list<System*>, int> path = universe->LeastJumpsPath(start_sys, end_sys, empire_id);
+        std::vector<int> retval;
+        for (std::list<System*>::const_iterator it = path.first.begin(); it != path.first.end(); ++it)
+            retval.push_back((*it)->ID());
+        return retval;
+    }
+    boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =         &LeastJumpsPath;
+
+    const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
+
+    boost::function<double(const UniverseObject*, MeterType)> InitialCurrentMeterValueFromObject =
+        boost::bind(&Meter::InitialCurrent, boost::bind(ObjectGetMeter, _1, _2));
+
+    boost::function<double(const UniverseObject*, MeterType)> InitialMaxMeterValueFromObject =
+        boost::bind(&Meter::InitialMax, boost::bind(ObjectGetMeter, _1, _2));
+
+    boost::function<double(const UniverseObject*, MeterType)> ProjectedMaxMeterValueFromObject =
+        boost::bind(&Meter::Max, boost::bind(ObjectGetMeter, _1, _2));
+
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
-    bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;}
+    bool                    (*ValidDesignDesign)(const ShipDesign&) =                           &ShipDesign::ValidDesign;
 
     const std::vector<std::string>& (ShipDesign::*PartsVoid)(void) const =                      &ShipDesign::Parts;
     std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
     unsigned int            (HullType::*NumSlotsTotal)(void) const =                            &HullType::NumSlots;
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
+}
 
-namespace FreeOrionPython {
+    namespace FreeOrionPython {
     using boost::python::def;
     using boost::python::class_;
     using boost::python::bases;
@@ -81,7 +105,16 @@ namespace FreeOrionPython {
             // put as part of universe class so one doesn't need a UniverseObject object in python to access these
             .def_readonly("invalidObjectID",    &UniverseObject::INVALID_OBJECT_ID)
             .def_readonly("invalidObjectAge",   &UniverseObject::INVALID_OBJECT_AGE)
+
+            .def("updateMeterEstimates",        UpdateMeterEstimatesVoidFunc)
+
+            .def("leastJumpsPath",              make_function(
+                                                    LeastJumpsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
+                                                ))
         ;
+
 
         ////////////////////
         // UniverseObject //
@@ -99,6 +132,27 @@ namespace FreeOrionPython {
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
             .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
             .add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
+            .def("Contains",                    &UniverseObject::Contains)
+            .def("ContainedBy",                 &UniverseObject::ContainedBy)
+            .def("MeterPoints",                 &UniverseObject::MeterPoints)           // actual amount of something represented by meter.  eg. population or resource production that isn't equal to the meter value
+            .def("ProjectedMeterPoints",        &UniverseObject::ProjectedMeterPoints)
+            .def("CurrentMeter",                make_function(
+                                                    boost::bind(InitialCurrentMeterValueFromObject, _1, _2),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<double, const UniverseObject*, MeterType>()
+                                                ))
+            .def("ProjectedCurrentMeter",       &UniverseObject::ProjectedCurrentMeter)
+            .def("MaxMeter",                    make_function(
+                                                    boost::bind(InitialMaxMeterValueFromObject, _1, _2),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<double, const UniverseObject*, MeterType>()
+                                                ))
+            .def("ProjectedMaxMeter",           make_function(
+                                                    boost::bind(ProjectedMaxMeterValueFromObject, _1, _2),
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<double, const UniverseObject*, MeterType>()
+                                                ))
+            //.def("GetMeter",                    ObjectGetMeter,                             return_value_policy<reference_existing_object>())
         ;
 
         ///////////////////
@@ -111,8 +165,9 @@ namespace FreeOrionPython {
             .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
             .add_property("numShips",                   &Fleet::NumShips)
-            .def("containsShipID",                      &Fleet::ContainsShip)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
+            .add_property("fuel",                       &Fleet::Fuel)
+            .add_property("maxFuel",                    &Fleet::MaxFuel)
         ;
 
         //////////////////
@@ -140,7 +195,7 @@ namespace FreeOrionPython {
             .add_property("defense",            make_function(&ShipDesign::Defense,             return_value_policy<return_by_value>()))
             .add_property("speed",              make_function(&ShipDesign::Speed,               return_value_policy<return_by_value>()))
             .add_property("attack",             make_function(&ShipDesign::Attack,              return_value_policy<return_by_value>()))
-            .add_property("canColonize",        make_function(&ShipDesign::Colonize,            return_value_policy<return_by_value>()))
+            .add_property("canColonize",        make_function(&ShipDesign::CanColonize,         return_value_policy<return_by_value>()))
             .add_property("cost",               make_function(&ShipDesign::Cost,                return_value_policy<return_by_value>()))
             .add_property("buildTime",          make_function(&ShipDesign::BuildTime,           return_value_policy<return_by_value>()))
             .add_property("hull",               make_function(&ShipDesign::Hull,                return_value_policy<return_by_value>()))

@@ -2,68 +2,73 @@
 <XMLDoc>
   <CREDITS>
     <GROUP name ="LEAD">
-      <PERSON name="Mark Saward"     nick="Tyreth"          task="Project Lead, Programming, Game Design, Graphics"/>
-      <PERSON name="Zach Laine"      nick="Tzlaine"         task="Programming Lead, Game Design"/>
-      <PERSON name="Geoff Topping"   nick="Geoff the Medio" task="Game Design Lead, Programming"/>
+      <PERSON name="Mark Saward"          nick="Tyreth"           task="Project Lead, Programming, Game Design, Graphics"/>
+      <PERSON name="Zach Laine"           nick="Tzlaine"          task="Programming Lead, Game Design"/>
+      <PERSON name="Geoff Topping"        nick="Geoff the Medio"  task="Game Design Lead, Programming"/>
     </GROUP>
     <GROUP name ="PROGRAMMING">
-      <PERSON name="Joseph Bissonnette"  nick="Oceanmachine"    task="Programming, Game Design"/>
-      <PERSON name="Dennis Brakhane"     nick="Yoghurt"         task="Programming"/>
-      <PERSON name="Joshua Barczak"      nick="jbarcz1"         task="Programming, Game Design"/>
-      <PERSON name="Andrew Emmons"       nick=""                task="Programming"/>
-      <PERSON name="Ronald Nölte"        nick="Noelte"          task="Programming"/>
-      <PERSON name="Tony Casale"         nick="Tsev"            task="Programming"/>
-      <PERSON name="Michael J. Agostini" nick=""                task="Programming"/>
-      <PERSON name="Karol Szumski"       nick="MareviQ"         task="Programming"/>
-      <PERSON name="Mike Dotterer"       nick="maelstrom512"    task="Programming"/>
-      <PERSON name="qk-gen"              nick=""                task="Programming"/>
-      <PERSON name="Adrian Schweizer"    nick="LaplaceOperator" task="Programming"/>
-      <PERSON name="Karl Chen"		 nick="quarl"           task="Programming"/>
+      <PERSON name="Joseph Bissonnette"   nick="Oceanmachine"     task="Programming, Game Design"/>
+      <PERSON name="Dennis Brakhane"      nick="Yoghurt"          task="Programming"/>
+      <PERSON name="Joshua Barczak"       nick="jbarcz1"          task="Programming, Game Design"/>
+      <PERSON name="Andrew Emmons"        nick=""                 task="Programming"/>
+      <PERSON name="Ronald Nölte"         nick="Noelte"           task="Programming"/>
+      <PERSON name="Tony Casale"          nick="Tsev"             task="Programming"/>
+      <PERSON name="Michael J. Agostini"  nick=""                 task="Programming"/>
+      <PERSON name="Karol Szumski"        nick="MareviQ"          task="Programming"/>
+      <PERSON name="Mike Dotterer"        nick="maelstrom512"     task="Programming"/>
+      <PERSON name="qk-gen"               nick=""                 task="Programming"/>
+      <PERSON name="Adrian Schweizer"     nick="LaplaceOperator"  task="Programming"/>
+      <PERSON name="Karl Chen"	          nick="quarl"            task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
-      <PERSON name="Samuel Knowlton"   nick="Aquitaine"  task="Game Design"/>
-      <PERSON name="Krum Stanoev"      nick=""           task="Game Design"/>
-      <PERSON name="Ben Lake"          nick="Drek"       task="Game Design"/>
-      <PERSON name="Nightfish"         nick=""           task="Game Design"/>
-      <PERSON name="Chris Martin"      nick="utilae"     task="Game Design"/>
-      <PERSON name="skdiw"             nick=""           task="Game Design"/>
-      <PERSON name="Peter DeVries"     nick="Krikkitone" task="Game Design"/>
-      <PERSON name="Kenneth Ferland"   nick="Impaler"    task="Game Design"/>
-      <PERSON name="emrys"             nick=""           task="Game Design"/>
-      <PERSON name="Andreas Bernard"   nick=""           task="Game Design"/>
-      <PERSON name="Teal Ablaze"       nick=""           task="Game Design"/>
-      <PERSON name="Bryan Patterson"   nick="PowerCrazy" task="Game Design"/>
-      <PERSON name="Andrew Hull"       nick="moxy"       task="Game Design"/>
-      <PERSON name="Benjamin Corfino"  nick="Tortanick"  task="Game Design"/>
+      <PERSON name="Samuel Knowlton"      nick="Aquitaine"        task="Game Design"/>
+      <PERSON name="Krum Stanoev"         nick=""                 task="Game Design"/>
+      <PERSON name="Ben Lake"             nick="Drek"             task="Game Design"/>
+      <PERSON name="Nightfish"            nick=""                 task="Game Design"/>
+      <PERSON name="Chris Martin"         nick="utilae"           task="Game Design"/>
+      <PERSON name="skdiw"                nick=""                 task="Game Design"/>
+      <PERSON name="Peter DeVries"        nick="Krikkitone"       task="Game Design"/>
+      <PERSON name="Kenneth Ferland"      nick="Impaler"          task="Game Design"/>
+      <PERSON name="emrys"                nick=""                 task="Game Design"/>
+      <PERSON name="Andreas Bernard"      nick=""                 task="Game Design"/>
+      <PERSON name="Teal Ablaze"          nick=""                 task="Game Design"/>
+      <PERSON name="Bryan Patterson"      nick="PowerCrazy"       task="Game Design"/>
+      <PERSON name="Andrew Hull"          nick="moxy"             task="Game Design"/>
+      <PERSON name="Benjamin Confino"     nick="Tortanick"        task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
-      <PERSON name="Jonathan Hill"    nick="Obiwan"         task="Graphics"/>
-      <PERSON name="Ka"               nick=""               task="Graphics"/>
-      <PERSON name="Alex Kaludis"     nick="That Guy"       task="Graphics"/>
-      <PERSON name="Chris Montgomery" nick=""               task="Graphics"/>
-      <PERSON name="Mathias Köhler"   nick="pd"             task="Graphics Assistant Lead"/>
-      <PERSON name="Anton Ruonala"    nick="Miu"            task="Graphics"/>
-      <PERSON name="Tim Gilmour"      nick="burndaddy"      task="Graphics"/>
-      <PERSON name="Zanzibar"         nick=""               task="Graphics"/>
-      <PERSON name="Tomi Hartikka"    nick="Mystiqq"        task="Graphics"/>
-      <PERSON name="Brendan Mauro"    nick="BreadMan"       task="Graphics"/>
-      <PERSON name="Karel Kalvoda"    nick="Solid Liquid"   task="Graphics"/>
-      <PERSON name="J. W. Bjerk"      nick="eleazar"        task="Graphics, Game Design"/>
-      <PERSON name="Josh Combs"       nick="Josh"           task="Graphics"/>
-      <PERSON name="Michael T. Young" nick="shrinkshooter"  task="Graphics"/>
-      <PERSON name="Thomas Meschede"  nick="ssalamassr" 	task="Graphics"/>
+      <PERSON name="Jonathan Hill"            nick="Obiwan"         task="Graphics"/>
+      <PERSON name="Ka"                       nick=""               task="Graphics"/>
+      <PERSON name="Alex Kaludis"             nick="That Guy"       task="Graphics"/>
+      <PERSON name="Chris Montgomery"         nick=""               task="Graphics"/>
+      <PERSON name="Mathias Köhler"           nick="pd"             task="Graphics Assistant Lead"/>
+      <PERSON name="Anton Ruonala"            nick="Miu"            task="Graphics"/>
+      <PERSON name="Tim Gilmour"              nick="burndaddy"      task="Graphics"/>
+      <PERSON name="Zanzibar"                 nick=""               task="Graphics"/>
+      <PERSON name="Satyagraha"               nick=""               task="Graphics"/>
+      <PERSON name="Tomi Hartikka"            nick="Mystiqq"        task="Graphics"/>
+      <PERSON name="Brendan Mauro"            nick="BreadMan"       task="Graphics"/>
+      <PERSON name="Karel Kalvoda"            nick="Solid Liquid"   task="Graphics"/>
+      <PERSON name="J. W. Bjerk"              nick="eleazar"        task="Graphics, Game Design"/>
+      <PERSON name="Josh Combs"               nick="Josh"           task="Graphics"/>
+      <PERSON name="Thomas Meschede"          nick="ssalamass"      task="Graphics"/>
+      <PERSON name="Michael T. Young"         nick="shrinkshooter"  task="Graphics"/>
+      <PERSON name="Porter Peterson Nielsen"  nick="Redcap"         task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
-      <PERSON name="Kenneth Welch"   nick="LithiumMongoose" task="Audio"/>
-      <PERSON name="Shannon Roberts" nick="Guiguibaah"      task="Audio"/>
-      <PERSON name="Mejoff"          nick=""                task="Audio"/>
-      <PERSON name="Run_Lugge"       nick=""                task="Audio"/>
-      <PERSON name="_Robbob_"        nick=""                task="Audio"/>
+      <PERSON name="Kenneth Welch"          nick="LithiumMongoose"  task="Audio"/>
+      <PERSON name="Shannon Roberts"        nick="Guiguibaah"       task="Audio"/>
+      <PERSON name="Mejoff"                 nick=""                 task="Audio"/>
+      <PERSON name="Run_Lugge"              nick=""                 task="Audio"/>
+      <PERSON name="_Robbob_"               nick=""                 task="Audio"/>
     </GROUP>
     <GROUP name ="TRANSLATION">
-      <PERSON name="Martin Wuttke" nick="The Silent One" task="German Translation, Graphics"/>
-      <PERSON name="Ivan Sanchez" nick="Ivan s c" task="Spanish Translation"/>
-      <PERSON name="Myckel Habets" nick="Myckel" task="Dutch Translation"/>
-    </GROUP>
+      <PERSON name="Martin Wuttke"        nick="The Silent One"     task="German Translation, Graphics, Programming"/>
+      <PERSON name="Ivan Sanchez"         nick="Ivan s c"           task="Spanish Translation"/>
+      <PERSON name="Myckel Habets"        nick="Myckel"             task="Dutch Translation"/>
+      <PERSON name="Martin Roth"          nick="Captain Rage"       task="Swedish Translation"/>
+      <PERSON name="Markus Sinner"        nick="kroddn"             task="German Translation"/>
+      <PERSON name="Fran Valenzuela"      nick="Synyestro"          task="Spanish Translation"/>
+      </GROUP>
   </CREDITS>
 </XMLDoc>

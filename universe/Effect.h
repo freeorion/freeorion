@@ -64,6 +64,7 @@ public:
     virtual ~EffectsGroup();
 
     void GetTargetSet(int source_id, TargetSet& targets) const;
+    void GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
     void Execute(int source_id, const TargetSet& targets) const;                    // execute all effects in group
     void Execute(int source_id, const TargetSet& targets, int effect_index) const;  // execute effect with \a effect_index (but not other effects)
     const std::string& StackingGroup() const;

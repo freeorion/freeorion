@@ -57,7 +57,7 @@ namespace {
     {
         double retval = 0.0;
         if (const Planet* planet = universe_object_cast<const Planet*>(object)) {
-            retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Environment()];
+            retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Size()];
         }
         return retval;
     }
@@ -82,20 +82,18 @@ namespace {
 }
 
 ResourceCenter::ResourceCenter()
-{
-}
+{}
 
 ResourceCenter::~ResourceCenter()
-{
-}
+{}
 
 void ResourceCenter::Init()
 {
-    InsertMeter(METER_FARMING, Meter());
-    InsertMeter(METER_MINING, Meter());
-    InsertMeter(METER_INDUSTRY, Meter());
-    InsertMeter(METER_RESEARCH, Meter());
-    InsertMeter(METER_TRADE, Meter());
+    InsertMeter(METER_FARMING,      Meter());
+    InsertMeter(METER_MINING,       Meter());
+    InsertMeter(METER_INDUSTRY,     Meter());
+    InsertMeter(METER_RESEARCH,     Meter());
+    InsertMeter(METER_TRADE,        Meter());
     InsertMeter(METER_CONSTRUCTION, Meter());
     Reset();
 }
@@ -138,10 +136,10 @@ double ResourceCenter::MeterPoints(MeterType type) const
     case METER_INDUSTRY:
     case METER_RESEARCH:
     case METER_TRADE:
-        return GetPopMeter()->Current() / 10.0 * GetMeter(type)->Current();
+        return GetPopMeter()->InitialCurrent() / 10.0 * GetMeter(type)->InitialCurrent();
         break;
     case METER_CONSTRUCTION:
-        return GetMeter(METER_CONSTRUCTION)->Current();
+        return GetMeter(METER_CONSTRUCTION)->InitialCurrent();
         break;
     default:
         const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
@@ -161,7 +159,7 @@ double ResourceCenter::ProjectedMeterPoints(MeterType type) const
     case METER_RESEARCH:
     case METER_TRADE:
         // TODO: get projected current population instead of using just current population
-        return GetPopMeter()->Current() / 10.0 * ProjectedCurrentMeter(type);
+        return GetPopMeter()->InitialCurrent() / 10.0 * ProjectedCurrentMeter(type);
         break;
     case METER_CONSTRUCTION:
         return ProjectedCurrentMeter(METER_CONSTRUCTION);
@@ -187,51 +185,47 @@ void ResourceCenter::SetSecondaryFocus(FocusType focus)
     ResourceCenterChangedSignal();
 }
 
-void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments()
+void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
     // determine meter maxes; they should have been previously reset to 0
     double primary_specialized_factor = ProductionDataTables()["FocusMods"][0][0];
     double secondary_specialized_factor = ProductionDataTables()["FocusMods"][1][0];
     double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
     double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
-    GetMeter(METER_CONSTRUCTION)->AdjustMax(10.0); // default construction max is 20
+
     UniverseObject* object = GetObjectSignal();
     assert(object);
-    GetMeter(METER_FARMING)->AdjustMax(MaxFarmingModFromObject(object));
-    GetMeter(METER_INDUSTRY)->AdjustMax(MaxIndustryModFromObject(object));
-    switch (m_primary) {
-    case FOCUS_BALANCED:
-        GetMeter(METER_FARMING)->AdjustMax(primary_balanced_factor);
-        GetMeter(METER_INDUSTRY)->AdjustMax(primary_balanced_factor);
-        GetMeter(METER_MINING)->AdjustMax(primary_balanced_factor);
-        GetMeter(METER_RESEARCH)->AdjustMax(primary_balanced_factor);
-        GetMeter(METER_TRADE)->AdjustMax(primary_balanced_factor);
-        break;
 
-    case FOCUS_FARMING:  GetMeter(METER_FARMING)->AdjustMax(primary_specialized_factor); break;
-    case FOCUS_INDUSTRY: GetMeter(METER_INDUSTRY)->AdjustMax(primary_specialized_factor); break;
-    case FOCUS_MINING:   GetMeter(METER_MINING)->AdjustMax(primary_specialized_factor); break;
-    case FOCUS_RESEARCH: GetMeter(METER_RESEARCH)->AdjustMax(primary_specialized_factor ); break;
-    case FOCUS_TRADE:    GetMeter(METER_TRADE)->AdjustMax(primary_specialized_factor); break;
+    // special cases for construction, farming and industry
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_CONSTRUCTION)
+        GetMeter(METER_CONSTRUCTION)->AdjustMax(10.0); // default construction max is 20
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_FARMING)
+        GetMeter(METER_FARMING)->AdjustMax(MaxFarmingModFromObject(object));
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_INDUSTRY)
+        GetMeter(METER_INDUSTRY)->AdjustMax(MaxIndustryModFromObject(object));
 
-    default:             break;
-    }
-    switch (m_secondary) {
-    case FOCUS_BALANCED: 
-        GetMeter(METER_FARMING)->AdjustMax(secondary_balanced_factor);
-        GetMeter(METER_INDUSTRY)->AdjustMax(secondary_balanced_factor);
-        GetMeter(METER_MINING)->AdjustMax(secondary_balanced_factor);
-        GetMeter(METER_RESEARCH)->AdjustMax(secondary_balanced_factor);
-        GetMeter(METER_TRADE)->AdjustMax(secondary_balanced_factor);
-        break;
+    // general-cases for all resource meters
+    std::vector<MeterType> res_meter_types;
+    res_meter_types.push_back(METER_FARMING);   res_meter_types.push_back(METER_MINING);    res_meter_types.push_back(METER_INDUSTRY);
+    res_meter_types.push_back(METER_RESEARCH);  res_meter_types.push_back(METER_TRADE);
 
-    case FOCUS_FARMING:  GetMeter(METER_FARMING)->AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_INDUSTRY: GetMeter(METER_INDUSTRY)->AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_MINING:   GetMeter(METER_MINING)->AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_RESEARCH: GetMeter(METER_RESEARCH)->AdjustMax(secondary_specialized_factor); break;
-    case FOCUS_TRADE:    GetMeter(METER_TRADE)->AdjustMax(secondary_specialized_factor); break;
+    // all meters matching parameter meter_type should be adjusted, depending on focus
+    for (unsigned int i = 0; i < res_meter_types.size(); ++i) {
+        const MeterType CUR_METER_TYPE = res_meter_types[i];
 
-    default:             break;
+        if (meter_type == INVALID_METER_TYPE || meter_type == CUR_METER_TYPE) {
+            Meter* meter = GetMeter(CUR_METER_TYPE);
+
+            if (m_primary == MeterToFocus(CUR_METER_TYPE))
+                meter->AdjustMax(primary_specialized_factor);
+            else if (m_primary == FOCUS_BALANCED)
+                meter->AdjustMax(primary_balanced_factor);
+
+            if (m_secondary == MeterToFocus(CUR_METER_TYPE))
+                meter->AdjustMax(secondary_specialized_factor);
+            else if (m_secondary == FOCUS_BALANCED)
+                meter->AdjustMax(secondary_balanced_factor);
+        }
     }
 }
 

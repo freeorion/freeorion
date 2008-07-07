@@ -7,7 +7,7 @@
 
 #include <GG/ListBox.h>
 
-class CUIListBox;
+class QueueListBox;
 class ProductionInfoPanel;
 class BuildDesignatorWnd;
 
@@ -31,10 +31,11 @@ public:
     void Render();
 
     void Reset();
+    void Update();
     void CenterOnBuild(int queue_idx);
     void SelectSystem(int system);
     void SelectPlanet(int planet);
-    void QueueItemMoved(int row_idx, GG::ListBox::Row* row);
+    void QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void Sanitize();
     //@}
 
@@ -42,16 +43,16 @@ public:
 
 private:
     void UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
-    void ResetInfoPanel();  ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
+    void UpdateInfoPanel(); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
     void AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
     void AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location);
     void ChangeBuildQuantitySlot(int queue_idx, int quantity);
-    void QueueItemDeletedSlot(int row_idx, GG::ListBox::Row* row);
-    void QueueItemClickedSlot(int row_idx, GG::ListBox::Row* row, const GG::Pt& pt);
-    void QueueItemDoubleClickedSlot(int row_idx, GG::ListBox::Row* row);
+    void QueueItemDeletedSlot(GG::ListBox::iterator it);
+    void QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
+    void QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
     ProductionInfoPanel* m_production_info_panel;
-    CUIListBox*          m_queue_lb;
+    QueueListBox*        m_queue_lb;
     BuildDesignatorWnd*  m_build_designator_wnd;
 
     std::set<boost::signals::connection> m_misc_connections;

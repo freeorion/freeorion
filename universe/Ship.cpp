@@ -14,13 +14,7 @@
 using boost::lexical_cast;
 #include <stdexcept>
 
-namespace {
-    void GrowFuelMeter(Meter* fuel) {
-        double regen = 0.5;        
-        double new_cur = std::min(fuel->Max(), fuel->Max() + regen);
-        fuel->SetCurrent(new_cur);
-    }
-}
+
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
     m_fleet_id(INVALID_OBJECT_ID)
@@ -73,7 +67,11 @@ UniverseObject::Visibility Ship::GetVisibility(int empire_id) const {
 }
 
 bool Ship::IsArmed() const {
-    return Design()->Attack() > 0;
+    return Design()->IsArmed();
+}
+
+bool Ship::CanColonize() const {
+    return Design()->CanColonize();
 }
 
 double Ship::Speed() const {
@@ -94,32 +92,12 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 }
 
 double Ship::ProjectedCurrentMeter(MeterType type) const {
-    const Meter* fuel = GetMeter(METER_FUEL);
-    Meter copy;
-
-    switch (type) {
-    case METER_FUEL:
-        assert(fuel);
-        copy = Meter(*fuel);
-        GrowFuelMeter(&copy);
-        return copy.Current();
-        break;
-    default:
-        return UniverseObject::ProjectedCurrentMeter(type);
-        break;
-    }
+    return UniverseObject::ProjectedCurrentMeter(type);
 }
 
 void Ship::MovementPhase() {
+    // Fleet::MovementPhase moves ships within fleet around and deals with ship fuel consumption
 }
 
 void Ship::PopGrowthProductionResearchPhase() {
-    GrowFuelMeter(GetMeter(METER_FUEL));    // get a little free fuel each turn
-}
-
-bool Ship::AdjustFuel(double amount) {
-    double new_fuel = GetMeter(METER_FUEL)->Current() + amount;
-    if (new_fuel > GetMeter(METER_FUEL)->Max() || new_fuel < Meter::METER_MIN) return false;
-    GetMeter(METER_FUEL)->SetCurrent(new_fuel);
-    return true;
 }

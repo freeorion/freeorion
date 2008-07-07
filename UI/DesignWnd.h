@@ -26,8 +26,6 @@ private:
     class PartPalette;      // shows parts that can be clicked for detailed or dragged on slots in design
     class MainPanel;        // shows image of hull, slots and parts, design name and description entry boxes, confirm button
 
-    void    DoLayout();
-
     void    AddDesign();    ///< adds current design to those stored by this empire, allowing ships of this design to be produced
 
     EncyclopediaDetailPanel*    m_detail_panel;

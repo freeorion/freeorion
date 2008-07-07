@@ -73,7 +73,6 @@ void SitRepPanel::Update()
     if (!empire)
         return;
 
-    int first_visible_sitrep = m_sitreps_lb->FirstRowShown();
     m_sitreps_lb->Clear();
 
     boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
@@ -86,10 +85,5 @@ void SitRepPanel::Update()
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);
-    }
-
-    if (!m_sitreps_lb->Empty()) {
-        m_sitreps_lb->BringRowIntoView(m_sitreps_lb->NumRows() - 1);
-        m_sitreps_lb->BringRowIntoView(first_visible_sitrep);
     }
 }

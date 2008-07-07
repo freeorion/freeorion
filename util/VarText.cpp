@@ -29,7 +29,7 @@ namespace {
 
             // look up child
             if (!m_variables.ContainsChild(token)) {
-                m_str += "ERROR";
+                m_str += UserString("ERROR");
                 return;
             }
 
@@ -46,7 +46,7 @@ namespace {
                     obj = GetUniverse().DestroyedObject(object_id);
 
                 if (!obj) {
-                    m_str += "ERROR";
+                    m_str += UserString("ERROR");
                     return;
                 }
 
@@ -55,7 +55,7 @@ namespace {
                 std::string tech_name = token_elem.Attribute("value");
 
                 if (!GetTech(tech_name)) {
-                    m_str += "ERROR";
+                    m_str += UserString("ERROR");
                     return;
                 }
 
@@ -64,7 +64,7 @@ namespace {
                 std::string building_name = token_elem.Attribute("value");
 
                 if (!GetBuildingType(building_name)) {
-                    m_str += "ERROR";
+                    m_str += UserString("ERROR");
                     return;
                 }
 

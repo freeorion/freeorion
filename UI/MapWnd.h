@@ -66,8 +66,10 @@ public:
     void           GetSaveGameUIData(SaveGameUIData& data) const;   //!< populates the relevant UI state that should be restored after a save-and-load cycle
     bool           InProductionViewMode() const;                    //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
 
-    GG::Pt ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;    //!< returns the position on the screen that corresponds to the specified universe X and Y coordinates
-    std::pair<double, double> UniversePositionFromScreenCoords(GG::Pt screen_coords) const; //!< returns the universe position (X and Y in pair) that corresponds to the specified screen coordinates
+    /* returns the position on the screen that corresponds to the specified universe X and Y coordinates. */
+    GG::Pt                      ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
+    /* returns the universe position (X and Y in pair) that corresponds to the specified screen coordinates. */
+    std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
     //!@}
 
     //! \name Mutators //!@{
@@ -90,42 +92,57 @@ public:
     mutable SystemRightClickedSignalType SystemRightClickedSignal;
     mutable SystemBrowsedSignalType      SystemBrowsedSignal;
 
-    void CenterOnMapCoord(double x, double y);          //!< centers the map on map position (x, y)
-    void CenterOnObject(int id);                        //!< centers the map on object with id \a id
-    void CenterOnObject(const UniverseObject* obj);     //!< centers the map on object \a id
-    void ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
-    void ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
-    void SelectSystem(int systemID);            //!< catches emitted signals from the system icons, and allows programmatic selection of planets
-    void ReselectLastSystem();                  //!< re-selects the most recently selected system, if a valid one exists
-    void SelectFleet(int fleetID);              //!< allows programmatic selection of fleets
-    void SelectFleet(Fleet* fleet);             //!< allows programmatic selection of fleets
+    void            CenterOnMapCoord(double x, double y);           //!< centers the map on map position (x, y)
+    void            CenterOnObject(int id);                         //!< centers the map on object with id \a id
+    void            CenterOnObject(const UniverseObject* obj);      //!< centers the map on object \a id
+    void            ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
+    void            ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
+    void            SelectSystem(int systemID);                     //!< catches emitted signals from the system icons, and allows programmatic selection of planets
+    void            ReselectLastSystem();                           //!< re-selects the most recently selected system, if a valid one exists
+    void            SelectFleet(int fleetID);                       //!< allows programmatic selection of fleets
+    void            SelectFleet(Fleet* fleet);                      //!< allows programmatic selection of fleets
 
-    void SetFleetMovement(FleetButton* fleet_button);   //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
-    void SetFleetMovement(Fleet* fleet);                //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
-    void SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route);   //!< creates specially-coloured projected fleet movement line for specified fleet following the specified route.  Move line originates from the fleet's button location.
+    void            SetFleetMovementLine(const FleetButton* fleet_button);          //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
+    void            SetFleetMovementLine(const Fleet* fleet);                       //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
+    void            SetFleetETAIndicators(const std::vector<const Fleet*>& fleets); //!< removes existing fleet move line ETA indicators, and adds indicators for the specified \a fleets move lines
 
-    void RegisterPopup(MapWndPopup* popup);     //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
-    void RemovePopup(MapWndPopup* popup);       //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
-    void Cleanup();                             //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
-    void Sanitize();                            //!< sanitizes the MapWnd after a game
+    /* creates specially-coloured projected fleet movement line for specified fleet following the specified
+       route.  Move line originates from the fleet's button location. */
+    void            SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route);
+    /* creates specially-coloured projected fleet movement lines for specified fleets following the specified
+       route.  Move lines originates from the fleets' button locations. */
+    void            SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route);
+    void            RemoveProjectedFleetMovementLine(const Fleet* fleet);   //!< removes projected fleet movement line for specified fleet.
+    void            ClearProjectedFleetMovementLines();                     //!< removes all projected fleet movement lines
+    void            SetProjectedFleetETAIndicators();                       //!< creates fleet move line ETA indicators for current projected fleet move lines
+
+    void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
+    void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
+    void            Cleanup();                                      //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
+    void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
     static const int SIDE_PANEL_WIDTH;
 
 protected:
-    virtual bool   EventFilter(GG::Wnd* w, const GG::WndEvent& event);
+    virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
-    void RefreshFoodResourceIndicator();    ///< gets stockpile and expected change and updates resource indicator
-    void RefreshMineralsResourceIndicator();
-    void RefreshTradeResourceIndicator();
-    void RefreshResearchResourceIndicator();
-    void RefreshIndustryResourceIndicator();
-    void RefreshPopulationIndicator();
+    void            RefreshFoodResourceIndicator();                 ///< gets stockpile and expected change and updates resource indicator
+    void            RefreshMineralsResourceIndicator();
+    void            RefreshTradeResourceIndicator();
+    void            RefreshResearchResourceIndicator();
+    void            RefreshIndustryResourceIndicator();
+    void            RefreshPopulationIndicator();
 
-    void UpdateMetersAndResourcePools();
-    void UpdateMeterEstimates();            ///< re-estimates meter values based on orders given
-    void UpdateEmpireResourcePools();       ///< recalculates production and predicted changes of player's empire's resource and population pools
+    void            UpdateMetersAndResourcePools();                                                     ///< update meter estimates and resource pool amounts for this client's empire
+    void            UpdateMetersAndResourcePools(const std::vector<int>& objects_vec);                  ///< update meter estimates for indicated objects, and resource pool amounts for this client's empire
+    void            UpdateMetersAndResourcePools(int object_id, bool update_contained_objects = false); ///< update meter esimtates for indiacted objects, and resource pool amounts for this client's empire
+    void            UpdateSidePanelSystemObjectMetersAndResourcePools();                                ///< update meter estimates for objects contained within the current system shown in the sidepanel, or all objects if there is no system shown
+    void            UpdateMeterEstimates();                                                             ///< re-estimates meter values of all known objects based on orders given
+    void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);         ///< re-estimates meter values of specified objects
+    void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                          ///< re-estimates meter values of specified objects
+    void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
 
     /** contains all the information necessary to render a single fleet movement line on the main map */
     struct MovementLineData
@@ -145,15 +162,20 @@ private:
         double m_x, m_y;                ///< universe x and y at which to originate line (start point isn't in the path) (if m_button is nonzero, its galaxy position should be used instead)
     };
 
+    class FleetETAMapIndicator;
+
     void Zoom(int delta);                           //!< changes the zoomlevel of the main map
     void DoMovingFleetButtonsLayout();              //!< does layout of fleet buttons for moving fleets
     void DoSystemIconsLayout();                     //!< does layout of system icons
+
     void RenderStarfields();                        //!< renders the background starfiends
     void RenderNebulae();                           //!< renders nebulae
     void RenderGalaxyGas();                         //!< renders gassy substance to make shape of galaxy
     void RenderSystems();                           //!< renders stars and halos
     void RenderStarlanes();                         //!< renders the starlanes between the systems
     void RenderFleetMovementLines();                //!< renders the dashed lines indicating where each fleet is going
+    void RenderMovementLine(const MapWnd::MovementLineData& move_line); //!< renders a single fleet movement line
+
     void CorrectMapPosition(GG::Pt &move_to_pt);    //!< ensures that the map data are positioned sensibly
     void SystemDoubleClicked(int system_id);
     void SystemLeftClicked(int system_id);
@@ -188,8 +210,7 @@ private:
     /** Disables keyboard accelerators that use an alphanumeric key without modifiers. This is useful if a
      * keyboard input is required, so that the keys aren't interpreted as an accelerator.
      * @note Repeated calls of DisableAlphaNumAccels have to be followed by the same number of calls to 
-     * EnableAlphaNumAccels to re-enable the accelerators.
-     */
+     * EnableAlphaNumAccels to re-enable the accelerators. */
     void DisableAlphaNumAccels();
     void EnableAlphaNumAccels();                //!< Re-enable accelerators disabled by DisableAlphaNumAccels
 
@@ -198,14 +219,14 @@ private:
     void ShowAllPopups();
 
     void FleetWndClosing(FleetWnd* fleet_wnd);
-    void HandleEmpireElimination(int empire_id); //!< cleans up internal storage of now-invalidated empire ID
+    void HandleEmpireElimination(int empire_id);    //!< cleans up internal storage of now-invalidated empire ID
 
-    std::set<GG::Key> m_disabled_accels_list;   //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
+    std::set<GG::Key> m_disabled_accels_list;       //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
-    std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;  //!< starfield backgrounds
-    std::vector<boost::shared_ptr<GG::Texture> >    m_nebulae;      //!< decorative nebula textures
-    std::vector<GG::Pt>     m_nebula_centers;   //!< the centerpoints of each of the nebula textures
-    std::vector<double>     m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
+    std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
+    std::vector<boost::shared_ptr<GG::Texture> >    m_nebulae;          //!< decorative nebula textures
+    std::vector<GG::Pt>                             m_nebula_centers;   //!< the centerpoints of each of the nebula textures
+    std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     int                         m_previously_selected_system;
 
@@ -218,20 +239,16 @@ private:
     DesignWnd*                  m_design_wnd;       //!< design screen
     GG::MultiEdit*              m_chat_display;     //!< (read-only) MP-chat output multi-line edit box
     CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
-    std::vector<FleetButton*>   m_moving_fleet_buttons; //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
 
+    std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
 
-    std::map<Fleet*, MovementLineData>
-                                m_fleet_lines;          //!< lines used for moving fleets in the main map
+    std::map<const Fleet*, MovementLineData>        m_fleet_lines;                          //!< lines used for moving fleets in the main map
+    std::map<const Fleet*,
+             std::vector<FleetETAMapIndicator*> >   m_fleet_eta_map_indicators;             //!< indicators that appear adjacent to fleet move lines that indicate the eta for points on a move path
 
-    MovementLineData            m_projected_fleet_line; //!< lines that show the projected path of the active fleet in the FleetWnd
-
-    std::map<int, std::set<int> > m_empire_system_fleet_supply;     //!< map from empire id to set of systems that empire can provide fleet supply to this turn
-
-    std::map<int, std::set<std::set<int> > >
-                                m_empire_resource_sharing_groups;   //!< map from empire id to set of sets of systems that can share resources for that empire
-    std::map<int, std::set<std::pair<int, int> > >
-                                m_empire_resource_sharing_lanes;    //!< map from empire id to set of starlanes (stored as directed pair of start and end system ids) along which inter-system resource sharing travels for that empire
+    std::map<const Fleet*, MovementLineData>        m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
+    std::map<const Fleet*,
+             std::vector<FleetETAMapIndicator*> >   m_projected_fleet_eta_map_indicators;   //!< indicators that appear adjacent to projected fleet move lines that indicate the eta for points on a move path
 
     // OpenGL buffers objects containing vertices, texture coordinates, etc.
     struct GLBuffer
@@ -264,7 +281,6 @@ private:
 
     FPSIndicator*               m_FPS;
 
-    static const int NUM_BACKGROUNDS;
     static double s_min_scale_factor;
     static double s_max_scale_factor;
 

@@ -10,11 +10,13 @@ class Fleet;
 class FleetButton;
 class System;
 namespace GG {
-class StaticGraphic;
-class TextControl;
+    class StaticGraphic;
+    class TextControl;
 }
 
-/** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). */
+/** A TextControl-like GG::Control that displays the name of a system in the color(s) of the owning empire(s). 
+    This class is derived from GG::Control because GG::ListBox::Row accepts GG::Control but not GG::Wnd being
+    added to them.  OwnerColoredSystemName are added to the list of systems on the SidePanel. */
 class OwnerColoredSystemName : public GG::Control
 {
 public:
@@ -47,7 +49,7 @@ public:
 
     //! \name Accessors //!@{
     const System&       GetSystem() const;
-    const FleetButton*  GetFleetButton(Fleet* fleet) const;
+    const FleetButton*  GetFleetButton(const Fleet* fleet) const;
     GG::Pt              FleetButtonCentre(int empire_id, bool moving) const;    //!< returns centre of fleetbutton owned by empire with id \a empire_id, or GG::Pt(INVALID_POSITION, INVALID_POSITION) if there is no such FleetButton for the specified empire.
 
     const boost::shared_ptr<GG::Texture>& DiscTexture() const; //!< returns the solid star disc texture
@@ -60,6 +62,7 @@ public:
     //! \name Mutators //!@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render() {}
+    void            ManualRender(double halo_scale_factor); //!< Draw disc and halo textures
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -67,7 +70,9 @@ public:
     virtual void    MouseLeave();
     void            SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 
-    void            Refresh();                      //!< sets up the icon's fleet buttons, generates fleet movement lines, etc.  Should be called after an icon is attached to the map
+    void            Refresh();                      //!< Resets system name text and calls RefreshFleetButtons().  Should be called after an icon is attached to the map
+    void            RefreshFleetButtons();          //!< Recreates all fleet buttons and fleet move lines from them
+
     void            DoFleetButtonLayout();          //!< arranges and resizes fleet buttons
     void            ClickFleetButton(Fleet* fleet); //!< clicks the FleetButton containing \a fleet
     void            ShowName();                     //!< enables the system name text
@@ -90,10 +95,11 @@ private:
     GG::Pt  NthFleetButtonUpperLeft(int n, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown, not empire id
     int     FleetButtonSize() const;                            //!< returns absolute size of fleetbuttons at current zoom level
 
-    void CreateFleetButtons();
+    void    FleetInserted(Fleet& fleet);
+    void    FleetRemoved(Fleet& fleet);
+    void    FleetStateChanged();
 
     void PositionSystemName();
-    void FleetCreatedOrDestroyed(const Fleet&);
 
     const System&                   m_system;               //!< the System object associated with this SystemIcon
     boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture
@@ -106,8 +112,10 @@ private:
     OwnerColoredSystemName*         m_name;                 //!< the control that holds the name of the system
     bool                            m_showing_name;         //!< is the icon supposed to show its name?
 
-    std::map<int, FleetButton*> m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
-    std::map<int, FleetButton*> m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
+    std::map<int, FleetButton*>     m_stationary_fleet_markers; //!< the fleet buttons for the fleets that are stationary in the system, indexed by Empire ID of the owner
+    std::map<int, FleetButton*>     m_moving_fleet_markers;     //!< the fleet buttons for the fleets that are under orders to move out of the system, indexed by Empire ID of the owner
+
+    std::map<const Fleet*, boost::signals::connection>  m_fleet_state_change_signals;
 
     struct FleetButtonClickedFunctor
     {

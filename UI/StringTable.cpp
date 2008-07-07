@@ -59,7 +59,7 @@ void StringTable::Load()
     const sregex COMMENT = '#' >> *(~_n) >> _n;
     const sregex KEY = IDENTIFIER;
     const sregex SINGLE_LINE_VALUE = *(~_n);
-    const sregex MULTI_LINE_VALUE = after("'''") >> *_ >> before("'''");
+    const sregex MULTI_LINE_VALUE = -*_;
     const sregex FILE_ =
         IDENTIFIER >>
         +(*(space | COMMENT) >>

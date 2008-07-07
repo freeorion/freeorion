@@ -77,7 +77,7 @@ EffectsGroup::~EffectsGroup()
     }
 }
 
-void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
 {
     Universe& universe = GetUniverse();
     UniverseObject* source = universe.Object(source_id);
@@ -96,11 +96,17 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 
     // evaluate the scope condition
     targets.clear();
-    non_targets.clear();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        non_targets.insert(it->second);
-    }
+    non_targets = potential_targets;
     m_scope->Eval(source, targets, non_targets);
+}
+
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
+{
+    Universe& universe = GetUniverse();
+    Condition::ObjectSet potential_targets;
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+        potential_targets.insert(it->second);
+    GetTargetSet(source_id, targets, potential_targets);
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
@@ -110,6 +116,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 
     // execute effects on targets
     for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
         for (unsigned int i = 0; i < m_effects.size(); ++i) {
             m_effects[i]->Execute(source, *it);
         }
@@ -250,6 +257,8 @@ void SetMeter::Execute(const UniverseObject* source, UniverseObject* target) con
 {
     if (Meter* m = target->GetMeter(m_meter)) {
         double val = m_value->Eval(source, target);
+        //Logger().debugStream() << "Setting " << (m_max ? "max " : "current ") << boost::lexical_cast<std::string>(m_meter) << " meter from "
+        //                       << (m_max ? m->Max() : m->Current()) << " to " << val;
         m_max ? m->SetMax(val) : m->SetCurrent(val);
     }
 }

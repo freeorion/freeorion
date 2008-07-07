@@ -516,6 +516,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     planets.push_back(new Planet(PT_OCEAN, SZ_HUGE));
 
     System system;
+    system.MoveTo(0, 0);
     system.SetStarType(STAR_BLUE);
     for (std::size_t i = 0; i < planets.size(); ++i) {
         GetUniverse().InsertID(planets[i], i);

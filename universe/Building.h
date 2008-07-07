@@ -29,20 +29,22 @@ public:
         is other than exactly one owner) */
     const BuildingType* GetBuildingType() const;
 
-    const std::string&  BuildingTypeName() const; ///< returns the name of the BuildingType object for this building
-    bool                Operating() const;        ///< returns true iff this building is currently operating
-    int                 PlanetID() const;         ///< returns the ID number of the planet this building is on
-    Planet*             GetPlanet() const;        ///< returns a pointer to the planet this building is on
+    const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
+    bool                    Operating() const;                  ///< returns true iff this building is currently operating
+    int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
+    Planet*                 GetPlanet() const;                  ///< returns a pointer to the planet this building is on
+
+    virtual Visibility      GetVisibility(int empire_id) const; ///< returns the visibility status of this building relative to the input empire.
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
     /** \name Mutators */ //@{
-    void Activate(bool activate);    ///< activates or deactivates the building
-    void SetPlanetID(int planet_id); ///< sets the planet on which the building is located
+    void                    Activate(bool activate);            ///< activates or deactivates the building
+    void                    SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
 
-    virtual void MovementPhase();
-    virtual void PopGrowthProductionResearchPhase();
+    virtual void            MovementPhase();
+    virtual void            PopGrowthProductionResearchPhase();
     //@}
 
 private:

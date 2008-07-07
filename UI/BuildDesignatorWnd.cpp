@@ -417,6 +417,12 @@ public:
     mutable boost::signal<void (BuildType, int, int)>                   RequestIDedBuildItemSignal;
 
 private:
+    typedef std::map<
+        GG::ListBox::iterator,
+        BuildType,
+        GG::ListBox::RowPtrIteratorLess<GG::ListBox>
+     > RowToBuildTypeMap;
+
     static const int TEXT_MARGIN_X = 3;
     static const int TEXT_MARGIN_Y = 3;
 
@@ -428,8 +434,8 @@ private:
     void PopulateList();
     std::vector<int> ColWidths();
 
-    void BuildItemSelected(const std::set<int>& selections);
-    void BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row);
+    void BuildItemSelected(const GG::ListBox::SelectionSet& selections);
+    void BuildItemDoubleClicked(GG::ListBox::iterator it);
 
     std::map<BuildType, CUIButton*>         m_build_type_buttons;
     std::vector<CUIButton*>                 m_availability_buttons;
@@ -438,7 +444,7 @@ private:
     std::pair<bool, bool>                   m_availabilities_shown; // .first -> available items; .second -> unavailable items
 
     BuildableItemsListBox*                  m_buildable_items;
-    std::map<GG::ListBox::Row*, BuildType>  m_build_types;
+    RowToBuildTypeMap                       m_build_types;
     GG::Pt                                  m_original_ul;
 
     int                                     m_build_location;
@@ -449,7 +455,10 @@ private:
 };
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
-    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
+    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 1, 1, w - 1, h - 1,
+           GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
+    m_buildable_items(new BuildableItemsListBox(0, 0, 1, 1)),
+    m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     // create build type toggle buttons (ship, building, orbital, all)
@@ -469,10 +478,11 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items
-    m_buildable_items = new BuildableItemsListBox(0, 0, 1, 1);
     AttachChild(m_buildable_items);
-    GG::Connect(m_buildable_items->SelChangedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
-    GG::Connect(m_buildable_items->DoubleClickedSignal, &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
+    GG::Connect(m_buildable_items->SelChangedSignal,
+                &BuildDesignatorWnd::BuildSelector::BuildItemSelected, this);
+    GG::Connect(m_buildable_items->DoubleClickedSignal,
+                &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
     m_buildable_items->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
     m_row_height = ClientUI::Pts()*3/2;
@@ -733,7 +743,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
     std::string selected_row;
     if (m_buildable_items->Selections().size() == 1) {
-        selected_row = m_buildable_items->GetRow(*m_buildable_items->Selections().begin()).DragDropDataType();
+        selected_row = (**m_buildable_items->Selections().begin())->DragDropDataType();
     }
 
 
@@ -747,7 +757,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     int icon_col_width = col_widths[0];
     int desc_col_width = col_widths[4];
 
-    int row_to_select = -1; // may be set while populating - used to reselect previously selected row after populating
+    GG::ListBox::iterator row_to_select = m_buildable_items->end(); // may be set while populating - used to reselect previously selected row after populating
     int i = 0;              // counter that keeps track of how many rows have been added so far
 
     // populate list with building types
@@ -792,10 +802,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
                 row->Disable(false);
             }
 
-            m_buildable_items->Insert(row);
-            m_build_types[row] = BT_BUILDING;
+            GG::ListBox::iterator row_it = m_buildable_items->Insert(row);
+            m_build_types[row_it] = BT_BUILDING;
             if (row->DragDropDataType() == selected_row)
-                row_to_select = i;
+                row_to_select = row_it;
 
             row->GetLayout()->SetColumnStretch(0, 0.0);
             row->GetLayout()->SetColumnStretch(1, 0.0);
@@ -847,10 +857,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
                 row->Disable(false);
             }
 
-            m_buildable_items->Insert(row);
-            m_build_types[row] = BT_SHIP;
+            GG::ListBox::iterator row_it = m_buildable_items->Insert(row);
+            m_build_types[row_it] = BT_SHIP;
             if (row->DragDropDataType() == selected_row)
-                row_to_select = i;
+                row_to_select = row_it;
 
             row->GetLayout()->SetColumnStretch(0, 0.0);
             row->GetLayout()->SetColumnStretch(1, 0.0);
@@ -894,10 +904,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
                 row->Disable(false);
             }
 
-            m_buildable_items->Insert(row);
-            m_build_types[row] = BT_ORBITAL;
+            GG::ListBox::iterator row_it = m_buildable_items->Insert(row);
+            m_build_types[row_it] = BT_ORBITAL;
             if (row->DragDropDataType() == selected_row)
-                row_to_select = i;
+                row_to_select = row_it;
 
             row->GetLayout()->SetColumnStretch(0, 0.0);
             row->GetLayout()->SetColumnStretch(1, 0.0);
@@ -908,7 +918,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     }
 
     Logger().debugStream() << "Selecting Row";
-    if (row_to_select != -1)
+    if (row_to_select != m_buildable_items->end())
         m_buildable_items->SelectRow(row_to_select);
     Logger().debugStream() << "Done";
 }
@@ -930,26 +940,27 @@ std::vector<int> BuildDesignatorWnd::BuildSelector::ColWidths()
     return retval;
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const std::set<int>& selections)
+void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections)
 {
     if (selections.size() == 1) {
-        GG::ListBox::Row* row = &m_buildable_items->GetRow(*selections.begin());
+        GG::ListBox::iterator row = *selections.begin();
         BuildType build_type = m_build_types[row];
         if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-            DisplayNamedBuildItemSignal(m_build_types[row], row->DragDropDataType());
+            DisplayNamedBuildItemSignal(m_build_types[row], (*row)->DragDropDataType());
         else if (build_type == BT_SHIP)
-            DisplayIDedBuildItemSignal(m_build_types[row], boost::lexical_cast<int>(row->DragDropDataType()));
+            DisplayIDedBuildItemSignal(m_build_types[row], boost::lexical_cast<int>((*row)->DragDropDataType()));
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(int row_index, GG::ListBox::Row* row)
+void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it)
 {
-    if (row->Disabled()) return;
-    BuildType build_type = m_build_types[row];
+    if ((*it)->Disabled())
+        return;
+    BuildType build_type = m_build_types[it];
     if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-        RequestNamedBuildItemSignal(build_type, row->DragDropDataType(), 1);
+        RequestNamedBuildItemSignal(build_type, (*it)->DragDropDataType(), 1);
     else if (build_type == BT_SHIP)
-        RequestIDedBuildItemSignal(build_type, boost::lexical_cast<int>(row->DragDropDataType()), 1);
+        RequestIDedBuildItemSignal(build_type, boost::lexical_cast<int>((*it)->DragDropDataType()), 1);
 }
 
 
@@ -1061,6 +1072,7 @@ void BuildDesignatorWnd::SelectSystem(int system)
         if (system != m_side_panel->SystemID()) {
             m_build_location = UniverseObject::INVALID_OBJECT_ID;
         }
+        m_side_panel->SetSystem(system);
         SelectDefaultPlanet(system);
     }
 }
@@ -1214,11 +1226,21 @@ void BuildDesignatorWnd::SelectDefaultPlanet(int system)
     m_side_panel->SetValidSelectionPredicate(boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID())));
     std::map<int, int>::iterator it = m_system_default_planets.find(system);
     if (it != m_system_default_planets.end()) {
+        // if a planet has previously been selected in this system, re-select it
         m_side_panel->SelectPlanet(it->second);
     } else {
-        System::ObjectVec owned_planets =
-            GetUniverse().Object<System>(system)->FindObjects(OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID()));
+        // find a planet to select from those owned by this client's player
+        const System* sys = GetUniverse().Object<System>(system);
+        if (!sys) {
+            Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system;
+            return;
+        }
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        System::ConstObjectVec owned_planets = sys->FindObjects(OwnedVisitor<Planet>(empire_id));
+
         if (!owned_planets.empty()) {
+            // pick planet with max population of those owned by this player in this system
             int planet_id = owned_planets[0]->ID();
             double max_pop = owned_planets[0]->GetMeter(METER_POPULATION)->Current();
             for (unsigned int i = 1; i < owned_planets.size(); ++i) {

@@ -7,7 +7,9 @@
 namespace {
     // Research queue tests whether it contains a Tech but Python needs a __contains__ function that takes a 
     // *Queue::Element.  This helper functions take an Element and returns the associated Tech.
-    const Tech*         TechFromResearchQueueElement(const ResearchQueue::Element& element) { return element.tech; }
+    const Tech*         TechFromResearchQueueElement(const ResearchQueue::Element& element) {
+        return element.tech;
+    }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                    &TechManager::TechNames;
     boost::function<std::vector<std::string>(const TechManager*)> TechNamesMemberFunc =                     TechNamesVoid;
@@ -102,6 +104,8 @@ namespace FreeOrionPython {
             .def("resourceAvailable",               &Empire::ResourceAvailable)
 
             .def("population",                      &Empire::Population)
+
+            .add_property("fleetSupplyableSystems", make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
         ;
 
 

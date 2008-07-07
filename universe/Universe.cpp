@@ -96,7 +96,7 @@ namespace {
                 return i;
         }
 
-        throw std::out_of_range("SystemGraphIndex cannot be found due to invalid system ID");
+        throw std::out_of_range("SystemGraphIndex cannot be found due to invalid system ID " + boost::lexical_cast<std::string>(system_id));
         return -1;
     }
 
@@ -202,8 +202,8 @@ namespace {
         std::vector<int> predecessors(boost::num_vertices(graph));
         for (unsigned int i = 0; i < boost::num_vertices(graph); ++i)
             predecessors[i] = i;
-        
-        
+
+
         // do the actual path finding using verbose boost magic...
         try {
             boost::queue<int> buf;
@@ -232,7 +232,7 @@ namespace {
             // add start system to path, as it wasn't added by traversing predecessors array
             retval.first.push_front(pointer_property_map[system1_index]);
         }
-        
+
         return retval;
     }
 
@@ -280,13 +280,55 @@ bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire
 
 
 /////////////////////////////////////////////
+// struct Universe::SourcedEffectsGroup
+/////////////////////////////////////////////
+Universe::SourcedEffectsGroup::SourcedEffectsGroup() :
+    source_object_id(UniverseObject::INVALID_OBJECT_ID),
+    effects_group()
+{}
+Universe::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const Effect::EffectsGroup>& effects_group_) :
+    source_object_id(source_object_id_),
+    effects_group(effects_group_)
+{}
+
+bool Universe::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) const
+{
+    return (this->source_object_id < right.source_object_id ||
+        (this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group);
+}
+
+ /////////////////////////////////////////////
+// struct Universe::EffectCause
+/////////////////////////////////////////////
+Universe::EffectCause::EffectCause() :
+    cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),
+    specific_cause()
+{}
+
+Universe::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_) :
+    cause_type(cause_type_),
+    specific_cause(specific_cause_)
+{}
+
+/////////////////////////////////////////////
+// struct Universe::EffectTargetAndCause
+/////////////////////////////////////////////
+Universe::EffectTargetAndCause::EffectTargetAndCause() :
+    target_set(),
+    effect_cause()
+{}
+
+Universe::EffectTargetAndCause::EffectTargetAndCause(const Effect::EffectsGroup::TargetSet& target_set_, const EffectCause& effect_cause_) :
+    target_set(target_set_),
+    effect_cause(effect_cause_)
+{}
+
+/////////////////////////////////////////////
 // struct Universe::EffectAccountingInfo
 /////////////////////////////////////////////
 Universe::EffectAccountingInfo::EffectAccountingInfo() :
+    EffectCause(),
     source_id(UniverseObject::INVALID_OBJECT_ID),
-    caused_by_empire_id(-1),
-    cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),
-    specific_cause(""),
     meter_change(0.0),
     running_meter_total(Meter::METER_MIN)
 {}
@@ -401,6 +443,7 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
 
 double Universe::LinearDistance(int system1_id, int system2_id) const
 {
+    //Logger().debugStream() << "LinearDistance(" << system1_id << ", " << system2_id << ")";
     int system1_index = SystemGraphIndex(m_system_graph, system1_id);
     int system2_index = SystemGraphIndex(m_system_graph, system2_id);
     return m_system_distances.at(std::max(system1_index, system2_index)).at(std::min(system1_index, system2_index));
@@ -535,10 +578,53 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
     return retval;
 }
 
+void Universe::ApplyAllEffectsAndUpdateMeters()
+{
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map);
+
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->ApplyUniverseTableMaxMeterAdjustments();
+    }
+
+    ExecuteEffects(targets_causes_map);
+
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    }
+}
+
+void Universe::ApplyMeterEffectsAndUpdateMeters()
+{
+    // cache all activation and scoping condition results before applying Effects, since the application of
+    // these Effects may affect the activation and scoping evaluations
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map);
+
+    // reset max meter state that is affected by the application of effects
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ResetMaxMeters();
+        it->second->ApplyUniverseTableMaxMeterAdjustments();
+    }
+
+    ExecuteMeterEffects(targets_causes_map);
+
+    for (const_iterator it = begin(); it != end(); ++it) {
+        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    }
+}
+
 void Universe::InitMeterEstimatesAndDiscrepancies()
 {
-    // clear old discrepancies
+    // clear old discrepancies and accounting
     m_effect_discrepancy_map.clear();
+    m_effect_accounting_map.clear();
+
+    //Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies";
 
     // generate new estimates (normally uses discrepancies, but in this case will find none)
     UpdateMeterEstimates();
@@ -546,6 +632,10 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
     // determine meter max discrepancies
     for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
         UniverseObject* obj = Object(obj_it->first);    // object that has some meters
+        if (!obj) {
+            Logger().errorStream() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
+            continue;
+        }
         std::map<MeterType, std::vector<EffectAccountingInfo> >& meters_map = obj_it->second;
 
         // every meter has a value at the start of the turn, and a value after updating with known effects
@@ -571,7 +661,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             info.cause_type = ECT_UNKNOWN_CAUSE;
             info.meter_change = discrepancy;
             info.running_meter_total = meter->Max();
-            
+
             m_effect_accounting_map[object_id][type].push_back(info);
         }
     }
@@ -579,59 +669,152 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
 
 void Universe::UpdateMeterEstimates()
 {
-    m_effect_accounting_map.clear();
+    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, INVALID_METER_TYPE, false);
+}
 
-    // for all objects to see if they have meters that need to be processed
-    for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
-        UniverseObject* obj = obj_it->second;
-        int object_id = obj_it->first;
+void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool update_contained_objects)
+{
+    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
+        std::vector<int> object_ids;
+        for (iterator obj_it = begin(); obj_it != end(); ++obj_it)
+            object_ids.push_back(obj_it->first);
+
+        UpdateMeterEstimates(object_ids, meter_type);
+        return;
+    }
+
+    // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
+    // in the (known) universe.  also clear effect accounting for meters that are to be updated.
+    std::set<int> objects_set;
+    std::list<int> objects_list;
+    objects_list.push_back(object_id);
+
+    for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
+        // get next object on list
+        int cur_object_id = *list_it;
+        UniverseObject* cur_object = Object(cur_object_id);
+        if (!cur_object) {
+            Logger().errorStream() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
+            return;
+        }
+
+        // add current object to set if it has the appropriate meter
+        if (meter_type == INVALID_METER_TYPE) {
+            // add object and clear effect accounting for all its meters
+            objects_set.insert(cur_object_id);
+            m_effect_accounting_map[cur_object_id].clear();
+        } else if (cur_object->GetMeter(meter_type)) {
+            // add object and clear effect accounting for just the relevant meter
+            objects_set.insert(cur_object_id);
+            m_effect_accounting_map[cur_object_id][meter_type].clear();
+        }
+
+        // add contained objects to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
+        if (update_contained_objects) {
+            const std::vector<UniverseObject*> contained_objects = cur_object->FindObjects(); // get all contained objects
+            for (std::vector<UniverseObject*>::const_iterator cont_it = contained_objects.begin(); cont_it != contained_objects.end(); ++cont_it)
+                objects_list.push_back((*cont_it)->ID());
+        }
+    }
+    std::vector<int> objects_vec;
+    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
+    UpdateMeterEstimatesImpl(objects_vec, meter_type);
+}
+
+void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterType meter_type)
+{
+    std::set<int> objects_set;  // ensures no duplicates
+
+    if (meter_type == INVALID_METER_TYPE) {
+        for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+            int cur_object_id = *obj_it;
+            m_effect_accounting_map[cur_object_id].clear();
+            objects_set.insert(cur_object_id);    // all meters are accepted, so don't need to check if an object has a particular meter (ignoring case where objects have no meters)
+        }
+    } else {
+        // need to check that each object has the requested meter type
+        for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+            int cur_object_id = *obj_it;
+            UniverseObject* cur_object = Object(cur_object_id);
+            if (cur_object->GetMeter(meter_type)) {
+                m_effect_accounting_map[cur_object_id][meter_type].clear();
+                objects_set.insert(cur_object_id);
+            }
+        }
+    }
+    std::vector<int> final_objects_vec;
+    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
+    UpdateMeterEstimatesImpl(final_objects_vec, meter_type);
+}
+
+void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type)
+{
+    // update meter estimates for indicated MeterType for all relevant objects
+    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+        int obj_id = *obj_it;
+        UniverseObject* obj = Object(obj_id);
 
         // Reset max meters to METER_MIN
-        obj->ResetMaxMeters();
+        obj->ResetMaxMeters(meter_type);
 
         // Apply non-effect focus mods from tables
-        obj->ApplyUniverseTableMaxMeterAdjustments();
+        obj->ApplyUniverseTableMaxMeterAdjustments(meter_type);
 
-        // record value of max meters after applying universe table adjustments
-        for (MeterType type = MeterType(0); type != NUM_METER_TYPES; type = MeterType(type + 1)) {
-            Meter* meter = obj->GetMeter(type);
-            if (meter) {
+        // record value(s) of max meter(s) after applying universe table adjustments.
+        // also set current meter value to initial current value.  this ensures that the
+        // projected current value will be based on the actual initial current value this
+        // turn, rather than the altered current value that may be different after meter
+        // effects were applied and meters were clamped.
+        MeterType start, end;
+        if (meter_type == INVALID_METER_TYPE) {
+            // record data for all meters
+            start = MeterType(0);
+            end = NUM_METER_TYPES;
+        } else {
+            // record for only relevant meter type
+            start = meter_type;
+            end = MeterType(meter_type + 1);
+        }
+        for (MeterType type = start; type != end; type = MeterType(type + 1)) {
+            if (Meter* meter = obj->GetMeter(type)) {
+                meter->SetCurrent(meter->InitialCurrent());
+
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
-                info.caused_by_empire_id = -1;
                 info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
                 info.meter_change = meter->Max() - Meter::METER_MIN;
                 info.running_meter_total = meter->Max();
-                
-                m_effect_accounting_map[object_id][type].push_back(info);
+
+                m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
-
-        // reset current meters to value at star of turn (before growth or effects changes)
     }
+
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    EffectsAndTargetsMap effects_targets_map;
-    EffectsAndCausesMap effects_causes_map;
-    GetEffectsAndTargets(effects_targets_map, &effects_causes_map);
+    EffectsTargetsCausesMap targets_causes_map;
+    GetEffectsAndTargets(targets_causes_map, objects_vec);
 
     // Apply and record effect meter adjustments
-    ExecuteMeterEffects(effects_targets_map, &effects_causes_map);
+    ExecuteMeterEffects(targets_causes_map);      // TODO: make act only on contents of objects vector
+
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty()) {
-        for (iterator obj_it = begin(); obj_it != end(); ++obj_it) {
-            UniverseObject* obj = obj_it->second;
-            int object_id = obj_it->first;
+        for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+            int obj_id = *obj_it;
+            UniverseObject* obj = Object(obj_id);
 
             // check if this object has any discrepancies
-            EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(object_id);
-            if (dis_it == m_effect_discrepancy_map.end()) continue;
+            EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
+            if (dis_it == m_effect_discrepancy_map.end())
+                continue;   // no discrepancy, so skip to next object
 
-            // apply all meters' discrapancies
+            // apply all meters' discrepancies
             std::map<MeterType, double>& meter_map = dis_it->second;
             for(std::map<MeterType, double>::iterator meter_it = meter_map.begin(); meter_it != meter_map.end(); ++meter_it) {
                 MeterType type = meter_it->first;
@@ -642,7 +825,7 @@ void Universe::UpdateMeterEstimates()
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
-                    Logger().debugStream() << "object " << object_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
+                    //Logger().debugStream() << "object " << obj_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
 
                     meter->AdjustMax(discrepancy);
 
@@ -650,94 +833,149 @@ void Universe::UpdateMeterEstimates()
                     info.cause_type = ECT_UNKNOWN_CAUSE;
                     info.meter_change = discrepancy;
                     info.running_meter_total = meter->Max();
-                    
-                    m_effect_accounting_map[object_id][type].push_back(info);
+
+                    m_effect_accounting_map[obj_id][type].push_back(info);
                 }
             }
         }
     }
 
-    ///////////////////////////
-    // do current meter growth ?
-    ///////////////////////////
+    // clamp meters to valid range of max values, and so current is less than max
+    for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
+        // currently this clamps all meters, even if not all meters are being processed by this function...
+        // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
+        // updated should have no effect
+        Object(*obj_it)->ClampMeters();
+    }
 }
 
-void Universe::GetEffectsAndTargets(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
+void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 {
-    effects_targets_map.clear();
-    if (effects_causes_map)
-        effects_causes_map->clear();
+    targets_causes_map.clear();
 
-    // get effects groups from specials
+    std::vector<int> all_objects = FindObjectIDs<UniverseObject>();
+    GetEffectsAndTargets(targets_causes_map, all_objects);
+}
+
+void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
+{
+    //Logger().debugStream() << "Universe::GetEffectsAndTargets";
+    // 1) EffectsGroups from Specials
     for (Universe::const_iterator it = begin(); it != end(); ++it) {
-        for (std::set<std::string>::const_iterator special_it = it->second->Specials().begin();
-             special_it != it->second->Specials().end();
-             ++special_it) {
+        int source_object_id = it->first;
+        const std::set<std::string>& specials = it->second->Specials();
+        for (std::set<std::string>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const Special* special = GetSpecial(*special_it);
             assert(special);
-            for (unsigned int i = 0; i < special->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = special->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->first, Effect::EffectsGroup::TargetSet()));
-                special->Effects()[i]->GetTargetSet(it->first, map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-                if (effects_causes_map)
-                    effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(it->first, std::make_pair(ECT_SPECIAL, special->Name()))));
-            }
+
+            StoreTargetsAndCausesOfEffectsGroups(special->Effects(), source_object_id, ECT_SPECIAL, special->Name(),
+                                                 target_objects, targets_causes_map);
         }
     }
 
-    // get effects groups from techs
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        for (Empire::TechItr tech_it = it->second->TechBegin(); tech_it != it->second->TechEnd(); ++tech_it) {
+    // 2) EffectsGroups from Specials
+    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        const Empire* empire = it->second;
+        for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             assert(tech);
-            for (unsigned int i = 0; i < tech->Effects().size(); ++i) {
-                boost::shared_ptr<const Effect::EffectsGroup> effect = tech->Effects()[i];
-                EffectsAndTargetsMapElem map_elem(effect, std::make_pair(it->second->CapitolID(), Effect::EffectsGroup::TargetSet()));
-                tech->Effects()[i]->GetTargetSet(it->second->CapitolID(), map_elem.second.second);
-                effects_targets_map.insert(map_elem);
-                if (effects_causes_map)
-                    effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(it->second->CapitolID(), std::make_pair(ECT_TECH, tech->Name()))));
-            }
+
+            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitolID(), ECT_TECH, tech->Name(),
+                                                 target_objects, targets_causes_map);
         }
     }
 
-    // get effects groups from buildings
+    // 3) EffectsGroups from Buildings
     std::vector<Building*> buildings = FindObjects<Building>();
-    for (unsigned int i = 0; i < buildings.size(); ++i) {
-        const BuildingType* building_type = buildings[i]->GetBuildingType();
+    for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+        const Building* building = *building_it;
+        const BuildingType* building_type = building->GetBuildingType();
         assert(building_type);
-        for (unsigned int j = 0; j < building_type->Effects().size(); ++j) {
-            boost::shared_ptr<const Effect::EffectsGroup> effect = building_type->Effects()[j];
-            EffectsAndTargetsMapElem map_elem(effect, std::make_pair(buildings[i]->ID(), Effect::EffectsGroup::TargetSet()));
-            building_type->Effects()[j]->GetTargetSet(buildings[i]->ID(), map_elem.second.second);
-            effects_targets_map.insert(map_elem);
-            if (effects_causes_map)
-                effects_causes_map->insert(EffectsAndCausesMapElem(effect, std::make_pair(buildings[i]->ID(), std::make_pair(ECT_BUILDING, building_type->Name()))));
+
+        StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
+                                             target_objects, targets_causes_map);
+    }
+
+    // 4) EffectsGroups from Ship Hull and Ship Parts
+    std::vector<Ship*> ships = FindObjects<Ship>();
+    for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
+        const Ship* ship = *ship_it;
+        assert(ship);
+        const ShipDesign* ship_design = ship->Design();
+        assert(ship_design);
+        const HullType* hull_type = ship_design->GetHull();
+        assert(hull_type);
+
+        StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
+                                             target_objects, targets_causes_map);
+
+        const std::vector<std::string>& parts = ship_design->Parts();
+        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+            const std::string& part = *part_it;
+            if (part.empty())
+                continue;
+            const PartType* part_type = GetPartType(*part_it);
+            assert(part_type);
+
+            StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
+                                                 target_objects, targets_causes_map);
         }
     }
 }
 
-void Universe::ExecuteEffects(EffectsAndTargetsMap& effects_targets_map)
+void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
+                                                    int source_object_id, EffectsCauseType effect_cause_type,
+                                                    const std::string& specific_cause_name,
+                                                    const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
+    Effect::EffectsGroup::TargetSet potential_target_set;
+    for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
+        potential_target_set.insert(Object(*it));
+
+    Effect::EffectsGroup::TargetSet target_set;
+
+    // process all effects groups in set provided
+    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
+    for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
+        boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
+        SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);     // combine effects group and source object id into sourced effects group
+        EffectCause effect_cause(effect_cause_type, specific_cause_name);               // combine cause type and specific cause into effect cause
+        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);// get set of target objects for this effects group from potential targets specified
+        EffectTargetAndCause target_and_cause(target_set, effect_cause);                // combine target set and effect cause
+        targets_causes_map[sourced_effects_group] = target_and_cause;                   // store effect cause and targets info in map, indexed by sourced effects group
+    }
+}
+
+void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
+{
+    m_marked_destroyed.clear();
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
-    for (EffectsAndTargetsMap::const_iterator it = effects_targets_map.begin(); it != effects_targets_map.end(); ++it) {
-        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(it->first->StackingGroup());
-        Effect::EffectsGroup::TargetSet targets(it->second.second);
+    for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+        // if other EffectsGroups with the same stacking group have affected some of the targets in
+        // the scope of the current EffectsGroup, skip them
+
+        const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+        const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
+
+        const EffectTargetAndCause& targets_and_cause = targets_it->second;
+        Effect::EffectsGroup::TargetSet targets = targets_and_cause.target_set;
+
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
 
+
         // execute the Effects in the EffectsGroup
-        it->first->Execute(it->second.first, targets);
+        effects_group->Execute(sourced_effects_group.source_object_id, targets);
+
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (it->first->StackingGroup() != "") {
-            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[it->first->StackingGroup()];
+        if (effects_group->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
                 affected_targets.insert(*object_it);
             }
@@ -749,121 +987,83 @@ void Universe::ExecuteEffects(EffectsAndTargetsMap& effects_targets_map)
     }
 }
 
-void Universe::ExecuteMeterEffects(EffectsAndTargetsMap& effects_targets_map, EffectsAndCausesMap* effects_causes_map)
+void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
-    if (effects_causes_map)
-        assert(effects_targets_map.size() == effects_causes_map->size());
-
+    //Logger().debugStream() << "Universe::ExecuteMeterEffects";
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
-    EffectsAndCausesMap::const_iterator causes_it;
+    for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+        // if other EffectsGroups with the same stacking group have affected some of the targets in
+        // the scope of the current EffectsGroup, skip them
 
-    for (EffectsAndTargetsMap::const_iterator targets_it = effects_targets_map.begin(); targets_it != effects_targets_map.end(); ++targets_it) {
-        Effect::EffectsGroup::TargetSet targets = targets_it->second.second;
-        const boost::shared_ptr<const Effect::EffectsGroup>& effects_group = targets_it->first;
+        const SourcedEffectsGroup& sourced_effects_group = targets_it->first;
+        const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
 
-        // if other EffectsGroups with the same stacking group have affected some of the targets in the scope of the current EffectsGroup, skip them
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(targets_it->first->StackingGroup());
+        const EffectTargetAndCause& targets_and_cause = targets_it->second;
+        Effect::EffectsGroup::TargetSet targets = targets_and_cause.target_set;
+
+        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::EffectsGroup::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
 
-        // if doing effect accounting, get cause of effect
-        EffectsCauseType cause_type = INVALID_EFFECTS_GROUP_CAUSE_TYPE;
-        std::string specific_cause = "";
-        if (effects_causes_map) {
-            causes_it = effects_causes_map->find(effects_group);
-            if (causes_it == effects_causes_map->end())
-                Logger().debugStream() << "something funky's going on...";
-            cause_type = causes_it->second.second.first;        // see definition of Universe::EffectsAndCausesMapElem
-            specific_cause = causes_it->second.second.second;
-        }
 
         // execute only the SetMeter effects in the EffectsGroup
-        int source = targets_it->second.first;
         const std::vector<Effect::EffectBase*>& effects = effects_group->EffectsList();
         for (unsigned int i = 0; i < effects.size(); ++i) {
             const Effect::SetMeter* meter_effect = dynamic_cast<Effect::SetMeter*>(effects[i]);
             if (!meter_effect) continue;
 
-            // do effect accounting
-            if (effects_causes_map) {
-                // determine meter to be altered by this effect
-                MeterType meter_type = meter_effect->GetMeterType();
-                
-                // record pre-effect meter values
-                for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-                    UniverseObject* target = *target_it;
-                    const Meter* meter = target->GetMeter(meter_type);
-                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+            // determine meter to be altered by this effect
+            MeterType meter_type = meter_effect->GetMeterType();
 
-                    // create new accounting info for this effect on this target/meter
-                    EffectAccountingInfo info;
-                    info.source_id = source;
-                    info.cause_type = ECT_UNKNOWN_CAUSE;    // need to get this somehow ...
-                    info.specific_cause = "";               // ... and this.
-                    info.running_meter_total = meter->Max();    // using as temp storage for max value before effects are applied
-                    
-                    // add accounting for this effect to end of vector
-                    m_effect_accounting_map[target->ID()][meter_type].push_back(info);
-                }
 
-                // apply effect to targets
-                effects_group->Execute(source, targets, i);
+            // record pre-effect meter values
+            for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                UniverseObject* target = *target_it;
+                const Meter* meter = target->GetMeter(meter_type);
+                if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                // find change in meter due to effect: equal to post-meter minus pre-meter value
-                for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-                    UniverseObject* target = *target_it;
-                    const Meter* meter = target->GetMeter(meter_type);
-                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+                // accounting info for this effect on this meter
+                EffectAccountingInfo info;
+                info.cause_type =           targets_and_cause.effect_cause.cause_type;
+                info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+                info.source_id =            sourced_effects_group.source_object_id;
+                info.running_meter_total =  meter->Max();
 
-                    // retreive info for this effect
-                    EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
+                // add accounting for this effect to end of vector
+                m_effect_accounting_map[target->ID()][meter_type].push_back(info);
+            }
 
-                    // update accounting info with meter change and new total
-                    info.meter_change = meter->Max() - info.running_meter_total;    // change is new max minus old max (stored in temp value with misleading name)
-                    info.running_meter_total = meter->Max();        // replacing temp stored value with new meter total
-                    info.cause_type = cause_type;
-                    info.specific_cause = specific_cause;
-                }
 
-            } else {                
-                // just apply effect
-                effects_group->Execute(source, targets, i);
+            // apply meter-altering effect to targets
+            effects_group->Execute(sourced_effects_group.source_object_id, targets, i);
+
+
+            // find change in meter due to effect: equal to post-meter minus pre-meter value
+            for (Effect::EffectsGroup::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                UniverseObject* target = *target_it;
+                const Meter* meter = target->GetMeter(meter_type);
+                if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                // retreive info for this effect
+                EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
+
+                // update accounting info with meter change and new total
+                info.meter_change = meter->Max() - info.running_meter_total;
+                info.running_meter_total = meter->Max();
             }
         }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
-        if (targets_it->first->StackingGroup() != "") {
-            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[targets_it->first->StackingGroup()];
-            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
+        if (effects_group->StackingGroup() != "") {
+            Effect::EffectsGroup::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
+            for (Effect::EffectsGroup::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it)
                 affected_targets.insert(*object_it);
-            }
         }
-
-        if (effects_causes_map)
-            ++causes_it;
     }
-}
-
-void Universe::ApplyEffects()
-{
-    m_marked_destroyed.clear();
-
-    // cache all activation and scoping condition results before applying Effects, since the application of
-    // these Effects may affect the activation and scoping evaluations
-    EffectsAndTargetsMap effects_targets_map;
-    GetEffectsAndTargets(effects_targets_map);
-
-    // reset max meter state that is affected by the application of effects
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->ApplyUniverseTableMaxMeterAdjustments();
-    }
-
-    ExecuteEffects(effects_targets_map);
 }
 
 void Universe::RebuildEmpireViewSystemGraphs()
@@ -886,15 +1086,15 @@ void Universe::Destroy(int id)
     // remove object from any containing UniverseObject
     if (it != m_objects.end()) {
         obj = it->second;
-        Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
+        //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
         // get and record set of empires that can presently see this object
         std::set<int> knowing_empires;
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
             int empire_id = emp_it->first;
-            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj)) {
+            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
                 knowing_empires.insert(empire_id);
-                Logger().debugStream() << "..visible to empire: " << empire_id;
+                //Logger().debugStream() << "..visible to empire: " << empire_id;
             }
         }
         m_destroyed_object_knowers[id] = knowing_empires;
@@ -912,9 +1112,10 @@ void Universe::Destroy(int id)
 
         // remove from existing objects set and insert into destroyed objects set
         m_objects.erase(id);
+        UniverseObjectDeleteSignal(obj);
         m_destroyed_objects[id] = obj;
     } else {
-        Logger().debugStream() << "Universe::Destroy called for nonexistant object with id: " << id;
+        Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << id;
     }
 
     s_inhibit_universe_object_signals = false;
@@ -972,17 +1173,17 @@ void Universe::EffectDestroy(int id)
 
 void Universe::HandleEmpireElimination(int empire_id)
 {
-    for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
-        // ever meter has a value at the start of the turn, and a value after updating with known effects
-        for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
-            for (std::size_t i = 0; i < meter_type_it->second.size(); ) {
-                if (meter_type_it->second[i].caused_by_empire_id == empire_id)
-                    meter_type_it->second.erase(meter_type_it->second.begin() + i);
-                else
-                    ++i;
-            }
-        }
-    }
+    //for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
+    //    // ever meter has a value at the start of the turn, and a value after updating with known effects
+    //    for (std::map<MeterType, std::vector<EffectAccountingInfo> >::iterator meter_type_it = obj_it->second.begin(); meter_type_it != obj_it->second.end(); ++meter_type_it) {
+    //        for (std::size_t i = 0; i < meter_type_it->second.size(); ) {
+    //            if (meter_type_it->second[i].caused_by_empire_id == empire_id)
+    //                meter_type_it->second.erase(meter_type_it->second.begin() + i);
+    //            else
+    //                ++i;
+    //        }
+    //    }
+    //}
 }
 
 bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
@@ -1630,14 +1831,14 @@ namespace Delauney {
     public:
         int num;
         double sortVal;
-        
         SortValInt(int n, double s);
     };
+
     SortValInt::SortValInt(int n, double s) {
         num = n;
         sortVal = s;
     };
-    
+
     // list of three interger array indices, and some additional info about the triangle that the corresponding
     // points make up, such as the circumcentre and radius, and a function to find if another point is in the
     // circumcircle
@@ -1690,7 +1891,7 @@ namespace Delauney {
         y1 = points[vert1].y;
         y2 = points[vert2].y;
         y3 = points[vert3].y;
-            
+
         // calculate circumcircle and circumcentre of triangle
         a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
             
@@ -1705,11 +1906,11 @@ namespace Delauney {
         b =   (    (x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) +
                 (x2 * x2 + y2 * y2) * (x3 * y1 - x1 * y3) +
                 (x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
-            
+
         // make sure nothing funky's going on...
         if (std::abs(a) < 0.01)
             throw std::runtime_error("Attempted to find circumcircle for a triangle with vertices in a line.");
-                    
+
         // finish!
         centre.x = Sx / a;
         centre.y = Sy / a;
@@ -1732,7 +1933,7 @@ namespace Delauney {
     // runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
     // returns the list of triangles produced
     std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
-    
+
     // does Delauney Triangulation to generate starlanes
     std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
 
@@ -1746,18 +1947,18 @@ namespace Delauney {
         // list of indices in vector of points extracted from removed triangles that need to be retriangulated
         std::list<Delauney::SortValInt> pointNumList;
         double vx, vy, mag;  // vector components, magnitude
-    
+
         // ensure a useful list of systems was passed...
         if (systems.empty())
             throw std::runtime_error("Attempted to run Delauney Triangulation on empty array of systems");
-    
+
         // extract systems positions, and store in vector.  Can't use actual systems data since
         // systems have position limitations which would interfere with algorithm    
         theSize = static_cast<int>(systems.size());
         for (n = 0; n < theSize; n++) {        
             points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));    
         }
-    
+
         // add points for covering triangle.  the point positions should be big enough to form a triangle
         // that encloses all the systems of the galaxy (or at least one whose circumcircle covers all points)
         points.push_back(Delauney::DTPoint(-1.0, -1.0));
@@ -1767,12 +1968,11 @@ namespace Delauney {
         // initialize triList.  algorithm adds and removes triangles from this list, and the resulting 
         // list is returned (so should be deleted externally)
         triList = new std::list<Delauney::DTTriangle>;
-        
+
         // add last three points into the first triangle, the "covering triangle"
         theSize = static_cast<int>(points.size());
         triList->push_front(Delauney::DTTriangle(theSize-1, theSize-2, theSize-3, points));
-    
-        
+
         // loop through "real" points (from systems, not the last three added to make the covering triangle)
         for (n = 0; n < theSize - 3; n++) {
             pointNumList.clear();
@@ -1780,7 +1980,7 @@ namespace Delauney {
             // check each triangle in list, to see if the new point lies in its circumcircle.  if so, delete
             // the triangle and add its vertices to a list 
             itCur = triList->begin();
-            itEnd = triList->end();        
+            itEnd = triList->end();
             while (itCur != itEnd) {
                 // get current triangle
                 Delauney::DTTriangle& tri = *itCur;
@@ -1792,7 +1992,7 @@ namespace Delauney {
                     // so would duplicate an index already in the list
                     for (c = 0; c < 3; c++) {
                         num = (tri.getVerts())[c];  // store "current point"
-                        
+
                         // get sorting value to order points clockwise circumferentially around point n
                         // vector from point n to current point
                         vx = points[num].x - points[n].x;
@@ -1847,19 +2047,19 @@ namespace Delauney {
 
             // add triangle for last and first points and n
             triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
-            
+
             num = (*itCur2).num;
             ++itCur2;
             while (itCur2 != itEnd2) {
-                num2 = num;                
+                num2 = num;
                 num = (*itCur2).num;
-                
+
                 triList->push_front(Delauney::DTTriangle(n, num2, num, points));
-                
+
                 ++itCur2;
             } // end while
-            
-        } // end for        
+
+        } // end for
         return triList;
     } // end function
 } // end namespace
@@ -1933,24 +2133,17 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
-    // Apply non-effect meter adjustments
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();   // zero all meters
-        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
-    }
-
     // Apply effects for 1st turn
-    ApplyEffects();
+    ApplyAllEffectsAndUpdateMeters();
 
     // update initial and previous meter values
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ClampMeters();  // limit current meters by max meters
+        it->second->ClampMeters();  // limit max meters to allowed range of values
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
-                meter->m_previous_current = meter->m_current;
-                meter->m_previous_max = meter->m_max;
-                meter->m_initial_current = meter->m_current;
-                meter->m_initial_max = meter->m_max;
+                // set all meter current and max values to initial max value
+                double max = meter->Max();
+                meter->Set(max, max, max, max, max, max);
             }
         }
     }
@@ -2687,6 +2880,11 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
     homeworlds.clear();
 
     std::vector<System*> sys_vec = FindObjects<System>();
+    //Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
+    //for (std::vector<System*>::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+    //    const System* sys = *it;
+    //    Logger().debugStream() << "... sys ptr: " << sys << " name: " << (sys ? sys->Name() : "no system!?") << " id: " << (sys ? boost::lexical_cast<std::string>(sys->ID()) : "none?!");
+    //}
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to generate homeworlds in an empty galaxy.");
@@ -2701,9 +2899,20 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         do {
             too_close = false;
             system_index = RandSmallInt(0, static_cast<int>(sys_vec.size()) - 1);
+            //Logger().debugStream() << "Universe::GenerateHomeworlds trying to put homeworld on system with index: " << system_index;
             system = sys_vec[system_index];
+            //Logger().debugStream() << "... system ptr: " << system << " name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
+
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
+                //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
                 System* existing_system = Object(homeworlds[j])->GetSystem();
+                //Logger().debugStream() << ".... existing system ptr: " << existing_system;
+
+                if (!existing_system) {
+                    Logger().errorStream() << "couldn't find existing system!";
+                    continue;
+                }
+
                 double x_dist = existing_system->X() - system->X();
                 double y_dist = existing_system->Y() - system->Y();
                 if (x_dist * x_dist + y_dist * y_dist < MIN_HOME_SYSTEM_SEPARATION * MIN_HOME_SYSTEM_SEPARATION) {
@@ -2811,47 +3020,19 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         System* home_system = home_planet->GetSystem();
         home_system->AddOwner(empire_id);
 
+        // give homeworld's a shipyard so players can build ships immediately
+        Building* shipyard = new Building(empire_id, "BLD_SHIPYARD_BASE", UniverseObject::INVALID_OBJECT_ID);
+        int shipyard_id = Insert(shipyard);
+        home_planet->AddBuilding(shipyard_id);
+
+
         // create population and industry on home planet
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
         home_planet->SetPrimaryFocus(FOCUS_BALANCED);
         home_planet->SetSecondaryFocus(FOCUS_BALANCED);
-        home_planet->ResetMaxMeters();
-        home_planet->ApplyUniverseTableMaxMeterAdjustments();
-        Effect::EffectsGroup::TargetSet target_set;
-        target_set.insert(home_planet);
-        Special* special = GetSpecial("HOMEWORLD_SPECIAL");
-        assert(special);
-        for (unsigned int j = 0; j < special->Effects().size(); ++j) {
-            special->Effects()[j]->Execute(home_planet->ID(), target_set);
-        }
-        home_planet->AdjustPop(home_planet->GetMeter(METER_HEALTH)->Max());
-        home_planet->GetMeter(METER_HEALTH)->SetCurrent(home_planet->GetMeter(METER_HEALTH)->Max());
-        home_planet->GetMeter(METER_CONSTRUCTION)->SetCurrent(home_planet->GetMeter(METER_CONSTRUCTION)->Max());
-        home_planet->GetMeter(METER_FARMING)->SetCurrent(home_planet->GetMeter(METER_FARMING)->Max());
-        home_planet->GetMeter(METER_INDUSTRY)->SetCurrent(home_planet->GetMeter(METER_INDUSTRY)->Max());
-        home_planet->GetMeter(METER_MINING)->SetCurrent(home_planet->GetMeter(METER_MINING)->Max());
-        home_planet->GetMeter(METER_RESEARCH)->SetCurrent(home_planet->GetMeter(METER_RESEARCH)->Max());
-        home_planet->GetMeter(METER_TRADE)->SetCurrent(home_planet->GetMeter(METER_TRADE)->Max());
-        home_planet->AdjustDefBases(3);
-
-        home_planet->GetMeter(METER_HEALTH)->m_initial_current = home_planet->GetMeter(METER_HEALTH)->Current();
-        home_planet->GetMeter(METER_HEALTH)->m_initial_max = home_planet->GetMeter(METER_HEALTH)->Max();
-        home_planet->GetMeter(METER_CONSTRUCTION)->m_initial_current = home_planet->GetMeter(METER_CONSTRUCTION)->Current();
-        home_planet->GetMeter(METER_CONSTRUCTION)->m_initial_max = home_planet->GetMeter(METER_CONSTRUCTION)->Max();
-        home_planet->GetMeter(METER_FARMING)->m_initial_current = home_planet->GetMeter(METER_FARMING)->Current();
-        home_planet->GetMeter(METER_FARMING)->m_initial_max = home_planet->GetMeter(METER_FARMING)->Max();
-        home_planet->GetMeter(METER_INDUSTRY)->m_initial_current = home_planet->GetMeter(METER_INDUSTRY)->Current();
-        home_planet->GetMeter(METER_INDUSTRY)->m_initial_max = home_planet->GetMeter(METER_INDUSTRY)->Max();
-        home_planet->GetMeter(METER_MINING)->m_initial_current = home_planet->GetMeter(METER_MINING)->Current();
-        home_planet->GetMeter(METER_MINING)->m_initial_max = home_planet->GetMeter(METER_MINING)->Max();
-        home_planet->GetMeter(METER_RESEARCH)->m_initial_current = home_planet->GetMeter(METER_RESEARCH)->Current();
-        home_planet->GetMeter(METER_RESEARCH)->m_initial_max = home_planet->GetMeter(METER_RESEARCH)->Max();
-        home_planet->GetMeter(METER_TRADE)->m_initial_current = home_planet->GetMeter(METER_TRADE)->Current();
-        home_planet->GetMeter(METER_TRADE)->m_initial_max = home_planet->GetMeter(METER_TRADE)->Max();
-
 
         // grant empire access to some initial buildings, ship parts and hulls
-        empire->AddBuildingType("BLD_IMERIAL_PALACE");
+        empire->AddBuildingType("BLD_IMPERIAL_PALACE");
 
         empire->AddPartType("SR_LASER");
         empire->AddPartType("SH_DEFENSE_GRID");
@@ -2919,16 +3100,16 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         Ship* ship = 0;
         int ship_id = -1;
 
-        // 5 scouts for The Silent One ot explore with
-        for (int n = 0; n < 5; ++n) {
+        // scouts for The Silent One to explore with
+        for (int n = 0; n < 2; ++n) {
             ship = new Ship(empire_id, scout_design_id);
             ship->Rename(empire->NewShipName());
             ship_id = Insert(ship);
             home_fleet->AddShip(ship_id);
         }
 
-        // 10 colony ships for The Silent One to test colonization
-        for (int n = 0; n < 10; ++n) {
+        // colony ships for The Silent One to test colonization
+        for (int n = 0; n < 1; ++n) {
             ship = new Ship(empire_id, colony_ship_design_id);
             ship->Rename(empire->NewShipName());
             ship_id = Insert(ship);

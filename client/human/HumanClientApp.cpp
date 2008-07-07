@@ -227,7 +227,7 @@ void HumanClientApp::NewSinglePlayerGame()
             StartServer();
         } catch (std::runtime_error err) {
             Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
-            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);            
+            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
         }
     }
@@ -247,14 +247,14 @@ void HumanClientApp::NewSinglePlayerGame()
         }
 
         if (!failed) {
-            // TODO: Select number and difficulty of AIs
+            // TODO: Select difficulty of AIs
             SinglePlayerSetupData setup_data;
             galaxy_wnd.Panel().GetSetupData(setup_data);
             setup_data.m_new_game = true;
             setup_data.m_host_player_name = SinglePlayerName();
             setup_data.m_empire_name = galaxy_wnd.EmpireName();
             setup_data.m_empire_color = galaxy_wnd.EmpireColor();
-            setup_data.m_AIs = 4;
+            setup_data.m_AIs = galaxy_wnd.NumberAIs();
             Networking().SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
         }

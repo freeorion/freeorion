@@ -52,7 +52,7 @@ private:
     void Init();
     void NewLoadClicked(int idx);
     void GalaxySetupPanelChanged();
-    void SaveGameChanged(int idx);
+    void SaveGameChanged(GG::DropDownList::iterator it);
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void PlayerDataChanged();
     bool PopulatePlayerList();

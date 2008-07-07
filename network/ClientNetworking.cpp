@@ -227,7 +227,7 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
     if (error.code() == boost::asio::error::eof ||
         error.code() == boost::asio::error::connection_reset ||
         error.code() == boost::asio::error::operation_aborted) {
-        Logger().errorStream() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to disconnect exception \"" << error.what() << "\"";
+        Logger().debugStream() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to disconnect exception \"" << error.what() << "\"";
     } else {
         Logger().errorStream() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated due to unhandled exception \"" << error.what() << "\"";
     }

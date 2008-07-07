@@ -28,8 +28,7 @@ using std::vector;
 #  include <iostream>
 #endif
 
-// TEMPORARY!  This should go into some sort of external config file that the server uses for game rules like this I
-// will be coding such a class in the near future
+// TEMPORARY!
 const int INITIAL_COLONY_POP = 1;
 
 /////////////////////////////////////////////////////
@@ -215,10 +214,10 @@ void FleetMoveOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-    
+
     Fleet* fleet = universe.Object<Fleet>(FleetID());
     System* system = universe.Object<System>(DestinationSystemID());
-    
+
     // perform sanity checks
     if (!fleet) throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
     if (!system) throw std::runtime_error("Non-system destination ID specified in fleet move order.");
@@ -228,13 +227,19 @@ void FleetMoveOrder::ExecuteImpl() const
         throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
                                  " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
 
-    // TODO:  check destination validity (once ship range is decided on)
-
-    // set the movement route
+    // convert list of ids to list of System
     std::list<System*> route;
     for (unsigned int i = 0; i < m_route.size(); ++i) {
         route.push_back(universe.Object<System>(m_route[i]));
     }
+
+    // check destination validity: disallow movement that's out of range
+    std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route));
+    if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
+        Logger().debugStream() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
+        return;
+    }
+
     fleet->SetRoute(route, m_route_length);
 }
 
@@ -336,14 +341,20 @@ void FleetColonizeOrder::ServerExecute() const
     Universe& universe = GetUniverse();
     universe.Delete(m_ship);
     Planet* planet = universe.Object<Planet>(m_planet);
-    planet->SetPrimaryFocus(FOCUS_BALANCED);
-    planet->SetSecondaryFocus(FOCUS_BALANCED);
-    planet->ResetMaxMeters();
-    planet->ApplyUniverseTableMaxMeterAdjustments();
-    planet->AdjustPop(INITIAL_COLONY_POP);
-    planet->GetMeter(METER_FARMING)->SetCurrent(INITIAL_COLONY_POP);
-    planet->GetMeter(METER_HEALTH)->SetCurrent(planet->GetMeter(METER_HEALTH)->Max());
+
+    planet->SetPrimaryFocus(FOCUS_FARMING);
+    planet->SetSecondaryFocus(FOCUS_FARMING);
+
+    planet->GetMeter(METER_POPULATION)->SetCurrent(INITIAL_COLONY_POP);
+    planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
+    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+
     planet->AddOwner(EmpireID());
+
+    Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
+    for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
+        if (const Meter* meter = planet->GetMeter(meter_type))
+            Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
 }
 
 void FleetColonizeOrder::ExecuteImpl() const
@@ -380,11 +391,11 @@ void FleetColonizeOrder::ExecuteImpl() const
     m_colony_fleet_id = fleet->ID(); // record the fleet in which the colony ship started
     m_colony_fleet_name = fleet->Name();
 
-    // Remove colony ship from fleet; if colony ship is only ship in fleet, delete the fleet.
+    // Remove colony ship from fleet; if colony ship is only ship in fleet, destroy the fleet.
     // This leaves the ship in existence, and in its starting system, but not in any fleet;
     // this situation will be resolved by either ServerExecute() or UndoImpl().
     if (fleet->NumShips() == 1) {
-        universe.Delete(fleet->ID());
+        universe.Destroy(fleet->ID());
     } else {
         fleet->RemoveShip(m_ship);
     }
@@ -397,7 +408,7 @@ bool FleetColonizeOrder::UndoImpl() const
     // same time.
 
     Universe& universe = GetUniverse();
-    
+
     Planet* planet = universe.Object<Planet>(m_planet);
     Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
     Ship* ship = universe.Object<Ship>(m_ship);
@@ -405,8 +416,22 @@ bool FleetColonizeOrder::UndoImpl() const
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
     if (!fleet || fleet->SystemID() != ship->SystemID()) {
         System* system = planet->GetSystem();
-        int new_fleet_id = !fleet ? m_colony_fleet_id : GetNewObjectID();
-        fleet = new Fleet(!fleet ? m_colony_fleet_name : "Colony Fleet", system->X(), system->Y(), EmpireID());
+
+        int         new_fleet_id =      m_colony_fleet_id;
+        std::string new_fleet_name =    m_colony_fleet_name;
+
+        if (fleet && (fleet->SystemID() != ship->SystemID())) {
+            // fleet still exists, but it or ship are no longer in the same system, so 
+            // need to create a new fleet for the ship in the system it is in
+
+            // new id for new fleet
+            new_fleet_id = GetNewObjectID();
+            // name for new fleet
+            std::vector<int> ship_ids;  ship_ids.push_back(m_ship);
+            new_fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);  // potential bug?!  Client and Server might be using different languge files, meaning the client will see fleet name in its set language on the turn of the undo, but will see a different language fleet name on the next turn which is permanently set by the server undo
+        }
+
+        fleet = new Fleet(new_fleet_name, system->X(), system->Y(), EmpireID());
         if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
             throw std::runtime_error("FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID");
         universe.InsertID(fleet, new_fleet_id);

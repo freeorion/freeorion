@@ -80,6 +80,7 @@ namespace {
         db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
         db.Add("UI.chat-edit-history", "OPTIONS_DB_UI_CHAT_EDIT_HISTORY", 50, RangedValidator<int>(0, 1000));
         db.Add("UI.galaxy-gas-background", "OPTIONS_DB_GALAXY_MAP_GAS", true, Validator<bool>());
+        db.Add("UI.optimized-system-rendering", "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING", true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -193,21 +194,60 @@ std::pair<double, double> MapWnd::MovementLineData::Start() const
     }
 }
 
+// MapWnd::FleetETAMapIndicator
+class MapWnd::FleetETAMapIndicator : public GG::Wnd
+{
+public:
+    FleetETAMapIndicator(double x, double y, int eta);
+    virtual void    Render();
+private:
+    double              m_x, m_y;
+    GG::TextControl*    m_text;
+};
+
+MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) :
+    GG::Wnd(0, 0, 1, 1, GG::Flags<GG::WndFlag>()),
+    m_x(x),
+    m_y(y),
+    m_text(0)
+{
+    std::string eta_text;
+    if (eta == Fleet::ETA_UNKNOWN)
+        eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
+    else if (eta == Fleet::ETA_NEVER)
+        eta_text = UserString("FW_FLEET_ETA_NEVER");
+    else if (eta == Fleet::ETA_OUT_OF_RANGE)
+        eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+    else
+        eta_text = boost::lexical_cast<std::string>(eta);
+
+    m_text = new GG::TextControl(0, 0, eta_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                 ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    Resize(m_text->Size());
+    AttachChild(m_text);
+}
+
+void MapWnd::FleetETAMapIndicator::Render()
+{
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
+}
+
 // MapWnd
 // static(s)
-const int MapWnd::NUM_BACKGROUNDS = 3;
 double    MapWnd::s_min_scale_factor = 0.35;
 double    MapWnd::s_max_scale_factor = 8.0;
 const int MapWnd::SIDE_PANEL_WIDTH = 360;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5), 
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5), 
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
             GG::CLICKABLE | GG::DRAGABLE),
     m_disabled_accels_list(),
-    m_backgrounds(NUM_BACKGROUNDS),
-    m_bg_scroll_rate(NUM_BACKGROUNDS),
+    m_backgrounds(),
+    m_bg_scroll_rate(),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
     m_star_texture_coords(),
@@ -231,8 +271,9 @@ MapWnd::MapWnd() :
 
     // system-view side panel
     m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
-    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this); // sidepanel requests system selection change -> select it
-    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);  // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+    //GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);                        // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
 
     m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
@@ -298,7 +339,7 @@ MapWnd::MapWnd() :
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_population);
-   
+
     m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0,3,true,false);
@@ -340,24 +381,10 @@ MapWnd::MapWnd() :
 
     m_menu_showing = false;
 
-    //set up background images
-    m_backgrounds[0] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield1.png");
-    m_bg_scroll_rate[0] = 0.125;
-    glBindTexture(GL_TEXTURE_2D, m_backgrounds[0]->OpenGLId());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //clear background images
+    m_backgrounds.clear();
+    m_bg_scroll_rate.clear();
 
-    m_backgrounds[1] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield2.png");
-    m_bg_scroll_rate[1] = 0.25;
-    glBindTexture(GL_TEXTURE_2D, m_backgrounds[1]->OpenGLId());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    m_backgrounds[2] = ClientUI::GetTexture(ClientUI::ArtDir() / "starfield3.png");
-    m_bg_scroll_rate[2] = 0.5;
-    glBindTexture(GL_TEXTURE_2D, m_backgrounds[2]->OpenGLId());
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     // connect keyboard accelerators
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
@@ -691,6 +718,37 @@ void MapWnd::InitTurn(int turn_number)
 
     Universe& universe = GetUniverse();
 
+    Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
+    for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
+        Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
+
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire) {
+        Logger().errorStream() << "MapWnd::InitTurn couldn't get an empire!";
+        return;
+    }
+
+
+    // update effect accounting and meter estimates
+    universe.InitMeterEstimatesAndDiscrepancies();
+
+    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
+    // population is available for currently uncolonized planets
+    UpdateMeterEstimates();
+
+
+    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        Empire* empire = it->second;
+        empire->UpdateSupplyUnobstructedSystems();
+        empire->UpdateSystemSupplyRanges();
+        empire->UpdateFleetSupply();
+        empire->UpdateResourceSupply();
+        empire->InitResourcePools();
+    }
+
+
     Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
                   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
@@ -709,9 +767,23 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
+    // set up backgrounds on first turn
+    if (m_backgrounds.empty()) {
+        std::vector<boost::shared_ptr<GG::Texture> > starfield_textures = ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir(), "starfield", false);
+        double scroll_rate = 1.0;
+        for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = starfield_textures.begin(); it != starfield_textures.end(); ++it) {
+            scroll_rate *= 0.5;
+            m_backgrounds.push_back(*it);
+            m_bg_scroll_rate.push_back(scroll_rate);
+            glBindTexture(GL_TEXTURE_2D, (*it)->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+    }
+
     // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
     m_fleet_lines.clear();
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
 
     // systems and starlanes
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
@@ -773,12 +845,12 @@ void MapWnd::InitTurn(int turn_number)
         m_system_icons[systems[i]->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
-        GG::Connect(icon->LeftClickedSignal, &MapWnd::SystemLeftClicked, this);
-        GG::Connect(icon->RightClickedSignal, &MapWnd::SystemRightClicked, this);
-        GG::Connect(icon->LeftDoubleClickedSignal, &MapWnd::SystemDoubleClicked, this);
-        GG::Connect(icon->MouseEnteringSignal, &MapWnd::MouseEnteringSystem, this);
-        GG::Connect(icon->MouseLeavingSignal, &MapWnd::MouseLeavingSystem, this);
-        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked, this);
+        GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
+        GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
+        GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
+        GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
+        GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
+        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
 
         // gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gaseous_texture =
@@ -842,6 +914,30 @@ void MapWnd::InitTurn(int turn_number)
 
     DoSystemIconsLayout();
 
+
+    // create animated lines indicating fleet supply flow
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
+        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
+            glColor(empire->Color());
+            const System* start_sys = universe.Object<System>(lane_it->first);
+            const System* end_sys = universe.Object<System>(lane_it->second);
+            raw_starlane_supply_vertices.push_back(start_sys->X());
+            raw_starlane_supply_vertices.push_back(start_sys->Y());
+            raw_starlane_supply_vertices.push_back(end_sys->X());
+            raw_starlane_supply_vertices.push_back(end_sys->Y());
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+            raw_starlane_supply_colors.push_back(empire->Color().r);
+            raw_starlane_supply_colors.push_back(empire->Color().g);
+            raw_starlane_supply_colors.push_back(empire->Color().b);
+            raw_starlane_supply_colors.push_back(empire->Color().a);
+        }
+    }
+
+
     // remove old fleet buttons for fleets not in systems
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         DeleteChild(m_moving_fleet_buttons[i]);
@@ -876,67 +972,23 @@ void MapWnd::InitTurn(int turn_number)
     DoMovingFleetButtonsLayout();
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
-        SetFleetMovement(*it);
+        SetFleetMovementLine(*it);
 
 
-    // update effect accounting and meter estimates
-    universe.InitMeterEstimatesAndDiscrepancies();
-
-    // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
-    // population is available for currently uncolonized planets
-    UpdateMeterEstimates();
-
-    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-
-    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
-    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        int empire_id = it->first;
-        Empire* empire = it->second;
-
-        // get supplyable systems for fleets and starlanes used for fleet supply for current empire...
-        std::set<std::pair<int, int> > fleet_supply_lanes;
-        empire->GetSupplyableSystemsAndStarlanesUsed(m_empire_system_fleet_supply[empire_id],
-                                                     fleet_supply_lanes);
-
-        // get sets of systems from and to which physical resources can be shared
-        empire->GetSupplySystemGroupsAndStarlanesUsed(m_empire_resource_sharing_groups[empire_id],
-                                                      m_empire_resource_sharing_lanes[empire_id]);
-
-        empire->InitResourcePools(m_empire_resource_sharing_groups[empire_id]);
-
-        for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
-            glColor(empire->Color());
-            const System* start_sys = universe.Object<System>(lane_it->first);
-            const System* end_sys = universe.Object<System>(lane_it->second);
-            raw_starlane_supply_vertices.push_back(start_sys->X());
-            raw_starlane_supply_vertices.push_back(start_sys->Y());
-            raw_starlane_supply_vertices.push_back(end_sys->X());
-            raw_starlane_supply_vertices.push_back(end_sys->Y());
-            raw_starlane_supply_colors.push_back(empire->Color().r);
-            raw_starlane_supply_colors.push_back(empire->Color().g);
-            raw_starlane_supply_colors.push_back(empire->Color().b);
-            raw_starlane_supply_colors.push_back(empire->Color().a);
-            raw_starlane_supply_colors.push_back(empire->Color().r);
-            raw_starlane_supply_colors.push_back(empire->Color().g);
-            raw_starlane_supply_colors.push_back(empire->Color().b);
-            raw_starlane_supply_colors.push_back(empire->Color().a);
-        }
-    }
 
     MoveChildUp(m_side_panel);
 
     // set turn button to current turn
-    m_turn_update->SetText( UserString("MAP_BTN_TURN_UPDATE") + boost::lexical_cast<std::string>(turn_number ) );    
+    m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
+                                          boost::lexical_cast<std::string>(turn_number)));
     MoveChildUp(m_turn_update);
 
     // are there any sitreps to show?
-    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    assert(empire);
     m_sitrep_panel->Update();
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
     m_sitrep_panel->Update();
-    if (empire->NumSitRepEntries()) {
+    if (empire && empire->NumSitRepEntries()) {
         AttachChild(m_sitrep_panel);
         MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
@@ -959,8 +1011,9 @@ void MapWnd::InitTurn(int turn_number)
     else
         ShowSystemNames();
 
-    // center the map on player's home system at the start of the game (if we're at the default start position, the odds are very good that this is a fresh game)
+    // if we're at the default start position, the odds are very good that this is a fresh game
     if (ClientUpperLeft() == GG::Pt()) {
+        // center the map on player's home system at the start of the game
         int capitol_id = empire->CapitolID();
         UniverseObject *obj = universe.Object(capitol_id);
         if (obj) {
@@ -969,6 +1022,9 @@ void MapWnd::InitTurn(int turn_number)
             // default to centred on whole universe if there is no capitol
             CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
         }
+
+        // default the tech tree to be centred on something interesting
+        m_research_wnd->Reset();
     }
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
@@ -983,8 +1039,6 @@ void MapWnd::InitTurn(int turn_number)
 
     GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
 
-    //GG::Connect(empire->GetFoodResPool().ChangedSignal, &SidePanel::Refresh);
-    //GG::Connect(empire->GetPopulationPool().ChangedSignal, &SidePanel::Refresh);
 
     m_toolbar->Show();
     m_FPS->Show();
@@ -994,9 +1048,11 @@ void MapWnd::InitTurn(int turn_number)
 
     empire->UpdateResourcePools();
 
+    m_research_wnd->Update();
+    m_production_wnd->Update();
+
     // clear out all the old buffers
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it =
-             m_star_core_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
          ++it) {
 #ifdef FREEORION_WIN32
@@ -1385,60 +1441,53 @@ void MapWnd::SelectFleet(Fleet* fleet)
     }
 }
 
-void MapWnd::SetFleetMovement(FleetButton* fleet_button)
+void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
 {
     assert(fleet_button);
-    std::set<int> destinations; // keeps track of systems to which lines are being drawn for given fleet button
     for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
         Fleet* fleet = *it;
-
-        // ensure the fleet has a valid destination, and that there isn't already a movement line to that location
-        if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
-            fleet->FinalDestinationID() != fleet->SystemID() &&
-            destinations.find(fleet->FinalDestinationID()) == destinations.end())
-        {
-            destinations.insert(fleet->FinalDestinationID());
-            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
-        } else {
-            // fleet's destination already has a line from this button, or the destination is invalid.  If there is
-            // another preexisting fleet line for this fleet, it is no longer needed.
-            m_fleet_lines.erase(fleet);
-        }
+        m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
     }
 }
 
-void MapWnd::SetFleetMovement(Fleet* fleet)
+void MapWnd::SetFleetMovementLine(const Fleet* fleet)
 {
-    assert(fleet);
-    
-    std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
-    if (it != m_fleet_lines.end()) {
-        const System* system = fleet->GetSystem();
-        if (system) {
-            // attempt draw line from fleet button location near system icon
-            // get system icon
-            std::map<int, SystemIcon*>::const_iterator it2 = m_system_icons.find(system->ID());
-            if (it2 != m_system_icons.end()) {
-                // get fleet button
-                const FleetButton* fleet_button = it2->second->GetFleetButton(fleet);
-                assert(fleet_button);
-                m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
+    if (!fleet) {
+        Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed a null fleet pointer";
+        return;
+    }
+
+    if (const System* system = fleet->GetSystem()) {
+        // if fleet is in a system, draw movement line from fleet button near system icon.
+
+        // get system icon
+        std::map<int, SystemIcon*>::const_iterator icon_it = m_system_icons.find(system->ID());
+        if (icon_it != m_system_icons.end()) {
+            const SystemIcon* icon = icon_it->second;
+            // get fleet button
+            const FleetButton* fleet_button = icon->GetFleetButton(fleet);
+
+            if (!fleet_button) {
+                Logger().errorStream() << "MapWnd::SetFleetMovement couldn't get a fleet button for a fleet in a system";
                 return;
             }
+
+            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
         }
-
-        // else if any of the above failed...
-
-        // draw line from fleet's centre
+    } else {
+        // fleet is not in a system, so fleet button is located at fleet's actual location, so can just
+        // create movement line starting at fleet's actual universe position
         m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
-    }    
+    }
 }
 
-void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& travel_route)
+void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route)
 {
-    if (!fleet || travel_route.empty()) {
-        // no route to display - set projected line to default empty MovementLineData
-        m_projected_fleet_line = MovementLineData();
+    if (!fleet)
+        return;
+
+    if (travel_route.empty()) {
+        RemoveProjectedFleetMovementLine(fleet);
         return;
     }
 
@@ -1446,7 +1495,7 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
 
     if (path.empty()) {
         // no route to display
-        m_projected_fleet_line = MovementLineData();
+        RemoveProjectedFleetMovementLine(fleet);
         return;
     }
 
@@ -1456,11 +1505,11 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
     std::pair<double, double> universe_position;
 
     // check if this MapWnd already has MovementLineData for this fleet
-    std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
+    std::map<const Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
     if (it != m_fleet_lines.end()) {
         // there is a fleet line already.  Its x and y are useful for the projected line, so it can be copied and tweaked a bit
         std::pair<double, double> start = it->second.Start();
-        m_projected_fleet_line = MovementLineData(start.first, start.second, path, line_colour);
+        m_projected_fleet_lines[fleet] = MovementLineData(start.first, start.second, path, line_colour);
     } else {
         // there is no preexisting fleet line.  need to make one from scratch
 
@@ -1472,12 +1521,37 @@ void MapWnd::SetProjectedFleetMovement(Fleet* fleet, const std::list<System*>& t
             // get fleet button
             const FleetButton* fleet_button = it->second->GetFleetButton(fleet);
             assert(fleet_button);
-            m_projected_fleet_line = MovementLineData(fleet_button, path, line_colour);
+            m_projected_fleet_lines[fleet] = MovementLineData(fleet_button, path, line_colour);
         } else {
             // couldn't get a fleet button, so instead use fleet's own position
-            m_projected_fleet_line = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
+            m_projected_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
         }
     }
+}
+
+void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route)
+{
+    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
+        SetProjectedFleetMovementLine(*it, travel_route);
+}
+
+void MapWnd::RemoveProjectedFleetMovementLine(const Fleet* fleet)
+{
+    std::map<const Fleet*, MovementLineData>::iterator it = m_projected_fleet_lines.find(fleet);
+    if (it != m_projected_fleet_lines.end())
+        m_projected_fleet_lines.erase(it);
+}
+
+void MapWnd::ClearProjectedFleetMovementLines()
+{
+    m_projected_fleet_lines.clear();
+    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator map_it = m_projected_fleet_eta_map_indicators.begin();
+         map_it != m_projected_fleet_eta_map_indicators.end(); ++map_it)
+    {
+        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = map_it->second.begin(); vec_it != map_it->second.end(); ++vec_it)
+            DeleteChild(*vec_it);
+    }
+    m_projected_fleet_eta_map_indicators.clear();
 }
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
@@ -1600,7 +1674,7 @@ void MapWnd::RenderStarfields()
         UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
     glMatrixMode(GL_TEXTURE);
 
-    for (int i = 0; i < NUM_BACKGROUNDS; ++i) {
+    for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
         float texture_coords_per_pixel_x = 1.0 / m_backgrounds[i]->Width();
         float texture_coords_per_pixel_y = 1.0 / m_backgrounds[i]->Height();
         glScalef(texture_coords_per_pixel_x * Width(),
@@ -1678,73 +1752,84 @@ void MapWnd::RenderGalaxyGas()
 
 void MapWnd::RenderSystems()
 {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-
     const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
-    if (0.5 < HALO_SCALE_FACTOR) {
-        glMatrixMode(GL_TEXTURE);
-        glTranslatef(0.5, 0.5, 0.0);
-        glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
-        glTranslatef(-0.5, -0.5, 0.0);
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-             it != m_star_halo_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+
+    if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
+        glColor4f(1.0, 1.0, 1.0, 1.0);
+
+        if (0.5 < HALO_SCALE_FACTOR) {
+            glMatrixMode(GL_TEXTURE);
+            glTranslatef(0.5, 0.5, 0.0);
+            glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
+            glTranslatef(-0.5, -0.5, 0.0);
+            for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+                 it != m_star_halo_quad_vertices.end();
+                 ++it) {
+                glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
 #ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+                glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
+                glVertexPointer(2, GL_FLOAT, 0, 0);
 #ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+                glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
 #endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
+                glTexCoordPointer(2, GL_FLOAT, 0, 0);
+                glDrawArrays(GL_QUADS, 0, it->second.m_size);
+            }
+            glLoadIdentity();
+            glMatrixMode(GL_MODELVIEW);
         }
+
+        if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
+            for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+                 it != m_star_core_quad_vertices.end();
+                 ++it) {
+                glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
+#ifdef FREEORION_WIN32
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
+#else
+                glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
+#endif
+                glVertexPointer(2, GL_FLOAT, 0, 0);
+#ifdef FREEORION_WIN32
+                glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
+#else
+                glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+#endif
+                glTexCoordPointer(2, GL_FLOAT, 0, 0);
+                glDrawArrays(GL_QUADS, 0, it->second.m_size);
+            }
+        }
+
+
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
+    } else {
+        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glPushMatrix();
         glLoadIdentity();
-        glMatrixMode(GL_MODELVIEW);
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+            it->second->ManualRender(HALO_SCALE_FACTOR);
+        glPopMatrix();
     }
-
-    if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
-        for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-             it != m_star_core_quad_vertices.end();
-             ++it) {
-            glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-#endif
-            glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
-#else
-            glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-#endif
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-            glDrawArrays(GL_QUADS, 0, it->second.m_size);
-        }
-    }
-
-
-#ifdef FREEORION_WIN32
-    glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
-#else
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
 }
 
 void MapWnd::RenderStarlanes()
 {
+    const float STARLANE_GRAY = 127.0f / 255.0f;
+    const float STARLANE_ALPHA = 0.7f;
+    const double STARLANE_WIDTH = 2.5;
+
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     if (m_starlane_vertices.m_name) {
-        const float STARLANE_GRAY = 127.0f / 255.0f;
-        const float STARLANE_ALPHA = 0.7f;
-        const double STARLANE_WIDTH = 2.5;
         glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
@@ -1764,9 +1849,8 @@ void MapWnd::RenderStarlanes()
         const double RATE = 0.1;            // slow crawl
         const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
-        const double LINE_SCALE = std::max(0.75, m_zoom_factor);
-        glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
-        glLineWidth(LINE_SCALE);
+        glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
+        glLineWidth(STARLANE_WIDTH);
         glEnableClientState(GL_COLOR_ARRAY);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
@@ -1789,70 +1873,77 @@ void MapWnd::RenderStarlanes()
 
 void MapWnd::RenderFleetMovementLines()
 {
+    const double STARLANE_WIDTH = 2.5;
+    glLineWidth(STARLANE_WIDTH);
+
+    // standard movement line stipple
     const GLushort PATTERN = 0xF0F0;
     const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
     const double RATE = 0.25;
-    const double PROJECTED_PATH_RATE = 0.35;
     const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
+    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+
+    // render standard movement lines
+    glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
+    for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
+        RenderMovementLine(it->second);
+
+
+    // projected movement line stipple
+    const double PROJECTED_PATH_RATE = 0.35;
     const int PROJECTED_PATH_SHIFT =
         static_cast<int>(GG::GUI::GetGUI()->Ticks() * PROJECTED_PATH_RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
-    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
-    double LINE_SCALE = std::max(1.0, m_zoom_factor);
 
-    glLineWidth(LINE_SCALE);
-    glLineStipple(static_cast<int>(LINE_SCALE), STIPPLE);
+    //// render projected move liens
+    glLineStipple(static_cast<int>(STARLANE_WIDTH), PROJECTED_PATH_STIPPLE);
+    for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
+        RenderMovementLine(it->second);
+}
 
-    GG::Pt ul = ClientUpperLeft();
-    for (std::map<Fleet*, MovementLineData>::iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it) {
-        const MovementLineData& move_line = it->second;
+void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
+    if (move_line.Path().empty() || move_line.Path().size() == 1)
+        return;
 
-        if (move_line.Path().empty())
+    // get starting vertex
+    std::pair<double, double> start = move_line.Start();
+    double prev_vertex_x = start.first, prev_vertex_y = start.second;
+
+    bool started = false;
+
+    // draw lines connecting starting to second vertex, second to third, etc, 
+    std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin();
+    ++path_it;
+    for (; path_it != move_line.Path().end(); ++path_it) {
+        // if this vertex can be reached, add vertices for line from previous to this vertex
+        if (path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
+            break;  // don't render additional legs of path that aren't reachable
+
+        double cur_vertex_x = path_it->x, cur_vertex_y = path_it->y;
+
+        // skip zero-length line segments since they seem to cause problems...
+        if (cur_vertex_x == prev_vertex_x && cur_vertex_y == prev_vertex_y)
             continue;
 
-        // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
-        // when the begining of a line segment starts offscreen
-        glBegin(GL_LINES);
-        glColor(move_line.Colour());
-
-        // add starting vertex
-        std::pair<double, double> start = move_line.Start();
-        glVertex2d(start.first, start.second);
-
-        for (std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin(); path_it != move_line.Path().end(); ++path_it) {
-            // add ending vertex for previous leg of path
-            glVertex2d(path_it->x, path_it->y);
-
-            // if not done, add starting vertex for next leg of path
-            std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != move_line.Path().end())
-                glVertex2d(path_it->x, path_it->y);
+        if (!started) {
+            // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
+            // when the begining of a line segment starts offscreen
+            glBegin(GL_LINES);
+            glColor(move_line.Colour());
+            started = true;
         }
-        glEnd();
+
+        glVertex2d(prev_vertex_x,   prev_vertex_y);
+        glVertex2d(cur_vertex_x,    cur_vertex_y);
+
+        // and update previous vertex for next iteration
+        prev_vertex_x = cur_vertex_x;
+        prev_vertex_y = cur_vertex_y;
     }
 
-    // render projected move path
-    glLineStipple(static_cast<int>(LINE_SCALE), PROJECTED_PATH_STIPPLE);
-    if (!m_projected_fleet_line.Path().empty()) {
-        glBegin(GL_LINES);
-        glColor(m_projected_fleet_line.Colour());
-
-        // add starting vertex
-        std::pair<double, double> start = m_projected_fleet_line.Start();
-        glVertex2d(start.first, start.second);
-
-        for (std::list<MovePathNode>::const_iterator path_it = m_projected_fleet_line.Path().begin(); path_it != m_projected_fleet_line.Path().end(); ++path_it) {
-            // add ending vertex for previous leg of path
-            glVertex2d(path_it->x, path_it->y);
-
-            // if not done, add starting vertex for next leg of path
-            std::list<MovePathNode>::const_iterator temp_it = path_it;
-            if (++temp_it != m_projected_fleet_line.Path().end())
-                glVertex2d(path_it->x, path_it->y);
-        }
+    if (started)
         glEnd();
-    }
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
@@ -1903,7 +1994,7 @@ void MapWnd::SystemRightClicked(int system_id)
 {
     if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
-            SetProjectedFleetMovement(0, std::list<System*>()) ;
+            ClearProjectedFleetMovementLines();
         else
             PlotFleetMovement(system_id, true);
     }
@@ -1912,9 +2003,8 @@ void MapWnd::SystemRightClicked(int system_id)
 
 void MapWnd::MouseEnteringSystem(int system_id)
 {
-    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd()) {
+    if (!m_in_production_view_mode && FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         PlotFleetMovement(system_id, false);
-    }
     SystemBrowsedSignal(system_id);
 }
 
@@ -1941,7 +2031,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
         // plot empty move pathes if destination is not a known system
         if (system_id == UniverseObject::INVALID_OBJECT_ID) {
-            SetProjectedFleetMovement(fleet, std::list<System*>()) ;
+            RemoveProjectedFleetMovementLine(fleet);
             continue;
         }
 
@@ -1962,14 +2052,11 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         }
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
-        if (execute_move && !route.empty()) {
+        if (execute_move && !route.empty())
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), start_system, system_id)));
-            if (fleet_sys_id == UniverseObject::INVALID_OBJECT_ID)
-                SetFleetMovement(fleet);
-        }
 
         // show route on map
-        SetProjectedFleetMovement(fleet, route);
+        SetProjectedFleetMovementLine(fleet, route);
     }
 }
 
@@ -1996,8 +2083,9 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         if (system) {
             const System::ObjectVec owned_fleets = system->FindObjects(OwnedVisitor<Fleet>(owner));
             for (System::ObjectVec::const_iterator it = owned_fleets.begin(); it != owned_fleets.end(); ++it) {
-                Fleet* owned_fleet = dynamic_cast<Fleet*>(*it);
-                if (owned_fleet) fleets.push_back(owned_fleet);
+                Fleet* owned_fleet = universe_object_cast<Fleet*>(*it);
+                if (owned_fleet)
+                    fleets.push_back(owned_fleet);
             }
         } else {
             std::copy(btn_fleets.begin(), btn_fleets.end(), std::back_inserter(fleets));
@@ -2038,7 +2126,7 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         } else if (selected_fleets.size() > 1) {
             return; // don't mess up user's carefully selected fleets
         } else {
-            selected_fleet = dynamic_cast<UniverseObject*>(*(selected_fleets.begin()));
+            selected_fleet = universe_object_cast<UniverseObject*>(*(selected_fleets.begin()));
         }
 
         if (system) {
@@ -2060,11 +2148,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
                 if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
                     // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
 
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(departing_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(departing_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
                 }
             } else {
                 // are assured there is at least one stationary fleet
@@ -2078,11 +2166,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
                 if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
                     // it wasn't found, or it was found at the end, so select the first stationary fleet
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(stationary_fleets.front()));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(stationary_fleets.front()));
                 } else {
                     // it was found, and wasn't at the end, so select the next fleet after it
                     ++it;
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
+                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
                 }
             }
         } else {
@@ -2098,11 +2186,11 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 
             if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
                 // it wasn't found, or it was found at the end, so select the first moving fleet
-                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(btn_fleets.front()));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(btn_fleets.front()));
             } else {
                 // it was found, and wasn't at the end, so select the next fleet after it
                 ++it;
-                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(dynamic_cast<Fleet*>(*it));
+                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
             }
         }
     } else {
@@ -2112,25 +2200,44 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 }
 
 void MapWnd::HandleEmpireElimination(int empire_id)
-{
-    m_empire_system_fleet_supply.erase(empire_id);
-    m_empire_resource_sharing_groups.erase(empire_id);
-    m_empire_resource_sharing_lanes.erase(empire_id);
-}
+{}
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
-{ m_fleet_lines.erase(const_cast<Fleet*>(universe_object_cast<const Fleet*>(obj))); }
+{
+    const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+    if (fleet) {
+        std::map<const Fleet*, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet);
+        if (it1 != m_fleet_lines.end())
+            m_fleet_lines.erase(it1);
 
-void MapWnd::RegisterPopup( MapWndPopup* popup )
+        std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it2 = m_fleet_eta_map_indicators.find(fleet);
+        if (it2 != m_fleet_eta_map_indicators.end()) {
+            // clear all ETA indicators
+            m_fleet_eta_map_indicators.erase(it2);
+        }
+
+        std::map<const Fleet*, MovementLineData>::iterator it3 = m_projected_fleet_lines.find(fleet);
+        if (it3 != m_projected_fleet_lines.end())
+            m_projected_fleet_lines.erase(it3);
+
+        std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it4 = m_projected_fleet_eta_map_indicators.find(fleet);
+        if (it4 != m_projected_fleet_eta_map_indicators.end()) {
+            // clear all ETA indicators
+            m_projected_fleet_eta_map_indicators.erase(it4);
+        }
+    }
+}
+
+void MapWnd::RegisterPopup(MapWndPopup* popup)
 {
     if (popup)
         m_popups.push_back(popup);
 }
 
-void MapWnd::RemovePopup( MapWndPopup* popup )
+void MapWnd::RemovePopup(MapWndPopup* popup)
 {
     if (popup) {
-        std::list<MapWndPopup*>::iterator it = std::find( m_popups.begin(), m_popups.end(), popup );
+        std::list<MapWndPopup*>::iterator it = std::find(m_popups.begin(), m_popups.end(), popup);
         if (it != m_popups.end())
             m_popups.erase(it);
     }
@@ -2214,7 +2321,7 @@ bool MapWnd::EndTurn()
 
 bool MapWnd::ToggleSitRep()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_sitrep_panel->Visible()) {
         DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
@@ -2246,7 +2353,7 @@ bool MapWnd::ToggleSitRep()
 
 bool MapWnd::ToggleResearch()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_research_wnd->Visible()) {
         m_research_wnd->Hide();
     } else {
@@ -2267,20 +2374,17 @@ bool MapWnd::ToggleResearch()
         // show the research window
         m_research_wnd->Show();
         GG::GUI::GetGUI()->MoveUp(m_research_wnd);
-        m_research_wnd->Reset();
     }
     return true;
 }
 
 bool MapWnd::ToggleProduction()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
         ShowAllPopups();
-        if (!m_side_panel->Visible())
-            m_side_panel->SetSystem(m_side_panel->SystemID());
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
@@ -2301,14 +2405,18 @@ bool MapWnd::ToggleProduction()
 
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
-        m_production_wnd->Reset();
+        // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
+        if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+            if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
+                if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
+                    m_production_wnd->SelectSystem(obj->SystemID());
     }
     return true;
 }
 
 bool MapWnd::ToggleDesign()
 {
-    m_projected_fleet_line = MovementLineData();
+    ClearProjectedFleetMovementLines();
     if (m_design_wnd->Visible()) {
         m_design_wnd->Hide();
         EnableAlphaNumAccels();
@@ -2337,7 +2445,7 @@ bool MapWnd::ToggleDesign()
 bool MapWnd::ShowMenu()
 {
     if (!m_menu_showing) {
-        m_projected_fleet_line = MovementLineData();
+        ClearProjectedFleetMovementLines();
         m_menu_showing = true;
         InGameMenu menu;
         menu.Run();
@@ -2426,35 +2534,103 @@ void MapWnd::UpdateMetersAndResourcePools()
     UpdateEmpireResourcePools();
 }
 
+void MapWnd::UpdateMetersAndResourcePools(const std::vector<int>& objects_vec)
+{
+    UpdateMeterEstimates(objects_vec);
+    UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_objects)
+{
+    UpdateMeterEstimates(object_id, update_contained_objects);
+    UpdateEmpireResourcePools();
+}
+
+void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools()
+{
+    UpdateMetersAndResourcePools(m_side_panel->SystemID(), true);
+}
+
 void MapWnd::UpdateMeterEstimates()
 {
-    // add this player ownership to all planets that the player can see but which aren't currently colonized.
+    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, false);
+}
+
+void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
+{
+    //Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
+
+    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+        // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
+        std::vector<int> object_ids;
+        const Universe& universe = GetUniverse();
+        for (Universe::const_iterator obj_it = universe.begin(); obj_it != universe.end(); ++obj_it)
+            object_ids.push_back(obj_it->first);
+
+        UpdateMeterEstimates(object_ids);
+        return;
+    }
+
+    // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
+    // in the (known) universe.  also clear effect accounting for meters that are to be updated.
+    std::set<int> objects_set;
+    std::list<int> objects_list;
+    objects_list.push_back(object_id);
+
+    for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
+        int cur_object_id = *list_it;
+
+        UniverseObject* cur_object = GetUniverse().Object(cur_object_id);
+        if (!cur_object) {
+            Logger().errorStream() << "MapWnd::UpdateMeterEstimates tried to get an invalid object...";
+            return;
+        }
+
+        // add current object to list
+        objects_set.insert(cur_object_id);
+
+
+        // add contained objects within current object to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
+        if (update_contained_objects) {
+            const std::vector<UniverseObject*> contained_objects = cur_object->FindObjects(); // get all contained objects
+            for (std::vector<UniverseObject*>::const_iterator cont_it = contained_objects.begin(); cont_it != contained_objects.end(); ++cont_it)
+                objects_list.push_back((*cont_it)->ID());
+        }
+    }
+    std::vector<int> objects_vec;
+    std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(objects_vec));
+    UpdateMeterEstimates(objects_vec);
+}
+
+void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
+    // add this player ownership to all planets in the objects_vec that aren't currently colonized.
     // this way, any effects the player knows about that would act on those planets if the player colonized them
     // include those planets in their scope.  This lets effects from techs the player knows alter the max
     // population of planet that is displayed to the player, even if those effects have a condition that causes
     // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
     // tech that should only benefit him/herself)
-    
+
     int player_id = HumanClientApp::GetApp()->PlayerID();
 
     // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
     // the current player's ownership to all, while remembering which planets this is done to
-    std::vector<Planet*> unowned_planets;
-    std::vector<Planet*> all_planets = HumanClientApp::GetApp()->GetUniverse().FindObjects<Planet>();
+    std::set<Planet*> unowned_planets;
     Universe::InhibitUniverseObjectSignals(true);
-    for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
-         Planet* planet = *it;
+    for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+         Planet* planet = GetUniverse().Object<Planet>(*it);
+         if (!planet)
+             continue;
          if (planet->Owners().empty()) {
-             unowned_planets.push_back(planet);
+             unowned_planets.insert(planet);
              planet->AddOwner(player_id);
          }
     }
 
     // update meter estimates with temporary ownership
-    GetUniverse().UpdateMeterEstimates();
+    GetUniverse().UpdateMeterEstimates(objects_vec);
 
     // remove temporary ownership added above
-    for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
+    for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
         (*it)->RemoveOwner(player_id);
     Universe::InhibitUniverseObjectSignals(false);
 }

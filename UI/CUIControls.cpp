@@ -38,13 +38,13 @@ namespace {
         const bool m_play_only_when_checked;
     };
 
-    void PlayListSelectSound(const std::set<int>&)
+    void PlayListSelectSound(const GG::ListBox::SelectionSet&)
     { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
 
     void PlayDropDownListOpenSound()
     { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
 
-    void PlayItemDropSound(int, GG::ListBox::Row*)
+    void PlayItemDropSound(GG::ListBox::iterator)
     { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
 
     void PlayTextTypingSound(const std::string&)
@@ -1046,16 +1046,17 @@ EmpireColorSelector::EmpireColorSelector(int h) :
 
 GG::Clr EmpireColorSelector::CurrentColor() const
 {
-    return (*CurrentItem())[0]->Color();
+    return (**CurrentItem())[0]->Color();
 }
 
 void EmpireColorSelector::SelectColor(const GG::Clr& clr)
 {
-    Select(0);
+    Select(begin());
     const std::vector<GG::Clr>& colors = EmpireColors();
-    for (unsigned int i = 0; i < colors.size(); ++i) {
+    iterator it = begin();
+    for (unsigned int i = 0; i < colors.size(); ++i, ++it) {
         if (colors[i] == clr) {
-            Select(i);
+            Select(it);
             break;
         } else if (i == colors.size() - 1) {
             assert(!"EmpireColorSelector::SelectColor() : No such color!");
@@ -1063,10 +1064,10 @@ void EmpireColorSelector::SelectColor(const GG::Clr& clr)
     }
 }
 
-void EmpireColorSelector::SelectionChanged(int i)
+void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
-    ColorChangedSignal(colors[i]);
+    ColorChangedSignal(colors[std::distance(begin(), it)]);
 }
 
 ///////////////////////////////////////

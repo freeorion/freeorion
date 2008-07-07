@@ -4,7 +4,16 @@ Hull
     speed = 120
     buildcost = 1
     buildtime = 1
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 3
+
     graphic = ""
 
 Hull
@@ -14,11 +23,19 @@ Hull
     buildcost = 10
     buildtime = 4
     slots = [
-        Slot type = External position = (0.1, 0.1)
-        Slot type = External position = (0.3, 0.1)
-        Slot type = External position = (0.5, 0.1)
+        Slot type = External position = (0.20, 0.40)
+        Slot type = External position = (0.40, 0.40)
+        Slot type = External position = (0.60, 0.40)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 3
     graphic = ""
 
 Hull
@@ -28,13 +45,21 @@ Hull
     buildcost = 20
     buildtime = 5
     slots = [
-        Slot type = External position = (0.2, 0.2)
-        Slot type = External position = (0.4, 0.2)
-        Slot type = External position = (0.6, 0.2)
-        Slot type = External position = (0.8, 0.2)
-        Slot type = Internal position = (0.4, 0.4)
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 5
     graphic = ""
 
 Hull
@@ -44,20 +69,23 @@ Hull
     buildcost = 30
     buildtime = 6
     slots = [
-        Slot type = External position = (0.0, 0.1)
-        Slot type = External position = (0.2, 0.1)
-        Slot type = External position = (0.4, 0.1)
-        Slot type = External position = (0.6, 0.1)
-        Slot type = External position = (0.8, 0.1)
-        Slot type = Internal position = (0.4, 0.4)
-        Slot type = Internal position = (0.6, 0.4)
+        Slot type = External position = (0.15, 0.15)
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.45, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.75, 0.15)
+        Slot type = Internal position = (0.30, 0.75)
+        Slot type = Internal position = (0.50, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     effectsgroups = 
         EffectsGroup
-            scope = All
-            activation = All
-            effects = SetMaxMining Target.MaxMining + 2
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 3
     graphic = ""
 
 Hull
@@ -67,16 +95,24 @@ Hull
     buildcost = 50
     buildtime = 8
     slots = [
-        Slot type = External position = (0.25, 0.2)
-        Slot type = External position = (0.35, 0.2)
-        Slot type = External position = (0.45, 0.2)
-        Slot type = External position = (0.55, 0.2)
-        Slot type = External position = (0.65, 0.2)
-        Slot type = External position = (0.75, 0.2)
-        Slot type = Internal position = (0.4, 0.4)
-        Slot type = Internal position = (0.5, 0.4)
-        Slot type = Internal position = (0.6, 0.4)
-        Slot type = Internal position = (0.7, 0.4)
+        Slot type = External position = (0.10, 0.15)
+        Slot type = External position = (0.25, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.55, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.85, 0.15)
+        Slot type = Internal position = (0.10, 0.75)
+        Slot type = Internal position = (0.25, 0.75)
+        Slot type = Internal position = (0.40, 0.75)
+        Slot type = Internal position = (0.55, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetMaxFuel Target.MaxFuel + 1
     graphic = ""

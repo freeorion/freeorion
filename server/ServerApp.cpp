@@ -414,13 +414,19 @@ int ServerApp::GetEmpirePlayerID(int empire_id) const
 }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{ m_turn_sequence[empire_id] = 0; }
+{
+    m_turn_sequence[empire_id] = 0;
+}
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
-{ m_turn_sequence.erase(empire_id); }
+{
+    m_turn_sequence.erase(empire_id);
+}
 
 void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
-{ m_turn_sequence[empire_id] = order_set; }
+{
+    m_turn_sequence[empire_id] = order_set;
+}
 
 bool ServerApp::AllOrdersReceived()
 {
@@ -434,8 +440,8 @@ bool ServerApp::AllOrdersReceived()
 
 void ServerApp::ProcessTurns()
 {
-    Empire                    *pEmpire;
-    OrderSet                  *pOrderSet;
+    Empire                    *empire;
+    OrderSet                  *order_set;
     OrderSet::const_iterator  order_it;
 
     // Now all orders, then process turns
@@ -446,26 +452,26 @@ void ServerApp::ProcessTurns()
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
         }
 
-        pEmpire = Empires().Lookup(it->first);
-        pEmpire->ClearSitRep();
-        pOrderSet = it->second;
-     
+        empire = Empires().Lookup(it->first);
+        empire->ClearSitRep();
+        order_set = it->second;
+
         // execute order set
-        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
+        for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
             order_it->second->Execute();
         }
-    }    
+    }
 
     // filter FleetColonizeOrder for later processing
     typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
     ColonizeOrderMap colonize_order_map;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
     {
-        pOrderSet = it->second;
+        order_set = it->second;
 
         // filter FleetColonizeOrder and sort them per planet
         boost::shared_ptr<FleetColonizeOrder> order;
-        for (order_it = pOrderSet->begin(); order_it != pOrderSet->end(); ++order_it) {
+        for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
             if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second)))
             {
                 ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
@@ -491,8 +497,8 @@ void ServerApp::ProcessTurns()
         // only one empire?
         if (it->second.size()==1) {
             it->second[0]->ServerExecute();
-            pEmpire = Empires().Lookup( it->second[0]->EmpireID() );
-            pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+            empire = Empires().Lookup( it->second[0]->EmpireID() );
+            empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
             const System *system = GetUniverse().Object<System>(planet->SystemID());
 
@@ -531,8 +537,8 @@ void ServerApp::ProcessTurns()
             for (int i=0;i<static_cast<int>(it->second.size());i++)
                 if (winner==i) {
                     it->second[i]->ServerExecute();
-                    pEmpire = Empires().Lookup( it->second[i]->EmpireID() );
-                    pEmpire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+                    empire = Empires().Lookup( it->second[i]->EmpireID() );
+                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
                 }
                 else
                     it->second[i]->Undo();
@@ -545,23 +551,23 @@ void ServerApp::ProcessTurns()
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
     }
-        
+
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         // save for possible SitRep generation after moving...
         const Fleet* fleet = GetUniverse().Object<Fleet>(it->first);
         int eta = -1;
         if (fleet)
             eta = fleet->ETA().first;
-        
+
         it->second->MovementPhase();
-        
+
         // SitRep for fleets having arrived at destinations, to all owners of those fleets
         if (fleet) {
             if (eta == 1) {
                 std::set<int> owners_set = fleet->Owners();
                 for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
-                    pEmpire = Empires().Lookup( *owners_it );
-                    pEmpire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+                    empire = Empires().Lookup( *owners_it );
+                    empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
                 }
             }
         }
@@ -578,7 +584,7 @@ void ServerApp::ProcessTurns()
     {
         std::vector<CombatAssets> empire_combat_forces;
         System* system = *it;
-      
+
         std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
         if (flt_vec.empty()) continue;  // skip systems with not fleets, as these can't have combat
 
@@ -628,9 +634,10 @@ void ServerApp::ProcessTurns()
         }
     }
 
-    // if a combat happened, give the human user a chance to look at the results
-    if (combat_happend)
-        Sleep(1500);
+    // commenting out this delay because human client isn't currently displaying combats anyway...
+    //// if a combat happened, give the human user a chance to look at the results
+    //if (combat_happend)
+    //    Sleep(1500);
 
     // process production and growth phase
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
@@ -638,23 +645,19 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // Update meters, do other effects stuff
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
-        it->second->ResetMaxMeters();   // zero all meters
-        it->second->ApplyUniverseTableMaxMeterAdjustments();  // apply non-effects max meter modifications, including focus mods
-    }
-    GetUniverse().ApplyEffects();       // apply effects, futher altering meters (and also non-meter effects)
+    // execute all effects and update meters prior to production, research, etc.
+    GetUniverse().ApplyAllEffectsAndUpdateMeters();
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
         Empire* empire = it->second;
 
-        std::set<std::set<int> > system_supply_groups;
-        std::set<std::pair<int, int> > supply_starlane_traversals;  // don't need this info, but need somewhere to put the output of GetSupplySystemGroupsAndStarlanesUsed
-        empire->GetSupplySystemGroupsAndStarlanesUsed(system_supply_groups, supply_starlane_traversals);
-
-        empire->InitResourcePools(system_supply_groups);
+        empire->UpdateSupplyUnobstructedSystems();
+        empire->UpdateSystemSupplyRanges();
+        empire->UpdateFleetSupply();
+        empire->UpdateResourceSupply();
+        empire->InitResourcePools();
         empire->UpdateResourcePools();
     }
 
@@ -668,45 +671,51 @@ void ServerApp::ProcessTurns()
     }
 
 
+    // re-execute all meter-related effects after production, so that new UniverseObjects created during production
+    // will have effects applied to them this turn, allowing (for example) ships to have max fuel meters greater than
+    // 0 on the turn they are created.
+    GetUniverse().ApplyMeterEffectsAndUpdateMeters();
+
+
     // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
     GetUniverse().RebuildEmpireViewSystemGraphs();
-
-
     // Population growth or loss, health meter growth, resource current meter growth
     for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();  // limit current meters by max meters
-        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-            if (Meter* meter = it->second->GetMeter(i)) {
-                meter->m_previous_current = meter->m_initial_current;
-                meter->m_previous_max = meter->m_initial_max;
-                meter->m_initial_current = meter->m_current;
-                meter->m_initial_max = meter->m_max;
-            }
-        }
     }
 
 
-    // find planets which have starved to death
+    // copy latest updated current meter values to initial current values, and initial current values
+    // to previous values, so that clients will have this information based on values after all changes
+    // that occured this turn.
+    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+            if (Meter* meter = it->second->GetMeter(i))
+                meter->BackPropegate();
+    }
+
+
+    // create sitreps for starved planets
     std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
-    for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it)
-        if ((*it)->Owners().size()>0 && (*it)->MeterPoints(METER_POPULATION) == 0.0)
-        {
+    for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it) {
+        if ((*it)->Owners().size() > 0 && (*it)->GetMeter(METER_POPULATION)->Current() <= 0.0) {
             // add some information to sitrep
             Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(), (*it)->ID()));
             (*it)->Reset();
         }
+    }
 
 
     // loop and free all orders
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         delete it->second;
-        it->second = NULL;
+        it->second = 0;
     }
 
+
     ++m_current_turn;
+
 
     // indicate that the clients are waiting for their new Universes
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
