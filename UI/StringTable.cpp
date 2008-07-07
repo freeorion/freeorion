@@ -4,13 +4,6 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
 
-#if defined(_MSC_VER)
-  // HACK! this keeps VC.x from barfing when it sees "typedef __int64 int64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  if defined(int64_t)
-#    undef int64_t
-#  endif
-#endif
 #include <boost/filesystem/fstream.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>

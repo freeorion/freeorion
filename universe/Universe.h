@@ -14,17 +14,6 @@
 #include "Predicates.h"
 #include "Effect.h"
 
-#if defined(_MSC_VER)
-  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  if defined(int64_t)
-#    undef int64_t
-#  endif
-#elif defined(WIN32)
-  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  define BOOST_MSVC -1
-#endif
 #ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
 #include <boost/graph/adjacency_list.hpp>
 #endif

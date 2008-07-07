@@ -12,14 +12,14 @@
 #include <GG/TabWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
+#include <boost/format.hpp>
+#include <boost/spirit.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/format.hpp>
-#include <boost/spirit.hpp>
+#include <boost/system/system_error.hpp>
 
 
 namespace fs = boost::filesystem;
@@ -518,7 +518,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
             }
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
-            if (e.system_error() != EACCES)
+            if (e.code() != boost::system::posix_error::permission_denied)
                 throw;
         }
     }

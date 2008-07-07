@@ -6,6 +6,9 @@
 #include "MapWnd.h"
 #include "SidePanel.h"
 #include "../util/AppInterface.h"
+
+#undef int64_t
+
 #include "../util/Random.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
@@ -29,11 +32,11 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#include <boost/spirit.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/spirit.hpp>
+#include <boost/system/system_error.hpp>
 
 #include <string>
 
@@ -589,7 +592,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
                     textures.push_back(ClientUI::GetTexture(*it, mipmap));
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.system_error() != EACCES)
+                if (e.code() != boost::system::posix_error::permission_denied)
                     throw;
             }
         }

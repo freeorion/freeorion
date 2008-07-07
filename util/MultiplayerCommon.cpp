@@ -6,20 +6,12 @@
 
 #include <log4cpp/Priority.hh>
 
-#if defined(_MSC_VER)
-  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  if defined(int64_t)
-#    undef int64_t
-#  endif
-#elif defined(WIN32)
-  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  define BOOST_MSVC -1
+#if defined(_MSC_VER) && defined(int64_t)
+#undef int64_t
 #endif
 
 #include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/cerrno.hpp>
+#include <boost/system/system_error.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/xtime.hpp>
 
@@ -255,7 +247,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
                 }
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.system_error() != EACCES)
+                if (e.code() != boost::system::posix_error::permission_denied)
                     throw;
             }
         }
