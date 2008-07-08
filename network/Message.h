@@ -4,6 +4,10 @@
 
 #include <boost/shared_ptr.hpp>
 
+#if defined(_MSC_VER) && defined(int64_t)
+#undef int64_t
+#endif
+
 #include <string>
 #include <map>
 

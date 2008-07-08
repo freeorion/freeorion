@@ -6,6 +6,7 @@
 # ifdef FREEORION_BUILD_HUMAN
 #  include "../client/human/HumanClientApp.h"
 # else
+#  undef int64_t
 #  include "../client/AI/AIClientApp.h"
 # endif
 #endif

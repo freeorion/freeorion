@@ -37,9 +37,9 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/assign/list_of.hpp>
-#include <boost/filesystem/cerrno.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/system/system_error.hpp>
 
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
@@ -573,7 +573,7 @@ void CombatWnd::InitCombat(const System& system)
                 }
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.system_error() != EACCES)
+                if (e.code() != boost::system::posix_error::permission_denied)
                     throw;
             }
         }
@@ -617,7 +617,7 @@ void CombatWnd::InitCombat(const System& system)
                     }
                 } catch (const fs::filesystem_error& e) {
                     // ignore files for which permission is denied, and rethrow other exceptions
-                    if (e.system_error() != EACCES)
+                    if (e.code() != boost::system::posix_error::permission_denied)
                         throw;
                 }
             }

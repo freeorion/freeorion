@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_34&quot;;C:\Python25\include;../../../network/"
+				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_35&quot;;C:\Python25\include;../../../network/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc80-mt-1_34.lib"
+				AdditionalDependencies="GiGi.lib opengl32.lib glu32.lib wsock32.lib zdll.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc80-mt-1_35.lib"
 				OutputFile="../../../freeorionca.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs"
@@ -224,14 +224,6 @@
 					RelativePath="..\..\..\network\Networking.h"
 					>
 				</File>
-				<Filter
-					Name="boost"
-					>
-					<File
-						RelativePath="..\..\..\network\boost\error_code.cpp"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="universe"

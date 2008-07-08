@@ -2,16 +2,8 @@
 #ifndef _Random_h_
 #define _Random_h_
 
-#if defined(_MSC_VER)
-  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  if defined(int64_t)
-#    undef int64_t
-#  endif
-#elif defined(WIN32)
-  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  define BOOST_MSVC -1
+#if defined(_MSC_VER) && defined(int64_t)
+#undef int64_t
 #endif
 
 #include <boost/random/mersenne_twister.hpp>

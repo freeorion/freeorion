@@ -9,7 +9,6 @@ common_sources = [
     'network/Message.cpp',
     'network/MessageQueue.cpp',
     'network/Networking.cpp',
-    'network/boost/error_code.cpp',
     'UI/StringTable.cpp',
     'universe/Building.cpp',
     'universe/Condition.cpp',

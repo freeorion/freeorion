@@ -235,6 +235,7 @@ if not env.GetOption('clean'):
             if not conf.CheckBoost(boost_version_string, freeorion_boost_libs, conf, not ms_linker):
                 Exit(1)
         else:
+            signals_namespace = 'signals'
             if OptionValue('boost_signals_namespace', env):
                 signals_namespace = OptionValue('boost_signals_namespace', env)
                 env.AppendUnique(CPPDEFINES = [
@@ -243,7 +244,8 @@ if not env.GetOption('clean'):
                     ])
 
             boost_libs = freeorion_boost_libs + [
-                ('boost_signals', 'boost/signals.hpp', 'boost::signals::connection();'),
+                ('boost_signals', 'boost/signals.hpp', 'boost::' + signals_namespace + '::connection();'),
+                ('boost_system', 'boost/system/error_code.hpp', 'boost::system::get_system_category();'),
                 ('boost_filesystem', 'boost/filesystem/operations.hpp', 'boost::filesystem::initial_path();'),
                 ('boost_thread', 'boost/thread/thread.hpp', 'boost::thread::yield();'),
                 ]
@@ -599,11 +601,8 @@ version_cpp.write(version_cpp_in.read() % values)
 version_cpp.close()
 version_cpp_in.close()
 
-# This is necessary until Boost 1.35 is released, which will include Boost.Asio.  For now, we have a local copy of
-# Boost.Asio in the network directory.
-env.AppendUnique(CPPPATH = ['network'])
-
-# On Win32, assume we're using the SDK, and copy the installed GG DLLs (and any other key files) to the FreeOrion directory.
+# On Win32, assume we're using the SDK, and copy the installed GG DLLs (and any
+# other key files) to the FreeOrion directory.
 if str(Platform()) == 'win32':
     import shutil
     shutil.copy(os.path.join('..', 'lib', 'GiGi.dll'), '.')

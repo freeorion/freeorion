@@ -127,7 +127,8 @@ def CheckVersionHeader(context, package, header, regex, comparison_string, versi
             context.Message('Checking %s version == %s... ' % (package, comparison_string))
     matches = FindRegexMatchesInHeader(regex, header, context.env)
     if len(matches) == 1:
-        if isinstance(matches[0], basestring):
+        import types
+        if type(matches[0]) == types.StringType:
             match_str = matches[0]
         else:
             match_str = '.'.join(matches[0])

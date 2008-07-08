@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_34&quot;;C:\Python25\include;../../../network/"
+				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_35&quot;;C:\Python25\include;../../../network/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -379,14 +379,6 @@
 					RelativePath="..\..\..\network\Networking.h"
 					>
 				</File>
-				<Filter
-					Name="boost"
-					>
-					<File
-						RelativePath="..\..\..\network\boost\error_code.cpp"
-						>
-					</File>
-				</Filter>
 			</Filter>
 			<Filter
 				Name="UI"
