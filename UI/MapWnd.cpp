@@ -477,13 +477,9 @@ SidePanel* MapWnd::GetSidePanel() const
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
-    data.map_upper_left = UpperLeft();
+    data.map_left = UpperLeft().x;
+    data.map_top = UpperLeft().y;
     data.map_zoom_factor = m_zoom_factor;
-    data.map_nebulae.resize(m_nebulae.size());
-    for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
-        data.map_nebulae[i].filename = m_nebulae[i]->Filename();
-        data.map_nebulae[i].center = m_nebula_centers[i];
-    }
 }
 
 bool MapWnd::InProductionViewMode() const
@@ -752,20 +748,6 @@ void MapWnd::InitTurn(int turn_number)
     Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
                   static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
-    // set up nebulae on the first turn
-    if (m_nebulae.empty()) {
-        // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
-        const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-        int num_nebulae = static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR);/*RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-                                                                                 static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));*/
-        m_nebulae.resize(num_nebulae);
-        m_nebula_centers.resize(num_nebulae);
-        SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
-        for (int i = 0; i < num_nebulae; ++i) {
-            m_nebulae[i] = ClientUI::GetClientUI()->GetRandomTexture(ClientUI::ArtDir(), "nebula");
-            m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-        }
-    }
 
     // set up backgrounds on first turn
     if (m_backgrounds.empty()) {
@@ -1275,7 +1257,8 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     DoMovingFleetButtonsLayout();
 
     GG::Pt ul = UpperLeft();
-    GG::Pt map_move = data.map_upper_left - ul;
+    GG::Pt map_ul = GG::Pt(data.map_left, data.map_top);
+    GG::Pt map_move = map_ul - ul;
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
@@ -1292,13 +1275,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
-
-    m_nebulae.clear();
-    m_nebula_centers.clear();
-    for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
-        m_nebulae.push_back(ClientUI::GetTexture(data.map_nebulae[i].filename));
-        m_nebula_centers.push_back(data.map_nebulae[i].center);
-    }
 }
 
 void MapWnd::ShowSystemNames()
@@ -1702,22 +1678,26 @@ void MapWnd::RenderStarfields()
 
 void MapWnd::RenderNebulae()
 {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    glPushMatrix();
-    glLoadIdentity();
-    for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
-        int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
-        int nebula_height = m_nebulae[i]->Height() / 3;
+    // nebula rendering disabled until we add nebulae worth rendering, which likely
+    // means for them to have some gameplay purpose and artist-approved way to
+    // specify what colours or specific nebula images to use
 
-        GG::Pt ul = 
-            ClientUpperLeft() + 
-            GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
-                   static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
-        m_nebulae[i]->OrthoBlit(ul, 
-                                ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
-                                            static_cast<int>(nebula_height * m_zoom_factor)));
-    }
-    glPopMatrix();
+    //glColor4f(1.0, 1.0, 1.0, 1.0);
+    //glPushMatrix();
+    //glLoadIdentity();
+    //for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
+    //    int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
+    //    int nebula_height = m_nebulae[i]->Height() / 3;
+
+    //    GG::Pt ul = 
+    //        ClientUpperLeft() + 
+    //        GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
+    //               static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
+    //    m_nebulae[i]->OrthoBlit(ul, 
+    //                            ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
+    //                                        static_cast<int>(nebula_height * m_zoom_factor)));
+    //}
+    //glPopMatrix();
 }
 
 void MapWnd::RenderGalaxyGas()

@@ -224,8 +224,6 @@ private:
     std::set<GG::Key> m_disabled_accels_list;       //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
-    std::vector<boost::shared_ptr<GG::Texture> >    m_nebulae;          //!< decorative nebula textures
-    std::vector<GG::Pt>                             m_nebula_centers;   //!< the centerpoints of each of the nebula textures
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     int                         m_previously_selected_system;

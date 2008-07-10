@@ -92,20 +92,9 @@ private:
 /** Contains the UI data that must be saved in save game files in order to restore games to the users' last views. */
 struct SaveGameUIData
 {
-    struct NebulaData
-    {
-        std::string filename;
-        GG::Pt      center;
-
-    private:
-        friend class boost::serialization::access;
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version);
-    };
-
-    GG::Pt                  map_upper_left;
-    double                  map_zoom_factor;
-    std::vector<NebulaData> map_nebulae;
+    int     map_top;
+    int     map_left;
+    double  map_zoom_factor;
 
 private:
     friend class boost::serialization::access;
@@ -221,18 +210,11 @@ void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void SaveGameUIData::NebulaData::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(filename)
-        & BOOST_SERIALIZATION_NVP(center);
-}
-
-template <class Archive>
 void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(map_upper_left)
-        & BOOST_SERIALIZATION_NVP(map_zoom_factor)
-        & BOOST_SERIALIZATION_NVP(map_nebulae);
+    ar  & BOOST_SERIALIZATION_NVP(map_top)
+        & BOOST_SERIALIZATION_NVP(map_left)
+        & BOOST_SERIALIZATION_NVP(map_zoom_factor);
 }
 
 template <class Archive>

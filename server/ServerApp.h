@@ -129,7 +129,7 @@ private:
     log4cpp::Category&        m_log_category;         ///< reference to the log4cpp object used to log events to file
 
     ServerFSM                 m_fsm;
-   
+
     int                       m_current_turn;         ///< current turn number
 
     std::map<std::string, Process>
