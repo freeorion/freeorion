@@ -18,8 +18,6 @@
 #include "../util/OrderSet.h"
 #include "../util/SitRepEntry.h"
 
-#include <GG/Font.h>
-
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>

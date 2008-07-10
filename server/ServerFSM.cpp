@@ -8,8 +8,6 @@
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
 
-#include <GG/Font.h>
-
 
 namespace {
     const bool TRACE_EXECUTION = false;
