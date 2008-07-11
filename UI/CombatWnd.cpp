@@ -126,6 +126,8 @@ namespace {
             }
             GLdouble projection[16];
             Ogre::Matrix4 projection_ = camera.getProjectionMatrixWithRSDepth();
+            // TODO: Use _m member of transposed projection_ instead of doing
+            // this "manual" copy.
             for (std::size_t i = 0; i < 16; ++i) {
                 projection[i] = projection_[i % 4][i / 4];
             }
@@ -145,6 +147,13 @@ namespace {
         }
 
         return retval;
+    }
+
+    GG::Pt ProjectToPixel(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
+    {
+        Ogre::Vector3 projection = (Project(camera, world_pt) + Ogre::Vector3(1.0, 1.0, 1.0)) / 2.0;
+        return GG::Pt(static_cast<int>(projection.x * camera.getViewport()->getActualWidth()),
+                      static_cast<int>((1.0 - projection.y) * camera.getViewport()->getActualHeight()));
     }
 
     std::string PlanetNodeMaterial(PlanetType type)
@@ -594,6 +603,15 @@ void CombatWnd::InitCombat(const System& system)
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
         technique = core_material->getTechnique(0);
         technique->getPass(0)->getTextureUnitState(0)->setTextureName(base_name + "core.png");
+
+        m_big_flare =
+            ClientUI::GetTexture(
+                ClientUI::ArtDir() / "combat" / "backgrounds" / (base_name + "big_spark.png"),
+                false);
+        m_small_flare =
+            ClientUI::GetTexture(
+                ClientUI::ArtDir() / "combat" / "backgrounds" / (base_name + "small_spark.png"),
+                false);
     }
 
     // build list of available planet textures, by type
@@ -739,6 +757,29 @@ void CombatWnd::InitCombat(const System& system)
 
 void CombatWnd::Render()
 {
+    // render two small lens flares that oppose the star's position relative to
+    // the center of the viewport
+    GG::Pt star_pt = ProjectToPixel(*m_camera, Ogre::Vector3(0.0, 0.0, 0.0));
+    if (InClient(star_pt)) {
+        GG::Pt center(Width() / 2, Height() / 2);
+        GG::Pt star_to_center = center - star_pt;
+
+        int big_flare_width = static_cast<int>(180 * m_star_brightness_factor);
+        int small_flare_width = static_cast<int>(120 * m_star_brightness_factor);
+
+        GG::Pt big_flare_ul = center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
+            GG::Pt(big_flare_width / 2, big_flare_width / 2);
+        GG::Pt small_flare_ul = center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
+            GG::Pt(small_flare_width / 2, small_flare_width / 2);
+        GG::Pt big_flare_lr = big_flare_ul + GG::Pt(big_flare_width, big_flare_width);
+        GG::Pt small_flare_lr = small_flare_ul + GG::Pt(small_flare_width, small_flare_width);
+
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr, m_big_flare->DefaultTexCoords());
+        m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr, m_small_flare->DefaultTexCoords());
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+
     if (m_selection_rect.ul != m_selection_rect.lr) {
         glColor4f(1.0, 1.0, 1.0, 0.5);
         glBegin(GL_LINE_LOOP);
@@ -1111,11 +1152,11 @@ void CombatWnd::UpdateStarFromCameraPosition()
     Ogre::Real BRIGHTNESS_AT_MAX_FOVY = 0.25;
     Ogre::Real center_nearness_factor =
         1.0 - angle_at_view_center_to_star.valueRadians() / (m_camera->getFOVy() / 2.0).valueRadians();
-    Ogre::Real star_back_brightness_factor =
+    m_star_brightness_factor =
         BRIGHTNESS_AT_MAX_FOVY + center_nearness_factor * (1.0 - BRIGHTNESS_AT_MAX_FOVY);
     // Raise the factor to a (smallish) power to create some nonlinearity in the scaling.
-    star_back_brightness_factor = Ogre::Math::Pow(star_back_brightness_factor, 1.5);
-    m_star_back_billboard->setColour(Ogre::ColourValue(1.0, 1.0, 1.0, star_back_brightness_factor));
+    m_star_brightness_factor = Ogre::Math::Pow(m_star_brightness_factor, 1.5);
+    m_star_back_billboard->setColour(Ogre::ColourValue(1.0, 1.0, 1.0, m_star_brightness_factor));
 
     Ogre::MaterialPtr back_material =
         Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");

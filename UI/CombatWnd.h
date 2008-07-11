@@ -21,6 +21,11 @@ namespace Ogre {
     class Viewport;
     class PlaneBoundedVolumeListSceneQuery;
 }
+
+namespace GG {
+    class Texture;
+}
+
 class System;
 class FPSIndicator;
 
@@ -112,6 +117,9 @@ private:
     Ogre::Vector3 m_look_at_point;
     std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
+    Ogre::Real m_star_brightness_factor;
+    boost::shared_ptr<GG::Texture> m_big_flare;
+    boost::shared_ptr<GG::Texture> m_small_flare;
 
     // The scene nodes representing planets in the system and the materials
     // created to show them, indexed by orbit number.
