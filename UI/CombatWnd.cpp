@@ -761,23 +761,27 @@ void CombatWnd::Render()
     // the center of the viewport
     GG::Pt star_pt = ProjectToPixel(*m_camera, Ogre::Vector3(0.0, 0.0, 0.0));
     if (InClient(star_pt)) {
-        GG::Pt center(Width() / 2, Height() / 2);
-        GG::Pt star_to_center = center - star_pt;
+        Ogre::Ray ray(m_camera->getRealPosition(), -m_camera->getRealPosition());
+        RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
+        if (!hit.m_object) {
+            GG::Pt center(Width() / 2, Height() / 2);
+            GG::Pt star_to_center = center - star_pt;
 
-        int big_flare_width = static_cast<int>(180 * m_star_brightness_factor);
-        int small_flare_width = static_cast<int>(120 * m_star_brightness_factor);
+            int big_flare_width = static_cast<int>(180 * m_star_brightness_factor);
+            int small_flare_width = static_cast<int>(120 * m_star_brightness_factor);
 
-        GG::Pt big_flare_ul = center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
-            GG::Pt(big_flare_width / 2, big_flare_width / 2);
-        GG::Pt small_flare_ul = center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
-            GG::Pt(small_flare_width / 2, small_flare_width / 2);
-        GG::Pt big_flare_lr = big_flare_ul + GG::Pt(big_flare_width, big_flare_width);
-        GG::Pt small_flare_lr = small_flare_ul + GG::Pt(small_flare_width, small_flare_width);
+            GG::Pt big_flare_ul = center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
+                GG::Pt(big_flare_width / 2, big_flare_width / 2);
+            GG::Pt small_flare_ul = center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
+                GG::Pt(small_flare_width / 2, small_flare_width / 2);
+            GG::Pt big_flare_lr = big_flare_ul + GG::Pt(big_flare_width, big_flare_width);
+            GG::Pt small_flare_lr = small_flare_ul + GG::Pt(small_flare_width, small_flare_width);
 
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr, m_big_flare->DefaultTexCoords());
-        m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr, m_small_flare->DefaultTexCoords());
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+            m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr, m_big_flare->DefaultTexCoords());
+            m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr, m_small_flare->DefaultTexCoords());
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
     }
 
     if (m_selection_rect.ul != m_selection_rect.lr) {
