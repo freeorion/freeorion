@@ -15,7 +15,7 @@ void main()
     float gloss = cg.g;
 
     vec3 daytime = texture2D(day_texture, tex_coord).rgb * diffuse + specular * gloss;
-    daytime = mix(daytime, abs(diffuse) * cloud_color.rgb, clouds);
+    daytime = mix(daytime, diffuse * cloud_color.rgb, clouds);
 
     vec3 color = daytime;
     if (diffuse < -TERMINATOR)
