@@ -222,7 +222,7 @@ material inferno_planet_01 : planet
         {
             fragment_program_ref
             {
-                param_named cloud_color float4 1.0 1.0 1.0 1.0
+                param_named cloud_color float4 0 0 0 1.0
             }
         }
     }

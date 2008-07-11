@@ -8,7 +8,7 @@ varying float surface_dot_product;
 varying float below_surface_dot_product;
 
 const float TERMINATOR = 0.3;
-const float AMBIENT = 0.05;
+const float AMBIENT = 0.10;
 
 void main()
 {
