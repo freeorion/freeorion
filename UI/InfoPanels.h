@@ -6,6 +6,7 @@
 
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
+#include <GG/BrowseInfoWnd.h>
 
 class PopulationPanel;
 class ResourcePanel;
@@ -360,6 +361,25 @@ private:
     static const int BAR_HEIGHT = 10;
 
     std::vector<GG::Clr> m_bar_colours;
+};
+
+/** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
+class IconTextBrowseWnd : public GG::BrowseInfoWnd {
+public:
+    IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text,
+                      const std::string& main_text);
+    virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const;
+    virtual void Render();
+
+private:
+    GG::StaticGraphic* m_icon;
+    GG::TextControl* m_title_text;
+    GG::TextControl* m_main_text;
+
+    static const int TEXT_WIDTH = 400;
+    static const int TEXT_PAD = 3;
+    static const int ICON_WIDTH = 64;
+    const int ROW_HEIGHT;
 };
 
 #endif

@@ -1,6 +1,8 @@
 #include "DesignWnd.h"
 
 #include "../util/AppInterface.h"
+#include "../util/OptionsDB.h"
+#include "../util/MultiplayerCommon.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
@@ -8,7 +10,6 @@
 #include "EncyclopediaDetailPanel.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
@@ -69,7 +70,16 @@ PartControl::PartControl(const PartType* part) :
     m_icon = new GG::StaticGraphic(0, 0, SIZE, SIZE, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Show();
     AttachChild(m_icon);
+
     SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+
+    if (m_part) {
+        Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),
+                                                                                    UserString(m_part->Name()),
+                                                                                    UserString(m_part->Description()))));
+    }
 }
 
 void PartControl::Render() {}
