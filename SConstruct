@@ -16,6 +16,8 @@ mising_pkg_config = not WhereIs('pkg-config')
 # create options                                 #
 ##################################################
 options = Options('options.cache')
+options.Add('CC', 'The C-Compiler used to compile C-Files')
+options.Add('CXX', 'The C++-Compiler used to compile C++-Files')
 options.Add(BoolOption('release', 'Build for public release (random numbers are nondeterminisitc, etc.).  This will force debug=0.', 0))
 options.Add(BoolOption('debug', 'Generate debug code', 0))
 options.Add(BoolOption('multithreaded', 'Generate multithreaded code', 1))
@@ -86,7 +88,11 @@ elif ('-h' in command_line_args) or ('--help' in command_line_args):
     preconfigured = True # this is just to ensure config gets skipped when help is requested
 ms_linker = 'msvs' in env['TOOLS'] or 'msvc' in env['TOOLS']
 
-env_cache_keys = ['CCFLAGS',
+
+
+env_cache_keys = ['CC',
+                  'CXX',
+                  'CCFLAGS',
                   'CPPDEFINES',
                   'CPPFLAGS',
                   'CPPPATH',
