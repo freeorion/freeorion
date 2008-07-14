@@ -3,7 +3,7 @@
 #define _SaveLoad_h_
 
 #include <vector>
-
+#include <string>
 
 class PlayerSaveGameData;
 class Universe;
