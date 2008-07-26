@@ -54,15 +54,15 @@ LOADING
 Chargement...
 
 SERVER_WONT_START
-'''The server could not be started.
+'''Le serveur ne peut pas démarrer.
 
-Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
+Note pour Linux: L'executable du serveur devrait être dans le répertoire de travail. Si freeorion était exécuté à partir d'autres quelque part que le répertoire dans lequel le principal binaire est situé, vous pourriez avoir besoin d'arrêter et de redémarrer depuis ce répertoire.'''
 
 SERVER_TIMEOUT
 Le serveur ne répond pas
 
 SERVER_LOST
-La connection au serveur a été perdue.
+La connexion au serveur a été perdue.
 
 SERVER_GAME_END
 Le serveur a envoyé un message de fin de jeu. Au revoir.
@@ -98,33 +98,33 @@ UNKNOWN_VALUE_SYMBOL
 ?
 
 ERROR
-ERROR
+ERREUR
 
 DEFENSE_BASE
 Base défensive
 
 DEFENSE_BASE_DESCRIPTION
-'''An orbital defense platform that aids in the defense of the planet at which it is located.
+'''Une plateforme orbitale participant à la défense de la planète ou elle est située.
 
-Attack: 1
-Defense: 3'''
+Attaque: 1
+Défense: 3'''
 
 CHAT_WHISPER
-whisper
+murmurer
 
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
-New Fleet %1%
+Nouvelle Flotte %1%
 
 NEW_FLEET_NAME_NO_NUMBER
-New Fleet
+Nouvelle Flotte
 
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
 
 COMMAND_LINE_USAGE
-Usage: ***
+Usage: 
 
 COMMAND_LINE_DEFAULT
 Défaut: 
@@ -151,10 +151,10 @@ OPTIONS_DB_UI_CHAT_EDIT_HISTORY
 Le nombre de messages déjà écrits à garder dans l'historique de la boîte d'édition du chat.***
 
 OPTIONS_DB_GALAXY_MAP_GAS
-Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
+Rendu grisé autour des systèmes pour donner une forme à la galaxie. Peut être lent sur les anciennes configurations.***
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
+Utilisation de OpenGL 1,5 optimisé pour le rendu de la carte galactique. Peut ne pas fonctionner sur les anciennes cartes graphiques.***
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force le client à ne pas lancer un serveur, même dans les cas de l'hébergement local d'un jeu, d'un jeu solo, etc.
@@ -232,7 +232,7 @@ OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
 Le fichier son à jouer quand un bouton flotte est cliqué.
 
 OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
-The sound file played when mouse moves over a system icon.
+Le fichier son à jouer lorsque la souris passe sur une icône système
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
 Le fichier son à jouer quand le panneau latéral du système est ouvert.
@@ -397,13 +397,13 @@ OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 La fréquence d'apparition des évé. spéciaux dans la galaxie.***
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
-The name used in the game for your empire.
+Le nom de votre empire dans le jeu.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
-The color used in the game for your empire.
+La couleur de votre empire dans le jeu.
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-The number of AI opponents you will play in the game.
+Le nombre d'IA dans le jeu.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 La largeur de l'espace à laisser vide entre technologies dans l'arbre des technologies, en multiples de la largeur d'une seule technologie théorique.***
@@ -453,20 +453,20 @@ FILE_DLG_MALFORMED_FILENAME
 Nom de fichier invalide.
 
 FILE_DLG_OVERWRITE_PROMPT
-'''%1% exists.
-Ok to overwrite it?'''
+'''%1% existe déjà.
+L'écraser?'''
 
 FILE_DLG_INVALID_FILENAME
 '''"%1%"
-is an invalid file name.'''
+n'est pas un nom de fichier valide.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
-is a directory.'''
+est un dossier.'''
 
 FILE_DLG_FILE_DOES_NOT_EXIST
-'''File "%1%"
-does not exist.'''
+'''Le fichier "%1%"
+n'existe pas.'''
 
 FILE_DLG_DEVICE_IS_NOT_READY
 Périphérique pas prêt.
@@ -606,7 +606,7 @@ START_GAME_BN
 Lancer partie
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Unique empire names and colours required
+Nom d'empire et couleur unique nécessaire
 
 ########################
 # Galaxy Setup Screen  #
@@ -628,7 +628,7 @@ GSETUP_EMPIRE_COLOR
 Couleur de l'empire
 
 GSETUP_NUMBER_AIS
-Number of AI Players
+Nombre d'IAs
 
 #Drop-down list labels and choices####
 
@@ -879,13 +879,13 @@ OPTIONS_CHAT_HIDE
 Délai avant dissimulation du chat
 
 OPTIONS_GALAXY_MAP
-Galaxy Map
+Carte Galactique
 
 OPTIONS_GALAXY_MAP_GAS
-Galaxy map gas rendering
+Rendu gazeux de la Carte galactique***
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimized system rendering
+Système de rendu optimisé
 
 OPTIONS_MUSIC
 Musique
@@ -954,16 +954,16 @@ OPTIONS_SOUND_BALANCED
 Balanced focus***
 
 OPTIONS_SOUND_FARMING
-Focalisation sur l'Agriculture
+Privilégier l'Agriculture
 
 OPTIONS_SOUND_INDUSTRY
-Focalisation sur l'Industrie
+Privilégier l'Industrie
 
 OPTIONS_SOUND_MINING
-Focalisation sur l'Exploitation Minière
+Privilégier l'Exploitation Minière
 
 OPTIONS_SOUND_RESEARCH
-Focalisation sur la Recherche
+Privilégier la Recherche
 
 OPTIONS_SOUND_LIST
 Sons des Listes
@@ -984,7 +984,7 @@ OPTIONS_CONTROL_COLORS
 Contrôle Interface
 
 OPTIONS_FILL_COLOR
-Intérieur (Remplissage***)
+Intérieur
 
 OPTIONS_BORDER_COLOR
 Bordure
@@ -996,7 +996,7 @@ OPTIONS_EDIT_COLORS
 Contrôle Édition
 
 OPTIONS_HIGHLIGHT_COLOR
-Sélection surbrillante***
+Surbrillance
 
 OPTIONS_INTERIOR_COLOR
 Intérieur
@@ -1079,7 +1079,7 @@ Fichiers de musique
 #################
 
 MAP_BTN_TURN_UPDATE
-Turn %1%
+Tour %1%
 
 MAP_INDICATOR_FPS
 FPS: %1%
@@ -1107,7 +1107,7 @@ SIDE_PANEL
 Panneau latéral
 
 SP_SYSTEM_PRODUCTION
-System Production
+Production du système
 
 ##Planet Panel#############
 PLANET_PANEL
@@ -1131,7 +1131,7 @@ PP_POPULATION
 Population
 
 PP_HEALTH
-Health
+Santé
 
 ## Resources Panel ##########
 
@@ -1151,10 +1151,10 @@ RP_INDUSTRY
 Production Industrielle\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
 
 RP_RESEARCH
-Research Output
+Niveau de Recherche
 
 RP_TRADE
-Trade Level
+Niveau de commerce
 
 RP_CONSTRUCTION
 Construction Infrastructure\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%\nMaximum: %4%
@@ -1162,24 +1162,24 @@ Construction Infrastructure\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChang
 ## Military Panel ##########
 
 MP_SUPPLY
-Fleet Supply
+Flotte de support
 
 MP_SHIELD
-Planetary Shield
+Bouclier planétaire
 
 MP_DEFENSE
-Planetary Defense
+Défense planétaire
 
 MP_DETECTION
-Detection
+Détection
 
 MP_STEALTH
-Stealth
+Furtivité
 
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Incomplete)
+'''%1% (Incomplet)
 
 %2%'''
 
@@ -1191,37 +1191,37 @@ BP_COMPLETE_BUILDING_TOOLTIP
 ## General Tooltips#########
 
 TT_CURRENT
-Current
+Actuel
 
 TT_NEXT
-Next Turn
+Prochain Tour 
 
 TT_CHANGE
 Change
 
 TT_METER
-Meter: %1% / %2%
+Compteur: %1% / %2%
 
 TT_BASIC_FOCUS_AND_UNIVERSE
-Basic Focus and Universe
+Dossier  de baseet de l'Univers***
 
 TT_TECH
 %1% Tech <i>%2%</i>
 
 TT_BUILDING
-%1% Building <i>%2%</i>
+%1% Construction <i>%2%</i>
 
 TT_SHIP_HULL
-Ship <i>%1%</i> Hull <i>%2%</i>
+Vaisseau <i>%1%</i> Coque <i>%2%</i>
 
 TT_SHIP_PART
-Ship <i>%1%</i> Part <i>%2%</i>
+Vaisseau <i>%1%</i> Partie <i>%2%</i>
 
 TT_SPECIAL
-Special <i>%1%</i>
+Spécial <i>%1%</i>
 
 TT_UNKNOWN
-Unknown
+Inconnu
 
 ## Misc. Sidepanel##########
 
@@ -1238,10 +1238,10 @@ SP_ENTER_NEW_PLANET_NAME
 Entrer le nouveau nom de la planète
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-'''All colony ships in this system have been
-given orders to leave the system.
+'''Tous les vaisseau de colonisation 
+on l'ordre de quitter le système
 
-Use one of the departing colony ships?'''
+Doit-on utiliser l'un d'eux?'''
 
 #################
 # Fleet Window  #
@@ -1251,7 +1251,7 @@ FW_FLEET_HOLDING_AT
 Au Système %1%
 
 FW_FLEET_MOVING_TO
-Moving to %1%, ETA %2% (%3%)
+Destination %1%, ETA %2% (%3%)
 
 FW_FLEET_ETA_NEVER
 Jamais
@@ -1260,7 +1260,7 @@ FW_FLEET_ETA_UNKNOWN
 Inconnu
 
 FW_FLEET_ETA_OUT_OF_RANGE
-Out of Range
+Hors de portée
 
 FW_SHIP_CLASS
 Classe de vaisseau 
@@ -1279,20 +1279,20 @@ FW_EMPIRE_FLEETS
 Flotte %1%
 
 FW_HOME_FLEET
-Home Fleet***
+Flotte Mère
 
 FW_BATTLE_FLEET
-Battle Fleet
+Flotte de combat
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
-Vaisseau étranger
+Flotte étrangère
 
 FW_FOREIGN_SHIP
-Foreign ship
+Vaisseau étranger
 
 FW_NO_FLEET
-No Fleet
+Pas de flotte
 
 ###############
 # TechTreeWnd #
@@ -1305,10 +1305,10 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / Turn @ %2% Turns
+%1% RP / Tour @ %2% Tours
 
 TECH_TURN_COST_STR
-%1% RP / Turn @ %2% Turns
+%1% RP / Tour @ %2% Tours
 
 TECH_TURNS_LEFT_STR
 %1% Tours
@@ -1325,14 +1325,14 @@ TECH_DETAIL_DESCRIPTION_STR
 TECH_DETAIL_EFFECTS_STR
 '''
 
-<u>Effects</u>
+<u>Effets</u>
 
 %1%'''
 
 TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
 
-<u>Unlocks</u>
+<u>Débloqué</u>
 
 '''
 
@@ -1368,10 +1368,10 @@ TECH_WND_STATUS_UNRESEARCHABLE
 N. Recherchables
 
 TECH_WND_LIST_VIEW
-List View
+Vue de la liste
 
 TECH_WND_TREE_VIEW
-Tree View
+Arborescence
 
 TECH_WND_REQUIRES
 Requiert
@@ -1437,13 +1437,13 @@ PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
 Indispo.
 
 PRODUCTION_TOTAL_COST_STR
-%1% PP / Turn @ %2% Turns
+%1% PP / Tour @ %2% Tours
 
 PRODUCTION_TURN_COST_STR
 +%1% PP
 
 PRODUCTION_TURNS_LEFT_STR
-%1% Tours left
+%1% Tours restant
 
 PRODUCTION_TURNS_LEFT_NEVER
 Jamais
@@ -1454,16 +1454,16 @@ PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
 PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
 '''%1%
 
-<u>Effects</u>
+<u>Effets</u>
 
 %2%'''
 
 PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
 '''%1%
 
-Attack: %2%
-Defense: %3%
-Speed: %4%'''
+Attaque: %2%
+Défense: %3%
+Vitesse: %4%'''
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Quantité
@@ -1497,90 +1497,90 @@ PRODUCTION_QUEUE_MULTIPLES
 ###############
 
 DESIGN_ADD_TEST
-Add Test Design
+Ajouter un prototype
 
 DESIGN_NAME_DEFAULT
-Custom Ship Design
+Design personnalisé
 
 DESIGN_DESCRIPTION_DEFAULT
-Design Description
+Description du Design 
 
 DESIGN_NO_PART
-None
+Aucun
 
 DESIGN_WND_STARTS
-Design Starts
+Design Starts***
 
 DESIGN_WND_HULLS
-Empty Hulls
+Coques vides
 
 DESIGN_WND_FINISHED_DESIGNS
-Finished Designs
+Designs finis
 
 DESIGN_WND_SAVED_DESIGNS
-Saved Designs
+Designs Sauvés
 
 DESIGN_WND_TEMPLATES
-Design Templates
+Modèle de Design 
 
 DESIGN_WND_PART_PALETTE_TITLE
-Ship Parts
+Eléments de vaisseau
 
 DESIGN_WND_MAIN_PANEL_TITLE
-Design Details
+Détails du Design
 
 DESIGN_WND_DESIGN_NAME
-Design Name
+Nom
 
 DESIGN_WND_DESIGN_DESCRIPTION
 Description
 
 DESIGN_WND_CONFIRM
-Confirm New Design
+Confirmer le Design
 
 DESIGN_WND_CLEAR
-Clear Parts
+Effacer les éléments
 
 # Ship Slot Types
 
 SL_EXTERNAL
-External
+Externe
 
 SL_INTERNAL
-Internal
+Interne
 
 
 # Ship Part Classes
 
 PC_SHORT_RANGE
-Short Range
+Courte portée
 
 PC_MISSILES
 Missiles
 
 PC_FIGHTERS
-Fighters
+Chasseurs
 
 PC_POINT_DEFENSE
-Point Defense
+Prox. Défense
 
 PC_SHIELD
-Shields
+Bouclier
 
 PC_ARMOUR
-Armour
+Blindage
 
 PC_DETECTION
-Detection
+Détection
 
 PC_STEALTH
-Stealth
+Furtivité
 
 PC_FUEL
-Fuel
+Carburant
 
 PC_COLONY
-Colonization
+Colonisation
 
 
 ####################
@@ -1589,28 +1589,28 @@ Colonization
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART
-Ship Part
+Elément de vaisseau
 
 ENC_SHIP_HULL
-Ship Hull
+Coque de vaisseau
 
 ENC_TECH
-Technology
+Technologie
 
 ENC_SHIP_DESIGN
-Ship Design
-
+Design de vaisseau
+ 
 ENC_SPECIAL
-Special
+Spécial
 
 ENC_BUILDING
-Building
+Batiment
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
 ENC_DETAIL_TYPE_STR
-<i>%1% %2%</i>
+<i>%2% %1%</i>
 
 ENC_PP
 PP
@@ -1624,14 +1624,14 @@ RP
 # %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
 END_COST_AND_TURNS_STR
-%1% %2% / Turn @ %3% Turns
+%1% %2% / Tour @ %3% Tours
 
 # autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
 # provide an appropriate heading to appear before the autogenerated text.
 END_EFFECTS_STR
 '''
 
-<u>Effects</u>
+<u>Effets</u>
 
 %1%'''
 
@@ -1993,18 +1993,24 @@ construction
 
 METER_HEALTH
 santé
+
 METER_FUEL
-fuel
+carburant
+
 METER_SUPPLY
-supply
+provision
+
 METER_STEALTH
-stealth
+furtivité
+
 METER_DETECTION
-detection
+détection
+
 METER_SHIELD
-shield
+bouclier
+
 METER_DEFENSE
-defense
+défense
 
 
 # EmpireAffiliationTypes
@@ -2022,11 +2028,13 @@ allié
 # UnlockableItemTypes
 
 UIT_BUILDING
-Building***
+Bâtiment
+
 UIT_SHIP_PART
-Ship Part
+Elément de vaisseau
+
 UIT_SHIP_HULL
-Ship Hull
+Coque de vaisseau
 
 # TechTypes
 
@@ -2144,49 +2152,49 @@ DESC_VAR_MAXCONSTRUCTION
 construction max
 
 DESC_VAR_CURRENTHEALTH
-current health
+santé actuelle
 
 DESC_VAR_MAXHEALTH
-max health
+santé max
 
 DESC_VAR_CURRENTPOPULATION
-current population
+population actuel
 
 DESC_VAR_MAXPOPULATION
-max population
+population max
 
 DESC_VAR_CURRENTFUEL
-current fuel
+carburant actuel
 
 DESC_VAR_MAXFUEL
-max fuel
+carburant max
 
 DESC_VAR_CURRENTSUPPLY
-current supply
+provision actuelle
 
 DESC_VAR_MAXSUPPLY
-max supply
+provision maximun
 
 DESC_VAR_CURRENTSTEALTH
-current stealth
+furtivité actuelle
 
 DESC_VAR_MAXSTEALTH
-max stealth
+furtivité max
 
 DESC_VAR_CURRENTDETECTION
-current detection
+détection actuelle
 
 DESC_VAR_MAXDETECTION
-max detection
+détection max
 
 DESC_VAR_CURRENTSHIELD
-current shield
+bouclier actuel
 
 DESC_VAR_MAXSHIELD
-max shield
+bouclier max
 
 DESC_VAR_CURRENTDEFENSE
-current defense
+défense actuelle
 
 DESC_VAR_MAXDEFENSE
 max defense
@@ -2201,19 +2209,19 @@ DESC_VAR_FOODSTOCKPILE
 stock de nourritures
 
 DESC_VAR_TRADEPRODUCTION
-trade production
+production commerciale
 
 DESC_VAR_FOODPRODUCTION
-food production
+production agricole
 
 DESC_VAR_MINERALPRODUCTION
-mineral production
+production de minerai
 
 DESC_VAR_INDUSTRYPRODUCTION
-industry production
+production industrielle
 
 DESC_VAR_RESEARCHPRODUCTION
-research production
+production scientifique
 
 DESC_VAR_OWNER
 propriétaire
@@ -2258,16 +2266,16 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Objects affected: Any object%1%
+Objets afféctés: tous les objets%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Objects affected: Source object only
+Objets afféctés: l'objet d'origine seulement***
 
 DESC_EFFECTS_GROUP_ACTIVATION
-Effect is active if the source is an object%1%
+L'effet est actif si la source est un objet% 1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Effect is always active
+L'effet est toujours actif
 
 DESC_EFFECTS_GROUP_SCOPE_DESC
 '''%1%
@@ -2286,7 +2294,7 @@ DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 '''
 
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Effects group %1%:
+'''Effets de groupe %1%:
 %2%
 '''
 
@@ -2296,155 +2304,155 @@ DESC_SIMPLE_SET_METER_MAX
 Max %1% %2%%3%
 
 DESC_SIMPLE_SET_METER_CURRENT
-Current %1% %2%%3%
+Actuel %1% %2%%3%
 
 DESC_COMPLEX_SET_METER_MAX
-Set max %1% to %2%
+Fixer le max %1% à %2%
 
 DESC_COMPLEX_SET_METER_CURRENT
-Set current %1% to %2%
+Fixer l'actuel %1% à %2%
 
 
 # others
 
 DESC_SET_EMPIRE_STOCKPILE
-Sets the stockpile of %1% of the object's owner to %2%
+Définit le stock de %1% du propriétaire de l'objet à %2%
 
 DESC_SET_PLANET_TYPE
-Changes the planet's type to %1%
+Change le type de la planète pour %1%
 
 DESC_SET_PLANET_SIZE
-Changes the planet's size to %1%
+Change la taille de la planète pour %1%
 
 DESC_ADD_OWNER
-Adds ownership by empire %1% to object
+Donnes l'objet à l'empire %1% 
 
 DESC_REMOVE_OWNER
-Removes ownership by empire %1% from object
+Enlève l'objet à l'empire %1%
 
 DESC_DESTROY
-Destroys object
+Détruit l'objet
 
 DESC_ADD_SPECIAL
-Attaches %1% special to object
+Donnes la capacité spéciale %1% à l'objet
 
 DESC_REMOVE_SPECIAL
-Removes %1% special from object
+Enlèves la capacité spéciale %1% à l'objet
 
 DESC_SET_STAR_TYPE
-Changes the star's type to %1%
+Change le type d'étoile pour %1%
 
 
 # SetTechAvailability
 
 DESC_TECH_AND_ITEMS_AFFECTED
-%1% and all the items it unlocks
+%1% et tous ses objet sont débloqués***
 
 DESC_ITEMS_ONLY_AFFECTED
-the items unlocked by the %1% tech
+les objets débloqué par la technologie %1%***
 
 DESC_SET_TECH_AVAIL
-Makes %1% available to empire %2%
+Rends %1% accessible à l'empire %2%
 
 DESC_SET_TECH_UNAVAIL
-Makes %1% unavailable to empire %2%
+Rends %1% inaccessible à l'empire %2%
 
 
 # Conditions
 
 DESC_ALL
- in the universe
+ dans l'univers
 
 DESC_EMPIRE_AFFILIATION_SELF
- that belongs to %1% empire
+ qui appartient à l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- that does not belong to %1% empire
+ qui n'appartient pas à l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- that belongs only to %1% empire
+ qui appartient seulement à l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- that does not belong only to %1% empire
+ qui n'appartient pas seulement à l'empire %1%
 
 DESC_EMPIRE_AFFILIATION
- that belongs to an %1% of %2% empire
+ qui appartient à un %1% de l'empire %2%
 
 DESC_EMPIRE_AFFILIATION_NOT
- that does not belong to an %1% of %2% empire
+ qui n'appartient pas à un %1% de l'empire %2%
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- that belongs only to an %1% of %2% empire
+ qui appartient seulement à un %1% de l'empire %2%
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- that does not belong only to an %1% of %2% empire
+ qui n'appartient pas seulement à un %1% de l'empire %2%
 
 # this one is intentionally left empty
 DESC_SELF
- that is the source object
+ qui est l'objet source
 
 DESC_SELF_NOT
- that is not the source object
+ qui n'est pas l'objet source
 
 DESC_TYPE
- that is a %1%
+ qui est un %1%
 
 DESC_TYPE_NOT
- that is not a %1%
+ qui n'est pas un %1%
 
 DESC_BUILDING
- that contains a %1% building
+ qui contient un %1% batiment
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+ qui ne contient pas un %1% batiment
 
 DESC_SPECIAL
- that has a %1% special
+ qui a le spécial %1%***
 
 DESC_SPECIAL_NOT
- that doesn't have a %1% special
+ qui n'a pas le spécial %1%***
 
 DESC_CONTAINS
- that contains an object%1%
+ qui contient un objet%1%
 
 DESC_CONTAINS_NOT
- that doesn't contain an object%1%
+ qui ne contient pas un objet%1%
 
 DESC_PLANET_TYPE
- that is a %1% planet
+ qui est une planète de type %1%
 
 DESC_PLANET_TYPE_NOT
- that is not a %1% planet
+ qui n'est pas une planète de type %1%
 
 DESC_PLANET_SIZE
- that is a %1% planet
+ qui est une planète de %1% taille
 
 DESC_PLANET_SIZE_NOT
- that is not a %1% planet
+ qui n'est pas une planète de %1% taille
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+ qui est une planète %1%
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+ qui n'est pas une planète %1%
 
 DESC_FOCUS_TYPE_PRIMARY
- that has primary focus %1%
+ qui est axée principalement sur %1%
 
 DESC_FOCUS_TYPE_PRIMARY_NOT
- that doesn't have primary focus %1%
+ qui n'est pas axée principalement sur %1%
 
 DESC_FOCUS_TYPE_SECONDARY
- that has secondary focus %1%
+ qui est axée secondairement sur %1%
 
 DESC_FOCUS_TYPE_SECONDARY_NOT
- that doesn't have secondary focus %1%
+ qui n'est pas axée secondairement sur %1%
 
 DESC_STAR_TYPE
- that is a system with a %1% star
+ qui est un système avec une étoile %1% 
 
 DESC_STAR_TYPE_NOT
- that is not a system with a %1% star
+ qui n'est pas un système avec une étoile %1%
 
 DESC_CHANCE_PERCENTAGE
  on a %1%%% chance
@@ -2453,88 +2461,88 @@ DESC_CHANCE_PERCENTAGE_NOT
  on a (100 - %1%)%% chance
 
 DESC_CHANCE
- with a probability of %1%
+ avec une probabilité de %1%
 
 DESC_CHANCE_NOT
- with a probability of 1 - %1%
+ avec une probabilité de 1 - %1%
 
 DESC_METER_VALUE_MAX
- that has a max %1% between %2% and %3%
+ qui a un max de %1% compris entre %2% et %3%
 
 DESC_METER_VALUE_MAX_NOT
- that doesn't have a max %1% between %2% and %3%
+ qui n'a pas un max de %1% compris entre %2% et %3%
 
 DESC_METER_VALUE_CURRENT
- that has a current %1% between %2% and %3%
+ qui a un %1% actuelle compris entre %2% et %3%
 
 DESC_METER_VALUE_CURRENT_NOT
- that doesn't have a current %1% between %2% and %3%
+ qui n'a pas un %1% actuelle compris entre %2% et %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
- that belongs to an empire with a %1% stockpile between %2% and %3%
+ qui appartient à un empire avec un stock de %1% entre %2% and %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- that doesn't belong to an empire with a %1% stockpile between %2% and %3%
+ qui n'appartient pas à un empire avec un stock de %1% entre %2% and %3%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE
- that is visible to the %1% empire
+ qui est visible par l'empire %1%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
- that is not visible to the %1% empire
+ qui n'est pas visbile par l'empire %1%
 
 DESC_VISIBLE_TO_EMPIRES
- that is visible to one of the %1% empires
+ qui est visible par l'un des empires %1%
 
 DESC_VISIBLE_TO_EMPIRES_NOT
- that is not visible to one of the %1% empires
+ qui n'est pas visible par l'un des empires %1%
 
 DESC_WITHIN_DISTANCE
- that is within %1% of any object%2%
+ qui est à moins de %1% de tout objets%2%
 
 DESC_WITHIN_DISTANCE_NOT
- that is not within %1% of any object%2%
+ qui n'est pas à moins de %1% de tout objets%2%
 
 DESC_WITHIN_STARLANE_JUMPS
- that is within %1% starlane jumps of any object%2%
+ qui est à moins de %1% saut hyperspatial de tout objets%2%
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- that is not within %1% starlane jumps of any object%2%
+ qui n'est pas à moins de %1% saut hyperspatial de tout objet%2%
 
 DESC_AND_BETWEEN_OPERANDS
- and
+ et
 
 DESC_OR_BETWEEN_OPERANDS
- or
+ ou
 
 DESC_TURN
- when the current turn is between %1% and %2%
+ quand le tour actuel est entre %1% et %2%
 
 DESC_TURN_NOT
- when the current turn is not between %1% and %2%
+ quand le tour actuel n'est pas entre %1% et %2%
 
 DESC_NUMBER_OF
- that is one of %1% objects%2%
+ qui est un des %1% objets%2%
 
 DESC_NUMBER_OF_NOT
- that is not one of %1% objects%2%
+ qui n'es pas un des %1% objets%2%
 
 DESC_CONTAINED_BY
- that is contained by an object%1%
+ qui est contenu par un objet%1%
 
 DESC_CONTAINED_BY_NOT
- that is not contained by an object%1%
+ qui n'est pas contenu par un objet%1%
 
 DESC_OWNER_HAS_TECH
- that belongs to an empire that has the tech %1%
+ qui appartient a un empire qui a la technologie %1%
 
 DESC_OWNER_HAS_TECH_NOT
- that does not belong to an empire that has the tech %1%
+ qui n'appartient pas à un empire qui a la technologie %1%
 
 DESC_NUMBER
- if there are between %1% and %2% objects%3%
+ si il ya entre %1% et %2% objets%3%
 
 DESC_NUMBER_NOT
- if there are not between %1% and %2% objects%3%
+ s'il n'existe pas entre %1% et %2% objets%3%
 
 ###################
 # Tech Categories #
@@ -2554,8 +2562,9 @@ Croissance
 
 ECONOMICS_CATEGORY
 Économie
+
 SHIPS_CATEGORY
-Ships
+Vaisseaux
 
 
 ####################################
@@ -2563,91 +2572,91 @@ Ships
 ####################################
 
 THEORY_SHORT_DESC
-Theoretical Prerequisite
+Pré-requis théorique
 
 LRN_PHYS_BRAIN
-The Physical Brain
+Cartographie Cérébral
 
 LRN_PHYS_BRAIN_DESC
-The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+Les structures et leurs fonctions dans le cerveau sont déterminés.  Le électrochimiques et la nature quantique de la pensée et la mémoire sont comprises.  Avec la compréhension des fonctions cérébrales, le renforcement et la transformation de celles-ci devient possible, et donne naissance à de nouvelles idées sur les limites de la pensée, de son expression, et de son remplacement.
 
 LRN_ALGO_ELEGANCE
-Algorithmic Elegance
+L'élégance Algorithmique 
 
 LRN_ALGO_ELEGANCE_DESC
-With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
-
+Avec une difficulté grandissante dans les problèmes d'analyse des données, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexité irréductible..  À ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisé.
+ 
 LRN_TRANSLING_THT
-Translinguistics
+Translinguistique 
 
 LRN_TRANSLING_THT_DESC
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+Les faibles d'esprit luttent ou acceptent les limites de la langue qu'ils ont appris. Les esprits normaux se sentent limités par les concepts qu'ils ont les moyens d'exprimer. Les vrais grands esprits se libèrent des limites de la langue, formant et analysant des pensées à la limite de la transcendance. Mais les grands esprits sont isolés et inutiles, car sans la langue pour exprimer des pensées, comment peuvent-ils partager leurs idées?
 
 LRN_PSIONICS
-Psionics
+Psionique
 
 LRN_PSIONICS_DESC
-Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
+A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dépasser des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la modification de personnalité et la possession ont de grandes conséquences sur la relation entre les êtres psioniques et les autres.
 
 LRN_ARTIF_MINDS
-Artificial Minds
+Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinie , ils leur manquent une qualité essentielle : la conscience. Avec le développement d'une véritable intelligence artificielle, cette qualités peut être synthétisé, modifié. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de metaparadigmes.***
 
 LRN_XENOARCH
-Xenoarchaeology
+Xenoarchaeologie
 
 LRN_XENOARCH_DESC
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+Les empires contemporains, les races et civilisations mono-système ne sont pas les premiers êtres ou les seul à avoir vécu dans cette galaxie. Des restes, des ruines et des rumeurs sur les  anciens peuvent être trouvées sur des planètes désertes, des astéroïdes sans vie, ou à la dérive dans l'espace. Rechercher et la traduire ces indices permettrai  de révéler des secrets, d' enseigner des leçons, de donner des pistes vers des anciennes connaissances.
 
 LRN_GRAVITONICS
-Gravitonics
+Gravitonique
 
 LRN_GRAVITONICS_DESC
-Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+Analogue à la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent être combinés pour fléchir  la surface de l'espace-temps arbitrairement. Cette manipulation autorise le contrôle de la force de gravité, ce qui permet des structures, des constructions et des recherches impossible avant, même théoriquement.
 
 LRN_EVERYTHING
-Theory of Everything
+Theorie du tout
 
 LRN_EVERYTHING_DESC
-Early, naive theories describe subsets of the four fundamental forces of nature: electromagnetism, the strong and weak nuclear forces, and gravity.  A complete framework expressing all forces as special cases of a single interaction represents a holy grail of science.  This theory describes the earliest moments of the universe, the most distorted depths of a singularity, the tightest windings of hidden dimensions and the final fate of the cosmos.  Yet still, there may "exist" layers of existence beyond what can be observed and described by science...
+Au début, des théories naïves  de décrivaient des sous-ensembles des quatre forces fondamentales de la nature: l'électromagnétisme, les forces nucléaires forte et faible, et la gravité. Une théorie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction représente un Saint-Graal de la science. Cette théorie décrit les premiers instants de l'univers, les profondeurs les plus déformées d'une singularité, la plus exigüe des dimensions cachées et le destin final du cosmos. Pourtant, il peut encore "exister" des couches d'existence au-delà de ce qui peut être observés et décrits par la science ...
 
 LRN_FORCE_FIELD
-Force-Field Harmonics
+Harmonique des champs de force
 
 LRN_FORCE_FIELD_DESC
-Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles.  By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.
+Comme l'analyse du son de Fourier, l'électromagnétisme, les interactions fortes et faibles peuvent être exprimé sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, les forces peuvent être contrôlé pour défendre, attaquer, contenir ou soutenir.***
 
 LRN_MIND_VOID
-Mind of the Void
+L'esprit du vide.
 
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+Nous ne sommes pas seuls dans le cosmos ... mais pourquoi la recherche devrait être limité de telle sorte? De nombreuses cultures ont des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou un observateur détaché, il est clair que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, observant.
 
 LRN_TIME_MECH
-Temporal Mechanics
+Mécanique temporelle
 
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+Qu'es ce que "maintenant", "le futur" et "le passé"? Le double paradoxe de la relativité ou la théorie du "trou de ver" , suggère les premières formes de "voyage dans le temps". La manipulation directe des fluxs spatio-temporelle permet d'exploiter et d'agrandir ces effets. Les incursions temporelles ne peut pas modifier sensiblement le passé de l'univers que nous percevons. Ils peuvent, toutefois, compresser le temps ou étendre des instants d'une durée arbitraire, aux applications limitées seulement par nos ressources, et notre propre patience ...***
 
 LRN_NDIM_SUBSPACE
-N-Dimensional Subspace
+L'espace a N-Dimension 
 
 LRN_NDIM_SUBSPACE_DESC
-Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
+Les premiers théoriciens des super-cordes ont parlé d'univers à 10, 11 ou 26 dimensions, mais avec tous les 4 macrodimensions "boucle" si étroite qu'elles sont invisibles. Celles-ci et d'autres dimensions peuvent maintenant être uncurled et ouvert, et la surface de l'espace lui-même peuvent être étirée et percée par des déplacements de matière vers ou en provenance de niveaux d'existence précédemment cachées par notre perception limitée, ou la création de couches ou des bulles où il n'en existait pas auparavant.***
 
 LRN_UNIF_CONC
-Unified Consciousness
+Conscience unifiée 
 
 LRN_UNIF_CONC_DESC
-Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truely joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
+La communication télépathique entre les individus ou par des interfaces esprit-machine a permis seulement les plus élémentaires et triviaux  échanges de pensée et d'idées. De vrais esprits joints fonctionne comme une seule conscience, avec la somme des facultés et des connaissances de ses parties, et en agissant comme une nouvelle entité unique. Cela a un grand potentiel, mais aussi des risques importants, que l'union d'esprit empêche  sa propre destruction, qui est nécessaire pour que chacun retrouve son esprit. D'un autre coté, un des esprits peut dominer les autres, les contrôler ou les détruire plutôt que de former, sur un pied d'égalité, une union harmonieuse.
 
 LRN_TRANSCEND
-Singularity of Transcendence
+Singularité de la transcendance
 
 LRN_TRANSCEND_DESC
-What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+Qu'est-ce que la divinité? Es ce qu'un dieu est concerné par les questions de moral, de bien ou de mal? Es ce qu'un dieu traite les mortels avec soin et amour, haine et souffrance ou indifférence? Es ce qu'un dieu est seulement conscient des affaires infiniment minuscule de l'univers physique, ou es ce que la vrai divinité est au-delà de la description, dont l'incapacité à être comprise par les mortels s'applique également dans l'autre sens?
 
 GRO_PLANET_ECOL
 Planetary Ecology
@@ -2986,24 +2995,24 @@ ECO_ECON_HEGEMONY_DESC
 An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
 SHP_SPACE_TACTICS
-Space Tactics
+Tactiques spatiales
 
 SHP_SPACE_TACTICS_DESC
-Battles in microgravity and vacuum require specialized weapon and defensive systems, as well as the theoretical tactics that motivate their use.
+Les combat en microgravité et dans le vide exige des armes spécialisées et des systèmes de défense adaptés, ainsi que des tactiques et des théoriques pour optimiser leur utilisation.
 
 SHP_GAL_EXPLO
-Galactic Exploration
+Exploration Galactique 
 
 SHP_GAL_EXPLO_DESC
-The discovery of interstellar travel via starlanes ushers in a new era of development of society.  Old political squabbles between minor factions become insignificant when the entire civilization is faced with the limitless potential of the stars... for growth and prosperity, or utter destruction.
+La découverte de voyage interstellaire par lien hyperspatial inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou  la destruction totale. 
 
 SHP_NAVIGATION
-Interstellar Navigation
+Navigation Interstellaire
 
 SHP_NAVIGATION_DESC
-'''Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.
+'''Les "Starlanes" forme un réseau relativement restraint de chemins possibles, mais les voyages interstellaires sont complexe et risqué sans des techniques de navigation.  
 
-In future, this tech might do something related to starlanes or ship speed or range...'''
+À l'avenir, cette technologie pourrait faire quelque chose liée à "starlanes" ou à la vitesse du vaisseau ou de leur portée ...'''***
 
 
 #########################################
@@ -3440,101 +3449,106 @@ Huge Ship Hulls
 ########################################
 
 BUILDING_REFINE_SHORT_DESC
-Refines Building
+Bâtiments de raffinage des minerais
 
 PRO_ASTEROID_MINE_II
-Advanced Asteroid Mines
+Mines astéroïde avancées 
 
 PRO_ASTEROID_MINE_II_DESC
-Experience with operation of initial implementations of asteroid mining techniques allows more refined methods to be devised.  The same asteroid field and population produces additional minerals at all planets in-system that focus primarily on mining.
+Expérience avec la mise en œuvre initiale des techniques d'exploitation minière d'astéroïde permet des méthodes plus raffiné d'être mise au point. Le même champ d'astéroïdes et la même population produisent plus de minéraux dans toutes les planètes du système qui se concentrent principalement sur l'exploitation minière.
 
 PRO_INDUSTRY_CENTRE_II
-Greater Industrial Centre
+Grand centre industriel
 
 PRO_INDUSTRY_CENTRE_II_DESC
-Improved centralized management of dispersed industrial activities increases the range and size of increased industiral output provided.
+Améliore la gestion centralisée des activités industrielles dispersées sur de plus grandes distances, augmente la production industriel.***
 
 PRO_INDUSTRY_CENTRE_III
-Supreme Industrial Centre
+Centre industriel suprême
 
 PRO_INDUSTRY_CENTRE_III_DESC
-Additional experience and facilities improvements further extend the range and size of industrial output improvement.
+Expérience supplémentaire et l'amélioration des installations permet d'élargir la distance et l'échelle  de la production industrielle.
 
 #################################
 # Building Names & Descriptions #
 #################################
 
 BLD_OBSERVATORY
-Observatory
+Observatoire
 
 BLD_OBSERVATORY_DESC
-'''The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more reasily detected by friendly planets within range of the Observatory.
+'''L'extension naturelle des télescopes de l'époque industrielle et de l'âge de l'information, renforcé par des algorithmes militaire, a permis de renforcer la détection longue portée. L'observatoire émet de puissants faisceaux de détection en espace lointain. Ces impulsions interfèrent avec toute tentative visant à rendre la planète discrète, mais les signaux peuvent se refléter sur des objets dans le voisinage galactique, permant de les détecter plus facilement par les planètes amies à portée de l'Observatoire. 
 
-Gives +10 to Detection to all friendly planets within distance 200.
-Decreases Stealth on planet where built by 10.'''
+Donne +10 à la détection de tous les planètes amies dans un rayon de 200.
+Diminue la furtivité de la planète par 10.'''
 
 BLD_IMPERIAL_PALACE
-Imperial Palace
+Palais Impérial 
 
 BLD_IMPERIAL_PALACE_DESC
-'''Represents imperial power and prestige and functions as a centre of control for the empire's holdings.
+'''Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire. 
 
-Planet on which palace is built receive +2 to max construction.'''
+La planète qui construit le palais pour recevoir +2 au maximun de construction.'''
 
 BLD_SHIPYARD_BASE
-Shipyard
+chantier Spatial
 
 BLD_SHIPYARD_BASE_DESC
-Orbital production facility for assembly of interstellar military-grade spacecraft.  Allows production of ships in the system where it is located.  Can be upgraded by producing additional buildings in the same system.
+Installation orbitale pour l'assemblage d'engins spatiaux militaire interstellaire. Permet la production de vaisseaux dans le système où il se trouve. Peut être amélioré par la production de bâtiments supplémentaires dans le même système.
 
 BLD_BIOTERROR_PROJECTOR
-Bioterror Projection Base
+Base de projection bioterroriste
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Projects negative health effects of minor biological warfare to nearby planets.
+'''Projettes les effets négatifs de la guerre biologique sur la santé des planètes à proximité.
 
-Planets within 2 starlane jumps owned by other empires receive -4 to max health.
-Planets within 2 starlane jumps owned exclusively by the empire that builds the projector receive -1 to max health.
-Requires empire operating it to own at least one Bioterror Research Centre; otherwise produces no negative health effects on other empires' planets.'''
+Planètes à moins de 2 sauts hyperspatiaux n'appartenant pas à l'empire qui a construit le projecteur reçoivent -4 au maximum de santé.
+Planètes à moins de 2 sauts hyperspatiaux appartenant à l'empire qui a construit le projecteur reçoivent -1 au maximum de santé.
+Nécessite un Centre de recherches en Bioterreur pour être exploiter, sans quoi il ne produit pas d'effets négatifs sur la santé des planètes des autres empires.'''
 
 BLD_BIOTERROR_LAB
-Bioterror Research Centre
+Centre de recherche en bioterreur
 
 BLD_BIOTERROR_LAB_DESC
-Is required for Bioterror Projection Bases to affect other empires.\n\nCauses -2 to max health of planets in system where it is built, regardless of that planet's ownership.
+'''Est nécessaire pour que les bases de projection bioterroriste puissent affecter d'autres empires.
+
+Causes -2 au maximum de santé des planètes du système, indépendamment du propriétaire de cette planète.'''
 
 BLD_AUTOFACTORY_CONTROL
-Autofactory Control Centre
+Centre de contrôle des usines automatique
 
 BLD_AUTOFACTORY_CONTROL_DESC
-Provides +2 to max production output per 10 population on primary industry focused worlds.\nProvides additional +1 to max industry output per 10 population on secondary industry focused worlds.
+'''Fournit +2 au maximum de production industriel par 10 unités de population sur les mondes axés principalement sur l'industrie.
+Donnes +1 supplémentaire au maximum de production industriel par 10 unités de population sur les mondes axés secondairement sur l'industrie.'''
 
 BLD_AUTOLAB_CONTROL
-Autolab Control Centre
+Centre de contrôle des autolabs
 
 BLD_AUTOLAB_CONTROL_DESC
-Provides +2 to max research output per 10 population and -2 to max health on primary research focused worlds.\nProvides additional +1 to max research output per 10 population and -1 to max health on secondary research focused worlds.
+'''Fournit +2 au maximum de recherche par 10 unités de population et -2 au maximum de santé aux mondes axé principalement sur la recherche. 
+Donnes +1 supplémentaire au maximum de recherche par 10 unités de population et -1 au maximum de santé aux mondes axé secondairement sur la recherche.'''
 
 BLD_THEOREM_PROVER
-Automatic Theorem Prover
+Validateur de thèoreme automatique
 
 BLD_THEORM_PROVER_DESC
-Provides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.
+'''Fournit max +5 à la recherche par 10 population sur les   mondes axée sur la recherche, non cumulatif. 
+Donnes un +1 supplémentaires au maximum de recherche par tranche de 10 population sur les mondes secondairement axé sur la recherche, non cumulatif.'''
 
 BLD_LIGHTHOUSE
-Interstellar Lighthouse
+Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Increases by 1 starlane jump the supply meter of all planets - regardless of owner - within 200 distance units.
+Augmente de 1 saut de "starlane"  le compteur de toutes les planètes - quel que soit les propriétaires - dans un rayon de 200 unités.
 
 BLD_HEAVY_MINE_PROCESSOR
-Heavy Mining Processor
+Heavy Mining Processor***
 
 BLD_HEAVY_MINE_PROCESSOR_DESC
-Provides +5 mining to mining-focused worlds, non stacking, within 100 distance of the facility, that are of type Barren, Radiated, Toxic or Inferno.  Also proves +2 to mining and -5 to farming, both non-stacking, on planet at which it is built.
+Fournit +5 à l'exploitation minière dans un rayon de 100, aux mondes axé sur l'exploitation minière et qui sont de type toundra, irradié, toxiques ou infernal, non cumulatif. Donnes également +2 à l'exploitation minière et -5 à l'agriculture, les deux non cumulatif, sur la planète ou il est construit.
 
 BLD_INDUSTRY_CENTRE
-Industrial Centre
+Centre Industriel
 
 BLD_INDUSTRY_CENTRE_DESC
 '''Initially provides +5 industry within 100 direct-line distance of facility, non stacking, to industry-focused worlds.
@@ -3544,133 +3558,136 @@ BLD_INDUSTRY_CENTRE_DESC
 [[tech PRO_INDUSTRY_CENTRE_III]] refinement further increases bonus to +7 and range to 300.'''
 
 BLD_ASTEROID_MINE
-Asteroid Mining Facility
+installation minière d'astéroïde
 
 BLD_ASTEROID_MINE_DESC
-Initially provides +4 minerals production per 10 population to planets in same system that contains an asteroid belt.\nWith Advanced Asteroid Mines refinement, provides additional +4, or +8 total minerals production per 10 population to planets in same system that contains an asteroid belt.
+'''Donnes +4 pour l'exploitation minière par 10 points de  population sur les planètes du système contenant une ceinture d'astéroïdes. 
+Avec raffinement avancée des astéroïdes***, fournit des +4 points supplémentaires, (+8 au total) à l'exploitation minière par 10 points de population sur les planètes du système contenant une ceinture d'astéroïdes.'''
 
 BLD_GRAVITY_WELLS
-Controlled Gravity Wells
+Puits de Gravité Contrôlé
 
 BLD_GRAVITY_WELLS_DESC
-A null gravity generator installed deep in the planet's core, greatly boosting industry and commerce in the system.
+Un générateur d'anti-gravité installé au plus profond de la planète, ce qui augmente énormément l'industrie et le commerce dans le système.
 
 BLD_MEGALITH
-Megalith
+Mégalithe
 
 BLD_MEGALITH_DESC
-A marvel of Exodus-era Architecture, the Megalith is an abnormally massive Starscraper, kilometers in diameter. The Megalith is an inspiration to architects sector-wide and is often the crown jewel of a powerful real estate mogul's empire.
+Une merveille d'architecture de l'époque de l'Exode, C'est une Mégalithe anormalement massives semblant touchées les étoiles, de plusieurs kilomètres de diamètre. Cette Mégalithe est une source d'inspiration pour les architectes de l'ensemble du secteur et est souvent le joyau d'un puissant magnat de l'immobilier  de l'empire.
 
 BLD_PLANET_RING
-Planetary Ring
+Anneau Planétaire
 
 BLD_PLANET_RING_DESC
-A ring of satellites completely encircling a world, tethered to the planet's equator by spoke-like space elevators. These are used for housing, micro-gravity construction and inter-world trade.
+Un anneau de satellites entourant complètement un monde, attachés à la planète à l'équateur par des ascenseurs spatiaux. Ces satellites sont utilisées pour le logement, la construction en micro-gravité et le commerce extragalactique.
 
 BLD_SPACE_ELEVATOR
-Space Elevator
+Ascenseur Spatial
 
 BLD_SPACE_ELEVATOR_DESC
-An enormous and practically unbreakable line of cable tethered to a satellite in geo-stationary low orbit on one end, and a launch platform on the planet-bound end. The space elevator boosts the trade for the entire system.
+Un énorme et pratiquement incassable câble attaché à un satellite en orbite géo-stationnaire basse d'un coté, et une plateforme de lancement sur la planète de l'autre. L'ascenseur spatial augmente le commerce pour l'ensemble du système.
 
 BLD_COMM_UNION
-Commercial Union of the Colonies
+Union commerciale des Colonies
 
 BLD_COMM_UNION_DESC
-The Commercial Union of the Colonies (CUC) is an organization with the means and will to monitor and regulate the entire galactic market. The first empire to complete the CUC gains an empire wide bonus to trade on all worlds.
+L'Union Commerciale des colonies (UCC) est une organisation avec l'objectif et la volonté de surveiller et de réglementer l'ensemble du marché galactique. Le premier empire à finir le UCC gagne un bonus au commerce sur tous les mondes.
 
 BLD_DEEP_GREEN
-Deep Green
+Deep Green***
 
 BLD_DEEP_GREEN_DESC
-A central economic forecast computer fed with data from all the economic markets of the known galaxy, it is capable of near perfect economic foresight and is used to boost all the markets in the empire.
+Un ordinateur faisant des prévisions économiques à partir des données provenant de tous les marchés économiques de la galaxie connue, il est capable de faire des prospectives économique presque parfaites et augmentes tous les marchés de l'empire.
 
 BLD_PARADISE
-Paradise Planet
+Planète Paradisiaque
 
 BLD_PARADISE_DESC
-A world whose entire infrastructure has been converted to tourism, giving an enormous boost to trade and tourism in the region, but eliminating almost all useful industrial and mining output.
+Un monde dont l'ensemble de l'infrastructure est dédiée au tourisme, ce qui donne une énorme impulsion au commerce et le tourisme dans la région, mais élimine de presque toute la production industrielle et minière.
 
 BLD_CADUCEAN
-The Caducean Institute
+L'Institute Caducen
 
 BLD_CADUCEAN_DESC
-Available with The Caducean Institute.\n\nIncreases max health on all populated worlds by +2, non-stacking.
+'''Disponible avec l'Institute Caducen.
+
+Augmentation du maximum de santé sur tous les mondes peuplés par +2, non cumulatif.'''
 
 BLD_GENOME_BANK
-Genome Bank
+La Banque du Gènome
 
 BLD_GENOME_BANK_DESC
-The largest database ever conceived. The Genome Bank includes maps of the genomes of every organism known to the empire. This database is invaluable in the treatment of disease and in establishing farming colonies.
+La plus grande base de données jamais conçue. La Banque du génome comprend les cartes des génomes de tous les organismes connus de l'empire. Cette base de données est d'une valeur inestimable dans le traitement des maladie et dans les colonies agricoles.
 
 BLD_LIVING_PLANET
-The Living Planet
+La Planète vivante
 
 BLD_LIVING_PLANET_DESC
-Convert a planet into the Living Planet by way of a sentient, almost god-like, cell-based computer program. This planet is wondrous to behold and famous throughout the known galaxy as a celebration of life and harmony. The inhabitants of this world think and act as though part of a larger organism, serving its needs simultaneously with their own. Industrial and mineral output are severely limited, however, as such activities upset the global harmonious balance.
+Convertit une planète Planète Vivante par le biais d'un sensible, presque divin, programme d'ordinateur à base de cellules. Cette planète est une merveille à voir et est connue dans toute la galaxie comme une célébration de la vie et l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un plus grand organisme, au service de ses besoins en même temps que la leurs. La production industrielle et l'exploitation minière sont sévèrement limitées, car de telles activités bouleversent l'équilibre du monde.
 
 BLD_ORBITAL_GARDENS
-Orbital Gardens
+Les jardins Orbitaux
 
 BLD_ORBITAL_GARDENS_DESC
-An enormous moon-like satellite in orbit above a world, the Orbital Gardens are a testament throughout the galaxy to your ability to harness your environment. Besides being an excellent tourist attraction, research conducted here helps boost farming on all worlds in your empire.
+Satellite aussi gros qu'une lune en orbite au-dessus d'un monde, les Jardins Orbitaux sont un témoignage à la galaxie à votre capacité à maîtriser votre environnement. En plus d'être une excellente attraction touristique, les recherches menées ici contribuent à améliorer l'agriculture sur tous les mondes de votre empire.
 
 BLD_COLLECTIVE_NET
-Collective Thought Network
+Réseau de pensée collective
 
 BLD_COLLECTIVE_NET_DESC
-By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
+En transférant des esprit dans le cyberespace, des milliers d'esprit peut agir à l'unisson, résolvant des problèmes et faisant des avancées qu'aucun esprit unique ne pourrait faire.
 
 BLD_ENCLAVE_VOID
-Enclave of the Void
+Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-The population of an entire planet is genetically attuned to the Void Mind and dedicated to channeling its wisdom to the empire. The denizens of the Void Enclave are regarded as priests, channels of higher thinking and wisdom. In all matters of importance to the empire, their advice is sought after. Emissaries from the Enclave can even be sent to assist in the empire's research projects. This world may never exceed industrial or mining output greater than 30.
+L'ensemble de la population de la planète est génétiquement adapté à l'esprit du Vide et est dédiée à la transmission de sa sagesse à l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, messager de la sagesse et des pensées les plus élevés. Leurs conseils sont recherchés pour toutes les questions d'importance de l'empire. Des émissaires de l'Enclave peuvent même être envoyés à travers l'empire pour aider dans des projets de recherche. Les productions industrielles et minière de ce monde ne dépassera  jamais 30.
 
 BLD_LOOKING_GLASS
-The Looking Glass
+The Looking Glass***
 
 BLD_LOOKING_GLASS_DESC
-A space-time museum of galactic fame. Both tourism and science benefit from its unfettered view of all history, as the ebb and flow of all time become as transparent as glass.
+Un musée spatio-temporel le de renommée galactique. Les flux et le reflux spatio-temporel deviennent aussi transparent que le verre, faisant bénéficier le tourisme et de la science  de la vue de l'histoire inaltéré.
 
 BLD_MONUMENT_EXODUS
-Monument to Exodus
+Mémorial de l'Exode
 
 BLD_MONUMENT_EXODUS_DESC
-A mighty orbiting sculpture visible from the ground and to passing ships. Your triumph over the starlanes will never be forgotten and your people will forever be emboldened to colonize new worlds. Increases population growth on all frontier worlds.
+Une immense sculpture en orbite visible depuis le sol et depuis l'espace proche. Votre victoire sur les "starlanes" ne sera jamais oublié et votre peuple sera toujours encouragé à coloniser de nouveaux mondes. Augmentation de la croissance de la population sur tous les mondes frontière.***
 
 BLD_PSICORP
-PsiCorp
+Académie Psy
 
 BLD_PSICORP_DESC
-An academy dedicated to identifying the psionically gifted citizens throughout the colonies and training them from birth to develop their abilities to the benefit of the most advanced research programs of the empire.
+Une académie consacrée à l'identification des citoyens psychiquement doués sur toute les colonies. Cette académie les formes depuis leur plus jeunes âges à développer leurs aptitudes au profit des programmes de recherche les plus avancée de l'empire.
 
 BLD_ART_BLACK_HOLE
-Artificial Black Hole
+Trou noir Artificiel
 
 BLD_ART_BLACK_HOLE_DESC
-A constructed singularity in a distant orbit in one system. Its power is harnessed to advance industry for all nearby worlds.
+Une singularité construite sur une orbite lointaine dans un système. Son pouvoir est exploitée pour augmenter la production industrielle de tous les mondes à proximité.
 
 BLD_HYPER_DAM
-Hyperspatial Dam
+Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-A tear in the fabric of the universe, safely controlled and harnessed. The hyperspatial dam serves as a source of nearly unlimited energy for the entire sector.
+Une déchirure dans le tissu de l'univers, contrôlée et exploitée en toute sécurité. Le barrage hyperspatial sert  de source d'énergie presque illimitée pour tout le secteur.
 
 BLD_MINI_SUN
-Miniature Sun
+Soleil Miniature
 
 BLD_MINI_SUN_DESC
-A miniature sun keeps the night sky above the world perpetually twilit. Besides being good for morale, the fusion reactor serves as a convenient source of energy for all planets in the system.
+Un soleil miniature transforme la nuit en pénombre. En plus d'être bon pour le moral, le réacteur à fusion sert de source d'énergie pour toutes les planètes du système.
 
 BLD_REMOTE_CONST
-Remote Construction
+Construction à Distance
 
 BLD_REMOTE_CONST_DESC
-A network of matter and construction. A team of construction workers and robots can assemble structures on distant worlds without the need for freighters or construction vessels. Only a small matter-terminal ship is needed. Quickly raises the industry on all worlds to that of an Established world.
+Un réseau de la matière et de la construction. Une équipe de constructeurs et de robots peuvent assembler des structures sur des mondes lointains sans avoir besoin de cargos ou de vaisseau de construction. Seul un vaisseau transmetteur de matière est nécessaire. Augmente rapidement le niveau de d'industrie sur tous les mondes jusqu'à l'équivalent d'un monde établi.
 
 BLD_ECON_SINKHOLE
-Economic Sinkhole
+Economic Sinkhole***
 
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
@@ -3682,100 +3699,103 @@ An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does 
 SR_LASER
 Laser
 SR_LASER_DESC
-Lower power and mass
+Puissance et masse faible
 
 SR_ION_CANNON
-Ion Cannon
+Canon à ions
 SR_ION_CANNON_DESC
-Moderate power and mass
+Puissance et masse modéré
 
 LR_NUCLEAR_MISSILE
-Nuclear Missile
+Missile Nucleaire
 
 LR_NUCLEAR_MISSILE_DESC
-Long range moderate power
+Longue portée, puissance moyenne
 
 DT_ACTIVE_RADAR
-Active Radar
+Radar Actif
 
 DT_ACTIVE_RADAR_DESC
-Moderate power detection with large stealth penalty to mounting ship.
+Pouvoir de détection modéré avec de grandes pénalité à la furtivité du vaisseau.
 
 FU_DEUTERIUM_TANK
-Deuterium Tank
+Réservoire de Deutérium
 
 FU_DEUTERIUM_TANK_DESC
-Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
+Légère augmentation de l'autonomie en augmentant la capacité de stockage en carburant. Encombrant et vulnérables aux tir des armes.
 
 FU_ANTIMATTER_TANK
-Antimatter Tank
+Réservoire d'anti-matière
 
 FU_ANTIMATTER_TANK_DESC
-Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
+Augmentation modérée de l'autonomie en augmentant la capacité de carburant. Compacte et faible en masse.
 
 ST_EM_DAMPER
-Electromagnetic Damper
+Amortisseur électromagnétique
 
 ST_EM_DAMPER_DESC
-Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
+Améliore la furtivité du vaisseau par l'amortissement des émissions électromagnétiques des systèmes embarqués. Ne peut compenser que des faibles émissions, et sera submergé par des éléments produisant de grandes émissions éléctromagnétiques
 
 AR_LEAD_PLATE
-Lead Armour Plating
+Blindage en Plomb
+
 AR_LEAD_PLATE_DESC
-Weak defense with large mass
+Faible défense pour une grande masse***
 
 SH_DEFENSE_GRID
-Defense Grid
+Grille de défense
+
 SH_DEFENSE_GRID_DESC
-Weak defense with no extra mass
+Faible défense sans supplément de masse
 
 SH_DEFLECTOR
-Deflector Shield
+Bouclier déflecteur
+
 SH_DEFLECTOR_DESC
-Strong defense with small mass
+Forte défense pour une petite masse
 
 CO_COLONY_POD
-Colony Pod
+Module de colonisation
 
 CO_COLONY_POD_DESC
-Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
+Minimums vitaux pour la survie des colons pendant leur voyage vers une nouvelle planète. Permet aux vaisseau de coloniser de nouveaux mondes.
 
 CO_SUSPEND_ANIM_POD
-Cryonic Colony Pod
+Module de colonisation cryogénique
 
 CO_SUSPEND_ANIM_POD_DESC
-Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
+Les colons sont maintenus en animation suspendue pendant le voyage, en éliminant nécessité de fournir les besoins vitaux, et en augmentant considérablement le nombre de colons qui peuvent être transportées sur un vaisseau.
 
 ##############
 # Ship Hulls #
 ##############
 
 SH_EMPTY
-Empty Hull
+Coque vide
 
 SH_EMPTY_DESC
-Cheap and fast, but can't mount any parts.
+Pas cher et rapide, mais on ne peut rien y mettre.
 
 SH_SMALL
-Small Hull
+Petite coque
 
 SH_SMALL_DESC
-Few slots but high speed
+Peut de place mais très rapide
 
 SH_MEDIUM
-Medium Hull
+Coque Moyenne
 
 SH_MEDIUM_DESC
-Moderate number of slots and moderate speed
+Un équilibre entre l'espace disponible et la vitesse
 
 SH_LARGE
-Large Hull
+Grande coque
 
 SH_LARGE_DESC
-Many slots but slow speed
+Beaucoup de place mais lent
 
 SH_HUGE
-Huge Hull
+Enorme coque
 
 SH_HUGE_DESC
-Very many slots but very slow speed
+Enormement de place mais très très lent
