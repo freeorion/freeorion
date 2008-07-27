@@ -1930,19 +1930,15 @@ géante gazeuse
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-inhabitable
-
-PE_TERRIBLE
-inconfortable
-
+uninhabitable
+PE_HOSTILE
+hostile
+PE_POOR
+poor
 PE_ADEQUATE
-adéquate
-
-PE_SUPERB
-confortable
-
-PE_OPTIMAL
-optimale
+adequate
+PE_GOOD
+good
 
 
 # FocusTypes
@@ -2272,7 +2268,7 @@ DESC_EFFECTS_GROUP_SELF_SCOPE
 Objets afféctés: l'objet d'origine seulement***
 
 DESC_EFFECTS_GROUP_ACTIVATION
-L'effet est actif si la source est un objet% 1%
+L'effet est actif si la source est un objet%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 L'effet est toujours actif
@@ -3012,7 +3008,7 @@ Navigation Interstellaire
 SHP_NAVIGATION_DESC
 '''Les "Starlanes" forme un réseau relativement restraint de chemins possibles, mais les voyages interstellaires sont complexe et risqué sans des techniques de navigation.  
 
-À l'avenir, cette technologie pourrait faire quelque chose liée à "starlanes" ou à la vitesse du vaisseau ou de leur portée ...'''***
+À l'avenir, cette technologie pourrait faire quelque chose liée à "starlanes" ou à la vitesse du vaisseau ou de leur portée ...*** '''
 
 
 #########################################
@@ -3023,37 +3019,37 @@ DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
 
 SHIP_PART_UNLOCK_SHORT_DESC
-Unlocks Ship Part
+Débloque un élément de vaisseau
 
 SHIP_HULL_UNLOCK_SHORT_DESC
-Unlocks Ship Hull
+Débloque un type de vaisseau
 
 BUILDING_UNLOCK_SHORT_DESC
-Unlocks Building
+Débloque un bâtiment
 
 RESEARCH_SHORT_DESC
-Improves Research
+Augmente la recherche
 
 FARMING_SHORT_DESC
-Improves Farming
+Augmente l'agricultur
 
 MINING_SHORT_DESC
-Improves Mining
+Augmente l'exploitation minère
 
 INDUSTRY_SHORT_DESC
-Improves Industry
+Augmente l'industrie
 
 TRADE_SHORT_DESC
-Improves Trade
+Augmente le commerce
 
 CONSTRUCTION_SHORT_DESC
-Improves Infrastructure
+Augmente l'infrastructure***
 
 POPULATION_SHORT_DESC
-Increases Planet Population
+Augmente la population planétaire
 
 FLEET_RANGE_DESC
-Improves Fleet Supply
+Augmente le support de flotte
 
 CON_TERRAFORM
 Terraforming
@@ -3531,7 +3527,7 @@ Donnes +1 supplémentaire au maximum de recherche par 10 unités de population et 
 BLD_THEOREM_PROVER
 Validateur de thèoreme automatique
 
-BLD_THEORM_PROVER_DESC
+BLD_THEOREM_PROVER_DESC
 '''Fournit max +5 à la recherche par 10 population sur les   mondes axée sur la recherche, non cumulatif. 
 Donnes un +1 supplémentaires au maximum de recherche par tranche de 10 population sur les mondes secondairement axé sur la recherche, non cumulatif.'''
 
