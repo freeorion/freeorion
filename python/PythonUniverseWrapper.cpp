@@ -229,7 +229,7 @@ namespace {
         //////////////////
         class_<Building, bases<UniverseObject>, noncopyable>("building", no_init)
             .def("getBuildingType",             &Building::GetBuildingType,                     return_value_policy<reference_existing_object>())
-            .add_property("operating",          &Building::Operating)
+//            .add_property("operating",          &Building::Operating)
             .def("getPlanet",                   &Building::GetPlanet,                           return_value_policy<reference_existing_object>())
         ;
 

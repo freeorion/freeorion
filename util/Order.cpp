@@ -587,8 +587,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
-    if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_BUILDING or BT_ORBITAL with a design id, not a name");
+    if (build_type == BT_BUILDING)
+        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name");
 }
 
 
@@ -633,7 +633,7 @@ void ProductionQueueOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Empire* empire = Empires().Lookup(EmpireID());
-    if (m_build_type == BT_BUILDING || m_build_type == BT_ORBITAL)
+    if (m_build_type == BT_BUILDING)
         empire->PlaceBuildInQueue(m_build_type, m_item_name, m_number, m_location);
     else if (m_build_type == BT_SHIP)
         empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);

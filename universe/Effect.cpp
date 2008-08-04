@@ -7,8 +7,10 @@
 #include "UniverseObject.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
+#include "Building.h"
 #include "Planet.h"
 #include "System.h"
+#include "Fleet.h"
 #include "Tech.h"
 
 #include <cctype>
@@ -600,6 +602,66 @@ std::string SetStarType::Description() const
 std::string SetStarType::Dump() const
 {
     return DumpIndent() + "SetStarType type = " + m_type->Dump() + "\n";
+}
+
+
+///////////////////////////////////////////////////////////
+// MoveTo                                              //
+///////////////////////////////////////////////////////////
+MoveTo::MoveTo(const ValueRef::ValueRefBase<int>* object_id) :
+    m_destination_object_id(object_id)
+{}
+
+MoveTo::~MoveTo()
+{
+    delete m_destination_object_id;
+}
+
+void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    Universe& universe = GetUniverse();
+    int dest_id = m_destination_object_id->Eval(source, target);
+    UniverseObject* destination = universe.Object(dest_id);
+    if (!destination) return;
+
+    // restrict movable object types to the following, as moving others (eg. ships, systems) isn't
+    // supported yet, due to complicated other bookeeping that would be required
+    if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+        if (System* dest_system = destination->GetSystem())
+            dest_system->Insert(target);
+        else
+            fleet->UniverseObject::MoveTo(destination);
+
+    } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
+        if (System* dest_system = destination->GetSystem()) {
+            //  determine if and which orbits are available
+            //  if an orbit is available...
+            //      dest_system->Insert(target);
+        }
+        // don't move planets to a location outside a system
+
+    } else if (Building* building = universe_object_cast<Building*>(target)) {
+        if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
+            dest_planet->AddBuilding(building->ID());
+        }
+        else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
+            if (Planet* dest_planet = dest_building->GetPlanet()) {
+                dest_planet->AddBuilding(building->ID());
+            }
+        }
+        // else if destination is something else that can be on a planet...
+    }
+}
+
+std::string MoveTo::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_destination_object_id) ? Empires().Lookup(m_destination_object_id->Eval(0, 0))->Name() : m_destination_object_id->Description();
+    return str(format(UserString("DESC_ADD_OWNER")) % value_str);
+}
+
+std::string MoveTo::Dump() const
+{
+    return DumpIndent() + "AddOwner empire = " + m_destination_object_id->Dump() + "\n";
 }
 
 

@@ -75,10 +75,14 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
 { AddOwner(owner); }
 
 Fleet::const_iterator Fleet::begin() const
-{ return m_ships.begin(); }
+{
+    return m_ships.begin();
+}
 
 Fleet::const_iterator Fleet::end() const
-{ return m_ships.end(); }
+{
+    return m_ships.end();
+}
 
 const std::set<int>& Fleet::ShipIDs() const
 {
@@ -529,16 +533,13 @@ void Fleet::AddShips(const std::vector<int>& ships)
 {
     for (unsigned int i = 0; i < ships.size(); ++i) {
         if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
-            if (Fleet* old_fleet = s->GetFleet()) {
-                old_fleet->RemoveShip(ships[i]);
-            }
-            s->SetFleetID(ID());
-            s->MoveTo(X(), Y());
             if (System* system = GetSystem()) {
                 system->Insert(s);
             } else {
+                s->MoveTo(X(), Y());
                 s->SetSystem(SystemID());
             }
+            s->SetFleetID(ID());
             m_ships.insert(ships[i]);
         } else {
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
@@ -550,20 +551,18 @@ void Fleet::AddShips(const std::vector<int>& ships)
 
 void Fleet::AddShip(const int ship_id)
 {
+    Logger().debugStream() << "Fleet " << this->Name() << " adding ship: " << ship_id;
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
-        if (Fleet* old_fleet = s->GetFleet()) {
-            old_fleet->RemoveShip(ship_id);
-        }
-        s->SetFleetID(ID());
-        s->MoveTo(X(), Y());
         if (System* system = GetSystem()) {
             system->Insert(s);
         } else {
+            s->MoveTo(X(), Y());
             s->SetSystem(SystemID());
         }
+        s->SetFleetID(ID());
         m_ships.insert(ship_id);
     } else {
-        throw std::invalid_argument("Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.");
+        Logger().errorStream() << "Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.";
     }
     RecalculateFleetSpeed(); // makes AddShip take Order(m_ships.size()) time - may need replacement
     StateChangedSignal();
@@ -625,28 +624,6 @@ void Fleet::SetSystem(int sys)
     }
 }
 
-void Fleet::Move(double x, double y)
-{
-    // move fleet itself
-    UniverseObject::Move(x, y);
-    // move ships in fleet
-    for (iterator it = begin(); it != end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
-        obj->Move(x, y);
-    }
-}
-
-void Fleet::MoveTo(UniverseObject* object)
-{
-    if (!object) {
-        Logger().errorStream() << "Fleet::MoveTo a null object!?";
-        return;
-    }
-    //Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
-    Fleet::MoveTo(object->X(), object->Y());
-}
-
 void Fleet::MoveTo(double x, double y)
 {
     //Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
@@ -656,7 +633,7 @@ void Fleet::MoveTo(double x, double y)
     for (iterator it = begin(); it != end(); ++it) {
         UniverseObject* obj = GetUniverse().Object(*it);
         assert(obj);
-        obj->MoveTo(x, y);
+        obj->UniverseObject::MoveTo(x, y);
     }
 }
 
@@ -784,10 +761,14 @@ void Fleet::MovementPhase()
 }
 
 Fleet::iterator Fleet::begin()
-{ return m_ships.begin(); }
+{
+    return m_ships.begin();
+}
 
 Fleet::iterator Fleet::end()
-{ return m_ships.end(); }
+{
+    return m_ships.end();
+}
 
 void Fleet::PopGrowthProductionResearchPhase()
 {

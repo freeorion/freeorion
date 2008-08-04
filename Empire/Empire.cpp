@@ -813,8 +813,6 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::
             break;
         return std::make_pair(building_type->BuildCost(), building_type->BuildTime());
     }
-    case BT_ORBITAL:
-        return std::make_pair(20.0, 10); // v0.3 only
     default:
         break;
     }
@@ -838,9 +836,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
 
 std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const
 {
-    if (item.build_type == BT_BUILDING || item.build_type == BT_ORBITAL)
-        return ProductionCostAndTime(item.build_type, item.name);
-    else if (item.build_type == BT_SHIP)
+    if (item.build_type == BT_SHIP)
         return ProductionCostAndTime(item.build_type, item.design_id);
     else
         throw std::invalid_argument("Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType");
@@ -860,8 +856,6 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
 
     if (build_type == BT_BUILDING && !BuildingTypeAvailable(name)) return false;
 
-    //if (build_type == BT_ORBITAL) -> nothing to do yet; orbitals are currently always buildable
-
     if (ProductionCostAndTime(build_type, name) == std::make_pair(-1.0, -1)) {
         // item is unknown, unavailable, or invalid.
         return false;
@@ -877,9 +871,6 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
         // ...and the specified location must be a valid production location for that building type
         return building_type->ProductionLocation(m_id, location);
 
-    } else if (build_type == BT_ORBITAL) {
-        // this empire must be only owner of the build location
-        return build_location->Owners().size() == 1 && *build_location->Owners().begin() == m_id;
     } else {
         throw std::invalid_argument("Empire::BuildableItem was passed an invalid BuildType");
     }
@@ -888,8 +879,8 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
 bool Empire::BuildableItem(BuildType build_type, int design_id, int location) const
 {
     // special case to check for buildings or orbitals being passed with ids, not names
-    if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING or BT_ORBITAL with a design id number, but these types are tracked by name");
+    if (build_type == BT_BUILDING)
+        throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
 
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
 
@@ -916,7 +907,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
 
 bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int location) const
 {
-    if (item.build_type == BT_BUILDING || item.build_type == BT_ORBITAL)
+    if (item.build_type == BT_BUILDING)
         return BuildableItem(item.build_type, item.name, location);
     else if (item.build_type == BT_SHIP)
         return BuildableItem(item.build_type, item.design_id, location);
@@ -1467,7 +1458,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
 
 void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/)
 {
-    if (item.build_type == BT_BUILDING || item.build_type == BT_ORBITAL)
+    if (item.build_type == BT_BUILDING)
         PlaceBuildInQueue(item.build_type, item.name, number, location, pos);
     else if (item.build_type == BT_SHIP)
         PlaceBuildInQueue(item.build_type, item.design_id, number, location, pos);
@@ -1839,15 +1830,6 @@ void Empire::CheckProductionProgress()
                 break;
             }
 
-            case BT_ORBITAL: {
-                // v0.3 only
-                Planet* planet = GetUniverse().Object<Planet>(m_production_queue[i].location);
-                assert(planet);
-                planet->AdjustDefBases(1);
-                AddSitRepEntry(CreateBaseBuiltSitRep(planet->SystemID(), planet->ID()));
-                break;
-            }
-
             default:
                 break;
             }
@@ -1978,7 +1960,7 @@ void Empire::UpdateTradeSpending()
     {
         Building *building = universe_object_cast<Building*>(*it);
         if (!building) continue;
-        if (building->Operating())
+        //if (building->Operating())
             m_maintenance_total_cost += GetBuildingType(building->BuildingTypeName())->MaintenanceCost();
     }
     m_resource_pools[RE_TRADE]->ChangedSignal();

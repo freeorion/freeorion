@@ -112,12 +112,6 @@ public:
 
     bool                                IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
-    /////////////////////////////////////////////////////////////////////////////
-    // V0.3 ONLY!!!!
-    int DefBases() const {return m_def_bases;}
-    // V0.3 ONLY!!!!
-    /////////////////////////////////////////////////////////////////////////////
-
     virtual UniverseObject::Visibility  GetVisibility(int empire_id) const;             ///< returns the visibility status of this universe object relative to the input empire.
 
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
@@ -131,8 +125,6 @@ public:
 
     /** \name Mutators */ //@{
     virtual void                        SetSystem(int sys);
-    virtual void                        Move(double x, double y);
-    virtual void                        MoveTo(UniverseObject* object);
     virtual void                        MoveTo(double x, double y);
 
     virtual void                        MovementPhase();
@@ -141,11 +133,6 @@ public:
 
     virtual Meter*                      GetMeter(MeterType type)    {return UniverseObject::GetMeter(type);}
 
-    /////////////////////////////////////////////////////////////////////////////
-    // V0.3 ONLY!!!!
-    void                                AdjustDefBases(int bases) {m_def_bases += bases; if (m_def_bases < 0) m_def_bases = 0; StateChangedSignal();}
-    // V0.3 ONLY!!!!
-    /////////////////////////////////////////////////////////////////////////////
 
     void                                SetType(PlanetType type);           ///< sets the type of this Planet to \a type
     void                                SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
@@ -198,12 +185,6 @@ private:
 
     bool            m_is_about_to_be_colonized;
 
-    /////////////////////////////////////////////////////////////////////////////
-    // V0.3 ONLY!!!!
-    int             m_def_bases;
-    // V0.3 ONLY!!!!
-    /////////////////////////////////////////////////////////////////////////////
-
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -241,8 +222,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(buildings);
     if (Universe::ALL_OBJECTS_VISIBLE || vis == FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_available_trade)
-            & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
-            & BOOST_SERIALIZATION_NVP(m_def_bases);
+            & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized);
     }
     if (Archive::is_loading::value)
         m_buildings = buildings;

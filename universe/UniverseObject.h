@@ -116,7 +116,7 @@ public:
 
     /** moves this object by relative displacements x and y. \throw std::runtime_error May throw std::runtime_error if the result
         of the move would place either coordinate outside the map area.*/
-    virtual void            Move(double x, double y);
+    void                    Move(double x, double y);
 
     /** calls MoveTo(const UniverseObject*) with the object pointed to by \a object_id. */
     void                    MoveTo(int object_id);
@@ -124,7 +124,7 @@ public:
     /** moves this object and contained objects to exact map coordinates of specified \a object
         If \a object is a system, places this object into that system.
         May throw std::invalid_argument if \a object is not a valid object*/
-    virtual void            MoveTo(UniverseObject* object);
+    void                    MoveTo(UniverseObject* object);
 
     /** moves this object and contained objects to exact map coordinates (x, y). \throw std::invalid_arugment
         May throw std::invalid_arugment if the either coordinate of the move is outside the map area.*/

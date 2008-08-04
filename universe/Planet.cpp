@@ -99,8 +99,7 @@ Planet::Planet() :
     m_axial_tilt(23.0),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false),
-    m_def_bases(0)
+    m_is_about_to_be_colonized(false)
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
@@ -120,8 +119,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false),
-    m_def_bases(0)
+    m_is_about_to_be_colonized(false)
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
@@ -170,10 +168,10 @@ double Planet::BuildingCosts() const
     Universe& universe = GetUniverse();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         Building* building = universe.Object<Building>(*it);
-        if (building->Operating()) {
+//        if (building->Operating()) {
             const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
             retval += bulding_type->MaintenanceCost();
-        }
+//        }
     }
     return retval;
 }
@@ -369,14 +367,18 @@ void Planet::SetHighAxialTilt()
 void Planet::AddBuilding(int building_id)
 {
     if (Building* building = GetUniverse().Object<Building>(building_id)) {
+        building->MoveTo(X(), Y());
         building->SetPlanetID(ID());
+
         if (System* system = GetSystem()) {
             system->Insert(building);
         } else {
             building->SetSystem(SystemID());
         }
-        building->MoveTo(X(), Y());
+
         m_buildings.insert(building_id);
+    } else {
+        Logger().errorStream() << "Planet::AddBuilding() : Attempted to add an id of a non-building object to a planet.";
     }
     StateChangedSignal();
 }
@@ -396,7 +398,7 @@ void Planet::SetAvailableTrade(double trade)
     m_available_trade = trade;
 }
 
-void Planet::AddOwner (int id)
+void Planet::AddOwner(int id)
 {
     GetSystem()->UniverseObject::AddOwner(id);
     UniverseObject::AddOwner(id);
@@ -503,36 +505,11 @@ void Planet::SetSystem(int sys)
 {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
-    // set system of buildings on this planet.  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->SetSystem(sys);
-    //}
-}
-
-void Planet::Move(double x, double y)
-{
-    // move planet itself
-    UniverseObject::Move(x, y);
-    // move buildings  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->Move(x, y);
-    //}
-}
-
-void Planet::MoveTo(UniverseObject* object)
-{
-    //Logger().debugStream() << "Planet::MoveTo(const UniverseObject* object)";
-    UniverseObject::MoveTo(object);
-    // move buildings  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->MoveTo(object);
-    //}
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->SetSystem(sys);
+    }
 }
 
 void Planet::MoveTo(double x, double y)
@@ -540,12 +517,12 @@ void Planet::MoveTo(double x, double y)
     //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
-    // move buildings  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->MoveTo(x, y);
-    //}
+    // move buildings
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->UniverseObject::MoveTo(x, y);
+    }
 }
 
 void Planet::MovementPhase()

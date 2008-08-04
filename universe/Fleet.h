@@ -91,8 +91,6 @@ public:
     iterator                end();                                          ///< returns the end iterator for the ships in the fleet
 
     virtual void            SetSystem(int sys);
-    virtual void            Move(double x, double y);
-    virtual void            MoveTo(UniverseObject* object);
     virtual void            MoveTo(double x, double y);
 
     virtual void            MovementPhase();

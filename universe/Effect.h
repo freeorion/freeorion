@@ -34,6 +34,7 @@ namespace Effect {
     class SetStarType;
     class SetTechAvailability;
     class SetEffectTarget;
+    class MoveTo;
 }
 
 namespace ValueRef {
@@ -316,6 +317,27 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Moves an UniverseObject to a location of another UniverseObject with id \a object_id.  If there are are no objects id
+    that id, nothing is done. */
+class Effect::MoveTo : public Effect::EffectBase
+{
+public:
+    MoveTo(const ValueRef::ValueRefBase<int>* object_id);
+    virtual ~MoveTo();
+
+    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<int>* m_destination_object_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
 /** Sets the availability of tech \a tech_name to empire \a empire_id.  If \a include_tech is true, the tech is fully available, just as if it were
     researched normally; otherwise, only the items that the tech includes are made available.  Note that this means this Effect is intended also to
     be used to unlock buildings, ships, etc.  The tech and/or its items are made available if \a available is true, or unavailable otherwise. */
@@ -443,6 +465,13 @@ void Effect::SetStarType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_type);
+}
+
+template <class Archive>
+void Effect::MoveTo::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_destination_object_id);
 }
 
 template <class Archive>

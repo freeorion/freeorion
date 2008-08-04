@@ -36,7 +36,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                                SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
+    void                                SetFleetID(int fleet_id);                           ///< sets the ID of the fleet the ship resides in
+    virtual void                        MoveTo(double x, double y);
+
     virtual void                        MovementPhase();
     virtual void                        PopGrowthProductionResearchPhase();
     //@}

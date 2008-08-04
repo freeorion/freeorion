@@ -101,15 +101,6 @@ UNKNOWN_VALUE_SYMBOL
 ERROR
 ERROR
 
-DEFENSE_BASE
-Defense Base
-
-DEFENSE_BASE_DESCRIPTION
-'''An orbital defense platform that aids in the defense of the planet at which it is located.
-
-Attack: 1
-Defense: 3'''
-
 CHAT_WHISPER
 whisper
 
@@ -1404,9 +1395,6 @@ Buildings
 
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Ships
-
-PRODUCTION_WND_CATEGORY_BT_ORBITAL
-Orbitals
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
 Available

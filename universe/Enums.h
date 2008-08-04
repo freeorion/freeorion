@@ -431,7 +431,6 @@ enum BuildType {
     BT_NOT_BUILDING,         ///< no building is taking place
     BT_BUILDING,             ///< a Building object is being built
     BT_SHIP,                 ///< a Ship object is being built
-    BT_ORBITAL,              ///< an Orbital object is being built
     NUM_BUILD_TYPES
 };
 
@@ -441,7 +440,6 @@ namespace GG {
     GG_ENUM_MAP_INSERT(BT_NOT_BUILDING)
     GG_ENUM_MAP_INSERT(BT_BUILDING)
     GG_ENUM_MAP_INSERT(BT_SHIP)
-    GG_ENUM_MAP_INSERT(BT_ORBITAL)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(BuildType)

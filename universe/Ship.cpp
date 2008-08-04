@@ -95,6 +95,23 @@ double Ship::ProjectedCurrentMeter(MeterType type) const {
     return UniverseObject::ProjectedCurrentMeter(type);
 }
 
+void Ship::SetFleetID(int fleet_id)
+{
+    m_fleet_id = fleet_id;
+    StateChangedSignal();
+}
+
+void Ship::MoveTo(double x, double y)
+{
+    UniverseObject::MoveTo(x, y);
+
+    // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
+    if (Fleet* fleet = GetFleet()) {
+        Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
+        fleet->RemoveShip(this->ID());
+    }
+}
+
 void Ship::MovementPhase() {
     // Fleet::MovementPhase moves ships within fleet around and deals with ship fuel consumption
 }
