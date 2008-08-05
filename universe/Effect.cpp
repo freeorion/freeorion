@@ -19,7 +19,6 @@
 using namespace Effect;
 using namespace boost::io;
 using boost::lexical_cast;
-using boost::format;
 
 extern int g_indent;
 
@@ -205,11 +204,11 @@ EffectsGroup::Description EffectsGroup::GetDescription() const
     if (dynamic_cast<const Condition::Self*>(m_scope))
         retval.scope_description = UserString("DESC_EFFECTS_GROUP_SELF_SCOPE");
     else
-        retval.scope_description = str(format(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
+        retval.scope_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
     if (dynamic_cast<const Condition::Self*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
         retval.activation_description = UserString("DESC_EFFECTS_GROUP_ALWAYS_ACTIVE");
     else
-        retval.activation_description = str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
+        retval.activation_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
     for (unsigned int i = 0; i < m_effects.size(); ++i) {
         retval.effect_descriptions.push_back(m_effects[i]->Description());
     }
@@ -223,11 +222,11 @@ std::string EffectsGroup::DescriptionString() const
     } else {
         std::stringstream retval;
         Description description = GetDescription();
-        retval << str(format(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
+        retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
         if (!dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
-            retval << str(format(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
+            retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
         for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {
-            retval << str(format(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
+            retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
         }
         return retval.str();
     }
@@ -275,10 +274,10 @@ std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect:
 {
     std::stringstream retval;
     if (effects_groups.size() == 1) {
-        retval << str(format(UserString("DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC")) % effects_groups[0]->DescriptionString());
+        retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC")) % effects_groups[0]->DescriptionString());
     } else {
         for (unsigned int i = 0; i < effects_groups.size(); ++i) {
-            retval << str(format(UserString("DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC")) % (i + 1) % effects_groups[i]->DescriptionString());
+            retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC")) % (i + 1) % effects_groups[i]->DescriptionString());
         }
     }
     return retval.str();
@@ -331,12 +330,12 @@ std::string SetMeter::Description() const
         case ValueRef::DIVIDES: op_char = '/'; break;
         default: op_char = '?';
         }
-        return str(format(UserString(m_max ? "DESC_SIMPLE_SET_METER_MAX" : "DESC_SIMPLE_SET_METER_CURRENT"))
+        return str(FlexibleFormat(UserString(m_max ? "DESC_SIMPLE_SET_METER_MAX" : "DESC_SIMPLE_SET_METER_CURRENT"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % op_char
                    % lexical_cast<std::string>(const_operand));
     } else {
-        return str(format(UserString(m_max ? "DESC_COMPLEX_SET_METER_MAX" : "DESC_COMPLEX_SET_METER_CURRENT"))
+        return str(FlexibleFormat(UserString(m_max ? "DESC_COMPLEX_SET_METER_MAX" : "DESC_COMPLEX_SET_METER_CURRENT"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % m_value->Description());
     }
@@ -387,7 +386,7 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
 std::string SetEmpireStockpile::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_value) ? lexical_cast<std::string>(m_value->Eval(0, 0)) : m_value->Description();
-    return str(format(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
+    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
 }
 
 std::string SetEmpireStockpile::Dump() const
@@ -435,7 +434,7 @@ void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target
 std::string SetPlanetType::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
-    return str(format(UserString("DESC_SET_PLANET_TYPE")) % value_str);
+    return str(FlexibleFormat(UserString("DESC_SET_PLANET_TYPE")) % value_str);
 }
 
 std::string SetPlanetType::Dump() const
@@ -473,7 +472,7 @@ void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target
 std::string SetPlanetSize::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0))) : m_size->Description();
-    return str(format(UserString("DESC_SET_PLANET_SIZE")) % value_str);
+    return str(FlexibleFormat(UserString("DESC_SET_PLANET_SIZE")) % value_str);
 }
 
 std::string SetPlanetSize::Dump() const
@@ -504,7 +503,7 @@ void AddOwner::Execute(const UniverseObject* source, UniverseObject* target) con
 std::string AddOwner::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
-    return str(format(UserString("DESC_ADD_OWNER")) % value_str);
+    return str(FlexibleFormat(UserString("DESC_ADD_OWNER")) % value_str);
 }
 
 std::string AddOwner::Dump() const
@@ -535,7 +534,7 @@ void RemoveOwner::Execute(const UniverseObject* source, UniverseObject* target) 
 std::string RemoveOwner::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
-    return str(format(UserString("DESC_REMOVE_OWNER")) % value_str);
+    return str(FlexibleFormat(UserString("DESC_REMOVE_OWNER")) % value_str);
 }
 
 std::string RemoveOwner::Dump() const
@@ -593,7 +592,7 @@ void AddSpecial::Execute(const UniverseObject* source, UniverseObject* target) c
 
 std::string AddSpecial::Description() const
 {
-    return str(format(UserString("DESC_ADD_SPECIAL")) % UserString(m_name));
+    return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(m_name));
 }
 
 std::string AddSpecial::Dump() const
@@ -616,7 +615,7 @@ void RemoveSpecial::Execute(const UniverseObject* source, UniverseObject* target
 
 std::string RemoveSpecial::Description() const
 {
-    return str(format(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name));
+    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name));
 }
 
 std::string RemoveSpecial::Dump() const
@@ -647,7 +646,7 @@ void SetStarType::Execute(const UniverseObject* source, UniverseObject* target) 
 std::string SetStarType::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
-    return str(format(UserString("DESC_SET_STAR_TYPE")) % value_str);
+    return str(FlexibleFormat(UserString("DESC_SET_STAR_TYPE")) % value_str);
 }
 
 std::string SetStarType::Dump() const
@@ -673,11 +672,14 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     Universe& universe = GetUniverse();
     int dest_id = m_destination_object_id->Eval(source, target);
     UniverseObject* destination = universe.Object(dest_id);
-    if (!destination) return;
+    if (!destination) {
+        Logger().errorStream() << "MoveTo::Execute couldn't get destination object with specified id: " << dest_id;
+        return;
+    }
 
-    // restrict movable object types to the following, as moving others (eg. ships, systems) isn't
-    // supported yet, due to complicated other bookeeping that would be required
     if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+        // fleets can be inserted into the system that contains the destination object (or the 
+        // destination object istelf if it is a system
         if (System* dest_system = destination->GetSystem()) {
             dest_system->Insert(target);
         } else {
@@ -703,18 +705,24 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         }
 
     } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
+        // planets need to be located in systems, so get system that contains destination object
         if (System* dest_system = destination->GetSystem()) {
             //  determine if and which orbits are available
-            //  if an orbit is available...
-            //      dest_system->Insert(target);
+            std::set<int> free_orbits = dest_system->FreeOrbits();
+            if (!free_orbits.empty()) {
+                int orbit = *(free_orbits.begin());
+                dest_system->Insert(target, orbit);
+            }
         }
         // don't move planets to a location outside a system
 
     } else if (Building* building = universe_object_cast<Building*>(target)) {
+        // buildings need to be located on planets, so if destination is a planet, insert building into it,
+        // or attempt to get the planet on which the destination object is located and insert target building into that
         if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
             dest_planet->AddBuilding(building->ID());
-        }
-        else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
+
+        } else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
             if (Planet* dest_planet = dest_building->GetPlanet()) {
                 dest_planet->AddBuilding(building->ID());
             }
@@ -725,13 +733,13 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 
 std::string MoveTo::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_destination_object_id) ? Empires().Lookup(m_destination_object_id->Eval(0, 0))->Name() : m_destination_object_id->Description();
-    return str(format(UserString("DESC_ADD_OWNER")) % value_str);
+    std::string value_str = ValueRef::ConstantExpr(m_destination_object_id) ? GetUniverse().Object(m_destination_object_id->Eval(0, 0))->Name() : m_destination_object_id->Description();
+    return str(FlexibleFormat(UserString("DESC_MOVE_TO")) % value_str);
 }
 
 std::string MoveTo::Dump() const
 {
-    return DumpIndent() + "AddOwner empire = " + m_destination_object_id->Dump() + "\n";
+    return DumpIndent() + "MoveTo destination_object_id =  empire = " + m_destination_object_id->Dump() + "\n";
 }
 
 
@@ -774,9 +782,9 @@ void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* 
 
 std::string SetTechAvailability::Description() const
 {
-    std::string affected = str(format(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % m_tech_name);
+    std::string affected = str(FlexibleFormat(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % m_tech_name);
     std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
-    return str(format(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
+    return str(FlexibleFormat(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
                % affected
                % empire_str);
 }

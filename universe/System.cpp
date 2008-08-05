@@ -475,6 +475,23 @@ std::pair<System::orbit_iterator, System::orbit_iterator> System::non_orbit_rang
     return m_objects.equal_range(-1);
 }
 
+bool System::OrbitOccupied(int orbit) const 
+{
+    return (m_objects.find(orbit) != m_objects.end());
+}
+
+std::set<int> System::FreeOrbits() const
+{
+    std::set<int> occupied;
+    for (const_orbit_iterator it = begin(); it != end(); ++it)
+        occupied.insert(it->first);
+    std::set<int> retval;
+    for (int i = 0; i < m_orbits; ++i)
+        if (occupied.find(i) == occupied.end())
+            retval.insert(i);
+    return retval;
+}
+
 System::lane_iterator System::begin_lanes()
 {
     return m_starlanes_wormholes.begin();

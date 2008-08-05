@@ -99,6 +99,9 @@ public:
     std::pair<const_orbit_iterator, const_orbit_iterator>
                             non_orbit_range() const;        ///< returns begin and end iterators for all system objects not in an orbit
 
+    bool                    OrbitOccupied(int orbit) const; ///< returns true if there is an object in \a orbit
+    std::set<int>           FreeOrbits() const;             ///< returns the set of orbit numbers that are unoccupied
+
     const_lane_iterator     begin_lanes() const;            ///< begin iterator for all starlanes and wormholes terminating in this system
     const_lane_iterator     end_lanes() const;              ///< end iterator for all starlanes and wormholes terminating in this system
 

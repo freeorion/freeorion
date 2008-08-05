@@ -52,6 +52,12 @@ namespace {
             member2 empire;
         };
 
+        struct ObjectIDParamClosure : boost::spirit::closure<ObjectIDParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<int>*>
+        {
+            member1 this_;
+            member2 object_id;
+        };
+
         struct NameParamClosure : boost::spirit::closure<NameParamClosure, Effect::EffectBase*, std::string>
         {
             member1 this_;
@@ -72,32 +78,35 @@ namespace {
             member4 include_tech;
         };
 
-        typedef rule<Scanner, SetMeterClosure::context_t> SetMeterRule;
-        typedef rule<Scanner, SetOwnerStockpileClosure::context_t> SetOwnerStockpileRule;
-        typedef rule<Scanner, SetPlanetTypeClosure::context_t> SetPlanetTypeRule;
-        typedef rule<Scanner, SetPlanetSizeClosure::context_t> SetPlanetSizeRule;
-        typedef rule<Scanner, EmpireParamClosure::context_t> EmpireParamRule;
-        typedef rule<Scanner, NameParamClosure::context_t> NameParamRule;
-        typedef rule<Scanner, SetStarTypeClosure::context_t> SetStarTypeRule;
-        typedef rule<Scanner, SetTechAvailabilityClosure::context_t> SetTechAvailabilityRule;
+        typedef rule<Scanner, SetMeterClosure::context_t>               SetMeterRule;
+        typedef rule<Scanner, SetOwnerStockpileClosure::context_t>      SetOwnerStockpileRule;
+        typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
+        typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
+        typedef rule<Scanner, EmpireParamClosure::context_t>            EmpireParamRule;
+        typedef rule<Scanner, ObjectIDParamClosure::context_t>          ObjectIDParamRule;
+        typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
+        typedef rule<Scanner, SetStarTypeClosure::context_t>            SetStarTypeRule;
+        typedef rule<Scanner, SetTechAvailabilityClosure::context_t>    SetTechAvailabilityRule;
 
-        SetMeterRule set_meter;
-        SetOwnerStockpileRule set_owner_stockpile;
-        SetPlanetTypeRule set_planet_type;
-        SetPlanetSizeRule set_planet_size;
-        EmpireParamRule add_owner;
-        EmpireParamRule remove_owner;
-        Rule destroy;
-        NameParamRule add_special;
-        NameParamRule remove_special;
-        SetStarTypeRule set_star_type;
+        SetMeterRule            set_meter;
+        SetOwnerStockpileRule   set_owner_stockpile;
+        SetPlanetTypeRule       set_planet_type;
+        SetPlanetSizeRule       set_planet_size;
+        EmpireParamRule         add_owner;
+        EmpireParamRule         remove_owner;
+        ObjectIDParamRule       move_to;
+        Rule                    destroy;
+        NameParamRule           add_special;
+        NameParamRule           remove_special;
+        SetStarTypeRule         set_star_type;
         SetTechAvailabilityRule set_tech_availability;
 
-        ParamLabel value_label;
-        ParamLabel type_label;
-        ParamLabel planetsize_label;
-        ParamLabel empire_label;
-        ParamLabel name_label;
+        ParamLabel              value_label;
+        ParamLabel              type_label;
+        ParamLabel              planetsize_label;
+        ParamLabel              empire_label;
+        ParamLabel              name_label;
+        ParamLabel              object_id_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -105,7 +114,8 @@ namespace {
         type_label("type"),
         planetsize_label("size"),
         empire_label("empire"),
-        name_label("name")
+        name_label("name"),
+        object_id_label("objectid")
     {
         set_meter =
             ((str_p("setmax")[set_meter.max_meter = val(true)]
@@ -154,6 +164,11 @@ namespace {
              >> empire_label >> int_expr_p[remove_owner.empire = arg1])
             [remove_owner.this_ = new_<Effect::RemoveOwner>(remove_owner.empire)];
 
+        move_to =
+            (str_p("moveto")
+             >> object_id_label >> int_expr_p[move_to.object_id = arg1])
+            [move_to.this_ = new_<Effect::MoveTo>(move_to.object_id)];
+
         destroy =
             str_p("destroy")
             [destroy.this_ = new_<Effect::Destroy>()];
@@ -188,6 +203,7 @@ namespace {
             | set_planet_size[effect_p.this_ = arg1]
             | add_owner[effect_p.this_ = arg1]
             | remove_owner[effect_p.this_ = arg1]
+            | move_to[effect_p.this_ = arg1]
             | destroy[effect_p.this_ = arg1]
             | add_special[effect_p.this_ = arg1]
             | remove_special[effect_p.this_ = arg1]
