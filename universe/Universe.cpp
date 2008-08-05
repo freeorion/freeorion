@@ -1421,14 +1421,14 @@ int Universe::GenerateDesignID()
 //////////////////////////////////////////
 namespace {
 #ifdef FREEORION_BUILD_SERVER
-    const double  MIN_SYSTEM_SEPARATION = 30.0; // in universe units [0.0, s_universe_width]
-    const double  MIN_HOME_SYSTEM_SEPARATION = 200.0; // in universe units [0.0, s_universe_width]
-    const double  AVG_UNIVERSE_WIDTH = 1000.0 / std::sqrt(150.0); // so a 150 star universe is 1000 units across
-    const int     ADJACENCY_BOXES = 25;
-    const double  PI = 3.141592653589793;
-    const int     MAX_SYSTEM_ORBITS = 10;   // maximum slots where planets can be, in v0.2
-    SmallIntDistType g_hundred_dist = SmallIntDist(1, 100); // a linear distribution [1, 100] used in most universe generation
-    const int MAX_ATTEMPTS_PLACE_SYSTEM = 100;
+    const double        MIN_SYSTEM_SEPARATION       = 30.0;                         // in universe units [0.0, s_universe_width]
+    const double        MIN_HOME_SYSTEM_SEPARATION  = 200.0;                        // in universe units [0.0, s_universe_width]
+    const double        AVG_UNIVERSE_WIDTH          = 1000.0 / std::sqrt(150.0);    // so a 150 star universe is 1000 units across
+    const int           ADJACENCY_BOXES             = 25;
+    const double        PI                          = 3.141592653589793;
+    const int           MAX_SYSTEM_ORBITS           = 9;                            // maximum slots where planets can be, in v0.2
+    SmallIntDistType    g_hundred_dist              = SmallIntDist(1, 100);         // a linear distribution [1, 100] used in most universe generation
+    const int           MAX_ATTEMPTS_PLACE_SYSTEM   = 100;
 #endif
 
     double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
@@ -1718,7 +1718,7 @@ namespace {
         std::string star_name(*it);
         star_names.erase(it);
 
-        // make a series of "rolls" (1-100) for each planet size, and take the highest modified roll
+        // make a series of "rolls" (1-100) for each star type, and take the highest modified roll
         int idx = 0;
         int max_roll = 0;
         for (unsigned int i = 0; i < NUM_STAR_TYPES; ++i) {

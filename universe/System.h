@@ -175,10 +175,10 @@ private:
     ObjectMultimap          PartiallyVisibleObjects(int empire_id) const;   ///< returns the subset of m_objects that is visible when this System's visibility is only PARTIAL_VISIBILITY
     void                    UpdateOwnership();
 
-    StarType       m_star;
-    int            m_orbits;
-    ObjectMultimap m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
-    StarlaneMap    m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+    StarType        m_star;
+    int             m_orbits;
+    ObjectMultimap  m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
+    StarlaneMap     m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
 
     friend class boost::serialization::access;
     template <class Archive>

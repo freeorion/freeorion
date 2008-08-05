@@ -11,6 +11,7 @@
 #include "Planet.h"
 #include "System.h"
 #include "Fleet.h"
+#include "Ship.h"
 #include "Tech.h"
 
 #include <cctype>
@@ -57,6 +58,56 @@ namespace {
         return retval;
     }
 
+    Fleet* CreateNewFleet(System* system, Ship* ship) {
+        Universe& universe = GetUniverse();
+        if (!system || !ship)
+            return 0;
+
+        int owner_empire_id = -1;
+        const std::set<int>& owners = ship->Owners();
+        if (!owners.empty())
+            owner_empire_id = *(owners.begin());
+
+        int new_fleet_id = GetNewObjectID();
+
+        std::vector<int> ship_ids;
+        ship_ids.push_back(ship->ID());
+        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
+
+        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), owner_empire_id);
+
+        universe.InsertID(fleet, new_fleet_id);
+        system->Insert(fleet);
+
+        fleet->AddShip(ship->ID());
+
+        return fleet;
+    }
+
+    Fleet* CreateNewFleet(double x, double y, Ship* ship) {
+        Universe& universe = GetUniverse();
+        if (!ship)
+            return 0;
+
+        int owner_empire_id = -1;
+        const std::set<int>& owners = ship->Owners();
+        if (!owners.empty())
+            owner_empire_id = *(owners.begin());
+
+        int new_fleet_id = GetNewObjectID();
+
+        std::vector<int> ship_ids;
+        ship_ids.push_back(ship->ID());
+        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
+
+        Fleet* fleet = new Fleet(fleet_name, x, y, owner_empire_id);
+
+        universe.InsertID(fleet, new_fleet_id);
+
+        fleet->AddShip(ship->ID());
+
+        return fleet;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -627,10 +678,29 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     // restrict movable object types to the following, as moving others (eg. ships, systems) isn't
     // supported yet, due to complicated other bookeeping that would be required
     if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
-        if (System* dest_system = destination->GetSystem())
+        if (System* dest_system = destination->GetSystem()) {
             dest_system->Insert(target);
-        else
+        } else {
             fleet->UniverseObject::MoveTo(destination);
+        }
+
+    } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
+        // TODO: make sure colonization doesn't interfere with this effect, and vice versa
+
+        // if moved to a fleet, insert the ship into the fleet.  otherwise, need to create a new
+        // fleet to put the ship into (as all ships must be in fleets)
+        if (Fleet* dest_fleet = universe_object_cast<Fleet*>(destination)) {
+            dest_fleet->AddShip(ship->ID());    // this takes care of moving the ship
+
+        } else {
+            // need to create a new fleet for ship
+            Fleet* new_fleet = 0;
+            if (System* dest_system = destination->GetSystem()) {
+                new_fleet = CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
+            } else {
+                new_fleet = CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
+            }
+        }
 
     } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
         if (System* dest_system = destination->GetSystem()) {

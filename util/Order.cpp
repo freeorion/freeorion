@@ -129,7 +129,7 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const in
 #endif
 }
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, const std::vector<int>& ship_ids) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(-1),

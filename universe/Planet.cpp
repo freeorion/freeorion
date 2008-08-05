@@ -366,16 +366,16 @@ void Planet::SetHighAxialTilt()
 
 void Planet::AddBuilding(int building_id)
 {
+    Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
     if (Building* building = GetUniverse().Object<Building>(building_id)) {
-        building->MoveTo(X(), Y());
-        building->SetPlanetID(ID());
-
         if (System* system = GetSystem()) {
             system->Insert(building);
         } else {
+            Logger().errorStream() << "... planet is not located in a system?!?!";
+            building->MoveTo(X(), Y());
             building->SetSystem(SystemID());
         }
-
+        building->SetPlanetID(ID());
         m_buildings.insert(building_id);
     } else {
         Logger().errorStream() << "Planet::AddBuilding() : Attempted to add an id of a non-building object to a planet.";

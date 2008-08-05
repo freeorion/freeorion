@@ -231,8 +231,10 @@ int System::Insert(UniverseObject* obj)
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
-    if (!obj)
-        throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
+    if (!obj) {
+        Logger().errorStream() << "System::Insert() : Attempted to place a null object in a System";
+        return -1;
+    }
 
     Logger().debugStream() << "System::Insert(" << obj->Name() <<", " << orbit << ")";
     //Logger().debugStream() << "..initial objects in system: ";
@@ -240,17 +242,19 @@ int System::Insert(UniverseObject* obj, int orbit)
     //    Logger().debugStream() << "...." << GetUniverse().Object(it->second)->Name();
     //Logger().debugStream() << "..initial object systemid: " << obj->SystemID();
 
-    if (orbit < -1)
-        throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
+    if (orbit < -1) {
+        Logger().errorStream() << "System::Insert() : Attempted to place an object in an orbit less than -1";
+        return -1;
+    }
+
+    if (orbit >= m_orbits) {
+        Logger().errorStream() << "System::Insert() : Attempted to place an object in a non-existing orbit with number higher than the largest numbered orbit";
+        return -1;
+    }
 
     // inform obj of its new location and system id.  this should propegate to all objects contained within obj
     obj->MoveTo(this);          // ensure object is physically at same location in universe as this system
     obj->SetSystem(this->ID()); // should do nothing if object is already in this system, but just to ensure things are consistent...
-
-
-    // ensure this system has enough orbits to contain objects
-    if (m_orbits <= orbit)
-        m_orbits = orbit + 1;
 
 
     // update obj and its contents in this System's bookkeeping
