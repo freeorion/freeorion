@@ -107,6 +107,14 @@ namespace {
 
         return fleet;
     }
+
+    void ExploreSystem(int system_id, const UniverseObject* target_object) {
+        if (!target_object) return;
+        const std::set<int>& owners = target_object->Owners();
+        if (!owners.empty())
+            if (Empire* owner_empire = Empires().Lookup(*owners.begin()))
+                owner_empire->AddExploredSystem(system_id);
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -682,6 +690,8 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         // destination object istelf if it is a system
         if (System* dest_system = destination->GetSystem()) {
             dest_system->Insert(target);
+            ExploreSystem(dest_system->ID(), target);
+
         } else {
             fleet->UniverseObject::MoveTo(destination);
         }
@@ -699,6 +709,8 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
             Fleet* new_fleet = 0;
             if (System* dest_system = destination->GetSystem()) {
                 new_fleet = CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
+                ExploreSystem(dest_system->ID(), target);
+
             } else {
                 new_fleet = CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
             }
@@ -712,6 +724,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
             if (!free_orbits.empty()) {
                 int orbit = *(free_orbits.begin());
                 dest_system->Insert(target, orbit);
+                ExploreSystem(dest_system->ID(), target);
             }
         }
         // don't move planets to a location outside a system
@@ -721,10 +734,15 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         // or attempt to get the planet on which the destination object is located and insert target building into that
         if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
             dest_planet->AddBuilding(building->ID());
+            if (const System* dest_system = dest_planet->GetSystem())
+                ExploreSystem(dest_system->ID(), target);
+
 
         } else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
             if (Planet* dest_planet = dest_building->GetPlanet()) {
                 dest_planet->AddBuilding(building->ID());
+                if (const System* dest_system = dest_planet->GetSystem())
+                    ExploreSystem(dest_system->ID(), target);
             }
         }
         // else if destination is something else that can be on a planet...

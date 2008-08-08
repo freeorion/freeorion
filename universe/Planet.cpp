@@ -199,14 +199,14 @@ std::vector<int> Planet::FindObjectIDs() const
     return retval;
 }
 
-UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
+Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility
     const System* system = GetSystem();
     if (system)
         return system->GetVisibility(empire_id);
     else
-        return NO_VISIBILITY;
+        return VIS_NO_VISIBITY;
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const

@@ -41,7 +41,7 @@ public:
 
     const std::set<int>&                ShipIDs() const;                    ///< returns set of IDs of ships in fleet.
 
-    virtual UniverseObject::Visibility  GetVisibility(int empire_id) const;
+    virtual Visibility                  GetVisibility(int empire_id) const;
     virtual const std::string&          PublicName(int empire_id) const;
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
@@ -138,7 +138,7 @@ BOOST_CLASS_VERSION(Fleet, 1)
 template <class Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
-    bool vis;
+    Visibility vis;
     int moving_to;
     std::list<System*> travel_route;
     double travel_distance;
@@ -147,7 +147,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(vis);
     if (Archive::is_saving::value) {
-        moving_to = (Universe::ALL_OBJECTS_VISIBLE || vis == FULL_VISIBILITY) ? m_moving_to : m_next_system;
+        moving_to = (Universe::ALL_OBJECTS_VISIBLE || vis == VIS_FULL_VISIBILITY) ? m_moving_to : m_next_system;
         if (1 <= version) {
             ShortenRouteToEndAtSystem(travel_route, moving_to);
             travel_distance = m_travel_distance;
@@ -175,7 +175,7 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         }
     }
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == FULL_VISIBILITY)
+        vis == VIS_FULL_VISIBILITY)
         ar  & BOOST_SERIALIZATION_NVP(m_speed);
 }
 

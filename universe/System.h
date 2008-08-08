@@ -105,8 +105,7 @@ public:
     const_lane_iterator     begin_lanes() const;            ///< begin iterator for all starlanes and wormholes terminating in this system
     const_lane_iterator     end_lanes() const;              ///< end iterator for all starlanes and wormholes terminating in this system
 
-    virtual UniverseObject::Visibility
-                            GetVisibility(int empire_id) const;     ///< returns the visibility status of this universe object relative to the input empire.
+    virtual Visibility      GetVisibility(int empire_id) const;     ///< returns the visibility status of this universe object relative to the input empire.
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -175,7 +174,7 @@ public:
     //@}
 
 private:
-    ObjectMultimap          PartiallyVisibleObjects(int empire_id) const;   ///< returns the subset of m_objects that is visible when this System's visibility is only PARTIAL_VISIBILITY
+    ObjectMultimap          PartiallyVisibleObjects(int empire_id) const;   ///< returns the subset of m_objects that is visible when this System's visibility is only VIS_PARTIAL_VISIBILITY
     void                    UpdateOwnership();
 
     StarType        m_star;
@@ -276,11 +275,11 @@ void System::serialize(Archive& ar, const unsigned int version)
     if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
         if (Universe::ALL_OBJECTS_VISIBLE ||
-            vis == FULL_VISIBILITY) {
+            vis == VIS_FULL_VISIBILITY) {
             orbits = m_orbits;
             objects = m_objects;
             starlanes_wormholes = m_starlanes_wormholes;
-        } else if (vis == PARTIAL_VISIBILITY) {
+        } else if (vis == VIS_PARTIAL_VISIBILITY) {
             orbits = m_orbits;
             objects = PartiallyVisibleObjects(Universe::s_encoding_empire);
             starlanes_wormholes = VisibleStarlanes(Universe::s_encoding_empire);
@@ -290,7 +289,7 @@ void System::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_star);
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+        vis == VIS_PARTIAL_VISIBILITY || vis == VIS_FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(orbits)
             & BOOST_SERIALIZATION_NVP(objects)
             & BOOST_SERIALIZATION_NVP(starlanes_wormholes);

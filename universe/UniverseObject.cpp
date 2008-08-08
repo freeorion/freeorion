@@ -181,9 +181,9 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
     return m_owners.size() == 1 && m_owners.find(empire) != m_owners.end();
 }
 
-UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
+Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
+    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? VIS_FULL_VISIBILITY : VIS_NO_VISIBITY;
 }
 
 const std::string& UniverseObject::PublicName(int empire_id) const

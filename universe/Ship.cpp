@@ -55,14 +55,14 @@ Fleet* Ship::GetFleet() const {
     return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Fleet>(m_fleet_id);
 }
 
-UniverseObject::Visibility Ship::GetVisibility(int empire_id) const {
-    UniverseObject::Visibility vis = NO_VISIBILITY;
+Visibility Ship::GetVisibility(int empire_id) const {
+    Visibility vis = VIS_NO_VISIBITY;
 
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
-        vis = FULL_VISIBILITY;
+        vis = VIS_FULL_VISIBILITY;
 
     // Ship is visible if its fleet is visible
-    UniverseObject::Visibility retval = FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
+    Visibility retval = FleetID() == INVALID_OBJECT_ID ? VIS_NO_VISIBITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
     return retval;
 }
 

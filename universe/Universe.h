@@ -421,7 +421,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         // existing objects
         for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
             if (Universe::ALL_OBJECTS_VISIBLE || s_encoding_empire == ALL_EMPIRES ||
-                it->second->GetVisibility(s_encoding_empire) != UniverseObject::NO_VISIBILITY ||
+                it->second->GetVisibility(s_encoding_empire) != VIS_NO_VISIBITY ||
                 universe_object_cast<System*>(it->second))
             {
                 objects.insert(*it);

@@ -1094,7 +1094,7 @@ void Universe::Destroy(int id)
         std::set<int> knowing_empires;
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
             int empire_id = emp_it->first;
-            if (obj->GetVisibility(empire_id) != UniverseObject::NO_VISIBILITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
+            if (obj->GetVisibility(empire_id) != VIS_NO_VISIBITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
                 knowing_empires.insert(empire_id);
                 //Logger().debugStream() << "..visible to empire: " << empire_id;
             }

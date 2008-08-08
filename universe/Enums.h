@@ -535,6 +535,29 @@ enum EncodingVisbility {
     ALL_EMPIRES = -1
 };
 
+/** degrees of visibility an Empire or UniverseObject can have for an UniverseObject.  determines how much information the empire
+    gets about the (non)visible object. */
+enum Visibility {
+    INVALID_VISIBILITY = -1,
+    VIS_NO_VISIBITY,
+    VIS_BASIC_VISIBILITY,
+    VIS_PARTIAL_VISIBILITY,
+    VIS_FULL_VISIBILITY,
+    NUM_VISIBILITIES
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Visibility)
+    GG_ENUM_MAP_INSERT(INVALID_VISIBILITY)
+    GG_ENUM_MAP_INSERT(VIS_NO_VISIBITY)
+    GG_ENUM_MAP_INSERT(VIS_PARTIAL_VISIBILITY)
+    GG_ENUM_MAP_INSERT(VIS_FULL_VISIBILITY)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(Visibility)
+GG_ENUM_STREAM_OUT(Visibility)
+
+
 /** Possible results of an UniverseObject being captured by other empires, or an object's containing
     UniverseObject being captured, or the location of a Production Queue Build Item being conquered, 
     or the result of other future events, such as spy activity... */

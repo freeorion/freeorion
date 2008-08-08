@@ -42,13 +42,6 @@ struct UniverseObjectVisitor;
 class UniverseObject
 {
 public:
-    /** the three different visibility levels */
-    enum Visibility { 
-        FULL_VISIBILITY,
-        PARTIAL_VISIBILITY,
-        NO_VISIBILITY
-    };
-
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> StateChangedSignalBaseType; ///< used to define StateChangedSignalType
     typedef InhibitableSignal<StateChangedSignalBaseType> StateChangedSignalType; ///< emitted when the UniverseObject is altered in any way
@@ -215,7 +208,7 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_system_id)
         & BOOST_SERIALIZATION_NVP(m_meters);
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+        vis == VIS_PARTIAL_VISIBILITY || vis == VIS_FULL_VISIBILITY) {
         std::string name;
         if (Archive::is_saving::value) {
             // We don't disclose the real object name for some types of objects, since it would look funny if e.g. the

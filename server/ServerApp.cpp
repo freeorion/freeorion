@@ -438,13 +438,12 @@ bool ServerApp::AllOrdersReceived()
 
 void ServerApp::ProcessTurns()
 {
-    Empire                    *empire;
-    OrderSet                  *order_set;
-    OrderSet::const_iterator  order_it;
+    Empire*                     empire;
+    OrderSet*                   order_set;
+    OrderSet::const_iterator    order_it;
 
     // Now all orders, then process turns
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         // broadcast UI message to all players
         for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
@@ -463,18 +462,15 @@ void ServerApp::ProcessTurns()
     // filter FleetColonizeOrder for later processing
     typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
     ColonizeOrderMap colonize_order_map;
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it)
-    {
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         order_set = it->second;
 
         // filter FleetColonizeOrder and sort them per planet
         boost::shared_ptr<FleetColonizeOrder> order;
         for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
-            if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second)))
-            {
+            if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second))) {
                 ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
-                if(it == colonize_order_map.end())
-                {
+                if (it == colonize_order_map.end()) {
                     colonize_order_map.insert(std::make_pair(order->PlanetID(),std::vector<boost::shared_ptr<FleetColonizeOrder> >()));
                     it = colonize_order_map.find(order->PlanetID());
                 }
@@ -488,8 +484,7 @@ void ServerApp::ProcessTurns()
     // 2 - if there are more than one empire then
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
-    for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it)
-    {
+    for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it) {
         Planet *planet = GetUniverse().Object<Planet>(it->first);
 
         // only one empire?
@@ -504,8 +499,7 @@ void ServerApp::ProcessTurns()
             std::set<int> set_empire_with_military;
             for (unsigned int i=0;i<vec_fleet.size();i++)
                 for (Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
-                    if (GetUniverse().Object<Ship>(*ship_it)->IsArmed())
-                    {
+                    if (GetUniverse().Object<Ship>(*ship_it)->IsArmed()) {
                         set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
                         break;
                     }
@@ -516,11 +510,9 @@ void ServerApp::ProcessTurns()
             bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
             for (unsigned int i=1;i<it->second.size();i++)
                 // is this empire armed?
-                if (set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end())
-                {
+                if (set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end()) {
                     // if this empire is armed and the former winner too, noone can win
-                    if (winner_is_armed)
-                    {
+                    if (winner_is_armed) {
                         winner = -1; // no winner!!
                         break;       // won't find a winner!
                     }
@@ -578,24 +570,20 @@ void ServerApp::ProcessTurns()
 
     std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
     bool combat_happend = false;
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it)
-    {
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         std::vector<CombatAssets> empire_combat_forces;
         System* system = *it;
 
         std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
         if (flt_vec.empty()) continue;  // skip systems with not fleets, as these can't have combat
 
-        for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it)
-        {
+        for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it) {
             Fleet* flt = *flt_it;
             // a fleet should belong only to one empire!?
-            if (1==flt->Owners().size())
-            {
+            if (1==flt->Owners().size()) {
                 std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
 
-                if (ecf_it==empire_combat_forces.end())
-                {
+                if (ecf_it==empire_combat_forces.end()) {
                     CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
                     ca.fleets.push_back(flt);
                     empire_combat_forces.push_back(ca);
@@ -605,16 +593,13 @@ void ServerApp::ProcessTurns()
             }
         }
         std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
-        for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it)
-        {
+        for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it) {
             Planet* plt = *plt_it;
             // a planet should belong only to one empire!?
-            if (1==plt->Owners().size())
-            {           
+            if (1==plt->Owners().size()) {
                 std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
 
-                if (ecf_it==empire_combat_forces.end())
-                {
+                if (ecf_it==empire_combat_forces.end()) {
                     CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
                     ca.planets.push_back(plt);
                     empire_combat_forces.push_back(ca);
@@ -624,8 +609,7 @@ void ServerApp::ProcessTurns()
             }
         }
 
-        if (empire_combat_forces.size()>1)
-        {
+        if (empire_combat_forces.size() > 1) {
             combat_happend=true;
             CombatSystem combat_system;
             combat_system.ResolveCombat(system->ID(),empire_combat_forces);

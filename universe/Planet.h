@@ -112,7 +112,7 @@ public:
 
     bool                                IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
-    virtual UniverseObject::Visibility  GetVisibility(int empire_id) const;             ///< returns the visibility status of this universe object relative to the input empire.
+    virtual Visibility                  GetVisibility(int empire_id) const;             ///< returns the visibility status of this universe object relative to the input empire.
 
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -203,7 +203,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
             int obj_id = *it;
             const UniverseObject* obj = universe.Object(obj_id);
-            if (obj->GetVisibility(Universe::s_encoding_empire) != NO_VISIBILITY)
+            if (obj->GetVisibility(Universe::s_encoding_empire) != VIS_NO_VISIBITY)
                 buildings.insert(obj_id);
         }
     }
@@ -220,7 +220,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_axial_tilt)
         & BOOST_SERIALIZATION_NVP(m_just_conquered)
         & BOOST_SERIALIZATION_NVP(buildings);
-    if (Universe::ALL_OBJECTS_VISIBLE || vis == FULL_VISIBILITY) {
+    if (Universe::ALL_OBJECTS_VISIBLE || vis == VIS_FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_available_trade)
             & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized);
     }

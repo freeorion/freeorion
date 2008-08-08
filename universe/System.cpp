@@ -206,17 +206,17 @@ System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjec
     return retval;
 }
 
-UniverseObject::Visibility System::GetVisibility(int empire_id) const
+Visibility System::GetVisibility(int empire_id) const
 {
     // if system is at least partially owned by this empire it is fully visible, if it has been explored it is partially visible, 
     // and otherwise it will be partially visible
     Empire* empire = 0;
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
-        return FULL_VISIBILITY;
+        return VIS_FULL_VISIBILITY;
     else if ((empire = Empires().Lookup(empire_id)) && empire->HasExploredSystem(ID()))
-        return PARTIAL_VISIBILITY;
+        return VIS_PARTIAL_VISIBILITY;
     else
-        return NO_VISIBILITY;
+        return VIS_NO_VISIBITY;
 }
 
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
@@ -520,7 +520,7 @@ System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const
     ObjectMultimap retval;
     const Universe& universe = GetUniverse();
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (universe.Object(it->second)->GetVisibility(empire_id) <= PARTIAL_VISIBILITY)
+        if (universe.Object(it->second)->GetVisibility(empire_id) <= VIS_PARTIAL_VISIBILITY)
             retval.insert(*it);
     }
     return retval;
