@@ -351,17 +351,15 @@ void SystemIcon::RefreshFleetButtons()
         const int empire_id = it->first;
         const Empire* empire = it->second;
 
-        std::vector<int> contained_objects = m_system.FindObjectIDs();
-        Logger().debugStream() << "System: " << m_system.Name() << " contained objects: ";
-        for (std::vector<int>::const_iterator it1 = contained_objects.begin(); it1 != contained_objects.end(); ++it1)
-            Logger().debugStream() << "... " << *it1;
-
+        //std::vector<int> contained_objects = m_system.FindObjectIDs();
+        //Logger().debugStream() << "System: " << m_system.Name() << " contained objects: ";
+        //for (std::vector<int>::const_iterator it1 = contained_objects.begin(); it1 != contained_objects.end(); ++it1)
+        //    Logger().debugStream() << "... " << *it1;
 
         std::vector<int> fleet_IDs = m_system.FindObjectIDs(StationaryFleetVisitor(empire_id));
-
-        Logger().debugStream() << "System: " << m_system.Name() << " stationary fleet ids: ";
-        for (std::vector<int>::const_iterator it1 = fleet_IDs.begin(); it1 != fleet_IDs.end(); ++it1)
-            Logger().debugStream() << "... " << *it1;
+        //Logger().debugStream() << "System: " << m_system.Name() << " stationary fleet ids: ";
+        //for (std::vector<int>::const_iterator it1 = fleet_IDs.begin(); it1 != fleet_IDs.end(); ++it1)
+        //    Logger().debugStream() << "... " << *it1;
 
         if (!fleet_IDs.empty()) {
             fb = new FleetButton(empire->Color(), fleet_IDs);

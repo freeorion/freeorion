@@ -532,7 +532,14 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
 void Fleet::AddShips(const std::vector<int>& ships)
 {
     for (unsigned int i = 0; i < ships.size(); ++i) {
-        if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
+        int ship_id = ships[i];
+
+        if (this->Contains(ship_id)) {
+            Logger().debugStream() << "Fleet::AddShip this fleet " << this->Name() << " already contained ship " << ship_id;
+            continue;
+        }
+
+        if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
             if (System* system = GetSystem()) {
                 system->Insert(s);
             } else {
@@ -540,7 +547,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
                 s->SetSystem(SystemID());
             }
             s->SetFleetID(ID());
-            m_ships.insert(ships[i]);
+            m_ships.insert(ship_id);
         } else {
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
         }
@@ -549,8 +556,13 @@ void Fleet::AddShips(const std::vector<int>& ships)
     StateChangedSignal();
 }
 
-void Fleet::AddShip(const int ship_id)
+void Fleet::AddShip(int ship_id)
 {
+    if (this->Contains(ship_id)) {
+        Logger().debugStream() << "Fleet::AddShip this fleet " << this->Name() << " already contained ship " << ship_id;
+        return;
+    }
+
     Logger().debugStream() << "Fleet " << this->Name() << " adding ship: " << ship_id;
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
         if (System* system = GetSystem()) {

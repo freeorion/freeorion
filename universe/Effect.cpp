@@ -166,6 +166,19 @@ namespace {
 
         fleet->SetRoute(route_pair.first, route_pair.second);
     }
+
+    /** returns true of the owners of the two passed objects are the same, and both are owned, false otherwise */
+    bool SameOwners(const UniverseObject* obj1, const UniverseObject* obj2) {
+        if (!obj1 || !obj2) return false;
+
+        const std::set<int>& owners1 = obj1->Owners();
+        const std::set<int>& owners2 = obj2->Owners();
+
+        int owner1 = *owners1.begin();
+        int owner2 = *owners2.begin();
+
+        return owner1 == owner2;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -740,10 +753,11 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         // fleets can be inserted into the system that contains the destination object (or the 
         // destination object istelf if it is a system
         if (System* dest_system = destination->GetSystem()) {
-            dest_system->Insert(target);
-            ExploreSystem(dest_system->ID(), target);
-            UpdateFleetRoute(fleet, UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
-
+            if (fleet->SystemID() != dest_system->ID()) {
+                dest_system->Insert(target);
+                ExploreSystem(dest_system->ID(), target);
+                UpdateFleetRoute(fleet, UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
+            }
         } else {
             fleet->UniverseObject::MoveTo(destination);
 
@@ -774,10 +788,23 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
-        // if moved to a fleet, insert the ship into the fleet.  otherwise, need to create a new
-        // fleet to put the ship into (as all ships must be in fleets)
-        if (Fleet* dest_fleet = universe_object_cast<Fleet*>(destination)) {
-            dest_fleet->AddShip(ship->ID());    // this takes care of moving the ship
+        Fleet* old_fleet = ship->GetFleet();
+        Fleet* dest_fleet = universe_object_cast<Fleet*>(destination);  // may be 0 if destination is not a fleet
+        bool same_owners = SameOwners(ship, destination);
+        int dest_sys_id = destination->SystemID();
+        int ship_sys_id = ship->SystemID();
+
+        if (dest_fleet && same_owners) {
+            // ship is moving to a different fleet owned by the same empire, so can be inserted into it
+            dest_fleet->AddShip(ship->ID());    // does nothing if fleet already contains the ship
+
+        } else if (dest_sys_id == ship_sys_id && dest_sys_id != UniverseObject::INVALID_OBJECT_ID) {
+            // ship is moving to the system it is already in, but isn't being or can't be moved into a specific fleet, so the ship
+            // can be left in its current fleet and at its current location
+
+        } else if (destination->X() == ship->X() && destination->Y() == ship->Y()) {
+            // ship is moving to the same location it's already at, but isn't being or can't be moved to a specific fleet, so the ship
+            // can be left in its current fleet and at its current location
 
         } else {
             // need to create a new fleet for ship
@@ -790,6 +817,9 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
                 new_fleet = CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
             }
         }
+
+        if (old_fleet && old_fleet->NumShips() < 1)
+            universe.EffectDestroy(old_fleet->ID());
 
     } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
         // planets need to be located in systems, so get system that contains destination object

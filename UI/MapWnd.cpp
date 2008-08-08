@@ -714,14 +714,13 @@ void MapWnd::InitTurn(int turn_number)
 
     Universe& universe = GetUniverse();
 
-    Logger().debugStream() << "MapWnd::InitTurn universe objects:";
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
-        Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first << " and systemID: " << it->second->SystemID();
+    //Logger().debugStream() << "MapWnd::InitTurn universe objects:";
+    //for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first << " and systemID: " << it->second->SystemID();
 
-
-    Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
-    for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
-        Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
+    //Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
+    //for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
+    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
