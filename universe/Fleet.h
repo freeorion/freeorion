@@ -92,6 +92,7 @@ public:
 
     virtual void            SetSystem(int sys);
     virtual void            MoveTo(double x, double y);
+    void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
 
     virtual void            MovementPhase();
     virtual void            PopGrowthProductionResearchPhase();

@@ -236,7 +236,7 @@ int System::Insert(UniverseObject* obj, int orbit)
         return -1;
     }
 
-    Logger().debugStream() << "System::Insert(" << obj->Name() <<", " << orbit << ")";
+    Logger().debugStream() << "System::Insert system " << this->Name() <<  " (object " << obj->Name() << ", orbit " << orbit << ")";
     //Logger().debugStream() << "..initial objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     //    Logger().debugStream() << "...." << GetUniverse().Object(it->second)->Name();
@@ -520,7 +520,7 @@ System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const
     ObjectMultimap retval;
     const Universe& universe = GetUniverse();
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (universe.Object(it->second)->GetVisibility(empire_id) <= VIS_PARTIAL_VISIBILITY)
+        if (universe.Object(it->second)->GetVisibility(empire_id) >= VIS_PARTIAL_VISIBILITY)
             retval.insert(*it);
     }
     return retval;

@@ -197,6 +197,12 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
     }
     m_route_length = route.second;
 
+    // ensure a zero-length (invalid) route is not requested / sent to a fleet
+    if (m_route.empty()) {
+        m_route.push_back(start_system);
+        m_route_length = 0.0;
+    }
+
 #if DEBUG_FLEET_MOVE_ORDER
     std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : \n"
               << "    m_empire=" << EmpireID() << "\n"

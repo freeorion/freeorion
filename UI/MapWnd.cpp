@@ -714,6 +714,11 @@ void MapWnd::InitTurn(int turn_number)
 
     Universe& universe = GetUniverse();
 
+    Logger().debugStream() << "MapWnd::InitTurn universe objects:";
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+        Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first << " and systemID: " << it->second->SystemID();
+
+
     Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
     for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
         Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
@@ -1394,19 +1399,16 @@ void MapWnd::SelectSystem(int system_id)
 
 void MapWnd::SelectFleet(int fleet_id)
 {
-    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id))
-        SelectFleet(fleet);
+    SelectFleet(GetUniverse().Object<Fleet>(fleet_id));
 }
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
+    if (!fleet) return;
     if (System* system = fleet->GetSystem()) {
-        for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-            if (&it->second->GetSystem() == system) {
-                it->second->ClickFleetButton(fleet);
-                break;
-            }
-        }
+        std::map<int, SystemIcon*>::iterator it = m_system_icons.find(system->ID());
+        if (it != m_system_icons.end())
+            it->second->ClickFleetButton(fleet);
     } else {
         for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
             if (std::find(m_moving_fleet_buttons[i]->Fleets().begin(), m_moving_fleet_buttons[i]->Fleets().end(), fleet) != m_moving_fleet_buttons[i]->Fleets().end()) {

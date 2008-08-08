@@ -637,6 +637,12 @@ void Fleet::MoveTo(double x, double y)
     }
 }
 
+void Fleet::SetNextAndPreviousSystems(int next, int prev)
+{
+    m_prev_system = prev;
+    m_next_system = next;
+}
+
 void Fleet::MovementPhase()
 {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();

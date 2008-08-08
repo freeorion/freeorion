@@ -57,6 +57,8 @@ namespace {
         return retval;
     }
 
+    /** creates a new fleet at \a system and inserts \a ship into it.  used when a ship has been moved by the MoveTo
+        effect separately from the fleet that previously held it.  all ships need to be within fleets. */
     Fleet* CreateNewFleet(System* system, Ship* ship) {
         Universe& universe = GetUniverse();
         if (!system || !ship)
@@ -83,6 +85,9 @@ namespace {
         return fleet;
     }
 
+    /** creates a new fleet at a specified \a x and \a y location within the Universe, and and inserts \a ship into it.
+        used when a ship has been moved by the MoveTo effect separately from the fleet that previously held it.  all
+        ships need to be within fleets. */
     Fleet* CreateNewFleet(double x, double y, Ship* ship) {
         Universe& universe = GetUniverse();
         if (!ship)
@@ -108,12 +113,58 @@ namespace {
         return fleet;
     }
 
+    /** Explores the system with the specified \a system_id for the owner of the specified \a target_object.  Used when
+        moving objects into a system with the MoveTo effect, as otherwise the system wouldn't get explored, and objects
+        being moved into unexplored systems might disappear for players or confuse the AI. */
     void ExploreSystem(int system_id, const UniverseObject* target_object) {
         if (!target_object) return;
         const std::set<int>& owners = target_object->Owners();
         if (!owners.empty())
             if (Empire* owner_empire = Empires().Lookup(*owners.begin()))
                 owner_empire->AddExploredSystem(system_id);
+    }
+
+    /** Resets the previous and next systems of \a fleet and recalcultes / resets the fleet's move route.  Used after a fleet
+        has been moved with the MoveTo effect, as its previous route was assigned based on its previous location, an may not
+        be valid for its new location. */
+    void UpdateFleetRoute(Fleet* fleet, int new_next_system, int new_previous_system) {
+        if (!fleet) {
+            Logger().errorStream() << "UpdateFleetRoute passed a null fleet pointer";
+            return;
+        }
+
+        Universe& universe = GetUniverse();
+
+        System* next_system = universe.Object<System>(new_next_system);
+        if (!next_system) {
+            Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
+            return;
+        }
+
+        fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
+
+        int owner = -1;
+        const std::set<int>& owners = fleet->Owners();
+        if (!owners.empty())
+            owner = *owners.begin();
+
+        int start_system = fleet->SystemID();
+        if (start_system == UniverseObject::INVALID_OBJECT_ID)
+            start_system = new_next_system;
+
+        int dest_system = fleet->FinalDestinationID();
+
+        std::pair<std::list<System*>, double> route_pair = universe.ShortestPath(start_system, dest_system, owner);
+
+        if (route_pair.first.empty()) {
+            route_pair.first.push_back(next_system);
+
+            double dist_x = next_system->X() - fleet->X();
+            double dist_y = next_system->Y() - fleet->Y();
+            route_pair.second = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+        }
+
+        fleet->SetRoute(route_pair.first, route_pair.second);
     }
 }
 
@@ -691,9 +742,33 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         if (System* dest_system = destination->GetSystem()) {
             dest_system->Insert(target);
             ExploreSystem(dest_system->ID(), target);
+            UpdateFleetRoute(fleet, UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
 
         } else {
             fleet->UniverseObject::MoveTo(destination);
+
+            // fleet has been moved to a location that is not a system.  Presumably this will be located on a starlane between two
+            // other systems, which may or may not have been explored.  Regardless, the fleet needs to be given a new next and
+            // previous system so it can move into a system, or can be ordered to a new location, and so that it won't try to move
+            // off of starlanes towards some other system from its current location (if it was heading to another system) and so it
+            // won't be stuck in the middle of a starlane, unable to move (if it wasn't previously moving)
+
+            // if destination object is a fleet or is part of a fleet, can use that fleet's previous and next systems to get
+            // valid next and previous systems for the target fleet.
+            const Fleet* dest_fleet = 0;
+
+            dest_fleet = universe_object_cast<const Fleet*>(destination);
+            if (!dest_fleet)
+                if (const Ship* dest_ship = universe_object_cast<const Ship*>(destination))
+                    dest_fleet = universe_object_cast<const Fleet*>(dest_ship->GetFleet());
+
+            if (dest_fleet) {
+                UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());
+            } else {
+                // need to do something more fancy, although as of this writing, there are no other types of UniverseObject subclass
+                // that can be located between systems other than fleets and ships, so this shouldn't matter for now...
+                Logger().errorStream() << "Effect::MoveTo::Execute couldn't find a way to set the previous and next systems for the target fleet!";
+            }
         }
 
     } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
