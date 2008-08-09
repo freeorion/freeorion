@@ -824,12 +824,15 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
         // planets need to be located in systems, so get system that contains destination object
         if (System* dest_system = destination->GetSystem()) {
-            //  determine if and which orbits are available
-            std::set<int> free_orbits = dest_system->FreeOrbits();
-            if (!free_orbits.empty()) {
-                int orbit = *(free_orbits.begin());
-                dest_system->Insert(target, orbit);
-                ExploreSystem(dest_system->ID(), target);
+            // check if planet is already in this system.  if so, don't need to do anything
+            if (planet->SystemID() == UniverseObject::INVALID_OBJECT_ID || planet->SystemID() != dest_system->ID()) {
+                //  determine if and which orbits are available
+                std::set<int> free_orbits = dest_system->FreeOrbits();
+                if (!free_orbits.empty()) {
+                    int orbit = *(free_orbits.begin());
+                    dest_system->Insert(target, orbit);
+                  ExploreSystem(dest_system->ID(), target);
+                }
             }
         }
         // don't move planets to a location outside a system

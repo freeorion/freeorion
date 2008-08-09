@@ -366,6 +366,10 @@ void Planet::SetHighAxialTilt()
 
 void Planet::AddBuilding(int building_id)
 {
+    if (this->Contains(building_id)) {
+        Logger().debugStream() << "Planet::AddBuilding this planet " << this->Name() << " already contained building " << building_id;
+        return;
+    }
     Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
     if (Building* building = GetUniverse().Object<Building>(building_id)) {
         if (System* system = GetSystem()) {
