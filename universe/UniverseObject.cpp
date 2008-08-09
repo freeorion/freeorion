@@ -96,7 +96,7 @@ int UniverseObject::SystemID() const
 
 System* UniverseObject::GetSystem() const
 {
-    return m_system_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<System>(m_system_id);
+    return SystemID() == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<System>(SystemID());
 }
 
 const std::set<std::string>& UniverseObject::Specials() const

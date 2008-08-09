@@ -93,6 +93,15 @@ bool System::HasWormholeTo(int id) const
    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
+int System::SystemID() const
+{
+    // Systems don't have a valid UniverseObject::m_system_id since it is never set by inserting them into (another) system.
+    // When new systems are created, it's also not set because UniverseObject are created without a valid id number, and only
+    // get one when being inserted into the Universe.  Universe::Insert overloads could check what is being inserted, but
+    // having SystemID be virtual and overriding it it in this class (System) is easier.
+    return this->ID();
+}
+
 std::vector<UniverseObject*> System::FindObjects() const
 {
     Universe& universe = GetUniverse();

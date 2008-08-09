@@ -530,7 +530,7 @@ int Universe::Insert(UniverseObject* obj)
     return retval;
 }
 
-bool Universe::InsertID(UniverseObject* obj, int id )
+bool Universe::InsertID(UniverseObject* obj, int id)
 {
     bool retval = false;
 

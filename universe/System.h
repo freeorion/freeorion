@@ -64,6 +64,8 @@ public:
     bool                    HasStarlaneTo(int id) const;    ///< returns true if there is a starlane from this system to the system with ID number \a id
     bool                    HasWormholeTo(int id) const;    ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
+    virtual int             SystemID() const;               ///< returns this->ID()
+
     virtual std::vector<UniverseObject*>
                             FindObjects() const;                ///< returns objects contained within this system
     virtual std::vector<int>

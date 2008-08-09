@@ -27,7 +27,8 @@ namespace Effect {
     class SetPlanetSize;
     class AddOwner;
     class RemoveOwner;
-    //class Create;
+    class CreatePlanet;
+    class CreateBuilding;
     class Destroy;
     class AddSpecial;
     class RemoveSpecial;
@@ -64,15 +65,15 @@ public:
                  const std::vector<EffectBase*>& effects, const std::string& stacking_group = "");
     virtual ~EffectsGroup();
 
-    void GetTargetSet(int source_id, TargetSet& targets) const;
-    void GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
-    void Execute(int source_id, const TargetSet& targets) const;                    // execute all effects in group
-    void Execute(int source_id, const TargetSet& targets, int effect_index) const;  // execute effect with \a effect_index (but not other effects)
-    const std::string& StackingGroup() const;
+    void                            GetTargetSet(int source_id, TargetSet& targets) const;
+    void                            GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
+    void                            Execute(int source_id, const TargetSet& targets) const;                    // execute all effects in group
+    void                            Execute(int source_id, const TargetSet& targets, int effect_index) const;  // execute effect with \a effect_index (but not other effects)
+    const std::string&              StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
-    Description GetDescription() const;
-    std::string DescriptionString() const;
-    std::string Dump() const;
+    Description                     GetDescription() const;
+    std::string                     DescriptionString() const;
+    std::string                     Dump() const;
 
 protected:
     const Condition::ConditionBase* m_scope;
@@ -98,7 +99,7 @@ class Effect::EffectBase
 public:
     virtual ~EffectBase();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const = 0;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const = 0;
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 
@@ -117,7 +118,7 @@ public:
     SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value, bool max);
     virtual ~SetMeter();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
     MeterType GetMeterType() const {return m_meter;};
@@ -140,7 +141,7 @@ public:
     SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireStockpile();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -163,7 +164,7 @@ public:
     SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type);
     virtual ~SetPlanetType();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -184,7 +185,7 @@ public:
     SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~SetPlanetSize();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -203,7 +204,7 @@ public:
     AddOwner(const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~AddOwner();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -222,7 +223,7 @@ public:
     RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~RemoveOwner();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -234,15 +235,45 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// TODO: create multiple Create*s for different kinds of objects
-/*class Effect::Create : public Effect::EffectBase
+/** Creates a new Planet with specified \a type and \a size at the system with specified \a location_id */
+class Effect::CreatePlanet : public Effect::EffectBase
 {
 public:
-    Create();
+    CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size,
+                 const ValueRef::ValueRefBase<int>* location_id);
+    virtual ~CreatePlanet();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
-};*/
+    virtual std::string Dump() const;
+private:
+    const ValueRef::ValueRefBase<PlanetType>*   m_type;
+    const ValueRef::ValueRefBase<PlanetSize>*   m_size;
+    const ValueRef::ValueRefBase<int>*          m_location_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Creates a new Building with specified \a type at the system with specified \a location_id */
+class Effect::CreateBuilding : public Effect::EffectBase
+{
+public:
+    CreateBuilding(const std::string& building_type, const ValueRef::ValueRefBase<int>* location_id);
+    virtual ~CreateBuilding();
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+private:
+    const std::string                   m_type;
+    const ValueRef::ValueRefBase<int>*  m_location_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
 
 /** Destroys the target object.  When executed on objects that contain other objects (such as Fleets and Planets), all
     contained objects are destroyed as well.  Has no effect on System objects.  Destroy effects are executed after all
@@ -252,7 +283,7 @@ class Effect::Destroy : public Effect::EffectBase
 public:
     Destroy();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -268,7 +299,7 @@ class Effect::AddSpecial : public Effect::EffectBase
 public:
     AddSpecial(const std::string& name);
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -286,7 +317,7 @@ class Effect::RemoveSpecial : public Effect::EffectBase
 public:
     RemoveSpecial(const std::string& name);
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -305,7 +336,7 @@ public:
     SetStarType(const ValueRef::ValueRefBase<StarType>* type);
     virtual ~SetStarType();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -325,7 +356,7 @@ public:
     MoveTo(const ValueRef::ValueRefBase<int>* object_id);
     virtual ~MoveTo();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -347,7 +378,7 @@ public:
     SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech);
     virtual ~SetTechAvailability();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -368,7 +399,7 @@ public:
     SetEffectTarget(const ValueRef::ValueRefBase<int>* effect_target_id);
     virtual ~SetEffectTarget();
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 

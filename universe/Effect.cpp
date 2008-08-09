@@ -616,16 +616,90 @@ std::string RemoveOwner::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// Create                                                //
+// CreatePlanet                                          //
 ///////////////////////////////////////////////////////////
-// TODO: create multiple Create*s for different kinds of objects
-/*class Effect::Create : public Effect::EffectBase
-{
-public:
-    Create();
+CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size,
+                           const ValueRef::ValueRefBase<int>* location_id) :
+    m_type(type),
+    m_size(size),
+    m_location_id(location_id)
+{}
 
-    virtual void Execute(const UniverseObject* source, UniverseObject* target) const;
-};*/
+CreatePlanet::~CreatePlanet()
+{
+    delete m_type;
+    delete m_size;
+    delete m_location_id;
+}
+
+void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    int location_id = m_location_id->Eval(source, target);
+    UniverseObject* location_obj = GetUniverse().Object(location_id);
+    if (!location_obj) {
+        Logger().errorStream() << "CreatePlanet::Execute couldn't get a location object with id " << location_id;
+        return;
+    }
+
+    System* location = location_obj->GetSystem();
+    if (!location) {
+        Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
+        return;
+    }
+
+    PlanetSize size = m_size->Eval(source, target);
+    PlanetType type = m_type->Eval(source, target);
+    if (size == INVALID_PLANET_SIZE || type == INVALID_PLANET_TYPE) {
+        Logger().errorStream() << "CreatePlanet::Execute got invalid size or type of planet to create...";
+        return;
+    }
+
+    //  determine if and which orbits are available
+    std::set<int> free_orbits = location->FreeOrbits();
+    if (free_orbits.empty()) {
+        Logger().errorStream() << "CreatePlanet::Execute couldn't find any free orbits in system where planet was to be created";
+        return;
+    }
+
+    Planet* planet = new Planet(type, size);
+    int new_planet_id = GetNewObjectID();
+    GetUniverse().InsertID(planet, new_planet_id);
+
+    int orbit = *(free_orbits.begin());
+    location->Insert(planet, orbit);
+}
+
+std::string CreatePlanet::Description() const
+{
+    return "";
+}
+
+std::string CreatePlanet::Dump() const
+{
+    return "";
+}
+
+
+///////////////////////////////////////////////////////////
+// CreateBuilding                                        //
+///////////////////////////////////////////////////////////
+//class Effect::CreateBuilding : public Effect::EffectBase
+//{
+//public:
+//    CreateBuilding(const std::string& building_type, const ValueRef::ValueRefBase<int>* location_id);
+//    virtual ~CreateBuilding();
+//
+//    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+//    virtual std::string Description() const;
+//    virtual std::string Dump() const;
+//private:
+//    const std::string                   m_type;
+//    const ValueRef::ValueRefBase<int>*  m_location_id;
+//
+//    friend class boost::serialization::access;
+//    template <class Archive>
+//    void serialize(Archive& ar, const unsigned int version);
+//};
 
 
 ///////////////////////////////////////////////////////////
@@ -831,7 +905,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
                 if (!free_orbits.empty()) {
                     int orbit = *(free_orbits.begin());
                     dest_system->Insert(target, orbit);
-                  ExploreSystem(dest_system->ID(), target);
+                    ExploreSystem(dest_system->ID(), target);
                 }
             }
         }
