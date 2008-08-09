@@ -671,12 +671,19 @@ void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target)
 
 std::string CreatePlanet::Description() const
 {
-    return "";
+    std::string type_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    std::string size_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0))) : m_size->Description();
+    std::string location_str = ValueRef::ConstantExpr(m_location_id) ? GetUniverse().Object(m_location_id->Eval(0, 0))->Name() : m_location_id->Description();
+
+    return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
+               % type_str
+               % size_str
+               % location_str);
 }
 
 std::string CreatePlanet::Dump() const
 {
-    return "";
+    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + " location = " + m_location_id->Dump() + "\n";
 }
 
 

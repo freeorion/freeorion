@@ -2244,6 +2244,8 @@ Removes %1% special from object
 DESC_SET_STAR_TYPE
 Changes the star's type to %1%
 
+DESC_MOVE_TO
+Moves the object to the location of an object with id that is %1%
 
 # SetTechAvailability
 
@@ -2258,6 +2260,15 @@ Makes %1% available to empire %2%
 
 DESC_SET_TECH_UNAVAIL
 Makes %1% unavailable to empire %2%
+
+
+# Object Creation
+
+DESC_CREATE_PLANET
+Creates a planet of type %1% of size %2% at the location of an object with id that is %3%
+
+DESC_CREATE_BUILDING
+Creates a building of type %1% at the location of an object with id that is %2%
 
 
 # Conditions
