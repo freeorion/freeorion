@@ -4,6 +4,7 @@
 #include "ValueRefParser.h"
 #include "ValueRef.h"
 #include "Effect.h"
+#include "Condition.h"
 
 using namespace boost::spirit;
 using namespace phoenix;
@@ -52,22 +53,38 @@ namespace {
             member2 empire;
         };
 
-        struct ObjectIDParamClosure : boost::spirit::closure<ObjectIDParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<int>*>
-        {
-            member1 this_;
-            member2 object_id;
-        };
-
         struct NameParamClosure : boost::spirit::closure<NameParamClosure, Effect::EffectBase*, std::string>
         {
             member1 this_;
             member2 name;
         };
 
+        struct ConditionParamClosure : boost::spirit::closure<ConditionParamClosure, Effect::EffectBase*, Condition::ConditionBase*>
+        {
+            member1 this_;
+            member2 condition;
+        };
+
         struct SetStarTypeClosure : boost::spirit::closure<SetStarTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*>
         {
             member1 this_;
             member2 type;
+        };
+
+        struct CreatePlanetClosure : boost::spirit::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*,
+                                                            ValueRef::ValueRefBase< ::PlanetType>*, ValueRef::ValueRefBase<int>*>
+        {
+            member1 this_;
+            member2 type;
+            member3 size;
+            member4 location_id;
+        };
+
+        struct CreateBuildingClosure : boost::spirit::closure<CreateBuildingClosure, Effect::EffectBase*, std::string, ValueRef::ValueRefBase<int>*>
+        {
+            member1 this_;
+            member2 building_type;
+            member3 location_id;
         };
 
         struct SetTechAvailabilityClosure : boost::spirit::closure<SetTechAvailabilityClosure, Effect::EffectBase*, std::string, bool, bool>
@@ -83,9 +100,11 @@ namespace {
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
         typedef rule<Scanner, EmpireParamClosure::context_t>            EmpireParamRule;
-        typedef rule<Scanner, ObjectIDParamClosure::context_t>          ObjectIDParamRule;
         typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
+        typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
         typedef rule<Scanner, SetStarTypeClosure::context_t>            SetStarTypeRule;
+        typedef rule<Scanner, CreatePlanetClosure::context_t>           CreatePlanetRule;
+        typedef rule<Scanner, CreateBuildingClosure::context_t>         CreateBuildingRule;
         typedef rule<Scanner, SetTechAvailabilityClosure::context_t>    SetTechAvailabilityRule;
 
         SetMeterRule            set_meter;
@@ -94,7 +113,9 @@ namespace {
         SetPlanetSizeRule       set_planet_size;
         EmpireParamRule         add_owner;
         EmpireParamRule         remove_owner;
-        ObjectIDParamRule       move_to;
+        CreatePlanetRule        create_planet;
+        CreateBuildingRule      create_building;
+        ConditionParamRule      move_to;
         Rule                    destroy;
         NameParamRule           add_special;
         NameParamRule           remove_special;
@@ -106,7 +127,7 @@ namespace {
         ParamLabel              planetsize_label;
         ParamLabel              empire_label;
         ParamLabel              name_label;
-        ParamLabel              object_id_label;
+        ParamLabel              destination_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -115,7 +136,7 @@ namespace {
         planetsize_label("size"),
         empire_label("empire"),
         name_label("name"),
-        object_id_label("objectid")
+        destination_label("destination")
     {
         set_meter =
             ((str_p("setmax")[set_meter.max_meter = val(true)]
@@ -164,10 +185,17 @@ namespace {
              >> empire_label >> int_expr_p[remove_owner.empire = arg1])
             [remove_owner.this_ = new_<Effect::RemoveOwner>(remove_owner.empire)];
 
+        //create_planet =
+        //    (str_p("createplanet")
+        //     >> type_label >> planettype_expr_p[create_planet.type = arg1]
+        //     >> planetsize_label >> planetsize_expr_p[create_planet.size = arg1]
+        //     >> empire_label >> int_expr_p[create_planet.location_id = arg1])
+        //    [create_planet.this_ = new_<Effect::CreatePlanet>(create_planet.type, create_planet.size, create_planet.location_id)];
+
         move_to =
             (str_p("moveto")
-             >> object_id_label >> int_expr_p[move_to.object_id = arg1])
-            [move_to.this_ = new_<Effect::MoveTo>(move_to.object_id)];
+             >> destination_label >> condition_p[move_to.condition = arg1])
+            [move_to.this_ = new_<Effect::MoveTo>(move_to.condition)];
 
         destroy =
             str_p("destroy")

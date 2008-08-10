@@ -531,7 +531,7 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
 
         ObjectSet::const_iterator contained_it = condition_targets.begin();
         ObjectSet::const_iterator contained_end = condition_targets.end();
-        
+
         if (search_domain == NON_TARGETS) {
             // non_targets (from_set) objects need to contain at least one condition_target to be transferred from
             // from_set to to_set.

@@ -618,30 +618,20 @@ std::string RemoveOwner::Dump() const
 ///////////////////////////////////////////////////////////
 // CreatePlanet                                          //
 ///////////////////////////////////////////////////////////
-CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size,
-                           const ValueRef::ValueRefBase<int>* location_id) :
+CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size) :
     m_type(type),
-    m_size(size),
-    m_location_id(location_id)
+    m_size(size)
 {}
 
 CreatePlanet::~CreatePlanet()
 {
     delete m_type;
     delete m_size;
-    delete m_location_id;
 }
 
 void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    int location_id = m_location_id->Eval(source, target);
-    UniverseObject* location_obj = GetUniverse().Object(location_id);
-    if (!location_obj) {
-        Logger().errorStream() << "CreatePlanet::Execute couldn't get a location object with id " << location_id;
-        return;
-    }
-
-    System* location = location_obj->GetSystem();
+    System* location = target->GetSystem();
     if (!location) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -673,17 +663,15 @@ std::string CreatePlanet::Description() const
 {
     std::string type_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
     std::string size_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0))) : m_size->Description();
-    std::string location_str = ValueRef::ConstantExpr(m_location_id) ? GetUniverse().Object(m_location_id->Eval(0, 0))->Name() : m_location_id->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
                % type_str
-               % size_str
-               % location_str);
+               % size_str);
 }
 
 std::string CreatePlanet::Dump() const
 {
-    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + " location = " + m_location_id->Dump() + "\n";
+    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n";
 }
 
 
@@ -809,26 +797,33 @@ std::string SetStarType::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// MoveTo                                              //
+// MoveTo                                                //
 ///////////////////////////////////////////////////////////
-MoveTo::MoveTo(const ValueRef::ValueRefBase<int>* object_id) :
-    m_destination_object_id(object_id)
+MoveTo::MoveTo(const Condition::ConditionBase* location_condition) :
+    m_location_condition(location_condition)
 {}
 
 MoveTo::~MoveTo()
 {
-    delete m_destination_object_id;
+    delete m_location_condition;
 }
 
 void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     Universe& universe = GetUniverse();
-    int dest_id = m_destination_object_id->Eval(source, target);
-    UniverseObject* destination = universe.Object(dest_id);
-    if (!destination) {
-        Logger().errorStream() << "MoveTo::Execute couldn't get destination object with specified id: " << dest_id;
+
+    Condition::ObjectSet potential_locations;
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+        potential_locations.insert(it->second);
+
+    Condition::ObjectSet valid_locations;
+
+    m_location_condition->Eval(source, valid_locations, potential_locations);
+
+    if (valid_locations.empty())
         return;
-    }
+
+    UniverseObject* destination = *valid_locations.begin();
 
     if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
         // fleets can be inserted into the system that contains the destination object (or the 
@@ -940,13 +935,13 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 
 std::string MoveTo::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_destination_object_id) ? GetUniverse().Object(m_destination_object_id->Eval(0, 0))->Name() : m_destination_object_id->Description();
+    std::string value_str = m_location_condition->Description();
     return str(FlexibleFormat(UserString("DESC_MOVE_TO")) % value_str);
 }
 
 std::string MoveTo::Dump() const
 {
-    return DumpIndent() + "MoveTo destination_object_id =  empire = " + m_destination_object_id->Dump() + "\n";
+    return DumpIndent() + "MoveTo destination = " + m_location_condition->Dump() + "\n";
 }
 
 

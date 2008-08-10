@@ -239,8 +239,7 @@ private:
 class Effect::CreatePlanet : public Effect::EffectBase
 {
 public:
-    CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size,
-                 const ValueRef::ValueRefBase<int>* location_id);
+    CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~CreatePlanet();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -249,7 +248,6 @@ public:
 private:
     const ValueRef::ValueRefBase<PlanetType>*   m_type;
     const ValueRef::ValueRefBase<PlanetSize>*   m_size;
-    const ValueRef::ValueRefBase<int>*          m_location_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -260,7 +258,7 @@ private:
 class Effect::CreateBuilding : public Effect::EffectBase
 {
 public:
-    CreateBuilding(const std::string& building_type, const ValueRef::ValueRefBase<int>* location_id);
+    CreateBuilding(const std::string& building_type);
     virtual ~CreateBuilding();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -268,7 +266,6 @@ public:
     virtual std::string Dump() const;
 private:
     const std::string                   m_type;
-    const ValueRef::ValueRefBase<int>*  m_location_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -311,7 +308,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Removes the Special with the name \a name to the target object.  This has no effect if no such Special was already attached to the target object. */
+/** Removes the Special with the name \a name to the target object.  This has no effect if no such Special was already
+    attached to the target object. */
 class Effect::RemoveSpecial : public Effect::EffectBase
 {
 public:
@@ -348,12 +346,12 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Moves an UniverseObject to a location of another UniverseObject with id \a object_id.  If there are are no objects id
-    that id, nothing is done. */
+/** Moves an UniverseObject to a location of another UniverseObject with id \a object_id.  If there are are no objects
+    id that id, nothing is done. */
 class Effect::MoveTo : public Effect::EffectBase
 {
 public:
-    MoveTo(const ValueRef::ValueRefBase<int>* object_id);
+    MoveTo(const Condition::ConditionBase* location_condition);
     virtual ~MoveTo();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -361,7 +359,7 @@ public:
     virtual std::string Dump() const;
 
 private:
-    const ValueRef::ValueRefBase<int>* m_destination_object_id;
+    const Condition::ConditionBase* m_location_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
