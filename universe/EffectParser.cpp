@@ -71,20 +71,18 @@ namespace {
             member2 type;
         };
 
-        struct CreatePlanetClosure : boost::spirit::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*,
-                                                            ValueRef::ValueRefBase< ::PlanetType>*, ValueRef::ValueRefBase<int>*>
+        struct CreatePlanetClosure : boost::spirit::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*,
+                                                            ValueRef::ValueRefBase< ::PlanetSize>*>
         {
             member1 this_;
             member2 type;
             member3 size;
-            member4 location_id;
         };
 
-        struct CreateBuildingClosure : boost::spirit::closure<CreateBuildingClosure, Effect::EffectBase*, std::string, ValueRef::ValueRefBase<int>*>
+        struct CreateBuildingClosure : boost::spirit::closure<CreateBuildingClosure, Effect::EffectBase*, std::string>
         {
             member1 this_;
-            member2 building_type;
-            member3 location_id;
+            member2 type;
         };
 
         struct SetTechAvailabilityClosure : boost::spirit::closure<SetTechAvailabilityClosure, Effect::EffectBase*, std::string, bool, bool>
@@ -185,12 +183,16 @@ namespace {
              >> empire_label >> int_expr_p[remove_owner.empire = arg1])
             [remove_owner.this_ = new_<Effect::RemoveOwner>(remove_owner.empire)];
 
-        //create_planet =
-        //    (str_p("createplanet")
-        //     >> type_label >> planettype_expr_p[create_planet.type = arg1]
-        //     >> planetsize_label >> planetsize_expr_p[create_planet.size = arg1]
-        //     >> empire_label >> int_expr_p[create_planet.location_id = arg1])
-        //    [create_planet.this_ = new_<Effect::CreatePlanet>(create_planet.type, create_planet.size, create_planet.location_id)];
+        create_planet =
+            (str_p("createplanet")
+             >> type_label >> planettype_expr_p[create_planet.type = arg1]
+             >> planetsize_label >> planetsize_expr_p[create_planet.size = arg1])
+            [create_planet.this_ = new_<Effect::CreatePlanet>(create_planet.type, create_planet.size)];
+
+        create_building =
+            (str_p("createbuilding")
+             >> name_label >> name_p[create_building.type = arg1])
+            [create_building.this_ = new_<Effect::CreateBuilding>(create_building.type)];
 
         move_to =
             (str_p("moveto")

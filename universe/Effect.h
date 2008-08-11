@@ -259,13 +259,12 @@ class Effect::CreateBuilding : public Effect::EffectBase
 {
 public:
     CreateBuilding(const std::string& building_type);
-    virtual ~CreateBuilding();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
-    const std::string                   m_type;
+    const std::string   m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -467,6 +466,21 @@ void Effect::RemoveOwner::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template <class Archive>
+void Effect::CreatePlanet::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_size);
+}
+
+template <class Archive>
+void Effect::CreateBuilding::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_type);
 }
 
 template <class Archive>

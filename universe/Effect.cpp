@@ -678,23 +678,23 @@ std::string CreatePlanet::Dump() const
 ///////////////////////////////////////////////////////////
 // CreateBuilding                                        //
 ///////////////////////////////////////////////////////////
-//class Effect::CreateBuilding : public Effect::EffectBase
-//{
-//public:
-//    CreateBuilding(const std::string& building_type, const ValueRef::ValueRefBase<int>* location_id);
-//    virtual ~CreateBuilding();
-//
-//    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
-//    virtual std::string Description() const;
-//    virtual std::string Dump() const;
-//private:
-//    const std::string                   m_type;
-//    const ValueRef::ValueRefBase<int>*  m_location_id;
-//
-//    friend class boost::serialization::access;
-//    template <class Archive>
-//    void serialize(Archive& ar, const unsigned int version);
-//};
+CreateBuilding::CreateBuilding(const std::string& building_type) :
+    m_type(building_type)
+{}
+
+void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+}
+
+std::string CreateBuilding::Description() const
+{
+    return "!";
+}
+
+std::string CreateBuilding::Dump() const
+{
+    return "@$";
+}
 
 
 ///////////////////////////////////////////////////////////
