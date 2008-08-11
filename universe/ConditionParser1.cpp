@@ -117,6 +117,8 @@ namespace {
         Rule                    all;
         OwnedByRule             owned_by;
         Rule                    source;
+        Rule                    homeworld;
+        Rule                    capitol;
         NameParamRule           building;
         PlanetTypeRule          planet_type;
         PlanetSizeRule          planet_size;
@@ -144,6 +146,14 @@ namespace {
         source =
             str_p("source")
             [source.this_ = new_<Condition::Self>()];
+
+        homeworld =
+            str_p("homeworld")
+            [homeworld.this_ = new_<Condition::Homeworld>()];
+
+        capitol =
+            str_p("capitol")
+            [capitol.this_ = new_<Condition::Capitol>()];
 
         building =
             (str_p("building")

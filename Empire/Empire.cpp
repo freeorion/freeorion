@@ -614,6 +614,7 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
 Empire::Empire() :
     m_id(-1),
     m_homeworld_id(UniverseObject::INVALID_OBJECT_ID),
+    m_capitol_id(UniverseObject::INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_food_total_distributed(0),
@@ -632,6 +633,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_player_name(player_name),
     m_color(color), 
     m_homeworld_id(homeworld_id),
+    m_capitol_id(homeworld_id),
     m_resource_pools(),
     m_population_pool(),
     m_food_total_distributed(0),
@@ -676,9 +678,20 @@ int Empire::HomeworldID() const
 
 int Empire::CapitolID() const
 {
-    // TODO: come up with a system for changing (moving) the capitol from the homeworld to somewhere else
-    return m_homeworld_id;
+    return m_capitol_id;
 }
+
+void Empire::SetCapitolID(int id)
+{
+    const Universe& universe = GetUniverse();
+    const Planet* planet = universe.Object<Planet>(id);
+    if (planet) {
+        const std::set<int>& owners = planet->Owners();
+        if (owners.size() == 1 && *owners.begin() == EmpireID()) {
+            m_capitol_id = id;
+        }
+    }
+};
 
 bool Empire::ResearchableTech(const std::string& name) const
 {

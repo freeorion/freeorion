@@ -107,6 +107,7 @@ namespace {
 
         SetMeterRule            set_meter;
         SetOwnerStockpileRule   set_owner_stockpile;
+        Rule                    set_owner_capitol;
         SetPlanetTypeRule       set_planet_type;
         SetPlanetSizeRule       set_planet_size;
         EmpireParamRule         add_owner;
@@ -162,6 +163,10 @@ namespace {
               | str_p("setownertradestockpile")[set_owner_stockpile.stockpile_type = val(RE_TRADE)])
              >> value_label >> double_expr_p[set_owner_stockpile.value = arg1])
             [set_owner_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_owner_stockpile.stockpile_type, set_owner_stockpile.value)];
+
+        set_owner_capitol =
+            str_p("setownercapitol")
+            [set_owner_capitol.this_ = new_<Effect::SetEmpireCapitol>()];
 
         set_planet_type =
             (str_p("setplanettype")

@@ -476,6 +476,33 @@ std::string SetEmpireStockpile::Dump() const
 
 
 ///////////////////////////////////////////////////////////
+// SetEmpireCapitol                                      //
+///////////////////////////////////////////////////////////
+SetEmpireCapitol::SetEmpireCapitol()
+{}
+
+void SetEmpireCapitol::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    if (const Planet* planet = universe_object_cast<const Planet*>(target)) {   // verify that target object is a planet
+        const std::set<int>& owners = planet->Owners();                         // get owner(s)
+        if (owners.size() == 1)                                                 // verify that there is only a single owner
+            if (Empire* empire = Empires().Lookup(*owners.begin()))             // get that owner empire object
+                empire->SetCapitolID(planet->ID());                             // make target planet the capitol of its owner empire
+    }
+}
+
+std::string SetEmpireCapitol::Description() const
+{
+    return UserString("DESC_SET_EMPIRE_CAPITOL");
+}
+
+std::string SetEmpireCapitol::Dump() const
+{
+    return DumpIndent() + "SetEmpireCapitol\n";
+}
+
+
+///////////////////////////////////////////////////////////
 // SetPlanetType                                         //
 ///////////////////////////////////////////////////////////
 SetPlanetType::SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type) :
@@ -688,12 +715,13 @@ void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* targe
 
 std::string CreateBuilding::Description() const
 {
-    return "!";
+    return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
+               % UserString(m_type));
 }
 
 std::string CreateBuilding::Dump() const
 {
-    return "@$";
+    return DumpIndent() + "CreateBuilding type = " + m_type + "\n";
 }
 
 

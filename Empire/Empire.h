@@ -320,12 +320,14 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void                    SetCapitolID(int id);                           ///< If the object with id \a id is a planet owned by this empire, sets that planet to be this empire's capitol, and otherwise does nothing
+
     /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
         it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
         is placed at the end of the queue. If \a tech is already available, no action is taken. */
     void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
 
-    void                    RemoveTechFromQueue(const Tech* tech);                 ///< Removes \a tech from the research queue, if it is in the research queue already.
+    void                    RemoveTechFromQueue(const Tech* tech);          ///< Removes \a tech from the research queue, if it is in the research queue already.
 
     /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
         queue.size() <= pos, the build is placed at the end of the queue. */
@@ -469,6 +471,7 @@ private:
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_homeworld_id;             ///< the ID of the empire's homeworld
+    int                             m_capitol_id;               ///< the ID of the empire's capitol planet
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
 
@@ -585,6 +588,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (Universe::ALL_OBJECTS_VISIBLE ||
         Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire) {
         ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
+            & BOOST_SERIALIZATION_NVP(m_capitol_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)

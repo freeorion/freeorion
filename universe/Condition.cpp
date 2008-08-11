@@ -369,6 +369,54 @@ bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* 
 }
 
 ///////////////////////////////////////////////////////////
+// Homeworld                                             //
+///////////////////////////////////////////////////////////
+Condition::Homeworld::Homeworld()
+{}
+
+std::string Condition::Homeworld::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_HOMEWORLD";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Homeworld::Dump() const
+{
+    return DumpIndent() + "Homeworld\n";
+}
+
+bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// Capitol                                               //
+///////////////////////////////////////////////////////////
+Condition::Capitol::Capitol()
+{}
+
+std::string Condition::Capitol::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_CAPITOL";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Capitol::Dump() const
+{
+    return DumpIndent() + "Capitol\n";
+}
+
+bool Condition::Capitol::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    return false;
+}
+
+///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
 Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
