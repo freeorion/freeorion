@@ -2066,8 +2066,8 @@ namespace Delauney {
     } // end function
 } // end namespace
 #endif
-void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, 
-                              SpecialsFrequency specials_freq, int players, int ai_players, 
+void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
+                              SpecialsFrequency specials_freq, int players, int ai_players,
                               const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
@@ -2082,6 +2082,14 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     m_last_allocated_object_id = -1;
     m_last_allocated_design_id = -1;
+
+    // ensure there are enough systems to give all players homeworlds
+    int total_players = players + ai_players;
+    const int MIN_SYSTEMS_PER_PLAYER = 3;
+    if (size < total_players*MIN_SYSTEMS_PER_PLAYER) {
+        Logger().debugStream() << "Universe creation requested with " << size << " systems, but this is too few for " << total_players << " players.  Creating a universe with " << total_players*MIN_SYSTEMS_PER_PLAYER << " systems instead";
+        size = total_players*MIN_SYSTEMS_PER_PLAYER;
+    }
 
     Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
 
