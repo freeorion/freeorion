@@ -389,6 +389,12 @@ std::string Condition::Homeworld::Dump() const
 
 bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    // check if any empire's homeworld's ID is that target object's id.  if it is, the target object is a homeworld.
+    int target_id = target->ID();
+    const EmpireManager& empires = Empires();
+    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
+        if (it->second->HomeworldID() == target_id)
+            return true;
     return false;
 }
 
@@ -413,6 +419,12 @@ std::string Condition::Capitol::Dump() const
 
 bool Condition::Capitol::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    // check if any empire's capitol's ID is that target object's id.  if it is, the target object is a capitol.
+    int target_id = target->ID();
+    const EmpireManager& empires = Empires();
+    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
+        if (it->second->CapitolID() == target_id)
+            return true;
     return false;
 }
 

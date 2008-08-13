@@ -505,7 +505,7 @@ public:
     {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
-        double axial_tilt = std::max(-75.0, std::min(static_cast<double>(m_planet.AxialTilt()), 88.0));
+        double axial_tilt = std::max(-30.0, std::min(static_cast<double>(m_planet.AxialTilt()), 60.0));
         RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Width(), m_surface_texture, m_initial_rotation,
                      1.0 / m_planet.RotationalPeriod(), axial_tilt, m_planet_data.shininess, m_star_type);
         if (m_atmosphere_texture) {
