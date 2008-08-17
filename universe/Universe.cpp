@@ -277,7 +277,7 @@ Universe::EdgeVisibilityFilter::EdgeVisibilityFilter(const SystemGraph* graph, i
 
 bool Universe::EdgeVisibilityFilter::CanSeeAtLeastOneSystem(const Empire* empire, int system1, int system2)
 {
-    return empire->HasExploredSystem(system1) || empire->HasExploredSystem(system2);
+    return empire && (empire->HasExploredSystem(system1) || empire->HasExploredSystem(system2));
 }
 
 
@@ -951,6 +951,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
 {
     m_marked_destroyed.clear();
+    m_marked_for_victory.clear();
     std::map<std::string, Effect::EffectsGroup::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
@@ -1171,6 +1172,11 @@ bool Universe::Delete(int id)
 void Universe::EffectDestroy(int id)
 {
     m_marked_destroyed.insert(id);
+}
+
+void Universe::EffectVictory(int object_id)
+{
+    m_marked_for_victory.insert(object_id);
 }
 
 void Universe::HandleEmpireElimination(int empire_id)

@@ -64,7 +64,7 @@ public:
     bool EliminateEmpire(int id);
 
 private:
-    std::map<int, Empire*> m_empire_map;    
+    std::map<int, Empire*> m_empire_map;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -37,6 +37,7 @@ namespace Effect {
     class SetTechAvailability;
     class SetEffectTarget;
     class MoveTo;
+    class Victory;
 }
 
 namespace ValueRef {
@@ -383,6 +384,21 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Causes the owner empire of the target object to win the game.  If the target object has multiple owners, nothing is done. */
+class Effect::Victory : public Effect::EffectBase
+{
+public:
+    Victory();
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
 
 /** Sets the availability of tech \a tech_name to empire \a empire_id.  If \a include_tech is true, the tech is fully available, just as if it were
     researched normally; otherwise, only the items that the tech includes are made available.  Note that this means this Effect is intended also to
@@ -539,6 +555,12 @@ void Effect::MoveTo::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_destination_object_id);
+}
+
+template <class Archive>
+void Effect::Victory::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
 }
 
 template <class Archive>

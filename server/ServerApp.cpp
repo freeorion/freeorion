@@ -48,6 +48,18 @@ PlayerSaveGameData::PlayerSaveGameData(const std::string& name, Empire* empire, 
     m_save_state_string(save_state_string)
 {}
 
+////////////////////////////////////////////////
+// ServerSaveGameData
+////////////////////////////////////////////////
+ServerSaveGameData::ServerSaveGameData() :
+    m_current_turn(-1),
+    m_victors()
+{}
+
+ServerSaveGameData::ServerSaveGameData(const int& current_turn, const std::set<int>& victors) :
+    m_current_turn(current_turn),
+    m_victors(victors)
+{}
 
 ////////////////////////////////////////////////
 // ServerApp
@@ -227,7 +239,7 @@ void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
     NewGameInit(setup_data->m_size, setup_data->m_shape, setup_data->m_age, setup_data->m_starlane_freq, setup_data->m_planet_density, setup_data->m_specials_freq, player_setup_data);
 }
 
-void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data)
+void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data, boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     std::set<int> unused_save_game_data;
     std::map<int, int> player_id_to_save_game_data_index;
@@ -240,7 +252,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         else
             unused_save_game_data.insert(i);
     }
-    LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, unused_save_game_data);
+    LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, unused_save_game_data, server_save_game_data);
 }
 
 void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
@@ -248,7 +260,7 @@ void ServerApp::NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data)
     NewGameInit(lobby_data->m_size, lobby_data->m_shape, lobby_data->m_age, lobby_data->m_starlane_freq, lobby_data->m_planet_density, lobby_data->m_specials_freq, lobby_data->m_players);
 }
 
-void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data)
+void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data, boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     // multiplayer load
     std::set<int> used_save_game_data;
@@ -270,13 +282,16 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
             unused_save_game_data.insert(i);
     }
 
-    LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, unused_save_game_data);
+    LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, unused_save_game_data, server_save_game_data);
 }
 
 void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
                             const std::map<int, PlayerSetupData>& player_setup_data)
 {
     m_turn_sequence.clear();
+
+    m_victors.clear();
+    m_eliminated_players.clear();
 
     m_current_turn = BEFORE_FIRST_TURN;     // every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(size, shape, age, starlane_freq, planet_density, specials_freq,
@@ -304,17 +319,20 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
         int empire_id = GetPlayerEmpire(player_id)->EmpireID();
         (*it)->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id, m_current_turn, m_empires, m_universe, players));
     }
-
-    m_losers.clear();
 }
 
 void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
                              const std::map<int, int>& player_id_to_save_game_data_index,
-                             std::set<int>& unused_save_game_data)
+                             std::set<int>& unused_save_game_data, boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     assert(!player_save_game_data.empty());
 
     m_turn_sequence.clear();
+
+    m_victors = server_save_game_data->m_victors;
+    m_eliminated_players.clear();
+
+    m_current_turn = server_save_game_data->m_current_turn;
 
     assert(m_networking.NumPlayers() == player_save_game_data.size());
     assert(player_id_to_save_game_data_index.size() + unused_save_game_data.size() == player_save_game_data.size());
@@ -378,8 +396,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                                                 players, *orders, ui_data.get()));
         }
     }
-
-    m_losers.clear();
 }
 
 Empire* ServerApp::GetPlayerEmpire(int player_id) const
@@ -441,6 +457,7 @@ void ServerApp::ProcessTurns()
     Empire*                     empire;
     OrderSet*                   order_set;
     OrderSet::const_iterator    order_it;
+    Universe&                   universe = GetUniverse();
 
     // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -485,7 +502,7 @@ void ServerApp::ProcessTurns()
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
     for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it) {
-        Planet *planet = GetUniverse().Object<Planet>(it->first);
+        Planet *planet = universe.Object<Planet>(it->first);
 
         // only one empire?
         if (it->second.size()==1) {
@@ -493,13 +510,13 @@ void ServerApp::ProcessTurns()
             empire = Empires().Lookup( it->second[0]->EmpireID() );
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
-            const System *system = GetUniverse().Object<System>(planet->SystemID());
+            const System *system = universe.Object<System>(planet->SystemID());
 
             std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
             std::set<int> set_empire_with_military;
             for (unsigned int i=0;i<vec_fleet.size();i++)
                 for (Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
-                    if (GetUniverse().Object<Ship>(*ship_it)->IsArmed()) {
+                    if (universe.Object<Ship>(*ship_it)->IsArmed()) {
                         set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
                         break;
                     }
@@ -542,9 +559,9 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
     }
 
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
         // save for possible SitRep generation after moving...
-        const Fleet* fleet = GetUniverse().Object<Fleet>(it->first);
+        const Fleet* fleet = universe.Object<Fleet>(it->first);
         int eta = -1;
         if (fleet)
             eta = fleet->ETA().first;
@@ -557,7 +574,10 @@ void ServerApp::ProcessTurns()
                 std::set<int> owners_set = fleet->Owners();
                 for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
                     empire = Empires().Lookup( *owners_it );
-                    empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+                    if (empire)
+                        empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
+                    else
+                        Logger().errorStream() << "ServerApp::ProcessTurns couldn't find empire with id " << *owners_it << " to send a fleet arrival sitrep to for fleet " << fleet->ID();
                 }
             }
         }
@@ -568,22 +588,22 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
     }
 
-    std::vector<System*> sys_vec = GetUniverse().FindObjects<System>();
+    std::vector<System*> sys_vec = universe.FindObjects<System>();
     bool combat_happend = false;
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         std::vector<CombatAssets> empire_combat_forces;
         System* system = *it;
 
         std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
-        if (flt_vec.empty()) continue;  // skip systems with not fleets, as these can't have combat
+        if (flt_vec.empty()) continue;  // skip systems with no fleets, as these can't have combat
 
         for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it) {
             Fleet* flt = *flt_it;
             // a fleet should belong only to one empire!?
-            if (1==flt->Owners().size()) {
+            if (1 == flt->Owners().size()) {
                 std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
 
-                if (ecf_it==empire_combat_forces.end()) {
+                if (ecf_it == empire_combat_forces.end()) {
                     CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
                     ca.fleets.push_back(flt);
                     empire_combat_forces.push_back(ca);
@@ -596,23 +616,23 @@ void ServerApp::ProcessTurns()
         for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it) {
             Planet* plt = *plt_it;
             // a planet should belong only to one empire!?
-            if (1==plt->Owners().size()) {
+            if (1 == plt->Owners().size()) {
                 std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
 
                 if (ecf_it==empire_combat_forces.end()) {
                     CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
                     ca.planets.push_back(plt);
                     empire_combat_forces.push_back(ca);
-                }
-                else
+                } else {
                     (*ecf_it).planets.push_back(plt);
+                }
             }
         }
 
         if (empire_combat_forces.size() > 1) {
             combat_happend=true;
             CombatSystem combat_system;
-            combat_system.ResolveCombat(system->ID(),empire_combat_forces);
+            combat_system.ResolveCombat(system->ID(), empire_combat_forces);
         }
     }
 
@@ -628,7 +648,7 @@ void ServerApp::ProcessTurns()
 
 
     // execute all effects and update meters prior to production, research, etc.
-    GetUniverse().ApplyAllEffectsAndUpdateMeters();
+    universe.ApplyAllEffectsAndUpdateMeters();
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
@@ -656,13 +676,13 @@ void ServerApp::ProcessTurns()
     // re-execute all meter-related effects after production, so that new UniverseObjects created during production
     // will have effects applied to them this turn, allowing (for example) ships to have max fuel meters greater than
     // 0 on the turn they are created.
-    GetUniverse().ApplyMeterEffectsAndUpdateMeters();
+    universe.ApplyMeterEffectsAndUpdateMeters();
 
 
     // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
-    GetUniverse().RebuildEmpireViewSystemGraphs();
+    universe.RebuildEmpireViewSystemGraphs();
     // Population growth or loss, health meter growth, resource current meter growth
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
     }
 
@@ -670,7 +690,7 @@ void ServerApp::ProcessTurns()
     // copy latest updated current meter values to initial current values, and initial current values
     // to previous values, so that clients will have this information based on values after all changes
     // that occured this turn.
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
             if (Meter* meter = it->second->GetMeter(i))
                 meter->BackPropegate();
@@ -678,7 +698,7 @@ void ServerApp::ProcessTurns()
 
 
     // create sitreps for starved planets
-    std::vector<Planet*> plt_vec = GetUniverse().FindObjects<Planet>();
+    std::vector<Planet*> plt_vec = universe.FindObjects<Planet>();
     for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it) {
         if ((*it)->Owners().size() > 0 && (*it)->GetMeter(METER_POPULATION)->Current() <= 0.0) {
             // add some information to sitrep
@@ -699,79 +719,20 @@ void ServerApp::ProcessTurns()
     ++m_current_turn;
 
 
-    // indicate that the clients are waiting for their new Universes
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::DOWNLOADING, -1));
-    }
+    // check for victory conditions...
 
-    // check if all empires are still alive
-    std::map<int, int> eliminations; // map from player ids to empire ids
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        if (GetUniverse().FindObjects(OwnedVisitor<Planet>(it->first)).empty()) { // when you're out of planets, your game is over
-            int player_id = GetEmpirePlayerID(it->first);
-            for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-                if ((*player_it)->ID() == player_id) {
-                    eliminations[player_id] = it->first;
-                    break;
-                }
-            }
-        } 
-    }
-
-    // clean up defeated empires
-    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-        // remove the empire from play
-        Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(it->second));
-        for (unsigned int j = 0; j < object_vec.size(); ++j) {
-            object_vec[j]->RemoveOwner(it->second);
-            // TODO: Consider just removing ownership from Buildings, and making
-            // them capturable by colonizing a planet.
-            if (object_vec[j]->Owners().empty() &&
-                (universe_object_cast<Building*>(object_vec[j]) ||
-                 universe_object_cast<Ship*>(object_vec[j]) ||
-                 universe_object_cast<Fleet*>(object_vec[j])))
-                GetUniverse().Destroy(object_vec[j]->ID());
+    // marked by Victory effect
+    const std::set<int>& marked_for_victory = universe.GetMarkedForVictory();
+    for (std::set<int>::const_iterator it = marked_for_victory.begin(); it != marked_for_victory.end(); ++it) {
+        const UniverseObject* obj = universe.Object(*it);
+        if (!obj) continue; // perhaps it was destroyed?
+        const std::set<int>& owners = obj->Owners();
+        if (owners.size() == 1) {
+            int empire_id = *owners.begin();
+            if (Empire* empire = Empires().Lookup(empire_id))
+                m_victors.insert(empire_id);
         }
     }
-
-    std::map<std::string, Process> processes_copy = m_ai_clients;
-    // notify all players of the eliminated players
-    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-            if ((*player_it)->ID() == it->first) {
-                m_ai_clients.erase((*player_it)->PlayerName());
-                (*player_it)->SendMessage(EndGameMessage((*player_it)->ID(), Message::YOU_ARE_DEFEATED));
-            } else {
-                (*player_it)->SendMessage(PlayerEliminatedMessage((*player_it)->ID(), it->second, Empires().Lookup(it->second)->Name()));
-            }
-        }
-    }
-
-    Sleep(1000);
-
-    // dump connections to eliminated players, and remove server-side empire data
-    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-        m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is marked as a loser and dumped";
-        m_losers.insert(it->first);
-        m_networking.Disconnect(it->first);
-        m_ai_IDs.erase(it->first);
-        Empires().EliminateEmpire(it->second);
-        RemoveEmpireTurn(it->second);
-    }
-
-    // determine if victory conditions exist
-    if (m_networking.NumPlayers() == 1) { // if there is only one player left, that player is the winner
-        m_log_category.debugStream() << "ServerApp::ProcessTurns : One player left -- sending victory notification and terminating.";
-        while (m_networking.NumPlayers() == 1) {
-            m_networking.SendMessage(EndGameMessage((*m_networking.established_begin())->ID(), Message::LAST_OPPONENT_DEFEATED));
-        }
-        Sleep(2000);
-        Exit(0);
-    } else if (m_ai_IDs.size() == m_networking.NumPlayers()) { // if there are none but AI players left, we're done
-        m_log_category.debugStream() << "ServerApp::ProcessTurns : No human players left -- server terminating.";
-        Exit(0);
-    }
-
 
     // compile map of PlayerInfo for each player, indexed by player ID
     std::map<int, PlayerInfo> players;

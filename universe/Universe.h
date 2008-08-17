@@ -196,6 +196,9 @@ public:
         in order effects were applied to the meter. */
     const EffectAccountingMap&                  GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
+    /** returns set of objects that have been marked by the Victory effect to grant their owners victory. */
+    const std::set<int>&                        GetMarkedForVictory() const {return m_marked_for_victory;}
+
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
@@ -266,6 +269,8 @@ public:
     bool                Delete(int id);
 
     void                HandleEmpireElimination(int empire_id); ///< cleans up internal storage of now-invalidated empire ID
+
+    void                EffectVictory(int object_id);           ///< used by the Victory effect to mark an object to give it owner victory
 
     /** sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
     static void         InhibitUniverseObjectSignals(bool inhibit = true);
@@ -394,6 +399,7 @@ private:
     int                         m_last_allocated_design_id;
 
     std::set<int>               m_marked_destroyed;             ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
+    std::set<int>               m_marked_for_victory;           ///< used while applying effects to cache objects whose owner should be victorious.  Victory testing is done separately from effects execution, so this needs to be stored temporarily...
 
     static double               s_universe_width;
     static bool                 s_inhibit_universe_object_signals;

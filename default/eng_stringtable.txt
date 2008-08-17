@@ -48,40 +48,8 @@ Yes
 NO
 No
 
-NEW_GAME
-Generating Universe and AIs ...
-
-LOADING
-Loading ...
-
-SERVER_WONT_START
-'''The server could not be started.
-
-Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
-
-SERVER_TIMEOUT
-The server is not responding.
-
-SERVER_LOST
-The connection to the server has been lost.
-
-SERVER_GAME_END
-The server has sent an end-game message.  Buh-bye.
-
-PLAYER_DISCONNECTED
-Player %1% no longer has a connection to the server.
-
-PLAYER_DEFEATED
-You are defeated.
-
-PLAYER_VICTORIOUS
-You are victorious.
-
 EMPIRE
 Empire
-
-EMPIRE_DEFEATED
-The %1% empire is no more.
 
 ALL
 All
@@ -110,6 +78,46 @@ New Fleet %1%
 
 NEW_FLEET_NAME_NO_NUMBER
 New Fleet
+
+
+##########################
+# Status Update Messages #
+##########################
+
+NEW_GAME
+Generating Universe and AIs ...
+
+LOADING
+Loading ...
+
+SERVER_WONT_START
+'''The server could not be started.
+
+Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
+
+SERVER_TIMEOUT
+The server is not responding.
+
+SERVER_LOST
+The connection to the server has been lost.
+
+SERVER_GAME_END
+The server has sent an end-game message.  Buh-bye.
+
+PLAYER_DISCONNECTED
+Player %1% no longer has a connection to the server.
+
+PLAYER_DEFEATED
+You are defeated.
+
+EMPIRE_DEFEATED
+The %1% empire is no more.
+
+UNKNOWN_EMPIRE
+Unknown Empire
+
+LAST_OPPONENT_DEFEATED_VICTORY
+Your last opponent has been defeated and you are victorious!
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -1507,47 +1515,6 @@ Confirm New Design
 DESIGN_WND_CLEAR
 Clear Parts
 
-# Ship Slot Types
-
-SL_EXTERNAL
-External
-
-SL_INTERNAL
-Internal
-
-
-# Ship Part Classes
-
-PC_SHORT_RANGE
-Short Range
-
-PC_MISSILES
-Missiles
-
-PC_FIGHTERS
-Fighters
-
-PC_POINT_DEFENSE
-Point Defense
-
-PC_SHIELD
-Shields
-
-PC_ARMOUR
-Armour
-
-PC_DETECTION
-Detection
-
-PC_STEALTH
-Stealth
-
-PC_FUEL
-Fuel
-
-PC_COLONY
-Colonization
-
 
 ####################
 #   Encyclopedia   #
@@ -1945,6 +1912,7 @@ Ship Part
 UIT_SHIP_HULL
 Ship Hull
 
+
 # TechTypes
 
 TT_THEORY
@@ -1976,6 +1944,37 @@ mineral
 ST_TRADE
 trade
 
+
+# Ship Slot Types
+
+SL_EXTERNAL
+External
+SL_INTERNAL
+Internal
+
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Short Range
+PC_MISSILES
+Missiles
+PC_FIGHTERS
+Fighters
+PC_POINT_DEFENSE
+Point Defense
+PC_SHIELD
+Shields
+PC_ARMOUR
+Armour
+PC_DETECTION
+Detection
+PC_STEALTH
+Stealth
+PC_FUEL
+Fuel
+PC_COLONY
+Colonization
 
 
 ################################################
@@ -2249,6 +2248,9 @@ Changes the star's type to %1%
 
 DESC_MOVE_TO
 Moves the object to the location of an object%1%
+
+DESC_VICTORY
+Causes the object's owner to win the game
 
 # SetTechAvailability
 

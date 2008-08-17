@@ -270,8 +270,8 @@ namespace AIInterface {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         int empire_id = AIClientApp::GetApp()->EmpireID();
         const Ship* ship = 0;
-        
-        // make sure all ships exist and are owned just by this player       
+
+        // make sure all ships exist and are owned just by this player
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
             ship = universe.Object<Ship>(*it);
             if (!ship) {

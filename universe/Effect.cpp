@@ -974,6 +974,28 @@ std::string MoveTo::Dump() const
 
 
 ///////////////////////////////////////////////////////////
+// Victory                                               //
+///////////////////////////////////////////////////////////
+Victory::Victory()
+{}
+
+void Victory::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    GetUniverse().EffectVictory(target->ID());
+}
+
+std::string Victory::Description() const
+{
+    return UserString("DESC_VICTORY");
+}
+
+std::string Victory::Dump() const
+{
+    return DumpIndent() + "Victory\n";
+}
+
+
+///////////////////////////////////////////////////////////
 // SetTechAvailability                                   //
 ///////////////////////////////////////////////////////////
 SetTechAvailability::SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech) :

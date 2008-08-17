@@ -116,6 +116,7 @@ namespace {
         CreateBuildingRule      create_building;
         ConditionParamRule      move_to;
         Rule                    destroy;
+        Rule                    victory;
         NameParamRule           add_special;
         NameParamRule           remove_special;
         SetStarTypeRule         set_star_type;
@@ -208,6 +209,10 @@ namespace {
             str_p("destroy")
             [destroy.this_ = new_<Effect::Destroy>()];
 
+        victory =
+            str_p("victory")
+            [victory.this_ = new_<Effect::Victory>()];
+
         add_special =
             (str_p("addspecial")
              >> name_label >> name_p[add_special.name = arg1])
@@ -240,6 +245,7 @@ namespace {
             | remove_owner[effect_p.this_ = arg1]
             | move_to[effect_p.this_ = arg1]
             | destroy[effect_p.this_ = arg1]
+            | victory[effect_p.this_ = arg1]
             | add_special[effect_p.this_ = arg1]
             | remove_special[effect_p.this_ = arg1]
             | set_star_type[effect_p.this_ = arg1]

@@ -56,11 +56,12 @@ public:
         COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
         COMBAT_END,              ///< sent to clients when a combat is concluded
         HUMAN_PLAYER_CHAT,       ///< sent when one player sends a chat message to another in multiplayer
-        PLAYER_ELIMINATED,       ///< sent to all clients (except the eliminated player) when a player is eliminated from play
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,   ///< sent by client to server requesting a new design ID.
         DISPATCH_NEW_DESIGN_ID,  ///< sent by server to client with the new design ID.
+        VICTORY_DEFEAT,          ///< sent by server to all clients when one or more players have met victory or defeat conditions
+        PLAYER_ELIMINATED,       ///< sent by server to all clients (except the eliminated player) when a player is eliminated
         END_GAME                 ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
     };
 
@@ -76,8 +77,12 @@ public:
     enum EndGameReason {
         HOST_DISCONNECTED,       ///< the host player suddenly lost connection to the server
         NONHOST_DISCONNECTED,    ///< a non-host player suddenly lost connection to the server
-        YOU_ARE_DEFEATED,        ///< the receiving player is defeated
-        LAST_OPPONENT_DEFEATED   ///< all the receiving player's opponents are defeated; the receiver has won
+        YOU_ARE_ELIMINATED       ///< the receiving player is eliminated from the game
+    };
+
+    enum VictoryOrDefeat {
+        VICTORY,                 ///< a player or players have met a victory condition
+        DEFEAT                   ///< a player or players have met a defeat condition
     };
 
     /** \name Structors */ //@{
@@ -178,14 +183,6 @@ Message HostMPAckMessage(int player_id);
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
 
-/** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the server are
-    considered valid.*/
-Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
-
-/** creates an END_GAME message indicating that the recipient has won the game.  This message should only be sent by the
-    server.*/
-Message VictoryMessage(int receiver);
-
 /** creates an TURN_ORDERS message. */
 Message TurnOrdersMessage(int sender, const OrderSet& orders);
 
@@ -229,9 +226,21 @@ Message GlobalChatMessage(int sender, const std::string& msg);
 /** creates a CHAT_MSG, which is sent to the server, and then from the server to a single recipient player */
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg);
 
-/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.  
+/** creates a VICTORY_DEFEAT message indicating that the recipient has won the game by meeting a victory condition.
+    The \a reason_string should be a stringtable entry name, not a human-readable string, so that each
+    player's client can look up and display a victory message in the player's selected language.  The
+    \a winner_empire_ids and \a winner_empire_names should contain the names and ids of all empires that have
+    won; this will contain only a single empire if it has won alone, but could contain multiple empires if
+    an allied victory has occured.  This message should only be sent by the server.*/
+Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat, const std::string& reason_string, int empire_id);
+
+/** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.
     This message should only be sent by the server.*/
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
+
+/** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the server
+    are considered valid.*/
+Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
 
 
 ////////////////////////////////////////////////
@@ -292,5 +301,7 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std::string& reason_player_name);
 
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
+
+void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat, std::string& reason_string, int& empire_id);
 
 #endif // _Message_h_
