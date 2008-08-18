@@ -554,7 +554,7 @@ template <class Archive>
 void Effect::MoveTo::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_destination_object_id);
+        & BOOST_SERIALIZATION_NVP(m_location_condition);
 }
 
 template <class Archive>
