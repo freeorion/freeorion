@@ -1589,7 +1589,7 @@ Tech
         "CON_SPACE_ELEVATOR"
     ]
     unlock = Item type = Building name = "BLD_PLANET_RING"
-    graphic = ""
+    graphic = "icons/tech/planetary_ring.png"
 
 Tech
     name = "CON_SPACE_ELEVATOR"
