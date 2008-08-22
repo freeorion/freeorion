@@ -144,10 +144,16 @@ IntroScreen::IntroScreen() :
                                    GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE)),
     m_logo(new GG::StaticGraphic(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
-                                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE))
+                                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE)),
+    m_version(new GG::TextControl(0, 0, FreeOrionVersionString(),
+                                  HumanClientApp::GetApp()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                  ClientUI::TextColor()))
 {
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);
+
+    m_version->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - m_version->Size().x,
+                             GG::GUI::GetGUI()->AppHeight() - m_version->Size().y));
 
     //create buttons
     m_single_player = new CUIButton(15, 12, 160, UserString("INTRO_BTN_SINGLE_PLAYER"));
@@ -182,6 +188,7 @@ IntroScreen::~IntroScreen()
     delete m_credits_wnd;
     delete m_logo;
     delete m_splash;
+    delete m_version;
 }
 
 void IntroScreen::OnSinglePlayer()
@@ -271,10 +278,6 @@ void IntroScreen::Close()
 
 void IntroScreen::Render()
 {
-    boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), ClientUI::Pts());
     CUIWnd::Render();
-    GG::Pt size = font->TextExtent(FreeOrionVersionString());
-    font->RenderText(GG::GUI::GetGUI()->AppWidth()-size.x,
-                     GG::GUI::GetGUI()->AppHeight()-size.y,
-                     FreeOrionVersionString());
+    m_version->Render();
 }

@@ -56,6 +56,7 @@ private:
 
     GG::StaticGraphic* m_splash;
     GG::StaticGraphic* m_logo;
+    GG::TextControl*   m_version;
 };
 
 #endif // _IntroScreen_h_
