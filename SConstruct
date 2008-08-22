@@ -116,8 +116,9 @@ if not force_configure:
 options.Update(env)
 
 if env.has_key('use_distcc') and env['use_distcc']:
-    env['CC'] = 'distcc %s' % env['CC']
-    env['CXX'] = 'distcc %s' % env['CXX']
+    if 'distcc' not in env['CC']:
+        env['CC'] = 'distcc %s' % env['CC']
+        env['CXX'] = 'distcc %s' % env['CXX']
     for i in ['HOME',
               'DISTCC_HOSTS',
               'DISTCC_VERBOSE',
@@ -132,8 +133,9 @@ if env.has_key('use_distcc') and env['use_distcc']:
             env['ENV'][i] = os.environ[i]
 
 if env.has_key('use_ccache') and env['use_ccache']:
-    env['CC'] = 'ccache %s' % env['CC']
-    env['CXX'] = 'ccache %s' % env['CXX']
+    if 'ccache' not in env['CC']:
+        env['CC'] = 'ccache %s' % env['CC']
+        env['CXX'] = 'ccache %s' % env['CXX']
     for i in ['HOME',
               'CCACHE_DIR',
               'CCACHE_TEMPDIR',
