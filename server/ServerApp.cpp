@@ -729,7 +729,7 @@ void ServerApp::ProcessTurns()
         const std::set<int>& owners = obj->Owners();
         if (owners.size() == 1) {
             int empire_id = *owners.begin();
-            if (Empire* empire = Empires().Lookup(empire_id))
+            if (Empires().Lookup(empire_id))
                 m_victors.insert(empire_id);
         }
     }

@@ -178,8 +178,6 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     log4cpp::Category::getRoot().debugStream() << "COMBAT resolution!";
 #endif
     const double base_chance_to_retreat = 0.25;
-    const int    defence_base_hit_points= 3;
-
 
 #ifdef FREEORION_RELEASE
     ClockSeed();
