@@ -46,6 +46,10 @@ public:
                                                  const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                  GG::Clr interior = GG::CLR_ZERO, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
 
+    virtual GG::TabBar*            NewTabBar(int x, int y, int w, const boost::shared_ptr<GG::Font>& font, GG::Clr color,
+                                             GG::Clr text_color = GG::CLR_BLACK, GG::TabBarStyle style = GG::TAB_BAR_ATTACHED,
+                                             GG::Flags<GG::WndFlag> flags = GG::CLICKABLE) const;
+
     virtual GG::Button*            NewScrollUpButton(int x, int y, int w, int h, const std::string& str,
                                                      const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,
                                                      GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN) const;

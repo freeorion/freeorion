@@ -320,8 +320,10 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
     m_border_color(border),
     m_mouse_here(false)
 {
-    if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB)
+    if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB) {
         SetColor(ClientUI::WndColor());
+        SetTextColor(DarkColor(text_color));
+    }
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
@@ -456,6 +458,28 @@ void CUIStateButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys
 void CUIStateButton::MouseLeave()
 {
     m_mouse_here = false;
+}
+
+
+///////////////////////////////////////
+// class CUITabBar
+///////////////////////////////////////
+CUITabBar::CUITabBar(int x, int y, int w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
+                     GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags) :
+    GG::TabBar(x, y, w, font, color, text_color, style, flags)
+{}
+
+void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {
+    RaiseCurrentTabButton();
+    int index = CurrentTabIndex();
+    for (int i = 0; i < static_cast<int>(tab_buttons.size()); ++i) {
+        GG::StateButton* tab = tab_buttons[i];
+        GG::Clr text_color = TextColor();
+        if (index == i)
+            tab->SetTextColor(text_color);
+        else
+            tab->SetTextColor(DarkColor(text_color));
+    }
 }
 
 

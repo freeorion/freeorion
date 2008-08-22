@@ -73,6 +73,12 @@ GG::Spin<double>* CUIStyle::NewDoubleSpin(int x, int y, int w, double value, dou
     return new CUISpin<double>(x, y, w, value, step, min, max, edits);
 }
 
+GG::TabBar* CUIStyle::NewTabBar(int x, int y, int w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
+                                GG::TabBarStyle style/* = GG::TAB_BAR_ATTACHED*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) const
+{
+    return new CUITabBar(x, y, w, font, color, text_color, style, flags);
+}
+
 GG::Button* CUIStyle::NewScrollUpButton(int x, int y, int w, int h, const std::string& str,
                                         const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/,
                                         GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::REPEAT_BUTTON_DOWN*/) const

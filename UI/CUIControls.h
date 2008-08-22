@@ -13,6 +13,7 @@
 #include <GG/MultiEdit.h>
 #include <GG/Scroll.h>
 #include <GG/Slider.h>
+#include <GG/TabWnd.h>
 
 #include "LinkText.h"
 
@@ -138,6 +139,21 @@ public:
 private:
     GG::Clr m_border_color;
     bool    m_mouse_here;
+};
+
+
+/** Tab bar with buttons for selecting tabbed windows. */
+class CUITabBar : public GG::TabBar
+{
+public:
+    /** \name Structors */ ///@{
+    /** Basic ctor. */
+    CUITabBar(int x, int y, int w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
+              GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags);
+    //@}
+
+private:
+    virtual void DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons);
 };
 
 
