@@ -452,12 +452,25 @@ bool ServerApp::AllOrdersReceived()
     return true;
 }
 
+namespace {
+    /** returns true if \a empire has been eliminated by the applicable definition of elimination.  As of this writing,
+        elimination means having no ships and no fleets. */
+    bool EmpireEliminated(const Empire* empire, const Universe& universe) {
+        if (!empire)
+            return false;
+        int empire_id = empire->EmpireID();
+        return (universe.FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
+                universe.FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
+    }
+}
+
 void ServerApp::ProcessTurns()
 {
     Empire*                     empire;
     OrderSet*                   order_set;
     OrderSet::const_iterator    order_it;
     Universe&                   universe = GetUniverse();
+    EmpireManager&              empires = Empires();
 
     // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -466,7 +479,7 @@ void ServerApp::ProcessTurns()
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
         }
 
-        empire = Empires().Lookup(it->first);
+        empire = empires.Lookup(it->first);
         empire->ClearSitRep();
         order_set = it->second;
 
@@ -507,7 +520,7 @@ void ServerApp::ProcessTurns()
         // only one empire?
         if (it->second.size()==1) {
             it->second[0]->ServerExecute();
-            empire = Empires().Lookup( it->second[0]->EmpireID() );
+            empire = empires.Lookup( it->second[0]->EmpireID() );
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
             const System *system = universe.Object<System>(planet->SystemID());
@@ -544,7 +557,7 @@ void ServerApp::ProcessTurns()
             for (int i=0;i<static_cast<int>(it->second.size());i++)
                 if (winner==i) {
                     it->second[i]->ServerExecute();
-                    empire = Empires().Lookup( it->second[i]->EmpireID() );
+                    empire = empires.Lookup( it->second[i]->EmpireID() );
                     empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
                 }
                 else
@@ -573,7 +586,7 @@ void ServerApp::ProcessTurns()
             if (eta == 1) {
                 std::set<int> owners_set = fleet->Owners();
                 for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
-                    empire = Empires().Lookup( *owners_it );
+                    empire = empires.Lookup( *owners_it );
                     if (empire)
                         empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
                     else
@@ -601,10 +614,10 @@ void ServerApp::ProcessTurns()
             Fleet* flt = *flt_it;
             // a fleet should belong only to one empire!?
             if (1 == flt->Owners().size()) {
-                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*flt->Owners().begin())));
+                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
 
                 if (ecf_it == empire_combat_forces.end()) {
-                    CombatAssets ca(Empires().Lookup(*flt->Owners().begin()));
+                    CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
                     ca.fleets.push_back(flt);
                     empire_combat_forces.push_back(ca);
                 }
@@ -617,10 +630,10 @@ void ServerApp::ProcessTurns()
             Planet* plt = *plt_it;
             // a planet should belong only to one empire!?
             if (1 == plt->Owners().size()) {
-                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(Empires().Lookup(*plt->Owners().begin())));
+                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
 
                 if (ecf_it==empire_combat_forces.end()) {
-                    CombatAssets ca(Empires().Lookup(*plt->Owners().begin()));
+                    CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
                     ca.planets.push_back(plt);
                     empire_combat_forces.push_back(ca);
                 } else {
@@ -652,8 +665,8 @@ void ServerApp::ProcessTurns()
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
-    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        Empire* empire = it->second;
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        empire = it->second;
 
         empire->UpdateSupplyUnobstructedSystems();
         empire->UpdateSystemSupplyRanges();
@@ -665,7 +678,7 @@ void ServerApp::ProcessTurns()
 
     // consume distributed resources on queues
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        Empire* empire = Empires().Lookup(it->first);
+        empire = empires.Lookup(it->first);
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();
@@ -702,7 +715,7 @@ void ServerApp::ProcessTurns()
     for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it) {
         if ((*it)->Owners().size() > 0 && (*it)->GetMeter(METER_POPULATION)->Current() <= 0.0) {
             // add some information to sitrep
-            Empire *empire = Empires().Lookup(*(*it)->Owners().begin());
+            Empire *empire = empires.Lookup(*(*it)->Owners().begin());
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep((*it)->SystemID(), (*it)->ID()));
             (*it)->Reset();
         }
@@ -719,7 +732,18 @@ void ServerApp::ProcessTurns()
     ++m_current_turn;
 
 
+    // compile map of PlayerInfo for each player, indexed by player ID
+    std::map<int, PlayerInfo> players;
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
+        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
+                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
+                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
+                                          (*it)->Host());
+    }
+
+
     // check for victory conditions...
+
 
     // marked by Victory effect
     const std::set<int>& marked_for_victory = universe.GetMarkedForVictory();
@@ -729,18 +753,75 @@ void ServerApp::ProcessTurns()
         const std::set<int>& owners = obj->Owners();
         if (owners.size() == 1) {
             int empire_id = *owners.begin();
-            if (Empires().Lookup(empire_id))
-                m_victors.insert(empire_id);
+            if (empire = empires.Lookup(empire_id))
+                m_victors.insert(GetEmpirePlayerID(empire_id));
         }
     }
 
-    // compile map of PlayerInfo for each player, indexed by player ID
-    std::map<int, PlayerInfo> players;
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
-                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
-                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
-                                          (*it)->Host());
+
+
+
+    // check for and clean up eliminated empires and players
+    std::map<int, int> eliminations; // map from player id to empire id of eliminated players
+    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
+        empire = it->second;
+        if (!EmpireEliminated(empire, universe))
+            continue;
+
+        int elim_empire_id = it->first;
+        int elim_player_id = GetEmpirePlayerID(elim_empire_id);
+        eliminations[elim_player_id] = elim_empire_id;
+
+        // remove eliminated empire's ownership of UniverseObjects
+        Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(elim_empire_id));
+        for (Universe::ObjectVec::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
+            (*obj_it)->RemoveOwner(elim_empire_id);
+
+        // notify all players of disconnection, and end game of eliminated player
+        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+            boost::shared_ptr<PlayerConnection> pc = *player_it;
+            int cur_player_id = pc->ID();
+            if (cur_player_id == elim_player_id) {
+                m_ai_clients.erase(pc->PlayerName());
+                pc->SendMessage(EndGameMessage(elim_player_id, Message::YOU_ARE_ELIMINATED));
+            } else {
+                pc->SendMessage(PlayerEliminatedMessage(cur_player_id, elim_empire_id, empire->Name()));
+            }
+        }
+    }
+
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        const std::set<int>& owners = it->second->Owners();
+        if (owners.empty())
+            Logger().debugStream() << "Object has no owners";
+        else {
+            Logger().debugStream() << "Object owner: " << *(owners.begin());
+            if (owners.size() > 1) {
+                std::set<int>::const_iterator qit = owners.begin();
+                ++qit;
+                Logger().debugStream() << "... and: " << *qit;
+            }
+        }
+    }
+
+    if (!eliminations.empty()) {
+        Sleep(1000); // time for elimination messages to propegate
+
+        // dump connections to eliminated players, and remove server-side empire data
+        for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
+            m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
+            m_eliminated_players.insert(it->first);
+            m_networking.Disconnect(it->first);
+            m_ai_IDs.erase(it->first);
+
+            empires.EliminateEmpire(it->second);
+            RemoveEmpireTurn(it->second);
+        }
+    }
+
+    // indicate that the clients are waiting for their new Universes
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::DOWNLOADING, -1));
     }
 
     // send new-turn updates to all players

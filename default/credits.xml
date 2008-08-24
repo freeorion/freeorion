@@ -19,6 +19,7 @@
       <PERSON name="qk-gen"               nick=""                 task="Programming"/>
       <PERSON name="Adrian Schweizer"     nick="LaplaceOperator"  task="Programming"/>
       <PERSON name="Karl Chen"	          nick="quarl"            task="Programming"/>
+      <PERSON name="Eliot Eshelman"       nick="igrok"            task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"      nick="Aquitaine"        task="Game Design"/>

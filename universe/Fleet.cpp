@@ -866,6 +866,9 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last
     const std::set<int>& owners = Owners();
     if (owners.size() == 1)
         fleet_owner = *(owners.begin());
+    const Empire* empire = Empires().Lookup(fleet_owner);
+    if (!empire)        // may occur for destroyed objects whose previous owner has since been eliminated
+        fleet_owner = -1;
 
     std::list<System*>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemNotReachable, _1, fleet_owner));
     std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
