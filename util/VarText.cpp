@@ -73,7 +73,7 @@ namespace {
         }
 
         const XMLElement&  m_variables;
-        std::string&           m_str;
+        std::string&       m_str;
     };
 
     // sticks a sequence of characters onto the end of a std::string
@@ -86,7 +86,6 @@ namespace {
         }
         std::string& m_str;
     };
-
 }
 
 // static(s)

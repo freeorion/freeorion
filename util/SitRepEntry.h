@@ -22,7 +22,6 @@
 class SitRepEntry : public VarText
 {
 public:
-    
     /** tag name of sitrep update */
     static const std::string SITREP_UPDATE_TAG;
 
@@ -43,6 +42,7 @@ public:
         PLANET_LOST_STARVED_TO_DEATH,
         PLANET_COLONIZED,
         FLEET_ARRIVED_AT_DESTINATION,
+        EMPIRE_ELIMINATED,
         NUM_SITREP_TYPES
     };
 
@@ -50,8 +50,8 @@ public:
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
     //@}
    
-    void SetType( EntryType type ) { m_type = type; }
-    EntryType GetType( ) { return m_type; }
+    void SetType(EntryType type) { m_type = type; }
+    EntryType GetType() { return m_type; }
 
 private:
     EntryType                  m_type; ///< the type of SitRep this is
@@ -65,21 +65,23 @@ private:
 // Sitrep constructors - for each SitRep type, there is a global constructor function See implementation file for
 // examples
 
-SitRepEntry *CreateTechResearchedSitRep(const std::string& tech_name);
+SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
 
-SitRepEntry *CreateBaseBuiltSitRep(int system_id, int planet_id);
+SitRepEntry* CreateBaseBuiltSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreateShipBuiltSitRep(int ship_id, int system_id);
+SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
 
-SitRepEntry *CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
+SitRepEntry* CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
 
-SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id);
+SitRepEntry* CreateCombatSitRep(int empire_id, int victor_id, int system_id);
 
-SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
+SitRepEntry* CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreatePlanetColonizedSitRep(int system_id, int planet_id);
+SitRepEntry* CreatePlanetColonizedSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
+SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
+
+SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name);
 
 // template implementations
 template <class Archive>

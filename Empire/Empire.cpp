@@ -1794,7 +1794,7 @@ void Empire::CheckProductionProgress()
                 Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
                 int building_id = universe.Insert(building);
                 planet->AddBuilding(building_id);
-                SitRepEntry *entry = CreateBuildingBuiltSitRep(m_production_queue[i].item.name, planet->ID());
+                SitRepEntry* entry = CreateBuildingBuiltSitRep(m_production_queue[i].item.name, planet->ID());
                 AddSitRepEntry(entry);
                 //Logger().debugStream() << "New Building created on turn: " << building->CreationTurn();
                 break;
@@ -1838,7 +1838,7 @@ void Empire::CheckProductionProgress()
                 Logger().debugStream() << "New Ship created on turn: " << ship->CreationTurn();
 
                 // add sitrep
-                SitRepEntry *entry = CreateShipBuiltSitRep(ship_id, system->ID());
+                SitRepEntry* entry = CreateShipBuiltSitRep(ship_id, system->ID());
                 AddSitRepEntry(entry);
                 break;
             }
