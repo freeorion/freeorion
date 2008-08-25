@@ -241,7 +241,8 @@ void EncyclopediaDetailPanel::Reset()
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(m_part->Class()));
-        detailed_description = UserString(m_part->Description()) + EffectsDescription(m_part->Effects());
+        detailed_description = UserString(m_part->Description()) +
+            boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_part->Effects()));
 
     } else if (m_hull) {
         // Ship Hulls
@@ -252,7 +253,8 @@ void EncyclopediaDetailPanel::Reset()
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
         // hulls have no specific types
-        detailed_description = UserString(m_hull->Description()) + EffectsDescription(m_hull->Effects());
+        detailed_description = UserString(m_hull->Description()) +
+            boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_hull->Effects()));
 
     } else if (m_tech) {
         // Technologies
@@ -306,7 +308,7 @@ void EncyclopediaDetailPanel::Reset()
         % specific_type
         % general_type));
 
-    m_cost_text->SetText(str(format(UserString("END_COST_AND_TURNS_STR"))
+    m_cost_text->SetText(str(format(UserString("ENC_COST_AND_TURNS_STR"))
         % static_cast<int>(cost + 0.5)
         % cost_units
         % turns));
