@@ -120,6 +120,8 @@ namespace {
         const System* src;
         const System* dst;
     };
+
+    void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
 }
 
 ////////////////////////////////////////////////////////////
@@ -925,10 +927,14 @@ void MapWnd::InitTurn(int turn_number)
 
 
     // remove old fleet buttons for fleets not in systems
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i)
         DeleteChild(m_moving_fleet_buttons[i]);
-    }
     m_moving_fleet_buttons.clear();
+
+    // disconnect old moving fleet statechangedsignal connections
+    for (std::vector<boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+        it->disconnect();
+    m_fleet_state_change_signals.clear();
 
     Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
     typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
@@ -960,7 +966,16 @@ void MapWnd::InitTurn(int turn_number)
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
         SetFleetMovementLine(*it);
 
-
+    // connect fleet change signals to update moving fleet movement lines, so that ordering moving fleets to move
+    // updates their displayed path
+    for (Universe::ObjectVec::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        const Fleet* moving_fleet = universe_object_cast<const Fleet*>(*it);
+        if (!moving_fleet) {
+            Logger().errorStream() << "MapWnd::InitTurn couldn't cast a (supposed) moving fleet pointer to a Fleet*";
+            continue;
+        }
+        m_fleet_state_change_signals.push_back(GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet)));
+    }
 
     MoveChildUp(m_side_panel);
 

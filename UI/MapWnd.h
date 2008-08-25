@@ -239,6 +239,8 @@ private:
     CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
 
     std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
+    std::vector<boost::signals::connection>         m_fleet_state_change_signals;
+
 
     std::map<const Fleet*, MovementLineData>        m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<const Fleet*,

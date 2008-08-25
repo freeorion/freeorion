@@ -21,7 +21,7 @@ namespace {
     const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
     const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
 
-    void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                  &Universe::UpdateMeterEstimates;
+    void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
     std::vector<int>        LeastJumpsPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
         std::pair<std::list<System*>, int> path = universe->LeastJumpsPath(start_sys, end_sys, empire_id);
@@ -30,7 +30,7 @@ namespace {
             retval.push_back((*it)->ID());
         return retval;
     }
-    boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =         &LeastJumpsPath;
+    boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
@@ -54,7 +54,7 @@ namespace {
     unsigned int            (HullType::*NumSlotsOfSlotType)(ShipSlotType) const =               &HullType::NumSlots;
 }
 
-    namespace FreeOrionPython {
+namespace FreeOrionPython {
     using boost::python::def;
     using boost::python::class_;
     using boost::python::bases;
