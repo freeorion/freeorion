@@ -43,6 +43,7 @@ public:
         PLANET_COLONIZED,
         FLEET_ARRIVED_AT_DESTINATION,
         EMPIRE_ELIMINATED,
+        VICTORY,
         NUM_SITREP_TYPES
     };
 
@@ -82,6 +83,8 @@ SitRepEntry* CreatePlanetColonizedSitRep(int system_id, int planet_id);
 SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
 
 SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name);
+
+SitRepEntry* CreateVictorySitRep(const std::string& reason_string, const std::string& empire_name);
 
 // template implementations
 template <class Archive>

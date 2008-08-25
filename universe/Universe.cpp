@@ -1174,9 +1174,9 @@ void Universe::EffectDestroy(int id)
     m_marked_destroyed.insert(id);
 }
 
-void Universe::EffectVictory(int object_id)
+void Universe::EffectVictory(int object_id, const std::string& reason_string)
 {
-    m_marked_for_victory.insert(object_id);
+    m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string));
 }
 
 void Universe::HandleEmpireElimination(int empire_id)

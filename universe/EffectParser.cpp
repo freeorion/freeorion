@@ -116,7 +116,7 @@ namespace {
         CreateBuildingRule      create_building;
         ConditionParamRule      move_to;
         Rule                    destroy;
-        Rule                    victory;
+        NameParamRule           victory;
         NameParamRule           add_special;
         NameParamRule           remove_special;
         SetStarTypeRule         set_star_type;
@@ -128,6 +128,7 @@ namespace {
         ParamLabel              empire_label;
         ParamLabel              name_label;
         ParamLabel              destination_label;
+        ParamLabel              reason_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -136,7 +137,8 @@ namespace {
         planetsize_label("size"),
         empire_label("empire"),
         name_label("name"),
-        destination_label("destination")
+        destination_label("destination"),
+        reason_label("reason")
     {
         set_meter =
             ((str_p("setmax")[set_meter.max_meter = val(true)]
@@ -210,8 +212,9 @@ namespace {
             [destroy.this_ = new_<Effect::Destroy>()];
 
         victory =
-            str_p("victory")
-            [victory.this_ = new_<Effect::Victory>()];
+            (str_p("victory")
+             >> reason_label >> name_p[victory.name = arg1])
+            [victory.this_ = new_<Effect::Victory>(victory.name)];
 
         add_special =
             (str_p("addspecial")

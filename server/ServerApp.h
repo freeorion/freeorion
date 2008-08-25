@@ -48,11 +48,11 @@ private:
     the universe */
 struct ServerSaveGameData
 {
-    ServerSaveGameData();                   ///< default ctor
-    ServerSaveGameData(const int& current_turn, const std::set<int>& victors);
+    ServerSaveGameData();                               ///< default ctor
+    ServerSaveGameData(const int& current_turn, const std::map<int, std::set<std::string> >& victors);
 
-    int             m_current_turn;
-    std::set<int>   m_victors;              ///< ids of players who have won the game
+    int                                     m_current_turn;
+    std::map<int, std::set<std::string> >   m_victors;  ///< for each player id, the victory types that player has achived
 
 private:
     friend class boost::serialization::access;
@@ -164,8 +164,8 @@ private:
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;
 
-    std::set<int>             m_victors;              ///< the IDs of players who have won the game
-    std::set<int>             m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
+    std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
+    std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
 
     static ServerApp*         s_app;
 

@@ -137,3 +137,19 @@ SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name) {
 
     return(sitrep);
 }
+
+SitRepEntry* CreateVictorySitRep(const std::string& reason_string, const std::string& empire_name) {
+    SitRepEntry* sitrep = new SitRepEntry();
+
+    sitrep->SetType(SitRepEntry::VICTORY);
+
+    XMLElement reason_elem("reason");
+    reason_elem.SetAttribute("value", reason_string);
+    sitrep->GetVariables().AppendChild(reason_elem);
+
+    XMLElement name_elem("name");
+    name_elem.SetAttribute("value", empire_name);
+    sitrep->GetVariables().AppendChild(name_elem);
+
+    return(sitrep);
+}

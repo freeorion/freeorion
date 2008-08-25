@@ -1681,6 +1681,20 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 SITREP_EMPIRE_ELIMINATED
 The %name% empire has been eliminated.
 
+SITREP_VICTORY
+%1%
+
+####################
+# Victory / Defeat #
+####################
+
+TECH_VICTORY
+The %1% empire has achived a technological victory.
+
+ALL_ENEMIES_ELIMINATED_VICTORY
+The %1% empire has achived a sole-survivor victory.
+
+
 ####################
 # Specials         #
 ####################

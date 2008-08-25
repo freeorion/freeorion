@@ -388,13 +388,15 @@ private:
 class Effect::Victory : public Effect::EffectBase
 {
 public:
-    Victory();
+    Victory(const std::string& reason_string);
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
 private:
+    std::string m_reason_string;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -560,7 +562,8 @@ void Effect::MoveTo::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Effect::Victory::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_reason_string);
 }
 
 template <class Archive>

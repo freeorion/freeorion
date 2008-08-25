@@ -976,12 +976,13 @@ std::string MoveTo::Dump() const
 ///////////////////////////////////////////////////////////
 // Victory                                               //
 ///////////////////////////////////////////////////////////
-Victory::Victory()
+Victory::Victory(const std::string& reason_string) :
+    m_reason_string(reason_string)
 {}
 
 void Victory::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    GetUniverse().EffectVictory(target->ID());
+    GetUniverse().EffectVictory(target->ID(), m_reason_string);
 }
 
 std::string Victory::Description() const
@@ -991,7 +992,7 @@ std::string Victory::Description() const
 
 std::string Victory::Dump() const
 {
-    return DumpIndent() + "Victory\n";
+    return DumpIndent() + "Victory reason = \"" + m_reason_string + "\"\n";
 }
 
 
