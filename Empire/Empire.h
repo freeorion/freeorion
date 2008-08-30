@@ -279,6 +279,7 @@ public:
 
     const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share food, industry and minerals (systems in separate groups are blockaded or otherwise separated)
     const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (food, industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
+    const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;  ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
     const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
 
     const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propegate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
@@ -504,16 +505,17 @@ private:
       */
     double                          m_maintenance_total_cost;
 
-    std::map<std::string, int>      m_ship_names_used;          ///< map from name to number of times used
+    std::map<std::string, int>      m_ship_names_used;                                  ///< map from name to number of times used
 
     // cached calculation results, returned by reference
-    std::set<int>                   m_fleet_supplyable_system_ids;
-    std::set<std::pair<int, int> >  m_fleet_supply_starlane_traversals;
-    std::map<int, int>              m_fleet_supply_system_ranges;
-    std::set<std::set<int> >        m_resource_supply_groups;
-    std::set<std::pair<int, int> >  m_resource_supply_starlane_traversals;
-    std::map<int, int>              m_resource_supply_system_ranges;
-    std::set<int>                   m_supply_unobstructed_systems;
+    std::set<int>                   m_fleet_supplyable_system_ids;                      ///< ids of systems where fleets can remain for a turn to be resupplied.  computed and set by UpdateFleetSupply
+    std::set<std::pair<int, int> >  m_fleet_supply_starlane_traversals;                 ///< ordered pairs of system ids between which a starlane runs that can be used to convey supply to fleets.
+    std::map<int, int>              m_fleet_supply_system_ranges;                       ///< number of starlane jumps away from each system (by id) fleet supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::set<std::set<int> >        m_resource_supply_groups;                           ///< sets of system ids that are connected by resource supply lines and are able to share resources between systems or between objects in systems
+    std::set<std::pair<int, int> >  m_resource_supply_starlane_traversals;              ///< ordered pairs of system ids between which a starlane runs that can be used to convey resources between systems
+    std::set<std::pair<int, int> >  m_resource_supply_obstructed_starlane_traversals;   ///< ordered pairs of system ids between which a starlane could be used to convey resources between system, but is not because something is obstructing the resource flow.  That is, the resource flow isn't limited by range, but by something blocking its flow.
+    std::map<int, int>              m_resource_supply_system_ranges;                    ///< number of starlane jumps away from each system (by id) that resources can be conveyed.
+    std::set<int>                   m_supply_unobstructed_systems;                      ///< ids of system that don't block supply (resource or fleet) from flowing
 
 
     friend class boost::serialization::access;

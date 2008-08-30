@@ -94,32 +94,10 @@ namespace {
     }
 #endif
 
-    ////////////////////////////////////////////////
-    // StarlaneData
-    ////////////////////////////////////////////////
-    /* Note that an order is imposed on the two systems the starlane spans.  The
-       "source" system is the one with the lower pointer.  This is so
-       StarlaneDatas can be stored in a std::set and duplicates will not be a
-       problem. */
-    struct StarlaneData
-    {
-        StarlaneData() {}
-        StarlaneData(const System* src_system, const System* dst_system) : 
-            src(std::min(src_system, dst_system)), 
-            dst(std::max(src_system, dst_system)) 
-            {}
-        bool operator<(const StarlaneData& rhs) const 
-            {
-                if (src != rhs.src) 
-                    return src < rhs.src; 
-                if (dst != rhs.dst) 
-                    return dst < rhs.dst;
-                return false;
-            }
-    private:
-        const System* src;
-        const System* dst;
-    };
+    // returns an int-int pair that doesn't depend on the order of parameters
+    std::pair<int, int> UnorderedIntPair(int one, int two) {
+        return std::make_pair(std::min(one, two), std::max(one, two));
+    }
 
     // disambiguate overloaded function with a function pointer
     void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
@@ -805,7 +783,11 @@ void MapWnd::InitTurn(int turn_number)
     std::vector<float> raw_starlane_supply_vertices;
     std::vector<unsigned char> raw_starlane_supply_colors;
 
-    std::set<StarlaneData> starlane_pairs;
+    std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
+    std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+
+    Logger().debugStream() << "====ADDING STARLANES====";
+
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
@@ -860,9 +842,11 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
         GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
 
-        // gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gaseous_texture =
-            ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
+
+        Logger().debugStream() << " considering lanes from " << start_system->Name() << " (id: " << start_system->ID() << ")";
+
+            // gaseous substance around system
+        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -898,43 +882,105 @@ void MapWnd::InitTurn(int turn_number)
 
             const System* dest_system = universe.Object<System>(lane_it->first);
 
-            // check that this land hasn't already been added by attempting to insert the ordered lane pair into a set.
-            // set::insert returns a pair, of which .second is a bool which is true if the key was inserted, and false
-            // if the set already contained the key.
-            if (!starlane_pairs.insert(StarlaneData(start_system, dest_system)).second) continue;
 
-            raw_starlane_vertices.push_back(start_system->X());
-            raw_starlane_vertices.push_back(start_system->Y());
-            raw_starlane_vertices.push_back(dest_system->X());
-            raw_starlane_vertices.push_back(dest_system->Y());
+            Logger().debugStream() << " considering lanes to " << dest_system->Name() << " (id: " << dest_system->ID() << ")";
 
-            // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
-            // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
-            // todo: render potential but blocked lanes as well
+            Logger().debugStream() << "added starlanes:";
+            for (std::set<std::pair<int, int> >::const_iterator it = rendered_starlanes.begin(); it != rendered_starlanes.end(); ++it)
+                Logger().debugStream() << " ... " << GetUniverse().Object(it->first)->Name() << " to " << GetUniverse().Object(it->second)->Name();
 
-            GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
+            Logger().debugStream() << "looking for " << start_system->Name() << " to " << dest_system->Name();
 
-            for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                empire = empire_it->second;
-                const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+            // render starlane between start and dest systems?
 
-                std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
-                std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+            // check that this lane isn't already going to be rendered.  skip it if it is.
+            if (rendered_starlanes.find(UnorderedIntPair(start_system->ID(), dest_system->ID())) == rendered_starlanes.end()) {
+                Logger().debugStream() << " ... lane not found.";
+                rendered_starlanes.insert(UnorderedIntPair(start_system->ID(), dest_system->ID()));
 
-                // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
-                if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
-                    lane_colour = empire->Color();
-                    break;  // found a colour for this lane, so can abort loop
+                raw_starlane_vertices.push_back(start_system->X());
+                raw_starlane_vertices.push_back(start_system->Y());
+                raw_starlane_vertices.push_back(dest_system->X());
+                raw_starlane_vertices.push_back(dest_system->Y());
+
+                // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
+                // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
+
+                GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
+
+                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    empire = empire_it->second;
+                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+
+                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+                    std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+
+                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
+                        lane_colour = empire->Color();
+                        Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
+                        break;
+                    }
+                }
+
+                if (lane_colour == UNOWNED_STARLANE_GRAY_CLR)
+                    Logger().debugStream() << "selected unowned gray colour for this full lane";
+
+                raw_starlane_colors.push_back(lane_colour.r);
+                raw_starlane_colors.push_back(lane_colour.g);
+                raw_starlane_colors.push_back(lane_colour.b);
+                raw_starlane_colors.push_back(lane_colour.a);
+                raw_starlane_colors.push_back(lane_colour.r);
+                raw_starlane_colors.push_back(lane_colour.g);
+                raw_starlane_colors.push_back(lane_colour.b);
+                raw_starlane_colors.push_back(lane_colour.a);
+
+                Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
+            }
+
+
+
+            // render half-starlane from the current start_system to the current dest_system?
+
+            // check that this lane isn't already going to be rendered.  skip it if it is.
+            if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
+                // NOTE: this will never find a preexisting half lane
+                Logger().debugStream() << "half lane not found... considering possible half lanes to add";
+
+                // scan through possible empires to have a half-lane here and add a half-lane if one is found
+
+                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    empire = empire_it->second;
+                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->ResourceSupplyOstructedStarlaneTraversals();
+
+                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+
+                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
+                        // found an empire that has a half lane here, so add it.
+                        rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
+
+                        raw_starlane_vertices.push_back(start_system->X());
+                        raw_starlane_vertices.push_back(start_system->Y());
+                        raw_starlane_vertices.push_back((start_system->X() + dest_system->X()) * 0.5);  // half way along starlane
+                        raw_starlane_vertices.push_back((start_system->Y() + dest_system->Y()) * 0.5);
+
+                        const GG::Clr& lane_colour = empire->Color();
+                        raw_starlane_colors.push_back(lane_colour.r);
+                        raw_starlane_colors.push_back(lane_colour.g);
+                        raw_starlane_colors.push_back(lane_colour.b);
+                        raw_starlane_colors.push_back(lane_colour.a);
+                        raw_starlane_colors.push_back(lane_colour.r);
+                        raw_starlane_colors.push_back(lane_colour.g);
+                        raw_starlane_colors.push_back(lane_colour.b);
+                        raw_starlane_colors.push_back(lane_colour.a);
+
+                        Logger().debugStream() << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name();
+
+                        break;
+                    }
                 }
             }
-            raw_starlane_colors.push_back(lane_colour.r);
-            raw_starlane_colors.push_back(lane_colour.g);
-            raw_starlane_colors.push_back(lane_colour.b);
-            raw_starlane_colors.push_back(lane_colour.a);
-            raw_starlane_colors.push_back(lane_colour.r);
-            raw_starlane_colors.push_back(lane_colour.g);
-            raw_starlane_colors.push_back(lane_colour.b);
-            raw_starlane_colors.push_back(lane_colour.a);
         }
     }
 

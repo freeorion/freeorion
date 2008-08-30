@@ -1032,7 +1032,7 @@ void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes)
     std::map<int, int> propegating_fleet_supply_ranges = m_fleet_supply_system_ranges;
 
     // insert all systems that produce supply on their own into a list of systems to process
-    std::list<int>      propegating_systems_list;           // working list of systems to propegate supply from
+    std::list<int> propegating_systems_list;    // working list of systems to propegate supply from
     for (std::map<int, int>::const_iterator it = propegating_fleet_supply_ranges.begin(); it != propegating_fleet_supply_ranges.end(); ++it)
         propegating_systems_list.push_back(it->first);
 
@@ -1106,7 +1106,7 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
 
     m_resource_supply_groups.clear();
     m_resource_supply_starlane_traversals.clear();
-
+    m_resource_supply_obstructed_starlane_traversals.clear();
 
     // map from system id to set of systems that are supply-connected to it directly (which may involve
     // multiple starlane jumps
@@ -1149,7 +1149,7 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
         // initialize with source supply range
         propegating_system_supply_ranges[source_sys_id] = system_supply_it->second;
 
-        Logger().debugStream() << " .. can propegate suppply " << system_supply_it->second << " jumps";
+        Logger().debugStream() << " ..... can propegate suppply " << system_supply_it->second << " jumps";
 
 
         // iterate through list of accessible systems, processing each in order it was added (like breadth first
@@ -1177,7 +1177,11 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
                 int lane_end_sys_id = *lane_it;
 
                 // ensure this adjacent system is unobstructed
-                if (m_supply_unobstructed_systems.find(lane_end_sys_id) == m_supply_unobstructed_systems.end()) continue; // can't propegate here
+                if (m_supply_unobstructed_systems.find(lane_end_sys_id) == m_supply_unobstructed_systems.end()) {
+                    // can't propegate here
+                    m_resource_supply_obstructed_starlane_traversals.insert(std::make_pair(cur_sys_id, lane_end_sys_id));
+                    continue;
+                }
 
                 // compare next system's supply range to this system's supply range.  propegate if necessary.
                 std::map<int, int>::const_iterator lane_end_sys_it = propegating_system_supply_ranges.find(lane_end_sys_id);
@@ -1218,9 +1222,21 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     }
 
     // DEBUG
-    Logger().debugStream() << "supply traversals:";
+    Logger().debugStream() << "resource supply traversals:";
     for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_starlane_traversals.begin(); it != m_resource_supply_starlane_traversals.end(); ++it) {
         Logger().debugStream() << " ... from: " << GetUniverse().Object(it->first)->Name() << " to: " << GetUniverse().Object(it->second)->Name();
+    }
+
+    Logger().debugStream() << "obstructed resource supply traversals:";
+    for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_obstructed_starlane_traversals.begin(); it != m_resource_supply_obstructed_starlane_traversals.end(); ++it) {
+        const UniverseObject* from = GetUniverse().Object(it->first);
+        const UniverseObject* to = GetUniverse().Object(it->second);
+        if (from && to)
+            Logger().debugStream() << " ... from: " << from->Name() << " to: " << to->Name();
+        else if (from)
+            Logger().debugStream() << " ... from: " << from->Name() << " to id: " << it->second;
+        else
+            Logger().debugStream() << " ... from id: " << it->first << " to id: " << it->second;
     }
 
     if (supply_groups_map.empty()) return;  // need to avoid going to boost graph stuff below, which doesn't seem to like being fed empty graphs...
@@ -1333,6 +1349,11 @@ const std::set<std::set<int> >& Empire::ResourceSupplyGroups() const
 const std::set<std::pair<int, int> >& Empire::ResourceSupplyStarlaneTraversals() const
 {
     return m_resource_supply_starlane_traversals;
+}
+
+const std::set<std::pair<int, int> >& Empire::ResourceSupplyOstructedStarlaneTraversals() const
+{
+    return m_resource_supply_obstructed_starlane_traversals;
 }
 
 const std::map<int, int>& Empire::ResourceSupplyRanges() const

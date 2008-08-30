@@ -1,15 +1,15 @@
 <?xml version="1.0"?>
 <XMLDoc>
  <GG::Clr>
-   <red>0</red>
-   <green>0</green>
+   <red>60</red>
+   <green>60</green>
    <blue>255</blue>
    <alpha>255</alpha>
  </GG::Clr>
  <GG::Clr>
    <red>0</red>
    <green>0</green>
-   <blue>140</blue>
+   <blue>120</blue>
    <alpha>255</alpha>
  </GG::Clr>
  <GG::Clr>
