@@ -262,8 +262,9 @@ private:
     std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_galaxy_gas_quad_vertices;
     GLBuffer m_star_texture_coords;
     GLBuffer m_starlane_vertices;
-    GLBuffer m_starlane_supply_vertices;
-    GLBuffer m_starlane_supply_colors;
+    GLBuffer m_starlane_colors;
+    GLBuffer m_starlane_fleet_supply_vertices;
+    GLBuffer m_starlane_fleet_supply_colors;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events

@@ -26,7 +26,7 @@ public:
     static const std::string SITREP_UPDATE_TAG;
 
     /** an enumeration of the types of entries 
-        WARNING: make sure to update the LUT in UIClient.cpp which contain stringIDs for each type of SitRep
+        WARNING: make sure to update the LUT in ClientUI.cpp which contain stringIDs for each type of SitRep
         This LUT is in Client because the server has no need for it - it's a UI issue. This design in a way breaks
         the data-hiding feature of a class, but is needed because both clients and server share this code. It's better
         to have the discrepancy here than to bloat the server with data it will not use */
@@ -50,7 +50,7 @@ public:
     /** \name Structors */ //@{
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
     //@}
-   
+
     void SetType(EntryType type) { m_type = type; }
     EntryType GetType() { return m_type; }
 

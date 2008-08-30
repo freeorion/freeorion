@@ -121,7 +121,14 @@ namespace {
         const System* dst;
     };
 
+    // disambiguate overloaded function with a function pointer
     void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
+
+    const float STARLANE_GRAY = 127.0f / 255.0f;
+    const float STARLANE_ALPHA = 0.7f;
+    const double STARLANE_WIDTH = 2.5;
+
+    const GG::Clr UNOWNED_STARLANE_GRAY_CLR = GG::Clr(128, 128, 128, 255);
 }
 
 ////////////////////////////////////////////////////////////
@@ -254,8 +261,9 @@ MapWnd::MapWnd() :
     m_zoom_factor(1.0),
     m_star_texture_coords(),
     m_starlane_vertices(),
-    m_starlane_supply_vertices(),
-    m_starlane_supply_colors(),
+    m_starlane_colors(),
+    m_starlane_fleet_supply_vertices(),
+    m_starlane_fleet_supply_colors(),
     m_drag_offset(-1, -1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
@@ -739,15 +747,25 @@ void MapWnd::InitTurn(int turn_number)
     // population is available for currently uncolonized planets
     UpdateMeterEstimates();
 
+    const std::set<int>& this_player_explored_systems = empire->ExploredSystems();
+    const std::map<int, std::set<int> > this_player_known_starlanes = empire->KnownStarlanes();
 
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* empire = it->second;
-        empire->UpdateSupplyUnobstructedSystems();
-        empire->UpdateSystemSupplyRanges();
-        empire->UpdateFleetSupply();
-        empire->UpdateResourceSupply();
-        empire->InitResourcePools();
+        Empire* cur_empire = it->second;
+
+        // use systems this client's player has explored for all empires, so that this client's player can
+        // see where other empires can probably propegate supply, even if this client's empire / player
+        // doesn't know what systems the other player has actually explored
+        cur_empire->UpdateSupplyUnobstructedSystems(this_player_explored_systems);  
+
+        cur_empire->UpdateSystemSupplyRanges();
+
+        // similarly, use this client's player's known starlanes to propegate all empires' supply
+        cur_empire->UpdateFleetSupply(this_player_known_starlanes);
+        cur_empire->UpdateResourceSupply(this_player_known_starlanes);
+
+        cur_empire->InitResourcePools();
     }
 
 
@@ -783,6 +801,7 @@ void MapWnd::InitTurn(int turn_number)
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
     std::vector<float> raw_star_texture_coords;
     std::vector<float> raw_starlane_vertices;
+    std::vector<unsigned char> raw_starlane_colors;
     std::vector<float> raw_starlane_supply_vertices;
     std::vector<unsigned char> raw_starlane_supply_colors;
 
@@ -790,7 +809,8 @@ void MapWnd::InitTurn(int turn_number)
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
-        SystemIcon* icon = new SystemIcon(this, 0, 0, 10, systems[i]->ID());
+        const System* start_system = systems[i];
+        SystemIcon* icon = new SystemIcon(this, 0, 0, 10, start_system->ID());
         {
             // See note above texture coords for why we're making coordinate
             // sets that are 2x too big.
@@ -830,7 +850,7 @@ void MapWnd::InitTurn(int turn_number)
                 halo_vertices.push_back(icon_lr_y);
             }
         }
-        m_system_icons[systems[i]->ID()] = icon;
+        m_system_icons[start_system->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
@@ -842,24 +862,24 @@ void MapWnd::InitTurn(int turn_number)
 
         // gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gaseous_texture =
-            ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", systems[i]->ID())) {
+            ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
             const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
-            const double ROTATION = systems[i]->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const double ROTATION = start_system->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const double COS_THETA = std::cos(ROTATION);
             const double SIN_THETA = std::sin(ROTATION);
             // This rotates the upper left and lower right corners CCW ROTATION
-            // radians, around systems[i].  The initial upper left and lower
+            // radians, around start_system.  The initial upper left and lower
             // right corners are (-GAS_SIZE, -GAS_SIZE) and (GAS_SIZE,
             // GAS_SIZE), in map coordinates respectively.  See note above
             // texture coords for why we're making coordinate sets that are 2x
             // too big.
-            double gas_ul_x = systems[i]->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
-            double gas_ul_y = systems[i]->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
-            double gas_lr_x = systems[i]->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
-            double gas_lr_y = systems[i]->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
+            double gas_ul_x = start_system->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
+            double gas_ul_y = start_system->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
+            double gas_lr_x = start_system->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
+            double gas_lr_y = start_system->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
             std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
             gas_vertices.push_back(gas_lr_x);
             gas_vertices.push_back(gas_ul_y);
@@ -872,18 +892,52 @@ void MapWnd::InitTurn(int turn_number)
         }
 
         // system's starlanes
-        for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
-            if (!it->second) {
-                System* dest_system = universe.Object<System>(it->first);
-                if (starlane_pairs.insert(StarlaneData(systems[i], dest_system)).second) {
-                    raw_starlane_vertices.push_back(systems[i]->X());
-                    raw_starlane_vertices.push_back(systems[i]->Y());
-                    raw_starlane_vertices.push_back(dest_system->X());
-                    raw_starlane_vertices.push_back(dest_system->Y());
+        for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
+            bool lane_is_wormhole = lane_it->second;
+            if (lane_is_wormhole) continue; // at present, not rendering wormholes
+
+            const System* dest_system = universe.Object<System>(lane_it->first);
+
+            // check that this land hasn't already been added by attempting to insert the ordered lane pair into a set.
+            // set::insert returns a pair, of which .second is a bool which is true if the key was inserted, and false
+            // if the set already contained the key.
+            if (!starlane_pairs.insert(StarlaneData(start_system, dest_system)).second) continue;
+
+            raw_starlane_vertices.push_back(start_system->X());
+            raw_starlane_vertices.push_back(start_system->Y());
+            raw_starlane_vertices.push_back(dest_system->X());
+            raw_starlane_vertices.push_back(dest_system->Y());
+
+            // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
+            // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
+            // todo: render potential but blocked lanes as well
+
+            GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
+
+            for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                empire = empire_it->second;
+                const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+
+                std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+                std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+
+                // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
+                    lane_colour = empire->Color();
+                    break;  // found a colour for this lane, so can abort loop
                 }
             }
+            raw_starlane_colors.push_back(lane_colour.r);
+            raw_starlane_colors.push_back(lane_colour.g);
+            raw_starlane_colors.push_back(lane_colour.b);
+            raw_starlane_colors.push_back(lane_colour.a);
+            raw_starlane_colors.push_back(lane_colour.r);
+            raw_starlane_colors.push_back(lane_colour.g);
+            raw_starlane_colors.push_back(lane_colour.b);
+            raw_starlane_colors.push_back(lane_colour.a);
         }
     }
+
 
     // Note these coordinates assume the texture is twice as large as it should
     // be.  This allows us to use one set of texture coords for everything, even
@@ -905,9 +959,9 @@ void MapWnd::InitTurn(int turn_number)
 
     // create animated lines indicating fleet supply flow
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        empire = it->second;
         const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
-            glColor(empire->Color());
             const System* start_sys = universe.Object<System>(lane_it->first);
             const System* end_sys = universe.Object<System>(lane_it->second);
             raw_starlane_supply_vertices.push_back(start_sys->X());
@@ -989,6 +1043,7 @@ void MapWnd::InitTurn(int turn_number)
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
     m_sitrep_panel->Update();
+    empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->NumSitRepEntries()) {
         AttachChild(m_sitrep_panel);
         MoveChildUp(m_sitrep_panel);
@@ -1047,7 +1102,10 @@ void MapWnd::InitTurn(int turn_number)
     DetachChild(m_side_panel);
     SelectSystem(m_side_panel->SystemID());
 
-    empire->UpdateResourcePools();
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        empire = it->second;
+        empire->UpdateResourcePools();
+    }
 
     m_research_wnd->Update();
     m_production_wnd->Update();
@@ -1094,6 +1152,7 @@ void MapWnd::InitTurn(int turn_number)
 #endif
         m_star_texture_coords.m_name = 0;
     }
+
     if (m_starlane_vertices.m_name) {
 #ifdef FREEORION_WIN32
         glDeleteBuffersARB(1, &m_starlane_vertices.m_name);
@@ -1102,21 +1161,32 @@ void MapWnd::InitTurn(int turn_number)
 #endif
         m_starlane_vertices.m_name = 0;
     }
-    if (m_starlane_supply_vertices.m_name) {
+
+    if (m_starlane_colors.m_name) {
 #ifdef FREEORION_WIN32
-        glDeleteBuffersARB(1, &m_starlane_supply_vertices.m_name);
+        glDeleteBuffersARB(1, &m_starlane_colors.m_name);
 #else
-        glDeleteBuffers(1, &m_starlane_supply_vertices.m_name);
+        glDeleteBuffers(1, &m_starlane_colors.m_name);
 #endif
-        m_starlane_supply_vertices.m_name = 0;
+        m_starlane_colors.m_name = 0;
     }
-    if (m_starlane_supply_colors.m_name) {
+
+    if (m_starlane_fleet_supply_vertices.m_name) {
 #ifdef FREEORION_WIN32
-        glDeleteBuffersARB(1, &m_starlane_supply_colors.m_name);
+        glDeleteBuffersARB(1, &m_starlane_fleet_supply_vertices.m_name);
 #else
-        glDeleteBuffers(1, &m_starlane_supply_colors.m_name);
+        glDeleteBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
 #endif
-        m_starlane_supply_colors.m_name = 0;
+        m_starlane_fleet_supply_vertices.m_name = 0;
+    }
+
+    if (m_starlane_fleet_supply_colors.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
+#else
+        glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
+#endif
+        m_starlane_fleet_supply_colors.m_name = 0;
     }
 
 
@@ -1224,41 +1294,59 @@ void MapWnd::InitTurn(int turn_number)
 #endif
         m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
     }
+    if (!raw_starlane_colors.empty()) {
+#ifdef FREEORION_WIN32
+        glGenBuffersARB(1, &m_starlane_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_colors.size() * sizeof(unsigned char),
+                        &raw_starlane_colors[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &m_starlane_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_colors.size() * sizeof(unsigned char),
+                     &raw_starlane_colors[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_starlane_colors.m_size = raw_starlane_colors.size() / 4;
+    }
     if (!raw_starlane_supply_vertices.empty()) {
 #ifdef FREEORION_WIN32
-        glGenBuffersARB(1, &m_starlane_supply_vertices.m_name);
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+        glGenBuffersARB(1, &m_starlane_fleet_supply_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                         raw_starlane_supply_vertices.size() * sizeof(float),
                         &raw_starlane_supply_vertices[0],
                         GL_STATIC_DRAW_ARB);
 #else
-        glGenBuffers(1, &m_starlane_supply_vertices.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glGenBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_supply_vertices.size() * sizeof(float),
                      &raw_starlane_supply_vertices[0],
                      GL_STATIC_DRAW);
 #endif
-        m_starlane_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
+        m_starlane_fleet_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
     }
     if (!raw_starlane_supply_colors.empty()) {
 #ifdef FREEORION_WIN32
-        glGenBuffersARB(1, &m_starlane_supply_colors.m_name);
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+        glGenBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_colors.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                         raw_starlane_supply_colors.size() * sizeof(unsigned char),
                         &raw_starlane_supply_colors[0],
                         GL_STATIC_DRAW_ARB);
 #else
-        glGenBuffers(1, &m_starlane_supply_colors.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glGenBuffers(1, &m_starlane_fleet_supply_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_supply_colors.size() * sizeof(unsigned char),
                      &raw_starlane_supply_colors[0],
                      GL_STATIC_DRAW);
 #endif
-        m_starlane_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
+        m_starlane_fleet_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
     }
 
 #ifdef FREEORION_WIN32
@@ -1819,26 +1907,29 @@ void MapWnd::RenderSystems()
 
 void MapWnd::RenderStarlanes()
 {
-    const float STARLANE_GRAY = 127.0f / 255.0f;
-    const float STARLANE_ALPHA = 0.7f;
-    const double STARLANE_WIDTH = 2.5;
-
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    if (m_starlane_vertices.m_name) {
-        glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
+    if (m_starlane_vertices.m_name && m_starlane_colors.m_name) {
+        glLineStipple(1, 0xffff);
+        glLineWidth(STARLANE_WIDTH);
+        glEnableClientState(GL_COLOR_ARRAY);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
-        glLineWidth(STARLANE_WIDTH);
-        glLineStipple(1, 0xffff);
+#ifdef FREEORION_WIN32
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
+#else
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
+#endif
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
         glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
+        glDisableClientState(GL_COLOR_ARRAY);
     }
 
-    if (m_starlane_supply_vertices.m_name && m_starlane_supply_colors.m_name) {
+    if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name) {
         // render fleet supply lines
         const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
         const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
@@ -1849,18 +1940,18 @@ void MapWnd::RenderStarlanes()
         glLineWidth(STARLANE_WIDTH);
         glEnableClientState(GL_COLOR_ARRAY);
 #ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
 #else
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
 #ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_colors.m_name);
 #else
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
 #endif
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
-        glDrawArrays(GL_LINES, 0, m_starlane_supply_vertices.m_size);
+        glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.m_size);
         glDisableClientState(GL_COLOR_ARRAY);
     }
 

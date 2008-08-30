@@ -299,7 +299,7 @@ bool Universe::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) 
         (this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group);
 }
 
- /////////////////////////////////////////////
+/////////////////////////////////////////////
 // struct Universe::EffectCause
 /////////////////////////////////////////////
 Universe::EffectCause::EffectCause() :
@@ -1859,7 +1859,7 @@ namespace Delauney {
     public:
         // determines whether a specified point is within the circumcircle of the triangle
         bool PointInCircumCircle(Delauney::DTPoint &p);
-        
+
         const std::vector<int>& getVerts(); // getter
 
         DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points);
@@ -1882,7 +1882,7 @@ namespace Delauney {
         double a, Sx, Sy, b;
         double x1, x2, x3, y1, y2, y3;
 
-        if ( vert1 == vert2 || vert1 == vert3 || vert2 == vert3)
+        if (vert1 == vert2 || vert1 == vert3 || vert2 == vert3)
             throw std::runtime_error("Attempted to create Triangle with two of the same vertex indices.");
 
         verts = std::vector<int>(3);
@@ -1902,18 +1902,18 @@ namespace Delauney {
 
         // calculate circumcircle and circumcentre of triangle
         a = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
-            
+
         Sx = 0.5 * ((x1 * x1 + y1 * y1) * (y2 - y3) +
-                     (x2 * x2 + y2 * y2) * (y3 - y1) +
-                     (x3 * x3 + y3 * y3) * (y1 - y2));
+                    (x2 * x2 + y2 * y2) * (y3 - y1) +
+                    (x3 * x3 + y3 * y3) * (y1 - y2));
 
         Sy = -0.5* ((x1 * x1 + y1 * y1) * (x2 - x3) +
                     (x2 * x2 + y2 * y2) * (x3 - x1) +
                     (x3 * x3 + y3 * y3) * (x1 - x2));
 
-        b =   (    (x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) +
-                (x2 * x2 + y2 * y2) * (x3 * y1 - x1 * y3) +
-                (x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
+        b =        ((x1 * x1 + y1 * y1) * (x2 * y3 - x3 * y2) +
+                    (x2 * x2 + y2 * y2) * (x3 * y1 - x1 * y3) +
+                    (x3 * x3 + y3 * y3) * (x1 * y2 - x2 * y1));
 
         // make sure nothing funky's going on...
         if (std::abs(a) < 0.01)
@@ -1947,9 +1947,9 @@ namespace Delauney {
 
         int n, c, theSize, num, num2; // loop counters, storage for retreived size of a vector, temp storage
         std::list<Delauney::DTTriangle>::iterator itCur, itEnd;
-        std::list<Delauney::SortValInt>::iterator itCur2, itEnd2; 
+        std::list<Delauney::SortValInt>::iterator itCur2, itEnd2;
         // vector of x and y positions of stars
-        std::vector<Delauney::DTPoint> points;    
+        std::vector<Delauney::DTPoint> points;
         // pointer to main list of triangles algorithm works with.
         std::list<Delauney::DTTriangle> *triList;
         // list of indices in vector of points extracted from removed triangles that need to be retriangulated
@@ -1961,10 +1961,10 @@ namespace Delauney {
             throw std::runtime_error("Attempted to run Delauney Triangulation on empty array of systems");
 
         // extract systems positions, and store in vector.  Can't use actual systems data since
-        // systems have position limitations which would interfere with algorithm    
+        // systems have position limitations which would interfere with algorithm
         theSize = static_cast<int>(systems.size());
-        for (n = 0; n < theSize; n++) {        
-            points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));    
+        for (n = 0; n < theSize; n++) {
+            points.push_back(Delauney::DTPoint(systems[n]->X(), systems[n]->Y()));
         }
 
         // add points for covering triangle.  the point positions should be big enough to form a triangle
@@ -1973,7 +1973,7 @@ namespace Delauney {
         points.push_back(Delauney::DTPoint(2.0 * (Universe::UniverseWidth() + 1.0), -1.0));
         points.push_back(Delauney::DTPoint(-1.0, 2.0 * (Universe::UniverseWidth() + 1.0)));
 
-        // initialize triList.  algorithm adds and removes triangles from this list, and the resulting 
+        // initialize triList.  algorithm adds and removes triangles from this list, and the resulting
         // list is returned (so should be deleted externally)
         triList = new std::list<Delauney::DTTriangle>;
 
@@ -1995,7 +1995,7 @@ namespace Delauney {
 
                 // check if point to be added to triangulation is within the circumcircle for the current triangle
                 if (tri.PointInCircumCircle(points[n])) {
-                    // if so, insert the triangles vertices indices into the list.  add in sorted position
+                    // if so, insert the triangle's vertices' indices into the list.  add in sorted position
                     // based on angle of direction to current point n being inserted.  don't add if doing
                     // so would duplicate an index already in the list
                     for (c = 0; c < 3; c++) {
@@ -2020,15 +2020,14 @@ namespace Delauney {
                         if (itCur2 == itEnd2) {
                             // list is empty
                             pointNumList.push_back(Delauney::SortValInt(num, mag));
-                        }
-                        else {
+                        } else {
                             while (itCur2 != itEnd2) {
                                 if ((*itCur2).num == num) 
                                     break;
                                 if ((*itCur2).sortVal > mag) {
                                     pointNumList.insert(itCur2, Delauney::SortValInt(num, mag));
                                     break;
-                                }                            
+                                }
                                 itCur2++;
                             }
                             if (itCur2 == itEnd2) {
@@ -2040,8 +2039,7 @@ namespace Delauney {
 
                     // remove current triangle from list of triangles
                     itCur = triList->erase(itCur);
-                }
-                else {
+                } else {
                     // point not in circumcircle for this triangle
                     // to go next triangle in list
                     ++itCur;

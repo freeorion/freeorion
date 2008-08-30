@@ -204,17 +204,12 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/**
-  * Class to maintain the state of a single empire. In both the client and server, Empires are managed by a subclass of
-  * EmpireManager, and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer.
-  */
+/** Class to maintain the state of a single empire. In both the client and server, Empires are managed by a subclass of
+  * EmpireManager, and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer. */
 class Empire 
 {
 public:
-    /**
-     * EmpireManagers must be friends so that they can have
-     * access to the constructor and keep it hidden from others
-     */
+    // EmpireManagers must be friends so that they can have access to the constructor and keep it hidden from others
     friend class EmpireManager;
 
     /** \name Iterator Types */ //@{
@@ -289,11 +284,12 @@ public:
     const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propegate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
 
     /** modifies passed parameter, which is a map from system id to the range, in starlane jumps that the
-      * system can send supplies.
-      */
+      * system can send supplies. */
     void                    GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
 
     const std::set<int>&    ExploredSystems() const;            ///< returns set of ids of systems that this empire has explored
+    const std::map<int, std::set<int> >
+                            KnownStarlanes() const;             ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
 
     TechItr                 TechBegin() const;                  ///< starting iterator for techs this empire has researched
     TechItr                 TechEnd() const;                    ///< end iterator for techs
@@ -323,8 +319,8 @@ public:
     void                    SetCapitolID(int id);                           ///< If the object with id \a id is a planet owned by this empire, sets that planet to be this empire's capitol, and otherwise does nothing
 
     /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
-        it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
-        is placed at the end of the queue. If \a tech is already available, no action is taken. */
+      * it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
+      * is placed at the end of the queue. If \a tech is already available, no action is taken. */
     void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
 
     void                    RemoveTechFromQueue(const Tech* tech);          ///< Removes \a tech from the research queue, if it is in the research queue already.
@@ -346,8 +342,8 @@ public:
     void                    RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
 
     /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
-        as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
-        queue of their current empire */
+      * as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
+      * queue of their current empire */
     void                    ConquerBuildsAtLocation(int location_id);
 
     void                    AddTech(const std::string& name);               ///< Inserts the given Tech into the Empire's list of available technologies.
@@ -380,9 +376,12 @@ public:
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
 
     void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.
-    void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply (fleet or resource)
-    void                    UpdateFleetSupply();                            ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
-    void                    UpdateResourceSupply();                         ///< Calculates groups of systems of this empire which can exchange resources and starlane traversals used to do so.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateSupplyUnobstructedSystems(const std::set<int>& explored_systems); ///< Calculates systems that can propegate supply (fleet or resource) using the specified set of \a explored_systems
+    void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply using this empire's own / internal list of explored systems
+    void                    UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes);      ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so, using the indicated \a starlanes but subject to obstruction of supply by various factors.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateFleetSupply();                            ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so using this empire's set of known starlanes.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes);   ///< Calculates groups of systems of this empire which can exchange resources and the starlane traversals used to do so, using the indicated \a starlanes but subject to obstruction of supply propegation by various factors.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateResourceSupply();                         ///< Calculates groups of systems of this empire which can exchange resources and starlane traversals used to do so using this empire's set of known starlanes.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
 
     /** Checks for production projects that have been completed, and places them at their respective
       * production sites.  Which projects have been completed is determined by the results of
@@ -609,7 +608,3 @@ void Empire::serialize(Archive& ar, const unsigned int version)
 }
 
 #endif // _Empire_h_
-
-
-
-
