@@ -798,8 +798,7 @@ void MapWnd::InitTurn(int turn_number)
         const System* start_system = systems[i];
         SystemIcon* icon = new SystemIcon(this, 0, 0, 10, start_system->ID());
         {
-            // See note above texture coords for why we're making coordinate
-            // sets that are 2x too big.
+            // See note above texture coords for why we're making coordinate sets that are 2x too big.
             const System& system = icon->GetSystem();
             double icon_size = ClientUI::SystemIconSize();
             double icon_ul_x = system.X() - icon_size;
@@ -849,7 +848,7 @@ void MapWnd::InitTurn(int turn_number)
 
         //Logger().debugStream() << " considering lanes from " << start_system->Name() << " (id: " << start_system->ID() << ")";
 
-            // gaseous substance around system
+        // gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -912,20 +911,18 @@ void MapWnd::InitTurn(int turn_number)
 
                 GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
 
-                if (GetOptionsDB().Get<bool>("UI.resource-starlane-colouring")) {
-                    for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                        empire = empire_it->second;
-                        const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    empire = empire_it->second;
+                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
 
-                        std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
-                        std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+                    std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
 
-                        // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
-                        if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
-                            lane_colour = empire->Color();
-                            //Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
-                            break;
-                        }
+                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
+                        lane_colour = empire->Color();
+                        //Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
+                        break;
                     }
                 }
 
@@ -947,8 +944,6 @@ void MapWnd::InitTurn(int turn_number)
 
 
             // render half-starlane from the current start_system to the current dest_system?
-            if (!GetOptionsDB().Get<bool>("UI.resource-starlane-colouring"))
-                continue;
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
             if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
@@ -1963,24 +1958,37 @@ void MapWnd::RenderStarlanes()
 {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    if (m_starlane_vertices.m_name && m_starlane_colors.m_name) {
-        glLineStipple(1, 0xffff);
+    bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+
+    if (m_starlane_vertices.m_name && (m_starlane_colors.m_name || !coloured)) {
+        glLineStipple(1, 0xffff);   // solid line / no stipple
         glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
-        glEnableClientState(GL_COLOR_ARRAY);
+
+        if (coloured)
+            glEnableClientState(GL_COLOR_ARRAY);
+        else
+            glColor(UNOWNED_STARLANE_GRAY_CLR);
+
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
+
+        if (coloured) {
 #ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
 #else
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
+            glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
 #endif
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+            glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+        }
+
         glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
-        glDisableClientState(GL_COLOR_ARRAY);
+
+        if (coloured)
+            glDisableClientState(GL_COLOR_ARRAY);
     }
 
     if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
