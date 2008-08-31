@@ -1125,9 +1125,9 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     for (std::set<int>::const_iterator source_sys_it = m_supply_unobstructed_systems.begin(); source_sys_it != m_supply_unobstructed_systems.end(); ++source_sys_it) {
         int source_sys_id = *source_sys_it;
 
-        // DEBUG
-        const UniverseObject* asdf = GetUniverse().Object(source_sys_id);
-        Logger().debugStream() << " .. unobstructed system : " << asdf->Name();
+        //// DEBUG
+        //const UniverseObject* asdf = GetUniverse().Object(source_sys_id);
+        //Logger().debugStream() << " .. unobstructed system : " << asdf->Name();
 
         // skip systems that don't have any supply to propegate.
         std::map<int, int>::const_iterator system_supply_it = m_resource_supply_system_ranges.find(source_sys_id);
@@ -1149,7 +1149,7 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
         // initialize with source supply range
         propegating_system_supply_ranges[source_sys_id] = system_supply_it->second;
 
-        Logger().debugStream() << " ..... can propegate suppply " << system_supply_it->second << " jumps";
+        //Logger().debugStream() << " ..... can propegate suppply " << system_supply_it->second << " jumps";
 
 
         // iterate through list of accessible systems, processing each in order it was added (like breadth first
@@ -1221,23 +1221,23 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
         }
     }
 
-    // DEBUG
-    Logger().debugStream() << "resource supply traversals:";
-    for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_starlane_traversals.begin(); it != m_resource_supply_starlane_traversals.end(); ++it) {
-        Logger().debugStream() << " ... from: " << GetUniverse().Object(it->first)->Name() << " to: " << GetUniverse().Object(it->second)->Name();
-    }
-
-    Logger().debugStream() << "obstructed resource supply traversals:";
-    for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_obstructed_starlane_traversals.begin(); it != m_resource_supply_obstructed_starlane_traversals.end(); ++it) {
-        const UniverseObject* from = GetUniverse().Object(it->first);
-        const UniverseObject* to = GetUniverse().Object(it->second);
-        if (from && to)
-            Logger().debugStream() << " ... from: " << from->Name() << " to: " << to->Name();
-        else if (from)
-            Logger().debugStream() << " ... from: " << from->Name() << " to id: " << it->second;
-        else
-            Logger().debugStream() << " ... from id: " << it->first << " to id: " << it->second;
-    }
+    //// DEBUG
+    //Logger().debugStream() << "resource supply traversals:";
+    //for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_starlane_traversals.begin(); it != m_resource_supply_starlane_traversals.end(); ++it) {
+    //    Logger().debugStream() << " ... from: " << GetUniverse().Object(it->first)->Name() << " to: " << GetUniverse().Object(it->second)->Name();
+    //}
+    //
+    //Logger().debugStream() << "obstructed resource supply traversals:";
+    //for (std::set<std::pair<int, int> >::const_iterator it = m_resource_supply_obstructed_starlane_traversals.begin(); it != m_resource_supply_obstructed_starlane_traversals.end(); ++it) {
+    //    const UniverseObject* from = GetUniverse().Object(it->first);
+    //    const UniverseObject* to = GetUniverse().Object(it->second);
+    //    if (from && to)
+    //        Logger().debugStream() << " ... from: " << from->Name() << " to: " << to->Name();
+    //    else if (from)
+    //        Logger().debugStream() << " ... from: " << from->Name() << " to id: " << it->second;
+    //    else
+    //        Logger().debugStream() << " ... from id: " << it->first << " to id: " << it->second;
+    //}
 
     if (supply_groups_map.empty()) return;  // need to avoid going to boost graph stuff below, which doesn't seem to like being fed empty graphs...
 
@@ -1313,16 +1313,16 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     for (std::map<int, std::set<int> >::const_iterator map_it = component_sets_map.begin(); map_it != component_sets_map.end(); ++map_it) {
         m_resource_supply_groups.insert(map_it->second);
 
-        // DEBUG!
-        Logger().debugStream() << "Set: ";
-        for (std::set<int>::const_iterator set_it = map_it->second.begin(); set_it != map_it->second.end(); ++set_it) {
-            const UniverseObject* obj = GetUniverse().Object(*set_it);
-            if (!obj) {
-                Logger().debugStream() << " ... missing object!";
-                continue;
-            }
-            Logger().debugStream() << " ... " << obj->Name();
-        }
+        //// DEBUG!
+        //Logger().debugStream() << "Set: ";
+        //for (std::set<int>::const_iterator set_it = map_it->second.begin(); set_it != map_it->second.end(); ++set_it) {
+        //    const UniverseObject* obj = GetUniverse().Object(*set_it);
+        //    if (!obj) {
+        //        Logger().debugStream() << " ... missing object!";
+        //        continue;
+        //    }
+        //    Logger().debugStream() << " ... " << obj->Name();
+        //}
     }
 }
 

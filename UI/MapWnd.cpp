@@ -77,12 +77,17 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
-        db.Add("UI.chat-edit-history", "OPTIONS_DB_UI_CHAT_EDIT_HISTORY", 50, RangedValidator<int>(0, 1000));
-        db.Add("UI.galaxy-gas-background", "OPTIONS_DB_GALAXY_MAP_GAS", true, Validator<bool>());
-        db.Add("UI.optimized-system-rendering", "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING", true, Validator<bool>());
+        db.Add("UI.chat-hide-interval",             "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL",         10,     RangedValidator<int>(0, 3600));
+        db.Add("UI.chat-edit-history",              "OPTIONS_DB_UI_CHAT_EDIT_HISTORY",          50,     RangedValidator<int>(0, 1000));
+        db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                true,   Validator<bool>());
+        db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",    true,   Validator<bool>());
+        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",            2.5,    RangedValidator<double>(0.1, 15.0));
+        db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",   true,   Validator<bool>());
+        db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",            true,   Validator<bool>());
+        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",       3.0,    RangedValidator<double>(0.1, 15.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
 
 #ifndef FREEORION_RELEASE
     bool RequestRegressionTestDump()
@@ -104,9 +109,8 @@ namespace {
 
     const float STARLANE_GRAY = 127.0f / 255.0f;
     const float STARLANE_ALPHA = 0.7f;
-    const double STARLANE_WIDTH = 2.5;
 
-    const GG::Clr UNOWNED_STARLANE_GRAY_CLR = GG::Clr(128, 128, 128, 255);
+    const GG::Clr UNOWNED_STARLANE_GRAY_CLR = GG::Clr(72, 72, 72, 255);
 }
 
 ////////////////////////////////////////////////////////////
@@ -786,7 +790,7 @@ void MapWnd::InitTurn(int turn_number)
     std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
     std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
-    Logger().debugStream() << "====ADDING STARLANES====";
+    //Logger().debugStream() << "====ADDING STARLANES====";
 
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
@@ -843,7 +847,7 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
 
 
-        Logger().debugStream() << " considering lanes from " << start_system->Name() << " (id: " << start_system->ID() << ")";
+        //Logger().debugStream() << " considering lanes from " << start_system->Name() << " (id: " << start_system->ID() << ")";
 
             // gaseous substance around system
         if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
@@ -883,19 +887,19 @@ void MapWnd::InitTurn(int turn_number)
             const System* dest_system = universe.Object<System>(lane_it->first);
 
 
-            Logger().debugStream() << " considering lanes to " << dest_system->Name() << " (id: " << dest_system->ID() << ")";
+            //Logger().debugStream() << " considering lanes to " << dest_system->Name() << " (id: " << dest_system->ID() << ")";
 
-            Logger().debugStream() << "added starlanes:";
-            for (std::set<std::pair<int, int> >::const_iterator it = rendered_starlanes.begin(); it != rendered_starlanes.end(); ++it)
-                Logger().debugStream() << " ... " << GetUniverse().Object(it->first)->Name() << " to " << GetUniverse().Object(it->second)->Name();
+            //Logger().debugStream() << "added starlanes:";
+            //for (std::set<std::pair<int, int> >::const_iterator it = rendered_starlanes.begin(); it != rendered_starlanes.end(); ++it)
+            //    Logger().debugStream() << " ... " << GetUniverse().Object(it->first)->Name() << " to " << GetUniverse().Object(it->second)->Name();
 
-            Logger().debugStream() << "looking for " << start_system->Name() << " to " << dest_system->Name();
+            //Logger().debugStream() << "looking for " << start_system->Name() << " to " << dest_system->Name();
 
             // render starlane between start and dest systems?
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
             if (rendered_starlanes.find(UnorderedIntPair(start_system->ID(), dest_system->ID())) == rendered_starlanes.end()) {
-                Logger().debugStream() << " ... lane not found.";
+                //Logger().debugStream() << " ... lane not found.";
                 rendered_starlanes.insert(UnorderedIntPair(start_system->ID(), dest_system->ID()));
 
                 raw_starlane_vertices.push_back(start_system->X());
@@ -908,23 +912,25 @@ void MapWnd::InitTurn(int turn_number)
 
                 GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
 
-                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                    empire = empire_it->second;
-                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+                if (GetOptionsDB().Get<bool>("UI.resource-starlane-colouring")) {
+                    for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                        empire = empire_it->second;
+                        const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
 
-                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
-                    std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+                        std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+                        std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
 
-                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
-                    if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
-                        lane_colour = empire->Color();
-                        Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
-                        break;
+                        // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                        if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
+                            lane_colour = empire->Color();
+                            //Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
+                            break;
+                        }
                     }
                 }
 
-                if (lane_colour == UNOWNED_STARLANE_GRAY_CLR)
-                    Logger().debugStream() << "selected unowned gray colour for this full lane";
+                //if (lane_colour == UNOWNED_STARLANE_GRAY_CLR)
+                //    Logger().debugStream() << "selected unowned gray colour for this full lane";
 
                 raw_starlane_colors.push_back(lane_colour.r);
                 raw_starlane_colors.push_back(lane_colour.g);
@@ -935,17 +941,19 @@ void MapWnd::InitTurn(int turn_number)
                 raw_starlane_colors.push_back(lane_colour.b);
                 raw_starlane_colors.push_back(lane_colour.a);
 
-                Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
+                //Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
 
 
 
             // render half-starlane from the current start_system to the current dest_system?
+            if (!GetOptionsDB().Get<bool>("UI.resource-starlane-colouring"))
+                continue;
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
             if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
                 // NOTE: this will never find a preexisting half lane
-                Logger().debugStream() << "half lane not found... considering possible half lanes to add";
+                //Logger().debugStream() << "half lane not found... considering possible half lanes to add";
 
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
 
@@ -975,7 +983,7 @@ void MapWnd::InitTurn(int turn_number)
                         raw_starlane_colors.push_back(lane_colour.b);
                         raw_starlane_colors.push_back(lane_colour.a);
 
-                        Logger().debugStream() << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name();
+                        //Logger().debugStream() << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name();
 
                         break;
                     }
@@ -1957,7 +1965,7 @@ void MapWnd::RenderStarlanes()
 
     if (m_starlane_vertices.m_name && m_starlane_colors.m_name) {
         glLineStipple(1, 0xffff);
-        glLineWidth(STARLANE_WIDTH);
+        glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
         glEnableClientState(GL_COLOR_ARRAY);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
@@ -1975,15 +1983,15 @@ void MapWnd::RenderStarlanes()
         glDisableClientState(GL_COLOR_ARRAY);
     }
 
-    if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name) {
+    if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
         // render fleet supply lines
         const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
         const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
         const double RATE = 0.1;            // slow crawl
         const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
-        glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
-        glLineWidth(STARLANE_WIDTH);
+        glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
+        glLineWidth(GetOptionsDB().Get<double>("UI.fleet-supply-line-width"));
         glEnableClientState(GL_COLOR_ARRAY);
 #ifdef FREEORION_WIN32
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
@@ -2006,8 +2014,7 @@ void MapWnd::RenderStarlanes()
 
 void MapWnd::RenderFleetMovementLines()
 {
-    const double STARLANE_WIDTH = 2.5;
-    glLineWidth(STARLANE_WIDTH);
+    glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
 
     // standard movement line stipple
     const GLushort PATTERN = 0xF0F0;
@@ -2017,7 +2024,7 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
 
     // render standard movement lines
-    glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
+    glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 
@@ -2030,7 +2037,7 @@ void MapWnd::RenderFleetMovementLines()
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
 
     //// render projected move liens
-    glLineStipple(static_cast<int>(STARLANE_WIDTH), PROJECTED_PATH_STIPPLE);
+    glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), PROJECTED_PATH_STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 }

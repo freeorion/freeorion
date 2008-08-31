@@ -156,6 +156,18 @@ Render gassy substance around systems to give galaxy shape.  May slow rendering 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
 
+OPTIONS_DB_STARLANE_THICKNESS
+Sets how wide to render starlanes in pixels.
+
+OPTIONS_DB_RESOURCE_STARLANE_COLOURING
+Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.
+
+OPTIONS_DB_FLEET_SUPPLY_LINES
+Toggles whether to show fleet supply lines with empire-coloured indica
+
+OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
+Sets how wide to render fleet supply lines.
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
@@ -862,6 +874,18 @@ Galaxy map gas rendering
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
 Optimized system rendering
+
+OPTIONS_STARLANE_THICKNESS
+Starlane thickness
+
+OPTIONS_RESOURCE_STARLANE_COLOURING
+Resource starlane colouring
+
+OPTIONS_FLEET_SUPPLY_LINES
+Fleet supply lines
+
+OPTIONS_FLEET_SUPPLY_LINE_WIDTH
+Fleet supply line width
 
 OPTIONS_MUSIC
 Music
