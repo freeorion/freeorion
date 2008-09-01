@@ -471,7 +471,7 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
     }
 
     const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
-    
+
     if (EPSILON < PPs) {
         //Logger().debugStream() << "ProductionQueue::Update: Simulating future turns of production queue";
         // simulate future turns in order to determine when the builditems in the queue will be finished
@@ -483,7 +483,7 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
         for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i) {
             sim_queue_original_indices[i] = i;
         }
-        
+
         // remove from simulated queue any items that can't be built due to not meeting their location conditions
         // might be better to re-check buildability each turn, but this would require creating a simulated universe
         // into which simulated completed buildings could be inserted, as well as spoofing the current turn, or
@@ -492,14 +492,14 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
         // assume that building location conditions evaluated at the present turn apply indefinitely
         for (unsigned int i = 0; i < sim_queue.size(); ++i) {
             if (empire->BuildableItem(sim_queue[i].item, sim_queue[i].location)) continue;
-            
-            // remove unbuildable items from the simulated queue, since they'll never finish...            
+
+            // remove unbuildable items from the simulated queue, since they'll never finish...
             m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
             sim_queue.erase(sim_queue.begin() + i);
             sim_production_status.erase(sim_production_status.begin() + i);
             sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
         }
-        
+
         // cycle through items on queue, adding up their allotted PP until each is finished and removed from queue
         // until everything on queue has been finished, in order to calculate expected completion times
         while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
@@ -508,16 +508,16 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
 
             //Logger().debugStream() << "ProductionQueue::Update: Calling SetProdQueueElementSpending for simulated queue";
             SetProdQueueElementSpending(empire, PPs, sim_production_status, sim_queue, total_PPs_spent, projects_in_progress);
-            
+
             // cycle through items on queue, apply one turn's PP towards items, remove items that are done
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 double item_cost;
                 int build_turns;
                 boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(sim_queue[i].item);
-                
+
                 double& status = sim_production_status[i];
                 status += sim_queue[i].spending;
-                
+
                 if (item_cost * build_turns - EPSILON <= status) {
                     sim_production_status[i] -= item_cost * build_turns;    // might have spillover to next item in order, so don't set to exactly 0
                     if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining) {
@@ -531,17 +531,17 @@ void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<doubl
                         sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
                     }
                 }
-            }            
-            ++turns;            
+            }
+            ++turns;
         }   // loop while (!sim_queue.empty() && turns < TOO_MANY_TURNS)
-        
+
         // mark rest of items on simulated queue (if any) as never to be finished
         for (unsigned int i = 0; i < sim_queue.size(); ++i) {
             if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining)
                 m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = -1;
             m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;
         }
-        
+
     } else {
         // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
@@ -1450,10 +1450,7 @@ double Empire::ResourceStockpile(ResourceType type) const
 
 double Empire::ResourceMaxStockpile(ResourceType type) const
 {
-    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(type);
-    if (it == m_resource_pools.end())
-        throw std::invalid_argument("Empire::ResourceMaxStockpile passed invalid ResourceType");
-    return it->second->MaxStockpile();
+    return 0.0; // not yet implemented
 }
 
 double Empire::ResourceProduction(ResourceType type) const
@@ -1492,10 +1489,7 @@ void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
 
 void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
 {
-    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator it = m_resource_pools.find(resource_type);
-    if (it == m_resource_pools.end())
-        throw std::invalid_argument("Empire::SetResourceMaxStockpile passed invalid ResourceType");
-    return it->second->SetMaxStockpile(max);
+    return; // not yet implemented
 }
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
@@ -1981,9 +1975,9 @@ void Empire::InitResourcePools()
     Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
     std::vector<ResourceCenter*> res_vec;
     std::vector<PopCenter*> pop_vec;
+
     // determine if each object owned by this empire is a ResourceCenter and/or PopCenter (could be one, neither or both)
-    for (unsigned int i = 0; i < object_vec.size(); ++i)
-    {
+    for (unsigned int i = 0; i < object_vec.size(); ++i) {
         if (ResourceCenter* rc = dynamic_cast<ResourceCenter*>(object_vec[i]))
             res_vec.push_back(rc);
         if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
@@ -2070,15 +2064,15 @@ void Empire::UpdateTradeSpending()
 
 void Empire::UpdateFoodDistribution()
 {
-    Logger().debugStream() << "Food distribution for empire " << EmpireID();
+    //Logger().debugStream() << "Food distribution for empire " << EmpireID();
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
     double available_food = m_resource_pools[RE_FOOD]->Available();
     m_food_total_distributed = 0.0;
 
-    std::vector<PopCenter*> pop_centers = m_population_pool.PopCenters(); //GetUniverse().FindObjects(OwnedVisitor<PopCenter>(m_id));
+    std::vector<PopCenter*> pop_centers = m_population_pool.PopCenters();
     std::vector<PopCenter*>::iterator pop_it;
-    std::vector<ResourceCenter*> resource_centers = m_resource_pools[RE_FOOD]->ResourceCenters(); //GetUniverse().FindObjects(OwnedVisitor<ResourceCenter>(m_id));
+    std::vector<ResourceCenter*> resource_centers = m_resource_pools[RE_FOOD]->ResourceCenters();
     std::vector<ResourceCenter*>::iterator res_it;
 
     // compile map of food production of ResourceCenters, indexed by center's id
@@ -2114,7 +2108,7 @@ void Empire::UpdateFoodDistribution()
         available_food -= allocation;
     }
 
-    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
+    //Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
     // second pass: give as much food as needed to PopCenters to maintain current population
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
@@ -2135,7 +2129,7 @@ void Empire::UpdateFoodDistribution()
         m_food_total_distributed += addition;
     }
 
-    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
+    //Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
     // third pass: give as much food as needed to PopCenters to allow max possible growth
     for (pop_it = pop_centers.begin(); pop_it != pop_centers.end() && available_food > 0.0; ++pop_it) {
@@ -2155,7 +2149,7 @@ void Empire::UpdateFoodDistribution()
         m_food_total_distributed += addition;
     }
 
-    Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
+    //Logger().debugStream() << "Empire::UpdateFoodDistribution: m_food_total_distributed: " << m_food_total_distributed;
 
 
     // after changing food distribution, population growth predictions may need to be redone

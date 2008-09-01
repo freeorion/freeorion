@@ -465,11 +465,9 @@ namespace {
 
 void ServerApp::ProcessTurns()
 {
-    Empire*                     empire;
-    OrderSet*                   order_set;
-    OrderSet::const_iterator    order_it;
-    Universe&                   universe = GetUniverse();
-    EmpireManager&              empires = Empires();
+    Empire*         empire;
+    Universe&       universe = GetUniverse();
+    EmpireManager&  empires = Empires();
 
     // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -480,10 +478,10 @@ void ServerApp::ProcessTurns()
 
         empire = empires.Lookup(it->first);
         empire->ClearSitRep();
-        order_set = it->second;
+        OrderSet* order_set = it->second;
 
         // execute order set
-        for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
+        for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
             order_it->second->Execute();
         }
     }
@@ -492,11 +490,11 @@ void ServerApp::ProcessTurns()
     typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
     ColonizeOrderMap colonize_order_map;
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        order_set = it->second;
+        OrderSet* order_set = it->second;
 
         // filter FleetColonizeOrder and sort them per planet
         boost::shared_ptr<FleetColonizeOrder> order;
-        for (order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
+        for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
             if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second))) {
                 ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
                 if (it == colonize_order_map.end()) {
@@ -537,7 +535,7 @@ void ServerApp::ProcessTurns()
             int winner = 0;
             // is the current winner armed?
             bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
-            for (unsigned int i=1;i<it->second.size();i++)
+            for (unsigned int i = 1; i < it->second.size(); i++)
                 // is this empire armed?
                 if (set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end()) {
                     // if this empire is armed and the former winner too, noone can win

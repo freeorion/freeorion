@@ -15,8 +15,7 @@ class Empire;
  *  
  *  Planet is the most obvious class to inherit ResourceCenter, but other classes could be made from it as well
  *  (e.g., a trade-ship or mining vessel, or a non-Planet UniverseObject- and PopCenter- derived object of some 
- *  sort.
- */
+ *  sort. */
 class ResourceCenter
 {
 public:
