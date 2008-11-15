@@ -598,7 +598,7 @@ void HumanClientApp::Autosave(bool new_game)
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {
-                std::string filename = it->leaf();
+                std::string filename = it->filename();
                 if (!new_game &&
                     filename.find(extension) == filename.size() - extension.size() && 
                     filename.find(save_filename.substr(0, save_filename.size() - 7)) == 0) {

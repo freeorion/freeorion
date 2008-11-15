@@ -9,7 +9,6 @@
 #include "../universe/ShipDesign.h"
 
 #include <boost/serialization/access.hpp>
-#include <boost/serialization/is_abstract.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <vector>
@@ -71,7 +70,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-BOOST_IS_ABSTRACT(Order);
 
 /////////////////////////////////////////////////////
 // RenameOrder

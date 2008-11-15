@@ -59,9 +59,9 @@ void InitDirs()
         bool foundexec = false,
              foundresources = false;
         for (fs::directory_iterator diter(bundle_path); diter != dir_end; ++diter) {
-            if ((*diter).leaf() == "Executables")
+            if ((*diter).filename() == "Executables")
                 foundexec = true;
-            else if ((*diter).leaf() == "Resources")
+            else if ((*diter).filename() == "Resources")
                 foundresources = true;
         }
         // if nothing found. assume that we are in the Executables directory which may be the case during debugging

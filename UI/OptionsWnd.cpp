@@ -512,7 +512,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     for (fs::directory_iterator it(GetSettingsDir()); it != end_it; ++it) {
         try {
             if (fs::exists(*it)) {
-                std::string filename = it->leaf();
+                std::string filename = it->filename();
                 if (boost::algorithm::ends_with(filename, FONT_SUFFIX))
                     filenames.insert(filename);
             }

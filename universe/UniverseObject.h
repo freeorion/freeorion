@@ -10,8 +10,6 @@
 
 #include "InhibitableSignal.h"
 
-#include <boost/serialization/is_abstract.hpp>
-
 #include <set>
 #include <string>
 #include <vector>
@@ -179,7 +177,6 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-BOOST_IS_ABSTRACT(UniverseObject)
 
 // template implementations
 template <class Iter>
