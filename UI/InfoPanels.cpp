@@ -57,8 +57,8 @@ namespace {
             row_height = ClientUI::Pts()*3/2;
             const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
 
-            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-            const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
+            const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+            const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
             m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_summary_title);
@@ -171,7 +171,7 @@ namespace {
             if (meter_it == m_meter_map.end() || meter_it->second.empty())
                 return; // couldn't find appropriate meter type, or there were no entries for that meter.
 
-            const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+            const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
             // add label-value pairs for each alteration recorded for this meter
             const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
@@ -320,7 +320,7 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an UniverseObject that is not a PopCenter");
 
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
@@ -594,7 +594,7 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
@@ -1117,7 +1117,7 @@ MilitaryPanel::MilitaryPanel(int w, const Planet &plt) :
     SetText("MilitaryPanel");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
@@ -1659,7 +1659,7 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     if (m_columns < 1) throw std::invalid_argument("Attempted to create a BuidingsPanel with less than 1 column");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE);
+    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
@@ -2128,7 +2128,7 @@ ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
     if (design) {
         m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(design->Hull()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
-        m_name = new GG::TextControl(0, 0, design->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_WHITE);
+        m_name = new GG::TextControl(0, 0, design->Name(), ClientUI::GetFont(), GG::CLR_WHITE);
         AttachChild(m_name);
     }
 }
@@ -2166,8 +2166,8 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
     m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
     AttachChild(m_icon);
 
-    const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-    const boost::shared_ptr<GG::Font>& font_bold = GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts());
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
     m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, 0, TEXT_WIDTH, ROW_HEIGHT, title_text,
                                        font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);

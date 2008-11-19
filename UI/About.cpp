@@ -28,7 +28,7 @@ About::About():
     m_vision = new CUIButton(220,440,75,UserString("VISION"));
     m_info = new CUIMultiEdit(20, 20, 550, 400, UserString("FREEORION_VISION"), 
                               GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
-                              GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                              ClientUI::GetFont(),
                               ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
                               ClientUI::MultieditIntColor(), GG::CLICKABLE);
     GG::Layout* layout = new GG::Layout(0, 0, ClientWidth(), ClientHeight(), 2, 6, 5);
@@ -76,7 +76,7 @@ void About::Render()
     CUIWnd::Render();
 }
 
-void About::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void About::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) // Same behaviour as if "done" was pressed
     {

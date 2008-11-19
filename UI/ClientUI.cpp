@@ -25,6 +25,7 @@
 #include <GG/GUI.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
+#include <GG/UnicodeCharsets.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <log4cpp/Appender.hh>
@@ -49,9 +50,7 @@ fs::path ClientUI::ArtDir()                    { return GetSettingsDir() / "data
 fs::path ClientUI::SoundDir()                  { return GetSettingsDir() / "data" / "sound"; }
 
 std::string ClientUI::Font()                   { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
-std::string ClientUI::FontBold()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
-std::string ClientUI::FontItalic()             { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-italic")).native_file_string(); }
-std::string ClientUI::FontBoldItalic()         { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold-italic")).native_file_string(); }
+std::string ClientUI::BoldFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
 std::string ClientUI::TitleFont()              { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
 
 int         ClientUI::Pts()                    { return GetOptionsDB().Get<int>("UI.font-size"); }
@@ -301,7 +300,40 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 // private static members
 ClientUI* ClientUI::s_the_UI = 0;
 
+std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset)
+{
+    os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
+    return os;
+}
+
 namespace {
+    const std::vector<GG::UnicodeCharset>& RequiredCharsets()
+    {
+        static std::vector<GG::UnicodeCharset> retval;
+        if (retval.empty()) {
+            const std::string CREDITS_STR = "Aö"; // Basic Latin and Latin-1 Supplement (character sets needed to display the credits page)
+            std::set<GG::UnicodeCharset> credits_charsets = GG::UncodeCharsetsToRender(CREDITS_STR);
+
+            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+                settings_dir += '/';
+            std::ifstream ifs((settings_dir + GetOptionsDB().Get<std::string>("stringtable-filename")).c_str());
+            std::string stringtable_str;
+            while (ifs) {
+                std::string line;
+                std::getline(ifs, line);
+                stringtable_str += line;
+                stringtable_str += '\n';
+            }
+            std::set<GG::UnicodeCharset> stringtable_charsets = GG::UncodeCharsetsToRender(stringtable_str);
+
+            std::set_union(credits_charsets.begin(), credits_charsets.end(),
+                           stringtable_charsets.begin(), stringtable_charsets.end(),
+                           std::back_inserter(retval));
+        }
+        return retval;
+    }
+
     // an internal LUT of string IDs for each SitRep type
     // It's in this module becaue SitReps know nothing about how they
     // should be rendered - this is up to the client UI
@@ -359,8 +391,6 @@ namespace {
         // fonts
         db.Add<std::string>("UI.font",                  "OPTIONS_DB_UI_FONT",               "DejaVuSans.ttf");
         db.Add<std::string>("UI.font-bold",             "OPTIONS_DB_UI_FONT_BOLD",          "DejaVuSans-Bold.ttf");
-        db.Add<std::string>("UI.font-italic",           "OPTIONS_DB_UI_FONT_ITALIC",        "DejaVuSans-Oblique.ttf");
-        db.Add<std::string>("UI.font-bold-italic",      "OPTIONS_DB_UI_FONT_BOLD_ITALIC",   "DejaVuSans-BoldOblique.ttf");
         db.Add("UI.font-size",                          "OPTIONS_DB_UI_FONT_SIZE",          12,                             RangedValidator<int>(4, 40));
         db.Add<std::string>("UI.title-font",            "OPTIONS_DB_UI_TITLE_FONT",         "DejaVuSans.ttf");
         db.Add("UI.title-font-size",                    "OPTIONS_DB_UI_TITLE_FONT_SIZE",    12,                             RangedValidator<int>(4, 40));
@@ -548,7 +578,7 @@ ClientUI* ClientUI::GetClientUI()
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
-    GG::ThreeButtonDlg dlg(320,200,message,GG::GUI::GetGUI()->GetFont(Font(),Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
+    GG::ThreeButtonDlg dlg(320,200,message,GetFont(Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");
@@ -575,6 +605,15 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
 #endif
     return retval;
 }
+
+boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/)
+{ return GG::GUI::GetGUI()->GetFont(Font(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+
+boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/)
+{ return GG::GUI::GetGUI()->GetFont(BoldFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+
+boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/)
+{ return GG::GUI::GetGUI()->GetFont(TitleFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
 
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
 {

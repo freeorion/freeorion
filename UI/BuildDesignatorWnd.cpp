@@ -103,9 +103,9 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_item_name_text = new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
-    m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
-    m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
+    m_item_name_text = new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetBoldFont(NAME_PTS), ClientUI::TextColor());
+    m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(COST_PTS),     ClientUI::TextColor());
+    m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(SUMMARY_PTS),  ClientUI::TextColor());
     m_description_box = new CUILinkTextMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
@@ -479,7 +479,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
 
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();
-    //boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    //boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     //GG::Clr clr = ClientUI::TextColor();
     //header->push_back("item", font, clr);
     //header->push_back("PP/turn", font, clr);
@@ -737,7 +737,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     m_build_types.clear();      // map from row to BuildType
 
 
-    boost::shared_ptr<GG::Font> default_font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
 
     std::vector<int> col_widths = ColWidths();
     int icon_col_width = col_widths[0];

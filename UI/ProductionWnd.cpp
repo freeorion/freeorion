@@ -106,7 +106,7 @@ namespace {
         Resize(GG::Pt(w, HEIGHT));
 
         GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         // get graphic and player-visible name text for item
         boost::shared_ptr<GG::Texture> graphic;

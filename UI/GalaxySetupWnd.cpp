@@ -62,7 +62,7 @@ GalaxySetupPanel::GalaxySetupPanel(int x, int y, int w/* = DEFAULT_WIDTH*/) :
     const int TOTAL_LISTBOX_MARGIN = 4;
     int row = -1;
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     // number of stars
     GG::TextControl* label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
@@ -305,7 +305,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     m_galaxy_setup_panel = new GalaxySetupPanel(0, 4);
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     const int LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
 
@@ -371,7 +371,7 @@ void GalaxySetupWnd::Render()
                       ClientUpperLeft().y + m_preview_ul.y + PREVIEW_SZ.y + 2, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void GalaxySetupWnd::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void GalaxySetupWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_ok->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) // Same behaviour as if "OK" was pressed
         OkClicked();

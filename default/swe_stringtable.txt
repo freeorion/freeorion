@@ -13,7 +13,7 @@ APPNAME
 FreeOrion
 
 BROWSE_BTN
-Bl‰ddra...
+Bl√§ddra...
 
 OK
 OK
@@ -25,7 +25,7 @@ DONE
 Klar
 
 CLOSE
-St‰ng
+St√§ng
 
 LOAD
 Ladda
@@ -34,7 +34,7 @@ SAVE
 Spara
 
 OPEN
-÷ppna
+√ñppna
 
 OR
 eller
@@ -61,13 +61,13 @@ SERVER_TIMEOUT
 Servern svarar inte.
 
 SERVER_LOST
-Fˆrbindelsen till servern har fˆrlorats.
+F√∂rbindelsen till servern har f√∂rlorats.
 
 SERVER_GAME_END
-Servern har meddelat att spelet ‰r slut. Hejsvejs.
+Servern har meddelat att spelet √§r slut. Hejsvejs.
 
 PLAYER_DISCONNECTED
-Spelare %1% har inte l‰ngre fˆrbindelse med servern.
+Spelare %1% har inte l√§ngre f√∂rbindelse med servern.
 
 PLAYER_DEFEATED
 Du har blivit besegrad.
@@ -79,16 +79,16 @@ EMPIRE
 Imperium
 
 EMPIRE_DEFEATED
-%1%-imperiet har gÂtt under.
+%1%-imperiet har g√•tt under.
 
 ALL
 Samtliga
 
 UNKNOWN_SYSTEM
-Ok‰nt system
+Ok√§nt system
 
 RENAME
-Dˆp om
+D√∂p om
 
 ENTER_NEW_NAME
 Ange nytt namn
@@ -117,31 +117,31 @@ COMMAND_LINE_DEFAULT
 Default: 
 
 OPTIONS_DB_HELP
-Skriv ut detta hj‰lpmeddelande.
+Skriv ut detta hj√§lpmeddelande.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
 
 OPTIONS_DB_MUSIC_OFF
-St‰nger av musiken i spelet.
+St√§nger av musiken i spelet.
 
 OPTIONS_DB_BG_MUSIC
-V‰ljer bakgrundsspÂr att spela.
+V√§ljer bakgrundssp√•r att spela.
 
 OPTIONS_DB_FULLSCREEN
-Starta spelet i fullsk‰rmsl‰ge.
+Starta spelet i fullsk√§rmsl√§ge.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Tidsintervall, i sekunder, efter vilket chattfˆnstret i flerspelarl‰get kommer att st‰ngas om inget l‰ggs till i det. Ett v‰rde av 0 anger att fˆnstret aldrig kommer st‰ngas.
+Tidsintervall, i sekunder, efter vilket chattf√∂nstret i flerspelarl√§get kommer att st√§ngas om inget l√§ggs till i det. Ett v√§rde av 0 anger att f√∂nstret aldrig kommer st√§ngas.
 
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Antalet utgÂende meddelanden att behÂlla i chatthistoriken.
+Antalet utg√•ende meddelanden att beh√•lla i chatthistoriken.
 
 OPTIONS_DB_GALAXY_MAP_GAS
-Rendera en gasliknande effekt runt systemen som ger galaxen en form. Detta kan orsaka spelet gÂr lÂngsammare pÂ en ‰ldre maskin.
+Rendera en gasliknande effekt runt systemen som ger galaxen en form. Detta kan orsaka spelet g√•r l√•ngsammare p√• en √§ldre maskin.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
-Tvinga klienten att inte starta en server, ‰ven n‰r ett spel skapas pÂ den lokala v‰rddatorn, sÂ som vid enspelarl‰ge, etc.
+Tvinga klienten att inte starta en server, √§ven n√§r ett spel skapas p√• den lokala v√§rddatorn, s√• som vid enspelarl√§ge, etc.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
@@ -150,16 +150,16 @@ OPTIONS_DB_UI_MAIN_MENU_Y
 Position of the center of the intro screen main menu, as a portion of the application's total height.
 
 OPTIONS_DB_APP_WIDTH
-ƒndrar vÂgr‰t programupplˆsning.
+√Ñndrar v√•gr√§t programuppl√∂sning.
 
 OPTIONS_DB_APP_HEIGHT
-ƒndrar lodr‰t programupplˆsning.
+√Ñndrar lodr√§t programuppl√∂sning.
 
 OPTIONS_DB_COLOR_DEPTH
-ƒndrar sk‰rmens f‰rgdjup, i bitar per pixel.
+√Ñndrar sk√§rmens f√§rgdjup, i bitar per pixel.
 
 OPTIONS_DB_SHOW_FPS
-V‰xlar mellan att visa FPS, pÂ eller av.
+V√§xlar mellan att visa FPS, p√• eller av.
 
 OPTIONS_DB_LIMIT_FPS
 Toggles FPS limiting on or off.  Limit is set with Max FPS option.
@@ -168,22 +168,22 @@ OPTIONS_DB_MAX_FPS
 Toggles FPS limit, if enabled.  Limiting is toggled with Limit FPS.
 
 OPTIONS_DB_UI_SOUND_ENABLED
-V‰xlar anv‰ndargr‰nssnittljud, pÂ eller av.
+V√§xlar anv√§ndargr√§nssnittljud, p√• eller av.
 
 OPTIONS_DB_UI_SOUND_VOLUME
-Volymen (0 till 255) som anv‰ndargr‰nssnittljudeffekterna kommer att spelas upp med.
+Volymen (0 till 255) som anv√§ndargr√§nssnittljudeffekterna kommer att spelas upp med.
 
 OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER
-Ljudfilen som spelas upp n‰r muspekaren flyttas ovanfˆr en knapp.
+Ljudfilen som spelas upp n√§r muspekaren flyttas ovanf√∂r en knapp.
 
 OPTIONS_DB_UI_SOUND_BUTTON_CLICK
-Ljudfilen som spelas dÂ man klickar pÂ en knapp.
+Ljudfilen som spelas d√• man klickar p√• en knapp.
 
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
-Ljudfilen som spelas dÂ man klickar pÂ turordningknappen.
+Ljudfilen som spelas d√• man klickar p√• turordningknappen.
 
 OPTIONS_DB_UI_SOUND_LIST_SELECT
-Ljudfilen som spelas dÂ ett fˆremÂl ur en rullgardinsmeny markerats.
+Ljudfilen som spelas d√• ett f√∂rem√•l ur en rullgardinsmeny markerats.
 
 OPTIONS_DB_UI_SOUND_ITEM_DROP
 The sound file played when an item is dropped into a listbox.
@@ -192,52 +192,52 @@ OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
 The sound file played when the list is opened in a drop-down list.
 
 OPTIONS_DB_UI_SOUND_TEXT_TYPING
-Ljudfilen som spelas dÂ anv‰ndaren skriver en text.
+Ljudfilen som spelas d√• anv√§ndaren skriver en text.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
-Ljudfilen som spelas dÂ ett fˆnster maximeras.
+Ljudfilen som spelas d√• ett f√∂nster maximeras.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
-Ljudfilen som spelas dÂ ett fˆnster minimeras.
+Ljudfilen som spelas d√• ett f√∂nster minimeras.
 
 OPTIONS_DB_UI_SOUND_WINDOW_CLOSE
-Ljudfilen som spelas dÂ ett fˆnster st‰ngs.
+Ljudfilen som spelas d√• ett f√∂nster st√§ngs.
 
 OPTIONS_DB_UI_SOUND_ALERT
-Ljudfilen som spelas dÂ ett fel uppstÂr eller n‰r en ogiltig Âtg‰rd fˆrsˆker genomfˆras.
+Ljudfilen som spelas d√• ett fel uppst√•r eller n√§r en ogiltig √•tg√§rd f√∂rs√∂ker genomf√∂ras.
 
 OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK
-Ljudfilen som spelas dÂ man klickar pÂ en planetknapp.
+Ljudfilen som spelas d√• man klickar p√• en planetknapp.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
-Ljudfilen som spelas dÂ muspekaren flyttas ovanfˆr en flottknapp.
+Ljudfilen som spelas d√• muspekaren flyttas ovanf√∂r en flottknapp.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
-Ljudfilen som spelas dÂ man klickar pÂ en flottknapp.
+Ljudfilen som spelas d√• man klickar p√• en flottknapp.
 
 OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
-Ljudfilen som spelas dÂ muspekaren flyttas ovanfˆr en systemikon.
+Ljudfilen som spelas d√• muspekaren flyttas ovanf√∂r en systemikon.
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
-Ljudfilen som spelas dÂ systemets sidpanel ˆppnas.
+Ljudfilen som spelas d√• systemets sidpanel √∂ppnas.
 
 OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Ljudfilen som spelas dÂ man klickar pÂ knappen fˆr fokus pÂ jordburk.
+Ljudfilen som spelas d√• man klickar p√• knappen f√∂r fokus p√• jordburk.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Ljudfilen som spelas dÂ man klickar pÂ knappen fˆr fokus pÂ industri.
+Ljudfilen som spelas d√• man klickar p√• knappen f√∂r fokus p√• industri.
 
 OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Ljudfilen som spelas dÂ man klickar pÂ knappen fˆr fokus pÂ forskning.
+Ljudfilen som spelas d√• man klickar p√• knappen f√∂r fokus p√• forskning.
 
 OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Ljudfilen som spelas dÂ man klickar pÂ knappen fˆr fokus pÂ gruvdrift.
+Ljudfilen som spelas d√• man klickar p√• knappen f√∂r fokus p√• gruvdrift.
 
 OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Ljudfilen som spelas dÂ man klickar pÂ knappen fˆr fokus pÂ handel.
+Ljudfilen som spelas d√• man klickar p√• knappen f√∂r fokus p√• handel.
 
 OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Ljudfilen som spelas dÂ man klickar pÂ knappen fˆr fokus pÂ balans.
+Ljudfilen som spelas d√• man klickar p√• knappen f√∂r fokus p√• balans.
 
 OPTIONS_DB_UI_FONT
 Sets UI font resource file.
@@ -393,22 +393,22 @@ OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
 OPTIONS_DB_GAMESETUP_STARS
-Antalet stj‰rnor i galaxen som kommer att genereras.
+Antalet stj√§rnor i galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-Formen pÂ galaxen som kommer att genereras.
+Formen p√• galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-Galaxens Âlder som kommer att genereras.
+Galaxens √•lder som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
 Antalet planeter per system i galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Antalet stj‰rnfarleder i galaxen som kommer att genereras.
+Antalet stj√§rnfarleder i galaxen som kommer att genereras.
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Fˆrekomsten av specialare i galaxen som kommer att genereras.
+F√∂rekomsten av specialare i galaxen som kommer att genereras.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
@@ -458,13 +458,13 @@ FILE_DLG_MALFORMED_FILENAME
 Ogiltigt filnamn.
 
 FILE_DLG_OVERWRITE_PROMPT
-%1% existerar redan.\nVill du skriva ˆver den?
+%1% existerar redan.\nVill du skriva √∂ver den?
 
 FILE_DLG_INVALID_FILENAME
-"%1%"\n‰r ett ogiltigt filnamn.
+"%1%"\n√§r ett ogiltigt filnamn.
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
-"%1%"\n‰r en katalog.
+"%1%"\n√§r en katalog.
 
 FILE_DLG_FILE_DOES_NOT_EXIST
 Fil "%1%"\nexisterar inte.
@@ -518,16 +518,16 @@ FreeOrion Huvudmeny
 #Button names####
 
 INTRO_BTN_SINGLE_PLAYER
-Enspelarl‰ge
+Enspelarl√§ge
 
 INTRO_BTN_MULTI_PLAYER
-Flerspelarl‰ge
+Flerspelarl√§ge
 
 INTRO_BTN_LOAD_GAME
 Ladda spel
 
 INTRO_BTN_OPTIONS
-Inst‰llningar
+Inst√§llningar
 
 INTRO_BTN_ABOUT
 Om
@@ -542,10 +542,10 @@ Avsluta
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Kunde inte fÂ nÂgot svar frÂn servern
+Kunde inte f√• n√•got svar fr√•n servern
 
 ERR_VERSION_MISMATCH
-Kan inte ansluta till servern eftersom denna klient anv‰nder en annan version av fˆljande inst‰llningar och/eller k‰llfiler: 
+Kan inte ansluta till servern eftersom denna klient anv√§nder en annan version av f√∂ljande inst√§llningar och/eller k√§llfiler: 
 
 
 ########################
@@ -561,9 +561,9 @@ Anslut till server
 #Static labels####
 
 LAN_GAME_LABEL
-Lan-spel pÂ:
+Lan-spel p√•:
 INTERNET_GAME_LABEL
-Internet-spel pÂ:
+Internet-spel p√•:
 PLAYER_NAME_LABEL
 Spelarens namn
 
@@ -585,11 +585,11 @@ Uppdatera lista
 #Window title####
 
 MPLOBBY_WINDOW_TITLE
-Flerspelarinst‰llningar
+Flerspelarinst√§llningar
 
 #Strings
 MPLOBBY_HOST_ABORTED_GAME
-V‰rden fˆr spelet har avslutat pÂgÂende spel.
+V√§rden f√∂r spelet har avslutat p√•g√•ende spel.
 
 #Button names####
 
@@ -603,7 +603,7 @@ START_GAME_BN
 Starta spel
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Unikt namn och f‰rg pÂ imperier kr‰vs
+Unikt namn och f√§rg p√• imperier kr√§vs
 
 
 ########################
@@ -613,7 +613,7 @@ Unikt namn och f‰rg pÂ imperier kr‰vs
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Galaxinst‰llningar
+Galaxinst√§llningar
 
 #Strings
 GSETUP_GRAPHICS_FILES
@@ -623,7 +623,7 @@ GSETUP_EMPIRE_NAME
 Imperiets namn
 
 GSETUP_EMPIRE_COLOR
-Imperiets f‰rg
+Imperiets f√§rg
 
 GSETUP_NUMBER_AIS
 Antalet AI-spelare
@@ -631,17 +631,17 @@ Antalet AI-spelare
 #Drop-down list labels and choices####
 
 GSETUP_STARS
-Stj‰rnor
+Stj√§rnor
 GSETUP_SHAPE
 Galaxform
 GSETUP_AGE
-GalaxÂlder
+Galax√•lder
 GSETUP_STARLANE_FREQ
-Stj‰rnfarledsfˆrekomst
+Stj√§rnfarledsf√∂rekomst
 GSETUP_PLANET_DENSITY
-Planett‰thet
+Planett√§thet
 GSETUP_SPECIALS_FREQ
-Specialfˆrekomst
+Specialf√∂rekomst
 
 GSETUP_2ARM
 Spiral, 2 armar
@@ -654,7 +654,7 @@ Anhopad
 GSETUP_ELLIPTICAL
 Elliptisk
 GSETUP_IRREGULAR
-Irregulj‰r
+Irregulj√§r
 GSETUP_RING
 Ring
 
@@ -666,28 +666,28 @@ Ung
 GSETUP_MATURE
 Mogen
 GSETUP_ANCIENT
-UrÂldrig
+Ur√•ldrig
 
 GSETUP_FEW
-FÂtal
+F√•tal
 GSETUP_SOME
-NÂgra
+N√•gra
 GSETUP_SEVERAL
 Flertal
 GSETUP_MANY
-MÂnga
+M√•nga
 GSETUP_VERY_MANY
-V‰ldigt mÂnga
+V√§ldigt m√•nga
 
 GSETUP_LOW
-LÂg
+L√•g
 GSETUP_MEDIUM
 Medel
 GSETUP_HIGH
-Hˆg
+H√∂g
 
 GSETUP_RARE
-S‰llsynta
+S√§llsynta
 GSETUP_UNCOMMON
 Ovanliga
 GSETUP_COMMON
@@ -734,7 +734,7 @@ VISION
 Vision
 
 FREEORION_VISION
-FreeOrion, ett ˆppet k‰llkods-spel baserat pÂ Master of Orion, ‰r ett turordningsbaserat spel om episk rymdstrategi som bygger pÂ den klassiska '4X'-modellen genom att inkludera element som nationsuppbyggnad frÂn spel sÂ som Europa Universalis 2 och en allsidig motor fˆr taktiska strider. DÂ dess anpassningsbara, ˆppna, design tillÂter en hˆg grad av personalisering av spelmotorn och spelets handling, vill personerna bakom FreeOrion fr‰mja skapandet av ett storskaligt och levande universum.
+FreeOrion, ett √∂ppet k√§llkods-spel baserat p√• Master of Orion, √§r ett turordningsbaserat spel om episk rymdstrategi som bygger p√• den klassiska '4X'-modellen genom att inkludera element som nationsuppbyggnad fr√•n spel s√• som Europa Universalis 2 och en allsidig motor f√∂r taktiska strider. D√• dess anpassningsbara, √∂ppna, design till√•ter en h√∂g grad av personalisering av spelmotorn och spelets handling, vill personerna bakom FreeOrion fr√§mja skapandet av ett storskaligt och levande universum.
 
 ###########################
 # Game Menu	              #
@@ -760,34 +760,34 @@ Sparfiler
 ###########################
 
 OPTIONS_TITLE
-Inst‰llningar
+Inst√§llningar
 
 OPTIONS_AUTOSELECT_FLEET
-Auto-markera fˆrsta flottan
+Auto-markera f√∂rsta flottan
 
 OPTIONS_MULTIPLE_FLEET_WNDS
-Flera flottfˆnster
+Flera flottf√∂nster
 
 OPTIONS_QUICK_CLOSE_WNDS
-Snabbst‰ng fˆnster
+Snabbst√§ng f√∂nster
 
 OPTIONS_MISC_UI
-÷vriga anv‰ndargr‰nssnittsinst‰llningar
+√ñvriga anv√§ndargr√§nssnittsinst√§llningar
 
 OPTIONS_SINGLEPLAYER
-Enspelarl‰ge
+Enspelarl√§ge
 
 OPTIONS_MULTIPLAYER
-Flerspelarl‰ge
+Flerspelarl√§ge
 
 OPTIONS_AUTOSAVE_TO_KEEP
-Antal automatiska sparfiler att behÂlla
+Antal automatiska sparfiler att beh√•lla
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Antal drag mellan automatisk sparning
 
 OPTIONS_LANGUAGE
-SprÂkfil
+Spr√•kfil
 
 OPTIONS_FONTS
 Typsnitt
@@ -799,49 +799,49 @@ OPTIONS_FONT_TEXT
 Text
 
 OPTIONS_FONT_TITLE
-Fˆnsterrubrik
+F√∂nsterrubrik
 
 OPTIONS_TECH_SPACING
 Teknologiutrymmen
 
 OPTIONS_HORIZONTAL
-VÂgr‰t
+V√•gr√§t
 
 OPTIONS_VERTICAL
-Lodr‰t
+Lodr√§t
 
 OPTIONS_TOOLTIP_DELAY
-Fˆrdrˆjning av inforuta (ms)
+F√∂rdr√∂jning av inforuta (ms)
 
 OPTIONS_VIDEO_MODE
-Bildsk‰rmsl‰ge  (kr‰ver omstart)
+Bildsk√§rmsl√§ge  (kr√§ver omstart)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Anv‰ndardefinierad
+Anv√§ndardefinierad
 
 OPTIONS_VIDEO_SETTINGS
-Videoinst‰llningar
+Videoinst√§llningar
 
 OPTIONS_APP_WIDTH
 Bredd
 
 OPTIONS_APP_HEIGHT
-Hˆjd
+H√∂jd
 
 OPTIONS_COLOR_DEPTH
-F‰rgdjup
+F√§rgdjup
 
 OPTIONS_FULLSCREEN
-Fullsk‰rm
+Fullsk√§rm
 
 OPTIONS_SHOW_FPS
 Visa FPS
 
 OPTIONS_LIMIT_FPS
-Begr‰nsa FPS
+Begr√§nsa FPS
 
 OPTIONS_MAX_FPS
 Max-FPS
@@ -853,7 +853,7 @@ OPTIONS_CHAT_HISTORY
 Chatthistorik
 
 OPTIONS_CHAT_HIDE
-Fˆrdrˆjning n‰r chattfˆnstret dˆljs
+F√∂rdr√∂jning n√§r chattf√∂nstret d√∂ljs
 
 OPTIONS_GALAXY_MAP
 Galaxkarta
@@ -865,7 +865,7 @@ OPTIONS_MUSIC
 Musik
 
 OPTIONS_UI_SOUNDS
-Anv‰ndargr‰nssnittljud
+Anv√§ndargr√§nssnittljud
 
 OPTIONS_BACKGROUND_MUSIC
 Musik
@@ -874,13 +874,13 @@ OPTIONS_SOUNDS
 Ljud
 
 OPTIONS_SOUND_CLOSE
-St‰ng fˆnster
+St√§ng f√∂nster
 
 OPTIONS_SOUND_MINIMIZE
-Minimera fˆnster
+Minimera f√∂nster
 
 OPTIONS_SOUND_MAXIMIZE
-Maximera fˆnster
+Maximera f√∂nster
 
 OPTIONS_SOUND_CLICK
 Klicka
@@ -898,7 +898,7 @@ OPTIONS_SOUND_SYSTEM_ROLLOVER
 System Icon Rollover
 
 OPTIONS_SOUND_WINDOW
-Fˆnsterljud
+F√∂nsterljud
 
 OPTIONS_SOUND_BUTTON
 Knappljud
@@ -916,43 +916,43 @@ OPTIONS_SOUND_TURN
 Turn button click
 
 OPTIONS_SOUND_SIDEPANEL
-÷ppna sidpanel
+√ñppna sidpanel
 
 OPTIONS_SOUND_PLANET
-Klicka pÂ planet
+Klicka p√• planet
 
 OPTIONS_SOUND_FOCUS
 Fokuseringsljud
 
 OPTIONS_SOUND_BALANCED
-Fokus pÂ balans
+Fokus p√• balans
 
 OPTIONS_SOUND_FARMING
-Fokus pÂ jordbruk
+Fokus p√• jordbruk
 
 OPTIONS_SOUND_INDUSTRY
-Fokus pÂ industri
+Fokus p√• industri
 
 OPTIONS_SOUND_MINING
-Fokus pÂ gruvdrift
+Fokus p√• gruvdrift
 
 OPTIONS_SOUND_RESEARCH
-Fokus pÂ forskning
+Fokus p√• forskning
 
 OPTIONS_SOUND_LIST
 Listljud
 
 OPTIONS_SOUND_DROP
-Nedsl‰pp av fˆremÂl
+Nedsl√§pp av f√∂rem√•l
 
 OPTIONS_SOUND_PULLDOWN
-÷ppna rullgardinmeny
+√ñppna rullgardinmeny
 
 OPTIONS_SOUND_SELECT
 List select
 
 OPTIONS_GENERAL_COLORS
-Allm‰nna
+Allm√§nna
 
 OPTIONS_CONTROL_COLORS
 UI Controls
@@ -973,10 +973,10 @@ OPTIONS_HIGHLIGHT_COLOR
 Selection highlighting
 
 OPTIONS_INTERIOR_COLOR
-Innandˆme
+Innand√∂me
 
 OPTIONS_WINDOW_COLORS
-Fˆnster
+F√∂nster
 
 OPTIONS_INNER_BORDER_COLOR
 Innerkant
@@ -985,7 +985,7 @@ OPTIONS_OUTER_BORDER_COLOR
 Ytterkant
 
 OPTIONS_PAGE_VIDEO
-Bildsk‰rm
+Bildsk√§rm
 
 OPTIONS_PAGE_AUDIO
 Ljud
@@ -994,10 +994,10 @@ OPTIONS_PAGE_AUTOSAVE
 Autosparning
 
 OPTIONS_PAGE_UI
-Anv‰ndargr‰nssnitt
+Anv√§ndargr√§nssnitt
 
 OPTIONS_PAGE_COLORS
-F‰rger
+F√§rger
 
 OPTIONS_PAGE_DIRECTORIES
 Kataloger
@@ -1009,19 +1009,19 @@ OPTIONS_TEXT_AND_BORDER_COLOR
 Text och kant
 
 OPTIONS_KNOWN_TECH_COLORS
-K‰nda teknologier
+K√§nda teknologier
 
 OPTIONS_RESEARCHABLE_TECH_COLORS
-Uppt‰ckbara teknologier
+Uppt√§ckbara teknologier
 
 OPTIONS_UNRESEARCHABLE_TECH_COLORS
-Ouppt‰ckbara teknologier
+Ouppt√§ckbara teknologier
 
 OPTIONS_TECH_PROGRESS_COLORS
-Forskningsfˆrloppsindikator
+Forskningsf√∂rloppsindikator
 
 OPTIONS_PROGRESS_BAR_COLOR
-Fˆrloppsindikator
+F√∂rloppsindikator
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Bakgrund
@@ -1036,7 +1036,7 @@ OPTIONS_FOLDER_SAVE
 Sparfiler
 
 OPTIONS_LANGUAGE_FILE
-SprÂkfiler
+Spr√•kfiler
 
 OPTIONS_VOLUME_AND_MUSIC
 Volym och musik
@@ -1088,7 +1088,7 @@ PLANET_PANEL
 Planetpanel
 
 PL_ASTEROID_BELT
-Asteroidb‰lte
+Asteroidb√§lte
 
 PL_UNINHABITED
 Obebodd
@@ -1105,15 +1105,15 @@ PP_POPULATION
 Population
 
 PP_HEALTH
-H‰lsa
+H√§lsa
 
 ## Resources Panel ##########
 
 RP_PRIMARY_FOCUS_TOOLTIP
-Prim‰r fokus: %1%
+Prim√§r fokus: %1%
 
 RP_SECONDARY_FOCUS_TOOLTIP
-Sekund‰r fokus: %1%
+Sekund√§r fokus: %1%
 
 RP_FOOD
 Matproduktion
@@ -1128,7 +1128,7 @@ RP_RESEARCH
 Forskningsavkastning
 
 RP_TRADE
-HandelsnivÂ
+Handelsniv√•
 
 RP_CONSTRUCTION
 Infrastrukturkonstruktion
@@ -1153,7 +1153,7 @@ Stealth
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
-%1% (PÂbˆrjad)\n\n%2%
+%1% (P√•b√∂rjad)\n\n%2%
 
 BP_COMPLETE_BUILDING_TOOLTIP
 %1%\n\n%2%
@@ -1167,7 +1167,7 @@ TT_NEXT
 Kommande drag
 
 TT_CHANGE
-Fˆr‰ndring
+F√∂r√§ndring
 
 TT_MAX_METER
 Max Meter: %1%
@@ -1191,24 +1191,24 @@ TT_SPECIAL
 Special <i>%1%</i>
 
 TT_UNKNOWN
-Ok‰nd
+Ok√§nd
 
 ## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
-Ok‰nt system
+Ok√§nt system
 
 SP_SYSTEM_NAME
 %1%
 
 SP_RENAME_PLANET
-Dˆp om planet
+D√∂p om planet
 
 SP_ENTER_NEW_PLANET_NAME
-Ange nytt namn pÂ planet
+Ange nytt namn p√• planet
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-Alla koloniskepp i detta system har getts\norder om att l‰mna systemet.\n\nVill du anv‰nda ett av dessa avgÂende skepp?
+Alla koloniskepp i detta system har getts\norder om att l√§mna systemet.\n\nVill du anv√§nda ett av dessa avg√•ende skepp?
 
 #################
 # Fleet Window  #
@@ -1218,19 +1218,19 @@ FW_FLEET_AT
 Vid %1%-systemet
 
 FW_FLEET_MOVING_TO
-PÂ v‰g mot %1%, ETA %2%
+P√• v√§g mot %1%, ETA %2%
 
 FW_FLEET_ETA_NEVER
 Aldrig
 
 FW_FLEET_ETA_UNKNOWN
-Ok‰nt
+Ok√§nt
 
 FW_SHIP_CLASS
 Skeppsklass 
 
 FW_UNKNOWN_DESIGN_NAME
-Ok‰nt
+Ok√§nt
 
 # used to name new fleets when they are created
 FW_NEW_FLEET_NAME
@@ -1251,11 +1251,11 @@ Stridsflotta
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
-Fr‰mmande flotta
+Fr√§mmande flotta
 
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
-Fr‰mmande skepp
+Fr√§mmande skepp
 
 ###############
 # TechTreeWnd #
@@ -1265,7 +1265,7 @@ TECH_DISPLAY
 Visa
 
 TECH_NAVIGATION
-÷versikt
+√ñversikt
 
 TECH_TOTAL_COST_STR
 %1% FP / drag @ %2% drag
@@ -1289,7 +1289,7 @@ TECH_DETAIL_EFFECTS_STR
 \n\n<u>Verkan</u>\n\n%1%
 
 TECH_DETAIL_UNLOCKS_SECTION_STR
-\n\n<u>TillÂter</u>\n\n
+\n\n<u>Till√•ter</u>\n\n
 
 TECH_DETAIL_UNLOCKED_ITEM_STR
 %1%: %2%\n
@@ -1298,34 +1298,34 @@ TECH_WND_TECH_COMPLETED
 AVSLUTAD
 
 TECH_WND_TECH_QUEUED
-Kˆad
+K√∂ad
 
 TECH_WND_TECH_INCOMPLETE
-PÂbˆrjat
+P√•b√∂rjat
 
 TECH_WND_TYPE_THEORIES
 Teorier
 
 TECH_WND_TYPE_APPLICATIONS
-Till‰mpningar
+Till√§mpningar
 
 TECH_WND_TYPE_REFINEMENTS
-Fˆrfiningar
+F√∂rfiningar
 
 TECH_WND_STATUS_COMPLETED
 Avslutat
 
 TECH_WND_STATUS_RESEARCHABLE
-Uppt‰ckbara
+Uppt√§ckbara
 
 TECH_WND_STATUS_UNRESEARCHABLE
-Ouppt‰ckbara
+Ouppt√§ckbara
 
 TECH_WND_REQUIRES
-Kr‰ver
+Kr√§ver
 
 TECH_WND_UNLOCKS
-TillÂter
+Till√•ter
 
 
 #######################
@@ -1333,19 +1333,19 @@ TillÂter
 #######################
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Tillg‰ngliga po‰ng totalt
+Tillg√§ngliga po√§ng totalt
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Fˆrspillda po‰ng
+F√∂rspillda po√§ng
 
 PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-PÂgÂende projekt
+P√•g√•ende projekt
 
 PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
 Underfinansierade projekt
 
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Kˆade projekt
+K√∂ade projekt
 
 
 ###############
@@ -1367,7 +1367,7 @@ FP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Tillverkningsbara fˆremÂl
+Tillverkningsbara f√∂rem√•l
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
 Byggnader
@@ -1379,10 +1379,10 @@ PRODUCTION_WND_CATEGORY_BT_ORBITAL
 Orbitaler
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
-Tillg‰ngliga
+Tillg√§ngliga
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
-Otillg‰ngliga
+Otillg√§ngliga
 
 PRODUCTION_TOTAL_COST_STR
 %1% PP / drag @ %2% drag
@@ -1403,13 +1403,13 @@ PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
 %1%\n\n<u>Effects</u>\n\n%2%
 
 PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-%1%\n\nAttack: %2%\nFˆrsvar: %3%\nHastighet: %4%
+%1%\n\nAttack: %2%\nF√∂rsvar: %3%\nHastighet: %4%
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
-M‰ngd
+M√§ngd
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-L‰gg till i kˆ
+L√§gg till i k√∂
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centrera tillverkning
@@ -1437,10 +1437,10 @@ PRODUCTION_QUEUE_MULTIPLES
 ###############
 
 DESIGN_ADD_TEST
-L‰gg till prototypritning
+L√§gg till prototypritning
 
 DESIGN_NAME_DEFAULT
-Anv‰ndardefinierad skeppsritning
+Anv√§ndardefinierad skeppsritning
 
 DESIGN_DESCRIPTION_DEFAULT
 Beskrivning utav ritning
@@ -1476,10 +1476,10 @@ DESIGN_WND_DESIGN_DESCRIPTION
 Beskrivning
 
 DESIGN_WND_CONFIRM
-Bekr‰fta ny ritning
+Bekr√§fta ny ritning
 
 DESIGN_WND_CLEAR
-Rensa frÂn delar
+Rensa fr√•n delar
 
 # Ship Slot Types
 
@@ -1505,7 +1505,7 @@ PC_POINT_DEFENSE
 Point Defense
 
 PC_SHIELD
-Skˆldar
+Sk√∂ldar
 
 PC_ARMOUR
 Bepansring
@@ -1517,7 +1517,7 @@ PC_STEALTH
 Smygteknik
 
 PC_FUEL
-Br‰nsle
+Br√§nsle
 
 PC_COLONY
 Kolonisering
@@ -1578,7 +1578,7 @@ END_EFFECTS_STR
 ####################
 
 COMBAT_WINDOW_TITLE
-Stridsfˆnster
+Stridsf√∂nster
 
 COMBAT_BATTLE
 SLAG : 
@@ -1587,7 +1587,7 @@ COMBAT_SYSTEM
 The %1% System
 
 COMBAT_MILITARY_SHIPS
-Milit‰ra skepp
+Milit√§ra skepp
 
 COMBAT_CIVILIAN_SHIPS
 Civila skepp
@@ -1596,19 +1596,19 @@ COMBAT_PLANETS
 Planeter
 
 COMBAT_REMAINING
- KvarstÂende
+ Kvarst√•ende
 
 COMBAT_RETREATED
  Retirerade
 
 COMBAT_DESTROYED
- Fˆrintad
+ F√∂rintad
 
 COMBAT_DEFENSELESS
- Fˆrsvarslˆs
+ F√∂rsvarsl√∂s
 
 COMBAT_LOST
- Fˆrlorade!
+ F√∂rlorade!
 
 
 ####################
@@ -1619,22 +1619,22 @@ TURN_PROGRESS_WND
 Framskridande utav drag
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Fˆrflyttning utav flottor ...
+F√∂rflyttning utav flottor ...
 
 TURN_PROGRESS_PHASE_COMBAT
-Stridernas utgÂng best‰ms ...
+Stridernas utg√•ng best√§ms ...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Produktion och tillv‰xt ..
+Produktion och tillv√§xt ..
 
 TURN_PROGRESS_PHASE_WAITING
-V‰ntar pÂ att spelarna ska avsluta sina drag ...
+V√§ntar p√• att spelarna ska avsluta sina drag ...
 
 TURN_PROGRESS_PHASE_ORDERS
-Utfˆr order ...
+Utf√∂r order ...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
-ErhÂller nya speldata ...
+Erh√•ller nya speldata ...
 
 
 ########################
@@ -1652,34 +1652,34 @@ Situationsrapport
 ####################
 
 SITREP_BASE_BUILT
-%planet% f‰rdigst‰llt en fˆrsvarsbas.
+%planet% f√§rdigst√§llt en f√∂rsvarsbas.
 
 SITREP_SHIP_BUILT
 %ship%, ett nytt skepp, har blivit tillverkat i %system%-systemet.
 
 SITREP_BUILDING_BUILT
-%building% har tillverkats pÂ %planet%.
+%building% har tillverkats p√• %planet%.
 
 SITREP_TECH_RESEARCHED
 %tech% har forskats fram.
 
 SITREP_COMBAT_SYSTEM_WON
-En strid har ‰gt rum vid %system%. Vi segrade!
+En strid har √§gt rum vid %system%. Vi segrade!
 
 SITREP_COMBAT_SYSTEM_LOST
-En strid har ‰gt rum vid %system%. Vi blev besegrade!
+En strid har √§gt rum vid %system%. Vi blev besegrade!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-En strid har ‰gt rum vid %system%. Sammandrabbningen slutade ovisst.
+En strid har √§gt rum vid %system%. Sammandrabbningen slutade ovisst.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-Hela populationen pÂ %planet% har svultit ihj‰l. Planeten har gÂtt fˆrlorad!
+Hela populationen p√• %planet% har svultit ihj√§l. Planeten har g√•tt f√∂rlorad!
 
 SITREP_PLANET_COLONIZED
 %planet% har koloniserats i %system%-systemet.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-%fleet% har anl‰nt vid %system%-systemet och inv‰ntar ytterligare order.
+%fleet% har anl√§nt vid %system%-systemet och inv√§ntar ytterligare order.
 
 
 ####################
@@ -1687,19 +1687,19 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 ####################
 
 HOMEWORLD_SPECIAL
-Hemv‰rld
+Hemv√§rld
 
 HOMEWORLD_SPECIAL_DESCRIPTION
-Den h‰r planeten ‰r din ras fˆdelseplats; du vet hur den anv‰nds pÂ b‰sta s‰tt, vilket inneb‰r en bonus till sÂ gott som alla aspekter.
+Den h√§r planeten √§r din ras f√∂delseplats; du vet hur den anv√§nds p√• b√§sta s√§tt, vilket inneb√§r en bonus till s√• gott som alla aspekter.
 
 ANCIENT_RUINS_SPECIAL
-UrÂldriga ruiner
+Ur√•ldriga ruiner
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Denna planet hyser ruiner efter en hˆgutvecklad forntida ras, vars k‰nnedom fˆr l‰nge sedan gÂtt fˆrlorad. Ger en bonus till din forskning i form av hˆgre avkastning.
+Denna planet hyser ruiner efter en h√∂gutvecklad forntida ras, vars k√§nnedom f√∂r l√§nge sedan g√•tt f√∂rlorad. Ger en bonus till din forskning i form av h√∂gre avkastning.
 
 MINERALS_SPECIAL
-Rik pÂ mineraler
+Rik p√• mineraler
 
 MINERALS_SPECIAL_DESCRIPTION
 Denna planet har en naturligt rik mineralfyndighet, vilket bidrar till gruvdrift samt handel.
@@ -1708,31 +1708,31 @@ TUNNELS_SPECIAL
 Naturliga tunnelsystem
 
 TUNNELS_SPECIAL_DESCRIPTION
-Denna planet har ett n‰tverk av naturligt bildade tunnlar, som tillÂter att en mycket stˆrre del av planeten l‰ttare kan koloniseras. 
+Denna planet har ett n√§tverk av naturligt bildade tunnlar, som till√•ter att en mycket st√∂rre del av planeten l√§ttare kan koloniseras. 
 
 TECHTONIC_INSTABILITY_SPECIAL
 Tektonisk ostabil
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-Denna planet ‰r tektonisk ostabil. Fˆrekommande jordb‰vningar, tsunamis, vulkanutbrott eller os‰ker aktivitet under fundamentet gˆr att konstruktion och byggande av infrastruktur blir till en svÂrighet.
+Denna planet √§r tektonisk ostabil. F√∂rekommande jordb√§vningar, tsunamis, vulkanutbrott eller os√§ker aktivitet under fundamentet g√∂r att konstruktion och byggande av infrastruktur blir till en sv√•righet.
 
 SOLID_CORE_SPECIAL
-Fast k‰rna
+Fast k√§rna
 
 SOLID_CORE_SPECIAL_DESC
-Denna planets k‰rna har ˆvergÂtt till fast form och har d‰rfˆr mycket svagt magnetf‰lt. Stj‰rnornas solvindar nÂr l‰tt den relativt oskyddade ytan, det skadar h‰lsan och begr‰nsar jordbruket.
+Denna planets k√§rna har √∂verg√•tt till fast form och har d√§rf√∂r mycket svagt magnetf√§lt. Stj√§rnornas solvindar n√•r l√§tt den relativt oskyddade ytan, det skadar h√§lsan och begr√§nsar jordbruket.
 
 HIGH_AXIAL_TILT_SPECIAL
-Hˆg axellutning
+H√∂g axellutning
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-Denna planets rotationsaxel lutar v‰ldigt i fˆrhÂllande till dess banlutning. ≈rstidsbest‰mda v‰dervariationer ‰r s‰rskilt extrema och hejdar pÂtagligt infrastrukturutvecklingen.
+Denna planets rotationsaxel lutar v√§ldigt i f√∂rh√•llande till dess banlutning. √Örstidsbest√§mda v√§dervariationer √§r s√§rskilt extrema och hejdar p√•tagligt infrastrukturutvecklingen.
 
 SLOW_ROTATION_SPECIAL
-V‰ldigt lÂngsam rotation
+V√§ldigt l√•ngsam rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-Denna planet roterar v‰ldigt lÂngsamt runt sin axel, orsakandes v‰ldigt lÂnga dagar och n‰tter. Framv‰xt av infrastruktur, matproduktion och populationskapacitet reduceras.
+Denna planet roterar v√§ldigt l√•ngsamt runt sin axel, orsakandes v√§ldigt l√•nga dagar och n√§tter. Framv√§xt av infrastruktur, matproduktion och populationskapacitet reduceras.
 
 TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
@@ -1744,7 +1744,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Excentrisk bana
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-Denna planets bana ‰r v‰ldigt excentrisk. Den har ett stort avstÂnd mellan dess n‰rmaste och mest avl‰gsna ansats till dess stj‰rna. De omv‰xlande fˆrhÂllandena h‰mmar utveckling av infrastruktur, men skapar ett gynnande underlag fˆr forskning.
+Denna planets bana √§r v√§ldigt excentrisk. Den har ett stort avst√•nd mellan dess n√§rmaste och mest avl√§gsna ansats till dess stj√§rna. De omv√§xlande f√∂rh√•llandena h√§mmar utveckling av infrastruktur, men skapar ett gynnande underlag f√∂r forskning.
 
 #######################
 # Enumeration  values #
@@ -1771,7 +1771,7 @@ system
 # StarTypes
 
 STAR_BLUE
-blÂ
+bl√•
 STAR_WHITE
 vit
 STAR_YELLOW
@@ -1779,11 +1779,11 @@ gul
 STAR_ORANGE
 orange
 STAR_RED
-rˆd
+r√∂d
 STAR_NEUTRON
 neutron
 STAR_BLACK
-svart hÂl
+svart h√•l
 
 
 # PlanetTypes
@@ -1801,7 +1801,7 @@ karg
 PT_TUNDRA
 tundra
 PT_DESERT
-ˆken
+√∂ken
 PT_TERRAN
 jordlik
 PT_OCEAN
@@ -1809,7 +1809,7 @@ oceanisk
 PT_ASTEROIDS
 asteroider
 PT_GASGIANT
-gasj‰tte
+gasj√§tte
 
 
 # Planet Sizes
@@ -1829,7 +1829,7 @@ enorm
 SZ_ASTEROIDS
 asteroider
 SZ_GASGIANT
-gasj‰tte
+gasj√§tte
 
 
 # PlanetEnvironments
@@ -1841,15 +1841,15 @@ fientlig
 PE_POOR
 torftig
 PE_ADEQUATE
-tillfredst‰llande
+tillfredst√§llande
 PE_GOOD
-l‰mplig
+l√§mplig
 
 
 # FocusTypes
 
 FOCUS_UNKNOWN
-ok‰nd
+ok√§nd
 FOCUS_BALANCED
 balanserad
 FOCUS_FARMING
@@ -1881,9 +1881,9 @@ gruvdrift
 METER_CONSTRUCTION
 konstruktion
 METER_HEALTH
-h‰lsa
+h√§lsa
 METER_FUEL
-br‰nsle
+br√§nsle
 METER_SUPPLY
 supply
 METER_STEALTH
@@ -1891,9 +1891,9 @@ stealth
 METER_DETECTION
 detection
 METER_SHIELD
-skˆld
+sk√∂ld
 METER_DEFENSE
-fˆrsvar
+f√∂rsvar
 
 
 # EmpireAffiliationTypes
@@ -1920,9 +1920,9 @@ Skeppsskrov
 TT_THEORY
 Teorier
 TT_APPLICATION
-Till‰mpningar
+Till√§mpningar
 TT_REFINEMENT
-Fˆrfiningar
+F√∂rfiningar
 
 
 # BuildTypes
@@ -1961,10 +1961,10 @@ DESC_VAR_SYSTEM
 system
 
 DESC_VAR_SOURCE
-k‰lla
+k√§lla
 
 DESC_VAR_TARGET
-mÂl
+m√•l
 
 DESC_VAR_PLANETSIZE
 planetstorlek
@@ -1973,19 +1973,19 @@ DESC_VAR_PLANETTYPE
 planettyp
 
 DESC_VAR_PLANETENVIRONMENT
-planetmiljˆ
+planetmilj√∂
 
 DESC_VAR_OBJECTTYPE
 objekttyp
 
 DESC_VAR_STARTYPE
-stj‰rntyp
+stj√§rntyp
 
 DESC_VAR_PRIMARYFOCUS
-prim‰r fokus
+prim√§r fokus
 
 DESC_VAR_SECONDARYFOCUS
-sekund‰r fokus
+sekund√§r fokus
 
 DESC_VAR_CURRENTFARMING
 nuvarande jordbruk
@@ -2024,10 +2024,10 @@ DESC_VAR_MAXCONSTRUCTION
 maximal konstruktion
 
 DESC_VAR_CURRENTHEALTH
-nuvarande h‰lsa
+nuvarande h√§lsa
 
 DESC_VAR_MAXHEALTH
-maximal h‰lsa
+maximal h√§lsa
 
 DESC_VAR_CURRENTPOPULATION
 nuvarande population
@@ -2036,16 +2036,16 @@ DESC_VAR_MAXPOPULATION
 maximal population
 
 DESC_VAR_CURRENTFUEL
-nuvarande br‰nsle
+nuvarande br√§nsle
 
 DESC_VAR_MAXFUEL
-maximalt br‰nsle
+maximalt br√§nsle
 
 DESC_VAR_CURRENTSUPPLY
-nuvarande fˆrnˆdenheter
+nuvarande f√∂rn√∂denheter
 
 DESC_VAR_MAXSUPPLY
-maximala fˆrnˆdenheter
+maximala f√∂rn√∂denheter
 
 DESC_VAR_CURRENTSTEALTH
 nuvarande smygteknik
@@ -2060,16 +2060,16 @@ DESC_VAR_MAXDETECTION
 maximal detektion
 
 DESC_VAR_CURRENTSHIELD
-nuvarande skˆld
+nuvarande sk√∂ld
 
 DESC_VAR_MAXSHIELD
-maximal skˆld
+maximal sk√∂ld
 
 DESC_VAR_CURRENTDEFENSE
-nuvarande fˆrsvar
+nuvarande f√∂rsvar
 
 DESC_VAR_MAXDEFENSE
-maximalt fˆrsvar
+maximalt f√∂rsvar
 
 DESC_VAR_TRADESTOCKPILE
 handelsreserv
@@ -2096,7 +2096,7 @@ DESC_VAR_RESEARCHPRODUCTION
 forskningsproduktion
 
 DESC_VAR_OWNER
-‰gare
+√§gare
 
 DESC_VAR_ID
 ID
@@ -2230,19 +2230,19 @@ DESC_ALL
  i universumet
 
 DESC_EMPIRE_AFFILIATION_SELF
- det tillhˆr %1%-imperiet
+ det tillh√∂r %1%-imperiet
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- det tillhˆr inte %1%-imperiet
+ det tillh√∂r inte %1%-imperiet
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- det tillhˆr endast %1%-imperiet
+ det tillh√∂r endast %1%-imperiet
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- det tillhˆr inte endast %1%-imperiet
+ det tillh√∂r inte endast %1%-imperiet
 
 DESC_EMPIRE_AFFILIATION
- det tillhˆr en %1% av %2%-imperiet
+ det tillh√∂r en %1% av %2%-imperiet
 
 DESC_EMPIRE_AFFILIATION_NOT
  that does not belong to an %1% of %2% empire
@@ -2415,13 +2415,13 @@ DESC_NUMBER_NOT
 ###################
 
 LEARNING_CATEGORY
-Inl‰rning
+Inl√§rning
 PRODUCTION_CATEGORY
 Produktion
 CONSTRUCTION_CATEGORY
 Konstruktion
 GROWTH_CATEGORY
-Tillv‰xt
+Tillv√§xt
 ECONOMICS_CATEGORY
 Ekonomi
 SHIPS_CATEGORY
@@ -3593,28 +3593,28 @@ SH_EMPTY
 Tomt skrov
 
 SH_EMPTY_DESC
-Billigt och snabbt, men kan inte installera nÂgra delar
+Billigt och snabbt, men kan inte installera n√•gra delar
 
 SH_SMALL
 Litet skrov
 
 SH_SMALL_DESC
-FÂtal platser men hˆg hastighet
+F√•tal platser men h√∂g hastighet
 
 SH_MEDIUM
 Mellanstort skrov
 
 SH_MEDIUM_DESC
-MÂttligt antal platser och mÂttlig hastighet
+M√•ttligt antal platser och m√•ttlig hastighet
 
 SH_LARGE
 Stort skrov
 
 SH_LARGE_DESC
-MÂnga platser men lÂg hastighet
+M√•nga platser men l√•g hastighet
 
 SH_HUGE
 Enormt skrov
 
 SH_HUGE_DESC
-V‰ldigt mÂnga platser men v‰ldigt lÂngsam hastighet
+V√§ldigt m√•nga platser men v√§ldigt l√•ngsam hastighet

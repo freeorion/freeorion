@@ -234,7 +234,7 @@ void CUIWnd::Render()
     }
 
     glColor(ClientUI::TextColor());
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::TitleFont(), ClientUI::TitlePts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
     font->RenderText(ul.x + BORDER_LEFT, ul.y, WindowText());
 }
 
@@ -403,7 +403,7 @@ void CUIEditWnd::ModalInit()
     GG::GUI::GetGUI()->SetFocusWnd(m_edit);
 }
 
-void CUIEditWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void CUIEditWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_RETURN: if (!m_ok_bn->Disabled()) OkClicked(); break;

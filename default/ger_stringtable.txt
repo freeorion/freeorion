@@ -1,7 +1,7 @@
 Deutsch
 
 #This is the String Table file for FreeOrion
-#Deutsche Übersetzung von Martin Wuttke [thesilentone] und Markus Sinner [kroddn]
+#Deutsche Ãœbersetzung von Martin Wuttke [thesilentone] und Markus Sinner [kroddn]
 
 #################
 # Common        #
@@ -34,7 +34,7 @@ SAVE
 Speichern
 
 OPEN
-Öffnen
+Ã–ffnen
 
 OR
 oder
@@ -67,7 +67,7 @@ SERVER_GAME_END
 Der Server hat das Spiel beendet.
 
 PLAYER_DISCONNECTED
-Spieler %1% ist nicht länger mit dem Server verbunden.
+Spieler %1% ist nicht lÃ¤nger mit dem Server verbunden.
 
 PLAYER_DEFEATED
 Sie wurden besiegt.
@@ -79,7 +79,7 @@ EMPIRE
 Imperium
 
 EMPIRE_DEFEATED
-Imperium %1% wurde ausgelöscht.
+Imperium %1% wurde ausgelÃ¶scht.
 
 ALL
 Alle
@@ -103,7 +103,7 @@ DEFENSE_BASE_DESCRIPTION
 Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
 
 CHAT_WHISPER
-flüstern
+flÃ¼stern
 
 
 ######################################
@@ -455,13 +455,13 @@ FILE_DLG_FILE_TYPES
 Typ(en):
 
 FILE_DLG_MALFORMED_FILENAME
-Ungültiger Dateiname.
+UngÃ¼ltiger Dateiname.
 
 FILE_DLG_OVERWRITE_PROMPT
-"%1%" gibt es bereits.\nÜberschreiben?
+"%1%" gibt es bereits.\nÃœberschreiben?
 
 FILE_DLG_INVALID_FILENAME
-"%1%"\nist ein ungültiger Dateiname.
+"%1%"\nist ein ungÃ¼ltiger Dateiname.
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 "%1%"\nist ein Verzeichnis.
@@ -470,7 +470,7 @@ FILE_DLG_FILE_DOES_NOT_EXIST
 Datei "%1%"\n existiert nicht.
 
 FILE_DLG_DEVICE_IS_NOT_READY
-Gerät ist nicht bereit.
+GerÃ¤t ist nicht bereit.
 
 
 #################
@@ -512,7 +512,7 @@ A:
 #Window title####
 
 INTRO_WINDOW_TITLE
-FreeOrion Hauptmenü
+FreeOrion HauptmenÃ¼
 
 
 #Button names####
@@ -530,7 +530,7 @@ INTRO_BTN_OPTIONS
 Optionen
 
 INTRO_BTN_ABOUT
-Über das Spiel
+Ãœber das Spiel
 
 INTRO_BTN_CREDITS
 Mitwirkende
@@ -542,7 +542,7 @@ Beenden
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Die Verbindungszeit zum Server wurde überschritten
+Die Verbindungszeit zum Server wurde Ã¼berschritten
 
 ERR_VERSION_MISMATCH
 Kann keine Verbindung zum Server herstellen, da dieser Client eine andere Version folgender Einstellungen und/oder Quellfiles verwendet:
@@ -751,7 +751,7 @@ LICENSE
 Lizenz
 
 ABOUT_WINDOW_TITLE
-Über FreeOrion
+Ãœber FreeOrion
 
 CREDITS
 Mitwirkende
@@ -760,14 +760,14 @@ VISION
 Vision
 
 FREEORION_VISION
-FreeOrion ist ein runden-basierendes (TBS = Turned Based Strategy) Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermöglicht Veränderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemüht sich, ein lebendes, atmendes Universum mit einem Großkampagnen-Modell zu erschaffen.
+FreeOrion ist ein runden-basierendes (TBS = Turned Based Strategy) Open-Source Spiel, das von Master of Orion inspiriert ist. Es basiert auf dem klassischen "4x - Modell", den Nationenaufbau - Elementen von Spielen wie Europa Universalis 2 und einer vielseitigen taktischen Kampfengine. Der modulare Aufbau des Spiels ermÃ¶glicht VerÃ¤nderungen sowohl an der Game Engine als auch der Story durch die Community; das FreeOrion-Team bemÃ¼ht sich, ein lebendes, atmendes Universum mit einem GroÃŸkampagnen-Modell zu erschaffen.
 
 ###########################
 # Game Menu	              #
 ###########################
 
 GAME_MENU_WINDOW_TITLE
-Menü
+MenÃ¼
 
 GAME_MENU_SAVE
 Spiel sichern
@@ -789,7 +789,7 @@ OPTIONS_TITLE
 Optionen
 
 OPTIONS_AUTOSELECT_FLEET
-Erste Flotte automatisch anwählen
+Erste Flotte automatisch anwÃ¤hlen
 
 OPTIONS_MULTIPLE_FLEET_WNDS
 Mehrere Flottenfenster
@@ -807,7 +807,7 @@ OPTIONS_MULTIPLAYER
 Mehrspieler
 
 OPTIONS_AUTOSAVE_TO_KEEP
-Automatisch gespeicherte Spielstände behalten
+Automatisch gespeicherte SpielstÃ¤nde behalten
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Runden zwischen dem automatischem Speichern
@@ -819,7 +819,7 @@ OPTIONS_FONTS
 Schriftart
 
 OPTIONS_FONT_SIZES
-Größe
+GrÃ¶ÃŸe
 
 OPTIONS_FONT_TEXT
 Text
@@ -927,7 +927,7 @@ OPTIONS_SOUND_WINDOW
 Allgemein
 
 OPTIONS_SOUND_BUTTON
-Knöpfe
+KnÃ¶pfe
 
 OPTIONS_SOUND_FLEET
 Flotten
@@ -942,7 +942,7 @@ OPTIONS_SOUND_TURN
 Rundenbutton anklicken
 
 OPTIONS_SOUND_SIDEPANEL
-Seitenfenster öffnen
+Seitenfenster Ã¶ffnen
 
 OPTIONS_SOUND_PLANET
 Planet anklicken
@@ -972,10 +972,10 @@ OPTIONS_SOUND_DROP
 Gegenstand loslassen
 
 OPTIONS_SOUND_PULLDOWN
-Drop-down Liste öffnen
+Drop-down Liste Ã¶ffnen
 
 OPTIONS_SOUND_SELECT
-Liste auswählen
+Liste auswÃ¤hlen
 
 OPTIONS_GENERAL_COLORS
 Kontrollfarben
@@ -1008,13 +1008,13 @@ OPTIONS_INNER_BORDER_COLOR
 Innere Grenze
 
 OPTIONS_OUTER_BORDER_COLOR
-Äußere Grenze
+Ã„uÃŸere Grenze
 
 OPTIONS_PAGE_VIDEO
 Allgemein
 
 OPTIONS_PAGE_AUDIO
-Geräusche
+GerÃ¤usche
 
 OPTIONS_PAGE_AUTOSAVE
 Automatisches Speichern
@@ -1085,7 +1085,7 @@ MAP_INDICATOR_FPS
 %1% FPS
 
 MAP_BTN_MENU
-Menü
+MenÃ¼
 
 MAP_BTN_SITREP
 SitRep
@@ -1114,13 +1114,13 @@ PLANET_PANEL
 Planetenfenster
 
 PL_ASTEROID_BELT
-Asteroidengürtel
+AsteroidengÃ¼rtel
 
 PL_UNINHABITED
 Unbewohnt
 
 PL_SIZE
-Größe
+GrÃ¶ÃŸe
 
 PL_COLONIZE
 Besiedeln
@@ -1128,7 +1128,7 @@ Besiedeln
 ##Population Panel#########
 
 PP_POPULATION
-Bevölkerung
+BevÃ¶lkerung
 
 PP_HEALTH
 Health
@@ -1148,10 +1148,10 @@ RP_MINERALS
 Produktion Mineralien
 
 RP_INDUSTRY
-Industriekapazität
+IndustriekapazitÃ¤t
 
 RP_RESEARCH
-Forschungskapazität
+ForschungskapazitÃ¤t
 
 RP_TRADE
 Handelsvolumen
@@ -1190,10 +1190,10 @@ TT_CURRENT
 Derzeit
 
 TT_NEXT
-Nächste Runde
+NÃ¤chste Runde
 
 TT_CHANGE
-Änderung
+Ã„nderung
 
 TT_MAX_METER
 Max Meter: %1%
@@ -1205,10 +1205,10 @@ TT_TECH
 %1% Tech <i>%2%</i>
 
 TT_BUILDING
-%1% Gebäude <i>%2%</i>
+%1% GebÃ¤ude <i>%2%</i>
 
 TT_SHIP_HULL
-Schiff <i>%1%</i> Hülle <i>%2%</i>
+Schiff <i>%1%</i> HÃ¼lle <i>%2%</i>
 
 TT_SHIP_PART
 Schiff <i>%1%</i> Teil <i>%2%</i>
@@ -1241,7 +1241,7 @@ Alle Kolonieschiffe in diesem System haben\nBefehl erhalten, das System zu\nverl
 #################
 
 FW_FLEET_HOLDING_AT
-Hält in System %1% 
+HÃ¤lt in System %1% 
 
 FW_FLEET_MOVING_TO
 Fliegt nach %1%, ETA %2% (%3%)
@@ -1306,7 +1306,7 @@ TECH_TURN_COST_STR
 %1% RP / %2% Runden
 
 TECH_TURNS_LEFT_STR
-%1% Runden übrig
+%1% Runden Ã¼brig
 
 TECH_TURNS_LEFT_NEVER
 Nie
@@ -1321,7 +1321,7 @@ TECH_DETAIL_EFFECTS_STR
 \n\n<u>Effekte</u>\n\n%1%
 
 TECH_DETAIL_UNLOCKS_SECTION_STR
-\n\n<u>Ermöglicht</u>\n\n
+\n\n<u>ErmÃ¶glicht</u>\n\n
 
 TECH_DETAIL_UNLOCKED_ITEM_STR
 %1%: %2%\n
@@ -1333,7 +1333,7 @@ TECH_WND_TECH_QUEUED
 In Warteliste
 
 TECH_WND_TECH_INCOMPLETE
-Unvollständig
+UnvollstÃ¤ndig
 
 TECH_WND_TYPE_THEORIES
 Theorien
@@ -1360,10 +1360,10 @@ TECH_WND_TREE_VIEW
 Baumansicht
 
 TECH_WND_REQUIRES
-Benötigt
+BenÃ¶tigt
 
 TECH_WND_UNLOCKS
-Ermöglicht
+ErmÃ¶glicht
 
 
 #######################
@@ -1371,7 +1371,7 @@ Ermöglicht
 #######################
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Insg. verfügbare Punkte
+Insg. verfÃ¼gbare Punkte
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Verschwendete Punkte
@@ -1408,7 +1408,7 @@ PRODUCTION_WND_BUILD_ITEMS_TITLE
 Zu errichtende Objekte:
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
-Gebäude
+GebÃ¤ude
 
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Schiffe
@@ -1417,10 +1417,10 @@ PRODUCTION_WND_CATEGORY_BT_ORBITAL
 Orbital
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
-Verfügbar
+VerfÃ¼gbar
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
-Nicht verfügbar
+Nicht verfÃ¼gbar
 
 PRODUCTION_TOTAL_COST_STR
 %1% PP / Runde @ %2% Runden
@@ -1429,7 +1429,7 @@ PRODUCTION_TURN_COST_STR
 %1% PP
 
 PRODUCTION_TURNS_LEFT_STR
-%1% Runden übrig
+%1% Runden Ã¼brig
 
 PRODUCTION_TURNS_LEFT_NEVER
 Nie
@@ -1447,7 +1447,7 @@ PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Anzahl
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-Zur Liste hinzufügen
+Zur Liste hinzufÃ¼gen
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Auf Projekt zentrieren
@@ -1475,7 +1475,7 @@ PRODUCTION_QUEUE_MULTIPLES
 ###############
 
 DESIGN_ADD_TEST
-Füge Test-Design hinzu
+FÃ¼ge Test-Design hinzu
 
 DESIGN_NAME_DEFAULT
 Eigenes Schiffdesign
@@ -1514,10 +1514,10 @@ DESIGN_WND_DESIGN_DESCRIPTION
 Description
 
 DESIGN_WND_CONFIRM
-Bestätige neues Design
+BestÃ¤tige neues Design
 
 DESIGN_WND_CLEAR
-Lösche Teile
+LÃ¶sche Teile
 
 # Ship Slot Types
 
@@ -1537,7 +1537,7 @@ PC_MISSILES
 Raketen
 
 PC_FIGHTERS
-Jäger
+JÃ¤ger
 
 PC_POINT_DEFENSE
 Punktverteid.
@@ -1582,7 +1582,7 @@ ENC_SPECIAL
 Spezial
 
 ENC_BUILDING
-Gebäude
+GebÃ¤ude
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
@@ -1625,7 +1625,7 @@ COMBAT_SYSTEM
 Das %1% System
 
 COMBAT_MILITARY_SHIPS
-Militärschiffe
+MilitÃ¤rschiffe
 
 COMBAT_CIVILIAN_SHIPS
 Zivilschiffe
@@ -1637,10 +1637,10 @@ COMBAT_REMAINING
  Verbleibend
 
 COMBAT_RETREATED
- Zurückgezogen
+ ZurÃ¼ckgezogen
 
 COMBAT_DESTROYED
- Zerstört
+ ZerstÃ¶rt
 
 COMBAT_DEFENSELESS
  Wehrlos
@@ -1660,7 +1660,7 @@ TURN_PROGRESS_PHASE_FLEET_MOVEMENT
 Flottenbewegung...
 
 TURN_PROGRESS_PHASE_COMBAT
-Führe Kämpfe durch...
+FÃ¼hre KÃ¤mpfe durch...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
 Produktion und Wachstum...
@@ -1669,7 +1669,7 @@ TURN_PROGRESS_PHASE_WAITING
 Warte auf andere Spieler...
 
 TURN_PROGRESS_PHASE_ORDERS
-Führe Befehle aus...
+FÃ¼hre Befehle aus...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Lade neue Spieldaten...
@@ -1711,7 +1711,7 @@ SITREP_COMBAT_SYSTEM_NO_VICTOR
 Ein Kampf hat sich im %system% System zugetragen. Der Kampf verlief ergebnislos.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-Die ganze Bevölkerung von %planet% ist verhungert. Der Planet ist verloren!
+Die ganze BevÃ¶lkerung von %planet% ist verhungert. Der Planet ist verloren!
 
 SITREP_PLANET_COLONIZED
 Der Planet %planet% im %system% - System wurde besiedelt.
@@ -1734,55 +1734,55 @@ ANCIENT_RUINS_SPECIAL
 Uralte Ruinen
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Auf diesem Planet befinden sich die Überreste einer uralten, technologisch forschrittlichen Rasse, die aus den Geschichtsbüchern verschwunden ist: Forschungsbonus.
+Auf diesem Planet befinden sich die Ãœberreste einer uralten, technologisch forschrittlichen Rasse, die aus den GeschichtsbÃ¼chern verschwunden ist: Forschungsbonus.
 
 MINERALS_SPECIAL
 Mineralienreichtum
 
 MINERALS_SPECIAL_DESCRIPTION
-Dieser Planet besitzt einen natürlichen Reichtum an Mineralien: Bonus auf Bergbau und Handel.
+Dieser Planet besitzt einen natÃ¼rlichen Reichtum an Mineralien: Bonus auf Bergbau und Handel.
 
 TUNNELS_SPECIAL
-Natürliche Tunnel
+NatÃ¼rliche Tunnel
 
 TUNNELS_SPECIAL_DESCRIPTION
-Dieser Planet besitzt ein Netzwerk natürlicher Tunnel; dadurch kann ein größerer Teil des Planeten als gewöhnlich kolonisiert werden.
+Dieser Planet besitzt ein Netzwerk natÃ¼rlicher Tunnel; dadurch kann ein grÃ¶ÃŸerer Teil des Planeten als gewÃ¶hnlich kolonisiert werden.
 
 TECHTONIC_INSTABILITY_SPECIAL
-Tektonische Instabilität
+Tektonische InstabilitÃ¤t
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-Dieser Planet ist tektonisch instabil.  Regelmässige Erdbeben, Tsunamis, Vulkanausbrüche und unvorhersehbare Fundamenteinbrüche erschweren das Errichten von Gebäuden und die Entwicklung der Infrastruktur.
+Dieser Planet ist tektonisch instabil.  RegelmÃ¤ssige Erdbeben, Tsunamis, VulkanausbrÃ¼che und unvorhersehbare FundamenteinbrÃ¼che erschweren das Errichten von GebÃ¤uden und die Entwicklung der Infrastruktur.
 
 SOLID_CORE_SPECIAL
 Erkalteter Kern
 
 SOLID_CORE_SPECIAL_DESC
-Der Kern dieses Planetens ist erkaltet und starr und hat deshalb nur ein sehr schwaches magnetisches Feld.  Der Sonnenwind des Sterns erreicht die Oberfläche des Planeten nahezu unabgeschwächt und beeinträchtigt Gesundheit und Nahrungsmittelproduktion.
+Der Kern dieses Planetens ist erkaltet und starr und hat deshalb nur ein sehr schwaches magnetisches Feld.  Der Sonnenwind des Sterns erreicht die OberflÃ¤che des Planeten nahezu unabgeschwÃ¤cht und beeintrÃ¤chtigt Gesundheit und Nahrungsmittelproduktion.
 
 HIGH_AXIAL_TILT_SPECIAL
 Starke Achsenauslenkung
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-Die Rotationsachse dieses Planeten ist im Verhältnis zu seiner orbitalen Ebene stark ausgelenkt.  Die jahreszeitlichen Wetterveränderungen sind besonders ausgeprägt und die Entwicklung der Infrastruktur deutlich eingeschränkt.
+Die Rotationsachse dieses Planeten ist im VerhÃ¤ltnis zu seiner orbitalen Ebene stark ausgelenkt.  Die jahreszeitlichen WetterverÃ¤nderungen sind besonders ausgeprÃ¤gt und die Entwicklung der Infrastruktur deutlich eingeschrÃ¤nkt.
 
 SLOW_ROTATION_SPECIAL
 Sehr langsame Rotation
 
 SLOW_ROTATION_SPECIAL_DESC
-Dieser Planet rotiert sehr langsam um seine Achse, wodurch lange Tage und Nächte entstehen. Der Wachstum der Infrastruktur, die Nahrungsmittelherstellung und die Bevölkerungskapazität sind vermindert.
+Dieser Planet rotiert sehr langsam um seine Achse, wodurch lange Tage und NÃ¤chte entstehen. Der Wachstum der Infrastruktur, die Nahrungsmittelherstellung und die BevÃ¶lkerungskapazitÃ¤t sind vermindert.
 
 TIDAL_LOCK_SPECIAL
 Zeitlich gekoppelte Rotation
 
 TIDAL_LOCK_SPECIAL_DESC
-Die Rotation des Planetens ist an den Stern gekoppelt, um den er kreist.  Ein Tag des Planeten hat die gleiche Dauer wie sein Jahr, und die eine Hälfte des Planeten ist ständig erhellt, die andere Hälfte in ewiger Nacht. Das Wachstum der Infrastruktur ist eingeschränkt, aber sobald sie besteht, geniesst die Industrie die Vorteile der lokal stabilen Oberflächenbedingungen.
+Die Rotation des Planetens ist an den Stern gekoppelt, um den er kreist.  Ein Tag des Planeten hat die gleiche Dauer wie sein Jahr, und die eine HÃ¤lfte des Planeten ist stÃ¤ndig erhellt, die andere HÃ¤lfte in ewiger Nacht. Das Wachstum der Infrastruktur ist eingeschrÃ¤nkt, aber sobald sie besteht, geniesst die Industrie die Vorteile der lokal stabilen OberflÃ¤chenbedingungen.
 
 ECCENTRIC_ORBIT_SPECIAL
 Exzentrischer Orbit
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-Der Orbit dieses Planeten ist sehr exzentrisch; der Unterschied zwischen seiner nahesten und weitesten Entfernung zu seinem Stern ist sehr groß.  Der Lichteinfall schwankt während des Jahres erheblich.  Die veränderlichen Bedingungen behindern die Entwicklung der Infrastruktur, aber sind eine gute Forschungsgrundlage.
+Der Orbit dieses Planeten ist sehr exzentrisch; der Unterschied zwischen seiner nahesten und weitesten Entfernung zu seinem Stern ist sehr groÃŸ.  Der Lichteinfall schwankt wÃ¤hrend des Jahres erheblich.  Die verÃ¤nderlichen Bedingungen behindern die Entwicklung der Infrastruktur, aber sind eine gute Forschungsgrundlage.
 
 #######################
 # Enumeration  values #
@@ -1791,7 +1791,7 @@ Der Orbit dieses Planeten ist sehr exzentrisch; der Unterschied zwischen seiner 
 # UniverseObjectTypes
 
 OBJ_BUILDING
-Gebäude
+GebÃ¤ude
 
 OBJ_SHIP
 Schiff
@@ -1803,7 +1803,7 @@ OBJ_PLANET
 Planet
 
 OBJ_POP_CENTER
-Bevölkerungszentrum
+BevÃ¶lkerungszentrum
 
 OBJ_PROD_CENTER
 Produktionszentrum
@@ -1818,7 +1818,7 @@ STAR_BLUE
 blau
 
 STAR_WHITE
-weiß
+weiÃŸ
 
 STAR_YELLOW
 gelb
@@ -1857,10 +1857,10 @@ PT_TUNDRA
 arktisch
 
 PT_DESERT
-Wüste
+WÃ¼ste
 
 PT_TERRAN
-erdähnlich
+erdÃ¤hnlich
 
 PT_OCEAN
 ozeanisch
@@ -1887,7 +1887,7 @@ SZ_MEDIUM
 mittel
 
 SZ_LARGE
-groß
+groÃŸ
 
 SZ_HUGE
 gewaltig
@@ -1944,7 +1944,7 @@ Handel
 # MeterTypes
 
 METER_POPULATION
-Bevölkerung
+BevÃ¶lkerung
 
 METER_FARMING
 Landwirtschaft
@@ -1995,13 +1995,13 @@ AFFIL_ENEMY
 Gegner
 
 AFFIL_ALLY
-Verbündeter
+VerbÃ¼ndeter
 
 
 # UnlockableItemTypes
 
 UIT_BUILDING
-Gebäude
+GebÃ¤ude
 
 UIT_SHIP_PART
 Schiffteil
@@ -2027,7 +2027,7 @@ BT_NOT_BUILDING
 nichts
 
 BT_BUILDING
-Gebäude
+GebÃ¤ude
 
 BT_SHIP
 Schiff
@@ -2068,7 +2068,7 @@ DESC_VAR_TARGET
 Ziel
 
 DESC_VAR_PLANETSIZE
-Planetengröße
+PlanetengrÃ¶ÃŸe
 
 DESC_VAR_PLANETTYPE
 Planetenklasse
@@ -2083,10 +2083,10 @@ DESC_VAR_STARTYPE
 Sternenklasse
 
 DESC_VAR_PRIMARYFOCUS
-primärer Fokus
+primÃ¤rer Fokus
 
 DESC_VAR_SECONDARYFOCUS
-sekundärer Fokus
+sekundÃ¤rer Fokus
 
 DESC_VAR_CURRENTFARMING
 aktuelle Landwirdschaft
@@ -2131,10 +2131,10 @@ DESC_VAR_MAXHEALTH
 maximale Gesundheit
 
 DESC_VAR_CURRENTPOPULATION
-aktuelle Bevölkerung
+aktuelle BevÃ¶lkerung
 
 DESC_VAR_MAXPOPULATION
-maximale Bevölkerung
+maximale BevÃ¶lkerung
 
 DESC_VAR_CURRENTFUEL
 aktueller Treibstoff
@@ -2203,7 +2203,7 @@ DESC_VAR_ID
 ID
 
 DESC_VAR_AGE
-Alter in Zügen
+Alter in ZÃ¼gen
 
 DESC_VAR_CREATIONTURN
 Zug der Erschaffung
@@ -2540,421 +2540,421 @@ LRN_PHYS_BRAIN
 Das physikalische Gehirn
 
 LRN_PHYS_BRAIN_DESC
-Die Strukturen des Gehirns und ihre Funktionen sind erforscht, die elektrochemische Natur und die Quantennatur von Gedanken und Erinnerung erkannt. Durch dieses Verständnis wird die Veränderung und Verstärkung von Hirnfunktionen möglich, und neue Ideen entspringen an den Grenzen des Vorstellbaren.
+Die Strukturen des Gehirns und ihre Funktionen sind erforscht, die elektrochemische Natur und die Quantennatur von Gedanken und Erinnerung erkannt. Durch dieses VerstÃ¤ndnis wird die VerÃ¤nderung und VerstÃ¤rkung von Hirnfunktionen mÃ¶glich, und neue Ideen entspringen an den Grenzen des Vorstellbaren.
 
 LRN_ALGO_ELEGANCE
 Algorithmische Eleganz
 
 LRN_ALGO_ELEGANCE_DESC
-Die steigende Komplexität der Probleme in der Datenanalyse überfordert herkömmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische Ansätze und Funktionen notwendig; die Eleganz der Lösung muss ästhetisch und metaphorisch optimiert werden.
+Die steigende KomplexitÃ¤t der Probleme in der Datenanalyse Ã¼berfordert herkÃ¶mmliche Algorithmen. Von dieser Entwicklungsstufe an werden andere algorithmische AnsÃ¤tze und Funktionen notwendig; die Eleganz der LÃ¶sung muss Ã¤sthetisch und metaphorisch optimiert werden.
 
 LRN_TRANSLING_THT
 Translinguistisches Denken
 
 LRN_TRANSLING_THT_DESC
-Schwache Denker kämpfen mit den Gesetzen der Sprache, die sie erlernt haben; durchschnittliche Denker fühlen sich durch die etablierten Ausdrucksmöglichkeiten eingeengt; außergewöhnliche Denker können die Grenzen der Sprache überwinden und schaffen und analysieren Gedanken an der Grenze des Transzendenten. Doch lediglich großartige Denker bleiben isoliert und nutzlos, denn wie sollen sie ohne eine adequate Sprache ihre Geistesblitze ausdrücken?
+Schwache Denker kÃ¤mpfen mit den Gesetzen der Sprache, die sie erlernt haben; durchschnittliche Denker fÃ¼hlen sich durch die etablierten AusdrucksmÃ¶glichkeiten eingeengt; auÃŸergewÃ¶hnliche Denker kÃ¶nnen die Grenzen der Sprache Ã¼berwinden und schaffen und analysieren Gedanken an der Grenze des Transzendenten. Doch lediglich groÃŸartige Denker bleiben isoliert und nutzlos, denn wie sollen sie ohne eine adequate Sprache ihre Geistesblitze ausdrÃ¼cken?
 
 LRN_PSIONICS
 Psionik
 
 LRN_PSIONICS_DESC
-Durch tiefe Einsicht oder künstliche Erweiterungen kann das Gehirn Fähigkeiten entwickeln, mit deren Hilfe es ohne Einschränkungen durch den physischen Körpers direkt mit dem umliegenden Universum interagieren kann. Kräfte wie z. B. Telepathie, Empathie, Hellsicht, Prescience, Psychokinese und Psychoenergese ersetzen banale biologische oder technische Alternativen. Die Anwendungen dieser Kräfte, u. a. Gedankenkontrolle, Persönlichkeitsveränderung und Posession, haben eine tiefgreifende Bedeutung für die Beziehung zwischen begabten und unbegabten Wesen.
+Durch tiefe Einsicht oder kÃ¼nstliche Erweiterungen kann das Gehirn FÃ¤higkeiten entwickeln, mit deren Hilfe es ohne EinschrÃ¤nkungen durch den physischen KÃ¶rpers direkt mit dem umliegenden Universum interagieren kann. KrÃ¤fte wie z. B. Telepathie, Empathie, Hellsicht, Prescience, Psychokinese und Psychoenergese ersetzen banale biologische oder technische Alternativen. Die Anwendungen dieser KrÃ¤fte, u. a. Gedankenkontrolle, PersÃ¶nlichkeitsverÃ¤nderung und Posession, haben eine tiefgreifende Bedeutung fÃ¼r die Beziehung zwischen begabten und unbegabten Wesen.
 
 LRN_ARTIF_MINDS
-Künstliches Bewußtsein
+KÃ¼nstliches BewuÃŸtsein
 
 LRN_ARTIF_MINDS_DESC
-Obwohl herkömmliche Computer nahezu unfassbare Intelligenz und Rechenfähigkeiten besitzen, fehlen ihnen entscheidende Qualitäten wie Selbsterkenntnis, Bewußtsein oder Gefühl. Durch die Entwicklung perfekter künstlicher Gehirne können diese Eigenschaften synthetisiert und modifiziert werden. Diese Erkenntnisse eröffnen ungeahnte Möglichkeiten in den kognitiven Wissenschaften und schaffen neue Metaparadigmen.
+Obwohl herkÃ¶mmliche Computer nahezu unfassbare Intelligenz und RechenfÃ¤higkeiten besitzen, fehlen ihnen entscheidende QualitÃ¤ten wie Selbsterkenntnis, BewuÃŸtsein oder GefÃ¼hl. Durch die Entwicklung perfekter kÃ¼nstlicher Gehirne kÃ¶nnen diese Eigenschaften synthetisiert und modifiziert werden. Diese Erkenntnisse erÃ¶ffnen ungeahnte MÃ¶glichkeiten in den kognitiven Wissenschaften und schaffen neue Metaparadigmen.
 
 LRN_XENOARCH
-Xenoarchäologie
+XenoarchÃ¤ologie
 
 LRN_XENOARCH_DESC
-Die gegenwärtigen Imperien, Rassen und Einzelsternzivilisationen sind nicht die ersten oder einzigen Wesen, die in dieser Galaxie gelebt haben. Überbleibsel, Ruinen und Gerüchte über die Alten finden sich auf verlassenen Planeten, leblosen Asteroiden oder treiben im leeren Weltraum. Der Fund und die Entzifferung solcher Hinweise bietet die Möglichkeit, alte Geheimnisse neu zu entdecken, von ihnen zu lernen oder auch vor altem Wissen gewarnt zu werden.
+Die gegenwÃ¤rtigen Imperien, Rassen und Einzelsternzivilisationen sind nicht die ersten oder einzigen Wesen, die in dieser Galaxie gelebt haben. Ãœberbleibsel, Ruinen und GerÃ¼chte Ã¼ber die Alten finden sich auf verlassenen Planeten, leblosen Asteroiden oder treiben im leeren Weltraum. Der Fund und die Entzifferung solcher Hinweise bietet die MÃ¶glichkeit, alte Geheimnisse neu zu entdecken, von ihnen zu lernen oder auch vor altem Wissen gewarnt zu werden.
 
 LRN_GRAVITONICS
 Gravitonik
 
 LRN_GRAVITONICS_DESC
-Analog zum "Farbwechsel" in der Quantenchromodynamik existieren verschiedene Gravitonentypen. Durch Kombination des üblichen Anziehungskraftgravitons, des umgangssprachlichen "Antigravitons", "Rechtsgravitons" und "Linksgravitons" kann die Oberfläche der Raumzeit willkürlich gebogen und gedehnt werden. Diese Manipulation wird als Kontrolle über die Schwerkraft wahrgenommen und ermöglicht neue Gebäude, Techniken und Untersuchungen, die vorher selbst theoretisch undenkbar waren.
+Analog zum "Farbwechsel" in der Quantenchromodynamik existieren verschiedene Gravitonentypen. Durch Kombination des Ã¼blichen Anziehungskraftgravitons, des umgangssprachlichen "Antigravitons", "Rechtsgravitons" und "Linksgravitons" kann die OberflÃ¤che der Raumzeit willkÃ¼rlich gebogen und gedehnt werden. Diese Manipulation wird als Kontrolle Ã¼ber die Schwerkraft wahrgenommen und ermÃ¶glicht neue GebÃ¤ude, Techniken und Untersuchungen, die vorher selbst theoretisch undenkbar waren.
 
 LRN_EVERYTHING
 Die einheitliche Theorie
 
 LRN_EVERYTHING_DESC
-Frühe, naive Theorien beschreiben ein System von vier fundamentalen Naturkräften: Elektromagnetismus, die starke und die schwache Kernkraft sowie die Gravitation. Eines der großen Ziele der Wissenschaft ist die Zusammenfassung dieser Kräfte in ein Bezugssystem, worin die Kräfte Spezialfälle einer einzigen Interaktion sind. Diese Theorie beschreibt die ersten Momente des Universums, die verzerrtesten Tiefen einer Singularität, die engsten Windungen versteckter Dimensionen und das endgültige Schicksal des Kosmos. Und doch können immer noch Ebenen des Seins über das hinaus "existieren", was beobachtet werden und durch die Wissenschaft beschrieben werden kann...
+FrÃ¼he, naive Theorien beschreiben ein System von vier fundamentalen NaturkrÃ¤ften: Elektromagnetismus, die starke und die schwache Kernkraft sowie die Gravitation. Eines der groÃŸen Ziele der Wissenschaft ist die Zusammenfassung dieser KrÃ¤fte in ein Bezugssystem, worin die KrÃ¤fte SpezialfÃ¤lle einer einzigen Interaktion sind. Diese Theorie beschreibt die ersten Momente des Universums, die verzerrtesten Tiefen einer SingularitÃ¤t, die engsten Windungen versteckter Dimensionen und das endgÃ¼ltige Schicksal des Kosmos. Und doch kÃ¶nnen immer noch Ebenen des Seins Ã¼ber das hinaus "existieren", was beobachtet werden und durch die Wissenschaft beschrieben werden kann...
 
 LRN_FORCE_FIELD
 Kraftfeldharmonik
 
 LRN_FORCE_FIELD_DESC
-Wie in der Fourieranalyse des Schalls können Elektromagnetismus, starke und schwache Kraft als harmonische Quantenwellen - Überlagerungen von kraftvermittelnden Partikeln ausgedrückt werden. Durch selektive Verstärkung dieser Harmonik können Kräfte willkürlich kontrolliert werden, um abzuschirmen, anzugreifen, einzudämmen oder zu unterstützen.
+Wie in der Fourieranalyse des Schalls kÃ¶nnen Elektromagnetismus, starke und schwache Kraft als harmonische Quantenwellen - Ãœberlagerungen von kraftvermittelnden Partikeln ausgedrÃ¼ckt werden. Durch selektive VerstÃ¤rkung dieser Harmonik kÃ¶nnen KrÃ¤fte willkÃ¼rlich kontrolliert werden, um abzuschirmen, anzugreifen, einzudÃ¤mmen oder zu unterstÃ¼tzen.
 
 LRN_MIND_VOID
 Der Geist der Leere
 
 LRN_MIND_VOID_DESC
-Wir sind nicht allein im Kosmos... aber könnte es noch mehr als das geben? Viele Kulturen besitzen Mythen, Legenden oder eine inbrünstige Überzeugung von der Existenz eines höheren Bewußtseins. Ob als liebender oder zorniger Gott, oder ein entfernter Beobachter, es besteht kein Zweifel, dass etwas, vielleicht das Universum selbst, auf irgend eine Art und Weise lebt, wacht, beobachtet.
+Wir sind nicht allein im Kosmos... aber kÃ¶nnte es noch mehr als das geben? Viele Kulturen besitzen Mythen, Legenden oder eine inbrÃ¼nstige Ãœberzeugung von der Existenz eines hÃ¶heren BewuÃŸtseins. Ob als liebender oder zorniger Gott, oder ein entfernter Beobachter, es besteht kein Zweifel, dass etwas, vielleicht das Universum selbst, auf irgend eine Art und Weise lebt, wacht, beobachtet.
 
 LRN_TIME_MECH
 Zeitmechanik
 
 LRN_TIME_MECH_DESC
-Was sind das "jetzt", die "Zukunft" und die "Vergangenheit"? Das Zwillingsparadoxon der speziellen Relativitätstheorie oder das theoretische "Wurmloch" an seiner Stelle kann man Frühform der "Zeitreise" verstehen. Die direkte Manipulation der Raumzeit und des Zeitflusses erlauben es, diese Effekte nutzbar zu machen und zu verstärken. Eingriffe in die Zeit können die Vergangenheit des von uns wahrgenommenen Universums zwar nicht wahrnehmlich verändern, sie können jedoch Zeitalter komprimieren oder Augenblicke zu willkürlichen Längen ausdehnen; die Nutzung der Zeit ist also nur durch beschränktes Material und die eigene Geduld limitiert...
+Was sind das "jetzt", die "Zukunft" und die "Vergangenheit"? Das Zwillingsparadoxon der speziellen RelativitÃ¤tstheorie oder das theoretische "Wurmloch" an seiner Stelle kann man FrÃ¼hform der "Zeitreise" verstehen. Die direkte Manipulation der Raumzeit und des Zeitflusses erlauben es, diese Effekte nutzbar zu machen und zu verstÃ¤rken. Eingriffe in die Zeit kÃ¶nnen die Vergangenheit des von uns wahrgenommenen Universums zwar nicht wahrnehmlich verÃ¤ndern, sie kÃ¶nnen jedoch Zeitalter komprimieren oder Augenblicke zu willkÃ¼rlichen LÃ¤ngen ausdehnen; die Nutzung der Zeit ist also nur durch beschrÃ¤nktes Material und die eigene Geduld limitiert...
 
 LRN_NDIM_SUBSPACE
 N-Dimensionaler Subraum
 
 LRN_NDIM_SUBSPACE_DESC
-Frühe Superstringtheorien sprachen von 10, 11 oder 26-dimensionalen Universen, wobei alle anderen außer den 4 Makrodimensionen so sehr "verdrillt" sind, das sie nicht sichtbar sind. Diese und weitere Dimensionen können nun aufgedreht und geöffnet werden, neue Ebenen und Blasen geschaffen werden, die es zuvor nicht gab; die Oberfläche des Raums selbst kann gedehnt und durch Materie durchbrochen werden, hin zu Ebenen der Existenz, die zuvor unter der Oberfläche von unserer beschränkten Wahrnehmung verborgen lagen.
+FrÃ¼he Superstringtheorien sprachen von 10, 11 oder 26-dimensionalen Universen, wobei alle anderen auÃŸer den 4 Makrodimensionen so sehr "verdrillt" sind, das sie nicht sichtbar sind. Diese und weitere Dimensionen kÃ¶nnen nun aufgedreht und geÃ¶ffnet werden, neue Ebenen und Blasen geschaffen werden, die es zuvor nicht gab; die OberflÃ¤che des Raums selbst kann gedehnt und durch Materie durchbrochen werden, hin zu Ebenen der Existenz, die zuvor unter der OberflÃ¤che von unserer beschrÃ¤nkten Wahrnehmung verborgen lagen.
 
 LRN_UNIF_CONC
-Vereintes Bewußtsein
+Vereintes BewuÃŸtsein
 
 LRN_UNIF_CONC_DESC
-Telepathische Verständigung zwischen Individuen und Gedanken-Maschine Schnittstellen erlauben nur einfachsten, trivialsten und oberflächlichsten Austausch von Ideen. Wirklich vereinte Gedanken arbeiten als ein einziges Bewußtsein mit den gesamten Fähigkeiten und Wissen seiner Einzelteile, wie ein neues, einzigartiges Wesen. Diese Verschmelzung bietet ein gewaltiges Potential, doch auch ein nicht unwesentliches Risiko, insofern dass sich eine Einheit nicht wieder lösen kann. Das ist aber für die Wiederkehr der ursprünglichen Persönlichkeiten notwendig.
+Telepathische VerstÃ¤ndigung zwischen Individuen und Gedanken-Maschine Schnittstellen erlauben nur einfachsten, trivialsten und oberflÃ¤chlichsten Austausch von Ideen. Wirklich vereinte Gedanken arbeiten als ein einziges BewuÃŸtsein mit den gesamten FÃ¤higkeiten und Wissen seiner Einzelteile, wie ein neues, einzigartiges Wesen. Diese Verschmelzung bietet ein gewaltiges Potential, doch auch ein nicht unwesentliches Risiko, insofern dass sich eine Einheit nicht wieder lÃ¶sen kann. Das ist aber fÃ¼r die Wiederkehr der ursprÃ¼nglichen PersÃ¶nlichkeiten notwendig.
 
 LRN_TRANSCEND
 Transzendenz
 
 LRN_TRANSCEND_DESC
-Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder böse und tyrannisch verhält? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter Gleichgültigkeit? Ist ein Gott sich den unendlich vielen unbedeutenden Affären des physischen Universums bewußt, oder ist eine wahre Gottheit eine Entität fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
+Was ist ein Gott? Befasst sich ein Gott damit, ob er sich moralisch und wohlwollend oder bÃ¶se und tyrannisch verhÃ¤lt? Behandelt ein Gott Sterbliche mit Sorgfalt und Liebe, Hass und Leid oder distanzierter GleichgÃ¼ltigkeit? Ist ein Gott sich den unendlich vielen unbedeutenden AffÃ¤ren des physischen Universums bewuÃŸt, oder ist eine wahre Gottheit eine EntitÃ¤t fern jeder Beschreibung, das weder die Sterblichen verstehen, noch umgekehrt?
 
 GRO_PLANET_ECOL
-Planetare Ökologie
+Planetare Ã–kologie
 
 GRO_PLANET_ECOL_DESC
-Agrikultureller und medizinischer Fortschritt kann die Bevölkerungssterblichkeit drastisch reduzieren; daraufhin entwickelt sich ein zeitlich begrenztes hyperexponentielles Wachstum. Schliesslich ergeben sich durch die Flächenkapazität des Planeten und das Netzwerk des Lebens, das er versorgen muss, neue Grenzen für das Wachstum. Das Verständnis der natürlichen Ökologie und ihrer Reaktion auf Belastungen hilft dabei, sie zu erhalten, damit auch künftige Generationen ihre Vorzüge ausschöpfen können.
+Agrikultureller und medizinischer Fortschritt kann die BevÃ¶lkerungssterblichkeit drastisch reduzieren; daraufhin entwickelt sich ein zeitlich begrenztes hyperexponentielles Wachstum. Schliesslich ergeben sich durch die FlÃ¤chenkapazitÃ¤t des Planeten und das Netzwerk des Lebens, das er versorgen muss, neue Grenzen fÃ¼r das Wachstum. Das VerstÃ¤ndnis der natÃ¼rlichen Ã–kologie und ihrer Reaktion auf Belastungen hilft dabei, sie zu erhalten, damit auch kÃ¼nftige Generationen ihre VorzÃ¼ge ausschÃ¶pfen kÃ¶nnen.
 
 GRO_GENETIC_ENG
 Gentechnik
 
 GRO_GENETIC_ENG_DESC
-Die genetische Palette ist so vielfältig wie die Lebensformen, von denen sie sich ableitet. Gene können entfernt, kopiert und wieder in ein Genom eingebracht werden; so können transgene Organismen mit Eigenschaftskombinationen geschaffen werden, die in der Natur zuvor nicht vorkamen. Außerdem können Gene vor ihrer Wiedereinbringung durch direkte Veränderung des Basenkodes modifiziert werden; so können völlig neue Gene erzeugt werden. Diese Methoden sind jedoch auf kleine Veränderungen von in der Forschung verfügbaren Genen beschränkt.
+Die genetische Palette ist so vielfÃ¤ltig wie die Lebensformen, von denen sie sich ableitet. Gene kÃ¶nnen entfernt, kopiert und wieder in ein Genom eingebracht werden; so kÃ¶nnen transgene Organismen mit Eigenschaftskombinationen geschaffen werden, die in der Natur zuvor nicht vorkamen. AuÃŸerdem kÃ¶nnen Gene vor ihrer Wiedereinbringung durch direkte VerÃ¤nderung des Basenkodes modifiziert werden; so kÃ¶nnen vÃ¶llig neue Gene erzeugt werden. Diese Methoden sind jedoch auf kleine VerÃ¤nderungen von in der Forschung verfÃ¼gbaren Genen beschrÃ¤nkt.
 
 GRO_MEDICAL_PATH
 Medizinische Pathologie
 
 GRO_MEDICAL_PATH_DESC
-Die Behandlung von Krankheiten und Verletzungen setzt ein weitreichendes Verständnis ihrer Ursachen voraus.
+Die Behandlung von Krankheiten und Verletzungen setzt ein weitreichendes VerstÃ¤ndnis ihrer Ursachen voraus.
 
 GRO_INDUSTY_FARM
 Industrielle Landwirtschaft
 
 GRO_INDUSTY_FARM_DESC
-Traditionelle landwirtschaftliche Methoden reichen für lokal selbstständige Gemeinschaften aus; durch die größere Spezialisierung fortschrittlicher Gesellschaften müssen jedoch weniger Landwirte eine größere Zahl an Arbeitern über größere Entfernungen versorgen, unter anderem auch wachsende Kolonien mit instellaren Lebensmittellieferungen. Hydroponiken, Automatisierung, Dünger, Schädlingsbekämpfung und modifizierte Beleuchtungszyklen werden nötig. Der erfolgreiche Einsatz dieser Werkzeuge setzt das Verständnis ihrer Funktionen, Interaktionen, Kosten und zu Grunde liegenden Mechanismen voraus.
+Traditionelle landwirtschaftliche Methoden reichen fÃ¼r lokal selbststÃ¤ndige Gemeinschaften aus; durch die grÃ¶ÃŸere Spezialisierung fortschrittlicher Gesellschaften mÃ¼ssen jedoch weniger Landwirte eine grÃ¶ÃŸere Zahl an Arbeitern Ã¼ber grÃ¶ÃŸere Entfernungen versorgen, unter anderem auch wachsende Kolonien mit instellaren Lebensmittellieferungen. Hydroponiken, Automatisierung, DÃ¼nger, SchÃ¤dlingsbekÃ¤mpfung und modifizierte Beleuchtungszyklen werden nÃ¶tig. Der erfolgreiche Einsatz dieser Werkzeuge setzt das VerstÃ¤ndnis ihrer Funktionen, Interaktionen, Kosten und zu Grunde liegenden Mechanismen voraus.
 
 GRO_ENV_ENCAPSUL
-Umwelteindämmung
+UmwelteindÃ¤mmung
 
 GRO_ENV_ENCAPSUL_DESC
-Ummantelte und versiegelte Räume zur Beherbergung eines bestimmten Lebensraums sind für Raumreisen, die Kolonisierung gefährlicher Planeten oder die Erhaltung der natürlichen Vielfalt auf stark industrialisierten Welten unerlässlich. Die Aufrechterhaltung der erwünschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen Fällen keine äußere Quelle für reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbstständige Umwelt, oft ein ganzes Ökosystem, zu erschaffen, das fähig ist, seine Abfälle wieder zu verwerten und alle seine Bedürfnisse selbst zu decken.
+Ummantelte und versiegelte RÃ¤ume zur Beherbergung eines bestimmten Lebensraums sind fÃ¼r Raumreisen, die Kolonisierung gefÃ¤hrlicher Planeten oder die Erhaltung der natÃ¼rlichen Vielfalt auf stark industrialisierten Welten unerlÃ¤sslich. Die Aufrechterhaltung der erwÃ¼nschten Bedingungen ist nicht so simpel, wie es erscheinen mag, da es in vielen FÃ¤llen keine Ã¤uÃŸere Quelle fÃ¼r reine Materialien oder Organismen gibt. Es ist daher notwendig, eine selbststÃ¤ndige Umwelt, oft ein ganzes Ã–kosystem, zu erschaffen, das fÃ¤hig ist, seine AbfÃ¤lle wieder zu verwerten und alle seine BedÃ¼rfnisse selbst zu decken.
 
 GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
 
 GRO_SYMBIOTIC_BIO_DESC
-Durch die ersten domestizierten Tiere oder Agrarpflanzen lernen Gesellschaften die Vorteile symbiotischer Beziehungen mit anderen Spezies kennen. Später werden oft Bakterien oder natürliche Parasiten für medizinische Zwecke eingesetzt. Bei diesen Frühformen hat die dominante Spezies komplette Kontrolle über die Beziehung, bei der nur der "gezüchtete" Organismus seinem Besitzer dient. Wahre Symbiose liegt aber nur dann vor, wenn beide Organismen zusammen leben und das Schicksal des Einen vom Anderen abhängt, die Gesamtsumme größer ist als die Summe der Einzelteile.
+Durch die ersten domestizierten Tiere oder Agrarpflanzen lernen Gesellschaften die Vorteile symbiotischer Beziehungen mit anderen Spezies kennen. SpÃ¤ter werden oft Bakterien oder natÃ¼rliche Parasiten fÃ¼r medizinische Zwecke eingesetzt. Bei diesen FrÃ¼hformen hat die dominante Spezies komplette Kontrolle Ã¼ber die Beziehung, bei der nur der "gezÃ¼chtete" Organismus seinem Besitzer dient. Wahre Symbiose liegt aber nur dann vor, wenn beide Organismen zusammen leben und das Schicksal des Einen vom Anderen abhÃ¤ngt, die Gesamtsumme grÃ¶ÃŸer ist als die Summe der Einzelteile.
 
 GRO_GENETIC_MED
 Genetische Medizin
 
 GRO_GENETIC_MED_DESC
-Traditionelle Gentherapie verändert den genetischen Kode und bringt ihn dann in den zu modifizierenden Organismus ein. Solche Methoden können auch bei gealterten Individuen angewandt werden. Das Ziel dieser Behandlung kann eine kosmetische oder anderweitig gewinnbringende Veränderung sein, aber auch eine korrektive, präventive oder zeitlich kritische medizinische Behandlung. Durch die Verkürzung der Zeit zwischen Anwendung und Ergebnis einer Behandlung von Generationen hin zu Monaten, Tagen oder Stunden erweitert sich die Zahl und das Ausmaß der Möglichkeiten für den Einsatz dieser Methoden.
+Traditionelle Gentherapie verÃ¤ndert den genetischen Kode und bringt ihn dann in den zu modifizierenden Organismus ein. Solche Methoden kÃ¶nnen auch bei gealterten Individuen angewandt werden. Das Ziel dieser Behandlung kann eine kosmetische oder anderweitig gewinnbringende VerÃ¤nderung sein, aber auch eine korrektive, prÃ¤ventive oder zeitlich kritische medizinische Behandlung. Durch die VerkÃ¼rzung der Zeit zwischen Anwendung und Ergebnis einer Behandlung von Generationen hin zu Monaten, Tagen oder Stunden erweitert sich die Zahl und das AusmaÃŸ der MÃ¶glichkeiten fÃ¼r den Einsatz dieser Methoden.
 
 GRO_LIFECYCLE_MAN
 Lebenszyklusmanipulation
 
 GRO_LIFECYCLE_MAN_DESC
-Die meisten komplexen Organismen durchschreiten während ihres Lebens physiologische Stadien, manchmal abgegrenzt durch Metamorphose oder auch kaum wahrnehmlich durch einen langsamen Altersprozess. In vielen Fällen sind eines oder mehrere dieser Stadien, zumindest zu einer gewissen Zeit, nützlicher und wünschenswerter als andere. Durch exakte Kontrolle hormonaler und mentaler Mechanismen wird es möglich, Lebensstadien drastisch zu verkürzen oder herauszuzögern, wodurch in einem Bruchteil des natürlichen Zeitrahmens voll entwickelte Individuen geschaffen werden können und die existierenden Individuen ihre Funktionalität niemals einbüßen und so praktisch unsterblich werden.
+Die meisten komplexen Organismen durchschreiten wÃ¤hrend ihres Lebens physiologische Stadien, manchmal abgegrenzt durch Metamorphose oder auch kaum wahrnehmlich durch einen langsamen Altersprozess. In vielen FÃ¤llen sind eines oder mehrere dieser Stadien, zumindest zu einer gewissen Zeit, nÃ¼tzlicher und wÃ¼nschenswerter als andere. Durch exakte Kontrolle hormonaler und mentaler Mechanismen wird es mÃ¶glich, Lebensstadien drastisch zu verkÃ¼rzen oder herauszuzÃ¶gern, wodurch in einem Bruchteil des natÃ¼rlichen Zeitrahmens voll entwickelte Individuen geschaffen werden kÃ¶nnen und die existierenden Individuen ihre FunktionalitÃ¤t niemals einbÃ¼ÃŸen und so praktisch unsterblich werden.
 
 GRO_XENO_GENETICS
 Xenogenetik
 
 GRO_XENO_GENETICS_DESC
-Der frühen Genetik sind durch die natürlich vorhandenen Organismen Grenzen gesetzt, da die Methoden der Gentechnik ausschliesslich auf ihnen basieren. Darüber hinaus ist die Genetik durch die physikalischen Mechanismen des genetischen Kodes wie seine Unterbringung, Veränderung und Expression in erwachsenen Individuen limitiert. Durch den Vergleich sich entsprechender Systeme in unterschiedlichen Ökosystemen und ihren Organismen sind weitreichende Erkenntnisse möglich, die zu neuen Entwicklungen in den altbekannten genetischen Systemen Ansporn geben.
+Der frÃ¼hen Genetik sind durch die natÃ¼rlich vorhandenen Organismen Grenzen gesetzt, da die Methoden der Gentechnik ausschliesslich auf ihnen basieren. DarÃ¼ber hinaus ist die Genetik durch die physikalischen Mechanismen des genetischen Kodes wie seine Unterbringung, VerÃ¤nderung und Expression in erwachsenen Individuen limitiert. Durch den Vergleich sich entsprechender Systeme in unterschiedlichen Ã–kosystemen und ihren Organismen sind weitreichende Erkenntnisse mÃ¶glich, die zu neuen Entwicklungen in den altbekannten genetischen Systemen Ansporn geben.
 
 GRO_NANOTECH_MED
 Nanomedizin
 
 GRO_NANOTECH_MED_DESC
-Während genetische Modifikationen die Effekte unerwünschter oder schädlicher Mutationen rückgängig machen können, sind für die Behandlung größerer physikalischer Traumen und nicht-genetischer kongenitaler Effekte wirkliche physikalische Maßnahmen notwendig. Für diese Aufgaben kann Nanotechnologie eingesetzt werden, was zwei Vorteile mit sich bringt: die Korrektur kann ohne invasive Chirurgie mit den damit verbundenen Sekundärschäden und Risiken durchgeführt werden; außerdem wird die Vorbereitungszeit vor der Behandlung signifikant reduziert, da die benötigten Werkzeuge immer an Ort und Stelle und einsatzbereit sind.
+WÃ¤hrend genetische Modifikationen die Effekte unerwÃ¼nschter oder schÃ¤dlicher Mutationen rÃ¼ckgÃ¤ngig machen kÃ¶nnen, sind fÃ¼r die Behandlung grÃ¶ÃŸerer physikalischer Traumen und nicht-genetischer kongenitaler Effekte wirkliche physikalische MaÃŸnahmen notwendig. FÃ¼r diese Aufgaben kann Nanotechnologie eingesetzt werden, was zwei Vorteile mit sich bringt: die Korrektur kann ohne invasive Chirurgie mit den damit verbundenen SekundÃ¤rschÃ¤den und Risiken durchgefÃ¼hrt werden; auÃŸerdem wird die Vorbereitungszeit vor der Behandlung signifikant reduziert, da die benÃ¶tigten Werkzeuge immer an Ort und Stelle und einsatzbereit sind.
 
 GRO_ORBIT_FARMING
 Orbitalfarmen
 
 GRO_ORBIT_FARMING_DESC
-Die Sonne ist in den meisten Gemeinschaften die wichtigste Energiequelle für die Lebensmittelherstellung. Farmen auf der Oberfläche des Planeten haben aufgrund des vergleichbar kleinen Winkels, in dem die Oberfläche des Planeten vom Licht geschnitten wird, nur einen sehr begrenzten Zugang zu dieser Energie; außerdem müssen die Farmen auf der Oberfläche mit anderen Verwendungszwecken für die Oberfläche konkurrieren. Durch die Verlegung der Nahrungsmittelherstellung in den Orbit eröffnet sich die Möglichkeit durchgängigen Zugangs zur Solarenergie; unerwünschte Spektralfiltration durch die Atmosphäre des Planeten wird vermieden. Die Nahrungsmittelherstellung kann drastisch gesteigert werden.
+Die Sonne ist in den meisten Gemeinschaften die wichtigste Energiequelle fÃ¼r die Lebensmittelherstellung. Farmen auf der OberflÃ¤che des Planeten haben aufgrund des vergleichbar kleinen Winkels, in dem die OberflÃ¤che des Planeten vom Licht geschnitten wird, nur einen sehr begrenzten Zugang zu dieser Energie; auÃŸerdem mÃ¼ssen die Farmen auf der OberflÃ¤che mit anderen Verwendungszwecken fÃ¼r die OberflÃ¤che konkurrieren. Durch die Verlegung der Nahrungsmittelherstellung in den Orbit erÃ¶ffnet sich die MÃ¶glichkeit durchgÃ¤ngigen Zugangs zur Solarenergie; unerwÃ¼nschte Spektralfiltration durch die AtmosphÃ¤re des Planeten wird vermieden. Die Nahrungsmittelherstellung kann drastisch gesteigert werden.
 
 GRO_INDUSRY_CLONE
 Industrielles Klonen
 
 GRO_INDUSRY_CLONE_DESC
-Primitive Klonrechniken wie z. B. manueller Zellkerntranfer sind für den großen Maßstab ungeeignet. Durch den Einsatz von Techniken, die industrieller Massenproduktion und biochemischer Manipulation nachempfunden sind, wird es möglich, von einer einzigen genetischen Blaupause Dutzende bis hin zu Millionen von ausgewachsenen Kopien zu erstellen. Ganze Bevölkerungen können bestellt werden, maßgeschneidert für die besonderen Bedürfnisse der Gesellschaft.
+Primitive Klonrechniken wie z. B. manueller Zellkerntranfer sind fÃ¼r den groÃŸen MaÃŸstab ungeeignet. Durch den Einsatz von Techniken, die industrieller Massenproduktion und biochemischer Manipulation nachempfunden sind, wird es mÃ¶glich, von einer einzigen genetischen Blaupause Dutzende bis hin zu Millionen von ausgewachsenen Kopien zu erstellen. Ganze BevÃ¶lkerungen kÃ¶nnen bestellt werden, maÃŸgeschneidert fÃ¼r die besonderen BedÃ¼rfnisse der Gesellschaft.
 
 GRO_XENO_HYBRIDS
 Xenohybridisierung
 
 GRO_XENO_HYBRIDS_DESC
-Ganz gleich, wie umfassend das Verständnis für ein biologisches System ist oder wie geschickt es verbessert wurde, es wird immer durch sein innewohnendes Wesen eingeschränkt. Strukturen und grundlegende Physiologie können nur in den Grenzen der Biologie eines einzelnen Planeten verändert werden. Durch das Verständnis fremder Biologie können unterschiedliche Systeme vereint werden und so eine völlig neue hybride Biologie geschaffen werden, die bessere Fähigkeiten als ihre einzelnen Ursprünge besitzt.
+Ganz gleich, wie umfassend das VerstÃ¤ndnis fÃ¼r ein biologisches System ist oder wie geschickt es verbessert wurde, es wird immer durch sein innewohnendes Wesen eingeschrÃ¤nkt. Strukturen und grundlegende Physiologie kÃ¶nnen nur in den Grenzen der Biologie eines einzelnen Planeten verÃ¤ndert werden. Durch das VerstÃ¤ndnis fremder Biologie kÃ¶nnen unterschiedliche Systeme vereint werden und so eine vÃ¶llig neue hybride Biologie geschaffen werden, die bessere FÃ¤higkeiten als ihre einzelnen UrsprÃ¼nge besitzt.
 
 GRO_NANO_CYBERNET
 Nanokybernetik
 
 GRO_NANO_CYBERNET_DESC
-Der nächste Schritt nach der Anwendung von Nanotechnologie zur Heilung von Defekten oder Verletzungen ist, natürliche biochemische Systeme mit verbesserten, künstlichen Erweiterungen auszubauen oder sie ganz zu ersetzen. Statt verlorene Glieder nachzuzüchten oder beschädigte Organe zu reparieren, können solche Erweiterungen rasch und einfach neue Organe nachwachsen lassen. Antiquierte biologische Systeme, vom Muskelgewebe und Sehnen hin zu Organellen oder Enzymen, können ersetzt werden; das ermöglicht dem Organismus deutlich erhöhte Stärke, Ausdauer und Flexibilität.
+Der nÃ¤chste Schritt nach der Anwendung von Nanotechnologie zur Heilung von Defekten oder Verletzungen ist, natÃ¼rliche biochemische Systeme mit verbesserten, kÃ¼nstlichen Erweiterungen auszubauen oder sie ganz zu ersetzen. Statt verlorene Glieder nachzuzÃ¼chten oder beschÃ¤digte Organe zu reparieren, kÃ¶nnen solche Erweiterungen rasch und einfach neue Organe nachwachsen lassen. Antiquierte biologische Systeme, vom Muskelgewebe und Sehnen hin zu Organellen oder Enzymen, kÃ¶nnen ersetzt werden; das ermÃ¶glicht dem Organismus deutlich erhÃ¶hte StÃ¤rke, Ausdauer und FlexibilitÃ¤t.
 
 GRO_ENERGY_META
 Transmetabolismus
 
 GRO_ENERGY_META_DESC
-Die letzte Stufe der physischen Entwicklung ist, das Physische ein für allemal zu überschreiten. Ohne Körper können Individuen und die Gesellschaft sich völlig frei bewegen, entwickeln und leben, ohne unnötige Behinderung durch physische Einschränkungen des Körpers und ineffiziente Stoffwechselprozesse, die Energie für die Aufrechterhaltung der Homöostase verschwenden.
+Die letzte Stufe der physischen Entwicklung ist, das Physische ein fÃ¼r allemal zu Ã¼berschreiten. Ohne KÃ¶rper kÃ¶nnen Individuen und die Gesellschaft sich vÃ¶llig frei bewegen, entwickeln und leben, ohne unnÃ¶tige Behinderung durch physische EinschrÃ¤nkungen des KÃ¶rpers und ineffiziente Stoffwechselprozesse, die Energie fÃ¼r die Aufrechterhaltung der HomÃ¶ostase verschwenden.
 
 PRO_MICROGRAV_MAN
 Mikrogravitationsproduktion
 
 PRO_MICROGRAV_MAN_DESC
-Die geringe Gravitation im niedrigen Orbit eines Planeten bietet großes Potential für einen neuartigen Aufbau für Fabriken, außerdem können Produktionstechniken eingesetzt werden, die auf der Oberfläche des Planeten unmöglich wären. Flüssigkeiten und Gas treiben frei und werden nur durch die Oberflächenspannung verformt, sofern keine anderweitige Manipulation stattfindet; die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewähren bei sinnvollem Einsatz einen deutlichen Anstieg der Produtkion und dessen Effizienz.
+Die geringe Gravitation im niedrigen Orbit eines Planeten bietet groÃŸes Potential fÃ¼r einen neuartigen Aufbau fÃ¼r Fabriken, auÃŸerdem kÃ¶nnen Produktionstechniken eingesetzt werden, die auf der OberflÃ¤che des Planeten unmÃ¶glich wÃ¤ren. FlÃ¼ssigkeiten und Gas treiben frei und werden nur durch die OberflÃ¤chenspannung verformt, sofern keine anderweitige Manipulation stattfindet; die Fabrikmaschinerie kann optimal in drei Dimensionen arrangiert werden. Diese Bedingungen gewÃ¤hren bei sinnvollem Einsatz einen deutlichen Anstieg der Produtkion und dessen Effizienz.
 
 PRO_PLANET_GEOL
 Planetare Geologie
 
 PRO_PLANET_GEOL_DESC
-Nützliche Mineralien entstehen unter verschiedensten chemischen und thermodynamischen Bedingungen im ganzen Volumen des Planeten, unter anderem durch wässrige Oberflächensedimentation, Kerndruckdifferenzierung und Mitteltiefenmetamorphose. Nach diesen Entstehungsprozessen sind z. B. Plattentektonik, Vulkanismus und Tiefenkonvektionsströme für den entgültigen Ort und die schlussendliche Form dieser Rohstoffe verantwortlich. Das Verständnis dieser Prozesse, ihre Effekte, Ursachen und Zeichen sind für effizienten, großangelegten Bergbau unerlässlich.
+NÃ¼tzliche Mineralien entstehen unter verschiedensten chemischen und thermodynamischen Bedingungen im ganzen Volumen des Planeten, unter anderem durch wÃ¤ssrige OberflÃ¤chensedimentation, Kerndruckdifferenzierung und Mitteltiefenmetamorphose. Nach diesen Entstehungsprozessen sind z. B. Plattentektonik, Vulkanismus und TiefenkonvektionsstrÃ¶me fÃ¼r den entgÃ¼ltigen Ort und die schlussendliche Form dieser Rohstoffe verantwortlich. Das VerstÃ¤ndnis dieser Prozesse, ihre Effekte, Ursachen und Zeichen sind fÃ¼r effizienten, groÃŸangelegten Bergbau unerlÃ¤sslich.
 
 PRO_ROBOTIC_PROD
 Automatisierung
 
 PRO_ROBOTIC_PROD_DESC
-Obwohl das erste [high level] Design von Produkten und der Aufbau von Fabriken noch durch Menschen überwacht werden muss, werden durch den Abzug von Arbeitern aus der Produktion viele Flaschenhälse beseitigt. Roboter arbeiten durchgehend und haben keine ständig steigenden Lohnansprüche. Sie sind besser für gefährliche Arbeitsbedingungen geeignet und brauchen keinen zusätzlichen Wohnraum außerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben führen Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.
+Obwohl das erste [high level] Design von Produkten und der Aufbau von Fabriken noch durch Menschen Ã¼berwacht werden muss, werden durch den Abzug von Arbeitern aus der Produktion viele FlaschenhÃ¤lse beseitigt. Roboter arbeiten durchgehend und haben keine stÃ¤ndig steigenden LohnansprÃ¼che. Sie sind besser fÃ¼r gefÃ¤hrliche Arbeitsbedingungen geeignet und brauchen keinen zusÃ¤tzlichen Wohnraum auÃŸerhalb der Fabrik. Die ihnen zugewiesenen Aufgaben fÃ¼hren Roboter fehlerlos aus, zumindest aber so gut, wie sie instruiert wurden.
 
 PRO_FUSION_GEN
 Kernfusion
 
 PRO_FUSION_GEN_DESC
-Explosive bzw. unkontrollierte thermonukleare Reaktionen sind recht einfach auszulösen, von kleinen taktischen Sprengköpfen hin zu unvorstellbaren stellaren Höllenfeuern. Kontrollierbare, stabile und in der Praxis einsetzbare Energieerzeugung ist um einiges schwieriger zu erreichen. Die Kontrolle des Fusionsprozesses bleibt nichtsdestotrotz erstrebenswert, da er nahezu unbegrenzt Energie erzeugt und gleichzeitig keine Abfallprodukte anfallen.
+Explosive bzw. unkontrollierte thermonukleare Reaktionen sind recht einfach auszulÃ¶sen, von kleinen taktischen SprengkÃ¶pfen hin zu unvorstellbaren stellaren HÃ¶llenfeuern. Kontrollierbare, stabile und in der Praxis einsetzbare Energieerzeugung ist um einiges schwieriger zu erreichen. Die Kontrolle des Fusionsprozesses bleibt nichtsdestotrotz erstrebenswert, da er nahezu unbegrenzt Energie erzeugt und gleichzeitig keine Abfallprodukte anfallen.
 
 PRO_NANOTECH_PROD
 Nanotechnische Produktion
 
 PRO_NANOTECH_PROD_DESC
-Traditionelle Produktionstechniken sind durch die Größe und Form der verwendeten Werkzeuge eingeschränkt. Wenn ein Produkt seine Form annimmt, verhindern seine äußeren Schichten den direkten Zugang und die Manipulation der inneren Strukturen, wodurch eine umständliche und ineffiziente Anpassung der Produktionsreihenfolge notwendig wird. Außerdem müssen die einzelnen Komponenten eines größeren Produkts sorgfältig geformt und zusammengesetzt werden, um sicherzustellen, dass sie wie vorgesehen arbeiten. Durch den Einsatz von Nanotechnologie kann ein Produkt in einem Schritt direkt aus den Rohstoffen hergestellt werden; so wird die Effizienz und die Produktionsgeschwindigkeit drastisch erhöht.
+Traditionelle Produktionstechniken sind durch die GrÃ¶ÃŸe und Form der verwendeten Werkzeuge eingeschrÃ¤nkt. Wenn ein Produkt seine Form annimmt, verhindern seine Ã¤uÃŸeren Schichten den direkten Zugang und die Manipulation der inneren Strukturen, wodurch eine umstÃ¤ndliche und ineffiziente Anpassung der Produktionsreihenfolge notwendig wird. AuÃŸerdem mÃ¼ssen die einzelnen Komponenten eines grÃ¶ÃŸeren Produkts sorgfÃ¤ltig geformt und zusammengesetzt werden, um sicherzustellen, dass sie wie vorgesehen arbeiten. Durch den Einsatz von Nanotechnologie kann ein Produkt in einem Schritt direkt aus den Rohstoffen hergestellt werden; so wird die Effizienz und die Produktionsgeschwindigkeit drastisch erhÃ¶ht.
 
 PRO_ORBITAL_GEN
 Orbitale Stromerzeugung
 
 PRO_ORBITAL_GEN_DESC
-Der niedrige Orbit von Himmelskörpern ermöglicht in der Energieerzeugung im Vergleich zur Oberfläche eines Planeten zahlreiche Vorteile, wie zum Beispiel direkte Bestrahlung durch die Sonne ohne Abschwächung durch die Atmosphäre, sowie die Möglichkeit deutlich größerer Gebäude zur Energiekollektion, die bei Mikrogravitation errichtet werden können. Die erzeugte Energie kann im Orbit eingesetzt werden oder zur Versorgung der Industrie auf die Oberfläche des Planeten hinab gebeamt werden. Im Orbit stehen außerdem neue Methoden der Energieumwandlung zur Verfügung, unter anderem planetare Magnetfeldkopplung, Orbitbewegungsaustausch und Reibungshitze mit der planetaren Atmosphäre, die für spezielle Anwendungen einen unschätzbaren Nutzen besitzen.
+Der niedrige Orbit von HimmelskÃ¶rpern ermÃ¶glicht in der Energieerzeugung im Vergleich zur OberflÃ¤che eines Planeten zahlreiche Vorteile, wie zum Beispiel direkte Bestrahlung durch die Sonne ohne AbschwÃ¤chung durch die AtmosphÃ¤re, sowie die MÃ¶glichkeit deutlich grÃ¶ÃŸerer GebÃ¤ude zur Energiekollektion, die bei Mikrogravitation errichtet werden kÃ¶nnen. Die erzeugte Energie kann im Orbit eingesetzt werden oder zur Versorgung der Industrie auf die OberflÃ¤che des Planeten hinab gebeamt werden. Im Orbit stehen auÃŸerdem neue Methoden der Energieumwandlung zur VerfÃ¼gung, unter anderem planetare Magnetfeldkopplung, Orbitbewegungsaustausch und Reibungshitze mit der planetaren AtmosphÃ¤re, die fÃ¼r spezielle Anwendungen einen unschÃ¤tzbaren Nutzen besitzen.
 
 PRO_SENTIENT_AUTOMATION
 KI - Automatisierung
 
 PRO_SENTIENT_AUTOMATION_DESC
-Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fähig, sich ohne äußeren Einfluss selbst zu replizieren und in Stand zu halten; sie benötigt nur entsprechende Rohstoffe und eine Vorgabe, welches Produkt hergestellt werden soll. Unter der Kontrolle einer künstlichen Intelligenz kann das gesamte System lernen, planen, reagieren und sich autonom anpassen, und das ohne die lästige Ineffizienz, die durch die Unterbringung und Anstellung von Arbeitern entsteht.
+Mit zunehmender Automatisierung in der Produktion wird die Maschinerie fÃ¤hig, sich ohne Ã¤uÃŸeren Einfluss selbst zu replizieren und in Stand zu halten; sie benÃ¶tigt nur entsprechende Rohstoffe und eine Vorgabe, welches Produkt hergestellt werden soll. Unter der Kontrolle einer kÃ¼nstlichen Intelligenz kann das gesamte System lernen, planen, reagieren und sich autonom anpassen, und das ohne die lÃ¤stige Ineffizienz, die durch die Unterbringung und Anstellung von Arbeitern entsteht.
 
 PRO_FRC_FLD_ASSMB
 Kraftfeldmechanik
 
 PRO_FRC_FLD_ASSMB_DESC
-Die Fernmanipulation ist ein revolutionärer Fortschritt der Produktion, egal, ob sie durch künstliche Mittel, Psychokinese oder beides gemeinsam bewerkstelligt wird. Vollständig kontrollierte chemische Reaktionen und willkürrliche Molekülzusammenstellung werden nahezu eine Trivialität. Bis in enorme Größenordnungen zur Größe von Himmelskörpern hin werden durch lokal unreaktive und kontaktfreie Krafteinwirkung zuvor unmögliche, nicht-destruktive Tests möglich; diese Methoden sind besonders geeignet für die Manipulation umschlossender oder verdeckter Bereiche, ganz ohne störende Isolationsversiegelung oder die Notwendigkeit, Materie aus dem Weg zu schaffen.
+Die Fernmanipulation ist ein revolutionÃ¤rer Fortschritt der Produktion, egal, ob sie durch kÃ¼nstliche Mittel, Psychokinese oder beides gemeinsam bewerkstelligt wird. VollstÃ¤ndig kontrollierte chemische Reaktionen und willkÃ¼rrliche MolekÃ¼lzusammenstellung werden nahezu eine TrivialitÃ¤t. Bis in enorme GrÃ¶ÃŸenordnungen zur GrÃ¶ÃŸe von HimmelskÃ¶rpern hin werden durch lokal unreaktive und kontaktfreie Krafteinwirkung zuvor unmÃ¶gliche, nicht-destruktive Tests mÃ¶glich; diese Methoden sind besonders geeignet fÃ¼r die Manipulation umschlossender oder verdeckter Bereiche, ganz ohne stÃ¶rende Isolationsversiegelung oder die Notwendigkeit, Materie aus dem Weg zu schaffen.
 
 PRO_INTSTEL_COPRO
 Interstellare Koproduktion
 
 PRO_INTSTEL_COPRO_DESC
-Traditionelle Produktionsmethoden müssen sich aufgrund logistischer Probleme selbst versorgen und sind daher beschränkt. Später wird durch die regionale Zusammenarbeit auf Planeten ein gewisser Grad an Spezialisierung möglich; jede Fabrik stellt nur einige Teile oder ein Subsystem her, so dass das ganze System von konzentrierter Fachkompetenz profitiert. Dieses Konzept kann auf den galaktischen Größenmaßstab übertragen werden; individuelle Planeten oder ganze Systeme dienen dann als eine einzige, spezialisierte Einrichtung. Die logistischen Schwierigkeiten, die diesem Paradigma innewohnen, ähneln denen des planetaren Maßstabs; Nutzen und Nachteile sind im gleichen Maß vergrößert.
+Traditionelle Produktionsmethoden mÃ¼ssen sich aufgrund logistischer Probleme selbst versorgen und sind daher beschrÃ¤nkt. SpÃ¤ter wird durch die regionale Zusammenarbeit auf Planeten ein gewisser Grad an Spezialisierung mÃ¶glich; jede Fabrik stellt nur einige Teile oder ein Subsystem her, so dass das ganze System von konzentrierter Fachkompetenz profitiert. Dieses Konzept kann auf den galaktischen GrÃ¶ÃŸenmaÃŸstab Ã¼bertragen werden; individuelle Planeten oder ganze Systeme dienen dann als eine einzige, spezialisierte Einrichtung. Die logistischen Schwierigkeiten, die diesem Paradigma innewohnen, Ã¤hneln denen des planetaren MaÃŸstabs; Nutzen und Nachteile sind im gleichen MaÃŸ vergrÃ¶ÃŸert.
 
 PRO_NDIM_ASSMB
 N-Dimensionale Montage
 
 PRO_NDIM_ASSMB_DESC
-Die Geometrie des physikalischen Raums hat schon immer die Montage von Objekten in diesem Raum behindert. Objekte können sich nicht am gleichen Ort befinden und Volumen nicht gleichzeitig offen und geschlossen vorliegen, wenn sich ihre Existenz auf drei Dimensionen beschränkt. Mit dem Überschreiten dieser Grenzen können störende Objektteile in Taschendimensionen und somit aus dem Weg gefaltet werden; kontinuierliche Linien können an Massen vorbeigeleitet werden, indem man "von der Achse" abweicht. Ähnliche Methoden werden auch angewandt, um niederdimensionale Objekte in Konfigurationen zu arrangieren, die ohne höherdimensionale Montagewege unmöglich wären.
+Die Geometrie des physikalischen Raums hat schon immer die Montage von Objekten in diesem Raum behindert. Objekte kÃ¶nnen sich nicht am gleichen Ort befinden und Volumen nicht gleichzeitig offen und geschlossen vorliegen, wenn sich ihre Existenz auf drei Dimensionen beschrÃ¤nkt. Mit dem Ãœberschreiten dieser Grenzen kÃ¶nnen stÃ¶rende Objektteile in Taschendimensionen und somit aus dem Weg gefaltet werden; kontinuierliche Linien kÃ¶nnen an Massen vorbeigeleitet werden, indem man "von der Achse" abweicht. Ã„hnliche Methoden werden auch angewandt, um niederdimensionale Objekte in Konfigurationen zu arrangieren, die ohne hÃ¶herdimensionale Montagewege unmÃ¶glich wÃ¤ren.
 
 PRO_SINGULAR_GEN
-Singularitätskonstruktion
+SingularitÃ¤tskonstruktion
 
 PRO_SINGULAR_GEN_DESC
-Wenn Materie durch eine intensive Raumzeitkrümmung oder ein Gravitationsfeld zu einer Singularität hingezogen wird, formt sie eine Gasscheibe, die sich stark erhitzt und komprimiert wird. Die Scheibe sendet eine hochenergetische Strahlung aus, die aufgefangen und zur Energiegewinnung verwandt werden kann. Der Ereignishorizont der Singularität sendet ebenfalls eine Strahlung aus, die durch die Vernichtung von Partikel-Antipartikelpaaren, die sich in der Nähe des Ereignishorizontes bilden, entsteht. Diese Variante der Energieerzeugung ist wesentlich heikler und unstabiler als die aus der Strahlung der Gasscheibe, aber erzeugt auch deutlich mehr Energie.
+Wenn Materie durch eine intensive RaumzeitkrÃ¼mmung oder ein Gravitationsfeld zu einer SingularitÃ¤t hingezogen wird, formt sie eine Gasscheibe, die sich stark erhitzt und komprimiert wird. Die Scheibe sendet eine hochenergetische Strahlung aus, die aufgefangen und zur Energiegewinnung verwandt werden kann. Der Ereignishorizont der SingularitÃ¤t sendet ebenfalls eine Strahlung aus, die durch die Vernichtung von Partikel-Antipartikelpaaren, die sich in der NÃ¤he des Ereignishorizontes bilden, entsteht. Diese Variante der Energieerzeugung ist wesentlich heikler und unstabiler als die aus der Strahlung der Gasscheibe, aber erzeugt auch deutlich mehr Energie.
 
 PRO_MATENG_REPLIC
 Materie-Energie Replikation
 
 PRO_MATENG_REPLIC_DESC
-Die früheren Montagetechniken waren im Grunde genommen Methoden, um besonders störende Probleme bei der Manipulation der Materie zu beseitigen. An der grundlegenden Methode, große Objekte aus kleinen zusammenzusetzen, seien es vorgefertigte Unterteile oder einzelne Atome, änderte keine dieser Techniken etwas. Durch die direkte Umwandlung purer Energie in das gewünschte materielle Objekt werden Produktionskomponenten und -materialien überflüssig; dies ist die ultimative Stufe flexibler und effizienter Montage.
+Die frÃ¼heren Montagetechniken waren im Grunde genommen Methoden, um besonders stÃ¶rende Probleme bei der Manipulation der Materie zu beseitigen. An der grundlegenden Methode, groÃŸe Objekte aus kleinen zusammenzusetzen, seien es vorgefertigte Unterteile oder einzelne Atome, Ã¤nderte keine dieser Techniken etwas. Durch die direkte Umwandlung purer Energie in das gewÃ¼nschte materielle Objekt werden Produktionskomponenten und -materialien Ã¼berflÃ¼ssig; dies ist die ultimative Stufe flexibler und effizienter Montage.
 
 PRO_ZERO_GEN
 Nullpunktenergie
 
 PRO_ZERO_GEN_DESC
-Jede Methode der Energieerzeugung, die eine materielle Treibstoffzufuhr verwendet, wird durch das relativistische Masse-Energie Verhältnis begrenzt: selbst bei perfekter Effizienz kann nicht mehr Energie erzeugt werden, als Masse verbraucht wird. Indem man die dem Vakuum innewohnende Energie, d. h. die Nullpunktenergie, anzapft, wird eine wirklich unerschöpfliche Quelle verfügbar. Das Ausmaß der Energiegewinnung ist theoretisch unbegrenzt; einzige Einschränkung sind die verfügbaren Mittel zur Nutzung dieser Quelle.
+Jede Methode der Energieerzeugung, die eine materielle Treibstoffzufuhr verwendet, wird durch das relativistische Masse-Energie VerhÃ¤ltnis begrenzt: selbst bei perfekter Effizienz kann nicht mehr Energie erzeugt werden, als Masse verbraucht wird. Indem man die dem Vakuum innewohnende Energie, d. h. die Nullpunktenergie, anzapft, wird eine wirklich unerschÃ¶pfliche Quelle verfÃ¼gbar. Das AusmaÃŸ der Energiegewinnung ist theoretisch unbegrenzt; einzige EinschrÃ¤nkung sind die verfÃ¼gbaren Mittel zur Nutzung dieser Quelle.
 
 CON_ORBITAL_CON
 Orbitale Konstruktion
 
 CON_ORBITAL_CON_DESC
-Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch"; bei Mikrogravitation dagegen herrscht praktisch Schwerelosigkeit. Dieser einfache Unterschied hat eine Vielzahl von Konsequenzen für die errichtbaren Gebäudetypen und wie sie den Raum, die Materialien und die Energie in ihrem jeweiligen Umfeld optimal ausnutzen. Außerdem muss die Inneneinrichtung von Räumen im Orbit neu durchdacht werden. Obwohl es attraktiv erscheint, ein vollkommen neues und vom planetaren Stil unabhängiges Innendesign zu entwerfen, werden diese Räume anfänglich hauptsächlich von Personen verwandt, die an die Oberfläche von Planeten gewohnt und angepasst sind. Ein stufenweiser Übergang vom alten zum neuen Innendesign ist daher wahrscheinlich effizienter als ein abrupter Wechsel.
+Auf einem Planeten gibt es immer die festgelegte Referenzrichtung "hoch"; bei Mikrogravitation dagegen herrscht praktisch Schwerelosigkeit. Dieser einfache Unterschied hat eine Vielzahl von Konsequenzen fÃ¼r die errichtbaren GebÃ¤udetypen und wie sie den Raum, die Materialien und die Energie in ihrem jeweiligen Umfeld optimal ausnutzen. AuÃŸerdem muss die Inneneinrichtung von RÃ¤umen im Orbit neu durchdacht werden. Obwohl es attraktiv erscheint, ein vollkommen neues und vom planetaren Stil unabhÃ¤ngiges Innendesign zu entwerfen, werden diese RÃ¤ume anfÃ¤nglich hauptsÃ¤chlich von Personen verwandt, die an die OberflÃ¤che von Planeten gewohnt und angepasst sind. Ein stufenweiser Ãœbergang vom alten zum neuen Innendesign ist daher wahrscheinlich effizienter als ein abrupter Wechsel.
 
 CON_ARCH_PSYCH
 Psychologische Architektur
 
 CON_ARCH_PSYCH_DESC
-Die Form eines Gebäudes oder Wohnraums sollte sich nicht nur an den physikalischen Einschränkungen der Baumaterialien orientieren; der psychologische Effekt auf einen Bewohner innen oder einen Betracher außen ist das, was einen Entwurf erfolgreich macht, und nicht die Stärke einer Mauer oder die Festigkeit eines Fundaments.
+Die Form eines GebÃ¤udes oder Wohnraums sollte sich nicht nur an den physikalischen EinschrÃ¤nkungen der Baumaterialien orientieren; der psychologische Effekt auf einen Bewohner innen oder einen Betracher auÃŸen ist das, was einen Entwurf erfolgreich macht, und nicht die StÃ¤rke einer Mauer oder die Festigkeit eines Fundaments.
 
 CON_INFRA_ECOL
 Infrastruktureffizienz
 
 CON_INFRA_ECOL_DESC
-Der grundlegende Aufbau einer neu errichteten planetaren Kolonie scheint sich gänzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Kolonie einzig von ihrem festgelegten Design abzuhängen. Tatsächlich sind es aber die Überlebensumstände des Planeten, auf dem die Kolonie errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das Verständnis der Interaktion zwischen natürlichen und künstlichen Komponenten und der Grenzen der Rohstoffe eines Ökosystems sind für die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Kolonie unabdingbar.
+Der grundlegende Aufbau einer neu errichteten planetaren Kolonie scheint sich gÃ¤nzlich nach dem Willen der Kolonisten zu richten und die Arbeitsweise der Kolonie einzig von ihrem festgelegten Design abzuhÃ¤ngen. TatsÃ¤chlich sind es aber die ÃœberlebensumstÃ¤nde des Planeten, auf dem die Kolonie errichtet wurde, die das Fundament der neuen Infrastruktur bilden und oft einen integralen Bestandteil ihrer Funktionsweise darstellen. Das VerstÃ¤ndnis der Interaktion zwischen natÃ¼rlichen und kÃ¼nstlichen Komponenten und der Grenzen der Rohstoffe eines Ã–kosystems sind fÃ¼r die Entwicklung einer optimalen und unterhaltbaren Infrastruktur jeder Kolonie unabdingbar.
 
 CON_ORGANIC_STRC
-Organische Gebäude
+Organische GebÃ¤ude
 
 CON_ORGANIC_STRC_DESC
-Gebäude aus unbelebten Materialien sind funktional und gelegentlich auch elegant, und Gebäude aus organischen, aber toten Materialien sind oft simpel und günstig. Wirklich lebendige Gebäude dagegen können ohne weitere Arbeit in ihre schlussendliche Form aufgezogen werden und sich außerdem im Falle einer Beschädigung zu einem gewissen Grad selbst wieder in Stand setzen. Sie können außerdem die Bedingungen in ihren inneren Räumen regulieren oder sich während ihres Heranwachsens und auch danach an veränderliche Umweltbedingungen nach Bedarf anpassen.
+GebÃ¤ude aus unbelebten Materialien sind funktional und gelegentlich auch elegant, und GebÃ¤ude aus organischen, aber toten Materialien sind oft simpel und gÃ¼nstig. Wirklich lebendige GebÃ¤ude dagegen kÃ¶nnen ohne weitere Arbeit in ihre schlussendliche Form aufgezogen werden und sich auÃŸerdem im Falle einer BeschÃ¤digung zu einem gewissen Grad selbst wieder in Stand setzen. Sie kÃ¶nnen auÃŸerdem die Bedingungen in ihren inneren RÃ¤umen regulieren oder sich wÃ¤hrend ihres Heranwachsens und auch danach an verÃ¤nderliche Umweltbedingungen nach Bedarf anpassen.
 
 CON_METRO_INFRA
 Metroplexarchitektur
 
 CON_METRO_INFRA_DESC
-Wenn die gesamte Oberfläche einer Welt bebaut ist, muss die weitere Entwicklung über- und unterhalb der bestehenden Gebäude stattfinden. Die Stabilität untergrabener oder überbauter Gebäude muss gewährleistet sein; Versorgungs- und Transportwege müssen hinsichtlich steigender Bevölkerungsdichten überdacht werden. Desweiteren müssen neuartige stilistische und funktionale Aspekte bedacht werden, um sicherzustellen, dass die neuen Ebenen auch mit den alten im Gesamtbild zusammenpassen.
+Wenn die gesamte OberflÃ¤che einer Welt bebaut ist, muss die weitere Entwicklung Ã¼ber- und unterhalb der bestehenden GebÃ¤ude stattfinden. Die StabilitÃ¤t untergrabener oder Ã¼berbauter GebÃ¤ude muss gewÃ¤hrleistet sein; Versorgungs- und Transportwege mÃ¼ssen hinsichtlich steigender BevÃ¶lkerungsdichten Ã¼berdacht werden. Desweiteren mÃ¼ssen neuartige stilistische und funktionale Aspekte bedacht werden, um sicherzustellen, dass die neuen Ebenen auch mit den alten im Gesamtbild zusammenpassen.
 
 CON_TRANS_STRC
-Flexible Gebäude
+Flexible GebÃ¤ude
 
 CON_TRANS_STRC_DESC
-Ein Rolladen dient je nach den Wünschen seines Anwenders sowohl als feste Wand als auch als geöffnetes Fenster. Ein Raum kann im Rahmen des verfügbaren Platzes ummöbliert werden, um einem ganz neuen Zweck zu erfüllen. Dieses Konzept kann auch auf die Form und Struktur eines ganzen Gebäudes oder einer ganzen Stadt, egal ob mechanisch oder organisch, ausgeweitet werden. Die Beseitigung der Notwendigkeit von Abriss und Neuaufbau erlaubt große Flexibilität und Effizienz der Infrastruktur. Einzelne oder isolierte Gebäude können gleichzeitig eine Vielzahl von Zwecken erfüllen, die zuvor größere und detailliertere, feste Designs voraussetzten.
+Ein Rolladen dient je nach den WÃ¼nschen seines Anwenders sowohl als feste Wand als auch als geÃ¶ffnetes Fenster. Ein Raum kann im Rahmen des verfÃ¼gbaren Platzes ummÃ¶bliert werden, um einem ganz neuen Zweck zu erfÃ¼llen. Dieses Konzept kann auch auf die Form und Struktur eines ganzen GebÃ¤udes oder einer ganzen Stadt, egal ob mechanisch oder organisch, ausgeweitet werden. Die Beseitigung der Notwendigkeit von Abriss und Neuaufbau erlaubt groÃŸe FlexibilitÃ¤t und Effizienz der Infrastruktur. Einzelne oder isolierte GebÃ¤ude kÃ¶nnen gleichzeitig eine Vielzahl von Zwecken erfÃ¼llen, die zuvor grÃ¶ÃŸere und detailliertere, feste Designs voraussetzten.
 
 CON_ARCH_MONOFILS
 Monofilamentarchitektur
 
 CON_ARCH_MONOFILS_DESC
-Praktisch unzerbrechliche Einzelkristallfilamente, die im Durchmesser nur wenige Atome messen, können die Dauerhaftigkeit und Kostengünstigkeit traditioneller Baumethoden verbessern. Die Fähigkeit, diese stärker belastbaren Materialien in vorher unmögliche Anordnungen anzubringen, eröffnet völlig neue Möglichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in großen orbitalen oder von der Oberfläche in den Orbit reichenden Gebäuden, bei denen die Veränderung der Schwerkraft entlang der Achse zuvor sehr hinderlich waren.
+Praktisch unzerbrechliche Einzelkristallfilamente, die im Durchmesser nur wenige Atome messen, kÃ¶nnen die Dauerhaftigkeit und KostengÃ¼nstigkeit traditioneller Baumethoden verbessern. Die FÃ¤higkeit, diese stÃ¤rker belastbaren Materialien in vorher unmÃ¶gliche Anordnungen anzubringen, erÃ¶ffnet vÃ¶llig neue MÃ¶glichkeiten. Leichte und zugleich zugfeste Filamente finden besondere Verwendung in groÃŸen orbitalen oder von der OberflÃ¤che in den Orbit reichenden GebÃ¤uden, bei denen die VerÃ¤nderung der Schwerkraft entlang der Achse zuvor sehr hinderlich waren.
 
 CON_SELFGRAV_STRC
 Eigengravitation
 
 CON_SELFGRAV_STRC_DESC
-Durch die Größenzunahme orbitaler Konstruktionen erreichen einzelne Einrichtungen eine Masse, die ausreicht, um eine wahrnehmliche Eigengravitation auszuüben. Da, wo die niedrige Schwerkraft eine fundamentale Rolle spielt, muss der Aufbau von Gebäuden neu durchdacht werden, so wie es der Fall war, als sie von der Oberfläche in den Orbit verlegt wurden. Statt sich immer weiter in geregelten Mustern auszubreiten, nehmen die künstlichen Körper die natürlich gebogene Form der Planetenkörper an. Die Vorteile orbitaler Strukturen gegenüber der Oberflächenkonstruktion bleiben aber erhalten, da ihre künstliche Masse zweckdienlich eingesetzt wird.
+Durch die GrÃ¶ÃŸenzunahme orbitaler Konstruktionen erreichen einzelne Einrichtungen eine Masse, die ausreicht, um eine wahrnehmliche Eigengravitation auszuÃ¼ben. Da, wo die niedrige Schwerkraft eine fundamentale Rolle spielt, muss der Aufbau von GebÃ¤uden neu durchdacht werden, so wie es der Fall war, als sie von der OberflÃ¤che in den Orbit verlegt wurden. Statt sich immer weiter in geregelten Mustern auszubreiten, nehmen die kÃ¼nstlichen KÃ¶rper die natÃ¼rlich gebogene Form der PlanetenkÃ¶rper an. Die Vorteile orbitaler Strukturen gegenÃ¼ber der OberflÃ¤chenkonstruktion bleiben aber erhalten, da ihre kÃ¼nstliche Masse zweckdienlich eingesetzt wird.
 
 CON_ASYMP_MATS
 Asymptotische Materialien
 
 CON_ASYMP_MATS_DESC
-Sobald gewisse Leistungsgrenzen überschritten werden, wird die relative Messung der physikalischen Eigenschaften von Materialien außer auf exponentiellen oder logarithmischen Skalen unhandlich. Genau wie bei der Supraleitfähigkeit in der Elektronik werden die Zugstärke, Härte, Dichte, Elastizität, der Refraktionsindex und andere mechanische Eigenschaften von Materialien praktisch grenzenlos kontrollierbar. Durch die Beseitigung aller vorigen Hindernisse öffnen sich neue Möglichkeiten für Gebäude, so dass sie im gleichen Maße wie der Fortschritt der Materialtechnik verbessert werden können.
+Sobald gewisse Leistungsgrenzen Ã¼berschritten werden, wird die relative Messung der physikalischen Eigenschaften von Materialien auÃŸer auf exponentiellen oder logarithmischen Skalen unhandlich. Genau wie bei der SupraleitfÃ¤higkeit in der Elektronik werden die ZugstÃ¤rke, HÃ¤rte, Dichte, ElastizitÃ¤t, der Refraktionsindex und andere mechanische Eigenschaften von Materialien praktisch grenzenlos kontrollierbar. Durch die Beseitigung aller vorigen Hindernisse Ã¶ffnen sich neue MÃ¶glichkeiten fÃ¼r GebÃ¤ude, so dass sie im gleichen MaÃŸe wie der Fortschritt der Materialtechnik verbessert werden kÃ¶nnen.
 
 CON_STRC_INT_FLDS
-Integritätsfelder
+IntegritÃ¤tsfelder
 
 CON_STRC_INT_FLDS_DESC
-Fortgeschrittene Baumaterialien und -techniken ermöglichen deutlich größere Gebäude. Irgendwann erreicht der Druck auf die Stützstrukturen die Größenordnung der starken Kernkraft, die für den Zusammenhalt der Atomkerne verantwortlich ist; zu diesem Zeitpunkt werden alternative Stabilisierungsmaßnahmen unvermeidlich. Projizierte Energiestützfelder können diesem Zweck dienen; der Ersatz oder die Verstärkung fester Stützstrukturen mit dieser Technologie bietet den Vorteil, Volumen und die Masse der benötigten Materialien drastisch reduzieren  zu können. Darüber hinaus kann auf rasche Belastungsänderungen dynamisch reagiert werden, wogegen feste Stützstrukturen, auch wenn sie nicht aktiv verwandt werden, an ihrem Platz verweilen müssen.
+Fortgeschrittene Baumaterialien und -techniken ermÃ¶glichen deutlich grÃ¶ÃŸere GebÃ¤ude. Irgendwann erreicht der Druck auf die StÃ¼tzstrukturen die GrÃ¶ÃŸenordnung der starken Kernkraft, die fÃ¼r den Zusammenhalt der Atomkerne verantwortlich ist; zu diesem Zeitpunkt werden alternative StabilisierungsmaÃŸnahmen unvermeidlich. Projizierte EnergiestÃ¼tzfelder kÃ¶nnen diesem Zweck dienen; der Ersatz oder die VerstÃ¤rkung fester StÃ¼tzstrukturen mit dieser Technologie bietet den Vorteil, Volumen und die Masse der benÃ¶tigten Materialien drastisch reduzieren  zu kÃ¶nnen. DarÃ¼ber hinaus kann auf rasche BelastungsÃ¤nderungen dynamisch reagiert werden, wogegen feste StÃ¼tzstrukturen, auch wenn sie nicht aktiv verwandt werden, an ihrem Platz verweilen mÃ¼ssen.
 
 CON_CONTGRAV_ARCH
 Schwerkraftarchitektur
 
 CON_CONTGRAV_ARCH_DESC
-Durch die perfekte Kontrolle der Orientierung und Stärke der Gravitationskraft, die auf und innerhalb eines Gebäudes wirken, können Bauten so gestaltet werden, dass sie gleichzeitig die Freiheiten der Schwerelosigkeit und den Nutzen eines definierten Oben und Unten besitzen. Das Gebäude selbst und seine Räume können jede Form im Raum einnehmen, sich über große Längen erstrecken, um sich selbst winden und willkürliche Verbingungen herstellen. Die Räume können einen nützlichen direktionalen Drift enthalten, der sich etwas oder auch völlig von den direkt angrenzender Bereichen unterscheiden kann. Eine solche Vielseitigkeit bietet ganz neue Möglichkeiten für soziale, produktive oder anderweitige Zwecke.
+Durch die perfekte Kontrolle der Orientierung und StÃ¤rke der Gravitationskraft, die auf und innerhalb eines GebÃ¤udes wirken, kÃ¶nnen Bauten so gestaltet werden, dass sie gleichzeitig die Freiheiten der Schwerelosigkeit und den Nutzen eines definierten Oben und Unten besitzen. Das GebÃ¤ude selbst und seine RÃ¤ume kÃ¶nnen jede Form im Raum einnehmen, sich Ã¼ber groÃŸe LÃ¤ngen erstrecken, um sich selbst winden und willkÃ¼rliche Verbingungen herstellen. Die RÃ¤ume kÃ¶nnen einen nÃ¼tzlichen direktionalen Drift enthalten, der sich etwas oder auch vÃ¶llig von den direkt angrenzender Bereichen unterscheiden kann. Eine solche Vielseitigkeit bietet ganz neue MÃ¶glichkeiten fÃ¼r soziale, produktive oder anderweitige Zwecke.
 
 CON_GAL_INFRA
 Galaktische Infrastruktur
 
 CON_GAL_INFRA_DESC
-Der Zusammenschluss und die Entwicklung der Infrastrukturen sehr produktiver Welten in ein vereintes, Galaxis-weites Netzwerk ist eine der größten logistischen Herausforderungen überhaupt. Das fertige System schliesst die verbundenen Welten zu einer Einheit zusammen. Gemeinsame Transport-, Wohnwesen-, Instandhaltungs- und Bauwerkzeuge können dort, wo sie optimal zur Rohstoffverwertung oder Adaption eingesetzt werden können, zur Verfügung gestellt werden.
+Der Zusammenschluss und die Entwicklung der Infrastrukturen sehr produktiver Welten in ein vereintes, Galaxis-weites Netzwerk ist eine der grÃ¶ÃŸten logistischen Herausforderungen Ã¼berhaupt. Das fertige System schliesst die verbundenen Welten zu einer Einheit zusammen. Gemeinsame Transport-, Wohnwesen-, Instandhaltungs- und Bauwerkzeuge kÃ¶nnen dort, wo sie optimal zur Rohstoffverwertung oder Adaption eingesetzt werden kÃ¶nnen, zur VerfÃ¼gung gestellt werden.
 
 CON_FRC_ENRG_STRC
-Kraft-Energie Gebäude
+Kraft-Energie GebÃ¤ude
 
 CON_FRC_ENRG_STRC_DESC
-Wenn Kräfte und Energie so manipuliert werden können, dass sie dieselbe Funktionalität wie feste Oberflächen besitzen, gibt es keinen entscheidenden Grund dafür, physikalische Materialien zur Konstruktion von Gebäuden einzusetzen. Gebäude aus purer Energie haben zahlreiche Vorteile, wie z. B. einfacher Umbau, Widerstandsfähigkeit, Transportabilität und neuartige Designmöglichkeiten.
+Wenn KrÃ¤fte und Energie so manipuliert werden kÃ¶nnen, dass sie dieselbe FunktionalitÃ¤t wie feste OberflÃ¤chen besitzen, gibt es keinen entscheidenden Grund dafÃ¼r, physikalische Materialien zur Konstruktion von GebÃ¤uden einzusetzen. GebÃ¤ude aus purer Energie haben zahlreiche Vorteile, wie z. B. einfacher Umbau, WiderstandsfÃ¤higkeit, TransportabilitÃ¤t und neuartige DesignmÃ¶glichkeiten.
 
 CON_ART_HEAVENLY
-Künstliche Himmelskörper
+KÃ¼nstliche HimmelskÃ¶rper
 
 CON_ART_HEAVENLY_DESC
-Ab der Masse eines kleinen Mondes wird es schwierig, ein Objekt als "Gebäude", "Raumstation" oder "Schiff" zu bezeichnen. In dieser Größenordnung handelt es sich eher um einen Himmelskörper; seine Gravitation bewirkt orbitale Bewegungen, es kann sich auf seiner Oberfläche eine dünne Atmosphäre ausbilden und er kann von kleineren Strukturen umkreist werden. Auf noch größeren Skalen können ganze Planeten (um-)gebaut werden; selbst neue Sterne können geformt und entzündet werden und künden dem Universum die Macht und Bestimmtheit seiner Schöpfer.
+Ab der Masse eines kleinen Mondes wird es schwierig, ein Objekt als "GebÃ¤ude", "Raumstation" oder "Schiff" zu bezeichnen. In dieser GrÃ¶ÃŸenordnung handelt es sich eher um einen HimmelskÃ¶rper; seine Gravitation bewirkt orbitale Bewegungen, es kann sich auf seiner OberflÃ¤che eine dÃ¼nne AtmosphÃ¤re ausbilden und er kann von kleineren Strukturen umkreist werden. Auf noch grÃ¶ÃŸeren Skalen kÃ¶nnen ganze Planeten (um-)gebaut werden; selbst neue Sterne kÃ¶nnen geformt und entzÃ¼ndet werden und kÃ¼nden dem Universum die Macht und Bestimmtheit seiner SchÃ¶pfer.
 
 CON_TRANS_ARCH
 Transarchitektur
 
 CON_TRANS_ARCH_DESC
-Perfektes Design vereint optimale Funktionalität mit Formschönheit. Eine transzendiertes Gebäude erweitert und inspiriert die Gedanken seiner Bewohner oder Betrachter - durch seine Form, Platzierung, Substanz und Integration, ob durch überwältige Größe, perfekte Hervorhebung einer Idee, Sichtweise oder das Fehlen einer solchen, oder durch bloße Simplizität und Zweckdienlichkeit.
+Perfektes Design vereint optimale FunktionalitÃ¤t mit FormschÃ¶nheit. Eine transzendiertes GebÃ¤ude erweitert und inspiriert die Gedanken seiner Bewohner oder Betrachter - durch seine Form, Platzierung, Substanz und Integration, ob durch Ã¼berwÃ¤ltige GrÃ¶ÃŸe, perfekte Hervorhebung einer Idee, Sichtweise oder das Fehlen einer solchen, oder durch bloÃŸe SimplizitÃ¤t und Zweckdienlichkeit.
 
 CON_NDIM_STRC
-N-Dimensionale Gebäude
+N-Dimensionale GebÃ¤ude
 
 CON_NDIM_STRC_DESC
-Von allen bizzaren Kunststücken der angewandten Physik hat die Fähigkeit, den Raum in sich selbst zu falten, den direktesten und tiefgreifendsten Einfluss auf die Form und das Design von Gebäuden. Das Potential ist endlos, und das wortwörtlich: Flure biegen sich zurück an ihren Beginn oder werden so verdreht, dass ihre Decke der Boden wird. Darüber hinaus löst sich das Konzept des Städtewachstums in Wohlgefallen auf, da eine beliebige Anzahl Personen in einem willkürlich kleinen Volumen untergebracht werden können, sicher in einer angrenzenden Existenzebene untergebracht.
+Von allen bizzaren KunststÃ¼cken der angewandten Physik hat die FÃ¤higkeit, den Raum in sich selbst zu falten, den direktesten und tiefgreifendsten Einfluss auf die Form und das Design von GebÃ¤uden. Das Potential ist endlos, und das wortwÃ¶rtlich: Flure biegen sich zurÃ¼ck an ihren Beginn oder werden so verdreht, dass ihre Decke der Boden wird. DarÃ¼ber hinaus lÃ¶st sich das Konzept des StÃ¤dtewachstums in Wohlgefallen auf, da eine beliebige Anzahl Personen in einem willkÃ¼rlich kleinen Volumen untergebracht werden kÃ¶nnen, sicher in einer angrenzenden Existenzebene untergebracht.
 
 ECO_MARKET_ECON
 Marktwirtschaft
 
 ECO_MARKET_ECON_DESC
-Der freie Austausch von Gütern und Dienstleistungen zwischen Individuen und Gruppen, ob durch simplen Tauschhandel oder eine allgemein anerkannte Währung, kann ein eiffizientes und dynamisches System bilden. Im idealisierten Fall reguliert der Markt sich vollkommen selbstständig; Angebot und Bedarf bewirken optimal effizienten Rohstoffeinsatz und Vollbeschäftigung in der Wirtschaft. Darüber hinaus sind die persönlichen Erfolgsmöglichkeiten in einem solchen System ein wirkungsvoller Motivator für Innovation und Einsatz. Im ungünstigsten Falle kann dieselbe Motivation aber auch zu Ausbeutung und Kartellbildung der Erfolgreichen führen, wodurch viele der Vorteile des Systems aufgehoben werden können.
+Der freie Austausch von GÃ¼tern und Dienstleistungen zwischen Individuen und Gruppen, ob durch simplen Tauschhandel oder eine allgemein anerkannte WÃ¤hrung, kann ein eiffizientes und dynamisches System bilden. Im idealisierten Fall reguliert der Markt sich vollkommen selbststÃ¤ndig; Angebot und Bedarf bewirken optimal effizienten Rohstoffeinsatz und VollbeschÃ¤ftigung in der Wirtschaft. DarÃ¼ber hinaus sind die persÃ¶nlichen ErfolgsmÃ¶glichkeiten in einem solchen System ein wirkungsvoller Motivator fÃ¼r Innovation und Einsatz. Im ungÃ¼nstigsten Falle kann dieselbe Motivation aber auch zu Ausbeutung und Kartellbildung der Erfolgreichen fÃ¼hren, wodurch viele der Vorteile des Systems aufgehoben werden kÃ¶nnen.
 
 ECO_PLANNED_ECON
 Planwirtschaft
 
 ECO_PLANNED_ECON_DESC
-Indem man die Bedürfnisse und spezifischen Ziele einer Gesellschaft identifiziert, nach ihrer Wichtigkeit ordnet und dann die notwendigen Schritte zu ihrer Realisierung einleitet, kann ein stabiles Wirtschaftssystem aufgebaut werden. Ob durch eine zentrale Verwaltungsstelle oder durch lokale Einrichtungen, im idealen Fall werden alle unnötigen Störfaktoren und Verschwendung beseitigt und alle Rohstoffe für die höchsten Prioritäten eingesetzt. Außerdem beseitigt ein gemeinsames Ziel und effiziente Planung die Verschwendung verfügbarer Arbeitskräfte. Es besteht jedoch die Gefahr, dass einzelne Individuen sich nicht für die gemeinsamen Ziele oder die Methode, sie zu erreichen, einsetzen möchten und so die Arbeitsmoral zu untergraben.
+Indem man die BedÃ¼rfnisse und spezifischen Ziele einer Gesellschaft identifiziert, nach ihrer Wichtigkeit ordnet und dann die notwendigen Schritte zu ihrer Realisierung einleitet, kann ein stabiles Wirtschaftssystem aufgebaut werden. Ob durch eine zentrale Verwaltungsstelle oder durch lokale Einrichtungen, im idealen Fall werden alle unnÃ¶tigen StÃ¶rfaktoren und Verschwendung beseitigt und alle Rohstoffe fÃ¼r die hÃ¶chsten PrioritÃ¤ten eingesetzt. AuÃŸerdem beseitigt ein gemeinsames Ziel und effiziente Planung die Verschwendung verfÃ¼gbarer ArbeitskrÃ¤fte. Es besteht jedoch die Gefahr, dass einzelne Individuen sich nicht fÃ¼r die gemeinsamen Ziele oder die Methode, sie zu erreichen, einsetzen mÃ¶chten und so die Arbeitsmoral zu untergraben.
 
 ECO_EXTERN_INTEG
-Externalitäteneinbezug
+ExternalitÃ¤teneinbezug
 
 ECO_EXTERN_INTEG_DESC
-Undurchdachte Wirtschaftssysteme erlauben die Entscheidungsbildung basierend auf Faktoren, die nur den Entscheidenden direkt betreffen. Andere Faktoren, oder Externalitäten, die ausschliesslich nicht an der Entscheidung beteiligte Personen betreffen, werden nicht in Betracht gezogen; dies führt dementsprechend zu unerwarteten Konsequenzen, was insgesamt zu einem Verlust ökonomischer Effizienz in einem ansonsten idealem System führt. Durch den Einbezug von Faktoren wie Umweltschäden, Einzelschicksalen und Konsequenzen von [networking effects], kann die Wirtschaft näher an ihre theoretische Idealform gebracht werden.
+Undurchdachte Wirtschaftssysteme erlauben die Entscheidungsbildung basierend auf Faktoren, die nur den Entscheidenden direkt betreffen. Andere Faktoren, oder ExternalitÃ¤ten, die ausschliesslich nicht an der Entscheidung beteiligte Personen betreffen, werden nicht in Betracht gezogen; dies fÃ¼hrt dementsprechend zu unerwarteten Konsequenzen, was insgesamt zu einem Verlust Ã¶konomischer Effizienz in einem ansonsten idealem System fÃ¼hrt. Durch den Einbezug von Faktoren wie UmweltschÃ¤den, Einzelschicksalen und Konsequenzen von [networking effects], kann die Wirtschaft nÃ¤her an ihre theoretische Idealform gebracht werden.
 
 ECO_ECON_SPECTRO
-Ökonomische Spektroskopie
+Ã–konomische Spektroskopie
 
 ECO_ECON_SPECTRO_DESC
-Durch sorgfältige Analyse und wohldurchdachte Modelle kann ein linear unabhängiger Satz von Grundzuständen, als eine Frequenzparameterisierung eines Wirtschaftssystems, erstellt werden. Zyklische Wirtschaftstrends und Indikatoren wiederläufiger Phasen können so unabhängig betrachtet werden und Amplituden- oder Phasenverschoben werden, um die erwünschten Ziele zu erreichen. Solche Eingriffe müssen jedoch mit großer Vorsicht vorgenommen werden, da [simultaneously phase-matched] zyklische Effekte, die anfänglich als unbegrenzter Wachstum erscheinen, unausweichlich einen Gipfel erreichen werden, nach dem ein ebenso dramatischer wirtschaftlicher Zusammenbruch erfolgen wird.
+Durch sorgfÃ¤ltige Analyse und wohldurchdachte Modelle kann ein linear unabhÃ¤ngiger Satz von GrundzustÃ¤nden, als eine Frequenzparameterisierung eines Wirtschaftssystems, erstellt werden. Zyklische Wirtschaftstrends und Indikatoren wiederlÃ¤ufiger Phasen kÃ¶nnen so unabhÃ¤ngig betrachtet werden und Amplituden- oder Phasenverschoben werden, um die erwÃ¼nschten Ziele zu erreichen. Solche Eingriffe mÃ¼ssen jedoch mit groÃŸer Vorsicht vorgenommen werden, da [simultaneously phase-matched] zyklische Effekte, die anfÃ¤nglich als unbegrenzter Wachstum erscheinen, unausweichlich einen Gipfel erreichen werden, nach dem ein ebenso dramatischer wirtschaftlicher Zusammenbruch erfolgen wird.
 
 ECO_INTSTEL_TRADE
 Interstellarer Handel
 
 ECO_INTSTEL_TRADE_DESC
-Der Kommerz zwischen den Sternen kann im Grunde genommen - unabhängig von der weiteren Größenordnung der Distanzen - direkt mit dem Handel auf einem einzelnen Planeten oder Kontinent verglichen werden. Während Grundprinzipien wie Handelsrouten, Handelsgilden und Piraterie auf eine gewisse Art bestehen bleiben, ist die Anpassung der Methodik ökonomischen Austauschs, seiner Regulation und Kontrolle an die Bedingungen des Weltraums alles andere als trivial. Wie zu früheren Zeiten kann der Einsatz oder Mißbrauch dieser Faktoren drastische Effekte auf die Wirtschaftskräfte ausüben, die vom Handel abhängig werden.
+Der Kommerz zwischen den Sternen kann im Grunde genommen - unabhÃ¤ngig von der weiteren GrÃ¶ÃŸenordnung der Distanzen - direkt mit dem Handel auf einem einzelnen Planeten oder Kontinent verglichen werden. WÃ¤hrend Grundprinzipien wie Handelsrouten, Handelsgilden und Piraterie auf eine gewisse Art bestehen bleiben, ist die Anpassung der Methodik Ã¶konomischen Austauschs, seiner Regulation und Kontrolle an die Bedingungen des Weltraums alles andere als trivial. Wie zu frÃ¼heren Zeiten kann der Einsatz oder MiÃŸbrauch dieser Faktoren drastische Effekte auf die WirtschaftskrÃ¤fte ausÃ¼ben, die vom Handel abhÃ¤ngig werden.
 
 ECO_ENV_ADAPTION
 Umweltadaptation
 
 ECO_ENV_ADAPTION_DESC
-Am Anfang der Kolonisierung des Weltraums erscheint die Vielfalt neuer Naturen nur als Hindernis, da die meisten Umweltbedingungen für jede beliebige Rasse unwohnlich sind und daher Bevölkerungswachstum und -ausbreitung einschränken. Aber mit der Ausbreitung eines Imperiums über mehrere Sternsysteme wird die natürliche Vielfalt immer nützlicher, wenn sie richtig eingesetzt wird. Jede Umwelt bietet seine direkten und indirekten Vorteile, besonders bei der Schaffung und Ausbeutung physikalischer und konzeptueller Rohstoffe, die dann zwischen Systemen gehandelt und ausgetauscht werden können. Indem man das Wirtschaftsystem jeder Welt an ihre Einzigartigkeit anpasst, kann man ihre Vorzüge maximieren.
+Am Anfang der Kolonisierung des Weltraums erscheint die Vielfalt neuer Naturen nur als Hindernis, da die meisten Umweltbedingungen fÃ¼r jede beliebige Rasse unwohnlich sind und daher BevÃ¶lkerungswachstum und -ausbreitung einschrÃ¤nken. Aber mit der Ausbreitung eines Imperiums Ã¼ber mehrere Sternsysteme wird die natÃ¼rliche Vielfalt immer nÃ¼tzlicher, wenn sie richtig eingesetzt wird. Jede Umwelt bietet seine direkten und indirekten Vorteile, besonders bei der Schaffung und Ausbeutung physikalischer und konzeptueller Rohstoffe, die dann zwischen Systemen gehandelt und ausgetauscht werden kÃ¶nnen. Indem man das Wirtschaftsystem jeder Welt an ihre Einzigartigkeit anpasst, kann man ihre VorzÃ¼ge maximieren.
 
 ECO_GAL_MONEY_POL
-Galaktische Währungspolitik
+Galaktische WÃ¤hrungspolitik
 
 ECO_GAL_MONEY_POL_DESC
-Mit der Ausweitung galaktischen Handels gehen isolierte planetare Wirtschaftkräfte in integrierte regionale oder imperiale Wirtschaftskräfte über. Intraimperiale Austauschquoten, Verleih- und Handelsgesetze und ihre Folgeeffekte auf scheinbar losgelöste Regionen werden die entscheidenden Faktoren für das allgemeine Wohlbefinden der galaktischen Wirtschaft. Dementsprechend müssen unilaterale ökonomische Erwägungen gemäßigt werden und lokale Angelegenheiten im Kontext weiterreichender Interessen diskutiert werden, um den wirtschaftlichen Wohlstand aller zu gewährleisten.
+Mit der Ausweitung galaktischen Handels gehen isolierte planetare WirtschaftkrÃ¤fte in integrierte regionale oder imperiale WirtschaftskrÃ¤fte Ã¼ber. Intraimperiale Austauschquoten, Verleih- und Handelsgesetze und ihre Folgeeffekte auf scheinbar losgelÃ¶ste Regionen werden die entscheidenden Faktoren fÃ¼r das allgemeine Wohlbefinden der galaktischen Wirtschaft. Dementsprechend mÃ¼ssen unilaterale Ã¶konomische ErwÃ¤gungen gemÃ¤ÃŸigt werden und lokale Angelegenheiten im Kontext weiterreichender Interessen diskutiert werden, um den wirtschaftlichen Wohlstand aller zu gewÃ¤hrleisten.
 
 ECO_ECON_FLUIDITY
-Ökonomische Fluidität
+Ã–konomische FluiditÃ¤t
 
 ECO_ECON_FLUIDITY_DESC
-Wenn die physikalische Distanz zwischen den Sternen von Handelspartnern nicht länger als gravierend wahrgenommen wird, tritt ein Paradigmenwechsel ein. Zuvor konnte man sich die interstellare Wirtschaft als ein Block vorstellen, seine Eckpunkte als lokale Wirtschaftskräfte und seine Kanten als starre Handelsverbindungen angrenzender Nachbarn. Durch die dieserartig veränderte Wahrnehmung durchläuft die Wirtschaft einen Phasenwechsel  von fest nach flüssig. Wirtschaftliche Aktivität beginnt, frei zwischen den Sternen zu fliessen: die Flüssigkeit gelangt in zuvor ungenutze Ritzen, füllt Spalten, folgt neuen Flussbahnen und beseitigt lokale Ungleichheiten.
+Wenn die physikalische Distanz zwischen den Sternen von Handelspartnern nicht lÃ¤nger als gravierend wahrgenommen wird, tritt ein Paradigmenwechsel ein. Zuvor konnte man sich die interstellare Wirtschaft als ein Block vorstellen, seine Eckpunkte als lokale WirtschaftskrÃ¤fte und seine Kanten als starre Handelsverbindungen angrenzender Nachbarn. Durch die dieserartig verÃ¤nderte Wahrnehmung durchlÃ¤uft die Wirtschaft einen Phasenwechsel  von fest nach flÃ¼ssig. Wirtschaftliche AktivitÃ¤t beginnt, frei zwischen den Sternen zu fliessen: die FlÃ¼ssigkeit gelangt in zuvor ungenutze Ritzen, fÃ¼llt Spalten, folgt neuen Flussbahnen und beseitigt lokale Ungleichheiten.
 
 ECO_PLANET_COLONY
 Planetarer Kolonialismus
 
 ECO_PLANET_COLONY_DESC
-Wenn ein wachsendes Imperium auf einen an Rohstoffen reichen und von primitiven Ureinwohnern bewohnten Planeten stößt, besteht die Möglichkeit, den Planeten als Kolonialbesitz zu behandeln. Umfassende, an das Umfeld gut angepasste Arbeitskräfte sind sofort verfügbar und können oft die Quelle für Wissen über die nicht so offensichtlichen, einzigartigen Rohstoffe des Planeten sein. Es muss jedoch darauf geachtet werden, dass die Ureinwohner, zumindest aber ihre Anführer, an der wirtschaftlichen Partnerschaft interessiert bleiben, da aus früheren Koloniearbeiter eine ebenso an das Umfeld gut angepasste Rebellenarmee werden kann.
+Wenn ein wachsendes Imperium auf einen an Rohstoffen reichen und von primitiven Ureinwohnern bewohnten Planeten stÃ¶ÃŸt, besteht die MÃ¶glichkeit, den Planeten als Kolonialbesitz zu behandeln. Umfassende, an das Umfeld gut angepasste ArbeitskrÃ¤fte sind sofort verfÃ¼gbar und kÃ¶nnen oft die Quelle fÃ¼r Wissen Ã¼ber die nicht so offensichtlichen, einzigartigen Rohstoffe des Planeten sein. Es muss jedoch darauf geachtet werden, dass die Ureinwohner, zumindest aber ihre AnfÃ¼hrer, an der wirtschaftlichen Partnerschaft interessiert bleiben, da aus frÃ¼heren Koloniearbeiter eine ebenso an das Umfeld gut angepasste Rebellenarmee werden kann.
 
 ECO_ECON_PRESCIEN
-Ökonomisches Prescience
+Ã–konomisches Prescience
 
 ECO_ECON_PRESCIEN_DESC
-Feedback - Kontrollsysteme verwerten oft gegenwärtige, vergangene und vorausgesagte, zuküntige Informationszustände eines Systems zur Korrektur desselben. Solche Vorraussagen sind jedoch so fehleranfällig, dass sie für alle komplexen und nicht-deterministischen Systeme interagierender Wesen, wie z. B. eine Wirtschaftskraft oder eine Gesellschaft, praktisch nutzlos sind. Um diese Schwierigkeit zu beseitigen, kann prekognitive Projektion eingesetzt werden; dadurch werden viele mögliche Zeitlinien der Zukunft und ihre relativen Wahrscheinlichkeiten enthüllt, genau wie die geeignetesten Eingriffe zur sinnvollen Beeinträchtigung dieser Wahrscheinlichkeiten. Durch diese Methode können die unvorhersehbaren und oft unlogischen Entscheidungen von Individuen abgegrenzt werden und die Wirtschaft kann endlich als ein makroskopisches, physikalisches System erfasst und kontrolliert werden.
+Feedback - Kontrollsysteme verwerten oft gegenwÃ¤rtige, vergangene und vorausgesagte, zukÃ¼ntige InformationszustÃ¤nde eines Systems zur Korrektur desselben. Solche Vorraussagen sind jedoch so fehleranfÃ¤llig, dass sie fÃ¼r alle komplexen und nicht-deterministischen Systeme interagierender Wesen, wie z. B. eine Wirtschaftskraft oder eine Gesellschaft, praktisch nutzlos sind. Um diese Schwierigkeit zu beseitigen, kann prekognitive Projektion eingesetzt werden; dadurch werden viele mÃ¶gliche Zeitlinien der Zukunft und ihre relativen Wahrscheinlichkeiten enthÃ¼llt, genau wie die geeignetesten Eingriffe zur sinnvollen BeeintrÃ¤chtigung dieser Wahrscheinlichkeiten. Durch diese Methode kÃ¶nnen die unvorhersehbaren und oft unlogischen Entscheidungen von Individuen abgegrenzt werden und die Wirtschaft kann endlich als ein makroskopisches, physikalisches System erfasst und kontrolliert werden.
 
 ECO_STAB_HYPGROW
-Überexponentielles Wachstum
+Ãœberexponentielles Wachstum
 
 ECO_STAB_HYPGROW_DESC
-Wirtschaftsaktivität wirkt als positives Feedback auf sein eigenes Wachstum. Daraus folgt in vielen Fällen eine natürliche exponentielle Wachstumskurve; wirtschaftliches Wachstum wird deshalb oft im Verhältnis zur Größe der Wirtschaftskraft beschrieben. Gelegentlich treten Schübe überexponentiellen Wachstums auf, die aber instabil sind und unangenehme Korrekturmaßnahmen nach sich ziehen. Durch geschickte Strukturierung und Organisation sowie sorgfältige Förderung der notwendigen Umstände für den Beginn eines hyperexponentiellen Wachstums kann ein unbegrenztes hyperexponentielles Wachstum aufrecht erhalten werden.
+WirtschaftsaktivitÃ¤t wirkt als positives Feedback auf sein eigenes Wachstum. Daraus folgt in vielen FÃ¤llen eine natÃ¼rliche exponentielle Wachstumskurve; wirtschaftliches Wachstum wird deshalb oft im VerhÃ¤ltnis zur GrÃ¶ÃŸe der Wirtschaftskraft beschrieben. Gelegentlich treten SchÃ¼be Ã¼berexponentiellen Wachstums auf, die aber instabil sind und unangenehme KorrekturmaÃŸnahmen nach sich ziehen. Durch geschickte Strukturierung und Organisation sowie sorgfÃ¤ltige FÃ¶rderung der notwendigen UmstÃ¤nde fÃ¼r den Beginn eines hyperexponentiellen Wachstums kann ein unbegrenztes hyperexponentielles Wachstum aufrecht erhalten werden.
 
 ECO_ECON_HEGEMONY
 Wirtschaftshegemonie
 
 ECO_ECON_HEGEMONY_DESC
-Ein Wirtschaftssystem in seiner optimalen Form besteht aus einem Zusammenspiel finanzieller, kultureller und anderer sozialer Mechanismen, die für die Ziele derer eingesetzt werden, die fähig sind, die Mechanismen zu kontrollieren. Durch den Einsatz dieser Werkzeuge können weniger entwickelte Wirtschaftskräfte vollständig kontrolliert werden, entweder durch offene Besatzung oder Zerstörung, oder durch subtilere und zielgerichtetere Manipulation. [By extension,] kann eine von außen kontrollierte Wirtschaftskraft eingesetzt werden, um Einfluss oder Kontrolle auf alle Aspekte einer Gesellschaft auszuüben. Durch derartige Methoden kann ein kriegerischen Methoden gleichwertiger oder sogar überlegener Druck ausgeübt werden.
+Ein Wirtschaftssystem in seiner optimalen Form besteht aus einem Zusammenspiel finanzieller, kultureller und anderer sozialer Mechanismen, die fÃ¼r die Ziele derer eingesetzt werden, die fÃ¤hig sind, die Mechanismen zu kontrollieren. Durch den Einsatz dieser Werkzeuge kÃ¶nnen weniger entwickelte WirtschaftskrÃ¤fte vollstÃ¤ndig kontrolliert werden, entweder durch offene Besatzung oder ZerstÃ¶rung, oder durch subtilere und zielgerichtetere Manipulation. [By extension,] kann eine von auÃŸen kontrollierte Wirtschaftskraft eingesetzt werden, um Einfluss oder Kontrolle auf alle Aspekte einer Gesellschaft auszuÃ¼ben. Durch derartige Methoden kann ein kriegerischen Methoden gleichwertiger oder sogar Ã¼berlegener Druck ausgeÃ¼bt werden.
 
 SHP_SPACE_TACTICS
 Space Tactics
@@ -2983,13 +2983,13 @@ DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
 
 SHIP_PART_UNLOCK_SHORT_DESC
-Ermöglicht Schiffsteil
+ErmÃ¶glicht Schiffsteil
 
 SHIP_HULL_UNLOCK_SHORT_DESC
-Ermöglicht Schiffsrumpf
+ErmÃ¶glicht Schiffsrumpf
 
 BUILDING_UNLOCK_SHORT_DESC
-Ermöglicht Gebäude
+ErmÃ¶glicht GebÃ¤ude
 
 RESEARCH_SHORT_DESC
 Verbessert Forschung
@@ -3010,10 +3010,10 @@ CONSTRUCTION_SHORT_DESC
 Verbessert Infrastruktur
 
 POPULATION_SHORT_DESC
-Erhöht Planeten-Bevölkerung
+ErhÃ¶ht Planeten-BevÃ¶lkerung
 
 FLEET_RANGE_DESC
-Erhöht Flottenunterstützung
+ErhÃ¶ht FlottenunterstÃ¼tzung
 
 CON_TERRAFORM
 Terraforming
@@ -3037,7 +3037,7 @@ CON_GRAVITY_WELLS
 Schwerkraftgeneratoren
 
 CON_GRAVITY_WELLS_DESC
-Durch die Installation eines Null - Schwerkraft Generators im Kern eines Planeten wird es möglich, die Schwerkraft in einem engen Bereich wie eine Lampe an- oder auszuschalten. Die Industrie des Planeten erhält alle Vorteile von Niedrig-G und Null-G ohne ihre Nachteile. Inverse Schwerkraftgeneratoren können auch erbaut werden; dadurch kosten Raumstarts nahezu nichts mehr.
+Durch die Installation eines Null - Schwerkraft Generators im Kern eines Planeten wird es mÃ¶glich, die Schwerkraft in einem engen Bereich wie eine Lampe an- oder auszuschalten. Die Industrie des Planeten erhÃ¤lt alle Vorteile von Niedrig-G und Null-G ohne ihre Nachteile. Inverse Schwerkraftgeneratoren kÃ¶nnen auch erbaut werden; dadurch kosten Raumstarts nahezu nichts mehr.
 
 CON_MEGALITH
 Megalith Konstruktion
@@ -3049,67 +3049,67 @@ CON_ORBITAL_FACT
 Orbitale Fabriken
 
 CON_ORBITAL_FACT_DESC
-Da alle Kolonien ihren Ursprung im Weltraum nehmen und die Rohstoffe zu ihrem Aufbau größtenteils von auswärts importiert werden, ist die übliche Exodus - Methode der vollständigen Landung neuer Kolonieschiffe auf dem Planeten Verschwendung. Die für neue Kolonien unverzichtliche Montagearbeit kann deutlich günstiger im Orbit ausgeführt werden. Die Ausrüstung neuer Kolonien mit vorgefertigten Orbitalfabriken gibt ihnen die Möglichkeit, die natürlichen Rohstoffe des niedrigen Orbits zu nutzen.
+Da alle Kolonien ihren Ursprung im Weltraum nehmen und die Rohstoffe zu ihrem Aufbau grÃ¶ÃŸtenteils von auswÃ¤rts importiert werden, ist die Ã¼bliche Exodus - Methode der vollstÃ¤ndigen Landung neuer Kolonieschiffe auf dem Planeten Verschwendung. Die fÃ¼r neue Kolonien unverzichtliche Montagearbeit kann deutlich gÃ¼nstiger im Orbit ausgefÃ¼hrt werden. Die AusrÃ¼stung neuer Kolonien mit vorgefertigten Orbitalfabriken gibt ihnen die MÃ¶glichkeit, die natÃ¼rlichen Rohstoffe des niedrigen Orbits zu nutzen.
 
 CON_PLANET_RING
 Planetenring
 
 CON_PLANET_RING_DESC
-Die Technik der Raumfahrstühle ist nun etabliert; dadurch wird ihre logische Erweiterung möglich. Indem man Fahrstühle ringförmig auf dem Planeten wie Speichen an einem Rad platziert und sie dann durch Ketten von Satelliten und Raumstationen verbindet, kann man einen Planetenring erbauen.
+Die Technik der RaumfahrstÃ¼hle ist nun etabliert; dadurch wird ihre logische Erweiterung mÃ¶glich. Indem man FahrstÃ¼hle ringfÃ¶rmig auf dem Planeten wie Speichen an einem Rad platziert und sie dann durch Ketten von Satelliten und Raumstationen verbindet, kann man einen Planetenring erbauen.
 
 CON_SPACE_ELEVATOR
 Weltraumlift
 
 CON_SPACE_ELEVATOR_DESC
-Die Materialien und Methoden der Nanokonstruktion eröffnen die Möglichkeit, ein Kabel zu schaffen, das zugfest genug ist, um in den niedrigen Orbit zu reichen und nicht zu zerreissen. Magnetisch am Kabel beförderte Fähren sind den teuren, ineffizienten und gefährlichen Raketenstarts überlegen.
+Die Materialien und Methoden der Nanokonstruktion erÃ¶ffnen die MÃ¶glichkeit, ein Kabel zu schaffen, das zugfest genug ist, um in den niedrigen Orbit zu reichen und nicht zu zerreissen. Magnetisch am Kabel befÃ¶rderte FÃ¤hren sind den teuren, ineffizienten und gefÃ¤hrlichen Raketenstarts Ã¼berlegen.
 
 CON_SUBTER_CONST
 Unterirdische Konstruktion
 
 CON_SUBTER_CONST_DESC
-Wenn der Platz knapp ist, liegt der heilige Gral der Konstruktion in der Fähigkeit, so leicht abwärts wie aufwärts zu bauen. Moderne Techniken machen dies möglich.
+Wenn der Platz knapp ist, liegt der heilige Gral der Konstruktion in der FÃ¤higkeit, so leicht abwÃ¤rts wie aufwÃ¤rts zu bauen. Moderne Techniken machen dies mÃ¶glich.
 
 CON_ORBITAL_INFRA
 Orbitale Infrastruktur
 
 CON_ORBITAL_INFRA_DESC
-Eine gut ausgebaute Versorgungsstruktur im Orbit gewährt große Flexibilität und eine schnelle Entwicklung der Produktionskapazität.
+Eine gut ausgebaute Versorgungsstruktur im Orbit gewÃ¤hrt groÃŸe FlexibilitÃ¤t und eine schnelle Entwicklung der ProduktionskapazitÃ¤t.
 
 ECO_COLONIAL_ECO
-Ökonomische Blaupausen
+Ã–konomische Blaupausen
 
 ECO_COLONIAL_ECO_DESC
-Jetzt, wo fortschrittliche ökonomische Planung sich durchgesetzt hat, kann die Ökonomie einer sich entwickelnden Welt wie ein physikalisches Gebäude geplant werden. Neue Märkte können nun ihr ganzes Wachstumspotential ausnutzen ohne in der unreifen "wilde Grenzen" - Mentalität stecken zu bleiben.
+Jetzt, wo fortschrittliche Ã¶konomische Planung sich durchgesetzt hat, kann die Ã–konomie einer sich entwickelnden Welt wie ein physikalisches GebÃ¤ude geplant werden. Neue MÃ¤rkte kÃ¶nnen nun ihr ganzes Wachstumspotential ausnutzen ohne in der unreifen "wilde Grenzen" - MentalitÃ¤t stecken zu bleiben.
 
 ECO_COMM_UNION
 Kommerzielle Union
 
 ECO_COMM_UNION_DESC
-Das Zusammenspiel verschiedenster Anwendungen, wie z. B. ökonomischer Spektroskopie, Biomimetik, digitaler Psychologie und fortschrittlicher Spieltheorie bewirkt einen Paradigmenwechsel in der Ökonomie. Es wird nun möglich, ökonomische Märkte von zuvor unvorstellbaren Größenordnungen zu organisieren.
+Das Zusammenspiel verschiedenster Anwendungen, wie z. B. Ã¶konomischer Spektroskopie, Biomimetik, digitaler Psychologie und fortschrittlicher Spieltheorie bewirkt einen Paradigmenwechsel in der Ã–konomie. Es wird nun mÃ¶glich, Ã¶konomische MÃ¤rkte von zuvor unvorstellbaren GrÃ¶ÃŸenordnungen zu organisieren.
 
 ECO_DEEP_GREEN
 Deep Green
 
 ECO_DEEP_GREEN_DESC
-Durch die komplexe Quantenfraktalnatur der Gleichungen in der ökonomischen Spektroskopie sind nur sehr oberflächliche Analysen für den Hauptanteil der Märkte durchführbar. Ein riesiger Computer, der von Grund auf für die Lösung solch unüblicher Algorithmen angelegt ist, könnte ein ganzes Imperium um ökonomischer Weitsicht und Stabilität bereichern.
+Durch die komplexe Quantenfraktalnatur der Gleichungen in der Ã¶konomischen Spektroskopie sind nur sehr oberflÃ¤chliche Analysen fÃ¼r den Hauptanteil der MÃ¤rkte durchfÃ¼hrbar. Ein riesiger Computer, der von Grund auf fÃ¼r die LÃ¶sung solch unÃ¼blicher Algorithmen angelegt ist, kÃ¶nnte ein ganzes Imperium um Ã¶konomischer Weitsicht und StabilitÃ¤t bereichern.
 
 ECO_ECO_ETHER
 Etherische Wirtschaft
 
 ECO_ECO_ETHER_DESC
-Im Exoduszeitalter der unendlichen Möglichkeiten tun sich die meisten Wirtschaftssysteme schwer, die althergebrachten Handelsmentalität aufzugeben. Der letzte Schritt der wirtschaftlichen Modernisierung ist, die veralteten, physischen ökonomischen Systeme ein für alle Mal hinter sich zu lassen und eine reinere Ebene der digitalen Information und virtuellen Präsenz zu beschreiten. Diese Neuerung verleiht den Märkten aller Welten, besonders den größten, Aufschwung.
+Im Exoduszeitalter der unendlichen MÃ¶glichkeiten tun sich die meisten Wirtschaftssysteme schwer, die althergebrachten HandelsmentalitÃ¤t aufzugeben. Der letzte Schritt der wirtschaftlichen Modernisierung ist, die veralteten, physischen Ã¶konomischen Systeme ein fÃ¼r alle Mal hinter sich zu lassen und eine reinere Ebene der digitalen Information und virtuellen PrÃ¤senz zu beschreiten. Diese Neuerung verleiht den MÃ¤rkten aller Welten, besonders den grÃ¶ÃŸten, Aufschwung.
 
 ECO_PARADISE
 Paradisplanet
 
 ECO_PARADISE_DESC
-Der Paradiesplanet ist das Urlaubsziel schlechthin, eine Welt dessen gesamte Wirtschaftsstruktur auf Tourismus und Unterhaltung ausgerichtet ist. Auch die Bewohner weit entfernter Welten würden von einem solchen Planeten profitieren.
+Der Paradiesplanet ist das Urlaubsziel schlechthin, eine Welt dessen gesamte Wirtschaftsstruktur auf Tourismus und Unterhaltung ausgerichtet ist. Auch die Bewohner weit entfernter Welten wÃ¼rden von einem solchen Planeten profitieren.
 
 ECO_SINKHOLE
-Ökonomischer Abfluss
+Ã–konomischer Abfluss
 
 ECO_SINKHOLE_DESC
-Betrachtet man die ökonomische Aktivität als eine Flüssigkeit, dann kann man auch ihren Fluss beeinträchtigen. Indem man einen lokalen Abfluss in der Oberfläche erzeugt, über die der Handel fliesst, werden auch weit vom Abfluss entfernte Handelszentren beeinflusst. Eine solche Störung des Handels breitet sich jedoch in alle Richtungen aus; dadurch ist es praktisch unmöglich, ein Ziel selektiv auszuwählen.
+Betrachtet man die Ã¶konomische AktivitÃ¤t als eine FlÃ¼ssigkeit, dann kann man auch ihren Fluss beeintrÃ¤chtigen. Indem man einen lokalen Abfluss in der OberflÃ¤che erzeugt, Ã¼ber die der Handel fliesst, werden auch weit vom Abfluss entfernte Handelszentren beeinflusst. Eine solche StÃ¶rung des Handels breitet sich jedoch in alle Richtungen aus; dadurch ist es praktisch unmÃ¶glich, ein Ziel selektiv auszuwÃ¤hlen.
 
 GRO_SELF_ROTATING_CROPS
 Self-Rotating Crops
@@ -3121,49 +3121,49 @@ GRO_BIOTERROR
 Bioterroranlage
 
 GRO_BIOTERROR_DESC
-Weiß nicht... sorgt dafür, dass die Leute langsamer wachsen.
+WeiÃŸ nicht... sorgt dafÃ¼r, dass die Leute langsamer wachsen.
 
 GRO_HABITATION_DOMES
 Habitatkuppeln
 
 GRO_HABITATION_DOMES_DESC
-Terraforming kann Planeten wohnlicher machen, doch der Vorgang ist kostspielig und zeitaufwändig.  Habitatkuppeln sind zwar eine begrenzte, aber auch schnelle und günstige Alternative, um die Bevölkerungskapazität unwohnlicher Planeten zu erhöhen. Mit ihrer Hilfe kann eine gewisse Infrastruktur und Ressourcenkapazität aufgebaut werden.\n\nErhöht das Bevölkerungsmaximum auf +2 auf Planeten mit Furchtbarer Umwelt mit einem aktueller Konstruktionswert von mindestens 20.
+Terraforming kann Planeten wohnlicher machen, doch der Vorgang ist kostspielig und zeitaufwÃ¤ndig.  Habitatkuppeln sind zwar eine begrenzte, aber auch schnelle und gÃ¼nstige Alternative, um die BevÃ¶lkerungskapazitÃ¤t unwohnlicher Planeten zu erhÃ¶hen. Mit ihrer Hilfe kann eine gewisse Infrastruktur und RessourcenkapazitÃ¤t aufgebaut werden.\n\nErhÃ¶ht das BevÃ¶lkerungsmaximum auf +2 auf Planeten mit Furchtbarer Umwelt mit einem aktueller Konstruktionswert von mindestens 20.
 
 GRO_CADUCEAN
-Das Kaduzäerinstitut
+Das KaduzÃ¤erinstitut
 
 GRO_CADUCEAN_DESC
-Die medizinischen Einrichtungen der prä-Exodus Era können nicht den Bedarf eines ganzen Imperiums abdecken. Durch sorgfältige Vorausplanung und Finanzierung könnte eine weitläufige, von der Regierung geführte medizinische Akademie realisiert werden. Das Haupquartier dieses Instituts würde als Zentrum der medizinischen Lehre und Praxis dienen, eine Eichmarke des imperialen Ruhms.
+Die medizinischen Einrichtungen der prÃ¤-Exodus Era kÃ¶nnen nicht den Bedarf eines ganzen Imperiums abdecken. Durch sorgfÃ¤ltige Vorausplanung und Finanzierung kÃ¶nnte eine weitlÃ¤ufige, von der Regierung gefÃ¼hrte medizinische Akademie realisiert werden. Das Haupquartier dieses Instituts wÃ¼rde als Zentrum der medizinischen Lehre und Praxis dienen, eine Eichmarke des imperialen Ruhms.
 
 GRO_GENOME_BANK
 Genombank
 
 GRO_GENOME_BANK_DESC
-Außer bei den einfachsten Genreparaturen verbleiben zu viele unbekannte Variablen in genetischen Kalkulationen, ganz zu Schweigen von den Auswirkungen, die eine genetische Modifikation möglicherweise in einer größeren Biosphere mit zahlreichen Spezies entfalten kann. Um die Vorzüge der genetischen Medizin vollständig nutzbar zu machen, ist es unabdingbar, eine umfassende Genomdatenbank für alle Spezies aller bekannten Welten zu erstellen.
+AuÃŸer bei den einfachsten Genreparaturen verbleiben zu viele unbekannte Variablen in genetischen Kalkulationen, ganz zu Schweigen von den Auswirkungen, die eine genetische Modifikation mÃ¶glicherweise in einer grÃ¶ÃŸeren Biosphere mit zahlreichen Spezies entfalten kann. Um die VorzÃ¼ge der genetischen Medizin vollstÃ¤ndig nutzbar zu machen, ist es unabdingbar, eine umfassende Genomdatenbank fÃ¼r alle Spezies aller bekannten Welten zu erstellen.
 
 GRO_LIVING_PLANET
 Der lebendige Planet
 
 GRO_LIVING_PLANET_DESC
-Theoretisch ist es möglich, die gesamte Ökologie eines einzelnen Planeten vorauszusagen, indem man das vollständige Netz seiner biologischen Abhängigkeiten, fühlend und nicht-fühlend, in Fraktalalgorithmen darstellt. In die Praxis umgesetzt werden könnte dies nur durch die Konstruktion eines den Planeten umspannendes Netzwerks, das für die Regulation der Biosphäre des Planeten programmiert ist. Dieser Computer wäre das Gehirn eines neuen Lebewesens - ein einziger planetarer Organismus, mit intelligenten Bewohnern als Bestandteil seines Gewebes, Diener des höheren Willens.
+Theoretisch ist es mÃ¶glich, die gesamte Ã–kologie eines einzelnen Planeten vorauszusagen, indem man das vollstÃ¤ndige Netz seiner biologischen AbhÃ¤ngigkeiten, fÃ¼hlend und nicht-fÃ¼hlend, in Fraktalalgorithmen darstellt. In die Praxis umgesetzt werden kÃ¶nnte dies nur durch die Konstruktion eines den Planeten umspannendes Netzwerks, das fÃ¼r die Regulation der BiosphÃ¤re des Planeten programmiert ist. Dieser Computer wÃ¤re das Gehirn eines neuen Lebewesens - ein einziger planetarer Organismus, mit intelligenten Bewohnern als Bestandteil seines Gewebes, Diener des hÃ¶heren Willens.
 
 GRO_ORBITAL_GARDENS
-Orbitale Gärten
+Orbitale GÃ¤rten
 
 GRO_ORBITAL_GARDENS_DESC
-Die orbitalen Gärten, ein Meisterstück der Kunst und des Handwerks, präsentieren als Ausstellungsstücke Flora der gesamten bekannten Galaxie, jedes in seiner eigenen künstlichen Umwelt in diesem kleinen, artifiziellen Mond.
+Die orbitalen GÃ¤rten, ein MeisterstÃ¼ck der Kunst und des Handwerks, prÃ¤sentieren als AusstellungsstÃ¼cke Flora der gesamten bekannten Galaxie, jedes in seiner eigenen kÃ¼nstlichen Umwelt in diesem kleinen, artifiziellen Mond.
 
 GRO_URBAN_FARM
 Stadtfarmen
 
 GRO_URBAN_FARM_DESC
-Auf industrialisierten Welten, wo bestellbares Land äußerst begrenzt ist, ist die Fähigkeit, Nahrung in mehrstöckigen Hydro- oder Aeroponiken herzustellen, für die Nahrungsversorgung unverzichtbar.
+Auf industrialisierten Welten, wo bestellbares Land Ã¤uÃŸerst begrenzt ist, ist die FÃ¤higkeit, Nahrung in mehrstÃ¶ckigen Hydro- oder Aeroponiken herzustellen, fÃ¼r die Nahrungsversorgung unverzichtbar.
 
 LRN_STELLAR_TOMOGRAPHY
 Stellartomographie
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im inneren eines Sterns rekonstruieren.  Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.\n\nErhöht die Forschung um +4 auf Forschung pro 10 Bevölkerung auf Planeten mit Primärfokus Forschung in Systemen mit schwarzem Loch.\nIn Systemen mit Neutronenstern beträgt der Bonus +3.\nBei Systemen mit blauen oder weißem Stern beträgt der Bonus +2.\nIn Systemen mit rotem, orangenem oder gelbem Stern beträgt der Bonus +1.
+Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die VorgÃ¤nge im inneren eines Sterns rekonstruieren.  Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind fÃ¼r diverse Forschungsprojekte ideal.\n\nErhÃ¶ht die Forschung um +4 auf Forschung pro 10 BevÃ¶lkerung auf Planeten mit PrimÃ¤rfokus Forschung in Systemen mit schwarzem Loch.\nIn Systemen mit Neutronenstern betrÃ¤gt der Bonus +3.\nBei Systemen mit blauen oder weiÃŸem Stern betrÃ¤gt der Bonus +2.\nIn Systemen mit rotem, orangenem oder gelbem Stern betrÃ¤gt der Bonus +1.
 
 LRN_OBSERVATORY_I
 Observatorium
@@ -3175,73 +3175,73 @@ LRN_AUTOLAB_I
 Autolabs
 
 LRN_AUTOLAB_I_DESC
-Automatisierte Laboratorien können unbeaufsichtigt forschen; es bleibt jedoch notwendig, den Laboratorien Forschungsrichtlinien vorzugeben und ihre Ergebnisse abzurufen.  Für die Kommunikation mit den Laboratorien wird ein spezialisiertes Kontrollzentrum benötigt.  Als Folge dessen können einzelne Welten ohne zusätzliche Kosten eigene Autolabs errichten; die Errichtung des Kontrollzentrums hingegen ist kostspielig.  Dieser Umstand macht Autolabs für Imperien mit Produktionsüberschuss und geringem Forschungsertrag attraktiv.  Ausserdem verschmutzen Autolabs die Umwelt mehr als Standardlaboratorien und beeinträchtigen die Gesundheit der Bevölkerung auf den Planeten, auf denen sie errichtet werden.
+Automatisierte Laboratorien kÃ¶nnen unbeaufsichtigt forschen; es bleibt jedoch notwendig, den Laboratorien Forschungsrichtlinien vorzugeben und ihre Ergebnisse abzurufen.  FÃ¼r die Kommunikation mit den Laboratorien wird ein spezialisiertes Kontrollzentrum benÃ¶tigt.  Als Folge dessen kÃ¶nnen einzelne Welten ohne zusÃ¤tzliche Kosten eigene Autolabs errichten; die Errichtung des Kontrollzentrums hingegen ist kostspielig.  Dieser Umstand macht Autolabs fÃ¼r Imperien mit ProduktionsÃ¼berschuss und geringem Forschungsertrag attraktiv.  Ausserdem verschmutzen Autolabs die Umwelt mehr als Standardlaboratorien und beeintrÃ¤chtigen die Gesundheit der BevÃ¶lkerung auf den Planeten, auf denen sie errichtet werden.
 
 LRN_THEOREM_PROVER
 Automatisierter Thesencomputer
 
 LRN_THEOREM_PROVER_DESC
-Abstrakte mathematische Entdeckungen haben oft unvorhergesehene praktische Anwendungen in der Wissenschaft.  Die steigende Komplexität der formalen Systeme verursacht eine längere Beweiszeit und verlangsamt den Fortschritt. Elegante algorithmische Methoden zur Automatisation des Beweisprozesses können dieses Problem lösen, aber die Entwicklung dieser Methoden selbst verlangt eine unheimliche wissenschaftliche Anstrengung. Deshalb gelingt nur Imperien, die sich langfristig auf Wissenschaft spezialisiert haben, die Erfindung des automatisierten Theoriecomputers.
+Abstrakte mathematische Entdeckungen haben oft unvorhergesehene praktische Anwendungen in der Wissenschaft.  Die steigende KomplexitÃ¤t der formalen Systeme verursacht eine lÃ¤ngere Beweiszeit und verlangsamt den Fortschritt. Elegante algorithmische Methoden zur Automatisation des Beweisprozesses kÃ¶nnen dieses Problem lÃ¶sen, aber die Entwicklung dieser Methoden selbst verlangt eine unheimliche wissenschaftliche Anstrengung. Deshalb gelingt nur Imperien, die sich langfristig auf Wissenschaft spezialisiert haben, die Erfindung des automatisierten Theoriecomputers.
 
 LRN_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 LRN_COLLECTIVE_NET_DESC
-Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.
+Durch die Ãœbertragung eines Geistes in den Cyberspace kÃ¶nnen unzÃ¤hlige Wesen vereint agieren und so Probleme lÃ¶sen und Gedanken fassen, die einem einzelnen Wesen nicht mÃ¶glich wÃ¤ren.
 
 LRN_DISTRIB_THOUGHT
 Hirnrechennetzwerk
 
 LRN_DISTRIB_THOUGHT_DESC
-Der Durchschnittsbürger verschwendet wortwörtlich sein Hirn, das eine der besten Rechenmaschinen des Universums darstellt. Indem sie sich durch einen simplen cybernetischen Transceiver in die untätigen Gehirne einer hinreichend großen Population einschalten, erhalten die Forschungszentren einer Welt Zugang zu günstiger, reichhaltiger Rechenleistung.
+Der DurchschnittsbÃ¼rger verschwendet wortwÃ¶rtlich sein Hirn, das eine der besten Rechenmaschinen des Universums darstellt. Indem sie sich durch einen simplen cybernetischen Transceiver in die untÃ¤tigen Gehirne einer hinreichend groÃŸen Population einschalten, erhalten die Forschungszentren einer Welt Zugang zu gÃ¼nstiger, reichhaltiger Rechenleistung.
 
 LRN_ENCLAVE_VOID
 Enklave der Leere
 
 LRN_ENCLAVE_VOID_DESC
-Das Studium des Geistes der Leere könnte beschleunigt werden, indem man die Bevölkerung einer ganzen Welt genetisch so manipuliert, dass sie auf die Leere abgestimmt wird. Diese neue Priesterklasse könnte die Sozialstruktur ihrer Welt auf eine Weise umstellen, dass sie die Weisheit des Geistes der Leere besser verstehen können und an das ganze Imperium weiterleiten können.
+Das Studium des Geistes der Leere kÃ¶nnte beschleunigt werden, indem man die BevÃ¶lkerung einer ganzen Welt genetisch so manipuliert, dass sie auf die Leere abgestimmt wird. Diese neue Priesterklasse kÃ¶nnte die Sozialstruktur ihrer Welt auf eine Weise umstellen, dass sie die Weisheit des Geistes der Leere besser verstehen kÃ¶nnen und an das ganze Imperium weiterleiten kÃ¶nnen.
 
 LRN_LOOKING_GLASS
 Die Lupe
 
 LRN_LOOKING_GLASS_DESC
-Die Lupe ist ein Fenster in die Raumzeit und als solches das ultimative Museum. Statt die Ruinen vergangener Zeiten auszugraben, wird es möglich, ein Fenster in die Zeit zu öffnen. Große Führer der Vergangenheit sind nicht nur durch Bücher und Holo-vids zugänglich, sondern können direkt beobachtet werden. Ein solches Museum würde Schwärme sowohl von Touristen als auch Akademikern anziehen.
+Die Lupe ist ein Fenster in die Raumzeit und als solches das ultimative Museum. Statt die Ruinen vergangener Zeiten auszugraben, wird es mÃ¶glich, ein Fenster in die Zeit zu Ã¶ffnen. GroÃŸe FÃ¼hrer der Vergangenheit sind nicht nur durch BÃ¼cher und Holo-vids zugÃ¤nglich, sondern kÃ¶nnen direkt beobachtet werden. Ein solches Museum wÃ¼rde SchwÃ¤rme sowohl von Touristen als auch Akademikern anziehen.
 
 LRN_MONUMENT_EXODUS
 Exodus - Monument
 
 LRN_MONUMENT_EXODUS_DESC
-Die großen Künstler und Mechaniker der Exodusgesellschaft werden versammelt, um einen Entwurf für ein passendes Wahrzeichen ihrer Erfolge zu erarbeiten und so das Exoduszeitalter einzuleiten.
+Die groÃŸen KÃ¼nstler und Mechaniker der Exodusgesellschaft werden versammelt, um einen Entwurf fÃ¼r ein passendes Wahrzeichen ihrer Erfolge zu erarbeiten und so das Exoduszeitalter einzuleiten.
 
 LRN_PSICORP
 PsiCorp
 
 LRN_PSICORP_DESC
-Es ist nun möglich, die in vereinzelten Individuen schlummernden psionischen Fähigkeiten bei der Geburt zu erkennen. Aber um ihre Begabung wirklich zu fördern, ist es notwendig, eine Akademie aufzubauen, die sich nur der Psionik widmet. Absolventen dieser Akademie würden eine hochspezialisierte Psi-Eliteeinheit bilden, die als Vermittler und Verstärker für die größten Forscher eines Imperiums eingesetzt werden können.
+Es ist nun mÃ¶glich, die in vereinzelten Individuen schlummernden psionischen FÃ¤higkeiten bei der Geburt zu erkennen. Aber um ihre Begabung wirklich zu fÃ¶rdern, ist es notwendig, eine Akademie aufzubauen, die sich nur der Psionik widmet. Absolventen dieser Akademie wÃ¼rden eine hochspezialisierte Psi-Eliteeinheit bilden, die als Vermittler und VerstÃ¤rker fÃ¼r die grÃ¶ÃŸten Forscher eines Imperiums eingesetzt werden kÃ¶nnen.
 
 PRO_AUTOFACTORY_I
 Automatisierte Fabriken
 
 PRO_AUTOFACTORY_I_DESC
-Automatisierte Fabriken müssen nicht direkt überwacht werden und erhöhen so den industriellen Ertrag; die Fabriken benötigen jedoch weiterhin Richtlinien, welche Güter benötigt werden. Für die Koordination dieser Prozesse wird ein spezialisiertes Kontrollzentrum benötigt; ausserdem muss eine komplexe Programmiersprache entwickelt werden, in der die Produktionsbefehle übertragen werden. Als Folge dessen ist der Einsatz automatisierter Fabriken hauptsächlich für Imperien geeignet, die sich auf Wissenschaft konzentrieren.  Für Imperien, die sich auf Produktion spezialisiert haben, sind andere Methoden zur Produktionsbeschleunigung effizienter.
+Automatisierte Fabriken mÃ¼ssen nicht direkt Ã¼berwacht werden und erhÃ¶hen so den industriellen Ertrag; die Fabriken benÃ¶tigen jedoch weiterhin Richtlinien, welche GÃ¼ter benÃ¶tigt werden. FÃ¼r die Koordination dieser Prozesse wird ein spezialisiertes Kontrollzentrum benÃ¶tigt; ausserdem muss eine komplexe Programmiersprache entwickelt werden, in der die Produktionsbefehle Ã¼bertragen werden. Als Folge dessen ist der Einsatz automatisierter Fabriken hauptsÃ¤chlich fÃ¼r Imperien geeignet, die sich auf Wissenschaft konzentrieren.  FÃ¼r Imperien, die sich auf Produktion spezialisiert haben, sind andere Methoden zur Produktionsbeschleunigung effizienter.
 
 PRO_HEAVY_MINING_I
 Teilautomatisierter Massenbergbau
 
 PRO_HEAVY_MINING_I_DESC
-Wenn die Rohstoffproduktion im Vordergrund steht, keine Umweltbedenken bestehen und die Umgebung es erlaubt, kann teilautomatisierter Massenbergbau das Mittel der Wahl sein.  Umfangreiche Verarbeitungskapazitäten und zentralisierte Erzverarbeitungsstätten sind unerlässlich.
+Wenn die Rohstoffproduktion im Vordergrund steht, keine Umweltbedenken bestehen und die Umgebung es erlaubt, kann teilautomatisierter Massenbergbau das Mittel der Wahl sein.  Umfangreiche VerarbeitungskapazitÃ¤ten und zentralisierte ErzverarbeitungsstÃ¤tten sind unerlÃ¤sslich.
 
 PRO_ENVIRO_MINING_I
 Umweltbewusster Bergbau
 
 PRO_ENVIRO_MINING_I_DESC
-Viele Bergbautechniken können auf stark bevölkerten Planeten wegen des Schadens, den sie der Umwelt zufügen, nicht eingesetzt werden.  Durch die Beachtung der planetaren Ökologie und Begrenzung des Bergbaus können Schäden an der Umwelt vermieden werden.  Es werden zwar weniger Rohstoffe pro Bevölkerung als bei extremeren Methoden hergestellt, aber die zusätzliche Bevölkerung kann dies bis zu einem gewissen Maße ausgleichen. Diese Begrenzungstechniken sind nur auf Planeten mit hoher Bevölkerungszahl geeignet: hervorragend oder optimal je nach Rasse.\n\nErhöht die Rohstoffproduktion um +2 pro 10 Bevölkerung auf Planeten mit Primärfokus Bergbau.\nErhöht die Rohstoffproduktion um +1 pro 10 Bevölkerung auf Planeten mit Primärfokus Ausgeglichen und Sekundärfokus Bergbau.\nSind Primär- und Sekundärfokus Bergbau, erhöht sich die Rohstoffproduktion um +3 pro 10 Bevölkerung.
+Viele Bergbautechniken kÃ¶nnen auf stark bevÃ¶lkerten Planeten wegen des Schadens, den sie der Umwelt zufÃ¼gen, nicht eingesetzt werden.  Durch die Beachtung der planetaren Ã–kologie und Begrenzung des Bergbaus kÃ¶nnen SchÃ¤den an der Umwelt vermieden werden.  Es werden zwar weniger Rohstoffe pro BevÃ¶lkerung als bei extremeren Methoden hergestellt, aber die zusÃ¤tzliche BevÃ¶lkerung kann dies bis zu einem gewissen MaÃŸe ausgleichen. Diese Begrenzungstechniken sind nur auf Planeten mit hoher BevÃ¶lkerungszahl geeignet: hervorragend oder optimal je nach Rasse.\n\nErhÃ¶ht die Rohstoffproduktion um +2 pro 10 BevÃ¶lkerung auf Planeten mit PrimÃ¤rfokus Bergbau.\nErhÃ¶ht die Rohstoffproduktion um +1 pro 10 BevÃ¶lkerung auf Planeten mit PrimÃ¤rfokus Ausgeglichen und SekundÃ¤rfokus Bergbau.\nSind PrimÃ¤r- und SekundÃ¤rfokus Bergbau, erhÃ¶ht sich die Rohstoffproduktion um +3 pro 10 BevÃ¶lkerung.
 
 PRO_ASTEROID_MINE
 Asteroidenbergbau
 
 PRO_ASTEROID_MINE_DESC
-Die erste Anwendung der Methoden des Asteroidenbergbau ermöglicht einen moderaten Bonus auf die Rohstoffproduktion in Systemen mit zur Ausbeutung geeigneten Asteroidengürteln.  Auf allen Planeten des Systems erhöht sich die Rohstoffproduktion, so dass auch Planeten, deren Umwelt den Bergbau erschwert, große Rohstofferträge pro Bevölkerungseinheit erbringen.  Normalerweise ist ein grosser Bergbauertrag pro Bevölkerungseinheit auf Planeten mit niedriger Bevölkerungskapazität beschränkt, was den tatsächlichen Rohstoffertrag einschränkt.
+Die erste Anwendung der Methoden des Asteroidenbergbau ermÃ¶glicht einen moderaten Bonus auf die Rohstoffproduktion in Systemen mit zur Ausbeutung geeigneten AsteroidengÃ¼rteln.  Auf allen Planeten des Systems erhÃ¶ht sich die Rohstoffproduktion, so dass auch Planeten, deren Umwelt den Bergbau erschwert, groÃŸe RohstoffertrÃ¤ge pro BevÃ¶lkerungseinheit erbringen.  Normalerweise ist ein grosser Bergbauertrag pro BevÃ¶lkerungseinheit auf Planeten mit niedriger BevÃ¶lkerungskapazitÃ¤t beschrÃ¤nkt, was den tatsÃ¤chlichen Rohstoffertrag einschrÃ¤nkt.
 
 PRO_ORBITAL_MINE
 Orbitaler Bergbau
@@ -3256,46 +3256,46 @@ PRO_CORE_MINE_DESC
 The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 PRO_ART_BLACK_HOLE
-Künstliches schwarzes Loch
+KÃ¼nstliches schwarzes Loch
 
 PRO_ART_BLACK_HOLE_DESC
-Durch einen kontrollierten Singularitätenkollaps in einem fernen Sonnenorbit liesse sich eine bequem lokalisierte Quelle unbegrenzter Kraft schaffen. Dies wäre zwar eine sehr kostenaufwendige und gefährliche Aufgabe, doch von großem Nutzen.
+Durch einen kontrollierten SingularitÃ¤tenkollaps in einem fernen Sonnenorbit liesse sich eine bequem lokalisierte Quelle unbegrenzter Kraft schaffen. Dies wÃ¤re zwar eine sehr kostenaufwendige und gefÃ¤hrliche Aufgabe, doch von groÃŸem Nutzen.
 
 PRO_EXOBOTS
 Exobots
 
 PRO_EXOBOTS_DESC
-Exobots vereinen auf einzigartige Weise Formschönheit und Funktionalität. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen können, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und können hervorragend in Kolonien einsetzen, die nicht die Infrastruktur und Arbeitskräfte für spezialisierte Fabriken besitzen. Jede Kolonie erhält einen Standartsatz Exobots, welche die frühe Entwicklung der Kolonie maßgeblich beschleunigen.
+Exobots vereinen auf einzigartige Weise FormschÃ¶nheit und FunktionalitÃ¤t. Es handelt sich dabei um Roboter, die nahezu jegliche Montagearbeit erledigen kÃ¶nnen, von Elektrotechnik hin zu weitreichenden Bauarbeiten. Sie lassen sich leicht in Massen herstellen und kÃ¶nnen hervorragend in Kolonien einsetzen, die nicht die Infrastruktur und ArbeitskrÃ¤fte fÃ¼r spezialisierte Fabriken besitzen. Jede Kolonie erhÃ¤lt einen Standartsatz Exobots, welche die frÃ¼he Entwicklung der Kolonie maÃŸgeblich beschleunigen.
 
 PRO_FUSION_PLANTS
 Fusionskraftwerke
 
 PRO_FUSION_PLANTS_DESC
-Obwohl die Herstellung und Unterhaltung von Fusionskraftwerken teuer ist, machen sie sich auf industrialisierten Welten mit steigendem Energiebedarf bezahlt. Die alten, auf Kernspaltung basierenden Kernkraftwerke werden allmählich ein Ding der Vergangenheit.
+Obwohl die Herstellung und Unterhaltung von Fusionskraftwerken teuer ist, machen sie sich auf industrialisierten Welten mit steigendem Energiebedarf bezahlt. Die alten, auf Kernspaltung basierenden Kernkraftwerke werden allmÃ¤hlich ein Ding der Vergangenheit.
 
 PRO_HYPER_DAM
 Hyperspatialdamm
 
 PRO_HYPER_DAM_DESC
-Eine der größten Ängste der n-dimensionalen Physiker ist nun ihr höchstes Ziel: einen hyperspatialen Riss willentlich zwischen unserem und den nächsten Universum zu schaffen, aber innerhalb einer Dimensionsblase, sicher von der Raumzeit getrennt. Wenn das zu Stande gebracht werden könnte, wäre es eine recht einfache Angelegenheit, sich des enormen Energieflusses durch den Rift zu bedienen.
+Eine der grÃ¶ÃŸten Ã„ngste der n-dimensionalen Physiker ist nun ihr hÃ¶chstes Ziel: einen hyperspatialen Riss willentlich zwischen unserem und den nÃ¤chsten Universum zu schaffen, aber innerhalb einer Dimensionsblase, sicher von der Raumzeit getrennt. Wenn das zu Stande gebracht werden kÃ¶nnte, wÃ¤re es eine recht einfache Angelegenheit, sich des enormen Energieflusses durch den Rift zu bedienen.
 
 PRO_MINI_SUN
 Miniatursonne
 
 PRO_MINI_SUN_DESC
-Eine magnetisch abgeschirmte, sich selbst aufrecht erhaltende Fusionsreaktion kann sicher hergestellt und in einem Orbit auf der Nachtseite eines Planeten platziert werden. Dieser neue Stern würde den Nachthimmel erhellen und mit seiner dem Planeten abgewandten Seite als gewaltiges Fusionskraftwerk dienen.
+Eine magnetisch abgeschirmte, sich selbst aufrecht erhaltende Fusionsreaktion kann sicher hergestellt und in einem Orbit auf der Nachtseite eines Planeten platziert werden. Dieser neue Stern wÃ¼rde den Nachthimmel erhellen und mit seiner dem Planeten abgewandten Seite als gewaltiges Fusionskraftwerk dienen.
 
 PRO_MINING_ENGINEERING
 Bergbauplanungswesen
 
 PRO_MINING_ENGINEERING_DESC
-Die Anwendung von Konzepten der planetaren Geologie erlaubt die effiziente Extraktion von oberflächennahen Mineralien des Planeten. Durch die Identifikation wahrscheinlicher Orte und geeigneter Extraktionsmethoden kann die Effizienz und die insgesamt mögliche Produktion erhöht werden. Des weiteren verbessert vorrausschauende Planung und Analyse die Sicherheit und Dauerhaftigkeit der Bergwerke.
+Die Anwendung von Konzepten der planetaren Geologie erlaubt die effiziente Extraktion von oberflÃ¤chennahen Mineralien des Planeten. Durch die Identifikation wahrscheinlicher Orte und geeigneter Extraktionsmethoden kann die Effizienz und die insgesamt mÃ¶gliche Produktion erhÃ¶ht werden. Des weiteren verbessert vorrausschauende Planung und Analyse die Sicherheit und Dauerhaftigkeit der Bergwerke.
 
 PRO_INDUSTRY_CENTRE_I
 Lokale Industriezentren
 
 PRO_INDUSTRY_CENTRE_I_DESC
-Industrielle Prozesse zwischen Planeten und Sternensystemen können in großen, zentralisierten Komplexen koordiniert werden.\n\nDie Baukosten, die Bauzeit eines Gebäudes und auch sein zukünftiges Wachstumspotential setzen eine sorgfältige Planung voraus. [!!!] Um grosse Gewinnspannen zu ermöglichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses Gebäude ist damit für Produktions-orientierte Strategien geeignet, nicht aber auf Forschung ausgerichtete Imperien.
+Industrielle Prozesse zwischen Planeten und Sternensystemen kÃ¶nnen in groÃŸen, zentralisierten Komplexen koordiniert werden.\n\nDie Baukosten, die Bauzeit eines GebÃ¤udes und auch sein zukÃ¼nftiges Wachstumspotential setzen eine sorgfÃ¤ltige Planung voraus. [!!!] Um grosse Gewinnspannen zu ermÃ¶glichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses GebÃ¤ude ist damit fÃ¼r Produktions-orientierte Strategien geeignet, nicht aber auf Forschung ausgerichtete Imperien.
 
 PRO_ENERGY_CONV
 Energy Conversion
@@ -3355,13 +3355,13 @@ SHP_RADAR
 Aktiver Radar
 
 SHP_RADAR_DESC
-Ermöglicht das Schiffsteil Aktiver Radar.
+ErmÃ¶glicht das Schiffsteil Aktiver Radar.
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
 
 SHP_DEUTERIUM_TANK_DESC
-Ermöglicht Schiffsteil Deuterium Tank.
+ErmÃ¶glicht Schiffsteil Deuterium Tank.
 
 SHP_MEDIUM_HULL
 Mittl. Schiffsrumpf
@@ -3370,16 +3370,16 @@ SHP_MEDIUM_HULL_DESC
 Mittlerer Schiffsrumpf BlaBla
 
 SHP_LARGE_HULL
-Großer Schiffsrumpf
+GroÃŸer Schiffsrumpf
 
 SHP_LARGE_HULL_DESC
-Großer Schiffsrumpf BlaBla
+GroÃŸer Schiffsrumpf BlaBla
 
 SHP_HUGE_HULL
-Rießiger Schiffsrumpf
+RieÃŸiger Schiffsrumpf
 
 SHP_HUGE_HULL_DESC
-Rießiger Schiffsrumpf BlaBla
+RieÃŸiger Schiffsrumpf BlaBla
 
 ########################################
 # Tech Refinement Names & Descriptions #
@@ -3392,19 +3392,19 @@ PRO_ASTEROID_MINE_II
 Fortschrittliche Asteroidenbergwerke
 
 PRO_ASTEROID_MINE_II_DESC
-Langjährige Erfahrung im Asteroidenbergbau ermöglicht die Verfeinerung der Bergbautechniken.  Auf allen Planeten des Systems mit Primärfokus Bergbau werden zusätzliche Rohstoffe extrahiert.
+LangjÃ¤hrige Erfahrung im Asteroidenbergbau ermÃ¶glicht die Verfeinerung der Bergbautechniken.  Auf allen Planeten des Systems mit PrimÃ¤rfokus Bergbau werden zusÃ¤tzliche Rohstoffe extrahiert.
 
 PRO_INDUSTRY_CENTRE_II
 Erweitertes lokales Industriezentrum
 
 PRO_INDUSTRY_CENTRE_II_DESC
-Ein zentralisieres Management verstreuter Industrieprozesse verbessert die Reichweite und die Größe der industriellen Produktion.
+Ein zentralisieres Management verstreuter Industrieprozesse verbessert die Reichweite und die GrÃ¶ÃŸe der industriellen Produktion.
 
 PRO_INDUSTRY_CENTRE_III
 Hochentwickeltes lokales Industriezentrum
 
 PRO_INDUSTRY_CENTRE_III_DESC
-Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion.
+Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermÃ¶glichen eine zusÃ¤tzliche Verbesserung der industriellen Produktion.
 
 #################################
 # Building Names & Descriptions #
@@ -3436,49 +3436,49 @@ BLD_BIOTERROR_PROJECTOR
 Bioterror Angriffsbasis
 
 BLD_BIOTERROR_PROJECTOR_DESC
-Wird durch Bioterrorfabriken verfügbar.  Vermindert die Gesundheit nahe gelegener Planeten durch geringgradige biologische Kriegsführung.\n\nPlaneten, die zwei Sternstrassen entfernt liegen, erhalten einen Malus von -4 auf maximale Gesundheit.\nPlaneten, die zum Imperium gehören, das die Angriffsbasis besitzt, erhalten einen Bonus von +1 auf maximale Gesundheit.\nBesitzt das Imperium kein Bioterror Forschungszentrum, entfällt die Funktion der Angriffsbasis.
+Wird durch Bioterrorfabriken verfÃ¼gbar.  Vermindert die Gesundheit nahe gelegener Planeten durch geringgradige biologische KriegsfÃ¼hrung.\n\nPlaneten, die zwei Sternstrassen entfernt liegen, erhalten einen Malus von -4 auf maximale Gesundheit.\nPlaneten, die zum Imperium gehÃ¶ren, das die Angriffsbasis besitzt, erhalten einen Bonus von +1 auf maximale Gesundheit.\nBesitzt das Imperium kein Bioterror Forschungszentrum, entfÃ¤llt die Funktion der Angriffsbasis.
 
 BLD_BIOTERROR_LAB
 Bioterror Forschungszentrum
 
 BLD_BIOTERROR_LAB_DESC
-Wird durch Bioterrorfabriken verfügbar.  Notwendig für den Bau von Bioterror Angriffsbasen.\n\n Entzieht -2 von der maximale Gesundheit der Planeten im System, wo die Basis errichtet wird, unabhängig davon, wem der Planet gehört.
+Wird durch Bioterrorfabriken verfÃ¼gbar.  Notwendig fÃ¼r den Bau von Bioterror Angriffsbasen.\n\n Entzieht -2 von der maximale Gesundheit der Planeten im System, wo die Basis errichtet wird, unabhÃ¤ngig davon, wem der Planet gehÃ¶rt.
 
 BLD_AUTOFACTORY_CONTROL
 Autofabrik - Kontrollzentrum
 
 BLD_AUTOFACTORY_CONTROL_DESC
-Wird durch KI - Autofabriken verfügbar.\n\nGewährt einen Bonus von +2 auf maximale Produktion pro 10 Bevölkerungseinheiten auf Planeten mit Primärfokus Industrie.\nAuf Planeten mit Sekundärfokus Industrie beträgt der Bonus +1.
+Wird durch KI - Autofabriken verfÃ¼gbar.\n\nGewÃ¤hrt einen Bonus von +2 auf maximale Produktion pro 10 BevÃ¶lkerungseinheiten auf Planeten mit PrimÃ¤rfokus Industrie.\nAuf Planeten mit SekundÃ¤rfokus Industrie betrÃ¤gt der Bonus +1.
 
 BLD_AUTOLAB_CONTROL
 Autolab - Kontrollzentrum
 
 BLD_AUTOLAB_CONTROL_DESC
-Wird durch KI - Autolabs verfügbar.\n\nGewährt einen Bonus von +2 auf maximale Forschung pro 10 Bevölkerungseinheiten und -2 auf maximale Gesundheit auf Planeten mit Primärfokus Forschung.\n Auf Planeten mit Sekundärfokus Forschung beträgt der Bonus +1.
+Wird durch KI - Autolabs verfÃ¼gbar.\n\nGewÃ¤hrt einen Bonus von +2 auf maximale Forschung pro 10 BevÃ¶lkerungseinheiten und -2 auf maximale Gesundheit auf Planeten mit PrimÃ¤rfokus Forschung.\n Auf Planeten mit SekundÃ¤rfokus Forschung betrÃ¤gt der Bonus +1.
 
 BLD_THEOREM_PROVER
 Automatisierter Thesencomputer
 
 BLD_THEOREM_PROVER_DESC
-Wird durch den automatisierten Thesencomputer verfügbar.\n\nGewährt einen Bonus von +5 auf maximale Forschung pro 10 Bevölkerungseinheiten auf Planeten mit Primärfokus Forschung (nicht kumulativ).\nAuf Planeten mit Sekundärfokus Forschung beträgt der Bonus +1.
+Wird durch den automatisierten Thesencomputer verfÃ¼gbar.\n\nGewÃ¤hrt einen Bonus von +5 auf maximale Forschung pro 10 BevÃ¶lkerungseinheiten auf Planeten mit PrimÃ¤rfokus Forschung (nicht kumulativ).\nAuf Planeten mit SekundÃ¤rfokus Forschung betrÃ¤gt der Bonus +1.
 
 BLD_LIGHTHOUSE
 Interstellarer Leuchtturm
 
 BLD_LIGHTHOUSE_DESC
-Hat keinen Effekt.  Eventuell könnte dieses Gebäude in Zukunft Schiffe beschleunigen, den Handel ankurbeln, oder angrenzende Sternenstrassen besser sichtbar machen (und so indirekt den Handel fördern)...
+Hat keinen Effekt.  Eventuell kÃ¶nnte dieses GebÃ¤ude in Zukunft Schiffe beschleunigen, den Handel ankurbeln, oder angrenzende Sternenstrassen besser sichtbar machen (und so indirekt den Handel fÃ¶rdern)...
 
 BLD_HEAVY_MINE_PROCESSOR
 Bergbauverarbeitungsstation
 
 BLD_HEAVY_MINE_PROCESSOR_DESC
-Wird durch Bergbauverarbeitungsstation verfügbar.\n\nErzeugt +5 Bergau auf Planeten mit Fokus auf Bergbau (nicht kumulativ) innerhalb eines Radius von 100 um die Station. Der Planet muss vom Typ unfruchtbar, verstrahlt, toxisch oder vulkanisch sein.  Der Planet, auf dem die Station errichtet wird, erhält +2 auf Bergbau und -5 auf Landwirtschaft (beide nicht kumulativ).
+Wird durch Bergbauverarbeitungsstation verfÃ¼gbar.\n\nErzeugt +5 Bergau auf Planeten mit Fokus auf Bergbau (nicht kumulativ) innerhalb eines Radius von 100 um die Station. Der Planet muss vom Typ unfruchtbar, verstrahlt, toxisch oder vulkanisch sein.  Der Planet, auf dem die Station errichtet wird, erhÃ¤lt +2 auf Bergbau und -5 auf Landwirtschaft (beide nicht kumulativ).
 
 BLD_INDUSTRY_CENTRE
 Lokales Industriezentrum
 
 BLD_INDUSTRY_CENTRE_DESC
-'''Wird durch lokale Industriezentren verfügbar.\n\nErzeugt anfänglich +5 Industrie für Planeten mit Fokus auf Industrie (nicht kumulativ), die innerhalb eines Radius von 100 des Zentrums liegen.\n\nDie Erweiterung "erweitertes lokales Industriezentrum" erhöht den Bonus auf +6 und erhöht den Radius auf 200.\n\nDie Erweiterung "hochentwickeltes lokales Industriezentrum" erhöht den Bonus auf +7 und den Radius auf 300.
+'''Wird durch lokale Industriezentren verfÃ¼gbar.\n\nErzeugt anfÃ¤nglich +5 Industrie fÃ¼r Planeten mit Fokus auf Industrie (nicht kumulativ), die innerhalb eines Radius von 100 des Zentrums liegen.\n\nDie Erweiterung "erweitertes lokales Industriezentrum" erhÃ¶ht den Bonus auf +6 und erhÃ¶ht den Radius auf 200.\n\nDie Erweiterung "hochentwickeltes lokales Industriezentrum" erhÃ¶ht den Bonus auf +7 und den Radius auf 300.
 
 [[tech PRO_INDUSTRY_CENTRE_II]] refinement increases bonus to +6 and increases distance to 200.
 
@@ -3488,7 +3488,7 @@ BLD_ASTEROID_MINE
 Asteroidenbergwerk
 
 BLD_ASTEROID_MINE_DESC
-Wird durch einfachen Asteroidenbergbau verfügbar und erzeugt anfänglich +4 Rohstoffen pro 10 Bevölkerungseinheiten auf den Planeten im System mit dem Asteroidengürtel. \nDurch fortschrittlichem Asteroidenbergbau werden +8 Rohstoffe erzeugt.
+Wird durch einfachen Asteroidenbergbau verfÃ¼gbar und erzeugt anfÃ¤nglich +4 Rohstoffen pro 10 BevÃ¶lkerungseinheiten auf den Planeten im System mit dem AsteroidengÃ¼rtel. \nDurch fortschrittlichem Asteroidenbergbau werden +8 Rohstoffe erzeugt.
 
 BLD_GRAVITY_WELLS
 Schwerkraftgeneratoren
@@ -3500,31 +3500,31 @@ BLD_MEGALITH
 Megalith
 
 BLD_MEGALITH_DESC
-Der Megalith ist ein architektonisches Wunder der Exodus - Era; es handelt sich um einen ungewöhnlich gewaltigen Wolkenkratzer, der einen kilometerweiten Durchmesser besitzt. Der Megalith inspiriert die Architekten des ganzen Sektors und ist oft das Kronjuwel eines mächtigen Immobilienmoguls.
+Der Megalith ist ein architektonisches Wunder der Exodus - Era; es handelt sich um einen ungewÃ¶hnlich gewaltigen Wolkenkratzer, der einen kilometerweiten Durchmesser besitzt. Der Megalith inspiriert die Architekten des ganzen Sektors und ist oft das Kronjuwel eines mÃ¤chtigen Immobilienmoguls.
 
 BLD_PLANET_RING
 Planetenring
 
 BLD_PLANET_RING_DESC
-Ein Planetenring ist ein Kreis von Satelliten, die eine Welt vollständig umringen. Durch speichenartige Raumfahrstühle ist der Ring am Äquator befestigt. Er dient als Wohnraum, für Montage bei niedriger Schwerkraft und interplanetaren Handel.
+Ein Planetenring ist ein Kreis von Satelliten, die eine Welt vollstÃ¤ndig umringen. Durch speichenartige RaumfahrstÃ¼hle ist der Ring am Ã„quator befestigt. Er dient als Wohnraum, fÃ¼r Montage bei niedriger Schwerkraft und interplanetaren Handel.
 
 BLD_SPACE_ELEVATOR
 Weltraumlift
 
 BLD_SPACE_ELEVATOR_DESC
-Ein enormes und nahezu unzerreissbares Kabel, dass an einem Ende mit einem Satelliten im niedrigen geostationären Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplatform befindet. Der Raumfahrstuhl fördert den Handel im ganzen System.
+Ein enormes und nahezu unzerreissbares Kabel, dass an einem Ende mit einem Satelliten im niedrigen geostationÃ¤ren Orbit verbunden ist, und an dessen Ende zum Planeten hin sich eine Startplatform befindet. Der Raumfahrstuhl fÃ¶rdert den Handel im ganzen System.
 
 BLD_COMM_UNION
 Kommerzielle Union
 
 BLD_COMM_UNION_DESC
-Die kommerzielle Union der Kolonien (KUK) ist eine Organisation, die sich der Regulation des galaktischen Markts widmet. Das erste Imperium, das die KUK fertig stellt, erhält einen Handelsbonus auf allen Planeten des Imperiums.
+Die kommerzielle Union der Kolonien (KUK) ist eine Organisation, die sich der Regulation des galaktischen Markts widmet. Das erste Imperium, das die KUK fertig stellt, erhÃ¤lt einen Handelsbonus auf allen Planeten des Imperiums.
 
 BLD_DEEP_GREEN
 Deep Green
 
 BLD_DEEP_GREEN_DESC
-Ein zentraler Computer zur Wirtschaftsvorhersage, der mit den Daten sämtlicher ökonomischer Märkte der bekannten Galaxie versorgt wird, nahezu perfekte ökonomische Voraussicht besitzt und zur Unterstützung aller Märkte des Imperiums eingesetzt wird.
+Ein zentraler Computer zur Wirtschaftsvorhersage, der mit den Daten sÃ¤mtlicher Ã¶konomischer MÃ¤rkte der bekannten Galaxie versorgt wird, nahezu perfekte Ã¶konomische Voraussicht besitzt und zur UnterstÃ¼tzung aller MÃ¤rkte des Imperiums eingesetzt wird.
 
 BLD_PARADISE
 Paradisplanet
@@ -3533,88 +3533,88 @@ BLD_PARADISE_DESC
 Ein Planet, dessen gesamte Infrastruktur auf Tourismus ausgerichtet ist und dem Handel und Tourismus der Region einen enormen Aufschwung verleiht, aber zu diesem Zweck nahezu den ganzen Ertrag aus Bergbau und Industrie verbraucht.
 
 BLD_CADUCEAN
-Das Kaduzäerinstitut
+Das KaduzÃ¤erinstitut
 
 BLD_CADUCEAN_DESC
-Dieses Institut ist die größte medizinische Akademie im Imperium und ein Behandlungscenter für Krankheiten; es bietet hochqualitative Gesundheitsfürsorge für alle kommenden Generationen des Imperiums.
+Dieses Institut ist die grÃ¶ÃŸte medizinische Akademie im Imperium und ein Behandlungscenter fÃ¼r Krankheiten; es bietet hochqualitative GesundheitsfÃ¼rsorge fÃ¼r alle kommenden Generationen des Imperiums.
 
 BLD_GENOME_BANK
 Genombank
 
 BLD_GENOME_BANK_DESC
-Die Genombank ist eine unvorstellbar gewaltige Datenbank, die Genkarten von den Genomen aller dem Imperium bekannten Organismen besitzt. Diese Datenbank ist für die Behandlung von Krankheiten und den Aufbau von landwirtschaftlichen Kolonien unverzichtbar.
+Die Genombank ist eine unvorstellbar gewaltige Datenbank, die Genkarten von den Genomen aller dem Imperium bekannten Organismen besitzt. Diese Datenbank ist fÃ¼r die Behandlung von Krankheiten und den Aufbau von landwirtschaftlichen Kolonien unverzichtbar.
 
 BLD_LIVING_PLANET
 Der lebende Planet
 
 BLD_LIVING_PLANET_DESC
-Ein Planet kann durch ein fühlendes, praktisch Gott-artiges, zellbasiertes Computerprogramm in einen lebenden Planeten umgewandelt werden. Dieser Planet ist wunderbar anzuschauen und in der gesamten bekannten Galaxie als Ausdruck von Leben und Harmonie bekannt. Die Bewohner dieser Welt denken und handeln als Teil eines größeren Organismus und dienen ihren Bedürfnissen und denen des Planeten zugleich. Der Ertrag von Bergbau und Industrie ist jedoch stark eingeschränkt, da solche Aktivitäten die globale Harmonie stören.
+Ein Planet kann durch ein fÃ¼hlendes, praktisch Gott-artiges, zellbasiertes Computerprogramm in einen lebenden Planeten umgewandelt werden. Dieser Planet ist wunderbar anzuschauen und in der gesamten bekannten Galaxie als Ausdruck von Leben und Harmonie bekannt. Die Bewohner dieser Welt denken und handeln als Teil eines grÃ¶ÃŸeren Organismus und dienen ihren BedÃ¼rfnissen und denen des Planeten zugleich. Der Ertrag von Bergbau und Industrie ist jedoch stark eingeschrÃ¤nkt, da solche AktivitÃ¤ten die globale Harmonie stÃ¶ren.
 
 BLD_ORBITAL_GARDENS
-Orbitale Gärten
+Orbitale GÃ¤rten
 
 BLD_ORBITAL_GARDENS_DESC
-Die orbitalen Gärten sind ein enormer, Mond-artiger Sattelit im Orbit über einer Welt; sie sind in der ganzen Galaxie das Wahrzeichen eurer Fähigkeit, die Umwelt zu kontrollieren. Davon abgesehen, dass sie eine hervorragende Touristenattraktion sind, fördern die hier stattfindenden Forschungsprojekte auch die Landwirtschaft auf allen Welten eures Imperiums.
+Die orbitalen GÃ¤rten sind ein enormer, Mond-artiger Sattelit im Orbit Ã¼ber einer Welt; sie sind in der ganzen Galaxie das Wahrzeichen eurer FÃ¤higkeit, die Umwelt zu kontrollieren. Davon abgesehen, dass sie eine hervorragende Touristenattraktion sind, fÃ¶rdern die hier stattfindenden Forschungsprojekte auch die Landwirtschaft auf allen Welten eures Imperiums.
 
 BLD_COLLECTIVE_NET
 Kollektives Gedankennetzwerk
 
 BLD_COLLECTIVE_NET_DESC
-Durch die Übertragung eines Geistes in den Cyberspace können unzählige Wesen vereint agieren und so Probleme lösen und Gedanken fassen, die einem einzelnen Wesen nicht möglich wären.
+Durch die Ãœbertragung eines Geistes in den Cyberspace kÃ¶nnen unzÃ¤hlige Wesen vereint agieren und so Probleme lÃ¶sen und Gedanken fassen, die einem einzelnen Wesen nicht mÃ¶glich wÃ¤ren.
 
 BLD_ENCLAVE_VOID
 Enklave der Leere
 
 BLD_ENCLAVE_VOID_DESC
-Die Bevölkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmen sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler höherer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave können auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken. Diese Welt kann in Bergbau und Industrie niemals einen höheren Ertrag als 30 erbringen.
+Die BevÃ¶lkerung eines ganzen Planeten wird genetisch auf den Geist der Leere ausgerichtet und widmen sich ganz der Aufgabe, seine Weisheit dem Imperium mitzuteilen. Die Mitglieder der Enklave der Leere werden als Priester erachtet und als Vermittler hÃ¶herer Weisheit. In allen wichtigen Angelegenheiten des Imperiums wird ihr Rat eingeholt. Botschafter der Enklave kÃ¶nnen auch ausgesandt werden, um bei Forschungsprojekten des Imperiums mitzuwirken. Diese Welt kann in Bergbau und Industrie niemals einen hÃ¶heren Ertrag als 30 erbringen.
 
 BLD_LOOKING_GLASS
 Die Lupe
 
 BLD_LOOKING_GLASS_DESC
-Dieses Raumzeitmuseum ist in der ganzen Galaxis berühmt. Sowohl Tourismus, als auch die Wissenschaft profitieren von der unverfälschten Widergabe der Geschichte, jetzt, wo Ebbe und Flut der Zeit durchsichtig wie Glas werden.
+Dieses Raumzeitmuseum ist in der ganzen Galaxis berÃ¼hmt. Sowohl Tourismus, als auch die Wissenschaft profitieren von der unverfÃ¤lschten Widergabe der Geschichte, jetzt, wo Ebbe und Flut der Zeit durchsichtig wie Glas werden.
 
 BLD_MONUMENT_EXODUS
 Exodus - Monument
 
 BLD_MONUMENT_EXODUS_DESC
-Das Exodus - Monument ist eine mächtige Skulptur im Orbit, die von Boden und vorbeifliegenden Schiffen aus sichtbar ist. Euer Triumph über die Sternstrassen wird nie in Vergessenheit geraten und euer Volk wird für immer ermutigt, neue Welten zu kolonisieren. Erhöht den Bevölkerungswachstum auf allen Grenzwelten.
+Das Exodus - Monument ist eine mÃ¤chtige Skulptur im Orbit, die von Boden und vorbeifliegenden Schiffen aus sichtbar ist. Euer Triumph Ã¼ber die Sternstrassen wird nie in Vergessenheit geraten und euer Volk wird fÃ¼r immer ermutigt, neue Welten zu kolonisieren. ErhÃ¶ht den BevÃ¶lkerungswachstum auf allen Grenzwelten.
 
 BLD_PSICORP
 PsiCorp
 
 BLD_PSICORP_DESC
-Eine Akademie mit der Aufgabe, die psionisch begabten Bürger in den Kolonien zu finden und sie von Geburt an auszubilden und ihre Fähigkeiten zu entwickeln, so dass sie die erfolgreichsten Forschungsprojekte des Imperiums unterstützen können.
+Eine Akademie mit der Aufgabe, die psionisch begabten BÃ¼rger in den Kolonien zu finden und sie von Geburt an auszubilden und ihre FÃ¤higkeiten zu entwickeln, so dass sie die erfolgreichsten Forschungsprojekte des Imperiums unterstÃ¼tzen kÃ¶nnen.
 
 BLD_ART_BLACK_HOLE
-Künstliches schwarzes Loch
+KÃ¼nstliches schwarzes Loch
 
 BLD_ART_BLACK_HOLE_DESC
-Eine künstliche Singularität in einem entfernten Orbit eines Systems. Die erzeugte Energie wird zur Unterstützung der Industrie in den angrenzenden Welten eingesetzt.
+Eine kÃ¼nstliche SingularitÃ¤t in einem entfernten Orbit eines Systems. Die erzeugte Energie wird zur UnterstÃ¼tzung der Industrie in den angrenzenden Welten eingesetzt.
 
 BLD_HYPER_DAM
 Hyperspatialdamm
 
 BLD_HYPER_DAM_DESC
-Dieser Damm verschliesst einen Riss im Gewebe des Universums, der so kontrolliert und beherrscht wird. Er dient als nahezu unbegrenzte Energiequelle für den gesamten Sektor.
+Dieser Damm verschliesst einen Riss im Gewebe des Universums, der so kontrolliert und beherrscht wird. Er dient als nahezu unbegrenzte Energiequelle fÃ¼r den gesamten Sektor.
 
 BLD_MINI_SUN
 Miniatursonne
 
 BLD_MINI_SUN_DESC
-Eine Miniatursonne erhellt den Nachthimmel einer Welt durchgehend, so dass ständiges Zwielicht herrscht. Außer den positiven Auswirkungen auf die Moral dient der Fusionsreaktor als bequeme Energiequelle für alle Planeten des Systems.
+Eine Miniatursonne erhellt den Nachthimmel einer Welt durchgehend, so dass stÃ¤ndiges Zwielicht herrscht. AuÃŸer den positiven Auswirkungen auf die Moral dient der Fusionsreaktor als bequeme Energiequelle fÃ¼r alle Planeten des Systems.
 
 BLD_REMOTE_CONST
 Fernmontage
 
 BLD_REMOTE_CONST_DESC
-Es handelt sich um ein [Netzwerk aus Materie und Konstruktion]. Eine Gruppe von Monteuren und Robotern können auf entlegenen Welten ohne Frachter oder Konstruktionsschiffe Strukturen zusammensetzen. Lediglich ein kleines Materie-Terminal Schiff ist notwendig. Erhöht die Industrie auf allen Welten zügig auf das Niveau einer entwickelten Welt.
+Es handelt sich um ein [Netzwerk aus Materie und Konstruktion]. Eine Gruppe von Monteuren und Robotern kÃ¶nnen auf entlegenen Welten ohne Frachter oder Konstruktionsschiffe Strukturen zusammensetzen. Lediglich ein kleines Materie-Terminal Schiff ist notwendig. ErhÃ¶ht die Industrie auf allen Welten zÃ¼gig auf das Niveau einer entwickelten Welt.
 
 BLD_ECON_SINKHOLE
-Ökonomischer Abfluss
+Ã–konomischer Abfluss
 
 BLD_ECON_SINKHOLE_DESC
-Ein ökonomischer Abfluss stört aktiv den Handel in seiner Umgebung. Der Effekt betrifft sowohl Freund als auch Feind, daher muss es sorgfältig platziert werden, so dass es hauptsächlich den Handel des Gegners stört, den eigenen dagegen möglichst wenig beeinträchtigt.
+Ein Ã¶konomischer Abfluss stÃ¶rt aktiv den Handel in seiner Umgebung. Der Effekt betrifft sowohl Freund als auch Feind, daher muss es sorgfÃ¤ltig platziert werden, so dass es hauptsÃ¤chlich den Handel des Gegners stÃ¶rt, den eigenen dagegen mÃ¶glichst wenig beeintrÃ¤chtigt.
 
 ##############
 # Ship Parts #
@@ -3657,7 +3657,7 @@ FU_ANTIMATTER_TANK_DESC
 Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
 
 ST_EM_DAMPER
-Elektromagnetische Dämpfung
+Elektromagnetische DÃ¤mpfung
 
 ST_EM_DAMPER_DESC
 Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.

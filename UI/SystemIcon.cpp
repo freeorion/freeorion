@@ -323,7 +323,7 @@ void SystemIcon::Refresh()
     // set up the name text controls
     if (!m_system.Name().empty()) {
         delete m_name;
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() + 3);
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont(ClientUI::Pts() + 3);
         m_name = new OwnerColoredSystemName(&m_system, font);
         AttachChild(m_name);
         m_showing_name = true;

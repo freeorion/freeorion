@@ -785,7 +785,7 @@ BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(int w, int h, const s
     if (hull_type) {
         m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
-        m_name = new GG::TextControl(0, 0, UserString(hull_type->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_NONE);
+        m_name = new GG::TextControl(0, 0, UserString(hull_type->Name()), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE);
         AttachChild(m_name);
     }
 }
@@ -1146,7 +1146,7 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
     GG::Connect(button->ClickedSignal, 
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false));
 
-    m_tabs = new GG::TabWnd(5, 2, 10, 10, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::CLICKABLE);
+    m_tabs = new GG::TabWnd(5, 2, 10, 10, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::CLICKABLE);
     GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
     AttachChild(m_tabs);
 
@@ -1163,13 +1163,13 @@ DesignWnd::BaseSelector::BaseSelector(int w, int h) :
 
     //m_saved_designs_list = new CUIListBox(0, 0, 10, 10);
     m_tabs->AddWnd(new GG::TextControl(0, 0, 30, 20, UserString("DESIGN_NO_PART"),
-                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                       ClientUI::GetFont(),
                                        ClientUI::TextColor()),
                    UserString("DESIGN_WND_SAVED_DESIGNS"));
 
     //m_templates_list = new CUIListBox(0, 0, 10, 10);
     m_tabs->AddWnd(new GG::TextControl(0, 0, 30, 20, UserString("DESIGN_NO_PART"),
-                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                       ClientUI::GetFont(),
                                        ClientUI::TextColor()),
                    UserString("DESIGN_WND_TEMPLATES"));
 
@@ -1565,7 +1565,7 @@ DesignWnd::MainPanel::MainPanel(int w, int h) :
 {
     EnableChildClipping();
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     m_design_name_label = new GG::TextControl(0, 0, 10, 10, UserString("DESIGN_WND_DESIGN_NAME"), font, 
                                               ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,

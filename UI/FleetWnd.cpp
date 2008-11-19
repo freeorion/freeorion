@@ -259,7 +259,7 @@ namespace {
             Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
             m_ship(ship),
             m_ship_icon(0),
-            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+            m_ship_name_text(new GG::TextControl(h, 0, w - h - 5, SHIP_NAME_HT, m_ship->Name(), ClientUI::GetFont(),
                                                  ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER)),
             m_ship_strength_stat(0),
             m_damage_stat(0),
@@ -479,7 +479,7 @@ FleetDataPanel::FleetDataPanel(int w, int h, const Fleet* fleet,
     EnableChildClipping();
 
     m_fleet_name_text = new GG::TextControl(h, 0, w - h - 5, FLEET_NAME_HT, m_fleet ? m_fleet->Name() : "<i>" + UserString("FW_NEW_FLEET_LABEL") + "</i>",
-                                            GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), m_fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
+                                            ClientUI::GetFont(), m_fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
                                             GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_name_text);
 
@@ -921,10 +921,10 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, GG::Flags<GG::W
     SetText("FleetDetailPanel");
     EnableChildClipping(true);
 
-    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::Pts() + 4, "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    m_destination_text = new GG::TextControl(0, 0, FLEET_LISTBOX_WIDTH, ClientUI::Pts() + 4, "temp", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_ships_lb = new ShipsListBox(0, m_destination_text->LowerRight().y + CONTROL_MARGIN, FLEET_LISTBOX_WIDTH, FLEET_LISTBOX_HEIGHT, 0, read_only);
     m_ship_status_text = new GG::TextControl(0, m_ships_lb->LowerRight().y + CONTROL_MARGIN, m_ships_lb->Width(), ClientUI::Pts() + 4, 
-                                             "temp", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT);
+                                             "temp", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_destination_text->SetMinSize(true);
     m_ships_lb->SetMinSize(m_ships_lb->Size());
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
@@ -1041,7 +1041,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(),
                         menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
@@ -1357,7 +1357,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
-    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(),
                         menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {

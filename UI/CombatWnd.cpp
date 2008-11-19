@@ -45,7 +45,7 @@ public:
         GG::Pt ul(UpperLeft()),lr(LowerRight());
         GG::FlatRectangle(ul.x+1,ul.y+1,lr.x,lr.y,bg_color,border_color,2);
 
-        boost::shared_ptr<GG::Font> font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
         GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
         std::string text;
 
@@ -61,13 +61,13 @@ public:
         GG::Rect rc;
 
         rc = GG::Rect(ul+GG::Pt(20,5),ul+GG::Pt(500,25));
-        font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
+        font = ClientUI::GetFont();
         glColor(ClientUI::TextColor());
         format = GG::FORMAT_LEFT | GG::FORMAT_BOTTOM;
         font->RenderText(rc.UpperLeft(),rc.LowerRight(),UserString("COMBAT_BATTLE"), format, 0);
 
         rc = GG::Rect(ul+GG::Pt(20+50,5),ul+GG::Pt(500,28));
-        font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.7));
+        font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.7));
         glColor(ClientUI::TextColor());
         format = GG::FORMAT_LEFT | GG::FORMAT_BOTTOM;
         font->RenderText(rc.UpperLeft(),rc.LowerRight(),boost::io::str(boost::format(UserString("COMBAT_SYSTEM")) % m_combat_info.m_system), format, 0);
@@ -107,7 +107,7 @@ public:
             
             GG::FlatRectangle(area.Left(), area.Top(), area.Right()+2, area.Bottom(),bg_item_color,border_color, 2);
 
-            font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.2));
+            font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.2));
 
             rc = GG::Rect(area.UpperLeft()+rc_txt_empire.UpperLeft(),area.UpperLeft()+rc_txt_empire.LowerRight());
             glColor(ClientUI::TextColor());format = GG::FORMAT_LEFT | GG::FORMAT_VCENTER;
@@ -122,7 +122,7 @@ public:
                 img_topic[c]    .OrthoBlit(col.UpperLeft()+item_img_topic      .UpperLeft(),col.UpperLeft()+item_img_topic      .LowerRight());
                 img_arrow_split .OrthoBlit(col.UpperLeft()+item_img_arrow_split.UpperLeft(),col.UpperLeft()+item_img_arrow_split.LowerRight());
 
-                font = HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.0));
+                font = ClientUI::GetFont();
                 for (unsigned int j = 0; j < 4; j++) {
                     rc = GG::Rect(col.UpperLeft()+item_txt[j].UpperLeft(),col.UpperLeft()+item_txt[j].LowerRight());
                     GG::FlatRectangle(rc.Left(), rc.Top(), rc.Right(), rc.Bottom(),entries[c][j].bg_clr,entries[c][j].border_clr,entries[c][j].border_width);

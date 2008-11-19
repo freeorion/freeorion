@@ -48,33 +48,33 @@ NO
 Non
 
 NEW_GAME
-Génération de l'univers et des IAs...
+GÃ©nÃ©ration de l'univers et des IAs...
 
 LOADING
 Chargement...
 
 SERVER_WONT_START
-'''Le serveur ne peut pas démarrer.
+'''Le serveur ne peut pas dÃ©marrer.
 
-Note pour Linux: L'executable du serveur devrait être dans le répertoire de travail. Si freeorion était exécuté à partir d'autres quelque part que le répertoire dans lequel le principal binaire est situé, vous pourriez avoir besoin d'arrêter et de redémarrer depuis ce répertoire.'''
+Note pour Linux: L'executable du serveur devrait Ãªtre dans le rÃ©pertoire de travail. Si freeorion Ã©tait exÃ©cutÃ© Ã  partir d'autres quelque part que le rÃ©pertoire dans lequel le principal binaire est situÃ©, vous pourriez avoir besoin d'arrÃªter et de redÃ©marrer depuis ce rÃ©pertoire.'''
 
 SERVER_TIMEOUT
-Le serveur ne répond pas
+Le serveur ne rÃ©pond pas
 
 SERVER_LOST
-La connexion au serveur a été perdue.
+La connexion au serveur a Ã©tÃ© perdue.
 
 SERVER_GAME_END
-Le serveur a envoyé un message de fin de jeu. Au revoir.
+Le serveur a envoyÃ© un message de fin de jeu. Au revoir.
 
 PLAYER_DISCONNECTED
-Le joueur %1% n'est plus connecté au serveur.
+Le joueur %1% n'est plus connectÃ© au serveur.
 
 PLAYER_DEFEATED
-Vous êtes vaincu.
+Vous Ãªtes vaincu.
 
 PLAYER_VICTORIOUS
-Vous êtes victorieux.
+Vous Ãªtes victorieux.
 
 EMPIRE
 Empire
@@ -86,7 +86,7 @@ ALL
 Tout
 
 UNKNOWN_SYSTEM
-Système inconnu
+SystÃ¨me inconnu
 
 RENAME
 Renommer
@@ -101,13 +101,13 @@ ERROR
 ERREUR
 
 DEFENSE_BASE
-Base défensive
+Base dÃ©fensive
 
 DEFENSE_BASE_DESCRIPTION
-'''Une plateforme orbitale participant à la défense de la planète ou elle est située.
+'''Une plateforme orbitale participant Ã  la dÃ©fense de la planÃ¨te ou elle est situÃ©e.
 
 Attaque: 1
-Défense: 3'''
+DÃ©fense: 3'''
 
 CHAT_WHISPER
 murmurer
@@ -127,184 +127,184 @@ COMMAND_LINE_USAGE
 Usage: 
 
 COMMAND_LINE_DEFAULT
-Défaut: 
+DÃ©faut: 
 
 OPTIONS_DB_HELP
 Affiche ce message d'aide.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
-Génère un fichier config.xml à partir des réglages contenus dans les fichiers config.xml existants et donnés dans la ligne de commande. Ceci écrasera le fichier config.xml actuel, si il existe.
+GÃ©nÃ¨re un fichier config.xml Ã  partir des rÃ©glages contenus dans les fichiers config.xml existants et donnÃ©s dans la ligne de commande. Ceci Ã©crasera le fichier config.xml actuel, si il existe.
 
 OPTIONS_DB_MUSIC_OFF
-Désactive la musique dans le jeu.
+DÃ©sactive la musique dans le jeu.
 
 OPTIONS_DB_BG_MUSIC
-Désigne le morceau à jouer en arrière-plan.
+DÃ©signe le morceau Ã  jouer en arriÃ¨re-plan.
 
 OPTIONS_DB_FULLSCREEN
-Commence le jeu en plein écran.
+Commence le jeu en plein Ã©cran.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-L'intervalle, en secondes, après lequel la fenêtre de chat multijoueur disparaît si rien n'y est ajouté. Une valeur de 0 indique que la fenêtre ne doit jamais disparaître.
+L'intervalle, en secondes, aprÃ¨s lequel la fenÃªtre de chat multijoueur disparaÃ®t si rien n'y est ajoutÃ©. Une valeur de 0 indique que la fenÃªtre ne doit jamais disparaÃ®tre.
 
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Le nombre de messages déjà écrits à garder dans l'historique de la boîte d'édition du chat.***
+Le nombre de messages dÃ©jÃ  Ã©crits Ã  garder dans l'historique de la boÃ®te d'Ã©dition du chat.***
 
 OPTIONS_DB_GALAXY_MAP_GAS
-Rendu grisé autour des systèmes pour donner une forme à la galaxie. Peut être lent sur les anciennes configurations.***
+Rendu grisÃ© autour des systÃ¨mes pour donner une forme Ã  la galaxie. Peut Ãªtre lent sur les anciennes configurations.***
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Utilisation de OpenGL 1,5 optimisé pour le rendu de la carte galactique. Peut ne pas fonctionner sur les anciennes cartes graphiques.***
+Utilisation de OpenGL 1,5 optimisÃ© pour le rendu de la carte galactique. Peut ne pas fonctionner sur les anciennes cartes graphiques.***
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
-Force le client à ne pas lancer un serveur, même dans les cas de l'hébergement local d'un jeu, d'un jeu solo, etc.
+Force le client Ã  ne pas lancer un serveur, mÃªme dans les cas de l'hÃ©bergement local d'un jeu, d'un jeu solo, etc.
 
 OPTIONS_DB_UI_MAIN_MENU_X
-Position du centre du menu principal de l'écran d'introduction, en portion de la largeur totale du programme.
+Position du centre du menu principal de l'Ã©cran d'introduction, en portion de la largeur totale du programme.
 
 OPTIONS_DB_UI_MAIN_MENU_Y
-Position du centre du menu principal de l'écran d'introduction, en portion de la hauteur totale du programme.
+Position du centre du menu principal de l'Ã©cran d'introduction, en portion de la hauteur totale du programme.
 
 OPTIONS_DB_APP_WIDTH
-Règle la résolution horizontale du programme.
+RÃ¨gle la rÃ©solution horizontale du programme.
 
 OPTIONS_DB_APP_HEIGHT
-Règle la résolution verticale du programme.
+RÃ¨gle la rÃ©solution verticale du programme.
 
 OPTIONS_DB_COLOR_DEPTH
-Règle la profondeur des couleurs, en bits par pixel.
+RÃ¨gle la profondeur des couleurs, en bits par pixel.
 
 OPTIONS_DB_SHOW_FPS
 Affiche le FPS, oui ou non.
 
 OPTIONS_DB_LIMIT_FPS
-Limitation du FPS, oui ou non.  La limite est définit avec l'option FPS Max.
+Limitation du FPS, oui ou non.  La limite est dÃ©finit avec l'option FPS Max.
 
 OPTIONS_DB_MAX_FPS
-Change la limitation du FPS, si actif.  La limitation est activé avec l'option Limitation FPS.
+Change la limitation du FPS, si actif.  La limitation est activÃ© avec l'option Limitation FPS.
 
 OPTIONS_DB_UI_SOUND_ENABLED
-Active ou désactive les effets sonores de l'interface.
+Active ou dÃ©sactive les effets sonores de l'interface.
 
 OPTIONS_DB_UI_SOUND_VOLUME
-Le volume (de 0 à 255) des effets sonores de l'interface.
+Le volume (de 0 Ã  255) des effets sonores de l'interface.
 
 OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER
-Le fichier son à jouer quand la souris passe sur un bouton.
+Le fichier son Ã  jouer quand la souris passe sur un bouton.
 
 OPTIONS_DB_UI_SOUND_BUTTON_CLICK
-Le fichier son à jouer quand un bouton est cliqué.
+Le fichier son Ã  jouer quand un bouton est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
-Le fichiers son à jouer quand le bouton de fin de tour est cliqué.
+Le fichiers son Ã  jouer quand le bouton de fin de tour est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_LIST_SELECT
-Le fichier son à jouer quand une une liste ou un menu déroulant est sélectionné.
+Le fichier son Ã  jouer quand une une liste ou un menu dÃ©roulant est sÃ©lectionnÃ©.
 
 OPTIONS_DB_UI_SOUND_ITEM_DROP
-Le fichier son à jouer quand un objet est lâché dans une liste.
+Le fichier son Ã  jouer quand un objet est lÃ¢chÃ© dans une liste.
 
 OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
-Le fichier son à jouer quand une liste est ouverte dans une liste déroulante***
+Le fichier son Ã  jouer quand une liste est ouverte dans une liste dÃ©roulante***
 
 OPTIONS_DB_UI_SOUND_TEXT_TYPING
-Le fichier son à jouer quand l'utilisateur tape un texte.
+Le fichier son Ã  jouer quand l'utilisateur tape un texte.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
-Le fichier son à jouer quand une fenêtre est maximisée.
+Le fichier son Ã  jouer quand une fenÃªtre est maximisÃ©e.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
-Le fichier son à jouer quand une fenêtre est minimisée.
+Le fichier son Ã  jouer quand une fenÃªtre est minimisÃ©e.
 
 OPTIONS_DB_UI_SOUND_WINDOW_CLOSE
-Le fichier son à jouer quand une fenêtre est fermée.
+Le fichier son Ã  jouer quand une fenÃªtre est fermÃ©e.
 
 OPTIONS_DB_UI_SOUND_ALERT
-Le fichier son à jouer quand une erreur survient ou qu'une action illégale est tentée.
+Le fichier son Ã  jouer quand une erreur survient ou qu'une action illÃ©gale est tentÃ©e.
 
 OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK
-Le fichier son à jouer quand un bouton planète est cliqué.
+Le fichier son Ã  jouer quand un bouton planÃ¨te est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
-Le fichier son à jouer quand la souris passe sur un bouton flotte.
+Le fichier son Ã  jouer quand la souris passe sur un bouton flotte.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
-Le fichier son à jouer quand un bouton flotte est cliqué.
+Le fichier son Ã  jouer quand un bouton flotte est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
-Le fichier son à jouer lorsque la souris passe sur une icône système
+Le fichier son Ã  jouer lorsque la souris passe sur une icÃ´ne systÃ¨me
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
-Le fichier son à jouer quand le panneau latéral du système est ouvert.
+Le fichier son Ã  jouer quand le panneau latÃ©ral du systÃ¨me est ouvert.
 
 OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Le fichier son à jouer quand un bouton focus : agriculture est cliqué.
+Le fichier son Ã  jouer quand un bouton focus : agriculture est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Le fichier son à jouer quand un bouton focus : industrie est cliqué.
+Le fichier son Ã  jouer quand un bouton focus : industrie est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Le fichier son à jouer quand un bouton focus : recherche est cliqué.
+Le fichier son Ã  jouer quand un bouton focus : recherche est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Le fichier son à jouer quand un bouton focus : exploitation minière est cliqué.
+Le fichier son Ã  jouer quand un bouton focus : exploitation miniÃ¨re est cliquÃ©.
 
 OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Le fichier son à jouer quand un bouton focus : commerce est cliqué
+Le fichier son Ã  jouer quand un bouton focus : commerce est cliquÃ©
 
 OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Le fichier son à jouer quand un bouton focus : général est cliqué.
+Le fichier son Ã  jouer quand un bouton focus : gÃ©nÃ©ral est cliquÃ©.
 
 OPTIONS_DB_UI_FONT
-Désigne le ficher ressource pour la police de caractère de l'interface.
+DÃ©signe le ficher ressource pour la police de caractÃ¨re de l'interface.
 
 OPTIONS_DB_UI_FONT_BOLD
-Désigne le fichier ressource pour la police de caractère (gras) de l'interface.
+DÃ©signe le fichier ressource pour la police de caractÃ¨re (gras) de l'interface.
 
 OPTIONS_DB_UI_FONT_ITALIC
-Désigne le fichier ressource pour la police de caractère (italique) de l'interface.
+DÃ©signe le fichier ressource pour la police de caractÃ¨re (italique) de l'interface.
 
 OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Désigne le fichier ressource pour la police de caractère (gras et italique) de l'interface.
+DÃ©signe le fichier ressource pour la police de caractÃ¨re (gras et italique) de l'interface.
 
 OPTIONS_DB_UI_FONT_SIZE
-Règle la taille des caractères utilisés dans l'interface.
+RÃ¨gle la taille des caractÃ¨res utilisÃ©s dans l'interface.
 
 OPTIONS_DB_UI_TITLE_FONT
-Désigne le fichier ressource pour la police de caractère des titres de l'interface.
+DÃ©signe le fichier ressource pour la police de caractÃ¨re des titres de l'interface.
 
 OPTIONS_DB_UI_TITLE_FONT_SIZE
-Règle la taille des caractères utilisés dans les titres de l'interface.
+RÃ¨gle la taille des caractÃ¨res utilisÃ©s dans les titres de l'interface.
 
 OPTIONS_DB_UI_WND_COLOR
-Règle la couleur des fenêtres de l'interface.
+RÃ¨gle la couleur des fenÃªtres de l'interface.
 
 OPTIONS_DB_UI_TEXT_COLOR
-Règle la couleur du texte de l'interface.
+RÃ¨gle la couleur du texte de l'interface.
 
 OPTIONS_DB_UI_CTRL_COLOR
-Règle la couleur des contrôles de l'interface.***
+RÃ¨gle la couleur des contrÃ´les de l'interface.***
 
 OPTIONS_DB_UI_CTRL_BORDER_COLOR
-Règle la couleur des bords de contrôles de l'interface.
+RÃ¨gle la couleur des bords de contrÃ´les de l'interface.
 
 OPTIONS_DB_UI_BUTTON_COLOR
-Règle la couleur des boutons de l'interface.
+RÃ¨gle la couleur des boutons de l'interface.
 
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
-Règle la couleur des boutons d'état de l'interface.
+RÃ¨gle la couleur des boutons d'Ã©tat de l'interface.
 
 OPTIONS_DB_UI_SCROLL_TAB_COLOR
-Règle la couleur de la tablette de défilement de l'interface.***
+RÃ¨gle la couleur de la tablette de dÃ©filement de l'interface.***
 
 OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR
-Règle la couleur de l'intérieur des listes déroulantes de l'interface.
+RÃ¨gle la couleur de l'intÃ©rieur des listes dÃ©roulantes de l'interface.
 
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
-Règle la couleur des flèches des listes déroulantes de l'interface.
+RÃ¨gle la couleur des flÃ¨ches des listes dÃ©roulantes de l'interface.
 
 OPTIONS_DB_UI_EDIT_HILITE
-Règle la couleur des contrôles d'édition de l'interface mis en surbrillance.***
+RÃ¨gle la couleur des contrÃ´les d'Ã©dition de l'interface mis en surbrillance.***
 
 OPTIONS_DB_UI_EDIT_INTERIOR
 Sets UI edit controls' interior color.***
@@ -319,82 +319,82 @@ OPTIONS_DB_UI_STAT_DECREASE_COLOR
 Sets the color of decreased stats in the UI.**
 
 OPTIONS_DB_UI_SIDEPANEL_COLOR
-Règle la couleur du panneau latéral.
+RÃ¨gle la couleur du panneau latÃ©ral.
 
 OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
-Règle la couleur de la bordure extérieure de l'interface.
+RÃ¨gle la couleur de la bordure extÃ©rieure de l'interface.
 
 OPTIONS_DB_UI_WND_BORDER_COLOR
-Règle la couleur de la bordure de l'interface.
+RÃ¨gle la couleur de la bordure de l'interface.
 
 OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
-Règle la couleur de la bordure intérieure de l'interface
+RÃ¨gle la couleur de la bordure intÃ©rieure de l'interface
 
 OPTIONS_DB_UI_KNOWN_TECH
-Règle la couleur des technologies connues dans l'arbre des technologies.
+RÃ¨gle la couleur des technologies connues dans l'arbre des technologies.
 
 OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Règle la couleur du texte et de la bordure des technologies connues dans l'arbre des technologies.
+RÃ¨gle la couleur du texte et de la bordure des technologies connues dans l'arbre des technologies.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH
-Règle la couleur des technologies accessibles à la recherche dans l'arbre des technologies.
+RÃ¨gle la couleur des technologies accessibles Ã  la recherche dans l'arbre des technologies.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
-Règle la couleur du texte et de la bordure des technologies accessibles à la recherche dans l'arbre des technologies.
+RÃ¨gle la couleur du texte et de la bordure des technologies accessibles Ã  la recherche dans l'arbre des technologies.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH
-Règle la couleur des technologies inaccessibles à la recherche dans l'arbre des technologies.
+RÃ¨gle la couleur des technologies inaccessibles Ã  la recherche dans l'arbre des technologies.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
-Règle la couleur du texte et de la bordure des technologies inaccessibles à la recherche dans l'arbre des technologies.
+RÃ¨gle la couleur du texte et de la bordure des technologies inaccessibles Ã  la recherche dans l'arbre des technologies.
 
 OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
-Règle la couleur de fond des barres de progression dans l'arbre des technologies.
+RÃ¨gle la couleur de fond des barres de progression dans l'arbre des technologies.
 
 OPTIONS_DB_UI_TECH_PROGRESS
-Règle la couleur des barres de progression dans l'arbre des technologies.
+RÃ¨gle la couleur des barres de progression dans l'arbre des technologies.
 
 OPTIONS_DB_UI_SCROLL_WIDTH
 Sets UI scroll width.***
 
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
-Règle la taille des icônes de systèmes.
+RÃ¨gle la taille des icÃ´nes de systÃ¨mes.
 
 OPTIONS_DB_UI_FLEET_BUTTON_SIZE
-Règle la taille (relative aux icônes de systèmes) des boutons de flotte.
+RÃ¨gle la taille (relative aux icÃ´nes de systÃ¨mes) des boutons de flotte.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-Règle la taille (relative aux icônes de systèmes) de l'indicateur de sélection de systèmes.
+RÃ¨gle la taille (relative aux icÃ´nes de systÃ¨mes) de l'indicateur de sÃ©lection de systÃ¨mes.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
-Règle le délai d'apparition des bulles d'information de l'interface, en ms.***
+RÃ¨gle le dÃ©lai d'apparition des bulles d'information de l'interface, en ms.***
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
-Si mis à vrai, les clics sur plusieurs boutons de flottes ouvrent plusieurs fenêtres de flottes en même temps. Sinon, toute nouvelle fenêtre de flotte ferme la précédente si il y en a.
+Si mis Ã  vrai, les clics sur plusieurs boutons de flottes ouvrent plusieurs fenÃªtres de flottes en mÃªme temps. Sinon, toute nouvelle fenÃªtre de flotte ferme la prÃ©cÃ©dente si il y en a.
 
 OPTIONS_DB_UI_FLEET_AUTOSELECT
 Auto-select the top fleet when a fleet window is opened.  Consider using this flag if you use UI.multiple-fleet-windows.***
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Fermer les fenêtres ouverte comme les fenêtres de flotte et le panneau latéral de système quand vous faites un clic droit sur la carte principale.
+Fermer les fenÃªtres ouverte comme les fenÃªtres de flotte et le panneau latÃ©ral de systÃ¨me quand vous faites un clic droit sur la carte principale.
 
 OPTIONS_DB_GAMESETUP_STARS
-Le nombre d'étoiles à générer dans la galaxie.
+Le nombre d'Ã©toiles Ã  gÃ©nÃ©rer dans la galaxie.
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-La forme de la galaxie à générer.
+La forme de la galaxie Ã  gÃ©nÃ©rer.
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-L'âge de la galaxie à générer.
+L'Ã¢ge de la galaxie Ã  gÃ©nÃ©rer.
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Le nombre de planètes par système dans la galaxie à générer.
+Le nombre de planÃ¨tes par systÃ¨me dans la galaxie Ã  gÃ©nÃ©rer.
 
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
 The number of starlanes in the galaxy to be generated.***
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-La fréquence d'apparition des évé. spéciaux dans la galaxie.***
+La frÃ©quence d'apparition des Ã©vÃ©. spÃ©ciaux dans la galaxie.***
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 Le nom de votre empire dans le jeu.
@@ -406,37 +406,37 @@ OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 Le nombre d'IA dans le jeu.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-La largeur de l'espace à laisser vide entre technologies dans l'arbre des technologies, en multiples de la largeur d'une seule technologie théorique.***
+La largeur de l'espace Ã  laisser vide entre technologies dans l'arbre des technologies, en multiples de la largeur d'une seule technologie thÃ©orique.***
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-La longueur de l'espace à laisser vide entre technologies dans l'arbre des technologies, en multiples de la longeur d'une seule technologie théorique.***
+La longueur de l'espace Ã  laisser vide entre technologies dans l'arbre des technologies, en multiples de la longeur d'une seule technologie thÃ©orique.***
 
 OPTIONS_DB_SAVE_DIR
-Le dossier dans lequel seront sauvegardées/à partir duquel seront chargées les parties. Les chemins de dossiers sont relatifs à la location de l'exécutable.
+Le dossier dans lequel seront sauvegardÃ©es/Ã  partir duquel seront chargÃ©es les parties. Les chemins de dossiers sont relatifs Ã  la location de l'exÃ©cutable.
 
 OPTIONS_DB_SETTINGS_DIR
-Le dossier racine à partir duquel seront cherchés les fichiers ressources du jeu (réglages et données).
+Le dossier racine Ã  partir duquel seront cherchÃ©s les fichiers ressources du jeu (rÃ©glages et donnÃ©es).
 
 OPTIONS_DB_LOG_LEVEL
-Règle le niveau d'importance à partir duquel les messages du journal seront affichés (niveaux par ordre décroissant de verbosité: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG).
+RÃ¨gle le niveau d'importance Ã  partir duquel les messages du journal seront affichÃ©s (niveaux par ordre dÃ©croissant de verbositÃ©: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG).
 
 OPTIONS_DB_STRINGTABLE_FILENAME
-Le fichier contenant la table des chaînes de caractères propre à un langage.
+Le fichier contenant la table des chaÃ®nes de caractÃ¨res propre Ã  un langage.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Si mis à vrai, le jeu effectuera des sauvegardes automatiques durant les parties solo.
+Si mis Ã  vrai, le jeu effectuera des sauvegardes automatiques durant les parties solo.
 
 OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Si mis à vrai, le jeu effectuera des sauvegardes automatiques durant les parties multijoueur.
+Si mis Ã  vrai, le jeu effectuera des sauvegardes automatiques durant les parties multijoueur.
 
 OPTIONS_DB_AUTOSAVE_TURNS
-Détermine le nombre de tours entre chaque sauvegarde automatique.
+DÃ©termine le nombre de tours entre chaque sauvegarde automatique.
 
 OPTIONS_DB_AUTOSAVE_SAVES
-Règle le nombre maximum de sauvegardes automatiques qui devraient être gardées.
+RÃ¨gle le nombre maximum de sauvegardes automatiques qui devraient Ãªtre gardÃ©es.
 
 OPTIONS_DB_MUSIC_VOLUME
-Règle le volume de la musique (de 0 à 255).
+RÃ¨gle le volume de la musique (de 0 Ã  255).
 
 
 #################
@@ -453,8 +453,8 @@ FILE_DLG_MALFORMED_FILENAME
 Nom de fichier invalide.
 
 FILE_DLG_OVERWRITE_PROMPT
-'''%1% existe déjà.
-L'écraser?'''
+'''%1% existe dÃ©jÃ .
+L'Ã©craser?'''
 
 FILE_DLG_INVALID_FILENAME
 '''"%1%"
@@ -469,7 +469,7 @@ FILE_DLG_FILE_DOES_NOT_EXIST
 n'existe pas.'''
 
 FILE_DLG_DEVICE_IS_NOT_READY
-Périphérique pas prêt.
+PÃ©riphÃ©rique pas prÃªt.
 
 
 #################
@@ -526,13 +526,13 @@ INTRO_BTN_LOAD_GAME
 Charger partie
 
 INTRO_BTN_OPTIONS
-Réglages
+RÃ©glages
 
 INTRO_BTN_ABOUT
 A propos
 
 INTRO_BTN_CREDITS
-Crédits
+CrÃ©dits
 
 INTRO_BTN_EXIT
 Quitter
@@ -541,10 +541,10 @@ Quitter
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Délai de connection au serveur dépassé.
+DÃ©lai de connection au serveur dÃ©passÃ©.
 
 ERR_VERSION_MISMATCH
-Connection au serveur impossible, ce client utilise une version différente des paramètres et/ou fichiers suivants: 
+Connection au serveur impossible, ce client utilise une version diffÃ©rente des paramÃ¨tres et/ou fichiers suivants: 
 
 
 ########################
@@ -572,13 +572,13 @@ Nom du joueur
 #Button names####
 
 HOST_GAME_BN
-Héberger partie
+HÃ©berger partie
 
 JOIN_GAME_BN
 Rejoindre partie
 
 REFRESH_LIST_BN
-Rafraîchir
+RafraÃ®chir
 
 
 ########################
@@ -592,7 +592,7 @@ Configuration Multijoueur
 
 #Strings
 MPLOBBY_HOST_ABORTED_GAME
-Le joueur hôte a mis fin à ce jeu.
+Le joueur hÃ´te a mis fin Ã  ce jeu.
 
 #Button names####
 
@@ -606,7 +606,7 @@ START_GAME_BN
 Lancer partie
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Nom d'empire et couleur unique nécessaire
+Nom d'empire et couleur unique nÃ©cessaire
 
 ########################
 # Galaxy Setup Screen  #
@@ -615,7 +615,7 @@ Nom d'empire et couleur unique nécessaire
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Création de la galaxie
+CrÃ©ation de la galaxie
 
 #Strings
 GSETUP_GRAPHICS_FILES
@@ -645,19 +645,19 @@ GSETUP_STARLANE_FREQ
 Starlane Frequency***
 
 GSETUP_PLANET_DENSITY
-Densité planètes  
+DensitÃ© planÃ¨tes  
 
 GSETUP_SPECIALS_FREQ
-Fréq. évé. spéciaux***
+FrÃ©q. Ã©vÃ©. spÃ©ciaux***
 
 GSETUP_2ARM
-Spirale à 2 bras
+Spirale Ã  2 bras
 
 GSETUP_3ARM
-Spirale à 3 bras
+Spirale Ã  3 bras
 
 GSETUP_4ARM
-Spirale à 4 bras
+Spirale Ã  4 bras
 
 GSETUP_CLUSTER
 Grappe
@@ -666,7 +666,7 @@ GSETUP_ELLIPTICAL
 Elliptique
 
 GSETUP_IRREGULAR
-Irrégulière
+IrrÃ©guliÃ¨re
 
 GSETUP_RING
 Anneau
@@ -678,7 +678,7 @@ GSETUP_YOUNG
 Jeune
 
 GSETUP_MATURE
-Mûre
+MÃ»re
 
 GSETUP_ANCIENT
 Ancienne
@@ -696,7 +696,7 @@ GSETUP_MANY
 Beaucoup
 
 GSETUP_VERY_MANY
-Enormément
+EnormÃ©ment
 
 GSETUP_LOW
 Faible
@@ -730,7 +730,7 @@ n'existe pas.
 #Window Title####
 
 ESELECT_WINDOW_TITLE
-Sélection d'un empire
+SÃ©lection d'un empire
 
 
 #Static text####
@@ -751,13 +751,13 @@ ABOUT_WINDOW_TITLE
 A propos de FreeOrion
 
 CREDITS
-Crédits
+CrÃ©dits
 
 VISION
 Vision
 
 FREEORION_VISION
-FreeOrion, un jeu open-source s'inspirant de Master of Orion, est un jeu de stratégie au tour par tour épique qui se base sur le modèle classique des "4x" en incorporant des éléments de construction de nations trouvés dans des jeux comme Europa Universalis 2 et un moteur de combat tactique versatile. Bien que son design modulaire et open-source permette des modifications et personalisations non-négligeables du moteur de jeu et des éléments de scénario par la communauté, l'équipe de FreeOrion se consacre à la construction d'un univers vivant sur le modèle d'une grande campaigne. ***
+FreeOrion, un jeu open-source s'inspirant de Master of Orion, est un jeu de stratÃ©gie au tour par tour Ã©pique qui se base sur le modÃ¨le classique des "4x" en incorporant des Ã©lÃ©ments de construction de nations trouvÃ©s dans des jeux comme Europa Universalis 2 et un moteur de combat tactique versatile. Bien que son design modulaire et open-source permette des modifications et personalisations non-nÃ©gligeables du moteur de jeu et des Ã©lÃ©ments de scÃ©nario par la communautÃ©, l'Ã©quipe de FreeOrion se consacre Ã  la construction d'un univers vivant sur le modÃ¨le d'une grande campaigne. ***
 
 ###########################
 # Game Menu               #
@@ -783,19 +783,19 @@ Fichiers de sauvegardes
 ###########################
 
 OPTIONS_TITLE
-Réglages
+RÃ©glages
 
 OPTIONS_AUTOSELECT_FLEET
-Sélection auto de la première flotte
+SÃ©lection auto de la premiÃ¨re flotte
 
 OPTIONS_MULTIPLE_FLEET_WNDS
-Fenêtres de flotte multiples
+FenÃªtres de flotte multiples
 
 OPTIONS_QUICK_CLOSE_WNDS
-Fermeture rapide des fenêtres
+Fermeture rapide des fenÃªtres
 
 OPTIONS_MISC_UI
-Réglages divers de l'interface
+RÃ©glages divers de l'interface
 
 OPTIONS_SINGLEPLAYER
 Parties solo
@@ -804,7 +804,7 @@ OPTIONS_MULTIPLAYER
 Parties multijoueur
 
 OPTIONS_AUTOSAVE_TO_KEEP
-Sauvegardes auto. à  garder
+Sauvegardes auto. Ã   garder
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
 Tours entres les sauvegardes auto.
@@ -813,7 +813,7 @@ OPTIONS_LANGUAGE
 Fichier de langue
 
 OPTIONS_FONTS
-Polices de caractères
+Polices de caractÃ¨res
 
 OPTIONS_FONT_SIZES
 Taille des polices
@@ -822,7 +822,7 @@ OPTIONS_FONT_TEXT
 Texte
 
 OPTIONS_FONT_TITLE
-Titres des fenêtres
+Titres des fenÃªtres
 
 OPTIONS_TECH_SPACING
 Espacement entre technologies
@@ -834,19 +834,19 @@ OPTIONS_VERTICAL
 Vertical
 
 OPTIONS_TOOLTIP_DELAY
-Délai avant bulle d'info. (ms)
+DÃ©lai avant bulle d'info. (ms)
 
 OPTIONS_VIDEO_MODE
-Mode vidéo
+Mode vidÃ©o
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Active le mode plein écran, règle la résolution et le nombre de bits par pixel en une seule étape; Utilisez "Personnalisé" pour régler la largeur, la hauteur et les bits par pixel individuellement.
+Active le mode plein Ã©cran, rÃ¨gle la rÃ©solution et le nombre de bits par pixel en une seule Ã©tape; Utilisez "PersonnalisÃ©" pour rÃ©gler la largeur, la hauteur et les bits par pixel individuellement.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Personnalisé
+PersonnalisÃ©
 
 OPTIONS_VIDEO_SETTINGS
-Réglages vidéo.
+RÃ©glages vidÃ©o.
 
 OPTIONS_APP_WIDTH
 Largeur
@@ -858,7 +858,7 @@ OPTIONS_COLOR_DEPTH
 Profondeur des couleurs
 
 OPTIONS_FULLSCREEN
-Plein écran
+Plein Ã©cran
 
 OPTIONS_SHOW_FPS
 Affichage du FPS
@@ -876,7 +876,7 @@ OPTIONS_CHAT_HISTORY
 Historique du chat
 
 OPTIONS_CHAT_HIDE
-Délai avant dissimulation du chat
+DÃ©lai avant dissimulation du chat
 
 OPTIONS_GALAXY_MAP
 Carte Galactique
@@ -885,7 +885,7 @@ OPTIONS_GALAXY_MAP_GAS
 Rendu gazeux de la Carte galactique***
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Système de rendu optimisé
+SystÃ¨me de rendu optimisÃ©
 
 OPTIONS_MUSIC
 Musique
@@ -900,13 +900,13 @@ OPTIONS_SOUNDS
 Sons
 
 OPTIONS_SOUND_CLOSE
-Fermeture de fenêtre
+Fermeture de fenÃªtre
 
 OPTIONS_SOUND_MINIMIZE
-Minimisation de fenêtre
+Minimisation de fenÃªtre
 
 OPTIONS_SOUND_MAXIMIZE
-Maximisation de fenêtre
+Maximisation de fenÃªtre
 
 OPTIONS_SOUND_CLICK
 Clic
@@ -924,7 +924,7 @@ OPTIONS_SOUND_SYSTEM_ROLLOVER
 System Icon Rollover
 
 OPTIONS_SOUND_WINDOW
-Sons des fenêtres
+Sons des fenÃªtres
 
 OPTIONS_SOUND_BUTTON
 Sons des boutons
@@ -939,13 +939,13 @@ OPTIONS_SOUND_TYPING
 Frappe (au clavier)
 
 OPTIONS_SOUND_TURN
-Bouton Tour Cliqué
+Bouton Tour CliquÃ©
 
 OPTIONS_SOUND_SIDEPANEL
-Ouverture du paneau latéral
+Ouverture du paneau latÃ©ral
 
 OPTIONS_SOUND_PLANET
-Planète Sélectionné
+PlanÃ¨te SÃ©lectionnÃ©
 
 OPTIONS_SOUND_FOCUS
 Sons de Focalisation
@@ -954,37 +954,37 @@ OPTIONS_SOUND_BALANCED
 Balanced focus***
 
 OPTIONS_SOUND_FARMING
-Privilégier l'Agriculture
+PrivilÃ©gier l'Agriculture
 
 OPTIONS_SOUND_INDUSTRY
-Privilégier l'Industrie
+PrivilÃ©gier l'Industrie
 
 OPTIONS_SOUND_MINING
-Privilégier l'Exploitation Minière
+PrivilÃ©gier l'Exploitation MiniÃ¨re
 
 OPTIONS_SOUND_RESEARCH
-Privilégier la Recherche
+PrivilÃ©gier la Recherche
 
 OPTIONS_SOUND_LIST
 Sons des Listes
 
 OPTIONS_SOUND_DROP
-Objet Lâché
+Objet LÃ¢chÃ©
 
 OPTIONS_SOUND_PULLDOWN
-Ouverture Liste Déroulante
+Ouverture Liste DÃ©roulante
 
 OPTIONS_SOUND_SELECT
-Liste Sélectionné
+Liste SÃ©lectionnÃ©
 
 OPTIONS_GENERAL_COLORS
-Général
+GÃ©nÃ©ral
 
 OPTIONS_CONTROL_COLORS
-Contrôle Interface
+ContrÃ´le Interface
 
 OPTIONS_FILL_COLOR
-Intérieur
+IntÃ©rieur
 
 OPTIONS_BORDER_COLOR
 Bordure
@@ -993,25 +993,25 @@ OPTIONS_TEXT_COLOR
 Texte
 
 OPTIONS_EDIT_COLORS
-Contrôle Édition
+ContrÃ´le Ã‰dition
 
 OPTIONS_HIGHLIGHT_COLOR
 Surbrillance
 
 OPTIONS_INTERIOR_COLOR
-Intérieur
+IntÃ©rieur
 
 OPTIONS_WINDOW_COLORS
-Fenêtres
+FenÃªtres
 
 OPTIONS_INNER_BORDER_COLOR
-Bordure Intérieur
+Bordure IntÃ©rieur
 
 OPTIONS_OUTER_BORDER_COLOR
-Bordure Extérieur
+Bordure ExtÃ©rieur
 
 OPTIONS_PAGE_VIDEO
-Vidéo
+VidÃ©o
 
 OPTIONS_PAGE_AUDIO
 Audio
@@ -1104,20 +1104,20 @@ Design
 #################
 
 SIDE_PANEL
-Panneau latéral
+Panneau latÃ©ral
 
 SP_SYSTEM_PRODUCTION
-Production du système
+Production du systÃ¨me
 
 ##Planet Panel#############
 PLANET_PANEL
-Panneau planétaire
+Panneau planÃ©taire
 
 PL_ASTEROID_BELT
-Ceinture d'astéroides
+Ceinture d'astÃ©roides
 
 PL_UNINHABITED
-Inhabitée
+InhabitÃ©e
 
 PL_SIZE
 Taille
@@ -1131,7 +1131,7 @@ PP_POPULATION
 Population
 
 PP_HEALTH
-Santé
+SantÃ©
 
 ## Resources Panel ##########
 
@@ -1145,7 +1145,7 @@ RP_FOOD
 Production Agricole\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
 
 RP_MINERALS
-Exploitation minière\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
+Exploitation miniÃ¨re\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
 
 RP_INDUSTRY
 Production Industrielle\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
@@ -1165,16 +1165,16 @@ MP_SUPPLY
 Flotte de support
 
 MP_SHIELD
-Bouclier planétaire
+Bouclier planÃ©taire
 
 MP_DEFENSE
-Défense planétaire
+DÃ©fense planÃ©taire
 
 MP_DETECTION
-Détection
+DÃ©tection
 
 MP_STEALTH
-Furtivité
+FurtivitÃ©
 
 ## Buildings Panel##########
 
@@ -1218,7 +1218,7 @@ TT_SHIP_PART
 Vaisseau <i>%1%</i> Partie <i>%2%</i>
 
 TT_SPECIAL
-Spécial <i>%1%</i>
+SpÃ©cial <i>%1%</i>
 
 TT_UNKNOWN
 Inconnu
@@ -1226,20 +1226,20 @@ Inconnu
 ## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
-Système Inconnu
+SystÃ¨me Inconnu
 
 SP_SYSTEM_NAME
 %1%
 
 SP_RENAME_PLANET
-Renommer la planète
+Renommer la planÃ¨te
 
 SP_ENTER_NEW_PLANET_NAME
-Entrer le nouveau nom de la planète
+Entrer le nouveau nom de la planÃ¨te
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
 '''Tous les vaisseau de colonisation 
-on l'ordre de quitter le système
+on l'ordre de quitter le systÃ¨me
 
 Doit-on utiliser l'un d'eux?'''
 
@@ -1248,7 +1248,7 @@ Doit-on utiliser l'un d'eux?'''
 #################
 
 FW_FLEET_HOLDING_AT
-Au Système %1%
+Au SystÃ¨me %1%
 
 FW_FLEET_MOVING_TO
 Destination %1%, ETA %2% (%3%)
@@ -1260,7 +1260,7 @@ FW_FLEET_ETA_UNKNOWN
 Inconnu
 
 FW_FLEET_ETA_OUT_OF_RANGE
-Hors de portée
+Hors de portÃ©e
 
 FW_SHIP_CLASS
 Classe de vaisseau 
@@ -1279,17 +1279,17 @@ FW_EMPIRE_FLEETS
 Flotte %1%
 
 FW_HOME_FLEET
-Flotte Mère
+Flotte MÃ¨re
 
 FW_BATTLE_FLEET
 Flotte de combat
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
-Flotte étrangère
+Flotte Ã©trangÃ¨re
 
 FW_FOREIGN_SHIP
-Vaisseau étranger
+Vaisseau Ã©tranger
 
 FW_NO_FLEET
 Pas de flotte
@@ -1332,7 +1332,7 @@ TECH_DETAIL_EFFECTS_STR
 TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
 
-<u>Débloqué</u>
+<u>DÃ©bloquÃ©</u>
 
 '''
 
@@ -1350,7 +1350,7 @@ TECH_WND_TECH_INCOMPLETE
 Incomplet
 
 TECH_WND_TYPE_THEORIES
-Théories
+ThÃ©ories
 
 TECH_WND_TYPE_APPLICATIONS
 Applications
@@ -1377,7 +1377,7 @@ TECH_WND_REQUIRES
 Requiert
 
 TECH_WND_UNLOCKS
-Débloque
+DÃ©bloque
 
 
 #######################
@@ -1388,13 +1388,13 @@ PRODUCTION_INFO_TOTAL_PS_LABEL
 Total points disponibles
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Points gaspillés
+Points gaspillÃ©s
 
 PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
 Projets en cours
 
 PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Projets sous-financés
+Projets sous-financÃ©s
 
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
 Projets en attente
@@ -1419,10 +1419,10 @@ RP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Possibilités de construction
+PossibilitÃ©s de construction
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
-Bâtiments
+BÃ¢timents
 
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Vaisseaux
@@ -1462,14 +1462,14 @@ PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
 '''%1%
 
 Attaque: %2%
-Défense: %3%
+DÃ©fense: %3%
 Vitesse: %4%'''
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Quantité
+QuantitÃ©
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-Rajouter à la file
+Rajouter Ã  la file
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centrer sur la construction
@@ -1500,7 +1500,7 @@ DESIGN_ADD_TEST
 Ajouter un prototype
 
 DESIGN_NAME_DEFAULT
-Design personnalisé
+Design personnalisÃ©
 
 DESIGN_DESCRIPTION_DEFAULT
 Description du Design 
@@ -1518,16 +1518,16 @@ DESIGN_WND_FINISHED_DESIGNS
 Designs finis
 
 DESIGN_WND_SAVED_DESIGNS
-Designs Sauvés
+Designs SauvÃ©s
 
 DESIGN_WND_TEMPLATES
-Modèle de Design 
+ModÃ¨le de Design 
 
 DESIGN_WND_PART_PALETTE_TITLE
-Eléments de vaisseau
+ElÃ©ments de vaisseau
 
 DESIGN_WND_MAIN_PANEL_TITLE
-Détails du Design
+DÃ©tails du Design
 
 DESIGN_WND_DESIGN_NAME
 Nom
@@ -1539,7 +1539,7 @@ DESIGN_WND_CONFIRM
 Confirmer le Design
 
 DESIGN_WND_CLEAR
-Effacer les éléments
+Effacer les Ã©lÃ©ments
 
 # Ship Slot Types
 
@@ -1553,7 +1553,7 @@ Interne
 # Ship Part Classes
 
 PC_SHORT_RANGE
-Courte portée
+Courte portÃ©e
 
 PC_MISSILES
 Missiles
@@ -1562,7 +1562,7 @@ PC_FIGHTERS
 Chasseurs
 
 PC_POINT_DEFENSE
-Prox. Défense
+Prox. DÃ©fense
 
 PC_SHIELD
 Bouclier
@@ -1571,10 +1571,10 @@ PC_ARMOUR
 Blindage
 
 PC_DETECTION
-Détection
+DÃ©tection
 
 PC_STEALTH
-Furtivité
+FurtivitÃ©
 
 PC_FUEL
 Carburant
@@ -1589,7 +1589,7 @@ Colonisation
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART
-Elément de vaisseau
+ElÃ©ment de vaisseau
 
 ENC_SHIP_HULL
 Coque de vaisseau
@@ -1601,7 +1601,7 @@ ENC_SHIP_DESIGN
 Design de vaisseau
  
 ENC_SPECIAL
-Spécial
+SpÃ©cial
 
 ENC_BUILDING
 Batiment
@@ -1642,13 +1642,13 @@ END_EFFECTS_STR
 ####################
 
 COMBAT_WINDOW_TITLE
-Fenêtre de Combat
+FenÃªtre de Combat
 
 COMBAT_BATTLE
 BATTAILE : 
 
 COMBAT_SYSTEM
-Système %1%
+SystÃ¨me %1%
 
 COMBAT_MILITARY_SHIPS
 Vaisseaux Militaires
@@ -1657,7 +1657,7 @@ COMBAT_CIVILIAN_SHIPS
 Vaisseaux Civils
 
 COMBAT_PLANETS
-Planètes
+PlanÃ¨tes
 
 COMBAT_REMAINING
  Restant
@@ -1666,10 +1666,10 @@ COMBAT_RETREATED
  En retraite
 
 COMBAT_DESTROYED
- Détruit
+ DÃ©truit
 
 COMBAT_DEFENSELESS
- Sans Défense
+ Sans DÃ©fense
 
 COMBAT_LOST
  Perdu!
@@ -1683,10 +1683,10 @@ TURN_PROGRESS_WND
 Tour en cours
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Déplacement des flottes ...
+DÃ©placement des flottes ...
 
 TURN_PROGRESS_PHASE_COMBAT
-Résolution des combats ...
+RÃ©solution des combats ...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
 Production et croissance ..
@@ -1695,10 +1695,10 @@ TURN_PROGRESS_PHASE_WAITING
 En attente des autres joueurs ...
 
 TURN_PROGRESS_PHASE_ORDERS
-Exécution des Ordres ...
+ExÃ©cution des Ordres ...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
-Téléchargment des données du jeu ...
+TÃ©lÃ©chargment des donnÃ©es du jeu ...
 
 ########################
 # SitRep Panel         #
@@ -1715,34 +1715,34 @@ Rapport de la situation
 ####################
 
 SITREP_BASE_BUILT
-%planet% a complété sa base défensive.
+%planet% a complÃ©tÃ© sa base dÃ©fensive.
 
 SITREP_SHIP_BUILT
-Un nouveau %ship% a été produit dans le système %system%.
+Un nouveau %ship% a Ã©tÃ© produit dans le systÃ¨me %system%.
 
 SITREP_BUILDING_BUILT
-%building% a été construit sur %planet%.
+%building% a Ã©tÃ© construit sur %planet%.
 
 SITREP_TECH_RESEARCHED
-La technologie %tech% a été recherchée.
+La technologie %tech% a Ã©tÃ© recherchÃ©e.
 
 SITREP_COMBAT_SYSTEM_WON
-Un combat s'est déroulé dans %system%. Nous y avons été victorieux!
+Un combat s'est dÃ©roulÃ© dans %system%. Nous y avons Ã©tÃ© victorieux!
 
 SITREP_COMBAT_SYSTEM_LOST
-Un combat s'est déroulé dans %system%. Nous avons été vaincus!
+Un combat s'est dÃ©roulÃ© dans %system%. Nous avons Ã©tÃ© vaincus!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-Un combat s'est déroulé dans %system%. Il n'y a ni vainqueur ni vaincu.
+Un combat s'est dÃ©roulÃ© dans %system%. Il n'y a ni vainqueur ni vaincu.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-La population entière de %planet% a été détruite par la famine. La planète est perdue!
+La population entiÃ¨re de %planet% a Ã©tÃ© dÃ©truite par la famine. La planÃ¨te est perdue!
 
 SITREP_PLANET_COLONIZED
-%planet%, du système %system%, a été colonisée.
+%planet%, du systÃ¨me %system%, a Ã©tÃ© colonisÃ©e.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-La flotte %fleet% est arrivée au système %system% et attend vos ordres.
+La flotte %fleet% est arrivÃ©e au systÃ¨me %system% et attend vos ordres.
 
 
 ####################
@@ -1753,61 +1753,61 @@ HOMEWORLD_SPECIAL
 Monde d'origine
 
 HOMEWORLD_SPECIAL_DESCRIPTION
-Cette planète est le berceau de votre espèce; vous savez l'exploiter au maximum, ce qui octroie des bonus à pratiquement toutes les caractéristiques de cette planète.
+Cette planÃ¨te est le berceau de votre espÃ¨ce; vous savez l'exploiter au maximum, ce qui octroie des bonus Ã  pratiquement toutes les caractÃ©ristiques de cette planÃ¨te.
 
 ANCIENT_RUINS_SPECIAL
 Ruinnnes anciennes
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Des ruinnes d'une ancienne race avancée, oubliées depuis longtemps, se trouvent sur cette planète. La recherche scientifique reçoit un bonus.
+Des ruinnes d'une ancienne race avancÃ©e, oubliÃ©es depuis longtemps, se trouvent sur cette planÃ¨te. La recherche scientifique reÃ§oit un bonus.
 
 MINERALS_SPECIAL
 Riche en minerais
 
 MINERALS_SPECIAL_DESCRIPTION
-Cette planètes possède de riches dépôts de minerais naturels, ce qui favorise l'expoitation minière et le commerce.
+Cette planÃ¨tes possÃ¨de de riches dÃ©pÃ´ts de minerais naturels, ce qui favorise l'expoitation miniÃ¨re et le commerce.
 
 TUNNELS_SPECIAL
 Tunnels naturels
 
 TUNNELS_SPECIAL_DESCRIPTION
-Cette planète possède un réseau très étendus de tunnels souterrains, permettant ainsi la colonisation aisée d'une plus grande portion de la planète.
+Cette planÃ¨te possÃ¨de un rÃ©seau trÃ¨s Ã©tendus de tunnels souterrains, permettant ainsi la colonisation aisÃ©e d'une plus grande portion de la planÃ¨te.
 
 TECHTONIC_INSTABILITY_SPECIAL
 Tectoniquement instable
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-Cette planète est tectoniquement instable. Des tremblements de terre fréquents, des tsunamis, des éruptions volcaniques ou l'instabilité du sol font que la construction et le développement d'infrastructures en général est difficile.
+Cette planÃ¨te est tectoniquement instable. Des tremblements de terre frÃ©quents, des tsunamis, des Ã©ruptions volcaniques ou l'instabilitÃ© du sol font que la construction et le dÃ©veloppement d'infrastructures en gÃ©nÃ©ral est difficile.
 
 SOLID_CORE_SPECIAL
-Noyau solidifié
+Noyau solidifiÃ©
 
 SOLID_CORE_SPECIAL_DESC
-Le noyau de cette planète s'est solidifié, et ne possède qu'un champ magnétique très faible. Les vents solaires de l'étoile arrivent à la surface relativement intacts, avec des effets néfastes sur la santé et la production de nourriture.
+Le noyau de cette planÃ¨te s'est solidifiÃ©, et ne possÃ¨de qu'un champ magnÃ©tique trÃ¨s faible. Les vents solaires de l'Ã©toile arrivent Ã  la surface relativement intacts, avec des effets nÃ©fastes sur la santÃ© et la production de nourriture.
 
 HIGH_AXIAL_TILT_SPECIAL
 Grande inclinaison axiale
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-Cette planète a un axe de rotation très incliné par rapport à son plan orbital. Les variations de climats sont particulièrement extrêmes ce qui gêne le dévelloppement des infrastructures.***
+Cette planÃ¨te a un axe de rotation trÃ¨s inclinÃ© par rapport Ã  son plan orbital. Les variations de climats sont particuliÃ¨rement extrÃªmes ce qui gÃªne le dÃ©velloppement des infrastructures.***
 
 SLOW_ROTATION_SPECIAL
-Rotation très lente
+Rotation trÃ¨s lente
 
 SLOW_ROTATION_SPECIAL_DESC
-Cette planète tourne sur elle-même très lentement, journées et nuits y sont donc très longs. Le développement d'infrastructures, l'agriculture et la capacité en population sont pénalisés.
+Cette planÃ¨te tourne sur elle-mÃªme trÃ¨s lentement, journÃ©es et nuits y sont donc trÃ¨s longs. Le dÃ©veloppement d'infrastructures, l'agriculture et la capacitÃ© en population sont pÃ©nalisÃ©s.
 
 TIDAL_LOCK_SPECIAL
 Rotation synchrone
 
 TIDAL_LOCK_SPECIAL_DESC
-Cette planète a une période de rotation identique à sa période orbitale; une face de la planète est constamment illuminée, tandis que l'autre est toujours dans la pénombre. Le développement d'infrastructures est pénalisé, mais une fois établies, les industries profitent des conditions de surface localement stables.
+Cette planÃ¨te a une pÃ©riode de rotation identique Ã  sa pÃ©riode orbitale; une face de la planÃ¨te est constamment illuminÃ©e, tandis que l'autre est toujours dans la pÃ©nombre. Le dÃ©veloppement d'infrastructures est pÃ©nalisÃ©, mais une fois Ã©tablies, les industries profitent des conditions de surface localement stables.
 
 ECCENTRIC_ORBIT_SPECIAL
-Orbite excentré
+Orbite excentrÃ©
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-L'orbite de cette planète est très excentré, c'est-à-dire qu'il y a une grande distance entre le point où la planètre est la plus proche de son étoile et celui où elle l'est le moins. L'insolation totale varie beaucoup au cours de l'année. Les condition variées ralentissent le développement des infrastructures, mais sont bénéfiques pour la recherche scientifique.
+L'orbite de cette planÃ¨te est trÃ¨s excentrÃ©, c'est-Ã -dire qu'il y a une grande distance entre le point oÃ¹ la planÃ¨tre est la plus proche de son Ã©toile et celui oÃ¹ elle l'est le moins. L'insolation totale varie beaucoup au cours de l'annÃ©e. Les condition variÃ©es ralentissent le dÃ©veloppement des infrastructures, mais sont bÃ©nÃ©fiques pour la recherche scientifique.
 
 #######################
 # Enumeration  values #
@@ -1816,7 +1816,7 @@ L'orbite de cette planète est très excentré, c'est-à-dire qu'il y a une grande d
 # UniverseObjectTypes
 
 OBJ_BUILDING
-bâtiment
+bÃ¢timent
 
 OBJ_SHIP
 vaisseau
@@ -1825,7 +1825,7 @@ OBJ_FLEET
 flotte
 
 OBJ_PLANET
-planète
+planÃ¨te
 
 OBJ_POP_CENTER
 centre de population
@@ -1834,7 +1834,7 @@ OBJ_PROD_CENTER
 centre de production
 
 OBJ_SYSTEM
-système
+systÃ¨me
 
 
 # StarTypes
@@ -1864,7 +1864,7 @@ trou noir
 # PlanetTypes
 
 PT_SWAMP
-marécageuse
+marÃ©cageuse
 
 PT_TOXIC
 toxique
@@ -1873,7 +1873,7 @@ PT_INFERNO
 infernale
 
 PT_RADIATED
-irradiée
+irradiÃ©e
 
 PT_BARREN
 lunaire
@@ -1882,28 +1882,28 @@ PT_TUNDRA
 toundra
 
 PT_DESERT
-désertique
+dÃ©sertique
 
 PT_TERRAN
 terrienne
 
 PT_OCEAN
-océanique
+ocÃ©anique
 
 PT_GAIA
 gaia
 
 PT_ASTEROIDS
-astéroides
+astÃ©roides
 
 PT_GASGIANT
-géante gazeuse
+gÃ©ante gazeuse
 
 
 # Planet Sizes
 
 SZ_NOWORLD
-Rien à voir ici, circulez.
+Rien Ã  voir ici, circulez.
 
 SZ_TINY
 minuscule
@@ -1918,13 +1918,13 @@ SZ_LARGE
 grande
 
 SZ_HUGE
-énorme
+Ã©norme
 
 SZ_ASTEROIDS
-astéroïdes
+astÃ©roÃ¯des
 
 SZ_GASGIANT
-géante gazeuse
+gÃ©ante gazeuse
 
 
 # PlanetEnvironments
@@ -1947,7 +1947,7 @@ FOCUS_UNKNOWN
 inconnu
 
 FOCUS_BALANCED
-équilibré
+Ã©quilibrÃ©
 
 FOCUS_FARMING
 agriculture
@@ -1956,7 +1956,7 @@ FOCUS_INDUSTRY
 industrie
 
 FOCUS_MINING
-expl. minière
+expl. miniÃ¨re
 
 FOCUS_RESEARCH
 recherche
@@ -1982,13 +1982,13 @@ METER_TRADE
 commerce
 
 METER_MINING
-expl. minière
+expl. miniÃ¨re
 
 METER_CONSTRUCTION
 construction
 
 METER_HEALTH
-santé
+santÃ©
 
 METER_FUEL
 carburant
@@ -1997,16 +1997,16 @@ METER_SUPPLY
 provision
 
 METER_STEALTH
-furtivité
+furtivitÃ©
 
 METER_DETECTION
-détection
+dÃ©tection
 
 METER_SHIELD
 bouclier
 
 METER_DEFENSE
-défense
+dÃ©fense
 
 
 # EmpireAffiliationTypes
@@ -2018,16 +2018,16 @@ AFFIL_ENEMY
 ennemi
 
 AFFIL_ALLY
-allié
+alliÃ©
 
 
 # UnlockableItemTypes
 
 UIT_BUILDING
-Bâtiment
+BÃ¢timent
 
 UIT_SHIP_PART
-Elément de vaisseau
+ElÃ©ment de vaisseau
 
 UIT_SHIP_HULL
 Coque de vaisseau
@@ -2035,7 +2035,7 @@ Coque de vaisseau
 # TechTypes
 
 TT_THEORY
-Théorie
+ThÃ©orie
 
 TT_APPLICATION
 Application
@@ -2065,7 +2065,7 @@ ST_FOOD
 nourriture
 
 ST_MINERAL
-minéraux
+minÃ©raux
 
 ST_TRADE
 commerce
@@ -2079,10 +2079,10 @@ commerce
 # ValueRef
 
 DESC_VAR_PLANET
-planète
+planÃ¨te
 
 DESC_VAR_SYSTEM
-système
+systÃ¨me
 
 DESC_VAR_SOURCE
 source
@@ -2091,19 +2091,19 @@ DESC_VAR_TARGET
 cible
 
 DESC_VAR_PLANETSIZE
-taille de la planète
+taille de la planÃ¨te
 
 DESC_VAR_PLANETTYPE
-type de la planète
+type de la planÃ¨te
 
 DESC_VAR_PLANETENVIRONMENT
-environnement de la planète
+environnement de la planÃ¨te
 
 DESC_VAR_OBJECTTYPE
 type d'objet
 
 DESC_VAR_STARTYPE
-type d'étoile
+type d'Ã©toile
 
 DESC_VAR_PRIMARYFOCUS
 objectif principal***
@@ -2136,10 +2136,10 @@ DESC_VAR_MAXTRADE
 commerce max
 
 DESC_VAR_CURRENTMINING
-exp. minière actuelle
+exp. miniÃ¨re actuelle
 
 DESC_VAR_MAXMINING
-exp. minière max
+exp. miniÃ¨re max
 
 DESC_VAR_CURRENTCONSTRUCTION
 construction actuelle
@@ -2148,10 +2148,10 @@ DESC_VAR_MAXCONSTRUCTION
 construction max
 
 DESC_VAR_CURRENTHEALTH
-santé actuelle
+santÃ© actuelle
 
 DESC_VAR_MAXHEALTH
-santé max
+santÃ© max
 
 DESC_VAR_CURRENTPOPULATION
 population actuel
@@ -2172,16 +2172,16 @@ DESC_VAR_MAXSUPPLY
 provision maximun
 
 DESC_VAR_CURRENTSTEALTH
-furtivité actuelle
+furtivitÃ© actuelle
 
 DESC_VAR_MAXSTEALTH
-furtivité max
+furtivitÃ© max
 
 DESC_VAR_CURRENTDETECTION
-détection actuelle
+dÃ©tection actuelle
 
 DESC_VAR_MAXDETECTION
-détection max
+dÃ©tection max
 
 DESC_VAR_CURRENTSHIELD
 bouclier actuel
@@ -2190,13 +2190,13 @@ DESC_VAR_MAXSHIELD
 bouclier max
 
 DESC_VAR_CURRENTDEFENSE
-défense actuelle
+dÃ©fense actuelle
 
 DESC_VAR_MAXDEFENSE
 max defense
 
 DESC_VAR_TRADESTOCKPILE
-stock de crédits
+stock de crÃ©dits
 
 DESC_VAR_MINERALSTOCKPILE
 stock de minerais
@@ -2220,16 +2220,16 @@ DESC_VAR_RESEARCHPRODUCTION
 production scientifique
 
 DESC_VAR_OWNER
-propriétaire
+propriÃ©taire
 
 DESC_VAR_ID
 ID
 
 DESC_VAR_AGE
-âge en tours
+Ã¢ge en tours
 
 DESC_VAR_CREATIONTURN
-tour de création
+tour de crÃ©ation
 
 DESC_VAR_CURRENTTURN
 tour actuel
@@ -2262,10 +2262,10 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Objets afféctés: tous les objets%1%
+Objets affÃ©ctÃ©s: tous les objets%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Objets afféctés: l'objet d'origine seulement***
+Objets affÃ©ctÃ©s: l'objet d'origine seulement***
 
 DESC_EFFECTS_GROUP_ACTIVATION
 L'effet est actif si la source est un objet%1%
@@ -2303,55 +2303,55 @@ DESC_SIMPLE_SET_METER_CURRENT
 Actuel %1% %2%%3%
 
 DESC_COMPLEX_SET_METER_MAX
-Fixer le max %1% à %2%
+Fixer le max %1% Ã  %2%
 
 DESC_COMPLEX_SET_METER_CURRENT
-Fixer l'actuel %1% à %2%
+Fixer l'actuel %1% Ã  %2%
 
 
 # others
 
 DESC_SET_EMPIRE_STOCKPILE
-Définit le stock de %1% du propriétaire de l'objet à %2%
+DÃ©finit le stock de %1% du propriÃ©taire de l'objet Ã  %2%
 
 DESC_SET_PLANET_TYPE
-Change le type de la planète pour %1%
+Change le type de la planÃ¨te pour %1%
 
 DESC_SET_PLANET_SIZE
-Change la taille de la planète pour %1%
+Change la taille de la planÃ¨te pour %1%
 
 DESC_ADD_OWNER
-Donnes l'objet à l'empire %1% 
+Donnes l'objet Ã  l'empire %1% 
 
 DESC_REMOVE_OWNER
-Enlève l'objet à l'empire %1%
+EnlÃ¨ve l'objet Ã  l'empire %1%
 
 DESC_DESTROY
-Détruit l'objet
+DÃ©truit l'objet
 
 DESC_ADD_SPECIAL
-Donnes la capacité spéciale %1% à l'objet
+Donnes la capacitÃ© spÃ©ciale %1% Ã  l'objet
 
 DESC_REMOVE_SPECIAL
-Enlèves la capacité spéciale %1% à l'objet
+EnlÃ¨ves la capacitÃ© spÃ©ciale %1% Ã  l'objet
 
 DESC_SET_STAR_TYPE
-Change le type d'étoile pour %1%
+Change le type d'Ã©toile pour %1%
 
 
 # SetTechAvailability
 
 DESC_TECH_AND_ITEMS_AFFECTED
-%1% et tous ses objet sont débloqués***
+%1% et tous ses objet sont dÃ©bloquÃ©s***
 
 DESC_ITEMS_ONLY_AFFECTED
-les objets débloqué par la technologie %1%***
+les objets dÃ©bloquÃ© par la technologie %1%***
 
 DESC_SET_TECH_AVAIL
-Rends %1% accessible à l'empire %2%
+Rends %1% accessible Ã  l'empire %2%
 
 DESC_SET_TECH_UNAVAIL
-Rends %1% inaccessible à l'empire %2%
+Rends %1% inaccessible Ã  l'empire %2%
 
 
 # Conditions
@@ -2360,28 +2360,28 @@ DESC_ALL
  dans l'univers
 
 DESC_EMPIRE_AFFILIATION_SELF
- qui appartient à l'empire %1%
+ qui appartient Ã  l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- qui n'appartient pas à l'empire %1%
+ qui n'appartient pas Ã  l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- qui appartient seulement à l'empire %1%
+ qui appartient seulement Ã  l'empire %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- qui n'appartient pas seulement à l'empire %1%
+ qui n'appartient pas seulement Ã  l'empire %1%
 
 DESC_EMPIRE_AFFILIATION
- qui appartient à un %1% de l'empire %2%
+ qui appartient Ã  un %1% de l'empire %2%
 
 DESC_EMPIRE_AFFILIATION_NOT
- qui n'appartient pas à un %1% de l'empire %2%
+ qui n'appartient pas Ã  un %1% de l'empire %2%
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- qui appartient seulement à un %1% de l'empire %2%
+ qui appartient seulement Ã  un %1% de l'empire %2%
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- qui n'appartient pas seulement à un %1% de l'empire %2%
+ qui n'appartient pas seulement Ã  un %1% de l'empire %2%
 
 # this one is intentionally left empty
 DESC_SELF
@@ -2403,10 +2403,10 @@ DESC_BUILDING_NOT
  qui ne contient pas un %1% batiment
 
 DESC_SPECIAL
- qui a le spécial %1%***
+ qui a le spÃ©cial %1%***
 
 DESC_SPECIAL_NOT
- qui n'a pas le spécial %1%***
+ qui n'a pas le spÃ©cial %1%***
 
 DESC_CONTAINS
  qui contient un objet%1%
@@ -2415,40 +2415,40 @@ DESC_CONTAINS_NOT
  qui ne contient pas un objet%1%
 
 DESC_PLANET_TYPE
- qui est une planète de type %1%
+ qui est une planÃ¨te de type %1%
 
 DESC_PLANET_TYPE_NOT
- qui n'est pas une planète de type %1%
+ qui n'est pas une planÃ¨te de type %1%
 
 DESC_PLANET_SIZE
- qui est une planète de %1% taille
+ qui est une planÃ¨te de %1% taille
 
 DESC_PLANET_SIZE_NOT
- qui n'est pas une planète de %1% taille
+ qui n'est pas une planÃ¨te de %1% taille
 
 DESC_PLANET_ENVIRONMENT
- qui est une planète %1%
+ qui est une planÃ¨te %1%
 
 DESC_PLANET_ENVIRONMENT_NOT
- qui n'est pas une planète %1%
+ qui n'est pas une planÃ¨te %1%
 
 DESC_FOCUS_TYPE_PRIMARY
- qui est axée principalement sur %1%
+ qui est axÃ©e principalement sur %1%
 
 DESC_FOCUS_TYPE_PRIMARY_NOT
- qui n'est pas axée principalement sur %1%
+ qui n'est pas axÃ©e principalement sur %1%
 
 DESC_FOCUS_TYPE_SECONDARY
- qui est axée secondairement sur %1%
+ qui est axÃ©e secondairement sur %1%
 
 DESC_FOCUS_TYPE_SECONDARY_NOT
- qui n'est pas axée secondairement sur %1%
+ qui n'est pas axÃ©e secondairement sur %1%
 
 DESC_STAR_TYPE
- qui est un système avec une étoile %1% 
+ qui est un systÃ¨me avec une Ã©toile %1% 
 
 DESC_STAR_TYPE_NOT
- qui n'est pas un système avec une étoile %1%
+ qui n'est pas un systÃ¨me avec une Ã©toile %1%
 
 DESC_CHANCE_PERCENTAGE
  on a %1%%% chance
@@ -2457,10 +2457,10 @@ DESC_CHANCE_PERCENTAGE_NOT
  on a (100 - %1%)%% chance
 
 DESC_CHANCE
- avec une probabilité de %1%
+ avec une probabilitÃ© de %1%
 
 DESC_CHANCE_NOT
- avec une probabilité de 1 - %1%
+ avec une probabilitÃ© de 1 - %1%
 
 DESC_METER_VALUE_MAX
  qui a un max de %1% compris entre %2% et %3%
@@ -2475,10 +2475,10 @@ DESC_METER_VALUE_CURRENT_NOT
  qui n'a pas un %1% actuelle compris entre %2% et %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
- qui appartient à un empire avec un stock de %1% entre %2% and %3%
+ qui appartient Ã  un empire avec un stock de %1% entre %2% and %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- qui n'appartient pas à un empire avec un stock de %1% entre %2% and %3%
+ qui n'appartient pas Ã  un empire avec un stock de %1% entre %2% and %3%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE
  qui est visible par l'empire %1%
@@ -2493,16 +2493,16 @@ DESC_VISIBLE_TO_EMPIRES_NOT
  qui n'est pas visible par l'un des empires %1%
 
 DESC_WITHIN_DISTANCE
- qui est à moins de %1% de tout objets%2%
+ qui est Ã  moins de %1% de tout objets%2%
 
 DESC_WITHIN_DISTANCE_NOT
- qui n'est pas à moins de %1% de tout objets%2%
+ qui n'est pas Ã  moins de %1% de tout objets%2%
 
 DESC_WITHIN_STARLANE_JUMPS
- qui est à moins de %1% saut hyperspatial de tout objets%2%
+ qui est Ã  moins de %1% saut hyperspatial de tout objets%2%
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
- qui n'est pas à moins de %1% saut hyperspatial de tout objet%2%
+ qui n'est pas Ã  moins de %1% saut hyperspatial de tout objet%2%
 
 DESC_AND_BETWEEN_OPERANDS
  et
@@ -2532,7 +2532,7 @@ DESC_OWNER_HAS_TECH
  qui appartient a un empire qui a la technologie %1%
 
 DESC_OWNER_HAS_TECH_NOT
- qui n'appartient pas à un empire qui a la technologie %1%
+ qui n'appartient pas Ã  un empire qui a la technologie %1%
 
 DESC_NUMBER
  si il ya entre %1% et %2% objets%3%
@@ -2557,7 +2557,7 @@ GROWTH_CATEGORY
 Croissance
 
 ECONOMICS_CATEGORY
-Économie
+Ã‰conomie
 
 SHIPS_CATEGORY
 Vaisseaux
@@ -2568,91 +2568,91 @@ Vaisseaux
 ####################################
 
 THEORY_SHORT_DESC
-Pré-requis théorique
+PrÃ©-requis thÃ©orique
 
 LRN_PHYS_BRAIN
-Cartographie Cérébral
+Cartographie CÃ©rÃ©bral
 
 LRN_PHYS_BRAIN_DESC
-Les structures et leurs fonctions dans le cerveau sont déterminés.  Le électrochimiques et la nature quantique de la pensée et la mémoire sont comprises.  Avec la compréhension des fonctions cérébrales, le renforcement et la transformation de celles-ci devient possible, et donne naissance à de nouvelles idées sur les limites de la pensée, de son expression, et de son remplacement.
+Les structures et leurs fonctions dans le cerveau sont dÃ©terminÃ©s.  Le Ã©lectrochimiques et la nature quantique de la pensÃ©e et la mÃ©moire sont comprises.  Avec la comprÃ©hension des fonctions cÃ©rÃ©brales, le renforcement et la transformation de celles-ci devient possible, et donne naissance Ã  de nouvelles idÃ©es sur les limites de la pensÃ©e, de son expression, et de son remplacement.
 
 LRN_ALGO_ELEGANCE
-L'élégance Algorithmique 
+L'Ã©lÃ©gance Algorithmique 
 
 LRN_ALGO_ELEGANCE_DESC
-Avec une difficulté grandissante dans les problèmes d'analyse des données, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexité irréductible..  À ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthétiquement et métaphoriquement, l'élégance de la solution doit être optimisé.
+Avec une difficultÃ© grandissante dans les problÃ¨mes d'analyse des donnÃ©es, les mesures traditionnelles des performances algorithmique deviennent moins utile en raison des limites de la complexitÃ© irrÃ©ductible..  Ã€ ce stade, des mesures de forme et de fonction algorithmique deviennent significatifs; esthÃ©tiquement et mÃ©taphoriquement, l'Ã©lÃ©gance de la solution doit Ãªtre optimisÃ©.
  
 LRN_TRANSLING_THT
 Translinguistique 
 
 LRN_TRANSLING_THT_DESC
-Les faibles d'esprit luttent ou acceptent les limites de la langue qu'ils ont appris. Les esprits normaux se sentent limités par les concepts qu'ils ont les moyens d'exprimer. Les vrais grands esprits se libèrent des limites de la langue, formant et analysant des pensées à la limite de la transcendance. Mais les grands esprits sont isolés et inutiles, car sans la langue pour exprimer des pensées, comment peuvent-ils partager leurs idées?
+Les faibles d'esprit luttent ou acceptent les limites de la langue qu'ils ont appris. Les esprits normaux se sentent limitÃ©s par les concepts qu'ils ont les moyens d'exprimer. Les vrais grands esprits se libÃ¨rent des limites de la langue, formant et analysant des pensÃ©es Ã  la limite de la transcendance. Mais les grands esprits sont isolÃ©s et inutiles, car sans la langue pour exprimer des pensÃ©es, comment peuvent-ils partager leurs idÃ©es?
 
 LRN_PSIONICS
 Psionique
 
 LRN_PSIONICS_DESC
-A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut développer les capacités d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la télépathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dépasser des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrôle de l'esprit, la modification de personnalité et la possession ont de grandes conséquences sur la relation entre les êtres psioniques et les autres.
+A travers l'introspection profonde ou une augmentation artificielle, le cerveau peut dÃ©velopper les capacitÃ©s d'interagir directement avec l'univers autour de lui, en contournant les limitations physiques du corps. Des puissances telles que la tÃ©lÃ©pathie, l'empathie, la clairvoyance, la prescience, la psychokinesie et la psychoenergie peuvent remplacer ou dÃ©passer des alternatives biologiques ou  technologiques. Les applications de ces pouvoirs, y compris le contrÃ´le de l'esprit, la modification de personnalitÃ© et la possession ont de grandes consÃ©quences sur la relation entre les Ãªtres psioniques et les autres.
 
 LRN_ARTIF_MINDS
 Intelligences Artificielles
 
 LRN_ARTIF_MINDS_DESC
-Alors que les ordinateurs traditionnels ont des capacités de calcul presque infinie , ils leur manquent une qualité essentielle : la conscience. Avec le développement d'une véritable intelligence artificielle, cette qualités peut être synthétisé, modifié. Ces recherches ouvrent de nouvelles voies en matière de sciences cognitives et de metaparadigmes.***
+Alors que les ordinateurs traditionnels ont des capacitÃ©s de calcul presque infinie , ils leur manquent une qualitÃ© essentielle : la conscience. Avec le dÃ©veloppement d'une vÃ©ritable intelligence artificielle, cette qualitÃ©s peut Ãªtre synthÃ©tisÃ©, modifiÃ©. Ces recherches ouvrent de nouvelles voies en matiÃ¨re de sciences cognitives et de metaparadigmes.***
 
 LRN_XENOARCH
 Xenoarchaeologie
 
 LRN_XENOARCH_DESC
-Les empires contemporains, les races et civilisations mono-système ne sont pas les premiers êtres ou les seul à avoir vécu dans cette galaxie. Des restes, des ruines et des rumeurs sur les  anciens peuvent être trouvées sur des planètes désertes, des astéroïdes sans vie, ou à la dérive dans l'espace. Rechercher et la traduire ces indices permettrai  de révéler des secrets, d' enseigner des leçons, de donner des pistes vers des anciennes connaissances.
+Les empires contemporains, les races et civilisations mono-systÃ¨me ne sont pas les premiers Ãªtres ou les seul Ã  avoir vÃ©cu dans cette galaxie. Des restes, des ruines et des rumeurs sur les  anciens peuvent Ãªtre trouvÃ©es sur des planÃ¨tes dÃ©sertes, des astÃ©roÃ¯des sans vie, ou Ã  la dÃ©rive dans l'espace. Rechercher et la traduire ces indices permettrai  de rÃ©vÃ©ler des secrets, d' enseigner des leÃ§ons, de donner des pistes vers des anciennes connaissances.
 
 LRN_GRAVITONICS
 Gravitonique
 
 LRN_GRAVITONICS_DESC
-Analogue à la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent être combinés pour fléchir  la surface de l'espace-temps arbitrairement. Cette manipulation autorise le contrôle de la force de gravité, ce qui permet des structures, des constructions et des recherches impossible avant, même théoriquement.
+Analogue Ã  la "charge de couleur" de la chromodynamique quantique, il existe plusieurs types de graviton. Avec la force attractive graviton, les "anti-graviton", "graviton-droit" et "graviton-gauche" peuvent Ãªtre combinÃ©s pour flÃ©chir  la surface de l'espace-temps arbitrairement. Cette manipulation autorise le contrÃ´le de la force de gravitÃ©, ce qui permet des structures, des constructions et des recherches impossible avant, mÃªme thÃ©oriquement.
 
 LRN_EVERYTHING
 Theorie du tout
 
 LRN_EVERYTHING_DESC
-Au début, des théories naïves  de décrivaient des sous-ensembles des quatre forces fondamentales de la nature: l'électromagnétisme, les forces nucléaires forte et faible, et la gravité. Une théorie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction représente un Saint-Graal de la science. Cette théorie décrit les premiers instants de l'univers, les profondeurs les plus déformées d'une singularité, la plus exigüe des dimensions cachées et le destin final du cosmos. Pourtant, il peut encore "exister" des couches d'existence au-delà de ce qui peut être observés et décrits par la science ...
+Au dÃ©but, des thÃ©ories naÃ¯ves  de dÃ©crivaient des sous-ensembles des quatre forces fondamentales de la nature: l'Ã©lectromagnÃ©tisme, les forces nuclÃ©aires forte et faible, et la gravitÃ©. Une thÃ©orie globale exprimant toutes les forces comme des cas particuliers d'une seule interaction reprÃ©sente un Saint-Graal de la science. Cette thÃ©orie dÃ©crit les premiers instants de l'univers, les profondeurs les plus dÃ©formÃ©es d'une singularitÃ©, la plus exigÃ¼e des dimensions cachÃ©es et le destin final du cosmos. Pourtant, il peut encore "exister" des couches d'existence au-delÃ  de ce qui peut Ãªtre observÃ©s et dÃ©crits par la science ...
 
 LRN_FORCE_FIELD
 Harmonique des champs de force
 
 LRN_FORCE_FIELD_DESC
-Comme l'analyse du son de Fourier, l'électromagnétisme, les interactions fortes et faibles peuvent être exprimé sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sélective de ces harmoniques, les forces peuvent être contrôlé pour défendre, attaquer, contenir ou soutenir.***
+Comme l'analyse du son de Fourier, l'Ã©lectromagnÃ©tisme, les interactions fortes et faibles peuvent Ãªtre exprimÃ© sous la forme de superpositions d'harmonique quantique transportant des particules de force. Par l'amplification sÃ©lective de ces harmoniques, les forces peuvent Ãªtre contrÃ´lÃ© pour dÃ©fendre, attaquer, contenir ou soutenir.***
 
 LRN_MIND_VOID
 L'esprit du vide.
 
 LRN_MIND_VOID_DESC
-Nous ne sommes pas seuls dans le cosmos ... mais pourquoi la recherche devrait être limité de telle sorte? De nombreuses cultures ont des mythes, des légendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu miséricordieux ou malveillant, ou un observateur détaché, il est clair que quelque chose, peut-être l'univers lui-même à un certain niveau, est vivant, conscient, observant.
+Nous ne sommes pas seuls dans le cosmos ... mais pourquoi la recherche devrait Ãªtre limitÃ© de telle sorte? De nombreuses cultures ont des mythes, des lÃ©gendes ou de ferventes croyances en une plus haute conscience. Que ce soit un Dieu misÃ©ricordieux ou malveillant, ou un observateur dÃ©tachÃ©, il est clair que quelque chose, peut-Ãªtre l'univers lui-mÃªme Ã  un certain niveau, est vivant, conscient, observant.
 
 LRN_TIME_MECH
-Mécanique temporelle
+MÃ©canique temporelle
 
 LRN_TIME_MECH_DESC
-Qu'es ce que "maintenant", "le futur" et "le passé"? Le double paradoxe de la relativité ou la théorie du "trou de ver" , suggère les premières formes de "voyage dans le temps". La manipulation directe des fluxs spatio-temporelle permet d'exploiter et d'agrandir ces effets. Les incursions temporelles ne peut pas modifier sensiblement le passé de l'univers que nous percevons. Ils peuvent, toutefois, compresser le temps ou étendre des instants d'une durée arbitraire, aux applications limitées seulement par nos ressources, et notre propre patience ...***
+Qu'es ce que "maintenant", "le futur" et "le passÃ©"? Le double paradoxe de la relativitÃ© ou la thÃ©orie du "trou de ver" , suggÃ¨re les premiÃ¨res formes de "voyage dans le temps". La manipulation directe des fluxs spatio-temporelle permet d'exploiter et d'agrandir ces effets. Les incursions temporelles ne peut pas modifier sensiblement le passÃ© de l'univers que nous percevons. Ils peuvent, toutefois, compresser le temps ou Ã©tendre des instants d'une durÃ©e arbitraire, aux applications limitÃ©es seulement par nos ressources, et notre propre patience ...***
 
 LRN_NDIM_SUBSPACE
 L'espace a N-Dimension 
 
 LRN_NDIM_SUBSPACE_DESC
-Les premiers théoriciens des super-cordes ont parlé d'univers à 10, 11 ou 26 dimensions, mais avec tous les 4 macrodimensions "boucle" si étroite qu'elles sont invisibles. Celles-ci et d'autres dimensions peuvent maintenant être uncurled et ouvert, et la surface de l'espace lui-même peuvent être étirée et percée par des déplacements de matière vers ou en provenance de niveaux d'existence précédemment cachées par notre perception limitée, ou la création de couches ou des bulles où il n'en existait pas auparavant.***
+Les premiers thÃ©oriciens des super-cordes ont parlÃ© d'univers Ã  10, 11 ou 26 dimensions, mais avec tous les 4 macrodimensions "boucle" si Ã©troite qu'elles sont invisibles. Celles-ci et d'autres dimensions peuvent maintenant Ãªtre uncurled et ouvert, et la surface de l'espace lui-mÃªme peuvent Ãªtre Ã©tirÃ©e et percÃ©e par des dÃ©placements de matiÃ¨re vers ou en provenance de niveaux d'existence prÃ©cÃ©demment cachÃ©es par notre perception limitÃ©e, ou la crÃ©ation de couches ou des bulles oÃ¹ il n'en existait pas auparavant.***
 
 LRN_UNIF_CONC
-Conscience unifiée 
+Conscience unifiÃ©e 
 
 LRN_UNIF_CONC_DESC
-La communication télépathique entre les individus ou par des interfaces esprit-machine a permis seulement les plus élémentaires et triviaux  échanges de pensée et d'idées. De vrais esprits joints fonctionne comme une seule conscience, avec la somme des facultés et des connaissances de ses parties, et en agissant comme une nouvelle entité unique. Cela a un grand potentiel, mais aussi des risques importants, que l'union d'esprit empêche  sa propre destruction, qui est nécessaire pour que chacun retrouve son esprit. D'un autre coté, un des esprits peut dominer les autres, les contrôler ou les détruire plutôt que de former, sur un pied d'égalité, une union harmonieuse.
+La communication tÃ©lÃ©pathique entre les individus ou par des interfaces esprit-machine a permis seulement les plus Ã©lÃ©mentaires et triviaux  Ã©changes de pensÃ©e et d'idÃ©es. De vrais esprits joints fonctionne comme une seule conscience, avec la somme des facultÃ©s et des connaissances de ses parties, et en agissant comme une nouvelle entitÃ© unique. Cela a un grand potentiel, mais aussi des risques importants, que l'union d'esprit empÃªche  sa propre destruction, qui est nÃ©cessaire pour que chacun retrouve son esprit. D'un autre cotÃ©, un des esprits peut dominer les autres, les contrÃ´ler ou les dÃ©truire plutÃ´t que de former, sur un pied d'Ã©galitÃ©, une union harmonieuse.
 
 LRN_TRANSCEND
-Singularité de la transcendance
+SingularitÃ© de la transcendance
 
 LRN_TRANSCEND_DESC
-Qu'est-ce que la divinité? Es ce qu'un dieu est concerné par les questions de moral, de bien ou de mal? Es ce qu'un dieu traite les mortels avec soin et amour, haine et souffrance ou indifférence? Es ce qu'un dieu est seulement conscient des affaires infiniment minuscule de l'univers physique, ou es ce que la vrai divinité est au-delà de la description, dont l'incapacité à être comprise par les mortels s'applique également dans l'autre sens?
+Qu'est-ce que la divinitÃ©? Es ce qu'un dieu est concernÃ© par les questions de moral, de bien ou de mal? Es ce qu'un dieu traite les mortels avec soin et amour, haine et souffrance ou indiffÃ©rence? Es ce qu'un dieu est seulement conscient des affaires infiniment minuscule de l'univers physique, ou es ce que la vrai divinitÃ© est au-delÃ  de la description, dont l'incapacitÃ© Ã  Ãªtre comprise par les mortels s'applique Ã©galement dans l'autre sens?
 
 GRO_PLANET_ECOL
 Planetary Ecology
@@ -2994,21 +2994,21 @@ SHP_SPACE_TACTICS
 Tactiques spatiales
 
 SHP_SPACE_TACTICS_DESC
-Les combat en microgravité et dans le vide exige des armes spécialisées et des systèmes de défense adaptés, ainsi que des tactiques et des théoriques pour optimiser leur utilisation.
+Les combat en microgravitÃ© et dans le vide exige des armes spÃ©cialisÃ©es et des systÃ¨mes de dÃ©fense adaptÃ©s, ainsi que des tactiques et des thÃ©oriques pour optimiser leur utilisation.
 
 SHP_GAL_EXPLO
 Exploration Galactique 
 
 SHP_GAL_EXPLO_DESC
-La découverte de voyage interstellaire par lien hyperspatial inaugure une nouvelle ère de développement de la société. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entière est confrontée au possibilités illimitées des étoiles ... la croissance et la prospérité, ou  la destruction totale. 
+La dÃ©couverte de voyage interstellaire par lien hyperspatial inaugure une nouvelle Ã¨re de dÃ©veloppement de la sociÃ©tÃ©. Les vieilles querelles politiques entre factions mineures deveniennent insignifiantes lorsque la civilisation tout entiÃ¨re est confrontÃ©e au possibilitÃ©s illimitÃ©es des Ã©toiles ... la croissance et la prospÃ©ritÃ©, ou  la destruction totale. 
 
 SHP_NAVIGATION
 Navigation Interstellaire
 
 SHP_NAVIGATION_DESC
-'''Les "Starlanes" forme un réseau relativement restraint de chemins possibles, mais les voyages interstellaires sont complexe et risqué sans des techniques de navigation.  
+'''Les "Starlanes" forme un rÃ©seau relativement restraint de chemins possibles, mais les voyages interstellaires sont complexe et risquÃ© sans des techniques de navigation.  
 
-À l'avenir, cette technologie pourrait faire quelque chose liée à "starlanes" ou à la vitesse du vaisseau ou de leur portée ...*** '''
+Ã€ l'avenir, cette technologie pourrait faire quelque chose liÃ©e Ã  "starlanes" ou Ã  la vitesse du vaisseau ou de leur portÃ©e ...*** '''
 
 
 #########################################
@@ -3019,13 +3019,13 @@ DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
 
 SHIP_PART_UNLOCK_SHORT_DESC
-Débloque un élément de vaisseau
+DÃ©bloque un Ã©lÃ©ment de vaisseau
 
 SHIP_HULL_UNLOCK_SHORT_DESC
-Débloque un type de vaisseau
+DÃ©bloque un type de vaisseau
 
 BUILDING_UNLOCK_SHORT_DESC
-Débloque un bâtiment
+DÃ©bloque un bÃ¢timent
 
 RESEARCH_SHORT_DESC
 Augmente la recherche
@@ -3034,7 +3034,7 @@ FARMING_SHORT_DESC
 Augmente l'agricultur
 
 MINING_SHORT_DESC
-Augmente l'exploitation minère
+Augmente l'exploitation minÃ¨re
 
 INDUSTRY_SHORT_DESC
 Augmente l'industrie
@@ -3046,7 +3046,7 @@ CONSTRUCTION_SHORT_DESC
 Augmente l'infrastructure***
 
 POPULATION_SHORT_DESC
-Augmente la population planétaire
+Augmente la population planÃ©taire
 
 FLEET_RANGE_DESC
 Augmente le support de flotte
@@ -3176,7 +3176,7 @@ GRO_CADUCEAN_DESC
 A premiere centralized medical academy and research centre has benefits to health and population growth throughout an empire.  Adequately funding such an institute can greatly tax smaller economies, however, potentially limiting its attraction to large or economically powerfully empires.
 
 GRO_GENOME_BANK
-Banque du Génome
+Banque du GÃ©nome
 
 GRO_GENOME_BANK_DESC
 The unknown variables in genomic calculations for any given species remain severe for all but the simplest genetic repairs, not to mention the changes that a genetic modification can potentially have on a larger multi-species biosphere. To truly realize the benefits of genetic medicine, it is necessary to collect a massive genome database for all the species from all known worlds.
@@ -3445,25 +3445,25 @@ Huge Ship Hulls
 ########################################
 
 BUILDING_REFINE_SHORT_DESC
-Bâtiments de raffinage des minerais
+BÃ¢timents de raffinage des minerais
 
 PRO_ASTEROID_MINE_II
-Mines astéroïde avancées 
+Mines astÃ©roÃ¯de avancÃ©es 
 
 PRO_ASTEROID_MINE_II_DESC
-Expérience avec la mise en œuvre initiale des techniques d'exploitation minière d'astéroïde permet des méthodes plus raffiné d'être mise au point. Le même champ d'astéroïdes et la même population produisent plus de minéraux dans toutes les planètes du système qui se concentrent principalement sur l'exploitation minière.
+ExpÃ©rience avec la mise en Âœuvre initiale des techniques d'exploitation miniÃ¨re d'astÃ©roÃ¯de permet des mÃ©thodes plus raffinÃ© d'Ãªtre mise au point. Le mÃªme champ d'astÃ©roÃ¯des et la mÃªme population produisent plus de minÃ©raux dans toutes les planÃ¨tes du systÃ¨me qui se concentrent principalement sur l'exploitation miniÃ¨re.
 
 PRO_INDUSTRY_CENTRE_II
 Grand centre industriel
 
 PRO_INDUSTRY_CENTRE_II_DESC
-Améliore la gestion centralisée des activités industrielles dispersées sur de plus grandes distances, augmente la production industriel.***
+AmÃ©liore la gestion centralisÃ©e des activitÃ©s industrielles dispersÃ©es sur de plus grandes distances, augmente la production industriel.***
 
 PRO_INDUSTRY_CENTRE_III
-Centre industriel suprême
+Centre industriel suprÃªme
 
 PRO_INDUSTRY_CENTRE_III_DESC
-Expérience supplémentaire et l'amélioration des installations permet d'élargir la distance et l'échelle  de la production industrielle.
+ExpÃ©rience supplÃ©mentaire et l'amÃ©lioration des installations permet d'Ã©largir la distance et l'Ã©chelle  de la production industrielle.
 
 #################################
 # Building Names & Descriptions #
@@ -3473,75 +3473,75 @@ BLD_OBSERVATORY
 Observatoire
 
 BLD_OBSERVATORY_DESC
-'''L'extension naturelle des télescopes de l'époque industrielle et de l'âge de l'information, renforcé par des algorithmes militaire, a permis de renforcer la détection longue portée. L'observatoire émet de puissants faisceaux de détection en espace lointain. Ces impulsions interfèrent avec toute tentative visant à rendre la planète discrète, mais les signaux peuvent se refléter sur des objets dans le voisinage galactique, permant de les détecter plus facilement par les planètes amies à portée de l'Observatoire. 
+'''L'extension naturelle des tÃ©lescopes de l'Ã©poque industrielle et de l'Ã¢ge de l'information, renforcÃ© par des algorithmes militaire, a permis de renforcer la dÃ©tection longue portÃ©e. L'observatoire Ã©met de puissants faisceaux de dÃ©tection en espace lointain. Ces impulsions interfÃ¨rent avec toute tentative visant Ã  rendre la planÃ¨te discrÃ¨te, mais les signaux peuvent se reflÃ©ter sur des objets dans le voisinage galactique, permant de les dÃ©tecter plus facilement par les planÃ¨tes amies Ã  portÃ©e de l'Observatoire. 
 
-Donne +10 à la détection de tous les planètes amies dans un rayon de 200.
-Diminue la furtivité de la planète par 10.'''
+Donne +10 Ã  la dÃ©tection de tous les planÃ¨tes amies dans un rayon de 200.
+Diminue la furtivitÃ© de la planÃ¨te par 10.'''
 
 BLD_IMPERIAL_PALACE
-Palais Impérial 
+Palais ImpÃ©rial 
 
 BLD_IMPERIAL_PALACE_DESC
-'''Représente le pouvoir et le prestige impérial et fonctionne comme un centre de contrôle des possessions de l'empire. 
+'''ReprÃ©sente le pouvoir et le prestige impÃ©rial et fonctionne comme un centre de contrÃ´le des possessions de l'empire. 
 
-La planète qui construit le palais pour recevoir +2 au maximun de construction.'''
+La planÃ¨te qui construit le palais pour recevoir +2 au maximun de construction.'''
 
 BLD_SHIPYARD_BASE
 chantier Spatial
 
 BLD_SHIPYARD_BASE_DESC
-Installation orbitale pour l'assemblage d'engins spatiaux militaire interstellaire. Permet la production de vaisseaux dans le système où il se trouve. Peut être amélioré par la production de bâtiments supplémentaires dans le même système.
+Installation orbitale pour l'assemblage d'engins spatiaux militaire interstellaire. Permet la production de vaisseaux dans le systÃ¨me oÃ¹ il se trouve. Peut Ãªtre amÃ©liorÃ© par la production de bÃ¢timents supplÃ©mentaires dans le mÃªme systÃ¨me.
 
 BLD_BIOTERROR_PROJECTOR
 Base de projection bioterroriste
 
 BLD_BIOTERROR_PROJECTOR_DESC
-'''Projettes les effets négatifs de la guerre biologique sur la santé des planètes à proximité.
+'''Projettes les effets nÃ©gatifs de la guerre biologique sur la santÃ© des planÃ¨tes Ã  proximitÃ©.
 
-Planètes à moins de 2 sauts hyperspatiaux n'appartenant pas à l'empire qui a construit le projecteur reçoivent -4 au maximum de santé.
-Planètes à moins de 2 sauts hyperspatiaux appartenant à l'empire qui a construit le projecteur reçoivent -1 au maximum de santé.
-Nécessite un Centre de recherches en Bioterreur pour être exploiter, sans quoi il ne produit pas d'effets négatifs sur la santé des planètes des autres empires.'''
+PlanÃ¨tes Ã  moins de 2 sauts hyperspatiaux n'appartenant pas Ã  l'empire qui a construit le projecteur reÃ§oivent -4 au maximum de santÃ©.
+PlanÃ¨tes Ã  moins de 2 sauts hyperspatiaux appartenant Ã  l'empire qui a construit le projecteur reÃ§oivent -1 au maximum de santÃ©.
+NÃ©cessite un Centre de recherches en Bioterreur pour Ãªtre exploiter, sans quoi il ne produit pas d'effets nÃ©gatifs sur la santÃ© des planÃ¨tes des autres empires.'''
 
 BLD_BIOTERROR_LAB
 Centre de recherche en bioterreur
 
 BLD_BIOTERROR_LAB_DESC
-'''Est nécessaire pour que les bases de projection bioterroriste puissent affecter d'autres empires.
+'''Est nÃ©cessaire pour que les bases de projection bioterroriste puissent affecter d'autres empires.
 
-Causes -2 au maximum de santé des planètes du système, indépendamment du propriétaire de cette planète.'''
+Causes -2 au maximum de santÃ© des planÃ¨tes du systÃ¨me, indÃ©pendamment du propriÃ©taire de cette planÃ¨te.'''
 
 BLD_AUTOFACTORY_CONTROL
-Centre de contrôle des usines automatique
+Centre de contrÃ´le des usines automatique
 
 BLD_AUTOFACTORY_CONTROL_DESC
-'''Fournit +2 au maximum de production industriel par 10 unités de population sur les mondes axés principalement sur l'industrie.
-Donnes +1 supplémentaire au maximum de production industriel par 10 unités de population sur les mondes axés secondairement sur l'industrie.'''
+'''Fournit +2 au maximum de production industriel par 10 unitÃ©s de population sur les mondes axÃ©s principalement sur l'industrie.
+Donnes +1 supplÃ©mentaire au maximum de production industriel par 10 unitÃ©s de population sur les mondes axÃ©s secondairement sur l'industrie.'''
 
 BLD_AUTOLAB_CONTROL
-Centre de contrôle des autolabs
+Centre de contrÃ´le des autolabs
 
 BLD_AUTOLAB_CONTROL_DESC
-'''Fournit +2 au maximum de recherche par 10 unités de population et -2 au maximum de santé aux mondes axé principalement sur la recherche. 
-Donnes +1 supplémentaire au maximum de recherche par 10 unités de population et -1 au maximum de santé aux mondes axé secondairement sur la recherche.'''
+'''Fournit +2 au maximum de recherche par 10 unitÃ©s de population et -2 au maximum de santÃ© aux mondes axÃ© principalement sur la recherche. 
+Donnes +1 supplÃ©mentaire au maximum de recherche par 10 unitÃ©s de population et -1 au maximum de santÃ© aux mondes axÃ© secondairement sur la recherche.'''
 
 BLD_THEOREM_PROVER
-Validateur de thèoreme automatique
+Validateur de thÃ¨oreme automatique
 
 BLD_THEOREM_PROVER_DESC
-'''Fournit max +5 à la recherche par 10 population sur les   mondes axée sur la recherche, non cumulatif. 
-Donnes un +1 supplémentaires au maximum de recherche par tranche de 10 population sur les mondes secondairement axé sur la recherche, non cumulatif.'''
+'''Fournit max +5 Ã  la recherche par 10 population sur les   mondes axÃ©e sur la recherche, non cumulatif. 
+Donnes un +1 supplÃ©mentaires au maximum de recherche par tranche de 10 population sur les mondes secondairement axÃ© sur la recherche, non cumulatif.'''
 
 BLD_LIGHTHOUSE
 Phare Interstellaire
 
 BLD_LIGHTHOUSE_DESC
-Augmente de 1 saut de "starlane"  le compteur de toutes les planètes - quel que soit les propriétaires - dans un rayon de 200 unités.
+Augmente de 1 saut de "starlane"  le compteur de toutes les planÃ¨tes - quel que soit les propriÃ©taires - dans un rayon de 200 unitÃ©s.
 
 BLD_HEAVY_MINE_PROCESSOR
 Heavy Mining Processor***
 
 BLD_HEAVY_MINE_PROCESSOR_DESC
-Fournit +5 à l'exploitation minière dans un rayon de 100, aux mondes axé sur l'exploitation minière et qui sont de type toundra, irradié, toxiques ou infernal, non cumulatif. Donnes également +2 à l'exploitation minière et -5 à l'agriculture, les deux non cumulatif, sur la planète ou il est construit.
+Fournit +5 Ã  l'exploitation miniÃ¨re dans un rayon de 100, aux mondes axÃ© sur l'exploitation miniÃ¨re et qui sont de type toundra, irradiÃ©, toxiques ou infernal, non cumulatif. Donnes Ã©galement +2 Ã  l'exploitation miniÃ¨re et -5 Ã  l'agriculture, les deux non cumulatif, sur la planÃ¨te ou il est construit.
 
 BLD_INDUSTRY_CENTRE
 Centre Industriel
@@ -3554,53 +3554,53 @@ BLD_INDUSTRY_CENTRE_DESC
 [[tech PRO_INDUSTRY_CENTRE_III]] refinement further increases bonus to +7 and range to 300.'''
 
 BLD_ASTEROID_MINE
-installation minière d'astéroïde
+installation miniÃ¨re d'astÃ©roÃ¯de
 
 BLD_ASTEROID_MINE_DESC
-'''Donnes +4 pour l'exploitation minière par 10 points de  population sur les planètes du système contenant une ceinture d'astéroïdes. 
-Avec raffinement avancée des astéroïdes***, fournit des +4 points supplémentaires, (+8 au total) à l'exploitation minière par 10 points de population sur les planètes du système contenant une ceinture d'astéroïdes.'''
+'''Donnes +4 pour l'exploitation miniÃ¨re par 10 points de  population sur les planÃ¨tes du systÃ¨me contenant une ceinture d'astÃ©roÃ¯des. 
+Avec raffinement avancÃ©e des astÃ©roÃ¯des***, fournit des +4 points supplÃ©mentaires, (+8 au total) Ã  l'exploitation miniÃ¨re par 10 points de population sur les planÃ¨tes du systÃ¨me contenant une ceinture d'astÃ©roÃ¯des.'''
 
 BLD_GRAVITY_WELLS
-Puits de Gravité Contrôlé
+Puits de GravitÃ© ContrÃ´lÃ©
 
 BLD_GRAVITY_WELLS_DESC
-Un générateur d'anti-gravité installé au plus profond de la planète, ce qui augmente énormément l'industrie et le commerce dans le système.
+Un gÃ©nÃ©rateur d'anti-gravitÃ© installÃ© au plus profond de la planÃ¨te, ce qui augmente Ã©normÃ©ment l'industrie et le commerce dans le systÃ¨me.
 
 BLD_MEGALITH
-Mégalithe
+MÃ©galithe
 
 BLD_MEGALITH_DESC
-Une merveille d'architecture de l'époque de l'Exode, C'est une Mégalithe anormalement massives semblant touchées les étoiles, de plusieurs kilomètres de diamètre. Cette Mégalithe est une source d'inspiration pour les architectes de l'ensemble du secteur et est souvent le joyau d'un puissant magnat de l'immobilier  de l'empire.
+Une merveille d'architecture de l'Ã©poque de l'Exode, C'est une MÃ©galithe anormalement massives semblant touchÃ©es les Ã©toiles, de plusieurs kilomÃ¨tres de diamÃ¨tre. Cette MÃ©galithe est une source d'inspiration pour les architectes de l'ensemble du secteur et est souvent le joyau d'un puissant magnat de l'immobilier  de l'empire.
 
 BLD_PLANET_RING
-Anneau Planétaire
+Anneau PlanÃ©taire
 
 BLD_PLANET_RING_DESC
-Un anneau de satellites entourant complètement un monde, attachés à la planète à l'équateur par des ascenseurs spatiaux. Ces satellites sont utilisées pour le logement, la construction en micro-gravité et le commerce extragalactique.
+Un anneau de satellites entourant complÃ¨tement un monde, attachÃ©s Ã  la planÃ¨te Ã  l'Ã©quateur par des ascenseurs spatiaux. Ces satellites sont utilisÃ©es pour le logement, la construction en micro-gravitÃ© et le commerce extragalactique.
 
 BLD_SPACE_ELEVATOR
 Ascenseur Spatial
 
 BLD_SPACE_ELEVATOR_DESC
-Un énorme et pratiquement incassable câble attaché à un satellite en orbite géo-stationnaire basse d'un coté, et une plateforme de lancement sur la planète de l'autre. L'ascenseur spatial augmente le commerce pour l'ensemble du système.
+Un Ã©norme et pratiquement incassable cÃ¢ble attachÃ© Ã  un satellite en orbite gÃ©o-stationnaire basse d'un cotÃ©, et une plateforme de lancement sur la planÃ¨te de l'autre. L'ascenseur spatial augmente le commerce pour l'ensemble du systÃ¨me.
 
 BLD_COMM_UNION
 Union commerciale des Colonies
 
 BLD_COMM_UNION_DESC
-L'Union Commerciale des colonies (UCC) est une organisation avec l'objectif et la volonté de surveiller et de réglementer l'ensemble du marché galactique. Le premier empire à finir le UCC gagne un bonus au commerce sur tous les mondes.
+L'Union Commerciale des colonies (UCC) est une organisation avec l'objectif et la volontÃ© de surveiller et de rÃ©glementer l'ensemble du marchÃ© galactique. Le premier empire Ã  finir le UCC gagne un bonus au commerce sur tous les mondes.
 
 BLD_DEEP_GREEN
 Deep Green***
 
 BLD_DEEP_GREEN_DESC
-Un ordinateur faisant des prévisions économiques à partir des données provenant de tous les marchés économiques de la galaxie connue, il est capable de faire des prospectives économique presque parfaites et augmentes tous les marchés de l'empire.
+Un ordinateur faisant des prÃ©visions Ã©conomiques Ã  partir des donnÃ©es provenant de tous les marchÃ©s Ã©conomiques de la galaxie connue, il est capable de faire des prospectives Ã©conomique presque parfaites et augmentes tous les marchÃ©s de l'empire.
 
 BLD_PARADISE
-Planète Paradisiaque
+PlanÃ¨te Paradisiaque
 
 BLD_PARADISE_DESC
-Un monde dont l'ensemble de l'infrastructure est dédiée au tourisme, ce qui donne une énorme impulsion au commerce et le tourisme dans la région, mais élimine de presque toute la production industrielle et minière.
+Un monde dont l'ensemble de l'infrastructure est dÃ©diÃ©e au tourisme, ce qui donne une Ã©norme impulsion au commerce et le tourisme dans la rÃ©gion, mais Ã©limine de presque toute la production industrielle et miniÃ¨re.
 
 BLD_CADUCEAN
 L'Institute Caducen
@@ -3608,79 +3608,79 @@ L'Institute Caducen
 BLD_CADUCEAN_DESC
 '''Disponible avec l'Institute Caducen.
 
-Augmentation du maximum de santé sur tous les mondes peuplés par +2, non cumulatif.'''
+Augmentation du maximum de santÃ© sur tous les mondes peuplÃ©s par +2, non cumulatif.'''
 
 BLD_GENOME_BANK
-La Banque du Gènome
+La Banque du GÃ¨nome
 
 BLD_GENOME_BANK_DESC
-La plus grande base de données jamais conçue. La Banque du génome comprend les cartes des génomes de tous les organismes connus de l'empire. Cette base de données est d'une valeur inestimable dans le traitement des maladie et dans les colonies agricoles.
+La plus grande base de donnÃ©es jamais conÃ§ue. La Banque du gÃ©nome comprend les cartes des gÃ©nomes de tous les organismes connus de l'empire. Cette base de donnÃ©es est d'une valeur inestimable dans le traitement des maladie et dans les colonies agricoles.
 
 BLD_LIVING_PLANET
-La Planète vivante
+La PlanÃ¨te vivante
 
 BLD_LIVING_PLANET_DESC
-Convertit une planète Planète Vivante par le biais d'un sensible, presque divin, programme d'ordinateur à base de cellules. Cette planète est une merveille à voir et est connue dans toute la galaxie comme une célébration de la vie et l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un plus grand organisme, au service de ses besoins en même temps que la leurs. La production industrielle et l'exploitation minière sont sévèrement limitées, car de telles activités bouleversent l'équilibre du monde.
+Convertit une planÃ¨te PlanÃ¨te Vivante par le biais d'un sensible, presque divin, programme d'ordinateur Ã  base de cellules. Cette planÃ¨te est une merveille Ã  voir et est connue dans toute la galaxie comme une cÃ©lÃ©bration de la vie et l'harmonie. Les habitants de ce monde pensent et agissent comme une partie d'un plus grand organisme, au service de ses besoins en mÃªme temps que la leurs. La production industrielle et l'exploitation miniÃ¨re sont sÃ©vÃ¨rement limitÃ©es, car de telles activitÃ©s bouleversent l'Ã©quilibre du monde.
 
 BLD_ORBITAL_GARDENS
 Les jardins Orbitaux
 
 BLD_ORBITAL_GARDENS_DESC
-Satellite aussi gros qu'une lune en orbite au-dessus d'un monde, les Jardins Orbitaux sont un témoignage à la galaxie à votre capacité à maîtriser votre environnement. En plus d'être une excellente attraction touristique, les recherches menées ici contribuent à améliorer l'agriculture sur tous les mondes de votre empire.
+Satellite aussi gros qu'une lune en orbite au-dessus d'un monde, les Jardins Orbitaux sont un tÃ©moignage Ã  la galaxie Ã  votre capacitÃ© Ã  maÃ®triser votre environnement. En plus d'Ãªtre une excellente attraction touristique, les recherches menÃ©es ici contribuent Ã  amÃ©liorer l'agriculture sur tous les mondes de votre empire.
 
 BLD_COLLECTIVE_NET
-Réseau de pensée collective
+RÃ©seau de pensÃ©e collective
 
 BLD_COLLECTIVE_NET_DESC
-En transférant des esprit dans le cyberespace, des milliers d'esprit peut agir à l'unisson, résolvant des problèmes et faisant des avancées qu'aucun esprit unique ne pourrait faire.
+En transfÃ©rant des esprit dans le cyberespace, des milliers d'esprit peut agir Ã  l'unisson, rÃ©solvant des problÃ¨mes et faisant des avancÃ©es qu'aucun esprit unique ne pourrait faire.
 
 BLD_ENCLAVE_VOID
 Enclave Du Vide
 
 BLD_ENCLAVE_VOID_DESC
-L'ensemble de la population de la planète est génétiquement adapté à l'esprit du Vide et est dédiée à la transmission de sa sagesse à l'empire. Les habitants de l'Enclave du Vide sont considérés comme des prêtres, messager de la sagesse et des pensées les plus élevés. Leurs conseils sont recherchés pour toutes les questions d'importance de l'empire. Des émissaires de l'Enclave peuvent même être envoyés à travers l'empire pour aider dans des projets de recherche. Les productions industrielles et minière de ce monde ne dépassera  jamais 30.
+L'ensemble de la population de la planÃ¨te est gÃ©nÃ©tiquement adaptÃ© Ã  l'esprit du Vide et est dÃ©diÃ©e Ã  la transmission de sa sagesse Ã  l'empire. Les habitants de l'Enclave du Vide sont considÃ©rÃ©s comme des prÃªtres, messager de la sagesse et des pensÃ©es les plus Ã©levÃ©s. Leurs conseils sont recherchÃ©s pour toutes les questions d'importance de l'empire. Des Ã©missaires de l'Enclave peuvent mÃªme Ãªtre envoyÃ©s Ã  travers l'empire pour aider dans des projets de recherche. Les productions industrielles et miniÃ¨re de ce monde ne dÃ©passera  jamais 30.
 
 BLD_LOOKING_GLASS
 The Looking Glass***
 
 BLD_LOOKING_GLASS_DESC
-Un musée spatio-temporel le de renommée galactique. Les flux et le reflux spatio-temporel deviennent aussi transparent que le verre, faisant bénéficier le tourisme et de la science  de la vue de l'histoire inaltéré.
+Un musÃ©e spatio-temporel le de renommÃ©e galactique. Les flux et le reflux spatio-temporel deviennent aussi transparent que le verre, faisant bÃ©nÃ©ficier le tourisme et de la science  de la vue de l'histoire inaltÃ©rÃ©.
 
 BLD_MONUMENT_EXODUS
-Mémorial de l'Exode
+MÃ©morial de l'Exode
 
 BLD_MONUMENT_EXODUS_DESC
-Une immense sculpture en orbite visible depuis le sol et depuis l'espace proche. Votre victoire sur les "starlanes" ne sera jamais oublié et votre peuple sera toujours encouragé à coloniser de nouveaux mondes. Augmentation de la croissance de la population sur tous les mondes frontière.***
+Une immense sculpture en orbite visible depuis le sol et depuis l'espace proche. Votre victoire sur les "starlanes" ne sera jamais oubliÃ© et votre peuple sera toujours encouragÃ© Ã  coloniser de nouveaux mondes. Augmentation de la croissance de la population sur tous les mondes frontiÃ¨re.***
 
 BLD_PSICORP
-Académie Psy
+AcadÃ©mie Psy
 
 BLD_PSICORP_DESC
-Une académie consacrée à l'identification des citoyens psychiquement doués sur toute les colonies. Cette académie les formes depuis leur plus jeunes âges à développer leurs aptitudes au profit des programmes de recherche les plus avancée de l'empire.
+Une acadÃ©mie consacrÃ©e Ã  l'identification des citoyens psychiquement douÃ©s sur toute les colonies. Cette acadÃ©mie les formes depuis leur plus jeunes Ã¢ges Ã  dÃ©velopper leurs aptitudes au profit des programmes de recherche les plus avancÃ©e de l'empire.
 
 BLD_ART_BLACK_HOLE
 Trou noir Artificiel
 
 BLD_ART_BLACK_HOLE_DESC
-Une singularité construite sur une orbite lointaine dans un système. Son pouvoir est exploitée pour augmenter la production industrielle de tous les mondes à proximité.
+Une singularitÃ© construite sur une orbite lointaine dans un systÃ¨me. Son pouvoir est exploitÃ©e pour augmenter la production industrielle de tous les mondes Ã  proximitÃ©.
 
 BLD_HYPER_DAM
 Barrage Hyperspatial
 
 BLD_HYPER_DAM_DESC
-Une déchirure dans le tissu de l'univers, contrôlée et exploitée en toute sécurité. Le barrage hyperspatial sert  de source d'énergie presque illimitée pour tout le secteur.
+Une dÃ©chirure dans le tissu de l'univers, contrÃ´lÃ©e et exploitÃ©e en toute sÃ©curitÃ©. Le barrage hyperspatial sert  de source d'Ã©nergie presque illimitÃ©e pour tout le secteur.
 
 BLD_MINI_SUN
 Soleil Miniature
 
 BLD_MINI_SUN_DESC
-Un soleil miniature transforme la nuit en pénombre. En plus d'être bon pour le moral, le réacteur à fusion sert de source d'énergie pour toutes les planètes du système.
+Un soleil miniature transforme la nuit en pÃ©nombre. En plus d'Ãªtre bon pour le moral, le rÃ©acteur Ã  fusion sert de source d'Ã©nergie pour toutes les planÃ¨tes du systÃ¨me.
 
 BLD_REMOTE_CONST
-Construction à Distance
+Construction Ã  Distance
 
 BLD_REMOTE_CONST_DESC
-Un réseau de la matière et de la construction. Une équipe de constructeurs et de robots peuvent assembler des structures sur des mondes lointains sans avoir besoin de cargos ou de vaisseau de construction. Seul un vaisseau transmetteur de matière est nécessaire. Augmente rapidement le niveau de d'industrie sur tous les mondes jusqu'à l'équivalent d'un monde établi.
+Un rÃ©seau de la matiÃ¨re et de la construction. Une Ã©quipe de constructeurs et de robots peuvent assembler des structures sur des mondes lointains sans avoir besoin de cargos ou de vaisseau de construction. Seul un vaisseau transmetteur de matiÃ¨re est nÃ©cessaire. Augmente rapidement le niveau de d'industrie sur tous les mondes jusqu'Ã  l'Ã©quivalent d'un monde Ã©tabli.
 
 BLD_ECON_SINKHOLE
 Economic Sinkhole***
@@ -3698,69 +3698,69 @@ SR_LASER_DESC
 Puissance et masse faible
 
 SR_ION_CANNON
-Canon à ions
+Canon Ã  ions
 SR_ION_CANNON_DESC
-Puissance et masse modéré
+Puissance et masse modÃ©rÃ©
 
 LR_NUCLEAR_MISSILE
 Missile Nucleaire
 
 LR_NUCLEAR_MISSILE_DESC
-Longue portée, puissance moyenne
+Longue portÃ©e, puissance moyenne
 
 DT_ACTIVE_RADAR
 Radar Actif
 
 DT_ACTIVE_RADAR_DESC
-Pouvoir de détection modéré avec de grandes pénalité à la furtivité du vaisseau.
+Pouvoir de dÃ©tection modÃ©rÃ© avec de grandes pÃ©nalitÃ© Ã  la furtivitÃ© du vaisseau.
 
 FU_DEUTERIUM_TANK
-Réservoire de Deutérium
+RÃ©servoire de DeutÃ©rium
 
 FU_DEUTERIUM_TANK_DESC
-Légère augmentation de l'autonomie en augmentant la capacité de stockage en carburant. Encombrant et vulnérables aux tir des armes.
+LÃ©gÃ¨re augmentation de l'autonomie en augmentant la capacitÃ© de stockage en carburant. Encombrant et vulnÃ©rables aux tir des armes.
 
 FU_ANTIMATTER_TANK
-Réservoire d'anti-matière
+RÃ©servoire d'anti-matiÃ¨re
 
 FU_ANTIMATTER_TANK_DESC
-Augmentation modérée de l'autonomie en augmentant la capacité de carburant. Compacte et faible en masse.
+Augmentation modÃ©rÃ©e de l'autonomie en augmentant la capacitÃ© de carburant. Compacte et faible en masse.
 
 ST_EM_DAMPER
-Amortisseur électromagnétique
+Amortisseur Ã©lectromagnÃ©tique
 
 ST_EM_DAMPER_DESC
-Améliore la furtivité du vaisseau par l'amortissement des émissions électromagnétiques des systèmes embarqués. Ne peut compenser que des faibles émissions, et sera submergé par des éléments produisant de grandes émissions éléctromagnétiques
+AmÃ©liore la furtivitÃ© du vaisseau par l'amortissement des Ã©missions Ã©lectromagnÃ©tiques des systÃ¨mes embarquÃ©s. Ne peut compenser que des faibles Ã©missions, et sera submergÃ© par des Ã©lÃ©ments produisant de grandes Ã©missions Ã©lÃ©ctromagnÃ©tiques
 
 AR_LEAD_PLATE
 Blindage en Plomb
 
 AR_LEAD_PLATE_DESC
-Faible défense pour une grande masse***
+Faible dÃ©fense pour une grande masse***
 
 SH_DEFENSE_GRID
-Grille de défense
+Grille de dÃ©fense
 
 SH_DEFENSE_GRID_DESC
-Faible défense sans supplément de masse
+Faible dÃ©fense sans supplÃ©ment de masse
 
 SH_DEFLECTOR
-Bouclier déflecteur
+Bouclier dÃ©flecteur
 
 SH_DEFLECTOR_DESC
-Forte défense pour une petite masse
+Forte dÃ©fense pour une petite masse
 
 CO_COLONY_POD
 Module de colonisation
 
 CO_COLONY_POD_DESC
-Minimums vitaux pour la survie des colons pendant leur voyage vers une nouvelle planète. Permet aux vaisseau de coloniser de nouveaux mondes.
+Minimums vitaux pour la survie des colons pendant leur voyage vers une nouvelle planÃ¨te. Permet aux vaisseau de coloniser de nouveaux mondes.
 
 CO_SUSPEND_ANIM_POD
-Module de colonisation cryogénique
+Module de colonisation cryogÃ©nique
 
 CO_SUSPEND_ANIM_POD_DESC
-Les colons sont maintenus en animation suspendue pendant le voyage, en éliminant nécessité de fournir les besoins vitaux, et en augmentant considérablement le nombre de colons qui peuvent être transportées sur un vaisseau.
+Les colons sont maintenus en animation suspendue pendant le voyage, en Ã©liminant nÃ©cessitÃ© de fournir les besoins vitaux, et en augmentant considÃ©rablement le nombre de colons qui peuvent Ãªtre transportÃ©es sur un vaisseau.
 
 ##############
 # Ship Hulls #
@@ -3776,13 +3776,13 @@ SH_SMALL
 Petite coque
 
 SH_SMALL_DESC
-Peut de place mais très rapide
+Peut de place mais trÃ¨s rapide
 
 SH_MEDIUM
 Coque Moyenne
 
 SH_MEDIUM_DESC
-Un équilibre entre l'espace disponible et la vitesse
+Un Ã©quilibre entre l'espace disponible et la vitesse
 
 SH_LARGE
 Grande coque
@@ -3794,4 +3794,4 @@ SH_HUGE
 Enorme coque
 
 SH_HUGE_DESC
-Enormement de place mais très très lent
+Enormement de place mais trÃ¨s trÃ¨s lent

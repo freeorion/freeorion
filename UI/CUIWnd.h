@@ -159,7 +159,7 @@ public:
     CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
 
     virtual void ModalInit();
-    virtual void KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
     const std::string& Result() const;
 

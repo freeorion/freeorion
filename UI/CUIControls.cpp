@@ -67,7 +67,7 @@ namespace {
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
     {
-        return font ? font : GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        return font ? font : ClientUI::GetFont();
     }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
@@ -946,7 +946,7 @@ const int CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT = 22;
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, int row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(1, row_height, "")
 {
-    push_back(new GG::TextControl(0, 0, row_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT));
+    push_back(new GG::TextControl(0, 0, row_text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
 }
 
 
@@ -966,13 +966,13 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     if (w >= h) {
         m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(h, 0, w - h, std::max(font_space, h), "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+        m_text = new GG::TextControl(h, 0, w - h, std::max(font_space, h), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
         // need vertical space for text, but don't want icon to be larger than available horizintal space
         int icon_height = std::min(w, std::max(h - font_space, 1));
         int icon_left = (w - icon_height)/2;
         m_icon = new GG::StaticGraphic(icon_left, 0, icon_height, icon_height, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(0, icon_height, w, font_space, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
+        m_text = new GG::TextControl(0, icon_height, w, font_space, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
     }
     
     AttachChild(m_icon);
@@ -993,10 +993,10 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     if (w >= h) {
         m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(h, 0, w - h, std::max(ClientUI::Pts()*3/2, h), "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+        m_text = new GG::TextControl(h, 0, w - h, std::max(ClientUI::Pts()*3/2, h), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
         m_icon = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(0, w, w, ClientUI::Pts()*3/2, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+        m_text = new GG::TextControl(0, w, w, ClientUI::Pts()*3/2, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
     }
 
     m_values[0] = value0;
@@ -1128,7 +1128,7 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     int x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
     int y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
-    GG::ColorDlg dlg(x, y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
+    GG::ColorDlg dlg(x, y, Color(), ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
     dlg.SetNewString(UserString("COLOR_DLG_NEW"));
     dlg.SetOldString(UserString("COLOR_DLG_OLD"));
     dlg.SetRedString(UserString("COLOR_DLG_RED"));
@@ -1153,7 +1153,7 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const std::vector<std::pair<std::string, std::string> >& types) :
-    GG::FileDlg(directory, filename, save, multi, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    GG::FileDlg(directory, filename, save, multi, ClientUI::GetFont(),
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor())
 {
     SetFileFilters(types);
@@ -1200,20 +1200,20 @@ ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title,
     const GG::Clr TEXT_COLOR = ClientUI::KnownTechTextAndBorderColor();
     m_center_gap = std::make_pair(LABEL_TEXT_WIDTH + 2, LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP);
 
-    m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, title, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), RESEARCH_TITLE_PTS), TEXT_COLOR);
-    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, title, ClientUI::GetFont(RESEARCH_TITLE_PTS), TEXT_COLOR);
+    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
 
     Resize(GG::Pt(Width(), m_projects_in_queue_label->LowerRight().y + 5));
 
@@ -1405,7 +1405,7 @@ void MultiTurnProgressBar::RightEndVertices(double x1, double y1, double x2, dou
 // FPSIndicator
 //////////////////////////////////////////////////
 FPSIndicator::FPSIndicator(int x, int y) :
-    GG::TextControl(x, y, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_NONE, GG::ONTOP)
+    GG::TextControl(x, y, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE, GG::ONTOP)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
     UpdateEnabled();

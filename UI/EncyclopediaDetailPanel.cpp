@@ -38,9 +38,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(int w, int h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_name_text =       new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(),  NAME_PTS),      ClientUI::TextColor());
-    m_cost_text =       new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(),      COST_PTS),      ClientUI::TextColor());
-    m_summary_text =    new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(),      SUMMARY_PTS),   ClientUI::TextColor());
+    m_name_text =       new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
+    m_cost_text =       new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
+    m_summary_text =    new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
     m_description_box = new CUILinkTextMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);

@@ -49,7 +49,7 @@ namespace {
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
-            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(m_player_data.m_empire_color);
@@ -214,7 +214,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     m_start_conditions_text = new GG::TextControl(x, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN,
                                                   m_cancel_bn->UpperLeft().x - x, ClientUI::Pts()*3/2,
                                                   UserString("MULTIPLAYER_GAME_START_CONDITIONS"),
-                                                  GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                                  ClientUI::GetFont(),
                                                   ClientUI::TextColor(), GG::FORMAT_LEFT);
 
     AttachChild(m_chat_box);
@@ -262,7 +262,7 @@ void MultiplayerLobbyWnd::Render()
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void MultiplayerLobbyWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void MultiplayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit) {
         int receiver = -1; // all players by default

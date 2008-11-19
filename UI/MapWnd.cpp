@@ -212,7 +212,7 @@ MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) 
     else
         eta_text = boost::lexical_cast<std::string>(eta);
 
-    m_text = new GG::TextControl(0, 0, eta_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    m_text = new GG::TextControl(0, 0, eta_text, ClientUI::GetFont(),
                                  ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     Resize(m_text->Size());
     AttachChild(m_text);
@@ -291,7 +291,7 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_turn_update);
     GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const int BUTTON_TOTAL_MARGIN = 8;
 
     // FPS indicator
@@ -358,7 +358,7 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
-    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, 
+    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::GetFont(), GG::CLR_ZERO, 
                                        GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT | GG::MULTI_NO_VSCROLL, 
                                        ClientUI::TextColor(), GG::CLR_ZERO, GG::Flags<GG::WndFlag>());
     AttachChild(m_chat_display);
@@ -366,7 +366,7 @@ MapWnd::MapWnd() :
     m_chat_display->Hide();
 
     m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
-                              GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
+                              ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -524,7 +524,7 @@ void MapWnd::Render()
     glPopMatrix();
 }
 
-void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_TAB: { // auto-complete current chat edit word

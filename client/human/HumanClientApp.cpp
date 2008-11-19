@@ -464,7 +464,7 @@ void HumanClientApp::Initialize()
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
 
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+        new GG::TextBoxBrowseInfoWnd(400, ClientUI::GetFont(),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
                                      GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);

@@ -24,7 +24,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void Update(); ///< loads all the relevant SitReps into the window

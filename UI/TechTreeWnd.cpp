@@ -661,9 +661,9 @@ TechTreeWnd::TechDetailPanel::TechDetailPanel(int w, int h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_tech_name_text = new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), NAME_PTS), ClientUI::TextColor());
-    m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), COST_PTS), ClientUI::TextColor());
-    m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SUMMARY_PTS), ClientUI::TextColor());
+    m_tech_name_text = new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetBoldFont(NAME_PTS), ClientUI::TextColor());
+    m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(COST_PTS),     ClientUI::TextColor());
+    m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(SUMMARY_PTS),  ClientUI::TextColor());
     m_description_box = new CUILinkTextMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
@@ -1079,7 +1079,7 @@ TechTreeWnd::TechNavigator::SectionHeaderControl::SectionHeaderControl(const std
     GG::Control(0, 0, 10, 3*ClientUI::Pts()/2 + 4)
 {
     m_label = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, str,
-                                  GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                  ClientUI::GetFont(),
                                   ClientUI::KnownTechTextAndBorderColor(), GG::FORMAT_LEFT);
     AttachChild(m_label);
 }
@@ -1157,7 +1157,7 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
     }
     GG::Pt client_size = ClientSize();
     m_name_text = new GG::TextControl(0, 0, 10, 3*ClientUI::Pts()/2 + 4, UserString(m_tech->Name()),
-                                      GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                      ClientUI::GetFont(),
                                       m_border_color, GG::FORMAT_LEFT);
     AttachChild(m_name_text);
 }
@@ -1359,7 +1359,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
 
 
     const int FONT_PTS = std::max(static_cast<const int>(ClientUI::Pts() * m_scale + 0.5), 3);
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), FONT_PTS);
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FONT_PTS);
 
     // tech icon
     int graphic_size = size.y - static_cast<int>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) - 2;
@@ -1570,7 +1570,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(int w, int h) :
     const unsigned int TOP = UpperLeft().y;
     const unsigned int LEFT = UpperLeft().x;
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), ZBOFFSET, ZBSIZE, "+", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
 
@@ -2227,7 +2227,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(int w, const Tech* tech) :
     graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
     push_back(graphic);
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     GG::TextControl* text = new GG::TextControl(0, 0, NAME_WIDTH, HEIGHT, UserString(m_tech->Name()), font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     text->ClipText(true);

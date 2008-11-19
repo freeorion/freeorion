@@ -24,7 +24,7 @@ public:
 
     /** \name Structors */ //@{
     CUISpin(int x, int y, int w, T value, T step, T min, T max, bool edits) :
-        GG::Spin<T>(x, y, w, value, step, min, max, edits, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlBorderColor(), 
+        GG::Spin<T>(x, y, w, value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), 
                     ClientUI::TextColor(), GG::CLR_ZERO)
     {
         GG::Connect(GG::Spin<T>::ValueChangedSignal, detail::PlayValueChangedSound(), -1);

@@ -66,7 +66,7 @@ public:
     
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
-    inline const std::string& String(std::string index) const { return operator[] (index); }    //!< Interface to operator() \see StringTable::operator() 
+    inline const std::string& String(std::string index) const { return operator[] (index); }    //!< Interface to operator() \see StringTable::operator[]
     inline const std::string& Language() const {return m_language;} //!< Returns the language of this StringTable
     inline const std::string& Filename() const {return m_filename;} //!< accessor to the filename
     //!@}

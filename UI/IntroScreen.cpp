@@ -68,7 +68,7 @@ void CreditsWnd::Render()
         return;
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    boost::shared_ptr<GG::Font> font=HumanClientApp::GetApp()->GetFont(ClientUI::Font(), static_cast<int>(ClientUI::Pts()*1.3));;
+    boost::shared_ptr<GG::Font> font=ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
     GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
@@ -146,7 +146,7 @@ IntroScreen::IntroScreen() :
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
                                  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE)),
     m_version(new GG::TextControl(0, 0, FreeOrionVersionString(),
-                                  HumanClientApp::GetApp()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                  ClientUI::GetFont(),
                                   ClientUI::TextColor()))
 {
     m_splash->AttachChild(m_logo);
@@ -267,7 +267,7 @@ void IntroScreen::OnExitGame()
     GG::GUI::GetGUI()->Exit(0);
 }
 
-void IntroScreen::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void IntroScreen::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE)
         OnExitGame();

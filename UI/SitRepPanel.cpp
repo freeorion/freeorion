@@ -29,7 +29,7 @@ SitRepPanel::SitRepPanel(int x, int y, int w, int h) :
     Hide();
 }
 
-void SitRepPanel::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_RETURN:
@@ -74,7 +74,7 @@ void SitRepPanel::Update()
 
     m_sitreps_lb->Clear();
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
     int width = m_sitreps_lb->Width() - 8;
 

@@ -104,7 +104,7 @@ namespace {
 
 
         GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         int top = MARGIN;
         int left = MARGIN;

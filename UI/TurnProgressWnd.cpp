@@ -33,8 +33,8 @@ TurnProgressWnd::TurnProgressWnd() :
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);
 
-    m_phase_text = new GG::TextControl(0, 20, Width(), ClientUI::Pts() * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-    m_empire_text = new GG::TextControl(0, 50, Width(), ClientUI::Pts() * 2 + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_phase_text = new GG::TextControl(0, 20, Width(), ClientUI::Pts() * 2 + 4, "", ClientUI::GetFont(ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_empire_text = new GG::TextControl(0, 50, Width(), ClientUI::Pts() * 2 + 4, "", ClientUI::GetFont(ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
 
     AttachChild(m_phase_text);
     AttachChild(m_empire_text);

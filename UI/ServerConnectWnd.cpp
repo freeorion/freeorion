@@ -43,7 +43,7 @@ ServerConnectWnd::ServerConnectWnd() :
 {
     TempUISoundDisabler sound_disabler;
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::TextControl* player_name_label = new GG::TextControl(0, 0, 1, 1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_player_name_edit = new CUIEdit(0, 0, 1, "");
     m_host_or_join_radio_group = new GG::RadioButtonGroup(0, 0, 1, 1, GG::VERTICAL);
@@ -97,7 +97,7 @@ void ServerConnectWnd::ModalInit()
     GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit);
 }
 
-void ServerConnectWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
         OkClicked();
@@ -134,7 +134,7 @@ void ServerConnectWnd::PopulateServerList()
     m_servers_lb->Clear();
     for (ClientNetworking::ServerList::iterator it = m_LAN_servers.begin(); it != m_LAN_servers.end(); ++it) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
-        row->push_back(it->second, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+        row->push_back(it->second, ClientUI::GetFont(), ClientUI::TextColor());
         m_servers_lb->Insert(row);
     }
 }

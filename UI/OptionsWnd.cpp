@@ -254,7 +254,7 @@ OptionsWnd::OptionsWnd():
     SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
     m_done_button = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
-    m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
+    m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
     Init();
 }
 
@@ -279,7 +279,7 @@ void OptionsWnd::BeginSection(const std::string& name)
     assert(m_current_option_list);
     assert(0 <= m_indentation_level);
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* heading_text = new GG::TextControl(0, 0, name, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    GG::TextControl* heading_text = new GG::TextControl(0, 0, name, ClientUI::GetFont(ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::FORMAT_LEFT);
     row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, m_indentation_level));
     m_current_option_list->Insert(row);
@@ -311,7 +311,7 @@ CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std
 CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     CUISpin<int>* spin = 0;
     int value = GetOptionsDB().Get<int>(option_name);
@@ -344,7 +344,7 @@ CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::s
 CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     CUISpin<double>* spin = 0;
     double value = GetOptionsDB().Get<double>(option_name);
@@ -426,7 +426,7 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
 void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     CUIEdit* edit = new CUIEdit(0, 0, 1, GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
     CUIButton* button = new CUIButton(0, 0, 1, "...");
@@ -481,7 +481,7 @@ void OptionsWnd::DirectoryOption(const std::string& option_name, const std::stri
 void OptionsWnd::ColorOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     ColorSelector* color_selector = new ColorSelector(0, 0, 1, ClientUI::Pts() + 4, GetOptionsDB().Get<StreamableColor>(option_name).ToClr());
     color_selector->SetMaxSize(GG::Pt(color_selector->MaxSize().x, color_selector->Size().y));
     GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2);
@@ -504,7 +504,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
     const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     drop_list->SetStyle(GG::LIST_NOSORT);
     std::set<std::string> filenames;
@@ -588,7 +588,7 @@ void OptionsWnd::ResolutionOption()
     GG::ListBox::Row* row = new GG::ListBox::Row();
     const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
     const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
-    GG::TextControl* drop_list_text_control = new GG::TextControl(0, 0, UserString("OPTIONS_VIDEO_MODE"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* drop_list_text_control = new GG::TextControl(0, 0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 1, 0, LAYOUT_MARGIN);
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
@@ -798,7 +798,7 @@ void OptionsWnd::Init()
 OptionsWnd::~OptionsWnd()
 {}
 
-void OptionsWnd::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void OptionsWnd::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE || key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
         DoneClicked();

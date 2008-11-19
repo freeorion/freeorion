@@ -706,7 +706,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
         }
     }
 
-    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER + 3, 5, planet.Name(), GG::GUI::GetGUI()->GetFont(ClientUI::FontBold(), ClientUI::Pts()*4/3), ClientUI::TextColor());
+    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER + 3, 5, planet.Name(), ClientUI::GetBoldFont(ClientUI::Pts()*4/3), ClientUI::TextColor());
     AttachChild(m_planet_name);
 
     std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
@@ -733,12 +733,12 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     AttachChild(m_specials_panel);
     m_specials_panel->MoveTo(GG::Pt(GG::Pt(Width() - m_population_panel->Width(), m_planet_name->LowerRight().y - UpperLeft().y)));
 
-    m_env_size = new GG::TextControl(MAX_PLANET_DIAMETER, m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+    m_env_size = new GG::TextControl(MAX_PLANET_DIAMETER, m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
 
 
     m_button_colonize = new CUIButton(MAX_PLANET_DIAMETER, m_env_size->LowerRight().y - UpperLeft().y + 1, 80, UserString("PL_COLONIZE"),
-                                      GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                                      ClientUI::GetFont(),
                                       ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
                                       ClientUI::TextColor(), GG::CLICKABLE);
 
@@ -970,7 +970,7 @@ void SidePanel::PlanetPanel::ClickColonize()
 
         if (!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin()))) {
             GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
-                                   GG::GUI::GetGUI()->GetFont(ClientUI::Font(),ClientUI::Pts()),ClientUI::WndColor(),ClientUI::CtrlBorderColor(),ClientUI::CtrlColor(),ClientUI::TextColor(),2,
+                                   ClientUI::GetFont(),ClientUI::WndColor(),ClientUI::CtrlBorderColor(),ClientUI::CtrlColor(),ClientUI::TextColor(),2,
                                    UserString("YES"),UserString("NO"));
             dlg.Run();
 
@@ -1016,7 +1016,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
-    GG::PopupMenu popup(pt.x, pt.y, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), menu_contents, ClientUI::TextColor());
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) 
         switch (popup.MenuID())
@@ -1210,7 +1210,7 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_planet_panel_container(new PlanetPanelContainer(0, 140, w, h-170)),
     m_system_resource_summary(0)
 {
-    const boost::shared_ptr<GG::Font>& font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), SystemNameFontSize());
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(SystemNameFontSize());
     const int DROP_HEIGHT = SystemNameFontSize();
 
     m_button_prev = new GG::Button(MAX_PLANET_DIAMETER + EDGE_PAD, EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
@@ -1340,7 +1340,7 @@ void SidePanel::SetSystemImpl()
                     continue;
                 }
             } else {
-                row->push_back(new OwnerColoredSystemName(sys_vec[i], HumanClientApp::GetApp()->GetFont(ClientUI::Font(), SystemNameFontSize()), UserString("SP_SYSTEM_NAME")));
+                row->push_back(new OwnerColoredSystemName(sys_vec[i], ClientUI::GetFont(SystemNameFontSize()), UserString("SP_SYSTEM_NAME")));
             }
 
             m_system_name->Insert(row);
