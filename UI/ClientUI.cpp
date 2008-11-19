@@ -312,7 +312,7 @@ namespace {
         static std::vector<GG::UnicodeCharset> retval;
         if (retval.empty()) {
             const std::string CREDITS_STR = "Aö"; // Basic Latin and Latin-1 Supplement (character sets needed to display the credits page)
-            std::set<GG::UnicodeCharset> credits_charsets = GG::UncodeCharsetsToRender(CREDITS_STR);
+            std::set<GG::UnicodeCharset> credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
 
             std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
             if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
@@ -325,7 +325,7 @@ namespace {
                 stringtable_str += line;
                 stringtable_str += '\n';
             }
-            std::set<GG::UnicodeCharset> stringtable_charsets = GG::UncodeCharsetsToRender(stringtable_str);
+            std::set<GG::UnicodeCharset> stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
 
             std::set_union(credits_charsets.begin(), credits_charsets.end(),
                            stringtable_charsets.begin(), stringtable_charsets.end(),
