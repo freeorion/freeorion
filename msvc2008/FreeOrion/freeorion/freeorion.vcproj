@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_35&quot;;C:\Python25\include;../../../GG/;../../include"
+				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;C:\Python25\include;../../../GG/;../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;GIGI_EXPORTS;GIGI_SDL_EXPORTS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -73,7 +73,7 @@
 				ShowProgress="0"
 				OutputFile="../../../freeorion.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs;C:\boost_1_35_0\lib"
+				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs;C:\boost_1_36_0\lib"
 				GenerateManifest="true"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
@@ -837,10 +837,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\GG\GG\Button.h"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\GG\GG\Clr.h"
 					>
 				</File>
@@ -941,6 +937,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\UnicodeCharsets.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\Wnd.h"
 					>
 				</File>
@@ -967,6 +967,10 @@
 				<Filter
 					Name="dialogs"
 					>
+					<File
+						RelativePath="..\..\..\GG\GG\Button.h"
+						>
+					</File>
 					<File
 						RelativePath="..\..\..\GG\GG\dialogs\ColorDlg.h"
 						>
@@ -1093,6 +1097,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\src\UnicodeCharsets.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\src\Wnd.cpp"
 					>
 				</File>
@@ -1131,6 +1139,10 @@
 						RelativePath="..\..\..\GG\src\dialogs\ThreeButtonDlg.cpp"
 						>
 					</File>
+				</Filter>
+				<Filter
+					Name="GIL"
+					>
 				</Filter>
 			</Filter>
 		</Filter>

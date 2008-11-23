@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_35&quot;;C:\Python25\include;../../../GG/"
+				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;C:\Python25\include;../../../GG/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;GIGI_EXPORTS;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -69,7 +69,7 @@
 				AdditionalDependencies="opengl32.lib glu32.lib wsock32.lib zdll.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc90-mt-1_35.lib"
 				OutputFile="../../../freeorionca.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs;C:\boost_1_35_0\lib"
+				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs;C:\boost_1_36_0\lib"
 				GenerateManifest="true"
 				GenerateDebugInformation="false"
 				SubSystem="1"
