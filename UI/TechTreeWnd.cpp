@@ -22,6 +22,25 @@
 
 #include <boost/timer.hpp>
 
+#ifndef M_PI
+#define M_PI      3.14159265358979323846
+#endif
+
+#ifndef PI
+#define PI      M_PI
+#endif
+
+#ifndef POINTS_PER_INCH
+#define POINTS_PER_INCH   72
+#endif
+
+#ifndef POINTS
+#define POINTS(f_inch)   (ROUND((f_inch)*POINTS_PER_INCH))
+#endif
+
+#ifndef PS2INCH
+#define PS2INCH(ps)      ((ps)/(double)POINTS_PER_INCH)
+#endif
 
 namespace {
     // command-line options
@@ -1901,7 +1920,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
     // default graph properties
     agraphattr(graph, "rankdir", "LR");
-    agraphattr(graph, "ordering", "in");
+    //agraphattr(graph, "ordering", "in");
     agraphattr(graph, "ranksep", const_cast<char*>(boost::lexical_cast<std::string>(RANK_SEP).c_str()));
     agraphattr(graph, "nodesep", const_cast<char*>(boost::lexical_cast<std::string>(NODE_SEP).c_str())); 
     agraphattr(graph, "arrowhead", "none");
