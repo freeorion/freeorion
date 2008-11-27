@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_35&quot;;C:\Python25\include;../../../network/;../../../GG/;../../include/"
+				AdditionalIncludeDirectories="..\..\..\GG\;..\..\include\;..\..\..\..\include\;&quot;..\..\..\..\Boost\include\boost-1_36&quot;;C:\Python25\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_WIN32_WINNT;GIGI_EXPORTS;GIGI_SDL_EXPORTS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -241,6 +241,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\UnicodeCharsets.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\Wnd.h"
 					>
 				</File>
@@ -390,6 +394,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\GG\src\Timer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\GG\src\UnicodeCharsets.cpp"
 					>
 				</File>
 				<File
