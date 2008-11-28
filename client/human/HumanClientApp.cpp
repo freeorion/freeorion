@@ -419,6 +419,8 @@ void HumanClientApp::SDLInit()
         Exit(1);
     }
 
+    SDL_EnableUNICODE(1);
+
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
     EnableMouseButtonDownRepeat(SDL_DEFAULT_REPEAT_DELAY / 2, SDL_DEFAULT_REPEAT_INTERVAL / 2);
 
