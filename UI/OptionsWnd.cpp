@@ -586,7 +586,7 @@ void OptionsWnd::ResolutionOption()
 
     // create controls
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    const GG::Y DROPLIST_HEIGHT = ClientUI::Pts() + 4;
+    const GG::Y DROPLIST_HEIGHT = GG::Y(ClientUI::Pts() + 4);
     const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
     GG::TextControl* drop_list_text_control = new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     CUIDropDownList* drop_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
