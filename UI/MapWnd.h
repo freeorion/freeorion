@@ -122,7 +122,7 @@ public:
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
-    static const int SIDE_PANEL_WIDTH;
+    static const GG::X SIDE_PANEL_WIDTH;
 
 protected:
     virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
@@ -300,7 +300,7 @@ private:
 class MapWndPopup : public CUIWnd
 {
 public:
-    MapWndPopup(const std::string& t, int x, int y, int h, int w, GG::Flags<GG::WndFlag> flags);
+    MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags);
     virtual ~MapWndPopup();
     void CloseClicked();
     void Close();

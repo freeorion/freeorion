@@ -43,7 +43,7 @@ public:
     //!@}
 
     //! \name Structors //!@{
-    SystemIcon(GG::Wnd* parent, int x, int y, int w, int id);    //!< construct from a universe ID at specified size and position
+    SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id);    //!< construct from a universe ID at specified size and position
     ~SystemIcon();                              //!< dtor
     //!@}
 
@@ -87,7 +87,7 @@ public:
     //!@}
 
     /** The size below which the "tiny" version of the star graphic is used, in pixels. */
-    static const int TINY_SIZE;
+    static const GG::X TINY_SIZE;
 
 private:
     void    Init(); //!< common constructor tasks

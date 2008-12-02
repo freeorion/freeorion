@@ -10,12 +10,12 @@
 
 
 namespace {
-    const int    SITREP_LB_MARGIN_X = 5;
-    const int    SITREP_LB_MARGIN_Y = 5;
+    const GG::X SITREP_LB_MARGIN_X(5);
+    const GG::Y SITREP_LB_MARGIN_Y(5);
 }
 
 
-SitRepPanel::SitRepPanel(int x, int y, int w, int h) : 
+SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) : 
     CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
 {
     TempUISoundDisabler sound_disabler;
@@ -76,11 +76,11 @@ void SitRepPanel::Update()
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
-    int width = m_sitreps_lb->Width() - 8;
+    GG::X width = m_sitreps_lb->Width() - 8;
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
-        LinkText* link_text = new LinkText(0, 0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
+        LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);

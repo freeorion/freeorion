@@ -29,7 +29,7 @@ class GalaxySetupData;
 class GalaxySetupPanel : public GG::Control
 {
 public:
-    enum {DEFAULT_WIDTH = 305};
+    static const GG::X DEFAULT_WIDTH;
 
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()>                               SettingsChangedSignalType; ///< emitted when the any of the settings controls changes
@@ -42,7 +42,7 @@ public:
     //@}
 
     /** \name Structors*/ //!@{
-    GalaxySetupPanel(int x, int y, int w = DEFAULT_WIDTH);
+    GalaxySetupPanel(GG::X x, GG::Y y, GG::X w = DEFAULT_WIDTH);
     //!@}
 
     /** \name Accessors*/ //!@{

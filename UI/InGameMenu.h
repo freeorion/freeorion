@@ -23,7 +23,7 @@ public:
     //@}
 
 protected:
-    virtual int MinimizedLength() const;//!< the width of a minimized InGameMenu wnd
+    virtual GG::X MinimizedWidth() const;//!< the width of a minimized InGameMenu wnd
 
 private:
     void Save();        //!< when m_save_btn button is pressed

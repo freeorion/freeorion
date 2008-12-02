@@ -578,7 +578,7 @@ ClientUI* ClientUI::GetClientUI()
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
-    GG::ThreeButtonDlg dlg(320,200,message,GetFont(Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
+    GG::ThreeButtonDlg dlg(GG::X(320),GG::Y(200),message,GetFont(Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
         HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");

@@ -31,7 +31,7 @@ public:
     class PlanetPanel;
 
     /** \name Structors */ //@{
-    SidePanel(int x, int y, int w, int h);
+    SidePanel(GG::X x, GG::Y y, GG::X w, GG::Y h);
     ~SidePanel();
     //@}
 
@@ -94,7 +94,7 @@ private:
     std::set<boost::signals::connection>                m_system_connections;
     std::map<const Fleet*, boost::signals::connection>  m_fleet_state_change_signals;
 
-    static const int            EDGE_PAD = 4;
+    static const int            EDGE_PAD;
 };
 
 #endif // _SidePanel_h_

@@ -25,12 +25,12 @@
 namespace fs = boost::filesystem;
 
 namespace {
-    const int PAGE_WIDTH = 400;
-    const int PAGE_HEIGHT = 450;
-    const int INDENTATION = 20;
-    const int ROW_WIDTH = PAGE_WIDTH - 4 - 14 - 5;
-    const int COLOR_SELECTOR_WIDTH = 75;
-    const int SPIN_WIDTH = 65;
+    const GG::X PAGE_WIDTH(400);
+    const GG::Y PAGE_HEIGHT(450);
+    const GG::X INDENTATION(20);
+    const GG::X ROW_WIDTH(PAGE_WIDTH - 4 - 14 - 5);
+    const GG::X COLOR_SELECTOR_WIDTH(75);
+    const GG::X SPIN_WIDTH(65);
     const int LAYOUT_MARGIN = 3;
 
     const std::string STRINGTABLE_FILE_SUFFIX = "_stringtable.txt";
@@ -41,26 +41,26 @@ namespace {
     class PlaceholderWnd : public GG::Wnd
     {
     public:
-        PlaceholderWnd(int w, int h) : Wnd(0, 0, w, h, GG::Flags<GG::WndFlag>()) {}
+        PlaceholderWnd(GG::X w, GG::Y h) : Wnd(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()) {}
         virtual void Render() {}
     };
 
     class RowContentsWnd : public GG::Control
     {
     public:
-        RowContentsWnd(int w, int h, Wnd* contents, int indentation_level) :
-            Control(0, 0, w, h, GG::CLICKABLE)
+        RowContentsWnd(GG::X w, GG::Y h, Wnd* contents, int indentation_level) :
+            Control(GG::X0, GG::Y0, w, h, GG::CLICKABLE)
             {
                 assert(contents);
                 if (!indentation_level) {
-                    GG::Layout* layout = new GG::Layout(0, 0, w, h, 1, 1);
+                    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 1);
                     layout->Add(contents, 0, 0);
                     SetLayout(layout);
                 } else {
-                    GG::Layout* layout = new GG::Layout(0, 0, w, h, 1, 2);
+                    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, w, h, 1, 2);
                     layout->SetMinimumColumnWidth(0, indentation_level * INDENTATION);
                     layout->SetColumnStretch(1, 1.0);
-                    layout->Add(new PlaceholderWnd(1, 1), 0, 0);
+                    layout->Add(new PlaceholderWnd(GG::X1, GG::Y1), 0, 0);
                     layout->Add(contents, 0, 1);
                     SetLayout(layout);
                 }
@@ -253,14 +253,14 @@ OptionsWnd::OptionsWnd():
 {
     SetMaxSize(GG::Pt(PAGE_WIDTH + 20, MaxSize().y));
     SetMinSize(GG::Pt(PAGE_WIDTH + 20, PAGE_HEIGHT + 70));
-    m_done_button = new CUIButton(15, PAGE_HEIGHT + 17, 75, UserString("DONE"));
-    m_tabs = new GG::TabWnd(5, 2, PAGE_WIDTH, PAGE_HEIGHT + 20, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
+    m_done_button = new CUIButton(GG::X(15), PAGE_HEIGHT + 17, GG::X(75), UserString("DONE"));
+    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), PAGE_WIDTH, PAGE_HEIGHT + 20, ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED);
     Init();
 }
 
 void OptionsWnd::BeginPage(const std::string& name)
 {
-    m_current_option_list = new CUIListBox(0, 0, 1, 1);
+    m_current_option_list = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_current_option_list->SetColor(GG::CLR_ZERO);
     m_current_option_list->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_tabs->AddWnd(m_current_option_list, name);
@@ -279,7 +279,7 @@ void OptionsWnd::BeginSection(const std::string& name)
     assert(m_current_option_list);
     assert(0 <= m_indentation_level);
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* heading_text = new GG::TextControl(0, 0, name, ClientUI::GetFont(ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    GG::TextControl* heading_text = new GG::TextControl(GG::X0, GG::Y0, name, ClientUI::GetFont(ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::FORMAT_LEFT);
     row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, m_indentation_level));
     m_current_option_list->Insert(row);
@@ -296,7 +296,7 @@ void OptionsWnd::EndSection()
 CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(0, 0, 1, 1, text, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, m_indentation_level));
@@ -311,21 +311,21 @@ CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std
 CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     CUISpin<int>* spin = 0;
     int value = GetOptionsDB().Get<int>(option_name);
     if (boost::shared_ptr<const RangedValidator<int> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(validator))
-        spin = new CUISpin<int>(0, 0, 1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
     else if (boost::shared_ptr<const StepValidator<int> > step_validator = boost::dynamic_pointer_cast<const StepValidator<int> >(validator))
-        spin = new CUISpin<int>(0, 0, 1, value, step_validator->m_step_size, -1000000, 1000000, true);
+        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, step_validator->m_step_size, -1000000, 1000000, true);
     else if (boost::shared_ptr<const RangedStepValidator<int> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<int> >(validator))
-        spin = new CUISpin<int>(0, 0, 1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<int> > int_validator = boost::dynamic_pointer_cast<const Validator<int> >(validator))
-        spin = new CUISpin<int>(0, 0, 1, value, 1, -1000000, 1000000, true);
+        spin = new CUISpin<int>(GG::X0, GG::Y0, GG::X1, value, 1, -1000000, 1000000, true);
     assert(spin);
     spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(spin, 0, 0);
     layout->Add(text_control, 0, 1);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -344,21 +344,21 @@ CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::s
 CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
     boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     CUISpin<double>* spin = 0;
     double value = GetOptionsDB().Get<double>(option_name);
     if (boost::shared_ptr<const RangedValidator<double> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<double> >(validator))
-        spin = new CUISpin<double>(0, 0, 1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
+        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
     else if (boost::shared_ptr<const StepValidator<double> > step_validator = boost::dynamic_pointer_cast<const StepValidator<double> >(validator))
-        spin = new CUISpin<double>(0, 0, 1, value, step_validator->m_step_size, -1000000, 1000000, true);
+        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, step_validator->m_step_size, -1000000, 1000000, true);
     else if (boost::shared_ptr<const RangedStepValidator<double> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<double> >(validator))
-        spin = new CUISpin<double>(0, 0, 1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
+        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
     else if (boost::shared_ptr<const Validator<double> > double_validator = boost::dynamic_pointer_cast<const Validator<double> >(validator))
-        spin = new CUISpin<double>(0, 0, 1, value, 1, -1000000, 1000000, true);
+        spin = new CUISpin<double>(GG::X0, GG::Y0, GG::X1, value, 1, -1000000, 1000000, true);
     assert(spin);
     spin->SetMaxSize(GG::Pt(spin->MaxSize().x, spin->Size().y));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(spin, 0, 0);
     layout->Add(text_control, 0, 1);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
@@ -377,14 +377,14 @@ CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const 
 void OptionsWnd::MusicVolumeOption()
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(0, 0, 1, 1, UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     button->SetCheck(!GetOptionsDB().Get<bool>("music-off"));
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("music-volume"));
     assert(validator);
-    CUISlider* slider = new CUISlider(0, 0, 1, 14, validator->m_min, validator->m_max, GG::HORIZONTAL);
+    CUISlider* slider = new CUISlider(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>("music-volume"));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
@@ -402,14 +402,14 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
                               VolumeSliderHandler volume_slider_handler, bool toggle_value)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    CUIStateButton* button = new CUIStateButton(0, 0, 1, 1, text, GG::FORMAT_LEFT);
+    CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
-    CUISlider* slider = new CUISlider(0, 0, 1, 14, validator->m_min, validator->m_max, GG::HORIZONTAL);
+    CUISlider* slider = new CUISlider(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2, 0, 5);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
@@ -426,13 +426,13 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
 void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
-    CUIEdit* edit = new CUIEdit(0, 0, 1, GetOptionsDB().Get<std::string>(option_name));
+    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
-    CUIButton* button = new CUIButton(0, 0, 1, "...");
+    CUIButton* button = new CUIButton(GG::X0, GG::Y0, GG::X1, "...");
     button->SetMinSize(GG::Pt(button->MinUsableSize().x + 8, button->Height()));
     button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 2, 0, LAYOUT_MARGIN);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, 0, LAYOUT_MARGIN);
     layout->Add(text_control, 0, 0, 1, 2);
     layout->Add(edit, 1, 0, 1, 1, GG::ALIGN_VCENTER);
     layout->Add(button, 1, 1, 1, 1, GG::ALIGN_VCENTER);
@@ -481,10 +481,10 @@ void OptionsWnd::DirectoryOption(const std::string& option_name, const std::stri
 void OptionsWnd::ColorOption(const std::string& option_name, const std::string& text)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
-    ColorSelector* color_selector = new ColorSelector(0, 0, 1, ClientUI::Pts() + 4, GetOptionsDB().Get<StreamableColor>(option_name).ToClr());
+    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    ColorSelector* color_selector = new ColorSelector(GG::X0, GG::Y0, GG::X1, GG::Y(ClientUI::Pts() + 4), GetOptionsDB().Get<StreamableColor>(option_name).ToClr());
     color_selector->SetMaxSize(GG::Pt(color_selector->MaxSize().x, color_selector->Size().y));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 1, 2);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2);
     layout->Add(text_control, 0, 0);
     layout->Add(color_selector, 0, 1, 1, 1, GG::ALIGN_VCENTER);
     layout->SetMinimumColumnWidth(1, COLOR_SELECTOR_WIDTH);
@@ -501,11 +501,11 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
 
 void OptionsWnd::FontOption(const std::string& option_name, const std::string& text)
 {
-    const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
-    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
+    const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
+    const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(0, 0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
-    CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    CUIDropDownList* drop_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     drop_list->SetStyle(GG::LIST_NOSORT);
     std::set<std::string> filenames;
     fs::directory_iterator end_it;
@@ -523,7 +523,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
         }
     }
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 1, 0, LAYOUT_MARGIN);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
     layout->Add(text_control, 0, 0);
     layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
     row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
@@ -586,11 +586,11 @@ void OptionsWnd::ResolutionOption()
 
     // create controls
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    const int DROPLIST_HEIGHT = ClientUI::Pts() + 4;
-    const int DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
-    GG::TextControl* drop_list_text_control = new GG::TextControl(0, 0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
-    CUIDropDownList* drop_list = new CUIDropDownList(0, 0, 1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 1, 0, LAYOUT_MARGIN);
+    const GG::Y DROPLIST_HEIGHT = ClientUI::Pts() + 4;
+    const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
+    GG::TextControl* drop_list_text_control = new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::CLICKABLE);
+    CUIDropDownList* drop_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
     layout->Add(drop_list_text_control, 0, 0);
     layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
@@ -646,7 +646,7 @@ void OptionsWnd::Init()
 
     TempUISoundDisabler sound_disabler;
 
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 2, 2, LAYOUT_MARGIN, LAYOUT_MARGIN);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, LAYOUT_MARGIN, LAYOUT_MARGIN);
     layout->SetMinimumColumnWidth(0, m_done_button->Width() + LAYOUT_MARGIN);
     layout->SetColumnStretch(1, 1.0);
     layout->SetRowStretch(0, 1.0);

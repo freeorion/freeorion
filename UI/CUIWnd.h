@@ -21,7 +21,7 @@ public:
        RESTORE_BUTTON
    };
               
-   CUI_MinRestoreButton(int x, int y); ///< basic ctor
+   CUI_MinRestoreButton(GG::X x, GG::Y y); ///< basic ctor
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
 
@@ -37,7 +37,7 @@ private:
 class CUI_CloseButton : public GG::Button
 {
 public:
-   CUI_CloseButton(int x, int y);
+   CUI_CloseButton(GG::X x, GG::Y y);
 
    void Render();
 };
@@ -85,7 +85,7 @@ class CUIWnd : public GG::Wnd
 {
 public:
     //! \name Structors //@{
-    CUIWnd(const std::string& t, int x, int y, int w, int h, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
+    CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
     ~CUIWnd();    //!< Destructor
     //@}
 
@@ -114,11 +114,11 @@ public:
 
 protected:
     //! \name Accessors //@{
-    virtual int MinimizedLength() const;//!< the width of a minimized CUIWnd
-    int LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
-    int TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
-    int RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
-    int BottomBorder() const;           //!< the distance at the bottom between the outer edge of the window and the inner border
+    virtual GG::X MinimizedWidth() const;//!< the width of a minimized CUIWnd
+    GG::X LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
+    GG::Y TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
+    GG::X RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
+    GG::Y BottomBorder() const;           //!< the distance at the bottom between the outer edge of the window and the inner border
     int InnerBorderAngleOffset() const; //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     //@}
 
@@ -137,17 +137,17 @@ protected:
     CUI_CloseButton*       m_close_button;     //!< the close button
     CUI_MinRestoreButton*  m_minimize_button;  //!< the minimize/restore button
 
-    static const int BUTTON_TOP_OFFSET = 3;
-    static const int BUTTON_RIGHT_OFFSET = 15;
-    static const int MINIMIZED_WND_LENGTH = 150;
-    static const int BORDER_LEFT = 5;
-    static const int BORDER_TOP = 18;
-    static const int BORDER_RIGHT = 5;
-    static const int BORDER_BOTTOM = 5;
-    static const int OUTER_EDGE_ANGLE_OFFSET = 8;
-    static const int INNER_BORDER_ANGLE_OFFSET = 11;
-    static const int RESIZE_HASHMARK1_OFFSET = 7;
-    static const int RESIZE_HASHMARK2_OFFSET = 3;
+    static const GG::Y BUTTON_TOP_OFFSET;
+    static const GG::X BUTTON_RIGHT_OFFSET;
+    static const GG::X MINIMIZED_WND_WIDTH;
+    static const GG::X BORDER_LEFT;
+    static const GG::Y BORDER_TOP;
+    static const GG::X BORDER_RIGHT;
+    static const GG::Y BORDER_BOTTOM;
+    static const int OUTER_EDGE_ANGLE_OFFSET;
+    static const int INNER_BORDER_ANGLE_OFFSET;
+    static const int RESIZE_HASHMARK1_OFFSET;
+    static const int RESIZE_HASHMARK2_OFFSET;
 };
 
 
@@ -156,7 +156,7 @@ protected:
 class CUIEditWnd : public CUIWnd
 {
 public:
-    CUIEditWnd(int w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
+    CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
 
     virtual void ModalInit();
     virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
@@ -172,8 +172,8 @@ private:
     CUIButton*  m_ok_bn;
     CUIButton*  m_cancel_bn;
 
-    static const int BUTTON_WIDTH = 75;
-    static const int CONTROL_MARGIN = 5;
+    static const GG::X BUTTON_WIDTH;
+    static const int CONTROL_MARGIN;
 };
 
 #endif // _CUIWnd_h_

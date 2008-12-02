@@ -14,12 +14,12 @@
 #include <boost/format.hpp>
 
 namespace {
-    const int TEXT_MARGIN_X = 3;
-    const int TEXT_MARGIN_Y = 3;
+    const GG::X TEXT_MARGIN_X(3);
+    const GG::Y TEXT_MARGIN_Y(3);
 }
 
-EncyclopediaDetailPanel::EncyclopediaDetailPanel(int w, int h) :
-    CUIWnd("", 1, 1, w - 1, h - 1, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
+    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
     m_tech(0),
     m_part(0),
     m_hull(0),
@@ -38,10 +38,10 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(int w, int h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_name_text =       new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
-    m_cost_text =       new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
-    m_summary_text =    new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
-    m_description_box = new CUILinkTextMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+    m_name_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
+    m_cost_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
+    m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
+    m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
@@ -62,29 +62,29 @@ void EncyclopediaDetailPanel::DoLayout() {
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
 
     // name
-    GG::Pt ul = GG::Pt(0, 0);
-    GG::Pt lr = ul + GG::Pt(Width(), NAME_PTS + 4);
+    GG::Pt ul = GG::Pt();
+    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 4));
     m_name_text->SizeMove(ul, lr);
 
     // cost / turns
-    ul += GG::Pt(0, m_name_text->Height());
-    lr = ul + GG::Pt(Width(), COST_PTS + 4);
+    ul += GG::Pt(GG::X0, m_name_text->Height());
+    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
     m_cost_text->SizeMove(ul, lr);
 
     // one line summary
-    ul += GG::Pt(0, m_cost_text->Height());
-    lr = ul + GG::Pt(Width(), SUMMARY_PTS + 4);
+    ul += GG::Pt(GG::X0, m_cost_text->Height());
+    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
     m_summary_text->SizeMove(ul, lr);
 
     // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(1, ICON_SIZE + TEXT_MARGIN_Y + 1);
+    ul = GG::Pt(GG::X1, ICON_SIZE + TEXT_MARGIN_Y + 1);
     lr = ul + GG::Pt(Width() - TEXT_MARGIN_X - BORDER_RIGHT, Height() - BORDER_BOTTOM - ul.y - TEXT_MARGIN_Y);
     m_description_box->SizeMove(ul, lr);
 
     // icons
     if (m_icon) {
-        ul = GG::Pt(1, 1);
-        lr = ul + GG::Pt(ICON_SIZE, ICON_SIZE);
+        ul = GG::Pt(GG::X1, GG::Y1);
+        lr = ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_icon->SizeMove(ul, lr);
     }
 }
@@ -106,7 +106,7 @@ GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const {
 void EncyclopediaDetailPanel::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    const int ICON_SIZE = m_summary_text->LowerRight().y - m_name_text->UpperLeft().y;
+    const GG::Y ICON_SIZE = m_summary_text->LowerRight().y - m_name_text->UpperLeft().y;
     GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
@@ -119,24 +119,24 @@ void EncyclopediaDetailPanel::Render() {
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
+        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
+        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -145,28 +145,28 @@ void EncyclopediaDetailPanel::Render() {
     // draw inner border, including extra resize-tab lines
     glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndInnerBorderColor());
-        glVertex2i(cl_ul.x, cl_ul.y);
-        glVertex2i(cl_lr.x, cl_ul.y);
-        glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-        glVertex2i(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-        glVertex2i(cl_ul.x, cl_lr.y);
-        glVertex2i(cl_ul.x, cl_ul.y);
+        glVertex(cl_ul.x, cl_ul.y);
+        glVertex(cl_lr.x, cl_ul.y);
+        glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
+        glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+        glVertex(cl_ul.x, cl_lr.y);
+        glVertex(cl_ul.x, cl_ul.y);
     glEnd();
     glBegin(GL_LINES);
         // draw the extra lines of the resize tab
         glColor(ClientUI::WndInnerBorderColor());
-        glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-        glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
+        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
+        glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
         
-        glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-        glVertex2i(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
+        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
+        glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
     glEnd();
     glEnable(GL_TEXTURE_2D);
 }
 
 void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
+    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
         // constrain to within parent
@@ -184,9 +184,9 @@ void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Fl
             GG::Pt ul = UpperLeft(), lr = LowerRight();
             GG::Pt new_ul = ul + move, new_lr = lr + move;
 
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(1, 1);
+            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
             GG::Pt max_lr = parent->ClientLowerRight();
-            GG::Pt max_ul = max_lr - this->Size();
+            GG::Pt max_ul = max_lr - Size();
 
             new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
             new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
@@ -285,9 +285,9 @@ void EncyclopediaDetailPanel::Reset()
 
     // Create Icons
     if (texture)
-        m_icon =        new GG::StaticGraphic(0, 0, 10, 10, texture,        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon =        new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), texture,        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     if (other_texture)
-        m_other_icon =  new GG::StaticGraphic(0, 0, 10, 10, other_texture,  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_other_icon =  new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), other_texture,  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     if (m_icon) {
         m_icon->Show();

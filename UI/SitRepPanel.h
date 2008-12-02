@@ -20,7 +20,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    SitRepPanel(int x, int y, int w, int h); ///< basic ctor
+    SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{

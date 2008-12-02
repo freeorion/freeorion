@@ -20,7 +20,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    BuildDesignatorWnd(int w, int h);
+    BuildDesignatorWnd(GG::X w, GG::Y h);
     //@}
 
     /** \name Accessors */ //@{

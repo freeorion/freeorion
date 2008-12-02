@@ -15,17 +15,18 @@ class CUIListBox;
 
 class CombatWnd : public CUIWnd
 {
-  public:
-    enum { WIDTH = 800, HEIGHT = 300}; 
+public:
+    static const GG::X WIDTH;
+    static const GG::Y HEIGHT;
 
     /** \name Structors */ //@{
-    CombatWnd(int x,int y);
+    CombatWnd(GG::X x, GG::Y y);
     ~CombatWnd();
     //@}
 
     void UpdateCombatTurnProgress(const std::string& message);
 
-  private:
+private:
     CUIListBox*  m_combats_lb;
 
 };

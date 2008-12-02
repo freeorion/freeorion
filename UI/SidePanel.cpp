@@ -300,7 +300,7 @@ namespace {
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glOrtho(0.0, HumanClientApp::GetApp()->AppWidth(), HumanClientApp::GetApp()->AppHeight(), 0.0, 0.0, HumanClientApp::GetApp()->AppWidth());
+        glOrtho(0.0, Value(HumanClientApp::GetApp()->AppWidth()), Value(HumanClientApp::GetApp()->AppHeight()), 0.0, 0.0, Value(HumanClientApp::GetApp()->AppWidth()));
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
@@ -315,7 +315,7 @@ namespace {
         glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
         glEnable(GL_TEXTURE_2D);
 
-        glTranslated(center.x, center.y, -(diameter / 2 + 1));
+        glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));
         glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
         glRotated(axial_tilt, 0.0, 1.0, 0.0);  // axial tilt
         double intensity = GetRotatingPlanetAmbientIntensity();
@@ -375,7 +375,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    PlanetPanel(int w, const Planet &planet, StarType star_type); ///< basic ctor
+    PlanetPanel(GG::X w, const Planet &planet, StarType star_type); ///< basic ctor
     ~PlanetPanel();
     //@}
 
@@ -438,7 +438,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    PlanetPanelContainer(int x, int y, int w, int h);
+    PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h);
     //@}
 
     void Clear();
@@ -482,8 +482,8 @@ private:
 class RotatingPlanetControl : public GG::Control
 {
 public:
-    RotatingPlanetControl(int x, int y, const Planet& planet, StarType star_type, const RotatingPlanetData& planet_data) :
-        GG::Control(x, y, PlanetDiameter(planet.Size()), PlanetDiameter(planet.Size()), GG::Flags<GG::WndFlag>()),
+    RotatingPlanetControl(GG::X x, GG::Y y, const Planet& planet, StarType star_type, const RotatingPlanetData& planet_data) :
+        GG::Control(x, y, GG::X(PlanetDiameter(planet.Size())), GG::Y(PlanetDiameter(planet.Size())), GG::Flags<GG::WndFlag>()),
         m_planet_data(planet_data),
         m_planet(planet),
         m_surface_texture(ClientUI::GetTexture(ClientUI::ArtDir() / m_planet_data.filename, true)),
@@ -497,7 +497,7 @@ public:
             const PlanetAtmosphereData::Atmosphere& atmosphere = it->second.atmospheres[RandSmallInt(0, it->second.atmospheres.size() - 1)];
             m_atmosphere_texture = ClientUI::GetTexture(ClientUI::ArtDir() / atmosphere.filename, true);
             m_atmosphere_alpha = atmosphere.alpha;
-            m_atmosphere_planet_rect = GG::Rect(1, 1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
+            m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
         }
     }
 
@@ -506,18 +506,18 @@ public:
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         // these values ensure that wierd GLUT-sphere artifacts do not show themselves
         double axial_tilt = std::max(-30.0, std::min(static_cast<double>(m_planet.AxialTilt()), 60.0));
-        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Width(), m_surface_texture, m_initial_rotation,
+        RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_initial_rotation,
                      1.0 / m_planet.RotationalPeriod(), axial_tilt, m_planet_data.shininess, m_star_type);
         if (m_atmosphere_texture) {
-            int texture_w = m_atmosphere_texture->DefaultWidth();
-            int texture_h = m_atmosphere_texture->DefaultHeight();
+            int texture_w = Value(m_atmosphere_texture->DefaultWidth());
+            int texture_h = Value(m_atmosphere_texture->DefaultHeight());
             double x_scale = PlanetDiameter(m_planet.Size()) / static_cast<double>(texture_w);
             double y_scale = PlanetDiameter(m_planet.Size()) / static_cast<double>(texture_h);
             glColor4ub(255, 255, 255, m_atmosphere_alpha);
-            m_atmosphere_texture->OrthoBlit(GG::Pt(static_cast<int>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
-                                                   static_cast<int>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale)),
-                                            GG::Pt(static_cast<int>(lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale),
-                                                   static_cast<int>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale)));
+            m_atmosphere_texture->OrthoBlit(GG::Pt(static_cast<GG::X>(ul.x - m_atmosphere_planet_rect.ul.x * x_scale),
+                                                   static_cast<GG::Y>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale)),
+                                            GG::Pt(static_cast<GG::X>(lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale),
+                                                   static_cast<GG::Y>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale)));
         }
     }
 
@@ -651,8 +651,8 @@ namespace {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
-SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_type) :
-    Wnd(0, 0, w, MAX_PLANET_DIAMETER, GG::CLICKABLE),
+SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star_type) :
+    Wnd(GG::X0, GG::Y0, w, GG::Y(MAX_PLANET_DIAMETER), GG::CLICKABLE),
     m_planet_id(planet.ID()),
     m_planet_name(0),
     m_env_size(0),
@@ -670,13 +670,13 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     int planet_image_sz = PlanetDiameter();
-    GG::Pt planet_image_pos(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3, Height() / 2 - planet_image_sz / 2);
+    GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3), Height() / 2 - planet_image_sz / 2);
 
     if (planet.Type() == PT_ASTEROIDS)
     {
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         GetAsteroidTextures(planet.ID(), textures);
-        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x,planet_image_pos.y,planet_image_sz,planet_image_sz,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y, GG::X(planet_image_sz), GG::Y(planet_image_sz), true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
@@ -706,7 +706,7 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
         }
     }
 
-    m_planet_name = new GG::TextControl(MAX_PLANET_DIAMETER + 3, 5, planet.Name(), ClientUI::GetBoldFont(ClientUI::Pts()*4/3), ClientUI::TextColor());
+    m_planet_name = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER + 3), GG::Y(5), planet.Name(), ClientUI::GetBoldFont(ClientUI::Pts()*4/3), ClientUI::TextColor());
     AttachChild(m_planet_name);
 
     std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
@@ -733,12 +733,12 @@ SidePanel::PlanetPanel::PlanetPanel(int w, const Planet &planet, StarType star_t
     AttachChild(m_specials_panel);
     m_specials_panel->MoveTo(GG::Pt(GG::Pt(Width() - m_population_panel->Width(), m_planet_name->LowerRight().y - UpperLeft().y)));
 
-    m_env_size = new GG::TextControl(MAX_PLANET_DIAMETER, m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
+    m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
 
 
-    m_button_colonize = new CUIButton(MAX_PLANET_DIAMETER, m_env_size->LowerRight().y - UpperLeft().y + 1, 80, UserString("PL_COLONIZE"),
-                                      ClientUI::GetFont(),
+    m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), m_env_size->LowerRight().y - UpperLeft().y + 1, GG::X(80),
+                                      UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
                                       ClientUI::TextColor(), GG::CLICKABLE);
 
@@ -795,8 +795,8 @@ void SidePanel::PlanetPanel::Hilite(HilitingType ht)
 void SidePanel::PlanetPanel::DoLayout()
 {
     const int INTERPANEL_SPACE = 3;
-    int y = m_specials_panel->LowerRight().y - UpperLeft().y;
-    int x = Width() - m_population_panel->Width();
+    GG::Y y = m_specials_panel->LowerRight().y - UpperLeft().y;
+    GG::X x = Width() - m_population_panel->Width();
 
     if (m_population_panel->Parent() == this) {
         m_population_panel->MoveTo(GG::Pt(x, y));
@@ -818,7 +818,7 @@ void SidePanel::PlanetPanel::DoLayout()
         y += m_buildings_panel->Height();
     }
 
-    Resize(GG::Pt(Width(), std::max(y, MAX_PLANET_DIAMETER)));
+    Resize(GG::Pt(Width(), std::max(y, GG::Y(MAX_PLANET_DIAMETER))));
     ResizedSignal();
 }
 
@@ -924,7 +924,9 @@ void SidePanel::PlanetPanel::Render()
     GG::Clr DARK_GREY = GG::Clr(26, 26, 26, 255);
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x + SidePanel::MAX_PLANET_DIAMETER, m_planet_name->UpperLeft().y, lr.x, m_planet_name->LowerRight().y, DARK_GREY, DARK_GREY, 0);   // top title filled background
+    GG::FlatRectangle(GG::Pt(ul.x + SidePanel::MAX_PLANET_DIAMETER, m_planet_name->UpperLeft().y),
+                      GG::Pt(lr.x, m_planet_name->LowerRight().y),
+                      DARK_GREY, DARK_GREY, 0);   // top title filled background
 
     const Planet *planet = GetPlanet();
 
@@ -934,10 +936,14 @@ void SidePanel::PlanetPanel::Render()
         double PI = 3.14159;
         double factor = 0.5 + std::cos(HumanClientApp::GetApp()->Ticks() / PERIOD_MS * 2 * PI) / 2;
         int alpha = static_cast<int>(255 * factor);
-        GG::FlatCircle(planet_rect.ul.x - 3, planet_rect.ul.y - 3, planet_rect.lr.x + 3, planet_rect.lr.y + 3, GG::Clr(0, 100, 0, alpha), GG::CLR_ZERO, 0);
+        GG::FlatCircle(GG::Pt(planet_rect.ul.x - 3, planet_rect.ul.y - 3),
+                       GG::Pt(planet_rect.lr.x + 3, planet_rect.lr.y + 3),
+                       GG::Clr(0, 100, 0, alpha), GG::CLR_ZERO, 0);
     } else if (m_hiliting == HILITING_SELECTED && planet->Type() != PT_ASTEROIDS) {
         GG::Rect planet_rect(m_rotating_planet_graphic->UpperLeft(), m_rotating_planet_graphic->LowerRight());
-        GG::FlatCircle(planet_rect.ul.x - 3, planet_rect.ul.y - 3, planet_rect.lr.x + 3, planet_rect.lr.y + 3, GG::CLR_WHITE, GG::CLR_ZERO, 0);
+        GG::FlatCircle(GG::Pt(planet_rect.ul.x - 3, planet_rect.ul.y - 3),
+                       GG::Pt(planet_rect.lr.x + 3, planet_rect.lr.y + 3),
+                       GG::CLR_WHITE, GG::CLR_ZERO, 0);
     }
 }
 
@@ -948,10 +954,10 @@ int SidePanel::PlanetPanel::PlanetDiameter() const
 
 bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 {
-    GG::Pt center = UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER / 2, MAX_PLANET_DIAMETER / 2);
+    GG::Pt center = UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER / 2), GG::Y(MAX_PLANET_DIAMETER / 2));
     GG::Pt diff = pt - center;
     int r_squared = PlanetDiameter() * PlanetDiameter() / 4;
-    return diff.x * diff.x + diff.y * diff.y <= r_squared;
+    return Value(diff.x * diff.x) + Value(diff.y * diff.y) <= r_squared;
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
@@ -969,7 +975,7 @@ void SidePanel::PlanetPanel::ClickColonize()
         }
 
         if (!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin()))) {
-            GG::ThreeButtonDlg dlg(320,200,UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
+            GG::ThreeButtonDlg dlg(GG::X(320),GG::Y(200),UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
                                    ClientUI::GetFont(),ClientUI::WndColor(),ClientUI::CtrlBorderColor(),ClientUI::CtrlColor(),ClientUI::TextColor(),2,
                                    UserString("YES"),UserString("NO"));
             dlg.Run();
@@ -1024,7 +1030,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         case 1: 
         { // rename planet
             std::string plt_name = planet->Name();
-            CUIEditWnd edit_wnd(350, UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
+            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
             edit_wnd.Run();
             if (edit_wnd.Result() != "")
             {
@@ -1041,11 +1047,11 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 ////////////////////////////////////////////////
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
-SidePanel::PlanetPanelContainer::PlanetPanelContainer(int x, int y, int w, int h) :
+SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_planet_panels(),
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(Width()-14,0,14,Height(),GG::VERTICAL))
+    m_vscroll(new CUIScroll(Width()-14,GG::Y0,GG::X(14),Height(),GG::VERTICAL))
 {
     SetText("PlanetPanelContainer");
     EnableChildClipping(true);
@@ -1059,7 +1065,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
             return true;
     }
 
-    return UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight();
+    return UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y0) <= pt && pt < LowerRight();
 }
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1097,21 +1103,21 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout()
 {
-    int y = 0;
+    GG::Y y(0);
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         PlanetPanel* panel = *it;
-        panel->MoveTo(GG::Pt(0, y));
+        panel->MoveTo(GG::Pt(GG::X0, y));
         y += panel->Height();   // may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
 
-    int available_height = y;
+    GG::Y available_height = y;
     GG::Wnd* parent = Parent();
     if (parent) {
-        int containing_height = parent->Height();
+        GG::Y containing_height = parent->Height();
         available_height = containing_height - 300;  // height of visible "page" of panels
     }
 
-    m_vscroll->SizeScroll(0, y, MAX_PLANET_DIAMETER, available_height);   // adjust size of scrollbar
+    m_vscroll->SizeScroll(0, Value(y), MAX_PLANET_DIAMETER, Value(available_height));   // adjust size of scrollbar
     m_vscroll->ScrolledSignal(m_vscroll->PosnRange().first, m_vscroll->PosnRange().second, 0, 0);   // fake a scroll event in order to update scrollbar and panel container position
 
     if (y < available_height + 1) {
@@ -1178,9 +1184,9 @@ void SidePanel::PlanetPanelContainer::PlanetSelected(int planet_id)
 
 void SidePanel::PlanetPanelContainer::VScroll(int from, int to, int range_min, int range_max)
 {
-    int y = -from;
+    GG::Y y(-from);
     for (unsigned int i = 0; i < m_planet_panels.size(); ++i) {
-        m_planet_panels[i]->MoveTo(GG::Pt(0, y));
+        m_planet_panels[i]->MoveTo(GG::Pt(GG::X0, y));
         y += m_planet_panels[i]->Height();
     }
 }
@@ -1200,22 +1206,23 @@ const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 4; // size of a
 
 const System*        SidePanel::s_system = 0;
 std::set<SidePanel*> SidePanel::s_side_panels;
+const int            SidePanel::EDGE_PAD = 4;
 
-SidePanel::SidePanel(int x, int y, int w, int h) : 
+SidePanel::SidePanel(GG::X x, GG::Y y, GG::X w, GG::Y h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_system_name(0),
     m_button_prev(0),
     m_button_next(0),
     m_star_graphic(0),
-    m_planet_panel_container(new PlanetPanelContainer(0, 140, w, h-170)),
+    m_planet_panel_container(new PlanetPanelContainer(GG::X0, GG::Y(140), w, h-170)),
     m_system_resource_summary(0)
 {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(SystemNameFontSize());
-    const int DROP_HEIGHT = SystemNameFontSize();
+    const GG::Y DROP_HEIGHT(SystemNameFontSize());
 
-    m_button_prev = new GG::Button(MAX_PLANET_DIAMETER + EDGE_PAD, EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
-    m_button_next = new GG::Button(w - DROP_HEIGHT - EDGE_PAD,     EDGE_PAD, DROP_HEIGHT, DROP_HEIGHT, "", font, GG::CLR_WHITE);
-    m_system_name = new CUIDropDownList(MAX_PLANET_DIAMETER, 0, w - MAX_PLANET_DIAMETER, DROP_HEIGHT, 10*SystemNameFontSize(), GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+    m_button_prev = new GG::Button(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), GG::Y(EDGE_PAD), GG::X(Value(DROP_HEIGHT)), DROP_HEIGHT, "", font, GG::CLR_WHITE);
+    m_button_next = new GG::Button(w - Value(DROP_HEIGHT) - EDGE_PAD,     GG::Y(EDGE_PAD), GG::X(Value(DROP_HEIGHT)), DROP_HEIGHT, "", font, GG::CLR_WHITE);
+    m_system_name = new CUIDropDownList(GG::X(MAX_PLANET_DIAMETER), GG::Y0, w - MAX_PLANET_DIAMETER, DROP_HEIGHT, GG::Y(10*SystemNameFontSize()), GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
 
     TempUISoundDisabler sound_disabler;
 
@@ -1225,16 +1232,16 @@ SidePanel::SidePanel(int x, int y, int w, int h) :
     m_system_name->SetStyle(GG::LIST_CENTER);
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
 
-    m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), 0, 0, 32, 32));
-    m_button_prev->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"  ), 0, 0, 32, 32));
-    m_button_prev->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png"), 0, 0, 32, 32));
+    m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_button_prev->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_button_prev->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
 
-    m_button_next->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"  ), 0, 0, 32, 32));
-    m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), 0, 0, 32, 32));
-    m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), 0, 0, 32, 32));
+    m_button_next->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
 
     m_system_resource_summary = new MultiIconValueIndicator(w - MAX_PLANET_DIAMETER - EDGE_PAD*2);
-    m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + EDGE_PAD, 140 - m_system_resource_summary->Height()));
+    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), 140 - m_system_resource_summary->Height()));
 
 
     AttachChild(m_system_name);
@@ -1269,13 +1276,13 @@ SidePanel::~SidePanel()
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
-    return (UpperLeft() + GG::Pt(MAX_PLANET_DIAMETER, 0) <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
+    return (UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y0) <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
 }
 
 void SidePanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    FlatRectangle(ul.x + MAX_PLANET_DIAMETER, ul.y, lr.x, lr.y, ClientUI::SidePanelColor(), GG::CLR_CYAN, 0);
+    FlatRectangle(GG::Pt(ul.x + MAX_PLANET_DIAMETER, ul.y), lr, ClientUI::SidePanelColor(), GG::CLR_CYAN, 0);
 }
 
 void SidePanel::Refresh()
@@ -1349,10 +1356,10 @@ void SidePanel::SetSystemImpl()
             if (sys_vec[i] == s_system)
                 select_row = row;
         }
-        const int TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
-        const int MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
+        const GG::Y TEXT_ROW_HEIGHT = CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT;
+        const GG::Y MAX_DROPLIST_DROP_HEIGHT = TEXT_ROW_HEIGHT * 10;
         const int TOTAL_LISTBOX_MARGIN = 4;
-        int drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+        GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
         m_system_name->SetDropHeight(drop_height);
 
         for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it) {
@@ -1369,8 +1376,8 @@ void SidePanel::SetSystemImpl()
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         textures.push_back(graphic);
 
-        int star_dim = (Width()*4)/5;
-        m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,-(star_dim*1)/3,star_dim,star_dim,true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        int star_dim = Value(Width()*4/5);
+        m_star_graphic = new GG::DynamicGraphic(Width()-(star_dim*2)/3,GG::Y(-(star_dim*1)/3),GG::X(star_dim),GG::Y(star_dim),true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         AttachChild(m_star_graphic);
         MoveChildDown(m_star_graphic);
@@ -1389,7 +1396,7 @@ void SidePanel::SetSystemImpl()
 
         delete m_system_resource_summary;
         m_system_resource_summary = new MultiIconValueIndicator(Width() - MAX_PLANET_DIAMETER - 8, owned_planets, meter_types);
-        m_system_resource_summary->MoveTo(GG::Pt(MAX_PLANET_DIAMETER + 4, 140 - m_system_resource_summary->Height()));
+        m_system_resource_summary->MoveTo(GG::Pt(GG::X(MAX_PLANET_DIAMETER + 4), 140 - m_system_resource_summary->Height()));
         AttachChild(m_system_resource_summary);
 
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());

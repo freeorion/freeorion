@@ -19,7 +19,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    TechTreeWnd(int w, int h);
+    TechTreeWnd(GG::X w, GG::Y h);
     //@}
 
     /** \name Accessors */ //@{
@@ -56,7 +56,7 @@ public:
     void                    CenterOnTech(const Tech* tech);
     //@}
 
-    static const int        NAVIGATOR_AND_DETAIL_HEIGHT = 200;
+    static const GG::Y        NAVIGATOR_AND_DETAIL_HEIGHT;
 
     mutable TechBrowsedSignalType               TechBrowsedSignal;
     mutable TechClickedSignalType               TechSelectedSignal;

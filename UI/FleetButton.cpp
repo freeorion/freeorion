@@ -26,7 +26,7 @@ namespace {
 ////////////////////////////////////////////////
 
 FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs) : 
-    Button(0, 0, 1, 1, "", boost::shared_ptr<GG::Font>(), color),
+    Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), color),
     m_orientation(SHAPE_RIGHT)
 {
     Universe& universe = GetUniverse();
@@ -36,7 +36,7 @@ FleetButton::FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs) :
     }
 }
 
-FleetButton::FleetButton(int x, int y, int w, int h, GG::Clr color, const std::vector<int>& fleet_IDs) :
+FleetButton::FleetButton(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, const std::vector<int>& fleet_IDs) :
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color),
     m_orientation(SHAPE_RIGHT)
 {
@@ -52,7 +52,7 @@ bool FleetButton::InWindow(const GG::Pt& pt) const
     GG::Pt ul = UpperLeft(), lr = LowerRight(), size = lr - ul;
     ul -= GG::Pt(size.x / 2, size.y / 2);
     lr += GG::Pt(size.x / 2, size.y / 2);
-    return InFleetMarker(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
+    return InFleetMarker(pt, ul, lr, m_orientation);
 }
 
 void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -78,7 +78,7 @@ void FleetButton::RenderUnpressed()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glDisable(GL_TEXTURE_2D);
-    FleetMarker(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
+    FleetMarker(ul, lr, m_orientation, color_to_use);
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -87,7 +87,7 @@ void FleetButton::RenderPressed()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glDisable(GL_TEXTURE_2D);
-    FleetMarker(ul.x, ul.y, lr.x, lr.y, m_orientation, color_to_use);
+    FleetMarker(ul, lr, m_orientation, color_to_use);
     glEnable(GL_TEXTURE_2D);
 }
 
@@ -96,6 +96,8 @@ void FleetButton::RenderRollover()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     glDisable(GL_TEXTURE_2D);
-    FleetMarker(ul.x-Width()/4, ul.y-Height()/4, lr.x+Width()/4, lr.y+Height()/4, m_orientation, color_to_use);
+    FleetMarker(GG::Pt(ul.x - Width() / 4, ul.y - Height() / 4),
+                GG::Pt(lr.x + Width() / 4, lr.y + Height() / 4),
+                m_orientation, color_to_use);
     glEnable(GL_TEXTURE_2D);
 }

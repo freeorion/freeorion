@@ -72,7 +72,7 @@ private:
     int         m_indentation_level;
     GG::TabWnd* m_tabs;
     CUIButton*  m_done_button;
-    int m_num_wnds;
+    int         m_num_wnds;
 };
 
 #endif // _OptionsWnd_h_

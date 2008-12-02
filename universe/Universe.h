@@ -32,15 +32,7 @@
 #include <string>
 #include <set>
 
-#ifdef __GNUC__
-  // GCC doesn't allow us to forward-declare PlayerSetupData
-#  ifndef _MultiplayerCommon_h_
-#    include "../util/MultiplayerCommon.h"
-#  endif
-#else
-  struct PlayerSetupData;
-#endif
-
+struct PlayerSetupData;
 class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;

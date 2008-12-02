@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ENCYCLOPEDIA_DETAIL_PANEL_H_
 #define _ENCYCLOPEDIA_DETAIL_PANEL_H_
 
@@ -22,7 +23,7 @@ namespace GG {
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    EncyclopediaDetailPanel(int w, int h);
+    EncyclopediaDetailPanel(GG::X x, GG::Y y);
     //@}
 
     /** \name Mutators */ //@{

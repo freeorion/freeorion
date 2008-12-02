@@ -28,8 +28,8 @@
 
 
 namespace {
-    const int PLAYER_ROW_HEIGHT = 22;
-    const int EMPIRE_NAME_WIDTH = 170;
+    const GG::Y PLAYER_ROW_HEIGHT(22);
+    const GG::X EMPIRE_NAME_WIDTH(170);
 
     struct PlayerRow : GG::ListBox::Row
     {
@@ -49,7 +49,7 @@ namespace {
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
-            CUIEdit* edit = new CUIEdit(0, 0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(m_player_data.m_empire_color);
@@ -87,7 +87,7 @@ namespace {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
             m_empire_list =
-                new CUIDropDownList(0, 0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
+                new CUIDropDownList(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
             for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
@@ -137,16 +137,16 @@ namespace {
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
     };
 
-    const int    LOBBY_WND_WIDTH = 800;
-    const int    LOBBY_WND_HEIGHT = 600;
-    const int    CONTROL_MARGIN = 5; // gap to leave between controls in the window
-    const int    GALAXY_SETUP_PANEL_WIDTH = 250;
-    const int    SAVED_GAMES_LIST_ROW_HEIGHT = 22;
-    const int    SAVED_GAMES_LIST_DROP_HEIGHT = 10 * SAVED_GAMES_LIST_ROW_HEIGHT;
-    const int    CHAT_WIDTH = 250;
-    GG::Pt       g_preview_ul;
-    const GG::Pt PREVIEW_SZ(248, 186);
-    const int    PREVIEW_MARGIN = 3;
+    const GG::X    LOBBY_WND_WIDTH(800);
+    const GG::Y    LOBBY_WND_HEIGHT(600);
+    const int           CONTROL_MARGIN = 5; // gap to leave between controls in the window
+    const GG::X    GALAXY_SETUP_PANEL_WIDTH(250);
+    const GG::Y    SAVED_GAMES_LIST_ROW_HEIGHT(22);
+    const GG::Y    SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
+    const GG::X    CHAT_WIDTH(250);
+    GG::Pt              g_preview_ul;
+    const GG::Pt        PREVIEW_SZ(GG::X(248), GG::Y(186));
+    const int           PREVIEW_MARGIN = 3;
 
 }
 
@@ -171,48 +171,48 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
 {
     TempUISoundDisabler sound_disabler;
 
-    int x = CONTROL_MARGIN;
+    GG::X x(CONTROL_MARGIN);
     m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");
-    m_chat_box = new CUIMultiEdit(x, CONTROL_MARGIN, CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "", 
+    m_chat_box = new CUIMultiEdit(x, GG::Y(CONTROL_MARGIN), CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "", 
                                   GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
-    const int RADIO_BN_HT = ClientUI::Pts() + 4;
+    const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
     m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
 
     m_new_load_game_buttons =
-        new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, CONTROL_MARGIN,
-                                 m_galaxy_setup_panel->LowerRight().y + 100, m_galaxy_setup_panel->LowerRight().y + RADIO_BN_HT - CONTROL_MARGIN,
+        new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN),
+                                 GG::X(Value(m_galaxy_setup_panel->LowerRight().y + 100)), m_galaxy_setup_panel->LowerRight().y + RADIO_BN_HT - CONTROL_MARGIN,
                                  GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(0, 0, 100, RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+        new CUIStateButton(GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
     m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
     m_saved_games_list->SetStyle(GG::LIST_NOSORT);
 
-    g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, CONTROL_MARGIN + PREVIEW_MARGIN);
+    g_preview_ul = GG::Pt(ClientWidth() - PREVIEW_SZ.x - CONTROL_MARGIN - PREVIEW_MARGIN, GG::Y(CONTROL_MARGIN + PREVIEW_MARGIN));
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(g_preview_ul.x, g_preview_ul.y, PREVIEW_SZ.x, PREVIEW_SZ.y, temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
-    int y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
+    GG::Y y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
     m_players_lb = new CUIListBox(x, y, ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
 
     if (m_host)
-        m_start_game_bn = new CUIButton(0, 0, 125, UserString("START_GAME_BN"));
-    m_cancel_bn = new CUIButton(0, 0, 125, UserString("CANCEL"));
+        m_start_game_bn = new CUIButton(GG::X0, GG::Y0, GG::X(125), UserString("START_GAME_BN"));
+    m_cancel_bn = new CUIButton(GG::X0, GG::Y0, GG::X(125), UserString("CANCEL"));
     m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     if (m_host)
         m_start_game_bn->MoveTo(GG::Pt(m_cancel_bn->UpperLeft().x - CONTROL_MARGIN - m_start_game_bn->Width(),
                                        ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
     m_start_conditions_text = new GG::TextControl(x, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN,
-                                                  m_cancel_bn->UpperLeft().x - x, ClientUI::Pts()*3/2,
+                                                  m_cancel_bn->UpperLeft().x - x, GG::Y(ClientUI::Pts()*3/2),
                                                   UserString("MULTIPLAYER_GAME_START_CONDITIONS"),
                                                   ClientUI::GetFont(),
                                                   ClientUI::TextColor(), GG::FORMAT_LEFT);
@@ -258,7 +258,8 @@ void MultiplayerLobbyWnd::Render()
 {
     CUIWnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
-    GG::FlatRectangle(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN, image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN, 
+    GG::FlatRectangle(GG::Pt(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN),
+                      GG::Pt(image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN), 
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 

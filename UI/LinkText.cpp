@@ -14,16 +14,16 @@
 ///////////////////////////////////////
 // LinkText
 ///////////////////////////////////////
-LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
+LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
-    GG::TextControl(x, y, w, 1, str, font, color, format, flags),
+    GG::TextControl(x, y, w, GG::Y1, str, font, color, format, flags),
     TextLinker()
 {
     Resize(TextLowerRight() - TextUpperLeft());
     FindLinks();
 }
 
-LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
+LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, str, font, color, GG::FORMAT_NONE, flags),
     TextLinker()
@@ -201,7 +201,7 @@ void TextLinker::FindLinks()
     const std::vector<GG::Font::LineData>& line_data = GetLineData();
     const boost::shared_ptr<GG::Font>& font = GetFont();
 
-    int y_posn = 0; // y-coordinate of the top of the current line
+    GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
 
     for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
@@ -211,7 +211,7 @@ void TextLinker::FindLinks()
 
         // if the last line ended without the current tag ending
         if (link.type != "") {
-            link.rects.push_back(GG::Rect(0, y_posn, 0, y_posn + font->Height()));
+            link.rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0, y_posn + font->Height()));
         }
 
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
@@ -222,7 +222,7 @@ void TextLinker::FindLinks()
                     link.type = tag->text;
                     if (tag->close_tag) {
                         link.text_posn.second = curr_line.char_data[i].original_char_index;
-                        link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : 0;
+                        link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
                         m_links.push_back(link);
                         link = Link();
                     } else {
@@ -231,9 +231,9 @@ void TextLinker::FindLinks()
                         for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
                             link.text_posn.first -= curr_line.char_data[i].tags[k]->OriginalStringChars();
                         }
-                        link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : 0,
+                        link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : GG::X0,
                                                       y_posn,
-                                                      0,
+                                                      GG::X0,
                                                       y_posn + font->Height()));
                     }
                 }
@@ -242,7 +242,7 @@ void TextLinker::FindLinks()
 
         // if a line is ending without the current tag ending
         if (link.type != "") {
-            link.rects.back().lr.x = curr_line.char_data.empty() ? 0 : curr_line.char_data.back().extent;
+            link.rects.back().lr.x = curr_line.char_data.empty() ? GG::X0 : curr_line.char_data.back().extent;
         }
     }
 }

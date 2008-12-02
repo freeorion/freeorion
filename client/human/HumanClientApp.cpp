@@ -346,7 +346,7 @@ void HumanClientApp::Enter2DMode()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glViewport(0, 0, AppWidth(), AppHeight()); //removed -1 from AppWidth & Height
+    glViewport(0, 0, Value(AppWidth()), Value(AppHeight()));
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -354,7 +354,7 @@ void HumanClientApp::Enter2DMode()
 
     // set up coordinates with origin in upper-left and +x and +y directions right and down, respectively
     // the depth of the viewing volume is only 1 (from 0.0 to 1.0)
-    glOrtho(0.0, AppWidth(), AppHeight(), 0.0, 0.0, AppWidth());
+    glOrtho(0.0, Value(AppWidth()), Value(AppHeight()), 0.0, 0.0, Value(AppWidth()));
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -414,7 +414,7 @@ void HumanClientApp::SDLInit()
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
     }
 
-    if (SDL_SetVideoMode(AppWidth(), AppHeight(), bpp, DoFullScreen | SDL_OPENGL) == 0) {
+    if (SDL_SetVideoMode(Value(AppWidth()), Value(AppHeight()), bpp, DoFullScreen | SDL_OPENGL) == 0) {
         Logger().errorStream() << "Video mode set failed: " << SDL_GetError();
         Exit(1);
     }
@@ -435,11 +435,11 @@ void HumanClientApp::GLInit()
     assert(error == GLEW_OK);
 #endif
 
-    double ratio = AppWidth() / (float)(AppHeight());
+    double ratio = Value(AppWidth()) / Value(AppHeight() * 1.0);
 
     glEnable(GL_BLEND);
     glClearColor(0, 0, 0, 0);
-    glViewport(0, 0, AppWidth(), AppHeight());
+    glViewport(0, 0, Value(AppWidth()), Value(AppHeight()));
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(50.0, ratio, 0.0, 10.0);
@@ -466,7 +466,7 @@ void HumanClientApp::Initialize()
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
 
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(400, ClientUI::GetFont(),
+        new GG::TextBoxBrowseInfoWnd(GG::X(400), ClientUI::GetFont(),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
                                      GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);

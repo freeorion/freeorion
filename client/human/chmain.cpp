@@ -2,6 +2,7 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/XMLDoc.h"
+#include "../../util/MultiplayerCommon.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>

@@ -23,7 +23,7 @@ public:
     typedef typename GG::Spin<T>::ValueType ValueType;
 
     /** \name Structors */ //@{
-    CUISpin(int x, int y, int w, T value, T step, T min, T max, bool edits) :
+    CUISpin(GG::X x, GG::Y y, GG::X w, T value, T step, T min, T max, bool edits) :
         GG::Spin<T>(x, y, w, value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), 
                     ClientUI::TextColor(), GG::CLR_ZERO)
     {
@@ -38,7 +38,7 @@ public:
         GG::Clr color_to_use = this->Disabled() ? DisabledColor(this->Color()) : this->Color();
         GG::Clr int_color_to_use = this->Disabled() ? DisabledColor(this->InteriorColor()) : this->InteriorColor();
         GG::Pt ul = this->UpperLeft(), lr = this->LowerRight();
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, color_to_use, 1);
+        FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
     }
     //@}
 };

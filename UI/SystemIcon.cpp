@@ -28,34 +28,34 @@ namespace {
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
 OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text/* = ""*/, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
-    Control(0, 0, 1, 1, flags)
+    Control(GG::X0, GG::Y0, GG::X1, GG::Y1, flags)
 {
     // TODO: Have this make a single call per color.  Set up texture coord and vertex buffers (quads) for the glyphs.  Consider extending GG::Font to do similar.
 
     std::string str = format_text == "" ? system->Name() : boost::io::str(boost::format(format_text) % system->Name());
-    int width = 0;
+    GG::X width(0);
     const std::set<int>& owners = system->Owners();
     if (owners.size() <= 1) {
         GG::Clr text_color = ClientUI::TextColor();
         if (!owners.empty())
             text_color = Empires().Lookup(*owners.begin())->Color();
-        GG::TextControl* text = new GG::TextControl(width, 0, str, font, text_color);
+        GG::TextControl* text = new GG::TextControl(width, GG::Y0, str, font, text_color);
         m_subcontrols.push_back(text);
         AttachChild(m_subcontrols.back());
         width += m_subcontrols.back()->Width();
     } else {
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
         std::vector<GG::Font::LineData> lines;
-        GG::Pt extent = font->DetermineLines(str, format, 1000, lines);
+        GG::Pt extent = font->DetermineLines(str, format, GG::X(1000), lines);
         unsigned int first_char_pos = 0;
         unsigned int last_char_pos = 0;
-        int pixels_per_owner = extent.x / owners.size() + 1; // the +1 is to make sure there is not a stray character left off the end
+        GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
         int owner_idx = 1;
         for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
             while (last_char_pos < str.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
                 ++last_char_pos;
             }
-            m_subcontrols.push_back(new GG::TextControl(width, 0, str.substr(first_char_pos, last_char_pos - first_char_pos), 
+            m_subcontrols.push_back(new GG::TextControl(width, GG::Y0, str.substr(first_char_pos, last_char_pos - first_char_pos), 
                                                         font, Empires().Lookup(*it)->Color()));
             AttachChild(m_subcontrols.back());
             first_char_pos = last_char_pos;
@@ -72,10 +72,10 @@ void OwnerColoredSystemName::Render()
 // SystemIcon
 ////////////////////////////////////////////////
 // static(s)
-const int SystemIcon::TINY_SIZE = 8;
+const GG::X SystemIcon::TINY_SIZE(8);
 
-SystemIcon::SystemIcon(GG::Wnd* parent, int x, int y, int w, int id) :
-    GG::Control(x, y, w, w, GG::CLICKABLE),
+SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id) :
+    GG::Control(x, y, w, GG::Y(Value(w)), GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
     m_disc_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.Star()], id)),
     m_halo_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[m_system.Star()], id)),
@@ -107,17 +107,17 @@ void SystemIcon::Init() {
     const int DEFAULT_SIZE = 10;
 
     if (m_tiny_texture)
-        m_tiny_graphic = new GG::StaticGraphic(0, 0, m_tiny_texture->Width(), m_tiny_texture->Height(), m_tiny_texture);
+        m_tiny_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, m_tiny_texture->Width(), m_tiny_texture->Height(), m_tiny_texture);
     AttachChild(m_tiny_graphic);
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
     boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
-    m_selection_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, selection_texture, GG::GRAPHIC_FITGRAPHIC);
+    m_selection_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(DEFAULT_SIZE), GG::Y(DEFAULT_SIZE), selection_texture, GG::GRAPHIC_FITGRAPHIC);
 
     // mouseover indicator graphic
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
-    m_mouseover_indicator = new GG::StaticGraphic(0, 0, DEFAULT_SIZE, DEFAULT_SIZE, mouseover_texture, GG::GRAPHIC_FITGRAPHIC);
+    m_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(DEFAULT_SIZE), GG::Y(DEFAULT_SIZE), mouseover_texture, GG::GRAPHIC_FITGRAPHIC);
 
     Refresh();
 }
@@ -166,12 +166,12 @@ GG::Pt SystemIcon::FleetButtonCentre(int empire_id, bool moving) const
     }
 
     if (it == end) {  // no such fleetbutton
-        return GG::Pt(static_cast<int>(UniverseObject::INVALID_POSITION),
-                      static_cast<int>(UniverseObject::INVALID_POSITION));
+        return GG::Pt(GG::X(static_cast<int>(UniverseObject::INVALID_POSITION)),
+                      GG::Y(static_cast<int>(UniverseObject::INVALID_POSITION)));
     }
 
-    const int HALF_SIZE = static_cast<int>(it->second->Width() * 0.5);
-    return it->second->UpperLeft() + GG::Pt(HALF_SIZE, HALF_SIZE);
+    const int HALF_SIZE = static_cast<int>(Value(it->second->Width() * 0.5));
+    return it->second->UpperLeft() + GG::Pt(GG::X(HALF_SIZE), GG::Y(HALF_SIZE));
 }
 
 const boost::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
@@ -187,22 +187,22 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int n, bool moving) const
 {
     assert(n > 0);
     // determine where the nth fleetbutton should be located
-    GG::Pt retval = GG::Pt(0, 0);//this->UpperLeft();
+    GG::Pt retval = GG::Pt();
     const int FLEETBUTTON_SIZE = FleetButtonSize();
 
     if (moving) {   // moving at bottom left
-        retval += GG::Pt(-FLEETBUTTON_SIZE, this->Height());
-        retval += GG::Pt(0, FLEETBUTTON_SIZE*(n - 1));
+        retval += GG::Pt(-GG::X(FLEETBUTTON_SIZE), Height());
+        retval += GG::Pt(GG::X0, GG::Y(FLEETBUTTON_SIZE)*(n - 1));
         return retval;
     } else {        // stationary at top right
-        retval += GG::Pt(this->Width(), -FLEETBUTTON_SIZE*n);
+        retval += GG::Pt(Width(), -GG::Y(FLEETBUTTON_SIZE)*n);
         return retval;
     }
 }
 
 int SystemIcon::FleetButtonSize() const
 {
-    return static_cast<int>(Height() * ClientUI::FleetButtonSize());
+    return static_cast<int>(Value(Height()) * ClientUI::FleetButtonSize());
 }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -212,17 +212,17 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     if (m_tiny_graphic && lr.x - ul.x < TINY_SIZE) {
         GG::Pt tiny_size = m_tiny_graphic->Size();
         GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
-        GG::Pt tiny_ul(static_cast<int>(middle.x - tiny_size.x / 2.0 + 0.5),
-                       static_cast<int>(middle.y - tiny_size.y / 2.0 + 0.5));
+        GG::Pt tiny_ul(static_cast<GG::X>(middle.x - tiny_size.x / 2.0 + 0.5),
+                       static_cast<GG::Y>(middle.y - tiny_size.y / 2.0 + 0.5));
         m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
         m_tiny_graphic->Show();
     } else {
         m_tiny_graphic->Hide();
     }
 
-    int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
+    int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Value(Width()));
     GG::Pt ind_ul((Width() - ind_size) / 2, (Height() - ind_size) / 2);
-    GG::Pt ind_lr = ind_ul + GG::Pt(ind_size, ind_size);
+    GG::Pt ind_lr = ind_ul + GG::Pt(GG::X(ind_size), GG::Y(ind_size));
 
     if (m_selection_indicator && m_selected)
         m_selection_indicator->SizeMove(ind_ul, ind_lr);
@@ -244,8 +244,8 @@ void SystemIcon::ManualRender(double halo_scale_factor)
         GG::Pt size = lr - ul;
         GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
         GG::Pt middle = ul + half_size;
-        GG::Pt halo_size = GG::Pt(static_cast<int>(size.x * halo_scale_factor),
-                                  static_cast<int>(size.y * halo_scale_factor));
+        GG::Pt halo_size = GG::Pt(static_cast<GG::X>(size.x * halo_scale_factor),
+                                  static_cast<GG::Y>(size.y * halo_scale_factor));
         GG::Pt halo_half_size = GG::Pt(halo_size.x / 2, halo_size.y / 2);
         GG::Pt halo_ul = middle - halo_half_size;
         GG::Pt halo_lr = halo_ul + halo_size;
@@ -305,9 +305,9 @@ void SystemIcon::SetSelected(bool selected)
     m_selected = selected;
 
     if (m_selected) {
-        int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Width());
+        int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Value(Width()));
         GG::Pt ind_ul = GG::Pt((Width() - size) / 2, (Height() - size) / 2);
-        GG::Pt ind_lr = ind_ul + GG::Pt(size, size);
+        GG::Pt ind_lr = ind_ul + GG::Pt(GG::X(size), GG::Y(size));
         AttachChild(m_selection_indicator);
         m_selection_indicator->SizeMove(ind_ul, ind_lr);
         MoveChildUp(m_selection_indicator);
@@ -427,7 +427,7 @@ void SystemIcon::HideName()
 void SystemIcon::DoFleetButtonLayout()
 {
     const int FLEETBUTTON_SIZE = FleetButtonSize();
-    const GG::Pt SIZE = GG::Pt(FLEETBUTTON_SIZE, FLEETBUTTON_SIZE);
+    const GG::Pt SIZE = GG::Pt(GG::X(FLEETBUTTON_SIZE), GG::Y(FLEETBUTTON_SIZE));
     
     // stationary fleet buttons
     int empire_num = 1;

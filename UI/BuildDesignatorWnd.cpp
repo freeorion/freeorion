@@ -24,7 +24,7 @@ namespace {
     class BuildableItemsListBox : public CUIListBox
     {
     public:
-        BuildableItemsListBox(int x, int y, int w, int h) :
+        BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
             CUIListBox(x, y, w, h)
         {}
         virtual void GainingFocus() {DeselectAll();}
@@ -60,7 +60,7 @@ namespace {
 class BuildDesignatorWnd::BuildDetailPanel : public CUIWnd
 {
 public:
-    BuildDetailPanel(int w, int h);
+    BuildDetailPanel(GG::X w, GG::Y h);
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void Render();
@@ -75,8 +75,8 @@ public:
     void SetBuild(int queue_idx);
 
 private:
-    static const int TEXT_MARGIN_X = 3;
-    static const int TEXT_MARGIN_Y = 3;
+    static const GG::X TEXT_MARGIN_X;
+    static const GG::Y TEXT_MARGIN_Y;
 
     void Reset();
     void DoLayout();
@@ -92,9 +92,11 @@ private:
     CUIMultiEdit*       m_description_box;
     GG::StaticGraphic*  m_item_graphic;
 };
+const GG::X BuildDesignatorWnd::BuildDetailPanel::TEXT_MARGIN_X(3);
+const GG::Y BuildDesignatorWnd::BuildDetailPanel::TEXT_MARGIN_Y(3);
 
-BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
-    CUIWnd("", 1, 1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
+BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(GG::X w, GG::Y h) :
+    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_build_type(INVALID_BUILD_TYPE),
     m_item_name("")
 {
@@ -103,10 +105,10 @@ BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(int w, int h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_item_name_text = new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetBoldFont(NAME_PTS), ClientUI::TextColor());
-    m_cost_text =      new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(COST_PTS),     ClientUI::TextColor());
-    m_summary_text =   new GG::TextControl(0, 0, 10, 10, "", ClientUI::GetFont(SUMMARY_PTS),  ClientUI::TextColor());
-    m_description_box = new CUILinkTextMultiEdit(0, 0, 10, 10, "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+    m_item_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS), ClientUI::TextColor());
+    m_cost_text =      new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),     ClientUI::TextColor());
+    m_summary_text =   new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),  ClientUI::TextColor());
+    m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(GG::CLR_ZERO);
 
@@ -130,29 +132,29 @@ void BuildDesignatorWnd::BuildDetailPanel::DoLayout()
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
 
     // name
-    GG::Pt ul = GG::Pt(0, 0);
-    GG::Pt lr = ul + GG::Pt(Width(), NAME_PTS + 4);
+    GG::Pt ul = GG::Pt();
+    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 4));
     m_item_name_text->SizeMove(ul, lr);
 
     // cost / turns
-    ul += GG::Pt(0, m_item_name_text->Height());
-    lr = ul + GG::Pt(Width(), COST_PTS + 4);
+    ul += GG::Pt(GG::X0, m_item_name_text->Height());
+    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
     m_cost_text->SizeMove(ul, lr);
 
     // one line summary
-    ul += GG::Pt(0, m_cost_text->Height());
-    lr = ul + GG::Pt(Width(), SUMMARY_PTS + 4);
+    ul += GG::Pt(GG::X0, m_cost_text->Height());
+    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
     m_summary_text->SizeMove(ul, lr);
 
     // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(1, ICON_SIZE + TEXT_MARGIN_Y + 1);
+    ul = GG::Pt(GG::X1, ICON_SIZE + TEXT_MARGIN_Y + 1);
     lr = ul + GG::Pt(Width() - TEXT_MARGIN_X - BORDER_RIGHT, Height() - BORDER_BOTTOM - ul.y - TEXT_MARGIN_Y);
     m_description_box->SizeMove(ul, lr);
 
     // icon
     if (m_item_graphic) {
-        ul = GG::Pt(1, 1);
-        lr = ul + GG::Pt(ICON_SIZE, ICON_SIZE);
+        ul = GG::Pt(GG::X1, GG::Y1);
+        lr = ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_item_graphic->SizeMove(ul, lr);
     }
 }
@@ -177,8 +179,8 @@ void BuildDesignatorWnd::BuildDetailPanel::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    const int ICON_SIZE = m_summary_text->LowerRight().y - m_item_name_text->UpperLeft().y;
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM);
+    const GG::Y ICON_HEIGHT = m_summary_text->LowerRight().y - m_item_name_text->UpperLeft().y;
+    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_HEIGHT + BORDER_BOTTOM);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
    // use GL to draw the lines
@@ -190,24 +192,24 @@ void BuildDesignatorWnd::BuildDetailPanel::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
+        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex2i(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
+        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -216,28 +218,28 @@ void BuildDesignatorWnd::BuildDetailPanel::Render()
     // draw inner border, including extra resize-tab lines
     glBegin(GL_LINE_STRIP);
         glColor(ClientUI::WndInnerBorderColor());
-        glVertex2i(cl_ul.x, cl_ul.y);
-        glVertex2i(cl_lr.x, cl_ul.y);
-        glVertex2i(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-        glVertex2i(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-        glVertex2i(cl_ul.x, cl_lr.y);
-        glVertex2i(cl_ul.x, cl_ul.y);
+        glVertex(cl_ul.x, cl_ul.y);
+        glVertex(cl_lr.x, cl_ul.y);
+        glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
+        glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+        glVertex(cl_ul.x, cl_lr.y);
+        glVertex(cl_ul.x, cl_ul.y);
     glEnd();
     glBegin(GL_LINES);
         // draw the extra lines of the resize tab
         glColor(ClientUI::WndInnerBorderColor());
-        glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-        glVertex2i(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
+        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
+        glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
         
-        glVertex2i(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-        glVertex2i(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
+        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
+        glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
     glEnd();
     glEnable(GL_TEXTURE_2D);
 }
 
 void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
+    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
         // constrain to within parent
@@ -255,7 +257,7 @@ void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt&
             GG::Pt ul = UpperLeft(), lr = LowerRight();
             GG::Pt new_ul = ul + move, new_lr = lr + move;
 
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(1, 1);
+            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
             GG::Pt max_lr = parent->ClientLowerRight();
             GG::Pt max_ul = max_lr - this->Size();
 
@@ -359,7 +361,8 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
 
     if (graphic) {
         GG::Pt ul = ClientUpperLeft();
-        m_item_graphic = new GG::StaticGraphic(0, 0, 10, 10, graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_item_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10),
+                                               graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_item_graphic->Show();
         AttachChild(m_item_graphic);
     }
@@ -380,7 +383,7 @@ void BuildDesignatorWnd::BuildDetailPanel::Reset()
 class BuildDesignatorWnd::BuildSelector : public CUIWnd
 {
 public:
-    BuildSelector(int w, int h);
+    BuildSelector(GG::X w, GG::Y h);
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
@@ -414,8 +417,8 @@ private:
         GG::ListBox::RowPtrIteratorLess<GG::ListBox>
      > RowToBuildTypeMap;
 
-    static const int TEXT_MARGIN_X = 3;
-    static const int TEXT_MARGIN_Y = 3;
+    static const GG::X TEXT_MARGIN_X;
+    static const GG::Y TEXT_MARGIN_Y;
 
     void DoLayout();
 
@@ -423,7 +426,7 @@ private:
     bool BuildableItemVisible(BuildType build_type, int design_id);
 
     void PopulateList();
-    std::vector<int> ColWidths();
+    std::vector<GG::X> ColWidths();
 
     void BuildItemSelected(const GG::ListBox::SelectionSet& selections);
     void BuildItemDoubleClicked(GG::ListBox::iterator it);
@@ -440,30 +443,32 @@ private:
 
     int                                     m_build_location;
 
-    int                                     m_row_height;
+    GG::Y                              m_row_height;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
+const GG::X BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_X(3);
+const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 
-BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
-    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), 1, 1, w - 1, h - 1,
+BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
+    CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), GG::X1, GG::Y1, w - 1, h - 1,
            GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
-    m_buildable_items(new BuildableItemsListBox(0, 0, 1, 1)),
+    m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     // create build type toggle buttons (ship, building, orbital, all)
-    m_build_type_buttons[BT_BUILDING] = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
+    m_build_type_buttons[BT_BUILDING] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
     AttachChild(m_build_type_buttons[BT_BUILDING]);
-    m_build_type_buttons[BT_SHIP] = new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));
+    m_build_type_buttons[BT_SHIP] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));
     AttachChild(m_build_type_buttons[BT_SHIP]);
-    m_build_type_buttons[NUM_BUILD_TYPES] = new CUIButton(0, 0, 1, UserString("ALL"));
+    m_build_type_buttons[NUM_BUILD_TYPES] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("ALL"));
     AttachChild(m_build_type_buttons[NUM_BUILD_TYPES]);
 
     // create availability toggle buttons (available, not available)
-    m_availability_buttons.push_back(new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE")));
+    m_availability_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE")));
     AttachChild(m_availability_buttons.back());
-    m_availability_buttons.push_back(new CUIButton(0, 0, 1, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE")));
+    m_availability_buttons.push_back(new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE")));
     AttachChild(m_availability_buttons.back());
 
     // selectable list of buildable items
@@ -474,8 +479,8 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(int w, int h) :
                 &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
     m_buildable_items->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
-    m_row_height = ClientUI::Pts()*3/2;
-    std::vector<int> col_widths = ColWidths();
+    m_row_height = GG::Y(ClientUI::Pts()*3/2);
+    std::vector<GG::X> col_widths = ColWidths();
 
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();
@@ -513,19 +518,19 @@ const std::pair<bool, bool>& BuildDesignatorWnd::BuildSelector::GetAvailabilitie
 void BuildDesignatorWnd::BuildSelector::DoLayout()
 {
     int num_buttons = std::max(1, static_cast<int>(m_build_type_buttons.size() + m_availability_buttons.size()));
-    int x = 0;
-    int button_width = ClientWidth() / num_buttons;
-    int button_height = 20;
+    GG::X x(0);
+    GG::X button_width = ClientWidth() / num_buttons;
+    GG::Y button_height(20);
     for (unsigned int i = 0; i < m_build_type_buttons.size() - 1; ++i) {
-        m_build_type_buttons[BuildType(BT_BUILDING + i)]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height));
+        m_build_type_buttons[BuildType(BT_BUILDING + i)]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
         x += button_width;
     }
-    m_build_type_buttons[NUM_BUILD_TYPES]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height)); x += button_width;
+    m_build_type_buttons[NUM_BUILD_TYPES]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height)); x += button_width;
 
-    m_availability_buttons[0]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height)); x += button_width;
-    m_availability_buttons[1]->SizeMove(GG::Pt(x, 0), GG::Pt(x + button_width, button_height));
+    m_availability_buttons[0]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height)); x += button_width;
+    m_availability_buttons[1]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
 
-    m_buildable_items->SizeMove(GG::Pt(0, button_height), ClientSize() - GG::Pt(TEXT_MARGIN_X, TEXT_MARGIN_Y));
+    m_buildable_items->SizeMove(GG::Pt(GG::X0, button_height), ClientSize() - GG::Pt(TEXT_MARGIN_X, TEXT_MARGIN_Y));
 }
 
 void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -541,7 +546,7 @@ void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt&
 
 void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_drag_offset != GG::Pt(-1, -1)) {  // resize-dragging
+    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
         // constrain to within parent
@@ -559,7 +564,7 @@ void BuildDesignatorWnd::BuildSelector::LDrag(const GG::Pt& pt, const GG::Pt& mo
             GG::Pt ul = UpperLeft(), lr = LowerRight();
             GG::Pt new_ul = ul + move, new_lr = lr + move;
 
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(1, 1);
+            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
             GG::Pt max_lr = parent->ClientLowerRight();
             GG::Pt max_ul = max_lr - this->Size();
 
@@ -587,7 +592,7 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
         if (m_close_button)
             m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
+            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
         Hide();
         Show(false);
         if (m_close_button)
@@ -602,7 +607,7 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
         if (m_close_button)
             m_close_button->MoveTo(GG::Pt(button_ul.x, button_ul.y));
         if (m_minimize_button)
-            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : 0), button_ul.y));
+            m_minimize_button->MoveTo(GG::Pt(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y));
         Show();
     }
 }
@@ -739,9 +744,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
     boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
 
-    std::vector<int> col_widths = ColWidths();
-    int icon_col_width = col_widths[0];
-    int desc_col_width = col_widths[4];
+    std::vector<GG::X> col_widths = ColWidths();
+    GG::X icon_col_width = col_widths[0];
+    GG::X desc_col_width = col_widths[4];
 
     GG::ListBox::iterator row_to_select = m_buildable_items->end(); // may be set while populating - used to reselect previously selected row after populating
     int i = 0;              // counter that keeps track of how many rows have been added so far
@@ -761,7 +766,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->SetDragDropDataType(name);
 
             // icon
-            GG::Control* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
+            GG::Control* icon = new GG::StaticGraphic(GG::X0, GG::Y0, icon_col_width, m_row_height, 
                 ClientUI::BuildingTexture(type->Name()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(icon);
@@ -778,7 +783,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // brief description
             std::string desc_text = UserString("BT_BUILDING");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(GG::X0, GG::Y0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -816,7 +821,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->SetDragDropDataType(boost::lexical_cast<std::string>(ship_design_id));
 
             // icon
-            GG::StaticGraphic* icon = new GG::StaticGraphic(0, 0, icon_col_width, m_row_height, 
+            GG::StaticGraphic* icon = new GG::StaticGraphic(GG::X0, GG::Y0, icon_col_width, m_row_height, 
                 ClientUI::ShipIcon(ship_design->ID()),
                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             row->push_back(dynamic_cast<GG::Control*>(icon));
@@ -833,7 +838,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // brief description            
             std::string desc_text = UserString("BT_SHIP");
-            GG::Control* desc_control = new GG::TextControl(0, 0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
+            GG::Control* desc_control = new GG::TextControl(GG::X0, GG::Y0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
@@ -862,18 +867,18 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     Logger().debugStream() << "Done";
 }
 
-std::vector<int> BuildDesignatorWnd::BuildSelector::ColWidths()
+std::vector<GG::X> BuildDesignatorWnd::BuildSelector::ColWidths()
 {
-    std::vector<int> retval;
+    std::vector<GG::X> retval;
 
-    retval.push_back(m_row_height);         // icon
-    retval.push_back(ClientUI::Pts()*18);   // name
-    retval.push_back(ClientUI::Pts()*3);    // cost
-    retval.push_back(ClientUI::Pts()*2);    // time
+    retval.push_back(GG::X(Value(m_row_height)));  // icon
+    retval.push_back(GG::X(ClientUI::Pts()*18));   // name
+    retval.push_back(GG::X(ClientUI::Pts()*3));    // cost
+    retval.push_back(GG::X(ClientUI::Pts()*2));    // time
 
-    int desc_col_width = m_buildable_items->ClientWidth() 
-                         - (retval[0] + retval[1] + retval[2] + retval[3])
-                         - ClientUI::ScrollWidth();
+    GG::X desc_col_width = m_buildable_items->ClientWidth() 
+        - (retval[0] + retval[1] + retval[2] + retval[3])
+        - ClientUI::ScrollWidth();
     retval.push_back(desc_col_width);
 
     return retval;
@@ -902,23 +907,23 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
 //////////////////////////////////////////////////
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
-BuildDesignatorWnd::BuildDesignatorWnd(int w, int h) :
-    Wnd(0, 0, w, h, GG::CLICKABLE | GG::ONTOP),
+BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
+    Wnd(GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::ONTOP),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
-    int CHILD_WIDTHS = w - MapWnd::SIDE_PANEL_WIDTH;
-    const int DETAIL_PANEL_HEIGHT = TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
-    const int BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
+    GG::X CHILD_WIDTHS = w - MapWnd::SIDE_PANEL_WIDTH;
+    const GG::Y DETAIL_PANEL_HEIGHT = TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
+    const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
     m_build_detail_panel = new BuildDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
 
-    m_side_panel = new SidePanel(Width() - MapWnd::SIDE_PANEL_WIDTH, 0, MapWnd::SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
+    m_side_panel = new SidePanel(Width() - MapWnd::SIDE_PANEL_WIDTH, GG::Y0, MapWnd::SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     m_side_panel->Hide();
 
-    m_map_view_hole = GG::Rect(0, 0, CHILD_WIDTHS + SidePanel::MAX_PLANET_DIAMETER, h);
+    m_map_view_hole = GG::Rect(GG::X0, GG::Y0, CHILD_WIDTHS + SidePanel::MAX_PLANET_DIAMETER, h);
 
     m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
-    m_build_selector->MoveTo(GG::Pt(0, h - BUILD_SELECTOR_HEIGHT));
+    m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));
 
 
     GG::Connect(m_build_selector->DisplayNamedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);

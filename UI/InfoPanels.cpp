@@ -31,7 +31,7 @@ namespace {
     class MeterBrowseWnd : public GG::BrowseInfoWnd {
     public:
         MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map) :
-            GG::BrowseInfoWnd(0, 0, LABEL_WIDTH + VALUE_WIDTH, 1),
+            GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
             m_meter_type(meter_type),
             m_obj(obj),
             m_meter_map(meter_map),
@@ -47,45 +47,45 @@ namespace {
         virtual void Render() {
             GG::Pt ul = UpperLeft();
             GG::Pt lr = LowerRight();
-            GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
-            GG::FlatRectangle(ul.x, ul.y, lr.x, ul.y + row_height, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
-            GG::FlatRectangle(ul.x, ul.y + 4*row_height, lr.x, ul.y + 5*row_height, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
+            GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
+            GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+            GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*row_height), GG::Pt(lr.x, ul.y + 5*row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
         }
 
     private:
         void Initialize() {
-            row_height = ClientUI::Pts()*3/2;
-            const int TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
+            row_height = GG::Y(ClientUI::Pts()*3/2);
+            const GG::X TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
 
             const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
             const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
-            m_summary_title = new GG::TextControl(0, 0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+            m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_summary_title);
 
-            m_current_label = new GG::TextControl(0, row_height, LABEL_WIDTH, row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+            m_current_label = new GG::TextControl(GG::X0, row_height, LABEL_WIDTH, row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_current_label);
             m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
             AttachChild(m_current_value);
 
-            m_next_turn_label = new GG::TextControl(0, row_height*2, LABEL_WIDTH, row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+            m_next_turn_label = new GG::TextControl(GG::X0, row_height*2, LABEL_WIDTH, row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_next_turn_label);
             m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
             AttachChild(m_next_turn_value);
 
-            m_change_label = new GG::TextControl(0, row_height*3, LABEL_WIDTH, row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+            m_change_label = new GG::TextControl(GG::X0, row_height*3, LABEL_WIDTH, row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_change_label);
             m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
             AttachChild(m_change_value);
 
-            m_meter_title = new GG::TextControl(0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+            m_meter_title = new GG::TextControl(GG::X0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
             AttachChild(m_meter_title);
 
             UpdateSummary();
             UpdateEffectLabelsAndValues();
-            int y = m_meter_title->LowerRight().y;
+            GG::Y y = m_meter_title->LowerRight().y;
             for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-                m_effect_labels_and_values[i].first->MoveTo(GG::Pt(0, y));
+                m_effect_labels_and_values[i].first->MoveTo(GG::Pt(GG::X0, y));
                 m_effect_labels_and_values[i].second->MoveTo(GG::Pt(LABEL_WIDTH, y));
                 y += row_height;
             }
@@ -233,7 +233,7 @@ namespace {
                 default:
                     text += UserString("TT_UNKNOWN");
                 }
-                GG::TextControl* label = new GG::TextControl(0, 0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                GG::TextControl* label = new GG::TextControl(GG::X0, GG::Y0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
                 label->Resize(GG::Pt(LABEL_WIDTH, row_height));
                 AttachChild(label);
                 GG::Clr clr = ClientUI::TextColor();
@@ -241,7 +241,7 @@ namespace {
                     clr = ClientUI::StatIncrColor();
                 else if (info_it->meter_change < 0.0)
                     clr = ClientUI::StatDecrColor();
-                GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, 0, VALUE_WIDTH, row_height, 
+                GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, GG::Y0, VALUE_WIDTH, row_height, 
                                                              GG::RgbaTag(clr) + DoubleToString(info_it->meter_change, 3, false, true) + "</rgba>",
                                                              font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
                 AttachChild(value);
@@ -266,14 +266,17 @@ namespace {
 
         std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_effect_labels_and_values;
 
-        int row_height;
+        GG::Y row_height;
 
-        static const int LABEL_WIDTH = 300;
-        static const int VALUE_WIDTH = 50;
-        static const int EDGE_PAD = 3;
+        static const GG::X LABEL_WIDTH;
+        static const GG::X VALUE_WIDTH;
+        static const int EDGE_PAD;
 
         bool initialized;
     };
+    const GG::X MeterBrowseWnd::LABEL_WIDTH(300);
+    const GG::X MeterBrowseWnd::VALUE_WIDTH(50);
+    const int MeterBrowseWnd::EDGE_PAD(3);
 
 
     GG::Clr MeterColor(MeterType meter_type)
@@ -307,8 +310,9 @@ namespace {
 //        PopulationPanel          //
 /////////////////////////////////////
 std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
-PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
-    Wnd(0, 0, w, ClientUI::Pts()*4/3, GG::CLICKABLE),
+const int PopulationPanel::EDGE_PAD = 3;
+PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*4/3), GG::CLICKABLE),
     m_popcenter_id(obj.ID()),
     m_pop_stat(0), m_health_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
@@ -320,20 +324,21 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an UniverseObject that is not a PopCenter");
 
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
-    int icon_size = ClientUI::Pts()*4/3;
+    GG::X icon_width(ClientUI::Pts()*4/3);
+    GG::Y icon_height(ClientUI::Pts()*4/3);
 
-    m_pop_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_POPULATION),
+    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_POPULATION),
                                    0, 3, false, false);
     AttachChild(m_pop_stat);
 
-    m_health_stat = new StatisticIcon(w/2, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_HEALTH),
+    m_health_stat = new StatisticIcon(w/2, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_HEALTH),
                                       0, 3, false, false);
     AttachChild(m_health_stat);
 
@@ -348,14 +353,14 @@ PopulationPanel::PopulationPanel(int w, const UniverseObject &obj) :
     meters.push_back(METER_POPULATION); meters.push_back(METER_HEALTH);
 
     // attach and show meter bars and large resource indicators
-    int top = UpperLeft().y;
+    GG::Y top = UpperLeft().y;
 
     m_multi_icon_value_indicator = new MultiIconValueIndicator(Width() - 2*EDGE_PAD, obj, meters);
-    m_multi_icon_value_indicator->MoveTo(GG::Pt(EDGE_PAD, EDGE_PAD - top));
+    m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), EDGE_PAD - top));
     m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
 
     m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, obj, meters);
-    m_multi_meter_status_bar->MoveTo(GG::Pt(EDGE_PAD, m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+    m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
     m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
 
 
@@ -393,7 +398,7 @@ void PopulationPanel::ExpandCollapse(bool expanded)
 
 void PopulationPanel::DoExpandCollapseLayout()
 {
-    int icon_size = ClientUI::Pts()*4/3;
+    GG::Y icon_height(ClientUI::Pts()*4/3);
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_popcenter_id]) {
@@ -404,7 +409,7 @@ void PopulationPanel::DoExpandCollapseLayout()
         AttachChild(m_pop_stat);
         AttachChild(m_health_stat);
 
-        Resize(GG::Pt(Width(), icon_size));
+        Resize(GG::Pt(Width(), icon_height));
     } else {
         // detach statistic icons
         DetachChild(m_health_stat); DetachChild(m_pop_stat);
@@ -413,19 +418,19 @@ void PopulationPanel::DoExpandCollapseLayout()
         AttachChild(m_multi_meter_status_bar);
         MoveChildUp(m_expand_button);
 
-        int top = UpperLeft().y;
+        GG::Y top = UpperLeft().y;
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
 
     // update appearance of expand/collapse button
     if (s_expanded_map[m_popcenter_id]) {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     } else {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
 
     ExpandCollapseSignal();
@@ -457,22 +462,22 @@ void PopulationPanel::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -572,9 +577,10 @@ PopCenter* PopulationPanel::GetPopCenter()
 //         ResourcePanel           //
 /////////////////////////////////////
 std::map<int, bool> ResourcePanel::s_expanded_map;
+const int ResourcePanel::EDGE_PAD = 3;
 
-ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
-    Wnd(0, 0, w, ClientUI::Pts()*9, GG::CLICKABLE),
+ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::CLICKABLE),
     m_rescenter_id(obj.ID()),
     m_farming_stat(0),
     m_mining_stat(0),
@@ -594,15 +600,16 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
 
-    int icon_size = ClientUI::Pts()*4/3;
+    GG::X icon_width(ClientUI::Pts()*4/3);
+    GG::Y icon_height(ClientUI::Pts()*4/3);
     GG::DropDownList::Row* row;
     boost::shared_ptr<GG::Texture> texture;
     GG::StaticGraphic* graphic;
@@ -617,19 +624,19 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     textures.push_back(ClientUI::MeterIcon(METER_RESEARCH));
     textures.push_back(ClientUI::MeterIcon(METER_TRADE));
 
-    m_primary_focus_drop = new CUIDropDownList(0, 0, icon_size*4, icon_size*3/2, icon_size*19/2);
+    m_primary_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, icon_width*4, icon_height*3/2, icon_height*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width*3/2, icon_height*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_primary_focus_drop->Insert(row);
     }
     AttachChild(m_primary_focus_drop);
 
-    m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + icon_size/2, 0,
-                                                 icon_size*4, icon_size*3/2, icon_size*19/2);
+    m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + icon_width/2, GG::Y0,
+                                                 icon_width*4, icon_height*3/2, icon_height*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(0, 0, icon_size*3/2, icon_size*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width*3/2, icon_height*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_secondary_focus_drop->Insert(row);
@@ -644,23 +651,23 @@ ResourcePanel::ResourcePanel(int w, const UniverseObject &obj) :
     GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
 
     // small resource indicators - for use when panel is collapsed
-    m_farming_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_FARMING),
+    m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_FARMING),
                                        0, 3, false, false);
     AttachChild(m_farming_stat);
 
-    m_mining_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_MINING),
+    m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_MINING),
                                       0, 3, false, false);
     AttachChild(m_mining_stat);
 
-    m_industry_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_INDUSTRY),
+    m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_INDUSTRY),
                                         0, 3, false, false);
     AttachChild(m_industry_stat);
 
-    m_research_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_RESEARCH),
+    m_research_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_RESEARCH),
                                         0, 3, false, false);
     AttachChild(m_research_stat);
 
-    m_trade_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_TRADE),
+    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_TRADE),
                                      0, 3, false, false);
     AttachChild(m_trade_stat);
 
@@ -721,7 +728,8 @@ void ResourcePanel::ExpandCollapse(bool expanded)
 
 void ResourcePanel::DoExpandCollapseLayout()
 {
-    int icon_size = ClientUI::Pts()*4/3;
+    GG::X icon_width(ClientUI::Pts()*4/3);
+    GG::Y icon_height(ClientUI::Pts()*4/3);
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
@@ -751,21 +759,21 @@ void ResourcePanel::DoExpandCollapseLayout()
         // position and reattach icons to be shown
         int n = 0;
         for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
-            int x = icon_size*n*7/2;
+            GG::X x = icon_width*n*7/2;
 
-            if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            if (x > Width() - m_expand_button->Width() - icon_width*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
             std::multimap<double, StatisticIcon*>::iterator it2 = --it;
 
             StatisticIcon* icon = it2->second;
             AttachChild(icon);
-            icon->MoveTo(GG::Pt(x, 0));
+            icon->MoveTo(GG::Pt(x, GG::Y0));
             icon->Show();
 
             n++;
         }
 
-        Resize(GG::Pt(Width(), icon_size));
+        Resize(GG::Pt(Width(), icon_height));
     } else {
         // detach statistic icons
         DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
@@ -779,14 +787,14 @@ void ResourcePanel::DoExpandCollapseLayout()
         AttachChild(m_primary_focus_drop);
 
         // attach and show meter bars and large resource indicators
-        int top = UpperLeft().y;
+        GG::Y top = UpperLeft().y;
 
         AttachChild(m_multi_icon_value_indicator);
-        m_multi_icon_value_indicator->MoveTo(GG::Pt(EDGE_PAD, m_primary_focus_drop->LowerRight().y + EDGE_PAD - top));
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_primary_focus_drop->LowerRight().y + EDGE_PAD - top));
         m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
 
         AttachChild(m_multi_meter_status_bar);
-        m_multi_meter_status_bar->MoveTo(GG::Pt(EDGE_PAD, m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
         m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
 
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
@@ -795,15 +803,15 @@ void ResourcePanel::DoExpandCollapseLayout()
     // update appearance of expand/collapse button
     if (s_expanded_map[m_rescenter_id])
     {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
     else
     {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
 
     ExpandCollapseSignal();
@@ -835,22 +843,22 @@ void ResourcePanel::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -1101,9 +1109,10 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(GG::DropDownList::ite
 //         MilitaryPanel           //
 /////////////////////////////////////
 std::map<int, bool> MilitaryPanel::s_expanded_map;
+const int MilitaryPanel::EDGE_PAD = 3;
 
-MilitaryPanel::MilitaryPanel(int w, const Planet &plt) :
-    Wnd(0, 0, w, ClientUI::Pts()*9, GG::CLICKABLE),
+MilitaryPanel::MilitaryPanel(GG::X w, const Planet &plt) :
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::CLICKABLE),
     m_planet_id(plt.ID()),
     m_fleet_supply_stat(0),
     m_shield_stat(0),
@@ -1117,33 +1126,34 @@ MilitaryPanel::MilitaryPanel(int w, const Planet &plt) :
     SetText("MilitaryPanel");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
     AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
 
-    int icon_size = ClientUI::Pts()*4/3;
+    GG::X icon_width(ClientUI::Pts()*4/3);
+    GG::Y icon_height(ClientUI::Pts()*4/3);
 
     // small meter indicators - for use when panel is collapsed
-    m_fleet_supply_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_SUPPLY),
+    m_fleet_supply_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_SUPPLY),
                                             0, 3, false, false);
     AttachChild(m_fleet_supply_stat);
 
-    m_shield_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_SHIELD),
+    m_shield_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_SHIELD),
                                       0, 3, false, false);
     AttachChild(m_shield_stat);
 
-    m_defense_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_DEFENSE),
+    m_defense_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_DEFENSE),
                                        0, 3, false, false);
     AttachChild(m_defense_stat);
 
-    m_detection_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_DETECTION),
+    m_detection_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_DETECTION),
                                          0, 3, false, false);
     AttachChild(m_detection_stat);
 
-    m_stealth_stat = new StatisticIcon(0, 0, icon_size, icon_size, ClientUI::MeterIcon(METER_STEALTH),
+    m_stealth_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_STEALTH),
                                        0, 3, false, false);
     AttachChild(m_stealth_stat);
 
@@ -1215,22 +1225,22 @@ void MilitaryPanel::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -1306,7 +1316,8 @@ void MilitaryPanel::ExpandCollapseButtonPressed()
 
 void MilitaryPanel::DoExpandCollapseLayout()
 {
-    int icon_size = ClientUI::Pts()*4/3;
+    GG::X icon_width(ClientUI::Pts()*4/3);
+    GG::Y icon_height(ClientUI::Pts()*4/3);
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
@@ -1333,33 +1344,33 @@ void MilitaryPanel::DoExpandCollapseLayout()
         // position and reattach icons to be shown
         int n = 0;
         for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it) {
-            int x = icon_size*n*7/2;
+            GG::X x = icon_width*n*7/2;
 
-            if (x > Width() - m_expand_button->Width() - icon_size*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            if (x > Width() - m_expand_button->Width() - icon_width*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
             StatisticIcon* icon = *it;
             AttachChild(icon);
-            icon->MoveTo(GG::Pt(x, 0));
+            icon->MoveTo(GG::Pt(x, GG::Y0));
             icon->Show();
 
             n++;
         }
 
-        Resize(GG::Pt(Width(), icon_size));
+        Resize(GG::Pt(Width(), icon_height));
     } else {
         // detach statistic icons
         DetachChild(m_fleet_supply_stat);   DetachChild(m_shield_stat);     DetachChild(m_defense_stat);
         DetachChild(m_detection_stat);      DetachChild(m_stealth_stat);
 
         // attach and show meter bars and large resource indicators
-        int top = UpperLeft().y;
+        GG::Y top = UpperLeft().y;
 
         AttachChild(m_multi_icon_value_indicator);
-        m_multi_icon_value_indicator->MoveTo(GG::Pt(EDGE_PAD, EDGE_PAD));
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), GG::Y(EDGE_PAD)));
         m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
 
         AttachChild(m_multi_meter_status_bar);
-        m_multi_meter_status_bar->MoveTo(GG::Pt(EDGE_PAD, m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
         m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
 
         MoveChildUp(m_expand_button);
@@ -1369,13 +1380,13 @@ void MilitaryPanel::DoExpandCollapseLayout()
 
     // update appearance of expand/collapse button
     if (s_expanded_map[m_planet_id]) {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     } else {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
 
     ExpandCollapseSignal();}
@@ -1398,8 +1409,13 @@ const ResourceCenter* MilitaryPanel::GetPlanet() const
 /////////////////////////////////////
 //    MultiIconValueIndicator      //
 /////////////////////////////////////
-MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
-    GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+const int MultiIconValueIndicator::EDGE_PAD = 6;
+const int MultiIconValueIndicator::ICON_SPACING = 12;
+const GG::X MultiIconValueIndicator::ICON_WIDTH(24);
+const GG::Y MultiIconValueIndicator::ICON_HEIGHT(24);
+
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
     m_icons(),
     m_meter_types(meter_types),
     m_obj_vec()
@@ -1408,44 +1424,44 @@ MultiIconValueIndicator::MultiIconValueIndicator(int w, const UniverseObject& ob
 
     SetText("MultiIconValueIndicator");
 
-    int x = EDGE_PAD;
+    GG::X x(EDGE_PAD);
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
-        m_icons.push_back(new StatisticIcon(x, EDGE_PAD, ICON_WIDTH, ICON_WIDTH + ClientUI::Pts()*3/2, texture,
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), ICON_WIDTH, ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
                                             0.0, 3, false, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += ICON_WIDTH + ICON_SPACING;
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2));
+        Resize(GG::Pt(w, EDGE_PAD + ICON_HEIGHT + ClientUI::Pts()*3/2));
     Update();
 }
 
-MultiIconValueIndicator::MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types) :
-    GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types) :
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
     m_icons(),
     m_meter_types(meter_types),
     m_obj_vec(obj_vec)
 {
     SetText("MultiIconValueIndicator");
 
-    int x = EDGE_PAD;
+    GG::X x(EDGE_PAD);
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
-        m_icons.push_back(new StatisticIcon(x, EDGE_PAD, ICON_WIDTH, ICON_WIDTH + ClientUI::Pts()*3/2, texture,
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), ICON_WIDTH, ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
                                             0.0, 3, false, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += ICON_WIDTH + ICON_SPACING;
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + ICON_WIDTH + ClientUI::Pts()*3/2));
+        Resize(GG::Pt(w, EDGE_PAD + ICON_HEIGHT + ClientUI::Pts()*3/2));
     Update();
 }
 
-MultiIconValueIndicator::MultiIconValueIndicator(int w) :
-    GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
     m_icons(),
     m_meter_types(),
     m_obj_vec()
@@ -1464,7 +1480,7 @@ void MultiIconValueIndicator::Render()
     GG::Pt lr = LowerRight();
 
     // outline of whole control
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1497,8 +1513,12 @@ void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shar
 /////////////////////////////////////
 //       MultiMeterStatusBar       //
 /////////////////////////////////////
-MultiMeterStatusBar::MultiMeterStatusBar(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
-    GG::Wnd(0, 0, w, 1, GG::CLICKABLE),
+const int MultiMeterStatusBar::EDGE_PAD = 2;
+const int MultiMeterStatusBar::BAR_PAD = 1;
+const GG::Y MultiMeterStatusBar::BAR_HEIGHT(10);
+
+MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
     m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(meter_types),
     m_initial_maxes(),
@@ -1521,17 +1541,17 @@ void MultiMeterStatusBar::Render()
     GG::Pt lr = LowerRight();
 
     // outline of whole control
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 
-    const int BAR_LEFT = ClientUpperLeft().x + EDGE_PAD;
-    const int BAR_RIGHT = ClientLowerRight().x - EDGE_PAD;
-    const int BAR_MAX_LENGTH = BAR_RIGHT - BAR_LEFT;
-    const int TOP = ClientUpperLeft().y + EDGE_PAD;
-    int y = TOP;
+    const GG::X BAR_LEFT = ClientUpperLeft().x + EDGE_PAD;
+    const GG::X BAR_RIGHT = ClientLowerRight().x - EDGE_PAD;
+    const GG::X BAR_MAX_LENGTH = BAR_RIGHT - BAR_LEFT;
+    const GG::Y TOP = ClientUpperLeft().y + EDGE_PAD;
+    GG::Y y = TOP;
 
     for (unsigned int i = 0; i < m_initial_maxes.size(); ++i) {
         // bar grey backgrounds
-        GG::FlatRectangle(BAR_LEFT, y, BAR_RIGHT, y + BAR_HEIGHT, DARY_GREY, DARY_GREY, 0);
+        GG::FlatRectangle(GG::Pt(BAR_LEFT, y), GG::Pt(BAR_RIGHT, y + BAR_HEIGHT), DARY_GREY, DARY_GREY, 0);
 
         y += BAR_HEIGHT + BAR_PAD;
     }
@@ -1541,14 +1561,14 @@ void MultiMeterStatusBar::Render()
     glDisable(GL_TEXTURE_2D);
     glColor(HALF_GREY);
     glBegin(GL_LINES);
-    glVertex2i(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
-    glVertex2i(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glVertex2i(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
-    glVertex2i(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glVertex2i(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
-    glVertex2i(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glVertex2i(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
-    glVertex2i(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
+    glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
+    glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
+    glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
+    glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
+    glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
     glEnd();
     glEnable(GL_TEXTURE_2D);
 
@@ -1557,9 +1577,9 @@ void MultiMeterStatusBar::Render()
     for (unsigned int i = 0; i < m_initial_maxes.size(); ++i) {
         GG::Clr clr;
 
-        const int MAX_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_maxes[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const GG::X MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_maxes[i] / (Meter::METER_MAX - Meter::METER_MIN));
         const int BORDER = 1;
-        const int BAR_BOTTOM = y + BAR_HEIGHT;
+        const GG::Y BAR_BOTTOM = y + BAR_HEIGHT;
 
         // max value
         if (MAX_RIGHT > BAR_LEFT) {
@@ -1567,9 +1587,9 @@ void MultiMeterStatusBar::Render()
             m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(MAX_RIGHT, BAR_BOTTOM));
         }
 
-        const int CUR_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_initial_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
-        const int PROJECTED_RIGHT = BAR_LEFT + static_cast<int>(BAR_MAX_LENGTH * m_projected_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
-        const int PROJECTED_TOP = y + 3*EDGE_PAD/2;
+        const GG::X CUR_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const GG::X PROJECTED_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const GG::Y PROJECTED_TOP = y + 3*EDGE_PAD/2;
 
         GG::Clr projected_clr = ClientUI::StatIncrColor();
         if (m_projected_currents[i] < m_initial_currents[i]) projected_clr = ClientUI::StatDecrColor();
@@ -1577,14 +1597,14 @@ void MultiMeterStatusBar::Render()
         if (PROJECTED_RIGHT > CUR_RIGHT) {
             // projected border
             glColor(GG::CLR_BLACK);
-            GG::FlatRectangle(CUR_RIGHT, PROJECTED_TOP,     PROJECTED_RIGHT + 1, BAR_BOTTOM, GG::CLR_BLACK, GG::CLR_BLACK, 0);
+            GG::FlatRectangle(GG::Pt(CUR_RIGHT, PROJECTED_TOP),     GG::Pt(PROJECTED_RIGHT + 1, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
             // projected colour bar
-            GG::FlatRectangle(CUR_RIGHT, PROJECTED_TOP + 1, PROJECTED_RIGHT,     BAR_BOTTOM, projected_clr, projected_clr, 0);
+            GG::FlatRectangle(GG::Pt(CUR_RIGHT, PROJECTED_TOP + 1), GG::Pt(PROJECTED_RIGHT,     BAR_BOTTOM), projected_clr, projected_clr, 0);
             // current value
             glColor(m_bar_colours[i]);
             m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(CUR_RIGHT, BAR_BOTTOM));
             // black border
-            GG::FlatRectangle(BAR_LEFT - BORDER, y - BORDER, MAX_RIGHT + BORDER, BAR_BOTTOM + BORDER, GG::CLR_ZERO, GG::CLR_BLACK, 1);
+            GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(MAX_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
         } else {
             // current value
             glColor(m_bar_colours[i]);
@@ -1592,13 +1612,13 @@ void MultiMeterStatusBar::Render()
             if (PROJECTED_RIGHT < CUR_RIGHT) {
                 // projected border
                 glColor(GG::CLR_BLACK);
-                GG::FlatRectangle(PROJECTED_RIGHT - 1, PROJECTED_TOP,     CUR_RIGHT, BAR_BOTTOM, GG::CLR_BLACK, GG::CLR_BLACK, 0);
+                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT - 1, PROJECTED_TOP),     GG::Pt(CUR_RIGHT, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
                 // projected colour bar
                 glColor(m_bar_colours[i]);
-                GG::FlatRectangle(PROJECTED_RIGHT,     PROJECTED_TOP + 1, CUR_RIGHT, BAR_BOTTOM, projected_clr, projected_clr, 0);
+                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT,     PROJECTED_TOP + 1), GG::Pt(CUR_RIGHT, BAR_BOTTOM), projected_clr, projected_clr, 0);
             }
             // black border
-            GG::FlatRectangle(BAR_LEFT - BORDER, y - BORDER, CUR_RIGHT + BORDER, BAR_BOTTOM + BORDER, GG::CLR_ZERO, GG::CLR_BLACK, 1);
+            GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(CUR_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
         }
 
         y += BAR_HEIGHT + BAR_PAD;
@@ -1623,7 +1643,7 @@ void MultiMeterStatusBar::Update()
     }
     const int NUM_BARS = meters.size();
 
-    const int HEIGHT = NUM_BARS*BAR_HEIGHT + (NUM_BARS - 1)*BAR_PAD + 2*EDGE_PAD;
+    const GG::Y HEIGHT = NUM_BARS*BAR_HEIGHT + (NUM_BARS - 1)*BAR_PAD + 2*EDGE_PAD;
 
     m_initial_maxes.clear();
     m_initial_currents.clear();
@@ -1647,8 +1667,8 @@ void MultiMeterStatusBar::Update()
 /////////////////////////////////////
 std::map<int, bool> BuildingsPanel::s_expanded_map = std::map<int, bool>();
 
-BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
-    GG::Wnd(0, 0, w, w, GG::CLICKABLE),
+BuildingsPanel::BuildingsPanel(GG::X w, int columns, const Planet &plt) :
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::CLICKABLE),
     m_planet_id(plt.ID()),
     m_columns(columns),
     m_building_indicators(),
@@ -1659,11 +1679,11 @@ BuildingsPanel::BuildingsPanel(int w, int columns, const Planet &plt) :
     if (m_columns < 1) throw std::invalid_argument("Attempted to create a BuidingsPanel with less than 1 column");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, 0, 16, 16, "", ClientUI::GetFont(), GG::CLR_WHITE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE);
     AttachChild(m_expand_button);
-    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+    m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
     // get owners, connect their production queue changed signals to update this panel
@@ -1714,22 +1734,22 @@ void BuildingsPanel::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -1757,7 +1777,7 @@ void BuildingsPanel::Update()
     const Planet* plt = universe.Object<Planet>(m_planet_id);
     const std::set<int>& buildings = plt->Buildings();
 
-    const int indicator_size = static_cast<int>(static_cast<double>(Width()) / m_columns);
+    const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
 
     // get existing / finished buildings and use them to create building indicators
     for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
@@ -1769,7 +1789,7 @@ void BuildingsPanel::Update()
             continue;
         }
         const BuildingType* building_type = building->GetBuildingType();
-        BuildingIndicator* ind = new BuildingIndicator(indicator_size, *building_type);
+        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type);
         m_building_indicators.push_back(ind);
     }
 
@@ -1802,7 +1822,7 @@ void BuildingsPanel::Update()
             double partial_turn = std::fmod(progress, turn_cost) / turn_cost;
             int turns_completed = static_cast<int>(progress / turn_cost);
             
-            BuildingIndicator* ind = new BuildingIndicator(indicator_size, *building_type, turns, turns_completed, partial_turn);
+            BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type, turns, turns_completed, partial_turn);
             m_building_indicators.push_back(ind);
         }
     }
@@ -1823,12 +1843,13 @@ void BuildingsPanel::DoExpandCollapseLayout()
 {
     int row = 0;
     int column = 0;
-    const int w = Width();      // horizontal space in which to place indicators
+    const GG::X w = Width();      // horizontal space in which to place indicators
     const int padding = 5;      // space around and between adjacent indicators
-    const int effective_width = w - padding * (m_columns + 1);  // padding on either side and between
-    const int indicator_size = static_cast<int>(static_cast<double>(effective_width) / m_columns);
-    const int icon_size = ClientUI::Pts()*4/3;
-    int height;
+    const GG::X effective_width = w - padding * (m_columns + 1);  // padding on either side and between
+    const int indicator_size = static_cast<int>(Value(effective_width * 1.0 / m_columns));
+    const GG::X icon_width(ClientUI::Pts()*4/3);
+    const GG::Y icon_height(ClientUI::Pts()*4/3);
+    GG::Y height;
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
@@ -1836,11 +1857,11 @@ void BuildingsPanel::DoExpandCollapseLayout()
         for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
             BuildingIndicator* ind = *it;
             
-            int x = icon_size * n;
+            GG::X x = icon_width * n;
 
-            if (x < (w - m_expand_button->Width() - icon_size)) {
-                ind->MoveTo(GG::Pt(n*icon_size, 0));
-                ind->Resize(GG::Pt(icon_size, icon_size));
+            if (x < (w - m_expand_button->Width() - icon_width)) {
+                ind->MoveTo(GG::Pt(n*icon_width, GG::Y0));
+                ind->Resize(GG::Pt(icon_width, icon_height));
                 AttachChild(ind);
             } else {
                 DetachChild(ind);
@@ -1853,11 +1874,11 @@ void BuildingsPanel::DoExpandCollapseLayout()
         for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
             BuildingIndicator* ind = *it;
 
-            int x = padding * (column + 1) + indicator_size * column;
-            int y = padding * (row + 1) + indicator_size * row;
+            GG::X x(padding * (column + 1) + indicator_size * column);
+            GG::Y y(padding * (row + 1) + indicator_size * row);
             ind->MoveTo(GG::Pt(x, y));
             
-            ind->Resize(GG::Pt(indicator_size, indicator_size));
+            ind->Resize(GG::Pt(GG::X(indicator_size), GG::Y(indicator_size)));
             
             AttachChild(ind);
             ind->Show();
@@ -1870,18 +1891,18 @@ void BuildingsPanel::DoExpandCollapseLayout()
         }
 
         if (column == 0)
-            height = padding * (row + 1) + row * indicator_size;        // if column is 0, then there are no buildings in the next row
+            height = GG::Y(padding * (row + 1) + row * indicator_size);        // if column is 0, then there are no buildings in the next row
         else
-            height = padding * (row + 2) + (row + 1) * indicator_size;  // if column != 0, there are buildings in the next row, so need to make space
+            height = GG::Y(padding * (row + 2) + (row + 1) * indicator_size);  // if column != 0, there are buildings in the next row, so need to make space
     }
 
     if (m_building_indicators.empty()) {
-        height = 0;  // hide if empty
+        height = GG::Y(0);  // hide if empty
         DetachChild(m_expand_button);
     } else {
         AttachChild(m_expand_button);
         m_expand_button->Show();
-        if (height < icon_size) height = icon_size;
+        if (height < icon_height) height = icon_height;
     }
 
     Resize(GG::Pt(Width(), height));
@@ -1889,15 +1910,15 @@ void BuildingsPanel::DoExpandCollapseLayout()
     // update appearance of expand/collapse button
     if (s_expanded_map[m_planet_id])
     {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
     else
     {
-        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), 0, 0, 32, 32));
-        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), 0, 0, 32, 32));
-        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), 0, 0, 32, 32));
+        m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+        m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
     Wnd::MoveChildUp(m_expand_button);
 
@@ -1921,8 +1942,8 @@ const Planet* BuildingsPanel::GetPlanet() const
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
-    Wnd(0, 0, w, w, GG::CLICKABLE),
+BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type) :
+    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::CLICKABLE),
     m_type(type),
     m_graphic(0),
     m_progress_bar(0)
@@ -1932,13 +1953,13 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type) :
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type.Name()), UserString(type.Description()))));
 
-    m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 }
 
-BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
+BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turns,
                                      int turns_completed, double partial_turn) :
-    Wnd(0, 0, w, w, GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::CLICKABLE),
     m_type(type),
     m_graphic(0),
     m_progress_bar(0)
@@ -1948,11 +1969,11 @@ BuildingIndicator::BuildingIndicator(int w, const BuildingType &type, int turns,
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type.Name()), UserString(type.Description()))));
 
-    m_graphic = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
-    m_progress_bar = new MultiTurnProgressBar(w, w/5, turns, turns_completed, partial_turn, GG::CLR_GRAY, GG::CLR_BLACK, GG::CLR_WHITE);
-    m_progress_bar->MoveTo(GG::Pt(0, Height() - m_progress_bar->Height()));
+    m_progress_bar = new MultiTurnProgressBar(w, GG::Y(Value(w/5)), turns, turns_completed, partial_turn, GG::CLR_GRAY, GG::CLR_BLACK, GG::CLR_WHITE);
+    m_progress_bar->MoveTo(GG::Pt(GG::X0, Height() - m_progress_bar->Height()));
     AttachChild(m_progress_bar);
 }
 
@@ -1975,22 +1996,22 @@ void BuildingIndicator::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // draw outer border on pixel inside of the outer edge of the window
     glPolygonMode(GL_BACK, GL_LINE);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndOuterBorderColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -2003,14 +2024,14 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
 
-    GG::Pt child_lr = lr - ul - GG::Pt(1, 1);   // extra pixel prevents graphic from overflowing border box
+    GG::Pt child_lr = lr - ul - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
     
     if (m_graphic)
-        m_graphic->SizeMove(GG::Pt(0, 0), child_lr);
+        m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
     
-    int bar_top = Height() * 4 / 5;
+    GG::Y bar_top = Height() * 4 / 5;
     if (m_progress_bar)
-        m_progress_bar->SizeMove(GG::Pt(0, bar_top), child_lr);
+        m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);
 }
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -2022,8 +2043,9 @@ void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::Mod
 /////////////////////////////////////
 //         SpecialsPanel           //
 /////////////////////////////////////
-SpecialsPanel::SpecialsPanel(int w, const UniverseObject &obj) : 
-    Wnd(0, 0, w, 32, GG::CLICKABLE),
+const int SpecialsPanel::EDGE_PAD = 2;
+SpecialsPanel::SpecialsPanel(GG::X w, const UniverseObject &obj) : 
+    Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::CLICKABLE),
     m_object_id(obj.ID()),
     m_icons()
 {
@@ -2061,14 +2083,15 @@ void SpecialsPanel::Update()
     const UniverseObject* obj = GetObject();
     const std::set<std::string>& specials = obj->Specials();
 
-    const int icon_size = 24;
+    const GG::X icon_width(24);
+    const GG::Y icon_height(24);
 
     int tooltip_time = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     // get specials and use them to create specials icons
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(0, 0, icon_size, icon_size, ClientUI::SpecialTexture(special->Name()),
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::SpecialTexture(special->Name()),
                                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
         graphic->SetBrowseModeTime(tooltip_time);
         graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()),
@@ -2077,27 +2100,27 @@ void SpecialsPanel::Update()
         m_icons.push_back(graphic);
     }
 
-    const int AVAILABLE_WIDTH = Width() - EDGE_PAD;
-    int x = EDGE_PAD;
-    int y = EDGE_PAD;
+    const GG::X AVAILABLE_WIDTH = Width() - EDGE_PAD;
+    GG::X x(EDGE_PAD);
+    GG::Y y(EDGE_PAD);
 
     for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
         GG::StaticGraphic* icon = *it;
         icon->MoveTo(GG::Pt(x, y));
         AttachChild(icon);
 
-        x += icon_size + EDGE_PAD;
+        x += icon_width + EDGE_PAD;
 
-        if (x + icon_size + EDGE_PAD > AVAILABLE_WIDTH) {
-            x = EDGE_PAD;
-            y += icon_size + EDGE_PAD;
+        if (x + icon_width + EDGE_PAD > AVAILABLE_WIDTH) {
+            x = GG::X(EDGE_PAD);
+            y += icon_height + EDGE_PAD;
         }
     }
 
     if (m_icons.empty()) {
-        Resize(GG::Pt(Width(), 0));
+        Resize(GG::Pt(Width(), GG::Y0));
     } else {
-        Resize(GG::Pt(Width(), y + icon_size + EDGE_PAD*2));
+        Resize(GG::Pt(Width(), y + icon_height + EDGE_PAD*2));
     }
 }
 
@@ -2118,17 +2141,19 @@ const UniverseObject* SpecialsPanel::GetObject() const
 /////////////////////////////////////
 //        ShipDesignPanel          //
 /////////////////////////////////////
-ShipDesignPanel::ShipDesignPanel(int w, int h, int design_id) :
-    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+const int ShipDesignPanel::EDGE_PAD = 2;
+
+ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_design_id(design_id),
     m_graphic(0),
     m_name(0)
 {
     const ShipDesign* design = GetShipDesign(m_design_id);
     if (design) {
-        m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(design->Hull()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(design->Hull()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
-        m_name = new GG::TextControl(0, 0, design->Name(), ClientUI::GetFont(), GG::CLR_WHITE);
+        m_name = new GG::TextControl(GG::X0, GG::Y0, design->Name(), ClientUI::GetFont(), GG::CLR_WHITE);
         AttachChild(m_name);
     }
 }
@@ -2159,21 +2184,26 @@ const ShipDesign* ShipDesignPanel::GetDesign() {
 /////////////////////////////////////
 //       IconTextBrowseWnd         //
 /////////////////////////////////////
+const GG::X IconTextBrowseWnd::TEXT_WIDTH(400);
+const GG::X IconTextBrowseWnd::TEXT_PAD(3);
+const GG::X IconTextBrowseWnd::ICON_WIDTH(64);
+const GG::Y IconTextBrowseWnd::ICON_HEIGHT(64);
+
 IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text, const std::string& main_text) :
-    GG::BrowseInfoWnd(0, 0, TEXT_WIDTH + ICON_WIDTH, 1),
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, TEXT_WIDTH + ICON_WIDTH, GG::Y1),
     ROW_HEIGHT(ClientUI::Pts()*3/2)
 {
-    m_icon = new GG::StaticGraphic(0, 0, ICON_WIDTH, ICON_WIDTH, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
+    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
     AttachChild(m_icon);
 
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
-    m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, 0, TEXT_WIDTH, ROW_HEIGHT, title_text,
+    m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, GG::Y0, TEXT_WIDTH, ROW_HEIGHT, title_text,
                                        font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_title_text);
 
-    m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_WIDTH, main_text,
+    m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_HEIGHT, main_text,
                                       font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     AttachChild(m_main_text);
 
@@ -2191,6 +2221,6 @@ bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, int mode) const {
 void IconTextBrowseWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
-    GG::FlatRectangle(ul.x + ICON_WIDTH, ul.y, lr.x, ul.y + ROW_HEIGHT, ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
+    GG::FlatRectangle(GG::Pt(ul.x + ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
 }

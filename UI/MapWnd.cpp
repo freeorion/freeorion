@@ -55,14 +55,14 @@ namespace {
     const double ZOOM_STEP_SIZE = 1.25;
     const int MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
     const int MAX_NEBULAE = 6;
-    const int END_TURN_BTN_WIDTH = 60;
-    const int SITREP_PANEL_WIDTH = 400;
-    const int SITREP_PANEL_HEIGHT = 300;
+    const GG::X END_TURN_BTN_WIDTH(60);
+    const GG::X SITREP_PANEL_WIDTH(400);
+    const GG::Y SITREP_PANEL_HEIGHT(300);
     const int MIN_SYSTEM_NAME_SIZE = 10;
     const int LAYOUT_MARGIN = 5;
-    const int CHAT_WIDTH = 400;
-    const int CHAT_HEIGHT = 400;
-    const int CHAT_EDIT_HEIGHT = 30;
+    const GG::X CHAT_WIDTH(400);
+    const GG::Y CHAT_HEIGHT(400);
+    const GG::Y CHAT_EDIT_HEIGHT(30);
 
     int g_chat_display_show_time = 0;
     std::deque<std::string> g_chat_edit_history;
@@ -124,12 +124,12 @@ MapWnd::GLBuffer::GLBuffer() :
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup(const std::string& t, int x, int y, int h, int w, GG::Flags<GG::WndFlag> flags) :
-    CUIWnd( t, x, y, h, w, flags)
+MapWndPopup::MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
+    CUIWnd(t, x, y, w, h, flags)
 { ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup(this); }
 
 MapWndPopup::~MapWndPopup()
-{ ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this);}
+{ ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this); }
 
 void MapWndPopup::CloseClicked()
 {
@@ -197,7 +197,7 @@ private:
 };
 
 MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) :
-    GG::Wnd(0, 0, 1, 1, GG::Flags<GG::WndFlag>()),
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
     m_x(x),
     m_y(y),
     m_text(0)
@@ -212,7 +212,7 @@ MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) 
     else
         eta_text = boost::lexical_cast<std::string>(eta);
 
-    m_text = new GG::TextControl(0, 0, eta_text, ClientUI::GetFont(),
+    m_text = new GG::TextControl(GG::X0, GG::Y0, eta_text, ClientUI::GetFont(),
                                  ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     Resize(m_text->Size());
     AttachChild(m_text);
@@ -222,19 +222,19 @@ void MapWnd::FleetETAMapIndicator::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
+    GG::FlatRectangle(ul, lr, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
 // MapWnd
 // static(s)
-double    MapWnd::s_min_scale_factor = 0.35;
-double    MapWnd::s_max_scale_factor = 8.0;
-const int MapWnd::SIDE_PANEL_WIDTH = 360;
+double           MapWnd::s_min_scale_factor = 0.35;
+double           MapWnd::s_max_scale_factor = 8.0;
+const GG::X MapWnd::SIDE_PANEL_WIDTH(360);
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
+            static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+            static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
             GG::CLICKABLE | GG::DRAGABLE),
     m_disabled_accels_list(),
     m_backgrounds(),
@@ -246,7 +246,7 @@ MapWnd::MapWnd() :
     m_starlane_colors(),
     m_starlane_fleet_supply_vertices(),
     m_starlane_fleet_supply_colors(),
-    m_drag_offset(-1, -1),
+    m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
@@ -257,7 +257,7 @@ MapWnd::MapWnd() :
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(0,0,GG::GUI::GetGUI()->AppWidth(),30);
+    m_toolbar = new CUIToolBar(GG::X0,GG::Y0,GG::GUI::GetGUI()->AppWidth(),GG::Y(30));
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
@@ -271,101 +271,101 @@ MapWnd::MapWnd() :
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
 
     m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
-    m_research_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
     m_production_wnd = new ProductionWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
-    m_production_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
     m_design_wnd = new DesignWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
-    m_design_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
     // turn button
-    m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
+    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
     GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    const int BUTTON_TOTAL_MARGIN = 8;
+    const GG::X BUTTON_TOTAL_MARGIN(8);
 
     // FPS indicator
     m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
     m_toolbar->AttachChild(m_FPS);
 
     // Subscreen / Menu buttons
-    int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, 0, button_width, UserString("MAP_BTN_MENU") );
+    GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, GG::Y0, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_DESIGN") );
+    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_DESIGN") );
     m_toolbar->AttachChild(m_btn_design);
     GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
     GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_SITREP") );
+    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
 
     // resources
-    const int ICON_DUAL_WIDTH = 100;
-    const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
-    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    const GG::X ICON_DUAL_WIDTH(100);
+    const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
+    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_population);
 
-    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
+    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0,3,true,false);
     m_toolbar->AttachChild(m_industry);
 
-    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
+    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
                                    0,3,true,false);
     m_toolbar->AttachChild(m_research);
 
-    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_trade);
 
-    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                   ClientUI::MeterIcon(METER_MINING),
                                   0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                ClientUI::MeterIcon(METER_FARMING),
                                0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
-    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::GetFont(), GG::CLR_ZERO, 
+    m_chat_display = new GG::MultiEdit(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::GetFont(), GG::CLR_ZERO, 
                                        GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT | GG::MULTI_NO_VSCROLL, 
                                        ClientUI::TextColor(), GG::CLR_ZERO, GG::Flags<GG::WndFlag>());
     AttachChild(m_chat_display);
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
-    m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
+    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
                               ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
@@ -449,16 +449,16 @@ double MapWnd::ZoomFactor() const
 GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
 {
     GG::Pt cl_ul = ClientUpperLeft();
-    int x = static_cast<int>((universe_x * m_zoom_factor) + cl_ul.x);
-    int y = static_cast<int>((universe_y * m_zoom_factor) + cl_ul.y);
+    GG::X x((universe_x * m_zoom_factor) + cl_ul.x);
+    GG::Y y((universe_y * m_zoom_factor) + cl_ul.y);
     return GG::Pt(x, y);
 }
 
 std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const
 {
     GG::Pt cl_ul = ClientUpperLeft();
-    double x = (screen_coords - cl_ul).x / m_zoom_factor;
-    double y = (screen_coords - cl_ul).y / m_zoom_factor;
+    double x = Value((screen_coords - cl_ul).x / m_zoom_factor);
+    double y = Value((screen_coords - cl_ul).y / m_zoom_factor);
     return std::pair<double, double>(x, y);
 }
 
@@ -469,8 +469,8 @@ SidePanel* MapWnd::GetSidePanel() const
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
-    data.map_left = UpperLeft().x;
-    data.map_top = UpperLeft().y;
+    data.map_left = Value(UpperLeft().x);
+    data.map_top = Value(UpperLeft().y);
     data.map_zoom_factor = m_zoom_factor;
 }
 
@@ -498,7 +498,7 @@ void MapWnd::Render()
     glPushMatrix();
     glLoadIdentity();
     glScalef(m_zoom_factor, m_zoom_factor, 1.0);
-    glTranslatef(origin_offset.x / m_zoom_factor, origin_offset.y / m_zoom_factor, 0.0);
+    glTranslatef(Value(origin_offset.x / m_zoom_factor), Value(origin_offset.y / m_zoom_factor), 0.0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -662,13 +662,13 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
 
 void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    m_drag_offset = GG::Pt(-1, -1);
+    m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     m_dragged = false;
 }
 
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    m_drag_offset = GG::Pt(-1, -1);
+    m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         m_side_panel->Hide();
@@ -751,8 +751,8 @@ void MapWnd::InitTurn(int turn_number)
     }
 
 
-    Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
-                  static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
+    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+                  static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
 
     // set up backgrounds on first turn
@@ -796,7 +796,7 @@ void MapWnd::InitTurn(int turn_number)
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
         const System* start_system = systems[i];
-        SystemIcon* icon = new SystemIcon(this, 0, 0, 10, start_system->ID());
+        SystemIcon* icon = new SystemIcon(this, GG::X0, GG::Y0, GG::X(10), start_system->ID());
         {
             // See note above texture coords for why we're making coordinate sets that are 2x too big.
             const System& system = icon->GetSystem();
@@ -1413,7 +1413,7 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     DoMovingFleetButtonsLayout();
 
     GG::Pt ul = UpperLeft();
-    GG::Pt map_ul = GG::Pt(data.map_left, data.map_top);
+    GG::Pt map_ul = GG::Pt(GG::X(data.map_left), GG::Y(data.map_top));
     GG::Pt map_move = map_ul - ul;
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
@@ -1457,10 +1457,10 @@ void MapWnd::HandlePlayerChatMessage(const std::string& msg)
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
-    double current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / m_zoom_factor;
-    double current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / m_zoom_factor;
-    GG::Pt map_move = GG::Pt(static_cast<int>((current_x - x) * m_zoom_factor), 
-                             static_cast<int>((current_y - y) * m_zoom_factor));
+    GG::X_d current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / m_zoom_factor;
+    GG::Y_d current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / m_zoom_factor;
+    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * m_zoom_factor), 
+                             static_cast<GG::Y>((current_y - y) * m_zoom_factor));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
@@ -1707,9 +1707,9 @@ void MapWnd::DoSystemIconsLayout()
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
 
-        GG::Pt icon_ul(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0),
-                       static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0));
-        it->second->SizeMove(icon_ul, icon_ul + GG::Pt(SYSTEM_ICON_SIZE, SYSTEM_ICON_SIZE));
+        GG::Pt icon_ul(GG::X(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0)));
+        it->second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE), GG::Y(SYSTEM_ICON_SIZE)));
     }
 }
 
@@ -1720,9 +1720,9 @@ void MapWnd::DoMovingFleetButtonsLayout()
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
 
-        GG::Pt button_ul(static_cast<int>(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0), 
-                         static_cast<int>(fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul, button_ul + GG::Pt(FLEET_BUTTON_SIZE, FLEET_BUTTON_SIZE));
+        GG::Pt button_ul(GG::X(static_cast<int>(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0)), 
+                         GG::Y(static_cast<int>(fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0)));
+        m_moving_fleet_buttons[i]->SizeMove(button_ul, button_ul + GG::Pt(GG::X(FLEET_BUTTON_SIZE), GG::Y(FLEET_BUTTON_SIZE)));
     }
 }
 
@@ -1739,9 +1739,10 @@ int MapWnd::FleetButtonSize() const
 void MapWnd::Zoom(int delta)
 {
     GG::Pt ul = ClientUpperLeft();
-    double ul_x = ul.x, ul_y = ul.y;
-    double center_x = GG::GUI::GetGUI()->AppWidth() / 2.0, center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
-    double ul_offset_x = ul_x - center_x, ul_offset_y = ul_y - center_y;
+    GG::X_d center_x = GG::GUI::GetGUI()->AppWidth() / 2.0;
+    GG::Y_d center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
+    GG::X_d ul_offset_x = ul.x - center_x;
+    GG::Y_d ul_offset_y = ul.y - center_y;
     if (delta > 0) {
         if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
             ul_offset_x *= ZOOM_STEP_SIZE;
@@ -1775,8 +1776,8 @@ void MapWnd::Zoom(int delta)
     DoMovingFleetButtonsLayout();
 
     // translate map and UI widgets to account for the change in upper left due to zooming
-    GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),
-                    static_cast<int>((center_y + ul_offset_y) - ul_y));
+    GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
+                    static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
@@ -1804,24 +1805,24 @@ void MapWnd::RenderStarfields()
     glMatrixMode(GL_TEXTURE);
 
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
-        float texture_coords_per_pixel_x = 1.0 / m_backgrounds[i]->Width();
-        float texture_coords_per_pixel_y = 1.0 / m_backgrounds[i]->Height();
-        glScalef(texture_coords_per_pixel_x * Width(),
-                 texture_coords_per_pixel_y * Height(),
+        float texture_coords_per_pixel_x = 1.0 / Value(m_backgrounds[i]->Width());
+        float texture_coords_per_pixel_y = 1.0 / Value(m_backgrounds[i]->Height());
+        glScalef(Value(texture_coords_per_pixel_x * Width()),
+                 Value(texture_coords_per_pixel_y * Height()),
                  1.0);
-        glTranslatef(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i],
-                     -texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i],
+        glTranslatef(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i]),
+                     Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i]),
                      0.0);
         glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
         glBegin(GL_QUADS);
         glTexCoord2f(0.0, 0.0);
         glVertex2i(0, 0);
         glTexCoord2f(0.0, 1.0);
-        glVertex2i(0, Height());
+        glVertex(GG::X0, Height());
         glTexCoord2f(1.0, 1.0);
-        glVertex2i(Width(), Height());
+        glVertex(Width(), Height());
         glTexCoord2f(1.0, 0.0);
-        glVertex2i(Width(), 0);
+        glVertex(Width(), GG::Y0);
         glEnd();
         glLoadIdentity();
     }
@@ -2096,29 +2097,29 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
-    int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
-    int app_width =  GG::GUI::GetGUI()->AppWidth();
-    int app_height = GG::GUI::GetGUI()->AppHeight();
-    int map_margin_width = static_cast<int>(app_width / 2.0);
+    GG::X contents_width(static_cast<int>(m_zoom_factor * Universe::UniverseWidth()));
+    GG::X app_width =  GG::GUI::GetGUI()->AppWidth();
+    GG::Y app_height = GG::GUI::GetGUI()->AppHeight();
+    GG::X map_margin_width(app_width / 2.0);
 
-    if (app_width - map_margin_width < contents_width || app_height - map_margin_width < contents_width) {
+    if (app_width - map_margin_width < contents_width || Value(app_height) - map_margin_width < contents_width) {
         if (map_margin_width < move_to_pt.x)
             move_to_pt.x = map_margin_width;
         if (move_to_pt.x + contents_width < app_width - map_margin_width)
             move_to_pt.x = app_width - map_margin_width - contents_width;
-        if (map_margin_width < move_to_pt.y)
-            move_to_pt.y = map_margin_width;
-        if (move_to_pt.y + contents_width < app_height - map_margin_width)
-            move_to_pt.y = app_height - map_margin_width - contents_width;
+        if (map_margin_width < Value(move_to_pt.y))
+            move_to_pt.y = GG::Y(Value(map_margin_width));
+        if (Value(move_to_pt.y) + contents_width < Value(app_height) - map_margin_width)
+            move_to_pt.y = app_height - Value(map_margin_width - contents_width);
     } else {
         if (move_to_pt.x < 0)
-            move_to_pt.x = 0;
+            move_to_pt.x = GG::X0;
         if (app_width < move_to_pt.x + contents_width)
             move_to_pt.x = app_width - contents_width;
-        if (move_to_pt.y < 0)
-            move_to_pt.y = 0;
-        if (app_height < move_to_pt.y + contents_width)
-            move_to_pt.y = app_height - contents_width;
+        if (move_to_pt.y < GG::Y0)
+            move_to_pt.y = GG::Y0;
+        if (app_height < move_to_pt.y + Value(contents_width))
+            move_to_pt.y = app_height - Value(contents_width);
     }
 }
 
@@ -2251,15 +2252,15 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         GG::Pt wnd_position = FleetWnd::LastPosition();
         // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-right
         if (wnd_position == GG::Pt())
-            wnd_position = GG::Pt(5, GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
+            wnd_position = GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
 
         wnd_for_button->MoveTo(wnd_position);
 
         // safety check to ensure window is on screen... may be redundant
         if (GG::GUI::GetGUI()->AppWidth() - 5 < wnd_for_button->LowerRight().x)
-            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, 0));
+            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, GG::Y0));
         if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
-            wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
+            wnd_for_button->OffsetMove(GG::Pt(GG::X0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
      }
 
 
@@ -2407,9 +2408,9 @@ void MapWnd::Sanitize()
 {
     Cleanup();
     m_side_panel->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y));
-    m_chat_display->MoveTo(GG::Pt(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN));
+    m_chat_display->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN));
     m_chat_display->Clear();
-    m_chat_edit->MoveTo(GG::Pt(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
+    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
     m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
     MoveTo(GG::Pt(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight()));
