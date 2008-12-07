@@ -290,10 +290,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\util\Version.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\util\XMLDoc.cpp"
 				>
 			</File>
