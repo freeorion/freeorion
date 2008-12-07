@@ -41,7 +41,7 @@ private:
     void Init();
     void PopulateServerList();
     void RefreshServerList();
-    void HostOrJoinClicked(int idx);
+    void HostOrJoinClicked(std::size_t idx);
     void ServerSelected(const GG::ListBox::SelectionSet& selections);
     void IPAddressEdited(const std::string& str);
     void NameEdited(const std::string& str);

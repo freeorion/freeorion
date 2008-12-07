@@ -487,7 +487,7 @@ void MapWnd::Render()
 
     RenderStarfields();
 
-    int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
+    unsigned int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
     if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
         (interval < (GG::GUI::GetGUI()->Ticks() - g_chat_display_show_time) / 1000)) {
         m_chat_display->Hide();

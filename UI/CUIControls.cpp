@@ -913,15 +913,15 @@ void CUISlider::Render()
     int tab_width = GetOrientation() == GG::VERTICAL ? Value(Tab()->Height()) : Value(Tab()->Width());
     GG::Pt ul, lr;
     if (GetOrientation() == GG::VERTICAL) {
-        ul.x = ((LR.x + UL.x) - LineWidth()) / 2;
-        lr.x   = ul.x + LineWidth();
+        ul.x = ((LR.x + UL.x) - static_cast<int>(LineWidth())) / 2;
+        lr.x   = ul.x + static_cast<int>(LineWidth());
         ul.y = UL.y + tab_width / 2;
         lr.y   = LR.y - tab_width / 2;
     } else {
         ul.x = UL.x + tab_width / 2;
         lr.x   = LR.x - tab_width / 2;
-        ul.y = ((LR.y + UL.y) - LineWidth()) / 2;
-        lr.y   = ul.y + LineWidth();
+        ul.y = ((LR.y + UL.y) - static_cast<int>(LineWidth())) / 2;
+        lr.y   = ul.y + static_cast<int>(LineWidth());
     }
     GG::FlatRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, 1);
     Tab()->OffsetMove(UpperLeft());

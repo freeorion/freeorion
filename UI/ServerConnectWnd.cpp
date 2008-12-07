@@ -145,7 +145,7 @@ void ServerConnectWnd::RefreshServerList()
     PopulateServerList();
 }
 
-void ServerConnectWnd::HostOrJoinClicked(int idx)
+void ServerConnectWnd::HostOrJoinClicked(std::size_t idx)
 {
     EnableDisableControls();
 }

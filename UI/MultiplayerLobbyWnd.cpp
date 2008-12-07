@@ -234,7 +234,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     m_saved_games_list->Disable();
 
     if (!m_host) {
-        for (int i = 0; i < m_new_load_game_buttons->NumButtons(); ++i) {
+        for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i) {
             m_new_load_game_buttons->DisableButton(i);
         }
         m_galaxy_setup_panel->Disable();
@@ -322,15 +322,15 @@ void MultiplayerLobbyWnd::LobbyExit(int player_id)
         m_start_game_bn->Disable(!CanStart());
 }
 
-void MultiplayerLobbyWnd::NewLoadClicked(int idx)
+void MultiplayerLobbyWnd::NewLoadClicked(std::size_t idx)
 {
     switch (idx) {
-    case 0:
+    case std::size_t(0):
         m_lobby_data.m_new_game = true;
         m_galaxy_setup_panel->Disable(false);
         m_saved_games_list->Disable();
         break;
-    case 1:
+    case std::size_t(1):
         m_lobby_data.m_new_game = false;
         m_galaxy_setup_panel->Disable();
         m_saved_games_list->Disable(false);

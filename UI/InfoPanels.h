@@ -369,7 +369,7 @@ class IconTextBrowseWnd : public GG::BrowseInfoWnd {
 public:
     IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text,
                       const std::string& main_text);
-    virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const;
+    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void Render();
 
 private:

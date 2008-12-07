@@ -38,9 +38,9 @@ namespace {
             initialized(false)
         {}
 
-        virtual bool WndHasBrowseInfo(const Wnd* wnd, int mode) const {
+        virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
             const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-            assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
+            assert(mode <= browse_modes.size());
             return true;
         }
 
@@ -95,7 +95,7 @@ namespace {
             initialized = true;
         }
 
-        virtual void UpdateImpl(int mode, const Wnd* target) {
+        virtual void UpdateImpl(std::size_t mode, const Wnd* target) {
             if (!initialized)
                 Initialize();
         }
@@ -535,14 +535,13 @@ void PopulationPanel::Update()
     m_pop_stat->SetValue(pop->ProjectedMeterPoints(METER_POPULATION));
     m_health_stat->SetValue(pop->ProjectedMeterPoints(METER_HEALTH));
 
-
     // tooltips
     if (meter_map) {
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
+        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
         m_pop_stat->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_HEALTH, obj, *meter_map));
+        browse_wnd.reset(new MeterBrowseWnd(METER_HEALTH, obj, *meter_map));
         m_health_stat->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
     }
@@ -2212,9 +2211,9 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
     Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), ROW_HEIGHT + m_main_text->Height())));
 }
 
-bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, int mode) const {
+bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
     const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-    assert(0 <= mode && mode <= static_cast<int>(browse_modes.size()));
+    assert(mode <= browse_modes.size());
     return true;
 }
 

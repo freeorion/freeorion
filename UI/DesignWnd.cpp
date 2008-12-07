@@ -1119,7 +1119,7 @@ public:
                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 private:
     void            DoLayout();
-    void            WndSelected(int index);
+    void            WndSelected(std::size_t index);
 
     int                                 m_empire_id;
 
@@ -1267,7 +1267,7 @@ void DesignWnd::BaseSelector::DoLayout() {
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
 }
 
-void DesignWnd::BaseSelector::WndSelected(int index) {
+void DesignWnd::BaseSelector::WndSelected(std::size_t index) {
     Reset();
 }
 

@@ -76,7 +76,7 @@ void CreditsWnd::Render()
 
     GG::Y offset(m_co);
 
-    offset -= (GG::GUI::GetGUI()->Ticks() - m_start_time)/40;
+    offset -= static_cast<int>((GG::GUI::GetGUI()->Ticks() - m_start_time)/40);
 
     int transparency = 255;
 

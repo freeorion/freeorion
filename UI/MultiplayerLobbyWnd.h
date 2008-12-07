@@ -50,7 +50,7 @@ public:
 
 private:
     void Init();
-    void NewLoadClicked(int idx);
+    void NewLoadClicked(std::size_t idx);
     void GalaxySetupPanelChanged();
     void SaveGameChanged(GG::DropDownList::iterator it);
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);

@@ -78,7 +78,7 @@ void SigHandler(int sig)
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+    const unsigned int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -202,7 +202,7 @@ void HumanClientApp::NewSinglePlayerGame()
 
     bool failed = false;
     if (galaxy_wnd.EndedWithOk()) {
-        int start_time = Ticks();
+        unsigned int start_time = Ticks();
         while (!Networking().ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
@@ -253,7 +253,7 @@ void HumanClientApp::MulitplayerGame()
                 }
                 server_name = "localhost";
             }
-            int start_time = Ticks();
+            unsigned int start_time = Ticks();
             while (!Networking().ConnectToServer(server_name)) {
                 if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
@@ -305,8 +305,7 @@ void HumanClientApp::LoadSinglePlayerGame()
 
             if (!GetOptionsDB().Get<bool>("force-external-server"))
                 StartServer();
-            int start_time = Ticks();
-            const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+            unsigned int start_time = Ticks();
             while (!Networking().ConnectToLocalHostServer()) {
                 if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
