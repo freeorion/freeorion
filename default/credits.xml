@@ -20,6 +20,7 @@
       <PERSON name="Adrian Schweizer"     nick="LaplaceOperator"  task="Programming"/>
       <PERSON name="Karl Chen"	          nick="quarl"            task="Programming"/>
       <PERSON name="Eliot Eshelman"       nick="igrok"            task="Programming"/>
+      <PERSON name="stride"               nick=""                 task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"      nick="Aquitaine"        task="Game Design"/>
