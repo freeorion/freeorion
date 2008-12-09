@@ -889,8 +889,10 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::Sel
     if (selections.size() == 1) {
         GG::ListBox::iterator row = *selections.begin();
         BuildType build_type = m_build_types[row];
-        if (build_type == BT_SHIP)
-            DisplayIDedBuildItemSignal(m_build_types[row], boost::lexical_cast<int>((*row)->DragDropDataType()));
+        if (build_type == BT_BUILDING)
+            DisplayNamedBuildItemSignal(BT_BUILDING, (*row)->DragDropDataType());
+        else if (build_type == BT_SHIP)
+            DisplayIDedBuildItemSignal(BT_SHIP, boost::lexical_cast<int>((*row)->DragDropDataType()));
     }
 }
 
@@ -899,8 +901,10 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
     if ((*it)->Disabled())
         return;
     BuildType build_type = m_build_types[it];
-    if (build_type == BT_SHIP)
-        RequestIDedBuildItemSignal(build_type, boost::lexical_cast<int>((*it)->DragDropDataType()), 1);
+    if (build_type == BT_BUILDING)
+        RequestNamedBuildItemSignal(BT_BUILDING, (*it)->DragDropDataType(), 1);
+    else if (build_type == BT_SHIP)
+        RequestIDedBuildItemSignal(BT_SHIP, boost::lexical_cast<int>((*it)->DragDropDataType()), 1);
 }
 
 

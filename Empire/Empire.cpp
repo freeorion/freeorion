@@ -849,8 +849,10 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
 
 std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const
 {
-    if (item.build_type == BT_SHIP)
-        return ProductionCostAndTime(item.build_type, item.design_id);
+    if (item.build_type == BT_BUILDING)
+        return ProductionCostAndTime(BT_BUILDING, item.name);
+    else if (item.build_type == BT_SHIP)
+        return ProductionCostAndTime(BT_SHIP, item.design_id);
     else
         throw std::invalid_argument("Empire::ProductionCostAndTime was passed a ProductionItem with an invalid BuildType");
     return std::make_pair(-1.0, -1);

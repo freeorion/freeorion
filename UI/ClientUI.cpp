@@ -355,12 +355,12 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("app-width",             "OPTIONS_DB_APP_WIDTH",     1024,   RangedValidator<int>(800, 2048));
-        db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",    768,    RangedValidator<int>(600, 1536));
-        db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",   32,     RangedStepValidator<int>(8, 16, 32));
+        db.Add("app-width",             "OPTIONS_DB_APP_WIDTH",     1024,       RangedValidator<int>(800, 2560));
+        db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",    768,        RangedValidator<int>(600, 1600));
+        db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",   32,         RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              "OPTIONS_DB_SHOW_FPS",      false);
         db.Add("limit-fps",             "OPTIONS_DB_LIMIT_FPS",     true);
-        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",       60.0,   RangedValidator<double>(10.0, 200.0));
+        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",       60.0,       RangedValidator<double>(10.0, 200.0));
 
         // sound
         db.Add("UI.sound.enabled",                              "OPTIONS_DB_UI_SOUND_ENABLED",                  true,                   Validator<bool>());
@@ -389,11 +389,11 @@ namespace {
         db.Add<std::string>("UI.sound.balanced-focus",          "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS",           "balanced_select.wav");
 
         // fonts
-        db.Add<std::string>("UI.font",                  "OPTIONS_DB_UI_FONT",               "DejaVuSans.ttf");
-        db.Add<std::string>("UI.font-bold",             "OPTIONS_DB_UI_FONT_BOLD",          "DejaVuSans-Bold.ttf");
-        db.Add("UI.font-size",                          "OPTIONS_DB_UI_FONT_SIZE",          12,                             RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font",            "OPTIONS_DB_UI_TITLE_FONT",         "DejaVuSans.ttf");
-        db.Add("UI.title-font-size",                    "OPTIONS_DB_UI_TITLE_FONT_SIZE",    12,                             RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.font",                          "OPTIONS_DB_UI_FONT",                           "DejaVuSans.ttf");
+        db.Add<std::string>("UI.font-bold",                     "OPTIONS_DB_UI_FONT_BOLD",                      "DejaVuSans-Bold.ttf");
+        db.Add("UI.font-size",                                  "OPTIONS_DB_UI_FONT_SIZE",                      12,                     RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font",                    "OPTIONS_DB_UI_TITLE_FONT",                     "DejaVuSans.ttf");
+        db.Add("UI.title-font-size",                            "OPTIONS_DB_UI_TITLE_FONT_SIZE",                12,                     RangedValidator<int>(4, 40));
 
         // colors
         db.Add("UI.wnd-color",                      "OPTIONS_DB_UI_WND_COLOR",                      StreamableColor(GG::Clr(0, 0, 0, 210)),         Validator<StreamableColor>());
@@ -424,13 +424,13 @@ namespace {
         db.Add("UI.tech-progress",                  "OPTIONS_DB_UI_TECH_PROGRESS",                  StreamableColor(GG::Clr(40, 40, 40, 255)),      Validator<StreamableColor>());
 
         // misc
-        db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,     RangedValidator<int>(8, 30));
-        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,     RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size",              "OPTIONS_DB_UI_FLEET_BUTTON_SIZE",              1.0,    RangedValidator<double>(0.2, 2));
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,    RangedValidator<double>(0.5, 5));
+        db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,         RangedValidator<int>(8, 30));
+        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
+        db.Add("UI.fleet-button-size",              "OPTIONS_DB_UI_FLEET_BUTTON_SIZE",              1.0,        RangedValidator<double>(0.2, 2));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedValidator<double>(0.5, 5));
 
         // UI behavior
-        db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  1000,   RangedValidator<int>(0, 3000));
+        db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  1000,       RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows",         "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",         false);
         db.Add("UI.fleet-autoselect",               "OPTIONS_DB_UI_FLEET_AUTOSELECT",               true);
         db.Add("UI.window-quickclose",              "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",              true);
