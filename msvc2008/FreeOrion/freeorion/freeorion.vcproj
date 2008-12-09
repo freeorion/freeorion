@@ -275,15 +275,8 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\util\Version.cpp.in"
+				RelativePath="..\..\src\Version.cpp"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\..\util\Version.h"
