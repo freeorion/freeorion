@@ -221,13 +221,13 @@ void TextLinker::FindLinks()
                     tag->text == "ship" || tag->text == "tech" || tag->text == "building" || tag->text == "encyclopedia") {
                     link.type = tag->text;
                     if (tag->close_tag) {
-                        link.text_posn.second = curr_line.char_data[i].original_char_index;
+                        link.text_posn.second = curr_line.char_data[i].string_index;
                         link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
                         m_links.push_back(link);
                         link = Link();
                     } else {
                         link.data = tag->params[0];
-                        link.text_posn.first = curr_line.char_data[i].original_char_index;
+                        link.text_posn.first = curr_line.char_data[i].string_index;
                         for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
                             link.text_posn.first -= curr_line.char_data[i].tags[k]->OriginalStringChars();
                         }
