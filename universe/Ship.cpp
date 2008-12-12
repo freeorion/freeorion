@@ -6,14 +6,6 @@
 #include "Predicates.h"
 #include "ShipDesign.h"
 
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
-#include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-#include <stdexcept>
-
 
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),

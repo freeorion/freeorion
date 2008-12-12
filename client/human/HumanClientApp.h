@@ -18,7 +18,7 @@
 #include <vector>
 
 
-class HumanClientFSM;
+struct HumanClientFSM;
 class MultiplayerLobbyWnd;
 
 /** the application framework class for the human player FreeOrion client. */

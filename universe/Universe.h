@@ -36,7 +36,7 @@ struct PlayerSetupData;
 class Empire;
 struct UniverseObjectVisitor;
 class XMLElement;
-struct ShipDesign;
+class ShipDesign;
 class UniverseObject;
 class System;
 

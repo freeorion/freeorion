@@ -10,7 +10,7 @@ namespace Effect {
 }
 class Planet;
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 
 enum CaptureResult;

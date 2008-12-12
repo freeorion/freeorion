@@ -13,7 +13,7 @@
 #include "Enums.h"
 
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 namespace Effect {
     class EffectsGroup;

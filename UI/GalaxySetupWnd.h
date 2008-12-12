@@ -23,7 +23,7 @@ namespace GG {
 class CUIButton;
 class CUIStateButton;
 class EmpireColorSelector;
-class GalaxySetupData;
+struct GalaxySetupData;
 
 /** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiplayerLobbyWnd. */
 class GalaxySetupPanel : public GG::Control

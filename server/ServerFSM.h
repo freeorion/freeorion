@@ -20,9 +20,9 @@
 #include <vector>
 
 
-class MultiplayerLobbyData;
+struct MultiplayerLobbyData;
 class ServerApp;
-class SinglePlayerSetupData;
+struct SinglePlayerSetupData;
 class PlayerConnection;
 class PlayerSaveGameData;
 class ServerSaveGameData;

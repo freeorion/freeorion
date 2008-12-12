@@ -21,7 +21,7 @@ class Tech;
 class TurnProgressWnd;
 class BuildingType;
 namespace GG {
-    class Clr;
+    struct Clr;
     class Font;
     class SubTexture;
     class Texture;

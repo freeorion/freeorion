@@ -13,10 +13,10 @@
 
 class EmpireManager;
 class Message;
-class MultiplayerLobbyData;
+struct MultiplayerLobbyData;
 class OrderSet;
-class SaveGameUIData;
-class SinglePlayerSetupData;
+struct SaveGameUIData;
+struct SinglePlayerSetupData;
 class Universe;
 class XMLDoc;
 struct PlayerInfo;

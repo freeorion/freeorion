@@ -14,7 +14,7 @@
 class UniverseObject;
 
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
     typedef std::set<UniverseObject*> ObjectSet;
 }
 

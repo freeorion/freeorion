@@ -18,7 +18,7 @@ class CUIIconButton;
 class CUIScroll;
 class CUITextureButton;
 class RotatingPlanetControl;
-class UniverseObjectVisitor;
+struct UniverseObjectVisitor;
 class MultiIconValueIndicator;
 
 namespace GG {
