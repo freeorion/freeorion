@@ -202,6 +202,9 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
     case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
     case Message::REQUEST_NEW_DESIGN_ID: m_fsm.process_event(RequestDesignID(msg, player_connection)); break;
+#ifndef FREEORION_RELEASE
+    case Message::DEBUG:                 break;
+#endif
     default:
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \""
                                      << msg.Type() << "\".  Terminating connection.";
@@ -216,6 +219,9 @@ void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_
     case Message::HOST_SP_GAME: m_fsm.process_event(HostSPGame(msg, player_connection)); break;
     case Message::HOST_MP_GAME: m_fsm.process_event(HostMPGame(msg, player_connection)); break;
     case Message::JOIN_GAME:    m_fsm.process_event(JoinGame(msg, player_connection)); break;
+#ifndef FREEORION_RELEASE
+    case Message::DEBUG:                 break;
+#endif
     default:
         m_log_category.errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                      << msg.Type() << "\" for a non-player Message.  Terminating connection.";

@@ -8,12 +8,8 @@
 #include "../Empire/EmpireManager.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 
-#include <stdexcept>
 #include <cmath>
-
-#include <boost/format.hpp>
 
 namespace {
     const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement

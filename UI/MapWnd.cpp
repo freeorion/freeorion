@@ -377,45 +377,7 @@ MapWnd::MapWnd() :
     m_backgrounds.clear();
     m_bg_scroll_rate.clear();
 
-
-    // connect keyboard accelerators
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN), &MapWnd::OpenChatWindow, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL), &MapWnd::EndTurn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL), &MapWnd::EndTurn, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2), &MapWnd::ToggleSitRep, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3), &MapWnd::ToggleResearch, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4), &MapWnd::ToggleProduction, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5), &MapWnd::ToggleDesign, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10), &MapWnd::ShowMenu, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s), &MapWnd::CloseSystemView, this);
-
-    // Keys for zooming
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r), &MapWnd::KeyboardZoomOut, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS), &MapWnd::KeyboardZoomOut, this);
-
-    // Keys for showing systems
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d), &MapWnd::ZoomToHomeSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x), &MapWnd::ZoomToPrevOwnedSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c), &MapWnd::ZoomToNextOwnedSystem, this);
-
-    // Keys for showing fleets
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f), &MapWnd::ZoomToPrevIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g), &MapWnd::ZoomToNextIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v), &MapWnd::ZoomToPrevFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b), &MapWnd::ZoomToNextFleet, this);
-
-#ifndef FREEORION_RELEASE
-    // special development-only key combo that dumps ValueRef, Condition, and Effect regression tests using the current
-    // Universe
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL), &RequestRegressionTestDump);
-#endif
+    ConnectKeyboardAcceleratorSignals();
 
     g_chat_edit_history.push_front("");
 
@@ -2926,6 +2888,53 @@ bool MapWnd::ZoomToNextFleet()
     return true;
 }
 
+void MapWnd::ConnectKeyboardAcceleratorSignals()
+{
+    // disconnect and clear old signals
+    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin(); it != m_keyboard_accelerator_signals.end(); ++it)
+        it->disconnect();
+    m_keyboard_accelerator_signals.clear();
+
+    // connect new signals
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE),   &MapWnd::ReturnToMap, this);
+
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),   &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
+
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL),     &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
+
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2),       &MapWnd::ToggleSitRep, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3),       &MapWnd::ToggleResearch, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4),       &MapWnd::ToggleProduction, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5),       &MapWnd::ToggleDesign, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),      &MapWnd::ShowMenu, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s),        &MapWnd::CloseSystemView, this);
+
+    // Keys for zooming
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),        &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),  &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),        &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS), &MapWnd::KeyboardZoomOut, this);
+
+    // Keys for showing systems
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d),        &MapWnd::ZoomToHomeSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x),        &MapWnd::ZoomToPrevOwnedSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c),        &MapWnd::ZoomToNextOwnedSystem, this);
+
+    // Keys for showing fleets
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),        &MapWnd::ZoomToPrevIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),        &MapWnd::ZoomToNextIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),        &MapWnd::ZoomToPrevFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),        &MapWnd::ZoomToNextFleet, this);
+
+#ifndef FREEORION_RELEASE
+    // Previously-used but presently ignored development-only key combo for dumping
+    // ValueRef, Condition, and Effect regression tests using the current Universe
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL),  &RequestRegressionTestDump);
+#endif
+}
+
 void MapWnd::SetAccelerators()
 {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE);
@@ -2939,6 +2948,7 @@ void MapWnd::SetAccelerators()
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F3);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F4);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F5);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_s);
 
@@ -2966,40 +2976,12 @@ void MapWnd::SetAccelerators()
 
 void MapWnd::RemoveAccelerators()
 {
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_ESCAPE);
-
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER);
-    
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
-
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F2);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F3);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F4);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F10);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_s);
-
-    // Zoom keys
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_e);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_PLUS);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_MINUS);
-
-    // Keys for showing systems
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_d);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_x);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_c);
-
-    // Keys for showing fleets
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_f);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_g);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_v);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_b);
-
-#ifndef FREEORION_RELEASE
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, GG::MOD_KEY_CTRL);
-#endif
+    GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
+    while (i != GG::GUI::GetGUI()->accel_end()) {
+        GG::GUI::GetGUI()->RemoveAccelerator(i->first, i->second);
+        i = GG::GUI::GetGUI()->accel_begin();
+    }
+    m_disabled_accels_list.clear();
 }
 
 void MapWnd::DisableAlphaNumAccels()

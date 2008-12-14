@@ -204,9 +204,10 @@ private:
     bool ZoomToPrevFleet();
     bool ZoomToNextFleet();
 
-    void SetAccelerators();
+    void ConnectKeyboardAcceleratorSignals();   //!< connects signals from keyboard accelerators to various GUI responses
+    void SetAccelerators();                     //!< tells the GUI which keypress combinations to track and emit signals for when they occur
+    void RemoveAccelerators();                  //!< tells GUI to stop emitting signals for keypresses
 
-    void RemoveAccelerators();
     /** Disables keyboard accelerators that use an alphanumeric key without modifiers. This is useful if a
      * keyboard input is required, so that the keys aren't interpreted as an accelerator.
      * @note Repeated calls of DisableAlphaNumAccels have to be followed by the same number of calls to 
@@ -241,6 +242,7 @@ private:
     std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
     std::vector<boost::signals::connection>         m_fleet_state_change_signals;
 
+    std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
 
     std::map<const Fleet*, MovementLineData>        m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<const Fleet*,
