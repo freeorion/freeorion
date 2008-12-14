@@ -185,6 +185,7 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::HUMAN_PLAYER_CHAT:
+        m_AI->HandleChatMessage(msg.SendingPlayer(), msg.Text());
         break;
 
     default: {
