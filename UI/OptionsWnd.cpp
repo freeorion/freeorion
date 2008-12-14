@@ -731,6 +731,7 @@ void OptionsWnd::Init()
     EndSection();
     BeginSection(UserString("OPTIONS_GALAXY_MAP"));
     BoolOption("UI.galaxy-gas-background",          UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption("UI.galaxy-starfields",              UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
     BoolOption("UI.optimized-system-rendering",     UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
     DoubleOption("UI.starlane-thickness",           UserString("OPTIONS_STARLANE_THICKNESS"));
     BoolOption("UI.resource-starlane-colouring",    UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));

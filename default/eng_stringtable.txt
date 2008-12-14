@@ -153,6 +153,9 @@ The number of outgoing messages to keep in the chat edit box history.
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
 
+OPTIONS_DB_GALAXY_MAP_STARFIELDS
+Render starsfields around systems. May slow rendering on older systems.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
 
@@ -871,6 +874,9 @@ Galaxy Map
 
 OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
+
+OPTIONS_GALAXY_MAP_STARFIELDS
+Galaxy map starfields rendering
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
 Optimized system rendering
