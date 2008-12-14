@@ -2976,9 +2976,9 @@ void MapWnd::SetAccelerators()
 
 void MapWnd::RemoveAccelerators()
 {
-    GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
+    GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
     while (i != GG::GUI::GetGUI()->accel_end()) {
-        GG::GUI::GetGUI()->RemoveAccelerator(i->first, i->second);
+        GG::GUI::GetGUI()->RemoveAccelerator(i);
         i = GG::GUI::GetGUI()->accel_begin();
     }
     m_disabled_accels_list.clear();
