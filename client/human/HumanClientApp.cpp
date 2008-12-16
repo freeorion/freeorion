@@ -28,8 +28,6 @@
 
 #include <GG/BrowseInfoWnd.h>
 
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
@@ -95,10 +93,10 @@ namespace {
  
 HumanClientApp::HumanClientApp() : 
     ClientApp(), 
-    SDLGUI(GetOptionsDB().Get<int>("app-width"), 
+    SDLGUI(GetOptionsDB().Get<int>("app-width"),
            GetOptionsDB().Get<int>("app-height"),
            false, "freeorion"),
-    m_fsm(new HumanClientFSM(*this)),
+    m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
     m_turns_since_autosave(0),
@@ -107,6 +105,7 @@ HumanClientApp::HumanClientApp() :
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
 #endif
+    m_fsm = new HumanClientFSM(*this);
 
     const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").native_file_string());
 

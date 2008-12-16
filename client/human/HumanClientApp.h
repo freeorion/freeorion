@@ -8,8 +8,6 @@
 
 #include <GG/SDL/SDLGUI.h>
 
-#include <log4cpp/Category.hh>
-
 #include <boost/filesystem/path.hpp>
 
 #include <string>
