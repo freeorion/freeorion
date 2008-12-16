@@ -56,6 +56,7 @@ def startNewGame():
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):
+    global foAIstate
     print "Resuming loaded game"
     try:
         foAIstate = AIstate.AIstate()
