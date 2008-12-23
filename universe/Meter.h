@@ -4,6 +4,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <string>
 
 class Universe;
 class ServerApp;
@@ -26,6 +27,8 @@ public:
     double  InitialMax() const;                 ///< returns the maximum value of the meter, as it was at the beginning of the turn
     double  PreviousCurrent() const;            ///< returns the current value of the meter, as it was at the beginning of last turn
     double  PreviousMax() const;                ///< returns the maximum value of the meter, as it was at the beginning of last turn
+
+    std::string Dump() const;                   ///< returns text of meter values
 
     void    BackPropegate();                    ///< sets previous current and max to initial current and max, and then sets initial current and max to current and max
 

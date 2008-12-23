@@ -354,16 +354,15 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row
 /** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or
     "[population icon] 66 (+5)", where [... icon] is an icon image, not text.
     The icon may have one or two numerical values.  If one, just that number is displayed.  If two, the first
-    number is displayed followed by the second in brackets "()"
-  */
+    number is displayed followed by the second in brackets "()" */
 class StatisticIcon : public GG::Control
 {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture, 
+    StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool integerize, bool showsign,
                   GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< initializes with one value
-    
+
     StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
                   bool integerize0, bool integerize1, bool showsign0, bool showsign1,
@@ -385,7 +384,7 @@ private:
     std::vector<int>    m_digits;
     std::vector<bool>   m_integerize;
     std::vector<bool>   m_show_signs;
-    
+
     GG::StaticGraphic*  m_icon;
     GG::TextControl*    m_text;
 };

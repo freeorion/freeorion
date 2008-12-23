@@ -43,12 +43,14 @@ namespace {
         return PlanetDataTables()["PlanetEnvHealthMod"][0][environment];
     }
 
-    void GrowPlanetMeters(Meter* meter, double updated_current_construction) {
-        // TODO: something better here...
+    void GrowMeter(Meter* meter, double updated_current_construction) {
+        // TODO: something better here, likely depending on meter type
         assert(meter);
-        double delta = updated_current_construction / (10.0 + meter->Current());
-        double new_cur = std::min(meter->Max(), meter->Current() + delta);
-        meter->SetCurrent(new_cur);
+        double initial_current =    meter->InitialCurrent();
+
+        double delta =              updated_current_construction / (10.0 + initial_current);
+
+        meter->AdjustCurrent(delta);
     }
 
     double SizeRotationFactor(PlanetSize size)
@@ -240,7 +242,8 @@ double Planet::ProjectedCurrentMeter(MeterType type) const
         original_meter = GetMeter(type);
         assert(original_meter);
         meter = Meter(*original_meter);
-        GrowPlanetMeters(&meter, ProjectedCurrentMeter(METER_CONSTRUCTION));
+        GrowMeter(&meter, ProjectedCurrentMeter(METER_CONSTRUCTION));
+        meter.Clamp();
         return meter.Current();
         break;
     default:
@@ -541,6 +544,9 @@ void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void Planet::PopGrowthProductionResearchPhase()
 {
+    if (Name() == "Hagalaz II") {
+        Logger().debugStream() << "Hagalaz II Growth";
+    }
     // do not do production if planet was just conquered
     if (m_just_conquered)
         m_just_conquered = false;
@@ -549,12 +555,12 @@ void Planet::PopGrowthProductionResearchPhase()
 
     PopCenter::PopGrowthProductionResearchPhase();
 
-    double current_construction = GetMeter(METER_CONSTRUCTION)->Current();
-    GrowPlanetMeters(GetMeter(METER_SUPPLY), current_construction);
-    GrowPlanetMeters(GetMeter(METER_SHIELD), current_construction);
-    GrowPlanetMeters(GetMeter(METER_DEFENSE), current_construction);
-    GrowPlanetMeters(GetMeter(METER_DETECTION), current_construction);
-    GrowPlanetMeters(GetMeter(METER_STEALTH), current_construction);
+    double current_construction = GetMeter(METER_CONSTRUCTION)->Current();  // want current construction, that has been updated from initial current construction
+    GrowMeter(GetMeter(METER_SUPPLY),       current_construction);
+    GrowMeter(GetMeter(METER_SHIELD),       current_construction);
+    GrowMeter(GetMeter(METER_DEFENSE),      current_construction);
+    GrowMeter(GetMeter(METER_DETECTION),    current_construction);
+    GrowMeter(GetMeter(METER_STEALTH),      current_construction);
 
     StateChangedSignal();
 }

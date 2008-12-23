@@ -260,7 +260,7 @@ namespace FreeOrionPython {
         ///////////////////
         class_<PopCenter, noncopyable>("popCenter", no_init)
             .add_property("inhabitants",        &PopCenter::Inhabitants)
-            .add_property("availableFood",      &PopCenter::AvailableFood)
+            .add_property("allocatedFood",      &PopCenter::AllocatedFood)
         ;
 
         //////////////////

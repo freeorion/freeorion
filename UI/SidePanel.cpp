@@ -650,7 +650,13 @@ namespace {
     }
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////
+// SidePanel::PlanetPanel
+////////////////////////////////////////////////
+namespace {
+    static const bool SHOW_ALL_PLANET_PANELS = true;
+}
+
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star_type) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(MAX_PLANET_DIAMETER), GG::CLICKABLE),
     m_planet_id(planet.ID()),
@@ -842,7 +848,7 @@ void SidePanel::PlanetPanel::Refresh()
         m_planet_name->SetTextColor(planet_empire ? planet_empire->Color() : ClientUI::TextColor());
     }
 
-    if (owner == OS_NONE) {
+    if (owner == OS_NONE && !SHOW_ALL_PLANET_PANELS) {
         AttachChild(m_env_size);
         DetachChild(m_population_panel);
         DetachChild(m_resource_panel);

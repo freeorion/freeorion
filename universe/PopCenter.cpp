@@ -43,12 +43,12 @@ namespace {
 }
 
 PopCenter::PopCenter(int race) :
-    m_race(race), m_available_food(0.0)
+    m_race(race), m_allocated_food(0.0)
 {
 }
 
 PopCenter::PopCenter() :
-    m_race(-1), m_available_food(0.0)
+    m_race(-1), m_allocated_food(0.0)
 {
 }
    
@@ -79,7 +79,9 @@ double PopCenter::FuturePopGrowth() const
 {
     double max = GetMeter(METER_POPULATION)->Max();
     double cur = GetMeter(METER_POPULATION)->Current();
-    return std::max(-cur, std::min(FuturePopGrowthMax(), std::min(AvailableFood(), max) - cur));           
+    Logger().debugStream() << "PopCenter::FuturePopGrowth  growth max: " << FuturePopGrowthMax() << "  allocated food: " << AllocatedFood();
+
+    return std::max(-cur, std::min(FuturePopGrowthMax(), std::min(AllocatedFood(), max) - cur));
 }
 
 double PopCenter::FuturePopGrowthMax() const
@@ -173,8 +175,19 @@ void PopCenter::PopGrowthProductionResearchPhase()
     Meter* pop = GetMeter(METER_POPULATION);
     Meter* health = GetMeter(METER_HEALTH);
 
-    pop->AdjustCurrent(FuturePopGrowth());
-    health->AdjustCurrent(health->InitialCurrent() * (((health->InitialMax() + 1.0) - health->InitialCurrent()) / (health->InitialMax() + 1.0)));
+    double pop_adjustment =         FuturePopGrowth();
+
+    pop->AdjustCurrent(pop_adjustment);
+
+    double health_initial_current = health->InitialCurrent();
+    double health_initial_max =     health->InitialMax();
+
+
+    if (health_initial_current < health_initial_max) {
+        double health_adjustment = (((health_initial_max + 1.0) - health_initial_current) / (health_initial_max + 1.0));
+        health->AdjustCurrent(health_adjustment);
+        Logger().debugStream() << "PopCenter::PopGrowthProductionResearchPhase adjusted current health to: " << health->Current();
+    }
 }
 
 void PopCenter::Reset(double max_pop_mod, double max_health_mod)
@@ -182,5 +195,5 @@ void PopCenter::Reset(double max_pop_mod, double max_health_mod)
     GetMeter(METER_POPULATION)->Set(0.0, max_pop_mod);
     GetMeter(METER_HEALTH)->Set(max_health_mod, max_health_mod);
     m_race = -1;
-    m_available_food = 0.0;
+    m_allocated_food = 0.0;
 }

@@ -118,7 +118,7 @@ namespace {
                 clr = ClientUI::StatIncrColor();
             else if (change < 0.0)
                 clr = ClientUI::StatDecrColor();
-            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>");
+            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>"); // crahses itermittantly due to UTF-8 invalid text error
             m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
                                                   DoubleToString(meter_cur, 3, false, false) %
                                                   DoubleToString(meter_max, 3, false, false)));
