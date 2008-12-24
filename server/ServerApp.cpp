@@ -678,35 +678,10 @@ void ServerApp::ProcessTurns()
     // process production and growth phase
 
 
-    // DEBUG
-    Logger().debugStream() << "planets before applying effects and updating meters";
-    std::vector<Planet*> planets = universe.FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        if (planet->Name() != "Hagalaz II") continue;
-        Logger().debugStream() << "planet: " << planet->Name();
-        for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-            if (const Meter* meter = planet->GetMeter(meter_type))
-                Logger().debugStream() << "...type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
-    }
-    // END DEBUG
-
 
     // execute all effects and update meters prior to production, research, etc.
     universe.ApplyAllEffectsAndUpdateMeters();
 
-
-    // DEBUG
-    Logger().debugStream() << "planets after applying effects and updating meters";
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        if (planet->Name() != "Hagalaz II") continue;
-        Logger().debugStream() << "planet: " << planet->Name();
-        for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-            if (const Meter* meter = planet->GetMeter(meter_type))
-                Logger().debugStream() << "...type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
-    }
-    // END DEBUG
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
@@ -721,7 +696,8 @@ void ServerApp::ProcessTurns()
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
-    // consume distributed resources on queues
+    // Consume distributed resources to planets and on queues, create new objects for completed production and
+    // give techs to empires that have researched them
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         empire = empires.Lookup(it->first);
         empire->CheckResearchProgress();
@@ -731,36 +707,11 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // DEBUG
-    Logger().debugStream() << "planets after updating pools and growth";
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        if (planet->Name() != "Hagalaz II") continue;
-        Logger().debugStream() << "planet: " << planet->Name();
-        for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-            if (const Meter* meter = planet->GetMeter(meter_type))
-                Logger().debugStream() << "...type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
-    }
-    // END DEBUG
-
-
     // re-execute all meter-related effects after production, so that new UniverseObjects created during production
     // will have effects applied to them this turn, allowing (for example) ships to have max fuel meters greater than
     // 0 on the turn they are created.
     universe.ApplyMeterEffectsAndUpdateMeters();
 
-
-    // DEBUG
-    Logger().debugStream() << "planets after applying effects and updating meters... again";
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        if (planet->Name() != "Hagalaz II") continue;
-        Logger().debugStream() << "planet: " << planet->Name();
-        for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-            if (const Meter* meter = planet->GetMeter(meter_type))
-                Logger().debugStream() << "...type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
-    }
-    // END DEBUG
 
 
     // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
@@ -772,17 +723,6 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // DEBUG
-    Logger().debugStream() << "planets after growth and meter clamping";
-    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        if (planet->Name() != "Hagalaz II") continue;
-        Logger().debugStream() << "planet: " << planet->Name();
-        for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-            if (const Meter* meter = planet->GetMeter(meter_type))
-                Logger().debugStream() << "...type: " << boost::lexical_cast<std::string>(meter_type) << ": " << meter->Dump();
-    }
-    // END DEBUG
 
     // copy latest updated current meter values to initial current values, and initial current values
     // to previous values, so that clients will have this information based on values after all changes

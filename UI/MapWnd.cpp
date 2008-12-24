@@ -2438,6 +2438,7 @@ bool MapWnd::ToggleSitRep()
     if (m_sitrep_panel->Visible()) {
         DetachChild(m_sitrep_panel);
         m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
+        m_btn_siterep->MarkNotSelected();
     } else {
         // hide other "competing" windows
         m_research_wnd->Hide();
@@ -2460,6 +2461,12 @@ bool MapWnd::ToggleSitRep()
         AttachChild(m_sitrep_panel);
         MoveChildUp(m_sitrep_panel);
         m_sitrep_panel->Show();
+
+        // indicate selections on buttons
+        m_btn_siterep->MarkSelectedGray();
+        m_btn_research->MarkNotSelected();
+        m_btn_production->MarkNotSelected();
+        m_btn_design->MarkNotSelected();
     }
     return true;
 }
@@ -2469,6 +2476,7 @@ bool MapWnd::ToggleResearch()
     ClearProjectedFleetMovementLines();
     if (m_research_wnd->Visible()) {
         m_research_wnd->Hide();
+        m_btn_research->MarkNotSelected();
     } else {
         // hide other "competing" windows
         m_sitrep_panel->Hide();
@@ -2487,6 +2495,12 @@ bool MapWnd::ToggleResearch()
         // show the research window
         m_research_wnd->Show();
         GG::GUI::GetGUI()->MoveUp(m_research_wnd);
+
+        // indicate selections on buttons
+        m_btn_siterep->MarkNotSelected();
+        m_btn_research->MarkSelectedGray();
+        m_btn_production->MarkNotSelected();
+        m_btn_design->MarkNotSelected();
     }
     return true;
 }
@@ -2497,6 +2511,7 @@ bool MapWnd::ToggleProduction()
     if (m_production_wnd->Visible()) {
         m_production_wnd->Hide();
         m_in_production_view_mode = false;
+        m_btn_production->MarkNotSelected();
         ShowAllPopups();
     } else {
         // hide other "competing" windows
@@ -2518,6 +2533,13 @@ bool MapWnd::ToggleProduction()
 
         GG::GUI::GetGUI()->MoveUp(m_production_wnd);
 
+        // indicate selections on buttons
+        m_btn_siterep->MarkNotSelected();
+        m_btn_research->MarkNotSelected();
+        m_btn_production->MarkSelectedGray();
+        m_btn_design->MarkNotSelected();
+
+
         // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
         if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
             if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
@@ -2532,6 +2554,7 @@ bool MapWnd::ToggleDesign()
     ClearProjectedFleetMovementLines();
     if (m_design_wnd->Visible()) {
         m_design_wnd->Hide();
+        m_btn_design->MarkNotSelected();
         EnableAlphaNumAccels();
     } else {
         // hide other "competing" windows
@@ -2551,6 +2574,12 @@ bool MapWnd::ToggleDesign()
         GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
         DisableAlphaNumAccels();
         m_design_wnd->Reset();
+
+        // indicate selections on buttons
+        m_btn_siterep->MarkNotSelected();
+        m_btn_research->MarkNotSelected();
+        m_btn_production->MarkNotSelected();
+        m_btn_design->MarkSelectedGray();
     }
     return true;
 }
@@ -2560,9 +2589,11 @@ bool MapWnd::ShowMenu()
     if (!m_menu_showing) {
         ClearProjectedFleetMovementLines();
         m_menu_showing = true;
+        m_btn_menu->MarkSelectedGray();
         InGameMenu menu;
         menu.Run();
         m_menu_showing = false;
+        m_btn_menu->MarkNotSelected();
     }
     return true;
 }
@@ -2971,7 +3002,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals()
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),   &MapWnd::OpenChatWindow, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
 
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL),     &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN,   GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
 
     GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2),       &MapWnd::ToggleSitRep, this);

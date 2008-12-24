@@ -1904,14 +1904,9 @@ void Empire::CheckProductionProgress()
                 ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);  // ensures ship starts with some fuel.  will be clamped to max value after effects are applied to set that max value appropriately
 
                 int ship_id = universe.Insert(ship);
-#if 0
-                const ShipDesign* ship_design = GetShipDesign(m_production_queue[i].item.design_id);
-                std::string ship_name(ship_design->Name());
-                ship_name += boost::lexical_cast<std::string>(ship_id);
-                ship->Rename(ship_name);
-#else
+
                 ship->Rename(NewShipName());
-#endif
+
                 fleet->AddShip(ship_id);
 
                 // rename fleet, given its id and the ship that is in it
@@ -1940,9 +1935,9 @@ void Empire::CheckProductionProgress()
         m_production_queue.erase(*it);
     }
 
+    // update minerals stockpile.  TODO: Update this to work like food distribution and only stockpile within the group of resource-
+    // sharing systems that have access to the stockpile.
     m_resource_pools[RE_MINERALS]->SetStockpile(m_resource_pools[RE_MINERALS]->TotalAvailable() - m_production_queue.TotalPPsSpent());
-    // can uncomment following line when / if industry stockpiling is allowed...
-    // m_resource_pools[RE_INDUSTRY]->SetStockpile(m_resource_pools[RE_INDUSTRY]->TotalAvailable() - m_production_queue.TotalPPsSpent());
 }
 
 void Empire::CheckTradeSocialProgress()
@@ -2075,14 +2070,19 @@ void Empire::InitResourcePools()
     m_resource_pools[RE_TRADE]->SetSystemSupplyGroups(sets_set);
 
     // set stockpile location
+    m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+    m_resource_pools[RE_RESEARCH]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+
     const UniverseObject* capitol = GetUniverse().Object(CapitolID());
     if (capitol) {
         int system_id = capitol->SystemID();
         m_resource_pools[RE_MINERALS]->SetStockpileSystem(system_id);
         m_resource_pools[RE_FOOD]->SetStockpileSystem(system_id);
-        m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(system_id);
-        m_resource_pools[RE_RESEARCH]->SetStockpileSystem(system_id);
         m_resource_pools[RE_TRADE]->SetStockpileSystem(system_id);
+    } else {
+        m_resource_pools[RE_MINERALS]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+        m_resource_pools[RE_FOOD]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+        m_resource_pools[RE_TRADE]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
     }
 }
 

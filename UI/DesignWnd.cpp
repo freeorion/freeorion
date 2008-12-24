@@ -1668,12 +1668,13 @@ void  DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
 }
 
 void DesignWnd::MainPanel::AddPart(const PartType* part) {
-    for (unsigned int i = 0; i < m_slots.size(); ++i) {
+    if (!part) return;
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find out that can mount part
         const ShipSlotType slot_type = m_slots[i]->SlotType();
-        const PartType* part_type = m_slots[i]->GetPart();
+        const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
 
-        if (!part_type && part && part->CanMountInSlotType(slot_type)) {
-            SetPart(part, i);
+        if (!part_type && part->CanMountInSlotType(slot_type)) {    // ... and if the part can mount here
+            SetPart(part, i);                                       // add part to slot
             return;
         }
     }
