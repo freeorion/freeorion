@@ -217,19 +217,20 @@ void TextLinker::FindLinks()
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
             for (unsigned int j = 0; j < curr_line.char_data[i].tags.size(); ++j) {
                 const boost::shared_ptr<GG::Font::FormattingTag>& tag = curr_line.char_data[i].tags[j];
-                if (tag->text == "planet" || tag->text == "system" || tag->text == "fleet" ||
-                    tag->text == "ship" || tag->text == "tech" || tag->text == "building" || tag->text == "encyclopedia") {
-                    link.type = tag->text;
+                if (tag->tag_name == "planet" || tag->tag_name == "system" || tag->tag_name == "fleet" ||
+                    tag->tag_name == "ship" || tag->tag_name == "tech" || tag->tag_name == "building" ||
+                    tag->tag_name == "encyclopedia") {
+                    link.type = tag->tag_name;
                     if (tag->close_tag) {
-                        link.text_posn.second = curr_line.char_data[i].string_index;
+                        link.text_posn.second = Value(curr_line.char_data[i].string_index);
                         link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
                         m_links.push_back(link);
                         link = Link();
                     } else {
                         link.data = tag->params[0];
-                        link.text_posn.first = curr_line.char_data[i].string_index;
+                        link.text_posn.first = Value(curr_line.char_data[i].string_index);
                         for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
-                            link.text_posn.first -= curr_line.char_data[i].tags[k]->OriginalStringChars();
+                            link.text_posn.first -= Value(curr_line.char_data[i].tags[k]->StringSize());
                         }
                         link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : GG::X0,
                                                       y_posn,

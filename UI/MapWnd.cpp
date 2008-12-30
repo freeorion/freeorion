@@ -493,14 +493,14 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
     case GG::GGK_TAB: { // auto-complete current chat edit word
         if (m_chat_edit->Visible()) {
             std::string text = m_chat_edit->WindowText();
-            std::pair<int, int> cursor_pos = m_chat_edit->CursorPosn();
-            if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= static_cast<int>(text.size())) {
-                std::string::size_type word_start = text.substr(0, cursor_pos.first).find_last_of(" :");
+            std::pair<GG::CPSize, GG::CPSize> cursor_pos = m_chat_edit->CursorPosn();
+            if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= text.size()) {
+                std::string::size_type word_start = text.substr(0, Value(cursor_pos.first)).find_last_of(" :");
                 if (word_start == std::string::npos)
                     word_start = 0;
                 else
                     ++word_start;
-                std::string partial_word = text.substr(word_start, cursor_pos.first - word_start);
+                std::string partial_word = text.substr(word_start, Value(cursor_pos.first - word_start));
                 if (partial_word == "")
                     return;
                 std::set<std::string> names;
@@ -517,7 +517,7 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
                 }
 
                 if (names.find(partial_word) != names.end()) { // if there's an exact match, just add a space
-                    text.insert(cursor_pos.first, " ");
+                    text.insert(Value(cursor_pos.first), " ");
                     m_chat_edit->SetText(text);
                     m_chat_edit->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
                 } else { // no exact match; look for possible completions
@@ -546,9 +546,9 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
                     }
                     unsigned int chars_to_add = common_end - partial_word.size();
                     bool full_completion = common_end == lower_bound->size();
-                    text.insert(cursor_pos.first, lower_bound->substr(partial_word.size(), chars_to_add) + (full_completion ? " " : ""));
+                    text.insert(Value(cursor_pos.first), lower_bound->substr(partial_word.size(), chars_to_add) + (full_completion ? " " : ""));
                     m_chat_edit->SetText(text);
-                    int move_cursor_to = cursor_pos.first + chars_to_add + (full_completion ? 1 : 0);
+                    GG::CPSize move_cursor_to = cursor_pos.first + chars_to_add + (full_completion ? GG::CP1 : GG::CP0);
                     m_chat_edit->SelectRange(move_cursor_to, move_cursor_to);
                 }
             }
