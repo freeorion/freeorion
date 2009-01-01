@@ -28,10 +28,12 @@
 namespace {
     const double EPSILON = 1.0e-5;
 
-    // sets the .spending, value for each Tech in the queue.  Only sets nonzero funding to
+    // sets the .allocated_rp, value for each Tech in the queue.  Only sets nonzero funding to
     // a Tech if it is researchable this turn.  Also determines total number of spent RP
     // (returning by reference in total_RPs_spent)
-    void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_progress, const std::map<std::string, TechStatus>& research_status, ResearchQueue::QueueType& queue, double& total_RPs_spent, int& projects_in_progress)
+    void SetTechQueueElementSpending(double RPs, const std::map<std::string, double>& research_progress,
+                                     const std::map<std::string, TechStatus>& research_status, ResearchQueue::QueueType& queue,
+                                     double& total_RPs_spent, int& projects_in_progress)
     {
         total_RPs_spent = 0.0;
         projects_in_progress = 0;
@@ -54,60 +56,122 @@ namespace {
                 double RPs_to_spend = std::min(RPs_needed, tech->ResearchCost());
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
-                    it->spending = RPs_to_spend;
-                    total_RPs_spent += it->spending;
+                    it->allocated_rp = RPs_to_spend;
+                    total_RPs_spent += it->allocated_rp;
                     ++projects_in_progress;
                 } else if (total_RPs_spent < RPs - EPSILON) {
-                    it->spending = RPs - total_RPs_spent;
-                    total_RPs_spent += it->spending;
+                    it->allocated_rp = RPs - total_RPs_spent;
+                    total_RPs_spent += it->allocated_rp;
                     ++projects_in_progress;
                 } else {
-                    it->spending = 0.0;
+                    it->allocated_rp = 0.0;
                 }
             } else {
                 // item can't be researched this turn
-                it->spending = 0.0;
+                it->allocated_rp = 0.0;
             }
         }
     }
 
-    // sets the .spending, value for each Element in the queue.  Only sets nonzero funding to
-    // an Element if its ProductionItem is buildable this turn.  Also determines total number
-    // of spent PP (returning by reference in total_PPs_spent)
-    void SetProdQueueElementSpending(Empire* empire, double PPs, const std::vector<double>& production_status, ProductionQueue::QueueType& queue, double& total_PPs_spent, int& projects_in_progress)
+    // sets the .allocated_pp value for each Element in the passed ProductionQueue \a queue.  Elements are allocated PP based on their
+    // need, the limits they can be given per turn, and the amount available at their production location (which is itself limited by 
+    // the resource supply system groups that are able to exchange resources with the build location and the amount of minerals and
+    // industry produced in the group).  Elements will not receive funding if they cannot be built by \a empire this turn, or can't be
+    // built at their build location.
+    void SetProdQueueElementSpending(Empire* empire, std::map<std::set<int>, double> available_pp,
+                                     const std::vector<std::set<int> >& queue_element_resource_sharing_system_groups,
+                                     const std::vector<double>& production_status, ProductionQueue::QueueType& queue,
+                                     std::map<std::set<int>, double>& allocated_pp, int& projects_in_progress)
     {
-        assert(production_status.size() == queue.size());
-        total_PPs_spent = 0.0;
-        projects_in_progress = 0;
-        int i = 0;
+        // TODO: When combat and blockading are updated to allow an armed ship to be in a system containing an enemy planet without
+        // actually attacking that planet, it will be possible to blockade a system from exchanging resources with itself.  This will
+        // mean that planets won't be listed in any resource sharing group, and thus won't be allocated the industry and minerals that
+        // they produce locally when such a blockade occurs.  The mineral and industry distribution code probably needs to be updated
+        // to allow a ResourceCenter to use its own production in cases where its system is not part of any resource-sharing group.
 
+        assert(production_status.size() == queue.size());
+        assert(production_status.size() == queue_element_resource_sharing_system_groups.size());
+
+        projects_in_progress = 0;
+        allocated_pp.clear();
+
+        int i = 0;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+            ProductionQueue::Element& queue_element = *it;
+
+            // get resource sharing group and amount of resource available to build this item
+            const std::set<int>& group = queue_element_resource_sharing_system_groups[i];
+            if (group.empty()) {
+                Logger().debugStream() << "resource sharing group for queue element is empty.  no allocating any resources to element";
+                queue_element.allocated_pp = 0.0;
+                continue;
+            }
+
+            std::map<std::set<int>, double>::iterator available_pp_it = available_pp.find(group);
+            if (available_pp_it == available_pp.end()) {
+                // item is not being built in a system that has access to resources, so it can't be built.
+                Logger().debugStream() << "no resource sharing group for production queue element";
+                queue_element.allocated_pp = 0.0;
+                continue;
+            }
+
+            double& group_pp_available = available_pp_it->second;
+
+
+            // if group has no pp available, can't build anything this turn
+            if (group_pp_available <= 0.0) {
+                Logger().debugStream() << "no pp available in group";
+                queue_element.allocated_pp = 0.0;
+                continue;
+            }
+
+
+            ProductionQueue::ProductionItem& item = queue_element.item;
+
+
             // see if item is buildable this turn...
-            int location = it->location;
-            bool buildable = empire->BuildableItem(it->item, location);
-                        
-            if (buildable) {
-                double item_cost;
-                int build_turns;
-                boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item);
-                
-                double progress = production_status[i];
-                double PPs_needed = item_cost * build_turns * it->remaining - progress;
-                double PPs_to_spend = std::min(PPs_needed, item_cost);
-                if (total_PPs_spent + PPs_to_spend <= PPs - EPSILON) {
-                    it->spending = PPs_to_spend;
-                    total_PPs_spent += it->spending;
-                    ++projects_in_progress;
-                } else if (total_PPs_spent < PPs - EPSILON) {
-                    it->spending = PPs - total_PPs_spent;
-                    total_PPs_spent += it->spending;
-                    ++projects_in_progress;
-                } else {
-                    it->spending = 0.0;
-                }
-            } else {
-                // item can't be produced at its location this turn
-                it->spending = 0.0;
+            int location = queue_element.location;
+            bool buildable = empire->BuildableItem(item, location);
+
+            if (!buildable) {
+                // can't be built at this location this turn.
+                queue_element.allocated_pp = 0.0;
+                Logger().debugStream() << "item can't be built at location this turn";
+                continue;
+            }
+
+
+            // get max contribution per turn and turns to build at max contribution rate
+            double item_cost;
+            int build_turns;
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(item);
+
+
+            // determine additional PP needed to complete build queue element: total cost - progress
+            double element_accumulated_PP = production_status[i];                                   // PP accumulated by this element towards building next item
+            double element_total_cost = item_cost * build_turns * queue_element.remaining;          // total PP to build all items in this element
+            double additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
+
+
+            // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
+            // item cost, which is the max number of PP per turn that can be put towards this item, and by the
+            // total cost remaining to complete the last item in the queue element (eg. the element has all but
+            // the last item complete already) and by the total pp available in this element's production location's
+            // resource sharing group
+            double allocation = std::max(std::min(std::min(additional_pp_to_complete_element, item_cost), group_pp_available), 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+
+
+            // allocate pp
+            queue_element.allocated_pp = allocation;
+
+            // record alloation in group, if group is not empty
+            allocated_pp[group] += allocation;  // assuming the double indexed by group will be default initialized to 0.0 if that entry doesn't already exist in the map
+            group_pp_available -= allocation;
+
+
+            // check if this will complete the element
+            if (allocation >= additional_pp_to_complete_element - EPSILON) {
+                ++projects_in_progress;
             }
         }
     }
@@ -131,13 +195,13 @@ namespace {
 ////////////////////////////////////////
 ResearchQueue::Element::Element() :
     tech(0),
-    spending(0.0),
+    allocated_rp(0.0),
     turns_left(0)
 {}
 
 ResearchQueue::Element::Element(const Tech* tech_, double spending_, int turns_left_) :
     tech(tech_),
-    spending(spending_),
+    allocated_rp(spending_),
     turns_left(turns_left_)
 {}
 
@@ -203,7 +267,7 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const
 ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
-        if (it->spending && it->spending < it->tech->ResearchCost() && 1 < it->turns_left)
+        if (it->allocated_rp && it->allocated_rp < it->tech->ResearchCost() && 1 < it->turns_left)
             return it;
     }
     return end();
@@ -243,7 +307,7 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 const Tech* tech = sim_queue[i].tech;
                 double& status = sim_research_progress[tech->Name()];
-                status += sim_queue[i].spending;
+                status += sim_queue[i].allocated_rp;
                 if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
                     m_queue[i].turns_left = simulation_results[m_queue[i].tech];
                     simulation_results[tech] = turns;
@@ -327,7 +391,7 @@ ResearchQueue::iterator ResearchQueue::end()
 ResearchQueue::iterator ResearchQueue::UnderfundedProject()
 {
     for (iterator it = begin(); it != end(); ++it) {
-        if (it->spending && it->spending < it->tech->ResearchCost() && 1 < it->turns_left)
+        if (it->allocated_rp && it->allocated_rp < it->tech->ResearchCost() && 1 < it->turns_left)
             return it;
     }
     return end();
@@ -365,7 +429,7 @@ ProductionQueue::Element::Element() :
     ordered(0),
     remaining(0),
     location(UniverseObject::INVALID_OBJECT_ID),
-    spending(0.0),
+    allocated_pp(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -375,7 +439,7 @@ ProductionQueue::Element::Element(ProductionItem item_, int ordered_, int remain
     ordered(ordered_),
     remaining(remaining_),
     location(location_),
-    spending(0.0),
+    allocated_pp(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -385,7 +449,7 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int or
     ordered(ordered_),
     remaining(remaining_),
     location(location_),
-    spending(0.0),
+    allocated_pp(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -395,7 +459,7 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
     ordered(ordered_),
     remaining(remaining_),
     location(location_),
-    spending(0.0),
+    allocated_pp(0.0),
     turns_left_to_next_item(-1),
     turns_left_to_completion(-1)
 {}
@@ -404,8 +468,7 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int order
 // ProductionQueue //
 /////////////////////
 ProductionQueue::ProductionQueue() :
-    m_projects_in_progress(0),
-    m_total_PPs_spent(0.0)
+    m_projects_in_progress(0)
 {}
 
 int ProductionQueue::ProjectsInProgress() const
@@ -415,7 +478,60 @@ int ProductionQueue::ProjectsInProgress() const
 
 double ProductionQueue::TotalPPsSpent() const
 {
-    return m_total_PPs_spent;
+    // add up allocated PP from all resource sharing system groups
+    double retval = 0;
+    for (std::map<std::set<int>, double>::const_iterator it = m_system_group_allocated_pp.begin(); it != m_system_group_allocated_pp.end(); ++it)
+        retval += it->second;
+    return retval;
+}
+
+std::map<std::set<int>, double> ProductionQueue::AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const
+{
+    std::map<std::set<int>, double> available_pp;
+
+    // get resource pools used for production...
+    boost::shared_ptr<ResourcePool> industry_pool, minerals_pool;
+    std::map<ResourceType, boost::shared_ptr<ResourcePool> >::const_iterator pool_it = resource_pools.find(RE_INDUSTRY);
+    if (pool_it != resource_pools.end()) {
+        industry_pool = pool_it->second;
+    } else {
+        Logger().errorStream() << "ProductionQueue::AvailablePP couldn't get an industry resource pool from passed resource pools";
+        return available_pp;
+    }
+    pool_it = resource_pools.find(RE_MINERALS);
+    if (pool_it != resource_pools.end()) {
+        minerals_pool = pool_it->second;
+    } else {
+        Logger().errorStream() << "ProductionQueue::AvailablePP couldn't get a minerals resource pool from passed resource pools";
+        return available_pp;
+    }
+
+
+    // determine available PP in each resource sharing group of systems for this empire.  PP are minimum of available minerals
+    // and industry in each resource-sharing group of systems
+    std::map<std::set<int>, double> available_industry = industry_pool->Available();
+    std::map<std::set<int>, double> available_minerals = minerals_pool->Available();
+
+
+    for (std::map<std::set<int>, double>::const_iterator ind_it = available_industry.begin(); ind_it != available_industry.end(); ++ind_it) {
+        // get group of systems in industry pool
+        const std::set<int>& group = ind_it->first;
+
+        // find same group in minerals pool
+        std::map<std::set<int>, double>::const_iterator min_it = available_minerals.find(group);
+
+        if (min_it == available_minerals.end())
+            continue;       // this group doesn't appear in both pools, so has no PP production
+
+        available_pp[group] = std::min(ind_it->second, min_it->second); // available pp needs minerals and industry.  whichever is less is the available pp
+    }
+
+    return available_pp;
+}
+
+std::map<std::set<int>, double> ProductionQueue::AllocatedPP() const
+{
+    return m_system_group_allocated_pp;
 }
 
 bool ProductionQueue::empty() const
@@ -455,100 +571,207 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject(const Empire
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item);
-        if (it->spending && it->spending < item_cost && 1 < it->turns_left_to_next_item)
+        if (it->allocated_pp && it->allocated_pp < item_cost && 1 < it->turns_left_to_next_item)
             return it;
     }
     return end();
 }
 
-void ProductionQueue::Update(Empire* empire, double PPs, const std::vector<double>& production_status)
+void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools,
+                             const std::vector<double>& production_status)
 {
-    SetProdQueueElementSpending(empire, PPs, production_status, m_queue, m_total_PPs_spent, m_projects_in_progress);
-
-    if (m_queue.empty()) {
-        ProductionQueueChangedSignal(); // need this so BuildingsPanel updates properly after removing last building
-        return;   // nothing more to do...
+    if (!empire) {
+        Logger().errorStream() << "ProductionQueue::Update passed null empire.  doing nothing.";
+        return;
     }
 
-    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
+    if (m_queue.empty()) {
+        Logger().debugStream() << "ProductionQueue::Update aborting early due to an empty queue";
+        m_projects_in_progress = 0;
 
-    if (EPSILON < PPs) {
-        //Logger().debugStream() << "ProductionQueue::Update: Simulating future turns of production queue";
-        // simulate future turns in order to determine when the builditems in the queue will be finished
-        int turns = 1;
-        QueueType sim_queue = m_queue;
-        std::vector<double> sim_production_status = production_status;
-        std::vector<int> simulation_results(sim_production_status.size(), -1);
-        std::vector<int> sim_queue_original_indices(sim_production_status.size());
-        for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i) {
-            sim_queue_original_indices[i] = i;
+        if (!production_status.empty())
+            Logger().errorStream() << "warnong: ProductionQueue::Update queue was empty, but passed production_status was not.";
+
+        ProductionQueueChangedSignal(); // need this so BuildingsPanel updates properly after removing last building
+        return;                         // nothing to do for an empty queue
+    }
+
+
+    std::map<std::set<int>, double> available_pp = AvailablePP(resource_pools);
+
+
+    // determine which resource sharing group each queue item is located in
+    std::vector<std::set<int> > queue_element_groups;
+    for (ProductionQueue::const_iterator queue_it = m_queue.begin(); queue_it != m_queue.end(); ++queue_it) {
+        // get location object for element
+        const ProductionQueue::Element& element = *queue_it;
+        int location_id = element.location;
+        const UniverseObject* location_obj = GetUniverse().Object(location_id);
+        if (!location_obj) {
+            Logger().errorStream() << "ProductionQueue::Update couldn't get a location object for a production queue element";
+            queue_element_groups.push_back(std::set<int>());    // record empty resource sharing system group for this element
+            continue;
         }
 
-        // remove from simulated queue any items that can't be built due to not meeting their location conditions
-        // might be better to re-check buildability each turn, but this would require creating a simulated universe
-        // into which simulated completed buildings could be inserted, as well as spoofing the current turn, or
-        // otherwise faking the results for evaluating arbitrary location conditions for the simulated universe.
-        // this would also be inaccurate anyway due to player choices or random chance, so for simplicity, it is
-        // assume that building location conditions evaluated at the present turn apply indefinitely
-        for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-            if (empire->BuildableItem(sim_queue[i].item, sim_queue[i].location)) continue;
 
+        // find resource sharing group with available pp that contains this system, if any
+        int system_id = location_obj->SystemID();
+
+        for (std::map<std::set<int>, double>::const_iterator groups_it = available_pp.begin(); true; ++groups_it) {
+            if (groups_it == available_pp.end()) {
+                // didn't find a group containing this system, so add an empty group as this element's queue element group
+                queue_element_groups.push_back(std::set<int>());
+                break;
+            }
+
+            // check if system id is in this group
+            const std::set<int>& group = groups_it->first;
+            std::set<int>::const_iterator set_it = group.find(system_id);
+            if (set_it != group.end()) {
+                // system is in this group.
+                queue_element_groups.push_back(group);  // record this discovery
+                break;                                  // stop searching for a group containing a system, since one has been found
+            }
+        }
+    }
+
+
+    // allocate pp to queue elements, returning updated available pp and updated allocated pp for each group of resource sharing systems
+    SetProdQueueElementSpending(empire, available_pp, queue_element_groups, production_status, m_queue, m_system_group_allocated_pp, m_projects_in_progress);
+
+
+    // if at least one resource-sharing system group have available PP, simulate future turns to predict when build items will be finished
+    bool simulate_future = false;
+    for (std::map<std::set<int>, double>::const_iterator available_it = available_pp.begin(); available_it != available_pp.end(); ++available_it) {
+        if (available_it->second > EPSILON) {
+            simulate_future = true;
+            break;
+        }
+    }
+
+
+    if (!simulate_future) {
+        // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
+        for (ProductionQueue::QueueType::iterator queue_it = m_queue.begin(); queue_it != m_queue.end(); ++queue_it) {
+            queue_it->turns_left_to_next_item = -1;
+            queue_it->turns_left_to_completion = -1;
+        }
+        ProductionQueueChangedSignal();
+        return;
+    }
+
+
+    // there are enough PP available in at least one group to make it worthwhile to simulate the future.
+    Logger().debugStream() << "ProductionQueue::Update: Simulating future turns of production queue";
+
+
+    // duplicate produciton queue state for future simulation
+    QueueType sim_queue = m_queue;
+    std::vector<double> sim_production_status = production_status;
+    std::vector<int> simulation_results(sim_production_status.size(), -1);
+    std::vector<int> sim_queue_original_indices(sim_production_status.size());
+    for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
+        sim_queue_original_indices[i] = i;
+
+
+    int turns = 1;  // to keep track of how man turn-iterations simulation takes to finish items
+    const int TOO_MANY_TURNS = 500; // stop counting turns to completion after this long, to prevent seemingly endless loops
+
+
+
+    // remove from simulated queue any items that can't be built due to not meeting their location conditions
+    // might be better to re-check buildability each turn, but this would require creating a simulated universe
+    // into which simulated completed buildings could be inserted, as well as spoofing the current turn, or
+    // otherwise faking the results for evaluating arbitrary location conditions for the simulated universe.
+    // this would also be inaccurate anyway due to player choices or random chance, so for simplicity, it is
+    // assume that building location conditions evaluated at the present turn apply indefinitely
+    //
+    // also remove from simulated queue any items that are located in a resource sharing system group that is
+    // empty or that does not have any PP available
+    for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+        const std::set<int>& group = queue_element_groups[sim_queue_original_indices[i]];
+
+        // if any removal condition is met, remove item from queue
+        bool remove = false;
+        if (group.empty() || !empire->BuildableItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
+            remove = true;
+        } else {
+            std::map<std::set<int>, double>::const_iterator available_it = available_pp.find(group);
+            if (available_it == available_pp.end() || available_it->second < EPSILON)                   // missing group or non-empty group with no PP available
+                remove = true;
+        }
+
+        if (remove) {
             // remove unbuildable items from the simulated queue, since they'll never finish...
             m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
             sim_queue.erase(sim_queue.begin() + i);
             sim_production_status.erase(sim_production_status.begin() + i);
             sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
         }
+    }
 
-        // cycle through items on queue, adding up their allotted PP until each is finished and removed from queue
-        // until everything on queue has been finished, in order to calculate expected completion times
-        while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
-            double total_PPs_spent = 0.0;
-            int projects_in_progress = 0;
 
-            //Logger().debugStream() << "ProductionQueue::Update: Calling SetProdQueueElementSpending for simulated queue";
-            SetProdQueueElementSpending(empire, PPs, sim_production_status, sim_queue, total_PPs_spent, projects_in_progress);
 
-            // cycle through items on queue, apply one turn's PP towards items, remove items that are done
-            for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-                double item_cost;
-                int build_turns;
-                boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(sim_queue[i].item);
+    // cycle through items on queue, adding up their allotted PP until each is finished and removed from queue
+    // until everything on queue has been finished, in order to calculate expected completion times
+    while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
+        std::map<std::set<int>, double> allocated_pp;
+        int projects_in_progress = 0;
 
-                double& status = sim_production_status[i];
-                status += sim_queue[i].spending;
 
-                if (item_cost * build_turns - EPSILON <= status) {
-                    sim_production_status[i] -= item_cost * build_turns;    // might have spillover to next item in order, so don't set to exactly 0
-                    if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining) {
-                        m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = turns;
-                    }
-                    if (!--sim_queue[i].remaining) {
-                        //Logger().debugStream() << "    ITEM COMPLETE!  REMOVING";
-                        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;
-                        sim_queue.erase(sim_queue.begin() + i);
-                        sim_production_status.erase(sim_production_status.begin() + i);
-                        sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
-                    }
+        // update allocation of PP on the simulated queue.  previous iterations of simulation may have removed elements
+        // from the queue, freeing up PP to be spent on other elements further down the queue
+        SetProdQueueElementSpending(empire, available_pp, queue_element_groups, sim_production_status, sim_queue, allocated_pp, projects_in_progress);
+
+
+        // cycle through items on queue, apply one turn's PP towards items, remove items that are done
+        for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+            ProductionQueue::Element& element = sim_queue[i];
+
+            double item_cost_per_turn;
+            int build_turns;
+            boost::tie(item_cost_per_turn, build_turns) = empire->ProductionCostAndTime(element.item);
+
+
+            double& status = sim_production_status[i];  // get previous iteration's accumulated PP for this element
+            status += element.allocated_pp;             // add one turn's allocated PP to element
+
+
+            // check if additional turn's PP allocation was enough to finish next item in element
+            if (item_cost_per_turn * build_turns - EPSILON <= status) {
+                // an item has been completed.
+
+                //  deduct cost of one item from accumulated PP.  don't set accumulation to zero, as this
+                // would eliminate any partial completion of the next item
+                sim_production_status[i] -= item_cost_per_turn * build_turns;
+
+                // if this was the first item in the element to be completed in this simuation, update the original
+                // queue element with the turns required to complete the next item in the element
+                if (element.remaining == m_queue[sim_queue_original_indices[i]].remaining)
+                    m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = turns;
+
+                // if all items in the element are completed in the simulation...
+                if (!--element.remaining) {
+                    //Logger().debugStream() << "    ITEM COMPLETE!  REMOVING";
+                    m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;    // record the (estimated) turns to complete the whole element on the original queue
+                    sim_queue.erase(sim_queue.begin() + i);                                     // remove the completed item from the simulated queue
+                    sim_production_status.erase(sim_production_status.begin() + i);             // and production status
+                    sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--); // and bookkeeping
                 }
             }
-            ++turns;
-        }   // loop while (!sim_queue.empty() && turns < TOO_MANY_TURNS)
-
-        // mark rest of items on simulated queue (if any) as never to be finished
-        for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-            if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining)
-                m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = -1;
-            m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;
         }
+        ++turns;
+    }   // loop while (!sim_queue.empty() && turns < TOO_MANY_TURNS)
 
-    } else {
-        // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
-        for (unsigned int i = 0; i < m_queue.size(); ++i) {
-            m_queue[i].turns_left_to_next_item = -1;
-            m_queue[i].turns_left_to_completion = -1;
-        }
+
+    // mark rest of items on simulated queue (if any) as never to be finished
+    for (unsigned int i = 0; i < sim_queue.size(); ++i) {
+        if (sim_queue[i].remaining == m_queue[sim_queue_original_indices[i]].remaining)
+            m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = -1;
+        m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;
     }
+
+
     ProductionQueueChangedSignal();
 }
 
@@ -601,7 +824,7 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(it->item);
-        if (it->spending && it->spending < item_cost && 1 < it->turns_left_to_next_item)
+        if (it->allocated_pp && it->allocated_pp < item_cost && 1 < it->turns_left_to_next_item)
             return it;
     }
     return end();
@@ -1533,7 +1756,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, in
         m_production_queue.insert(m_production_queue.begin() + pos, build);
         m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos/* = -1*/)
@@ -1549,7 +1772,7 @@ void Empire::PlaceBuildInQueue(BuildType build_type, int design_id, int number, 
         m_production_queue.insert(m_production_queue.begin() + pos, build);
         m_production_progress.insert(m_production_progress.begin() + pos, 0.0);
     }
-    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
 void Empire::PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos/* = -1*/)
@@ -1573,7 +1796,7 @@ void Empire::SetBuildQuantity(int index, int quantity)
     int original_quantity = m_production_queue[index].remaining;
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
-    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
 void Empire::MoveBuildWithinQueue(int index, int new_index)
@@ -1589,7 +1812,7 @@ void Empire::MoveBuildWithinQueue(int index, int new_index)
     m_production_progress.erase(m_production_progress.begin() + index);
     m_production_queue.insert(m_production_queue.begin() + new_index, build);
     m_production_progress.insert(m_production_progress.begin() + new_index, status);
-    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
 void Empire::RemoveBuildFromQueue(int index)
@@ -1598,7 +1821,7 @@ void Empire::RemoveBuildFromQueue(int index)
         throw std::runtime_error("Empire::RemoveBuildFromQueue() : Attempted to delete a production queue item with an invalid index.");
     m_production_queue.erase(index);
     m_production_progress.erase(m_production_progress.begin() + index);
-    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    m_production_queue.Update(this, m_resource_pools, m_production_progress);
 }
 
 void Empire::ConquerBuildsAtLocation(int location_id) {
@@ -1678,7 +1901,6 @@ void Empire::AddTech(const std::string& name)
 
 void Empire::UnlockItem(const ItemSpec& item)
 {
-    // TODO: handle other types (such as ship components) as they are implemented
     switch (item.type) {
     case UIT_BUILDING:
         AddBuildingType(item.name);
@@ -1807,15 +2029,35 @@ void Empire::RemoveTech(const std::string& name)
 
 void Empire::LockItem(const ItemSpec& item)
 {
-    // TODO: handle other types (such as ship components) as they are implemented
-    if (item.type == UIT_BUILDING) {
+    switch (item.type) {
+    case UIT_BUILDING:
         RemoveBuildingType(item.name);
+        (item.name);
+        break;
+    case UIT_SHIP_PART:
+        RemovePartType(item.name);
+        break;
+    case UIT_SHIP_HULL:
+        RemoveHullType(item.name);
+        break;
+    default:
+        Logger().errorStream() << "Empire::LockItem : passed ItemSpec with unrecognized UnlockableItemType";
     }
 }
 
 void Empire::RemoveBuildingType(const std::string& name)
 {
     m_available_building_types.erase(name);
+}
+
+void Empire::RemovePartType(const std::string& name)
+{
+    // TODO: THIS
+}
+
+void Empire::RemoveHullType(const std::string& name)
+{
+    // TODO: THIS
 }
 
 void Empire::ClearSitRep()
@@ -1833,7 +2075,7 @@ void Empire::CheckResearchProgress()
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
         const Tech* tech = it->tech;
         double& progress = m_research_progress[tech->Name()];
-        progress += it->spending;
+        progress += it->allocated_rp;
         if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= progress) {
             m_techs.insert(tech->Name());
             const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
@@ -1859,14 +2101,21 @@ void Empire::CheckResearchProgress()
 void Empire::CheckProductionProgress()
 {
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
-    // m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    // m_production_queue.Update(this, m_resource_pools, m_production_progress);
+
+
+    // go through queue, updating production progress.  If a build item is completed, create the built object or take whatever other
+    // action is appropriate, and record that queue item as complete, so it can be erased from the queue
     std::vector<int> to_erase;
     for (unsigned int i = 0; i < m_production_queue.size(); ++i) {
         double item_cost;
         int build_turns;
         boost::tie(item_cost, build_turns) = ProductionCostAndTime(m_production_queue[i].item);
         double& status = m_production_progress[i];
-        status += m_production_queue[i].spending;
+        status += m_production_queue[i].allocated_pp;               // add allocated PP to queue item
+
+
+        // if accumulated PP is sufficient, the item is complete
         if (item_cost * build_turns - EPSILON <= status) {
             m_production_progress[i] -= item_cost * build_turns;
             switch (m_production_queue[i].item.build_type) {
@@ -1922,22 +2171,72 @@ void Empire::CheckProductionProgress()
             }
 
             default:
+                Logger().debugStream() << "Build item of unknown build type finished on production queue.";
                 break;
             }
 
-            if (!--m_production_queue[i].remaining)
-                to_erase.push_back(i);
+
+            if (!--m_production_queue[i].remaining)     // decrement number of remaining items to be produced in current queue element
+                to_erase.push_back(i);                  // remember completed element so that it can be removed from queue
         }
     }
 
+    // removed completed items from queue
     for (std::vector<int>::reverse_iterator it = to_erase.rbegin(); it != to_erase.rend(); ++it) {
         m_production_progress.erase(m_production_progress.begin() + *it);
         m_production_queue.erase(*it);
     }
 
-    // update minerals stockpile.  TODO: Update this to work like food distribution and only stockpile within the group of resource-
-    // sharing systems that have access to the stockpile.
-    m_resource_pools[RE_MINERALS]->SetStockpile(m_resource_pools[RE_MINERALS]->TotalAvailable() - m_production_queue.TotalPPsSpent());
+
+    // update minerals stockpile
+
+    // get minerals resource pool and stockpile location
+    boost::shared_ptr<ResourcePool> pool = m_resource_pools[RE_MINERALS];
+    int stockpile_system_id = pool->StockpileSystemID();
+
+
+    if (stockpile_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        // empire has nowhere to stockpile food, so has no stockpile.
+        pool->SetStockpile(0.0);
+        Logger().debugStream() << "no mineral stockpile location.  stockpile is set to 0.0";
+
+    } else {
+        // find minerals (PP) allocated to production elements located in systems in the group of
+        // resource-sharing systems that has access to stockpile
+        double stockpile_group_pp_allocation = 0.0;
+
+        // find the set of systems that contains the stopile system, from the map of PP allocated within each group
+        std::map<std::set<int>, double> allocated_pp = m_production_queue.AllocatedPP();
+
+        Logger().debugStream() << "trying to find stockpile system group...  stockpile system has id: " << stockpile_system_id;
+        for (std::map<std::set<int>, double>::const_iterator it = allocated_pp.begin(); it != allocated_pp.end(); ++it) {
+            const std::set<int>& group = it->first;                     // get group
+            Logger().debugStream() << "potential group:";
+            for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
+                Logger().debugStream() << "...." << *qit;
+
+            if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
+                stockpile_group_pp_allocation = it->second;        // record allocation for this group
+                Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of systems for stockpile system.  size: " << it->first.size();
+                break;
+            }
+
+            Logger().debugStream() << "didn't find in group... trying next.";
+        }
+        // if the stockpile system is not found in any group of systems with allocated pp, assuming this is fine and that the
+        // stockpile system's group of systems didn't have any allocated pp...
+
+
+        double stockpile_system_group_available = pool->GroupAvailable(stockpile_system_id);
+        Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_system_group_available;
+        Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
+
+        Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
+
+        double new_stockpile = stockpile_system_group_available - stockpile_group_pp_allocation;
+        pool->SetStockpile(new_stockpile);
+        Logger().debugStream() << "New stockpile is: " << new_stockpile;
+    }
 }
 
 void Empire::CheckTradeSocialProgress()
@@ -1952,15 +2251,17 @@ void Empire::CheckGrowthFoodProgress()
 
     int stockpile_system_id = pool->StockpileSystemID();
 
-    Logger().debugStream() << "stockpile system id: " << stockpile_system_id;
+    Logger().debugStream() << "food stockpile system id: " << stockpile_system_id;
 
     if (stockpile_system_id == UniverseObject::INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
         pool->SetStockpile(0.0);
 
     } else {
-        // find total food allocated to group that has access to stockpile
-        std::map<std::set<int>, double> food_sharing_groups = pool->Available();
+        // find total food allocated to group that has access to stockpile...
+
+        // first find the set of systems that contains the stockpile system
+        std::map<std::set<int>, double> food_sharing_groups = pool->Available();    // don't actually need the available PP; just using the map as a set of sets of systems
         std::set<int> stockpile_group_systems;
         Logger().debugStream() << "trying to find stockpile system group...  stockpile system has id: " << stockpile_system_id;
         for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin(); it != food_sharing_groups.end(); ++it) {
@@ -1978,12 +2279,9 @@ void Empire::CheckGrowthFoodProgress()
             Logger().debugStream() << "didn't find in group... trying next.";
         }
 
-
         const std::vector<PopCenter*>& pop_centers = pop_pool.PopCenters();
 
-
         double stockpile_group_food_allocation = 0.0;
-
 
         // go through population pools, adding up food allocation of those that are in one of the systems
         // in the group of systems that can access the stockpile
@@ -2002,6 +2300,7 @@ void Empire::CheckGrowthFoodProgress()
             }
         }
 
+
         double stockpile_system_group_available = pool->GroupAvailable(stockpile_system_id);
         Logger().debugStream() << "food available in stockpile group is:  " << stockpile_system_group_available;
         Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
@@ -2012,8 +2311,6 @@ void Empire::CheckGrowthFoodProgress()
         pool->SetStockpile(new_stockpile);
         Logger().debugStream() << "New stockpile is: " << new_stockpile;
     }
-
-
 }
 
 void Empire::SetColor(const GG::Clr& color)
@@ -2059,6 +2356,7 @@ void Empire::InitResourcePools()
     m_resource_pools[RE_FOOD]->SetSystemSupplyGroups(m_resource_supply_groups);
     m_resource_pools[RE_INDUSTRY]->SetSystemSupplyGroups(m_resource_supply_groups);
 
+
     // set non-blockadeable resrouce pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
@@ -2069,18 +2367,19 @@ void Empire::InitResourcePools()
     m_resource_pools[RE_RESEARCH]->SetSystemSupplyGroups(sets_set);
     m_resource_pools[RE_TRADE]->SetSystemSupplyGroups(sets_set);
 
+
     // set stockpile location
-    m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+    m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);       // industry and research are not stockpileable
     m_resource_pools[RE_RESEARCH]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
 
-    const UniverseObject* capitol = GetUniverse().Object(CapitolID());
+    const UniverseObject* capitol = GetUniverse().Object(CapitolID());                          // other resources are stockpilable, and stockpile location is currently the capitol.  could be changed later to let an effect set the stockpile location
     if (capitol) {
         int system_id = capitol->SystemID();
         m_resource_pools[RE_MINERALS]->SetStockpileSystem(system_id);
         m_resource_pools[RE_FOOD]->SetStockpileSystem(system_id);
         m_resource_pools[RE_TRADE]->SetStockpileSystem(system_id);
     } else {
-        m_resource_pools[RE_MINERALS]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+        m_resource_pools[RE_MINERALS]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);   // if there is no capitol, there's nowhere to stockpile, so resources become nonstockpilable
         m_resource_pools[RE_FOOD]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
         m_resource_pools[RE_TRADE]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
     }
@@ -2088,7 +2387,7 @@ void Empire::InitResourcePools()
 
 void Empire::UpdateResourcePools()
 {
-    // updating queues, spending, distribution and growth each update their respective pools,
+    // updating queues, allocated_rp, distribution and growth each update their respective pools,
     // (as well as the ways in which the resources are used, which needs to be done
     // simultaneously to keep things consistent)
     UpdateResearchQueue();
@@ -2109,7 +2408,7 @@ void Empire::UpdateProductionQueue()
 {
     m_resource_pools[RE_MINERALS]->Update();
     m_resource_pools[RE_INDUSTRY]->Update();
-    m_production_queue.Update(this, ProductionPoints(), m_production_progress);
+    m_production_queue.Update(this, m_resource_pools, m_production_progress);
     m_resource_pools[RE_MINERALS]->ChangedSignal();
     m_resource_pools[RE_INDUSTRY]->ChangedSignal();
 }
@@ -2134,6 +2433,12 @@ void Empire::UpdateTradeSpending()
 
 void Empire::UpdateFoodDistribution()
 {
+    // TODO: When combat and blockading are updated to allow an armed ship to be in a system containing an enemy planet without
+    // actually attacking that planet, it will be possible to blockade a system from exchanging resources with itself.  This will
+    // mean that planets won't be listed in any resource sharing group, and thus won't be allocated the food that they produce
+    // locally when such a blockade occurs.  The food distribution code probably needs to be updated to allow a ResourceCenter
+    // that is also a PopCenter to use its own food production in cases where its system is not part of any resource-sharing group.
+
     Logger().debugStream() << "@@@@ Food distribution for empire: " << EmpireID() << " @@@@";
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production

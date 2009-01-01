@@ -14,15 +14,6 @@
 class PopCenter
 {
 public:
-    /** the types of population density*/
-    enum DensityType {
-        OUTPOST,
-        SPARSE,
-        AVERAGE,
-        DENSE,
-        SUPERDENSE
-    }; // others TBD (these are from the Public Review: Population & Econ Model thread on the forums)
-
     /** \name Signal Types */ //@{
     typedef boost::signal<UniverseObject* (), Default0Combiner> GetObjectSignalType; ///< emitted as a request for the UniverseObject to which this PopCenter is attached
     //@}
@@ -35,7 +26,6 @@ public:
     /** \name Accessors */ //@{
     int                     Race() const {return m_race;}                       ///< returns the race that the population is composed of
     double                  Inhabitants() const;                                ///< returns the number of inhabitants in the center (not the pop points); depends on race
-    DensityType             PopDensity() const;                                 ///< returns the density of this center, based on its population
     double                  AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
 
     virtual const Meter*    GetMeter(MeterType type) const = 0;                 ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -72,7 +62,7 @@ private:
     virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 
     int         m_race;             ///< the id of the race that occupies this planet
-    double      m_allocated_food;   ///< amount of food 
+    double      m_allocated_food;   ///< amount of food allocated to this PopCenter by Empire food distribution
 
     friend class boost::serialization::access;
     template <class Archive>

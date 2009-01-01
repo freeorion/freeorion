@@ -68,13 +68,6 @@ double PopCenter::Inhabitants() const
     return GetMeter(METER_POPULATION)->Current();    // TO DO: Something fancy for different races
 }
 
-PopCenter::DensityType PopCenter::PopDensity() const
-{
-    DensityType retval = OUTPOST;
-    // TODO
-    return retval;
-}
-
 double PopCenter::FuturePopGrowth() const
 {
     double max = GetMeter(METER_POPULATION)->Max();

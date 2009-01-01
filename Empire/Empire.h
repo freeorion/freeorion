@@ -25,7 +25,7 @@ struct ResearchQueue
         Element(const Tech* tech_, double spending_, int turns_left_); ///< basic ctor.
 
         const Tech* tech;
-        double      spending;
+        double      allocated_rp;
         int         turns_left;
 
     private:
@@ -121,13 +121,13 @@ struct ProductionQueue
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
 
-        ProductionItem item;
-        int            ordered;                 ///< how many of item to produce
-        int            remaining;               ///< how many left to produce
-        int            location;                ///< the ID of the UniverseObject at which this item is being produced
-        double         spending;
-        int            turns_left_to_next_item;
-        int            turns_left_to_completion;
+        ProductionItem  item;
+        int             ordered;                    ///< how many of item to produce
+        int             remaining;                  ///< how many left to produce
+        int             location;                   ///< the ID of the UniverseObject at which this item is being produced
+        double          allocated_pp;               ///< amount of PP allocated to this ProductionQueue Element by Empire production update
+        int             turns_left_to_next_item;
+        int             turns_left_to_completion;
 
     private:
         friend class boost::serialization::access;
@@ -151,8 +151,16 @@ struct ProductionQueue
     //@}
 
     /** \name Accessors */ //@{
-    int ProjectsInProgress() const;       ///< Returns the number of production projects currently (perhaps partially) funded.
-    double TotalPPsSpent() const;         ///< Returns the number of PPs currently spent on the projects in this queue.
+    int                             ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
+    double                          TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
+
+    /** Returns map from sets of system ids that can share resources to amount of PP available in those groups of systems */
+    std::map<std::set<int>, double> AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const;
+
+    /** Returns map from sets of system ids that can share resources to amount of PP allocated to production queue elmenets that have
+        build locations in systems in the group. */
+    std::map<std::set<int>, double> AllocatedPP() const;
+
 
     // STL container-like interface
     bool empty() const;
@@ -168,14 +176,12 @@ struct ProductionQueue
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
-      * determines the number of projects in progress, and the total number of PPs spent on the projects
-      * in the queue.  Does not actually "spend" the PP, but just determines how much should be spent
-      * on each item in the queue.  Later call to empire->CheckProductionProgress() will actually 
-      * spend PP, remove items from queue and create them in the universe.  \note A precondition of
-      * this function that \a PPs must be greater than some epsilon > 0; see the implementation for
-      * the actual value used for epsilon. 
-      */
-    void Update(Empire* empire, double PPs, const std::vector<double>& production_status);
+      * determines the number of projects in progress, and the minerals and industry consumed by projects
+      * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
+      * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
+      * in the universe. */
+    void Update(Empire* empire, const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools,
+                const std::vector<double>& production_status);
 
     // STL container-like interface
     void push_back(const Element& element);
@@ -195,9 +201,9 @@ struct ProductionQueue
     //@}
 
 private:
-    QueueType m_queue;
-    int       m_projects_in_progress;
-    double    m_total_PPs_spent;
+    QueueType                       m_queue;
+    int                             m_projects_in_progress;
+    std::map<std::set<int>, double> m_system_group_allocated_pp;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -350,7 +356,6 @@ public:
     void                    UnlockItem(const ItemSpec& item);               ///< Adds a given buildable item (Building, Ship Component, etc.) to the list of available buildable items.
     void                    AddBuildingType(const std::string& name);       ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void                    AddPartType(const std::string& name);           ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
-
     void                    AddHullType(const std::string& name);           ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
     void                    AddExploredSystem(int ID);                      ///< Inserts the given ID into the Empire's list of explored systems.
     void                    AddShipDesign(int ship_design_id);              ///< inserts given design id into the empire's set of designs
@@ -372,6 +377,8 @@ public:
     void                    RemoveTech(const std::string& name);            ///< Removes the given Tech from the empire's list
     void                    LockItem(const ItemSpec& item);                 ///< Removes a given buildable item (Building, ShipComponent, etc.) from the list of available buildable items.
     void                    RemoveBuildingType(const std::string& name);    ///< Removes the given BuildingType from the empire's list
+    void                    RemovePartType(const std::string& name);        ///<
+    void                    RemoveHullType(const std::string& name);        ///<
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
 
     void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.
@@ -416,11 +423,11 @@ public:
       * call UpdateResourceSupply before calling this. */
     void                    InitResourcePools();
 
-    /** Resets production of resources and calculates spending (on each item in queues and 
-      * overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
+    /** Resets production of resources and calculates allocated resources (on each item in
+      * queues and overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
       * UpdateTradeSpending, and UpdateFoodDistribution.  Does not actually "spend" resources,
-      * but just determines how much and on what to spend.  Actual spending, removal of items
-      * from queue, processing of finished items and population growth happens in various
+      * but just determines how much and on what to spend.  Actual consumption of resources, removal
+      * of items from queue, processing of finished items and population growth happens in various
       * Check(Whatever)Progress functions. */
     void                    UpdateResourcePools();
 
@@ -511,7 +518,7 @@ void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
         tech_name = tech->Name();
     }
     ar  & BOOST_SERIALIZATION_NVP(tech_name)
-        & BOOST_SERIALIZATION_NVP(spending)
+        & BOOST_SERIALIZATION_NVP(allocated_rp)
         & BOOST_SERIALIZATION_NVP(turns_left);
     if (Archive::is_loading::value) {
         assert(tech_name != "");
@@ -542,7 +549,7 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(ordered)
         & BOOST_SERIALIZATION_NVP(remaining)
         & BOOST_SERIALIZATION_NVP(location)
-        & BOOST_SERIALIZATION_NVP(spending)
+        & BOOST_SERIALIZATION_NVP(allocated_pp)
         & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
 }
@@ -552,7 +559,7 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
         & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_total_PPs_spent);
+        & BOOST_SERIALIZATION_NVP(m_system_group_allocated_pp);
 }
 
 template <class Archive>

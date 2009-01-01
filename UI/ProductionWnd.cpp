@@ -72,7 +72,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, build, build.spending, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueBuildPanel(w, build, build.allocated_pp, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
         Resize(panel->Size());
         push_back(panel);
 
@@ -85,7 +85,7 @@ namespace {
     QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_build(build),
-        m_in_progress(build.spending),
+        m_in_progress(build.allocated_pp),
         m_total_turns(turns),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
@@ -368,7 +368,7 @@ void ProductionWnd::UpdateInfoPanel()
     double PPs = empire->ProductionPoints();
     double total_queue_cost = queue.TotalPPsSpent();
     ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject(empire);
-    double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
+    double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_pp;
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
     /* Altering production queue may have freed up or required more PP, which may require extra
        or free up excess minerals.  Signalling that the MineralResPool has changed causes the

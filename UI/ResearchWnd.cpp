@@ -278,7 +278,7 @@ void ResearchWnd::UpdateQueue()
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
     for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->spending, it->turns_left));
+        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->allocated_rp, it->turns_left));
     }
 
     if (!m_queue_lb->Empty())
@@ -294,7 +294,7 @@ void ResearchWnd::UpdateInfoPanel()
     double RPs = empire->ResourceProduction(RE_RESEARCH);
     double total_queue_cost = queue.TotalRPsSpent();
     ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
-    double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
+    double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_rp;
     m_research_info_panel->Reset(RPs, total_queue_cost, queue.ProjectsInProgress(), RPs_to_underfunded_projects, queue.size());
     /* Altering research queue may have freed up or required more RP.  Signalling that the
        ResearchResPool has changed causes the MapWnd to be signalled that that pool has changed,
