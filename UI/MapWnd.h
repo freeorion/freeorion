@@ -188,10 +188,23 @@ private:
     bool ReturnToMap();
     bool OpenChatWindow();
     bool EndTurn();
+
     bool ToggleSitRep();
+    void ShowSitRep();
+    void HideSitRep();
+
     bool ToggleResearch();
+    void ShowResearch();
+    void HideResearch();
+
     bool ToggleProduction();
+    void ShowProduction();
+    void HideProduction();
+
     bool ToggleDesign();
+    void ShowDesign();
+    void HideDesign();
+
     bool ShowMenu();
     bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();

@@ -2047,17 +2047,26 @@ void Empire::LockItem(const ItemSpec& item)
 
 void Empire::RemoveBuildingType(const std::string& name)
 {
+    std::set<std::string>::const_iterator it = m_available_building_types.find(name);
+    if (it == m_available_building_types.end())
+        Logger().debugStream() << "Empire::RemoveBuildingType asked to remove building type " << name << " that was no available to this empire";
     m_available_building_types.erase(name);
 }
 
 void Empire::RemovePartType(const std::string& name)
 {
-    // TODO: THIS
+    std::set<std::string>::const_iterator it = m_available_part_types.find(name);
+    if (it == m_available_part_types.end())
+        Logger().debugStream() << "Empire::RemovePartType asked to remove part type " << name << " that was no available to this empire";
+    m_available_part_types.erase(name);
 }
 
 void Empire::RemoveHullType(const std::string& name)
 {
-    // TODO: THIS
+    std::set<std::string>::const_iterator it = m_available_hull_types.find(name);
+    if (it == m_available_hull_types.end())
+        Logger().debugStream() << "Empire::RemoveHullType asked to remove hull type " << name << " that was no available to this empire";
+    m_available_hull_types.erase(name);
 }
 
 void Empire::ClearSitRep()

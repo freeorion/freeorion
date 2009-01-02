@@ -377,8 +377,8 @@ public:
     void                    RemoveTech(const std::string& name);            ///< Removes the given Tech from the empire's list
     void                    LockItem(const ItemSpec& item);                 ///< Removes a given buildable item (Building, ShipComponent, etc.) from the list of available buildable items.
     void                    RemoveBuildingType(const std::string& name);    ///< Removes the given BuildingType from the empire's list
-    void                    RemovePartType(const std::string& name);        ///<
-    void                    RemoveHullType(const std::string& name);        ///<
+    void                    RemovePartType(const std::string& name);        ///< Removes the given PartType from the empire's list
+    void                    RemoveHullType(const std::string& name);        ///< Removes the given HullType from the empire's list
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
 
     void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.

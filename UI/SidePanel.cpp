@@ -654,7 +654,7 @@ namespace {
 // SidePanel::PlanetPanel
 ////////////////////////////////////////////////
 namespace {
-    static const bool SHOW_ALL_PLANET_PANELS = true;
+    static const bool SHOW_ALL_PLANET_PANELS = false;
 }
 
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star_type) :
@@ -1513,8 +1513,7 @@ void SidePanel::SetSystem(int system_id)
     if (system && system != s_system)
         PlaySidePanelOpenSound();
     s_system = system;
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it) {
+    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->SetSystemImpl();
-    }
 }
 

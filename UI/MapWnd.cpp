@@ -1055,20 +1055,11 @@ void MapWnd::InitTurn(int turn_number)
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
     m_sitrep_panel->Update();
-    empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->NumSitRepEntries()) {
-        AttachChild(m_sitrep_panel);
-        MoveChildUp(m_sitrep_panel);
-        m_sitrep_panel->Show();
-    } else {
-        DetachChild(m_sitrep_panel);
-        m_sitrep_panel->Hide();
-    }
 
-    m_research_wnd->Hide();
-    m_production_wnd->Hide();
-    m_design_wnd->Hide();
-    m_in_production_view_mode = false;
+    empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire && empire->NumSitRepEntries())
+        ShowSitRep();
+
 
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -1491,7 +1482,7 @@ void MapWnd::SelectSystem(int system_id)
         }
         m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
         DetachChild(m_side_panel);
-    } else {    
+    } else {
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
             m_side_panel->SetSystem(system_id);
 
@@ -2360,10 +2351,10 @@ void MapWnd::Cleanup()
 {
     CloseAllPopups();
     RemoveAccelerators();
-    m_research_wnd->Hide();
-    m_production_wnd->Hide();
-    m_design_wnd->Hide();
-    m_in_production_view_mode = false;
+    HideResearch();
+    HideProduction();
+    HideDesign();
+    HideSitRep();
     m_toolbar->Hide();
     m_FPS->Hide();
 }
@@ -2388,26 +2379,17 @@ void MapWnd::Sanitize()
 bool MapWnd::ReturnToMap()
 {
     if (m_sitrep_panel->Visible())
-        m_sitrep_panel->Hide();
-    if (m_research_wnd->Visible()) {
-        m_research_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_research_wnd);
-    }
-    if (m_design_wnd->Visible()) {
-        m_design_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_design_wnd);
-        EnableAlphaNumAccels();
-    }
-    if (m_production_wnd->Visible()) {
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-        HumanClientApp::GetApp()->MoveDown(m_production_wnd);
-    }
+        ToggleSitRep();
+
+    if (m_research_wnd->Visible())
+        ToggleResearch();
+
+    if (m_design_wnd->Visible())
+        ToggleDesign();
+
+    if (m_production_wnd->Visible())
+        ToggleProduction();
+
     return true;
 }
 
@@ -2432,155 +2414,150 @@ bool MapWnd::EndTurn()
     return true;
 }
 
-bool MapWnd::ToggleSitRep()
+void MapWnd::ShowSitRep()
 {
     ClearProjectedFleetMovementLines();
-    if (m_sitrep_panel->Visible()) {
-        DetachChild(m_sitrep_panel);
-        m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
-        m_btn_siterep->MarkNotSelected();
-    } else {
-        // hide other "competing" windows
-        m_research_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_research_wnd);
-        if (m_design_wnd->Visible()) {
-            m_design_wnd->Hide();
-            HumanClientApp::GetApp()->MoveDown(m_design_wnd);
-            EnableAlphaNumAccels();
-        }
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-        HumanClientApp::GetApp()->MoveDown(m_production_wnd);
 
-        // show the sitrep window
-        AttachChild(m_sitrep_panel);
-        MoveChildUp(m_sitrep_panel);
-        m_sitrep_panel->Show();
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
 
-        // indicate selections on buttons
-        m_btn_siterep->MarkSelectedGray();
-        m_btn_research->MarkNotSelected();
-        m_btn_production->MarkNotSelected();
-        m_btn_design->MarkNotSelected();
-    }
+    // show the sitrep window
+    AttachChild(m_sitrep_panel);
+    MoveChildUp(m_sitrep_panel);
+    m_sitrep_panel->Show();
+
+    // indicate selection on button
+    m_btn_siterep->MarkSelectedGray();
+}
+
+void MapWnd::HideSitRep()
+{
+    DetachChild(m_sitrep_panel);
+    m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
+    m_btn_siterep->MarkNotSelected();
+}
+
+bool MapWnd::ToggleSitRep()
+{
+    if (m_sitrep_panel->Visible())
+        HideSitRep();
+    else
+        ShowSitRep();
     return true;
+}
+
+void MapWnd::ShowResearch()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideSitRep();
+    HideProduction();
+    HideDesign();
+
+    // show the research window
+    m_research_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_research_wnd);
+
+    // indicate selection on button
+    m_btn_research->MarkSelectedGray();
+}
+
+void MapWnd::HideResearch()
+{
+    m_research_wnd->Hide();
+    m_btn_research->MarkNotSelected();
+    ShowAllPopups();
 }
 
 bool MapWnd::ToggleResearch()
 {
-    ClearProjectedFleetMovementLines();
-    if (m_research_wnd->Visible()) {
-        m_research_wnd->Hide();
-        m_btn_research->MarkNotSelected();
-    } else {
-        // hide other "competing" windows
-        m_sitrep_panel->Hide();
-        if (m_design_wnd->Visible()) {
-            m_design_wnd->Hide();
-            EnableAlphaNumAccels();
-        }
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-
-        // show the research window
-        m_research_wnd->Show();
-        GG::GUI::GetGUI()->MoveUp(m_research_wnd);
-
-        // indicate selections on buttons
-        m_btn_siterep->MarkNotSelected();
-        m_btn_research->MarkSelectedGray();
-        m_btn_production->MarkNotSelected();
-        m_btn_design->MarkNotSelected();
-    }
+    if (m_research_wnd->Visible())
+        HideResearch();
+    else
+        ShowResearch();
     return true;
+}
+
+void MapWnd::ShowProduction()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideSitRep();
+    HideResearch();
+    HideDesign();
+
+    // show the production window
+    m_production_wnd->Show();
+    m_in_production_view_mode = true;
+    HideAllPopups();
+    GG::GUI::GetGUI()->MoveUp(m_production_wnd);
+
+    // indicate selection on button
+    m_btn_production->MarkSelectedGray();
+
+    // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
+    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
+            if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
+                m_production_wnd->SelectSystem(obj->SystemID());
+}
+
+void MapWnd::HideProduction()
+{
+    m_production_wnd->Hide();
+    m_in_production_view_mode = false;
+    m_btn_production->MarkNotSelected();
+    ShowAllPopups();
+    //if (!m_side_panel->Visible())
+    //        m_side_panel->SetSystem(m_side_panel->SystemID());
 }
 
 bool MapWnd::ToggleProduction()
 {
-    ClearProjectedFleetMovementLines();
-    if (m_production_wnd->Visible()) {
-        m_production_wnd->Hide();
-        m_in_production_view_mode = false;
-        m_btn_production->MarkNotSelected();
-        ShowAllPopups();
-    } else {
-        // hide other "competing" windows
-        m_sitrep_panel->Hide();
-        DetachChild(m_sitrep_panel);
-        m_research_wnd->Hide();
-        if (m_design_wnd->Visible()) {
-            m_design_wnd->Hide();
-            EnableAlphaNumAccels();
-        }
-
-        // show the production window
-        m_production_wnd->Show();
-        m_in_production_view_mode = true;
-        HideAllPopups();
-
-        m_side_panel->Hide();
-        DetachChild(m_side_panel);
-
-        GG::GUI::GetGUI()->MoveUp(m_production_wnd);
-
-        // indicate selections on buttons
-        m_btn_siterep->MarkNotSelected();
-        m_btn_research->MarkNotSelected();
-        m_btn_production->MarkSelectedGray();
-        m_btn_design->MarkNotSelected();
-
-
-        // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
-        if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-            if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-                if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
-                    m_production_wnd->SelectSystem(obj->SystemID());
-    }
+    if (m_production_wnd->Visible())
+        HideProduction();
+    else
+        ShowProduction();
     return true;
+}
+
+void MapWnd::ShowDesign()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideSitRep();
+    HideResearch();
+    HideProduction();
+
+    // show the design window
+    m_design_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_design_wnd);
+    //GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
+    DisableAlphaNumAccels();
+    m_design_wnd->Reset();
+
+    // indicate selection on button
+    m_btn_design->MarkSelectedGray();
+}
+
+void MapWnd::HideDesign()
+{
+    m_design_wnd->Hide();
+    m_btn_design->MarkNotSelected();
+    EnableAlphaNumAccels();
 }
 
 bool MapWnd::ToggleDesign()
 {
-    ClearProjectedFleetMovementLines();
-    if (m_design_wnd->Visible()) {
-        m_design_wnd->Hide();
-        m_btn_design->MarkNotSelected();
-        EnableAlphaNumAccels();
-    } else {
-        // hide other "competing" windows
-        m_sitrep_panel->Hide();
-        m_research_wnd->Hide();
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-
-        // show the design window
-        m_design_wnd->Show();
-        GG::GUI::GetGUI()->MoveUp(m_design_wnd);
-        GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
-        DisableAlphaNumAccels();
-        m_design_wnd->Reset();
-
-        // indicate selections on buttons
-        m_btn_siterep->MarkNotSelected();
-        m_btn_research->MarkNotSelected();
-        m_btn_production->MarkNotSelected();
-        m_btn_design->MarkSelectedGray();
-    }
+    if (m_design_wnd->Visible())
+        HideDesign();
+    else
+        ShowDesign();
     return true;
 }
 
@@ -3194,7 +3171,7 @@ void MapWnd::CloseAllPopups()
         // get popup and increment iterator first since closing the popup will change this list by removing the popup
         MapWndPopup* popup = *it++;
         popup->Close();
-    }   
+    }
     // clear list
     m_popups.clear();
 }
