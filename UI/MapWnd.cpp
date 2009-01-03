@@ -2642,7 +2642,7 @@ void MapWnd::RefreshFoodResourceIndicator()
 
         if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
             stockpile_group_systems = group;
-            Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of systems for stockpile system.  size: " << stockpile_group_systems.size();
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of systems for stockpile system.  size: " << stockpile_group_systems.size();
             break;
         }
 
@@ -2737,7 +2737,7 @@ void MapWnd::RefreshMineralsResourceIndicator()
 
         if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
             stockpile_group_pp_allocation = it->second;        // record allocation for this group
-            Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of systems for stockpile system.  size: " << it->first.size();
+            Logger().debugStream() << "MapWnd::RefreshMineralsResourceIndicator found group of systems for stockpile system.  size: " << it->first.size();
             break;
         }
 

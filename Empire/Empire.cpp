@@ -83,6 +83,7 @@ namespace {
                                      const std::vector<double>& production_status, ProductionQueue::QueueType& queue,
                                      std::map<std::set<int>, double>& allocated_pp, int& projects_in_progress)
     {
+        Logger().debugStream() << "========SetProdQueueElementSpending========";
         // TODO: When combat and blockading are updated to allow an armed ship to be in a system containing an enemy planet without
         // actually attacking that planet, it will be possible to blockade a system from exchanging resources with itself.  This will
         // mean that planets won't be listed in any resource sharing group, and thus won't be allocated the industry and minerals that
@@ -94,6 +95,8 @@ namespace {
 
         projects_in_progress = 0;
         allocated_pp.clear();
+
+        Logger().debugStream() << "queue size: " << queue.size();
 
         int i = 0;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
@@ -124,6 +127,7 @@ namespace {
                 queue_element.allocated_pp = 0.0;
                 continue;
             }
+            Logger().debugStream() << "group has " << group_pp_available << " PP available";
 
 
             ProductionQueue::ProductionItem& item = queue_element.item;
@@ -145,6 +149,7 @@ namespace {
             double item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(item);
+            Logger().debugStream() << "item " << item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
 
             // determine additional PP needed to complete build queue element: total cost - progress
@@ -160,6 +165,8 @@ namespace {
             // resource sharing group
             double allocation = std::max(std::min(std::min(additional_pp_to_complete_element, item_cost), group_pp_available), 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
 
+            Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost " << element_total_cost << " and needs " << additional_pp_to_complete_element << " more to be completed";
+            Logger().debugStream() << "... allocating " << allocation;
 
             // allocate pp
             queue_element.allocated_pp = allocation;
@@ -168,11 +175,12 @@ namespace {
             allocated_pp[group] += allocation;  // assuming the double indexed by group will be default initialized to 0.0 if that entry doesn't already exist in the map
             group_pp_available -= allocation;
 
+            Logger().debugStream() << "... leaving " << group_pp_available << " PP available to group";
+
 
             // check if this will complete the element
-            if (allocation >= additional_pp_to_complete_element - EPSILON) {
+            if (allocation >= additional_pp_to_complete_element - EPSILON)
                 ++projects_in_progress;
-            }
         }
     }
 
@@ -582,12 +590,15 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
 {
     if (!empire) {
         Logger().errorStream() << "ProductionQueue::Update passed null empire.  doing nothing.";
+        m_projects_in_progress = 0;
+        m_system_group_allocated_pp.clear();
         return;
     }
 
     if (m_queue.empty()) {
         Logger().debugStream() << "ProductionQueue::Update aborting early due to an empty queue";
         m_projects_in_progress = 0;
+        m_system_group_allocated_pp.clear();
 
         if (!production_status.empty())
             Logger().errorStream() << "warnong: ProductionQueue::Update queue was empty, but passed production_status was not.";
@@ -651,9 +662,10 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
 
 
     if (!simulate_future) {
+        Logger().debugStream() << "not enough PP to be worth simulating future turns production.  marking everything as never complete";
         // since there are so few PPs, indicate that the number of turns left is indeterminate by providing a number < 0
         for (ProductionQueue::QueueType::iterator queue_it = m_queue.begin(); queue_it != m_queue.end(); ++queue_it) {
-            queue_it->turns_left_to_next_item = -1;
+            queue_it->turns_left_to_next_item = -1;     // -1 is sentinel value indicating never to be complete.  ProductionWnd checks for turns to completeion less than 0 and displays "NEVER" when appropriate
             queue_it->turns_left_to_completion = -1;
         }
         ProductionQueueChangedSignal();
@@ -2109,6 +2121,7 @@ void Empire::CheckResearchProgress()
 
 void Empire::CheckProductionProgress()
 {
+    Logger().debugStream() << "========Empire::CheckProductionProgress=======";
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
     // m_production_queue.Update(this, m_resource_pools, m_production_progress);
 
@@ -2226,7 +2239,7 @@ void Empire::CheckProductionProgress()
 
             if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
                 stockpile_group_pp_allocation = it->second;        // record allocation for this group
-                Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of systems for stockpile system.  size: " << it->first.size();
+                Logger().debugStream() << "Empire::CheckProductionProgress found group of systems for stockpile system.  size: " << it->first.size();
                 break;
             }
 
@@ -2255,6 +2268,8 @@ void Empire::CheckTradeSocialProgress()
 
 void Empire::CheckGrowthFoodProgress()
 {
+    Logger().debugStream() << "========Empire::CheckGrowthFoodProgress=======";
+
     boost::shared_ptr<ResourcePool> pool = m_resource_pools[RE_FOOD];
     const PopulationPool& pop_pool = m_population_pool;                 // adding a reference to a member variable of this object for consistency with other implementation of this code in MapWnd
 
@@ -2415,6 +2430,8 @@ void Empire::UpdateResearchQueue()
 
 void Empire::UpdateProductionQueue()
 {
+    Logger().debugStream() << "========= Production Update for empire: " << EmpireID() << " ========";
+
     m_resource_pools[RE_MINERALS]->Update();
     m_resource_pools[RE_INDUSTRY]->Update();
     m_production_queue.Update(this, m_resource_pools, m_production_progress);
@@ -2448,7 +2465,7 @@ void Empire::UpdateFoodDistribution()
     // locally when such a blockade occurs.  The food distribution code probably needs to be updated to allow a ResourceCenter
     // that is also a PopCenter to use its own food production in cases where its system is not part of any resource-sharing group.
 
-    Logger().debugStream() << "@@@@ Food distribution for empire: " << EmpireID() << " @@@@";
+    Logger().debugStream() << "======= Food distribution for empire: " << EmpireID() << " =======";
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
     int stockpile_system_id = m_resource_pools[RE_FOOD]->StockpileSystemID();
