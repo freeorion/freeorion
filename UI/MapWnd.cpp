@@ -665,6 +665,8 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 
 void MapWnd::InitTurn(int turn_number)
 {
+    Logger().debugStream() << "Initializing turn " << turn_number;
+
     SetAccelerators();
 
     Universe& universe = GetUniverse();
@@ -753,7 +755,7 @@ void MapWnd::InitTurn(int turn_number)
     std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
     std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
-    //Logger().debugStream() << "====ADDING STARLANES====";
+    Logger().debugStream() << "ADDING STARLANES";
 
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
@@ -1111,6 +1113,7 @@ void MapWnd::InitTurn(int turn_number)
     m_research_wnd->Update();
     m_production_wnd->Update();
 
+    Logger().debugStream() << "Turn initialization graphic buffer clearing";
     // clear out all the old buffers
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
@@ -1191,6 +1194,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
 
+    Logger().debugStream() << "Turn initialization new graphic buffer creation";
     // create new buffers
     for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
              raw_star_core_quad_vertices.begin();
