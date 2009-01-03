@@ -122,6 +122,7 @@ Message::Message() :
     m_type(UNDEFINED),
     m_sending_player(0),
     m_receiving_player(0),
+    m_synchronous_response(false),
     m_message_size(0),
     m_message_text(0)
 {}

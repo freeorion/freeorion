@@ -211,7 +211,6 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
     m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
-    GG::Connect(m_queue_lb->QueueItemMoved, &ProductionWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y(6));
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
@@ -219,13 +218,14 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
     EnableChildClipping(true);
 
-    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
-    GG::Connect(m_build_designator_wnd->SystemSelectedSignal, SystemSelectedSignal);
-    GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this);
-    GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal, &ProductionWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal,     &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
+    GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
+    GG::Connect(m_queue_lb->QueueItemMoved,                             &ProductionWnd::QueueItemMoved, this);
+    GG::Connect(m_queue_lb->ErasedSignal,                               &ProductionWnd::QueueItemDeletedSlot, this);
+    GG::Connect(m_queue_lb->LeftClickedSignal,                          &ProductionWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal,                        &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_lb);
@@ -351,9 +351,8 @@ void ProductionWnd::UpdateQueue()
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
     int i = 0;
-    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i)
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, *it, i));
-    }
 
     if (!m_queue_lb->Empty()) {
         m_queue_lb->BringRowIntoView(--m_queue_lb->end());

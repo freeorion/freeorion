@@ -345,7 +345,9 @@ double Universe::s_universe_width = 1000.0;
 bool Universe::s_inhibit_universe_object_signals = false;
 int Universe::s_encoding_empire = ALL_EMPIRES;
 
-Universe::Universe()
+Universe::Universe() :
+    m_last_allocated_object_id(UniverseObject::INVALID_OBJECT_ID),
+    m_last_allocated_design_id(UniverseObject::INVALID_OBJECT_ID)
 {}
 
 const Universe& Universe::operator=(Universe& rhs)

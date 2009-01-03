@@ -74,7 +74,8 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
     m_log_category(log4cpp::Category::getRoot()),
     m_fsm(*this),
-    m_current_turn(INVALID_GAME_TURN)
+    m_current_turn(INVALID_GAME_TURN),
+    m_single_player_game(false)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class ServerApp");
