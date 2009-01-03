@@ -476,16 +476,6 @@ void ServerApp::ProcessTurns()
     Universe&       universe = GetUniverse();
     EmpireManager&  empires = Empires();
 
-    for (Universe::const_iterator blah = universe.begin(); blah != universe.end(); ++blah) {
-        const UniverseObject* obj = blah->second;
-        if (obj->Name() == "Hagalaz II") {
-            Logger().debugStream() << "Hagalaz II at start of ProcessTurns";
-            for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-                if (const Meter* meter = obj->GetMeter(meter_type))
-                    Logger().debugStream() << "...type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
-            break;
-        }
-    }
 
     // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {

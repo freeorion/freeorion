@@ -544,9 +544,6 @@ void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void Planet::PopGrowthProductionResearchPhase()
 {
-    if (Name() == "Hagalaz II") {
-        Logger().debugStream() << "Hagalaz II Growth";
-    }
     // do not do production if planet was just conquered
     if (m_just_conquered)
         m_just_conquered = false;

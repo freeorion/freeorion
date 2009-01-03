@@ -191,24 +191,27 @@ void ResourcePool::Update() {
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
 
+    if (INVALID_METER_TYPE == meter_type)
+        Logger().errorStream() << "ResourcePool::Update() called when m_type can't be converted to a valid MeterType";
+
     // for every group...
     for (std::map<std::set<int>, double>::iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it) {
         // sum production from from all ResourceCenters in this pool that are located in a system in this group
 
-        it->second = 0.0;                               // zero production for this pool before beginning accumulation
         const std::set<int>& group_ids = it->first;     // extract the set of systems that this group comprises
         double& group_production = it->second;          // to be updated later...
+        group_production = 0.0;                         // zero production for this pool before beginning accumulation
 
         // loop through systems in group, checking each resource center to see if it is located therein
         for (std::set<int>::const_iterator group_it = group_ids.begin(); group_it != group_ids.end(); ++group_it) {
             int system_in_group_id = *group_it;         // get system to check resource centers against
 
-            //// DEBUG
-            //const UniverseObject* system = GetUniverse().Object(system_in_group_id);
-            //if (!system)
-            //    Logger().errorStream() << "ResourcePool::Update tried to get a system that doesn't exist but is listed in a supply system group";
-            //Logger().debugStream() << "... system: " << system->Name() << "(" << system_in_group_id << ")";
-            //// END DEBUG
+            // DEBUG
+            const UniverseObject* system = GetUniverse().Object(system_in_group_id);
+            if (!system)
+                Logger().errorStream() << "ResourcePool::Update tried to get a system that doesn't exist but is listed in a supply system group";
+            Logger().debugStream() << "... system: " << system->Name() << "(" << system_in_group_id << ")";
+            // END DEBUG
 
             // check all ResourceCenters in this pool to see if any are in this system.
             for (std::map<const ResourceCenter*, const UniverseObject*>::const_iterator obj_it = m_resource_center_objs.begin(); obj_it != m_resource_center_objs.end(); ++obj_it) {
@@ -216,10 +219,12 @@ void ResourcePool::Update() {
                     // add this ResourceCenter's production to the group pool
                     const ResourceCenter* rc = obj_it->first;
                     group_production += rc->ProjectedMeterPoints(meter_type);
-                    Logger().debugStream() << "... ... contributes: " << rc->ProjectedMeterPoints(meter_type);
-                    break;  // assuming ResourceCenter are located in only one system
+                    Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->ProjectedMeterPoints(meter_type);
                 }
             }
+
+            // this checks all ResourceCenter against all systems, even if a system has already been found for a ResourceCenter.  Some
+            // fancy caching or swapping the inner and outer loops might be a performance improvement... or detriment.
         }
         Logger().debugStream() << "... group production: " << group_production;
     }
