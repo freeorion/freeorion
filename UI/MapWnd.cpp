@@ -2493,6 +2493,8 @@ void MapWnd::ShowProduction()
     HideSitRep();
     HideResearch();
     HideDesign();
+    m_side_panel->Hide();
+    DetachChild(m_side_panel);
 
     // show the production window
     m_production_wnd->Show();
