@@ -646,8 +646,8 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     m_primary_focus_drop->SetBrowseModeTime(tooltip_delay);
     m_secondary_focus_drop->SetBrowseModeTime(tooltip_delay);
 
-    GG::Connect(m_primary_focus_drop->SelChangedSignal, &ResourcePanel::PrimaryFocusDropListSelectionChanged, this);
-    GG::Connect(m_secondary_focus_drop->SelChangedSignal, &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
+    m_drop_changed_connections[m_primary_focus_drop] =      GG::Connect(m_primary_focus_drop->SelChangedSignal,     &ResourcePanel::PrimaryFocusDropListSelectionChanged,   this);
+    m_drop_changed_connections[m_secondary_focus_drop] =    GG::Connect(m_secondary_focus_drop->SelChangedSignal,   &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
 
     // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_FARMING),
@@ -705,6 +705,11 @@ ResourcePanel::~ResourcePanel()
     delete m_industry_stat;
     delete m_research_stat;
     delete m_trade_stat;
+
+    // get rid of held connections
+    for (std::map<CUIDropDownList*, boost::signals::connection>::iterator it = m_drop_changed_connections.begin(); it != m_drop_changed_connections.end(); ++it)
+        it->second.disconnect();
+    m_drop_changed_connections.clear();
 
     delete m_primary_focus_drop;
     delete m_secondary_focus_drop;
@@ -823,7 +828,7 @@ void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey>
         parent->MouseWheel(pt, move, mod_keys);
 }
 
-void ResourcePanel::Render() 
+void ResourcePanel::Render()
 {
     // Draw outline and background...
 
@@ -866,7 +871,7 @@ void ResourcePanel::Render()
     glEnable(GL_TEXTURE_2D);
 
     // draw details depending on state of ownership and expanded / collapsed status
-    
+
     // determine ownership
     /*const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
     if(obj->Owners().empty()) 
@@ -952,6 +957,7 @@ void ResourcePanel::Update()
     }
 
     // focus droplists
+    m_drop_changed_connections[m_primary_focus_drop].block();   // prevent cyclic signalling
     std::string text;
     switch (res->PrimaryFocus())
     {
@@ -984,8 +990,10 @@ void ResourcePanel::Update()
         text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
+    m_drop_changed_connections[m_primary_focus_drop].unblock();
     m_primary_focus_drop->SetBrowseText(text);
 
+    m_drop_changed_connections[m_secondary_focus_drop].block();
     switch (res->SecondaryFocus())
     {
     case FOCUS_BALANCED:
@@ -1017,6 +1025,7 @@ void ResourcePanel::Update()
         text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
+    m_drop_changed_connections[m_secondary_focus_drop].unblock();
     m_secondary_focus_drop->SetBrowseText(text);
 }
 

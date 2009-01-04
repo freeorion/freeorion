@@ -125,6 +125,7 @@ private:
 
     CUIDropDownList*            m_primary_focus_drop;   ///< displays and allows selection of primary focus
     CUIDropDownList*            m_secondary_focus_drop; ///< displays and allows selection of secondary focus
+    std::map<CUIDropDownList*, boost::signals::connection>  m_drop_changed_connections; ///< signals connecting selection changed signals from drop lists to responses.  blocked when programmatically changing focus selection, to avoid recursive signal emission
 
     GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
