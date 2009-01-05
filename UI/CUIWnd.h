@@ -86,7 +86,7 @@ class CUIWnd : public GG::Wnd
 public:
     //! \name Structors //@{
     CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); //!< Constructs the window to be a CUI window
-    ~CUIWnd();    //!< Destructor
+    virtual ~CUIWnd();  //!< Destructor
     //@}
 
     //! \name Accessors //@{
