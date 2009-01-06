@@ -37,7 +37,7 @@ public:
     void OnCredits();       //!< called when credits is clicked
     void OnExitGame();      //!< called when exit_game is clicked
     virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
-    
+
     virtual void Close();
 
     virtual void Render();

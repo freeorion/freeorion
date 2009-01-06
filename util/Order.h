@@ -32,7 +32,7 @@ public:
     Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
     virtual ~Order() {}
     //@}
-   
+
     /** \name Accessors */ //@{
     int          EmpireID() const {return m_empire;} ///< returns the ID of the Empire issuing the order
 
@@ -132,7 +132,7 @@ public:
 
 private:
     /**
-     * Preconditions of execute: 
+     * Preconditions of execute:
      *    None.
      *
      *  Postconditions:
@@ -258,7 +258,7 @@ public:
     int   PlanetID() const  {return m_planet;} ///< returns ID of the planet to be colonized
     int   ShipID  () const  {return m_ship  ;} ///< returns ID of the ship which is colonizing the planet
 
-    virtual void           ServerExecute() const; //< called if the server allows the colonization effort 
+    virtual void           ServerExecute() const; //< called if the server allows the colonization effort
     //@}
 
 private:
@@ -471,7 +471,7 @@ public:
 
 private:
     /**
-     * Preconditions of execute: 
+     * Preconditions of execute:
      *    - For creating a new design, the passed design is a valid reference to a design created by the
      *      empire issuing the order
      *    - For remembering an existing ship design, there exists a ship design with the passed id, and

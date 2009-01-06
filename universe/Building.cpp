@@ -244,7 +244,7 @@ CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_i
     if (as_production_item && location && to_empire)
         return CR_CAPTURE;
 
-    return CR_DESTROY;
+    return CR_CAPTURE;
 }
 
 /////////////////////////////////////////////////

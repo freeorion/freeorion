@@ -1038,7 +1038,7 @@ void StatisticIcon::SetValue(double value, int index)
 void StatisticIcon::Refresh()
 {
     std::string text = "";
-    
+
     // first value: always present
     std::string clr_tag = GG::RgbaTag(ValueColor(0));
     text += clr_tag + DoubleToString(m_values[0], m_digits[0], m_integerize[0], m_show_signs[0]) + "</rgba>";
@@ -1056,7 +1056,7 @@ void StatisticIcon::Refresh()
 GG::Clr StatisticIcon::ValueColor(int index) const
 {
     int effectiveSign = EffectiveSign(m_values.at(index), m_integerize.at(index));
-     
+
     if (index == 0) return ClientUI::TextColor();
 
     if (effectiveSign == -1) return ClientUI::StatDecrColor();

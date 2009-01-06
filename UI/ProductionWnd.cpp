@@ -153,7 +153,7 @@ namespace {
 
         top += m_progress_bar->Height() + MARGIN;
 
-        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % turn_spending);
+        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false, false));
         m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turn_spending_text, font, clr, GG::FORMAT_LEFT);
 

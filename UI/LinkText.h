@@ -9,7 +9,7 @@
 class TextLinker
 {
 private:
-    struct BoolCombiner 
+    struct BoolCombiner
     {
         typedef bool result_type; 
         template<class InIt> result_type operator()(InIt first, InIt last) const;
@@ -57,10 +57,10 @@ private:
     static bool         s_link_tags_registered;
 };
 
-/** allows text that the user sees to emit signals when clicked, and indicates to the user visually which text 
+/** allows text that the user sees to emit signals when clicked, and indicates to the user visually which text
     represents a link.  There is one type of signal for each type of ZoomTo*() method in ClientUI.  This allows
-    any text that refers to game elements to be tagged as such and clicked by the user, emitting a signal of the 
-    appropriate type.  These signals can be used to ZoomTo*() an appropriate screen, or take some other action.
+    any text that refers to game elements to be tagged as such and clicked by the user, emitting a signal of the
+    appropriate type.  These signals can be used to ZoomTo*() an appropriate screen, or take some other action
     The folowig tags are currently supported:
     \verbatim
     <planet ID>
@@ -81,7 +81,7 @@ public:
     LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
-        Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 
+        Window size is determined from the string and font; the window will be large enough to fit the text as rendered,
         and no larger.  \see DynamicText::DynamicText() */
     LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE);
     //@}
@@ -104,8 +104,8 @@ public:
     virtual void    MouseLeave();
 
 
-    /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text 
-        (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever 
+    /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text
+        (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever
         space the newly rendered text occupies. */
     virtual void    SetText(const std::string& str);
     //@}

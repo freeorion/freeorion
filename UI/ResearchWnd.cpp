@@ -119,14 +119,14 @@ namespace {
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
-        
+
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
                                                   ClientUI::TechWndProgressBarBackground(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;
-        
+
         using boost::io::str;
         using boost::format;
 
@@ -135,7 +135,7 @@ namespace {
                                                    turns_cost_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
-        
+
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(format(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                      turns_left_text, font, clr, GG::FORMAT_RIGHT);
