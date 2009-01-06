@@ -96,14 +96,18 @@ Neuen Namen eingeben
 UNKNOWN_VALUE_SYMBOL
 ?
 
-DEFENSE_BASE
-Verteidigungsbasis
-
-DEFENSE_BASE_DESCRIPTION
-Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
+ERROR
+ERROR
 
 CHAT_WHISPER
 flüstern
+
+# used to generate names for new fleets when they are created
+NEW_FLEET_NAME
+Neue Flotte %1%
+
+NEW_FLEET_NAME_NO_NUMBER
+Neue Flotte
 
 
 ######################################
@@ -1195,8 +1199,8 @@ Nächste Runde
 TT_CHANGE
 Änderung
 
-TT_MAX_METER
-Max Meter: %1%
+TT_METER
+Meter: %1% / %2%
 
 TT_BASIC_FOCUS_AND_UNIVERSE
 Basis-Fokus und Universum
@@ -1234,7 +1238,10 @@ SP_ENTER_NEW_PLANET_NAME
 Neuen Planetennamen eingeben
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-Alle Kolonieschiffe in diesem System haben\nBefehl erhalten, das System zu\nverlassen.\n\nSoll eines dieser Schiffe verwandt werden?
+'''Alle Kolonieschiffe in diesem System haben
+den Befehl erhalten, das System zu verlassen.
+
+Soll eines dieser Schiffe verwendet werden?'''
 
 #################
 # Fleet Window  #
@@ -1300,13 +1307,13 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / %2% Runden
+%1% RP / %2% Rnd
 
 TECH_TURN_COST_STR
-%1% RP / %2% Runden
+%1% RP / %2% Rnd
 
 TECH_TURNS_LEFT_STR
-%1% Runden übrig
+noch %1% Runden
 
 TECH_TURNS_LEFT_NEVER
 Nie
@@ -3725,3 +3732,11 @@ Huge Hull
 
 SH_HUGE_DESC
 Sehr viele Slots aber sehr niedrige Geschwindigkeit
+
+
+# Alte Werte
+DEFENSE_BASE
+Verteidigungsbasis
+
+DEFENSE_BASE_DESCRIPTION
+Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
