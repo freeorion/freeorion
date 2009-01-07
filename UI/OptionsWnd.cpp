@@ -12,6 +12,7 @@
 #include <GG/TabWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
+#include <boost/cast.hpp>
 #include <boost/format.hpp>
 #include <boost/spirit.hpp>
 #include <boost/algorithm/string/erase.hpp>
@@ -76,7 +77,7 @@ namespace {
         void operator()()
             {
                 try {
-                    FileDlg dlg(m_path.native_directory_string(), m_edit->WindowText(), false, false, m_filters);
+                    FileDlg dlg(m_path.native_directory_string(), m_edit->Text(), false, false, m_filters);
                     if (m_directory)
                         dlg.SelectDirectories(true);
                     dlg.Run();
@@ -168,7 +169,7 @@ namespace {
         void operator()(GG::DropDownList::iterator it)
             {
                 assert(it != m_drop_list->end());
-                GetOptionsDB().Set<std::string>(m_option_name, (*it)->WindowText());
+                GetOptionsDB().Set<std::string>(m_option_name, (*it)->Name());
             }
         const std::string m_option_name;
         CUIDropDownList* m_drop_list;
@@ -180,7 +181,7 @@ namespace {
             m_drop_list(drop_list), m_width_spin(width_spin), m_height_spin(height_spin), m_color_depth_spin(color_depth_spin), m_fullscreen_button(fullscreen_button)
             {
                 const GG::ListBox::Row* row = *m_drop_list->CurrentItem();
-                if (row && row->WindowText() != UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
+                if (row && row->Name() != UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
                     m_width_spin->Disable(true);
                     m_height_spin->Disable(true);
                     m_color_depth_spin->Disable(true);
@@ -192,7 +193,7 @@ namespace {
             {
                 const GG::ListBox::Row* row = *it;
                 assert(row);
-                if (row->WindowText() == UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
+                if (row->Name() == UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
                     m_width_spin->Disable(false);
                     m_height_spin->Disable(false);
                     m_color_depth_spin->Disable(false);
@@ -207,7 +208,7 @@ namespace {
                     int w, h, bpp;
                     using namespace boost::spirit;
                     rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
-                    parse(row->WindowText().c_str(), resolution_p);
+                    parse(row->Name().c_str(), resolution_p);
                     GetOptionsDB().Set<int>("app-width", w);
                     GetOptionsDB().Set<int>("app-height", h);
                     GetOptionsDB().Set<int>("color-depth", bpp);
@@ -449,7 +450,7 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(edit->EditedSignal, SetOptionFunctor<std::string>(option_name, edit, string_validator));
     GG::Connect(button->ClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory));
-    if (string_validator && !string_validator(edit->WindowText()))
+    if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
 }
 
@@ -534,7 +535,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     int index = -1;
     for (std::set<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
         GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(boost::algorithm::erase_last_copy(*it, FONT_SUFFIX));
-        font_row->SetText(*it);
+        font_row->SetName(*it);
         drop_list->Insert(font_row);
         if (*it == current_font)
             index = drop_list->NumRows() - 1;
@@ -599,11 +600,11 @@ void OptionsWnd::ResolutionOption()
     m_current_option_list->Insert(row);
     drop_list->SetStyle(GG::LIST_NOSORT);
     GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
-    font_row->SetText(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
+    font_row->SetName(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
     drop_list->Insert(font_row);
     for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
         font_row = new CUISimpleDropDownListRow(*it);
-        font_row->SetText(*it);
+        font_row->SetName(*it);
         drop_list->Insert(font_row);
     }
     if (current_resolution_index != -1 && GetOptionsDB().Get<bool>("fullscreen"))

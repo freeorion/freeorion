@@ -1185,7 +1185,7 @@ void Empire::UpdateSystemSupplyRanges()
             continue;   // TODO: consider future special case if current object is itself a system
 
         // check if object has a construction meter
-        if (const Meter* construction = obj->GetMeter(METER_CONSTRUCTION)) {
+        if (obj->GetMeter(METER_CONSTRUCTION)) {
             // get resource supply range for next turn for this object
             int resource_supply_range = static_cast<int>(floor(obj->ProjectedCurrentMeter(METER_CONSTRUCTION) / 20.0));
 
@@ -1196,7 +1196,7 @@ void Empire::UpdateSystemSupplyRanges()
         }
 
         // check if object has a supply meter
-        if (const Meter* supply_meter = obj->GetMeter(METER_SUPPLY)) {
+        if (obj->GetMeter(METER_SUPPLY)) {
             // get fleet supply range for next turn for this object
             int fleet_supply_range = static_cast<int>(floor(obj->ProjectedCurrentMeter(METER_SUPPLY)));
 
@@ -2468,8 +2468,6 @@ void Empire::UpdateFoodDistribution()
     Logger().debugStream() << "======= Food distribution for empire: " << EmpireID() << " =======";
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
-    int stockpile_system_id = m_resource_pools[RE_FOOD]->StockpileSystemID();
-    double stockpile = m_resource_pools[RE_FOOD]->Stockpile();
 
     std::vector<PopCenter*>             pop_centers =       m_population_pool.PopCenters();
     std::vector<ResourceCenter*>        resource_centers =  m_resource_pools[RE_FOOD]->ResourceCenters();

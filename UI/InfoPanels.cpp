@@ -318,7 +318,7 @@ PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
     m_expand_button(0)
 {
-    SetText("PopulationPanel");
+    SetName("PopulationPanel");
 
     const PopCenter* pop = dynamic_cast<const PopCenter*>(&obj);
     if (!pop)
@@ -592,7 +592,7 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     m_secondary_focus_drop(0),
     m_expand_button(0)
 {
-    SetText("ResourcePanel");
+    SetName("ResourcePanel");
 
     const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(&obj);
     if (!res)
@@ -1131,7 +1131,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, const Planet &plt) :
     m_multi_meter_status_bar(0),
     m_expand_button(0)
 {
-    SetText("MilitaryPanel");
+    SetName("MilitaryPanel");
 
     // expand / collapse button at top right    
     m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
@@ -1430,7 +1430,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const UniverseObject& 
 {
     m_obj_vec.push_back(&obj);
 
-    SetText("MultiIconValueIndicator");
+    SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
@@ -1452,7 +1452,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<cons
     m_meter_types(meter_types),
     m_obj_vec(obj_vec)
 {
-    SetText("MultiIconValueIndicator");
+    SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
@@ -1474,7 +1474,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
     m_meter_types(),
     m_obj_vec()
 {
-    SetText("MultiIconValueIndicator");
+    SetName("MultiIconValueIndicator");
 }
 
 bool MultiIconValueIndicator::Empty()
@@ -1536,7 +1536,7 @@ MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, const UniverseObject& obj, con
     m_obj(obj),
     m_bar_colours()
 {
-    SetText("MultiMeterStatusBar");
+    SetName("MultiMeterStatusBar");
     Update();
 }
 
@@ -1682,7 +1682,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, const Planet &plt) :
     m_building_indicators(),
     m_expand_button(0)
 {
-    SetText("BuildingsPanel");
+    SetName("BuildingsPanel");
 
     if (m_columns < 1) throw std::invalid_argument("Attempted to create a BuidingsPanel with less than 1 column");
 
@@ -2057,7 +2057,7 @@ SpecialsPanel::SpecialsPanel(GG::X w, const UniverseObject &obj) :
     m_object_id(obj.ID()),
     m_icons()
 {
-    SetText("SpecialsPanel");
+    SetName("SpecialsPanel");
 
     Update();
 }

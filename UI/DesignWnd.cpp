@@ -1622,14 +1622,14 @@ const std::string& DesignWnd::MainPanel::Hull() const {
 
 const std::string& DesignWnd::MainPanel::DesignName() const {
     if (m_design_name)
-        return m_design_name->WindowText();
+        return m_design_name->Text();
     else
         return EMPTY_STRING;
 }
 
 const std::string& DesignWnd::MainPanel::DesignDescription() const {
     if (m_design_description)
-        return m_design_description->WindowText();
+        return m_design_description->Text();
     else
         return EMPTY_STRING;
 }

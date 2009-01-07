@@ -128,7 +128,7 @@ namespace {
             m_player_data.m_empire_color = it->second.m_color;
             m_player_data.m_save_game_empire_id = it->second.m_id;
             m_color_selector->SelectColor(m_player_data.m_empire_color);
-            operator[](3)->SetText(it->second.m_player_name);
+            boost::polymorphic_downcast<GG::TextControl*>(operator[](3))->SetText(it->second.m_player_name);
             DataChangedSignal();
         }
 
@@ -267,7 +267,7 @@ void MultiplayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
 {
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) && GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit) {
         int receiver = -1; // all players by default
-        std::string text = m_chat_input_edit->WindowText();
+        std::string text = m_chat_input_edit->Text();
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
         *m_chat_box += m_lobby_data.m_players[HumanClientApp::GetApp()->PlayerID()].m_player_name + ": " + text + "\n";
@@ -313,7 +313,7 @@ void MultiplayerLobbyWnd::LobbyExit(int player_id)
     std::string player_name = m_lobby_data.m_players[player_id].m_player_name;
     m_lobby_data.m_players.erase(player_id);
     for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
-        if (player_name == (**it)[0]->WindowText()) {
+        if (player_name == boost::polymorphic_downcast<GG::TextControl*>((**it)[0])->Text()) {
             delete m_players_lb->Erase(it);
             break;
         }

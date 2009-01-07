@@ -84,7 +84,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id) :
     m_selection_indicator(0),
     m_mouseover_indicator(0),
     m_selected(false),
-    m_name(0),
+    m_colored_name(0),
     m_showing_name(false)
 {
     parent->AttachChild(this);
@@ -101,7 +101,7 @@ void SystemIcon::Init() {
     for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
         m_fleet_state_change_signals[*it] = GG::Connect((*it)->StateChangedSignal, &SystemIcon::FleetStateChanged, this);
 
-    SetText(m_system.Name());
+    SetName(m_system.Name());
 
     // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
@@ -280,8 +280,8 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         AttachChild(m_mouseover_indicator);
         MoveChildUp(m_mouseover_indicator);
     }
-    if (m_name)
-        m_name->Show();
+    if (m_colored_name)
+        m_colored_name->Show();
 
     PlaySystemIconRolloverSound();
 
@@ -294,8 +294,8 @@ void SystemIcon::MouseLeave()
     if (m_mouseover_indicator) {
         DetachChild(m_mouseover_indicator);
     }
-    if (!m_showing_name && m_name)
-        m_name->Hide();
+    if (!m_showing_name && m_colored_name)
+        m_colored_name->Hide();
 
     MouseLeavingSignal(m_system.ID());
 }
@@ -318,14 +318,14 @@ void SystemIcon::SetSelected(bool selected)
 
 void SystemIcon::Refresh()
 {
-    SetText(m_system.Name());
+    SetName(m_system.Name());
 
     // set up the name text controls
     if (!m_system.Name().empty()) {
-        delete m_name;
+        delete m_colored_name;
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont(ClientUI::Pts() + 3);
-        m_name = new OwnerColoredSystemName(&m_system, font);
-        AttachChild(m_name);
+        m_colored_name = new OwnerColoredSystemName(&m_system, font);
+        AttachChild(m_colored_name);
         m_showing_name = true;
         PositionSystemName();
     }
@@ -412,15 +412,15 @@ void SystemIcon::ClickFleetButton(Fleet* fleet)
 
 void SystemIcon::ShowName()
 {
-    if (m_name)
-        m_name->Show();
+    if (m_colored_name)
+        m_colored_name->Show();
     m_showing_name = true;
 }
 
 void SystemIcon::HideName()
 {
-    if (m_name)
-        m_name->Hide();
+    if (m_colored_name)
+        m_colored_name->Hide();
     m_showing_name = false;
 }
 
@@ -448,8 +448,8 @@ void SystemIcon::DoFleetButtonLayout()
 
 void SystemIcon::PositionSystemName()
 {
-    if (m_name)
-        m_name->MoveTo(GG::Pt((Width() - m_name->Width()) / 2, Height()));
+    if (m_colored_name)
+        m_colored_name->MoveTo(GG::Pt((Width() - m_colored_name->Width()) / 2, Height()));
 }
 
 bool SystemIcon::InWindow(const GG::Pt& pt) const

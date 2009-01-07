@@ -28,7 +28,7 @@ TurnProgressWnd::TurnProgressWnd() :
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
                                  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE))
 {
-    SetText(UserString("TURN_PROGRESS_WND"));
+    SetName(UserString("TURN_PROGRESS_WND"));
 
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);

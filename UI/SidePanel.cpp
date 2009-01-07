@@ -672,7 +672,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     m_buildings_panel(0),
     m_specials_panel(0)
 {
-    SetText(UserString("PLANET_PANEL"));
+    SetName(UserString("PLANET_PANEL"));
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     int planet_image_sz = PlanetDiameter();
@@ -1059,7 +1059,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w,
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
     m_vscroll(new CUIScroll(Width()-14,GG::Y0,GG::X(14),Height(),GG::VERTICAL))
 {
-    SetText("PlanetPanelContainer");
+    SetName("PlanetPanelContainer");
     EnableChildClipping(true);
     GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll, this);
 }
@@ -1232,7 +1232,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
 
     TempUISoundDisabler sound_disabler;
 
-    SetText(UserString("SIDE_PANEL"));
+    SetName(UserString("SIDE_PANEL"));
 
     m_system_name->DisableDropArrow();
     m_system_name->SetStyle(GG::LIST_CENTER);

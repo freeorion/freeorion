@@ -830,9 +830,9 @@ GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
     return CUIMultiEdit::TextLowerRight();
 }
 
-const std::string& CUILinkTextMultiEdit::WindowText() const
+std::string CUILinkTextMultiEdit::Text_() const
 {
-    return CUIMultiEdit::WindowText();
+    return CUIMultiEdit::Text();
 }
 
 void CUILinkTextMultiEdit::Render()

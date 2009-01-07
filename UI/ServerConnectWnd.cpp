@@ -9,6 +9,8 @@
 #include <GG/TextControl.h>
 #include <GG/SDL/SDLGUI.h>
 
+#include <boost/cast.hpp>
+
 #include <sstream>
 #include <iomanip>
 #include <cctype>
@@ -176,8 +178,11 @@ void ServerConnectWnd::OkClicked()
         m_result.second = "HOST GAME SELECTED";
     } else {
         m_result.second = *m_IP_address_edit;
-        if (m_result.second == "")
-            m_result.second = (***m_servers_lb->Selections().begin())[0]->WindowText();
+        if (m_result.second == "") {
+            m_result.second =
+                boost::polymorphic_downcast<GG::TextControl*>(
+                    (***m_servers_lb->Selections().begin())[0])->Text();
+        }
     }
     CUIWnd::CloseClicked();
 }
@@ -191,8 +196,8 @@ void ServerConnectWnd::EnableDisableControls()
     m_internet_game_label->Disable(host_selected);
     m_IP_address_edit->Disable(host_selected);
     bool disable_ok_bn =
-        !NameOK(m_player_name_edit->WindowText()) ||
+        !NameOK(m_player_name_edit->Text()) ||
         (!host_selected && m_servers_lb->Selections().empty() &&
-         m_IP_address_edit->WindowText().empty());
+         m_IP_address_edit->Text().empty());
     m_ok_bn->Disable(disable_ok_bn);
 }

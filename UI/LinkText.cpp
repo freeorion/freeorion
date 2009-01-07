@@ -78,9 +78,9 @@ const boost::shared_ptr<GG::Font>& LinkText::GetFont() const
     return GG::TextControl::GetFont();
 }
 
-const std::string& LinkText::WindowText() const
+std::string LinkText::Text_() const
 {
-    return GG::TextControl::WindowText();
+    return GG::TextControl::Text();
 }
 
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -180,7 +180,7 @@ void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (rollover_link != m_old_rollover_link) {
         ClearOldRollover();
         if (rollover_link != -1) {
-            std::string text = WindowText();
+            std::string text = Text_();
             text.insert(m_links[rollover_link].text_posn.first, "<u>");
             text.insert(m_links[rollover_link].text_posn.second + 3, "</u>");
             SetLinkedText(text);
@@ -266,7 +266,7 @@ int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
 void TextLinker::ClearOldRollover()
 {
     if (m_old_rollover_link != -1) {
-        std::string text = WindowText();
+        std::string text = Text_();
         std::string::size_type pos = text.find("<u>", m_links[m_old_rollover_link].text_posn.first);
         text.erase(pos, 3);
         pos = text.find("</u>", m_links[m_old_rollover_link].text_posn.first);

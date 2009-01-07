@@ -34,7 +34,7 @@ protected:
     virtual GG::Pt                                  TextUpperLeft() const = 0;
     virtual GG::Pt                                  TextLowerRight() const = 0;
     virtual void                                    SetLinkedText(const std::string& str) = 0;
-    virtual const std::string&                      WindowText() const = 0;
+    virtual std::string                             Text_() const = 0;
 
     void                                            FindLinks();    ///< finds the links in the text and populates m_links
 
@@ -92,7 +92,7 @@ public:
 
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const;
     virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
-    virtual const std::string&                      WindowText() const;
+    virtual std::string                             Text_() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -104,9 +104,10 @@ public:
     virtual void    MouseLeave();
 
 
-    /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text
-        (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever
-        space the newly rendered text occupies. */
+    /** sets the text to \a str; may resize the window.  If the window was
+        constructed to fit the size of the text (i.e. if the second ctor type
+        was used), calls to this function cause the window to be resized to
+        whatever space the newly rendered text occupies. */
     virtual void    SetText(const std::string& str);
     //@}
 

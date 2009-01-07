@@ -404,7 +404,7 @@ namespace {
             GG::ListBox::Row(PANEL_WD - ClientUI::ScrollWidth(), PANEL_HT + 4, fleet ? FLEET_DROP_TYPE_STRING : ""),
             m_fleet(fleet)
         {
-            SetText("FleetRow");
+            SetName("FleetRow");
             EnableChildClipping();
             push_back(new FleetDataPanel(Width(), PANEL_HT, m_fleet));
         }
@@ -426,7 +426,7 @@ namespace {
             GG::ListBox::Row(PANEL_WD - ClientUI::ScrollWidth(), PANEL_HT + 4, SHIP_DROP_TYPE_STRING),
             m_ship(ship)
         {
-            SetText("ShipRow");
+            SetName("ShipRow");
             if (!ship)
                 throw std::invalid_argument("ShipRow::ShipRow() : Attempted to contruct a ShipRow using a null ship pointer.");
 
@@ -930,7 +930,7 @@ FleetDetailPanel::FleetDetailPanel(Fleet* fleet, bool read_only, GG::Flags<GG::W
     m_ships_lb(0),
     m_ship_status_text(0)
 {
-    SetText("FleetDetailPanel");
+    SetName("FleetDetailPanel");
     EnableChildClipping(true);
 
     m_destination_text = new GG::TextControl(GG::X0, GG::Y0, FLEET_LISTBOX_WIDTH, GG::Y(ClientUI::Pts() + 4), "temp", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
@@ -1059,14 +1059,15 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // rename ship
-            std::string ship_name = (**it)[0]->WindowText();
+            GG::TextControl* text_control = boost::polymorphic_downcast<GG::TextControl*>((**it)[0]);
+            std::string ship_name = text_control->Text();
             CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name);
             edit_wnd.Run();
             if (edit_wnd.Result() != "") {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(),
                                              edit_wnd.Result())));
-                (**it)[0]->SetText(edit_wnd.Result());
+                text_control->SetText(edit_wnd.Result());
             }
             break;}
         default:
@@ -1143,7 +1144,7 @@ FleetDetailWnd::FleetDetailWnd(Fleet* fleet, bool read_only, GG::Flags<GG::WndFl
     GridLayout();
     GetLayout()->SetBorderMargin(7);
     SetMaxSize(GG::Pt(Width(), MaxSize().y));
-    SetText(TitleText());
+    SetName(TitleText());
     EnableChildClipping(false);
 }
 
@@ -1276,7 +1277,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     if (!m_read_only)
         GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal, &FleetWnd::CreateNewFleetFromDrops, this);
 
-    SetText(TitleText());
+    SetName(TitleText());
 
     if (GetOptionsDB().Get<bool>("UI.fleet-autoselect") && !fleets.empty()) {
         GG::ListBox::iterator it = boost::next(m_fleets_lb->begin(), selected_fleet);
@@ -1382,7 +1383,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID(),
                                              edit_wnd.Result())));
-                (**it)[0]->SetText(edit_wnd.Result());
+                boost::polymorphic_downcast<GG::TextControl*>((**it)[0])->SetText(edit_wnd.Result());
             }
             break;
         }

@@ -346,7 +346,6 @@ void ProductionWnd::UpdateQueue()
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
-    std::size_t original_queue_length = m_queue_lb->NumRows();
     m_queue_lb->Clear();
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 

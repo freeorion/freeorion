@@ -100,7 +100,7 @@ public:
 
     /** returns the panel containing all the user-chosen options. */
     const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
-    const std::string&      EmpireName() const;
+    std::string             EmpireName() const;
     GG::Clr                 EmpireColor() const;
     int                     NumberAIs() const;
     //!@}

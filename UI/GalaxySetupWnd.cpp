@@ -351,9 +351,9 @@ GalaxySetupWnd::GalaxySetupWnd() :
     Init();
 }
 
-const std::string& GalaxySetupWnd::EmpireName() const
+std::string GalaxySetupWnd::EmpireName() const
 {
-    return m_empire_name_edit->WindowText();
+    return m_empire_name_edit->Text();
 }
 
 GG::Clr GalaxySetupWnd::EmpireColor() const

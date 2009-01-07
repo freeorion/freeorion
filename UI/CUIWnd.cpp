@@ -153,8 +153,8 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     m_close_button(0),
     m_minimize_button(0)
 {
-    // set window text
-    SetText(t);
+    // set window name
+    SetName(t);
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(CUIWnd::MinimizedWidth(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     InitButtons();
@@ -247,7 +247,7 @@ void CUIWnd::Render()
 
     glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
-    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y), WindowText());
+    font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y), Name());
 }
 
 void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -433,6 +433,6 @@ const std::string& CUIEditWnd::Result() const
 
 void CUIEditWnd::OkClicked() 
 {
-    m_result = m_edit->WindowText();
+    m_result = m_edit->Text();
     CloseClicked();
 }

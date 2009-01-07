@@ -308,7 +308,7 @@ public:
     virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
     virtual GG::Pt                                  TextUpperLeft() const;
     virtual GG::Pt                                  TextLowerRight() const;
-    virtual const std::string&                      WindowText() const;
+    virtual std::string                             Text_() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -319,9 +319,10 @@ public:
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
 
-    /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text 
-        (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever 
-        space the newly rendered text occupies. */
+    /** sets the text to \a str; may resize the window.  If the window was
+        constructed to fit the size of the text (i.e. if the second ctor type
+        was used), calls to this function cause the window to be resized to
+        whatever space the newly rendered text occupies. */
     virtual void    SetText(const std::string& str);
     //@}
 

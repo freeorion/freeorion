@@ -36,20 +36,6 @@
 #include <vector>
 #include <deque>
 
-#define TEST_BROWSE_INFO 0
-#if TEST_BROWSE_INFO
-#include <GG/BrowseInfoWnd.h>
-class BrowseFoo : public GG::TextBoxBrowseInfoWnd
-{
-public:
-    BrowseFoo() :
-        TextBoxBrowseInfoWnd(200, ClientUI::Font(), 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
-        {}
-
-    void Update(int mode, const GG::Wnd* target)
-        { SetText("mode=" + boost::lexical_cast<std::string>(mode) + " wnd=" + target->WindowText()); }
-};
-#endif
 
 namespace {
     const double ZOOM_STEP_SIZE = 1.25;
@@ -253,7 +239,7 @@ MapWnd::MapWnd() :
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_in_production_view_mode(false)
 {
-    SetText("MapWnd");
+    SetName("MapWnd");
 
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
@@ -492,7 +478,7 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
     switch (key) {
     case GG::GGK_TAB: { // auto-complete current chat edit word
         if (m_chat_edit->Visible()) {
-            std::string text = m_chat_edit->WindowText();
+            std::string text = m_chat_edit->Text();
             std::pair<GG::CPSize, GG::CPSize> cursor_pos = m_chat_edit->CursorPosn();
             if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= text.size()) {
                 std::string::size_type word_start = text.substr(0, Value(cursor_pos.first)).find_last_of(" :");
@@ -558,7 +544,7 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
     case GG::GGK_RETURN:
     case GG::GGK_KP_ENTER: { // send chat message
         if (m_chat_edit->Visible()) {
-            std::string edit_text = m_chat_edit->WindowText();
+            std::string edit_text = m_chat_edit->Text();
             if (edit_text != "") {
                 if (g_chat_edit_history.size() == 1 || g_chat_edit_history[1] != edit_text) {
                     g_chat_edit_history[0] = edit_text;
@@ -583,7 +569,7 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
 
     case GG::GGK_UP: {
         if (m_chat_edit->Visible() && g_history_position < static_cast<int>(g_chat_edit_history.size()) - 1) {
-            g_chat_edit_history[g_history_position] = m_chat_edit->WindowText();
+            g_chat_edit_history[g_history_position] = m_chat_edit->Text();
             ++g_history_position;
             m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
         }
@@ -592,7 +578,7 @@ void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG:
 
     case GG::GGK_DOWN: {
         if (m_chat_edit->Visible() && 0 < g_history_position) {
-            g_chat_edit_history[g_history_position] = m_chat_edit->WindowText();
+            g_chat_edit_history[g_history_position] = m_chat_edit->Text();
             --g_history_position;
             m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
         }
