@@ -265,9 +265,8 @@ void PopulationPool::Update() {
     // sum population from all PopCenters in this pool
     for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it) {
         const PopCenter* center = (*it);
-        const Meter* meter = center->GetMeter(METER_POPULATION);
-        m_population += meter->InitialCurrent();
-        m_future_population += meter->Current();
+        m_population += center->MeterPoints(METER_POPULATION);
+        m_future_population += center->ProjectedMeterPoints(METER_POPULATION);
     }
     m_growth = m_future_population - m_population;
     ChangedSignal();
