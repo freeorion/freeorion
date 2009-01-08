@@ -216,6 +216,7 @@ public:
 
 private:
     TechManager();
+    ~TechManager();
 
     /** returns an error string indicating the first instance of an illegal prerequisite relationship between
         two techs in m_techs, or an empty string if there are no illegal dependencies  */

@@ -143,6 +143,9 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_graphic(graphic)
 {}
 
+BuildingType::~BuildingType()
+{ delete m_location; }
+
 const std::string& BuildingType::Name() const
 {
     return m_name;
@@ -277,6 +280,13 @@ BuildingTypeManager::BuildingTypeManager()
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);
+}
+
+BuildingTypeManager::~BuildingTypeManager()
+{
+    for (std::map<std::string, BuildingType*>::iterator it = m_building_types.begin(); it != m_building_types.end(); ++it) {
+        delete it->second;
+    }
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const

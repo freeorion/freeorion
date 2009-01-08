@@ -501,6 +501,16 @@ TechManager::TechManager()
 #endif
 }
 
+TechManager::~TechManager()
+{
+    for (std::map<std::string, TechCategory*>::iterator it = m_categories.begin(); it != m_categories.end(); ++it) {
+        delete it->second;
+    }
+    for (TechContainer::iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
+        delete *it;
+    }
+}
+
 std::string TechManager::FindIllegalDependencies()
 {
     assert(!m_techs.empty());

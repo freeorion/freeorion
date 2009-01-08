@@ -69,6 +69,8 @@ public:
                  const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
+
+    ~BuildingType(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -127,6 +129,7 @@ public:
 
 private:
     BuildingTypeManager();
+    ~BuildingTypeManager();
 
     std::map<std::string, BuildingType*> m_building_types;
 

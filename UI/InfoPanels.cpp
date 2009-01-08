@@ -1712,6 +1712,7 @@ BuildingsPanel::~BuildingsPanel()
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
         delete *it;
     m_building_indicators.clear();
+    delete m_expand_button;
 }
 
 void BuildingsPanel::ExpandCollapse(bool expanded)

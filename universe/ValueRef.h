@@ -106,6 +106,7 @@ template <class FromType, class ToType>
 struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
 {
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
+    ~StaticCast();
 
     virtual double Eval(const UniverseObject* source, const UniverseObject* target) const;
     virtual std::string Description() const;
@@ -320,6 +321,10 @@ ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::Variable<From
     ValueRef::Variable<ToType>(value_ref->SourceRef(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
+
+template <class FromType, class ToType>
+ValueRef::StaticCast<FromType, ToType>::~StaticCast()
+{ delete m_value_ref; }
 
 template <class FromType, class ToType>
 double ValueRef::StaticCast<FromType, ToType>::Eval(const UniverseObject* source, const UniverseObject* target) const

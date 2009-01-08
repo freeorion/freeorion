@@ -439,6 +439,7 @@ public:
 
     /** \name Structors */ //@{
     PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    ~PlanetPanelContainer();
     //@}
 
     void Clear();
@@ -1064,6 +1065,9 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w,
     GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll, this);
 }
 
+SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
+{ delete m_vscroll; }
+
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 {
     for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
@@ -1278,6 +1282,9 @@ SidePanel::~SidePanel()
         m_fleet_state_change_signals.erase(m_fleet_state_change_signals.begin());
     }
     s_side_panels.erase(this);
+
+    delete m_star_graphic;
+    delete m_system_resource_summary;
 }
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
@@ -1377,7 +1384,7 @@ void SidePanel::SetSystemImpl()
 
 
         // top right star graphic
-        DeleteChild(m_star_graphic);
+        delete m_star_graphic;
         boost::shared_ptr<GG::Texture> graphic = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars_sidepanel", ClientUI::StarTypeFilePrefixes()[s_system->Star()], s_system->ID());
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         textures.push_back(graphic);

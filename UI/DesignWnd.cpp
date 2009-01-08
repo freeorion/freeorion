@@ -1960,22 +1960,14 @@ void DesignWnd::AddDesign() {
         graphic = hull->Graphic();
 
     // create design from stuff chosen in UI
-    ShipDesign* design = new ShipDesign(name, description, empire_id, CurrentTurn(),
-                                        hull_name, parts, graphic, "some model");
-
-    if (!design) {
-        Logger().errorStream() << "DesignWnd::AddDesign failed to create a new ShipDesign object";
-        return;
-    }
+    ShipDesign design(name, description, empire_id, CurrentTurn(),
+                      hull_name, parts, graphic, "some model");
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ShipDesignOrder(empire_id, new_design_id, design)));
 
     EmpireDesignsChangedSignal();
 
-    Logger().debugStream() << "Added new design: " << design->Name();
-
-    //const Universe& universe = GetUniverse();
-    //for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
-    //    Logger().debugStream() << "Shipdesign: " << it->second->Name();
+    Logger().debugStream() << "Added new design: " << design.Name();
 }

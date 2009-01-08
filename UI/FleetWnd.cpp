@@ -290,6 +290,7 @@ namespace {
 
         ~ShipDataPanel()
         {
+            delete m_ship_icon;
             m_ship_connection.disconnect();
         }
 

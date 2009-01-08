@@ -377,6 +377,8 @@ Universe::~Universe()
         delete it->second;
     for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it)
         delete it->second;
+    for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
+        delete it->second;
 }
 
 const UniverseObject* Universe::Object(int id) const

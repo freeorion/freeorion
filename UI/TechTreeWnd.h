@@ -20,6 +20,7 @@ public:
 
     /** \name Structors */ //@{
     TechTreeWnd(GG::X w, GG::Y h);
+    ~TechTreeWnd();
     //@}
 
     /** \name Accessors */ //@{

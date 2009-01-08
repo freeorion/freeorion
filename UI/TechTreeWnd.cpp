@@ -2021,9 +2021,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_sz.x))), Value(client_sz.x));
 
     gvFreeLayout(gvc, graph);
-    gvFreeContext(gvc);
-
     agclose(graph);
+    gvFreeContext(gvc);
 
     Logger().debugStream() << "Tech Tree Layout Done";
 
@@ -2557,6 +2556,12 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
         ShowType(type);
 
     ShowTreeView();
+}
+
+TechTreeWnd::~TechTreeWnd()
+{
+    delete m_tech_list;
+    delete m_layout_panel;
 }
 
 double TechTreeWnd::Scale() const
