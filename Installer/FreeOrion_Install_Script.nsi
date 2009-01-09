@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "0.3.10"
+!define PRODUCT_VERSION "0.3.11"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\freeorionca.exe"
@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\FreeOrion-0.3.10-Setup.exe"
+OutFile "..\..\FreeOrion-0.3.11-Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -58,7 +58,7 @@ Section "MainSection" SEC01
   File /r /x .svn "..\default"
   File "..\glew32.dll"
   File "..\alut.dll"
-  File "..\boost_python-vc80-mt-1_34.dll"
+  File "..\boost_python-vc80-mt-1_36.dll"
   File "..\devil.dll"
   File "..\GiGi.dll"
   File "..\GG\GiGi.dll.manifest"
@@ -71,7 +71,6 @@ Section "MainSection" SEC01
   File "..\libogg.dll"
   File "..\libvorbis.dll"
   File "..\libvorbisfile.dll"
-  File "..\log4cpp.dll"
   File "..\msvcm80.dll"
   File "..\msvcp80.dll"
   File "..\msvcr80.dll"
