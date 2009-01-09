@@ -62,7 +62,7 @@ typedef u_long in_addr_t;
 
 /* Version number of package */
 #ifndef LOG4CPP_VERSION
-#define LOG4CPP_VERSION  "0.3.5"
+#define LOG4CPP_VERSION  "1.0"
 #endif
 
 /* define if the compiler implements namespaces */

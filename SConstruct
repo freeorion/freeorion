@@ -50,9 +50,6 @@ options.Add('with_ft_libdir', 'Specify exact library dir for FreeType2 library')
 options.Add('with_devil', 'Root directory of DevIL installation')
 options.Add('with_devil_include', 'Specify exact include dir for DevIL headers')
 options.Add('with_devil_libdir', 'Specify exact library dir for DevIL library')
-options.Add('with_log4cpp', 'Root directory of Log4cpp installation')
-options.Add('with_log4cpp_include', 'Specify exact include dir for Log4cpp headers')
-options.Add('with_log4cpp_libdir', 'Specify exact library dir for Log4cpp library')
 options.Add('with_openal', 'Root directory of OpenAL installation')
 options.Add('with_openal_include', 'Specify exact include dir for OpenAL headers')
 options.Add('with_openal_libdir', 'Specify exact library dir for OpenAL library')
@@ -437,23 +434,6 @@ int main() {
                     'gvc'
                     ])
 
-        # Log4cpp
-        AppendPackagePaths('log4cpp', env)
-        found_it_with_pkg_config = False
-        if pkg_config:
-            if conf.CheckPkg('log4cpp', log4cpp_version):
-                env.ParseConfig('pkg-config --cflags --libs log4cpp')
-                found_it_with_pkg_config = True
-        if not found_it_with_pkg_config:
-            version_regex = re.compile(r'LOG4CPP_VERSION\s*\"([^"]*)\"', re.DOTALL)
-            if not conf.CheckVersionHeader('log4cpp', 'log4cpp/config.h', version_regex, log4cpp_version, False):
-                Exit(1)
-        if not conf.CheckCXXHeader('log4cpp/Category.hh'):
-            Exit(1)
-        if str(Platform()) != 'win32':
-            if not conf.CheckLibWithHeader('log4cpp', 'log4cpp/Category.hh', 'C++', 'log4cpp::Category::getRoot();'):
-                Exit(1)
-
         # GG
         AppendPackagePaths('gg', env)
 
@@ -541,7 +521,6 @@ if str(Platform()) == 'win32':
         'glew32',
         'jpeg',
         'kernel32',
-        'log4cpp',
         'opengl32',
         'png',
         'SDL',
@@ -556,6 +535,8 @@ else:
         env.AppendUnique(CCFLAGS = ['-Wall', '-g', '-O0'])
     else:
         env.AppendUnique(CCFLAGS = ['-Wall', '-O2'])
+
+env.AppendUnique(CPPPATH = ['log4cpp'])
 
 # generate Version.cpp
 version_cpp_in = open('util/Version.cpp.in', 'r')

@@ -48,8 +48,31 @@ common_sources = [
     'util/Version.cpp',
     'util/binreloc.c',
     'util/Directories.cpp',
-    'util/XMLDoc.cpp'
+    'util/XMLDoc.cpp',
+    'log4cpp/src/Appender.cpp',
+    'log4cpp/src/AppenderSkeleton.cpp',
+    'log4cpp/src/BasicLayout.cpp',
+    'log4cpp/src/Category.cpp',
+    'log4cpp/src/CategoryStream.cpp',
+    'log4cpp/src/Configurator.cpp',
+    'log4cpp/src/FactoryParams.cpp',
+    'log4cpp/src/FileAppender.cpp',
+    'log4cpp/src/HierarchyMaintainer.cpp',
+    'log4cpp/src/LayoutAppender.cpp',
+    'log4cpp/src/Localtime.cpp',
+    'log4cpp/src/LoggingEvent.cpp',
+    'log4cpp/src/NDC.cpp',
+    'log4cpp/src/PatternLayout.cpp',
+    'log4cpp/src/Priority.cpp',
+    'log4cpp/src/StringUtil.cpp',
+    'log4cpp/src/TimeStamp.cpp'
     ]
+
+if str(Platform()) == 'win32':
+    common_sources += ['log4cpp/src/MSThreads.cpp']
+else:
+    common_sources += ['log4cpp/src/PThreads.cpp']
+
 
 if 'FREEORION_BUILD_SERVER' in env['target_defines']:
     target_sources = [
