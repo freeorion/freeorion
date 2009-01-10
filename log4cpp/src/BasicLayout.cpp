@@ -15,6 +15,8 @@
 #include <sstream>
 #endif
 
+#include <memory>
+
 namespace log4cpp {
 
     BasicLayout::BasicLayout() {
