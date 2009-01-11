@@ -10,7 +10,7 @@ namespace Effect {
 }
 class Planet;
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 
 enum CaptureResult;
@@ -30,7 +30,6 @@ public:
     const BuildingType* GetBuildingType() const;
 
     const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
-    bool                    Operating() const;                  ///< returns true iff this building is currently operating
     int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
     Planet*                 GetPlanet() const;                  ///< returns a pointer to the planet this building is on
 
@@ -40,8 +39,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                    Activate(bool activate);            ///< activates or deactivates the building
     void                    SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
+    virtual void            MoveTo(double x, double y);
 
     virtual void            MovementPhase();
     virtual void            PopGrowthProductionResearchPhase();
@@ -49,7 +48,6 @@ public:
 
 private:
     std::string m_building_type;
-    bool        m_operating;
     int         m_planet_id;
 
     friend class boost::serialization::access;
@@ -71,6 +69,8 @@ public:
                  const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
+
+    ~BuildingType(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -129,6 +129,7 @@ public:
 
 private:
     BuildingTypeManager();
+    ~BuildingTypeManager();
 
     std::map<std::string, BuildingType*> m_building_types;
 
@@ -149,7 +150,6 @@ void Building::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(m_building_type)
-        & BOOST_SERIALIZATION_NVP(m_operating)
         & BOOST_SERIALIZATION_NVP(m_planet_id);
 }
 

@@ -19,7 +19,7 @@
 #include <cmath>
 
 namespace {
-    const int RESEARCH_INFO_AND_QUEUE_WIDTH = 250;
+    const GG::X RESEARCH_INFO_AND_QUEUE_WIDTH(250);
     const double PI = 3.141594;
     const double OUTER_LINE_THICKNESS = 2.0;
 
@@ -28,7 +28,7 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row
     {
-        QueueRow(int w, const Tech* tech_, bool in_progress, int turns_left);
+        QueueRow(GG::X w, const Tech* tech_, bool in_progress, int turns_left);
         const Tech* const tech;
     };
 
@@ -38,7 +38,7 @@ namespace {
     class QueueTechPanel : public GG::Control
     {
     public:
-        QueueTechPanel(int w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn);
+        QueueTechPanel(GG::X w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn);
         virtual void Render();
 
     private:
@@ -59,7 +59,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(int w, const Tech* tech_, bool in_progress, int turns_left) :
+    QueueRow::QueueRow(GG::X w, const Tech* tech_, bool in_progress, int turns_left) :
         GG::ListBox::Row(),
         tech(tech_)
     {
@@ -79,8 +79,8 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    QueueTechPanel::QueueTechPanel(int w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn) :
-        GG::Control(0, 0, w, 10, GG::Flags<GG::WndFlag>()),
+    QueueTechPanel::QueueTechPanel(GG::X w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn) :
+        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_tech(tech),
         m_in_progress(in_progress),
         m_total_turns(tech->ResearchTurns()),
@@ -90,54 +90,54 @@ namespace {
         const int MARGIN = 2;
 
         const int FONT_PTS = ClientUI::Pts();
-        const int METER_HEIGHT = FONT_PTS;
+        const GG::Y METER_HEIGHT(FONT_PTS);
 
-        const int HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+        const GG::Y HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
 
-        const int GRAPHIC_SIZE = HEIGHT - 9;    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+        const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
 
-        const int NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
-        const int METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
-        const int TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
+        const GG::X NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
+        const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
+        const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
 
         Resize(GG::Pt(w, HEIGHT));
 
 
         GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-        int top = MARGIN;
-        int left = MARGIN;
+        GG::Y top(MARGIN);
+        GG::X left(MARGIN);
 
 
-        m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
+        m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE), ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
         m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
 
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, UserString(tech->Name()), font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), UserString(tech->Name()), font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
-        
+
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
                                                   ClientUI::TechWndProgressBarBackground(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;
-        
+
         using boost::io::str;
         using boost::format;
 
         std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns());
-        m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+        m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turns_cost_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
-        
+
         std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(format(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+        m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                      turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_text->ClipText(true);
 
@@ -179,20 +179,20 @@ namespace {
 //////////////////////////////////////////////////
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
-ResearchWnd::ResearchWnd(int w, int h) :
-    GG::Wnd(0, 0, w, h, GG::ONTOP),
+ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP),
     m_research_info_panel(0),
     m_queue_lb(0),
     m_tech_tree_wnd(0)
 {
-    m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, 200, UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
+    m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
-    m_queue_lb = new QueueListBox(2, m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), "RESEARCH_QUEUE_ROW");
+    m_queue_lb = new QueueListBox(GG::X(2), m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), "RESEARCH_QUEUE_ROW");
     GG::Connect(m_queue_lb->QueueItemMoved, &ResearchWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, 6);
+    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, GG::Y(6));
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
-    m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, 3));
+    m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, GG::Y(3)));
 
     GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal, &ResearchWnd::AddTechToQueueSlot, this);
     GG::Connect(m_tech_tree_wnd->AddMultipleTechsToQueueSignal, &ResearchWnd::AddMultipleTechsToQueueSlot, this);
@@ -256,11 +256,11 @@ void ResearchWnd::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -273,17 +273,16 @@ void ResearchWnd::UpdateQueue()
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ResearchQueue& queue = empire->GetResearchQueue();
     std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
-    std::size_t original_queue_length = m_queue_lb->NumRows();
     m_queue_lb->Clear();
-    const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
+    const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
     for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->spending, it->turns_left));
+        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->allocated_rp, it->turns_left));
     }
 
     if (!m_queue_lb->Empty())
         m_queue_lb->BringRowIntoView(--m_queue_lb->end());
-    if (m_queue_lb->NumRows() <= original_queue_length)
+    if (first_visible_queue_row < m_queue_lb->NumRows())
         m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
 }
 
@@ -294,7 +293,7 @@ void ResearchWnd::UpdateInfoPanel()
     double RPs = empire->ResourceProduction(RE_RESEARCH);
     double total_queue_cost = queue.TotalRPsSpent();
     ResearchQueue::const_iterator underfunded_it = queue.UnderfundedProject();
-    double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
+    double RPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_rp;
     m_research_info_panel->Reset(RPs, total_queue_cost, queue.ProjectsInProgress(), RPs_to_underfunded_projects, queue.size());
     /* Altering research queue may have freed up or required more RP.  Signalling that the
        ResearchResPool has changed causes the MapWnd to be signalled that that pool has changed,

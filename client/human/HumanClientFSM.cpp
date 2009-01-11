@@ -320,6 +320,23 @@ boost::statechart::result PlayingGame::react(const Disconnection& d)
     return transit<IntroMenu>();
 }
 
+boost::statechart::result PlayingGame::react(const VictoryDefeat& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.VictoryDefeat";
+    Message::VictoryOrDefeat victory_or_defeat;
+    std::string reason_string;
+    int empire_id;
+    ExtractMessageData(msg.m_message, victory_or_defeat, reason_string, empire_id);
+
+    const Empire* empire = Empires().Lookup(empire_id);
+    std::string empire_name = UserString("UNKNOWN_EMPIRE");
+    if (empire)
+        empire_name = empire->Name();
+
+    ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString(reason_string)) % empire_name));
+    return discard_event();
+}
+
 boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerEliminated";
@@ -347,15 +364,11 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
         reason_message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
-    case Message::YOU_ARE_DEFEATED:
+    case Message::YOU_ARE_ELIMINATED:
         if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
             Client().m_server_process.Free();
         Client().EndGame(true);
         reason_message = UserString("PLAYER_DEFEATED");
-        break;
-    case Message::LAST_OPPONENT_DEFEATED:
-        Client().EndGame(true);
-        reason_message = UserString("PLAYER_VICTORIOUS");
         break;
     }
     ClientUI::MessageBox(reason_message, error);

@@ -14,16 +14,16 @@
 ///////////////////////////////////////
 // LinkText
 ///////////////////////////////////////
-LinkText::LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
+LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
-    GG::TextControl(x, y, w, 1, str, font, color, format, flags),
+    GG::TextControl(x, y, w, GG::Y1, str, font, color, format, flags),
     TextLinker()
 {
     Resize(TextLowerRight() - TextUpperLeft());
     FindLinks();
 }
 
-LinkText::LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
+LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
                    GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
     GG::TextControl(x, y, str, font, color, GG::FORMAT_NONE, flags),
     TextLinker()
@@ -78,9 +78,9 @@ const boost::shared_ptr<GG::Font>& LinkText::GetFont() const
     return GG::TextControl::GetFont();
 }
 
-const std::string& LinkText::WindowText() const
+std::string LinkText::Text_() const
 {
-    return GG::TextControl::WindowText();
+    return GG::TextControl::Text();
 }
 
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -180,7 +180,7 @@ void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (rollover_link != m_old_rollover_link) {
         ClearOldRollover();
         if (rollover_link != -1) {
-            std::string text = WindowText();
+            std::string text = Text_();
             text.insert(m_links[rollover_link].text_posn.first, "<u>");
             text.insert(m_links[rollover_link].text_posn.second + 3, "</u>");
             SetLinkedText(text);
@@ -201,7 +201,7 @@ void TextLinker::FindLinks()
     const std::vector<GG::Font::LineData>& line_data = GetLineData();
     const boost::shared_ptr<GG::Font>& font = GetFont();
 
-    int y_posn = 0; // y-coordinate of the top of the current line
+    GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
 
     for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
@@ -211,29 +211,30 @@ void TextLinker::FindLinks()
 
         // if the last line ended without the current tag ending
         if (link.type != "") {
-            link.rects.push_back(GG::Rect(0, y_posn, 0, y_posn + font->Height()));
+            link.rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0, y_posn + font->Height()));
         }
 
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
             for (unsigned int j = 0; j < curr_line.char_data[i].tags.size(); ++j) {
                 const boost::shared_ptr<GG::Font::FormattingTag>& tag = curr_line.char_data[i].tags[j];
-                if (tag->text == "planet" || tag->text == "system" || tag->text == "fleet" ||
-                    tag->text == "ship" || tag->text == "tech" || tag->text == "building" || tag->text == "encyclopedia") {
-                    link.type = tag->text;
+                if (tag->tag_name == "planet" || tag->tag_name == "system" || tag->tag_name == "fleet" ||
+                    tag->tag_name == "ship" || tag->tag_name == "tech" || tag->tag_name == "building" ||
+                    tag->tag_name == "encyclopedia") {
+                    link.type = tag->tag_name;
                     if (tag->close_tag) {
-                        link.text_posn.second = curr_line.char_data[i].original_char_index;
-                        link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : 0;
+                        link.text_posn.second = Value(curr_line.char_data[i].string_index);
+                        link.rects.back().lr.x = i ? curr_line.char_data[i - 1].extent : GG::X0;
                         m_links.push_back(link);
                         link = Link();
                     } else {
                         link.data = tag->params[0];
-                        link.text_posn.first = curr_line.char_data[i].original_char_index;
+                        link.text_posn.first = Value(curr_line.char_data[i].string_index);
                         for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
-                            link.text_posn.first -= curr_line.char_data[i].tags[k]->OriginalStringChars();
+                            link.text_posn.first -= Value(curr_line.char_data[i].tags[k]->StringSize());
                         }
-                        link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : 0,
+                        link.rects.push_back(GG::Rect(i ? curr_line.char_data[i - 1].extent : GG::X0,
                                                       y_posn,
-                                                      0,
+                                                      GG::X0,
                                                       y_posn + font->Height()));
                     }
                 }
@@ -242,7 +243,7 @@ void TextLinker::FindLinks()
 
         // if a line is ending without the current tag ending
         if (link.type != "") {
-            link.rects.back().lr.x = curr_line.char_data.empty() ? 0 : curr_line.char_data.back().extent;
+            link.rects.back().lr.x = curr_line.char_data.empty() ? GG::X0 : curr_line.char_data.back().extent;
         }
     }
 }
@@ -265,7 +266,7 @@ int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
 void TextLinker::ClearOldRollover()
 {
     if (m_old_rollover_link != -1) {
-        std::string text = WindowText();
+        std::string text = Text_();
         std::string::size_type pos = text.find("<u>", m_links[m_old_rollover_link].text_posn.first);
         text.erase(pos, 3);
         pos = text.find("</u>", m_links[m_old_rollover_link].text_posn.first);

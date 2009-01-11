@@ -8,15 +8,13 @@
 
 #include <GG/Ogre/OgreGUI.h>
 
-#include <log4cpp/Category.hh>
-
 #include <string>
 #include <map>
 #include <set>
 #include <vector>
 
 
-class HumanClientFSM;
+struct HumanClientFSM;
 class MultiplayerLobbyWnd;
 namespace Ogre {
     class Root;

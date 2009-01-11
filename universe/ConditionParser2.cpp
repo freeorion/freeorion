@@ -106,31 +106,31 @@ namespace {
             member2 empires;
         };
 
-        typedef rule<Scanner, WithinDistanceClosure::context_t> WithinDistanceRule;
-        typedef rule<Scanner, WithinStarlaneJumpsClosure::context_t> WithinStarlaneJumpsRule;
-        typedef rule<Scanner, NumberClosure::context_t> NumberRule;
-        typedef rule<Scanner, TurnClosure::context_t> TurnRule;
-        typedef rule<Scanner, NumberOfClosure::context_t> NumberOfRule;
-        typedef rule<Scanner, NameParamClosure::context_t> NameParamRule;
-        typedef rule<Scanner, ConditionParamClosure::context_t> ConditionParamRule;
-        typedef rule<Scanner, StarTypeClosure::context_t> StarTypeRule;
-        typedef rule<Scanner, RandomClosure::context_t> RandomRule;
-        typedef rule<Scanner, StockpileClosure::context_t> StockpileRule;
-        typedef rule<Scanner, VisibleToEmpireClosure::context_t> VisibleToEmpireRule;
+        typedef rule<Scanner, WithinDistanceClosure::context_t>         WithinDistanceRule;
+        typedef rule<Scanner, WithinStarlaneJumpsClosure::context_t>    WithinStarlaneJumpsRule;
+        typedef rule<Scanner, NumberClosure::context_t>                 NumberRule;
+        typedef rule<Scanner, TurnClosure::context_t>                   TurnRule;
+        typedef rule<Scanner, NumberOfClosure::context_t>               NumberOfRule;
+        typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
+        typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
+        typedef rule<Scanner, StarTypeClosure::context_t>               StarTypeRule;
+        typedef rule<Scanner, RandomClosure::context_t>                 RandomRule;
+        typedef rule<Scanner, StockpileClosure::context_t>              StockpileRule;
+        typedef rule<Scanner, VisibleToEmpireClosure::context_t>        VisibleToEmpireRule;
 
-        NameParamRule owner_has_tech;
-        WithinDistanceRule within_distance;
+        NameParamRule           owner_has_tech;
+        WithinDistanceRule      within_distance;
         WithinStarlaneJumpsRule within_starlane_jumps;
-        NumberRule number;
-        TurnRule turn;
-        NumberOfRule number_of;
-        NameParamRule has_special;
-        ConditionParamRule contains;
-        ConditionParamRule contained_by;
-        StarTypeRule star_type;
-        RandomRule random;
-        StockpileRule owner_stockpile;
-        VisibleToEmpireRule visible_to_empire;
+        NumberRule              number;
+        TurnRule                turn;
+        NumberOfRule            number_of;
+        NameParamRule           has_special;
+        ConditionParamRule      contains;
+        ConditionParamRule      contained_by;
+        StarTypeRule            star_type;
+        RandomRule              random;
+        StockpileRule           owner_stockpile;
+        VisibleToEmpireRule     visible_to_empire;
     };
 
     ConditionParser2Definition::ConditionParser2Definition()

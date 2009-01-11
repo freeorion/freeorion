@@ -16,6 +16,8 @@ mising_pkg_config = not WhereIs('pkg-config')
 # create options                                 #
 ##################################################
 options = Options('options.cache')
+options.Add('CC', 'The C-Compiler used to compile C-Files')
+options.Add('CXX', 'The C++-Compiler used to compile C++-Files')
 options.Add(BoolOption('release', 'Build for public release (random numbers are nondeterminisitc, etc.).  This will force debug=0.', 0))
 options.Add(BoolOption('debug', 'Generate debug code', 0))
 options.Add(BoolOption('multithreaded', 'Generate multithreaded code', 1))
@@ -48,9 +50,6 @@ options.Add('with_devil_libdir', 'Specify exact library dir for DevIL library')
 options.Add('with_ogre', 'Root directory of Ogre installation')
 options.Add('with_ogre_include', 'Specify exact include dir for Ogre headers')
 options.Add('with_ogre_libdir', 'Specify exact library dir for Ogre library')
-options.Add('with_log4cpp', 'Root directory of Log4cpp installation')
-options.Add('with_log4cpp_include', 'Specify exact include dir for Log4cpp headers')
-options.Add('with_log4cpp_libdir', 'Specify exact library dir for Log4cpp library')
 options.Add('with_bullet', 'Root directory of Bullet installation')
 options.Add('with_bullet_include', 'Specify exact include dir for Bullet headers')
 options.Add('with_bullet_libdir', 'Specify exact library dir for Bullet library')
@@ -89,7 +88,11 @@ elif ('-h' in command_line_args) or ('--help' in command_line_args):
     preconfigured = True # this is just to ensure config gets skipped when help is requested
 ms_linker = 'msvs' in env['TOOLS'] or 'msvc' in env['TOOLS']
 
-env_cache_keys = ['CCFLAGS',
+
+
+env_cache_keys = ['CC',
+                  'CXX',
+                  'CCFLAGS',
                   'CPPDEFINES',
                   'CPPFLAGS',
                   'CPPPATH',
@@ -113,8 +116,9 @@ if not force_configure:
 options.Update(env)
 
 if env.has_key('use_distcc') and env['use_distcc']:
-    env['CC'] = 'distcc %s' % env['CC']
-    env['CXX'] = 'distcc %s' % env['CXX']
+    if 'distcc' not in env['CC']:
+        env['CC'] = 'distcc %s' % env['CC']
+        env['CXX'] = 'distcc %s' % env['CXX']
     for i in ['HOME',
               'DISTCC_HOSTS',
               'DISTCC_VERBOSE',
@@ -129,8 +133,9 @@ if env.has_key('use_distcc') and env['use_distcc']:
             env['ENV'][i] = os.environ[i]
 
 if env.has_key('use_ccache') and env['use_ccache']:
-    env['CC'] = 'ccache %s' % env['CC']
-    env['CXX'] = 'ccache %s' % env['CXX']
+    if 'ccache' not in env['CC']:
+        env['CC'] = 'ccache %s' % env['CC']
+        env['CXX'] = 'ccache %s' % env['CXX']
     for i in ['HOME',
               'CCACHE_DIR',
               'CCACHE_TEMPDIR',
@@ -170,9 +175,6 @@ if str(Platform()) == 'win32':
 ##################################################
 if not env.GetOption('clean'):
     if not preconfigured:
-        if os.environ.has_key('PKG_CONFIG_PATH'):
-            env['ENV']['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
-
         conf = env.Configure(custom_tests = {'CheckVersionHeader' : CheckVersionHeader,
                                              'CheckPkgConfig' : CheckPkgConfig,
                                              'CheckPkg' : CheckPkg,
@@ -469,23 +471,6 @@ int main() {
                     'gvc'
                     ])
 
-        # Log4cpp
-        AppendPackagePaths('log4cpp', env)
-        found_it_with_pkg_config = False
-        if pkg_config:
-            if conf.CheckPkg('log4cpp', log4cpp_version):
-                env.ParseConfig('pkg-config --cflags --libs log4cpp')
-                found_it_with_pkg_config = True
-        if not found_it_with_pkg_config:
-            version_regex = re.compile(r'LOG4CPP_VERSION\s*\"([^"]*)\"', re.DOTALL)
-            if not conf.CheckVersionHeader('log4cpp', 'log4cpp/config.h', version_regex, log4cpp_version, False):
-                Exit(1)
-        if not conf.CheckCXXHeader('log4cpp/Category.hh'):
-            Exit(1)
-        if str(Platform()) != 'win32':
-            if not conf.CheckLibWithHeader('log4cpp', 'log4cpp/Category.hh', 'C++', 'log4cpp::Category::getRoot();'):
-                Exit(1)
-
         # GG
         AppendPackagePaths('gg', env)
 
@@ -576,7 +561,6 @@ if str(Platform()) == 'win32':
         'glew32',
         'jpeg',
         'kernel32',
-        'log4cpp',
         'opengl32',
         'png',
         'user32',
@@ -589,6 +573,8 @@ else:
         env.AppendUnique(CCFLAGS = ['-Wall', '-g', '-O0'])
     else:
         env.AppendUnique(CCFLAGS = ['-Wall', '-O2'])
+
+env.AppendUnique(CPPPATH = ['log4cpp'])
 
 # generate Version.cpp
 version_cpp_in = open('util/Version.cpp.in', 'r')

@@ -9,7 +9,7 @@
 ////////////////////////////////////////////////////////////
 // QueueListBox
 ////////////////////////////////////////////////////////////
-QueueListBox::QueueListBox(int x, int y, int w, int h, const std::string& drop_type_str) :
+QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str) :
     CUIListBox(x, y, w, h),
     m_drop_point(end()),
     m_show_drop_point(false)
@@ -47,7 +47,7 @@ void QueueListBox::Render()
             ul.y = lr.y;
         ul.x = panel->UpperLeft().x;
         lr.x = panel->LowerRight().x;
-        GG::FlatRectangle(ul.x, ul.y - 1, lr.x, ul.y, GG::CLR_ZERO, GG::CLR_WHITE, 1);
+        GG::FlatRectangle(GG::Pt(ul.x, ul.y - 1), GG::Pt(lr.x, ul.y), GG::CLR_ZERO, GG::CLR_WHITE, 1);
     }
 }
 

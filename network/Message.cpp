@@ -122,6 +122,7 @@ Message::Message() :
     m_type(UNDEFINED),
     m_sending_player(0),
     m_receiving_player(0),
+    m_synchronous_response(false),
     m_message_size(0),
     m_message_text(0)
 {}
@@ -339,22 +340,6 @@ Message JoinAckMessage(int player_id)
     return Message(Message::JOIN_GAME, -1, player_id, "ACK");
 }
 
-Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name/* = ""*/)
-{
-    std::ostringstream os;
-    {
-        FREEORION_OARCHIVE_TYPE oa(os);
-        oa << BOOST_SERIALIZATION_NVP(reason)
-           << BOOST_SERIALIZATION_NVP(reason_player_name);
-    }
-    return Message(Message::END_GAME, -1, receiver, os.str());
-}
-
-Message VictoryMessage(int receiver)
-{
-    return Message(Message::END_GAME, -1, receiver, "VICTORY");
-}
-
 Message TurnOrdersMessage(int sender, const OrderSet& orders)
 {
     std::ostringstream os;
@@ -474,6 +459,18 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
     return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, msg);
 }
 
+Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat, const std::string& reason_string, int empire_id)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(victory_or_defeat)
+           << BOOST_SERIALIZATION_NVP(reason_string)
+           << BOOST_SERIALIZATION_NVP(empire_id);
+    }
+    return Message(Message::VICTORY_DEFEAT, -1, receiver, os.str());
+}
+
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name)
 {
     std::ostringstream os;
@@ -484,6 +481,18 @@ Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& 
     }
     return Message(Message::PLAYER_ELIMINATED, -1, receiver, os.str());
 }
+
+Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name/* = ""*/)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(reason)
+           << BOOST_SERIALIZATION_NVP(reason_player_name);
+    }
+    return Message(Message::END_GAME, -1, receiver, os.str());
+}
+
 
 
 ////////////////////////////////////////////////
@@ -694,6 +703,21 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
            >> BOOST_SERIALIZATION_NVP(empire_name);
     } catch (const boost::archive::archive_exception &e) {
         std::cerr << "ExtractMessageData(const Message& msg, int empire_id, std::string& empire_name) failed!  "
+                  << "Message:\n" << msg.Text() << std::endl;
+        throw;
+    }
+}
+
+void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat, std::string& reason_string, int& empire_id)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(victory_or_defeat)
+           >> BOOST_SERIALIZATION_NVP(reason_string)
+           >> BOOST_SERIALIZATION_NVP(empire_id);
+    } catch (const boost::archive::archive_exception &e) {
+        std::cerr << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
                   << "Message:\n" << msg.Text() << std::endl;
         throw;
     }

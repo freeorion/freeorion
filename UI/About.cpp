@@ -20,18 +20,19 @@
 ////////////////////////////////////////////
 
 About::About():
-    CUIWnd(UserString("ABOUT_WINDOW_TITLE"),80,130,600,500, GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
+    CUIWnd(UserString("ABOUT_WINDOW_TITLE"), GG::X(80), GG::Y(130), GG::X(600), GG::Y(500),
+           GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
-    m_done_btn = new CUIButton(400,440,75,UserString("DONE"));
-    m_license = new CUIButton(310,440,75,UserString("LICENSE"));
-    m_vision = new CUIButton(220,440,75,UserString("VISION"));
-    m_info = new CUIMultiEdit(20, 20, 550, 400, UserString("FREEORION_VISION"), 
+    m_done_btn = new CUIButton(GG::X(400), GG::Y(440), GG::X(75), UserString("DONE"));
+    m_license = new CUIButton(GG::X(310), GG::Y(440), GG::X(75), UserString("LICENSE"));
+    m_vision = new CUIButton(GG::X(220), GG::Y(440), GG::X(75), UserString("VISION"));
+    m_info = new CUIMultiEdit(GG::X(20), GG::Y(20), GG::X(550), GG::Y(400), UserString("FREEORION_VISION"), 
                               GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
-                              GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+                              ClientUI::GetFont(),
                               ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
                               ClientUI::MultieditIntColor(), GG::CLICKABLE);
-    GG::Layout* layout = new GG::Layout(0, 0, ClientWidth(), ClientHeight(), 2, 6, 5);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), 2, 6, 5);
     layout->SetMinimumRowHeight(1, m_license->Height() + 5);
     layout->SetRowStretch(0, 1);
     layout->Add(m_info, 0, 0, 1, 6);
@@ -76,7 +77,7 @@ void About::Render()
     CUIWnd::Render();
 }
 
-void About::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void About::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) // Same behaviour as if "done" was pressed
     {

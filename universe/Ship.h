@@ -23,7 +23,7 @@ public:
     int                                 FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
     Fleet*                              GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
 
-    virtual UniverseObject::Visibility  GetVisibility(int empire_id) const;
+    virtual Visibility                  GetVisibility(int empire_id) const;
     virtual const std::string&          PublicName(int empire_id) const;
 
     bool                                IsArmed() const;
@@ -36,7 +36,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                                SetFleetID(int fleet_id) {m_fleet_id = fleet_id; StateChangedSignal();} ///< sets the ID of the fleet the ship resides in
+    void                                SetFleetID(int fleet_id);                           ///< sets the ID of the fleet the ship resides in
+    virtual void                        MoveTo(double x, double y);
+
     virtual void                        MovementPhase();
     virtual void                        PopGrowthProductionResearchPhase();
     //@}

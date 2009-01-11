@@ -44,6 +44,22 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** contains data that must be retained by the server when saving and loading a game that isn't player data or
+    the universe */
+struct ServerSaveGameData
+{
+    ServerSaveGameData();                               ///< default ctor
+    ServerSaveGameData(const int& current_turn, const std::map<int, std::set<std::string> >& victors);
+
+    int                                     m_current_turn;
+    std::map<int, std::set<std::string> >   m_victors;  ///< for each player id, the victory types that player has achived
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** the application framework class for the FreeOrion server. */
 class ServerApp
 {
@@ -81,11 +97,18 @@ public:
     /** Processes all empires in the manager in the order that they are added. Will delete all pOrderSets assigned.*/
     void ProcessTurns();
 
-    void NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data);     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
-    void LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data);    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
+    /** Intializes game universe, sends out initial game state to clients, and signals clients to start first turn */
+    void NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data);
 
-    void NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data);     ///< intializes game universe, sends out initial game state to clients, and signals clients to start first turn
-    void LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data);    ///< restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn
+    /** restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn. */
+    void LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data, boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+
+    /** Intializes game universe, sends out initial game state to clients, and signals clients to start first turn */
+    void NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data);
+
+    /** Restores saved game universe, sends out game state and saved pending orders to clients, and signals clients to finish current turn. */
+    void LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data, const std::vector<PlayerSaveGameData>& player_save_game_data,
+                      boost::shared_ptr<ServerSaveGameData> server_save_game_data);
     //@}
 
     static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
@@ -98,11 +121,11 @@ private:
     const ServerApp& operator=(const ServerApp&); // disabled
     ServerApp(const ServerApp&); // disabled
 
-    void NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
-                     const std::map<int, PlayerSetupData>& player_setup_data);
+    void NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
+                     SpecialsFrequency specials_freq, const std::map<int, PlayerSetupData>& player_setup_data);
     void LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
                       const std::map<int, int>& player_id_to_save_game_data_index,
-                      std::set<int>& unused_save_game_data);
+                      std::set<int>& unused_save_game_data, boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     void Run();             ///< initializes app state, then executes main event handler/render loop (Poll())
     void CleanupAIs();      ///< cleans up AI processes
@@ -129,7 +152,7 @@ private:
     log4cpp::Category&        m_log_category;         ///< reference to the log4cpp object used to log events to file
 
     ServerFSM                 m_fsm;
-   
+
     int                       m_current_turn;         ///< current turn number
 
     std::map<std::string, Process>
@@ -141,7 +164,8 @@ private:
     // turn sequence map is used for turn processing. Each empire is added at the start of a game or reload and then the map maintains OrderSets for that turn
     std::map<int, OrderSet*>  m_turn_sequence;
 
-    std::set<int>             m_losers;               ///< the IDs of players who have been eliminated during the normal course of the game
+    std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
+    std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
 
     static ServerApp*         s_app;
 
@@ -169,5 +193,11 @@ void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_save_state_string);
 }
 
-#endif // _ServerApp_h_
+template <class Archive>
+void ServerSaveGameData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_current_turn)
+        & BOOST_SERIALIZATION_NVP(m_victors);
+}
 
+#endif // _ServerApp_h_

@@ -25,7 +25,7 @@ struct ResearchQueue
         Element(const Tech* tech_, double spending_, int turns_left_); ///< basic ctor.
 
         const Tech* tech;
-        double      spending;
+        double      allocated_rp;
         int         turns_left;
 
     private:
@@ -121,13 +121,13 @@ struct ProductionQueue
         Element(BuildType build_type, std::string name, int ordered_, int remaining_, int location_); ///< basic ctor.
         Element(BuildType build_type, int design_id, int ordered_, int remaining_, int location_); ///< basic ctor.
 
-        ProductionItem item;
-        int            ordered;                 ///< how many of item to produce
-        int            remaining;               ///< how many left to produce
-        int            location;                ///< the ID of the UniverseObject at which this item is being produced
-        double         spending;
-        int            turns_left_to_next_item;
-        int            turns_left_to_completion;
+        ProductionItem  item;
+        int             ordered;                    ///< how many of item to produce
+        int             remaining;                  ///< how many left to produce
+        int             location;                   ///< the ID of the UniverseObject at which this item is being produced
+        double          allocated_pp;               ///< amount of PP allocated to this ProductionQueue Element by Empire production update
+        int             turns_left_to_next_item;
+        int             turns_left_to_completion;
 
     private:
         friend class boost::serialization::access;
@@ -151,8 +151,16 @@ struct ProductionQueue
     //@}
 
     /** \name Accessors */ //@{
-    int ProjectsInProgress() const;       ///< Returns the number of production projects currently (perhaps partially) funded.
-    double TotalPPsSpent() const;         ///< Returns the number of PPs currently spent on the projects in this queue.
+    int                             ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
+    double                          TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
+
+    /** Returns map from sets of system ids that can share resources to amount of PP available in those groups of systems */
+    std::map<std::set<int>, double> AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const;
+
+    /** Returns map from sets of system ids that can share resources to amount of PP allocated to production queue elmenets that have
+        build locations in systems in the group. */
+    std::map<std::set<int>, double> AllocatedPP() const;
+
 
     // STL container-like interface
     bool empty() const;
@@ -168,14 +176,12 @@ struct ProductionQueue
 
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
-      * determines the number of projects in progress, and the total number of PPs spent on the projects
-      * in the queue.  Does not actually "spend" the PP, but just determines how much should be spent
-      * on each item in the queue.  Later call to empire->CheckProductionProgress() will actually 
-      * spend PP, remove items from queue and create them in the universe.  \note A precondition of
-      * this function that \a PPs must be greater than some epsilon > 0; see the implementation for
-      * the actual value used for epsilon. 
-      */
-    void Update(Empire* empire, double PPs, const std::vector<double>& production_status);
+      * determines the number of projects in progress, and the minerals and industry consumed by projects
+      * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
+      * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
+      * in the universe. */
+    void Update(Empire* empire, const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools,
+                const std::vector<double>& production_status);
 
     // STL container-like interface
     void push_back(const Element& element);
@@ -195,26 +201,21 @@ struct ProductionQueue
     //@}
 
 private:
-    QueueType m_queue;
-    int       m_projects_in_progress;
-    double    m_total_PPs_spent;
+    QueueType                       m_queue;
+    int                             m_projects_in_progress;
+    std::map<std::set<int>, double> m_system_group_allocated_pp;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/**
-  * Class to maintain the state of a single empire. In both the client and server, Empires are managed by a subclass of
-  * EmpireManager, and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer.
-  */
+/** Class to maintain the state of a single empire. In both the client and server, Empires are managed by a subclass of
+  * EmpireManager, and can be accessed from other modules by using the EmpireManager::Lookup() method to obtain a pointer. */
 class Empire 
 {
 public:
-    /**
-     * EmpireManagers must be friends so that they can have
-     * access to the constructor and keep it hidden from others
-     */
+    // EmpireManagers must be friends so that they can have access to the constructor and keep it hidden from others
     friend class EmpireManager;
 
     /** \name Iterator Types */ //@{
@@ -284,16 +285,18 @@ public:
 
     const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share food, industry and minerals (systems in separate groups are blockaded or otherwise separated)
     const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (food, industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
+    const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;  ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
     const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
 
     const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propegate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
 
     /** modifies passed parameter, which is a map from system id to the range, in starlane jumps that the
-      * system can send supplies.
-      */
+      * system can send supplies. */
     void                    GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
 
     const std::set<int>&    ExploredSystems() const;            ///< returns set of ids of systems that this empire has explored
+    const std::map<int, std::set<int> >
+                            KnownStarlanes() const;             ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
 
     TechItr                 TechBegin() const;                  ///< starting iterator for techs this empire has researched
     TechItr                 TechEnd() const;                    ///< end iterator for techs
@@ -306,7 +309,6 @@ public:
 
     double                  ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is the minimum of available industry and available minerals)
 
-    double                  TotalFoodDistributed() const {return m_food_total_distributed;} ///< Returns amount of food empire will distribute this turn.  Assumes Empire::UpdateFoodDistribution() has previously been called to determine this number.
     double                  TotalTradeSpending() const {return m_maintenance_total_cost;}   ///< Returns amount of trade empire will spend this turn.  Assumes Empire::UpdateTradeSpending() has previously been called to determine this number.
 
     const ResourcePool*     GetResourcePool(ResourceType resource_type) const;      ///< Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists
@@ -320,12 +322,14 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void                    SetCapitolID(int id);                           ///< If the object with id \a id is a planet owned by this empire, sets that planet to be this empire's capitol, and otherwise does nothing
+
     /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
-        it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
-        is placed at the end of the queue. If \a tech is already available, no action is taken. */
+      * it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
+      * is placed at the end of the queue. If \a tech is already available, no action is taken. */
     void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
 
-    void                    RemoveTechFromQueue(const Tech* tech);                 ///< Removes \a tech from the research queue, if it is in the research queue already.
+    void                    RemoveTechFromQueue(const Tech* tech);          ///< Removes \a tech from the research queue, if it is in the research queue already.
 
     /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
         queue.size() <= pos, the build is placed at the end of the queue. */
@@ -344,15 +348,14 @@ public:
     void                    RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
 
     /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
-        as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
-        queue of their current empire */
+      * as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
+      * queue of their current empire */
     void                    ConquerBuildsAtLocation(int location_id);
 
     void                    AddTech(const std::string& name);               ///< Inserts the given Tech into the Empire's list of available technologies.
     void                    UnlockItem(const ItemSpec& item);               ///< Adds a given buildable item (Building, Ship Component, etc.) to the list of available buildable items.
     void                    AddBuildingType(const std::string& name);       ///< Inserts the given BuildingType into the Empire's list of available BuldingTypes.
     void                    AddPartType(const std::string& name);           ///< Inserts the given ship PartType into the Empire's list of available BuldingTypes.
-
     void                    AddHullType(const std::string& name);           ///< Inserts the given ship HullType into the Empire's list of available BuldingTypes.
     void                    AddExploredSystem(int ID);                      ///< Inserts the given ID into the Empire's list of explored systems.
     void                    AddShipDesign(int ship_design_id);              ///< inserts given design id into the empire's set of designs
@@ -366,8 +369,7 @@ public:
      *  The object pointed to by 'entry' will be deallocated when
      *  the empire's sitrep is cleared.  Be careful you do not have any
      *  references to SitRepEntries lying around when this happens.
-     *  You \a must pass in a dynamically allocated sitrep entry
-     */
+     *  You \a must pass in a dynamically allocated sitrep entry */
     void                    AddSitRepEntry(SitRepEntry* entry);
 
     void                    ClearSitRep();                                  ///< Clears all sitrep entries
@@ -375,12 +377,17 @@ public:
     void                    RemoveTech(const std::string& name);            ///< Removes the given Tech from the empire's list
     void                    LockItem(const ItemSpec& item);                 ///< Removes a given buildable item (Building, ShipComponent, etc.) from the list of available buildable items.
     void                    RemoveBuildingType(const std::string& name);    ///< Removes the given BuildingType from the empire's list
+    void                    RemovePartType(const std::string& name);        ///< Removes the given PartType from the empire's list
+    void                    RemoveHullType(const std::string& name);        ///< Removes the given HullType from the empire's list
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
 
     void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.
-    void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply (fleet or resource)
-    void                    UpdateFleetSupply();                            ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
-    void                    UpdateResourceSupply();                         ///< Calculates groups of systems of this empire which can exchange resources and starlane traversals used to do so.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateSupplyUnobstructedSystems(const std::set<int>& explored_systems); ///< Calculates systems that can propegate supply (fleet or resource) using the specified set of \a explored_systems
+    void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply using this empire's own / internal list of explored systems
+    void                    UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes);      ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so, using the indicated \a starlanes but subject to obstruction of supply by various factors.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateFleetSupply();                            ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so using this empire's set of known starlanes.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes);   ///< Calculates groups of systems of this empire which can exchange resources and the starlane traversals used to do so, using the indicated \a starlanes but subject to obstruction of supply propegation by various factors.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
+    void                    UpdateResourceSupply();                         ///< Calculates groups of systems of this empire which can exchange resources and starlane traversals used to do so using this empire's set of known starlanes.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
 
     /** Checks for production projects that have been completed, and places them at their respective
       * production sites.  Which projects have been completed is determined by the results of
@@ -388,24 +395,20 @@ public:
       * receives, but does not actually spend them).  This function spends the PP, removes complete
       * items from the queue and creates the results in the universe.  Also updates the empire's 
       * minerals stockpile to account for any excess not used or any shortfall that was made up by
-      * taking from the stockpile 
-      */
+      * taking from the stockpile. */
     void                    CheckProductionProgress();
 
-    /** Checks for tech projects that have been completed, and adds them to the known techs list.
-      */
+    /** Checks for tech projects that have been completed, and adds them to the known techs list. */
     void                    CheckResearchProgress();
 
     /** Eventually : Will check for social projects that have been completed and/or
       * process ongoing social projects... (not sure exactly what form "social projects" will take
       * or how they will work).  Also will update the empire's trade stockpile to account for trade
       * production and expenditures.
-      * Currently: Deducts cost of maintenance of buildings from empire's trade stockpile
-      */
+      * Currently: Deducts cost of maintenance of buildings from empire's trade stockpile */
     void                    CheckTradeSocialProgress();
 
-    /** Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects
-      */
+    /** Updates food stockpile.  Growth actually occurs in PopGrowthProductionResearchPhase() of objects */
     void                    CheckGrowthFoodProgress();
 
     void                    SetColor(const GG::Clr& color);                 ///< Mutator for empire color
@@ -417,49 +420,39 @@ public:
 
     /** Determines ResourceCenters that can provide resources for this empire and sets
       * the supply groups used for each ResourcePool as appropriate for each resource.
-      * call UpdateResourceSupply before calling this.
-      */
+      * call UpdateResourceSupply before calling this. */
     void                    InitResourcePools();
 
-    /** Resets production of resources and calculates spending (on each item in queues and 
-      * overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
+    /** Resets production of resources and calculates allocated resources (on each item in
+      * queues and overall) for each resource by calling UpdateResearchQueue, UpdateProductionQueue,
       * UpdateTradeSpending, and UpdateFoodDistribution.  Does not actually "spend" resources,
-      * but just determines how much and on what to spend.  Actual spending, removal of items
-      * from queue, processing of finished items and population growth happens in various
-      * Check(Whatever)Progress functions.
-      */
+      * but just determines how much and on what to spend.  Actual consumption of resources, removal
+      * of items from queue, processing of finished items and population growth happens in various
+      * Check(Whatever)Progress functions. */
     void                    UpdateResourcePools();
 
     /** Calls Update() on empire's research queue, which recalculates the RPs spent on and
-      * number of turns left for each tech in the queue.
-      */
+      * number of turns left for each tech in the queue. */
     void                    UpdateResearchQueue();
 
     /** Calls Update() on empire's production queue, which recalculates the PPs spent on and
-      * number of turns left for each project in the queue.
-      */
+      * number of turns left for each project in the queue. */
     void                    UpdateProductionQueue();
 
     /** Eventually: Calls appropriate subsystem Update to calculate trade spent on social projects
       * and maintenance of buildings.  Later call to CheckTradeSocialProgress() will then have the
       * correct allocations of trade.
-      * Currently: Sums maintenance costs of all buildings owned by empire, sets m_maintenance_total_cost
-      */
+      * Currently: Sums maintenance costs of all buildings owned by empire, sets m_maintenance_total_cost */
     void                    UpdateTradeSpending();
 
     /** Allocates available food to PopCenters.  Doesn't actually distribute food; just calculates how
-      * how much food each PopCenter gets.  Sets m_food_total_distributed to indicate how much food
-      * the empire will distribute (instead of the Production or Research-like system of having a subsystem
-      * keep track, since there is no separate food distribution subsystem class).  Does not automatically
-      * update population growth estimates, so UpdatePopulationGrowth() may need to be called after calling
-      * this function.
-      */
+      * how much food each PopCenter gets.  Does not automatically update population growth estimates,
+      * so UpdatePopulationGrowth() may need to be called after calling this function. */
     void                    UpdateFoodDistribution();
 
     /** Has m_population_pool recalculate all PopCenters' and empire's total expected population growth
       * Assumes UpdateFoodDistribution() has been called to determine food allocations to each planet (which
-      * are a factor in the growth prediction calculation).
-      */
+      * are a factor in the growth prediction calculation). */
     void                    UpdatePopulationGrowth();
     //@}
 
@@ -469,6 +462,7 @@ private:
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
     int                             m_homeworld_id;             ///< the ID of the empire's homeworld
+    int                             m_capitol_id;               ///< the ID of the empire's capitol planet
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
 
@@ -489,29 +483,22 @@ private:
     std::map<ResourceType, boost::shared_ptr<ResourcePool> >    m_resource_pools;
     PopulationPool                                              m_population_pool;
 
-    /** set by UpdateFoodDistribution() to indicate how much food the empire will distribute this turn.  Unlike
-      * the Research and Production subsystems, food distribution only requires a single function and doesn't
-      * have its own queue class.  So, instead of GetFoodQueue().TotalFoodDistributed(), one just calls
-      * Empire::TotalFoodDistributed(), which returns this value.
-      */
-    double                          m_food_total_distributed;
-
     /** MAYBE TEMPORARY: Until social projects and/or consequences of unpaid maintenance is implemented.
       * Total maintenance on buildings owned by this empire.  Set by UpdateTradeSpending(), used
-      * by CheckTradeSocialProgress() to deduct maintenance cost from trade stockpile
-      */
+      * by CheckTradeSocialProgress() to deduct maintenance cost from trade stockpile */
     double                          m_maintenance_total_cost;
 
-    std::map<std::string, int>      m_ship_names_used;          ///< map from name to number of times used
+    std::map<std::string, int>      m_ship_names_used;                                  ///< map from name to number of times used
 
     // cached calculation results, returned by reference
-    std::set<int>                   m_fleet_supplyable_system_ids;
-    std::set<std::pair<int, int> >  m_fleet_supply_starlane_traversals;
-    std::map<int, int>              m_fleet_supply_system_ranges;
-    std::set<std::set<int> >        m_resource_supply_groups;
-    std::set<std::pair<int, int> >  m_resource_supply_starlane_traversals;
-    std::map<int, int>              m_resource_supply_system_ranges;
-    std::set<int>                   m_supply_unobstructed_systems;
+    std::set<int>                   m_fleet_supplyable_system_ids;                      ///< ids of systems where fleets can remain for a turn to be resupplied.  computed and set by UpdateFleetSupply
+    std::set<std::pair<int, int> >  m_fleet_supply_starlane_traversals;                 ///< ordered pairs of system ids between which a starlane runs that can be used to convey supply to fleets.
+    std::map<int, int>              m_fleet_supply_system_ranges;                       ///< number of starlane jumps away from each system (by id) fleet supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::set<std::set<int> >        m_resource_supply_groups;                           ///< sets of system ids that are connected by resource supply lines and are able to share resources between systems or between objects in systems
+    std::set<std::pair<int, int> >  m_resource_supply_starlane_traversals;              ///< ordered pairs of system ids between which a starlane runs that can be used to convey resources between systems
+    std::set<std::pair<int, int> >  m_resource_supply_obstructed_starlane_traversals;   ///< ordered pairs of system ids between which a starlane could be used to convey resources between system, but is not because something is obstructing the resource flow.  That is, the resource flow isn't limited by range, but by something blocking its flow.
+    std::map<int, int>              m_resource_supply_system_ranges;                    ///< number of starlane jumps away from each system (by id) that resources can be conveyed.
+    std::set<int>                   m_supply_unobstructed_systems;                      ///< ids of system that don't block supply (resource or fleet) from flowing
 
 
     friend class boost::serialization::access;
@@ -531,7 +518,7 @@ void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
         tech_name = tech->Name();
     }
     ar  & BOOST_SERIALIZATION_NVP(tech_name)
-        & BOOST_SERIALIZATION_NVP(spending)
+        & BOOST_SERIALIZATION_NVP(allocated_rp)
         & BOOST_SERIALIZATION_NVP(turns_left);
     if (Archive::is_loading::value) {
         assert(tech_name != "");
@@ -562,7 +549,7 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(ordered)
         & BOOST_SERIALIZATION_NVP(remaining)
         & BOOST_SERIALIZATION_NVP(location)
-        & BOOST_SERIALIZATION_NVP(spending)
+        & BOOST_SERIALIZATION_NVP(allocated_pp)
         & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion);
 }
@@ -572,7 +559,7 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
         & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_total_PPs_spent);
+        & BOOST_SERIALIZATION_NVP(m_system_group_allocated_pp);
 }
 
 template <class Archive>
@@ -585,6 +572,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (Universe::ALL_OBJECTS_VISIBLE ||
         Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire) {
         ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
+            & BOOST_SERIALIZATION_NVP(m_capitol_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
@@ -598,14 +586,9 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
             & BOOST_SERIALIZATION_NVP(m_resource_pools)
             & BOOST_SERIALIZATION_NVP(m_population_pool)
-            & BOOST_SERIALIZATION_NVP(m_food_total_distributed)
             & BOOST_SERIALIZATION_NVP(m_maintenance_total_cost)
             & BOOST_SERIALIZATION_NVP(m_ship_names_used);
     }
 }
 
 #endif // _Empire_h_
-
-
-
-

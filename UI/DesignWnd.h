@@ -10,7 +10,7 @@ class EncyclopediaDetailPanel;
 class DesignWnd : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    DesignWnd(int w, int h);
+    DesignWnd(GG::X w, GG::Y h);
     //@}
 
     /** \name Mutators */ //@{

@@ -56,6 +56,7 @@ def startNewGame():
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):
+    global foAIstate
     print "Resuming loaded game"
     try:
         foAIstate = AIstate.AIstate()
@@ -78,7 +79,7 @@ def prepareForSave():
 # called when this player receives a chat message.  senderID is the player who sent the message, and 
 # messageText is the text of the sent message
 def handleChatMessage(senderID, messageText):
-    print "Received chat message - ignoring it"
+    print "Received chat message from " + str(senderID) + " that says: " + messageText + " - ignoring it"
 
 
 # called once per turn to tell the Python AI to generate and issue orders to control its empire.

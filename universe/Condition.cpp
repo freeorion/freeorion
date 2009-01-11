@@ -369,6 +369,66 @@ bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* 
 }
 
 ///////////////////////////////////////////////////////////
+// Homeworld                                             //
+///////////////////////////////////////////////////////////
+Condition::Homeworld::Homeworld()
+{}
+
+std::string Condition::Homeworld::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_HOMEWORLD";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Homeworld::Dump() const
+{
+    return DumpIndent() + "Homeworld\n";
+}
+
+bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    // check if any empire's homeworld's ID is that target object's id.  if it is, the target object is a homeworld.
+    int target_id = target->ID();
+    const EmpireManager& empires = Empires();
+    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
+        if (it->second->HomeworldID() == target_id)
+            return true;
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// Capitol                                               //
+///////////////////////////////////////////////////////////
+Condition::Capitol::Capitol()
+{}
+
+std::string Condition::Capitol::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_CAPITOL";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Capitol::Dump() const
+{
+    return DumpIndent() + "Capitol\n";
+}
+
+bool Condition::Capitol::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    // check if any empire's capitol's ID is that target object's id.  if it is, the target object is a capitol.
+    int target_id = target->ID();
+    const EmpireManager& empires = Empires();
+    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
+        if (it->second->CapitolID() == target_id)
+            return true;
+    return false;
+}
+
+///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
 Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
@@ -531,7 +591,7 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
 
         ObjectSet::const_iterator contained_it = condition_targets.begin();
         ObjectSet::const_iterator contained_end = condition_targets.end();
-        
+
         if (search_domain == NON_TARGETS) {
             // non_targets (from_set) objects need to contain at least one condition_target to be transferred from
             // from_set to to_set.
@@ -1199,7 +1259,7 @@ bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const Unive
 {
     bool retval = false;
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target)) != UniverseObject::NO_VISIBILITY)
+        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target)) != VIS_NO_VISIBITY)
             return true;
     }
     return retval;

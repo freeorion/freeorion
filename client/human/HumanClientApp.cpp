@@ -29,8 +29,6 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Cursor.h>
 
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
@@ -77,7 +75,7 @@ void SigHandler(int sig)
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+    const unsigned int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -99,7 +97,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::Viewport* viewport) : 
     ClientApp(), 
     OgreGUI(window, "OISInput.cfg"),
-    m_fsm(new HumanClientFSM(*this)),
+    m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
     m_turns_since_autosave(0),
@@ -113,6 +111,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
 #endif
+    m_fsm = new HumanClientFSM(*this);
 
     const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").native_file_string());
 
@@ -151,13 +150,13 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
 
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(400, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+        new GG::TextBoxBrowseInfoWnd(GG::X(400), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
                                      GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
     boost::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(6, 3))));
+    SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
 
     m_fsm->initiate();
@@ -237,7 +236,7 @@ void HumanClientApp::NewSinglePlayerGame()
 
     bool failed = false;
     if (galaxy_wnd.EndedWithOk()) {
-        int start_time = Ticks();
+        unsigned int start_time = Ticks();
         while (!Networking().ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
@@ -286,7 +285,7 @@ void HumanClientApp::MulitplayerGame()
                 }
                 server_name = "localhost";
             }
-            int start_time = Ticks();
+            unsigned int start_time = Ticks();
             while (!Networking().ConnectToServer(server_name)) {
                 if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
@@ -336,8 +335,7 @@ void HumanClientApp::LoadSinglePlayerGame()
 
             if (!GetOptionsDB().Get<bool>("force-external-server"))
                 StartServer();
-            int start_time = Ticks();
-            const int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+            unsigned int start_time = Ticks();
             while (!Networking().ConnectToLocalHostServer()) {
                 if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                     ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
@@ -387,14 +385,14 @@ void HumanClientApp::Enter2DMode()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glViewport(0, 0, AppWidth(), AppHeight()); //removed -1 from AppWidth & Height
+    glViewport(0, 0, Value(AppWidth()), Value(AppHeight()));
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
     // set up coordinates with origin in upper-left and +x and +y directions right and down, respectively
     // the depth of the viewing volume is only 1 (from 0.0 to 1.0)
-    glOrtho(0.0, AppWidth(), AppHeight(), 0.0, 0.0, AppWidth());
+    glOrtho(0.0, Value(AppWidth()), Value(AppHeight()), 0.0, 0.0, Value(AppWidth()));
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -450,6 +448,7 @@ void HumanClientApp::HandleMessage(Message& msg)
     case Message::COMBAT_ROUND_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg)); break;
     case Message::COMBAT_END:            m_fsm->process_event(CombatEnd(msg)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm->process_event(PlayerChat(msg)); break;
+    case Message::VICTORY_DEFEAT :       m_fsm->process_event(VictoryDefeat(msg)); break;
     case Message::PLAYER_ELIMINATED:     m_fsm->process_event(PlayerEliminated(msg)); break;
     case Message::END_GAME:              m_fsm->process_event(::EndGame(msg)); break;
     default:
@@ -512,7 +511,7 @@ void HumanClientApp::Autosave(bool new_game)
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
             if (!fs::is_directory(*it)) {
-                std::string filename = it->leaf();
+                std::string filename = it->filename();
                 if (!new_game &&
                     filename.find(extension) == filename.size() - extension.size() && 
                     filename.find(save_filename.substr(0, save_filename.size() - 7)) == 0) {

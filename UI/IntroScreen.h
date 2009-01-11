@@ -36,8 +36,8 @@ public:
     void OnAbout();         //!< called when about is clicked
     void OnCredits();       //!< called when credits is clicked
     void OnExitGame();      //!< called when exit_game is clicked
-    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
-    
+    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+
     virtual void Close();
 
     virtual void Render();
@@ -56,6 +56,7 @@ private:
 
     GG::StaticGraphic* m_splash;
     GG::StaticGraphic* m_logo;
+    GG::TextControl*   m_version;
 };
 
 #endif // _IntroScreen_h_

@@ -6,14 +6,6 @@
 #include "Predicates.h"
 #include "ShipDesign.h"
 
-#include <log4cpp/Appender.hh>
-#include <log4cpp/Category.hh>
-#include <log4cpp/PatternLayout.hh>
-#include <log4cpp/FileAppender.hh>
-#include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-#include <stdexcept>
-
 
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
@@ -55,14 +47,14 @@ Fleet* Ship::GetFleet() const {
     return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Fleet>(m_fleet_id);
 }
 
-UniverseObject::Visibility Ship::GetVisibility(int empire_id) const {
-    UniverseObject::Visibility vis = NO_VISIBILITY;
+Visibility Ship::GetVisibility(int empire_id) const {
+    Visibility vis = VIS_NO_VISIBITY;
 
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
-        vis = FULL_VISIBILITY;
+        vis = VIS_FULL_VISIBILITY;
 
     // Ship is visible if its fleet is visible
-    UniverseObject::Visibility retval = FleetID() == INVALID_OBJECT_ID ? NO_VISIBILITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
+    Visibility retval = FleetID() == INVALID_OBJECT_ID ? VIS_NO_VISIBITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
     return retval;
 }
 
@@ -93,6 +85,23 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 
 double Ship::ProjectedCurrentMeter(MeterType type) const {
     return UniverseObject::ProjectedCurrentMeter(type);
+}
+
+void Ship::SetFleetID(int fleet_id)
+{
+    m_fleet_id = fleet_id;
+    StateChangedSignal();
+}
+
+void Ship::MoveTo(double x, double y)
+{
+    UniverseObject::MoveTo(x, y);
+
+    // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
+    if (Fleet* fleet = GetFleet()) {
+        Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
+        fleet->RemoveShip(this->ID());
+    }
 }
 
 void Ship::MovementPhase() {

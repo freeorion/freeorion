@@ -28,7 +28,7 @@ public:
     //! \name Mutators
     //!@{
     virtual void ModalInit ();
-    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     //!@}
 
     /** \name Accessors */ //@{
@@ -41,7 +41,7 @@ private:
     void Init();
     void PopulateServerList();
     void RefreshServerList();
-    void HostOrJoinClicked(int idx);
+    void HostOrJoinClicked(std::size_t idx);
     void ServerSelected(const GG::ListBox::SelectionSet& selections);
     void IPAddressEdited(const std::string& str);
     void NameEdited(const std::string& str);

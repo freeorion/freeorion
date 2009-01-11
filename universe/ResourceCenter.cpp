@@ -65,19 +65,22 @@ namespace {
     void GrowResourceMeter(Meter* resource_meter, double updated_current_construction)
     {
         assert(resource_meter);
-        double delta = updated_current_construction / (10.0 + resource_meter->Current());
-        double new_cur = std::min(resource_meter->Max(), resource_meter->Current() + delta);
-        resource_meter->SetCurrent(new_cur);
+        double initial_current =    resource_meter->InitialCurrent();
+
+        double delta = updated_current_construction / (10.0 + initial_current);
+
+        resource_meter->AdjustCurrent(delta);
     }
 
     void GrowConstructionMeter(Meter* construction_meter, double updated_current_population)
     {
         assert(construction_meter);
-        double cur = construction_meter->Current();
-        double max = construction_meter->Max();
-        double delta = (cur + 1) * ((max - cur) / (max + 1)) * (updated_current_population * 10.0) * 0.01;
-        double new_cur = std::min(max, cur + delta);
-        construction_meter->SetCurrent(new_cur);
+        double initial_current =    construction_meter->InitialCurrent();
+        double initial_max =        construction_meter->InitialMax();
+
+        double delta = (initial_current + 1) * ((initial_max - initial_current) / (initial_max + 1)) * (updated_current_population * 10.0) * 0.01;
+
+        construction_meter->AdjustCurrent(delta);
     }
 }
 
@@ -113,10 +116,12 @@ double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
     case METER_TRADE:
         GrowConstructionMeter(&construction, GetPopMeter()->Current());
         GrowResourceMeter(&meter, construction.Current());
+        meter.Clamp();
         return meter.Current();
         break;
     case METER_CONSTRUCTION:
         GrowConstructionMeter(&construction, GetPopMeter()->Current());
+        meter.Clamp();
         return construction.Current();
         break;
     default:
@@ -146,7 +151,7 @@ double ResourceCenter::MeterPoints(MeterType type) const
         if (obj)
             return obj->MeterPoints(type);
         else
-            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
+            throw std::runtime_error("ResourceCenter::MeterPoints couldn't convert this pointer to UniverseObject*");
     }
 }
 
@@ -169,7 +174,7 @@ double ResourceCenter::ProjectedMeterPoints(MeterType type) const
         if (obj)
             return obj->ProjectedMeterPoints(type);
         else
-            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
+            throw std::runtime_error("ResourceCenter::ProjectedMeterPoints couldn't convert this pointer to UniverseObject*");
     }
 }
 

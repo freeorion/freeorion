@@ -26,6 +26,7 @@
 #include <GG/GUI.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
+#include <GG/UnicodeCharsets.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
 #include <log4cpp/Appender.hh>
@@ -50,9 +51,7 @@ fs::path ClientUI::ArtDir()                    { return GetSettingsDir() / "data
 fs::path ClientUI::SoundDir()                  { return GetSettingsDir() / "data" / "sound"; }
 
 std::string ClientUI::Font()                   { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
-std::string ClientUI::FontBold()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
-std::string ClientUI::FontItalic()             { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-italic")).native_file_string(); }
-std::string ClientUI::FontBoldItalic()         { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold-italic")).native_file_string(); }
+std::string ClientUI::BoldFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
 std::string ClientUI::TitleFont()              { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
 
 int         ClientUI::Pts()                    { return GetOptionsDB().Get<int>("UI.font-size"); }
@@ -324,7 +323,40 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 // private static members
 ClientUI* ClientUI::s_the_UI = 0;
 
+std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset)
+{
+    os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
+    return os;
+}
+
 namespace {
+    const std::vector<GG::UnicodeCharset>& RequiredCharsets()
+    {
+        static std::vector<GG::UnicodeCharset> retval;
+        if (retval.empty()) {
+            const std::string CREDITS_STR = "Aรถ"; // Basic Latin and Latin-1 Supplement (character sets needed to display the credits page)
+            std::set<GG::UnicodeCharset> credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
+
+            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
+            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
+                settings_dir += '/';
+            std::ifstream ifs((settings_dir + GetOptionsDB().Get<std::string>("stringtable-filename")).c_str());
+            std::string stringtable_str;
+            while (ifs) {
+                std::string line;
+                std::getline(ifs, line);
+                stringtable_str += line;
+                stringtable_str += '\n';
+            }
+            std::set<GG::UnicodeCharset> stringtable_charsets = GG::UnicodeCharsetsToRender(stringtable_str);
+
+            std::set_union(credits_charsets.begin(), credits_charsets.end(),
+                           stringtable_charsets.begin(), stringtable_charsets.end(),
+                           std::back_inserter(retval));
+        }
+        return retval;
+    }
+
     // an internal LUT of string IDs for each SitRep type
     // It's in this module becaue SitReps know nothing about how they
     // should be rendered - this is up to the client UI
@@ -339,92 +371,92 @@ namespace {
         "SITREP_COMBAT_SYSTEM_NO_VICTOR",
         "SITREP_PLANET_LOST_STARVED_TO_DEATH",
         "SITREP_PLANET_COLONIZED",
-        "SITREP_FLEET_ARRIVED_AT_DESTINATION"
+        "SITREP_FLEET_ARRIVED_AT_DESTINATION",
+        "SITREP_EMPIRE_ELIMINATED",
+        "SITREP_VICTORY"
     };
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("app-width", "OPTIONS_DB_APP_WIDTH", 1024, RangedValidator<int>(800, 2048));
-        db.Add("app-height", "OPTIONS_DB_APP_HEIGHT", 768, RangedValidator<int>(600, 1536));
-        db.Add('c', "color-depth", "OPTIONS_DB_COLOR_DEPTH", 32, RangedStepValidator<int>(8, 16, 32));
-        db.Add("show-fps", "OPTIONS_DB_SHOW_FPS", false);
-        db.Add("limit-fps", "OPTIONS_DB_LIMIT_FPS", true);
-        db.Add("max-fps", "OPTIONS_DB_MAX_FPS", 60.0, RangedValidator<double>(10.0, 200.0));
+        db.Add("app-width",             "OPTIONS_DB_APP_WIDTH",     1024,       RangedValidator<int>(800, 2560));
+        db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",    768,        RangedValidator<int>(600, 1600));
+        db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",   32,         RangedStepValidator<int>(8, 16, 32));
+        db.Add("show-fps",              "OPTIONS_DB_SHOW_FPS",      false);
+        db.Add("limit-fps",             "OPTIONS_DB_LIMIT_FPS",     true);
+        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",       60.0,       RangedValidator<double>(10.0, 200.0));
 
         // sound
-        db.Add("UI.sound.enabled", "OPTIONS_DB_UI_SOUND_ENABLED", true, Validator<bool>());
-        db.Add("UI.sound.volume", "OPTIONS_DB_UI_SOUND_VOLUME", 255, RangedValidator<int>(0, 255));
-        db.Add<std::string>("UI.sound.button-rollover", "OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER", "button_rollover.wav");
-        db.Add<std::string>("UI.sound.button-click", "OPTIONS_DB_UI_SOUND_BUTTON_CLICK", "button_click.wav");
-        db.Add<std::string>("UI.sound.turn-button-click", "OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK", "turn_button_click.wav");
-        db.Add<std::string>("UI.sound.list-select", "OPTIONS_DB_UI_SOUND_LIST_SELECT", "list_select.wav");
-        db.Add<std::string>("UI.sound.item-drop", "OPTIONS_DB_UI_SOUND_ITEM_DROP", "item_drop.wav");
-        db.Add<std::string>("UI.sound.list-pulldown", "OPTIONS_DB_UI_SOUND_LIST_PULLDOWN", "list_pulldown.wav");
-        db.Add<std::string>("UI.sound.text-typing", "OPTIONS_DB_UI_SOUND_TEXT_TYPING", "text_typing.wav");
-        db.Add<std::string>("UI.sound.window-maximize", "OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE", "window_maximize.wav");
-        db.Add<std::string>("UI.sound.window-minimize", "OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE", "window_minimize.wav");
-        db.Add<std::string>("UI.sound.window-close", "OPTIONS_DB_UI_SOUND_WINDOW_CLOSE", "window_close.wav");
-        db.Add<std::string>("UI.sound.alert", "OPTIONS_DB_UI_SOUND_ALERT", "alert.wav");
-        db.Add<std::string>("UI.sound.planet-button-click", "OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK", "button_click.wav");
-        db.Add<std::string>("UI.sound.fleet-button-rollover", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER", "fleet_button_rollover.wav");
-        db.Add<std::string>("UI.sound.fleet-button-click", "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK", "fleet_button_click.wav");
-        db.Add<std::string>("UI.sound.system-icon-rollover", "OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER", "fleet_button_rollover.wav");
-        db.Add<std::string>("UI.sound.sidepanel-open", "OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN", "sidepanel_open.wav");
-        db.Add<std::string>("UI.sound.farming-focus", "OPTIONS_DB_UI_SOUND_FARMING_FOCUS", "farm_select.wav");
-        db.Add<std::string>("UI.sound.industry-focus", "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS", "industry_select.wav");
-        db.Add<std::string>("UI.sound.research-focus", "OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS", "research_select.wav");
-        db.Add<std::string>("UI.sound.mining-focus", "OPTIONS_DB_UI_SOUND_MINING_FOCUS", "mining_select.wav");
-        db.Add<std::string>("UI.sound.trade-focus", "OPTIONS_DB_UI_SOUND_TRADE_FOCUS", "trade_select.wav");
-        db.Add<std::string>("UI.sound.balanced-focus", "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS", "balanced_select.wav");
+        db.Add("UI.sound.enabled",                              "OPTIONS_DB_UI_SOUND_ENABLED",                  true,                   Validator<bool>());
+        db.Add("UI.sound.volume",                               "OPTIONS_DB_UI_SOUND_VOLUME",                   255,                    RangedValidator<int>(0, 255));
+        db.Add<std::string>("UI.sound.button-rollover",         "OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER",          "button_rollover.wav");
+        db.Add<std::string>("UI.sound.button-click",            "OPTIONS_DB_UI_SOUND_BUTTON_CLICK",             "button_click.wav");
+        db.Add<std::string>("UI.sound.turn-button-click",       "OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK",        "turn_button_click.wav");
+        db.Add<std::string>("UI.sound.list-select",             "OPTIONS_DB_UI_SOUND_LIST_SELECT",              "list_select.wav");
+        db.Add<std::string>("UI.sound.item-drop",               "OPTIONS_DB_UI_SOUND_ITEM_DROP",                "item_drop.wav");
+        db.Add<std::string>("UI.sound.list-pulldown",           "OPTIONS_DB_UI_SOUND_LIST_PULLDOWN",            "list_pulldown.wav");
+        db.Add<std::string>("UI.sound.text-typing",             "OPTIONS_DB_UI_SOUND_TEXT_TYPING",              "text_typing.wav");
+        db.Add<std::string>("UI.sound.window-maximize",         "OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE",          "window_maximize.wav");
+        db.Add<std::string>("UI.sound.window-minimize",         "OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE",          "window_minimize.wav");
+        db.Add<std::string>("UI.sound.window-close",            "OPTIONS_DB_UI_SOUND_WINDOW_CLOSE",             "window_close.wav");
+        db.Add<std::string>("UI.sound.alert",                   "OPTIONS_DB_UI_SOUND_ALERT",                    "alert.wav");
+        db.Add<std::string>("UI.sound.planet-button-click",     "OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK",      "button_click.wav");
+        db.Add<std::string>("UI.sound.fleet-button-rollover",   "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER",    "fleet_button_rollover.wav");
+        db.Add<std::string>("UI.sound.fleet-button-click",      "OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK",       "fleet_button_click.wav");
+        db.Add<std::string>("UI.sound.system-icon-rollover",    "OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER",     "fleet_button_rollover.wav");
+        db.Add<std::string>("UI.sound.sidepanel-open",          "OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN",           "sidepanel_open.wav");
+        db.Add<std::string>("UI.sound.farming-focus",           "OPTIONS_DB_UI_SOUND_FARMING_FOCUS",            "farm_select.wav");
+        db.Add<std::string>("UI.sound.industry-focus",          "OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS",           "industry_select.wav");
+        db.Add<std::string>("UI.sound.research-focus",          "OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS",           "research_select.wav");
+        db.Add<std::string>("UI.sound.mining-focus",            "OPTIONS_DB_UI_SOUND_MINING_FOCUS",             "mining_select.wav");
+        db.Add<std::string>("UI.sound.trade-focus",             "OPTIONS_DB_UI_SOUND_TRADE_FOCUS",              "trade_select.wav");
+        db.Add<std::string>("UI.sound.balanced-focus",          "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS",           "balanced_select.wav");
 
         // fonts
-        db.Add<std::string>("UI.font", "OPTIONS_DB_UI_FONT", "DejaVuSans.ttf");
-        db.Add<std::string>("UI.font-bold", "OPTIONS_DB_UI_FONT_BOLD", "DejaVuSans-Bold.ttf");
-        db.Add<std::string>("UI.font-italic", "OPTIONS_DB_UI_FONT_ITALIC", "DejaVuSans-Oblique.ttf");
-        db.Add<std::string>("UI.font-bold-italic", "OPTIONS_DB_UI_FONT_BOLD_ITALIC", "DejaVuSans-BoldOblique.ttf");
-        db.Add("UI.font-size", "OPTIONS_DB_UI_FONT_SIZE", 12, RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font", "OPTIONS_DB_UI_TITLE_FONT", "DejaVuSans.ttf");
-        db.Add("UI.title-font-size", "OPTIONS_DB_UI_TITLE_FONT_SIZE", 12, RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.font",                          "OPTIONS_DB_UI_FONT",                           "DejaVuSans.ttf");
+        db.Add<std::string>("UI.font-bold",                     "OPTIONS_DB_UI_FONT_BOLD",                      "DejaVuSans-Bold.ttf");
+        db.Add("UI.font-size",                                  "OPTIONS_DB_UI_FONT_SIZE",                      12,                     RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font",                    "OPTIONS_DB_UI_TITLE_FONT",                     "DejaVuSans.ttf");
+        db.Add("UI.title-font-size",                            "OPTIONS_DB_UI_TITLE_FONT_SIZE",                12,                     RangedValidator<int>(4, 40));
 
         // colors
-        db.Add("UI.wnd-color", "OPTIONS_DB_UI_WND_COLOR", StreamableColor(GG::Clr(0, 0, 0, 210)), Validator<StreamableColor>());
-        db.Add("UI.text-color", "OPTIONS_DB_UI_TEXT_COLOR", StreamableColor(GG::Clr(255, 255, 255, 255)), Validator<StreamableColor>());
-        db.Add("UI.ctrl-color", "OPTIONS_DB_UI_CTRL_COLOR", StreamableColor(GG::Clr(30, 30, 30, 255)), Validator<StreamableColor>());
-        db.Add("UI.ctrl-border-color", "OPTIONS_DB_UI_CTRL_BORDER_COLOR", StreamableColor(GG::Clr(124, 124, 124, 255)), Validator<StreamableColor>());
-        db.Add("UI.button-color", "OPTIONS_DB_UI_BUTTON_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.state-button-color", "OPTIONS_DB_UI_STATE_BUTTON_COLOR", StreamableColor(GG::Clr(0, 127, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.scroll-tab-color", "OPTIONS_DB_UI_SCROLL_TAB_COLOR", StreamableColor(GG::Clr(60, 60, 60, 255)), Validator<StreamableColor>());
-        db.Add("UI.dropdownlist-interior-color", "OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.dropdownlist-arrow-color", "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR", StreamableColor(GG::Clr(130, 130, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.edit-hilite", "OPTIONS_DB_UI_EDIT_HILITE", StreamableColor(GG::Clr(43, 81, 102, 255)), Validator<StreamableColor>());
-        db.Add("UI.edit-interior", "OPTIONS_DB_UI_EDIT_INTERIOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.multiedit-interior", "OPTIONS_DB_UI_MULTIEDIT_INTERIOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.stat-increase-color", "OPTIONS_DB_UI_STAT_INCREASE_COLOR", StreamableColor(GG::Clr(0, 255, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.stat-decrease-color", "OPTIONS_DB_UI_STAT_DECREASE_COLOR", StreamableColor(GG::Clr(255, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.sidepanel-color", "OPTIONS_DB_UI_SIDEPANEL_COLOR", StreamableColor(GG::Clr(0, 0, 0, 220)), Validator<StreamableColor>());
-        db.Add("UI.wnd-outer-border-color", "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR", StreamableColor(GG::Clr(64, 64, 64, 255)), Validator<StreamableColor>());
-        db.Add("UI.wnd-border-color", "OPTIONS_DB_UI_WND_BORDER_COLOR", StreamableColor(GG::Clr(0, 0, 0, 255)), Validator<StreamableColor>());
-        db.Add("UI.wnd-inner-border-color", "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR", StreamableColor(GG::Clr(255, 255, 255, 255)), Validator<StreamableColor>());
-        db.Add("UI.known-tech", "OPTIONS_DB_UI_KNOWN_TECH", StreamableColor(GG::Clr(72, 72, 72, 255)), Validator<StreamableColor>());
-        db.Add("UI.known-tech-border", "OPTIONS_DB_UI_KNOWN_TECH_BORDER", StreamableColor(GG::Clr(164, 164, 164, 255)), Validator<StreamableColor>());
-        db.Add("UI.researchable-tech", "OPTIONS_DB_UI_RESEARCHABLE_TECH", StreamableColor(GG::Clr(48, 48, 48, 255)), Validator<StreamableColor>());
-        db.Add("UI.researchable-tech-border", "OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER", StreamableColor(GG::Clr(164, 164, 164, 255)), Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech", "OPTIONS_DB_UI_UNRESEARCHABLE_TECH", StreamableColor(GG::Clr(30, 30, 30, 255)), Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech-border", "OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER", StreamableColor(GG::Clr(86, 86, 86, 255)), Validator<StreamableColor>());
-        db.Add("UI.tech-progress-background", "OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND", StreamableColor(GG::Clr(72, 72, 72, 255)), Validator<StreamableColor>());
-        db.Add("UI.tech-progress", "OPTIONS_DB_UI_TECH_PROGRESS", StreamableColor(GG::Clr(40, 40, 40, 255)), Validator<StreamableColor>());
+        db.Add("UI.wnd-color",                      "OPTIONS_DB_UI_WND_COLOR",                      StreamableColor(GG::Clr(0, 0, 0, 210)),         Validator<StreamableColor>());
+        db.Add("UI.text-color",                     "OPTIONS_DB_UI_TEXT_COLOR",                     StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+        db.Add("UI.ctrl-color",                     "OPTIONS_DB_UI_CTRL_COLOR",                     StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
+        db.Add("UI.ctrl-border-color",              "OPTIONS_DB_UI_CTRL_BORDER_COLOR",              StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
+        db.Add("UI.button-color",                   "OPTIONS_DB_UI_BUTTON_COLOR",                   StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
+        db.Add("UI.state-button-color",             "OPTIONS_DB_UI_STATE_BUTTON_COLOR",             StreamableColor(GG::Clr(0, 127, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.scroll-tab-color",               "OPTIONS_DB_UI_SCROLL_TAB_COLOR",               StreamableColor(GG::Clr(60, 60, 60, 255)),      Validator<StreamableColor>());
+        db.Add("UI.dropdownlist-interior-color",    "OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR",    StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
+        db.Add("UI.dropdownlist-arrow-color",       "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR",       StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());
+        db.Add("UI.edit-hilite",                    "OPTIONS_DB_UI_EDIT_HILITE",                    StreamableColor(GG::Clr(43, 81, 102, 255)),     Validator<StreamableColor>());
+        db.Add("UI.edit-interior",                  "OPTIONS_DB_UI_EDIT_INTERIOR",                  StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
+        db.Add("UI.multiedit-interior",             "OPTIONS_DB_UI_MULTIEDIT_INTERIOR",             StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
+        db.Add("UI.stat-increase-color",            "OPTIONS_DB_UI_STAT_INCREASE_COLOR",            StreamableColor(GG::Clr(0, 255, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.stat-decrease-color",            "OPTIONS_DB_UI_STAT_DECREASE_COLOR",            StreamableColor(GG::Clr(255, 0, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.sidepanel-color",                "OPTIONS_DB_UI_SIDEPANEL_COLOR",                StreamableColor(GG::Clr(0, 0, 0, 220)),         Validator<StreamableColor>());
+        db.Add("UI.wnd-outer-border-color",         "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR",         StreamableColor(GG::Clr(64, 64, 64, 255)),      Validator<StreamableColor>());
+        db.Add("UI.wnd-border-color",               "OPTIONS_DB_UI_WND_BORDER_COLOR",               StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
+        db.Add("UI.wnd-inner-border-color",         "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR",         StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+        db.Add("UI.known-tech",                     "OPTIONS_DB_UI_KNOWN_TECH",                     StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
+        db.Add("UI.known-tech-border",              "OPTIONS_DB_UI_KNOWN_TECH_BORDER",              StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
+        db.Add("UI.researchable-tech",              "OPTIONS_DB_UI_RESEARCHABLE_TECH",              StreamableColor(GG::Clr(48, 48, 48, 255)),      Validator<StreamableColor>());
+        db.Add("UI.researchable-tech-border",       "OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER",       StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech",            "OPTIONS_DB_UI_UNRESEARCHABLE_TECH",            StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech-border",     "OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER",     StreamableColor(GG::Clr(86, 86, 86, 255)),      Validator<StreamableColor>());
+        db.Add("UI.tech-progress-background",       "OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND",       StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
+        db.Add("UI.tech-progress",                  "OPTIONS_DB_UI_TECH_PROGRESS",                  StreamableColor(GG::Clr(40, 40, 40, 255)),      Validator<StreamableColor>());
 
         // misc
-        db.Add("UI.scroll-width", "OPTIONS_DB_UI_SCROLL_WIDTH", 14, RangedValidator<int>(8, 30));
-        db.Add("UI.system-icon-size", "OPTIONS_DB_UI_SYSTEM_ICON_SIZE", 14, RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size", "OPTIONS_DB_UI_FLEET_BUTTON_SIZE", 1.0, RangedValidator<double>(0.2, 2));
-        db.Add("UI.system-selection-indicator-size", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE", 2.0, RangedValidator<double>(0.5, 5));
+        db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,         RangedValidator<int>(8, 30));
+        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
+        db.Add("UI.fleet-button-size",              "OPTIONS_DB_UI_FLEET_BUTTON_SIZE",              1.0,        RangedValidator<double>(0.2, 2));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedValidator<double>(0.5, 5));
 
         // UI behavior
-        db.Add("UI.tooltip-delay", "OPTIONS_DB_UI_TOOLTIP_DELAY", 1000, RangedValidator<int>(0, 3000));
-        db.Add("UI.multiple-fleet-windows", "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS", false);
-        db.Add("UI.fleet-autoselect", "OPTIONS_DB_UI_FLEET_AUTOSELECT", true);
-        db.Add("UI.window-quickclose", "OPTIONS_DB_UI_WINDOW_QUICKCLOSE", true);
+        db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  1000,       RangedValidator<int>(0, 3000));
+        db.Add("UI.multiple-fleet-windows",         "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",         false);
+        db.Add("UI.fleet-autoselect",               "OPTIONS_DB_UI_FLEET_AUTOSELECT",               true);
+        db.Add("UI.window-quickclose",              "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",              true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -442,7 +474,7 @@ ClientUI::ClientUI() :
     m_map_wnd->Hide();
 }
 
-ClientUI::~ClientUI() 
+ClientUI::~ClientUI()
 {
     delete m_map_wnd;
     s_the_UI = 0;
@@ -509,9 +541,8 @@ bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
-{ 
+{
     // TODO: Zooming code
-    
     return false;
 }
 
@@ -570,7 +601,7 @@ ClientUI* ClientUI::GetClientUI()
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
-    GG::ThreeButtonDlg dlg(320,200,message,GG::GUI::GetGUI()->GetFont(Font(),Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
+    GG::ThreeButtonDlg dlg(GG::X(320),GG::Y(200),message,GetFont(Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound)
         Sound::GetSound().PlaySound(SoundDir() / "alert.wav", true);
@@ -598,6 +629,15 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     return retval;
 }
 
+boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/)
+{ return GG::GUI::GetGUI()->GetFont(Font(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+
+boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/)
+{ return GG::GUI::GetGUI()->GetFont(BoldFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+
+boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/)
+{ return GG::GUI::GetGUI()->GetFont(TitleFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
 {
     namespace fs = boost::filesystem;
@@ -611,7 +651,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {
-                if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->leaf(), prefix))
+                if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->filename(), prefix))
                     textures.push_back(ClientUI::GetTexture(*it, mipmap));
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
@@ -806,31 +846,31 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     // append base scale SI prefix (as postfix)
     switch (unitPow10) {
     case -15:
-        text += "f";    // femto
+        text += "f";        // femto
         break;
     case -12:
-        text += "p";    // pico
+        text += "p";        // pico
         break;
     case -9:
-        text += "n";    // nano
+        text += "n";        // nano
         break;
     case -6:
-        text += "ต";    // micro
+        text += "\xC2\xB5"; // micro.  mu in UTF-8
         break;
     case -3:
-        text += "m";    // milli
+        text += "m";        // milli
         break;
     case 3:
-        text += "k";    // kilo
+        text += "k";        // kilo
         break;
     case 6:
-        text += "M";    // Mega
+        text += "M";        // Mega
         break;
     case 9:
-        text += "G";    // Giga
+        text += "G";        // Giga
         break;
     case 12:
-        text += "T";    // Terra
+        text += "T";        // Terra
         break;
     default:
         break;

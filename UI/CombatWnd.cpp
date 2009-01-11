@@ -42,7 +42,7 @@
 #include <boost/system/system_error.hpp>
 
 namespace {
-    const GG::Pt INVALID_SELECTION_DRAG_POS(-1, -1);
+    const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
 
     const Ogre::Real SYSTEM_RADIUS = 1000.0;
     const Ogre::Real STAR_RADIUS = 80.0;
@@ -152,8 +152,8 @@ namespace {
     GG::Pt ProjectToPixel(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
     {
         Ogre::Vector3 projection = (Project(camera, world_pt) + Ogre::Vector3(1.0, 1.0, 1.0)) / 2.0;
-        return GG::Pt(static_cast<int>(projection.x * camera.getViewport()->getActualWidth()),
-                      static_cast<int>((1.0 - projection.y) * camera.getViewport()->getActualHeight()));
+        return GG::Pt(GG::X(static_cast<int>(projection.x * camera.getViewport()->getActualWidth())),
+                      GG::Y(static_cast<int>((1.0 - projection.y) * camera.getViewport()->getActualHeight())));
     }
 
     std::string PlanetNodeMaterial(PlanetType type)
@@ -387,7 +387,7 @@ private:
 CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
                      Ogre::Camera* camera,
                      Ogre::Viewport* viewport) :
-    Wnd(0, 0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::CLICKABLE),
     m_scene_manager(scene_manager),
     m_camera(camera),
     m_camera_node(m_scene_manager->getRootSceneNode()->createChildSceneNode()),
@@ -415,7 +415,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_left_horizontal_flare_scroll_offset(0.0),
     m_right_horizontal_flare_scroll_offset(0.0),
     m_stencil_op_frame_listener(new StencilOpQueueListener),
-    m_fps_text(new FPSIndicator(5, 5)),
+    m_fps_text(new FPSIndicator(GG::X(5), GG::Y(5))),
     m_menu_showing(false),
     m_exit(false)
 {
@@ -577,8 +577,8 @@ void CombatWnd::InitCombat(const System& system)
             try {
                 if (fs::exists(*it) &&
                     !fs::is_directory(*it) &&
-                    boost::algorithm::starts_with(it->leaf(), type_str)) {
-                    star_textures.insert(it->leaf().substr(0, type_str.size() + 2));
+                    boost::algorithm::starts_with(it->filename(), type_str)) {
+                    star_textures.insert(it->filename().substr(0, type_str.size() + 2));
                 }
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
@@ -630,8 +630,8 @@ void CombatWnd::InitCombat(const System& system)
                 try {
                     if (fs::exists(*it) &&
                         !fs::is_directory(*it) &&
-                        boost::algorithm::starts_with(it->leaf(), type_it->second)) {
-                        current_textures.insert(it->leaf().substr(0, type_it->second.size() + 2));
+                        boost::algorithm::starts_with(it->filename(), type_it->second)) {
+                        current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
                     }
                 } catch (const fs::filesystem_error& e) {
                     // ignore files for which permission is denied, and rethrow other exceptions
@@ -771,11 +771,11 @@ void CombatWnd::Render()
             int small_flare_width = static_cast<int>(120 * m_star_brightness_factor);
 
             GG::Pt big_flare_ul = center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
-                GG::Pt(big_flare_width / 2, big_flare_width / 2);
+                GG::Pt(GG::X(big_flare_width / 2), GG::Y(big_flare_width / 2));
             GG::Pt small_flare_ul = center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
-                GG::Pt(small_flare_width / 2, small_flare_width / 2);
-            GG::Pt big_flare_lr = big_flare_ul + GG::Pt(big_flare_width, big_flare_width);
-            GG::Pt small_flare_lr = small_flare_ul + GG::Pt(small_flare_width, small_flare_width);
+                GG::Pt(GG::X(small_flare_width / 2), GG::Y(small_flare_width / 2));
+            GG::Pt big_flare_lr = big_flare_ul + GG::Pt(GG::X(big_flare_width), GG::Y(big_flare_width));
+            GG::Pt small_flare_lr = small_flare_ul + GG::Pt(GG::X(small_flare_width), GG::Y(small_flare_width));
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
             m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr, m_big_flare->DefaultTexCoords());
@@ -787,10 +787,10 @@ void CombatWnd::Render()
     if (m_selection_rect.ul != m_selection_rect.lr) {
         glColor4f(1.0, 1.0, 1.0, 0.5);
         glBegin(GL_LINE_LOOP);
-        glVertex2i(m_selection_rect.lr.x, m_selection_rect.ul.y);
-        glVertex2i(m_selection_rect.ul.x, m_selection_rect.ul.y);
-        glVertex2i(m_selection_rect.ul.x, m_selection_rect.lr.y);
-        glVertex2i(m_selection_rect.lr.x, m_selection_rect.lr.y);
+        glVertex(m_selection_rect.lr.x, m_selection_rect.ul.y);
+        glVertex(m_selection_rect.ul.x, m_selection_rect.ul.y);
+        glVertex(m_selection_rect.ul.x, m_selection_rect.lr.y);
+        glVertex(m_selection_rect.lr.x, m_selection_rect.lr.y);
         glEnd();
     }
 }
@@ -806,7 +806,7 @@ void CombatWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
     GG::Pt delta_pos = pt - m_last_pos;
     if (m_mouse_dragged ||
         GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
-        delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y) {
+        static_cast<unsigned int>(Value(delta_pos.x * delta_pos.x) + Value(delta_pos.y * delta_pos.y))) {
         if (m_selection_drag_start == INVALID_SELECTION_DRAG_POS) {
             m_selection_drag_start = pt;
             m_selection_rect = GG::Rect();
@@ -881,8 +881,8 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             assert(clicked_scene_node);
             LookAt(clicked_scene_node);
         } else {
-            Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
-                                                             pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
+            Ogre::Ray ray = m_camera->getCameraToViewportRay(Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
+                                                             Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()));
             std::pair<bool, Ogre::Real> intersection =
                 Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
             const Ogre::Real MAX_DISTANCE_SQ = SYSTEM_RADIUS * SYSTEM_RADIUS;
@@ -906,18 +906,18 @@ void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
     GG::Pt delta_pos = pt - m_last_pos;
     if (m_mouse_dragged ||
         GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
-        delta_pos.x * delta_pos.x + delta_pos.y * delta_pos.y) {
+        static_cast<unsigned int>(Value(delta_pos.x * delta_pos.x) + Value(delta_pos.y * delta_pos.y))) {
         m_last_pos = pt;
 
         Ogre::Radian delta_pitch =
-            -delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight() * Ogre::Radian(Ogre::Math::PI);
+            Value(-delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight()) * Ogre::Radian(Ogre::Math::PI);
         m_pitch += delta_pitch;
         if (m_pitch < Ogre::Radian(0.0))
             m_pitch = Ogre::Radian(0.0);
         if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
             m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
         Ogre::Radian delta_roll =
-            -delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth() * Ogre::Radian(Ogre::Math::PI);
+            Value(-delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth()) * Ogre::Radian(Ogre::Math::PI);
         m_roll += delta_roll;
 
         UpdateCameraPosition();
@@ -1178,13 +1178,13 @@ void CombatWnd::EndSelectionDrag()
 
 void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
 {
-    const float APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
-    const float APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
+    const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
+    const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
 
-    float left = std::min(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH;
-    float right = std::max(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH;
-    float top = std::min(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT;
-    float bottom = std::max(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT;
+    float left = Value(std::min(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH);
+    float right = Value(std::max(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH);
+    float top = Value(std::min(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT);
+    float bottom = Value(std::max(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT);
 
     const float MIN_SELECTION_VOLUME = 0.0001;
     if ((right - left) * (bottom - top) < MIN_SELECTION_VOLUME)
@@ -1229,8 +1229,8 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
 
 Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 {
-    Ogre::Ray ray = m_camera->getCameraToViewportRay(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth(),
-                                                     pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight());
+    Ogre::Ray ray = m_camera->getCameraToViewportRay(Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
+                                                     Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()));
     RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
     return hit.m_object;
 }

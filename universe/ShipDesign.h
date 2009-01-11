@@ -13,7 +13,7 @@
 #include "Enums.h"
 
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 namespace Effect {
     class EffectsGroup;
@@ -29,6 +29,7 @@ public:
              std::vector<ShipSlotType> mountable_slot_types, const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
+    ~PartType();
     //@}
 
     /** \name Accessors */ //@{
@@ -98,6 +99,7 @@ public:
 
 private:
     PartTypeManager();
+    ~PartTypeManager();
 
     std::map<std::string, PartType*>    m_parts;
     static PartTypeManager*             s_instance;
@@ -139,6 +141,7 @@ public:
              const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
+    ~HullType();
     //@}
 
     /** \name Accessors */ //@{
@@ -206,6 +209,8 @@ public:
 
 private:
     HullTypeManager();
+    ~HullTypeManager();
+
     std::map<std::string, HullType*> m_hulls;
     static HullTypeManager* s_instance;
 };

@@ -20,11 +20,12 @@
 #include <vector>
 
 
-class MultiplayerLobbyData;
+struct MultiplayerLobbyData;
 class ServerApp;
-class SinglePlayerSetupData;
+struct SinglePlayerSetupData;
 class PlayerConnection;
 class PlayerSaveGameData;
+class ServerSaveGameData;
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 
 // Non-Message events
@@ -109,6 +110,7 @@ struct ServerFSM : boost::statechart::state_machine<ServerFSM, Idle>
     boost::shared_ptr<MultiplayerLobbyData>  m_lobby_data;
     boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;
+    boost::shared_ptr<ServerSaveGameData>    m_server_save_game_data;
 
 private:
     ServerApp& m_server;
@@ -163,6 +165,7 @@ struct MPLobby : boost::statechart::state<MPLobby, ServerFSM>
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
+    boost::shared_ptr<ServerSaveGameData>   m_server_save_game_data;
 
     SERVER_ACCESSOR
 };
@@ -186,6 +189,7 @@ struct WaitingForSPGameJoiners : boost::statechart::state<WaitingForSPGameJoiner
 
     boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;
+    boost::shared_ptr<ServerSaveGameData>    m_server_save_game_data;
     std::set<std::string>                    m_expected_ai_player_names;
     int                                      m_num_expected_players;
 
@@ -211,6 +215,7 @@ struct WaitingForMPGameJoiners : boost::statechart::state<WaitingForMPGameJoiner
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
+    boost::shared_ptr<ServerSaveGameData>   m_server_save_game_data;
     std::set<std::string>                   m_expected_ai_player_names;
     int                                     m_num_expected_players;
 

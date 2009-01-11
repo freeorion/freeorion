@@ -96,7 +96,7 @@ int UniverseObject::SystemID() const
 
 System* UniverseObject::GetSystem() const
 {
-    return m_system_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<System>(m_system_id);
+    return SystemID() == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<System>(SystemID());
 }
 
 const std::set<std::string>& UniverseObject::Specials() const
@@ -181,9 +181,9 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
     return m_owners.size() == 1 && m_owners.find(empire) != m_owners.end();
 }
 
-UniverseObject::Visibility UniverseObject::GetVisibility(int empire_id) const
+Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? FULL_VISIBILITY : NO_VISIBILITY;
+    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? VIS_FULL_VISIBILITY : VIS_NO_VISIBITY;
 }
 
 const std::string& UniverseObject::PublicName(int empire_id) const
@@ -210,14 +210,12 @@ void UniverseObject::Rename(const std::string& name)
 
 void UniverseObject::Move(double x, double y)
 {
-    if (m_x + x < 0.0 || Universe::UniverseWidth() < m_x + x || m_y + y < 0.0 || Universe::UniverseWidth() < m_y + y)
-        throw std::runtime_error("UniverseObject::Move : Attempted to move object \"" + m_name + "\" off the map area.");
-    UniverseObject::MoveTo(m_x + x, m_y + y);
+    MoveTo(m_x + x, m_y + y);
 }
 
 void UniverseObject::MoveTo(int object_id)
 {
-    UniverseObject::MoveTo(GetUniverse().Object(object_id));
+    MoveTo(GetUniverse().Object(object_id));
 }
 
 void UniverseObject::MoveTo(UniverseObject* object)
@@ -225,7 +223,7 @@ void UniverseObject::MoveTo(UniverseObject* object)
     if (!object)
         throw std::invalid_argument("UniverseObject::MoveTo passed an invalid object or object id");
 
-    UniverseObject::MoveTo(object->X(), object->Y());
+    MoveTo(object->X(), object->Y());
 }
 
 void UniverseObject::MoveTo(double x, double y)
@@ -236,6 +234,7 @@ void UniverseObject::MoveTo(double x, double y)
 
     m_x = x;
     m_y = y;
+
     if (System* system = GetSystem())
         system->Remove(this);
     StateChangedSignal();

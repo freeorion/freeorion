@@ -99,7 +99,7 @@ namespace FreeOrionPython {
 
             .add_property("productionPoints",       make_function(&Empire::ProductionPoints,        return_value_policy<return_by_value>()))
             .def("resourceStockpile",               &Empire::ResourceStockpile)
-            .def("resourceMaxStockpile",            &Empire::ResourceMaxStockpile)
+            //.def("resourceMaxStockpile",            &Empire::ResourceMaxStockpile)
             .def("resourceProduction",              &Empire::ResourceProduction)
             .def("resourceAvailable",               &Empire::ResourceAvailable)
 
@@ -114,7 +114,7 @@ namespace FreeOrionPython {
         ////////////////////
         class_<ResearchQueue::Element>("researchQueueElement", no_init)
             .add_property("tech",                   make_getter(&ResearchQueue::Element::tech,      return_value_policy<reference_existing_object>()))
-            .def_readonly("spending",               &ResearchQueue::Element::spending)
+            .def_readonly("allocation",             &ResearchQueue::Element::allocated_rp)
             .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
         ;
         class_<ResearchQueue, noncopyable>("researchQueue", no_init)
@@ -157,7 +157,7 @@ namespace FreeOrionPython {
                                                         boost::mpl::vector<BuildType, const ProductionQueue::Element&>()
                                                     ))
             .def_readonly("locationID",             &ProductionQueue::Element::location)
-            .def_readonly("spending",               &ProductionQueue::Element::spending)
+            .def_readonly("allocation",             &ProductionQueue::Element::allocated_pp)
             .def_readonly("turnsLeft",              &ProductionQueue::Element::turns_left_to_completion)
         ;
         class_<ProductionQueue, noncopyable>("productionQueue", no_init)

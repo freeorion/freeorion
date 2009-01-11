@@ -23,13 +23,13 @@ namespace GG {
 class CUIButton;
 class CUIStateButton;
 class EmpireColorSelector;
-class GalaxySetupData;
+struct GalaxySetupData;
 
 /** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiplayerLobbyWnd. */
 class GalaxySetupPanel : public GG::Control
 {
 public:
-    enum {DEFAULT_WIDTH = 305};
+    static const GG::X DEFAULT_WIDTH;
 
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()>                               SettingsChangedSignalType; ///< emitted when the any of the settings controls changes
@@ -42,7 +42,7 @@ public:
     //@}
 
     /** \name Structors*/ //!@{
-    GalaxySetupPanel(int x, int y, int w = DEFAULT_WIDTH);
+    GalaxySetupPanel(GG::X x, GG::Y y, GG::X w = DEFAULT_WIDTH);
     //!@}
 
     /** \name Accessors*/ //!@{
@@ -100,14 +100,14 @@ public:
 
     /** returns the panel containing all the user-chosen options. */
     const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
-    const std::string&      EmpireName() const;
+    std::string             EmpireName() const;
     GG::Clr                 EmpireColor() const;
     int                     NumberAIs() const;
     //!@}
 
     /** \name Mutators*/ //!@{
     virtual void Render();    //!< drawing code
-    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     //!@}
 
 private:

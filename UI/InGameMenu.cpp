@@ -24,8 +24,8 @@ namespace {
     }
     bool foo_bool = RegisterOptions(&Options);
 
-    const int IN_GAME_OPTIONS_WIDTH = 150;
-    const int IN_GAME_OPTIONS_HEIGHT = 280;
+    const GG::X IN_GAME_OPTIONS_WIDTH(150);
+    const GG::Y IN_GAME_OPTIONS_HEIGHT(280);
 
 }
 
@@ -34,16 +34,16 @@ InGameMenu::InGameMenu():
     CUIWnd(UserString("GAME_MENU_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - IN_GAME_OPTIONS_WIDTH) / 2,
            (GG::GUI::GetGUI()->AppHeight() - IN_GAME_OPTIONS_HEIGHT) / 2, IN_GAME_OPTIONS_WIDTH, IN_GAME_OPTIONS_HEIGHT, GG::CLICKABLE | GG::MODAL)
 {
-    const int BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
-    const int BUTTON_X = (ClientWidth() - BUTTON_WIDTH) / 2;
-    m_save_btn = new CUIButton(BUTTON_X, 22, BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
-    m_load_btn = new CUIButton(BUTTON_X, 62, BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
-    m_options_btn = new CUIButton(BUTTON_X, 102, BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
-    m_exit_btn = new CUIButton(BUTTON_X, 142, BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
-    m_done_btn = new CUIButton(BUTTON_X, 192, BUTTON_WIDTH, UserString("DONE"));
+    const GG::X BUTTON_WIDTH = IN_GAME_OPTIONS_WIDTH - 60;
+    const GG::X BUTTON_X = (ClientWidth() - BUTTON_WIDTH) / 2;
+    m_save_btn = new CUIButton(BUTTON_X, GG::Y(22), BUTTON_WIDTH, UserString("GAME_MENU_SAVE"));
+    m_load_btn = new CUIButton(BUTTON_X, GG::Y(62), BUTTON_WIDTH, UserString("GAME_MENU_LOAD"));
+    m_options_btn = new CUIButton(BUTTON_X, GG::Y(102), BUTTON_WIDTH, UserString("INTRO_BTN_OPTIONS"));
+    m_exit_btn = new CUIButton(BUTTON_X, GG::Y(142), BUTTON_WIDTH, UserString("GAME_MENU_RESIGN"));
+    m_done_btn = new CUIButton(BUTTON_X, GG::Y(192), BUTTON_WIDTH, UserString("DONE"));
 
-    // call to InGameMenu::MinimizedLength() because MinimizedLength is virtual
-    SetMinSize(GG::Pt(InGameMenu::MinimizedLength(), MinSize().y));
+    // call to InGameMenu::MinimizedWidth() because MinimizedWidth is virtual
+    SetMinSize(GG::Pt(InGameMenu::MinimizedWidth(), MinSize().y));
 
     //add children
     AttachChild(m_save_btn);
@@ -69,13 +69,13 @@ InGameMenu::InGameMenu():
 InGameMenu::~InGameMenu()
 {}
 
-int InGameMenu::MinimizedLength() const
-{ return 135; }
+GG::X InGameMenu::MinimizedWidth() const
+{ return GG::X(135); }
 
 void InGameMenu::Render()
 { CUIWnd::Render(); }
 
-void InGameMenu::KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_RETURN || key == GG::GGK_ESCAPE || key == GG::GGK_F10) // Same behaviour as if "done" was pressed
         Done();

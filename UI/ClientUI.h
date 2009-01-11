@@ -21,7 +21,8 @@ class Tech;
 class TurnProgressWnd;
 class BuildingType;
 namespace GG {
-    class Clr;
+    struct Clr;
+    class Font;
     class SubTexture;
     class Texture;
 }
@@ -85,14 +86,27 @@ public:
         missing.png if name isn't found. */
     static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
+    /** Returns the default font in the specified point size.  Uses Font() as
+        the font filename, and provides Unicode character sets based on the
+        contents of the stringtable in use. */
+    static boost::shared_ptr<GG::Font> GetFont(int pts = Pts());
+
+    /** Returns the default font in the specified point size.  Uses BoldFont()
+        as the font filename, and provides Unicode character sets based on the
+        contents of the stringtable in use. */
+    static boost::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());
+
+    /** Returns the default font in the specified point size.  Uses
+        TitleFont() as the font filename, and provides Unicode character sets
+        based on the contents of the stringtable in use. */
+    static boost::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
+
     //!@{
     static boost::filesystem::path ArtDir();    //!< directory holding artwork
     static boost::filesystem::path SoundDir();  //!< directory holding sound and music
 
     static std::string  Font();                 //!< The default font to use
-    static std::string  FontBold();             //!< The default bold font to use
-    static std::string  FontItalic();           //!< The default italic font to use
-    static std::string  FontBoldItalic();       //!< The default bold and italic font to use
+    static std::string  BoldFont();             //!< The default bold font to use
     static int          Pts();                  //!< default point size
     static std::string  TitleFont();            //!< The default font to use for the window title
     static int          TitlePts();             //!< default point size to use for window title

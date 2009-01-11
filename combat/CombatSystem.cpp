@@ -178,8 +178,6 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     log4cpp::Category::getRoot().debugStream() << "COMBAT resolution!";
 #endif
     const double base_chance_to_retreat = 0.25;
-    const int    defence_base_hit_points= 3;
-
 
 #ifdef FREEORION_RELEASE
     ClockSeed();
@@ -212,12 +210,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         for(unsigned int i=0; i<assets[e].planets.size(); i++)
         {
             Planet *plt = assets[e].planets[i];
-
-            if(plt->DefBases()>0)
-                // static defense bonus of >defence_base_hit_points< points per defense base
-                cahp.planets.push_back(std::pair<Planet*,unsigned int>(plt,plt->DefBases() * defence_base_hit_points));
-            else
-                cahp.defenseless_planets.push_back(plt);
+            cahp.defenseless_planets.push_back(plt);
         }
 
         empire_combat_forces.push_back(cahp);
@@ -372,22 +365,6 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 
     for(int e=0;e<static_cast<int>(empire_combat_forces.size());e++)
     {
-        //remove defense bases of defenseless planets
-        for(unsigned int i=0; i<empire_combat_forces[e].defenseless_planets.size(); i++)
-            empire_combat_forces[e].defenseless_planets[i]->AdjustDefBases(-empire_combat_forces[e].defenseless_planets[i]->DefBases());
-
-        //adjust defense bases of planets
-        for(unsigned int i=0; i<empire_combat_forces[e].planets.size(); i++)
-        {
-            unsigned int defense_bases_left = defence_base_hit_points==0
-                ?0
-                : ( empire_combat_forces[e].planets[i].first->DefBases()*defence_base_hit_points
-                    -empire_combat_forces[e].planets[i].second
-                    +defence_base_hit_points-1)
-                / defence_base_hit_points;
-            empire_combat_forces[e].planets[i].first->AdjustDefBases(defense_bases_left-empire_combat_forces[e].planets[i].first->DefBases());
-        }
-
         // conquer planets if there is a victor
         if(victor!=-1 && victor!=e)
         {

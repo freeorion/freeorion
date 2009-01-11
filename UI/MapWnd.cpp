@@ -1,6 +1,12 @@
 #ifdef FREEORION_WIN32
 #include <GL/glew.h>
+# ifndef USE_GL_BIND_BUFFER_ARB
+#  define USE_GL_BIND_BUFFER_ARB
+# endif
 #endif
+
+// Maybe also set for Linux
+//#define USE_GL_BIND_BUFFER_ARB
 
 #include "MapWnd.h"
 
@@ -36,33 +42,19 @@
 #include <vector>
 #include <deque>
 
-#define TEST_BROWSE_INFO 0
-#if TEST_BROWSE_INFO
-#include <GG/BrowseInfoWnd.h>
-class BrowseFoo : public GG::TextBoxBrowseInfoWnd
-{
-public:
-    BrowseFoo() :
-        TextBoxBrowseInfoWnd(200, ClientUI::Font(), 12, GG::CLR_SHADOW, GG::CLR_WHITE, GG::CLR_WHITE)
-        {}
-
-    void Update(int mode, const GG::Wnd* target)
-        { SetText("mode=" + boost::lexical_cast<std::string>(mode) + " wnd=" + target->WindowText()); }
-};
-#endif
 
 namespace {
     const double ZOOM_STEP_SIZE = 1.25;
     const int MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
     const int MAX_NEBULAE = 6;
-    const int END_TURN_BTN_WIDTH = 60;
-    const int SITREP_PANEL_WIDTH = 400;
-    const int SITREP_PANEL_HEIGHT = 300;
+    const GG::X END_TURN_BTN_WIDTH(60);
+    const GG::X SITREP_PANEL_WIDTH(400);
+    const GG::Y SITREP_PANEL_HEIGHT(300);
     const int MIN_SYSTEM_NAME_SIZE = 10;
     const int LAYOUT_MARGIN = 5;
-    const int CHAT_WIDTH = 400;
-    const int CHAT_HEIGHT = 400;
-    const int CHAT_EDIT_HEIGHT = 30;
+    const GG::X CHAT_WIDTH(400);
+    const GG::Y CHAT_HEIGHT(400);
+    const GG::Y CHAT_EDIT_HEIGHT(30);
 
     int g_chat_display_show_time = 0;
     std::deque<std::string> g_chat_edit_history;
@@ -77,12 +69,18 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.chat-hide-interval", "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL", 10, RangedValidator<int>(0, 3600));
-        db.Add("UI.chat-edit-history", "OPTIONS_DB_UI_CHAT_EDIT_HISTORY", 50, RangedValidator<int>(0, 1000));
-        db.Add("UI.galaxy-gas-background", "OPTIONS_DB_GALAXY_MAP_GAS", true, Validator<bool>());
-        db.Add("UI.optimized-system-rendering", "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING", true, Validator<bool>());
+        db.Add("UI.chat-hide-interval",             "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL",         10,     RangedValidator<int>(0, 3600));
+        db.Add("UI.chat-edit-history",              "OPTIONS_DB_UI_CHAT_EDIT_HISTORY",          50,     RangedValidator<int>(0, 1000));
+        db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                true,   Validator<bool>());
+        db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",         true,   Validator<bool>());
+        db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",    true,   Validator<bool>());
+        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",            2.5,    RangedValidator<double>(0.1, 15.0));
+        db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",   true,   Validator<bool>());
+        db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",            true,   Validator<bool>());
+        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",       3.0,    RangedValidator<double>(0.1, 15.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
 
 #ifndef FREEORION_RELEASE
     bool RequestRegressionTestDump()
@@ -94,32 +92,18 @@ namespace {
     }
 #endif
 
-    ////////////////////////////////////////////////
-    // StarlaneData
-    ////////////////////////////////////////////////
-    /* Note that an order is imposed on the two systems the starlane spans.  The
-       "source" system is the one with the lower pointer.  This is so
-       StarlaneDatas can be stored in a std::set and duplicates will not be a
-       problem. */
-    struct StarlaneData
-    {
-        StarlaneData() {}
-        StarlaneData(const System* src_system, const System* dst_system) : 
-            src(std::min(src_system, dst_system)), 
-            dst(std::max(src_system, dst_system)) 
-            {}
-        bool operator<(const StarlaneData& rhs) const 
-            {
-                if (src != rhs.src) 
-                    return src < rhs.src; 
-                if (dst != rhs.dst) 
-                    return dst < rhs.dst;
-                return false;
-            }
-    private:
-        const System* src;
-        const System* dst;
-    };
+    // returns an int-int pair that doesn't depend on the order of parameters
+    std::pair<int, int> UnorderedIntPair(int one, int two) {
+        return std::make_pair(std::min(one, two), std::max(one, two));
+    }
+
+    // disambiguate overloaded function with a function pointer
+    void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
+
+    const float STARLANE_GRAY = 127.0f / 255.0f;
+    const float STARLANE_ALPHA = 0.7f;
+
+    const GG::Clr UNOWNED_STARLANE_GRAY_CLR = GG::Clr(72, 72, 72, 255);
 }
 
 ////////////////////////////////////////////////////////////
@@ -133,12 +117,12 @@ MapWnd::GLBuffer::GLBuffer() :
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
-MapWndPopup::MapWndPopup(const std::string& t, int x, int y, int h, int w, GG::Flags<GG::WndFlag> flags) :
-    CUIWnd( t, x, y, h, w, flags)
+MapWndPopup::MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
+    CUIWnd(t, x, y, w, h, flags)
 { ClientUI::GetClientUI()->GetMapWnd()->RegisterPopup(this); }
 
 MapWndPopup::~MapWndPopup()
-{ ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this);}
+{ ClientUI::GetClientUI()->GetMapWnd()->RemovePopup(this); }
 
 void MapWndPopup::CloseClicked()
 {
@@ -206,7 +190,7 @@ private:
 };
 
 MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) :
-    GG::Wnd(0, 0, 1, 1, GG::Flags<GG::WndFlag>()),
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
     m_x(x),
     m_y(y),
     m_text(0)
@@ -221,7 +205,7 @@ MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) 
     else
         eta_text = boost::lexical_cast<std::string>(eta);
 
-    m_text = new GG::TextControl(0, 0, eta_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    m_text = new GG::TextControl(GG::X0, GG::Y0, eta_text, ClientUI::GetFont(),
                                  ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     Resize(m_text->Size());
     AttachChild(m_text);
@@ -231,19 +215,19 @@ void MapWnd::FleetETAMapIndicator::Render()
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
+    GG::FlatRectangle(ul, lr, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
 // MapWnd
 // static(s)
-double    MapWnd::s_min_scale_factor = 0.35;
-double    MapWnd::s_max_scale_factor = 8.0;
-const int MapWnd::SIDE_PANEL_WIDTH = 360;
+double           MapWnd::s_min_scale_factor = 0.35;
+double           MapWnd::s_max_scale_factor = 8.0;
+const GG::X MapWnd::SIDE_PANEL_WIDTH(360);
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
-            static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
+            static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+            static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
             GG::CLICKABLE | GG::DRAGABLE),
     m_disabled_accels_list(),
     m_backgrounds(),
@@ -252,20 +236,21 @@ MapWnd::MapWnd() :
     m_zoom_factor(1.0),
     m_star_texture_coords(),
     m_starlane_vertices(),
-    m_starlane_supply_vertices(),
-    m_starlane_supply_colors(),
-    m_drag_offset(-1, -1),
+    m_starlane_colors(),
+    m_starlane_fleet_supply_vertices(),
+    m_starlane_fleet_supply_colors(),
+    m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_in_production_view_mode(false)
 {
-    SetText("MapWnd");
+    SetName("MapWnd");
 
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(0,0,GG::GUI::GetGUI()->AppWidth(),30);
+    m_toolbar = new CUIToolBar(GG::X0,GG::Y0,GG::GUI::GetGUI()->AppWidth(),GG::Y(30));
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
@@ -279,102 +264,102 @@ MapWnd::MapWnd() :
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
 
     m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
-    m_research_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
     m_production_wnd = new ProductionWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
-    m_production_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
     m_design_wnd = new DesignWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
-    m_design_wnd->MoveTo(GG::Pt(0, m_toolbar->Height()));
+    m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
 
     // turn button
-    m_turn_update = new CUITurnButton(LAYOUT_MARGIN, LAYOUT_MARGIN, END_TURN_BTN_WIDTH, "" );
+    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), END_TURN_BTN_WIDTH, "" );
     m_toolbar->AttachChild(m_turn_update);
     GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-    const int BUTTON_TOTAL_MARGIN = 8;
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    const GG::X BUTTON_TOTAL_MARGIN(8);
 
     // FPS indicator
     m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
     m_toolbar->AttachChild(m_FPS);
 
     // Subscreen / Menu buttons
-    int button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, 0, button_width, UserString("MAP_BTN_MENU") );
+    GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, GG::Y0, button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_DESIGN") );
+    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_DESIGN") );
     m_toolbar->AttachChild(m_btn_design);
     GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
     GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
 
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, 0, button_width, UserString("MAP_BTN_SITREP") );
+    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
 
     // resources
-    const int ICON_DUAL_WIDTH = 100;
-    const int ICON_WIDTH = ICON_DUAL_WIDTH - 30;
-    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    const GG::X ICON_DUAL_WIDTH(100);
+    const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
+    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
                                      0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_population);
 
-    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
+    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
                                    0,3,true,false);
     m_toolbar->AttachChild(m_industry);
 
-    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,LAYOUT_MARGIN,ICON_WIDTH,m_turn_update->Height(),
+    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
                                    0,3,true,false);
     m_toolbar->AttachChild(m_research);
 
-    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
                                 0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_trade);
 
-    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                   ClientUI::MeterIcon(METER_MINING),
                                   0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_mineral);
 
-    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,LAYOUT_MARGIN,ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                ClientUI::MeterIcon(METER_FARMING),
                                0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_food);
 
     // chat display and chat input box
-    m_chat_display = new GG::MultiEdit(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), GG::CLR_ZERO, 
+    m_chat_display = new GG::MultiEdit(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::GetFont(), GG::CLR_ZERO, 
                                        GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT | GG::MULTI_NO_VSCROLL, 
                                        ClientUI::TextColor(), GG::CLR_ZERO, GG::Flags<GG::WndFlag>());
     AttachChild(m_chat_display);
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
-    m_chat_edit = new CUIEdit(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
-                              GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
+    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
+                              ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -385,45 +370,7 @@ MapWnd::MapWnd() :
     m_backgrounds.clear();
     m_bg_scroll_rate.clear();
 
-
-    // connect keyboard accelerators
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE), &MapWnd::ReturnToMap, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN), &MapWnd::OpenChatWindow, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL), &MapWnd::EndTurn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL), &MapWnd::EndTurn, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2), &MapWnd::ToggleSitRep, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3), &MapWnd::ToggleResearch, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4), &MapWnd::ToggleProduction, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5), &MapWnd::ToggleDesign, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10), &MapWnd::ShowMenu, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s), &MapWnd::CloseSystemView, this);
-
-    // Keys for zooming
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS), &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r), &MapWnd::KeyboardZoomOut, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS), &MapWnd::KeyboardZoomOut, this);
-
-    // Keys for showing systems
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d), &MapWnd::ZoomToHomeSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x), &MapWnd::ZoomToPrevOwnedSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c), &MapWnd::ZoomToNextOwnedSystem, this);
-
-    // Keys for showing fleets
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f), &MapWnd::ZoomToPrevIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g), &MapWnd::ZoomToNextIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v), &MapWnd::ZoomToPrevFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b), &MapWnd::ZoomToNextFleet, this);
-
-#ifndef FREEORION_RELEASE
-    // special development-only key combo that dumps ValueRef, Condition, and Effect regression tests using the current
-    // Universe
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL), &RequestRegressionTestDump);
-#endif
+    ConnectKeyboardAcceleratorSignals();
 
     g_chat_edit_history.push_front("");
 
@@ -457,16 +404,16 @@ double MapWnd::ZoomFactor() const
 GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
 {
     GG::Pt cl_ul = ClientUpperLeft();
-    int x = static_cast<int>((universe_x * m_zoom_factor) + cl_ul.x);
-    int y = static_cast<int>((universe_y * m_zoom_factor) + cl_ul.y);
+    GG::X x((universe_x * m_zoom_factor) + cl_ul.x);
+    GG::Y y((universe_y * m_zoom_factor) + cl_ul.y);
     return GG::Pt(x, y);
 }
 
 std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const
 {
     GG::Pt cl_ul = ClientUpperLeft();
-    double x = (screen_coords - cl_ul).x / m_zoom_factor;
-    double y = (screen_coords - cl_ul).y / m_zoom_factor;
+    double x = Value((screen_coords - cl_ul).x / m_zoom_factor);
+    double y = Value((screen_coords - cl_ul).y / m_zoom_factor);
     return std::pair<double, double>(x, y);
 }
 
@@ -477,13 +424,9 @@ SidePanel* MapWnd::GetSidePanel() const
 
 void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
-    data.map_upper_left = UpperLeft();
+    data.map_left = Value(UpperLeft().x);
+    data.map_top = Value(UpperLeft().y);
     data.map_zoom_factor = m_zoom_factor;
-    data.map_nebulae.resize(m_nebulae.size());
-    for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
-        data.map_nebulae[i].filename = m_nebulae[i]->Filename();
-        data.map_nebulae[i].center = m_nebula_centers[i];
-    }
 }
 
 bool MapWnd::InProductionViewMode() const
@@ -499,7 +442,7 @@ void MapWnd::Render()
 
     RenderStarfields();
 
-    int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
+    unsigned int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
     if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
         (interval < (GG::GUI::GetGUI()->Ticks() - g_chat_display_show_time) / 1000)) {
         m_chat_display->Hide();
@@ -510,7 +453,7 @@ void MapWnd::Render()
     glPushMatrix();
     glLoadIdentity();
     glScalef(m_zoom_factor, m_zoom_factor, 1.0);
-    glTranslatef(origin_offset.x / m_zoom_factor, origin_offset.y / m_zoom_factor, 0.0);
+    glTranslatef(Value(origin_offset.x / m_zoom_factor), Value(origin_offset.y / m_zoom_factor), 0.0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -536,20 +479,20 @@ void MapWnd::Render()
     glPopMatrix();
 }
 
-void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_TAB: { // auto-complete current chat edit word
         if (m_chat_edit->Visible()) {
-            std::string text = m_chat_edit->WindowText();
-            std::pair<int, int> cursor_pos = m_chat_edit->CursorPosn();
-            if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= static_cast<int>(text.size())) {
-                std::string::size_type word_start = text.substr(0, cursor_pos.first).find_last_of(" :");
+            std::string text = m_chat_edit->Text();
+            std::pair<GG::CPSize, GG::CPSize> cursor_pos = m_chat_edit->CursorPosn();
+            if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= text.size()) {
+                std::string::size_type word_start = text.substr(0, Value(cursor_pos.first)).find_last_of(" :");
                 if (word_start == std::string::npos)
                     word_start = 0;
                 else
                     ++word_start;
-                std::string partial_word = text.substr(word_start, cursor_pos.first - word_start);
+                std::string partial_word = text.substr(word_start, Value(cursor_pos.first - word_start));
                 if (partial_word == "")
                     return;
                 std::set<std::string> names;
@@ -566,7 +509,7 @@ void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
                 }
 
                 if (names.find(partial_word) != names.end()) { // if there's an exact match, just add a space
-                    text.insert(cursor_pos.first, " ");
+                    text.insert(Value(cursor_pos.first), " ");
                     m_chat_edit->SetText(text);
                     m_chat_edit->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
                 } else { // no exact match; look for possible completions
@@ -595,9 +538,9 @@ void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
                     }
                     unsigned int chars_to_add = common_end - partial_word.size();
                     bool full_completion = common_end == lower_bound->size();
-                    text.insert(cursor_pos.first, lower_bound->substr(partial_word.size(), chars_to_add) + (full_completion ? " " : ""));
+                    text.insert(Value(cursor_pos.first), lower_bound->substr(partial_word.size(), chars_to_add) + (full_completion ? " " : ""));
                     m_chat_edit->SetText(text);
-                    int move_cursor_to = cursor_pos.first + chars_to_add + (full_completion ? 1 : 0);
+                    GG::CPSize move_cursor_to = cursor_pos.first + chars_to_add + (full_completion ? GG::CP1 : GG::CP0);
                     m_chat_edit->SelectRange(move_cursor_to, move_cursor_to);
                 }
             }
@@ -607,7 +550,7 @@ void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
     case GG::GGK_RETURN:
     case GG::GGK_KP_ENTER: { // send chat message
         if (m_chat_edit->Visible()) {
-            std::string edit_text = m_chat_edit->WindowText();
+            std::string edit_text = m_chat_edit->Text();
             if (edit_text != "") {
                 if (g_chat_edit_history.size() == 1 || g_chat_edit_history[1] != edit_text) {
                     g_chat_edit_history[0] = edit_text;
@@ -632,7 +575,7 @@ void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 
     case GG::GGK_UP: {
         if (m_chat_edit->Visible() && g_history_position < static_cast<int>(g_chat_edit_history.size()) - 1) {
-            g_chat_edit_history[g_history_position] = m_chat_edit->WindowText();
+            g_chat_edit_history[g_history_position] = m_chat_edit->Text();
             ++g_history_position;
             m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
         }
@@ -641,7 +584,7 @@ void MapWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
 
     case GG::GGK_DOWN: {
         if (m_chat_edit->Visible() && 0 < g_history_position) {
-            g_chat_edit_history[g_history_position] = m_chat_edit->WindowText();
+            g_chat_edit_history[g_history_position] = m_chat_edit->Text();
             --g_history_position;
             m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
         }
@@ -674,13 +617,13 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
 
 void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    m_drag_offset = GG::Pt(-1, -1);
+    m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     m_dragged = false;
 }
 
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    m_drag_offset = GG::Pt(-1, -1);
+    m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         m_side_panel->Hide();
@@ -714,13 +657,19 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 
 void MapWnd::InitTurn(int turn_number)
 {
+    Logger().debugStream() << "Initializing turn " << turn_number;
+
     SetAccelerators();
 
     Universe& universe = GetUniverse();
 
-    Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
-    for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
-        Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
+    //Logger().debugStream() << "MapWnd::InitTurn universe objects:";
+    //for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first << " and systemID: " << it->second->SystemID();
+
+    //Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
+    //for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
+    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
@@ -737,35 +686,31 @@ void MapWnd::InitTurn(int turn_number)
     // population is available for currently uncolonized planets
     UpdateMeterEstimates();
 
+    const std::set<int>& this_player_explored_systems = empire->ExploredSystems();
+    const std::map<int, std::set<int> > this_player_known_starlanes = empire->KnownStarlanes();
 
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* empire = it->second;
-        empire->UpdateSupplyUnobstructedSystems();
-        empire->UpdateSystemSupplyRanges();
-        empire->UpdateFleetSupply();
-        empire->UpdateResourceSupply();
-        empire->InitResourcePools();
+        Empire* cur_empire = it->second;
+
+        // use systems this client's player has explored for all empires, so that this client's player can
+        // see where other empires can probably propegate supply, even if this client's empire / player
+        // doesn't know what systems the other player has actually explored
+        cur_empire->UpdateSupplyUnobstructedSystems(this_player_explored_systems);  
+
+        cur_empire->UpdateSystemSupplyRanges();
+
+        // similarly, use this client's player's known starlanes to propegate all empires' supply
+        cur_empire->UpdateFleetSupply(this_player_known_starlanes);
+        cur_empire->UpdateResourceSupply(this_player_known_starlanes);
+
+        cur_empire->InitResourcePools();
     }
 
 
-    Resize(GG::Pt(static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
-                  static_cast<int>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
+    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
+                  static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
-    // set up nebulae on the first turn
-    if (m_nebulae.empty()) {
-        // chosen so that the density of nebulae will be about MIN_NEBULAE to MAX_NEBULAE for a 1000.0-width galaxy
-        const double DENSITY_SCALE_FACTOR = (Universe::UniverseWidth() * Universe::UniverseWidth()) / (1000.0 * 1000.0);
-        int num_nebulae = static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR);/*RandSmallInt(static_cast<int>(MIN_NEBULAE * DENSITY_SCALE_FACTOR), 
-                                                                                 static_cast<int>(MAX_NEBULAE * DENSITY_SCALE_FACTOR));*/
-        m_nebulae.resize(num_nebulae);
-        m_nebula_centers.resize(num_nebulae);
-        SmallIntDistType universe_placement = SmallIntDist(0, static_cast<int>(Universe::UniverseWidth()));
-        for (int i = 0; i < num_nebulae; ++i) {
-            m_nebulae[i] = ClientUI::GetClientUI()->GetRandomTexture(ClientUI::ArtDir(), "nebula");
-            m_nebula_centers[i] = GG::Pt(universe_placement(), universe_placement());
-        }
-    }
 
     // set up backgrounds on first turn
     if (m_backgrounds.empty()) {
@@ -795,17 +740,22 @@ void MapWnd::InitTurn(int turn_number)
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
     std::vector<float> raw_star_texture_coords;
     std::vector<float> raw_starlane_vertices;
+    std::vector<unsigned char> raw_starlane_colors;
     std::vector<float> raw_starlane_supply_vertices;
     std::vector<unsigned char> raw_starlane_supply_colors;
 
-    std::set<StarlaneData> starlane_pairs;
+    std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
+    std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+
+    Logger().debugStream() << "ADDING STARLANES";
+
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // system
-        SystemIcon* icon = new SystemIcon(this, 0, 0, 10, systems[i]->ID());
+        const System* start_system = systems[i];
+        SystemIcon* icon = new SystemIcon(this, GG::X0, GG::Y0, GG::X(10), start_system->ID());
         {
-            // See note above texture coords for why we're making coordinate
-            // sets that are 2x too big.
+            // See note above texture coords for why we're making coordinate sets that are 2x too big.
             const System& system = icon->GetSystem();
             double icon_size = ClientUI::SystemIconSize();
             double icon_ul_x = system.X() - icon_size;
@@ -842,7 +792,7 @@ void MapWnd::InitTurn(int turn_number)
                 halo_vertices.push_back(icon_lr_y);
             }
         }
-        m_system_icons[systems[i]->ID()] = icon;
+        m_system_icons[start_system->ID()] = icon;
         icon->InstallEventFilter(this);
         AttachChild(icon);
         GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
@@ -852,26 +802,28 @@ void MapWnd::InitTurn(int turn_number)
         GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
         GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
 
+
+        //Logger().debugStream() << " considering lanes from " << start_system->Name() << " (id: " << start_system->ID() << ")";
+
         // gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gaseous_texture =
-            ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", systems[i]->ID())) {
+        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
             const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
-            const double ROTATION = systems[i]->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const double ROTATION = start_system->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const double COS_THETA = std::cos(ROTATION);
             const double SIN_THETA = std::sin(ROTATION);
             // This rotates the upper left and lower right corners CCW ROTATION
-            // radians, around systems[i].  The initial upper left and lower
+            // radians, around start_system.  The initial upper left and lower
             // right corners are (-GAS_SIZE, -GAS_SIZE) and (GAS_SIZE,
             // GAS_SIZE), in map coordinates respectively.  See note above
             // texture coords for why we're making coordinate sets that are 2x
             // too big.
-            double gas_ul_x = systems[i]->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
-            double gas_ul_y = systems[i]->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
-            double gas_lr_x = systems[i]->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
-            double gas_lr_y = systems[i]->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
+            double gas_ul_x = start_system->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
+            double gas_ul_y = start_system->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
+            double gas_lr_x = start_system->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
+            double gas_lr_y = start_system->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
             std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
             gas_vertices.push_back(gas_lr_x);
             gas_vertices.push_back(gas_ul_y);
@@ -884,18 +836,114 @@ void MapWnd::InitTurn(int turn_number)
         }
 
         // system's starlanes
-        for (System::lane_iterator it = systems[i]->begin_lanes(); it != systems[i]->end_lanes(); ++it) {
-            if (!it->second) {
-                System* dest_system = universe.Object<System>(it->first);
-                if (starlane_pairs.insert(StarlaneData(systems[i], dest_system)).second) {
-                    raw_starlane_vertices.push_back(systems[i]->X());
-                    raw_starlane_vertices.push_back(systems[i]->Y());
-                    raw_starlane_vertices.push_back(dest_system->X());
-                    raw_starlane_vertices.push_back(dest_system->Y());
+        for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
+            bool lane_is_wormhole = lane_it->second;
+            if (lane_is_wormhole) continue; // at present, not rendering wormholes
+
+            const System* dest_system = universe.Object<System>(lane_it->first);
+
+
+            //Logger().debugStream() << " considering lanes to " << dest_system->Name() << " (id: " << dest_system->ID() << ")";
+
+            //Logger().debugStream() << "added starlanes:";
+            //for (std::set<std::pair<int, int> >::const_iterator it = rendered_starlanes.begin(); it != rendered_starlanes.end(); ++it)
+            //    Logger().debugStream() << " ... " << GetUniverse().Object(it->first)->Name() << " to " << GetUniverse().Object(it->second)->Name();
+
+            //Logger().debugStream() << "looking for " << start_system->Name() << " to " << dest_system->Name();
+
+            // render starlane between start and dest systems?
+
+            // check that this lane isn't already going to be rendered.  skip it if it is.
+            if (rendered_starlanes.find(UnorderedIntPair(start_system->ID(), dest_system->ID())) == rendered_starlanes.end()) {
+                //Logger().debugStream() << " ... lane not found.";
+                rendered_starlanes.insert(UnorderedIntPair(start_system->ID(), dest_system->ID()));
+
+                raw_starlane_vertices.push_back(start_system->X());
+                raw_starlane_vertices.push_back(start_system->Y());
+                raw_starlane_vertices.push_back(dest_system->X());
+                raw_starlane_vertices.push_back(dest_system->Y());
+
+                // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
+                // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
+
+                GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
+
+                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    empire = empire_it->second;
+                    const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
+
+                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+                    std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+
+                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
+                        lane_colour = empire->Color();
+                        //Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
+                        break;
+                    }
+                }
+
+                //if (lane_colour == UNOWNED_STARLANE_GRAY_CLR)
+                //    Logger().debugStream() << "selected unowned gray colour for this full lane";
+
+                raw_starlane_colors.push_back(lane_colour.r);
+                raw_starlane_colors.push_back(lane_colour.g);
+                raw_starlane_colors.push_back(lane_colour.b);
+                raw_starlane_colors.push_back(lane_colour.a);
+                raw_starlane_colors.push_back(lane_colour.r);
+                raw_starlane_colors.push_back(lane_colour.g);
+                raw_starlane_colors.push_back(lane_colour.b);
+                raw_starlane_colors.push_back(lane_colour.a);
+
+                //Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
+            }
+
+
+
+            // render half-starlane from the current start_system to the current dest_system?
+
+            // check that this lane isn't already going to be rendered.  skip it if it is.
+            if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
+                // NOTE: this will never find a preexisting half lane
+                //Logger().debugStream() << "half lane not found... considering possible half lanes to add";
+
+                // scan through possible empires to have a half-lane here and add a half-lane if one is found
+
+                for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    empire = empire_it->second;
+                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->ResourceSupplyOstructedStarlaneTraversals();
+
+                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
+
+                    // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
+                    if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
+                        // found an empire that has a half lane here, so add it.
+                        rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
+
+                        raw_starlane_vertices.push_back(start_system->X());
+                        raw_starlane_vertices.push_back(start_system->Y());
+                        raw_starlane_vertices.push_back((start_system->X() + dest_system->X()) * 0.5);  // half way along starlane
+                        raw_starlane_vertices.push_back((start_system->Y() + dest_system->Y()) * 0.5);
+
+                        const GG::Clr& lane_colour = empire->Color();
+                        raw_starlane_colors.push_back(lane_colour.r);
+                        raw_starlane_colors.push_back(lane_colour.g);
+                        raw_starlane_colors.push_back(lane_colour.b);
+                        raw_starlane_colors.push_back(lane_colour.a);
+                        raw_starlane_colors.push_back(lane_colour.r);
+                        raw_starlane_colors.push_back(lane_colour.g);
+                        raw_starlane_colors.push_back(lane_colour.b);
+                        raw_starlane_colors.push_back(lane_colour.a);
+
+                        //Logger().debugStream() << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name();
+
+                        break;
+                    }
                 }
             }
         }
     }
+
 
     // Note these coordinates assume the texture is twice as large as it should
     // be.  This allows us to use one set of texture coords for everything, even
@@ -917,9 +965,9 @@ void MapWnd::InitTurn(int turn_number)
 
     // create animated lines indicating fleet supply flow
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        empire = it->second;
         const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
-            glColor(empire->Color());
             const System* start_sys = universe.Object<System>(lane_it->first);
             const System* end_sys = universe.Object<System>(lane_it->second);
             raw_starlane_supply_vertices.push_back(start_sys->X());
@@ -939,10 +987,14 @@ void MapWnd::InitTurn(int turn_number)
 
 
     // remove old fleet buttons for fleets not in systems
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
+    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i)
         DeleteChild(m_moving_fleet_buttons[i]);
-    }
     m_moving_fleet_buttons.clear();
+
+    // disconnect old moving fleet statechangedsignal connections
+    for (std::vector<boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+        it->disconnect();
+    m_fleet_state_change_signals.clear();
 
     Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
     typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
@@ -974,7 +1026,16 @@ void MapWnd::InitTurn(int turn_number)
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
         SetFleetMovementLine(*it);
 
-
+    // connect fleet change signals to update moving fleet movement lines, so that ordering moving fleets to move
+    // updates their displayed path
+    for (Universe::ObjectVec::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        const Fleet* moving_fleet = universe_object_cast<const Fleet*>(*it);
+        if (!moving_fleet) {
+            Logger().errorStream() << "MapWnd::InitTurn couldn't cast a (supposed) moving fleet pointer to a Fleet*";
+            continue;
+        }
+        m_fleet_state_change_signals.push_back(GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet)));
+    }
 
     MoveChildUp(m_side_panel);
 
@@ -988,19 +1049,11 @@ void MapWnd::InitTurn(int turn_number)
     // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
     // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
     m_sitrep_panel->Update();
-    if (empire && empire->NumSitRepEntries()) {
-        AttachChild(m_sitrep_panel);
-        MoveChildUp(m_sitrep_panel);
-        m_sitrep_panel->Show();
-    } else {
-        DetachChild(m_sitrep_panel);
-        m_sitrep_panel->Hide();
-    }
 
-    m_research_wnd->Hide();
-    m_production_wnd->Hide();
-    m_design_wnd->Hide();
-    m_in_production_view_mode = false;
+    empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire && empire->NumSitRepEntries())
+        ShowSitRep();
+
 
     m_chat_edit->Hide();
     EnableAlphaNumAccels();
@@ -1046,16 +1099,18 @@ void MapWnd::InitTurn(int turn_number)
     DetachChild(m_side_panel);
     SelectSystem(m_side_panel->SystemID());
 
-    empire->UpdateResourcePools();
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
+        it->second->UpdateResourcePools();
 
     m_research_wnd->Update();
     m_production_wnd->Update();
 
+    Logger().debugStream() << "Turn initialization graphic buffer clearing";
     // clear out all the old buffers
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
          ++it) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &it->second.m_name);
 #else
         glDeleteBuffers(1, &it->second.m_name);
@@ -1066,7 +1121,7 @@ void MapWnd::InitTurn(int turn_number)
              m_star_halo_quad_vertices.begin();
          it != m_star_halo_quad_vertices.end();
          ++it) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &it->second.m_name);
 #else
         glDeleteBuffers(1, &it->second.m_name);
@@ -1077,7 +1132,7 @@ void MapWnd::InitTurn(int turn_number)
              m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &it->second.m_name);
 #else
         glDeleteBuffers(1, &it->second.m_name);
@@ -1086,46 +1141,59 @@ void MapWnd::InitTurn(int turn_number)
     m_galaxy_gas_quad_vertices.clear();
 
     if (m_star_texture_coords.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_star_texture_coords.m_name);
 #else
         glDeleteBuffers(1, &m_star_texture_coords.m_name);
 #endif
         m_star_texture_coords.m_name = 0;
     }
+
     if (m_starlane_vertices.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_starlane_vertices.m_name);
 #else
         glDeleteBuffers(1, &m_starlane_vertices.m_name);
 #endif
         m_starlane_vertices.m_name = 0;
     }
-    if (m_starlane_supply_vertices.m_name) {
-#ifdef FREEORION_WIN32
-        glDeleteBuffersARB(1, &m_starlane_supply_vertices.m_name);
+
+    if (m_starlane_colors.m_name) {
+#ifdef USE_GL_BIND_BUFFER_ARB
+        glDeleteBuffersARB(1, &m_starlane_colors.m_name);
 #else
-        glDeleteBuffers(1, &m_starlane_supply_vertices.m_name);
+        glDeleteBuffers(1, &m_starlane_colors.m_name);
 #endif
-        m_starlane_supply_vertices.m_name = 0;
+        m_starlane_colors.m_name = 0;
     }
-    if (m_starlane_supply_colors.m_name) {
-#ifdef FREEORION_WIN32
-        glDeleteBuffersARB(1, &m_starlane_supply_colors.m_name);
+
+    if (m_starlane_fleet_supply_vertices.m_name) {
+#ifdef USE_GL_BIND_BUFFER_ARB
+        glDeleteBuffersARB(1, &m_starlane_fleet_supply_vertices.m_name);
 #else
-        glDeleteBuffers(1, &m_starlane_supply_colors.m_name);
+        glDeleteBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
 #endif
-        m_starlane_supply_colors.m_name = 0;
+        m_starlane_fleet_supply_vertices.m_name = 0;
+    }
+
+    if (m_starlane_fleet_supply_colors.m_name) {
+#ifdef FREEORION_WIN32
+        glDeleteBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
+#else
+        glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
+#endif
+        m_starlane_fleet_supply_colors.m_name = 0;
     }
 
 
+    Logger().debugStream() << "Turn initialization new graphic buffer creation";
     // create new buffers
     for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
              raw_star_core_quad_vertices.begin();
          it != raw_star_core_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_core_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1147,7 +1215,7 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_star_halo_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_halo_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1169,7 +1237,7 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_galaxy_gas_quad_vertices.end();
          ++it) {
         GLuint& name = m_galaxy_gas_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1188,7 +1256,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (!raw_star_texture_coords.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_star_texture_coords.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1206,7 +1274,7 @@ void MapWnd::InitTurn(int turn_number)
         m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
     }
     if (!raw_starlane_vertices.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_starlane_vertices.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1223,44 +1291,62 @@ void MapWnd::InitTurn(int turn_number)
 #endif
         m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
     }
-    if (!raw_starlane_supply_vertices.empty()) {
+    if (!raw_starlane_colors.empty()) {
 #ifdef FREEORION_WIN32
-        glGenBuffersARB(1, &m_starlane_supply_vertices.m_name);
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+        glGenBuffersARB(1, &m_starlane_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
+        glBufferDataARB(GL_ARRAY_BUFFER_ARB,
+                        raw_starlane_colors.size() * sizeof(unsigned char),
+                        &raw_starlane_colors[0],
+                        GL_STATIC_DRAW_ARB);
+#else
+        glGenBuffers(1, &m_starlane_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_starlane_colors.size() * sizeof(unsigned char),
+                     &raw_starlane_colors[0],
+                     GL_STATIC_DRAW);
+#endif
+        m_starlane_colors.m_size = raw_starlane_colors.size() / 4;
+    }
+    if (!raw_starlane_supply_vertices.empty()) {
+#ifdef USE_GL_BIND_BUFFER_ARB
+        glGenBuffersARB(1, &m_starlane_fleet_supply_vertices.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                         raw_starlane_supply_vertices.size() * sizeof(float),
                         &raw_starlane_supply_vertices[0],
                         GL_STATIC_DRAW_ARB);
 #else
-        glGenBuffers(1, &m_starlane_supply_vertices.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glGenBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_supply_vertices.size() * sizeof(float),
                      &raw_starlane_supply_vertices[0],
                      GL_STATIC_DRAW);
 #endif
-        m_starlane_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
+        m_starlane_fleet_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
     }
     if (!raw_starlane_supply_colors.empty()) {
-#ifdef FREEORION_WIN32
-        glGenBuffersARB(1, &m_starlane_supply_colors.m_name);
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+#ifdef USE_GL_BIND_BUFFER_ARB
+        glGenBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_colors.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
                         raw_starlane_supply_colors.size() * sizeof(unsigned char),
                         &raw_starlane_supply_colors[0],
                         GL_STATIC_DRAW_ARB);
 #else
-        glGenBuffers(1, &m_starlane_supply_colors.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glGenBuffers(1, &m_starlane_fleet_supply_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
         glBufferData(GL_ARRAY_BUFFER,
                      raw_starlane_supply_colors.size() * sizeof(unsigned char),
                      &raw_starlane_supply_colors[0],
                      GL_STATIC_DRAW);
 #endif
-        m_starlane_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
+        m_starlane_fleet_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
     }
 
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
 #else
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1275,7 +1361,8 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     DoMovingFleetButtonsLayout();
 
     GG::Pt ul = UpperLeft();
-    GG::Pt map_move = data.map_upper_left - ul;
+    GG::Pt map_ul = GG::Pt(GG::X(data.map_left), GG::Y(data.map_top));
+    GG::Pt map_move = map_ul - ul;
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
@@ -1292,13 +1379,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
-
-    m_nebulae.clear();
-    m_nebula_centers.clear();
-    for (unsigned int i = 0; i < data.map_nebulae.size(); ++i) {
-        m_nebulae.push_back(ClientUI::GetTexture(data.map_nebulae[i].filename));
-        m_nebula_centers.push_back(data.map_nebulae[i].center);
-    }
 }
 
 void MapWnd::ShowSystemNames()
@@ -1325,10 +1405,10 @@ void MapWnd::HandlePlayerChatMessage(const std::string& msg)
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
-    double current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / m_zoom_factor;
-    double current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / m_zoom_factor;
-    GG::Pt map_move = GG::Pt(static_cast<int>((current_x - x) * m_zoom_factor), 
-                             static_cast<int>((current_y - y) * m_zoom_factor));
+    GG::X_d current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / m_zoom_factor;
+    GG::Y_d current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / m_zoom_factor;
+    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * m_zoom_factor), 
+                             static_cast<GG::Y>((current_y - y) * m_zoom_factor));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
@@ -1384,7 +1464,7 @@ void MapWnd::SelectSystem(int system_id)
     int prev_system_id = m_side_panel->SystemID();
     if (prev_system_id != UniverseObject::INVALID_OBJECT_ID)
         m_system_icons[prev_system_id]->SetSelected(false);
-    
+
     // place indicator on newly selected system
     if (system_id != UniverseObject::INVALID_OBJECT_ID)
         m_system_icons[system_id]->SetSelected(true);
@@ -1394,14 +1474,14 @@ void MapWnd::SelectSystem(int system_id)
         if (system_id != m_side_panel->SystemID()) {
             // only set selected system if newly selected system is different from before, otherwise planet rotation phase resets
             m_side_panel->SetSystem(system_id);
-            m_production_wnd->SelectSystem(system_id);            
+            m_production_wnd->SelectSystem(system_id);
         }
         m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
         DetachChild(m_side_panel);
-    } else {    
+    } else {
         if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
             m_side_panel->SetSystem(system_id);
-            
+
             // if selected an invalid system, hide sidepanel
             if (system_id == UniverseObject::INVALID_OBJECT_ID) {
                 m_side_panel->Hide();
@@ -1418,19 +1498,16 @@ void MapWnd::SelectSystem(int system_id)
 
 void MapWnd::SelectFleet(int fleet_id)
 {
-    if (Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id))
-        SelectFleet(fleet);
+    SelectFleet(GetUniverse().Object<Fleet>(fleet_id));
 }
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
+    if (!fleet) return;
     if (System* system = fleet->GetSystem()) {
-        for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-            if (&it->second->GetSystem() == system) {
-                it->second->ClickFleetButton(fleet);
-                break;
-            }
-        }
+        std::map<int, SystemIcon*>::iterator it = m_system_icons.find(system->ID());
+        if (it != m_system_icons.end())
+            it->second->ClickFleetButton(fleet);
     } else {
         for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
             if (std::find(m_moving_fleet_buttons[i]->Fleets().begin(), m_moving_fleet_buttons[i]->Fleets().end(), fleet) != m_moving_fleet_buttons[i]->Fleets().end()) {
@@ -1578,9 +1655,9 @@ void MapWnd::DoSystemIconsLayout()
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
 
-        GG::Pt icon_ul(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0),
-                       static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0));
-        it->second->SizeMove(icon_ul, icon_ul + GG::Pt(SYSTEM_ICON_SIZE, SYSTEM_ICON_SIZE));
+        GG::Pt icon_ul(GG::X(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0)));
+        it->second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE), GG::Y(SYSTEM_ICON_SIZE)));
     }
 }
 
@@ -1591,9 +1668,9 @@ void MapWnd::DoMovingFleetButtonsLayout()
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
 
-        GG::Pt button_ul(static_cast<int>(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0), 
-                         static_cast<int>(fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul, button_ul + GG::Pt(FLEET_BUTTON_SIZE, FLEET_BUTTON_SIZE));
+        GG::Pt button_ul(GG::X(static_cast<int>(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0)), 
+                         GG::Y(static_cast<int>(fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0)));
+        m_moving_fleet_buttons[i]->SizeMove(button_ul, button_ul + GG::Pt(GG::X(FLEET_BUTTON_SIZE), GG::Y(FLEET_BUTTON_SIZE)));
     }
 }
 
@@ -1610,9 +1687,10 @@ int MapWnd::FleetButtonSize() const
 void MapWnd::Zoom(int delta)
 {
     GG::Pt ul = ClientUpperLeft();
-    double ul_x = ul.x, ul_y = ul.y;
-    double center_x = GG::GUI::GetGUI()->AppWidth() / 2.0, center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
-    double ul_offset_x = ul_x - center_x, ul_offset_y = ul_y - center_y;
+    GG::X_d center_x = GG::GUI::GetGUI()->AppWidth() / 2.0;
+    GG::Y_d center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
+    GG::X_d ul_offset_x = ul.x - center_x;
+    GG::Y_d ul_offset_y = ul.y - center_y;
     if (delta > 0) {
         if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
             ul_offset_x *= ZOOM_STEP_SIZE;
@@ -1646,8 +1724,8 @@ void MapWnd::Zoom(int delta)
     DoMovingFleetButtonsLayout();
 
     // translate map and UI widgets to account for the change in upper left due to zooming
-    GG::Pt map_move(static_cast<int>((center_x + ul_offset_x) - ul_x),
-                    static_cast<int>((center_y + ul_offset_y) - ul_y));
+    GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
+                    static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_chat_display->OffsetMove(-map_move);
@@ -1668,6 +1746,9 @@ void MapWnd::Zoom(int delta)
 
 void MapWnd::RenderStarfields()
 {
+    if (!GetOptionsDB().Get<bool>("UI.galaxy-starfields"))
+        return;
+
     glColor3d(1.0, 1.0, 1.0);
 
     GG::Pt origin_offset =
@@ -1675,24 +1756,24 @@ void MapWnd::RenderStarfields()
     glMatrixMode(GL_TEXTURE);
 
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
-        float texture_coords_per_pixel_x = 1.0 / m_backgrounds[i]->Width();
-        float texture_coords_per_pixel_y = 1.0 / m_backgrounds[i]->Height();
-        glScalef(texture_coords_per_pixel_x * Width(),
-                 texture_coords_per_pixel_y * Height(),
+        float texture_coords_per_pixel_x = 1.0 / Value(m_backgrounds[i]->Width());
+        float texture_coords_per_pixel_y = 1.0 / Value(m_backgrounds[i]->Height());
+        glScalef(Value(texture_coords_per_pixel_x * Width()),
+                 Value(texture_coords_per_pixel_y * Height()),
                  1.0);
-        glTranslatef(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i],
-                     -texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i],
+        glTranslatef(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i]),
+                     Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i]),
                      0.0);
         glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
         glBegin(GL_QUADS);
         glTexCoord2f(0.0, 0.0);
         glVertex2i(0, 0);
         glTexCoord2f(0.0, 1.0);
-        glVertex2i(0, Height());
+        glVertex(GG::X0, Height());
         glTexCoord2f(1.0, 1.0);
-        glVertex2i(Width(), Height());
+        glVertex(Width(), Height());
         glTexCoord2f(1.0, 0.0);
-        glVertex2i(Width(), 0);
+        glVertex(Width(), GG::Y0);
         glEnd();
         glLoadIdentity();
     }
@@ -1702,22 +1783,26 @@ void MapWnd::RenderStarfields()
 
 void MapWnd::RenderNebulae()
 {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    glPushMatrix();
-    glLoadIdentity();
-    for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
-        int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
-        int nebula_height = m_nebulae[i]->Height() / 3;
+    // nebula rendering disabled until we add nebulae worth rendering, which likely
+    // means for them to have some gameplay purpose and artist-approved way to
+    // specify what colours or specific nebula images to use
 
-        GG::Pt ul = 
-            ClientUpperLeft() + 
-            GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
-                   static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
-        m_nebulae[i]->OrthoBlit(ul, 
-                                ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
-                                            static_cast<int>(nebula_height * m_zoom_factor)));
-    }
-    glPopMatrix();
+    //glColor4f(1.0, 1.0, 1.0, 1.0);
+    //glPushMatrix();
+    //glLoadIdentity();
+    //for (unsigned int i = 0; i < m_nebulae.size(); ++i) {
+    //    int nebula_width = m_nebulae[i]->Width() / 3;   // factor of 3 chosen to give ok-seeming nebula sizes for images in use at time of this writing
+    //    int nebula_height = m_nebulae[i]->Height() / 3;
+
+    //    GG::Pt ul = 
+    //        ClientUpperLeft() + 
+    //        GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
+    //               static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
+    //    m_nebulae[i]->OrthoBlit(ul, 
+    //                            ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
+    //                                        static_cast<int>(nebula_height * m_zoom_factor)));
+    //}
+    //glPopMatrix();
 }
 
 void MapWnd::RenderGalaxyGas()
@@ -1823,48 +1908,64 @@ void MapWnd::RenderSystems()
 
 void MapWnd::RenderStarlanes()
 {
-    const float STARLANE_GRAY = 127.0f / 255.0f;
-    const float STARLANE_ALPHA = 0.7f;
-    const double STARLANE_WIDTH = 2.5;
-
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    if (m_starlane_vertices.m_name) {
-        glColor4f(STARLANE_GRAY, STARLANE_GRAY, STARLANE_GRAY, STARLANE_ALPHA);
-#ifdef FREEORION_WIN32
+    bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+
+    if (m_starlane_vertices.m_name && (m_starlane_colors.m_name || !coloured)) {
+        glLineStipple(1, 0xffff);   // solid line / no stipple
+        glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
+
+        if (coloured)
+            glEnableClientState(GL_COLOR_ARRAY);
+        else
+            glColor(UNOWNED_STARLANE_GRAY_CLR);
+
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
-        glLineWidth(STARLANE_WIDTH);
-        glLineStipple(1, 0xffff);
+
+        if (coloured) {
+#ifdef FREEORION_WIN32
+            glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
+#else
+            glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
+#endif
+            glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+        }
+
         glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
+
+        if (coloured)
+            glDisableClientState(GL_COLOR_ARRAY);
     }
 
-    if (m_starlane_supply_vertices.m_name && m_starlane_supply_colors.m_name) {
+    if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
         // render fleet supply lines
         const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
         const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
         const double RATE = 0.1;            // slow crawl
         const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
-        glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
-        glLineWidth(STARLANE_WIDTH);
+        glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
+        glLineWidth(GetOptionsDB().Get<double>("UI.fleet-supply-line-width"));
         glEnableClientState(GL_COLOR_ARRAY);
-#ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_vertices.m_name);
+#ifdef USE_GL_BIND_BUFFER_ARB
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
 #else
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_vertices.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
-        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_supply_colors.m_name);
+#ifdef USE_GL_BIND_BUFFER_ARB
+        glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_colors.m_name);
 #else
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_supply_colors.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
 #endif
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
-        glDrawArrays(GL_LINES, 0, m_starlane_supply_vertices.m_size);
+        glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.m_size);
         glDisableClientState(GL_COLOR_ARRAY);
     }
 
@@ -1873,8 +1974,7 @@ void MapWnd::RenderStarlanes()
 
 void MapWnd::RenderFleetMovementLines()
 {
-    const double STARLANE_WIDTH = 2.5;
-    glLineWidth(STARLANE_WIDTH);
+    glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
 
     // standard movement line stipple
     const GLushort PATTERN = 0xF0F0;
@@ -1884,7 +1984,7 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
 
     // render standard movement lines
-    glLineStipple(static_cast<int>(STARLANE_WIDTH), STIPPLE);
+    glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 
@@ -1897,7 +1997,7 @@ void MapWnd::RenderFleetMovementLines()
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
 
     //// render projected move liens
-    glLineStipple(static_cast<int>(STARLANE_WIDTH), PROJECTED_PATH_STIPPLE);
+    glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), PROJECTED_PATH_STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 }
@@ -1948,29 +2048,29 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
-    int contents_width = static_cast<int>(m_zoom_factor * Universe::UniverseWidth());
-    int app_width =  GG::GUI::GetGUI()->AppWidth();
-    int app_height = GG::GUI::GetGUI()->AppHeight();
-    int map_margin_width = static_cast<int>(app_width / 2.0);
+    GG::X contents_width(static_cast<int>(m_zoom_factor * Universe::UniverseWidth()));
+    GG::X app_width =  GG::GUI::GetGUI()->AppWidth();
+    GG::Y app_height = GG::GUI::GetGUI()->AppHeight();
+    GG::X map_margin_width(app_width / 2.0);
 
-    if (app_width - map_margin_width < contents_width || app_height - map_margin_width < contents_width) {
+    if (app_width - map_margin_width < contents_width || Value(app_height) - map_margin_width < contents_width) {
         if (map_margin_width < move_to_pt.x)
             move_to_pt.x = map_margin_width;
         if (move_to_pt.x + contents_width < app_width - map_margin_width)
             move_to_pt.x = app_width - map_margin_width - contents_width;
-        if (map_margin_width < move_to_pt.y)
-            move_to_pt.y = map_margin_width;
-        if (move_to_pt.y + contents_width < app_height - map_margin_width)
-            move_to_pt.y = app_height - map_margin_width - contents_width;
+        if (map_margin_width < Value(move_to_pt.y))
+            move_to_pt.y = GG::Y(Value(map_margin_width));
+        if (Value(move_to_pt.y) + contents_width < Value(app_height) - map_margin_width)
+            move_to_pt.y = app_height - Value(map_margin_width - contents_width);
     } else {
         if (move_to_pt.x < 0)
-            move_to_pt.x = 0;
+            move_to_pt.x = GG::X0;
         if (app_width < move_to_pt.x + contents_width)
             move_to_pt.x = app_width - contents_width;
-        if (move_to_pt.y < 0)
-            move_to_pt.y = 0;
-        if (app_height < move_to_pt.y + contents_width)
-            move_to_pt.y = app_height - contents_width;
+        if (move_to_pt.y < GG::Y0)
+            move_to_pt.y = GG::Y0;
+        if (app_height < move_to_pt.y + Value(contents_width))
+            move_to_pt.y = app_height - Value(contents_width);
     }
 }
 
@@ -2103,15 +2203,15 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         GG::Pt wnd_position = FleetWnd::LastPosition();
         // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-right
         if (wnd_position == GG::Pt())
-            wnd_position = GG::Pt(5, GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
+            wnd_position = GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
 
         wnd_for_button->MoveTo(wnd_position);
 
         // safety check to ensure window is on screen... may be redundant
         if (GG::GUI::GetGUI()->AppWidth() - 5 < wnd_for_button->LowerRight().x)
-            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, 0));
+            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, GG::Y0));
         if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
-            wnd_for_button->OffsetMove(GG::Pt(0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
+            wnd_for_button->OffsetMove(GG::Pt(GG::X0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
      }
 
 
@@ -2247,10 +2347,10 @@ void MapWnd::Cleanup()
 {
     CloseAllPopups();
     RemoveAccelerators();
-    m_research_wnd->Hide();
-    m_production_wnd->Hide();
-    m_design_wnd->Hide();
-    m_in_production_view_mode = false;
+    HideResearch();
+    HideProduction();
+    HideDesign();
+    HideSitRep();
     m_toolbar->Hide();
     m_FPS->Hide();
 }
@@ -2259,9 +2359,9 @@ void MapWnd::Sanitize()
 {
     Cleanup();
     m_side_panel->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y));
-    m_chat_display->MoveTo(GG::Pt(LAYOUT_MARGIN, m_turn_update->LowerRight().y + LAYOUT_MARGIN));
+    m_chat_display->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN));
     m_chat_display->Clear();
-    m_chat_edit->MoveTo(GG::Pt(LAYOUT_MARGIN, GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
+    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
     m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
     MoveTo(GG::Pt(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight()));
@@ -2275,26 +2375,17 @@ void MapWnd::Sanitize()
 bool MapWnd::ReturnToMap()
 {
     if (m_sitrep_panel->Visible())
-        m_sitrep_panel->Hide();
-    if (m_research_wnd->Visible()) {
-        m_research_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_research_wnd);
-    }
-    if (m_design_wnd->Visible()) {
-        m_design_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_design_wnd);
-        EnableAlphaNumAccels();
-    }
-    if (m_production_wnd->Visible()) {
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-        HumanClientApp::GetApp()->MoveDown(m_production_wnd);
-    }
+        ToggleSitRep();
+
+    if (m_research_wnd->Visible())
+        ToggleResearch();
+
+    if (m_design_wnd->Visible())
+        ToggleDesign();
+
+    if (m_production_wnd->Visible())
+        ToggleProduction();
+
     return true;
 }
 
@@ -2319,126 +2410,152 @@ bool MapWnd::EndTurn()
     return true;
 }
 
-bool MapWnd::ToggleSitRep()
+void MapWnd::ShowSitRep()
 {
     ClearProjectedFleetMovementLines();
-    if (m_sitrep_panel->Visible()) {
-        DetachChild(m_sitrep_panel);
-        m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
-    } else {
-        // hide other "competing" windows
-        m_research_wnd->Hide();
-        HumanClientApp::GetApp()->MoveDown(m_research_wnd);
-        if (m_design_wnd->Visible()) {
-            m_design_wnd->Hide();
-            HumanClientApp::GetApp()->MoveDown(m_design_wnd);
-            EnableAlphaNumAccels();
-        }
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-        HumanClientApp::GetApp()->MoveDown(m_production_wnd);
 
-        // show the sitrep window
-        AttachChild(m_sitrep_panel);
-        MoveChildUp(m_sitrep_panel);
-        m_sitrep_panel->Show();
-    }
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
+
+    // show the sitrep window
+    AttachChild(m_sitrep_panel);
+    MoveChildUp(m_sitrep_panel);
+    m_sitrep_panel->Show();
+
+    // indicate selection on button
+    m_btn_siterep->MarkSelectedGray();
+}
+
+void MapWnd::HideSitRep()
+{
+    DetachChild(m_sitrep_panel);
+    m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
+    m_btn_siterep->MarkNotSelected();
+}
+
+bool MapWnd::ToggleSitRep()
+{
+    if (m_sitrep_panel->Visible())
+        HideSitRep();
+    else
+        ShowSitRep();
     return true;
+}
+
+void MapWnd::ShowResearch()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideSitRep();
+    HideProduction();
+    HideDesign();
+
+    // show the research window
+    m_research_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_research_wnd);
+
+    // indicate selection on button
+    m_btn_research->MarkSelectedGray();
+}
+
+void MapWnd::HideResearch()
+{
+    m_research_wnd->Hide();
+    m_btn_research->MarkNotSelected();
+    ShowAllPopups();
 }
 
 bool MapWnd::ToggleResearch()
 {
-    ClearProjectedFleetMovementLines();
-    if (m_research_wnd->Visible()) {
-        m_research_wnd->Hide();
-    } else {
-        // hide other "competing" windows
-        m_sitrep_panel->Hide();
-        if (m_design_wnd->Visible()) {
-            m_design_wnd->Hide();
-            EnableAlphaNumAccels();
-        }
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-
-        // show the research window
-        m_research_wnd->Show();
-        GG::GUI::GetGUI()->MoveUp(m_research_wnd);
-    }
+    if (m_research_wnd->Visible())
+        HideResearch();
+    else
+        ShowResearch();
     return true;
+}
+
+void MapWnd::ShowProduction()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideSitRep();
+    HideResearch();
+    HideDesign();
+    m_side_panel->Hide();
+    DetachChild(m_side_panel);
+
+    // show the production window
+    m_production_wnd->Show();
+    m_in_production_view_mode = true;
+    HideAllPopups();
+    GG::GUI::GetGUI()->MoveUp(m_production_wnd);
+
+    // indicate selection on button
+    m_btn_production->MarkSelectedGray();
+
+    // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
+    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
+            if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
+                m_production_wnd->SelectSystem(obj->SystemID());
+}
+
+void MapWnd::HideProduction()
+{
+    m_production_wnd->Hide();
+    m_in_production_view_mode = false;
+    m_btn_production->MarkNotSelected();
+    ShowAllPopups();
+    //if (!m_side_panel->Visible())
+    //        m_side_panel->SetSystem(m_side_panel->SystemID());
 }
 
 bool MapWnd::ToggleProduction()
 {
-    ClearProjectedFleetMovementLines();
-    if (m_production_wnd->Visible()) {
-        m_production_wnd->Hide();
-        m_in_production_view_mode = false;
-        ShowAllPopups();
-    } else {
-        // hide other "competing" windows
-        m_sitrep_panel->Hide();
-        DetachChild(m_sitrep_panel);
-        m_research_wnd->Hide();
-        if (m_design_wnd->Visible()) {
-            m_design_wnd->Hide();
-            EnableAlphaNumAccels();
-        }
-
-        // show the production window
-        m_production_wnd->Show();
-        m_in_production_view_mode = true;
-        HideAllPopups();
-
-        m_side_panel->Hide();
-        DetachChild(m_side_panel);
-
-        GG::GUI::GetGUI()->MoveUp(m_production_wnd);
-
-        // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
-        if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
-            if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-                if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
-                    m_production_wnd->SelectSystem(obj->SystemID());
-    }
+    if (m_production_wnd->Visible())
+        HideProduction();
+    else
+        ShowProduction();
     return true;
+}
+
+void MapWnd::ShowDesign()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideSitRep();
+    HideResearch();
+    HideProduction();
+
+    // show the design window
+    m_design_wnd->Show();
+    GG::GUI::GetGUI()->MoveUp(m_design_wnd);
+    //GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
+    DisableAlphaNumAccels();
+    m_design_wnd->Reset();
+
+    // indicate selection on button
+    m_btn_design->MarkSelectedGray();
+}
+
+void MapWnd::HideDesign()
+{
+    m_design_wnd->Hide();
+    m_btn_design->MarkNotSelected();
+    EnableAlphaNumAccels();
 }
 
 bool MapWnd::ToggleDesign()
 {
-    ClearProjectedFleetMovementLines();
-    if (m_design_wnd->Visible()) {
-        m_design_wnd->Hide();
-        EnableAlphaNumAccels();
-    } else {
-        // hide other "competing" windows
-        m_sitrep_panel->Hide();
-        m_research_wnd->Hide();
-        m_production_wnd->Hide();
-        if (m_in_production_view_mode) {
-            m_in_production_view_mode = false;
-            ShowAllPopups();
-            if (!m_side_panel->Visible())
-                m_side_panel->SetSystem(m_side_panel->SystemID());
-        }
-
-        // show the design window
-        m_design_wnd->Show();
-        GG::GUI::GetGUI()->MoveUp(m_design_wnd);
-        GG::GUI::GetGUI()->SetFocusWnd(m_design_wnd);
-        DisableAlphaNumAccels();
-        m_design_wnd->Reset();
-    }
+    if (m_design_wnd->Visible())
+        HideDesign();
+    else
+        ShowDesign();
     return true;
 }
 
@@ -2447,9 +2564,11 @@ bool MapWnd::ShowMenu()
     if (!m_menu_showing) {
         ClearProjectedFleetMovementLines();
         m_menu_showing = true;
+        m_btn_menu->MarkSelectedGray();
         InGameMenu menu;
         menu.Run();
         m_menu_showing = false;
+        m_btn_menu->MarkNotSelected();
     }
     return true;
 }
@@ -2475,26 +2594,170 @@ bool MapWnd::KeyboardZoomOut()
 
 void MapWnd::RefreshFoodResourceIndicator()
 {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    if (!empire) {
+        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an empire";
+        m_mineral->SetValue(0.0);
+        m_mineral->SetValue(0.0, 1);
+        return;
+    }
 
-    m_food->SetValue(empire->ResourceStockpile(RE_FOOD)); // set first value to stockpiled food
+    const ResourcePool* pool = empire->GetResourcePool(RE_FOOD);
+    if (!pool) {
+        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get a food resourepool";
+        m_food->SetValue(0.0);
+        m_food->SetValue(0.0, 1);
+        return;
+    }
 
-    double production = empire->ResourceProduction(RE_FOOD);
-    double spent = empire->TotalFoodDistributed();
+    const PopulationPool& pop_pool = empire->GetPopulationPool();
 
-    m_food->SetValue(production - spent, 1);    // set second (bracketed) value to predicted stockpile change
+    int stockpile_system_id = pool->StockpileSystemID();
+
+    if (stockpile_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        // empire has nowhere to stockpile food, so has no stockpile.  Instead of showing stockpile, show production
+        m_food->SetValue(pool->TotalAvailable());   // no stockpile means available is equal to production
+        m_food->SetValue(0.0, 1);                   // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
+        return;
+    }
+
+    // empire has a stockpile. Show stockpiled amount for first number
+
+    m_food->SetValue(pool->Stockpile()); // set first value to stockpiled food
+
+    // for second number, show predicted change in stockpile for next turn compared to this turn.
+
+
+    // find total food allocated to group that has access to stockpile
+    std::map<std::set<int>, double> food_sharing_groups = pool->Available();
+    std::set<int> stockpile_group_systems;
+    Logger().debugStream() << "trying to find stockpile system group...  stockpile system has id: " << stockpile_system_id;
+    for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin(); it != food_sharing_groups.end(); ++it) {
+        const std::set<int>& group = it->first;                     // get group
+        Logger().debugStream() << "potential group:";
+        for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
+            Logger().debugStream() << "...." << *qit;
+
+        if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
+            stockpile_group_systems = group;
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of systems for stockpile system.  size: " << stockpile_group_systems.size();
+            break;
+        }
+
+        Logger().debugStream() << "didn't find in group... trying next.";
+    }
+
+
+    const std::vector<PopCenter*>& pop_centers = pop_pool.PopCenters();
+
+
+    double stockpile_group_food_allocation = 0.0;
+
+
+    // go through population pools, adding up food allocation of those that are in one of the systems
+    // in the group of systems that can access the stockpile
+    for (std::vector<PopCenter*>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
+        const PopCenter* pop = *it;
+        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(pop);
+        if (!obj) {
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a PopCenter* to an UniverseObject*";
+            continue;
+        }
+        int center_system_id = obj->SystemID();
+
+        if (stockpile_group_systems.find(center_system_id) != stockpile_group_systems.end()) {
+            stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
+            Logger().debugStream() << "object " << obj->Name() << " is in stockpile system group has " << pop->AllocatedFood() << " food allocated to it";
+        }
+    }
+
+    double stockpile_system_group_available = pool->GroupAvailable(stockpile_system_id);
+    Logger().debugStream() << "food available in stockpile group is:  " << stockpile_system_group_available;
+    Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
+
+    double new_stockpile = stockpile_system_group_available - stockpile_group_food_allocation;
+    Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
+
+    Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
+
+    double stockpile_change = new_stockpile - pool->Stockpile();
+    Logger().debugStream() << "Stockpile change is: " << stockpile_change;
+
+    m_food->SetValue(stockpile_change, 1);
 }
 
 void MapWnd::RefreshMineralsResourceIndicator()
 {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    Empire* empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
+    if (!empire) {
+        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an empire";
+        m_mineral->SetValue(0.0);
+        m_mineral->SetValue(0.0, 1);
+        return;
+    }
 
-    m_mineral->SetValue(empire->ResourceStockpile(RE_MINERALS));
+    const ResourcePool* pool = empire->GetResourcePool(RE_MINERALS);
+    if (!pool) {
+        Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get a minerals resourepool";
+        m_mineral->SetValue(0.0);
+        m_mineral->SetValue(0.0, 1);
+        return;
+    }
 
-    double production = empire->ResourceProduction(RE_MINERALS);
-    double spent = empire->GetProductionQueue().TotalPPsSpent();
+    int stockpile_system_id = pool->StockpileSystemID();
 
-    m_mineral->SetValue(production - spent, 1);
+    if (stockpile_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        // empire has nowhere to stockpile food, so has no stockpile.
+        m_mineral->SetValue(0.0);
+        m_mineral->SetValue(0.0, 1);        // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
+        return;
+    }
+
+    // empire has a stockpile. Show stockpiled amount for first number
+
+    m_mineral->SetValue(pool->Stockpile()); // set first value to stockpiled food
+
+
+    // find minerals (PP) allocated to production elements located in systems in the group of
+    // resource-sharing systems that has access to stockpile
+    double stockpile_group_pp_allocation = 0.0;
+
+    // find the set of systems that contains the stopile system, from the map of PP allocated within each group
+    const ProductionQueue& queue = empire->GetProductionQueue();
+    std::map<std::set<int>, double> allocated_pp = queue.AllocatedPP();
+
+    Logger().debugStream() << "trying to find stockpile system group...  stockpile system has id: " << stockpile_system_id;
+    for (std::map<std::set<int>, double>::const_iterator it = allocated_pp.begin(); it != allocated_pp.end(); ++it) {
+        const std::set<int>& group = it->first;                     // get group
+        Logger().debugStream() << "potential group:";
+        for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
+            Logger().debugStream() << "...." << *qit;
+
+        if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
+            stockpile_group_pp_allocation = it->second;        // record allocation for this group
+            Logger().debugStream() << "MapWnd::RefreshMineralsResourceIndicator found group of systems for stockpile system.  size: " << it->first.size();
+            break;
+        }
+
+        Logger().debugStream() << "didn't find in group... trying next.";
+    }
+    // if the stockpile system is not found in any group of systems with allocated pp, assuming this is fine and that the
+    // stockpile system's group of systems didn't have any allocated pp...
+
+
+    double stockpile_system_group_available = pool->GroupAvailable(stockpile_system_id);
+    Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_system_group_available;
+    Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
+
+    double new_stockpile = stockpile_system_group_available - stockpile_group_pp_allocation;
+    Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
+
+    Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
+
+    double stockpile_change = new_stockpile - pool->Stockpile();
+    Logger().debugStream() << "Stockpile change is: " << stockpile_change;
+
+    m_mineral->SetValue(stockpile_change, 1);
 }
 
 void MapWnd::RefreshTradeResourceIndicator()
@@ -2777,6 +3040,53 @@ bool MapWnd::ZoomToNextFleet()
     return true;
 }
 
+void MapWnd::ConnectKeyboardAcceleratorSignals()
+{
+    // disconnect and clear old signals
+    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin(); it != m_keyboard_accelerator_signals.end(); ++it)
+        it->disconnect();
+    m_keyboard_accelerator_signals.clear();
+
+    // connect new signals
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE),   &MapWnd::ReturnToMap, this);
+
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),   &MapWnd::OpenChatWindow, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
+
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN,   GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
+
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2),       &MapWnd::ToggleSitRep, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3),       &MapWnd::ToggleResearch, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4),       &MapWnd::ToggleProduction, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5),       &MapWnd::ToggleDesign, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),      &MapWnd::ShowMenu, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s),        &MapWnd::CloseSystemView, this);
+
+    // Keys for zooming
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),        &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),  &MapWnd::KeyboardZoomIn, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),        &MapWnd::KeyboardZoomOut, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS), &MapWnd::KeyboardZoomOut, this);
+
+    // Keys for showing systems
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d),        &MapWnd::ZoomToHomeSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x),        &MapWnd::ZoomToPrevOwnedSystem, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c),        &MapWnd::ZoomToNextOwnedSystem, this);
+
+    // Keys for showing fleets
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),        &MapWnd::ZoomToPrevIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),        &MapWnd::ZoomToNextIdleFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),        &MapWnd::ZoomToPrevFleet, this);
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),        &MapWnd::ZoomToNextFleet, this);
+
+#ifndef FREEORION_RELEASE
+    // Previously-used but presently ignored development-only key combo for dumping
+    // ValueRef, Condition, and Effect regression tests using the current Universe
+    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL),  &RequestRegressionTestDump);
+#endif
+}
+
 void MapWnd::SetAccelerators()
 {
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_ESCAPE);
@@ -2790,6 +3100,7 @@ void MapWnd::SetAccelerators()
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F2);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F3);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F4);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F5);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10);
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_s);
 
@@ -2817,40 +3128,12 @@ void MapWnd::SetAccelerators()
 
 void MapWnd::RemoveAccelerators()
 {
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_ESCAPE);
-
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER);
-    
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
-
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F2);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F3);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F4);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_F10);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_s);
-
-    // Zoom keys
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_e);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_PLUS);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_KP_MINUS);
-
-    // Keys for showing systems
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_d);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_x);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_c);
-
-    // Keys for showing fleets
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_f);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_g);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_v);
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_b);
-
-#ifndef FREEORION_RELEASE
-    GG::GUI::GetGUI()->RemoveAccelerator(GG::GGK_r, GG::MOD_KEY_CTRL);
-#endif
+    GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
+    while (i != GG::GUI::GetGUI()->accel_end()) {
+        GG::GUI::GetGUI()->RemoveAccelerator(i);
+        i = GG::GUI::GetGUI()->accel_begin();
+    }
+    m_disabled_accels_list.clear();
 }
 
 void MapWnd::DisableAlphaNumAccels()
@@ -2886,7 +3169,7 @@ void MapWnd::CloseAllPopups()
         // get popup and increment iterator first since closing the popup will change this list by removing the popup
         MapWndPopup* popup = *it++;
         popup->Close();
-    }   
+    }
     // clear list
     m_popups.clear();
 }

@@ -15,8 +15,7 @@ class Empire;
  *  
  *  Planet is the most obvious class to inherit ResourceCenter, but other classes could be made from it as well
  *  (e.g., a trade-ship or mining vessel, or a non-Planet UniverseObject- and PopCenter- derived object of some 
- *  sort.
- */
+ *  sort. */
 class ResourceCenter
 {
 public:
@@ -76,7 +75,7 @@ private:
 template <class Archive>
 void ResourceCenter::serialize(Archive& ar, const unsigned int version)
 {
-    UniverseObject::Visibility vis;
+    Visibility vis;
     if (Archive::is_saving::value) {
         UniverseObject* object = GetObjectSignal();
         assert(object);
@@ -84,7 +83,7 @@ void ResourceCenter::serialize(Archive& ar, const unsigned int version)
     }
     ar  & BOOST_SERIALIZATION_NVP(vis);
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == UniverseObject::FULL_VISIBILITY) {
+        vis == VIS_FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_primary)
             & BOOST_SERIALIZATION_NVP(m_secondary);
     }

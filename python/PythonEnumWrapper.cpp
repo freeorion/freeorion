@@ -54,8 +54,8 @@ namespace FreeOrionPython {
             .value("complete",          TS_COMPLETE)
         ;
         enum_<BuildType>("buildType")
-            .value("unresearchable",    BT_BUILDING)
-            .value("researchable",      BT_SHIP)
+            .value("building",          BT_BUILDING)
+            .value("ship",              BT_SHIP)
         ;
         enum_<ResourceType>("resourceType")
             .value("food",          RE_FOOD)

@@ -46,14 +46,12 @@ namespace {
 Building::Building() :
     UniverseObject(),
     m_building_type(""),
-    m_operating(true),
     m_planet_id(INVALID_OBJECT_ID)
 {}
 
 Building::Building(int empire_id, const std::string& building_type, int planet_id) :
     UniverseObject(),
     m_building_type(building_type),
-    m_operating(true),
     m_planet_id(planet_id)
 {
     AddOwner(empire_id);
@@ -74,11 +72,6 @@ const std::string& Building::BuildingTypeName() const
     return m_building_type;
 }
 
-bool Building::Operating() const
-{
-    return m_operating;
-}
-
 int Building::PlanetID() const
 {
     return m_planet_id;
@@ -89,12 +82,12 @@ Planet* Building::GetPlanet() const
     return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
 }
 
-UniverseObject::Visibility Building::GetVisibility(int empire_id) const {
+Visibility Building::GetVisibility(int empire_id) const {
     const Planet* planet = GetPlanet();
     if (planet)
         return planet->GetVisibility(empire_id);
     else
-        return NO_VISIBILITY;
+        return VIS_NO_VISIBITY;
 }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
@@ -102,16 +95,20 @@ UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
     return visitor.Visit(const_cast<Building* const>(this));
 }
 
-void Building::Activate(bool activate)
-{
-    m_operating = activate;
-}
-
 void Building::SetPlanetID(int planet_id)
 {
     if (Planet* planet = GetPlanet())
         planet->RemoveBuilding(ID());
     m_planet_id = planet_id;
+}
+
+void Building::MoveTo(double x, double y)
+{
+    UniverseObject::MoveTo(x, y);
+
+    // if building is being moved away from its planet, remove from the planet.  otherwise, keep building on planet
+    if (Planet* planet = GetPlanet())
+        planet->RemoveBuilding(this->ID());
 }
 
 void Building::MovementPhase()
@@ -145,6 +142,9 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_effects(effects),
     m_graphic(graphic)
 {}
+
+BuildingType::~BuildingType()
+{ delete m_location; }
 
 const std::string& BuildingType::Name() const
 {
@@ -247,7 +247,7 @@ CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_i
     if (as_production_item && location && to_empire)
         return CR_CAPTURE;
 
-    return CR_DESTROY;
+    return CR_CAPTURE;
 }
 
 /////////////////////////////////////////////////
@@ -280,6 +280,13 @@ BuildingTypeManager::BuildingTypeManager()
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);
+}
+
+BuildingTypeManager::~BuildingTypeManager()
+{
+    for (std::map<std::string, BuildingType*>::iterator it = m_building_types.begin(); it != m_building_types.end(); ++it) {
+        delete it->second;
+    }
 }
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const

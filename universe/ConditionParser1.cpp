@@ -25,7 +25,7 @@ ParamLabel jumps_label("jumps");
 rule<Scanner, ConditionClosure::context_t> condition1_p;
 
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 
 namespace {
@@ -103,30 +103,32 @@ namespace {
             member2 condition;
         };
 
-        typedef rule<Scanner, OwnedByClosure::context_t> OwnedByRule;
-        typedef rule<Scanner, NameParamClosure::context_t> NameParamRule;
-        typedef rule<Scanner, PlanetTypeClosure::context_t> PlanetTypeRule;
-        typedef rule<Scanner, PlanetSizeClosure::context_t> PlanetSizeRule;
-        typedef rule<Scanner, PlanetEnvironmentClosure::context_t> PlanetEnvironmentRule;
-        typedef rule<Scanner, ObjectTypeClosure::context_t> ObjectTypeRule;
-        typedef rule<Scanner, FocusTypeClosure::context_t> FocusTypeRule;
-        typedef rule<Scanner, MeterValueClosure::context_t> MeterValueRule;
-        typedef rule<Scanner, AndOrClosure::context_t> AndOrRule;
-        typedef rule<Scanner, NotClosure::context_t> NotRule;
+        typedef rule<Scanner, OwnedByClosure::context_t>            OwnedByRule;
+        typedef rule<Scanner, NameParamClosure::context_t>          NameParamRule;
+        typedef rule<Scanner, PlanetTypeClosure::context_t>         PlanetTypeRule;
+        typedef rule<Scanner, PlanetSizeClosure::context_t>         PlanetSizeRule;
+        typedef rule<Scanner, PlanetEnvironmentClosure::context_t>  PlanetEnvironmentRule;
+        typedef rule<Scanner, ObjectTypeClosure::context_t>         ObjectTypeRule;
+        typedef rule<Scanner, FocusTypeClosure::context_t>          FocusTypeRule;
+        typedef rule<Scanner, MeterValueClosure::context_t>         MeterValueRule;
+        typedef rule<Scanner, AndOrClosure::context_t>              AndOrRule;
+        typedef rule<Scanner, NotClosure::context_t>                NotRule;
 
-        Rule all;
-        OwnedByRule owned_by;
-        Rule source;
-        NameParamRule building;
-        PlanetTypeRule planet_type;
-        PlanetSizeRule planet_size;
-        PlanetEnvironmentRule planet_environment;
-        ObjectTypeRule object_type;
-        FocusTypeRule focus_type;
-        MeterValueRule meter_value;
-        AndOrRule and_;
-        AndOrRule or_;
-        NotRule not_;
+        Rule                    all;
+        OwnedByRule             owned_by;
+        Rule                    source;
+        Rule                    homeworld;
+        Rule                    capitol;
+        NameParamRule           building;
+        PlanetTypeRule          planet_type;
+        PlanetSizeRule          planet_size;
+        PlanetEnvironmentRule   planet_environment;
+        ObjectTypeRule          object_type;
+        FocusTypeRule           focus_type;
+        MeterValueRule          meter_value;
+        AndOrRule               and_;
+        AndOrRule               or_;
+        NotRule                 not_;
     };
 
     ConditionParser1Definition::ConditionParser1Definition()
@@ -144,6 +146,14 @@ namespace {
         source =
             str_p("source")
             [source.this_ = new_<Condition::Self>()];
+
+        homeworld =
+            str_p("homeworld")
+            [homeworld.this_ = new_<Condition::Homeworld>()];
+
+        capitol =
+            str_p("capitol")
+            [capitol.this_ = new_<Condition::Capitol>()];
 
         building =
             (str_p("building")

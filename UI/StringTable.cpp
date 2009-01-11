@@ -60,6 +60,8 @@ void StringTable::Load()
           (("'''" >> MULTI_LINE_VALUE >> "'''" >> _n) | SINGLE_LINE_VALUE >> _n));
     const sregex REFERENCE =
         "[[" >> *space >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> *space >> "]]";
+    const sregex KEYEXPANSION =
+        "[[" >> *space >> (s1 = IDENTIFIER) >> *space >> "]]";
 
     smatch matches;
     if (regex_search(file_contents, matches, FILE_)) {
@@ -108,8 +110,34 @@ void StringTable::Load()
                 }
             }
         }
+        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
+        {
+            sregex_iterator it(map_it->second.begin(), map_it->second.end(), KEYEXPANSION);
+            sregex_iterator end;
+            std::size_t offset = 0;
+            std::set<std::string> cyclic_reference_check;
+            bool cyclic_reference_error = false;
+            cyclic_reference_check.insert(map_it->first);
+            while (it != end && !cyclic_reference_error) {
+                const smatch& match = *it;
+                if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
+                    cyclic_reference_check.insert(match[1]);
+                    std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
+                    if (map_lookup_it != m_strings.end()) {
+                        std::string substitution = map_lookup_it->second;
+                        map_it->second.replace(match.position() + offset, match.length(), substitution);
+                        offset = match.position();
+                        it = sregex_iterator(map_it->second.begin() + offset,
+                                             map_it->second.end(),
+                                             KEYEXPANSION);
+                    }
+                } else {
+                    cyclic_reference_error = true;
+                    Logger().errorStream() << "While parsing stringtable, expanding key " << match[1] << ": Cyclic referense found. File: '" << m_filename << "'.  Skipping expansion.";
+                }
+            }
+        }
     } else {
         Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed";
     }
 }
-

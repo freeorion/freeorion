@@ -292,6 +292,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<Disconnection>,
+        boost::statechart::custom_reaction<VictoryDefeat>,
         boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<EndGame>,
         boost::statechart::custom_reaction<ResetToIntroMenu>
@@ -301,6 +302,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     ~PlayingGame();
 
     boost::statechart::result react(const Disconnection& d);
+    boost::statechart::result react(const VictoryDefeat& msg);
     boost::statechart::result react(const PlayerEliminated& msg);
     boost::statechart::result react(const EndGame& msg);
     boost::statechart::result react(const ResetToIntroMenu& msg);
@@ -321,6 +323,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
         boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<SaveGame>,
+        boost::statechart::deferral<VictoryDefeat>,
         boost::statechart::deferral<PlayerEliminated>,
         boost::statechart::deferral<PlayerChat>
     > reactions;

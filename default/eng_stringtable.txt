@@ -48,6 +48,42 @@ Yes
 NO
 No
 
+EMPIRE
+Empire
+
+ALL
+All
+
+UNKNOWN_SYSTEM
+Unknown System
+
+RENAME
+Rename
+
+ENTER_NEW_NAME
+Enter new name
+
+UNKNOWN_VALUE_SYMBOL
+?
+
+ERROR
+ERROR
+
+CHAT_WHISPER
+whisper
+
+# used to generate names for new fleets when they are created
+NEW_FLEET_NAME
+New Fleet %1%
+
+NEW_FLEET_NAME_NO_NUMBER
+New Fleet
+
+
+##########################
+# Status Update Messages #
+##########################
+
 NEW_GAME
 Generating Universe and AIs ...
 
@@ -74,51 +110,14 @@ Player %1% no longer has a connection to the server.
 PLAYER_DEFEATED
 You are defeated.
 
-PLAYER_VICTORIOUS
-You are victorious.
-
-EMPIRE
-Empire
-
 EMPIRE_DEFEATED
 The %1% empire is no more.
 
-ALL
-All
+UNKNOWN_EMPIRE
+Unknown Empire
 
-UNKNOWN_SYSTEM
-Unknown System
-
-RENAME
-Rename
-
-ENTER_NEW_NAME
-Enter new name
-
-UNKNOWN_VALUE_SYMBOL
-?
-
-ERROR
-ERROR
-
-DEFENSE_BASE
-Defense Base
-
-DEFENSE_BASE_DESCRIPTION
-'''An orbital defense platform that aids in the defense of the planet at which it is located.
-
-Attack: 1
-Defense: 3'''
-
-CHAT_WHISPER
-whisper
-
-# used to generate names for new fleets when they are created
-NEW_FLEET_NAME
-New Fleet %1%
-
-NEW_FLEET_NAME_NO_NUMBER
-New Fleet
+LAST_OPPONENT_DEFEATED_VICTORY
+Your last opponent has been defeated and you are victorious!
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -154,8 +153,23 @@ The number of outgoing messages to keep in the chat edit box history.
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
 
+OPTIONS_DB_GALAXY_MAP_STARFIELDS
+Render starsfields around systems. May slow rendering on older systems.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
+
+OPTIONS_DB_STARLANE_THICKNESS
+Sets how wide to render starlanes in pixels.
+
+OPTIONS_DB_RESOURCE_STARLANE_COLOURING
+Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.
+
+OPTIONS_DB_FLEET_SUPPLY_LINES
+Toggles whether to show fleet supply lines with empire-coloured indica
+
+OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
+Sets how wide to render fleet supply lines.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
@@ -366,36 +380,6 @@ Sets size of fleet buttons (relative to system icon).
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator (relative to system icon).
-
-OPTIONS_DB_UI_TECH_CATEGORY_1
-Sets color of the first category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_2
-Sets color of the second category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_3
-Sets color of the third category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_4
-Sets color of the fourth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_5
-Sets color of the fifth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_6
-Sets color of the sixth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_7
-Sets color of the seventh category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_8
-Sets color of the eighth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_9
-Sets color of the ninth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_10
-Sets color of the tenth category of techs defined in techs.xml.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip popup delay, in ms.
@@ -897,8 +881,23 @@ Galaxy Map
 OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
 
+OPTIONS_GALAXY_MAP_STARFIELDS
+Galaxy map starfields rendering
+
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
 Optimized system rendering
+
+OPTIONS_STARLANE_THICKNESS
+Starlane thickness
+
+OPTIONS_RESOURCE_STARLANE_COLOURING
+Resource starlane colouring
+
+OPTIONS_FLEET_SUPPLY_LINES
+Fleet supply lines
+
+OPTIONS_FLEET_SUPPLY_LINE_WIDTH
+Fleet supply line width
 
 OPTIONS_MUSIC
 Music
@@ -1328,10 +1327,10 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / Turn @ %2% Turns
+%2% Turns @ %1% RP / Turn
 
 TECH_TURN_COST_STR
-%1% RP / Turn @ %2% Turns
+%2% Turns @ %1% RP / Turn
 
 TECH_TURNS_LEFT_STR
 %1% Turns
@@ -1450,9 +1449,6 @@ Buildings
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Ships
 
-PRODUCTION_WND_CATEGORY_BT_ORBITAL
-Orbitals
-
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
 Available
 
@@ -1470,23 +1466,6 @@ PRODUCTION_TURNS_LEFT_STR
 
 PRODUCTION_TURNS_LEFT_NEVER
 Never
-
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
-%1%
-
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-'''%1%
-
-<u>Effects</u>
-
-%2%'''
-
-PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-'''%1%
-
-Attack: %2%
-Defense: %3%
-Speed: %4%'''
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Quantity
@@ -1564,47 +1543,6 @@ Confirm New Design
 DESIGN_WND_CLEAR
 Clear Parts
 
-# Ship Slot Types
-
-SL_EXTERNAL
-External
-
-SL_INTERNAL
-Internal
-
-
-# Ship Part Classes
-
-PC_SHORT_RANGE
-Short Range
-
-PC_MISSILES
-Missiles
-
-PC_FIGHTERS
-Fighters
-
-PC_POINT_DEFENSE
-Point Defense
-
-PC_SHIELD
-Shields
-
-PC_ARMOUR
-Armour
-
-PC_DETECTION
-Detection
-
-PC_STEALTH
-Stealth
-
-PC_FUEL
-Fuel
-
-PC_COLONY
-Colonization
-
 
 ####################
 #   Encyclopedia   #
@@ -1620,14 +1558,14 @@ Ship Hull
 ENC_TECH
 Technology
 
-ENC_SHIP_DESIGN
-Ship Design
-
 ENC_SPECIAL
 Special
 
-ENC_BUILDING
-Building
+ENC_BUILDING_TYPE
+Building Type
+
+ENC_SHIP_DESIGN
+Ship Design
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
@@ -1646,17 +1584,24 @@ RP
 # %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
 # %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
-END_COST_AND_TURNS_STR
-%1% %2% / Turn @ %3% Turns
+ENC_COST_AND_TURNS_STR
+%3% Turns @ %1% %2% / Turn
 
 # autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
 # provide an appropriate heading to appear before the autogenerated text.
-END_EFFECTS_STR
+ENC_EFFECTS_STR
 '''
 
 <u>Effects</u>
 
 %1%'''
+
+ENC_SHIP_DESIGN_DESCRIPTION_STR
+'''%1%
+
+Attack: %2%
+Defense: %3%
+Speed: %4%'''
 
 
 
@@ -1767,6 +1712,22 @@ SITREP_PLANET_COLONIZED
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% has arrived at the %system% system and awaits further orders.
+
+SITREP_EMPIRE_ELIMINATED
+The %name% empire has been eliminated.
+
+SITREP_VICTORY
+%1%
+
+####################
+# Victory / Defeat #
+####################
+
+TECH_VICTORY
+The %1% empire has achived a technological victory.
+
+ALL_ENEMIES_ELIMINATED_VICTORY
+The %1% empire has achived a sole-survivor victory.
 
 
 ####################
@@ -2002,6 +1963,7 @@ Ship Part
 UIT_SHIP_HULL
 Ship Hull
 
+
 # TechTypes
 
 TT_THEORY
@@ -2033,6 +1995,37 @@ mineral
 ST_TRADE
 trade
 
+
+# Ship Slot Types
+
+SL_EXTERNAL
+External
+SL_INTERNAL
+Internal
+
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Short Range
+PC_MISSILES
+Missiles
+PC_FIGHTERS
+Fighters
+PC_POINT_DEFENSE
+Point Defense
+PC_SHIELD
+Shields
+PC_ARMOUR
+Armour
+PC_DETECTION
+Detection
+PC_STEALTH
+Stealth
+PC_FUEL
+Fuel
+PC_COLONY
+Colonization
 
 
 ################################################
@@ -2277,6 +2270,9 @@ Set current %1% to %2%
 DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the object's owner to %2%
 
+DESC_SET_EMPIRE_CAPITOL
+Makes the object the object's owner's capitol planet
+
 DESC_SET_PLANET_TYPE
 Changes the planet's type to %1%
 
@@ -2301,6 +2297,11 @@ Removes %1% special from object
 DESC_SET_STAR_TYPE
 Changes the star's type to %1%
 
+DESC_MOVE_TO
+Moves the object to the location of an object%1%
+
+DESC_VICTORY
+Causes the object's owner to win the game
 
 # SetTechAvailability
 
@@ -2315,6 +2316,15 @@ Makes %1% available to empire %2%
 
 DESC_SET_TECH_UNAVAIL
 Makes %1% unavailable to empire %2%
+
+
+# Object Creation
+
+DESC_CREATE_PLANET
+Creates a new planet of type %1% and size %2%
+
+DESC_CREATE_BUILDING
+Creates a new %1% building
 
 
 # Conditions
@@ -2346,12 +2356,23 @@ DESC_EMPIRE_AFFILIATION_EXCLUSIVE
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
  that does not belong only to an %1% of %2% empire
 
-# this one is intentionally left empty
 DESC_SELF
  that is the source object
 
 DESC_SELF_NOT
  that is not the source object
+
+DESC_HOMEWORLD
+ that is a homeworld
+
+DESC_HOMEWORLD_NOT
+ that is not a homeworld
+
+DESC_CAPITOL
+ that is an empire's capitol planet
+
+DESC_CAPITOL_NOT
+ that is not an empire's capitol planet
 
 DESC_TYPE
  that is a %1%
@@ -3481,7 +3502,7 @@ Provides +2 to max research output per 10 population and -2 to max health on pri
 BLD_THEOREM_PROVER
 Automatic Theorem Prover
 
-BLD_THEORM_PROVER_DESC
+BLD_THEOREM_PROVER_DESC
 Provides +5 to max research output per 10 population on primary research focused worlds, non-stacking.\nProvides additional +1 to max research output per 10 population on secondary research focused worlds, non-stacking.
 
 BLD_LIGHTHOUSE

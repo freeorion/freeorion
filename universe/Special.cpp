@@ -42,6 +42,13 @@ namespace {
             ProcessSpecialsFile(settings_dir + "planet_specials.txt", true);
         }
 
+        ~SpecialManager()
+        {
+            for (std::map<std::string, Special*>::iterator it = m_specials.begin(); it != m_specials.end(); ++it) {
+                delete it->second;
+            }
+        }
+
         const std::set<std::string>& PlanetSpecialNames() const
         {
             return m_planet_special_names;

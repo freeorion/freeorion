@@ -10,7 +10,7 @@ class QueueListBox :
     public CUIListBox
 {
 public:
-    QueueListBox(int x, int y, int w, int h, const std::string& drop_type_str);
+    QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str);
 
     virtual void DropsAcceptable(DropsAcceptableIter first,
                                  DropsAcceptableIter last,

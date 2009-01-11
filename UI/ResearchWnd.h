@@ -16,7 +16,7 @@ class ResearchWnd : public GG::Wnd
 {
 public:
     /** \name Structors */ //@{
-    ResearchWnd(int w, int h);
+    ResearchWnd(GG::X w, GG::Y h);
     //@}
 
     /** \name Mutators */ //@{

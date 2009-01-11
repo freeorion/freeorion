@@ -118,7 +118,7 @@ namespace ValueRef {
         case PE_ADEQUATE: return "Adequate";
         case PE_GOOD: return "Good";
         default: return "?";
-        }                     
+        }
     }
 
     template <>

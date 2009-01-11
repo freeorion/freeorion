@@ -74,7 +74,7 @@ public:
 
     //! \name Mutators //!@{
     virtual void   Render();
-    virtual void   KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     virtual void   LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void   LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -122,7 +122,7 @@ public:
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
-    static const int SIDE_PANEL_WIDTH;
+    static const GG::X SIDE_PANEL_WIDTH;
 
 protected:
     virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
@@ -188,10 +188,23 @@ private:
     bool ReturnToMap();
     bool OpenChatWindow();
     bool EndTurn();
+
     bool ToggleSitRep();
+    void ShowSitRep();
+    void HideSitRep();
+
     bool ToggleResearch();
+    void ShowResearch();
+    void HideResearch();
+
     bool ToggleProduction();
+    void ShowProduction();
+    void HideProduction();
+
     bool ToggleDesign();
+    void ShowDesign();
+    void HideDesign();
+
     bool ShowMenu();
     bool CloseSystemView();                      //!< closes off the current system view
     bool KeyboardZoomIn();
@@ -204,9 +217,10 @@ private:
     bool ZoomToPrevFleet();
     bool ZoomToNextFleet();
 
-    void SetAccelerators();
+    void ConnectKeyboardAcceleratorSignals();   //!< connects signals from keyboard accelerators to various GUI responses
+    void SetAccelerators();                     //!< tells the GUI which keypress combinations to track and emit signals for when they occur
+    void RemoveAccelerators();                  //!< tells GUI to stop emitting signals for keypresses
 
-    void RemoveAccelerators();
     /** Disables keyboard accelerators that use an alphanumeric key without modifiers. This is useful if a
      * keyboard input is required, so that the keys aren't interpreted as an accelerator.
      * @note Repeated calls of DisableAlphaNumAccels have to be followed by the same number of calls to 
@@ -224,8 +238,6 @@ private:
     std::set<GG::Key> m_disabled_accels_list;       //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
-    std::vector<boost::shared_ptr<GG::Texture> >    m_nebulae;          //!< decorative nebula textures
-    std::vector<GG::Pt>                             m_nebula_centers;   //!< the centerpoints of each of the nebula textures
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     int                         m_previously_selected_system;
@@ -241,6 +253,9 @@ private:
     CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
 
     std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
+    std::vector<boost::signals::connection>         m_fleet_state_change_signals;
+
+    std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
 
     std::map<const Fleet*, MovementLineData>        m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<const Fleet*,
@@ -262,8 +277,9 @@ private:
     std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_galaxy_gas_quad_vertices;
     GLBuffer m_star_texture_coords;
     GLBuffer m_starlane_vertices;
-    GLBuffer m_starlane_supply_vertices;
-    GLBuffer m_starlane_supply_colors;
+    GLBuffer m_starlane_colors;
+    GLBuffer m_starlane_fleet_supply_vertices;
+    GLBuffer m_starlane_fleet_supply_colors;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
@@ -299,7 +315,7 @@ private:
 class MapWndPopup : public CUIWnd
 {
 public:
-    MapWndPopup(const std::string& t, int x, int y, int h, int w, GG::Flags<GG::WndFlag> flags);
+    MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags);
     virtual ~MapWndPopup();
     void CloseClicked();
     void Close();

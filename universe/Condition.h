@@ -23,6 +23,8 @@ namespace Condition {
     struct All;
     struct EmpireAffiliation;
     struct Self;
+    struct Homeworld;
+    struct Capitol;
     struct Type;
     struct Building;
     struct HasSpecial;
@@ -160,6 +162,36 @@ private:
 struct Condition::Self : Condition::ConditionBase
 {
     Self();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches planets that are a homeworld. */
+struct Condition::Homeworld : Condition::ConditionBase
+{
+    Homeworld();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches planets that are an empire's capitol. */
+struct Condition::Capitol : Condition::ConditionBase
+{
+    Capitol();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -589,6 +621,18 @@ void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int ver
 
 template <class Archive>
 void Condition::Self::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::Capitol::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }

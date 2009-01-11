@@ -4,6 +4,7 @@
 #include "ValueRefParser.h"
 #include "ValueRef.h"
 #include "Effect.h"
+#include "Condition.h"
 
 using namespace boost::spirit;
 using namespace phoenix;
@@ -58,7 +59,27 @@ namespace {
             member2 name;
         };
 
+        struct ConditionParamClosure : boost::spirit::closure<ConditionParamClosure, Effect::EffectBase*, Condition::ConditionBase*>
+        {
+            member1 this_;
+            member2 condition;
+        };
+
         struct SetStarTypeClosure : boost::spirit::closure<SetStarTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*>
+        {
+            member1 this_;
+            member2 type;
+        };
+
+        struct CreatePlanetClosure : boost::spirit::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*,
+                                                            ValueRef::ValueRefBase< ::PlanetSize>*>
+        {
+            member1 this_;
+            member2 type;
+            member3 size;
+        };
+
+        struct CreateBuildingClosure : boost::spirit::closure<CreateBuildingClosure, Effect::EffectBase*, std::string>
         {
             member1 this_;
             member2 type;
@@ -72,32 +93,42 @@ namespace {
             member4 include_tech;
         };
 
-        typedef rule<Scanner, SetMeterClosure::context_t> SetMeterRule;
-        typedef rule<Scanner, SetOwnerStockpileClosure::context_t> SetOwnerStockpileRule;
-        typedef rule<Scanner, SetPlanetTypeClosure::context_t> SetPlanetTypeRule;
-        typedef rule<Scanner, SetPlanetSizeClosure::context_t> SetPlanetSizeRule;
-        typedef rule<Scanner, EmpireParamClosure::context_t> EmpireParamRule;
-        typedef rule<Scanner, NameParamClosure::context_t> NameParamRule;
-        typedef rule<Scanner, SetStarTypeClosure::context_t> SetStarTypeRule;
-        typedef rule<Scanner, SetTechAvailabilityClosure::context_t> SetTechAvailabilityRule;
+        typedef rule<Scanner, SetMeterClosure::context_t>               SetMeterRule;
+        typedef rule<Scanner, SetOwnerStockpileClosure::context_t>      SetOwnerStockpileRule;
+        typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
+        typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
+        typedef rule<Scanner, EmpireParamClosure::context_t>            EmpireParamRule;
+        typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
+        typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
+        typedef rule<Scanner, SetStarTypeClosure::context_t>            SetStarTypeRule;
+        typedef rule<Scanner, CreatePlanetClosure::context_t>           CreatePlanetRule;
+        typedef rule<Scanner, CreateBuildingClosure::context_t>         CreateBuildingRule;
+        typedef rule<Scanner, SetTechAvailabilityClosure::context_t>    SetTechAvailabilityRule;
 
-        SetMeterRule set_meter;
-        SetOwnerStockpileRule set_owner_stockpile;
-        SetPlanetTypeRule set_planet_type;
-        SetPlanetSizeRule set_planet_size;
-        EmpireParamRule add_owner;
-        EmpireParamRule remove_owner;
-        Rule destroy;
-        NameParamRule add_special;
-        NameParamRule remove_special;
-        SetStarTypeRule set_star_type;
+        SetMeterRule            set_meter;
+        SetOwnerStockpileRule   set_owner_stockpile;
+        Rule                    set_owner_capitol;
+        SetPlanetTypeRule       set_planet_type;
+        SetPlanetSizeRule       set_planet_size;
+        EmpireParamRule         add_owner;
+        EmpireParamRule         remove_owner;
+        CreatePlanetRule        create_planet;
+        CreateBuildingRule      create_building;
+        ConditionParamRule      move_to;
+        Rule                    destroy;
+        NameParamRule           victory;
+        NameParamRule           add_special;
+        NameParamRule           remove_special;
+        SetStarTypeRule         set_star_type;
         SetTechAvailabilityRule set_tech_availability;
 
-        ParamLabel value_label;
-        ParamLabel type_label;
-        ParamLabel planetsize_label;
-        ParamLabel empire_label;
-        ParamLabel name_label;
+        ParamLabel              value_label;
+        ParamLabel              type_label;
+        ParamLabel              planetsize_label;
+        ParamLabel              empire_label;
+        ParamLabel              name_label;
+        ParamLabel              destination_label;
+        ParamLabel              reason_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -105,7 +136,9 @@ namespace {
         type_label("type"),
         planetsize_label("size"),
         empire_label("empire"),
-        name_label("name")
+        name_label("name"),
+        destination_label("destination"),
+        reason_label("reason")
     {
         set_meter =
             ((str_p("setmax")[set_meter.max_meter = val(true)]
@@ -134,6 +167,10 @@ namespace {
              >> value_label >> double_expr_p[set_owner_stockpile.value = arg1])
             [set_owner_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_owner_stockpile.stockpile_type, set_owner_stockpile.value)];
 
+        set_owner_capitol =
+            str_p("setownercapitol")
+            [set_owner_capitol.this_ = new_<Effect::SetEmpireCapitol>()];
+
         set_planet_type =
             (str_p("setplanettype")
              >> type_label >> planettype_expr_p[set_planet_type.type = arg1])
@@ -154,9 +191,30 @@ namespace {
              >> empire_label >> int_expr_p[remove_owner.empire = arg1])
             [remove_owner.this_ = new_<Effect::RemoveOwner>(remove_owner.empire)];
 
+        create_planet =
+            (str_p("createplanet")
+             >> type_label >> planettype_expr_p[create_planet.type = arg1]
+             >> planetsize_label >> planetsize_expr_p[create_planet.size = arg1])
+            [create_planet.this_ = new_<Effect::CreatePlanet>(create_planet.type, create_planet.size)];
+
+        create_building =
+            (str_p("createbuilding")
+             >> name_label >> name_p[create_building.type = arg1])
+            [create_building.this_ = new_<Effect::CreateBuilding>(create_building.type)];
+
+        move_to =
+            (str_p("moveto")
+             >> destination_label >> condition_p[move_to.condition = arg1])
+            [move_to.this_ = new_<Effect::MoveTo>(move_to.condition)];
+
         destroy =
             str_p("destroy")
             [destroy.this_ = new_<Effect::Destroy>()];
+
+        victory =
+            (str_p("victory")
+             >> reason_label >> name_p[victory.name = arg1])
+            [victory.this_ = new_<Effect::Victory>(victory.name)];
 
         add_special =
             (str_p("addspecial")
@@ -188,7 +246,9 @@ namespace {
             | set_planet_size[effect_p.this_ = arg1]
             | add_owner[effect_p.this_ = arg1]
             | remove_owner[effect_p.this_ = arg1]
+            | move_to[effect_p.this_ = arg1]
             | destroy[effect_p.this_ = arg1]
+            | victory[effect_p.this_ = arg1]
             | add_special[effect_p.this_ = arg1]
             | remove_special[effect_p.this_ = arg1]
             | set_star_type[effect_p.this_ = arg1]

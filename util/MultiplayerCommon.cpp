@@ -237,8 +237,8 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
             try {
-                if (fs::exists(*it) && !fs::is_directory(*it) && it->leaf()[0] != '.') {
-                    std::string filename = it->leaf();
+                if (fs::exists(*it) && !fs::is_directory(*it) && it->filename()[0] != '.') {
+                    std::string filename = it->filename();
                     // disallow filenames that begin with a dot, and filenames with spaces in them
                     if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
                         filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {

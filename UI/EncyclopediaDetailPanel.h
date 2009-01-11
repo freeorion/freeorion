@@ -1,3 +1,4 @@
+// -*- C++ -*-
 #ifndef _ENCYCLOPEDIA_DETAIL_PANEL_H_
 #define _ENCYCLOPEDIA_DETAIL_PANEL_H_
 
@@ -22,7 +23,7 @@ namespace GG {
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    EncyclopediaDetailPanel(int w, int h);
+    EncyclopediaDetailPanel(GG::X x, GG::Y y);
     //@}
 
     /** \name Mutators */ //@{
@@ -40,14 +41,14 @@ public:
     void            SetItem(const BuildingType* building);
     void            SetItem(const ShipDesign* design);
     void            SetItem(const Special* special);
+
+    void Reset();
+    void UnsetAll();
     //@}
 
 private:
-    void Reset();
     void DoLayout();
-
     bool NothingSet();
-    void UnsetAll();
 
     const Tech*         m_tech;
     const PartType*     m_part;

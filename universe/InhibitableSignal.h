@@ -2,9 +2,9 @@
 #ifndef _InhibitableSignal_h_
 #define _InhibitableSignal_h_
 
-#ifndef BOOST_SIGNAL_HPP
 #include <boost/signal.hpp>
-#endif
+#include <boost/bind.hpp>
+
 
 /** A class template for a type of signal that wraps a boost::signal so that its emission can be controlled by an external boolean value. */
 template <class T>

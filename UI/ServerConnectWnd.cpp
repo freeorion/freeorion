@@ -9,13 +9,15 @@
 #include <GG/Layout.h>
 #include <GG/TextControl.h>
 
+#include <boost/cast.hpp>
+
 #include <sstream>
 #include <iomanip>
 #include <cctype>
 
 namespace {
-    const int WINDOW_WIDTH  = 400;
-    const int WINDOW_HEIGHT = 535;
+    const GG::X WINDOW_WIDTH(400);
+    const GG::Y WINDOW_HEIGHT(535);
 
     bool NameOK(const std::string& name)
     {
@@ -43,25 +45,25 @@ ServerConnectWnd::ServerConnectWnd() :
 {
     Sound::TempUISoundDisabler sound_disabler;
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
-    GG::TextControl* player_name_label = new GG::TextControl(0, 0, 1, 1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_player_name_edit = new CUIEdit(0, 0, 1, "");
-    m_host_or_join_radio_group = new GG::RadioButtonGroup(0, 0, 1, 1, GG::VERTICAL);
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, 1, 1, UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
-    m_host_or_join_radio_group->AddButton(new CUIStateButton(0, 0, 1, 1, UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
-    m_LAN_game_label = new GG::TextControl(0, 0, UserString("LAN_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_servers_lb = new CUIListBox(0, 0, 1, 1);
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    GG::TextControl* player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
+    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, "");
+    m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+    m_host_or_join_radio_group->AddButton(new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
+    m_LAN_game_label = new GG::TextControl(GG::X0, GG::Y0, UserString("LAN_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
+    m_servers_lb = new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1);
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
-    m_find_LAN_servers_bn = new CUIButton(0, 0, 1, UserString("REFRESH_LIST_BN"));
-    m_internet_game_label = new GG::TextControl(0, 0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_IP_address_edit = new CUIEdit(0, 0, 1, "localhost");
-    m_ok_bn = new CUIButton(0, 0, 1, UserString("OK"));
-    m_cancel_bn = new CUIButton(0, 0, 1, UserString("CANCEL"));
+    m_find_LAN_servers_bn = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("REFRESH_LIST_BN"));
+    m_internet_game_label = new GG::TextControl(GG::X0, GG::Y0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
+    m_IP_address_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, "localhost");
+    m_ok_bn = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("OK"));
+    m_cancel_bn = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("CANCEL"));
 
-    const int OK_CANCEL_BUTTON_WIDTH = 80;
+    const GG::X OK_CANCEL_BUTTON_WIDTH(80);
     const int CONTROL_MARGIN = 5;
 
-    GG::Layout* layout = new GG::Layout(0, 0, 1, 1, 8, 4, CONTROL_MARGIN);
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
     layout->SetMinimumColumnWidth(0, player_name_label->MinUsableSize().x + CONTROL_MARGIN);
     layout->SetColumnStretch(1, 1.0);
     layout->SetMinimumColumnWidth(2, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);
@@ -97,7 +99,7 @@ void ServerConnectWnd::ModalInit()
     GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit);
 }
 
-void ServerConnectWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
         OkClicked();
@@ -134,7 +136,7 @@ void ServerConnectWnd::PopulateServerList()
     m_servers_lb->Clear();
     for (ClientNetworking::ServerList::iterator it = m_LAN_servers.begin(); it != m_LAN_servers.end(); ++it) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
-        row->push_back(it->second, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor());
+        row->push_back(it->second, ClientUI::GetFont(), ClientUI::TextColor());
         m_servers_lb->Insert(row);
     }
 }
@@ -145,7 +147,7 @@ void ServerConnectWnd::RefreshServerList()
     PopulateServerList();
 }
 
-void ServerConnectWnd::HostOrJoinClicked(int idx)
+void ServerConnectWnd::HostOrJoinClicked(std::size_t idx)
 {
     EnableDisableControls();
 }
@@ -176,8 +178,11 @@ void ServerConnectWnd::OkClicked()
         m_result.second = "HOST GAME SELECTED";
     } else {
         m_result.second = *m_IP_address_edit;
-        if (m_result.second == "")
-            m_result.second = (***m_servers_lb->Selections().begin())[0]->WindowText();
+        if (m_result.second == "") {
+            m_result.second =
+                boost::polymorphic_downcast<GG::TextControl*>(
+                    (***m_servers_lb->Selections().begin())[0])->Text();
+        }
     }
     CUIWnd::CloseClicked();
 }
@@ -191,8 +196,8 @@ void ServerConnectWnd::EnableDisableControls()
     m_internet_game_label->Disable(host_selected);
     m_IP_address_edit->Disable(host_selected);
     bool disable_ok_bn =
-        !NameOK(m_player_name_edit->WindowText()) ||
+        !NameOK(m_player_name_edit->Text()) ||
         (!host_selected && m_servers_lb->Selections().empty() &&
-         m_IP_address_edit->WindowText().empty());
+         m_IP_address_edit->Text().empty());
     m_ok_bn->Disable(disable_ok_bn);
 }

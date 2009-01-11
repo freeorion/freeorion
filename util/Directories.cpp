@@ -59,9 +59,9 @@ void InitDirs()
         bool foundexec = false,
              foundresources = false;
         for (fs::directory_iterator diter(bundle_path); diter != dir_end; ++diter) {
-            if ((*diter).leaf() == "Executables")
+            if ((*diter).filename() == "Executables")
                 foundexec = true;
-            else if ((*diter).leaf() == "Resources")
+            else if ((*diter).filename() == "Resources")
                 foundresources = true;
         }
         // if nothing found. assume that we are in the Executables directory which may be the case during debugging
@@ -138,7 +138,7 @@ void InitDirs()
     if (fs::path::default_name_check_writable())
         fs::path::default_name_check(fs::native);
 
-    // store working dir
+    // store working dir (current working dir)
     fs::initial_path();
 
     br_init(0);

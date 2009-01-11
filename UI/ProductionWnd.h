@@ -16,7 +16,7 @@ class ProductionWnd : public GG::Wnd
 {
 public:
     /** \name Structors */ //@{
-    ProductionWnd(int w, int h);
+    ProductionWnd(GG::X w, GG::Y h);
     ~ProductionWnd();
     //@}
 

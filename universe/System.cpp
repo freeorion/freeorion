@@ -17,34 +17,35 @@ using boost::lexical_cast;
 
 
 System::System() :
-   UniverseObject(),
-   m_star(INVALID_STAR_TYPE),
-   m_orbits(0)
+    UniverseObject(),
+    m_star(INVALID_STAR_TYPE),
+    m_orbits(0)
 {}
 
-System::System(StarType star, int orbits, const std::string& name, double x, double y, 
-               const std::set<int>& owners/* = std::set<int>()*/) : 
-   UniverseObject(name, x, y, owners),
-   m_star(star),
-   m_orbits(orbits)
+System::System(StarType star, int orbits, const std::string& name, double x, double y,
+               const std::set<int>& owners/* = std::set<int>()*/) :
+    UniverseObject(name, x, y, owners),
+    m_star(star),
+    m_orbits(orbits)
 {
-   if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
-      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
-   if (m_orbits < 0)
-      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
+    if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
+        throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
+    if (m_orbits < 0)
+        throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
 }
 
 System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes, 
                const std::string& name, double x, double y, const std::set<int>& owners/* = std::set<int>()*/) : 
-   UniverseObject(name, x, y, owners),
-   m_star(star),
-   m_orbits(orbits),
-   m_starlanes_wormholes(lanes_and_holes)
+    UniverseObject(name, x, y, owners),
+    m_star(star),
+    m_orbits(orbits),
+    m_starlanes_wormholes(lanes_and_holes)
 {
-   if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
-      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
-   if (m_orbits < 0)
-      throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
+    if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
+        throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
+    if (m_orbits < 0)
+        throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
+    SetSystem(ID());
 }
 
 System::~System()
@@ -90,6 +91,15 @@ bool System::HasWormholeTo(int id) const
 {
    const_lane_iterator it = m_starlanes_wormholes.find(id);
    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
+}
+
+int System::SystemID() const
+{
+    // Systems don't have a valid UniverseObject::m_system_id since it is never set by inserting them into (another) system.
+    // When new systems are created, it's also not set because UniverseObject are created without a valid id number, and only
+    // get one when being inserted into the Universe.  Universe::Insert overloads could check what is being inserted, but
+    // having SystemID be virtual and overriding it it in this class (System) is easier.
+    return this->ID();
 }
 
 std::vector<UniverseObject*> System::FindObjects() const
@@ -205,17 +215,17 @@ System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjec
     return retval;
 }
 
-UniverseObject::Visibility System::GetVisibility(int empire_id) const
+Visibility System::GetVisibility(int empire_id) const
 {
     // if system is at least partially owned by this empire it is fully visible, if it has been explored it is partially visible, 
     // and otherwise it will be partially visible
     Empire* empire = 0;
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
-        return FULL_VISIBILITY;
+        return VIS_FULL_VISIBILITY;
     else if ((empire = Empires().Lookup(empire_id)) && empire->HasExploredSystem(ID()))
-        return PARTIAL_VISIBILITY;
+        return VIS_PARTIAL_VISIBILITY;
     else
-        return NO_VISIBILITY;
+        return VIS_NO_VISIBITY;
 }
 
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
@@ -230,45 +240,59 @@ int System::Insert(UniverseObject* obj)
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
-    if (!obj)
-        throw std::invalid_argument("System::Insert() : Attempted to place a null object in a System");
+    if (!obj) {
+        Logger().errorStream() << "System::Insert() : Attempted to place a null object in a System";
+        return -1;
+    }
 
-    //Logger().debugStream() << "System::Insert(" << obj->Name() <<", " << orbit << ")";
+    Logger().debugStream() << "System::Insert system " << this->Name() <<  " (object " << obj->Name() << ", orbit " << orbit << ")";
     //Logger().debugStream() << "..initial objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     //    Logger().debugStream() << "...." << GetUniverse().Object(it->second)->Name();
     //Logger().debugStream() << "..initial object systemid: " << obj->SystemID();
 
-    int obj_id = obj->ID();
+    if (orbit < -1) {
+        Logger().errorStream() << "System::Insert() : Attempted to place an object in an orbit less than -1";
+        return -1;
+    }
 
-    if (orbit < -1)
-        throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
+    if (orbit >= m_orbits) {
+        Logger().errorStream() << "System::Insert() : Attempted to place an object in a non-existing orbit with number higher than the largest numbered orbit";
+        return -1;
+    }
 
-
-    // ensure object and its contents are all inserted
-    std::vector<UniverseObject*> contained_objects = obj->FindObjects();
-    for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it)
-        this->Insert(*it, orbit);
-
-
+    // inform obj of its new location and system id.  this should propegate to all objects contained within obj
     obj->MoveTo(this);          // ensure object is physically at same location in universe as this system
     obj->SetSystem(this->ID()); // should do nothing if object is already in this system, but just to ensure things are consistent...
 
-    // ensure object isn't already in this system (as far as the system is concerned).  If the system already
-    // thinks the object is here, just return its current orbit and don't change anything.
-    for (orbit_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->second == obj_id) {
-            return it->first;
-        }
+
+    // update obj and its contents in this System's bookkeeping
+    std::list<UniverseObject*> inserted_objects;
+    inserted_objects.push_back(obj);
+    // recursively get all objects contained within obj
+    for(std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
+        std::vector<UniverseObject*> contained_objects = (*it)->FindObjects();
+        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(inserted_objects));
     }
 
-    // ensure this system has enough orbits to contain object
-    if (m_orbits <= orbit)
-        m_orbits = orbit + 1;
 
-    // record object in this system's record of objects in each orbit
-    std::pair<int, int> insertion(orbit, obj_id);
-    m_objects.insert(insertion);
+    // for all inserted objects, up date this System's bookkeeping about orbit and whether it is contained herein
+    for (std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
+        int cur_id = (*it)->ID();
+
+        // check if obj is already in system's internal bookkeeping.  if it is, check if it is in the wrong
+        // orbit.  if it is both, remove it from its current orbit
+        for (orbit_iterator orbit_it = m_objects.begin(); orbit_it != m_objects.end(); ++orbit_it) {
+            if (orbit != orbit_it->first && orbit_it->second == cur_id) {
+                m_objects.erase(orbit_it);
+                break;                  // assuming no duplicate entries
+            }
+        }
+
+        // add obj to system's internal bookkeeping
+        std::pair<int, int> insertion(orbit, cur_id);
+        m_objects.insert(insertion);
+    }
 
 
     // special cases for if object is a planet or fleet
@@ -295,47 +319,65 @@ int System::Insert(int obj_id, int orbit)
 
 void System::Remove(UniverseObject* obj)
 {
-    //Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
+    Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
     //Logger().debugStream() << "..objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     //    Logger().debugStream() << ".... " << GetUniverse().Object(it->second)->Name();
 
-    // ensure object and its contents are all removed from system
-    std::vector<UniverseObject*> contained_objects = obj->FindObjects();
-    for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it)
-        this->Remove(*it);
-
-
-    if (obj->SystemID() != this->ID())
-        Logger().debugStream() << "System::Remove tried to remove an object whose system id was not this system.  Its current system id is: " << obj->SystemID();
-
-
-    // locate object in this system's map of objects, and erase if present
-    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        //Logger().debugStream() << "..system object id " << it->second;
-        if (it->second == obj->ID()) {
-            m_objects.erase(it);
-
-            obj->SetSystem(INVALID_OBJECT_ID);
-
-            //Logger().debugStream() << "....erased from system";
-
-            // UI bookeeping
-            if (universe_object_cast<Planet*>(obj))
-                UpdateOwnership();
-            else if (Fleet* fleet = universe_object_cast<Fleet*>(obj))
-                FleetRemovedSignal(*fleet);
-
-            StateChangedSignal();
-
-            return; // assuming object isn't in system twice...
-        }
+    // ensure object and (recursive) contents are all removed from system
+    std::list<UniverseObject*> removed_objects;
+    removed_objects.push_back(obj);
+    obj = 0;    // to ensure I don't accidentally use obj instead of cur_obj in subsequent code
+    // recursively get all objects contained within obj
+    for(std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
+        std::vector<UniverseObject*> contained_objects = (*it)->FindObjects();
+        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(removed_objects));
     }
 
 
-    // didn't find object.  this doesn't necessarily indicate a problem, as removing objects from
-    // systems may be done redundantly when inserting or moving objects that contain other objects
-    Logger().debugStream() << "System::Remove didn't find object in system";
+    // keep track of what is removed...
+    bool removed_something = false;
+    std::vector<Fleet*> removed_fleets;
+    bool removed_planet = false;
+
+
+    // do actual removal
+    for (std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
+        UniverseObject* cur_obj = *it;
+
+        if (this->ID() != cur_obj->SystemID())
+            Logger().debugStream() << "System::Remove tried to remove an object whose system id was not this system.  Its current system id is: " << cur_obj->SystemID();
+
+        for (ObjectMultimap::iterator map_it = m_objects.begin(); map_it != m_objects.end(); ++map_it) {
+            if (map_it->second == cur_obj->ID()) {
+                m_objects.erase(map_it);
+                cur_obj->SetSystem(INVALID_OBJECT_ID);
+
+                removed_something = true;
+
+                if (universe_object_cast<Planet*>(cur_obj))
+                    removed_planet = true;
+                if (Fleet* fleet = universe_object_cast<Fleet*>(cur_obj))
+                    removed_fleets.push_back(fleet);
+
+                break;                  // assuming no duplicate entries
+            }
+        }
+    }
+
+    if (removed_something) {
+        // UI bookeeping
+        if (removed_planet)
+            UpdateOwnership();
+        for (std::vector<Fleet*>::const_iterator it = removed_fleets.begin(); it != removed_fleets.end(); ++it)
+            FleetRemovedSignal(**it);
+
+        StateChangedSignal();
+    } else {
+        // didn't find object.  this doesn't necessarily indicate a problem, as removing objects from
+        // systems may be done redundantly when inserting or moving objects that contain other objects
+        Logger().debugStream() << "System::Remove didn't find object in system";
+    }
 }
 
 void System::Remove(int id)
@@ -442,6 +484,23 @@ std::pair<System::orbit_iterator, System::orbit_iterator> System::non_orbit_rang
     return m_objects.equal_range(-1);
 }
 
+bool System::OrbitOccupied(int orbit) const 
+{
+    return (m_objects.find(orbit) != m_objects.end());
+}
+
+std::set<int> System::FreeOrbits() const
+{
+    std::set<int> occupied;
+    for (const_orbit_iterator it = begin(); it != end(); ++it)
+        occupied.insert(it->first);
+    std::set<int> retval;
+    for (int i = 0; i < m_orbits; ++i)
+        if (occupied.find(i) == occupied.end())
+            retval.insert(i);
+    return retval;
+}
+
 System::lane_iterator System::begin_lanes()
 {
     return m_starlanes_wormholes.begin();
@@ -470,7 +529,7 @@ System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const
     ObjectMultimap retval;
     const Universe& universe = GetUniverse();
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (universe.Object(it->second)->GetVisibility(empire_id) <= PARTIAL_VISIBILITY)
+        if (universe.Object(it->second)->GetVisibility(empire_id) >= VIS_PARTIAL_VISIBILITY)
             retval.insert(*it);
     }
     return retval;

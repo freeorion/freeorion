@@ -22,12 +22,11 @@
 class SitRepEntry : public VarText
 {
 public:
-    
     /** tag name of sitrep update */
     static const std::string SITREP_UPDATE_TAG;
 
     /** an enumeration of the types of entries 
-        WARNING: make sure to update the LUT in UIClient.cpp which contain stringIDs for each type of SitRep
+        WARNING: make sure to update the LUT in ClientUI.cpp which contain stringIDs for each type of SitRep
         This LUT is in Client because the server has no need for it - it's a UI issue. This design in a way breaks
         the data-hiding feature of a class, but is needed because both clients and server share this code. It's better
         to have the discrepancy here than to bloat the server with data it will not use */
@@ -43,15 +42,17 @@ public:
         PLANET_LOST_STARVED_TO_DEATH,
         PLANET_COLONIZED,
         FLEET_ARRIVED_AT_DESTINATION,
+        EMPIRE_ELIMINATED,
+        VICTORY,
         NUM_SITREP_TYPES
     };
 
     /** \name Structors */ //@{
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
     //@}
-   
-    void SetType( EntryType type ) { m_type = type; }
-    EntryType GetType( ) { return m_type; }
+
+    void SetType(EntryType type) { m_type = type; }
+    EntryType GetType() { return m_type; }
 
 private:
     EntryType                  m_type; ///< the type of SitRep this is
@@ -65,21 +66,25 @@ private:
 // Sitrep constructors - for each SitRep type, there is a global constructor function See implementation file for
 // examples
 
-SitRepEntry *CreateTechResearchedSitRep(const std::string& tech_name);
+SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
 
-SitRepEntry *CreateBaseBuiltSitRep(int system_id, int planet_id);
+SitRepEntry* CreateBaseBuiltSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreateShipBuiltSitRep(int ship_id, int system_id);
+SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
 
-SitRepEntry *CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
+SitRepEntry* CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
 
-SitRepEntry *CreateCombatSitRep(int empire_id, int victor_id, int system_id);
+SitRepEntry* CreateCombatSitRep(int empire_id, int victor_id, int system_id);
 
-SitRepEntry *CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
+SitRepEntry* CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreatePlanetColonizedSitRep(int system_id, int planet_id);
+SitRepEntry* CreatePlanetColonizedSitRep(int system_id, int planet_id);
 
-SitRepEntry *CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
+SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
+
+SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name);
+
+SitRepEntry* CreateVictorySitRep(const std::string& reason_string, const std::string& empire_name);
 
 // template implementations
 template <class Archive>

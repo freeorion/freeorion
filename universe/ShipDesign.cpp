@@ -97,6 +97,13 @@ PartTypeManager::PartTypeManager() {
         ReportError(std::cerr, input.c_str(), result);
 }
 
+PartTypeManager::~PartTypeManager()
+{
+    for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+        delete it->second;
+    }
+}
+
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
     std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
     return it != m_parts.end() ? it->second : 0;
@@ -148,6 +155,9 @@ PartType::PartType(const std::string& name, const std::string& description, Ship
     m_effects(effects),
     m_graphic(graphic)
 {}
+
+PartType::~PartType()
+{ delete m_location; }
 
 const std::string& PartType::Name() const {
     return m_name;
@@ -225,6 +235,9 @@ HullType::HullType(const std::string& name, const std::string& description, doub
     m_effects(effects),
     m_graphic(graphic)
 {}
+
+HullType::~HullType()
+{ delete m_location; }
 
 const std::string& HullType::Name() const {
     return m_name;
@@ -304,6 +317,13 @@ HullTypeManager::HullTypeManager() {
               skip_p);
     if (!result.full)
         ReportError(std::cerr, input.c_str(), result);
+}
+
+HullTypeManager::~HullTypeManager()
+{
+    for (std::map<std::string, HullType*>::iterator it = m_hulls.begin(); it != m_hulls.end(); ++it) {
+        delete it->second;
+    }
 }
 
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {

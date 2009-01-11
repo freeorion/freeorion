@@ -1,6 +1,8 @@
 #include "DesignWnd.h"
 
 #include "../util/AppInterface.h"
+#include "../util/OptionsDB.h"
+#include "../util/MultiplayerCommon.h"
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
@@ -9,7 +11,6 @@
 #include "Sound.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
 #include "../universe/ShipDesign.h"
 
 #include <GG/DrawUtil.h>
@@ -26,7 +27,7 @@
 namespace {
     static const std::string PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     static const std::string EMPTY_STRING = "";
-    static const int BASES_LIST_BOX_ROW_HEIGHT = 100;
+    static const GG::Y BASES_LIST_BOX_ROW_HEIGHT(100);
 }
 
 //////////////////////////////////////////////////
@@ -55,22 +56,34 @@ public:
     mutable boost::signal<void (const PartType*)> ClickedSignal;
     mutable boost::signal<void (const PartType*)> DoubleClickedSignal;
 
-    static const int SIZE = 64;
+    static const GG::X WIDTH;
+    static const GG::Y HEIGHT;
 private:
     GG::StaticGraphic*  m_icon;
     const PartType*     m_part;
 };
+const GG::X PartControl::WIDTH(64);
+const GG::Y PartControl::HEIGHT(64);
 
 PartControl::PartControl(const PartType* part) :
-    GG::Control(0, 0, SIZE, SIZE, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, WIDTH, HEIGHT, GG::CLICKABLE),
     m_icon(0),
     m_part(part)
 {
     //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
-    m_icon = new GG::StaticGraphic(0, 0, SIZE, SIZE, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, WIDTH, HEIGHT, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_icon->Show();
     AttachChild(m_icon);
+
     SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+
+    if (m_part) {
+        Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
+        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),
+                                                                                    UserString(m_part->Name()),
+                                                                                    UserString(m_part->Description()))));
+    }
 }
 
 void PartControl::Render() {}
@@ -92,12 +105,12 @@ class PartsListBox : public CUIListBox {
 public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
-        PartsListBoxRow(int w, int h);
+        PartsListBoxRow(GG::X w, GG::Y h);
         virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
     };
 
     /** \name Structors */ //@{
-    PartsListBox(int x, int y, int w, int h);
+    PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h);
     //@}
 
     /** \name Accessors */ //@{
@@ -134,7 +147,7 @@ private:
     int                     m_previous_num_columns;
 };
 
-PartsListBox::PartsListBoxRow::PartsListBoxRow(int w, int h) :
+PartsListBox::PartsListBoxRow::PartsListBoxRow(GG::X w, GG::Y h) :
     CUIListBox::Row(w, h, "")    // drag_drop_data_type = "" implies not draggable row
 {}
 
@@ -179,7 +192,7 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
     }
 }
 
-PartsListBox::PartsListBox(int x, int y, int w, int h) :
+PartsListBox::PartsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     CUIListBox(x, y, w, h),
     m_part_classes_shown(),
     m_slot_types_shown(),
@@ -209,9 +222,8 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
     if (Visible() && old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
-        const int PART_SIZE = PartControl::SIZE;
-        const int TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
-        const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / PART_SIZE);
+        const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
+        const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / PartControl::WIDTH));
 
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
@@ -219,9 +231,8 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void PartsListBox::Populate() {
-    const int PART_SIZE = PartControl::SIZE;
-    const int TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, TOTAL_WIDTH / PART_SIZE);
+    const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
+    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / PartControl::WIDTH));
 
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
@@ -265,7 +276,7 @@ void PartsListBox::Populate() {
             if (cur_row)
                 Insert(cur_row);
             cur_col = 0;
-            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PART_SIZE);
+            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PartControl::HEIGHT);
         }
         ++cur_col;
 
@@ -371,7 +382,7 @@ void PartsListBox::HideAvailability(bool available, bool refresh_list) {
 class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    PartPalette(int w, int h);
+    PartPalette(GG::X w, GG::Y h);
     //@}
 
     /** \name Mutators */ //@{
@@ -408,21 +419,21 @@ private:
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
-DesignWnd::PartPalette::PartPalette(int w, int h) :
-    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), 0, 0, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
+    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), GG::X0, GG::Y0, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
     m_parts_list(0)
 {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
     EnableChildClipping(true);
 
-    m_parts_list = new PartsListBox(0, 0, 10, 10);
+    m_parts_list = new PartsListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
     AttachChild(m_parts_list);
     GG::Connect(m_parts_list->PartTypeClickedSignal,        PartTypeClickedSignal);
     GG::Connect(m_parts_list->PartTypeDoubleClickedSignal,  PartTypeDoubleClickedSignal);
 
     // class buttons
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
-        m_class_buttons[part_class] = (new CUIButton(10, 10, 10, UserString(boost::lexical_cast<std::string>(part_class))));
+        m_class_buttons[part_class] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(part_class))));
         AttachChild(m_class_buttons[part_class]);
         GG::Connect(m_class_buttons[part_class]->ClickedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
@@ -430,19 +441,19 @@ DesignWnd::PartPalette::PartPalette(int w, int h) :
 
     // slot type buttons
     for (ShipSlotType slot_type = ShipSlotType(0); slot_type != NUM_SHIP_SLOT_TYPES; slot_type = ShipSlotType(slot_type + 1)) {
-        m_slot_type_buttons[slot_type] = (new CUIButton(10, 10, 10, UserString(boost::lexical_cast<std::string>(slot_type))));
+        m_slot_type_buttons[slot_type] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(slot_type))));
         AttachChild(m_slot_type_buttons[slot_type]);
         GG::Connect(m_slot_type_buttons[slot_type]->ClickedSignal,
                     boost::bind(&DesignWnd::PartPalette::ToggleSlotType, this, slot_type, true));
     }
 
     // availability buttons
-    CUIButton* button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     m_availability_buttons.first = button;
     AttachChild(button);
     GG::Connect(button->ClickedSignal, 
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
-    button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
     m_availability_buttons.second = button;
     AttachChild(button);
     GG::Connect(button->ClickedSignal, 
@@ -465,16 +476,16 @@ void DesignWnd::PartPalette::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void DesignWnd::PartPalette::DoLayout() {
     const int PTS = ClientUI::Pts();
-    const int PTS_WIDE = PTS/2;         // guess at how wide per character the font needs
-    const int BUTTON_HEIGHT = PTS*3/2;
+    const GG::X PTS_WIDE(PTS/2);         // guess at how wide per character the font needs
+    const GG::Y  BUTTON_HEIGHT(PTS*3/2);
     const int BUTTON_SEPARATION = 3;    // vertical or horizontal sepration between adjacent buttons
     const int BUTTON_EDGE_PAD = 2;      // distance from edges of control to buttons
-    const int RIGHT_EDGE_PAD = 8;       // to account for border of CUIWnd
+    const GG::X RIGHT_EDGE_PAD(8);       // to account for border of CUIWnd
 
-    const int USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, 1);   // space in which to fit buttons
+    const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to fit buttons
     const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL = 14;                   // rough guesstimate... avoid overly long part class names
-    const int MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
-    const int MAX_BUTTONS_PER_ROW = std::max(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION), 1);
+    const GG::X MIN_BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_LABEL;
+    const int MAX_BUTTONS_PER_ROW = std::max(Value(USABLE_WIDTH / (MIN_BUTTON_WIDTH + BUTTON_SEPARATION)), 1);
 
     const int NUM_CLASS_BUTTONS = std::max(1, static_cast<int>(m_class_buttons.size()));
     const int NUM_SLOT_TYPE_BUTTONS = std::max(1, static_cast<int>(m_slot_type_buttons.size()));
@@ -495,10 +506,10 @@ void DesignWnd::PartPalette::DoLayout() {
 
     const int TOTAL_BUTTONS_PER_ROW = NUM_CLASS_BUTTONS_PER_ROW + num_non_class_buttons_per_row;
 
-    const int BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;
+    const GG::X BUTTON_WIDTH = (USABLE_WIDTH - (TOTAL_BUTTONS_PER_ROW - 1)*BUTTON_SEPARATION) / TOTAL_BUTTONS_PER_ROW;
 
-    const int COL_OFFSET = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
-    const int ROW_OFFSET = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
+    const GG::X COL_OFFSET = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
+    const GG::Y ROW_OFFSET = BUTTON_HEIGHT + BUTTON_SEPARATION;   // vertical distance between each row of buttons
 
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW, row = -1;
@@ -515,7 +526,7 @@ void DesignWnd::PartPalette::DoLayout() {
 
     // place parts list.  note: assuming at least as many rows of class buttons as availability buttons, as should
     //                          be the case given how num_non_class_buttons_per_row is determined
-    m_parts_list->SizeMove(GG::Pt(0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(BUTTON_SEPARATION, BUTTON_SEPARATION));
+    m_parts_list->SizeMove(GG::Pt(GG::X0, BUTTON_EDGE_PAD + ROW_OFFSET*(row + 1)), ClientSize() - GG::Pt(GG::X(BUTTON_SEPARATION), GG::Y(BUTTON_SEPARATION)));
 
     // place slot type buttons
     col = NUM_CLASS_BUTTONS_PER_ROW;
@@ -669,7 +680,7 @@ void DesignWnd::PartPalette::Reset() {
 class BasesListBox : public CUIListBox {
 public:
     /** \name Structors */ //@{
-    BasesListBox(int x, int y, int w, int h);
+    BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h);
     //@}
 
     /** \name Accessors */ //@{
@@ -694,6 +705,8 @@ public:
                                     DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
                                     DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+    mutable boost::signal<void (const ShipDesign*)>
+                                    DesignBrowsedSignal;                    //!< a completed design was browsed (clicked once)
     mutable boost::signal<void (const HullType*)>
                                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 
@@ -715,7 +728,7 @@ private:
 
     class BasesListBoxRow : public CUIListBox::Row {
     public:
-        BasesListBoxRow(int w, int h);
+        BasesListBoxRow(GG::X w, GG::Y h);
         virtual void                    Render();
         virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     };
@@ -724,7 +737,7 @@ private:
     public:
         class HullPanel : public GG::Control {
         public:
-            HullPanel(int w, int h, const std::string& hull);
+            HullPanel(GG::X w, GG::Y h, const std::string& hull);
             virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
             virtual void                    Render() {}
         private:
@@ -732,7 +745,7 @@ private:
             GG::TextControl*                m_name;
             GG::TextControl*                m_cost_and_build_time;
         };
-        HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts);
+        HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::vector<std::string>& parts);
         const std::string&              Hull() const { return m_hull; }
         const std::vector<std::string>& Parts() const { return m_parts; }
     private:
@@ -742,21 +755,21 @@ private:
 
     class CompletedDesignListBoxRow : public BasesListBoxRow {
     public:
-        CompletedDesignListBoxRow(int w, int h, int design_id);
+        CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id);
         int                             DesignID() const { return m_design_id; }
     private:
         int                             m_design_id;
     };
 };
 
-BasesListBox::BasesListBoxRow::BasesListBoxRow(int w, int h) :
+BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h) :
     CUIListBox::Row(w, h, "BasesListBoxRow")
 {}
 
 void BasesListBox::BasesListBoxRow::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 1);
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_WHITE, 1);
 }
 
 void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -766,17 +779,17 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         at(0)->Resize(Size());
 }
 
-BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(int w, int h, const std::string& hull) :
-    GG::Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+BasesListBox::HullAndPartsListBoxRow::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_graphic(0),
     m_name(0),
     m_cost_and_build_time(0)
 {
     const HullType* hull_type = GetHullType(hull);
     if (hull_type) {
-        m_graphic = new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
-        m_name = new GG::TextControl(0, 0, UserString(hull_type->Name()), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_NONE);
+        m_name = new GG::TextControl(GG::X0, GG::Y0, UserString(hull_type->Name()), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE);
         AttachChild(m_name);
     }
 }
@@ -792,7 +805,7 @@ void BasesListBox::HullAndPartsListBoxRow::HullPanel::SizeMove(const GG::Pt& ul,
     }
 }
 
-BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(int w, int h, const std::string& hull, const std::vector<std::string>& parts) :
+BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::vector<std::string>& parts) :
     BasesListBoxRow(w, h),
     m_hull(hull),
     m_parts(parts)
@@ -803,11 +816,11 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(int w, int h, const
         push_back(new HullPanel(w, h, m_hull));
     } else {
         // contents are a hull and parts  TODO: make a HullAndPartsPanel
-        push_back(new GG::StaticGraphic(0, 0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
+        push_back(new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC));
     }
 }
 
-BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(int w, int h, int design_id) :
+BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id) :
     BasesListBoxRow(w, h),
     m_design_id(design_id)
 {
@@ -818,7 +831,7 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(int w, int h,
     push_back(new ShipDesignPanel(w, h, design_id));
 }
 
-BasesListBox::BasesListBox(int x, int y, int w, int h) :
+BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     CUIListBox(x, y, w, h),
     m_empire_id_shown(-1),  // all empires
     m_availabilities_shown(std::make_pair(false, false)),
@@ -1010,6 +1023,14 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 void BasesListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
+    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (design_row) {
+        int id = design_row->DesignID();
+        const ShipDesign* design = GetShipDesign(id);
+        if (design)
+            DesignBrowsedSignal(design);
+    }
+
     HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
     if (box_row) {
         const std::string& hull_name = box_row->Hull();
@@ -1089,7 +1110,7 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
 class DesignWnd::BaseSelector : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    BaseSelector(int w, int h);
+    BaseSelector(GG::X w, GG::Y h);
     //@}
 
     /** \name Mutators */ //@{
@@ -1105,11 +1126,13 @@ public:
                     DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
                     DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+    mutable boost::signal<void (const ShipDesign*)>
+                    DesignBrowsedSignal;                    //!< a complete design was browsed (clicked once)
     mutable boost::signal<void (const HullType*)>
                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 private:
     void            DoLayout();
-    void            WndSelected(int index);
+    void            WndSelected(std::size_t index);
 
     int                                 m_empire_id;
 
@@ -1119,48 +1142,49 @@ private:
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 
-DesignWnd::BaseSelector::BaseSelector(int w, int h) :
-    CUIWnd(UserString("DESIGN_WND_STARTS"), 0, 0, w, h, GG::CLICKABLE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
+DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
+    CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
     m_empire_id(-1),
     m_tabs(0),
     m_hulls_list(0),
     m_designs_list(0)
 {
-    CUIButton* button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
+    CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     m_availability_buttons.first = button;
     AttachChild(button);
     GG::Connect(button->ClickedSignal, 
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true));
-    button = new CUIButton(10, 10, 10, UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+    button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
     m_availability_buttons.second = button;
     AttachChild(button);
     GG::Connect(button->ClickedSignal, 
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false));
 
-    m_tabs = new GG::TabWnd(5, 2, 10, 10, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::CLICKABLE);
+    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::CLICKABLE);
     GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
     AttachChild(m_tabs);
 
-    m_hulls_list = new BasesListBox(0, 0, 10, 10);
+    m_hulls_list = new BasesListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     GG::Connect(m_hulls_list->HullBrowsedSignal,                DesignWnd::BaseSelector::HullBrowsedSignal);
 
-    m_designs_list = new BasesListBox(0, 0, 10, 10);
+    m_designs_list = new BasesListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
     GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
+    GG::Connect(m_designs_list->DesignBrowsedSignal,            DesignWnd::BaseSelector::DesignBrowsedSignal);
 
-    //m_saved_designs_list = new CUIListBox(0, 0, 10, 10);
-    m_tabs->AddWnd(new GG::TextControl(0, 0, 30, 20, UserString("DESIGN_NO_PART"),
-                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    //m_saved_designs_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
+    m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
+                                       ClientUI::GetFont(),
                                        ClientUI::TextColor()),
                    UserString("DESIGN_WND_SAVED_DESIGNS"));
 
-    //m_templates_list = new CUIListBox(0, 0, 10, 10);
-    m_tabs->AddWnd(new GG::TextControl(0, 0, 30, 20, UserString("DESIGN_NO_PART"),
-                                       GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    //m_templates_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
+    m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
+                                       ClientUI::GetFont(),
                                        ClientUI::TextColor()),
                    UserString("DESIGN_WND_TEMPLATES"));
 
@@ -1235,16 +1259,16 @@ void DesignWnd::BaseSelector::ToggleAvailability(bool available) {
 
 
 void DesignWnd::BaseSelector::DoLayout() {
-    const int LEFT_PAD = 5;
-    const int TOP_PAD = 2;
-    const int AVAILABLE_WIDTH = ClientWidth() - 2*LEFT_PAD;
+    const GG::X LEFT_PAD(5);
+    const GG::Y TOP_PAD(2);
+    const GG::X AVAILABLE_WIDTH = ClientWidth() - 2*LEFT_PAD;
     const int BUTTON_SEPARATION = 3;
-    const int BUTTON_WIDTH = (AVAILABLE_WIDTH - BUTTON_SEPARATION) / 2;
+    const GG::X BUTTON_WIDTH = (AVAILABLE_WIDTH - BUTTON_SEPARATION) / 2;
     const int PTS = ClientUI::Pts();
-    const int BUTTON_HEIGHT = PTS * 2;
+    const GG::Y BUTTON_HEIGHT(PTS * 2);
 
-    int top = TOP_PAD;
-    int left = LEFT_PAD;
+    GG::Y top(TOP_PAD);
+    GG::X left(LEFT_PAD);
 
     m_availability_buttons.first->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
@@ -1257,7 +1281,7 @@ void DesignWnd::BaseSelector::DoLayout() {
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
 }
 
-void DesignWnd::BaseSelector::WndSelected(int index) {
+void DesignWnd::BaseSelector::WndSelected(std::size_t index) {
     Reset();
 }
 
@@ -1313,7 +1337,7 @@ private:
 };
 
 SlotControl::SlotControl() :
-    GG::Control(0, 0, PartControl::SIZE, PartControl::SIZE, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, PartControl::WIDTH, PartControl::HEIGHT, GG::CLICKABLE),
     m_highlighted(false),
     m_slot_type(INVALID_SHIP_SLOT_TYPE),
     m_x_position_fraction(0.4),
@@ -1324,7 +1348,7 @@ SlotControl::SlotControl() :
 }
 
 SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
-    GG::Control(0, 0, PartControl::SIZE, PartControl::SIZE, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, PartControl::WIDTH, PartControl::HEIGHT, GG::CLICKABLE),
     m_highlighted(false),
     m_slot_type(slot_type),
     m_x_position_fraction(x),
@@ -1440,9 +1464,9 @@ void SlotControl::Render() {
     // TODO: Render differently depending on ShipSlotType
 
     if (m_highlighted)
-        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_WHITE, 2);
+        GG::FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_WHITE, 2);
     else
-        GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+        GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void SlotControl::Highlight(bool actually) {
@@ -1479,7 +1503,7 @@ void SlotControl::EmitNullSlotContentsAlteredSignal() {
 class DesignWnd::MainPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    MainPanel(int w, int h);
+    MainPanel(GG::X w, GG::Y h);
     //@}
 
     /** \name Accessors */ //@{
@@ -1542,8 +1566,8 @@ private:
 // static
 DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_func_ptr = &DesignWnd::MainPanel::SetPart;
 
-DesignWnd::MainPanel::MainPanel(int w, int h) :
-    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), 0, 0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
+    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
     m_hull(0),
     m_background_image(0),
     m_slots(),
@@ -1556,33 +1580,33 @@ DesignWnd::MainPanel::MainPanel(int w, int h) :
 {
     EnableChildClipping();
 
-    boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-    m_design_name_label = new GG::TextControl(0, 0, 10, 10, UserString("DESIGN_WND_DESIGN_NAME"), font, 
+    m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), font, 
                                               ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
                                               GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_design_name_label);
 
-    m_design_name = new CUIEdit(0, 0, 10, UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
+    m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
                                 ClientUI::TextColor(), ClientUI::EditIntColor(), GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_design_name);
 
-    m_design_description_label = new GG::TextControl(0, 0, 10, 10, UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font, 
+    m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font, 
                                                      ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
                                                      GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_design_description_label);
 
-    m_design_description = new CUIEdit(0, 0, 10, UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
+    m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
                                 ClientUI::TextColor(), ClientUI::EditIntColor(), GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_design_description);
 
-    m_confirm_button = new CUIButton(0, 0, 10, UserString("DESIGN_WND_CONFIRM"), font, ClientUI::ButtonColor(),
+    m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::ButtonColor(),
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->ClickedSignal, DesignConfirmedSignal);
     m_confirm_button->Disable(true);
 
-    m_clear_button = new CUIButton(0, 0, 10, UserString("DESIGN_WND_CLEAR"), font, ClientUI::ButtonColor(),
+    m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::ButtonColor(),
                                    ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->ClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
@@ -1612,14 +1636,14 @@ const std::string& DesignWnd::MainPanel::Hull() const {
 
 const std::string& DesignWnd::MainPanel::DesignName() const {
     if (m_design_name)
-        return m_design_name->WindowText();
+        return m_design_name->Text();
     else
         return EMPTY_STRING;
 }
 
 const std::string& DesignWnd::MainPanel::DesignDescription() const {
     if (m_design_description)
-        return m_design_description->WindowText();
+        return m_design_description->Text();
     else
         return EMPTY_STRING;
 }
@@ -1658,7 +1682,17 @@ void  DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
 }
 
 void DesignWnd::MainPanel::AddPart(const PartType* part) {
-    // TODO: IMPLEMENT THIS
+    if (!part) return;
+    for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots to find out that can mount part
+        const ShipSlotType slot_type = m_slots[i]->SlotType();
+        const PartType* part_type = m_slots[i]->GetPart();          // check if this slot is empty
+
+        if (!part_type && part->CanMountInSlotType(slot_type)) {    // ... and if the part can mount here
+            SetPart(part, i);                                       // add part to slot
+            return;
+        }
+    }
+    Logger().debugStream() << "DesignWnd::MainPanel::AddPart(" << (part ? part->Name() : "no part") << ") couldn't find a slot for the part";
 }
 
 void DesignWnd::MainPanel::ClearParts() {
@@ -1677,7 +1711,7 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     m_background_image = 0;
     if (m_hull) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::HullTexture(hull->Name());
-        m_background_image = new GG::StaticGraphic(0, 0, 1, 1, texture, GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_background_image = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture, GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_background_image);
         MoveChildDown(m_background_image);
     }
@@ -1750,25 +1784,25 @@ void DesignWnd::MainPanel::DoLayout() {
     // position labels and text edit boxes for name and description and buttons to clear and confirm design
 
     const int PTS = ClientUI::Pts();
-    const int PTS_WIDE = PTS / 2;           // guess at how wide per character the font needs
-    const int BUTTON_HEIGHT = PTS * 2;
-    const int LABEL_WIDTH = PTS_WIDE * 15;
+    const GG::X PTS_WIDE(PTS / 2);           // guess at how wide per character the font needs
+    const GG::Y BUTTON_HEIGHT(PTS * 2);
+    const GG::X LABEL_WIDTH = PTS_WIDE * 15;
     const int PAD = 6;
     const int GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT = 25;    // rough guesstimate... avoid overly long part class names
-    const int BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
+    const GG::X BUTTON_WIDTH = PTS_WIDE*GUESSTIMATE_NUM_CHARS_IN_BUTTON_TEXT;
 
-    int edit_right = ClientWidth();
-    int edit_height = BUTTON_HEIGHT;
-    int confirm_right = ClientWidth() - PAD;
+    GG::X edit_right = ClientWidth();
+    GG::Y edit_height = BUTTON_HEIGHT;
+    GG::X confirm_right = ClientWidth() - PAD;
 
     if (m_confirm_button) {
-        GG::Pt lr = GG::Pt(confirm_right, BUTTON_HEIGHT) + GG::Pt(0, PAD);
+        GG::Pt lr = GG::Pt(confirm_right, BUTTON_HEIGHT) + GG::Pt(GG::X0, GG::Y(PAD));
         GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         m_confirm_button->SizeMove(ul, lr);
         edit_right = ul.x - PAD;
     }
     if (m_clear_button) {
-        GG::Pt lr = ClientSize() + GG::Pt(-PAD, -PAD);
+        GG::Pt lr = ClientSize() + GG::Pt(-GG::X(PAD), -GG::Y(PAD));
         GG::Pt ul = lr - GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
         m_clear_button->SizeMove(ul, lr);
     }
@@ -1776,7 +1810,8 @@ void DesignWnd::MainPanel::DoLayout() {
     if (m_design_name)
         edit_height = m_design_name->Height();
 
-    int x = PAD, y = PAD;
+    GG::X x(PAD);
+    GG::Y y(PAD);
     if (m_design_name_label) {
         GG::Pt ul = GG::Pt(x, y);
         GG::Pt lr = ul + GG::Pt(LABEL_WIDTH, edit_height);
@@ -1790,7 +1825,7 @@ void DesignWnd::MainPanel::DoLayout() {
         x = lr.x + PAD;
     }
 
-    x = PAD;
+    x = GG::X(PAD);
     y += (edit_height + PAD);
 
     if (m_design_description_label) {
@@ -1809,10 +1844,10 @@ void DesignWnd::MainPanel::DoLayout() {
     y += (edit_height);
 
     // place background image of hull
-    GG::Rect background_rect = GG::Rect(GG::Pt(0, y), ClientLowerRight());
+    GG::Rect background_rect = GG::Rect(GG::Pt(GG::X0, y), ClientLowerRight());
 
     if (m_background_image) {
-        GG::Pt ul = GG::Pt(0, y);
+        GG::Pt ul = GG::Pt(GG::X0, y);
         GG::Pt lr = ClientSize();
         m_background_image->SizeMove(ul, lr);
         background_rect = m_background_image->RenderedArea();
@@ -1821,8 +1856,8 @@ void DesignWnd::MainPanel::DoLayout() {
     // place slot controls over image of hull
     for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it) {
         SlotControl* slot = *it;
-        int x = background_rect.Left() - slot->Width()/2 - ClientUpperLeft().x + static_cast<int>(slot->XPositionFraction() * background_rect.Width());
-        int y = background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + static_cast<int>(slot->YPositionFraction() * background_rect.Height());
+        GG::X x(background_rect.Left() - slot->Width()/2 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width());
+        GG::Y y(background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
     }
 }
@@ -1838,8 +1873,8 @@ void DesignWnd::MainPanel::DesignChanged() {
 //////////////////////////////////////////////////
 // DesignWnd                                    //
 //////////////////////////////////////////////////
-DesignWnd::DesignWnd(int w, int h) :
-    GG::Wnd(0, 0, w, h, GG::ONTOP | GG::CLICKABLE),
+DesignWnd::DesignWnd(GG::X w, GG::Y h) :
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::CLICKABLE),
     m_detail_panel(0),
     m_base_selector(0),
     m_part_palette(0),
@@ -1848,14 +1883,14 @@ DesignWnd::DesignWnd(int w, int h) :
     Sound::TempUISoundDisabler sound_disabler;
     EnableChildClipping(true);
 
-    int base_selector_width = 300;
-    int pedia_height = 200;
-    int main_height = 350;
-    int main_bottom = pedia_height + main_height;
+    GG::X base_selector_width(300);
+    GG::Y pedia_height(200);
+    GG::Y main_height(350);
+    GG::Y main_bottom = pedia_height + main_height;
 
     m_detail_panel = new EncyclopediaDetailPanel(ClientWidth() - base_selector_width, pedia_height);
     AttachChild(m_detail_panel);
-    m_detail_panel->MoveTo(GG::Pt(base_selector_width, 0));
+    m_detail_panel->MoveTo(GG::Pt(base_selector_width, GG::Y0));
 
     m_main_panel = new MainPanel(ClientWidth() - base_selector_width, main_height);
     AttachChild(m_main_panel);
@@ -1873,8 +1908,9 @@ DesignWnd::DesignWnd(int w, int h) :
     AttachChild(m_base_selector);
     GG::Connect(m_base_selector->DesignSelectedSignal,          &MainPanel::SetDesign,              m_main_panel);
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
+    GG::Connect(m_base_selector->DesignBrowsedSignal,           &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     GG::Connect(m_base_selector->HullBrowsedSignal,             &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
-    m_base_selector->MoveTo(GG::Pt(0, 0));
+    m_base_selector->MoveTo(GG::Pt());
 
     GG::Connect(this->EmpireDesignsChangedSignal,               &BaseSelector::Reset,               m_base_selector);
 }
@@ -1901,11 +1937,11 @@ void DesignWnd::Render() {
     glPolygonMode(GL_BACK, GL_FILL);
     glBegin(GL_POLYGON);
         glColor(ClientUI::WndColor());
-        glVertex2i(ul.x, ul.y);
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x, lr.y);
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(ul.x, ul.y);
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -1939,24 +1975,14 @@ void DesignWnd::AddDesign() {
         graphic = hull->Graphic();
 
     // create design from stuff chosen in UI
-    ShipDesign* design = new ShipDesign(name, description, empire_id, CurrentTurn(),
-                                        hull_name, parts, graphic, "some model");
-
-    if (!design) {
-        Logger().errorStream() << "DesignWnd::AddDesign failed to create a new ShipDesign object";
-        return;
-    }
+    ShipDesign design(name, description, empire_id, CurrentTurn(),
+                      hull_name, parts, graphic, "some model");
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ShipDesignOrder(empire_id, new_design_id, design)));
 
     EmpireDesignsChangedSignal();
 
-    Logger().debugStream() << "Added new design: " << design->Name();
-
-    //const Universe& universe = GetUniverse();
-    //for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
-    //    Logger().debugStream() << "Shipdesign: " << it->second->Name();
+    Logger().debugStream() << "Added new design: " << design.Name();
 }
-
-

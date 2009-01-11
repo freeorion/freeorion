@@ -3,6 +3,7 @@
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
 #include "../../util/XMLDoc.h"
+#include "../../util/MultiplayerCommon.h"
 
 #include <OgreCamera.h>
 #include <OgreLogManager.h>

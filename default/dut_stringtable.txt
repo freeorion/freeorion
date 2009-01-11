@@ -222,7 +222,7 @@ OPTIONS_DB_UI_SOUND_FARMING_FOCUS
 Het geluidsbestand dat afgespeeld moet worden als een agrarische focusknop geklikt wordt.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Het geluidsbestand dat afgespeeld moet worden als een industriële focusknop geklikt wordt.
+Het geluidsbestand dat afgespeeld moet worden als een industriÃ«le focusknop geklikt wordt.
 
 OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
 Het geluidsbestand dat afgespeeld moet worden als een onderzoeks focusknop geklikt wordt.
@@ -312,22 +312,22 @@ OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
 Zet GebruikersInterface binnenste rand kleur.
 
 OPTIONS_DB_UI_KNOWN_TECH
-Zet kleur van bekende technologiën in de technologie boom.
+Zet kleur van bekende technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Zet tekst en rand kleur van bekende technologiën in de technologie boom.
+Zet tekst en rand kleur van bekende technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH
-Zet kleur van onderzoekbare technologiën in de technologie boom.
+Zet kleur van onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
-Zet tekst en rand kleur van onderzoekbare technologiën in de technologie boom.
+Zet tekst en rand kleur van onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH
-Zet kleur van niet-onderzoekbare technologiën in de technologie boom.
+Zet kleur van niet-onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
-Zet tekst en rand kleur van niet-onderzoekbare technologiën in de technologie boom.
+Zet tekst en rand kleur van niet-onderzoekbare technologiÃ«n in de technologie boom.
 
 OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
 Zet achtergrondkleur van de voortgangsbalk in de technologie boom.
@@ -348,19 +348,19 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Zet grootte van systeem selectie indicatoren (relatief te opzichte van systeem iconen).
 
 OPTIONS_DB_UI_TECH_CATEGORY_1
-Zet kleur van de eerste categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de eerste categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_2
-Zet kleur van de tweede categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de tweede categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_3
-Zet kleur van de derde categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de derde categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_4
-Zet kleur van de vierde categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de vierde categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_5
-Zet kleur van de vijfde categorie van technologiën gedefinieerd in tech.xml.
+Zet kleur van de vijfde categorie van technologiÃ«n gedefinieerd in tech.xml.
 
 OPTIONS_DB_UI_TECH_CATEGORY_6
 Sets color of the sixth category of techs defined in techs.xml.
@@ -408,10 +408,10 @@ OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 De frequentie van verschijning van specials in de melkweg om te genereren. 
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-De horizontale afstand tussen technologiën in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
+De horizontale afstand tussen technologiÃ«n in het onderzoeksvenster, in meerdere van de breedte voor iedere enkele theorie technologie.
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-De verticale afstand tussen technologiën in het onderzoeksvenster, in meerdere van de hoogte voor iedere enkele theorie technologie.
+De verticale afstand tussen technologiÃ«n in het onderzoeksvenster, in meerdere van de hoogte voor iedere enkele theorie technologie.
 
 OPTIONS_DB_SAVE_DIR
 De directorie waarin opgeslagen spellen opgeslagen en vanuit geladen worden. Directorienamen zijn relatief ten opzichte van de lokatie van het uitvoerbaar bestand.
@@ -920,7 +920,7 @@ OPTIONS_SOUND_FARMING
 Agrarische focus
 
 OPTIONS_SOUND_INDUSTRY
-Industri�le focus
+Industriële focus
 
 OPTIONS_SOUND_MINING
 Mijnindustrie focus
@@ -992,19 +992,19 @@ OPTIONS_PAGE_DIRECTORIES
 Directories
 
 OPTIONS_TECH_COLORS
-Technologi�n
+Technologiën
 
 OPTIONS_TEXT_AND_BORDER_COLOR
 Tekst en Rand
 
 OPTIONS_KNOWN_TECH_COLORS
-Bekende technologiën
+Bekende technologiÃ«n
 
 OPTIONS_RESEARCHABLE_TECH_COLORS
-Ondezoekbare technologiën
+Ondezoekbare technologiÃ«n
 
 OPTIONS_UNRESEARCHABLE_TECH_COLORS
-Niet-onderzoekbare technologiën
+Niet-onderzoekbare technologiÃ«n
 
 OPTIONS_TECH_PROGRESS_COLORS
 Onderzoekvoortgangsbalk
@@ -1077,7 +1077,7 @@ PLANET_PANEL
 Planeet Paneel
 
 PL_ASTEROID_BELT
-Astero�dengordel
+Asteroïdengordel
 
 PL_UNINHABITED
 Onbewoond
@@ -1111,7 +1111,7 @@ RP_MINERALS
 Mineralen Productie
 
 RP_INDUSTRY
-Industri�le Uitvoer
+Industriële Uitvoer
 
 RP_RESEARCH
 Onderzoek Uitvoer
@@ -1270,7 +1270,7 @@ TECH_WND_TECH_INCOMPLETE
 Onvoltooid
 
 TECH_WND_TYPE_THEORIES
-Theorie�n
+Theorieën
 
 TECH_WND_TYPE_APPLICATIONS
 Toepassingen
@@ -1659,10 +1659,10 @@ HOMEWORLD_SPECIAL_DESCRIPTION
 Deze planeet is de geboorteplaats van je soort; je weet hoe je hem het beste moet gebruiken, en krijgt daardoor bonussen op alle planetaire statistieken.
 
 ANCIENT_RUINS_SPECIAL
-Oude Ru�nes
+Oude Ruïnes
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-Deze planeet bevat de ruïnes van een geavanceerde oude soort, die vergeten en niet in de geschiedenisboeken terug te vinden zijn, dit geeft een bonus in onderzoek.
+Deze planeet bevat de ruÃ¯nes van een geavanceerde oude soort, die vergeten en niet in de geschiedenisboeken terug te vinden zijn, dit geeft een bonus in onderzoek.
 
 MINERALS_SPECIAL
 Minerale Rijkdom
@@ -1704,7 +1704,7 @@ TIDAL_LOCK_SPECIAL
 Getijde-vaste Rotatie
 
 TIDAL_LOCK_SPECIAL_DESC
-De getijde van deze planeet is verbonden met de ster waar hij omheen draait. Zijn dag en jaar hebben dezelfde duur en een helft van de planeet is continue dag, de andere kant continue nacht. Infrastructuurgroei is vertraagd, maar zodra deze er is zal de industriële capaciteit voordelen hebben van de lokale stabiele oppervlaktecondities.
+De getijde van deze planeet is verbonden met de ster waar hij omheen draait. Zijn dag en jaar hebben dezelfde duur en een helft van de planeet is continue dag, de andere kant continue nacht. Infrastructuurgroei is vertraagd, maar zodra deze er is zal de industriÃ«le capaciteit voordelen hebben van de lokale stabiele oppervlaktecondities.
 
 ECCENTRIC_ORBIT_SPECIAL
 Eccentrische Omloopbaan
@@ -1773,7 +1773,7 @@ aarde
 PT_OCEAN
 oceaan
 PT_ASTEROIDS
-asteroïden
+asteroÃ¯den
 PT_GASGIANT
 gas reus
 
@@ -1793,7 +1793,7 @@ groot
 SZ_HUGE
 gigantisch
 SZ_ASTEROIDS
-astero�den
+asteroïden
 SZ_GASGIANT
 gas reus
 
@@ -2405,7 +2405,7 @@ LRN_PHYS_BRAIN
 Het Fysieke Brein
 
 LRN_PHYS_BRAIN_DESC
-De structuren en hun functies in het brein worden bepaald. De electroschemische en quantum natuur van het denken en geheugen worden blootgelegd. Doordat de werking begrepen wordt, zijn aanpassing en versterking van breinfuncties mogelijk, en worden nieuwe idee�n bedacht over de grenzen van het denken, en over de expressie vervanging daarvan.
+De structuren en hun functies in het brein worden bepaald. De electroschemische en quantum natuur van het denken en geheugen worden blootgelegd. Doordat de werking begrepen wordt, zijn aanpassing en versterking van breinfuncties mogelijk, en worden nieuwe ideeën bedacht over de grenzen van het denken, en over de expressie vervanging daarvan.
 
 LRN_ALGO_ELEGANCE
 Algoritmische Elegantie
@@ -2414,7 +2414,7 @@ LRN_ALGO_ELEGANCE_DESC
 Met toenemende complexiteit van gegevens analyse problemen, traditionele metingen van de algoritme efficientie worden steeds minder bruikbaar door de beperkingen van onomkeerbare complexiteit. Op dit punt worden andere meetmethoden van algoritmische vorm en functie significant; esthetisch en metaforisch, de elegantie van de oplossing moet geoptimaliseerd worden.
 
 LRN_TRANSLING_THT
-Translingu�stiek
+Translinguïstiek
 
 LRN_TRANSLING_THT_DESC
 Een minder intellect worstelt met, of accepteert de beperkingen van de taalt die ze geleerd hebben. Toerijkende intellectuelen bereiken en voelen een beperking door de concepten om dingen te verwoorden. Echt grote intellectuelen kunnen zich ontdoen van de ketens van de taal, vormen en analyseren gedachten over de rand van een verhevenheid. Maar mindere grote intellectuelen zullen geisoleerd en onbeduidend achterblijven, want zonder taal om gedachten over te brengen, hoe moeten zij hun inzichten delen?
@@ -2447,7 +2447,7 @@ LRN_EVERYTHING
 Theorie van Alles
 
 LRN_EVERYTHING_DESC
-Vroege, na�ve theori�n beschreven onderdelen van de vier fundamentele krachten van de natuur: elektromagnetisme, de sterke en zwakke kernkrachten en zwaartekracht. Een compleet raamwerk die alle krachten als speciale gevallen van een enkele interactie beschrijft is de heilige graal van de wetenschap. Deze theorie beschrijft de vroegste momenten van het universum, de meest verstoorde diepten van een singulariteit, de strakste draaiingen van verborgen dimensies en het uiteindelijke lot van de kosmos. Maar, er kunnen nog lagen van realiteit "bestaan" buiten hetgeen wat door de wetenschap kan worden geobserveerd en beschreven...
+Vroege, naïve theoriën beschreven onderdelen van de vier fundamentele krachten van de natuur: elektromagnetisme, de sterke en zwakke kernkrachten en zwaartekracht. Een compleet raamwerk die alle krachten als speciale gevallen van een enkele interactie beschrijft is de heilige graal van de wetenschap. Deze theorie beschrijft de vroegste momenten van het universum, de meest verstoorde diepten van een singulariteit, de strakste draaiingen van verborgen dimensies en het uiteindelijke lot van de kosmos. Maar, er kunnen nog lagen van realiteit "bestaan" buiten hetgeen wat door de wetenschap kan worden geobserveerd en beschreven...
 
 LRN_FORCE_FIELD
 Krachtveld Harmoniciteit
@@ -2495,7 +2495,7 @@ GRO_GENETIC_ENG
 Genetische Modificatie
 
 GRO_GENETIC_ENG_DESC
-Het werkpallet van de genetica is zo gevarieerd als de vormen van leven van waar het deze leent. Genen kunnen verwijderd, gekopieerd en in andere genomen geintegreerd worden om transgenetische organismen te cre�ren met combinaties van eigenschappen die niet bestaan of mogelijk zijn in de natuur. Daarnaast is het mogelijk om, voordat de genen weer ingevoegd worden, de basiscodes direct aan te passen om zo totaal nieuwe genen te maken. De technieken zijn echter beperkt tot kleine aanpassingen van bestaande genen die beschikbaar zijn voor onderzoek.
+Het werkpallet van de genetica is zo gevarieerd als de vormen van leven van waar het deze leent. Genen kunnen verwijderd, gekopieerd en in andere genomen geintegreerd worden om transgenetische organismen te creëren met combinaties van eigenschappen die niet bestaan of mogelijk zijn in de natuur. Daarnaast is het mogelijk om, voordat de genen weer ingevoegd worden, de basiscodes direct aan te passen om zo totaal nieuwe genen te maken. De technieken zijn echter beperkt tot kleine aanpassingen van bestaande genen die beschikbaar zijn voor onderzoek.
 
 GRO_MEDICAL_PATH
 Medische Pathologie
@@ -2519,7 +2519,7 @@ GRO_SYMBIOTIC_BIO
 Symbiotische Biologie
 
 GRO_SYMBIOTIC_BIO_DESC
-Sinds de eerste gedomesticeerde dieren en agrarische planten ontdeken gemeenschappen de voordelen van symbiotische relaties met andere soorten. Later worden bacteri�n of natuurlijke parasieten vaak gebruikt voor medische doeleinden. In deze vroege vormen is echter (in ideale omstandigheden) de dominante soort in volledige controle over de relatie, met het andere organisme als alleen bedienend aan zijn eigenaar. Echte symbiose gebeurt alleen als beide organismen van elkaar kunnen profiteren, elkaar helpend en door samenwerking afhankelijk zijn van deze voordelen. Deze voordelige combinatie zal groter zijn dan de som van de losse gedeelten.
+Sinds de eerste gedomesticeerde dieren en agrarische planten ontdeken gemeenschappen de voordelen van symbiotische relaties met andere soorten. Later worden bacteriën of natuurlijke parasieten vaak gebruikt voor medische doeleinden. In deze vroege vormen is echter (in ideale omstandigheden) de dominante soort in volledige controle over de relatie, met het andere organisme als alleen bedienend aan zijn eigenaar. Echte symbiose gebeurt alleen als beide organismen van elkaar kunnen profiteren, elkaar helpend en door samenwerking afhankelijk zijn van deze voordelen. Deze voordelige combinatie zal groter zijn dan de som van de losse gedeelten.
 
 GRO_GENETIC_MED
 Genetisch Medicijn

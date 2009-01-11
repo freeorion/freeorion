@@ -1,6 +1,7 @@
 #include "Meter.h"
 
 #include <algorithm>
+#include <boost/lexical_cast.hpp>
 
 const double Meter::METER_MIN = 0.0;
 const double Meter::METER_MAX = 100.0;
@@ -60,6 +61,14 @@ double Meter::PreviousCurrent() const
 double Meter::PreviousMax() const
 {
     return m_previous_max;
+}
+
+std::string Meter::Dump() const
+{
+    using boost::lexical_cast;
+    return "Cur: " + lexical_cast<std::string>(m_current) + "/" + lexical_cast<std::string>(m_max) +
+           " Initial Cur: " + lexical_cast<std::string>(m_initial_current) + "/" + lexical_cast<std::string>(m_initial_max) +
+           " Prev: " + lexical_cast<std::string>(m_previous_current) + "/" + lexical_cast<std::string>(m_previous_max);
 }
 
 void Meter::BackPropegate()

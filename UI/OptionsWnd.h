@@ -36,7 +36,7 @@ public:
 
     //! \name Mutators
     //!@{
-    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     //!@}
 
 private:
@@ -72,7 +72,7 @@ private:
     int         m_indentation_level;
     GG::TabWnd* m_tabs;
     CUIButton*  m_done_button;
-    int m_num_wnds;
+    int         m_num_wnds;
 };
 
 #endif // _OptionsWnd_h_

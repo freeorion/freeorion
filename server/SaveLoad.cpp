@@ -21,21 +21,21 @@
 #include <fstream>
 
 
-void SaveGame(const std::string& filename, int current_turn, const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe)
+void SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data, const std::vector<PlayerSaveGameData>& player_save_game_data, const Universe& universe)
 {
     std::ofstream ofs(filename.c_str(), std::ios_base::binary);
     FREEORION_OARCHIVE_TYPE oa(ofs);
-    oa << BOOST_SERIALIZATION_NVP(current_turn);
+    oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
     Universe::s_encoding_empire = ALL_EMPIRES;
     oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
     Serialize(oa, universe);
 }
 
-void LoadGame(const std::string& filename, int& current_turn, std::vector<PlayerSaveGameData>& player_save_game_data, Universe& universe)
+void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data, std::vector<PlayerSaveGameData>& player_save_game_data, Universe& universe)
 {
     std::ifstream ifs(filename.c_str(), std::ios_base::binary);
     FREEORION_IARCHIVE_TYPE ia(ifs);
-    ia >> BOOST_SERIALIZATION_NVP(current_turn);
+    ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
     Universe::s_encoding_empire = ALL_EMPIRES;
     ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
     Deserialize(ia, universe);

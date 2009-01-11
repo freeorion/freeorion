@@ -8,41 +8,41 @@
 
 
 namespace {
-    void FindIsoscelesTriangleVertices(int x1, int y1, int x2, int y2, ShapeOrientation orientation,
+    void FindIsoscelesTriangleVertices(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation,
                                        double& x1_, double& y1_, double& x2_, double& y2_, double& x3_, double& y3_)
     {
         switch (orientation) {
         case SHAPE_UP:
-            x1_ = x1;
-            y1_ = y2;
-            x2_ = x2;
-            y2_ = y2;
-            x3_ = (x1 + x2) / 2.0;
-            y3_ = y1;
+            x1_ = Value(ul.x);
+            y1_ = Value(lr.y);
+            x2_ = Value(lr.x);
+            y2_ = Value(lr.y);
+            x3_ = Value((ul.x + lr.x) / 2.0);
+            y3_ = Value(ul.y);
             break;
         case SHAPE_DOWN:
-            x1_ = x2;
-            y1_ = y1;
-            x2_ = x1;
-            y2_ = y1;
-            x3_ = (x1 + x2) / 2.0;
-            y3_ = y2;
+            x1_ = Value(lr.x);
+            y1_ = Value(ul.y);
+            x2_ = Value(ul.x);
+            y2_ = Value(ul.y);
+            x3_ = Value((ul.x + lr.x) / 2.0);
+            y3_ = Value(lr.y);
             break;
         case SHAPE_LEFT:
-            x1_ = x2;
-            y1_ = y2;
-            x2_ = x2;
-            y2_ = y1;
-            x3_ = x1;
-            y3_ = (y1 + y2) / 2.0;
+            x1_ = Value(lr.x);
+            y1_ = Value(lr.y);
+            x2_ = Value(lr.x);
+            y2_ = Value(ul.y);
+            x3_ = Value(ul.x);
+            y3_ = Value((ul.y + lr.y) / 2.0);
             break;
         case SHAPE_RIGHT:
-            x1_ = x1;
-            y1_ = y1;
-            x2_ = x1;
-            y2_ = y2;
-            x3_ = x2;
-            y3_ = (y1 + y2) / 2.0;
+            x1_ = Value(ul.x);
+            y1_ = Value(ul.y);
+            x2_ = Value(ul.x);
+            y2_ = Value(lr.y);
+            x3_ = Value(lr.x);
+            y3_ = Value((ul.y + lr.y) / 2.0);
             break;
         }
     }
@@ -70,34 +70,34 @@ GG::Clr OpaqueColor(const GG::Clr& color)
     return retval;
 }
 
-void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Clr border, int angle_offset, int thick,
+void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
                            bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/, bool draw_bottom/* = true*/)
 {
     glDisable(GL_TEXTURE_2D);
 
-    int inner_x1 = x1 + thick;
-    int inner_y1 = y1 + thick;
-    int inner_x2 = x2 - thick;
-    int inner_y2 = y2 - thick;
+    GG::X inner_x1 = ul.x + thick;
+    GG::Y inner_y1 = ul.y + thick;
+    GG::X inner_x2 = lr.x - thick;
+    GG::Y inner_y2 = lr.y - thick;
 
     // these are listed in CCW order for convenience
-    int ul_corner_x1 = x1 + angle_offset;
-    int ul_corner_y1 = y1;
-    int ul_corner_x2 = x1;
-    int ul_corner_y2 = y1 + angle_offset;
-    int lr_corner_x1 = x2 - angle_offset;
-    int lr_corner_y1 = y2;
-    int lr_corner_x2 = x2;
-    int lr_corner_y2 = y2 - angle_offset;
+    GG::X ul_corner_x1 = ul.x + angle_offset;
+    GG::Y ul_corner_y1 = ul.y;
+    GG::X ul_corner_x2 = ul.x;
+    GG::Y ul_corner_y2 = ul.y + angle_offset;
+    GG::X lr_corner_x1 = lr.x - angle_offset;
+    GG::Y lr_corner_y1 = lr.y;
+    GG::X lr_corner_x2 = lr.x;
+    GG::Y lr_corner_y2 = lr.y - angle_offset;
 
-    int inner_ul_corner_x1 = ul_corner_x1 + thick;
-    int inner_ul_corner_y1 = ul_corner_y1 + thick;
-    int inner_ul_corner_x2 = ul_corner_x2 + thick;
-    int inner_ul_corner_y2 = ul_corner_y2 + thick;
-    int inner_lr_corner_x1 = lr_corner_x1 - thick;
-    int inner_lr_corner_y1 = lr_corner_y1 - thick;
-    int inner_lr_corner_x2 = lr_corner_x2 - thick;
-    int inner_lr_corner_y2 = lr_corner_y2 - thick;
+    GG::X inner_ul_corner_x1 = ul_corner_x1 + thick;
+    GG::Y inner_ul_corner_y1 = ul_corner_y1 + thick;
+    GG::X inner_ul_corner_x2 = ul_corner_x2 + thick;
+    GG::Y inner_ul_corner_y2 = ul_corner_y2 + thick;
+    GG::X inner_lr_corner_x1 = lr_corner_x1 - thick;
+    GG::Y inner_lr_corner_y1 = lr_corner_y1 - thick;
+    GG::X inner_lr_corner_x2 = lr_corner_x2 - thick;
+    GG::Y inner_lr_corner_y2 = lr_corner_y2 - thick;
 
     // draw border
     if (thick) {
@@ -105,66 +105,66 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
         glColor(border);
 
         // the top
-        glVertex2i(inner_x2, inner_y1);
-        glVertex2i(x2, y1);
+        glVertex(inner_x2, inner_y1);
+        glVertex(lr.x, ul.y);
         if (upper_left_angled) {
-            glVertex2i(ul_corner_x1, ul_corner_y1);
-            glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
+            glVertex(ul_corner_x1, ul_corner_y1);
+            glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
         } else {
-            glVertex2i(x1, y1);
-            glVertex2i(inner_x1, inner_y1);
+            glVertex(ul.x, ul.y);
+            glVertex(inner_x1, inner_y1);
         }
 
         // the upper-left angled side
         if (upper_left_angled) {
-            glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
-            glVertex2i(ul_corner_x1, ul_corner_y1);
-            glVertex2i(ul_corner_x2, ul_corner_y2);
-            glVertex2i(inner_ul_corner_x2, inner_ul_corner_y2);
+            glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
+            glVertex(ul_corner_x1, ul_corner_y1);
+            glVertex(ul_corner_x2, ul_corner_y2);
+            glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
         }
 
         // the left side
         if (upper_left_angled) {
-            glVertex2i(inner_ul_corner_x2, inner_ul_corner_y2);
-            glVertex2i(ul_corner_x2, ul_corner_y2);
+            glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
+            glVertex(ul_corner_x2, ul_corner_y2);
         } else {
-            glVertex2i(inner_x1, inner_y1);
-            glVertex2i(x1, y1);
+            glVertex(inner_x1, inner_y1);
+            glVertex(ul.x, ul.y);
         }
-        glVertex2i(x1, y2);
-        glVertex2i(inner_x1, inner_y2);
+        glVertex(ul.x, lr.y);
+        glVertex(inner_x1, inner_y2);
 
         // the bottom
         if (draw_bottom) {
-            glVertex2i(inner_x1, inner_y2);
-            glVertex2i(x1, y2);
+            glVertex(inner_x1, inner_y2);
+            glVertex(ul.x, lr.y);
             if (lower_right_angled) {
-                glVertex2i(lr_corner_x1, lr_corner_y1);
-                glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
+                glVertex(lr_corner_x1, lr_corner_y1);
+                glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
             } else {
-                glVertex2i(x2, y2);
-                glVertex2i(inner_x2, inner_y2);
+                glVertex(lr.x, lr.y);
+                glVertex(inner_x2, inner_y2);
             }
         }
 
         // the lower-right angled side
         if (lower_right_angled) {
-            glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-            glVertex2i(lr_corner_x1, lr_corner_y1);
-            glVertex2i(lr_corner_x2, lr_corner_y2);
-            glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+            glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
+            glVertex(lr_corner_x1, lr_corner_y1);
+            glVertex(lr_corner_x2, lr_corner_y2);
+            glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
         }
 
         // the right side
         if (lower_right_angled) {
-            glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
-            glVertex2i(lr_corner_x2, lr_corner_y2);
+            glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
+            glVertex(lr_corner_x2, lr_corner_y2);
         } else {
-            glVertex2i(x2, y2);
-            glVertex2i(inner_x2, inner_y2);
+            glVertex(lr.x, lr.y);
+            glVertex(inner_x2, inner_y2);
         }
-        glVertex2i(x2, y1);
-        glVertex2i(inner_x2, inner_y1);
+        glVertex(lr.x, ul.y);
+        glVertex(inner_x2, inner_y1);
 
         glEnd();
     }
@@ -173,35 +173,33 @@ void AngledCornerRectangle(int x1, int y1, int x2, int y2, GG::Clr color, GG::Cl
     glColor(color);
     glBegin(GL_POLYGON);
     if (upper_left_angled) {
-        glVertex2i(inner_ul_corner_x1, inner_ul_corner_y1);
-        glVertex2i(inner_ul_corner_x2, inner_ul_corner_y2);
+        glVertex(inner_ul_corner_x1, inner_ul_corner_y1);
+        glVertex(inner_ul_corner_x2, inner_ul_corner_y2);
     } else {
-        glVertex2i(inner_x1, inner_y1);
+        glVertex(inner_x1, inner_y1);
     }
-    glVertex2i(inner_x1, inner_y2);
+    glVertex(inner_x1, inner_y2);
     if (lower_right_angled) {
-        glVertex2i(inner_lr_corner_x1, inner_lr_corner_y1);
-        glVertex2i(inner_lr_corner_x2, inner_lr_corner_y2);
+        glVertex(inner_lr_corner_x1, inner_lr_corner_y1);
+        glVertex(inner_lr_corner_x2, inner_lr_corner_y2);
     } else {
-        glVertex2i(inner_x2, inner_y2);
+        glVertex(inner_x2, inner_y2);
     }
-    glVertex2i(inner_x2, inner_y1);
+    glVertex(inner_x2, inner_y1);
     glEnd();
 
     glEnable(GL_TEXTURE_2D);
 }
 
-bool InAngledCornerRect(const GG::Pt& pt, int x1, int y1, int x2, int y2, int angle_offset, 
+bool InAngledCornerRect(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, int angle_offset, 
                         bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/)
 {
     bool retval = false;
-    GG::Pt ul(x1, y1);
-    GG::Pt lr(x2, y2);
     if (retval = (ul <= pt && pt < lr)) {
         GG::Pt dist_from_ul = pt - ul;
         GG::Pt dist_from_lr = lr - pt;
-        bool inside_upper_left_corner = upper_left_angled ? (angle_offset < dist_from_ul.x + dist_from_ul.y) : true;
-        bool inside_lower_right_corner = lower_right_angled ? (angle_offset < dist_from_lr.x + dist_from_lr.y) : true;
+        bool inside_upper_left_corner = upper_left_angled ? (angle_offset < Value(dist_from_ul.x) + Value(dist_from_ul.y)) : true;
+        bool inside_lower_right_corner = lower_right_angled ? (angle_offset < Value(dist_from_lr.x) + Value(dist_from_lr.y)) : true;
         retval = inside_upper_left_corner && inside_lower_right_corner;
     }
     return retval;
@@ -242,45 +240,47 @@ bool InTriangle(const GG::Pt& pt, double x1, double y1, double x2, double y2, do
     double vec_B_y = y3 - y2; // side B is the vector from pt2 to pt3
     double vec_C_x = x1 - x3; // side C is the vector from pt3 to pt1
     double vec_C_y = y1 - y3; // side C is the vector from pt3 to pt1
+    int pt_x = Value(pt.x);
+    int pt_y = Value(pt.y);
     // take dot products of perpendicular vectors (normals of sides) with point pt, and sum the signs of these products
-    int sum = (0 < (pt.x - x1) * vec_A_y + (pt.y - y1) * -vec_A_x ? 1 : 0) + 
-              (0 < (pt.x - x2) * vec_B_y + (pt.y - y2) * -vec_B_x ? 1 : 0) +
-              (0 < (pt.x - x3) * vec_C_y + (pt.y - y3) * -vec_C_x ? 1 : 0);
+    int sum = (0 < (pt_x - x1) * vec_A_y + (pt_y - y1) * -vec_A_x ? 1 : 0) + 
+              (0 < (pt_x - x2) * vec_B_y + (pt_y - y2) * -vec_B_x ? 1 : 0) +
+              (0 < (pt_x - x3) * vec_C_y + (pt_y - y3) * -vec_C_x ? 1 : 0);
     // if the products are all the same sign, the point is in the triangle
     return (sum == 3 || sum == 0);
 }
 
-void IsoscelesTriangle(int x1, int y1, int x2, int y2, ShapeOrientation orientation, GG::Clr color, bool border/* = true*/)
+void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation, GG::Clr color, bool border/* = true*/)
 {
     double x1_, y1_, x2_, y2_, x3_, y3_;
-    FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
+    FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     Triangle(x1_, y1_, x2_, y2_, x3_, y3_, color, border);
 }
 
-bool InIsoscelesTriangle(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation)
+bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation)
 {
     double x1_, y1_, x2_, y2_, x3_, y3_;
-    FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
+    FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
-void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, GG::Clr color)
+void FleetMarker(const GG::Pt& ul, GG::Pt lr, ShapeOrientation orientation, GG::Clr color)
 {
     if (orientation == SHAPE_UP || orientation == SHAPE_DOWN)
         orientation = SHAPE_LEFT;
 
     // make sure triangle width is odd, for symmetry
-    if (!((y2 - y1) % 2))
-        ++y2;
+    if (!((lr.y - ul.y) % 2))
+        ++lr.y;
 
-    double point = orientation == SHAPE_LEFT ? x1 : x2;
-    double base =  orientation == SHAPE_LEFT ? x2 : x1;
+    double point = Value(orientation == SHAPE_LEFT ? ul.x : lr.x);
+    double base = Value(orientation == SHAPE_LEFT ? lr.x : ul.x);
     double cutout_point = base + (point - base) * 0.2;
-    double top = y1;
-    double middle = (y2 + y1) * 0.5;
-    double bottom = y2;
-    double cutout_top = top + (y2 - y1) * 0.25;
-    double cutout_bottom = bottom - (y2 - y1) * 0.25;
+    double top = Value(ul.y);
+    double middle = Value((lr.y + ul.y) * 0.5);
+    double bottom = Value(lr.y);
+    double cutout_top = Value(top + (lr.y - ul.y) * 0.25);
+    double cutout_bottom = Value(bottom - (lr.y - ul.y) * 0.25);
 
     GG::Clr border_color = color;
     AdjustBrightness(border_color, 75);
@@ -340,20 +340,20 @@ void FleetMarker(int x1, int y1, int x2, int y2, ShapeOrientation orientation, G
     }
 }
 
-bool InFleetMarker(const GG::Pt& pt, int x1, int y1, int x2, int y2, ShapeOrientation orientation)
+bool InFleetMarker(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation)
 {
     if (orientation == SHAPE_UP || orientation == SHAPE_DOWN)
         orientation = SHAPE_LEFT;
     double x1_, y1_, x2_, y2_, x3_, y3_;
-    FindIsoscelesTriangleVertices(x1, y1, x2, y2, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
+    FindIsoscelesTriangleVertices(ul, lr, orientation, x1_, y1_, x2_, y2_, x3_, y3_);
     return InTriangle(pt, x1_, y1_, x2_, y2_, x3_, y3_);
 }
 
-void CircleArc(int x1, int y1, int x2, int y2, double theta1, double theta2, bool filled_shape)
+void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape)
 {
-    int wd = x2 - x1, ht = y2 - y1;
-    double center_x = x1 + wd / 2.0;
-    double center_y = y1 + ht / 2.0;
+    int wd = Value(lr.x - ul.x), ht = Value(lr.y - ul.y);
+    double center_x = Value(ul.x + wd / 2.0);
+    double center_y = Value(ul.y + ht / 2.0);
     double r = std::min(wd / 2.0, ht / 2.0);
     const double PI = 3.141594;
 
@@ -410,69 +410,69 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_r
     const double PI = 3.141594;
     if (fill) {
         if (ur_round)
-            CircleArc(lr.x - 2 * radius, ul.y, lr.x, ul.y + 2 * radius, 0.0, PI / 2.0, fill);
+            CircleArc(GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, fill);
         if (ul_round)
-            CircleArc(ul.x, ul.y, ul.x + 2 * radius, ul.y + 2 * radius, PI / 2.0, PI, fill);
+            CircleArc(ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, fill);
         if (ll_round)
-            CircleArc(ul.x, lr.y - 2 * radius, ul.x + 2 * radius, lr.y, PI, 3.0 * PI / 2.0, fill);
+            CircleArc(GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, fill);
         if (lr_round)
-            CircleArc(lr.x - 2 * radius, lr.y - 2 * radius, lr.x, lr.y, 3.0 * PI / 2.0, 0.0, fill);
+            CircleArc(GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, fill);
         glBegin(GL_QUADS);
-        glVertex2i(lr.x, ul.y + radius);
-        glVertex2i(ul.x, ul.y + radius);
-        glVertex2i(ul.x, lr.y - radius);
-        glVertex2i(lr.x, lr.y - radius);
-        glVertex2i(lr.x - radius, ul.y);
-        glVertex2i(ul.x + radius, ul.y);
-        glVertex2i(ul.x + radius, ul.y + radius);
-        glVertex2i(lr.x - radius, ul.y + radius);
-        glVertex2i(lr.x - radius, lr.y - radius);
-        glVertex2i(ul.x + radius, lr.y - radius);
-        glVertex2i(ul.x + radius, lr.y);
-        glVertex2i(lr.x - radius, lr.y);
+        glVertex(lr.x, ul.y + radius);
+        glVertex(ul.x, ul.y + radius);
+        glVertex(ul.x, lr.y - radius);
+        glVertex(lr.x, lr.y - radius);
+        glVertex(lr.x - radius, ul.y);
+        glVertex(ul.x + radius, ul.y);
+        glVertex(ul.x + radius, ul.y + radius);
+        glVertex(lr.x - radius, ul.y + radius);
+        glVertex(lr.x - radius, lr.y - radius);
+        glVertex(ul.x + radius, lr.y - radius);
+        glVertex(ul.x + radius, lr.y);
+        glVertex(lr.x - radius, lr.y);
         if (!ur_round) {
-            glVertex2i(lr.x, ul.y);
-            glVertex2i(lr.x - radius, ul.y);
-            glVertex2i(lr.x - radius, ul.y + radius);
-            glVertex2i(lr.x, ul.y + radius);
+            glVertex(lr.x, ul.y);
+            glVertex(lr.x - radius, ul.y);
+            glVertex(lr.x - radius, ul.y + radius);
+            glVertex(lr.x, ul.y + radius);
         }
         if (!ul_round) {
-            glVertex2i(ul.x + radius, ul.y);
-            glVertex2i(ul.x, ul.y);
-            glVertex2i(ul.x, ul.y + radius);
-            glVertex2i(ul.x + radius, ul.y + radius);
+            glVertex(ul.x + radius, ul.y);
+            glVertex(ul.x, ul.y);
+            glVertex(ul.x, ul.y + radius);
+            glVertex(ul.x + radius, ul.y + radius);
         }
         if (!ll_round) {
-            glVertex2i(ul.x + radius, lr.y - radius);
-            glVertex2i(ul.x, lr.y - radius);
-            glVertex2i(ul.x, lr.y);
-            glVertex2i(ul.x + radius, lr.y);
+            glVertex(ul.x + radius, lr.y - radius);
+            glVertex(ul.x, lr.y - radius);
+            glVertex(ul.x, lr.y);
+            glVertex(ul.x + radius, lr.y);
         }
         if (!lr_round) {
-            glVertex2i(lr.x, lr.y - radius);
-            glVertex2i(lr.x - radius, lr.y - radius);
-            glVertex2i(lr.x - radius, lr.y);
-            glVertex2i(lr.x, lr.y);
+            glVertex(lr.x, lr.y - radius);
+            glVertex(lr.x - radius, lr.y - radius);
+            glVertex(lr.x - radius, lr.y);
+            glVertex(lr.x, lr.y);
         }
         glEnd();
     } else {
         glBegin(GL_LINE_LOOP);
         if (ur_round)
-            CircleArc(lr.x - 2 * radius, ul.y, lr.x, ul.y + 2 * radius, 0.0, PI / 2.0, fill);
+            CircleArc(GG::Pt(lr.x - 2 * radius, ul.y), GG::Pt(lr.x, ul.y + 2 * radius), 0.0, PI / 2.0, fill);
         else
-            glVertex2i(lr.x, ul.y);
+            glVertex(lr.x, ul.y);
         if (ul_round)
-            CircleArc(ul.x, ul.y, ul.x + 2 * radius, ul.y + 2 * radius, PI / 2.0, PI, fill);
+            CircleArc(ul, GG::Pt(ul.x + 2 * radius, ul.y + 2 * radius), PI / 2.0, PI, fill);
         else
-            glVertex2i(ul.x, ul.y);
+            glVertex(ul.x, ul.y);
         if (ll_round)
-            CircleArc(ul.x, lr.y - 2 * radius, ul.x + 2 * radius, lr.y, PI, 3.0 * PI / 2.0, fill);
+            CircleArc(GG::Pt(ul.x, lr.y - 2 * radius), GG::Pt(ul.x + 2 * radius, lr.y), PI, 3.0 * PI / 2.0, fill);
         else
-            glVertex2i(ul.x, lr.y);
+            glVertex(ul.x, lr.y);
         if (lr_round)
-            CircleArc(lr.x - 2 * radius, lr.y - 2 * radius, lr.x, lr.y, 3.0 * PI / 2.0, 0.0, fill);
+            CircleArc(GG::Pt(lr.x - 2 * radius, lr.y - 2 * radius), lr, 3.0 * PI / 2.0, 0.0, fill);
         else
-            glVertex2i(lr.x, lr.y);
+            glVertex(lr.x, lr.y);
         glEnd();
     }
 }

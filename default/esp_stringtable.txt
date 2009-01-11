@@ -1,6 +1,6 @@
-Español
+EspaÃ±ol
 
-#Esto es el archivo de lenguaje en español para FreeOrion. Se ha traducido una muy pequeña parte del texto, el resto permanece en ingles, se sigue trabajando en el.
+#Esto es el archivo de lenguaje en espaÃ±ol para FreeOrion. Se ha traducido una muy pequeÃ±a parte del texto, el resto permanece en ingles, se sigue trabajando en el.
 #Ultima modificacion: 21-05-2008. Traduccion IvanS, Synyestro.
 
 #################
@@ -729,7 +729,7 @@ VISION
 Vision
 
 FREEORION_VISION
-FreeOrion, un juego de codigo abierto basado en Master of Orion, es un juego por turnos de estrategia espacial que integra el clasico modelo "4X" incorporando elementos de construccion de imperios presentes en juegos como el Europa Universalis 2 y con un motor de combate tactico versatil. Al ser modular, el diseño de codigo abierto permite un grado significativo de personalizacion del motor del juego y de los elementos de la historia por la comunidad, el equipo de FreeOrion esta dedicado a la construccion de un universo vivo en un modelo de 'gran campaña'. 
+FreeOrion, un juego de codigo abierto basado en Master of Orion, es un juego por turnos de estrategia espacial que integra el clasico modelo "4X" incorporando elementos de construccion de imperios presentes en juegos como el Europa Universalis 2 y con un motor de combate tactico versatil. Al ser modular, el diseÃ±o de codigo abierto permite un grado significativo de personalizacion del motor del juego y de los elementos de la historia por la comunidad, el equipo de FreeOrion esta dedicado a la construccion de un universo vivo en un modelo de 'gran campaÃ±a'. 
 
 ###########################
 # Game Menu	              #
@@ -788,7 +788,7 @@ OPTIONS_FONTS
 Fuentes
 
 OPTIONS_FONT_SIZES
-Tamaño
+TamaÃ±o
 
 OPTIONS_FONT_TEXT
 Texto
@@ -1060,7 +1060,7 @@ MAP_BTN_PRODUCTION
 Produccion
 
 MAP_BTN_DESIGN
-Diseño
+DiseÃ±o
 
 #################
 # SidePanel     #
@@ -1083,7 +1083,7 @@ PL_UNINHABITED
 Deshabitado
 
 PL_SIZE
-Tamaño
+TamaÃ±o
 
 PL_COLONIZE
 Colonizar
@@ -1174,7 +1174,7 @@ SP_ENTER_NEW_PLANET_NAME
 Introducir nombre del planeta
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-Todos los colonizadores en este sistema\nhan recibido ordenes de abandonarlo\n\n¿Usar uno de esos colonizadores?
+Todos los colonizadores en este sistema\nhan recibido ordenes de abandonarlo\n\nÂ¿Usar uno de esos colonizadores?
 
 #################
 # Fleet Window  #
@@ -1375,7 +1375,7 @@ PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Cantidad
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-Añadir a la cola
+AÃ±adir a la cola
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
 Centrar en construccion
@@ -1630,16 +1630,16 @@ SITREP_TECH_RESEARCHED
 %tech% ha sido desarrollado.
 
 SITREP_COMBAT_SYSTEM_WON
-Un combate ha tenido lugar en %system%. ¡Hemos vencido!
+Un combate ha tenido lugar en %system%. Â¡Hemos vencido!
 
 SITREP_COMBAT_SYSTEM_LOST
-Un combate ha tenido lugar en %system%. ¡Hemos sido derrotados!
+Un combate ha tenido lugar en %system%. Â¡Hemos sido derrotados!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-Un combate ha tenido lugar en %system%. ¡Hemos empatado!
+Un combate ha tenido lugar en %system%. Â¡Hemos empatado!
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-Toda la poblacion de %planet% se ha muerto de hambre. ¡Hemos perdido el planeta!
+Toda la poblacion de %planet% se ha muerto de hambre. Â¡Hemos perdido el planeta!
 
 SITREP_PLANET_COLONIZED
 %planet% has been colonized in the %system% system.
@@ -1785,7 +1785,7 @@ Nada que ver aqui; vayamos a otro lado.
 SZ_TINY
 Enano
 SZ_SMALL
-Pequeño
+PequeÃ±o
 SZ_MEDIUM
 Medio
 SZ_LARGE
@@ -2414,7 +2414,7 @@ LRN_ALGO_ELEGANCE_DESC
 Con cada vez una mayor dificultad para el analisis de datos, las medidas tradicionales de la eficiencia de los algoritmos se volvieron inutiles debido a la irreductible complejidad. En ese punto, otras mediciones de las formas y funciones de los algoritmos cobran significancia, estetica y metaforicamente, la elegancia de la solucion debe ser optimizada.
 
 LRN_TRANSLING_THT
-Pensamiento tranlingüistico
+Pensamiento tranlingÃ¼istico
 
 LRN_TRANSLING_THT_DESC
 Las mentes inferiores luchan, o aceptan los limites del lenguaje que han aprendido. Las mentes adecuadas se limitan y sienten obligadas por los conceptos que les han dado para expresarse. Las autenticas mentes superiores superan libremente los limites del lenguaje, formando y analizando pensamientos que rondan lo trascendental. Pero si las grandes mentes son aisladas y futiles, sin un lenguaje con el que expresar sus pensamientos, como podran compartir su interior.
@@ -2435,7 +2435,7 @@ LRN_XENOARCH
 Xenoarqueologia
 
 LRN_XENOARCH_DESC
-Los imperios contemporaneos, razas y civilizaciones no son los primeros o unicos seres que han vivido en la galaxia. Restos, ruinas y rumores de los ancianos pueden ser encontrados en los planetas deserticos y asteroides sin vida, o viajando por el espacio. Encontrarlos y descifrarlos tiene un gran potencial para revelar secretos, enseñear lecciones, o avisar sobre peligros del conocimiento antiguo.
+Los imperios contemporaneos, razas y civilizaciones no son los primeros o unicos seres que han vivido en la galaxia. Restos, ruinas y rumores de los ancianos pueden ser encontrados en los planetas deserticos y asteroides sin vida, o viajando por el espacio. Encontrarlos y descifrarlos tiene un gran potencial para revelar secretos, enseÃ±ear lecciones, o avisar sobre peligros del conocimiento antiguo.
 
 LRN_GRAVITONICS
 Gravitonics
@@ -2495,7 +2495,7 @@ GRO_GENETIC_ENG
 Ingenieria Genetica
 
 GRO_GENETIC_ENG_DESC
-La paleta de genes es tan variada como las formas de vida que permiten. Los genes se pueden eliminar, copiar y reinsertar en los genomas para crear organismos transgenicos con combinaciones de rasgos que no existen o son posibles en la naturaleza. Tambien se pueden alterar antes de reinsertar, modificando las bases directamente, permitiendo genes totalmente nuevos sean creados. Las tecnicas son limitadas, aun asi, las pequeñas modificaciones de los genes existentes estan disponibles para el estudio 
+La paleta de genes es tan variada como las formas de vida que permiten. Los genes se pueden eliminar, copiar y reinsertar en los genomas para crear organismos transgenicos con combinaciones de rasgos que no existen o son posibles en la naturaleza. Tambien se pueden alterar antes de reinsertar, modificando las bases directamente, permitiendo genes totalmente nuevos sean creados. Las tecnicas son limitadas, aun asi, las pequeÃ±as modificaciones de los genes existentes estan disponibles para el estudio 
 
 GRO_MEDICAL_PATH
 Medical Pathology
@@ -3070,7 +3070,7 @@ LRN_MONUMENT_EXODUS
 Monumento al Exodo
 
 LRN_MONUMENT_EXODUS_DESC
-Los artistas y los ingenieros mas grandes de la sociedad del Exodo son convocados a realizar el diseño de un tributo apropiado a sus logros, y enmarcado en la Era del Exodo. 
+Los artistas y los ingenieros mas grandes de la sociedad del Exodo son convocados a realizar el diseÃ±o de un tributo apropiado a sus logros, y enmarcado en la Era del Exodo. 
 
 LRN_PSICORP
 PsiCorp
@@ -3124,7 +3124,7 @@ PRO_EXOBOTS
 Exobots
 
 PRO_EXOBOTS_DESC
-Exobots, como se les conoce comunmente, son una maravilla del encuentro entre forma y funcion. Ellos son robots que se diseñaron para cumplir casi cualquier trabajo industrial, en campos que van desde la electronica a la construccion a gran escala. Faciles de producir en masa, sirven mejor en las colonias que carecen de la infraestructura y fuerza de trabajo para dedicar a fabricas especializadas. Cada colonia recibe un equipo estandar de exobots, aumentando su construccion durante las primeras fases del desarrollo. 
+Exobots, como se les conoce comunmente, son una maravilla del encuentro entre forma y funcion. Ellos son robots que se diseÃ±aron para cumplir casi cualquier trabajo industrial, en campos que van desde la electronica a la construccion a gran escala. Faciles de producir en masa, sirven mejor en las colonias que carecen de la infraestructura y fuerza de trabajo para dedicar a fabricas especializadas. Cada colonia recibe un equipo estandar de exobots, aumentando su construccion durante las primeras fases del desarrollo. 
 
 PRO_FUSION_PLANTS
 Plantas de Fusion
@@ -3439,7 +3439,7 @@ BLD_HYPER_DAM
 Dique Hiperespacial
 
 BLD_HYPER_DAM_DESC
-Un rasguño en la tela del universo, controlado y enjaezado de forma segura. El dique hiperespacial sirve como una fuente de energia casi ilimitada para el sector entero. 
+Un rasguÃ±o en la tela del universo, controlado y enjaezado de forma segura. El dique hiperespacial sirve como una fuente de energia casi ilimitada para el sector entero. 
 
 BLD_MINI_SUN
 Sol en miniatura
@@ -3451,7 +3451,7 @@ BLD_REMOTE_CONST
 Construccion Remota
 
 BLD_REMOTE_CONST_DESC
-Una red de materia y construccion. Un equipo de trabajadores de la construccion y robots puede levantar las estructuras en mundos lejanos sin la necesidad de naves y buques de carga o construccion. Solo se necesita una pequeña nave terminal-materia. Levante rapidamente la industria en todos mundos al nivel de  un mundo Establecido. 
+Una red de materia y construccion. Un equipo de trabajadores de la construccion y robots puede levantar las estructuras en mundos lejanos sin la necesidad de naves y buques de carga o construccion. Solo se necesita una pequeÃ±a nave terminal-materia. Levante rapidamente la industria en todos mundos al nivel de  un mundo Establecido. 
 
 BLD_ECON_SINKHOLE
 Sumidero Economico

@@ -43,12 +43,14 @@ namespace {
         return PlanetDataTables()["PlanetEnvHealthMod"][0][environment];
     }
 
-    void GrowPlanetMeters(Meter* meter, double updated_current_construction) {
-        // TODO: something better here...
+    void GrowMeter(Meter* meter, double updated_current_construction) {
+        // TODO: something better here, likely depending on meter type
         assert(meter);
-        double delta = updated_current_construction / (10.0 + meter->Current());
-        double new_cur = std::min(meter->Max(), meter->Current() + delta);
-        meter->SetCurrent(new_cur);
+        double initial_current =    meter->InitialCurrent();
+
+        double delta =              updated_current_construction / (10.0 + initial_current);
+
+        meter->AdjustCurrent(delta);
     }
 
     double SizeRotationFactor(PlanetSize size)
@@ -99,8 +101,7 @@ Planet::Planet() :
     m_axial_tilt(23.0),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false),
-    m_def_bases(0)
+    m_is_about_to_be_colonized(false)
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
@@ -120,8 +121,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false),
-    m_def_bases(0)
+    m_is_about_to_be_colonized(false)
 {
     GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
@@ -170,10 +170,10 @@ double Planet::BuildingCosts() const
     Universe& universe = GetUniverse();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         Building* building = universe.Object<Building>(*it);
-        if (building->Operating()) {
+//        if (building->Operating()) {
             const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
             retval += bulding_type->MaintenanceCost();
-        }
+//        }
     }
     return retval;
 }
@@ -201,14 +201,14 @@ std::vector<int> Planet::FindObjectIDs() const
     return retval;
 }
 
-UniverseObject::Visibility Planet::GetVisibility(int empire_id) const
+Visibility Planet::GetVisibility(int empire_id) const
 {
     // use the containing system's visibility
     const System* system = GetSystem();
     if (system)
         return system->GetVisibility(empire_id);
     else
-        return NO_VISIBILITY;
+        return VIS_NO_VISIBITY;
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
@@ -242,7 +242,8 @@ double Planet::ProjectedCurrentMeter(MeterType type) const
         original_meter = GetMeter(type);
         assert(original_meter);
         meter = Meter(*original_meter);
-        GrowPlanetMeters(&meter, ProjectedCurrentMeter(METER_CONSTRUCTION));
+        GrowMeter(&meter, ProjectedCurrentMeter(METER_CONSTRUCTION));
+        meter.Clamp();
         return meter.Current();
         break;
     default:
@@ -368,15 +369,23 @@ void Planet::SetHighAxialTilt()
 
 void Planet::AddBuilding(int building_id)
 {
+    if (this->Contains(building_id)) {
+        Logger().debugStream() << "Planet::AddBuilding this planet " << this->Name() << " already contained building " << building_id;
+        return;
+    }
+    Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
     if (Building* building = GetUniverse().Object<Building>(building_id)) {
-        building->SetPlanetID(ID());
         if (System* system = GetSystem()) {
             system->Insert(building);
         } else {
+            Logger().errorStream() << "... planet is not located in a system?!?!";
+            building->MoveTo(X(), Y());
             building->SetSystem(SystemID());
         }
-        building->MoveTo(X(), Y());
+        building->SetPlanetID(ID());
         m_buildings.insert(building_id);
+    } else {
+        Logger().errorStream() << "Planet::AddBuilding() : Attempted to add an id of a non-building object to a planet.";
     }
     StateChangedSignal();
 }
@@ -396,7 +405,7 @@ void Planet::SetAvailableTrade(double trade)
     m_available_trade = trade;
 }
 
-void Planet::AddOwner (int id)
+void Planet::AddOwner(int id)
 {
     GetSystem()->UniverseObject::AddOwner(id);
     UniverseObject::AddOwner(id);
@@ -503,36 +512,11 @@ void Planet::SetSystem(int sys)
 {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
-    // set system of buildings on this planet.  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->SetSystem(sys);
-    //}
-}
-
-void Planet::Move(double x, double y)
-{
-    // move planet itself
-    UniverseObject::Move(x, y);
-    // move buildings  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->Move(x, y);
-    //}
-}
-
-void Planet::MoveTo(UniverseObject* object)
-{
-    //Logger().debugStream() << "Planet::MoveTo(const UniverseObject* object)";
-    UniverseObject::MoveTo(object);
-    // move buildings  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->MoveTo(object);
-    //}
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->SetSystem(sys);
+    }
 }
 
 void Planet::MoveTo(double x, double y)
@@ -540,12 +524,12 @@ void Planet::MoveTo(double x, double y)
     //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
-    // move buildings  TODO: THIS
-    //for (iterator it = begin(); it != end(); ++it) {
-    //    UniverseObject* obj = GetUniverse().Object(*it);
-    //    assert(obj);
-    //    obj->MoveTo(x, y);
-    //}
+    // move buildings
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+        UniverseObject* obj = GetUniverse().Object(*it);
+        assert(obj);
+        obj->UniverseObject::MoveTo(x, y);
+    }
 }
 
 void Planet::MovementPhase()
@@ -568,12 +552,12 @@ void Planet::PopGrowthProductionResearchPhase()
 
     PopCenter::PopGrowthProductionResearchPhase();
 
-    double current_construction = GetMeter(METER_CONSTRUCTION)->Current();
-    GrowPlanetMeters(GetMeter(METER_SUPPLY), current_construction);
-    GrowPlanetMeters(GetMeter(METER_SHIELD), current_construction);
-    GrowPlanetMeters(GetMeter(METER_DEFENSE), current_construction);
-    GrowPlanetMeters(GetMeter(METER_DETECTION), current_construction);
-    GrowPlanetMeters(GetMeter(METER_STEALTH), current_construction);
+    double current_construction = GetMeter(METER_CONSTRUCTION)->Current();  // want current construction, that has been updated from initial current construction
+    GrowMeter(GetMeter(METER_SUPPLY),       current_construction);
+    GrowMeter(GetMeter(METER_SHIELD),       current_construction);
+    GrowMeter(GetMeter(METER_DEFENSE),      current_construction);
+    GrowMeter(GetMeter(METER_DETECTION),    current_construction);
+    GrowMeter(GetMeter(METER_STEALTH),      current_construction);
 
     StateChangedSignal();
 }

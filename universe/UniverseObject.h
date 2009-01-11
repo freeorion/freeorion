@@ -10,8 +10,6 @@
 
 #include "InhibitableSignal.h"
 
-#include <boost/serialization/is_abstract.hpp>
-
 #include <set>
 #include <string>
 #include <vector>
@@ -42,13 +40,6 @@ struct UniverseObjectVisitor;
 class UniverseObject
 {
 public:
-    /** the three different visibility levels */
-    enum Visibility { 
-        FULL_VISIBILITY,
-        PARTIAL_VISIBILITY,
-        NO_VISIBILITY
-    };
-
     /** \name Signal Types */ //@{
     typedef boost::signal<void ()> StateChangedSignalBaseType; ///< used to define StateChangedSignalType
     typedef InhibitableSignal<StateChangedSignalBaseType> StateChangedSignalType; ///< emitted when the UniverseObject is altered in any way
@@ -75,7 +66,7 @@ public:
     double                  X() const;                          ///< the X-coordinate of this object
     double                  Y() const;                          ///< the Y-coordinate of this object
     const std::set<int>&    Owners() const;                     ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-    int                     SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    virtual int             SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     System*                 GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
                             Specials() const;                   ///< returns the set of names of the Specials attached to this object
@@ -116,7 +107,7 @@ public:
 
     /** moves this object by relative displacements x and y. \throw std::runtime_error May throw std::runtime_error if the result
         of the move would place either coordinate outside the map area.*/
-    virtual void            Move(double x, double y);
+    void                    Move(double x, double y);
 
     /** calls MoveTo(const UniverseObject*) with the object pointed to by \a object_id. */
     void                    MoveTo(int object_id);
@@ -124,7 +115,7 @@ public:
     /** moves this object and contained objects to exact map coordinates of specified \a object
         If \a object is a system, places this object into that system.
         May throw std::invalid_argument if \a object is not a valid object*/
-    virtual void            MoveTo(UniverseObject* object);
+    void                    MoveTo(UniverseObject* object);
 
     /** moves this object and contained objects to exact map coordinates (x, y). \throw std::invalid_arugment
         May throw std::invalid_arugment if the either coordinate of the move is outside the map area.*/
@@ -186,7 +177,6 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
-BOOST_IS_ABSTRACT(UniverseObject)
 
 // template implementations
 template <class Iter>
@@ -215,7 +205,7 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_system_id)
         & BOOST_SERIALIZATION_NVP(m_meters);
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == PARTIAL_VISIBILITY || vis == FULL_VISIBILITY) {
+        vis == VIS_PARTIAL_VISIBILITY || vis == VIS_FULL_VISIBILITY) {
         std::string name;
         if (Archive::is_saving::value) {
             // We don't disclose the real object name for some types of objects, since it would look funny if e.g. the

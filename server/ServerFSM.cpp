@@ -8,8 +8,6 @@
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
 
-#include <GG/Font.h>
-
 
 namespace {
     const bool TRACE_EXECUTION = false;
@@ -18,10 +16,12 @@ namespace {
     {
         save_game_empire_data.clear();
         std::vector<PlayerSaveGameData> player_save_game_data;
-        int current_turn;
+        ServerSaveGameData server_data;
         Universe universe;
+
         LoadGame((GetLocalDir() / "save" / save_game_filename).native_file_string().c_str(),
-                 current_turn, player_save_game_data, universe);
+                 server_data, player_save_game_data, universe);
+
         for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
             Empire* empire = player_save_game_data[i].m_empire;
             SaveGameEmpireData& data = save_game_empire_data[empire->EmpireID()];
@@ -92,7 +92,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Host player disconnected; server terminating.";
         Sleep(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         m_server.Exit(1);
-    } else if (m_server.m_losers.find(id) == m_server.m_losers.end()) { // player abnormally disconnected during a regular game
+    } else if (m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end()) { // player abnormally disconnected during a regular game
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
                                << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
         std::string message = player_connection->PlayerName();
@@ -103,6 +103,8 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
             }
         }
     }
+
+    // TODO: Add a way to have AIs play without humans... for AI debugging purposes
 
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.NumPlayers()) {
@@ -164,7 +166,8 @@ boost::statechart::result Idle::react(const HostSPGame& msg)
 ////////////////////////////////////////////////////////////
 MPLobby::MPLobby(my_context c) :
     Base(c),
-    m_lobby_data (new MultiplayerLobbyData(true))
+    m_lobby_data(new MultiplayerLobbyData(true)),
+    m_server_save_game_data(new ServerSaveGameData())
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
     ServerApp& server = Server();
@@ -348,11 +351,12 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
             }
         } else {
             LoadGame((GetLocalDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).native_file_string(),
-                     server.m_current_turn, m_player_save_game_data, GetUniverse());
+                     *m_server_save_game_data, m_player_save_game_data, GetUniverse());
             int expected_players = m_player_save_game_data.size();
             int needed_AI_clients = expected_players - server.m_networking.NumPlayers();
             if (!needed_AI_clients) {
-                server.LoadGameInit(m_lobby_data, m_player_save_game_data);
+                // have all needed AIs, so don't need to wait for MP Joiners, and can immediately start game
+                server.LoadGameInit(m_lobby_data, m_player_save_game_data, m_server_save_game_data);
                 return transit<PlayingGame>();
             }
         }
@@ -363,8 +367,10 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
         return discard_event();
     }
 
+    // copy locally stored data to common server fsm context so it can be retreived in WaitingForMPGameJoiners
     context<ServerFSM>().m_lobby_data = m_lobby_data;
     context<ServerFSM>().m_player_save_game_data = m_player_save_game_data;
+    context<ServerFSM>().m_server_save_game_data = m_server_save_game_data;
 
     return transit<WaitingForMPGameJoiners>();
 }
@@ -376,6 +382,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
 WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     Base(c),
     m_setup_data(context<ServerFSM>().m_setup_data),
+    m_server_save_game_data(new ServerSaveGameData()),
     m_num_expected_players(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners";
@@ -387,7 +394,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         m_num_expected_players = m_setup_data->m_AIs + 1;
         server.CreateAIClients(std::vector<PlayerSetupData>(m_setup_data->m_AIs), m_expected_ai_player_names);
     } else {
-        LoadGame(m_setup_data->m_filename, server.m_current_turn, m_player_save_game_data, GetUniverse());
+        LoadGame(m_setup_data->m_filename, *m_server_save_game_data, m_player_save_game_data, GetUniverse());
+
         assert(!m_player_save_game_data.empty());
         m_num_expected_players = m_player_save_game_data.size();
         server.CreateAIClients(std::vector<PlayerSetupData>(m_num_expected_players - 1), m_expected_ai_player_names);
@@ -428,7 +436,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         if (m_setup_data->m_new_game)
             server.NewGameInit(m_setup_data);
         else
-            server.LoadGameInit(m_player_save_game_data);
+            server.LoadGameInit(m_player_save_game_data, m_server_save_game_data);
         return transit<PlayingGame>();
     }
 
@@ -443,11 +451,14 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     Base(c),
     m_lobby_data(context<ServerFSM>().m_lobby_data),
     m_player_save_game_data(context<ServerFSM>().m_player_save_game_data),
+    m_server_save_game_data(context<ServerFSM>().m_server_save_game_data),
     m_num_expected_players(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
     context<ServerFSM>().m_lobby_data.reset();
     context<ServerFSM>().m_player_save_game_data.clear();
+    context<ServerFSM>().m_server_save_game_data.reset();
+
     ServerApp& server = Server();
     if (m_lobby_data->m_new_game) {
         m_num_expected_players = m_lobby_data->m_players.size();
@@ -498,7 +509,7 @@ boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
         if (m_player_save_game_data.empty())
             server.NewGameInit(m_lobby_data);
         else
-            server.LoadGameInit(m_lobby_data, m_player_save_game_data);
+            server.LoadGameInit(m_lobby_data, m_player_save_game_data, m_server_save_game_data);
         return transit<PlayingGame>();
     }
 
@@ -705,7 +716,10 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
     m_players_responded.insert(message.SendingPlayer());
 
     if (m_players_responded == m_needed_reponses) {
-        SaveGame(context<WaitingForTurnEnd>().m_save_filename, server.m_current_turn, m_player_save_game_data, GetUniverse());
+        ServerSaveGameData server_data(server.m_current_turn, server.m_victors);
+
+        SaveGame(context<WaitingForTurnEnd>().m_save_filename, server_data, m_player_save_game_data, GetUniverse());
+
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();
     }

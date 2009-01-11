@@ -23,7 +23,7 @@
 // Forward Declarations                                   //
 ////////////////////////////////////////////////////////////
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 namespace Effect {
     class EffectsGroup;

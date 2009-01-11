@@ -19,11 +19,11 @@ public:
 
     /** \name Mutators */ //@{
     virtual void Render();
-    virtual void KeyPress (GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
 protected:
-    virtual int MinimizedLength() const;//!< the width of a minimized InGameMenu wnd
+    virtual GG::X MinimizedWidth() const;//!< the width of a minimized InGameMenu wnd
 
 private:
     void Save();        //!< when m_save_btn button is pressed

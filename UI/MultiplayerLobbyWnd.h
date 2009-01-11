@@ -41,7 +41,7 @@ public:
     
     /** \name Mutators */ //@{
     virtual void Render();
-    virtual void KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys);
+    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
     void ChatMessage(int player_id, const std::string& msg);
     void LobbyUpdate(const MultiplayerLobbyData& lobby_data);
@@ -50,7 +50,7 @@ public:
 
 private:
     void Init();
-    void NewLoadClicked(int idx);
+    void NewLoadClicked(std::size_t idx);
     void GalaxySetupPanelChanged();
     void SaveGameChanged(GG::DropDownList::iterator it);
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);

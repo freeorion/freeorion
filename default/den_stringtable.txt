@@ -27,7 +27,7 @@ CLOSE
 Luk
 
 LOAD
-Indlæs
+IndlÃ¦s
 
 SAVE
 Gem
@@ -57,7 +57,7 @@ INTRO_BTN_MULTI_PLAYER
 Multi Player
 
 INTRO_BTN_LOAD_GAME
-Indlæs Gammelt Spil
+IndlÃ¦s Gammelt Spil
 
 INTRO_BTN_OPTIONS
 Options
@@ -72,7 +72,7 @@ Afslut
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Fik timeout mens vi prøvede at tilslutte til serveren
+Fik timeout mens vi prÃ¸vede at tilslutte til serveren
 
 
 ########################
@@ -88,9 +88,9 @@ Tilslut til server
 #Static labels####
 
 LAN_GAME_LABEL
-Lan spil på:
+Lan spil pÃ¥:
 INTERNET_GAME_LABEL
-Internet spil på:
+Internet spil pÃ¥:
 PLAYER_NAME_LABEL
 Spiller navn:
 
@@ -112,7 +112,7 @@ Opdater listen
 #Window title####
 
 MPLOBBY_WINDOW_TITLE
-Multiplayer Opsætning
+Multiplayer OpsÃ¦tning
 
 #Strings
 MPLOBBY_HOST_ABORTED_GAME
@@ -124,7 +124,7 @@ NEW_GAME_BN
 Nyt spil
 
 LOAD_GAME_BN
-Indlæs gammelt spil
+IndlÃ¦s gammelt spil
 
 START_GAME_BN
 Start spil
@@ -137,7 +137,7 @@ Start spil
 #Window title####
 
 GSETUP_WINDOW_TITLE
-Galakse Opsætning
+Galakse OpsÃ¦tning
 
 #Strings
 GSETUP_GRAPHICS_FILES
@@ -157,7 +157,7 @@ Stjernevejs Hyppighed
 GSETUP_PLANET_DENSITY
 Planet Forekomst
 GSETUP_SPECIALS_FREQ
-Karak.træks Hyppighed
+Karak.trÃ¦ks Hyppighed
 
 GSETUP_2ARM
 Spiral, 2-arme
@@ -185,7 +185,7 @@ GSETUP_ANCIENT
 Antik
 
 GSETUP_FEW
-Få
+FÃ¥
 GSETUP_SOME
 Nogle
 GSETUP_SEVERAL
@@ -200,12 +200,12 @@ Lav
 GSETUP_MEDIUM
 Medium
 GSETUP_HIGH
-Høj
+HÃ¸j
 
 GSETUP_RARE
-Sjældent
+SjÃ¦ldent
 GSETUP_UNCOMMON
-Usædvanligt
+UsÃ¦dvanligt
 GSETUP_COMMON
 Normalt
 
@@ -223,7 +223,7 @@ Eksistere ikke.
 #Window Title####
 
 ESELECT_WINDOW_TITLE
-Imperium Udvælgelse
+Imperium UdvÃ¦lgelse
 
 
 #Static text####
@@ -257,7 +257,7 @@ GAME_MENU_SAVE
 Gem Spil
 
 GAME_MENU_LOAD
-Indlæs Spil
+IndlÃ¦s Spil
 
 GAME_MENU_RESIGN
 Afslut Spil
@@ -286,7 +286,7 @@ Planet Panel
 #Planet Sizes and Types####
 
 PL_SZ_NOWORLD
-Intet at se her; fortsæt bare.
+Intet at se her; fortsÃ¦t bare.
 PL_SZ_TINY
 Mini
 PL_SZ_SMALL
@@ -311,9 +311,9 @@ Radioaktiv
 PL_SWAMP
 Sump
 PL_BARREN
-Øde
+Ã˜de
 PL_DESERT
-Ørken
+Ã˜rken
 PL_TUNDRA
 Tundra
 PL_OCEAN
@@ -330,10 +330,10 @@ PL_UNINHABITED
 Ubeboet
 
 PL_PRIMARY_FOCUS
-primær 
+primÃ¦r 
 
 PL_SECONDARY_FOCUS
-sekundær
+sekundÃ¦r
 
 PL_BALANCED
 balanceret
@@ -353,7 +353,7 @@ PL_PRODUCTION_TIME_TURNS
 (%d ture)
 
 PL_COLONIZE
-Kolonisér
+KolonisÃ©r
 
 SP_UNKNOWN_SYSTEM
 ukendt system
@@ -373,19 +373,19 @@ TURN_PROGRESS_WND
 Udregning af Tur
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Bevægelse af Flåder
+BevÃ¦gelse af FlÃ¥der
 
 TURN_PROGRESS_PHASE_COMBAT
-Løser Kamp
+LÃ¸ser Kamp
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Produktion og Vækst
+Produktion og VÃ¦kst
 
 TURN_PROGRESS_PHASE_WAITING
-Venter på at spillere færdigører deres tur
+Venter pÃ¥ at spillere fÃ¦rdigÃ¸rer deres tur
 
 TURN_PROGRESS_PHASE_ORDERS
-Udfører ordre
+UdfÃ¸rer ordre
 
 
 ########################
@@ -403,23 +403,23 @@ Situations Report
 ####################
 
 SITREP_MAX_INDUSTRY
-Planet %planet% i systemet %system% har nået sin maksimale produktion.
+Planet %planet% i systemet %system% har nÃ¥et sin maksimale produktion.
 
 SITREP_SHIP_BUILT
-Et nyt skib %ship% er nu i kredsløb omkring planeten %planet%.
+Et nyt skib %ship% er nu i kredslÃ¸b omkring planeten %planet%.
 
 SITREP_TECH_RESEARCHED
 Teknologien %tech% er blevet opfundet.
 
 SITREP_BASE_BUILT
-Planeten %planet% i systemet %system% har færdig gjort en forsvars station.
+Planeten %planet% i systemet %system% har fÃ¦rdig gjort en forsvars station.
 
 SITREP_COMBAT_SYSTEM_WON
-Der har været en kamp i systemet %system%. Du vandt!
+Der har vÃ¦ret en kamp i systemet %system%. Du vandt!
 
 SITREP_COMBAT_SYSTEM_LOST
-Der har været en kamp i systemet %system%. Du tabte!
+Der har vÃ¦ret en kamp i systemet %system%. Du tabte!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-Der har været en kamp i systemet %system%. Det blev uafgjort.
+Der har vÃ¦ret en kamp i systemet %system%. Det blev uafgjort.
 

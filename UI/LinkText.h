@@ -9,7 +9,7 @@
 class TextLinker
 {
 private:
-    struct BoolCombiner 
+    struct BoolCombiner
     {
         typedef bool result_type; 
         template<class InIt> result_type operator()(InIt first, InIt last) const;
@@ -34,7 +34,7 @@ protected:
     virtual GG::Pt                                  TextUpperLeft() const = 0;
     virtual GG::Pt                                  TextLowerRight() const = 0;
     virtual void                                    SetLinkedText(const std::string& str) = 0;
-    virtual const std::string&                      WindowText() const = 0;
+    virtual std::string                             Text_() const = 0;
 
     void                                            FindLinks();    ///< finds the links in the text and populates m_links
 
@@ -57,10 +57,10 @@ private:
     static bool         s_link_tags_registered;
 };
 
-/** allows text that the user sees to emit signals when clicked, and indicates to the user visually which text 
+/** allows text that the user sees to emit signals when clicked, and indicates to the user visually which text
     represents a link.  There is one type of signal for each type of ZoomTo*() method in ClientUI.  This allows
-    any text that refers to game elements to be tagged as such and clicked by the user, emitting a signal of the 
-    appropriate type.  These signals can be used to ZoomTo*() an appropriate screen, or take some other action.
+    any text that refers to game elements to be tagged as such and clicked by the user, emitting a signal of the
+    appropriate type.  These signals can be used to ZoomTo*() an appropriate screen, or take some other action
     The folowig tags are currently supported:
     \verbatim
     <planet ID>
@@ -78,12 +78,12 @@ class LinkText : public GG::TextControl, public TextLinker
 {
 public:
     /** \name Structors */ //@{
-    LinkText(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor taking a font directly
+    LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
-        Window size is determined from the string and font; the window will be large enough to fit the text as rendered, 
+        Window size is determined from the string and font; the window will be large enough to fit the text as rendered,
         and no larger.  \see DynamicText::DynamicText() */
-    LinkText(int x, int y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE);
+    LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE);
     //@}
 
     /** \name Accessors */ //@{
@@ -92,7 +92,7 @@ public:
 
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const;
     virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
-    virtual const std::string&                      WindowText() const;
+    virtual std::string                             Text_() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -104,9 +104,10 @@ public:
     virtual void    MouseLeave();
 
 
-    /** sets the text to \a str; may resize the window.  If the window was constructed to fit the size of the text 
-        (i.e. if the second ctor type was used), calls to this function cause the window to be resized to whatever 
-        space the newly rendered text occupies. */
+    /** sets the text to \a str; may resize the window.  If the window was
+        constructed to fit the size of the text (i.e. if the second ctor type
+        was used), calls to this function cause the window to be resized to
+        whatever space the newly rendered text occupies. */
     virtual void    SetText(const std::string& str);
     //@}
 

@@ -20,7 +20,7 @@
 
 
 namespace {
-    const int PRODUCTION_INFO_AND_QUEUE_WIDTH = 250;
+    const GG::X PRODUCTION_INFO_AND_QUEUE_WIDTH(250);
     const double PI = 3.141594;
     const double OUTER_LINE_THICKNESS = 2.0;
 
@@ -29,7 +29,7 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row
     {
-        QueueRow(int w, const ProductionQueue::Element& build, int queue_index_);
+        QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_);
         const int queue_index;
     };
 
@@ -39,7 +39,7 @@ namespace {
     class QueueBuildPanel : public GG::Control
     {
     public:
-        QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn);
+        QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_cost, int turns, int number, int turns_completed, double partially_complete_turn);
         virtual void Render();
 
     private:
@@ -60,7 +60,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(int w, const ProductionQueue::Element& build, int queue_index_) :
+    QueueRow::QueueRow(GG::X w, const ProductionQueue::Element& build, int queue_index_) :
         GG::ListBox::Row(),
         queue_index(queue_index_)
     {
@@ -72,7 +72,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, build, build.spending, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueBuildPanel(w, build, build.allocated_pp, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
         Resize(panel->Size());
         push_back(panel);
 
@@ -82,10 +82,10 @@ namespace {
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(int w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
-        GG::Control(0, 0, w, 10, GG::Flags<GG::WndFlag>()),
+    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
+        GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_build(build),
-        m_in_progress(build.spending),
+        m_in_progress(build.allocated_pp),
         m_total_turns(turns),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
@@ -93,20 +93,20 @@ namespace {
         const int MARGIN = 2;
 
         const int FONT_PTS = ClientUI::Pts();
-        const int METER_HEIGHT = FONT_PTS;
+        const GG::Y METER_HEIGHT(FONT_PTS);
 
-        const int HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
+        const GG::Y HEIGHT = MARGIN + FONT_PTS + MARGIN + METER_HEIGHT + MARGIN + FONT_PTS + MARGIN + 6;
 
-        const int GRAPHIC_SIZE = HEIGHT - 9;    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
+        const int GRAPHIC_SIZE = Value(HEIGHT - 9);    // 9 pixels accounts for border thickness so the sharp-cornered icon doesn't with the rounded panel corner
 
-        const int NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
-        const int METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
-        const int TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
+        const GG::X NAME_WIDTH = w - GRAPHIC_SIZE - 2*MARGIN - 3;
+        const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
+        const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
 
         Resize(GG::Pt(w, HEIGHT));
 
         GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
-        boost::shared_ptr<GG::Font> font = GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         // get graphic and player-visible name text for item
         boost::shared_ptr<GG::Texture> graphic;
@@ -117,9 +117,6 @@ namespace {
         } else if (build.item.build_type == BT_SHIP) {
             graphic = ClientUI::ShipIcon(build.item.design_id);
             name_text = GetShipDesign(build.item.design_id)->Name();
-        } else if (build.item.build_type == BT_ORBITAL) {
-            graphic = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "base1.png"); // this is a kludge for v0.3 only
-            name_text = UserString(build.item.name);
         } else {
             graphic = ClientUI::GetTexture(""); // get "missing texture" texture by supply intentionally bad path
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
@@ -134,17 +131,17 @@ namespace {
 
 
         // create and arrange widgets to display info
-        int top = MARGIN;
-        int left = MARGIN;
+        GG::Y top(MARGIN);
+        GG::X left(MARGIN);
 
         if (graphic)
-            m_icon = new GG::StaticGraphic(left, top, GRAPHIC_SIZE, GRAPHIC_SIZE, graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE), graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         else
             m_icon = 0;
 
         left += GRAPHIC_SIZE + MARGIN;
 
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, FONT_PTS + 2*MARGIN, name_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), name_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
@@ -156,8 +153,8 @@ namespace {
 
         top += m_progress_bar->Height() + MARGIN;
 
-        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % turn_spending);
-        m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false, false));
+        m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turn_spending_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
@@ -165,7 +162,7 @@ namespace {
 
         int turns_left = build.turns_left_to_next_item;
         std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
-        m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, FONT_PTS + MARGIN,
+        m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                                          turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_until_next_complete_text->ClipText(true);
 
@@ -205,30 +202,30 @@ namespace {
 //////////////////////////////////////////////////
 // ProductionWnd                                //
 //////////////////////////////////////////////////
-ProductionWnd::ProductionWnd(int w, int h) :
-    GG::Wnd(0, 0, w, h, GG::ONTOP),
+ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
     m_build_designator_wnd(0)
 {
-    m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, 200, UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
+    m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
-    m_queue_lb = new QueueListBox(2, m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
-    GG::Connect(m_queue_lb->QueueItemMoved, &ProductionWnd::QueueItemMoved, this);
+    m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), 6);
+    GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y(6));
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
-    m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), 0));
+    m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), GG::Y0));
 
     EnableChildClipping(true);
 
-    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal, &ProductionWnd::AddBuildToQueueSlot, this);
-    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal, &ProductionWnd::ChangeBuildQuantitySlot, this);
-    GG::Connect(m_build_designator_wnd->SystemSelectedSignal, SystemSelectedSignal);
-    GG::Connect(m_queue_lb->ErasedSignal, &ProductionWnd::QueueItemDeletedSlot, this);
-    GG::Connect(m_queue_lb->LeftClickedSignal, &ProductionWnd::QueueItemClickedSlot, this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal, &ProductionWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal,     &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      &ProductionWnd::AddBuildToQueueSlot, this);
+    GG::Connect(m_build_designator_wnd->BuildQuantityChangedSignal,     &ProductionWnd::ChangeBuildQuantitySlot, this);
+    GG::Connect(m_build_designator_wnd->SystemSelectedSignal,           SystemSelectedSignal);
+    GG::Connect(m_queue_lb->QueueItemMoved,                             &ProductionWnd::QueueItemMoved, this);
+    GG::Connect(m_queue_lb->ErasedSignal,                               &ProductionWnd::QueueItemDeletedSlot, this);
+    GG::Connect(m_queue_lb->LeftClickedSignal,                          &ProductionWnd::QueueItemClickedSlot, this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal,                        &ProductionWnd::QueueItemDoubleClickedSlot, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_lb);
@@ -271,28 +268,28 @@ void ProductionWnd::Render()
     glPolygonMode(GL_BACK, GL_FILL);
     glColor(ClientUI::WndColor());
     glBegin(GL_QUADS);
-    glVertex2i(ul.x, ul.y);
-    glVertex2i(lr.x, ul.y);
-    glVertex2i(lr.x, clip_rect.ul.y);
-    glVertex2i(ul.x, clip_rect.ul.y);
+    glVertex(ul.x, ul.y);
+    glVertex(lr.x, ul.y);
+    glVertex(lr.x, clip_rect.ul.y);
+    glVertex(ul.x, clip_rect.ul.y);
 
-    glVertex2i(ul.x, clip_rect.ul.y);
-    glVertex2i(clip_rect.ul.x, clip_rect.ul.y);
-    glVertex2i(clip_rect.ul.x, clip_rect.lr.y);
-    glVertex2i(ul.x, clip_rect.lr.y);
+    glVertex(ul.x, clip_rect.ul.y);
+    glVertex(clip_rect.ul.x, clip_rect.ul.y);
+    glVertex(clip_rect.ul.x, clip_rect.lr.y);
+    glVertex(ul.x, clip_rect.lr.y);
 
-    glVertex2i(clip_rect.lr.x, clip_rect.ul.y);
-    glVertex2i(lr.x, clip_rect.ul.y);
-    glVertex2i(lr.x, clip_rect.lr.y);
-    glVertex2i(clip_rect.lr.x, clip_rect.lr.y);
+    glVertex(clip_rect.lr.x, clip_rect.ul.y);
+    glVertex(lr.x, clip_rect.ul.y);
+    glVertex(lr.x, clip_rect.lr.y);
+    glVertex(clip_rect.lr.x, clip_rect.lr.y);
     glEnd();
 
     glBegin(GL_POLYGON);
-    glVertex2i(ul.x, clip_rect.lr.y);
-    glVertex2i(lr.x, clip_rect.lr.y);
-    glVertex2i(lr.x, lr.y);
-    glVertex2i(ul.x, lr.y);
-    glVertex2i(ul.x, clip_rect.lr.y);
+    glVertex(ul.x, clip_rect.lr.y);
+    glVertex(lr.x, clip_rect.lr.y);
+    glVertex(lr.x, lr.y);
+    glVertex(ul.x, lr.y);
+    glVertex(ul.x, clip_rect.lr.y);
     glEnd();
 
     // reset this to whatever it was initially
@@ -349,18 +346,16 @@ void ProductionWnd::UpdateQueue()
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
-    std::size_t original_queue_length = m_queue_lb->NumRows();
     m_queue_lb->Clear();
-    const int QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
+    const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
     int i = 0;
-    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
+    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i)
         m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, *it, i));
-    }
 
     if (!m_queue_lb->Empty())
         m_queue_lb->BringRowIntoView(--m_queue_lb->end());
-    if (m_queue_lb->NumRows() <= original_queue_length)
+    if (first_visible_queue_row < m_queue_lb->NumRows())
         m_queue_lb->BringRowIntoView(boost::next(m_queue_lb->begin(), first_visible_queue_row));
 }
 
@@ -371,7 +366,7 @@ void ProductionWnd::UpdateInfoPanel()
     double PPs = empire->ProductionPoints();
     double total_queue_cost = queue.TotalPPsSpent();
     ProductionQueue::const_iterator underfunded_it = queue.UnderfundedProject(empire);
-    double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->spending;
+    double PPs_to_underfunded_projects = underfunded_it == queue.end() ? 0.0 : underfunded_it->allocated_pp;
     m_production_info_panel->Reset(PPs, total_queue_cost, queue.ProjectsInProgress(), PPs_to_underfunded_projects, queue.size());
     /* Altering production queue may have freed up or required more PP, which may require extra
        or free up excess minerals.  Signalling that the MineralResPool has changed causes the

@@ -6,6 +6,7 @@
 
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
+#include <GG/BrowseInfoWnd.h>
 
 class PopulationPanel;
 class ResourcePanel;
@@ -32,7 +33,7 @@ namespace GG {
 class PopulationPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    PopulationPanel(int w, const UniverseObject &obj);  ///< basic ctor
+    PopulationPanel(GG::X w, const UniverseObject &obj);  ///< basic ctor
     ~PopulationPanel();
     //@}
 
@@ -73,13 +74,13 @@ private:
 
     static std::map<int, bool>  s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 
-    static const int            EDGE_PAD = 3;           ///< distance between edges of panel and placement of child controls
+    static const int            EDGE_PAD;               ///< distance between edges of panel and placement of child controls
 };
 
 class ResourcePanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    ResourcePanel(int w, const UniverseObject &obj);
+    ResourcePanel(GG::X w, const UniverseObject &obj);
     ~ResourcePanel();
     //@}
 
@@ -124,18 +125,19 @@ private:
 
     CUIDropDownList*            m_primary_focus_drop;   ///< displays and allows selection of primary focus
     CUIDropDownList*            m_secondary_focus_drop; ///< displays and allows selection of secondary focus
+    std::map<CUIDropDownList*, boost::signals::connection>  m_drop_changed_connections; ///< signals connecting selection changed signals from drop lists to responses.  blocked when programmatically changing focus selection, to avoid recursive signal emission
 
     GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 
-    static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
+    static const int            EDGE_PAD;           ///< distance between edges of panel and placement of child controls
 };
 
 class MilitaryPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    MilitaryPanel(int w, const Planet &plt);
+    MilitaryPanel(GG::X w, const Planet &plt);
     ~MilitaryPanel();
     //@}
 
@@ -177,13 +179,13 @@ private:
 
     static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 
-    static const int            EDGE_PAD = 3;       ///< distance between edges of panel and placement of child controls
+    static const int            EDGE_PAD;           ///< distance between edges of panel and placement of child controls
 };
 
 class BuildingsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    BuildingsPanel(int w, int columns, const Planet &plt);  ///< basic ctor
+    BuildingsPanel(GG::X w, int columns, const Planet &plt);  ///< basic ctor
     ~BuildingsPanel();
     //@}
 
@@ -224,8 +226,8 @@ private:
 /** Represents and allows some user interaction with a building */
 class BuildingIndicator : public GG::Wnd {
 public:
-    BuildingIndicator(int w, const BuildingType &type); ///< constructor for use when building is completed, shown without progress bar
-    BuildingIndicator(int w, const BuildingType &type, int turns_left, int turns_completed,
+    BuildingIndicator(GG::X w, const BuildingType &type); ///< constructor for use when building is completed, shown without progress bar
+    BuildingIndicator(GG::X w, const BuildingType &type, int turns_left, int turns_completed,
                       double partial_turn);             ///< constructor for use when building is partially complete, to show progress bar
 
     virtual void    Render();
@@ -245,7 +247,7 @@ private:
 class SpecialsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    SpecialsPanel(int w, const UniverseObject &obj);   ///< basic ctor
+    SpecialsPanel(GG::X w, const UniverseObject &obj);   ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -268,14 +270,14 @@ private:
 
     std::vector<GG::StaticGraphic*> m_icons;
 
-    static const int                EDGE_PAD = 2;
+    static const int                EDGE_PAD;
 };
 
 /** Represents a ShipDesign */
 class ShipDesignPanel : public GG::Control {
 public:
     /** \name Structors */ //@{
-    ShipDesignPanel(int w, int h, int design_id);   ///< basic ctor
+    ShipDesignPanel(GG::X w, GG::Y h, int design_id);   ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -298,7 +300,7 @@ protected:
     GG::StaticGraphic*      m_graphic;
     GG::TextControl*        m_name;
 
-    static const int EDGE_PAD = 2;
+    static const int EDGE_PAD;
 };
 
 /** Display icon and number for various meter-related quantities associated with objects.  Typical use
@@ -308,9 +310,9 @@ protected:
 */
 class MultiIconValueIndicator : public GG::Wnd {
 public:
-    MultiIconValueIndicator(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
-    MultiIconValueIndicator(int w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types);
-    MultiIconValueIndicator(int w); ///< initializes with no icons shown
+    MultiIconValueIndicator(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(GG::X w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(GG::X w); ///< initializes with no icons shown
 
     bool            Empty();
 
@@ -327,16 +329,17 @@ private:
     std::vector<MeterType>              m_meter_types;
     std::vector<const UniverseObject*>  m_obj_vec;
 
-    static const int                    EDGE_PAD = 6;
-    static const int                    ICON_SPACING = 12;
-    static const int                    ICON_WIDTH = 24;
+    static const int                    EDGE_PAD;
+    static const int                    ICON_SPACING;
+    static const GG::X                  ICON_WIDTH;
+    static const GG::Y                  ICON_HEIGHT;
 };
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a
     horizontal indicator for each meter. */
 class MultiMeterStatusBar : public GG::Wnd {
 public:
-    MultiMeterStatusBar(int w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
+    MultiMeterStatusBar(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
 
     virtual void Render();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
@@ -354,12 +357,32 @@ private:
 
     const UniverseObject& m_obj;
 
-    static const int EDGE_PAD = 2;
-    static const int BAR_PAD = 1;
+    static const int EDGE_PAD;
+    static const int BAR_PAD;
 
-    static const int BAR_HEIGHT = 10;
+    static const GG::Y BAR_HEIGHT;
 
     std::vector<GG::Clr> m_bar_colours;
+};
+
+/** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
+class IconTextBrowseWnd : public GG::BrowseInfoWnd {
+public:
+    IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text,
+                      const std::string& main_text);
+    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    virtual void Render();
+
+private:
+    GG::StaticGraphic* m_icon;
+    GG::TextControl* m_title_text;
+    GG::TextControl* m_main_text;
+
+    static const GG::X TEXT_WIDTH;
+    static const GG::X TEXT_PAD;
+    static const GG::X ICON_WIDTH;
+    static const GG::Y ICON_HEIGHT;
+    const GG::Y ROW_HEIGHT;
 };
 
 #endif

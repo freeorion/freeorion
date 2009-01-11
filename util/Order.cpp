@@ -118,18 +118,18 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const in
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER
-    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n"
-              << "    m_empire=" << EmpireID() << "\n"
-              << "    m_fleet_name=" << m_fleet_name << "\n"
-              << "    m_system_id=" << m_system_id << "\n"
-              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
-              << "    m_new_id=" << m_new_id << "\n"
-              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n" << std::endl 
+              << "    m_empire=" << EmpireID() << std::endl
+              << "    m_fleet_name=" << m_fleet_name << std::endl
+              << "    m_system_id=" << m_system_id << std::endl
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")" << std::endl
+              << "    m_new_id=" << m_new_id << std::endl
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
               << std::endl;
 #endif
 }
 
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, const std::vector<int>& ship_ids) :
+NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, const std::vector<int>& ship_ids) :
     Order(empire),
     m_fleet_name(fleet_name),
     m_system_id(-1),
@@ -138,13 +138,13 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name,  const i
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER
-    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id : \n"
-              << "    m_empire=" << EmpireID() << "\n"
-              << "    m_fleet_name=" << m_fleet_name << "\n"
-              << "    m_system_id=" << m_system_id << "\n"
-              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
-              << "    m_new_id=" << m_new_id << "\n"
-              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id : " << std::endl
+              << "    m_empire=" << EmpireID() << std::endl
+              << "    m_fleet_name=" << m_fleet_name << std::endl
+              << "    m_system_id=" << m_system_id << std::endl
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")" << std::endl
+              << "    m_new_id=" << m_new_id << std::endl
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
               << std::endl;
 #endif
 }
@@ -197,14 +197,24 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
     }
     m_route_length = route.second;
 
+    // ensure a zero-length (invalid) route is not requested / sent to a fleet
+    if (m_route.empty()) {
+        m_route.push_back(start_system);
+        const Fleet* fleet_obj = GetUniverse().Object<const Fleet>(fleet);
+        const System* system_obj = GetUniverse().Object<const System>(start_system);
+        double dist_x = system_obj->X() - fleet_obj->X();
+        double dist_y = system_obj->Y() - fleet_obj->Y();
+        m_route_length = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+    }
+
 #if DEBUG_FLEET_MOVE_ORDER
-    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : \n"
-              << "    m_empire=" << EmpireID() << "\n"
-              << "    m_fleet=" << m_fleet << "\n"
-              << "    m_start_system=" << m_start_system << "\n"
-              << "    m_dest_system=" << m_dest_system << "\n"
-              << "    m_route.size()=" << m_route.size() << "\n"
-              << "    m_route_length=" << m_route_length << "\n"
+    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : " << std::endl
+              << "    m_empire=" << EmpireID() << std::endl
+              << "    m_fleet=" << m_fleet << std::endl
+              << "    m_start_system=" << m_start_system << std::endl
+              << "    m_dest_system=" << m_dest_system << std::endl
+              << "    m_route.size()=" << m_route.size() << std::endl
+              << "    m_route_length=" << m_route_length << std::endl
               << std::endl;
 #endif
 }
@@ -346,15 +356,18 @@ void FleetColonizeOrder::ServerExecute() const
     planet->SetSecondaryFocus(FOCUS_FARMING);
 
     planet->GetMeter(METER_POPULATION)->SetCurrent(INITIAL_COLONY_POP);
+    planet->GetMeter(METER_POPULATION)->BackPropegate();
     planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
+    planet->GetMeter(METER_FARMING)->BackPropegate();
     planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+    planet->GetMeter(METER_HEALTH)->BackPropegate();
 
     planet->AddOwner(EmpireID());
 
     Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
     for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
         if (const Meter* meter = planet->GetMeter(meter_type))
-            Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Current() << "/" << meter->Max();
+            Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->InitialCurrent() << "/" << meter->InitialMax();
 }
 
 void FleetColonizeOrder::ExecuteImpl() const
@@ -587,8 +600,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
-    if (build_type == BT_BUILDING || build_type == BT_ORBITAL)
-        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_BUILDING or BT_ORBITAL with a design id, not a name");
+    if (build_type == BT_BUILDING)
+        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name");
 }
 
 
@@ -633,7 +646,7 @@ void ProductionQueueOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Empire* empire = Empires().Lookup(EmpireID());
-    if (m_build_type == BT_BUILDING || m_build_type == BT_ORBITAL)
+    if (m_build_type == BT_BUILDING)
         empire->PlaceBuildInQueue(m_build_type, m_item_name, m_number, m_location);
     else if (m_build_type == BT_SHIP)
         empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
@@ -721,7 +734,7 @@ void ShipDesignOrder::ExecuteImpl() const
         std::vector<Ship*> ship_vec = GetUniverse().FindObjects<Ship>();
         bool known = false;
         for (std::vector<Ship*>::const_iterator it = ship_vec.begin(); it != ship_vec.end(); ++it) {
-            if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != UniverseObject::NO_VISIBILITY) {
+            if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != VIS_NO_VISIBITY) {
                 if ((*it)->DesignID() == m_design_id) {
                     known = true;
                     break;

@@ -1,6 +1,6 @@
 # -*- Python -*-
 
-freeorion_version = 'v0.3.10'
+freeorion_version = 'v0.3.11'
 
 gigi_version = '0.6.0'
 
@@ -14,13 +14,11 @@ devil_version = ''.join(devil_version_string.split('.'))
 ogre_version = '1.4.3'
 ois_version = '1.0.0'
 
-boost_version_string = '1.35'
+boost_version_string = '1.36'
 def BoostStringToNumber(version_string):
     pieces = version_string.split('.')
     return str(int(pieces[0]) * 100000 + int(pieces[1]) * 100 + (3 <= len(pieces) and int(pieces[2]) or 0))
 boost_version = BoostStringToNumber(boost_version_string)
-
-log4cpp_version = '0.3.4b'
 
 bullet_version = '2.68'
 

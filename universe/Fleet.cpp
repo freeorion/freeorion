@@ -8,12 +8,8 @@
 #include "../Empire/EmpireManager.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 
-#include <stdexcept>
 #include <cmath>
-
-#include <boost/format.hpp>
 
 namespace {
     const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement
@@ -75,35 +71,39 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
 { AddOwner(owner); }
 
 Fleet::const_iterator Fleet::begin() const
-{ return m_ships.begin(); }
+{
+    return m_ships.begin();
+}
 
 Fleet::const_iterator Fleet::end() const
-{ return m_ships.end(); }
+{
+    return m_ships.end();
+}
 
 const std::set<int>& Fleet::ShipIDs() const
 {
     return m_ships;
 }
 
-UniverseObject::Visibility Fleet::GetVisibility(int empire_id) const
+Visibility Fleet::GetVisibility(int empire_id) const
 {
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {
-        return FULL_VISIBILITY;
+        return VIS_FULL_VISIBILITY;
     } else {
         // A fleet is visible to another player, iff
         // the previous system on the route or the next system on the route
         // is visible to the player.
         System * system;
         if ((system = GetUniverse().Object<System>(SystemID())) &&
-            system->GetVisibility(empire_id) != NO_VISIBILITY)
-            return PARTIAL_VISIBILITY;
+            system->GetVisibility(empire_id) != VIS_NO_VISIBITY)
+            return VIS_PARTIAL_VISIBILITY;
         if ((system = GetUniverse().Object<System>(NextSystemID())) &&
-            system->GetVisibility(empire_id) != NO_VISIBILITY)
-            return PARTIAL_VISIBILITY;
+            system->GetVisibility(empire_id) != VIS_NO_VISIBITY)
+            return VIS_PARTIAL_VISIBILITY;
         if ((system = GetUniverse().Object<System>(PreviousSystemID())) &&
-            system->GetVisibility(empire_id) != NO_VISIBILITY)
-            return PARTIAL_VISIBILITY;
-        return NO_VISIBILITY;
+            system->GetVisibility(empire_id) != VIS_NO_VISIBITY)
+            return VIS_PARTIAL_VISIBILITY;
+        return VIS_NO_VISIBITY;
     }
 }
 
@@ -528,18 +528,22 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
 void Fleet::AddShips(const std::vector<int>& ships)
 {
     for (unsigned int i = 0; i < ships.size(); ++i) {
-        if (Ship* s = GetUniverse().Object<Ship>(ships[i])) {
-            if (Fleet* old_fleet = s->GetFleet()) {
-                old_fleet->RemoveShip(ships[i]);
-            }
-            s->SetFleetID(ID());
-            s->MoveTo(X(), Y());
+        int ship_id = ships[i];
+
+        if (this->Contains(ship_id)) {
+            Logger().debugStream() << "Fleet::AddShip this fleet " << this->Name() << " already contained ship " << ship_id;
+            continue;
+        }
+
+        if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
             if (System* system = GetSystem()) {
                 system->Insert(s);
             } else {
+                s->MoveTo(X(), Y());
                 s->SetSystem(SystemID());
             }
-            m_ships.insert(ships[i]);
+            s->SetFleetID(ID());
+            m_ships.insert(ship_id);
         } else {
             throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
         }
@@ -548,22 +552,25 @@ void Fleet::AddShips(const std::vector<int>& ships)
     StateChangedSignal();
 }
 
-void Fleet::AddShip(const int ship_id)
+void Fleet::AddShip(int ship_id)
 {
+    if (this->Contains(ship_id)) {
+        Logger().debugStream() << "Fleet::AddShip this fleet " << this->Name() << " already contained ship " << ship_id;
+        return;
+    }
+
+    Logger().debugStream() << "Fleet " << this->Name() << " adding ship: " << ship_id;
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
-        if (Fleet* old_fleet = s->GetFleet()) {
-            old_fleet->RemoveShip(ship_id);
-        }
-        s->SetFleetID(ID());
-        s->MoveTo(X(), Y());
         if (System* system = GetSystem()) {
             system->Insert(s);
         } else {
+            s->MoveTo(X(), Y());
             s->SetSystem(SystemID());
         }
+        s->SetFleetID(ID());
         m_ships.insert(ship_id);
     } else {
-        throw std::invalid_argument("Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.");
+        Logger().errorStream() << "Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.";
     }
     RecalculateFleetSpeed(); // makes AddShip take Order(m_ships.size()) time - may need replacement
     StateChangedSignal();
@@ -625,28 +632,6 @@ void Fleet::SetSystem(int sys)
     }
 }
 
-void Fleet::Move(double x, double y)
-{
-    // move fleet itself
-    UniverseObject::Move(x, y);
-    // move ships in fleet
-    for (iterator it = begin(); it != end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
-        obj->Move(x, y);
-    }
-}
-
-void Fleet::MoveTo(UniverseObject* object)
-{
-    if (!object) {
-        Logger().errorStream() << "Fleet::MoveTo a null object!?";
-        return;
-    }
-    //Logger().debugStream() << "Fleet::MoveTo(const UniverseObject* object)";
-    Fleet::MoveTo(object->X(), object->Y());
-}
-
 void Fleet::MoveTo(double x, double y)
 {
     //Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
@@ -656,8 +641,14 @@ void Fleet::MoveTo(double x, double y)
     for (iterator it = begin(); it != end(); ++it) {
         UniverseObject* obj = GetUniverse().Object(*it);
         assert(obj);
-        obj->MoveTo(x, y);
+        obj->UniverseObject::MoveTo(x, y);
     }
+}
+
+void Fleet::SetNextAndPreviousSystems(int next, int prev)
+{
+    m_prev_system = prev;
+    m_next_system = next;
 }
 
 void Fleet::MovementPhase()
@@ -784,10 +775,14 @@ void Fleet::MovementPhase()
 }
 
 Fleet::iterator Fleet::begin()
-{ return m_ships.begin(); }
+{
+    return m_ships.begin();
+}
 
 Fleet::iterator Fleet::end()
-{ return m_ships.end(); }
+{
+    return m_ships.end();
+}
 
 void Fleet::PopGrowthProductionResearchPhase()
 {
@@ -867,6 +862,9 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last
     const std::set<int>& owners = Owners();
     if (owners.size() == 1)
         fleet_owner = *(owners.begin());
+    const Empire* empire = Empires().Lookup(fleet_owner);
+    if (!empire)        // may occur for destroyed objects whose previous owner has since been eliminated
+        fleet_owner = -1;
 
     std::list<System*>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemNotReachable, _1, fleet_owner));
     std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));

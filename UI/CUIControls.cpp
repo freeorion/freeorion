@@ -52,7 +52,7 @@ namespace {
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
     {
-        return font ? font : GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts());
+        return font ? font : ClientUI::GetFont();
     }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
@@ -85,16 +85,16 @@ namespace {
 ///////////////////////////////////////
 namespace {
     const int CUIBUTTON_ANGLE_OFFSET = 5;
-    const int COLOR_SELECTOR_WIDTH = 75;
-    const int COLOR_SQUARE_HEIGHT = 10;
+    const GG::X COLOR_SELECTOR_WIDTH(75);
+    const GG::Y COLOR_SQUARE_HEIGHT(10);
 
     // row type used in the EmpireColorSelector
     struct ColorRow : public GG::ListBox::Row
     {
         struct ColorSquare : GG::Control
         {
-            ColorSquare(const GG::Clr& color, int h) : 
-                GG::Control(0, 0, COLOR_SELECTOR_WIDTH - 40, h, GG::Flags<GG::WndFlag>())
+            ColorSquare(const GG::Clr& color, GG::Y h) : 
+                GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::Flags<GG::WndFlag>())
             {
                 SetColor(color);
             }
@@ -102,18 +102,18 @@ namespace {
             virtual void Render()
             {
                 GG::Pt ul = UpperLeft(), lr = LowerRight();
-                GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_ZERO, 0);
+                GG::FlatRectangle(ul, lr, Color(), GG::CLR_ZERO, 0);
             }
         };
 
-        ColorRow(const GG::Clr& color, int h = COLOR_SQUARE_HEIGHT)
+        ColorRow(const GG::Clr& color, GG::Y h = COLOR_SQUARE_HEIGHT)
         {
             push_back(new ColorSquare(color, h));
         }
     };
 }
 
-CUIButton::CUIButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                      GG::Clr color/* = ClientUI::ButtonColor()*/,
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                      GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
@@ -128,7 +128,7 @@ bool CUIButton::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    return InAngledCornerRect(pt, ul.x, ul.y, lr.x, lr.y, CUIBUTTON_ANGLE_OFFSET);
+    return InAngledCornerRect(pt, ul, lr, CUIBUTTON_ANGLE_OFFSET);
 }
 
 void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -156,10 +156,10 @@ void CUIButton::RenderPressed()
     AdjustBrightness(color_to_use, 25);
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, m_border_color, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
-    OffsetMove(GG::Pt(1,1));
+    AngledCornerRectangle(ul, lr, color_to_use, m_border_color, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+    OffsetMove(GG::Pt(GG::X1, GG::Y1));
     TextControl::Render();
-    OffsetMove(GG::Pt(-1,-1));
+    OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
 }
 
 void CUIButton::RenderRollover()
@@ -171,7 +171,7 @@ void CUIButton::RenderRollover()
         border_color_to_use = DisabledColor(m_border_color);
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
     TextControl::Render();
 }
 
@@ -181,7 +181,7 @@ void CUIButton::RenderUnpressed()
     GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
+    AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, m_border_thick);
     TextControl::Render();
 }
 
@@ -215,7 +215,7 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category)
 ///////////////////////////////////////
 // class CUITurnButton
 ///////////////////////////////////////
-CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                              GG::Clr color/* = ClientUI::ButtonColor()*/, 
                              GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                              GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
@@ -228,7 +228,7 @@ CUITurnButton::CUITurnButton(int x, int y, int w, const std::string& str, const 
 ///////////////////////////////////////
 // class CUIArrowButton
 ///////////////////////////////////////
-CUIArrowButton::CUIArrowButton(int x, int y, int w, int h, ShapeOrientation orientation, GG::Clr color, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation, GG::Clr color, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)
@@ -241,8 +241,8 @@ bool CUIArrowButton::InWindow(const GG::Pt& pt) const
     if (m_fill_background_with_wnd_color) {
         return Button::InWindow(pt);
     } else {
-        GG::Pt ul = UpperLeft() + GG::Pt(3, 1), lr = LowerRight() - GG::Pt(2, 1);
-        return InIsoscelesTriangle(pt, ul.x, ul.y, lr.x, lr.y, m_orientation);
+        GG::Pt ul = UpperLeft() + GG::Pt(GG::X(3), GG::Y(1)), lr = LowerRight() - GG::Pt(GG::X(2), GG::Y(1));
+        return InIsoscelesTriangle(pt, ul, lr, m_orientation);
     }
 }
 
@@ -265,39 +265,39 @@ void CUIArrowButton::RenderPressed()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_fill_background_with_wnd_color)
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
-    OffsetMove(GG::Pt(1, 1));
+        FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_ZERO, 0);
+    OffsetMove(GG::Pt(GG::X1, GG::Y1));
     RenderUnpressed();
-    OffsetMove(GG::Pt(-1, -1));
+    OffsetMove(GG::Pt(-GG::X1, -GG::Y1));
 }
 
 void CUIArrowButton::RenderRollover()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_fill_background_with_wnd_color)
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
+        FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
     if (!Disabled())
         AdjustBrightness(color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
-    GG::Pt tri_ul = ul + GG::Pt(3, 1), tri_lr = lr - GG::Pt(2, 1);
-    IsoscelesTriangle(tri_ul.x, tri_ul.y, tri_lr.x, tri_lr.y, m_orientation, color_to_use);
+    GG::Pt tri_ul = ul + GG::Pt(GG::X(3), GG::Y1), tri_lr = lr - GG::Pt(GG::X(2), GG::Y1);
+    IsoscelesTriangle(tri_ul, tri_lr, m_orientation, color_to_use);
 }
 
 void CUIArrowButton::RenderUnpressed()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_fill_background_with_wnd_color)
-        FlatRectangle(ul.x, ul.y, lr.x, lr.y, ClientUI::WndColor(), GG::CLR_ZERO, 0);
+        FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_ZERO, 0);
     GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Pt tri_ul = ul + GG::Pt(3, 1), tri_lr = lr - GG::Pt(2, 1);
-    IsoscelesTriangle(tri_ul.x, tri_ul.y, tri_lr.x, tri_lr.y, m_orientation, color_to_use);
+    GG::Pt tri_ul = ul + GG::Pt(GG::X(3), GG::Y1), tri_lr = lr - GG::Pt(GG::X(2), GG::Y1);
+    IsoscelesTriangle(tri_ul, tri_lr, m_orientation, color_to_use);
 }
 
 
 ///////////////////////////////////////
 // class CUIStateButton
 ///////////////////////////////////////
-CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
+CUIStateButton::CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
                                GG::Clr color/* = ClientUI::StateButtonColor()*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
@@ -305,8 +305,10 @@ CUIStateButton::CUIStateButton(int x, int y, int w, int h, const std::string& st
     m_border_color(border),
     m_mouse_here(false)
 {
-    if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB)
+    if (style == GG::SBSTYLE_3D_TOP_DETACHED_TAB || style == GG::SBSTYLE_3D_TOP_ATTACHED_TAB) {
         SetColor(ClientUI::WndColor());
+        SetTextColor(DarkColor(text_color));
+    }
     // HACK! radio buttons should only emit sounds when they are checked, and *not* when they are unchecked; currently, there's no 
     // other way to detect the difference between these two kinds of CUIStateButton within the CUIStateButton ctor other than
     // checking the redering style
@@ -340,37 +342,37 @@ void CUIStateButton::Render()
 
         if (static_cast<int>(Style()) == GG::SBSTYLE_3D_CHECKBOX) {
             const int MARGIN = 3;
-            FlatRectangle(bn_ul.x, bn_ul.y, bn_lr.x, bn_lr.y, int_color_to_use, border_color_to_use, 1);
+            FlatRectangle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
             if (Checked()) {
                 GG::Clr inside_color = color_to_use;
                 GG::Clr outside_color = color_to_use;
                 AdjustBrightness(outside_color, 50);
-                bn_ul += GG::Pt(MARGIN, MARGIN);
-                bn_lr -= GG::Pt(MARGIN, MARGIN);
-                const int OFFSET = (bn_lr.y - bn_ul.y) / 2;
+                bn_ul += GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
+                bn_lr -= GG::Pt(GG::X(MARGIN), GG::Y(MARGIN));
+                const int OFFSET = Value(bn_lr.y - bn_ul.y) / 2;
                 glDisable(GL_TEXTURE_2D);
                 glColor(inside_color);
                 glBegin(GL_QUADS);
-                glVertex2i(bn_lr.x, bn_ul.y);
-                glVertex2i(bn_ul.x + OFFSET, bn_ul.y);
-                glVertex2i(bn_ul.x, bn_ul.y + OFFSET);
-                glVertex2i(bn_ul.x, bn_lr.y);
-                glVertex2i(bn_ul.x, bn_lr.y);
-                glVertex2i(bn_lr.x - OFFSET, bn_lr.y);
-                glVertex2i(bn_lr.x, bn_lr.y - OFFSET);
-                glVertex2i(bn_lr.x, bn_ul.y);
+                glVertex(bn_lr.x, bn_ul.y);
+                glVertex(bn_ul.x + OFFSET, bn_ul.y);
+                glVertex(bn_ul.x, bn_ul.y + OFFSET);
+                glVertex(bn_ul.x, bn_lr.y);
+                glVertex(bn_ul.x, bn_lr.y);
+                glVertex(bn_lr.x - OFFSET, bn_lr.y);
+                glVertex(bn_lr.x, bn_lr.y - OFFSET);
+                glVertex(bn_lr.x, bn_ul.y);
                 glEnd();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glColor(outside_color);
                 glBegin(GL_POLYGON);
-                glVertex2i(bn_lr.x, bn_ul.y);
-                glVertex2i(bn_ul.x + OFFSET, bn_ul.y);
-                glVertex2i(bn_ul.x, bn_ul.y + OFFSET);
-                glVertex2i(bn_ul.x, bn_lr.y);
-                glVertex2i(bn_ul.x, bn_lr.y);
-                glVertex2i(bn_lr.x - OFFSET, bn_lr.y);
-                glVertex2i(bn_lr.x, bn_lr.y - OFFSET);
-                glVertex2i(bn_lr.x, bn_ul.y);
+                glVertex(bn_lr.x, bn_ul.y);
+                glVertex(bn_ul.x + OFFSET, bn_ul.y);
+                glVertex(bn_ul.x, bn_ul.y + OFFSET);
+                glVertex(bn_ul.x, bn_lr.y);
+                glVertex(bn_ul.x, bn_lr.y);
+                glVertex(bn_lr.x - OFFSET, bn_lr.y);
+                glVertex(bn_lr.x, bn_lr.y - OFFSET);
+                glVertex(bn_lr.x, bn_ul.y);
                 glEnd();
                 glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
                 glEnable(GL_TEXTURE_2D);
@@ -379,33 +381,37 @@ void CUIStateButton::Render()
                 AdjustBrightness(inside_color, -75);
                 GG::Clr outside_color = inside_color;
                 AdjustBrightness(outside_color, 40);
-                glTranslated((bn_ul.x + bn_lr.x) / 2.0, -(bn_ul.y + bn_lr.y) / 2.0, 0.0);
+                glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
                 glScaled(-1.0, 1.0, 1.0);
-                glTranslated(-(bn_ul.x + bn_lr.x) / 2.0, (bn_ul.y + bn_lr.y) / 2.0, 0.0);
-                AngledCornerRectangle(bn_ul.x + MARGIN, bn_ul.y + MARGIN, bn_lr.x - MARGIN, bn_lr.y - MARGIN, 
-                                      inside_color, outside_color, (bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
-                glTranslated((bn_ul.x + bn_lr.x) / 2.0, -(bn_ul.y + bn_lr.y) / 2.0, 0.0);
+                glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
+                AngledCornerRectangle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
+                                      GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN), 
+                                      inside_color, outside_color, Value(bn_lr.y - bn_ul.y - 2 * MARGIN) / 2, 1);
+                glTranslated(Value((bn_ul.x + bn_lr.x) / 2.0), Value(-(bn_ul.y + bn_lr.y) / 2.0), 0.0);
                 glScaled(-1.0, 1.0, 1.0);
-                glTranslated(-(bn_ul.x + bn_lr.x) / 2.0, (bn_ul.y + bn_lr.y) / 2.0, 0.0);
+                glTranslated(Value(-(bn_ul.x + bn_lr.x) / 2.0), Value((bn_ul.y + bn_lr.y) / 2.0), 0.0);
             }
         } else if (static_cast<int>(Style()) == GG::SBSTYLE_3D_RADIO) {
             const int MARGIN = 2;
-            FlatCircle(bn_ul.x, bn_ul.y, bn_lr.x, bn_lr.y, int_color_to_use, border_color_to_use, 1);
+            FlatCircle(bn_ul, bn_lr, int_color_to_use, border_color_to_use, 1);
             if (Checked()) {
                 GG::Clr inside_color = color_to_use;
                 GG::Clr outside_color = color_to_use;
                 AdjustBrightness(outside_color, 50);
-                FlatCircle(bn_ul.x + MARGIN, bn_ul.y + MARGIN, bn_lr.x - MARGIN, bn_lr.y - MARGIN, GG::CLR_ZERO, 
-                           outside_color, 1);
-                FlatCircle(bn_ul.x + MARGIN + 1, bn_ul.y + MARGIN + 1, bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1, 
+                FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
+                           GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
+                           GG::CLR_ZERO, outside_color, 1);
+                FlatCircle(GG::Pt(bn_ul.x + MARGIN + 1, bn_ul.y + MARGIN + 1),
+                           GG::Pt(bn_lr.x - MARGIN - 1, bn_lr.y - MARGIN - 1), 
                            inside_color, outside_color, 1);
             } else {
                 GG::Clr inside_color = border_color_to_use;
                 AdjustBrightness(inside_color, -75);
                 GG::Clr outside_color = inside_color;
                 AdjustBrightness(outside_color, 40);
-                FlatCircle(bn_ul.x + MARGIN, bn_ul.y + MARGIN, bn_lr.x - MARGIN, bn_lr.y - MARGIN, inside_color, 
-                           outside_color, 1);
+                FlatCircle(GG::Pt(bn_ul.x + MARGIN, bn_ul.y + MARGIN),
+                           GG::Pt(bn_lr.x - MARGIN, bn_lr.y - MARGIN),
+                           inside_color, outside_color, 1);
             }
         }
         // draw text
@@ -422,9 +428,9 @@ void CUIStateButton::Render()
         GG::Pt additional_text_offset;
         if (!Checked()) {
             ul.y += UNCHECKED_OFFSET;
-            additional_text_offset.y = UNCHECKED_OFFSET / 2;
+            additional_text_offset.y = GG::Y(UNCHECKED_OFFSET / 2);
         }
-        AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !Checked());
+        AngledCornerRectangle(ul, lr, color_to_use, border_color_to_use, CUIBUTTON_ANGLE_OFFSET, 1, true, false, !Checked());
         OffsetMove(TextUpperLeft() + additional_text_offset);
         TextControl::Render();
         OffsetMove(-(TextUpperLeft() + additional_text_offset));
@@ -445,6 +451,28 @@ void CUIStateButton::MouseLeave()
 
 
 ///////////////////////////////////////
+// class CUITabBar
+///////////////////////////////////////
+CUITabBar::CUITabBar(GG::X x, GG::Y y, GG::X w, const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color,
+                     GG::TabBarStyle style, GG::Flags<GG::WndFlag> flags) :
+    GG::TabBar(x, y, w, font, color, text_color, style, flags)
+{}
+
+void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons) {
+    RaiseCurrentTabButton();
+    int index = CurrentTabIndex();
+    for (int i = 0; i < static_cast<int>(tab_buttons.size()); ++i) {
+        GG::StateButton* tab = tab_buttons[i];
+        GG::Clr text_color = TextColor();
+        if (index == i)
+            tab->SetTextColor(text_color);
+        else
+            tab->SetTextColor(DarkColor(text_color));
+    }
+}
+
+
+///////////////////////////////////////
 // class CUIScroll
 ///////////////////////////////////////
 namespace {
@@ -455,16 +483,17 @@ namespace {
 // class CUIScroll::ScrollTab
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, 
                                 GG::Clr border_color) : 
-    Button(orientation == GG::VERTICAL ? 0 : 2,
-           orientation == GG::VERTICAL ? 2 : 0,
-           scroll_width, scroll_width, "", boost::shared_ptr<GG::Font>(), color),
+    Button(GG::X(orientation == GG::VERTICAL ? 0 : 2),
+           GG::Y(orientation == GG::VERTICAL ? 2 : 0),
+           GG::X(scroll_width), GG::Y(scroll_width),
+           "", boost::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
     m_orientation(orientation),
     m_mouse_here(false),
     m_being_dragged(false)
 {
-    SetMinSize(GG::Pt(m_orientation == GG::VERTICAL ? MinSize().x : 10,
-                      m_orientation == GG::VERTICAL ? 10 : MinSize().y));
+    SetMinSize(GG::Pt(m_orientation == GG::VERTICAL ? MinSize().x : GG::X(10),
+                      m_orientation == GG::VERTICAL ? GG::Y(10) : MinSize().y));
 }
 
 void CUIScroll::ScrollTab::SetColor(GG::Clr c)
@@ -492,7 +521,7 @@ void CUIScroll::ScrollTab::Render()
     }
 
     // basic shape, no border
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
+    AngledCornerRectangle(ul, lr, color_to_use, GG::CLR_ZERO, CUISCROLL_ANGLE_OFFSET, 0);
     // upper left diagonal stripe
     GG::Clr light_color = Color();
     AdjustBrightness(light_color, 35);
@@ -502,34 +531,34 @@ void CUIScroll::ScrollTab::Render()
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_POLYGON);
     if (m_orientation == GG::VERTICAL) {
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-        glVertex2i(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
-        glVertex2i(ul.x, ul.y + std::min(lr.x - ul.x, lr.y - ul.y));
+        glVertex(lr.x, ul.y);
+        glVertex(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
+        glVertex(ul.x, ul.y + CUISCROLL_ANGLE_OFFSET);
+        glVertex(ul.x, ul.y + std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)));
     } else {
-        glVertex2i(ul.x + std::min(lr.x - ul.x, lr.y - ul.y), ul.y);
-        glVertex2i(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
-        glVertex2i(ul.x, lr.y - CUISCROLL_ANGLE_OFFSET);
-        glVertex2i(ul.x, lr.y);
+        glVertex(ul.x + std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)), ul.y);
+        glVertex(ul.x + CUISCROLL_ANGLE_OFFSET, ul.y);
+        glVertex(ul.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+        glVertex(ul.x, lr.y);
     }
     glEnd();
     // lower right diagonal stripe
     glBegin(GL_POLYGON);
     if (m_orientation == GG::VERTICAL) {
-        glVertex2i(lr.x, lr.y - std::min(lr.x - ul.x, lr.y - ul.y));
-        glVertex2i(ul.x, lr.y);
-        glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-        glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+        glVertex(lr.x, lr.y - std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)));
+        glVertex(ul.x, lr.y);
+        glVertex(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
+        glVertex(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
     } else {
-        glVertex2i(lr.x, ul.y);
-        glVertex2i(lr.x - std::min(lr.x - ul.x, lr.y - ul.y), lr.y);
-        glVertex2i(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
-        glVertex2i(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x - std::min(Value(lr.x - ul.x), Value(lr.y - ul.y)), lr.y);
+        glVertex(lr.x - CUISCROLL_ANGLE_OFFSET, lr.y);
+        glVertex(lr.x, lr.y - CUISCROLL_ANGLE_OFFSET);
     }
     glEnd();
     glEnable(GL_TEXTURE_2D);
     // border
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
+    AngledCornerRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, CUISCROLL_ANGLE_OFFSET, 1);
 }
 
 void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -567,7 +596,7 @@ void CUIScroll::ScrollTab::MouseLeave()
 ///////////////////////////////////////
 // class CUIScroll
 ///////////////////////////////////////
-CUIScroll::CUIScroll(int x, int y, int w, int h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
+CUIScroll::CUIScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
                      GG::Flags<GG::WndFlag> flags/* = CLICKABLE | REPEAT_BUTTON_DOWN*/) :
     Scroll(x, y, w, h, orientation, color, interior, flags),
@@ -580,16 +609,16 @@ void CUIScroll::Render()
     GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    FlatRectangle(ul.x, ul.y, lr.x, lr.y, color_to_use, border_color_to_use, 1);
+    FlatRectangle(ul, lr, color_to_use, border_color_to_use, 1);
 }
 
 void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
-    int bn_width = (ScrollOrientation() == GG::VERTICAL) ? Size().x : Size().y;
     TabButton()->SizeMove(TabButton()->RelativeUpperLeft(), 
-                          (ScrollOrientation() == GG::VERTICAL) ? GG::Pt(bn_width, TabButton()->RelativeLowerRight().y) :
-                          GG::Pt(TabButton()->RelativeLowerRight().x, bn_width));
+                          (ScrollOrientation() == GG::VERTICAL) ?
+                          GG::Pt(Size().x, TabButton()->RelativeLowerRight().y) :
+                          GG::Pt(TabButton()->RelativeLowerRight().x, Size().y));
     SizeScroll(ScrollRange().first, ScrollRange().second, LineSize(), PageSize()); // update tab size and position
 }
 
@@ -597,7 +626,7 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 ///////////////////////////////////////
 // class CUIListBox
 ///////////////////////////////////////
-CUIListBox::CUIListBox(int x, int y, int w, int h, GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
+CUIListBox::CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
                        GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
     ListBox(x, y, w, h, color, interior, flags)
 {
@@ -611,7 +640,7 @@ void CUIListBox::Render()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Clr color = Color(); // save color
     GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
-    FlatRectangle(ul.x, ul.y, lr.x, lr.y, InteriorColor(), color_to_use, 1);
+    FlatRectangle(ul, lr, InteriorColor(), color_to_use, 1);
     SetColor(GG::CLR_ZERO); // disable the default border by rendering it transparently
     ListBox::Render();
     SetColor(color); // restore color
@@ -625,7 +654,7 @@ namespace {
     const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
-CUIDropDownList::CUIDropDownList(int x, int y, int w, int h, int drop_ht, GG::Clr color/* = ClientUI::CtrlBorderColor()*/,
+CUIDropDownList::CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color/* = ClientUI::CtrlBorderColor()*/,
                                  GG::Clr interior/* = ClientUI::DropDownListIntColor()*/, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
     DropDownList(x, y, w, h, drop_ht, color),
     m_render_drop_arrow(true),
@@ -642,7 +671,7 @@ void CUIDropDownList::Render()
     GG::Clr color_to_use = Disabled() ? DisabledColor(lb_color) : lb_color;
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, GG::CLR_ZERO, CUIDROPDOWNLIST_ANGLE_OFFSET, 3, false);
+    AngledCornerRectangle(ul, lr, int_color_to_use, GG::CLR_ZERO, CUIDROPDOWNLIST_ANGLE_OFFSET, 3, false);
 
     LB()->SetColor(GG::CLR_ZERO);
     LB()->SetInteriorColor(GG::CLR_ZERO);
@@ -650,20 +679,22 @@ void CUIDropDownList::Render()
     LB()->SetInteriorColor(lb_interior_color);
     LB()->SetColor(lb_color);
 
-    AngledCornerRectangle(ul.x, ul.y, lr.x, lr.y, GG::CLR_ZERO, color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
+    AngledCornerRectangle(ul, lr, GG::CLR_ZERO, color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
 
     int margin = 3;
-    int triangle_width = lr.y - ul.y - 4 * margin;
+    int triangle_width = Value(lr.y - ul.y - 4 * margin);
     int outline_width = triangle_width + 3 * margin;
 
     if (m_render_drop_arrow) {
         GG::Clr triangle_color_to_use = ClientUI::DropDownListArrowColor();
         if (m_mouse_here && !Disabled())
             AdjustBrightness(triangle_color_to_use, ARROW_BRIGHTENING_SCALE_FACTOR);
-        IsoscelesTriangle(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin, lr.x - margin * 5 / 2, lr.y - 2 * margin, 
+        IsoscelesTriangle(GG::Pt(lr.x - triangle_width - margin * 5 / 2, ul.y + 2 * margin),
+                          GG::Pt(lr.x - margin * 5 / 2, lr.y - 2 * margin), 
                           SHAPE_DOWN, triangle_color_to_use);
-        AngledCornerRectangle(lr.x - outline_width - margin, ul.y + margin, lr.x - margin, lr.y - margin, GG::CLR_ZERO, 
-                              color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
+        AngledCornerRectangle(GG::Pt(lr.x - outline_width - margin, ul.y + margin),
+                              GG::Pt(lr.x - margin, lr.y - margin),
+                              GG::CLR_ZERO, color_to_use, CUIDROPDOWNLIST_ANGLE_OFFSET, 1, false);
     }
 }
 
@@ -698,7 +729,7 @@ void CUIDropDownList::EnableDropArrow()
 ///////////////////////////////////////
 // class CUIEdit
 ///////////////////////////////////////
-CUIEdit::CUIEdit(int x, int y, int w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+CUIEdit::CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                  GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
                  GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::EditIntColor()*/, 
                  GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
@@ -717,7 +748,7 @@ void CUIEdit::Render()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
 
-    FlatRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, color_to_use, 1);
+    FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
 
     SetColor(GG::CLR_ZERO);
     Edit::Render();
@@ -727,7 +758,7 @@ void CUIEdit::Render()
 ///////////////////////////////////////
 // class CUIMultiEdit
 ///////////////////////////////////////
-CUIMultiEdit::CUIMultiEdit(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/, 
+CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/, 
                            const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                            GG::Clr color/* = ClientUI::CtrlBorderColor()*/, GG::Clr text_color/* = ClientUI::TextColor()*/, 
                            GG::Clr interior/* = ClientUI::MultieditIntColor()*/, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
@@ -745,7 +776,7 @@ void CUIMultiEdit::Render()
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
 
-    FlatRectangle(ul.x, ul.y, lr.x, lr.y, int_color_to_use, color_to_use, 1);
+    FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
 
     SetColor(GG::CLR_ZERO);
     MultiEdit::Render();
@@ -755,7 +786,7 @@ void CUIMultiEdit::Render()
 ///////////////////////////////////////
 // class CUILinkTextMultiEdit
 ///////////////////////////////////////
-CUILinkTextMultiEdit::CUILinkTextMultiEdit(int x, int y, int w, int h, const std::string& str, GG::Flags<GG::MultiEditStyle> style,
+CUILinkTextMultiEdit::CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style,
                                            const boost::shared_ptr<GG::Font>& font,
                                            GG::Clr color, GG::Clr text_color, 
                                            GG::Clr interior, GG::Flags<GG::WndFlag> flags) :
@@ -784,9 +815,9 @@ GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
     return CUIMultiEdit::TextLowerRight();
 }
 
-const std::string& CUILinkTextMultiEdit::WindowText() const
+std::string CUILinkTextMultiEdit::Text_() const
 {
-    return CUIMultiEdit::WindowText();
+    return CUIMultiEdit::Text();
 }
 
 void CUILinkTextMultiEdit::Render()
@@ -855,28 +886,29 @@ void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)
 ///////////////////////////////////////
 // class CUISlider
 ///////////////////////////////////////
-CUISlider::CUISlider(int x, int y, int w, int h, int min, int max, GG::Orientation orientation, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) :
-    Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CtrlColor(), orientation == GG::VERTICAL ? w : h, 5, flags)
+CUISlider::CUISlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) :
+    Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CtrlColor(), orientation == GG::VERTICAL ? Value(w) : Value(h), 5, flags)
 {}
 
 void CUISlider::Render()
 {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    const GG::Pt UL = UpperLeft();
+    const GG::Pt LR = LowerRight();
     GG::Clr border_color_to_use = Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    int tab_width = GetOrientation() == GG::VERTICAL ? Tab()->Height() : Tab()->Width();
-    int x_start, x_end, y_start, y_end;
+    int tab_width = GetOrientation() == GG::VERTICAL ? Value(Tab()->Height()) : Value(Tab()->Width());
+    GG::Pt ul, lr;
     if (GetOrientation() == GG::VERTICAL) {
-        x_start = ((lr.x + ul.x) - LineWidth()) / 2;
-        x_end   = x_start + LineWidth();
-        y_start = ul.y + tab_width / 2;
-        y_end   = lr.y - tab_width / 2;
+        ul.x = ((LR.x + UL.x) - static_cast<int>(LineWidth())) / 2;
+        lr.x   = ul.x + static_cast<int>(LineWidth());
+        ul.y = UL.y + tab_width / 2;
+        lr.y   = LR.y - tab_width / 2;
     } else {
-        x_start = ul.x + tab_width / 2;
-        x_end   = lr.x - tab_width / 2;
-        y_start = ((lr.y + ul.y) - LineWidth()) / 2;
-        y_end   = y_start + LineWidth();
+        ul.x = UL.x + tab_width / 2;
+        lr.x   = LR.x - tab_width / 2;
+        ul.y = ((LR.y + UL.y) - static_cast<int>(LineWidth())) / 2;
+        lr.y   = ul.y + static_cast<int>(LineWidth());
     }
-    GG::FlatRectangle(x_start, y_start, x_end, y_end, GG::CLR_ZERO, border_color_to_use, 1);
+    GG::FlatRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, 1);
     Tab()->OffsetMove(UpperLeft());
     Tab()->Render();
     Tab()->OffsetMove(-UpperLeft());
@@ -886,13 +918,13 @@ void CUISlider::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
     if (GetOrientation() == GG::VERTICAL) {
-        Tab()->Resize(GG::Pt(TabWidth(), TabWidth()));
+        Tab()->Resize(GG::Pt(GG::X(TabWidth()), GG::Y(TabWidth())));
         Tab()->MoveTo(GG::Pt((Width() - Tab()->Width()) / 2, Tab()->RelativeUpperLeft().y));
-        Tab()->SetMinSize(GG::Pt(Tab()->MinSize().x, 10));
+        Tab()->SetMinSize(GG::Pt(Tab()->MinSize().x, GG::Y(10)));
     } else {
-        Tab()->SizeMove(GG::Pt(2, 0), GG::Pt(TabWidth(), TabWidth()));
+        Tab()->SizeMove(GG::Pt(GG::X(2), GG::Y0), GG::Pt(GG::X(TabWidth()), GG::Y(TabWidth())));
         Tab()->MoveTo(GG::Pt(Tab()->RelativeUpperLeft().x, (Height() - Tab()->Height()) / 2));
-        Tab()->SetMinSize(GG::Pt(10, Tab()->MinSize().y));
+        Tab()->SetMinSize(GG::Pt(GG::X(10), Tab()->MinSize().y));
     }
     MoveTabToPosn();
 }
@@ -902,19 +934,19 @@ void CUISlider::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 // class CUISimpleDropDownListRow
 ///////////////////////////////////////
 // static(s)
-const int CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT = 22;
+const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
-CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, int row_height/* = DEFAULT_ROW_HEIGHT*/) :
-    GG::ListBox::Row(1, row_height, "")
+CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
+    GG::ListBox::Row(GG::X1, row_height, "")
 {
-    push_back(new GG::TextControl(0, 0, row_text, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT));
+    push_back(new GG::TextControl(GG::X0, GG::Y0, row_text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
 }
 
 
 ///////////////////////////////////////
 // class StatisticIcon
 ///////////////////////////////////////
-StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool integerize, bool showsign,
                              GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
     GG::Control(x, y, w, h, flags),
@@ -925,15 +957,15 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
 {
     int font_space = ClientUI::Pts()*3/2;
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
-    if (w >= h) {
-        m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(h, 0, w - h, std::max(font_space, h), "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    if (w >= Value(h)) {
+        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, w - Value(h), GG::Y(std::max(font_space, Value(h))), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
         // need vertical space for text, but don't want icon to be larger than available horizintal space
-        int icon_height = std::min(w, std::max(h - font_space, 1));
-        int icon_left = (w - icon_height)/2;
-        m_icon = new GG::StaticGraphic(icon_left, 0, icon_height, icon_height, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(0, icon_height, w, font_space, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
+        int icon_height = std::min(Value(w), std::max(Value(h - font_space), 1));
+        int icon_left = Value(w - icon_height)/2;
+        m_icon = new GG::StaticGraphic(GG::X(icon_left), GG::Y0, GG::X(icon_height), GG::Y(icon_height), texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(GG::X0, GG::Y(icon_height), w, GG::Y(font_space), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
     }
     
     AttachChild(m_icon);
@@ -941,7 +973,7 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
     Refresh();
 }
 
-StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
                              bool integerize0, bool integerize1, bool showsign0, bool showsign1,
                              GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
@@ -952,12 +984,12 @@ StatisticIcon::StatisticIcon(int x, int y, int w, int h, const boost::shared_ptr
     m_icon(0), m_text(0)
 {
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
-    if (w >= h) {
-        m_icon = new GG::StaticGraphic(0, 0, h, h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(h, 0, w - h, std::max(ClientUI::Pts()*3/2, h), "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+    if (w >= Value(h)) {
+        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, w - Value(h), std::max(GG::Y(ClientUI::Pts()*3/2), h), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
-        m_icon = new GG::StaticGraphic(0, 0, w, w, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(0, w, w, ClientUI::Pts()*3/2, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+        m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC);
+        m_text = new GG::TextControl(GG::X0, GG::Y(Value(w)), w, GG::Y(ClientUI::Pts()*3/2), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
     }
 
     m_values[0] = value0;
@@ -991,7 +1023,7 @@ void StatisticIcon::SetValue(double value, int index)
 void StatisticIcon::Refresh()
 {
     std::string text = "";
-    
+
     // first value: always present
     std::string clr_tag = GG::RgbaTag(ValueColor(0));
     text += clr_tag + DoubleToString(m_values[0], m_digits[0], m_integerize[0], m_show_signs[0]) + "</rgba>";
@@ -1009,7 +1041,7 @@ void StatisticIcon::Refresh()
 GG::Clr StatisticIcon::ValueColor(int index) const
 {
     int effectiveSign = EffectiveSign(m_values.at(index), m_integerize.at(index));
-     
+
     if (index == 0) return ClientUI::TextColor();
 
     if (effectiveSign == -1) return ClientUI::StatDecrColor();
@@ -1021,21 +1053,21 @@ GG::Clr StatisticIcon::ValueColor(int index) const
 ///////////////////////////////////////
 // class CUIToolBar
 ///////////////////////////////////////
-CUIToolBar::CUIToolBar(int x, int y, int w, int h) :
+CUIToolBar::CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     GG::Control(x, y, w, h, GG::ONTOP | GG::CLICKABLE)
 {}
 
 void CUIToolBar::Render()
 {
     GG::Pt ul(UpperLeft()),lr(LowerRight());
-    GG::FlatRectangle(ul.x,ul.y,lr.x,lr.y,GG::FloatClr(0.0f,0.0f,0.0f,0.8f),GG::CLR_ZERO,0);
+    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0f,0.0f,0.0f,0.8f),GG::CLR_ZERO,0);
 }
 
 ///////////////////////////////////////
 // class EmpireColorSelector
 ///////////////////////////////////////
-EmpireColorSelector::EmpireColorSelector(int h) : 
-    CUIDropDownList(0, 0, COLOR_SELECTOR_WIDTH, h, 5 * h)
+EmpireColorSelector::EmpireColorSelector(GG::Y h) : 
+    CUIDropDownList(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH, h, 5 * h)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
     for (unsigned int i = 0; i < colors.size(); ++i) {
@@ -1073,7 +1105,7 @@ void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it)
 ///////////////////////////////////////
 // class ColorSelector
 ///////////////////////////////////////
-ColorSelector::ColorSelector(int x, int y, int w, int h, GG::Clr color) :
+ColorSelector::ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color) :
     Control(x, y, w, h)
 {
     SetColor(color);
@@ -1082,14 +1114,14 @@ ColorSelector::ColorSelector(int x, int y, int w, int h, GG::Clr color) :
 void ColorSelector::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::FlatRectangle(ul.x, ul.y, lr.x, lr.y, Color(), GG::CLR_WHITE, 1);
+    GG::FlatRectangle(ul, lr, Color(), GG::CLR_WHITE, 1);
 }
 
 void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    int x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
-    int y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
-    GG::ColorDlg dlg(x, y, Color(), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
+    GG::X x = std::min(pt.x, GG::GUI::GetGUI()->AppWidth() - 315);    // 315 is width of ColorDlg from GG::ColorDlg:::ColorDlg
+    GG::Y y = std::min(pt.y, GG::GUI::GetGUI()->AppHeight() - 300);   // 300 is height of ColorDlg from GG::ColorDlg:::ColorDlg
+    GG::ColorDlg dlg(x, y, Color(), ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor());
     dlg.SetNewString(UserString("COLOR_DLG_NEW"));
     dlg.SetOldString(UserString("COLOR_DLG_OLD"));
     dlg.SetRedString(UserString("COLOR_DLG_RED"));
@@ -1114,7 +1146,7 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
                  const std::vector<std::pair<std::string, std::string> >& types) :
-    GG::FileDlg(directory, filename, save, multi, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+    GG::FileDlg(directory, filename, save, multi, ClientUI::GetFont(),
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor())
 {
     SetFileFilters(types);
@@ -1140,11 +1172,11 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
 //////////////////////////////////////////////////
 // static(s)
 const int ProductionInfoPanel::CORNER_RADIUS = 9;
-const int ProductionInfoPanel::VERTICAL_SECTION_GAP = 4;
+const GG::Y ProductionInfoPanel::VERTICAL_SECTION_GAP(4);
 
-ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title, const std::string& points_str,
+ProductionInfoPanel::ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
                                          double border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
-    GG::Wnd(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_border_thickness(border_thickness),
     m_color(color),
     m_text_and_border_color(text_and_border_color)
@@ -1152,29 +1184,29 @@ ProductionInfoPanel::ProductionInfoPanel(int w, int h, const std::string& title,
     const int RESEARCH_TITLE_PTS = ClientUI::Pts() + 10;
     const int STAT_TEXT_PTS = ClientUI::Pts();
     const int CENTERLINE_GAP = 4;
-    const int LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
-    const int VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
-    const int LEFT_TEXT_X = 0;
-    const int RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
-    const int P_LABEL_X = RIGHT_TEXT_X + 40;
-    const int P_LABEL_WIDTH = Width() - 2 - 5 - P_LABEL_X;
+    const GG::X LABEL_TEXT_WIDTH = (Width() - 4 - CENTERLINE_GAP) * 2 / 3;
+    const GG::X VALUE_TEXT_WIDTH = Width() - 4 - CENTERLINE_GAP - LABEL_TEXT_WIDTH;
+    const GG::X LEFT_TEXT_X(0);
+    const GG::X RIGHT_TEXT_X = LEFT_TEXT_X + LABEL_TEXT_WIDTH + 8 + CENTERLINE_GAP;
+    const GG::X P_LABEL_X = RIGHT_TEXT_X + 40;
+    const GG::X P_LABEL_WIDTH = Width() - 2 - 5 - P_LABEL_X;
     const GG::Clr TEXT_COLOR = ClientUI::KnownTechTextAndBorderColor();
-    m_center_gap = std::make_pair(LABEL_TEXT_WIDTH + 2, LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP);
+    m_center_gap = std::make_pair(Value(LABEL_TEXT_WIDTH + 2), Value(LABEL_TEXT_WIDTH + 2 + CENTERLINE_GAP));
 
-    m_title = new GG::TextControl(2, 4, Width() - 4, RESEARCH_TITLE_PTS + 4, title, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), RESEARCH_TITLE_PTS), TEXT_COLOR);
-    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, STAT_TEXT_PTS + 4, points_str, GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
-    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, STAT_TEXT_PTS + 4, UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
-    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, STAT_TEXT_PTS + 4, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_title = new GG::TextControl(GG::X(2), GG::Y(4), Width() - 4, GG::Y(RESEARCH_TITLE_PTS + 4), title, ClientUI::GetFont(RESEARCH_TITLE_PTS), TEXT_COLOR);
+    m_total_points_label = new GG::TextControl(LEFT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_TOTAL_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_total_points = new GG::TextControl(RIGHT_TEXT_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_total_points_P_label = new GG::TextControl(P_LABEL_X, m_title->LowerRight().y + VERTICAL_SECTION_GAP + 4, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_label = new GG::TextControl(LEFT_TEXT_X, m_total_points_label->LowerRight().y, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_WASTED_PS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_wasted_points = new GG::TextControl(RIGHT_TEXT_X, m_total_points_label->LowerRight().y, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_wasted_points_P_label = new GG::TextControl(P_LABEL_X, m_total_points_label->LowerRight().y, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_progress_label = new GG::TextControl(LEFT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_progress = new GG::TextControl(RIGHT_TEXT_X, m_wasted_points_label->LowerRight().y + VERTICAL_SECTION_GAP + 4, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_label = new GG::TextControl(LEFT_TEXT_X, m_projects_in_progress_label->LowerRight().y, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_points_to_underfunded_projects = new GG::TextControl(RIGHT_TEXT_X, m_projects_in_progress_label->LowerRight().y, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_points_to_underfunded_projects_P_label = new GG::TextControl(P_LABEL_X, m_projects_in_progress_label->LowerRight().y, P_LABEL_WIDTH, GG::Y(STAT_TEXT_PTS + 4), points_str, ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
+    m_projects_in_queue_label = new GG::TextControl(LEFT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, LABEL_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), UserString("PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL"), ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_RIGHT);
+    m_projects_in_queue = new GG::TextControl(RIGHT_TEXT_X, m_points_to_underfunded_projects_label->LowerRight().y, VALUE_TEXT_WIDTH, GG::Y(STAT_TEXT_PTS + 4), "", ClientUI::GetFont(STAT_TEXT_PTS), TEXT_COLOR, GG::FORMAT_LEFT);
 
     Resize(GG::Pt(Width(), m_projects_in_queue_label->LowerRight().y + 5));
 
@@ -1219,11 +1251,12 @@ void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, in
 
 void ProductionInfoPanel::Draw(GG::Clr clr, bool fill)
 {
-    GG::Pt ul = UpperLeft() + GG::Pt(3, 3), lr = LowerRight() - GG::Pt(3, 3);
+    GG::Pt square_3(GG::X(3), GG::Y(3));
+    GG::Pt ul = UpperLeft() + square_3, lr = LowerRight() - square_3;
     glColor(clr);
     PartlyRoundedRect(ul, GG::Pt(lr.x, m_title->LowerRight().y + 2),
                       CORNER_RADIUS, true, true, false, false, fill);
-    std::pair<int, int> gap_to_use(m_center_gap.first + ul.x, m_center_gap.second + ul.x);
+    std::pair<GG::X, GG::X> gap_to_use(m_center_gap.first + ul.x, m_center_gap.second + ul.x);
     PartlyRoundedRect(GG::Pt(ul.x, m_total_points_label->UpperLeft().y - 2), GG::Pt(gap_to_use.first, m_wasted_points_label->LowerRight().y + 2),
                       CORNER_RADIUS, false, false, false, false, fill);
     PartlyRoundedRect(GG::Pt(gap_to_use.second, m_total_points_label->UpperLeft().y - 2), GG::Pt(lr.x, m_wasted_points_label->LowerRight().y + 2),
@@ -1237,9 +1270,9 @@ void ProductionInfoPanel::Draw(GG::Clr clr, bool fill)
 //////////////////////////////////////////////////
 // MultiTurnProgressBar
 //////////////////////////////////////////////////
-MultiTurnProgressBar::MultiTurnProgressBar(int w, int h, int total_turns, int turns_completed, double partially_complete_turn,
+MultiTurnProgressBar::MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, int turns_completed, double partially_complete_turn,
                                            const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color) :
-    Control(0, 0, w, h, GG::Flags<GG::WndFlag>()),
+    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_total_turns(total_turns),
     m_turns_completed(turns_completed),
     m_partially_complete_turn(partially_complete_turn),
@@ -1251,20 +1284,20 @@ MultiTurnProgressBar::MultiTurnProgressBar(int w, int h, int total_turns, int tu
 void MultiTurnProgressBar::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    int h = Height();
-    const double TURN_SEGMENT_WIDTH = Width() / static_cast<double>(m_total_turns);
+    GG::Y h = Height();
+    const GG::X_d TURN_SEGMENT_WIDTH = Width() / static_cast<double>(m_total_turns);
     glDisable(GL_TEXTURE_2D);
     glColor(m_background);
     if (m_partially_complete_turn && m_turns_completed == m_total_turns - 1) {
-        GG::BeginScissorClipping(static_cast<int>(lr.x - TURN_SEGMENT_WIDTH), ul.y,
-                                 lr.x, static_cast<int>(lr.y - m_partially_complete_turn * h));
+        GG::BeginScissorClipping(GG::Pt(lr.x - TURN_SEGMENT_WIDTH, ul.y),
+                                 GG::Pt(lr.x, lr.y - m_partially_complete_turn * h));
         glBegin(GL_POLYGON);
         RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
         glEnd();
         GG::EndScissorClipping();
-        GG::BeginScissorClipping(static_cast<int>(lr.x - TURN_SEGMENT_WIDTH),
-                                 static_cast<int>(lr.y - m_partially_complete_turn * h),
-                                 lr.x, lr.y);
+        GG::BeginScissorClipping(GG::Pt(lr.x - TURN_SEGMENT_WIDTH,
+                                        lr.y - m_partially_complete_turn * h),
+                                 lr);
         glColor(m_bar_color);
         glBegin(GL_POLYGON);
         RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
@@ -1278,41 +1311,41 @@ void MultiTurnProgressBar::Render()
     }
     glBegin(GL_QUADS);
     if (m_turns_completed != m_total_turns - 1) {
-        glVertex2d(lr.x - TURN_SEGMENT_WIDTH, ul.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
-        glVertex2d(lr.x - TURN_SEGMENT_WIDTH, lr.y);
+        glVertex(lr.x - TURN_SEGMENT_WIDTH, ul.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
+        glVertex(lr.x - TURN_SEGMENT_WIDTH, lr.y);
     }
     if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
     }
     glColor(m_bar_color);
     if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
     }
     if (m_turns_completed) {
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH, ul.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH, lr.y);
-        glVertex2d(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH, ul.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH, lr.y);
+        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
     }
     glEnd();
     if (m_partially_complete_turn && !m_turns_completed) {
-        GG::BeginScissorClipping(ul.x, static_cast<int>(lr.y - m_partially_complete_turn * h),
-                                 static_cast<int>(ul.x + TURN_SEGMENT_WIDTH), lr.y);
+        GG::BeginScissorClipping(GG::Pt(ul.x, lr.y - m_partially_complete_turn * h),
+                                 GG::Pt(ul.x + TURN_SEGMENT_WIDTH, lr.y));
         glBegin(GL_POLYGON);
         LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
         glEnd();
         GG::EndScissorClipping();
-        GG::BeginScissorClipping(ul.x, ul.y,
-                                 static_cast<int>(ul.x + TURN_SEGMENT_WIDTH),
-                                 static_cast<int>(lr.y - m_partially_complete_turn * h));
+        GG::BeginScissorClipping(ul,
+                                 GG::Pt(ul.x + TURN_SEGMENT_WIDTH,
+                                        lr.y - m_partially_complete_turn * h));
         glColor(m_background);
         glBegin(GL_POLYGON);
         LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
@@ -1327,9 +1360,9 @@ void MultiTurnProgressBar::Render()
     }
     glColor(m_outline_color);
     glBegin(GL_LINES);
-    for (double x = ul.x + TURN_SEGMENT_WIDTH; x < lr.x - 1.0e-5; x += TURN_SEGMENT_WIDTH) {
-        glVertex2d(x, ul.y);
-        glVertex2d(x, lr.y);
+    for (GG::X_d x = ul.x + TURN_SEGMENT_WIDTH; x < lr.x - 1.0e-5; x += TURN_SEGMENT_WIDTH) {
+        glVertex(x, ul.y);
+        glVertex(x, lr.y);
     }
     glEnd();
     glEnable(GL_LINE_SMOOTH);
@@ -1342,31 +1375,31 @@ void MultiTurnProgressBar::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void MultiTurnProgressBar::LeftEndVertices(double x1, double y1, double x2, double y2)
+void MultiTurnProgressBar::LeftEndVertices(GG::X x1, GG::Y y1, GG::X_d x2, GG::Y y2)
 {
-    glVertex2d(x2, y1);
-    glVertex2d(x1 + 5, y1);
-    glVertex2d(x1, y1 + 4);
-    glVertex2d(x1, y2 - 4);
-    glVertex2d(x1 + 5, y2);
-    glVertex2d(x2, y2);
+    glVertex(x2, y1);
+    glVertex(x1 + 5, y1);
+    glVertex(x1, y1 + 4);
+    glVertex(x1, y2 - 4);
+    glVertex(x1 + 5, y2);
+    glVertex(x2, y2);
 }
 
-void MultiTurnProgressBar::RightEndVertices(double x1, double y1, double x2, double y2)
+void MultiTurnProgressBar::RightEndVertices(GG::X_d x1, GG::Y y1, GG::X x2, GG::Y y2)
 {
-    glVertex2d(x1, y2);
-    glVertex2d(x2 - 5, y2);
-    glVertex2d(x2, y2 - 4);
-    glVertex2d(x2, y1 + 4);
-    glVertex2d(x2 - 5, y1);
-    glVertex2d(x1, y1);
+    glVertex(x1, y2);
+    glVertex(x2 - 5, y2);
+    glVertex(x2, y2 - 4);
+    glVertex(x2, y1 + 4);
+    glVertex(x2 - 5, y1);
+    glVertex(x1, y1);
 }
 
 //////////////////////////////////////////////////
 // FPSIndicator
 //////////////////////////////////////////////////
-FPSIndicator::FPSIndicator(int x, int y) :
-    GG::TextControl(x, y, "", GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()), ClientUI::TextColor(), GG::FORMAT_NONE, GG::ONTOP)
+FPSIndicator::FPSIndicator(GG::X x, GG::Y y) :
+    GG::TextControl(x, y, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NONE, GG::ONTOP)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
     UpdateEnabled();
