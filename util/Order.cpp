@@ -118,13 +118,13 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const in
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER
-    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n"
-              << "    m_empire=" << EmpireID() << "\n"
-              << "    m_fleet_name=" << m_fleet_name << "\n"
-              << "    m_system_id=" << m_system_id << "\n"
-              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
-              << "    m_new_id=" << m_new_id << "\n"
-              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n" << std::endl 
+              << "    m_empire=" << EmpireID() << std::endl
+              << "    m_fleet_name=" << m_fleet_name << std::endl
+              << "    m_system_id=" << m_system_id << std::endl
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")" << std::endl
+              << "    m_new_id=" << m_new_id << std::endl
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
               << std::endl;
 #endif
 }
@@ -138,13 +138,13 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const in
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER
-    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id : \n"
-              << "    m_empire=" << EmpireID() << "\n"
-              << "    m_fleet_name=" << m_fleet_name << "\n"
-              << "    m_system_id=" << m_system_id << "\n"
-              << "    m_position=(" << m_position.first << " " << m_position.second << ")\n"
-              << "    m_new_id=" << m_new_id << "\n"
-              << "    m_ship_ids.size()=" << m_ship_ids.size() << "\n"
+    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id : " << std::endl
+              << "    m_empire=" << EmpireID() << std::endl
+              << "    m_fleet_name=" << m_fleet_name << std::endl
+              << "    m_system_id=" << m_system_id << std::endl
+              << "    m_position=(" << m_position.first << " " << m_position.second << ")" << std::endl
+              << "    m_new_id=" << m_new_id << std::endl
+              << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
               << std::endl;
 #endif
 }
@@ -208,13 +208,13 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
     }
 
 #if DEBUG_FLEET_MOVE_ORDER
-    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : \n"
-              << "    m_empire=" << EmpireID() << "\n"
-              << "    m_fleet=" << m_fleet << "\n"
-              << "    m_start_system=" << m_start_system << "\n"
-              << "    m_dest_system=" << m_dest_system << "\n"
-              << "    m_route.size()=" << m_route.size() << "\n"
-              << "    m_route_length=" << m_route_length << "\n"
+    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : " << std::endl
+              << "    m_empire=" << EmpireID() << std::endl
+              << "    m_fleet=" << m_fleet << std::endl
+              << "    m_start_system=" << m_start_system << std::endl
+              << "    m_dest_system=" << m_dest_system << std::endl
+              << "    m_route.size()=" << m_route.size() << std::endl
+              << "    m_route_length=" << m_route_length << std::endl
               << std::endl;
 #endif
 }

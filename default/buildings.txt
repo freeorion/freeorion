@@ -175,8 +175,8 @@ BuildingType
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 PrimaryFocus Research
             ]
-            activation = OwnerHasTech "LRN_THEORM_PROVER"
-            stackinggroup = "THEORM_PROVER_STACK_PRIMARY"
+            activation = OwnerHasTech "LRN_THEOREM_PROVER"
+            stackinggroup = "THEOREM_PROVER_STACK_PRIMARY"
             effects = SetMaxResearch Target.MaxResearch + 5
 
          EffectsGroup
@@ -184,8 +184,8 @@ BuildingType
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 SecondaryFocus Research
             ]
-            activation = OwnerHasTech "LRN_THEORM_PROVER"
-            stackinggroup = "THEORM_PROVER_STACK_SECONDARY"
+            activation = OwnerHasTech "LRN_THEOREM_PROVER"
+            stackinggroup = "THEOREM_PROVER_STACK_SECONDARY"
             effects = SetMaxResearch Target.MaxResearch + 2
     ]            
     graphic = ""

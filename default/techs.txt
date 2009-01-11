@@ -2016,7 +2016,7 @@ Tech
     researchcost = 1
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
-    unlock = Item type = ShipPart name = "SR_ION_CANNON"
+    unlock = Item type = ShipPart name = "LR_NUCLEAR_MISSILE"
     graphic = ""
 
 Tech
