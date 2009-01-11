@@ -90,6 +90,13 @@ namespace {
         // they produce locally when such a blockade occurs.  The mineral and industry distribution code probably needs to be updated
         // to allow a ResourceCenter to use its own production in cases where its system is not part of any resource-sharing group.
 
+        Logger().debugStream() << "production status: ";
+        for (std::vector<double>::const_iterator it = production_status.begin(); it != production_status.end(); ++it)
+            Logger().debugStream() << " ... " << *it;
+        Logger().debugStream() << "queue: ";
+        for (ProductionQueue::QueueType::const_iterator it = queue.begin(); it != queue.end(); ++it)
+            Logger().debugStream() << " ... name: " << it->item.name << "id: " << it->item.design_id << " allocated: " << it->allocated_pp << " locationid: " << it->location << " ordered: " << it->ordered;
+
         assert(production_status.size() == queue.size());
         assert(production_status.size() == queue_element_resource_sharing_system_groups.size());
 
@@ -679,9 +686,10 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
 
     // duplicate produciton queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<double> sim_production_status = production_status;
-    std::vector<int> simulation_results(sim_production_status.size(), -1);
-    std::vector<int> sim_queue_original_indices(sim_production_status.size());
+    std::vector<double>         sim_production_status = production_status;
+    std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;
+    std::vector<int>            simulation_results(sim_production_status.size(), -1);
+    std::vector<int>            sim_queue_original_indices(sim_production_status.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
         sim_queue_original_indices[i] = i;
 
@@ -718,6 +726,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
             m_queue[sim_queue_original_indices[i]].turns_left_to_completion = -1;   // turns left is indeterminate for this item
             sim_queue.erase(sim_queue.begin() + i);
             sim_production_status.erase(sim_production_status.begin() + i);
+            sim_queue_element_groups.erase(sim_queue_element_groups.begin() + i);
             sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--);
         }
     }
@@ -733,7 +742,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
 
         // update allocation of PP on the simulated queue.  previous iterations of simulation may have removed elements
         // from the queue, freeing up PP to be spent on other elements further down the queue
-        SetProdQueueElementSpending(empire, available_pp, queue_element_groups, sim_production_status, sim_queue, allocated_pp, projects_in_progress);
+        SetProdQueueElementSpending(empire, available_pp, sim_queue_element_groups, sim_production_status, sim_queue, allocated_pp, projects_in_progress);
 
 
         // cycle through items on queue, apply one turn's PP towards items, remove items that are done
@@ -768,6 +777,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
                     m_queue[sim_queue_original_indices[i]].turns_left_to_completion = turns;    // record the (estimated) turns to complete the whole element on the original queue
                     sim_queue.erase(sim_queue.begin() + i);                                     // remove the completed item from the simulated queue
                     sim_production_status.erase(sim_production_status.begin() + i);             // and production status
+                    sim_queue_element_groups.erase(sim_queue_element_groups.begin() + i);       // and the group of systems this element could access resources from
                     sim_queue_original_indices.erase(sim_queue_original_indices.begin() + i--); // and bookkeeping
                 }
             }

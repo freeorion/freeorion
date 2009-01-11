@@ -836,31 +836,31 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     // append base scale SI prefix (as postfix)
     switch (unitPow10) {
     case -15:
-        text += "f";    // femto
+        text += "f";        // femto
         break;
     case -12:
-        text += "p";    // pico
+        text += "p";        // pico
         break;
     case -9:
-        text += "n";    // nano
+        text += "n";        // nano
         break;
     case -6:
-        text += "µ";    // micro
+        text += "\xC2\xB5"; // micro.  mu in UTF-8
         break;
     case -3:
-        text += "m";    // milli
+        text += "m";        // milli
         break;
     case 3:
-        text += "k";    // kilo
+        text += "k";        // kilo
         break;
     case 6:
-        text += "M";    // Mega
+        text += "M";        // Mega
         break;
     case 9:
-        text += "G";    // Giga
+        text += "G";        // Giga
         break;
     case 12:
-        text += "T";    // Terra
+        text += "T";        // Terra
         break;
     default:
         break;
