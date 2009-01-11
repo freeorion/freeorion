@@ -138,7 +138,7 @@ void InitDirs()
     if (fs::path::default_name_check_writable())
         fs::path::default_name_check(fs::native);
 
-    // store working dir
+    // store working dir (current working dir)
     fs::initial_path();
 
     br_init(0);

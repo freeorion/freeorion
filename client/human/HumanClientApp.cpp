@@ -474,7 +474,15 @@ void HumanClientApp::Initialize()
 
 void HumanClientApp::HandleSystemEvents()
 {
+  try {
     SDLGUI::HandleSystemEvents();
+  }
+  catch (const std::runtime_error& e) {
+    std::cerr << "std::runtime_error exception caught while SDLGUI::HandleSystemEvents() in HumanClientApp::HandleSystemEvents(): " << e.what() << "\n";
+    throw e;
+  }
+
+  try {
     if (m_connected && !Networking().Connected()) {
         m_connected = false;
         // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
@@ -487,6 +495,11 @@ void HumanClientApp::HandleSystemEvents()
         Networking().GetMessage(msg);
         HandleMessage(msg);
     }
+  }
+  catch (const std::runtime_error& e) {
+    std::cerr << "std::runtime_error exception caught in HumanClientApp::HandleSystemEvents(): " << e.what() << "\n";
+    throw e;
+  }
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)

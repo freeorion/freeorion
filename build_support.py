@@ -234,9 +234,14 @@ def CheckBoostLib(context, lib_tuple, conf):
     if conf.CheckLibWithHeader(lib_name, lib_tuple[1], 'C++', lib_tuple[2]):
         ret = lib_name
     else:
-        lib_name = lib_name + '-mt'
-        if conf.CheckLibWithHeader(lib_name, lib_tuple[1], 'C++', lib_tuple[2]):
-            ret = lib_name
+        lib_name_mt = lib_name + '-mt'
+        if conf.CheckLibWithHeader(lib_name_mt, lib_tuple[1], 'C++', lib_tuple[2]):
+            ret = lib_name_mt
+        else:
+            lib_name_py = lib_name + '-py25'
+            if conf.CheckLibWithHeader(lib_name_py, lib_tuple[1], 'C++', lib_tuple[2]):
+                ret = lib_name_py        
+
     return ret
 
 def CheckBGL(context, conf):

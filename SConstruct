@@ -112,6 +112,10 @@ if not force_configure:
 
 options.Update(env)
 
+# We maybe need this env var for pkg-config later
+if os.environ.has_key('PKG_CONFIG_PATH'):
+    env['ENV']['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
+
 if env.has_key('use_distcc') and env['use_distcc']:
     if 'distcc' not in env['CC']:
         env['CC'] = 'distcc %s' % env['CC']
@@ -225,6 +229,8 @@ if not env.GetOption('clean'):
             if conf.CheckPkg('GiGiSDL', gigi_version):
                 env.ParseConfig('pkg-config --cflags --libs GiGiSDL')
                 found_gg_pkg_config = True
+            else:
+                Exit(1)
 
         freeorion_boost_libs = [
             ('boost_serialization', 'boost/archive/binary_iarchive.hpp', 'boost::archive::binary_iarchive::is_saving();'),
@@ -581,7 +587,7 @@ if str(Platform()) == 'win32':
     env.Command('icon.rbj', 'win32_resources.res', ['cvtres /out:icon.rbj /machine:ix86 win32_resources.res'])
     freeorion = env.Program("freeorion", human_objects + ['icon.rbj'])
 else:
-    env_copy = env.Copy()
+    env_copy = env.Clone()
     env_copy.AppendUnique(LIBS = human_libs)
     freeorion = env_copy.Program("freeorion", human_objects)
 

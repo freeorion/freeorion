@@ -1,6 +1,12 @@
 #ifdef FREEORION_WIN32
 #include <GL/glew.h>
+# ifndef USE_GL_BIND_BUFFER_ARB
+#  define USE_GL_BIND_BUFFER_ARB
+# endif
 #endif
+
+// Maybe also set for Linux
+//#define USE_GL_BIND_BUFFER_ARB
 
 #include "MapWnd.h"
 
@@ -1104,7 +1110,7 @@ void MapWnd::InitTurn(int turn_number)
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
          ++it) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &it->second.m_name);
 #else
         glDeleteBuffers(1, &it->second.m_name);
@@ -1115,7 +1121,7 @@ void MapWnd::InitTurn(int turn_number)
              m_star_halo_quad_vertices.begin();
          it != m_star_halo_quad_vertices.end();
          ++it) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &it->second.m_name);
 #else
         glDeleteBuffers(1, &it->second.m_name);
@@ -1126,7 +1132,7 @@ void MapWnd::InitTurn(int turn_number)
              m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &it->second.m_name);
 #else
         glDeleteBuffers(1, &it->second.m_name);
@@ -1135,7 +1141,7 @@ void MapWnd::InitTurn(int turn_number)
     m_galaxy_gas_quad_vertices.clear();
 
     if (m_star_texture_coords.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_star_texture_coords.m_name);
 #else
         glDeleteBuffers(1, &m_star_texture_coords.m_name);
@@ -1144,7 +1150,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (m_starlane_vertices.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_starlane_vertices.m_name);
 #else
         glDeleteBuffers(1, &m_starlane_vertices.m_name);
@@ -1153,7 +1159,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (m_starlane_colors.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_starlane_colors.m_name);
 #else
         glDeleteBuffers(1, &m_starlane_colors.m_name);
@@ -1162,7 +1168,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (m_starlane_fleet_supply_vertices.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_starlane_fleet_supply_vertices.m_name);
 #else
         glDeleteBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
@@ -1187,7 +1193,7 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_star_core_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_core_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1209,7 +1215,7 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_star_halo_quad_vertices.end();
          ++it) {
         GLuint& name = m_star_halo_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1231,7 +1237,7 @@ void MapWnd::InitTurn(int turn_number)
          it != raw_galaxy_gas_quad_vertices.end();
          ++it) {
         GLuint& name = m_galaxy_gas_quad_vertices[it->first].m_name;
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1250,7 +1256,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (!raw_star_texture_coords.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_star_texture_coords.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1268,7 +1274,7 @@ void MapWnd::InitTurn(int turn_number)
         m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
     }
     if (!raw_starlane_vertices.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_starlane_vertices.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1304,7 +1310,7 @@ void MapWnd::InitTurn(int turn_number)
         m_starlane_colors.m_size = raw_starlane_colors.size() / 4;
     }
     if (!raw_starlane_supply_vertices.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_starlane_fleet_supply_vertices.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1322,7 +1328,7 @@ void MapWnd::InitTurn(int turn_number)
         m_starlane_fleet_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
     }
     if (!raw_starlane_supply_colors.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_colors.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1340,7 +1346,7 @@ void MapWnd::InitTurn(int turn_number)
         m_starlane_fleet_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
     }
 
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
     glBindBufferARB(GL_ARRAY_BUFFER, 0);
 #else
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1915,7 +1921,7 @@ void MapWnd::RenderStarlanes()
         else
             glColor(UNOWNED_STARLANE_GRAY_CLR);
 
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_vertices.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
@@ -1947,13 +1953,13 @@ void MapWnd::RenderStarlanes()
         glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
         glLineWidth(GetOptionsDB().Get<double>("UI.fleet-supply-line-width"));
         glEnableClientState(GL_COLOR_ARRAY);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_vertices.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_fleet_supply_colors.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
