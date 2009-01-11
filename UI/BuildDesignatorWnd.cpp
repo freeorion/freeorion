@@ -7,6 +7,7 @@
 #include "SidePanel.h"
 #include "TechTreeWnd.h"
 #include "MapWnd.h"
+#include "EncyclopediaDetailPanel.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
@@ -55,329 +56,6 @@ namespace {
 }
 
 //////////////////////////////////////////////////
-// BuildDesignatorWnd::BuildDetailPanel
-//////////////////////////////////////////////////
-class BuildDesignatorWnd::BuildDetailPanel : public CUIWnd
-{
-public:
-    BuildDetailPanel(GG::X w, GG::Y h);
-
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void Render();
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
-
-    /* need to redefine this so that icons and name can be put at the top of the Wnd, rather
-       than being restricted to the client area of a CUIWnd */
-    GG::Pt ClientUpperLeft() const;
-
-    void SetBuildItem(BuildType build_type, const std::string& item = "");
-    void SetBuildItem(BuildType build_type, int design_id);
-    void SetBuild(int queue_idx);
-
-private:
-    static const GG::X TEXT_MARGIN_X;
-    static const GG::Y TEXT_MARGIN_Y;
-
-    void Reset();
-    void DoLayout();
-
-    bool DisplayingQueueItem() const;
-
-    BuildType           m_build_type;
-    std::string         m_item_name;
-    int                 m_item_design_id;
-    GG::TextControl*    m_item_name_text;
-    GG::TextControl*    m_cost_text;
-    GG::TextControl*    m_summary_text;
-    CUIMultiEdit*       m_description_box;
-    GG::StaticGraphic*  m_item_graphic;
-};
-const GG::X BuildDesignatorWnd::BuildDetailPanel::TEXT_MARGIN_X(3);
-const GG::Y BuildDesignatorWnd::BuildDetailPanel::TEXT_MARGIN_Y(3);
-
-BuildDesignatorWnd::BuildDetailPanel::BuildDetailPanel(GG::X w, GG::Y h) :
-    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
-    m_build_type(INVALID_BUILD_TYPE),
-    m_item_name("")
-{
-    const int PTS = ClientUI::Pts();
-    const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
-    const int SUMMARY_PTS = PTS*4/3;
-
-    m_item_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS), ClientUI::TextColor());
-    m_cost_text =      new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),     ClientUI::TextColor());
-    m_summary_text =   new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),  ClientUI::TextColor());
-    m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
-    m_description_box->SetColor(GG::CLR_ZERO);
-    m_description_box->SetInteriorColor(GG::CLR_ZERO);
-
-    m_item_graphic = 0;
-
-    AttachChild(m_item_name_text);
-    AttachChild(m_cost_text);
-    AttachChild(m_summary_text);
-    AttachChild(m_description_box);
-
-    DoLayout();
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::DoLayout()
-{
-    const int PTS = ClientUI::Pts();
-    const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
-    const int SUMMARY_PTS = PTS*4/3;
-
-    const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
-
-    // name
-    GG::Pt ul = GG::Pt();
-    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 4));
-    m_item_name_text->SizeMove(ul, lr);
-
-    // cost / turns
-    ul += GG::Pt(GG::X0, m_item_name_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
-    m_cost_text->SizeMove(ul, lr);
-
-    // one line summary
-    ul += GG::Pt(GG::X0, m_cost_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
-    m_summary_text->SizeMove(ul, lr);
-
-    // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(GG::X1, ICON_SIZE + TEXT_MARGIN_Y + 1);
-    lr = ul + GG::Pt(Width() - TEXT_MARGIN_X - BORDER_RIGHT, Height() - BORDER_BOTTOM - ul.y - TEXT_MARGIN_Y);
-    m_description_box->SizeMove(ul, lr);
-
-    // icon
-    if (m_item_graphic) {
-        ul = GG::Pt(GG::X1, GG::Y1);
-        lr = ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-        m_item_graphic->SizeMove(ul, lr);
-    }
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
-    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
-
-    // maybe later do something interesting with docking
-    GG::Wnd::SizeMove(ul, lr);
-
-    if (Visible() && old_size != GG::Wnd::Size())
-        DoLayout();
-}
-
-GG::Pt BuildDesignatorWnd::BuildDetailPanel::ClientUpperLeft() const
-{
-    return GG::Wnd::UpperLeft();
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::Render()
-{
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    const GG::Y ICON_HEIGHT = m_summary_text->LowerRight().y - m_item_name_text->UpperLeft().y;
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_HEIGHT + BORDER_BOTTOM);
-    GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
-
-   // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
-
-    // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
-
-    // draw inner border, including extra resize-tab lines
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_ul.x, cl_ul.y);
-        glVertex(cl_lr.x, cl_ul.y);
-        glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-        glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-        glVertex(cl_ul.x, cl_lr.y);
-        glVertex(cl_ul.x, cl_ul.y);
-    glEnd();
-    glBegin(GL_LINES);
-        // draw the extra lines of the resize tab
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-        glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-        
-        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-        glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
-        GG::Pt new_lr = pt - m_drag_offset;
-
-        // constrain to within parent
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt max_lr = parent->ClientLowerRight();
-            new_lr.x = std::min(new_lr.x, max_lr.x);
-            new_lr.y = std::min(new_lr.y, max_lr.y);
-        }        
-
-        Resize(new_lr - UpperLeft());
-    } else {    // normal-dragging
-        GG::Pt final_move = move;
-
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt new_ul = ul + move, new_lr = lr + move;
-
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_lr = parent->ClientLowerRight();
-            GG::Pt max_ul = max_lr - this->Size();
-
-            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
-            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
-
-            final_move = new_ul - ul;
-        }
-
-        GG::Wnd::LDrag(pt, final_move, mod_keys);
-    }
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, const std::string& item)
-{
-    if (build_type != BT_BUILDING && build_type != INVALID_BUILD_TYPE)
-        throw std::invalid_argument("Attempted to SetBuildItem with a name and BuildType that wasn't BT_BUILDING");
-    m_build_type = build_type;
-    m_item_name = item;
-    m_item_design_id = UniverseObject::INVALID_OBJECT_ID;
-    Reset();
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::SetBuildItem(BuildType build_type, int design_id)
-{
-    if (build_type != BT_SHIP)
-        throw std::invalid_argument("Attempted to SetBuildItem with a design id and BuildType that wasn't BT_SHIP");
-    m_build_type = build_type;
-    m_item_name = "";
-    m_item_design_id = design_id;
-    Reset();
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::SetBuild(int queue_idx)
-{
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    const ProductionQueue& queue = empire->GetProductionQueue();
-    if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
-        m_build_type = queue[queue_idx].item.build_type;
-        m_item_name = queue[queue_idx].item.name;
-        m_item_design_id = queue[queue_idx].item.design_id;
-    } else {
-        m_build_type = INVALID_BUILD_TYPE;
-        m_item_name = "";
-        m_item_design_id = UniverseObject::INVALID_OBJECT_ID;
-    }
-    Reset();
-}
-
-void BuildDesignatorWnd::BuildDetailPanel::Reset()
-{
-    m_item_name_text->SetText("");
-    m_cost_text->SetText("");
-    m_description_box->SetText("");
-    if (m_item_graphic) {
-        DeleteChild(m_item_graphic);
-        m_item_graphic = 0;
-    }
-
-    if (m_build_type == INVALID_BUILD_TYPE) return;
-
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire) return;
-
-    using boost::io::str;
-    using boost::format;
-    double cost_per_turn = 0;
-    int turns = 0;
-    std::string item_name_str = UserString(m_item_name);
-    std::string description_str;
-    boost::shared_ptr<GG::Texture> graphic;
-    if (m_build_type == BT_BUILDING) {
-        assert(empire);
-        const BuildingType* building_type = GetBuildingType(m_item_name);
-        assert(building_type);
-        turns = building_type->BuildTime();
-        boost::tie(cost_per_turn, turns) = empire->ProductionCostAndTime(BT_BUILDING, m_item_name);
-        if (building_type->Effects().empty()) {
-            description_str = str(format(UserString("PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR"))
-                                  % UserString(building_type->Description()));
-        } else {
-            description_str = str(format(UserString("PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS"))
-                                  % UserString(building_type->Description())
-                                  % EffectsDescription(building_type->Effects()));
-        }
-        graphic = ClientUI::BuildingTexture(building_type->Name());
-    } else if (m_build_type == BT_SHIP) {
-        assert(empire);
-        const ShipDesign* design = GetShipDesign(m_item_design_id);
-        assert(design);
-        turns = 5; // this is a kludge for v0.3 only
-        boost::tie(cost_per_turn, turns) = empire->ProductionCostAndTime(BT_SHIP, m_item_design_id);
-        item_name_str = design->Name();
-        description_str = str(format(UserString("PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR"))
-                              % design->Description()
-                              % design->Attack()
-                              % design->Defense()
-                              % design->Speed());
-        graphic = ClientUI::ShipIcon(design->ID());
-    }
-
-    if (graphic) {
-        GG::Pt ul = ClientUpperLeft();
-        m_item_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10),
-                                               graphic, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        m_item_graphic->Show();
-        AttachChild(m_item_graphic);
-    }
-
-    DoLayout();
-
-    m_item_name_text->SetText(item_name_str);
-    m_cost_text->SetText(str(format(UserString("PRODUCTION_TOTAL_COST_STR"))
-                             % static_cast<int>(cost_per_turn + 0.5)
-                             % turns));
-    m_description_box->SetText(description_str);
-}
-
-
-//////////////////////////////////////////////////
 // BuildDesignatorWnd::BuildSelector
 //////////////////////////////////////////////////
 class BuildDesignatorWnd::BuildSelector : public CUIWnd
@@ -405,9 +83,9 @@ public:
     void ShowAvailability(bool available, bool refresh_list = true);
     void HideAvailability(bool available, bool refresh_list = true);
 
-    mutable boost::signal<void (BuildType, const std::string&)>         DisplayNamedBuildItemSignal;
+    mutable boost::signal<void (const BuildingType*)>                   DisplayBuildingTypeSignal;
     mutable boost::signal<void (BuildType, const std::string&, int)>    RequestNamedBuildItemSignal;
-    mutable boost::signal<void (BuildType, int)>                        DisplayIDedBuildItemSignal;
+    mutable boost::signal<void (const ShipDesign*)>                     DisplayShipDesignSignal;
     mutable boost::signal<void (BuildType, int, int)>                   RequestIDedBuildItemSignal;
 
 private:
@@ -443,7 +121,7 @@ private:
 
     int                                     m_build_location;
 
-    GG::Y                              m_row_height;
+    GG::Y                                   m_row_height;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
@@ -889,10 +567,15 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::Sel
     if (selections.size() == 1) {
         GG::ListBox::iterator row = *selections.begin();
         BuildType build_type = m_build_types[row];
-        if (build_type == BT_BUILDING)
-            DisplayNamedBuildItemSignal(BT_BUILDING, (*row)->DragDropDataType());
-        else if (build_type == BT_SHIP)
-            DisplayIDedBuildItemSignal(BT_SHIP, boost::lexical_cast<int>((*row)->DragDropDataType()));
+        if (build_type == BT_BUILDING) {
+            const BuildingType* building_type = GetBuildingType((*row)->DragDropDataType());
+            assert(building_type);
+            DisplayBuildingTypeSignal(building_type);
+        } else if (build_type == BT_SHIP) {
+            const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>((*row)->DragDropDataType()));
+            assert(design);
+            DisplayShipDesignSignal(design);
+        }
     }
 }
 
@@ -907,7 +590,6 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
         RequestIDedBuildItemSignal(BT_SHIP, boost::lexical_cast<int>((*it)->DragDropDataType()), 1);
 }
 
-
 //////////////////////////////////////////////////
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
@@ -919,7 +601,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     const GG::Y DETAIL_PANEL_HEIGHT = TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
-    m_build_detail_panel = new BuildDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
 
     m_side_panel = new SidePanel(Width() - MapWnd::SIDE_PANEL_WIDTH, GG::Y0, MapWnd::SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
     m_side_panel->Hide();
@@ -930,8 +612,8 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));
 
 
-    GG::Connect(m_build_selector->DisplayNamedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
-    GG::Connect(m_build_selector->DisplayIDedBuildItemSignal, &BuildDesignatorWnd::BuildDetailPanel::SetBuildItem, m_build_detail_panel);
+    GG::Connect(m_build_selector->DisplayBuildingTypeSignal, &EncyclopediaDetailPanel::SetItem, m_enc_detail_panel);
+    GG::Connect(m_build_selector->DisplayShipDesignSignal, &EncyclopediaDetailPanel::SetItem, m_enc_detail_panel);
     GG::Connect(m_build_selector->RequestNamedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
     GG::Connect(m_build_selector->RequestIDedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
 
@@ -948,11 +630,11 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     GG::Connect(m_build_selector->m_availability_buttons.at(0)->ClickedSignal, ToggleAvailabilityFunctor(this, true));    // available items
     GG::Connect(m_build_selector->m_availability_buttons.at(1)->ClickedSignal, ToggleAvailabilityFunctor(this, false));   // UNavailable items
 
-    AttachChild(m_build_detail_panel);
+    AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);
     AttachChild(m_side_panel);
 
-    MoveChildUp(m_build_detail_panel);
+    MoveChildUp(m_enc_detail_panel);
     MoveChildUp(m_build_selector);
 
     ShowAllTypes(false);            // show all types without populating the list
@@ -974,7 +656,7 @@ bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
 {
     GG::Rect clip_rect = m_map_view_hole + UpperLeft();
     return clip_rect.Contains(pt) ?
-        (m_build_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt)) :
+        (m_enc_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt)) :
         Wnd::InClient(pt);
 }
 
@@ -982,7 +664,7 @@ bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 {
     GG::Rect clip_rect = m_map_view_hole + UpperLeft();
     return clip_rect.Contains(pt) ?
-        (m_build_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt)) :
+        (m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt)) :
         Wnd::InClient(pt);
 }
 
@@ -993,7 +675,8 @@ GG::Rect BuildDesignatorWnd::MapViewHole() const
 
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
 {
-    m_build_detail_panel->SetBuild(queue_idx);
+    SetBuild(queue_idx);
+
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
@@ -1007,6 +690,27 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
             SystemSelectedSignal(system);
         m_side_panel->SelectPlanet(queue[queue_idx].location);
     }
+}
+
+void BuildDesignatorWnd::SetBuild(int queue_idx)
+{
+    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const ProductionQueue& queue = empire->GetProductionQueue();
+    if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
+        BuildType buildType = queue[queue_idx].item.build_type;
+        if (buildType == BT_BUILDING) {
+            const BuildingType* building_type = GetBuildingType(queue[queue_idx].item.name);
+            assert(building_type);
+            m_build_selector->DisplayBuildingTypeSignal(building_type);
+        } else if (buildType == BT_SHIP) {
+            const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(queue[queue_idx].item.design_id));
+            assert(design);
+            m_build_selector->DisplayShipDesignSignal(design);
+        }
+    } else {
+            m_enc_detail_panel->UnsetAll();
+    }
+    m_enc_detail_panel->Reset();
 }
 
 void BuildDesignatorWnd::SelectSystem(int system)
@@ -1037,13 +741,14 @@ void BuildDesignatorWnd::Reset()
     }
     SelectDefaultPlanet(m_side_panel->SystemID());
     m_build_selector->Reset();
-    m_build_detail_panel->SetBuildItem(INVALID_BUILD_TYPE);
+    m_enc_detail_panel->Reset();
     m_side_panel->Refresh();
 }
 
 void BuildDesignatorWnd::Clear()
 {
-    m_build_detail_panel->SetBuildItem(INVALID_BUILD_TYPE);
+    m_enc_detail_panel->UnsetAll();
+    m_enc_detail_panel->Reset();
     m_build_selector->Reset();
     SystemSelectedSignal(UniverseObject::INVALID_OBJECT_ID);
     m_side_panel->Hide();

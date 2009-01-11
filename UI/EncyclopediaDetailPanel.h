@@ -41,14 +41,14 @@ public:
     void            SetItem(const BuildingType* building);
     void            SetItem(const ShipDesign* design);
     void            SetItem(const Special* special);
+
+    void Reset();
+    void UnsetAll();
     //@}
 
 private:
-    void Reset();
     void DoLayout();
-
     bool NothingSet();
-    void UnsetAll();
 
     const Tech*         m_tech;
     const PartType*     m_part;

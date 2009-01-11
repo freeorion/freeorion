@@ -220,7 +220,6 @@ void EncyclopediaDetailPanel::Reset()
         return;
     }
 
-
     // get details of item as applicable in order to set summary, cost, description TextControls
     std::string name = "";
     boost::shared_ptr<GG::Texture> texture;
@@ -243,7 +242,6 @@ void EncyclopediaDetailPanel::Reset()
         specific_type = UserString(boost::lexical_cast<std::string>(m_part->Class()));
         detailed_description = UserString(m_part->Description()) +
             boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_part->Effects()));
-
     } else if (m_hull) {
         // Ship Hulls
         name = UserString(m_hull->Name());
@@ -255,7 +253,6 @@ void EncyclopediaDetailPanel::Reset()
         // hulls have no specific types
         detailed_description = UserString(m_hull->Description()) +
             boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_hull->Effects()));
-
     } else if (m_tech) {
         // Technologies
         name = UserString(m_tech->Name());
@@ -266,17 +263,29 @@ void EncyclopediaDetailPanel::Reset()
         cost_units = UserString("ENC_RP");
         general_type = UserString("ENC_TECH");
         specific_type = UserString(m_tech->Category());
-
     } else if (m_building) {
         // Buildings
         name = UserString(m_building->Name());
         texture = ClientUI::BuildingTexture(m_building->Name());
-
+        turns = m_building->BuildTime();
+        cost = m_building->BuildCost();
+        cost_units = UserString("ENC_PP");
+        general_type = UserString("ENC_BUILDING_TYPE");
+        detailed_description = UserString(m_building->Description()) +
+            boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_building->Effects()));
     } else if (m_design) {
         // Ship Designs
-        name = UserString(m_design->Name());
+        name = m_design->Name();
         texture = ClientUI::ShipIcon(m_design->ID());
-
+        turns = m_design->BuildTime();
+        cost = m_design->Cost();
+        cost_units = UserString("ENC_PP");
+        general_type = UserString("ENC_SHIP_DESIGN");
+        detailed_description = boost::io::str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+            % m_design->Description()
+            % m_design->Attack()
+            % m_design->Defense()
+            % m_design->Speed());
     } else if (m_special) {
         // Specials
         name = UserString(m_special->Name());

@@ -1452,23 +1452,6 @@ PRODUCTION_TURNS_LEFT_STR
 PRODUCTION_TURNS_LEFT_NEVER
 Never
 
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
-%1%
-
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-'''%1%
-
-<u>Effects</u>
-
-%2%'''
-
-PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-'''%1%
-
-Attack: %2%
-Defense: %3%
-Speed: %4%'''
-
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Quantity
 
@@ -1560,14 +1543,14 @@ Ship Hull
 ENC_TECH
 Technology
 
-ENC_SHIP_DESIGN
-Ship Design
-
 ENC_SPECIAL
 Special
 
-ENC_BUILDING
-Building
+ENC_BUILDING_TYPE
+Building Type
+
+ENC_SHIP_DESIGN
+Ship Design
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
@@ -1597,6 +1580,13 @@ ENC_EFFECTS_STR
 <u>Effects</u>
 
 %1%'''
+
+ENC_SHIP_DESIGN_DESCRIPTION_STR
+'''%1%
+
+Attack: %2%
+Defense: %3%
+Speed: %4%'''
 
 
 
