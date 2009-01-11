@@ -474,32 +474,30 @@ void HumanClientApp::Initialize()
 
 void HumanClientApp::HandleSystemEvents()
 {
-  try {
-      SDLGUI::HandleSystemEvents();
-  }
-  catch (const std::runtime_error& e) {
-      std::cerr << "std::runtime_error exception caught while SDLGUI::HandleSystemEvents() in HumanClientApp::HandleSystemEvents(): " << e.what() << std::endl;
-      throw e;
-  }
+    try {
+        SDLGUI::HandleSystemEvents();
+    } catch (const std::runtime_error& e) {
+        std::cerr << "std::runtime_error exception caught while SDLGUI::HandleSystemEvents() in HumanClientApp::HandleSystemEvents(): " << e.what() << std::endl;
+        throw e;
+    }
 
-  try {
-      if (m_connected && !Networking().Connected()) {
-          m_connected = false;
-          // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
-          // Disconnection inherently precipitates a transition out of any state S that handles it, and if another event
-          // that also causes a transition out of S is currently active (e.g. MPLobby), a double-destruction of S will
-          // occur.
-          m_fsm->post_event(Disconnection());
-      } else if (Networking().MessageAvailable()) {
-          Message msg;
-          Networking().GetMessage(msg);
-          HandleMessage(msg);
-     }
-  }
-  catch (const std::runtime_error& e) {
-      std::cerr << "std::runtime_error exception caught in HumanClientApp::HandleSystemEvents(): " << e.what() << std::endl;
-      throw e;
-  }
+    try {
+        if (m_connected && !Networking().Connected()) {
+            m_connected = false;
+            // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
+            // Disconnection inherently precipitates a transition out of any state S that handles it, and if another event
+            // that also causes a transition out of S is currently active (e.g. MPLobby), a double-destruction of S will
+            // occur.
+            m_fsm->post_event(Disconnection());
+        } else if (Networking().MessageAvailable()) {
+            Message msg;
+            Networking().GetMessage(msg);
+            HandleMessage(msg);
+        }
+    } catch (const std::runtime_error& e) {
+        std::cerr << "std::runtime_error exception caught in HumanClientApp::HandleSystemEvents(): " << e.what() << std::endl;
+        throw e;
+    }
 }
 
 void HumanClientApp::HandleNonGGEvent(const SDL_Event& event)
