@@ -704,6 +704,8 @@ public:
                                     DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
                                     DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+    mutable boost::signal<void (const ShipDesign*)>
+                                    DesignBrowsedSignal;                    //!< a completed design was browsed (clicked once)
     mutable boost::signal<void (const HullType*)>
                                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 
@@ -1020,6 +1022,14 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 void BasesListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
+    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (design_row) {
+        int id = design_row->DesignID();
+        const ShipDesign* design = GetShipDesign(id);
+        if (design)
+            DesignBrowsedSignal(design);
+    }
+
     HullAndPartsListBoxRow* box_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
     if (box_row) {
         const std::string& hull_name = box_row->Hull();
@@ -1115,6 +1125,8 @@ public:
                     DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
                     DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+    mutable boost::signal<void (const ShipDesign*)>
+                    DesignBrowsedSignal;                    //!< a complete design was browsed (clicked once)
     mutable boost::signal<void (const HullType*)>
                     HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
 private:
@@ -1161,6 +1173,7 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
     GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
+    GG::Connect(m_designs_list->DesignBrowsedSignal,            DesignWnd::BaseSelector::DesignBrowsedSignal);
 
     //m_saved_designs_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
     m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
@@ -1894,6 +1907,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     AttachChild(m_base_selector);
     GG::Connect(m_base_selector->DesignSelectedSignal,          &MainPanel::SetDesign,              m_main_panel);
     GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,    m_main_panel);
+    GG::Connect(m_base_selector->DesignBrowsedSignal,           &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     GG::Connect(m_base_selector->HullBrowsedSignal,             &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     m_base_selector->MoveTo(GG::Pt());
 
