@@ -1,0 +1,4 @@
+/* Localized versions of Info.plist keys */
+
+CFBundleName = "OpenSteerDemo";
+NSHumanReadableCopyright = "© 2002-2004, Sony Computer Entertainment America";

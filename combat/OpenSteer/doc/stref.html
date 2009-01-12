@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+ "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>OpenSteerDemo reference page</title>
+<style type="text/css">
+  td.graybox { padding: 2px 8px 2px 8px;
+               background-color: #e0e0e0;
+               vertical-align: top; }
+  td.titlebox { padding: 0 0 0 0;
+                background-color: #f0f0f0;
+                vertical-align: top; }
+</style>
+</head>
+
+<body bgcolor="#f0f0f0">
+
+<table border=0 cellspacing=0 cellpadding=0 width="100%" align=center>
+<tr>
+<td class=titlebox align=left>
+<big>
+<big>
+<big>
+<b>
+OpenSteerDemo quick reference guide
+</b>
+</big>
+</big>
+</big>
+</td>
+<td class=titlebox align=right>
+October 7, 2003<br>
+OpenSteer 0.8
+</td>
+</tr>
+</table>
+
+<p>After installation <small><a href= "doc.html#InstallingOpenSteer"
+>[see doc section "Installing OpenSteer"]</a></small> launch the
+OpenSteerDemo application which opens a window labeled "OpenSteerDemo
+0.8". OpenSteerDemo has a single <i>selected</i> vehicle which the
+camera normally tracks.  The user can select another vehicle by
+clicking on it with the left mouse button.  OpenSteerDemo recognizes
+several single key commands:</p>
+
+
+<table border=0 cellspacing=0 cellpadding=0 width="90%" align=center>
+<tr>
+<td class=titlebox width="25%">Tab</td>
+<td class=titlebox>select next PlugIn</td>
+</tr>
+<tr>
+<td class=titlebox>r</td>
+<td class=titlebox>restart current PlugIn</td>
+</tr>
+<tr>
+<td class=titlebox>s</td>
+<td class=titlebox>select next vehicle/agent/character&nbsp; 
+                   (or mouse-click to select)</td>
+</tr>
+<tr>
+<td class=titlebox>c</td>
+<td class=titlebox>select next camera aiming mode</td>
+</tr>
+<tr>
+<td class=titlebox>f</td>
+<td class=titlebox>select next preset frame rate&nbsp;
+                   (as-fast-as-possible, 24fps, 60fps)</td>
+</tr>
+<tr>
+<td class=titlebox>a</td>
+<td class=titlebox>toggle annotation on/off</td>
+</tr>
+<tr>
+<td class=titlebox>Space</td>
+<td class=titlebox>toggle between Run and Pause</td>
+</tr>
+<tr>
+<td class=titlebox>-> &nbsp; (right arrow)</td>
+<td class=titlebox>step forward one frame</td>
+</tr>
+<tr>
+<td class=titlebox>?</td>
+<td class=titlebox>print "mini help" on console&nbsp;</td>
+</tr>
+<tr>
+<td class=titlebox>Esc</td>
+<td class=titlebox>exit OpenSteerDemo</td>
+</tr>
+</table>
+
+<p>The camera (or "point of view") in OpenSteerDemo is typically
+controlled so that it tracks the selected vehicle.  Several different
+camera aiming modes are provided:</p>
+
+<table border=0 cellspacing=0 cellpadding=0 width="90%" align=center>
+<tr>
+<td class=titlebox width="25%">static</td>
+<td class=titlebox>fixed camera</td>
+</tr>
+<tr>
+<td class=titlebox>fixed&nbsp;distance&nbsp;offset&nbsp;&nbsp;</td>
+<td class=titlebox>
+camera remains a fixed distance from selected vehicle
+</td>
+</tr>
+<tr>
+<td class=titlebox>fixed local offset</td>
+<td class=titlebox>
+camera remains fixed in selected vehicle's local space
+</td>
+</tr>
+<tr>
+<td class=titlebox>straight down</td>
+<td class=titlebox>
+camera looks at selected vehicle from directly above
+</td>
+</tr>
+<tr>
+<td class=titlebox>offset POV</td>
+<td class=titlebox>
+camera looks in selected vehicle's forward direction, from a given
+offset in the vehicle's local space
+</td>
+</tr>
+</table>
+
+<p>You can adjust the camera's view with the mouse: hold down the
+keyboard's <i>control </i>(Ctrl) key while dragging the mouse with its
+left button held down.  2D mouse motion is mapped into the camera's
+space, rotating the camera's position around its aimpoint.  This
+allows the camera to move on the surface of a sphere centered at the
+aimpoint.  The radius of this sphere--<wbr>the "viewing
+distance"--<wbr>can be adjusted by dragging the mouse with the middle
+button held down (vertical mouse motion maps to distance).  If you use
+a one- or two-button mouse (hence no middle button) you can adjust the
+radius by holding down both the Ctrl and Alt ("control-meta-") keys
+while dragging the mouse with its left button held down.</p>
+
+<p>Sample PlugIns:
+
+<b>Capture the Flag:</b> a single (bluish) attacker attempts to reach
+a central goal while four (reddish) defenders try to intercept ("tag")
+the attacker before it gets to the goal.  Press F1 to add an obstacle
+(up to 100 of them), F2 to remove one.
+
+<b>Pedestrians:</b> 100 agents follow a path (the red line) while
+avoiding collisions with each other and two large spherical obstacles.
+
+Press F1 to add a Pedestrian and F2 to remove one. F3 cycles among
+types of proximity databases. F4 toggles between two versions of path
+following. F5 toggles a Pedestrian's wander component on and off.
+
+<b>Boids:</b> 200 simulated flocking "bird like objects". Press F1 to
+add a Boid and F2 to remove one. F3 cycles among types of proximity
+databases. F4 toggles between two boundary conditions.
+
+<b>Soccer:</b> a simple soccer game, blue and red teams of 8 Players
+each, a green Ball and yellow field and goals. As play proceeds the
+PlugIn keeps score.
+
+<b>Multiple Pursuit:</b> a "test fixture" for the <i>pursue</i>
+behavior.  30 pursuers chase one wandering quarry.
+
+<b>Low Speed Turn:</b> a "test fixture" for evaluating the response of
+a vehicle to backward-pointing steering force while moving at low
+speed.
+
+<b>One Turning Away:</b> this was the first one, now it serves as a
+minimal example of a PlugIn.</p>
+
+</body>
+</html>
