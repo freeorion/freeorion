@@ -26,9 +26,9 @@
 #ifndef _GG_Config_h_
 #define _GG_Config_h_
 
-#define GG_USE_DEVIL_IMAGE_LOAD_LIBRARY 1
+#define GG_USE_DEVIL_IMAGE_LOAD_LIBRARY 0
 #define GG_HAVE_LIBJPEG 0
-#define GG_HAVE_LIBPNG 0
+#define GG_HAVE_LIBPNG 1
 #define GG_HAVE_LIBTIFF 0
 
 #endif // _GG_Config_h_
