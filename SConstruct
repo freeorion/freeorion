@@ -47,9 +47,6 @@ options.Add('with_sdl_libdir', 'Specify exact library dir for SDL library')
 options.Add('with_ft', 'Root directory of FreeType2 installation')
 options.Add('with_ft_include', 'Specify exact include dir for FreeType2 headers')
 options.Add('with_ft_libdir', 'Specify exact library dir for FreeType2 library')
-options.Add('with_devil', 'Root directory of DevIL installation')
-options.Add('with_devil_include', 'Specify exact include dir for DevIL headers')
-options.Add('with_devil_libdir', 'Specify exact library dir for DevIL library')
 options.Add('with_openal', 'Root directory of OpenAL installation')
 options.Add('with_openal_include', 'Specify exact include dir for OpenAL headers')
 options.Add('with_openal_libdir', 'Specify exact library dir for OpenAL library')
@@ -308,36 +305,6 @@ if not env.GetOption('clean'):
                     Exit(1)
             else:
                 env.AppendUnique(LIBS = [ft_win32_lib_name])
-
-            # DevIL (aka IL)
-            AppendPackagePaths('devil', env)
-            version_regex = re.compile(r'IL_VERSION\s*(\d+)')
-            if not conf.CheckVersionHeader('DevIL', 'IL/il.h', version_regex, devil_version, True, 'Checking DevIL version >= %s... ' % devil_version_string):
-                Exit(1)
-            if not conf.CheckCHeader('IL/il.h') or \
-                   not conf.CheckCHeader('IL/ilu.h') or \
-                   not conf.CheckCHeader('IL/ilut.h'):
-                print "Note: since SDL support is disabled, the SDL headers are not in the compiler's search path during tests.  If DevIL was built with SDL support, this may cause the search for ilut.h to fail."
-                Exit(1)
-            if str(Platform()) != 'win32' and (not conf.CheckLib('IL', 'ilInit') or \
-                                               not conf.CheckLib('ILU', 'iluInit') or \
-                                               not conf.CheckLib('ILUT', 'ilutInit')):
-                Exit(1)
-            from sys import stdout
-            stdout.write('Checking for DevIL OpenGL support... ')
-            devil_gl_check_app = """
-#include <IL/ilut.h>
-#ifndef ILUT_USE_OPENGL
-#error "DevIL not built with OpenGL support"
-#endif
-int main() {
-    return 0;
-}
-"""
-            if not conf.TryCompile(devil_gl_check_app, '.c'):
-                print 'no'
-            else:
-                print 'yes'
 
             # ltdl
             if str(Platform()) != 'win32':
