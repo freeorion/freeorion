@@ -211,7 +211,7 @@ namespace {
         world.rayTest(collision_results.m_rayFromWorld,
                       collision_results.m_rayToWorld,
                       collision_results);
-        if (collision_results.HasHit()) {
+        if (collision_results.hasHit()) {
             retval.m_object = reinterpret_cast<Ogre::MovableObject*>(
                 collision_results.m_collisionObject->getUserPointer());
             retval.m_point = FromCollisionVector(collision_results.m_hitPointWorld);

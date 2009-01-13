@@ -20,7 +20,7 @@ def BoostStringToNumber(version_string):
     return str(int(pieces[0]) * 100000 + int(pieces[1]) * 100 + (3 <= len(pieces) and int(pieces[2]) or 0))
 boost_version = BoostStringToNumber(boost_version_string)
 
-bullet_version = '2.68'
+bullet_version = '2.73'
 
 openal_pkgconfig_version = '0.0.8'
 alut_pkgconfig_version ='1.1.0'
