@@ -74,7 +74,7 @@ public:
 
 
     /** Combination of an EffectsGroup and the id of a source object. */
-    typedef struct SourcedEffectsGroup {
+    struct SourcedEffectsGroup {
         SourcedEffectsGroup();
         SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const Effect::EffectsGroup>& effects_group_);
         bool operator<(const SourcedEffectsGroup& right) const;
@@ -82,14 +82,14 @@ public:
         boost::shared_ptr<const Effect::EffectsGroup>   effects_group;
     };
     /** Description of cause of an effect: the general cause type, and the specific cause.  eg. Building and a particular BuildingType. */
-    typedef struct EffectCause {
+    struct EffectCause {
         EffectCause();
         EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_);
         EffectsCauseType                                cause_type;         ///< general type of effect cause, eg. tech, building, special...
         std::string                                     specific_cause;     ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
     };
     /** Combination of targets and cause for an effects group. */
-    typedef struct EffectTargetAndCause {
+    struct EffectTargetAndCause {
         EffectTargetAndCause();
         EffectTargetAndCause(const Effect::EffectsGroup::TargetSet& target_set_, const EffectCause& effect_cause_);
         Effect::EffectsGroup::TargetSet                 target_set;
