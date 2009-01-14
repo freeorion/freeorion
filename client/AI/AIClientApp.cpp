@@ -13,10 +13,6 @@
 #include <log4cpp/FileAppender.hh>
 
 #include "../../universe/Universe.h"
-#include "../../universe/System.h"
-#include "../../universe/Fleet.h"
-#include "../../universe/Ship.h"
-#include "../../universe/ShipDesign.h"
 #include "../../util/OrderSet.h"
 #include "../../util/Order.h"
 #include "../../Empire/Empire.h"
