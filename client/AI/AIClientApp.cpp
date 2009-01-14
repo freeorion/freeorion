@@ -33,7 +33,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     s_app = this;
 
     if (argc < 2) {
-        Logger().fatal("The AI client should not be executed directly!");
+        std::cerr << "The AI client should not be executed directly!  Run freeorion to start the game.";
         Exit(1);
     }
 

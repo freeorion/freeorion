@@ -485,7 +485,7 @@ UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
     return visitor.Visit(const_cast<Fleet* const>(this));
 }
 
-void Fleet::SetRoute(const std::list<System*>& route, double distance)
+void Fleet::SetRoute(const std::list<System*>& route)
 {
     if (route.empty())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
@@ -497,7 +497,27 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
 
     m_travel_route = route;
-    m_travel_distance = distance;
+
+    // calculate length of line segments between systems on route, and sum up to determine length of route between
+    // systems on route.  (Might later add distance from fleet to first system on route to this to get the total
+    // route length, or this may itself be the total route length if the fleet is at the first system on the route).
+    m_travel_distance = 0.0;
+    for (std::list<System*>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it) {
+        std::list<System*>::const_iterator next_it = it;    ++next_it;
+
+        if (next_it == m_travel_route.end())
+            break;  // current system is the last on the route, so don't need to add any additional distance.
+
+        const System* cur_sys = *it;
+        const System* next_sys = *next_it;
+        if (!cur_sys || !next_sys)
+            throw std::invalid_argument("Fleet::SetRoute() : passed a null System pointer on route");
+
+        double dist_x = next_sys->X() - cur_sys->X();
+        double dist_y = next_sys->Y() - cur_sys->Y();
+        m_travel_distance += std::sqrt(dist_x * dist_x + dist_y * dist_y);
+    }
+
 
     // if resetting to no movement while in a system
     if (SystemID() != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_travel_route.back()->ID()) {
@@ -514,7 +534,7 @@ void Fleet::SetRoute(const std::list<System*>& route, double distance)
         }
         m_moving_to = m_travel_route.back()->ID();
         if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()->ID()) {
-            m_prev_system = m_next_system; // if already in transit and turning around, swap prev and next
+            m_prev_system = m_next_system;      // if already in transit and turning around, swap prev and next
         } else if (SystemID() == route.front()->ID()) {
             m_prev_system = SystemID();
         }
