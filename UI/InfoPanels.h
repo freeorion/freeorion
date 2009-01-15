@@ -393,15 +393,35 @@ class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
 public:
     SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system);
 
-    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
 
-    virtual void Render();
+    virtual void    Render();
 
 private:
-    void Initialize();
+    void            Initialize();
+    virtual void    UpdateImpl(std::size_t mode, const GG::Wnd* target);
+
+    void            UpdateProduction(GG::Y& top);   // adds pairs of TextControl for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
+    void            UpdateAllocation(GG::Y& top);   // adds pairs of TextControl for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
+    void            UpdateImportExport(GG::Y& top); // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
 
     ResourceType        m_resource_type;
     const System*       m_system;
+
+    GG::TextControl*    m_production_label;
+    GG::TextControl*    m_allocation_label;
+
+    GG::TextControl*    m_import_export_label;
+    GG::TextControl*    m_import_export_amount;
+
+    std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_production_labels_and_amounts;
+    std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_allocation_labels_and_amounts;
+
+    GG::Y               row_height;
+
+    GG::Y               production_label_top;
+    GG::Y               allocation_label_top;
+    GG::Y               import_export_label_top;
 
     static const GG::X  LABEL_WIDTH;
     static const GG::X  VALUE_WIDTH;

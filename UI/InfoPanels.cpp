@@ -37,6 +37,12 @@ namespace {
             m_meter_type(meter_type),
             m_obj(obj),
             m_meter_map(meter_map),
+            m_summary_title(0),
+            m_current_label(0), m_current_value(0),
+            m_next_turn_label(0), m_next_turn_value(0),
+            m_change_label(0), m_change_value(0),
+            m_meter_title(0),
+            row_height(1),
             initialized(false)
         {}
 
@@ -120,7 +126,7 @@ namespace {
                 clr = ClientUI::StatIncrColor();
             else if (change < 0.0)
                 clr = ClientUI::StatDecrColor();
-            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>"); // crahses itermittantly due to UTF-8 invalid text error
+            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>");
             m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
                                                   DoubleToString(meter_cur, 3, false, false) %
                                                   DoubleToString(meter_max, 3, false, false)));
@@ -2251,6 +2257,9 @@ SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType reso
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
     m_resource_type(resource_type),
     m_system(system),
+    m_production_label(0), m_allocation_label(0),
+    m_import_export_label(0), m_import_export_amount(0),
+    row_height(1), production_label_top(0), allocation_label_top(0), import_export_label_top(0),
     initialized(false)
 {}
 
@@ -2261,17 +2270,161 @@ bool SystemResourceSummaryBrowseWnd::WndHasBrowseInfo(const GG::Wnd* wnd, std::s
 }
 
 void SystemResourceSummaryBrowseWnd::Render() {
-    // TEMP //
-    int row_height = ClientUI::Pts() * 3/2;
-    // END TEMP //
-
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
-    GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
-    GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*row_height), GG::Pt(lr.x, ul.y + 5*row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
+    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);       // main background
+    GG::FlatRectangle(GG::Pt(ul.x, ul.y + production_label_top), GG::Pt(lr.x, ul.y + production_label_top + row_height),
+                      ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);                 // production label background
+    GG::FlatRectangle(GG::Pt(ul.x, ul.y + allocation_label_top), GG::Pt(lr.x, ul.y + allocation_label_top + row_height),
+                      ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);                 // allocation label background
+    GG::FlatRectangle(GG::Pt(ul.x, ul.y + import_export_label_top), GG::Pt(lr.x, ul.y + import_export_label_top + row_height),
+                      ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);                 // import or export label background
+}
+
+void SystemResourceSummaryBrowseWnd::UpdateImpl(std::size_t mode, const GG::Wnd* target) {
+    if (!initialized)
+        Initialize();
 }
 
 void SystemResourceSummaryBrowseWnd::Initialize() {
+    row_height = GG::Y(ClientUI::Pts() * 3/2);
+    const GG::X TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
+
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+
+    GG::Y top = GG::Y0;
+
+    production_label_top = top;
+    m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, production_label_top + row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_production_label);
+    top += row_height;
+
+    UpdateProduction(top);
+
+    allocation_label_top = top;
+    m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, allocation_label_top + row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_allocation_label);
+    top += row_height;
+
+    UpdateAllocation(top);
+
+
+    // create import / export labels anywhere... will be positions in UpdateImportExport()
+    m_import_export_label = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_import_export_label);
+    m_import_export_amount = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_import_export_amount);
+
+    import_export_label_top = top;
+    UpdateImportExport(top);    // positions and updates import / export labels
+
+
+    Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, top));
+
+
     initialized = true;
 }
+
+void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
+    // adds pairs of TextControl for ResourceCenter name and production of resource starting at vertical position \a top
+    // and updates \a top to the vertical position after the last entry
+    for (unsigned int i = 0; i < m_production_labels_and_amounts.size(); ++i) {
+        DeleteChild(m_production_labels_and_amounts[i].first);
+        DeleteChild(m_production_labels_and_amounts[i].second);
+    }
+    m_production_labels_and_amounts.clear();
+
+    if (!m_system || m_resource_type == INVALID_RESOURCE_TYPE)
+        return;
+
+
+    double total_system_resource_production = 0.0;
+
+
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+
+    // add label-value pair for each resource-producing object in system to indicate amount of resource produced
+    std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
+    for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
+        const UniverseObject* obj = *it;
+        const ResourceCenter* rc = dynamic_cast<const ResourceCenter*>(obj);
+        if (!rc)
+            continue;
+
+        std::string name = obj->Name();
+        double production = rc->ProjectedMeterPoints(ResourceToMeter(m_resource_type));
+        total_system_resource_production += production;
+
+        std::string amount_text = DoubleToString(production, 3, false, false);
+
+
+        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, top + row_height,
+                                                     name, font, ClientUI::TextColor(),
+                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        label->Resize(GG::Pt(LABEL_WIDTH, row_height));
+        AttachChild(label);
+
+        GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, top, VALUE_WIDTH, top + row_height,
+                                                     amount_text, font, ClientUI::TextColor(),
+                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(value);
+
+        m_production_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+        top += row_height;
+    }
+
+
+
+    // set production label
+    std::string resource_text = "";
+    switch (m_resource_type) {
+    case RE_FOOD:
+        resource_text = UserString("RP_FOOD");              break;
+    case RE_MINERALS:
+        resource_text = UserString("RP_MINERALS");          break;
+    case RE_INDUSTRY:
+        resource_text = UserString("RP_INDUSTRY");          break;
+    case RE_RESEARCH:
+        resource_text = UserString("RP_RESEARCH");          break;
+    case RE_TRADE:
+        resource_text = UserString("RP_TRADE");             break;
+    default:
+        resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
+    }
+
+    m_production_label->SetText(boost::io::str(FlexibleFormat(UserString("RESOURCE_PRODUCTION_TOOLTIP")) %
+                                                              resource_text %
+                                                              DoubleToString(total_system_resource_production, 3, false, false)));
+
+
+    // height of label already added to top outside this function
+}
+
+void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
+    // adds pairs of TextControl for allocation of resources in system, starting at vertical position \a top and
+    // updates \a top to be the vertical position after the last entry
+    for (unsigned int i = 0; i < m_allocation_labels_and_amounts.size(); ++i) {
+        DeleteChild(m_allocation_labels_and_amounts[i].first);
+        DeleteChild(m_allocation_labels_and_amounts[i].second);
+    }
+    m_allocation_labels_and_amounts.clear();
+
+    // UserString("TT_RESOURCE_ALLOCATION") // parames: object_name  and  allocation
+
+    // TEMP
+    top += row_height;
+}
+
+void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
+    // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being
+    // imported or exported from this system, and moves them to vertical position \a top and updates \a top
+    // to be the vertical position below these labels
+    m_import_export_label;
+    m_import_export_amount;
+
+    // TEMP
+    top += row_height;
+}
+
