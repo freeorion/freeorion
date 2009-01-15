@@ -479,10 +479,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\UI\Hotkey.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\UI\InfoPanels.cpp"
 				>
 			</File>
@@ -1136,10 +1132,6 @@
 						RelativePath="..\..\..\GG\src\dialogs\ThreeButtonDlg.cpp"
 						>
 					</File>
-				</Filter>
-				<Filter
-					Name="GIL"
-					>
 				</Filter>
 			</Filter>
 		</Filter>

@@ -13,10 +13,6 @@
 #include <log4cpp/FileAppender.hh>
 
 #include "../../universe/Universe.h"
-#include "../../universe/System.h"
-#include "../../universe/Fleet.h"
-#include "../../universe/Ship.h"
-#include "../../universe/ShipDesign.h"
 #include "../../util/OrderSet.h"
 #include "../../util/Order.h"
 #include "../../Empire/Empire.h"
@@ -37,7 +33,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     s_app = this;
 
     if (argc < 2) {
-        Logger().fatal("The AI client should not be executed directly!");
+        std::cerr << "The AI client should not be executed directly!  Run freeorion to start the game.";
         Exit(1);
     }
 

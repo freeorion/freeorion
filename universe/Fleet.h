@@ -79,7 +79,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                    SetRoute(const std::list<System*>& route, double distance);  ///< orders the fleet to move through the systems in the list, in order
+    void                    SetRoute(const std::list<System*>& route);      ///< orders the fleet to move through the systems in the list, in order
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.

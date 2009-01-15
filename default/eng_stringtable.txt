@@ -3357,7 +3357,7 @@ SHP_LIGHTHOUSE
 Interstellar Lighthouses
 
 SHP_LIGHTHOUSE_DESC
-Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significantly safer.
 
 SHP_FLEET_LOGISTICS
 Fleet Logistics

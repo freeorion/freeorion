@@ -3,12 +3,12 @@
 #define _BuildDesignatorWnd_h_
 
 #include "../universe/Enums.h"
-#include "EncyclopediaDetailPanel.h"
 
 #include <GG/Wnd.h>
 
 
 class SidePanel;
+class EncyclopediaDetailPanel;
 
 class BuildDesignatorWnd : public GG::Wnd
 {

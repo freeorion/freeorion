@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="..\..\..\GG\;..\..\include\;..\..\..\..\include\;&quot;..\..\..\..\Boost\include\boost-1_36&quot;;C:\Python25\include"
+				AdditionalIncludeDirectories="../../../log4cpp/;../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;C:\Python25\include;../../../GG/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;GIGI_EXPORTS;FREEORION_BUILD_AI;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib wsock32.lib zdll.lib log4cpp.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc80-mt-1_36.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib wsock32.lib zdll.lib freetype214MT.lib cdt.lib common.lib pathplan.lib libexpat.lib python25.lib boost_python-vc80-mt-1_36.lib"
 				OutputFile="../../../freeorionca.exe"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs"
@@ -633,6 +633,194 @@
 				RelativePath="..\..\..\universe\ValueRefParser.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="log4cpp"
+			>
+			<Filter
+				Name="src"
+				>
+				<File
+					RelativePath="..\..\..\log4cpp\src\Appender.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\AppenderSkeleton.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\BasicLayout.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\Category.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\CategoryStream.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\Configurator.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\FactoryParams.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\FileAppender.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\HierarchyMaintainer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\LayoutAppender.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\Localtime.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\Localtime.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\LoggingEvent.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\MSThreads.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\NDC.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\PatternLayout.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\Priority.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\StringUtil.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\StringUtil.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\src\TimeStamp.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="log4cpp"
+				>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Appender.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\AppenderSkeleton.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\BasicLayout.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\CategoryStream.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\config-win32.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Configurator.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\convenience.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Export.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\FactoryParams.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\FileAppender.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Filter.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\HierarchyMaintainer.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Layout.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\LayoutAppender.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\LoggingEvent.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Manipulator.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\NDC.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\PatternLayout.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Portability.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\Priority.hh"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\log4cpp\log4cpp\TimeStamp.hh"
+					>
+				</File>
+				<Filter
+					Name="threading"
+					>
+					<File
+						RelativePath="..\..\..\log4cpp\log4cpp\threading\MSThreads.hh"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\log4cpp\log4cpp\threading\Threading.hh"
+						>
+					</File>
+				</Filter>
+			</Filter>
 		</Filter>
 	</Files>
 	<Globals>

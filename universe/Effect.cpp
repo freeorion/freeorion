@@ -125,7 +125,7 @@ namespace {
     }
 
     /** Resets the previous and next systems of \a fleet and recalcultes / resets the fleet's move route.  Used after a fleet
-        has been moved with the MoveTo effect, as its previous route was assigned based on its previous location, an may not
+        has been moved with the MoveTo effect, as its previous route was assigned based on its previous location, and may not
         be valid for its new location. */
     void UpdateFleetRoute(Fleet* fleet, int new_next_system, int new_previous_system) {
         if (!fleet) {
@@ -143,6 +143,9 @@ namespace {
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
 
+
+        // recalculate route from the shortest path between first system on path and final destination
+
         int owner = -1;
         const std::set<int>& owners = fleet->Owners();
         if (!owners.empty())
@@ -156,15 +159,14 @@ namespace {
 
         std::pair<std::list<System*>, double> route_pair = universe.ShortestPath(start_system, dest_system, owner);
 
-        if (route_pair.first.empty()) {
+        // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
+        // to the next system that it was just set to move to anyway.
+        if (route_pair.first.empty())
             route_pair.first.push_back(next_system);
 
-            double dist_x = next_system->X() - fleet->X();
-            double dist_y = next_system->Y() - fleet->Y();
-            route_pair.second = std::sqrt(dist_x * dist_x + dist_y * dist_y);
-        }
 
-        fleet->SetRoute(route_pair.first, route_pair.second);
+        // set fleet with newly recalculated route
+        fleet->SetRoute(route_pair.first);
     }
 
     /** returns true of the owners of the two passed objects are the same, and both are owned, false otherwise */
@@ -840,18 +842,25 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     Universe& universe = GetUniverse();
 
+    // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
     for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
         potential_locations.insert(it->second);
 
     Condition::ObjectSet valid_locations;
 
+    // apply location condition to determine valid location to move target to
     m_location_condition->Eval(source, valid_locations, potential_locations);
 
+    // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (valid_locations.empty())
         return;
 
+    // "randomly" pick a destination
     UniverseObject* destination = *valid_locations.begin();
+
+
+    // do the moving...
 
     if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
         // fleets can be inserted into the system that contains the destination object (or the 

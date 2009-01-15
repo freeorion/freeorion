@@ -172,17 +172,18 @@ public:
     int                      StartSystemID() const       {return m_start_system;} ///< returns ID of system set as the start system for this order (the system the route starts from)
     int                      DestinationSystemID() const {return m_dest_system;}  ///< returns ID of system set as destination for this order
     const std::vector<int>&  Route() const               {return m_route;}        ///< returns the IDs of the systems in the route specified by this Order
-    double                   RouteLength() const         {return m_route_length;} ///< returns the length of the route specified by this Order
     //@}
 
 private:
     /**
-     * Preconditions of execute: 
-     *    None.
+     * Preconditions of execute:
+     *    - m_fleet is a valid id of a fleet owned by the order-giving empire
+     *    - if the fleet is located in a system, m_start_system is the id of that system
+     *    - if the fleet is not located in a system, m_start_system is the id of the system the fleet is moving to
+     *    - 
      *
      *  Postconditions:
-     *    - a new fleet will exist either in system m_system_id or at position m_position,
-     *          and will belong to the creating empire.
+     *    - TODO: WRITE THIS
      *
      */
     virtual void ExecuteImpl() const;
@@ -191,7 +192,6 @@ private:
     int              m_start_system;
     int              m_dest_system;
     std::vector<int> m_route;
-    double           m_route_length;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -537,8 +537,7 @@ void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_fleet)
         & BOOST_SERIALIZATION_NVP(m_start_system)
         & BOOST_SERIALIZATION_NVP(m_dest_system)
-        & BOOST_SERIALIZATION_NVP(m_route)
-        & BOOST_SERIALIZATION_NVP(m_route_length);
+        & BOOST_SERIALIZATION_NVP(m_route);
 }
 
 template <class Archive>

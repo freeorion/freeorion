@@ -8,9 +8,6 @@ ft_pkgconfig_version = '9.0.0'
 ft_version = '2.1.2'
 ft_win32_lib_name = 'freetype214MT'
 
-devil_version_string = '1.6.1'
-devil_version = ''.join(devil_version_string.split('.'))
-
 ogre_version = '1.4.3'
 ois_version = '1.0.0'
 

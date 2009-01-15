@@ -181,40 +181,30 @@ void NewFleetOrder::ExecuteImpl() const
 FleetMoveOrder::FleetMoveOrder() : 
     Order(),
     m_fleet(UniverseObject::INVALID_OBJECT_ID),
-    m_dest_system(UniverseObject::INVALID_OBJECT_ID),
-    m_route_length(0.0)
+    m_start_system(UniverseObject::INVALID_OBJECT_ID),
+    m_dest_system(UniverseObject::INVALID_OBJECT_ID)
 {}
 
-FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : 
+FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) :
     Order(empire),
     m_fleet(fleet),
     m_start_system(start_system),
     m_dest_system(dest_system)
 {
     std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(start_system, dest_system, empire);
-    for (std::list<System*>::iterator it = route.first.begin(); it != route.first.end(); ++it) {
+    for (std::list<System*>::iterator it = route.first.begin(); it != route.first.end(); ++it)
         m_route.push_back((*it)->ID());
-    }
-    m_route_length = route.second;
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
-    if (m_route.empty()) {
+    if (m_route.empty())
         m_route.push_back(start_system);
-        const Fleet* fleet_obj = GetUniverse().Object<const Fleet>(fleet);
-        const System* system_obj = GetUniverse().Object<const System>(start_system);
-        double dist_x = system_obj->X() - fleet_obj->X();
-        double dist_y = system_obj->Y() - fleet_obj->Y();
-        m_route_length = std::sqrt(dist_x * dist_x + dist_y * dist_y);
-    }
 
 #if DEBUG_FLEET_MOVE_ORDER
-    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) : " << std::endl
+    std::cerr << "FleetMoveOrder(int empire, int fleet, int start_syste, int dest_system) : " << std::endl
               << "    m_empire=" << EmpireID() << std::endl
               << "    m_fleet=" << m_fleet << std::endl
               << "    m_start_system=" << m_start_system << std::endl
               << "    m_dest_system=" << m_dest_system << std::endl
-              << "    m_route.size()=" << m_route.size() << std::endl
-              << "    m_route_length=" << m_route_length << std::endl
               << std::endl;
 #endif
 }
@@ -226,22 +216,46 @@ void FleetMoveOrder::ExecuteImpl() const
     Universe& universe = GetUniverse();
 
     Fleet* fleet = universe.Object<Fleet>(FleetID());
-    System* system = universe.Object<System>(DestinationSystemID());
+    System* destination_system = universe.Object<System>(DestinationSystemID());
 
     // perform sanity checks
     if (!fleet) throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
-    if (!system) throw std::runtime_error("Non-system destination ID specified in fleet move order.");
+    if (!destination_system) throw std::runtime_error("Non-system destination ID specified in fleet move order.");
+
 
     // verify that empire specified in order owns specified fleet
     if ( !fleet->OwnedBy(EmpireID()) )
-        throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) + 
+        throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) +
                                  " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
+
+
+    // verify fleet route first system
+    int fleet_sys_id = fleet->SystemID();
+    if (fleet_sys_id != UniverseObject::INVALID_OBJECT_ID) {
+        // fleet is in a system.  Its move path should also start from that system.
+        if (fleet_sys_id != m_start_system)
+            throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) +
+                                     " ordered a fleet to move from a system with id " + boost::lexical_cast<std::string>(m_start_system) +
+                                     " that it is not at.  Fleet is located at system with id " + boost::lexical_cast<std::string>(fleet_sys_id) + ".");
+    } else {
+        // fleet is not in a system.  Its move path should start from the next system it is moving to.
+        int next_system = fleet->NextSystemID();
+        if (next_system != m_start_system)
+            throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) +
+                                     " ordered a fleet to move starting from a system with id " + boost::lexical_cast<std::string>(m_start_system) +
+                                     ", but the fleet's next destination is system with id " + boost::lexical_cast<std::string>(next_system) + ".");
+    }
+
 
     // convert list of ids to list of System
     std::list<System*> route;
-    for (unsigned int i = 0; i < m_route.size(); ++i) {
+    for (unsigned int i = 0; i < m_route.size(); ++i)
         route.push_back(universe.Object<System>(m_route[i]));
-    }
+
+
+    // validate route.  Only allow travel between systems connected in series by starlanes known to this fleet's owner.
+
+
 
     // check destination validity: disallow movement that's out of range
     std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route));
@@ -250,7 +264,7 @@ void FleetMoveOrder::ExecuteImpl() const
         return;
     }
 
-    fleet->SetRoute(route, m_route_length);
+    fleet->SetRoute(route);
 }
 
 
