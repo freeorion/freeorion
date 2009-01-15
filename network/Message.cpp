@@ -5,7 +5,6 @@
 #include "../universe/Universe.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
-#include "../util/XMLDoc.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>

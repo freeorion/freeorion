@@ -1375,6 +1375,7 @@ void SidePanel::SetSystemImpl()
         GG::Y drop_height = std::min(TEXT_ROW_HEIGHT * system_names_in_droplist, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
         m_system_name->SetDropHeight(drop_height);
 
+        // select system name in list for system currently being set
         for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it) {
             if (select_row == *it) {
                 m_system_name->Select(it);
@@ -1395,35 +1396,56 @@ void SidePanel::SetSystemImpl()
         AttachChild(m_star_graphic);
         MoveChildDown(m_star_graphic);
 
-        // add panels for planets
-        std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
 
+        // update planet panel container
+        std::vector<const Planet*> plt_vec = s_system->FindObjects<Planet>();
+        m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
+
+
+        // connect signals so changes to planets will update GUI
+        for (unsigned int i = 0; i < plt_vec.size(); i++) {
+            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal,             &MultiIconValueIndicator::Update,       m_system_resource_summary));
+            m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal,    SidePanel::ResourceCenterChangedSignal));
+        }
+
+
+        // populate system resource summary
+
+        // get planets owned by player's empire
         std::vector<const UniverseObject*> owned_planets;
         for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it)
             if ((*it)->WhollyOwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 owned_planets.push_back(universe_object_cast<const UniverseObject*>(*it));
 
+        // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
         std::vector<MeterType> meter_types;
         meter_types.push_back(METER_FARMING);   meter_types.push_back(METER_MINING);    meter_types.push_back(METER_INDUSTRY);
         meter_types.push_back(METER_RESEARCH);  meter_types.push_back(METER_TRADE);
 
+        // refresh the system resource summary.
         delete m_system_resource_summary;
         m_system_resource_summary = new MultiIconValueIndicator(Width() - MAX_PLANET_DIAMETER - 8, owned_planets, meter_types);
         m_system_resource_summary->MoveTo(GG::Pt(GG::X(MAX_PLANET_DIAMETER + 4), 140 - m_system_resource_summary->Height()));
         AttachChild(m_system_resource_summary);
 
-        m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
-        for (unsigned int i = 0; i < plt_vec.size(); i++) {
-            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal, &MultiIconValueIndicator::Update, m_system_resource_summary));
-            m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
-        }
 
-        if(m_system_resource_summary->Empty()) {
+        // add tooltips and show system resource summary if it not empty
+        if (m_system_resource_summary->Empty()) {
             DetachChild(m_system_resource_summary);
         } else {
+            // add tooltips to the system resource summary
+            for (std::vector<MeterType>::const_iterator it = meter_types.begin(); it != meter_types.end(); ++it) {
+                MeterType type = *it;
+                // add tooltip for each meter type
+                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(
+                                                                      new SystemResourceSummaryBrowseWnd(MeterToResource(type), s_system));
+                m_system_resource_summary->SetToolTip(type, browse_wnd);
+            }
+
             AttachChild(m_system_resource_summary);
             m_system_resource_summary->Update();
         }
+
     } else { // (!s_system)
         DetachChild(m_star_graphic);
         DetachChild(m_system_resource_summary);

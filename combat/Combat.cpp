@@ -1,7 +1,6 @@
 #include "Combat.h"
 
 #include "../util/MultiplayerCommon.h"
-#include "../util/XMLDoc.h"
 
 
 

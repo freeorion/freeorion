@@ -28,6 +28,8 @@
 using boost::lexical_cast;
 
 namespace {
+    /** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
+      * shows the current turn's current meter value and the predicted current meter value for next turn. */
     class MeterBrowseWnd : public GG::BrowseInfoWnd {
     public:
         MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map) :
@@ -249,28 +251,28 @@ namespace {
             }
         }
 
-        MeterType m_meter_type;
-        const UniverseObject* m_obj;
-        const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& m_meter_map;
+        MeterType               m_meter_type;
+        const UniverseObject*   m_obj;
+        const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >&    m_meter_map;
 
-        GG::TextControl* m_summary_title;
+        GG::TextControl*        m_summary_title;
 
-        GG::TextControl* m_current_label;
-        GG::TextControl* m_current_value;
-        GG::TextControl* m_next_turn_label;
-        GG::TextControl* m_next_turn_value;
-        GG::TextControl* m_change_label;
-        GG::TextControl* m_change_value;
+        GG::TextControl*        m_current_label;
+        GG::TextControl*        m_current_value;
+        GG::TextControl*        m_next_turn_label;
+        GG::TextControl*        m_next_turn_value;
+        GG::TextControl*        m_change_label;
+        GG::TextControl*        m_change_value;
 
-        GG::TextControl* m_meter_title;
+        GG::TextControl*        m_meter_title;
 
-        std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_effect_labels_and_values;
+        std::vector<std::pair<GG::TextControl*, GG::TextControl*> >                 m_effect_labels_and_values;
 
-        GG::Y row_height;
+        GG::Y                   row_height;
 
-        static const GG::X LABEL_WIDTH;
-        static const GG::X VALUE_WIDTH;
-        static const int EDGE_PAD;
+        static const GG::X      LABEL_WIDTH;
+        static const GG::X      VALUE_WIDTH;
+        static const int        EDGE_PAD;
 
         bool initialized;
     };
@@ -278,9 +280,9 @@ namespace {
     const GG::X MeterBrowseWnd::VALUE_WIDTH(50);
     const int MeterBrowseWnd::EDGE_PAD(3);
 
-
-    GG::Clr MeterColor(MeterType meter_type)
-    {
+    /** Returns GG::Clr with which to display programatically coloured things (such as meter bars) for the
+        indicated \a meter_type */
+    GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
         case METER_FARMING:
             return GG::CLR_YELLOW;
@@ -522,11 +524,6 @@ void PopulationPanel::Update()
     m_pop_stat->SetValue(pop->MeterPoints(METER_POPULATION));
     m_health_stat->SetValue(pop->MeterPoints(METER_HEALTH));
 
-    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_popcenter_id);
-    if (map_it != effect_accounting_map.end())
-        meter_map = &(map_it->second);
 
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
@@ -535,7 +532,14 @@ void PopulationPanel::Update()
     m_pop_stat->SetValue(pop->ProjectedMeterPoints(METER_POPULATION));
     m_health_stat->SetValue(pop->ProjectedMeterPoints(METER_HEALTH));
 
+
     // tooltips
+    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
+    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_popcenter_id);
+    if (map_it != effect_accounting_map.end())
+        meter_map = &(map_it->second);
+
     if (meter_map) {
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
         m_pop_stat->SetBrowseInfoWnd(browse_wnd);
@@ -914,11 +918,6 @@ void ResourcePanel::Update()
         m_secondary_focus_drop->Disable(true);
     }
 
-    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_rescenter_id);
-    if (map_it != effect_accounting_map.end())
-        meter_map = &(map_it->second);
 
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
@@ -930,7 +929,14 @@ void ResourcePanel::Update()
     m_research_stat->SetValue(res->ProjectedMeterPoints(METER_RESEARCH));
     m_trade_stat->SetValue(res->ProjectedMeterPoints(METER_TRADE));
 
+
     // tooltips
+    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
+    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_rescenter_id);
+    if (map_it != effect_accounting_map.end())
+        meter_map = &(map_it->second);
+
     if (meter_map) {
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
         m_farming_stat->SetBrowseInfoWnd(browse_wnd);
@@ -2232,4 +2238,40 @@ void IconTextBrowseWnd::Render() {
     GG::Pt lr = LowerRight();
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
     GG::FlatRectangle(GG::Pt(ul.x + ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+}
+
+//////////////////////////////////////
+//  SystemResourceSummaryBrowseWnd  //
+//////////////////////////////////////
+const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(300);
+const GG::X SystemResourceSummaryBrowseWnd::VALUE_WIDTH(50);
+const int SystemResourceSummaryBrowseWnd::EDGE_PAD(3);
+
+SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system) :
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
+    m_resource_type(resource_type),
+    m_system(system),
+    initialized(false)
+{}
+
+bool SystemResourceSummaryBrowseWnd::WndHasBrowseInfo(const GG::Wnd* wnd, std::size_t mode) const {
+    const std::vector<GG::Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
+    assert(mode <= browse_modes.size());
+    return true;
+}
+
+void SystemResourceSummaryBrowseWnd::Render() {
+    // TEMP //
+    int row_height = ClientUI::Pts() * 3/2;
+    // END TEMP //
+
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
+    GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+    GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*row_height), GG::Pt(lr.x, ul.y + 5*row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
+}
+
+void SystemResourceSummaryBrowseWnd::Initialize() {
+    initialized = true;
 }

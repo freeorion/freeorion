@@ -179,7 +179,7 @@ CombatWnd::~CombatWnd( )
 void CombatWnd::UpdateCombatTurnProgress(const std::string& message) {
     std::stringstream stream(message);
     XMLDoc doc;
-    doc.ReadDoc(stream);          
+    doc.ReadDoc(stream);
 
     CombatUpdateMessage msg(doc.root_node.Child("combat-update-message"));
     std::size_t r;

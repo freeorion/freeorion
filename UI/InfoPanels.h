@@ -15,10 +15,10 @@ class BuildingIndicator;
 class SpecialsPanel;
 class MultiTurnProgressBar;
 class MultiMeterStatusBar;
-class MeterStatusBar;   // TODO: delete this line
 class MultiIconValueIndicator;
 class Meter;
 class ShipDesign;
+class System;
 class Planet;
 class ResourceCenter;
 class PopCenter;
@@ -30,6 +30,7 @@ namespace GG {
     class StaticGraphic;
 }
 
+/** Shows population and health with meter bars */
 class PopulationPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
@@ -77,6 +78,7 @@ private:
     static const int            EDGE_PAD;               ///< distance between edges of panel and placement of child controls
 };
 
+/** Shows resource meters with meter-bars */
 class ResourcePanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
@@ -134,6 +136,7 @@ private:
     static const int            EDGE_PAD;           ///< distance between edges of panel and placement of child controls
 };
 
+/** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
 class MilitaryPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
@@ -305,9 +308,8 @@ protected:
 
 /** Display icon and number for various meter-related quantities associated with objects.  Typical use
     would be to display the resource production values for a planet (not the meter values) and the
-    construction (a meter value), or the population (not a meter value) and health (a meter value).  
-    Given a set of MeterType, the indicator will present the appropriate values for each.
-*/
+    construction (a meter value), or the population (not a meter value) and health (a meter value).
+    Given a set of MeterType, the indicator will present the appropriate values for each. */
 class MultiIconValueIndicator : public GG::Wnd {
 public:
     MultiIconValueIndicator(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
@@ -383,6 +385,29 @@ private:
     static const GG::X ICON_WIDTH;
     static const GG::Y ICON_HEIGHT;
     const GG::Y ROW_HEIGHT;
+};
+
+/** Gives information about inporting and exporting of resources to and from this system when mousing
+  * over the system resource production summary. */
+class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
+public:
+    SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system);
+
+    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+
+    virtual void Render();
+
+private:
+    void Initialize();
+
+    ResourceType        m_resource_type;
+    const System*       m_system;
+
+    static const GG::X  LABEL_WIDTH;
+    static const GG::X  VALUE_WIDTH;
+    static const int    EDGE_PAD;
+
+    bool initialized;
 };
 
 #endif

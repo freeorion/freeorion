@@ -80,15 +80,15 @@ private:
 //! \name Controls
 //!@{
 
-    GG::Button*       m_done_btn;    //!< Done button
-    GG::Button*       m_license;     //!< License button
-    GG::Button*       m_vision;        //!< Vision button
+    GG::Button*     m_done_btn;     //!< Done button
+    GG::Button*     m_license;      //!< License button
+    GG::Button*     m_vision;       //!< Vision button
 
-    XMLDoc                    m_vision_doc; //!< XML document containing the project vision
+    XMLDoc          m_vision_doc;   //!< XML document containing the project vision
 
-    GG::MultiEdit *       m_info;       //!< Displays the license or vision information
+    GG::MultiEdit*  m_info;         //!< Displays the license or vision information
 
-    std::string           m_license_str;        //!< String containing the copyright license
+    std::string     m_license_str;  //!< String containing the copyright license
 
 //!@}
 

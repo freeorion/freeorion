@@ -530,6 +530,10 @@ FocusType MeterToFocus(MeterType type);
 /** Returns the equivalent meter type for the given resource type; if no such meter type exists, returns INVALID_METER_TYPE. */
 MeterType ResourceToMeter(ResourceType type);
 
+/** Returns the equivalent resource type for the given meter type; if no such resource type exists, returns INVALID_RESOURCE_TYPE. */
+ResourceType MeterToResource(MeterType type);
+
+
 /** the value used for the encoding empire when all data are desired, not just those visible to one empire */
 enum EncodingVisbility {
     ALL_EMPIRES = -1
