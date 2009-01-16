@@ -222,6 +222,7 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
+        db.AddFlag("tech-demo", "Try out the 3D combat tech demo.");
         db.Add("combat.enable-glow", "OPTIONS_DB_COMBAT_ENABLE_GLOW",
                true, Validator<bool>());
         db.Add("combat.filled-selection", "OPTIONS_DB_COMBAT_FILLED_SELECTION",

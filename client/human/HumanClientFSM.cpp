@@ -13,8 +13,6 @@
 #include <boost/format.hpp>
 
 
-#define TEST_COMBAT_WND_ON_STARTUP 1
-
 namespace {
     const bool TRACE_EXECUTION = false;
 
@@ -68,28 +66,21 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
 ////////////////////////////////////////////////////////////
 IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx),
-#if TEST_COMBAT_WND_ON_STARTUP
-    m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
-#else
+    m_combat_wnd(GetOptionsDB().Get<bool>("tech-demo") ? new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()) : 0),
     m_intro_screen(new IntroScreen)
-#endif
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
-#if TEST_COMBAT_WND_ON_STARTUP
-    Client().Register(m_combat_wnd);
-#else
-    Client().Register(m_intro_screen);
-#endif
+    if (GetOptionsDB().Get<bool>("tech-demo"))
+        Client().Register(m_combat_wnd);
+    else
+        Client().Register(m_intro_screen);
 }
 
 IntroMenu::~IntroMenu()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
-#if TEST_COMBAT_WND_ON_STARTUP
     delete m_combat_wnd;
-#else
     delete m_intro_screen;
-#endif
 }
 
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a)
@@ -175,18 +166,14 @@ MPLobby::MPLobby(my_context ctx) :
     m_lobby_wnd(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby";
-#if !TEST_COMBAT_WND_ON_STARTUP
     context<IntroMenu>().m_intro_screen->Hide();
-#endif
 }
 
 MPLobby::~MPLobby()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
     delete m_lobby_wnd;
-#if !TEST_COMBAT_WND_ON_STARTUP
     context<IntroMenu>().m_intro_screen->Show();
-#endif
 }
 
 boost::statechart::result MPLobby::react(const Disconnection& d)
