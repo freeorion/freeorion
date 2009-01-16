@@ -67,7 +67,7 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
 IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx),
     m_combat_wnd(GetOptionsDB().Get<bool>("tech-demo") ? new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()) : 0),
-    m_intro_screen(new IntroScreen)
+    m_intro_screen(GetOptionsDB().Get<bool>("tech-demo") ? 0 : new IntroScreen)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
     if (GetOptionsDB().Get<bool>("tech-demo"))
@@ -166,14 +166,16 @@ MPLobby::MPLobby(my_context ctx) :
     m_lobby_wnd(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby";
-    context<IntroMenu>().m_intro_screen->Hide();
+    if (context<IntroMenu>().m_intro_screen)
+        context<IntroMenu>().m_intro_screen->Hide();
 }
 
 MPLobby::~MPLobby()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
     delete m_lobby_wnd;
-    context<IntroMenu>().m_intro_screen->Show();
+    if (context<IntroMenu>().m_intro_screen)
+        context<IntroMenu>().m_intro_screen->Show();
 }
 
 boost::statechart::result MPLobby::react(const Disconnection& d)

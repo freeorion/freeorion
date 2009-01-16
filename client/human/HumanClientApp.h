@@ -93,7 +93,6 @@ private:
     bool                        m_in_save_game_cycle; ///< true during SaveGame()'s send-request, receive-save-game-data-request, send-save-game-data cycle
     bool                        m_connected;          ///< true if we are in a state in which we are supposed to be connected to the server
     Ogre::Root*                 m_root;
-    Ogre::RenderWindow*         m_window;
     Ogre::SceneManager*         m_scene_manager;
     Ogre::Camera*               m_camera;
     Ogre::Viewport*             m_viewport;

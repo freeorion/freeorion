@@ -103,7 +103,6 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     m_turns_since_autosave(0),
     m_connected(false),
     m_root(root),
-    m_window(window),
     m_scene_manager(scene_manager),
     m_camera(camera),
     m_viewport(viewport)

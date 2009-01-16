@@ -120,26 +120,11 @@ int main(int argc, char* argv[])
         root->setRenderSystem(selected_render_system);
 
         selected_render_system->setConfigOption("Full Screen", GetOptionsDB().Get<bool>("fullscreen") ? "Yes" : "No");
-        std::string video_mode_str =
-            boost::io::str(boost::format("%1% x %2% @ %3%-bit colour") %
-                           GetOptionsDB().Get<int>("app-width") %
-                           GetOptionsDB().Get<int>("app-height") %
-                           GetOptionsDB().Get<int>("color-depth"));
-        selected_render_system->setConfigOption("Video Mode", video_mode_str);
-
-        // retrieve the config option map
-        ConfigOptionMap config_options = selected_render_system->getConfigOptions();
-        ConfigOptionMap::const_iterator end_it = config_options.end();
-        for (ConfigOptionMap::const_iterator it = config_options.begin(); it != end_it; ++it) {
-            String option_name = it->first;
-            String current_value = it->second.currentValue;
-            StringVector possible_values = it->second.possibleValues;
-            for (unsigned int i = 0; i < possible_values.size(); ++i) {
-                String value = possible_values.at(i);
-            }
-        }
 
         RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());
+        window->resize(GetOptionsDB().Get<int>("app-width"),
+                       GetOptionsDB().Get<int>("app-height"));
+        Ogre::WindowEventUtilities::messagePump();
         SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
 
         Camera* camera = scene_manager->createCamera("Camera");
