@@ -206,12 +206,12 @@ void ResourcePool::Update() {
         for (std::set<int>::const_iterator group_it = group_ids.begin(); group_it != group_ids.end(); ++group_it) {
             int system_in_group_id = *group_it;         // get system to check resource centers against
 
-            // DEBUG
-            const UniverseObject* system = GetUniverse().Object(system_in_group_id);
-            if (!system)
-                Logger().errorStream() << "ResourcePool::Update tried to get a system that doesn't exist but is listed in a supply system group";
-            Logger().debugStream() << "... system: " << system->Name() << "(" << system_in_group_id << ")";
-            // END DEBUG
+            //// DEBUG
+            //const UniverseObject* system = GetUniverse().Object(system_in_group_id);
+            //if (!system)
+            //    Logger().errorStream() << "ResourcePool::Update tried to get a system that doesn't exist but is listed in a supply system group";
+            //Logger().debugStream() << "... system: " << system->Name() << "(" << system_in_group_id << ")";
+            //// END DEBUG
 
             // check all ResourceCenters in this pool to see if any are in this system.
             for (std::map<const ResourceCenter*, const UniverseObject*>::const_iterator obj_it = m_resource_center_objs.begin(); obj_it != m_resource_center_objs.end(); ++obj_it) {
@@ -219,14 +219,14 @@ void ResourcePool::Update() {
                     // add this ResourceCenter's production to the group pool
                     const ResourceCenter* rc = obj_it->first;
                     group_production += rc->ProjectedMeterPoints(meter_type);
-                    Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->ProjectedMeterPoints(meter_type);
+                    //Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->ProjectedMeterPoints(meter_type);
                 }
             }
 
             // this checks all ResourceCenter against all systems, even if a system has already been found for a ResourceCenter.  Some
             // fancy caching or swapping the inner and outer loops might be a performance improvement... or detriment.
         }
-        Logger().debugStream() << "... group production: " << group_production;
+        //Logger().debugStream() << "... group production: " << group_production;
     }
 
     ChangedSignal();

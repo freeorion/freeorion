@@ -47,3 +47,18 @@ MeterType ResourceToMeter(ResourceType type)
         break;
     }
 }
+
+ResourceType MeterToResource(MeterType type)
+{
+    switch (type) {
+    case METER_FARMING:     return RE_FOOD;
+    case METER_INDUSTRY:    return RE_INDUSTRY;
+    case METER_MINING:      return RE_MINERALS;
+    case METER_RESEARCH:    return RE_RESEARCH;
+    case METER_TRADE:       return RE_TRADE;
+    default:
+        assert(0);
+        return INVALID_RESOURCE_TYPE;
+        break;
+    }
+}

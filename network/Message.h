@@ -18,7 +18,6 @@ class OrderSet;
 struct SaveGameUIData;
 struct SinglePlayerSetupData;
 class Universe;
-class XMLDoc;
 struct PlayerInfo;
 
 /** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
