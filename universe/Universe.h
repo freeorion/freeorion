@@ -2,28 +2,15 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
-#ifndef BOOST_SERIALIZATION_SHARED_PTR_HPP
-#include <boost/serialization/shared_ptr.hpp>
-#endif
-
-#ifndef BOOST_SIGNAL_HPP
-#include <boost/signal.hpp>
-#endif
-
 #include "Enums.h"
 #include "Predicates.h"
 #include "Effect.h"
 
-#ifndef BOOST_GRAPH_ADJACENCY_LIST_HPP
-#include <boost/graph/adjacency_list.hpp>
-#endif
-#ifndef BOOST_FILTERED_GRAPH_HPP
-#include <boost/graph/filtered_graph.hpp>
-#endif
-
+#include <boost/signal.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/serialization/shared_ptr.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 #include <vector>
@@ -57,11 +44,6 @@ private:
 public:
     /** Set to true to make everything visible for everyone. Useful for debugging. */
     static const bool ALL_OBJECTS_VISIBLE;
-
-    struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
-    typedef boost::property<vertex_system_pointer_t, System*,
-                            boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
-    typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
     typedef ObjectMap::const_iterator           const_iterator;         ///< a const_iterator for sequences over the objects in the universe
     typedef ObjectMap::iterator                 iterator;               ///< an iterator for sequences over the objects in the universe
@@ -287,41 +269,12 @@ public:
 private:
     typedef std::vector< std::vector<double> > DistanceMatrix;
 
-    // declare main graph types, including properties declared above
-    typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-                                  vertex_property_t, edge_property_t> SystemGraph;
-
-    // declare types for iteration over graph
-    typedef SystemGraph::vertex_iterator   VertexIterator;
-    typedef SystemGraph::out_edge_iterator OutEdgeIterator;
-
-    struct EdgeVisibilityFilter
-    {
-        EdgeVisibilityFilter();
-        EdgeVisibilityFilter(const SystemGraph* graph, int empire_id);
-        template <typename EdgeDescriptor>
-        bool operator()(const EdgeDescriptor& edge) const;
-        static bool CanSeeAtLeastOneSystem(const Empire* empire, int system1, int system2);
-    private:
-        const SystemGraph* m_graph;
-        const Empire* m_empire;
-    };
-    typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
-    typedef std::map<int, boost::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
-
-    // declare property map types for properties declared above
-    typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-    typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::type       SystemPointerPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::const_type   ConstIndexPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::type         IndexPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
-
-
     /** Discrepancy between meter's value at start of turn, and the value that this client calculate that the
         meter should have with the knowledge available -> the unknown factor affecting the meter.  This is used
         when generating effect accounting, in the case where the expected and actual meter values don't match. */
     typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;
+
+    struct GraphImpl;
 
     /** Clears \a effects_targets_map, and then populates with all EffectsGroups and their targets in
       * the known universe.  If \a effects_causes_map is provided (nonzero pointer) then this map will be simultaneously
@@ -380,8 +333,7 @@ private:
     ShipDesignMap               m_ship_designs;                 ///< ship designs in the universe
 
     DistanceMatrix              m_system_distances;             ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
-    SystemGraph                 m_system_graph;                 ///< a graph in which the systems are vertices and the starlanes are edges
-    EmpireViewSystemGraphMap    m_empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
+    GraphImpl*                  m_graph_impl;                   ///< a graph in which the systems are vertices and the starlanes are edges
 
     EffectAccountingMap         m_effect_accounting_map;        ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     EffectDiscrepancyMap        m_effect_discrepancy_map;       ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
@@ -538,13 +490,6 @@ Universe::ObjectIDVec Universe::FindObjectIDs() const
             retval.push_back(it->first);
     }
     return retval;
-}
-
-
-template <typename EdgeDescriptor>
-bool Universe::EdgeVisibilityFilter::operator()(const EdgeDescriptor& edge) const
-{
-    return m_empire && m_graph ? CanSeeAtLeastOneSystem(m_empire, boost::source(edge, *m_graph), boost::target(edge, *m_graph)) : false;
 }
 
 #endif // _Universe_h_

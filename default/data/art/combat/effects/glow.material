@@ -40,20 +40,20 @@ fragment_program final_copy_frag glsl
 
 material effects/glow/combine_scene_and_glow_geometry
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-			cull_hardware none
-			cull_software none
-			depth_check off
+            cull_hardware none
+            cull_software none
+            depth_check off
             vertex_program_ref fullscreen_quad_vert
             {
             }
             fragment_program_ref combine_scene_and_glow_frag
             {
-        		param_named scene int 0
-        		param_named glow_geometry int 1
+                param_named scene int 0
+                param_named glow_geometry int 1
             }
             texture_unit
             {
@@ -71,19 +71,19 @@ material effects/glow/combine_scene_and_glow_geometry
 
 material effects/glow/horizontal_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-			cull_hardware none
-			cull_software none
-			depth_check off
+            cull_hardware none
+            cull_software none
+            depth_check off
             vertex_program_ref fullscreen_quad_vert
             {
             }
             fragment_program_ref horizontal_pass_1_frag
             {
-        		param_named source int 0
+                param_named source int 0
                 param_named texture_width float 1024.0
             }
             texture_unit
@@ -97,11 +97,11 @@ material effects/glow/horizontal_pass_1
 
 material effects/glow/horizontal_pass_2 : effects/glow/horizontal_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref horizontal_pass_1_frag
             {
                 param_named texture_width float 256.0
             }
@@ -111,11 +111,11 @@ material effects/glow/horizontal_pass_2 : effects/glow/horizontal_pass_1
 
 material effects/glow/horizontal_pass_3 : effects/glow/horizontal_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref horizontal_pass_1_frag
             {
                 param_named texture_width float 64.0
             }
@@ -125,13 +125,13 @@ material effects/glow/horizontal_pass_3 : effects/glow/horizontal_pass_1
 
 material effects/glow/horizontal_pass_4 : effects/glow/horizontal_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref horizontal_pass_4_frag
             {
-        		param_named source int 0
+                param_named source int 0
                 param_named texture_width float 16.0
             }
         }
@@ -140,13 +140,13 @@ material effects/glow/horizontal_pass_4 : effects/glow/horizontal_pass_1
 
 material effects/glow/vertical_pass_1 : effects/glow/horizontal_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref vertical_pass_1_frag
             {
-        		param_named source int 0
+                param_named source int 0
                 param_named texture_width float 1024.0
             }
         }
@@ -155,11 +155,11 @@ material effects/glow/vertical_pass_1 : effects/glow/horizontal_pass_1
 
 material effects/glow/vertical_pass_2 : effects/glow/vertical_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref vertical_pass_1_frag
             {
                 param_named texture_width float 256.0
             }
@@ -169,11 +169,11 @@ material effects/glow/vertical_pass_2 : effects/glow/vertical_pass_1
 
 material effects/glow/vertical_pass_3 : effects/glow/vertical_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref vertical_pass_1_frag
             {
                 param_named texture_width float 64.0
             }
@@ -183,13 +183,13 @@ material effects/glow/vertical_pass_3 : effects/glow/vertical_pass_1
 
 material effects/glow/vertical_pass_4 : effects/glow/vertical_pass_1
 {
-	technique
-	{
+    technique
+    {
         pass
         {
             fragment_program_ref vertical_pass_4_frag
             {
-        		param_named source int 0
+                param_named source int 0
                 param_named texture_width float 16.0
             }
         }
@@ -198,23 +198,23 @@ material effects/glow/vertical_pass_4 : effects/glow/vertical_pass_1
 
 material effects/glow/combine_passes
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-			cull_hardware none
-			cull_software none
-			depth_check off
+            cull_hardware none
+            cull_software none
+            depth_check off
             vertex_program_ref fullscreen_quad_vert
             {
             }
             fragment_program_ref combine_passes_frag
             {
-        		param_named scene int 0
-        		param_named pass_1 int 1
-        		param_named pass_2 int 2
-        		param_named pass_3 int 3
-        		param_named pass_4 int 4
+                param_named scene int 0
+                param_named pass_1 int 1
+                param_named pass_2 int 2
+                param_named pass_3 int 3
+                param_named pass_4 int 4
             }
             texture_unit
             {
@@ -247,19 +247,19 @@ material effects/glow/combine_passes
 
 material effects/glow/final_copy
 {
-	technique
-	{
+    technique
+    {
         pass
         {
-			cull_hardware none
-			cull_software none
-			depth_check off
+            cull_hardware none
+            cull_software none
+            depth_check off
             vertex_program_ref fullscreen_quad_vert
             {
             }
             fragment_program_ref final_copy_frag
             {
-        		param_named source int 0
+                param_named source int 0
             }
             texture_unit
             {

@@ -524,12 +524,12 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     planets.push_back(new Planet(PT_DESERT, SZ_TINY));
     planets.push_back(new Planet(PT_OCEAN, SZ_HUGE));
 
-    System system;
-    system.MoveTo(0, 0);
-    system.SetStarType(STAR_BLUE);
+    System system(STAR_BLUE, planets.size(), "Sample", 0.0, 0.0);
     for (std::size_t i = 0; i < planets.size(); ++i) {
         GetUniverse().InsertID(planets[i], i);
         system.Insert(i, i);
+        assert(system.Contains(i));
+        assert(system.begin() != system.end());
     }
 
     InitCombat(system);
@@ -827,7 +827,7 @@ void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void CombatWnd::LookAt(Ogre::SceneNode* look_at_node)
 {
     m_look_at_scene_node = look_at_node;
-    LookAt(m_look_at_scene_node->getWorldPosition());
+    LookAt(m_look_at_scene_node->_getDerivedPosition());
 }
 
 void CombatWnd::LookAt(const Ogre::Vector3& look_at_point)
@@ -1247,7 +1247,7 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
         m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
     node->attachObject(entity);
 
-    // TOOD: This is only here because the Durgha model is upside down.  Remove
+    // TODO: This is only here because the Durgha model is upside down.  Remove
     // it when this is fixed.
     node->yaw(Ogre::Radian(Ogre::Math::PI));
 
@@ -1265,7 +1265,7 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
     m_collision_objects.push_back(new btCollisionObject);
     btMatrix3x3 identity;
     identity.setIdentity();
-    // TOOD: Remove z-flip scaling when models are right.
+    // TODO: Remove z-flip scaling when models are right.
     btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
     m_collision_objects.back().getWorldTransform().setBasis(scaled);
     m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(node->getPosition()));

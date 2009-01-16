@@ -151,7 +151,6 @@ int main(int argc, char* argv[])
 
         Viewport* viewport = window->addViewport(camera);
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
-        camera->setAspectRatio(static_cast<double>(viewport->getActualWidth()) / viewport->getActualHeight());
 
         HumanClientApp app(root, window, scene_manager, camera, viewport);
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);

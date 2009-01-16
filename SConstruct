@@ -593,7 +593,7 @@ if str(Platform()) == 'win32':
     env.Command('icon.rbj', 'win32_resources.res', ['cvtres /out:icon.rbj /machine:ix86 win32_resources.res'])
     freeorion = env.Program("freeorion", human_objects + ['icon.rbj'])
 else:
-    env_copy = env.Copy()
+    env_copy = env.Clone()
     env_copy.AppendUnique(LIBS = human_libs)
     freeorion = env_copy.Program("freeorion", human_objects)
 

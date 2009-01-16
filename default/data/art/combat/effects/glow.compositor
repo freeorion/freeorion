@@ -21,7 +21,8 @@ compositor effects/glow
 
         target glow_geometry
         {
-            visibility_mask 2 // == GLOWING_OBJECTS_MASK
+            // must equal GLOWING_OBJECTS_MASK
+            visibility_mask 2
             pass clear
             {
                 clear
@@ -31,7 +32,8 @@ compositor effects/glow
             }
             pass render_scene
             {
-                first_render_queue 50 // == RENDER_QUEUE_MAIN
+                // must equal RENDER_QUEUE_MAIN
+                first_render_queue 50
             }
         }
 

@@ -192,7 +192,7 @@ material swamp_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
@@ -206,7 +206,7 @@ material toxic_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
@@ -220,7 +220,7 @@ material inferno_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 0 0 0 1.0
             }
@@ -234,7 +234,7 @@ material tundra_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
@@ -248,7 +248,7 @@ material desert_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
@@ -262,7 +262,7 @@ material terran_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
@@ -276,7 +276,7 @@ material ocean_planet_01 : planet
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_frag
             {
                 param_named cloud_color float4 1.0 1.0 1.0 1.0
             }
@@ -295,7 +295,7 @@ material swamp_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 0.201 0.884 0.7 0.45
                 param_named atmosphere_edge_color float4 0.201 0.984 0.7 0.65
@@ -310,7 +310,7 @@ material toxic_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 1 0.8 0.1 0.6
                 param_named atmosphere_edge_color float4 1 0.7 0.1 0.9
@@ -325,7 +325,7 @@ material inferno_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 0.95 0.20 0.1 0.7
                 param_named atmosphere_edge_color float4 1 0.2 0.2 1
@@ -340,7 +340,7 @@ material tundra_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 0.501 0.684 1.0 0.45
                 param_named atmosphere_edge_color float4 0.501 0.684 1.0 0.65
@@ -355,7 +355,7 @@ material desert_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 0.15 0.48 0.79 0.65
                 param_named atmosphere_edge_color float4 0.25 0.58 0.89 0.5
@@ -370,7 +370,7 @@ material terran_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 0.501 0.684 1.0 0.55
                 param_named atmosphere_edge_color float4 0.601 0.784 1.0 1.0
@@ -385,7 +385,7 @@ material ocean_atmosphere_01 : atmosphere
     {
         pass
         {
-            fragment_program_ref
+            fragment_program_ref planet_atmosphere_frag
             {
                 param_named atmosphere_color float4 0.551 0.684 1.0 0.45
                 param_named atmosphere_edge_color float4 0.701 0.684 1.0 0.65

@@ -8,8 +8,8 @@ ft_pkgconfig_version = '9.0.0'
 ft_version = '2.1.2'
 ft_win32_lib_name = 'freetype214MT'
 
-ogre_version = '1.4.3'
-ois_version = '1.0.0'
+ogre_version = '1.6.0'
+ois_version = '1.2.0'
 
 boost_version_string = '1.36'
 def BoostStringToNumber(version_string):

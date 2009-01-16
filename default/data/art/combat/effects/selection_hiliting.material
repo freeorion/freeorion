@@ -53,7 +53,7 @@ material effects/selection/filled_hiliting_1 : effects/selection/outline_hilitin
         pass
         {
             scene_blend alpha_blend
-            fragment_program_ref
+            fragment_program_ref hiliting_frag
             {
                 param_named hiliting_color float4 1.0 1.0 0.0 0.0
             }
