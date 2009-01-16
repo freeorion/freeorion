@@ -79,6 +79,8 @@ New Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 New Fleet
 
+NOT_APPLICABLE
+N/A
 
 ##########################
 # Status Update Messages #

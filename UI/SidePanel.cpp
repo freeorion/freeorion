@@ -833,6 +833,7 @@ void SidePanel::PlanetPanel::Refresh()
 {
     const Planet *planet = GetPlanet();
 
+    // determine the ownership status of planet with respect to this client's player's empire
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
     if (planet->Owners().empty() || planet->IsAboutToBeColonized()) {
@@ -844,17 +845,23 @@ void SidePanel::PlanetPanel::Refresh()
             owner = OS_SELF;
     }
 
+
+    // colour planet name with owner's empire colour
     if (!planet->Owners().empty()) {
         Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()));
         m_planet_name->SetTextColor(planet_empire ? planet_empire->Color() : ClientUI::TextColor());
     }
 
+
+    // set up planet panel differently for owned and unowned planets...
     if (owner == OS_NONE && !SHOW_ALL_PLANET_PANELS) {
+        // show only the environment and size information and (if applicable) buildings and specials
         AttachChild(m_env_size);
         DetachChild(m_population_panel);
         DetachChild(m_resource_panel);
         DetachChild(m_military_panel);
     } else {
+        // show population, resource and military panels, but hide environement / size indicator that's used only for uncolonized planets
         DetachChild(m_env_size);
         AttachChild(m_population_panel);
         m_population_panel->Refresh();
@@ -864,6 +871,8 @@ void SidePanel::PlanetPanel::Refresh()
         m_military_panel->Refresh();
     }
 
+
+    // create colonize or cancel button, if appropriate (a ship is in the system that can colonize, or the planet has been ordered to be colonized already this turn)
     if (owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
         m_button_colonize->SetText(UserString("PL_COLONIZE") + " " + boost::lexical_cast<std::string>(planet->GetMeter(METER_POPULATION)->Max()));
@@ -876,6 +885,8 @@ void SidePanel::PlanetPanel::Refresh()
         DetachChild(m_button_colonize);
     }
 
+
+    // update panels
     m_buildings_panel->Refresh();
     m_specials_panel->Update();
 

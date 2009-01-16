@@ -398,6 +398,7 @@ public:
     virtual void    Render();
 
 private:
+    void            Clear();
     void            Initialize();
     virtual void    UpdateImpl(std::size_t mode, const GG::Wnd* target);
 
@@ -427,8 +428,6 @@ private:
     static const GG::X  LABEL_WIDTH;
     static const GG::X  VALUE_WIDTH;
     static const int    EDGE_PAD;
-
-    bool initialized;
 };
 
 #endif

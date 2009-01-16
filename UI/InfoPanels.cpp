@@ -112,6 +112,10 @@ namespace {
         }
 
         virtual void UpdateImpl(std::size_t mode, const Wnd* target) {
+            // because a MeterBrowseWnd's contents depends only on the meters of a single object, if that object doesn't
+            // change between showings of the meter browse wnd, it's not necessary to fully recreate the MeterBrowseWnd,
+            // and it can be just reshown.without being altered.  To refresh a MeterBrowseWnd, recreate it by assigning
+            // a new one as the moused-over object's BrowseWnd in this Wnd's place
             if (!initialized)
                 Initialize();
         }
@@ -315,8 +319,84 @@ namespace {
     }
 
 
-    /** */
-    double ObjectResourceConsumption(const UniverseObject* obj, ResourceType resource_type, int player_id = -1) {
+    /** Returns how much of specified \a resource_type is being consumed by the empire with id \a empire_id
+      * at the location of the specified object \a obj. */
+    double ObjectResourceConsumption(const UniverseObject* obj, ResourceType resource_type, int empire_id = ALL_EMPIRES) {
+        if (!obj) {
+            Logger().errorStream() << "ObjectResourceConsumption passed a null object";
+            return 0.0;
+        }
+        if (resource_type == INVALID_RESOURCE_TYPE) {
+            Logger().errorStream() << "ObjectResourceConsumption passed a INVALID_RESOURCE_TYPE";
+            return 0.0;
+        }
+
+
+        const Empire* empire = 0;
+
+        if (empire_id != ALL_EMPIRES) {
+            empire = Empires().Lookup(empire_id);
+
+            if (!empire) {
+                Logger().errorStream() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire was not found";
+                return 0.0;     // requested a specific empire, but didn't find it in this client, so production is 0.0
+            }
+
+            if (!obj->OwnedBy(empire_id)) {
+                Logger().debugStream() << "ObjectResourceConsumption requested consumption for empire " << empire_id << " but this empire doesn't own the object";
+                return 0.0;     // if the empire doesn't own the object, assuming it can't be consuming any of the empire's resources.  May need to revisit this assumption later.
+            }
+        }
+
+
+        const PopCenter* pc = 0;
+        double prod_queue_allocation_sum = 0.0;
+        const Building* building = 0;
+
+        switch (resource_type) {
+        case RE_FOOD:
+            // food allocated to obj if obj is a PopCenter
+            if (pc = dynamic_cast<const PopCenter*>(obj))
+                return pc->AllocatedFood();
+            return 0.0; // can't consume food if not a PopCenter
+            break;
+
+        case RE_MINERALS:
+        case RE_INDUSTRY:
+            // PP (equal to mineral and industry) cost of objects on production queue at this object's location
+            if (empire) {
+                // add allocated PP for all production items at this location for this empire
+                const ProductionQueue& queue = empire->GetProductionQueue();
+                for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it)
+                    if (queue_it->location == obj->ID())
+                        prod_queue_allocation_sum += queue_it->allocated_pp;
+
+            } else {
+                // add allocated PP for all production items at this location for all empires
+                for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+                    empire = it->second;
+                    const ProductionQueue& queue = empire->GetProductionQueue();
+                    for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it)
+                        if (queue_it->location == obj->ID())
+                            prod_queue_allocation_sum += queue_it->allocated_pp;
+                }
+            }
+            return prod_queue_allocation_sum;
+            break;
+
+        case RE_TRADE:
+            // maintenance cost of this object
+            if (building = dynamic_cast<const Building*>(obj))
+                return building->GetBuildingType()->MaintenanceCost();
+            return 0.0; // if not a building, doesn't presently consume trade
+            break;
+
+        case RE_RESEARCH:
+            // research isn't consumed at a particular location, so none is consumed at any location
+        default:
+            // for INVALID_RESOURCE_TYPE just return 0.0.  Could throw an exception, I suppose...
+            break;
+        }
         return 0.0;
     }
 }
@@ -528,7 +608,7 @@ void PopulationPanel::Update()
     if(obj->Owners().empty()) 
         owner = OS_NONE;  // uninhabited
     else {
-        if(!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        if (!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
             owner = OS_FOREIGN; // inhabited by other empire
         else
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
@@ -923,6 +1003,8 @@ void ResourcePanel::Update()
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
 
+
+    // only allow focus changes in UI for planets this client's player's empire owns
     if (owner == OS_SELF) {
         m_primary_focus_drop->Disable(false);
         m_secondary_focus_drop->Disable(false);
@@ -973,6 +1055,9 @@ void ResourcePanel::Update()
 
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map));
         m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
+    } else {
+        // I'd like to do something like   m_*_stat->ClearBrowseWnd();   to enesure an old BrowseWnd isn't shown
+        // but as far as I know, there's no way to do this.
     }
 
     // focus droplists
@@ -1795,6 +1880,7 @@ void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey
 
 void BuildingsPanel::Update()
 {
+    // remove old indicators
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
         DetachChild(*it);
         delete (*it);
@@ -2267,8 +2353,7 @@ SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType reso
     m_player_id(player_id),
     m_production_label(0), m_allocation_label(0),
     m_import_export_label(0), m_import_export_amount(0),
-    row_height(1), production_label_top(0), allocation_label_top(0), import_export_label_top(0),
-    initialized(false)
+    row_height(1), production_label_top(0), allocation_label_top(0), import_export_label_top(0)
 {}
 
 bool SystemResourceSummaryBrowseWnd::WndHasBrowseInfo(const GG::Wnd* wnd, std::size_t mode) const {
@@ -2290,8 +2375,13 @@ void SystemResourceSummaryBrowseWnd::Render() {
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateImpl(std::size_t mode, const GG::Wnd* target) {
-    if (!initialized)
-        Initialize();
+    // fully recreate browse wnd for each viewing.  finding all the queues, resourcepools and (maybe?) individual
+    // UniverseObject that would have ChangedSignals that would need to be connected to the object that creates
+    // this BrowseWnd seems like more trouble than it's worth to avoid recreating the BrowseWnd every time it's shown
+    // (the alternative is to only reinitialize when something changes that would affect what's displayed in the
+    // BrowseWnd, which is how MeterBrowseWnd works)
+    Clear();
+    Initialize();
 }
 
 void SystemResourceSummaryBrowseWnd::Initialize() {
@@ -2329,9 +2419,6 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, top));
-
-
-    initialized = true;
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
@@ -2380,6 +2467,24 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
         GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
                                                      amount_text, font, ClientUI::TextColor(),
+                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(value);
+
+        m_production_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+        top += row_height;
+    }
+
+
+    if (m_production_labels_and_amounts.empty()) {
+        // add "blank" line to indicate no production
+        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
+                                                     UserString("NOT_APPLICABLE"), font, ClientUI::TextColor(),
+                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(label);
+
+        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
+                                                     "", font, ClientUI::TextColor(),
                                                      GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
         AttachChild(value);
 
@@ -2447,6 +2552,16 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         double allocation = ObjectResourceConsumption(obj, m_resource_type, m_player_id);
 
 
+        // following section should be uncommented, but I'm leaving it commented now to help isolate an apparent bug where more
+        // objects are returned from m_system->FindObjects() than would be expected.  (Multiple copies of some objects are returned)
+        //// don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
+        //if (allocation <= 0.0) {
+        //    if (allocation < 0.0)
+        //        Logger().errorStream() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
+        //    continue;
+        //}
+
+
         total_system_resource_allocation += allocation;
 
         std::string amount_text = DoubleToString(allocation, 3, false, false);
@@ -2455,11 +2570,28 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
                                                      name, font, ClientUI::TextColor(),
                                                      GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-        label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
         GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
                                                      amount_text, font, ClientUI::TextColor(),
+                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(value);
+
+        m_allocation_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+        top += row_height;
+    }
+
+
+    if (m_allocation_labels_and_amounts.empty()) {
+        // add "blank" line to indicate no allocation
+        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
+                                                     UserString("NOT_APPLICABLE"), font, ClientUI::TextColor(),
+                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(label);
+
+        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
+                                                     "", font, ClientUI::TextColor(),
                                                      GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
         AttachChild(value);
 
@@ -2486,9 +2618,15 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
     }
 
+    std::string system_allocation_text = DoubleToString(total_system_resource_allocation, 3, false, false);
+
+    // for research only, local allocation makes no sense
+    if (m_resource_type == RE_RESEARCH && total_system_resource_allocation == 0.0)
+        system_allocation_text = UserString("NOT_APPLICABLE");
+
     m_allocation_label->SetText(boost::io::str(FlexibleFormat(UserString("RESOURCE_ALLOCATION_TOOLTIP")) %
                                                               resource_text %
-                                                              DoubleToString(total_system_resource_allocation, 3, false, false)));
+                                                              system_allocation_text));
 
     // height of label already added to top outside this function
 }
@@ -2504,3 +2642,22 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
     top += row_height;
 }
 
+void SystemResourceSummaryBrowseWnd::Clear() {
+    DeleteChild(m_production_label);
+    DeleteChild(m_allocation_label);
+
+    DeleteChild(m_import_export_label);
+    DeleteChild(m_import_export_amount);
+
+    for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
+        DeleteChild(it->first);
+        DeleteChild(it->second);
+    }
+    m_production_labels_and_amounts.clear();
+
+    for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_allocation_labels_and_amounts.begin(); it != m_allocation_labels_and_amounts.end(); ++it) {
+        DeleteChild(it->first);
+        DeleteChild(it->second);
+    }
+    m_allocation_labels_and_amounts.clear();
+}
