@@ -1438,7 +1438,7 @@ void SidePanel::SetSystemImpl()
                 MeterType type = *it;
                 // add tooltip for each meter type
                 boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(
-                                                                      new SystemResourceSummaryBrowseWnd(MeterToResource(type), s_system));
+                    new SystemResourceSummaryBrowseWnd(MeterToResource(type), s_system, HumanClientApp::GetApp()->EmpireID()));
                 m_system_resource_summary->SetToolTip(type, browse_wnd);
             }
 

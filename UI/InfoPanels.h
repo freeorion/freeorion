@@ -391,7 +391,7 @@ private:
   * over the system resource production summary. */
 class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system);
+    SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int player_id = -1);
 
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
 
@@ -407,6 +407,7 @@ private:
 
     ResourceType        m_resource_type;
     const System*       m_system;
+    int                 m_player_id;
 
     GG::TextControl*    m_production_label;
     GG::TextControl*    m_allocation_label;

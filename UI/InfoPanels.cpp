@@ -28,6 +28,18 @@
 using boost::lexical_cast;
 
 namespace {
+    /** Returns text representation of number wrapped in GG RGBA tags for colour depending on whether number
+        is positive, negative or 0.0 */
+    std::string ColouredNumber(double number) {
+        GG::Clr clr = ClientUI::TextColor();
+        if (number > 0.0)
+            clr = ClientUI::StatIncrColor();
+        else if (number < 0.0)
+            clr = ClientUI::StatDecrColor();
+        return GG::RgbaTag(clr) + DoubleToString(number, 3, false, true) + "</rgba>";
+    }
+
+
     /** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
       * shows the current turn's current meter value and the predicted current meter value for next turn. */
     class MeterBrowseWnd : public GG::BrowseInfoWnd {
@@ -90,15 +102,11 @@ namespace {
             AttachChild(m_meter_title);
 
             UpdateSummary();
-            UpdateEffectLabelsAndValues();
-            GG::Y y = m_meter_title->LowerRight().y;
-            for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-                m_effect_labels_and_values[i].first->MoveTo(GG::Pt(GG::X0, y));
-                m_effect_labels_and_values[i].second->MoveTo(GG::Pt(LABEL_WIDTH, y));
-                y += row_height;
-            }
 
-            Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, y));
+            GG::Y next_row_y = m_meter_title->LowerRight().y;
+            UpdateEffectLabelsAndValues(next_row_y);
+
+            Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, next_row_y));
 
             initialized = true;
         }
@@ -121,12 +129,7 @@ namespace {
 
             m_current_value->SetText(DoubleToString(current, 3, false, false));
             m_next_turn_value->SetText(DoubleToString(next, 3, false, false));
-            GG::Clr clr = ClientUI::TextColor();
-            if (change > 0.0)
-                clr = ClientUI::StatIncrColor();
-            else if (change < 0.0)
-                clr = ClientUI::StatDecrColor();
-            m_change_value->SetText(GG::RgbaTag(clr) + DoubleToString(change, 3, false, true) + "</rgba>");
+            m_change_value->SetText(ColouredNumber(change));
             m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
                                                   DoubleToString(meter_cur, 3, false, false) %
                                                   DoubleToString(meter_max, 3, false, false)));
@@ -164,7 +167,7 @@ namespace {
         }
 
         // meter effect entries
-        void UpdateEffectLabelsAndValues() {
+        void UpdateEffectLabelsAndValues(GG::Y& top) {
             for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
                 DeleteChild(m_effect_labels_and_values[i].first);
                 DeleteChild(m_effect_labels_and_values[i].second);
@@ -241,19 +244,17 @@ namespace {
                 default:
                     text += UserString("TT_UNKNOWN");
                 }
-                GG::TextControl* label = new GG::TextControl(GG::X0, GG::Y0, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-                label->Resize(GG::Pt(LABEL_WIDTH, row_height));
+
+                GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
                 AttachChild(label);
-                GG::Clr clr = ClientUI::TextColor();
-                if (info_it->meter_change > 0.0)
-                    clr = ClientUI::StatIncrColor();
-                else if (info_it->meter_change < 0.0)
-                    clr = ClientUI::StatDecrColor();
-                GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, GG::Y0, VALUE_WIDTH, row_height, 
-                                                             GG::RgbaTag(clr) + DoubleToString(info_it->meter_change, 3, false, true) + "</rgba>",
+
+                GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
+                                                             ColouredNumber(info_it->meter_change),
                                                              font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
                 AttachChild(value);
                 m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+                top += row_height;
             }
         }
 
@@ -311,6 +312,12 @@ namespace {
         default:
             return GG::CLR_WHITE;
         }
+    }
+
+
+    /** */
+    double ObjectResourceConsumption(const UniverseObject* obj, ResourceType resource_type, int player_id = -1) {
+        return 0.0;
     }
 }
 
@@ -2249,14 +2256,15 @@ void IconTextBrowseWnd::Render() {
 //////////////////////////////////////
 //  SystemResourceSummaryBrowseWnd  //
 //////////////////////////////////////
-const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(300);
-const GG::X SystemResourceSummaryBrowseWnd::VALUE_WIDTH(50);
+const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(200);
+const GG::X SystemResourceSummaryBrowseWnd::VALUE_WIDTH(60);
 const int SystemResourceSummaryBrowseWnd::EDGE_PAD(3);
 
-SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system) :
+SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int player_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
     m_resource_type(resource_type),
     m_system(system),
+    m_player_id(player_id),
     m_production_label(0), m_allocation_label(0),
     m_import_export_label(0), m_import_export_amount(0),
     row_height(1), production_label_top(0), allocation_label_top(0), import_export_label_top(0),
@@ -2296,14 +2304,14 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
     GG::Y top = GG::Y0;
 
     production_label_top = top;
-    m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, production_label_top + row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_production_label);
     top += row_height;
 
     UpdateProduction(top);
 
     allocation_label_top = top;
-    m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, allocation_label_top + row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_allocation_label);
     top += row_height;
 
@@ -2348,6 +2356,11 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
     for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
         const UniverseObject* obj = *it;
+
+        // display information only for the requested player
+        if (m_player_id != -1 && !obj->OwnedBy(m_player_id))
+            continue;   // if m_player_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
+
         const ResourceCenter* rc = dynamic_cast<const ResourceCenter*>(obj);
         if (!rc)
             continue;
@@ -2359,13 +2372,13 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         std::string amount_text = DoubleToString(production, 3, false, false);
 
 
-        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, top + row_height,
+        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
                                                      name, font, ClientUI::TextColor(),
                                                      GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
         label->Resize(GG::Pt(LABEL_WIDTH, row_height));
         AttachChild(label);
 
-        GG::TextControl* value = new GG::TextControl(VALUE_WIDTH, top, VALUE_WIDTH, top + row_height,
+        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
                                                      amount_text, font, ClientUI::TextColor(),
                                                      GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
         AttachChild(value);
@@ -2374,7 +2387,6 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
         top += row_height;
     }
-
 
 
     // set production label
@@ -2398,7 +2410,6 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
                                                               resource_text %
                                                               DoubleToString(total_system_resource_production, 3, false, false)));
 
-
     // height of label already added to top outside this function
 }
 
@@ -2411,10 +2422,75 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    // UserString("TT_RESOURCE_ALLOCATION") // parames: object_name  and  allocation
+    if (!m_system || m_resource_type == INVALID_RESOURCE_TYPE)
+        return;
 
-    // TEMP
-    top += row_height;
+
+    double total_system_resource_allocation = 0.0;
+
+
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+
+    // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
+    std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
+    for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
+        const UniverseObject* obj = *it;
+
+        // display information only for the requested player
+        if (m_player_id != -1 && !obj->OwnedBy(m_player_id))
+            continue;   // if m_player_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
+
+
+        std::string name = obj->Name();
+
+
+        double allocation = ObjectResourceConsumption(obj, m_resource_type, m_player_id);
+
+
+        total_system_resource_allocation += allocation;
+
+        std::string amount_text = DoubleToString(allocation, 3, false, false);
+
+
+        GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
+                                                     name, font, ClientUI::TextColor(),
+                                                     GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        label->Resize(GG::Pt(LABEL_WIDTH, row_height));
+        AttachChild(label);
+
+        GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
+                                                     amount_text, font, ClientUI::TextColor(),
+                                                     GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(value);
+
+        m_allocation_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+        top += row_height;
+    }
+
+
+    // set consumption / allocation label
+    std::string resource_text = "";
+    switch (m_resource_type) {
+    case RE_FOOD:
+        resource_text = UserString("FOOD_CONSUMPTION");     break;
+    case RE_MINERALS:
+        resource_text = UserString("MINERALS_CONSUMPTION"); break;
+    case RE_INDUSTRY:
+        resource_text = UserString("INDUSTRY_CONSUMPTION"); break;
+    case RE_RESEARCH:
+        resource_text = UserString("RESEARCH_CONSUMPTION"); break;
+    case RE_TRADE:
+        resource_text = UserString("TRADE_CONSUMPTION");    break;
+    default:
+        resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
+    }
+
+    m_allocation_label->SetText(boost::io::str(FlexibleFormat(UserString("RESOURCE_ALLOCATION_TOOLTIP")) %
+                                                              resource_text %
+                                                              DoubleToString(total_system_resource_allocation, 3, false, false)));
+
+    // height of label already added to top outside this function
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {

@@ -1115,7 +1115,42 @@ Side Panel
 SP_SYSTEM_PRODUCTION
 System Production
 
+RESOURCE_PRODUCTION_TOOLTIP
+System %1%: %2%
+
+RESOURCE_ALLOCATION_TOOLTIP
+System %1%: %2%
+
+FOOD_CONSUMPTION
+Food Consumption
+
+MINERALS_CONSUMPTION
+Minerals Consumption
+
+INDUSTRY_CONSUMPTION
+Industrial Consumption
+
+RESEARCH_CONSUMPTION
+Research Consumption
+
+TRADE_CONSUMPTION
+Trade Consumption
+
+INTERSYSTEM_EXCHANGE_TOOLTIP
+Inter-System Exchange
+
+RESOURCE_IMPORT
+Importing
+
+RESOURCE_EXPORT
+Exporting
+
+RESOURCE_UNUSED
+Unused
+
+
 ##Planet Panel#############
+
 PLANET_PANEL
 Planet Panel
 
@@ -1131,6 +1166,7 @@ Size
 PL_COLONIZE
 Colonize
 
+
 ##Population Panel#########
 
 PP_POPULATION
@@ -1138,6 +1174,7 @@ Population
 
 PP_HEALTH
 Health
+
 
 ## Resources Panel ##########
 
@@ -1165,6 +1202,7 @@ Trade Level
 RP_CONSTRUCTION
 Construction Infrastructure
 
+
 ## Military Panel ##########
 
 MP_SUPPLY
@@ -1182,6 +1220,7 @@ Detection
 MP_STEALTH
 Stealth
 
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1193,6 +1232,7 @@ BP_COMPLETE_BUILDING_TOOLTIP
 '''%1%
 
 %2%'''
+
 
 ## General Tooltips#########
 
@@ -1228,6 +1268,12 @@ Special <i>%1%</i>
 
 TT_UNKNOWN
 Unknown
+
+TT_RESOURCE_PRODUCTION
+%1% produces %2%
+
+TT_RESOURCE_ALLOCATION
+%1% consumes %2%
 
 ## Misc. Sidepanel##########
 
