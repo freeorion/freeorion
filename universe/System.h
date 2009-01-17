@@ -302,6 +302,11 @@ void System::serialize(Archive& ar, const unsigned int version)
         m_orbits = orbits;
         m_objects = objects;
         m_starlanes_wormholes = starlanes_wormholes;
+        //// DEBUG
+        //Logger().debugStream() << "system " << this->Name() << " deserialized objects ids:";
+        //for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        //    Logger().debugStream() << ".... " << it->second;
+        //// END DEBUG
     }
 }
 

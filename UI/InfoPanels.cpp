@@ -2538,6 +2538,13 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
     // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
     std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
+    //// DEBUG
+    //Logger().debugStream() << "System::FindObjects for system " << m_system->Name();
+    //for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it)
+    //    Logger().debugStream() << ".... " << (*it)->Name();
+    //// END DEBUG
+
+
     for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
         const UniverseObject* obj = *it;
 
@@ -2552,14 +2559,12 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         double allocation = ObjectResourceConsumption(obj, m_resource_type, m_player_id);
 
 
-        // following section should be uncommented, but I'm leaving it commented now to help isolate an apparent bug where more
-        // objects are returned from m_system->FindObjects() than would be expected.  (Multiple copies of some objects are returned)
-        //// don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
-        //if (allocation <= 0.0) {
-        //    if (allocation < 0.0)
-        //        Logger().errorStream() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
-        //    continue;
-        //}
+        // don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
+        if (allocation <= 0.0) {
+            if (allocation < 0.0)
+                Logger().errorStream() << "object " << obj->Name() << " is reported having negative " << boost::lexical_cast<std::string>(m_resource_type) << " consumption";
+            continue;
+        }
 
 
         total_system_resource_allocation += allocation;

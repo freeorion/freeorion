@@ -29,7 +29,7 @@ namespace {
         {
             m_context = alcCreateContext(m_device,NULL); // instead of NULL we can pass a ALCint* pointing to a set of
                                                          // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
-           
+
             if ((m_context != NULL) && (alcMakeContextCurrent(m_context) == AL_TRUE))
             {
                 alutInitWithoutContext(NULL,NULL); // we need to init alut or we won't be able to read .wav files
@@ -39,7 +39,7 @@ namespace {
                 error_code = alGetError();
                 if(error_code != AL_NO_ERROR)
                 {
-                     Logger().errorStream() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                    Logger().errorStream() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
                     alcMakeContextCurrent(NULL);
                     alcDestroyContext(m_context);
                 }
@@ -66,10 +66,9 @@ namespace {
                                                << "Renderer "
                                                << alGetString(AL_RENDERER)
                                                << "Vendor "
-                                               << alGetString(AL_VENDOR)
-                                               << "\nExtensions: "
-                                               << alGetString(AL_EXTENSIONS)
-                                               << "\n";
+                                               << alGetString(AL_VENDOR) << "\n"
+                                               << "Extensions: "
+                                               << alGetString(AL_EXTENSIONS) << "\n";
                     }
                 }
             }
