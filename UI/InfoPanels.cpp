@@ -28,6 +28,11 @@
 using boost::lexical_cast;
 
 namespace {
+    /** Returns text wrapped in GG RGBA tags for specified colour */
+    std::string ColourWrappedtext(const std::string& text, const GG::Clr colour) {
+        return GG::RgbaTag(colour) + text + "</rgba>";
+    }
+
     /** Returns text representation of number wrapped in GG RGBA tags for colour depending on whether number
         is positive, negative or 0.0 */
     std::string ColouredNumber(double number) {
@@ -36,7 +41,7 @@ namespace {
             clr = ClientUI::StatIncrColor();
         else if (number < 0.0)
             clr = ClientUI::StatDecrColor();
-        return GG::RgbaTag(clr) + DoubleToString(number, 3, false, true) + "</rgba>";
+        return ColourWrappedtext(DoubleToString(number, 3, false, true), clr);
     }
 
 
@@ -1033,6 +1038,9 @@ void ResourcePanel::Update()
         meter_map = &(map_it->second);
 
     if (meter_map) {
+        // create an attach browse info wnds for each meter type on the icon+number stats used when collapsed and
+        // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
+        // browse wnd on these indicators
         boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
         m_farming_stat->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
@@ -1056,15 +1064,29 @@ void ResourcePanel::Update()
         browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map));
         m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
     } else {
-        // I'd like to do something like   m_*_stat->ClearBrowseWnd();   to enesure an old BrowseWnd isn't shown
-        // but as far as I know, there's no way to do this.
+        // remove any old browse wnds
+        m_farming_stat->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(METER_FARMING);
+
+        m_mining_stat->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(METER_MINING);
+
+        m_industry_stat->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(METER_INDUSTRY);
+
+        m_research_stat->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(METER_RESEARCH);
+
+        m_trade_stat->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
+
+        m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
     }
 
     // focus droplists
     m_drop_changed_connections[m_primary_focus_drop].block();   // prevent cyclic signalling
     std::string text;
-    switch (res->PrimaryFocus())
-    {
+    switch (res->PrimaryFocus()) {
     case FOCUS_BALANCED:
         m_primary_focus_drop->Select(0);
         text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
@@ -1098,8 +1120,7 @@ void ResourcePanel::Update()
     m_primary_focus_drop->SetBrowseText(text);
 
     m_drop_changed_connections[m_secondary_focus_drop].block();
-    switch (res->SecondaryFocus())
-    {
+    switch (res->SecondaryFocus()) {
     case FOCUS_BALANCED:
         m_secondary_focus_drop->Select(0);
         text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
@@ -1621,6 +1642,12 @@ void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shar
             m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);
 }
 
+void MultiIconValueIndicator::ClearToolTip(MeterType meter_type)
+{
+    for (unsigned int i = 0; i < m_icons.size(); ++i)
+        if (m_meter_types.at(i) == meter_type)
+            m_icons.at(i)->ClearBrowseInfoWnd();
+}
 
 /////////////////////////////////////
 //       MultiMeterStatusBar       //
@@ -2342,17 +2369,16 @@ void IconTextBrowseWnd::Render() {
 //////////////////////////////////////
 //  SystemResourceSummaryBrowseWnd  //
 //////////////////////////////////////
-const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(200);
+const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(240);
 const GG::X SystemResourceSummaryBrowseWnd::VALUE_WIDTH(60);
 const int SystemResourceSummaryBrowseWnd::EDGE_PAD(3);
 
-SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int player_id) :
+SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int empire_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
     m_resource_type(resource_type),
     m_system(system),
-    m_player_id(player_id),
-    m_production_label(0), m_allocation_label(0),
-    m_import_export_label(0), m_import_export_amount(0),
+    m_empire_id(empire_id),
+    m_production_label(0), m_allocation_label(0), m_import_export_label(0),
     row_height(1), production_label_top(0), allocation_label_top(0), import_export_label_top(0)
 {}
 
@@ -2393,29 +2419,26 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
     GG::Y top = GG::Y0;
 
+
     production_label_top = top;
     m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_production_label);
     top += row_height;
-
     UpdateProduction(top);
+
 
     allocation_label_top = top;
     m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_allocation_label);
     top += row_height;
-
     UpdateAllocation(top);
 
 
-    // create import / export labels anywhere... will be positions in UpdateImportExport()
-    m_import_export_label = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_import_export_label);
-    m_import_export_amount = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_import_export_amount);
-
     import_export_label_top = top;
-    UpdateImportExport(top);    // positions and updates import / export labels
+    m_import_export_label = new GG::TextControl(GG::X0, import_export_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_import_export_label);
+    top += row_height;
+    UpdateImportExport(top);
 
 
     Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, top));
@@ -2434,7 +2457,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         return;
 
 
-    double total_system_resource_production = 0.0;
+    m_production = 0.0;
 
 
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
@@ -2445,8 +2468,8 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         const UniverseObject* obj = *it;
 
         // display information only for the requested player
-        if (m_player_id != -1 && !obj->OwnedBy(m_player_id))
-            continue;   // if m_player_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
+        if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
+            continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
         const ResourceCenter* rc = dynamic_cast<const ResourceCenter*>(obj);
         if (!rc)
@@ -2454,7 +2477,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
         std::string name = obj->Name();
         double production = rc->ProjectedMeterPoints(ResourceToMeter(m_resource_type));
-        total_system_resource_production += production;
+        m_production += production;
 
         std::string amount_text = DoubleToString(production, 3, false, false);
 
@@ -2513,7 +2536,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     m_production_label->SetText(boost::io::str(FlexibleFormat(UserString("RESOURCE_PRODUCTION_TOOLTIP")) %
                                                               resource_text %
-                                                              DoubleToString(total_system_resource_production, 3, false, false)));
+                                                              DoubleToString(m_production, 3, false, false)));
 
     // height of label already added to top outside this function
 }
@@ -2531,10 +2554,10 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         return;
 
 
-    double total_system_resource_allocation = 0.0;
-
-
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+
+    m_allocation = 0.0;
+
 
     // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
     std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
@@ -2549,14 +2572,14 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         const UniverseObject* obj = *it;
 
         // display information only for the requested player
-        if (m_player_id != -1 && !obj->OwnedBy(m_player_id))
-            continue;   // if m_player_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
+        if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
+            continue;   // if m_empire_id == ALL_EMPIRES, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
 
 
         std::string name = obj->Name();
 
 
-        double allocation = ObjectResourceConsumption(obj, m_resource_type, m_player_id);
+        double allocation = ObjectResourceConsumption(obj, m_resource_type, m_empire_id);
 
 
         // don't add summary entries for objects that consume no resource.  (otherwise there would be a loooong pointless list of 0's
@@ -2567,15 +2590,28 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         }
 
 
-        total_system_resource_allocation += allocation;
+        m_allocation += allocation;
 
         std::string amount_text = DoubleToString(allocation, 3, false, false);
+
+        // TODO: for food only, colour allocation text depending on need of PopCenter:
+        // - if allocation < need to avoid starvation: colour stat decr colour (red)
+        // - if allocation > need to avoid starvation  and  allocation < need for max growth: colour generic text colour (white)
+        // - if allocation = need for max growth: colour stat incr colour (green)
+        // if (m_resource_type == RE_FOOD) {
+        //     // get various needs, determine appropriate colour for food text
+        //     GG::Clr text_colour = // something?
+        //     amount_text = ColourWrappedtext(amount_text, text_colour);
+        // }
+
+        // TODO: for minerals and industry, consider something similar as colouring text for food above.
 
 
         GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
                                                      name, font, ClientUI::TextColor(),
                                                      GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
         AttachChild(label);
+
 
         GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
                                                      amount_text, font, ClientUI::TextColor(),
@@ -2623,11 +2659,12 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
     }
 
-    std::string system_allocation_text = DoubleToString(total_system_resource_allocation, 3, false, false);
+    std::string system_allocation_text = DoubleToString(m_allocation, 3, false, false);
 
     // for research only, local allocation makes no sense
-    if (m_resource_type == RE_RESEARCH && total_system_resource_allocation == 0.0)
+    if (m_resource_type == RE_RESEARCH && m_allocation == 0.0)
         system_allocation_text = UserString("NOT_APPLICABLE");
+
 
     m_allocation_label->SetText(boost::io::str(FlexibleFormat(UserString("RESOURCE_ALLOCATION_TOOLTIP")) %
                                                               resource_text %
@@ -2637,22 +2674,83 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 }
 
 void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
-    // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being
-    // imported or exported from this system, and moves them to vertical position \a top and updates \a top
-    // to be the vertical position below these labels
-    m_import_export_label;
-    m_import_export_amount;
+    m_import_export_label->SetText(UserString("IMPORT_EXPORT_TOOLTIP"));
 
-    // TEMP
+    const Empire* empire = 0;
+
+    // check for early exit cases...
+    bool abort = false;
+    if (m_empire_id == ALL_EMPIRES ||m_resource_type == RE_RESEARCH) {
+        // multiple empires have complicated stockpiling which don't make sense to try to display.
+        // Research use is nonlocalized, so importing / exporting doesn't make sense to display
+        abort = true;
+    } else {
+        empire = Empires().Lookup(m_empire_id);
+        if (!empire)
+            abort = true;
+    }
+
+
+    std::string label_text = "", amount_text = "";
+
+
+    if (!abort) {
+        double difference = m_production - m_allocation;
+
+        switch (m_resource_type) {
+        case RE_FOOD:
+        case RE_MINERALS:
+        case RE_TRADE:
+        case RE_INDUSTRY:
+            if (difference > 0.0) {
+                // show surplus
+                label_text = UserString("RESOURCE_EXPORT");
+                amount_text = DoubleToString(difference, 3, false, false);
+                break;
+            } else if (difference < 0.0) {
+                // show amount being imported
+                label_text = UserString("RESOURCE_IMPORT");
+                amount_text = DoubleToString(std::abs(difference), 3, false, false);
+                break;
+            }
+            // else fall back to do nothing case
+        case RE_RESEARCH:
+        default:
+            // show nothing
+            abort = true;
+            break;
+        }
+    }
+
+
+    if (abort) {
+        label_text = UserString("NOT_APPLICABLE");
+        amount_text = "";   // no change
+    }
+
+
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+
+    // add label and amount.  may be "NOT APPLIABLE" and nothing if aborted above
+    GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
+                                                 label_text, font, ClientUI::TextColor(),
+                                                 GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(label);
+
+    GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
+                                                 amount_text, font, ClientUI::TextColor(),
+                                                 GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    AttachChild(value);
+
+    m_import_export_labels_and_amounts.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
     top += row_height;
 }
 
 void SystemResourceSummaryBrowseWnd::Clear() {
     DeleteChild(m_production_label);
     DeleteChild(m_allocation_label);
-
     DeleteChild(m_import_export_label);
-    DeleteChild(m_import_export_amount);
 
     for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
         DeleteChild(it->first);
@@ -2665,4 +2763,10 @@ void SystemResourceSummaryBrowseWnd::Clear() {
         DeleteChild(it->second);
     }
     m_allocation_labels_and_amounts.clear();
+
+    for (std::vector<std::pair<GG::TextControl*, GG::TextControl*> >::iterator it = m_import_export_labels_and_amounts.begin(); it != m_import_export_labels_and_amounts.end(); ++it) {
+        DeleteChild(it->first);
+        DeleteChild(it->second);
+    }
+    m_import_export_labels_and_amounts.clear();
 }

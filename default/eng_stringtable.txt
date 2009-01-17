@@ -1141,14 +1141,14 @@ Trade Consumption
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Inter-System Exchange
 
+IMPORT_EXPORT_TOOLTIP
+Import / Export
+
 RESOURCE_IMPORT
 Importing
 
 RESOURCE_EXPORT
-Exporting
-
-RESOURCE_UNUSED
-Unused
+Available for Export
 
 
 ##Planet Panel#############
