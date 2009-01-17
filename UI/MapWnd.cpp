@@ -97,6 +97,36 @@ namespace {
         return std::make_pair(std::min(one, two), std::max(one, two));
     }
 
+
+    static bool checked_gl_version_already = false;
+    void CheckGLVersion() {
+        // only execute once
+        if (checked_gl_version_already)
+            return;
+        else
+            checked_gl_version_already = true;
+
+        // get OpenGL version string and parse to get version number
+        const GLubyte* gl_version = glGetString(GL_VERSION);
+        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
+        Logger().debugStream() << "OpenGL version string: " << boost::lexical_cast<std::string>(gl_version);
+
+        float version_number = 0.0;
+        std::istringstream iss(gl_version_string);
+        iss >> version_number;
+
+        Logger().debugStream() << "extracted version number: " << boost::lexical_cast<std::string>(version_number);
+
+        if (version_number < 1.5) {
+            Logger().errorStream() << "OpenGL version number less than 1.5.  FreeOrion requires OpenGL 1.5.  The following code should crash.";
+            std::cerr << "OpenGL version number" << boost::lexical_cast<std::string>(version_number) << " is less than 1.5." << std::endl;
+            std::cerr << "FreeOrion requires OpenGL 1.5.  The following code will likely crash." << std::endl;
+        } else if (version_number < 2.0) {
+            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion requires OpenGL 2.0 unless specially compiled.  The following code may crash.";
+        }
+    }
+
+
     // disambiguate overloaded function with a function pointer
     void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
 
@@ -1105,6 +1135,11 @@ void MapWnd::InitTurn(int turn_number)
     m_production_wnd->Update();
 
     Logger().debugStream() << "Turn initialization graphic buffer clearing";
+
+
+    CheckGLVersion();
+
+
     // clear out all the old buffers
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
