@@ -1371,29 +1371,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Never
 
-TECH_DETAIL_TYPE_STR
-%1% %2% - %3%
-
-TECH_DETAIL_DESCRIPTION_STR
-%1%
-
-TECH_DETAIL_EFFECTS_STR
-'''
-
-<u>Effects</u>
-
-%1%'''
-
-TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-<u>Unlocks</u>
-
-'''
-
-TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
 
 TECH_WND_TECH_COMPLETED
 COMPLETED
@@ -1636,7 +1613,19 @@ Attack: %2%
 Defense: %3%
 Speed: %4%'''
 
+ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
+'''
 
+<u>Unlocks</u>
+
+'''
+
+ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
+'''%1%: %2%
+'''
+
+ENC_TECH_DETAIL_TYPE_STR
+%1% %2% - %3%
 
 ####################
 # Combat Messages  #

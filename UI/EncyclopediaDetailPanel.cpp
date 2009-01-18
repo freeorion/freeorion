@@ -81,11 +81,17 @@ void EncyclopediaDetailPanel::DoLayout() {
     lr = ul + GG::Pt(Width() - TEXT_MARGIN_X - BORDER_RIGHT, Height() - BORDER_BOTTOM - ul.y - TEXT_MARGIN_Y);
     m_description_box->SizeMove(ul, lr);
 
-    // icons
+    // icon
     if (m_icon) {
         ul = GG::Pt(GG::X1, GG::Y1);
         lr = ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_icon->SizeMove(ul, lr);
+    }
+    // other icon
+    if (m_other_icon) {
+        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + 1));
+        ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
+        m_other_icon->SizeMove(ul, lr);
     }
 }
 
@@ -164,8 +170,7 @@ void EncyclopediaDetailPanel::Render() {
     glEnable(GL_TEXTURE_2D);
 }
 
-void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
+void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {
     if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
         GG::Pt new_lr = pt - m_drag_offset;
 
@@ -202,8 +207,7 @@ bool EncyclopediaDetailPanel::NothingSet() {
     return (!m_tech && !m_part &&  !m_hull && !m_building && !m_design && !m_special);
 }
 
-void EncyclopediaDetailPanel::Reset()
-{
+void EncyclopediaDetailPanel::Reset() {
     if (m_icon) {
         DeleteChild(m_icon);
         m_icon = 0;
@@ -230,7 +234,9 @@ void EncyclopediaDetailPanel::Reset()
     std::string general_type = "";          // general type of thing being shown, eg. "Building" or "Ship Part"
     std::string specific_type = "";         // specific type of thing; thing's purpose.  eg. "Farming" or "Colonization".  May be left blank for things without specific types (eg. specials)
     std::string detailed_description = "";
-
+    GG::Clr color = GG::CLR_ZERO;
+    
+    using boost::io::str;
     if (m_part) {
         // Ship Parts
         name = UserString(m_part->Name());
@@ -240,8 +246,11 @@ void EncyclopediaDetailPanel::Reset()
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(m_part->Class()));
-        detailed_description = UserString(m_part->Description()) +
-            boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_part->Effects()));
+        
+        detailed_description = UserString(m_part->Description());
+        if (!m_part->Effects().empty()) {
+            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_part->Effects()));
+        }
     } else if (m_hull) {
         // Ship Hulls
         name = UserString(m_hull->Name());
@@ -251,18 +260,39 @@ void EncyclopediaDetailPanel::Reset()
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
         // hulls have no specific types
-        detailed_description = UserString(m_hull->Description()) +
-            boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_hull->Effects()));
+        
+        detailed_description = UserString(m_hull->Description());
+        if (!m_hull->Effects().empty()) {
+            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_hull->Effects()));
+        }
     } else if (m_tech) {
         // Technologies
         name = UserString(m_tech->Name());
         texture = ClientUI::TechTexture(m_tech->Name());
-        other_texture = ClientUI::CategoryIcon(m_tech->Category());
+        other_texture = ClientUI::CategoryIcon(m_tech->Category()); 
+        color = ClientUI::CategoryColor(m_tech->Category());
         turns = m_tech->ResearchTurns();
         cost = m_tech->ResearchCost();
         cost_units = UserString("ENC_RP");
-        general_type = UserString("ENC_TECH");
-        specific_type = UserString(m_tech->Category());
+        general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
+            % UserString(m_tech->Category())
+            % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
+            % UserString(m_tech->ShortDescription()));
+        
+        detailed_description = UserString(m_tech->Description());
+        if (!m_tech->Effects().empty()) {
+            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_tech->Effects()));
+        }
+        
+        const std::vector<ItemSpec>& unlocked_items = m_tech->UnlockedItems();
+        if (!unlocked_items.empty()) {
+            detailed_description += UserString("ENC_TECH_DETAIL_UNLOCKS_SECTION_STR");
+            for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
+                detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
+                    % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
+                    % UserString(unlocked_items[i].name));
+            }
+        }
     } else if (m_building) {
         // Buildings
         name = UserString(m_building->Name());
@@ -271,8 +301,11 @@ void EncyclopediaDetailPanel::Reset()
         cost = m_building->BuildCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_BUILDING_TYPE");
-        detailed_description = UserString(m_building->Description()) +
-            boost::io::str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_building->Effects()));
+        
+        detailed_description = UserString(m_building->Description());
+        if (!m_building->Effects().empty()) {
+            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_building->Effects()));
+        }
     } else if (m_design) {
         // Ship Designs
         name = m_design->Name();
@@ -281,7 +314,7 @@ void EncyclopediaDetailPanel::Reset()
         cost = m_design->Cost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_DESIGN");
-        detailed_description = boost::io::str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+        detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
             % m_design->Description()
             % m_design->Attack()
             % m_design->Defense()
@@ -293,10 +326,16 @@ void EncyclopediaDetailPanel::Reset()
     }
 
     // Create Icons
-    if (texture)
+    if (texture) {
         m_icon =        new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), texture,        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    if (other_texture)
+        if (color != GG::CLR_ZERO)
+            m_icon->SetColor(color);
+    }
+    if (other_texture) {
         m_other_icon =  new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10), other_texture,  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        if (color != GG::CLR_ZERO)
+            m_other_icon->SetColor(color);
+    }
 
     if (m_icon) {
         m_icon->Show();
@@ -308,7 +347,6 @@ void EncyclopediaDetailPanel::Reset()
     }
 
     // Set Text
-    using boost::io::str;
     using boost::format;
 
     m_name_text->SetText(name);
@@ -316,6 +354,8 @@ void EncyclopediaDetailPanel::Reset()
     m_summary_text->SetText(str(format(UserString("ENC_DETAIL_TYPE_STR"))
         % specific_type
         % general_type));
+    if (color != GG::CLR_ZERO)
+        m_summary_text->SetColor(color);
 
     m_cost_text->SetText(str(format(UserString("ENC_COST_AND_TURNS_STR"))
         % static_cast<int>(cost + 0.5)
@@ -323,7 +363,6 @@ void EncyclopediaDetailPanel::Reset()
         % turns));
 
     m_description_box->SetText(detailed_description);
-
 
     DoLayout();
 }
@@ -338,6 +377,9 @@ void EncyclopediaDetailPanel::UnsetAll() {
 }
 
 void EncyclopediaDetailPanel::SetItem(const Tech* tech) {
+    UnsetAll();
+    m_tech = tech;
+    Reset();
 }
 
 void EncyclopediaDetailPanel::SetItem(const PartType* part) {

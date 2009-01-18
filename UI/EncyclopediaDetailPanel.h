@@ -22,9 +22,9 @@ namespace GG {
   */
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
-    /** \name Structors */ //@{
+    //! \name Structors //!@{
     EncyclopediaDetailPanel(GG::X x, GG::Y y);
-    //@}
+    //!@}
 
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);

@@ -6,6 +6,7 @@
 #include "../universe/Enums.h"
 
 class Tech;
+class EncyclopediaDetailPanel;
 
 /** Contains the tech graph layout, some controls to control what is visible in the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd
@@ -57,7 +58,7 @@ public:
     void                    CenterOnTech(const Tech* tech);
     //@}
 
-    static const GG::Y        NAVIGATOR_AND_DETAIL_HEIGHT;
+    static const GG::Y          NAVIGATOR_AND_DETAIL_HEIGHT;
 
     mutable TechBrowsedSignalType               TechBrowsedSignal;
     mutable TechClickedSignalType               TechSelectedSignal;
@@ -66,7 +67,6 @@ public:
 
 private:
     class TechTreeControls;
-    class TechDetailPanel;
     class TechNavigator;
     class LayoutPanel;
     class TechListBox;
@@ -75,11 +75,11 @@ private:
     void                    TechClickedSlot(const Tech* tech);
     void                    TechDoubleClickedSlot(const Tech* tech);
 
-    TechTreeControls*       m_tech_tree_controls;
-    TechDetailPanel*        m_tech_detail_panel;
-    TechNavigator*          m_tech_navigator;
-    LayoutPanel*            m_layout_panel;
-    TechListBox*            m_tech_list;
+    TechTreeControls*           m_tech_tree_controls;
+    EncyclopediaDetailPanel*    m_enc_detail_panel;
+    TechNavigator*              m_tech_navigator;
+    LayoutPanel*                m_layout_panel;
+    TechListBox*                m_tech_list;
 };
 
 #endif // _TechTreeWnd_h_
