@@ -538,4 +538,21 @@ private:
     void UpdateEnabled();
     bool m_enabled;
 };
+
+/** Acts like a normal TextControl, but renders extra black copy / copies of text behind to create a
+  * drop-shadow effect, impriving text readability. */
+class ShadowedTextControl : public GG::TextControl
+{
+public:
+    ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                        GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
+                        GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+
+    ShadowedTextControl(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                        GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
+                        GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+ 
+    virtual void Render();
+};
+
 #endif // _CUIControls_h_

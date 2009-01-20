@@ -11,6 +11,7 @@
 #include "../universe/System.h"
 #include "../Empire/Empire.h"
 #include "../util/OptionsDB.h"
+#include "CUIControls.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -39,7 +40,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost
         GG::Clr text_color = ClientUI::TextColor();
         if (!owners.empty())
             text_color = Empires().Lookup(*owners.begin())->Color();
-        GG::TextControl* text = new GG::TextControl(width, GG::Y0, str, font, text_color);
+        GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, str, font, text_color);
         m_subcontrols.push_back(text);
         AttachChild(m_subcontrols.back());
         width += m_subcontrols.back()->Width();
@@ -55,7 +56,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost
             while (last_char_pos < str.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
                 ++last_char_pos;
             }
-            m_subcontrols.push_back(new GG::TextControl(width, GG::Y0, str.substr(first_char_pos, last_char_pos - first_char_pos), 
+            m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, str.substr(first_char_pos, last_char_pos - first_char_pos), 
                                                         font, Empires().Lookup(*it)->Color()));
             AttachChild(m_subcontrols.back());
             first_char_pos = last_char_pos;

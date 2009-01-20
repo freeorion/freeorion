@@ -1432,3 +1432,43 @@ void FPSIndicator::UpdateEnabled()
 {
     m_enabled = GetOptionsDB().Get<bool>("show-fps");
 }
+
+//////////////////////////////////////////////////
+// ShadowedTextControl
+//////////////////////////////////////////////////
+ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                                         GG::Clr color, GG::Flags<GG::TextFormat> format,
+                                         GG::Flags<GG::WndFlag> flags) :
+    GG::TextControl(x, y, w, h, str, font, color, format, flags)
+{}
+
+ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                                         GG::Clr color, GG::Flags<GG::TextFormat> format,
+                                         GG::Flags<GG::WndFlag> flags) :
+    GG::TextControl(x, y, str, font, color, format, flags)
+{}
+
+
+void ShadowedTextControl::Render()
+{
+    GG::Clr text_colour = TextColor();          // save original colour
+
+    SetTextColor(GG::CLR_BLACK);                // render shadows in opaque black
+
+    OffsetMove(GG::Pt(-GG::X1, GG::Y(0)));      // shadow to left
+    TextControl::Render();
+
+    OffsetMove(GG::Pt(GG::X1, GG::Y1));         // up
+    TextControl::Render();
+
+    OffsetMove(GG::Pt(GG::X1, -GG::Y1));        // right
+    TextControl::Render();
+
+    OffsetMove(GG::Pt(-GG::X1, -GG::Y1));       // down
+    TextControl::Render();
+
+    SetTextColor(text_colour);                  // restore original colour
+
+    OffsetMove(GG::Pt(GG::X(0), GG::Y1));       // render main coloured text
+    TextControl::Render();
+}
