@@ -80,6 +80,8 @@ void SitRepPanel::Update()
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
+        if ((*sitrep_it)->GetType() == SitRepEntry::VICTORY)
+            continue;   // don't show victory sitreps for now... they're currently broken
         LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         row->push_back(link_text);
