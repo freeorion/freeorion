@@ -36,6 +36,9 @@ struct Disconnection : boost::statechart::event<Disconnection>
     PlayerConnectionPtr& m_player_connection;
 };
 
+struct CheckStartConditions : boost::statechart::event<CheckStartConditions>
+{};
+
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
@@ -49,7 +52,7 @@ struct MessageEventBase
 
 // Define Boost.Preprocessor list of all Message events
 #define MESSAGE_EVENTS                          \
-    (HostMPGame)                                \
+        (HostMPGame)                            \
         (HostSPGame)                            \
         (StartMPGame)                           \
         (LobbyUpdate)                           \
@@ -179,13 +182,15 @@ struct WaitingForSPGameJoiners : boost::statechart::state<WaitingForSPGameJoiner
 
     typedef boost::mpl::list<
         boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
-        boost::statechart::custom_reaction<JoinGame>
+        boost::statechart::custom_reaction<JoinGame>,
+        boost::statechart::custom_reaction<CheckStartConditions>
     > reactions;
 
     WaitingForSPGameJoiners(my_context c);
     ~WaitingForSPGameJoiners();
 
     boost::statechart::result react(const JoinGame& msg);
+    boost::statechart::result react(const CheckStartConditions& u);
 
     boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;

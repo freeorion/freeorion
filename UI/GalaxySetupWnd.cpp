@@ -35,7 +35,7 @@ namespace {
         db.Add("GameSetup.specials-frequency", "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY", SPECIALS_UNCOMMON, RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
         db.Add("GameSetup.empire-name", "OPTIONS_DB_GAMESETUP_EMPIRE_NAME", std::string("Human"), Validator<std::string>());
         db.Add("GameSetup.empire-color", "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR", 0, RangedValidator<int>(0, 100));
-        db.Add("GameSetup.ai-players", "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS", 4, RangedValidator<int>(1, MAX_AI_PLAYERS));
+        db.Add("GameSetup.ai-players", "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS", 4, RangedValidator<int>(0, MAX_AI_PLAYERS));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -334,7 +334,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_number_ais_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
-    m_number_ais_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, GG::X(75), GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 1, MAX_AI_PLAYERS, true);
+    m_number_ais_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, GG::X(75), GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);
     m_number_ais_label->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_number_ais_label->Height()) / 2));
     m_number_ais_spin->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_number_ais_spin->Height()) / 2));
 

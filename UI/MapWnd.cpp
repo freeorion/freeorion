@@ -250,9 +250,9 @@ void MapWnd::FleetETAMapIndicator::Render()
 
 // MapWnd
 // static(s)
-double           MapWnd::s_min_scale_factor = 0.35;
-double           MapWnd::s_max_scale_factor = 8.0;
-const GG::X MapWnd::SIDE_PANEL_WIDTH(360);
+double          MapWnd::s_min_scale_factor = 0.35;
+double          MapWnd::s_max_scale_factor = 8.0;
+const GG::X     MapWnd::SIDE_PANEL_WIDTH(360);
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -1211,7 +1211,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (m_starlane_fleet_supply_colors.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
 #else
         glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
@@ -1326,7 +1326,7 @@ void MapWnd::InitTurn(int turn_number)
         m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
     }
     if (!raw_starlane_colors.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_starlane_colors.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1853,13 +1853,13 @@ void MapWnd::RenderGalaxyGas()
         // basis, however, since GL 2.0 will soon be required for the use of
         // Ogre, shaders, etc.  This note applies to all such uses of the ARB
         // versions of GL functions and macros.
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
@@ -1885,13 +1885,13 @@ void MapWnd::RenderSystems()
                  it != m_star_halo_quad_vertices.end();
                  ++it) {
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
                 glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
@@ -1908,13 +1908,13 @@ void MapWnd::RenderSystems()
                  it != m_star_core_quad_vertices.end();
                  ++it) {
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
                 glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
@@ -1925,7 +1925,7 @@ void MapWnd::RenderSystems()
         }
 
 
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1963,7 +1963,7 @@ void MapWnd::RenderStarlanes()
         glVertexPointer(2, GL_FLOAT, 0, 0);
 
         if (coloured) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
 #else
             glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
