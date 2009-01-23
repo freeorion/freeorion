@@ -115,14 +115,14 @@ namespace {
         std::istringstream iss(gl_version_string);
         iss >> version_number;
 
-        Logger().debugStream() << "extracted version number: " << boost::lexical_cast<std::string>(version_number);
+        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number + 0.05, 2, false, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
 
         if (version_number < 1.5) {
-            Logger().errorStream() << "OpenGL version number less than 1.5.  FreeOrion requires OpenGL 1.5.  The following code should crash.";
-            std::cerr << "OpenGL version number" << boost::lexical_cast<std::string>(version_number) << " is less than 1.5." << std::endl;
-            std::cerr << "FreeOrion requires OpenGL 1.5.  The following code will likely crash." << std::endl;
+            Logger().errorStream() << "OpenGL version number less than 1.5.  FreeOrion uses OpenGL 1.5 features and may crash on this system.";
+            std::cerr << "OpenGL version number " << DoubleToString(version_number, 2, false, false) << " is less than 1.5." << std::endl;      // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+            std::cerr << "FreeOrion requires OpenGL 1.5 and may crash on this system." << std::endl;
         } else if (version_number < 2.0) {
-            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion requires OpenGL 2.0 unless specially compiled.  The following code may crash.";
+            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion reccomended OpenGL version is 2.0 or greater and you may have problems on this system.";
         }
     }
 
