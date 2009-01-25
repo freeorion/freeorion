@@ -114,8 +114,9 @@ namespace {
         float version_number = 0.0;
         std::istringstream iss(gl_version_string);
         iss >> version_number;
+        version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
 
-        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number + 0.05, 2, false, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
 
         if (version_number < 1.5) {
             Logger().errorStream() << "OpenGL version number less than 1.5.  FreeOrion uses OpenGL 1.5 features and may crash on this system.";

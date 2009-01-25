@@ -2166,10 +2166,10 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     Wnd::SizeMove(ul, lr);
 
     GG::Pt child_lr = lr - ul - GG::Pt(GG::X1, GG::Y1);   // extra pixel prevents graphic from overflowing border box
-    
+
     if (m_graphic)
         m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
-    
+
     GG::Y bar_top = Height() * 4 / 5;
     if (m_progress_bar)
         m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);

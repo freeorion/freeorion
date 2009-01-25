@@ -1043,13 +1043,17 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 {
     ShipRow* ship_row = dynamic_cast<ShipRow*>(*it);
 
-    if (!ship_row ||
-        ship_row->m_ship->Owners().size() != 1 ||
-        HumanClientApp::GetApp()->EmpireID() != *ship_row->m_ship->Owners().begin()) {
+    if (!ship_row)
+        return;
+
+    Ship* ship = ship_row->m_ship;
+
+    if (!ship ||
+        ship->Owners().size() != 1 ||
+        HumanClientApp::GetApp()->EmpireID() != *ship->Owners().begin())
+    {
         return;
     }
-
-    Ship* ship = GetUniverse().Object<Ship>(ship_row->ShipID());
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
@@ -1060,15 +1064,16 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // rename ship
-            GG::TextControl* text_control = boost::polymorphic_downcast<GG::TextControl*>((**it)[0]);
-            std::string ship_name = text_control->Text();
+            std::string ship_name = ship->Name();
             CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), ship_name);
             edit_wnd.Run();
-            if (edit_wnd.Result() != "") {
+
+            std::string new_name = edit_wnd.Result();
+
+            if (new_name != "" && new_name != ship_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), ship->ID(),
-                                             edit_wnd.Result())));
-                text_control->SetText(edit_wnd.Result());
+                                             new_name)));
             }
             break;}
         default:
@@ -1365,12 +1370,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
     Fleet* fleet = FleetInRow(it);
     if (!fleet ||
         fleet->Owners().size() != 1 ||
-        HumanClientApp::GetApp()->EmpireID() != *fleet->Owners().begin()) {
+        HumanClientApp::GetApp()->EmpireID() != *fleet->Owners().begin())
+    {
         return;
     }
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
+
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(),
                         menu_contents, ClientUI::TextColor());
 
@@ -1380,11 +1387,13 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
             std::string fleet_name = fleet->Name();
             CUIEditWnd edit_wnd(GG::X(350), UserString("ENTER_NEW_NAME"), fleet_name);
             edit_wnd.Run();
-            if (edit_wnd.Result() != "") {
+
+            std::string new_name = edit_wnd.Result();
+
+            if (new_name != "" && new_name != fleet_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), fleet->ID(),
-                                             edit_wnd.Result())));
-                boost::polymorphic_downcast<GG::TextControl*>((**it)[0])->SetText(edit_wnd.Result());
+                                             new_name)));
             }
             break;
         }
