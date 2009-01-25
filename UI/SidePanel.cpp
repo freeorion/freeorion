@@ -369,7 +369,7 @@ public:
     typedef boost::signal<void (int)>   LeftClickedSignalType;  ///< emitted when the planet graphic is left clicked by the user
     typedef boost::signal<void ()>      ResizedSignalType;      ///< emitted when resized, so external container can redo layout
     //@}
-   
+
     /** \name Slot Types */ //@{
     typedef LeftClickedSignalType::slot_type LeftClickedSlotType; ///< type of functor(s) invoked on a LeftClickedSignalType
     //@}
@@ -430,6 +430,8 @@ private:
     SpecialsPanel*          m_specials_panel;           ///< contains icons representing specials
 };
 
+/** Container class that holds PlanetPanels.  Creates and destroys PlanetPanel as necessary, and does layout of them
+  * after creation and in response to scrolling through them by the user. */
 class SidePanel::PlanetPanelContainer : public GG::Wnd
 {
 public:
@@ -468,16 +470,19 @@ private:
     void FindSelectionCandidates();
     void HiliteSelectionCandidates();
     void PlanetSelected(int planet_id);
-    void DoPanelsLayout();  // repositions PlanetPanels, accounting for their size, which may have changed
-    void VScroll(int from, int to, int range_min, int range_max);
+    void DoPanelsLayout(GG::Y top);     // repositions PlanetPanels, positioning the top panel at y position \a top relative to the to of the container.
+    void DoPanelsLayout();              // repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
+    void VScroll(int pos_top, int pos_bottom, int range_min, int range_max);    // all but first parameter ignored
 
-    std::vector<PlanetPanel*> m_planet_panels;
-    int                       m_planet_id;
-    std::set<int>             m_candidate_ids;
+    std::vector<PlanetPanel*>   m_planet_panels;
+    GG::Y                       m_planet_panels_top;
 
-    boost::shared_ptr<UniverseObjectVisitor> m_valid_selection_predicate;
+    int                         m_planet_id;
+    std::set<int>               m_candidate_ids;
 
-    CUIScroll*        m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
+    boost::shared_ptr<UniverseObjectVisitor>    m_valid_selection_predicate;
+
+    CUIScroll*                  m_vscroll; ///< the vertical scroll (for viewing all the planet panes)
 };
 
 class RotatingPlanetControl : public GG::Control
@@ -705,20 +710,22 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
         }
     }
 
-    m_planet_name = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER + 3), GG::Y(5), planet.Name(), ClientUI::GetBoldFont(ClientUI::Pts()*4/3), ClientUI::TextColor());
+    // create planet panel that auto-sizes itself to fit text
+    m_planet_name = new ShadowedTextControl(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), GG::Y0, planet.Name(), ClientUI::GetBoldFont(ClientUI::Pts()*4/3), ClientUI::TextColor());
     AttachChild(m_planet_name);
 
     std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
 
+    // create info panels and attach signals
     m_population_panel = new PopulationPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_population_panel);
     GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
     m_resource_panel = new ResourcePanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_resource_panel);
-    GG::Connect(m_resource_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
-    GG::Connect(m_resource_panel->PrimaryFocusChangedSignal, &SidePanel::PlanetPanel::SetPrimaryFocus, this);
-    GG::Connect(m_resource_panel->SecondaryFocusChangedSignal, &SidePanel::PlanetPanel::SetSecondaryFocus, this);
+    GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_resource_panel->PrimaryFocusChangedSignal,    &SidePanel::PlanetPanel::SetPrimaryFocus, this);
+    GG::Connect(m_resource_panel->SecondaryFocusChangedSignal,  &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
     m_military_panel = new MilitaryPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_military_panel);
@@ -730,7 +737,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
 
     m_specials_panel = new SpecialsPanel(w - MAX_PLANET_DIAMETER, planet);
     AttachChild(m_specials_panel);
-    m_specials_panel->MoveTo(GG::Pt(GG::Pt(Width() - m_population_panel->Width(), m_planet_name->LowerRight().y - UpperLeft().y)));
 
     m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
@@ -748,7 +754,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     if (planet.Type() == PT_ASTEROIDS) 
         MoveChildDown(m_planet_graphic);
 
-    const Planet *plt = GetUniverse().Object<const Planet>(m_planet_id);
+    const Planet* plt = GetUniverse().Object<const Planet>(m_planet_id);
 
     // connecting system's StateChangedSignal to this->Refresh() should be redundant, as
     // the sidepanel's Refresh will be called when that signal is emitted, which will refresh
@@ -793,23 +799,33 @@ void SidePanel::PlanetPanel::Hilite(HilitingType ht)
 
 void SidePanel::PlanetPanel::DoLayout()
 {
-    const int INTERPANEL_SPACE = 3;
-    GG::Y y = m_specials_panel->LowerRight().y - UpperLeft().y;
-    GG::X x = Width() - m_population_panel->Width();
+    GG::X x = GG::X0 + MAX_PLANET_DIAMETER + EDGE_PAD;
+    GG::Y y = GG::Y0;
+
+    m_planet_name->MoveTo(GG::Pt(x, y));                // assumed to always be this Wnd's child
+    y += m_planet_name->Height();                       // no interpanel space needed here, I declare arbitrarily
+
+    m_specials_panel->MoveTo(GG::Pt(x, y));             // assumed to always be this Wnd's child
+    y += m_specials_panel->Height() + EDGE_PAD;
+
+    if (m_env_size->Parent() == this) {
+        m_env_size->MoveTo(GG::Pt(x, y));
+        y += m_env_size->Height() + EDGE_PAD;
+    }
 
     if (m_population_panel->Parent() == this) {
         m_population_panel->MoveTo(GG::Pt(x, y));
-        y += m_population_panel->Height() + INTERPANEL_SPACE;
+        y += m_population_panel->Height() + EDGE_PAD;
     }
 
     if (m_resource_panel->Parent() == this) {
         m_resource_panel->MoveTo(GG::Pt(x, y));
-        y += m_resource_panel->Height() + INTERPANEL_SPACE;
+        y += m_resource_panel->Height() + EDGE_PAD;
     }
 
     if (m_military_panel->Parent() == this) {
         m_military_panel->MoveTo(GG::Pt(x, y));
-        y += m_military_panel->Height() + INTERPANEL_SPACE;
+        y += m_military_panel->Height() + EDGE_PAD;
     }
 
     if (m_buildings_panel->Parent() == this) {
@@ -906,11 +922,8 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
-    // The mouse is in this window if it is in the rightmost Width() - MAX_PLANET_DIAMETER portion, or if it is over the
-    // planet graphic, or if it is over the specials panel.  That is, it falls through to the MapWnd if it is over the
-    // empty space around the planet on the left side of the panel.
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    ul.x += MAX_PLANET_DIAMETER;
+    //ul.x += MAX_PLANET_DIAMETER;  // uncomment to exclude points over rotating planet graphic
     return (ul <= pt && pt < lr || m_specials_panel->InWindow(pt) || InPlanet(pt));
 }
 
@@ -934,11 +947,17 @@ void SidePanel::PlanetPanel::Render()
     GG::Clr DARK_GREY = GG::Clr(26, 26, 26, 255);
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(GG::Pt(ul.x + SidePanel::MAX_PLANET_DIAMETER, m_planet_name->UpperLeft().y),
-                      GG::Pt(lr.x, m_planet_name->LowerRight().y),
-                      DARK_GREY, DARK_GREY, 0);   // top title filled background
 
-    const Planet *planet = GetPlanet();
+    Logger().debugStream() << "Planetpanel top: " << GG::Value(ul.y);
+
+    // background and border
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+
+    // background behind planet name
+    GG::FlatRectangle(m_planet_name->UpperLeft() - GG::Pt(GG::X(SidePanel::EDGE_PAD), GG::Y0), GG::Pt(lr.x, m_planet_name->LowerRight().y),
+                      DARK_GREY, DARK_GREY, 0);
+
+    const Planet* planet = GetPlanet();
 
     if (m_hiliting == HILITING_CANDIDATE && planet->Type() != PT_ASTEROIDS) {
         GG::Rect planet_rect(m_rotating_planet_graphic->UpperLeft(), m_rotating_planet_graphic->LowerRight());
@@ -1060,6 +1079,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     Wnd(x, y, w, h, GG::CLICKABLE),
     m_planet_panels(),
+    m_planet_panels_top(GG::Y0),
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
     m_vscroll(new CUIScroll(Width()-14,GG::Y0,GG::X(14),Height(),GG::VERTICAL))
 {
@@ -1105,38 +1125,47 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*
         PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), *planet, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
-        GG::Connect(m_planet_panels.back()->PlanetImageLClickedSignal, &SidePanel::PlanetPanelContainer::PlanetSelected, this);
-        GG::Connect(m_planet_panels.back()->ResizedSignal, &SidePanel::PlanetPanelContainer::DoPanelsLayout, this);
+        GG::Connect(m_planet_panels.back()->PlanetImageLClickedSignal,  &SidePanel::PlanetPanelContainer::PlanetSelected, this);
+        GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::DoPanelsLayout, this);
     }
-    DoPanelsLayout();
-    VScroll(m_vscroll->PosnRange().first, 0, 0, 0);
+    VScroll(0, 0, 0, 0);        // reset scroll when resetting planets to ensure new set of planets won't be stuck scrolled up out of view
     FindSelectionCandidates();
     HiliteSelectionCandidates();
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout()
 {
-    GG::Y y(0);
+    DoPanelsLayout(m_planet_panels_top);    // redo layout without moving panels
+}
+
+void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
+{
+    Logger().errorStream() << "SidePanel::PlanetPanelContainer::DoPanelsLaout passed positive top.  It is expected to be 0 or negative only.";
+    m_planet_panels_top = top;
+    GG::Y y = m_planet_panels_top;
+    GG::X x = GG::X0;
+
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         PlanetPanel* panel = *it;
-        panel->MoveTo(GG::Pt(GG::X0, y));
-        y += panel->Height();   // may be different for each panel depending whether that panel has been previously left expanded or collapsed
+        panel->MoveTo(GG::Pt(x, y));
+        y += panel->Height() + SidePanel::EDGE_PAD;               // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
 
     GG::Y available_height = y;
-    GG::Wnd* parent = Parent();
-    if (parent) {
+    const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(300);
+
+    if (GG::Wnd* parent = Parent()) {
         GG::Y containing_height = parent->Height();
-        available_height = containing_height - 300;  // height of visible "page" of panels
+        available_height = containing_height - BIG_PAD_TO_BE_SAFE;  // height of visible "page" of panels
     }
 
-    m_vscroll->SizeScroll(0, Value(y), MAX_PLANET_DIAMETER, Value(available_height));   // adjust size of scrollbar
-    m_vscroll->ScrolledSignal(m_vscroll->PosnRange().first, m_vscroll->PosnRange().second, 0, 0);   // fake a scroll event in order to update scrollbar and panel container position
+    // adjust size of scrollbar to account for panel resizing
+    m_vscroll->SizeScroll(0, Value(y - m_planet_panels_top), MAX_PLANET_DIAMETER, Value(available_height));
 
-    if (y < available_height + 1) {
+    // hide scrollbar if all panels are visible and fit into the available height
+    if (Value(y - m_planet_panels_top) < available_height + 1) {
         DetachChild(m_vscroll);
-    }
-    else {
+    } else {
         AttachChild(m_vscroll);
         m_vscroll->Show();
     }
@@ -1195,13 +1224,9 @@ void SidePanel::PlanetPanelContainer::PlanetSelected(int planet_id)
     }
 }
 
-void SidePanel::PlanetPanelContainer::VScroll(int from, int to, int range_min, int range_max)
+void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int range_min, int range_max)
 {
-    GG::Y y(-from);
-    for (unsigned int i = 0; i < m_planet_panels.size(); ++i) {
-        m_planet_panels[i]->MoveTo(GG::Pt(GG::X0, y));
-        y += m_planet_panels[i]->Height();
-    }
+    DoPanelsLayout(GG::Y(-pos_top));    // scrolling bar down pos_top pixels causes the panels to move up that many pixels
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
@@ -1219,7 +1244,7 @@ const int SidePanel::MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER / 4; // size of a
 
 const System*        SidePanel::s_system = 0;
 std::set<SidePanel*> SidePanel::s_side_panels;
-const int            SidePanel::EDGE_PAD = 4;
+const int            SidePanel::EDGE_PAD = 3;
 
 SidePanel::SidePanel(GG::X x, GG::Y y, GG::X w, GG::Y h) : 
     Wnd(x, y, w, h, GG::CLICKABLE),
@@ -1298,7 +1323,7 @@ bool SidePanel::InWindow(const GG::Pt& pt) const
 void SidePanel::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    FlatRectangle(GG::Pt(ul.x + MAX_PLANET_DIAMETER, ul.y), lr, ClientUI::SidePanelColor(), GG::CLR_CYAN, 0);
+    FlatRectangle(GG::Pt(ul.x + MAX_PLANET_DIAMETER, ul.y), lr, ClientUI::SidePanelColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 void SidePanel::Refresh()
