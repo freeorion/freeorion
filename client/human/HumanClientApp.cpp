@@ -249,8 +249,9 @@ void HumanClientApp::MulitplayerGame()
                 if (!GetOptionsDB().Get<bool>("force-external-server")) {
                     HumanClientApp::GetApp()->StartServer();
                     HumanClientApp::GetApp()->FreeServer();
-                }
-                server_name = "localhost";
+                    server_name = "localhost";
+                }                
+                server_name = GetOptionsDB().Get<std::string>("external-server-address");
             }
             unsigned int start_time = Ticks();
             while (!Networking().ConnectToServer(server_name)) {

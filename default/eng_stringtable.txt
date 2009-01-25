@@ -176,6 +176,9 @@ Sets how wide to render fleet supply lines.
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
+OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
+Address to connect to in external server mode. If used, this client becomes the manager of the game.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 
