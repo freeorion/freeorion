@@ -350,7 +350,7 @@ namespace {
         default           : scale = 2.0/5.0; break;
         }
 
-        return static_cast<int>(SidePanel::MIN_PLANET_DIAMETER + (SidePanel::MAX_PLANET_DIAMETER - SidePanel::MIN_PLANET_DIAMETER) * scale);
+        return static_cast<int>(SidePanel::MIN_PLANET_DIAMETER + (SidePanel::MAX_PLANET_DIAMETER - SidePanel::MIN_PLANET_DIAMETER) * scale) - 2;    // -2 for borders of planet panel so largest planet doesn't exceed its space
     }
 
 }
@@ -717,34 +717,36 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
 
     // create info panels and attach signals
-    m_population_panel = new PopulationPanel(w - MAX_PLANET_DIAMETER, planet);
+    GG::X panel_width = w - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
+
+    m_population_panel = new PopulationPanel(panel_width, planet);
     AttachChild(m_population_panel);
     GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_resource_panel = new ResourcePanel(w - MAX_PLANET_DIAMETER, planet);
+    m_resource_panel = new ResourcePanel(panel_width, planet);
     AttachChild(m_resource_panel);
     GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
     GG::Connect(m_resource_panel->PrimaryFocusChangedSignal,    &SidePanel::PlanetPanel::SetPrimaryFocus, this);
     GG::Connect(m_resource_panel->SecondaryFocusChangedSignal,  &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
-    m_military_panel = new MilitaryPanel(w - MAX_PLANET_DIAMETER, planet);
+    m_military_panel = new MilitaryPanel(panel_width, planet);
     AttachChild(m_military_panel);
     GG::Connect(m_military_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_buildings_panel = new BuildingsPanel(w - MAX_PLANET_DIAMETER, 4, planet);
+    m_buildings_panel = new BuildingsPanel(panel_width, 4, planet);
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_specials_panel = new SpecialsPanel(w - MAX_PLANET_DIAMETER, planet);
+    m_specials_panel = new SpecialsPanel(panel_width, planet);
     AttachChild(m_specials_panel);
 
-    m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), m_specials_panel->LowerRight().y - UpperLeft().y, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
+    m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
 
 
-    m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), m_env_size->LowerRight().y - UpperLeft().y + 1, GG::X(80),
+    m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), GG::Y0, GG::X(ClientUI::Pts()*8),
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
-                                      ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, 
+                                      ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::CLICKABLE);
 
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
@@ -764,6 +766,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 
     Refresh();
+    DoLayout();
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
@@ -799,37 +802,43 @@ void SidePanel::PlanetPanel::Hilite(HilitingType ht)
 
 void SidePanel::PlanetPanel::DoLayout()
 {
-    GG::X x = GG::X0 + MAX_PLANET_DIAMETER + EDGE_PAD;
+    GG::X left = GG::X0 + MAX_PLANET_DIAMETER + EDGE_PAD;
+    GG::X right = left + Width() - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
     GG::Y y = GG::Y0;
 
-    m_planet_name->MoveTo(GG::Pt(x, y));                // assumed to always be this Wnd's child
-    y += m_planet_name->Height();                       // no interpanel space needed here, I declare arbitrarily
+    m_planet_name->MoveTo(GG::Pt(left, y));                 // assumed to always be this Wnd's child
+    y += m_planet_name->Height();                           // no interpanel space needed here, I declare arbitrarily
 
-    m_specials_panel->MoveTo(GG::Pt(x, y));             // assumed to always be this Wnd's child
+    m_specials_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_specials_panel->Height())); // assumed to always be this Wnd's child
     y += m_specials_panel->Height() + EDGE_PAD;
 
     if (m_env_size->Parent() == this) {
-        m_env_size->MoveTo(GG::Pt(x, y));
+        m_env_size->MoveTo(GG::Pt(left, y));
         y += m_env_size->Height() + EDGE_PAD;
     }
 
+    if (m_button_colonize->Parent() == this) {
+        m_button_colonize->MoveTo(GG::Pt(left, y));
+        y += m_button_colonize->Height() + EDGE_PAD;
+    }
+
     if (m_population_panel->Parent() == this) {
-        m_population_panel->MoveTo(GG::Pt(x, y));
+        m_population_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_population_panel->Height()));
         y += m_population_panel->Height() + EDGE_PAD;
     }
 
     if (m_resource_panel->Parent() == this) {
-        m_resource_panel->MoveTo(GG::Pt(x, y));
+        m_resource_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_resource_panel->Height()));
         y += m_resource_panel->Height() + EDGE_PAD;
     }
 
     if (m_military_panel->Parent() == this) {
-        m_military_panel->MoveTo(GG::Pt(x, y));
+        m_military_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_military_panel->Height()));
         y += m_military_panel->Height() + EDGE_PAD;
     }
 
     if (m_buildings_panel->Parent() == this) {
-        m_buildings_panel->MoveTo(GG::Pt(x, y));
+        m_buildings_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_buildings_panel->Height()));
         y += m_buildings_panel->Height();
     }
 
