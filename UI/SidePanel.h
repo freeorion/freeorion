@@ -46,6 +46,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void        Render();
+    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     static void         Refresh();    ///< causes all sidepanels to refresh / update indicators
 
@@ -65,6 +66,8 @@ public:
 
 private:
     class PlanetPanelContainer;
+
+    void                DoLayout();
 
     void                RefreshImpl();
     void                SetSystemImpl();

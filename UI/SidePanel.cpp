@@ -340,14 +340,14 @@ namespace {
         double scale = 0.0;
         switch (size)
         {
-        case SZ_TINY      : scale = 0.0/5.0; break;
-        case SZ_SMALL     : scale = 1.0/5.0; break;
-        case SZ_MEDIUM    : scale = 2.0/5.0; break;
-        case SZ_LARGE     : scale = 3.0/5.0; break;
-        case SZ_HUGE      : scale = 4.0/5.0; break;
-        case SZ_GASGIANT  : scale = 5.0/5.0; break;
-        case SZ_ASTEROIDS : scale = 5.0/5.0; break;
-        default           : scale = 2.0/5.0; break;
+        case SZ_TINY      : scale = 1.0/7.0; break;
+        case SZ_SMALL     : scale = 2.0/7.0; break;
+        case SZ_MEDIUM    : scale = 3.0/7.0; break;
+        case SZ_LARGE     : scale = 4.0/7.0; break;
+        case SZ_HUGE      : scale = 5.0/7.0; break;
+        case SZ_GASGIANT  : scale = 7.0/7.0; break;
+        case SZ_ASTEROIDS : scale = 7.0/7.0; break;
+        default           : scale = 3.0/7.0; break;
         }
 
         const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
@@ -363,7 +363,7 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.sidepanel-width",                "OPTIONS_DB_UI_SIDEPANEL_WIDTH",                360,    RangedValidator<int>(64, 512));
+        db.Add("UI.sidepanel-width",                "OPTIONS_DB_UI_SIDEPANEL_WIDTH",                370,    RangedValidator<int>(64, 512));
         db.Add("UI.sidepanel-planet-max-diameter",  "OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER",  128,    RangedValidator<int>(16, 512));
         db.Add("UI.sidepanel-planet-min-diameter",  "OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER",  24,     RangedValidator<int>(8,  128));
     }
@@ -565,7 +565,12 @@ private:
 namespace {
     int SystemNameFontSize()
     {
-        return static_cast<int>(ClientUI::Pts()*3/2);
+        return ClientUI::Pts()*3/2;
+    }
+
+    GG::Y SystemNameTextControlHeight()
+    {
+        return GG::Y(SystemNameFontSize()*4/3);
     }
 
     struct SystemRow : public GG::ListBox::Row
@@ -1179,11 +1184,10 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
         y += panel->Height() + SidePanel::EDGE_PAD;               // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
     }
 
-    GG::Y available_height = y;
-    const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(300);
-
+    GG::Y available_height = Height();
     if (GG::Wnd* parent = Parent()) {
         GG::Y containing_height = parent->Height();
+        const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(300);
         available_height = containing_height - BIG_PAD_TO_BE_SAFE;  // height of visible "page" of panels
     }
 
@@ -1281,15 +1285,17 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_planet_panel_container(0),
     m_system_resource_summary(0)
 {
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(SystemNameFontSize());
-    const GG::Y DROP_HEIGHT(SystemNameFontSize());
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    const boost::shared_ptr<GG::Font>&  font = ClientUI::GetFont(SystemNameFontSize());
+    const GG::Y     SYSTEM_NAME_TEXT_HEIGHT = SystemNameTextControlHeight();
+    const GG::X     BUTTON_WIDTH = GG::X(Value(SYSTEM_NAME_TEXT_HEIGHT));
+    const GG::X     MAX_PLANET_DIAMETER = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"));
+    const GG::Y     DROP_DISPLAYED_LIST_HEIGHT = GG::Y(10*SystemNameFontSize());
 
     m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y(140), Width(), h - 170);
 
-    m_button_prev = new GG::Button(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD),   GG::Y(EDGE_PAD),    GG::X(Value(DROP_HEIGHT)),      DROP_HEIGHT, "", font, GG::CLR_WHITE);
-    m_button_next = new GG::Button(Width() - Value(DROP_HEIGHT) - EDGE_PAD, GG::Y(EDGE_PAD),    GG::X(Value(DROP_HEIGHT)),      DROP_HEIGHT, "", font, GG::CLR_WHITE);
-    m_system_name = new CUIDropDownList(GG::X(MAX_PLANET_DIAMETER),         GG::Y0,             Width() - MAX_PLANET_DIAMETER,  DROP_HEIGHT, GG::Y(10*SystemNameFontSize()), GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+    m_button_prev = new GG::Button(MAX_PLANET_DIAMETER + EDGE_PAD,      GG::Y(EDGE_PAD),    BUTTON_WIDTH,                   SYSTEM_NAME_TEXT_HEIGHT,    "", font, GG::CLR_WHITE);
+    m_button_next = new GG::Button(Width() - BUTTON_WIDTH - EDGE_PAD,   GG::Y(EDGE_PAD),    BUTTON_WIDTH,                   SYSTEM_NAME_TEXT_HEIGHT,    "", font, GG::CLR_WHITE);
+    m_system_name = new CUIDropDownList(MAX_PLANET_DIAMETER,            GG::Y0,             Width() - MAX_PLANET_DIAMETER,  SYSTEM_NAME_TEXT_HEIGHT,    DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
 
     TempUISoundDisabler sound_disabler;
 
@@ -1307,8 +1313,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
 
-    m_system_resource_summary = new MultiIconValueIndicator(Width() - MAX_PLANET_DIAMETER - EDGE_PAD*2);
-    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), 140 - m_system_resource_summary->Height()));
+    m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
 
 
     AttachChild(m_system_name);
@@ -1322,6 +1327,7 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     GG::Connect(m_button_next->ClickedSignal,                   &SidePanel::NextButtonClicked,      this);
     GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected,         this);
 
+    DoLayout();
     Hide();
 
     s_side_panels.insert(this);
@@ -1371,6 +1377,46 @@ void SidePanel::RefreshImpl()
     m_planet_panel_container->RefreshAllPlanetPanels();
 }
 
+void SidePanel::DoLayout()
+{
+    const GG::X MAX_PLANET_DIAMETER(GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"));
+    const GG::Y SYSTEM_NAME_TEXT_HEIGHT = SystemNameTextControlHeight();
+    const GG::Y BUTTON_HEIGHT = SYSTEM_NAME_TEXT_HEIGHT;
+    const GG::X BUTTON_WIDTH = GG::X(Value(BUTTON_HEIGHT));
+    const GG::Y PLANET_PANEL_TOP = GG::Y(140);
+    const GG::Y PLANET_PANEL_BOTTOM_PAD = GG::Y(30);    // makes things line up nice.  accounts for top of sidepanel not being top of screen, I think...
+
+    GG::Pt ul = GG::Pt(MAX_PLANET_DIAMETER + EDGE_PAD, GG::Y(EDGE_PAD));
+    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_button_prev->SizeMove(ul, lr);
+
+    ul = GG::Pt(Width() - BUTTON_WIDTH - EDGE_PAD, GG::Y(EDGE_PAD));
+    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    m_button_next->SizeMove(ul, lr);
+
+    ul = GG::Pt(MAX_PLANET_DIAMETER, GG::Y0);           // no EDGE_PAD-ing for name... not sure why, but it works.
+    lr = ul + GG::Pt(Width() - MAX_PLANET_DIAMETER, m_system_name->Height());   // There's no obvious way to determine what the height of a droplist will be.  It's determined from the height passed to the constructor (not the font passed) but isn't equal to the passed height.
+    m_system_name->SizeMove(ul, lr);
+
+    ul = GG::Pt(GG::X0, PLANET_PANEL_TOP);
+    lr = GG::Pt(Width(), Height() - PLANET_PANEL_BOTTOM_PAD);
+    m_planet_panel_container->SizeMove(ul, lr);
+
+    ul = GG::Pt(GG::X(EDGE_PAD), m_planet_panel_container->UpperLeft().y - m_system_resource_summary->Height());
+    lr = ul + GG::Pt(Width() - EDGE_PAD*2, m_system_resource_summary->Height());
+    m_system_resource_summary->SizeMove(ul, lr);
+}
+
+void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (Visible() && old_size != GG::Wnd::Size())
+        DoLayout();
+}
+
 void SidePanel::SetSystemImpl()
 {
     TempUISoundDisabler sound_disabler;
@@ -1406,20 +1452,17 @@ void SidePanel::SetSystemImpl()
 
         int system_names_in_droplist = 0;
         for (unsigned int i = 0; i < sys_vec.size(); i++) {
-            GG::ListBox::Row *row = new SystemRow(sys_vec[i]->ID());
+            const System* sys = sys_vec[i];
+            GG::ListBox::Row *row = new SystemRow(sys->ID());
 
-            if (sys_vec[i]->Name().length()==0) {
-                if (sys_vec[i] == s_system) {
-                    row->push_back(UserString("SP_UNKNOWN_SYSTEM"), ClientUI::Font(), SystemNameFontSize(), ClientUI::TextColor());
-                    GG::Control* control = row->at(0);
-                    GG::TextControl* text_control = dynamic_cast<GG::TextControl*>(control);
-                    text_control->SetTextFormat(GG::FORMAT_VCENTER | GG::FORMAT_CENTER);
-                } else {
-                    delete row;
-                    continue;
-                }
+            if (sys->Name().empty() && sys != s_system) {
+                delete row; // delete rows for systems that aren't known to this client, except the selected system
+                continue;
             } else {
-                row->push_back(new OwnerColoredSystemName(sys_vec[i], ClientUI::GetFont(SystemNameFontSize()), UserString("SP_SYSTEM_NAME")));
+                std::string text = UserString("SP_SYSTEM_NAME");
+                if (sys->Name().empty())
+                    text = UserString("SP_UNKNOWN_SYSTEM"); // if showing an unexplored system (with no name) use "Unknown System" instead of displaying system name text
+                row->push_back(new OwnerColoredSystemName(sys, ClientUI::GetFont(SystemNameFontSize()), text));
             }
 
             m_system_name->Insert(row);

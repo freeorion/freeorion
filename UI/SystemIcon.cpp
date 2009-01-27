@@ -33,7 +33,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost
 {
     // TODO: Have this make a single call per color.  Set up texture coord and vertex buffers (quads) for the glyphs.  Consider extending GG::Font to do similar.
 
-    std::string str = format_text == "" ? system->Name() : boost::io::str(boost::format(format_text) % system->Name());
+    std::string str = format_text == "" ? system->Name() : boost::io::str(FlexibleFormat(format_text) % system->Name());
     GG::X width(0);
     const std::set<int>& owners = system->Owners();
     if (owners.size() <= 1) {
