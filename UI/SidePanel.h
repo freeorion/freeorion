@@ -31,7 +31,7 @@ public:
     class PlanetPanel;
 
     /** \name Structors */ //@{
-    SidePanel(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    SidePanel(GG::X x, GG::Y y, GG::Y h);
     ~SidePanel();
     //@}
 
@@ -57,8 +57,6 @@ public:
 
     static void         SetSystem(int system_id);       ///< sets the system currently being viewed in all side panels
 
-    static const int            MAX_PLANET_DIAMETER;    ///< size of a huge planet, in on-screen pixels
-    static const int            MIN_PLANET_DIAMETER;    ///< size of a tiny planet, in on-screen pixels
     static const int            EDGE_PAD;               ///< spacing between widgets and edges of sidepanel
 
     mutable boost::signal<void (int)>   PlanetSelectedSignal;           ///< emitted when a rotating planet in the side panel is clicked by the user

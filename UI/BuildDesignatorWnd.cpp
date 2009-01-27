@@ -597,16 +597,18 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     Wnd(GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::ONTOP),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
-    GG::X CHILD_WIDTHS = w - MapWnd::SIDE_PANEL_WIDTH;
+    const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    const GG::X CHILD_WIDTHS = w - SIDEPANEL_WIDTH;
     const GG::Y DETAIL_PANEL_HEIGHT = TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
 
-    m_side_panel = new SidePanel(Width() - MapWnd::SIDE_PANEL_WIDTH, GG::Y0, MapWnd::SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
+    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, GG::GUI::GetGUI()->AppHeight());
     m_side_panel->Hide();
 
-    m_map_view_hole = GG::Rect(GG::X0, GG::Y0, CHILD_WIDTHS + SidePanel::MAX_PLANET_DIAMETER, h);
+    m_map_view_hole = GG::Rect(GG::X0, GG::Y0, CHILD_WIDTHS + MAX_PLANET_DIAMETER, h);
 
     m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
     m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));

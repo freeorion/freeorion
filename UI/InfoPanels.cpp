@@ -412,7 +412,7 @@ namespace {
 std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
 const int PopulationPanel::EDGE_PAD = 3;
 PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*4/3), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::CLICKABLE),
     m_popcenter_id(obj.ID()),
     m_pop_stat(0), m_health_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
@@ -521,6 +521,8 @@ void PopulationPanel::DoExpandCollapseLayout()
         GG::Y top = UpperLeft().y;
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
+
+    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     // update appearance of expand/collapse button
     if (s_expanded_map[m_popcenter_id]) {
@@ -699,6 +701,8 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(&obj);
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
+
+    EnableChildClipping(true);
 
     // expand / collapse button at top right    
     m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);

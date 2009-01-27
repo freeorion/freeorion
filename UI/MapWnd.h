@@ -122,8 +122,6 @@ public:
     void            Sanitize();                                     //!< sanitizes the MapWnd after a game
     //!@}
 
-    static const GG::X SIDE_PANEL_WIDTH;
-
 protected:
     virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 

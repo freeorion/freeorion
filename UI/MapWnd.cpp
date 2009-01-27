@@ -253,7 +253,6 @@ void MapWnd::FleetETAMapIndicator::Render()
 // static(s)
 double          MapWnd::s_min_scale_factor = 0.35;
 double          MapWnd::s_max_scale_factor = 8.0;
-const GG::X     MapWnd::SIDE_PANEL_WIDTH(360);
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -286,25 +285,29 @@ MapWnd::MapWnd() :
     m_toolbar->Hide();
 
     // system-view side panel
-    m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
-    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
-    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X APP_WIDTH(GG::GUI::GetGUI()->AppWidth());
+    const GG::Y APP_HEIGHT(GG::GUI::GetGUI()->AppHeight());
 
-    m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
+    m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT);
+    GG::Connect(m_side_panel->SystemSelectedSignal,         &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal,  &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+
+    m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, (APP_HEIGHT-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
 
-    m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_research_wnd = new ResearchWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
-    m_production_wnd = new ProductionWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_production_wnd = new ProductionWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
-    m_design_wnd = new DesignWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_design_wnd = new DesignWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
@@ -388,7 +391,7 @@ MapWnd::MapWnd() :
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
-    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
+    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), APP_HEIGHT - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
                               ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
@@ -2393,13 +2396,21 @@ void MapWnd::Cleanup()
 void MapWnd::Sanitize()
 {
     Cleanup();
-    m_side_panel->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y));
+
+    const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
+    const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
+
+    GG::Pt sp_ul = GG::Pt(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y);
+    GG::Pt sp_lr = sp_ul + GG::Pt(SIDEPANEL_WIDTH, m_side_panel->Height());
+
+    m_side_panel->SizeMove(sp_ul, sp_lr);
     m_chat_display->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN));
     m_chat_display->Clear();
-    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
-    m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
+    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), APP_HEIGHT - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
+    m_sitrep_panel->MoveTo(GG::Pt((APP_WIDTH - SITREP_PANEL_WIDTH) / 2, (APP_HEIGHT - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
-    MoveTo(GG::Pt(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight()));
+    MoveTo(GG::Pt(-APP_WIDTH, -APP_HEIGHT));
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
