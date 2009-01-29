@@ -105,7 +105,7 @@ namespace ValueRef {
         case PT_ASTEROIDS: return "Asteroids";
         case PT_GASGIANT: return "GasGiant";
         default: return "?";
-        }                     
+        }
     }
 
     template <>
