@@ -42,7 +42,7 @@ public:
     void StartServer(); ///< starts a server process on localhost
     void FreeServer();  ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void KillServer();  ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
-    void NewSinglePlayerGame();
+    void NewSinglePlayerGame(bool quickstart = false);
     void MulitplayerGame();
     void SaveGame(const std::string& filename); ///< saves the current game; blocks until all save-related network traffic is resolved.
     void EndGame(); ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state

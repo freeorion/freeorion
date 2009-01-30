@@ -184,7 +184,7 @@ void HumanClientApp::KillServer()
     SetPlayerName("");
 }
 
-void HumanClientApp::NewSinglePlayerGame()
+void HumanClientApp::NewSinglePlayerGame(bool quickstart)
 {
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
         try {
@@ -197,10 +197,12 @@ void HumanClientApp::NewSinglePlayerGame()
     }
 
     GalaxySetupWnd galaxy_wnd;
-    galaxy_wnd.Run();
+    if (!quickstart) {
+        galaxy_wnd.Run();
+    }
 
     bool failed = false;
-    if (galaxy_wnd.EndedWithOk()) {
+    if (quickstart || galaxy_wnd.EndedWithOk()) {
         unsigned int start_time = Ticks();
         while (!Networking().ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
@@ -213,14 +215,42 @@ void HumanClientApp::NewSinglePlayerGame()
         }
 
         if (!failed) {
-            // TODO: Select difficulty of AIs
             SinglePlayerSetupData setup_data;
-            galaxy_wnd.Panel().GetSetupData(setup_data);
+            if (quickstart) {
+                // get values stored in options from previous time game was run
+
+                setup_data.m_size = GetOptionsDB().Get<int>("GameSetup.stars");
+                setup_data.m_shape = GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
+                setup_data.m_age = GetOptionsDB().Get<Age>("GameSetup.galaxy-age");
+
+                // GalaxySetupWnd doesn't allow LANES_NON, but I'll assume the value in the OptionsDB is valid here
+                // since this is quickstart, and should be based on previous acceptable value stored, unless
+                // the options file has be corrupted or edited
+                setup_data.m_starlane_freq = GetOptionsDB().Get<StarlaneFrequency>("GameSetup.starlane-frequency");
+
+                setup_data.m_planet_density = GetOptionsDB().Get<PlanetDensity>("GameSetup.planet-density");
+                setup_data.m_specials_freq = GetOptionsDB().Get<SpecialsFrequency>("GameSetup.specials-frequency");
+                setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
+
+                // DB stores index into array of available colours, so need to get that array to look up value of index.
+                // if stored value is invalid, use a default colour
+                const std::vector<GG::Clr>& empire_colours = EmpireColors();
+                int colour_index = GetOptionsDB().Get<int>("GameSetup.empire-color");
+                if (colour_index >= 0 && colour_index < empire_colours.size())
+                    setup_data.m_empire_color = empire_colours[colour_index];
+                else
+                    setup_data.m_empire_color = GG::CLR_GREEN;
+
+                setup_data.m_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
+
+            } else {
+                galaxy_wnd.Panel().GetSetupData(setup_data);
+                setup_data.m_empire_name = galaxy_wnd.EmpireName();
+                setup_data.m_empire_color = galaxy_wnd.EmpireColor();
+                setup_data.m_AIs = galaxy_wnd.NumberAIs();
+            }
             setup_data.m_new_game = true;
             setup_data.m_host_player_name = SinglePlayerName();
-            setup_data.m_empire_name = galaxy_wnd.EmpireName();
-            setup_data.m_empire_color = galaxy_wnd.EmpireColor();
-            setup_data.m_AIs = galaxy_wnd.NumberAIs();
             Networking().SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
         }

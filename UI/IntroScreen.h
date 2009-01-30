@@ -30,6 +30,7 @@ public:
 
     /** \name Mutators*/ //!@{
     void OnSinglePlayer();  //!< called when single player is clicked
+    void OnQuickStart();    //!< called when quick start is clicked
     void OnMultiPlayer();   //!< called when multi player is clicked
     void OnLoadGame();      //!< called when load game is clicked
     void OnOptions();       //!< called when options is clicked
@@ -45,6 +46,7 @@ public:
 
 private:
     CUIButton*         m_single_player; //!< opens up the single player game dialog
+    CUIButton*         m_quick_start;   //!< starts a single-player game with the default options (no dialog)
     CUIButton*         m_multi_player;  //!< opens up the multi player game dialog
     CUIButton*         m_load_game;     //!< loads a saved single player game
     CUIButton*         m_options;       //!< opens the options dialog

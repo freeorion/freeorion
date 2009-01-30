@@ -548,6 +548,9 @@ FreeOrion Main Menu
 INTRO_BTN_SINGLE_PLAYER
 Single Player
 
+INTRO_BTN_QUICK_START
+Quick Start
+
 INTRO_BTN_MULTI_PLAYER
 Multi Player
 
