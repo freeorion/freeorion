@@ -10,6 +10,22 @@
 
 #define RENDER_DEBUGGING_LINK_RECTS 0
 
+namespace {
+    static bool link_tags_registered = false;
+    void RegisterLinkTags() {
+        if (link_tags_registered)
+            return;
+        // need to register the tags that link text uses so GG::Font will know how to (not) render them
+        GG::Font::RegisterKnownTag("planet");
+        GG::Font::RegisterKnownTag("system");
+        GG::Font::RegisterKnownTag("fleet");
+        GG::Font::RegisterKnownTag("ship");
+        GG::Font::RegisterKnownTag("tech");
+        GG::Font::RegisterKnownTag("building");
+        GG::Font::RegisterKnownTag("encyclopedia");
+        link_tags_registered = true;
+    }
+}
 
 ///////////////////////////////////////
 // LinkText
@@ -102,24 +118,11 @@ void LinkText::MouseLeave()
 ///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
-// initialize static(s)
-bool TextLinker::s_link_tags_registered = false;
-
 TextLinker::TextLinker() : 
     m_old_sel_link(-1),
     m_old_rollover_link(-1)
 {
-    // if this is the first LinkText created, it needs to register the tags that it knows about
-    if (!s_link_tags_registered) {
-        GG::Font::RegisterKnownTag("planet");
-        GG::Font::RegisterKnownTag("system");
-        GG::Font::RegisterKnownTag("fleet");
-        GG::Font::RegisterKnownTag("ship");
-        GG::Font::RegisterKnownTag("tech");
-        GG::Font::RegisterKnownTag("building");
-        GG::Font::RegisterKnownTag("encyclopedia");
-        s_link_tags_registered = true;
-    }
+    RegisterLinkTags();
 }
 
 TextLinker::~TextLinker()

@@ -11,6 +11,18 @@
 namespace {
     static const GG::X SCROLL_WIDTH(14);
     static const int EDGE_PAD(3);
+
+    static const std::string EMPTY_STRING("");
+
+    static bool markup_tags_registered = false;
+
+    void RegisterMarkupTags() {
+        if (markup_tags_registered)
+            return;
+        GG::Font::RegisterKnownTag("img");
+        GG::Font::RegisterKnownTag("h");
+        markup_tags_registered = true;
+    }
 }
 
 //////////////////////////////
@@ -94,11 +106,18 @@ void MarkupBox::MarkupSurface::Refresh() {
         delete *it;
     m_controls.clear();
 
-    // recreate controls / content based on current m_str
-
     // TEMP / TEST~!
     GG::Y top = GG::Y0;
-    GG::Control* control = new GG::TextControl(GG::X0, top, m_text, ClientUI::GetFont(), ClientUI::TextColor());
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
+
+    // if tags for image: ...
+    // create image
+
+    // if just text:
+    GG::Control* control = new LinkText(GG::X0, top, Width(), m_text, font, format, ClientUI::TextColor());
+
+
     m_controls.push_back(control);
     AttachChild(control);
 
@@ -108,7 +127,7 @@ void MarkupBox::MarkupSurface::Refresh() {
     std::cout << "MarkupSurface::Refresh control (x,y): " << control->UpperLeft().x << ", " << control->UpperLeft().y <<
                                                " (w,h): " << control->Width() << ", " << control->Height() << std::endl;
 
-    Resize(GG::Pt(Width(), GG::Y(m_text.length()*ClientUI::Pts())));
+    Resize(GG::Pt(Width(), GG::Y(top)));
     // END TEMP / TEST
 }
 
@@ -120,16 +139,13 @@ void MarkupBox::MarkupSurface::Render() {
 //////////////////////////////
 //        MarkupBox         //
 //////////////////////////////
-namespace {
-    static const std::string EMPTY_STRING("");
-}
-
 MarkupBox::MarkupBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::WndFlag> flags) :
     GG::Control(x, y, w, h, flags),
     m_vscroll(0),
     m_surface(0),
     m_preserve_scroll_position_on_next_text_set(false)
 {
+    RegisterMarkupTags();
     m_surface = new MarkupSurface(GG::X0 + EDGE_PAD, GG::Y0 + EDGE_PAD, w - 2*EDGE_PAD, h - 2*EDGE_PAD, str);
     AttachChild(m_surface);
     EnableChildClipping(true);
@@ -145,6 +161,7 @@ MarkupBox::MarkupBox() :
     m_surface(0),
     m_preserve_scroll_position_on_next_text_set(false)
 {
+    RegisterMarkupTags();
     m_surface = new MarkupSurface(GG::X0, GG::Y0, GG::X0, GG::Y0, "");
     AttachChild(m_surface);
     EnableChildClipping(true);

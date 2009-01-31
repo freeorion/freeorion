@@ -496,6 +496,7 @@ namespace {
 
 ///////////////////////////////////////
 // class CUIScroll::ScrollTab
+///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, 
                                 GG::Clr border_color) : 
     Button(GG::X(orientation == GG::VERTICAL ? 0 : 2),

@@ -57,7 +57,6 @@ private:
     GG::Y           m_surface_top;          ///< position, relative to top of MarkupBox where MarkupSurface is located.  Used to keep track of scrolling position.
 
     bool            m_preserve_scroll_position_on_next_text_set;
-
 };
 
 
