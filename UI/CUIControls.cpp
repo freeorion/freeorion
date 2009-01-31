@@ -878,7 +878,7 @@ void CUILinkTextMultiEdit::SetText(const std::string& str)
     // Since highlighting links on rollover also involves setting text, there are a lot of potentially unnecessary
     // calls to SetText and FindLinks.  This check for whether text is already being set eliminates many of those
     // calls when they aren't necessary, since the results will be overridden later anyway by the outermost (or
-    // lowest on stack, or first ) call to SetText
+    // lowest on stack, or first) call to SetText
     if (!m_already_setting_text_so_dont_link) {
         m_already_setting_text_so_dont_link = true;
         CUIMultiEdit::SetText(str);
@@ -888,8 +888,6 @@ void CUILinkTextMultiEdit::SetText(const std::string& str)
     } else {
         CUIMultiEdit::SetText(str);
     }
-    //CUIMultiEdit::SetText(str);
-    //FindLinks();
 }
 
 void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)

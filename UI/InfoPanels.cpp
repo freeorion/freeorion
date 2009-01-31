@@ -586,21 +586,6 @@ void PopulationPanel::Render()
     glPolygonMode(GL_BACK, initial_modes[1]);
 
     glEnable(GL_TEXTURE_2D);
-
-    // draw details depending on state of ownership and expanded / collapsed status
-    
-    // determine ownership
-    /*const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
-    if(obj->Owners().empty()) 
-        // uninhabited
-    else
-    {
-        if(!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            // inhabited by other empire
-        else
-            // inhabited by this empire (and possibly other empires)
-    }*/
-
 }
 
 void PopulationPanel::Update()
