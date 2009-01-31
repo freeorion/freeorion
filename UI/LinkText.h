@@ -39,13 +39,7 @@ protected:
     void                                            FindLinks();    ///< finds the links in the text and populates m_links
 
 private:
-    struct Link
-    {
-        std::string             type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
-        std::string             data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
-        std::vector<GG::Rect>   rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
-        std::pair<int, int>     text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the link text
-    };
+    struct Link;
 
     int     GetLinkUnderPt(const GG::Pt& pt);   ///< returns the index of the link under screen coordinate \a pt, or -1 if none
     void    ClearOldRollover();

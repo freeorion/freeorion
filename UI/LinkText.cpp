@@ -8,9 +8,9 @@
 
 #include <boost/lexical_cast.hpp>
 
-#define RENDER_DEBUGGING_LINK_RECTS 0
-
 namespace {
+    static const bool RENDER_DEBUGGING_LINK_RECTS = false;
+
     static bool link_tags_registered = false;
     void RegisterLinkTags() {
         if (link_tags_registered)
@@ -116,6 +116,18 @@ void LinkText::MouseLeave()
 
 
 ///////////////////////////////////////
+// TextLinker::Link
+///////////////////////////////////////
+struct TextLinker::Link
+{
+    std::string             type;           ///< contents of type field of link tag (eg "planet" in <planet 3>)
+    std::string             data;           ///< contents of data field of link tag (eg "3" in <planet 3>)
+    std::vector<GG::Rect>   rects;          ///< the rectangles in which this link falls, in window coordinates (some links may span more than one line)
+    std::pair<int, int>     text_posn;      ///< the index of the first (.first) and last + 1 (.second) characters in the link text
+};
+
+
+///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
 TextLinker::TextLinker() : 
@@ -130,16 +142,20 @@ TextLinker::~TextLinker()
 
 void TextLinker::Render_()
 {
-#if RENDER_DEBUGGING_LINK_RECTS
+    if (!RENDER_DEBUGGING_LINK_RECTS)
+        return;
+
+    // draw yellow box around whole text block
     GG::Rect bounds(TextUpperLeft(), TextLowerRight());
-    FlatRectangle(bounds.ul.x, bounds.ul.y, bounds.lr.x, bounds.lr.y, GG::CLR_ZERO, GG::CLR_YELLOW, 1);
+    FlatRectangle(bounds.ul, bounds.lr, GG::CLR_ZERO, GG::CLR_YELLOW, 1);
+
+    // draw red box around individual linkified bits of text within block
     for (unsigned int i = 0; i < m_links.size(); ++i) {
         for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
             GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
-            FlatRectangle(r.ul.x, r.ul.y, r.lr.x, r.lr.y, GG::CLR_ZERO, GG::CLR_RED, 1);
+            FlatRectangle(r.ul, r.lr, GG::CLR_ZERO, GG::CLR_RED, 1);
         }
     }
-#endif
 }
 
 void TextLinker::LButtonDown_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
