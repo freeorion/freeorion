@@ -16,7 +16,7 @@ EmpireManager& Empires();
 
 /** Accessor for the App's universe object */
 Universe& GetUniverse();
-    
+
 /** Accessor for the App's logger */
 log4cpp::Category& Logger();
 

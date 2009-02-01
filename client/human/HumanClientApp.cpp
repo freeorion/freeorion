@@ -236,7 +236,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
                 // if stored value is invalid, use a default colour
                 const std::vector<GG::Clr>& empire_colours = EmpireColors();
                 int colour_index = GetOptionsDB().Get<int>("GameSetup.empire-color");
-                if (colour_index >= 0 && colour_index < empire_colours.size())
+                if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
                     setup_data.m_empire_color = empire_colours[colour_index];
                 else
                     setup_data.m_empire_color = GG::CLR_GREEN;
