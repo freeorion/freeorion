@@ -62,137 +62,157 @@ namespace {
             return retval;
         }
 
-        // TODO: loop through lines
-        const GG::Font::LineData& line = *(line_data.begin());
-        if (line.Empty()) {
-            // TODO:: continue looping through lines instead of returning
-            return retval;
-        }
-        const std::vector<GG::Font::LineData::CharData>& char_data_vec = line.char_data;
+        for (std::vector<GG::Font::LineData>::const_iterator line_it = line_data.begin(); line_it != line_data.end(); ++line_it) {
+            const GG::Font::LineData& line = *line_it;
+            if (line.Empty())   // checks if char_data is empty
+                continue;
+            const std::vector<GG::Font::LineData::CharData>& char_data_vec = line.char_data;
 
 
-        // scan through char data vector, creating a new entry in retval for each block of text
-        // that is delimited by a markup tag
+            // scan through char_data vector, creating a new entry in retval for each block of text
+            // that is delimited by a markup tag
 
-        MarkupTextBlockType         open_text_block_type = PLAIN_TEXT_MARKUP;   // what kind of text is at current char, determined from the most recent markup tag
-        std::vector<std::string>    open_text_block_params;                     // parameters specified in current text block opening tag
-        unsigned int                text_block_start = 0;                       // first character in the current block of text
-        unsigned int                text_block_end = char_data_vec.size() - 1;  // last character in current block of text.
+            MarkupTextBlockType         open_text_block_type = PLAIN_TEXT_MARKUP;   // what kind of text is at current char, determined from the most recent markup tag
+            std::vector<std::string>    open_text_block_params;                     // parameters specified in current text block opening tag
+            unsigned int                text_block_start = 0;                       // first character in the current block of text
+            unsigned int                text_block_end = char_data_vec.size() - 1;  // last character in current block of text.
 
+            // DEBUG
+            std::cout << "char vec size: " << char_data_vec.size() << std::endl << std::endl;
+            // END DBUG
 
-        // scan through text until the text block type changes.  text block type changes happen
-        // when a an (open or close) markup tag is one of the tags of a CharData in the vector
-        for (unsigned int i = 0; i < char_data_vec.size(); ++i) {
-            // get current CharData
-            const GG::Font::LineData::CharData& cur_char_data = char_data_vec[i];
-            // get tags on current CharData
-            const std::vector<boost::shared_ptr<GG::Font::FormattingTag> >& tags = cur_char_data.tags;
+            // scan through text until the text block type changes.  text block type changes happen
+            // when a an (open or close) markup tag is one of the tags of a CharData in the vector
+            for (unsigned int i = 0; i < char_data_vec.size(); ++i) {
+                // get current CharData
+                const GG::Font::LineData::CharData& cur_char_data = char_data_vec[i];
+                // get tags on current CharData
+                const std::vector<boost::shared_ptr<GG::Font::FormattingTag> >& tags = cur_char_data.tags;
 
-            //DEBUG
-            {
-            GG::StrSize char_start = cur_char_data.string_index;
-            GG::StrSize char_size = cur_char_data.string_size;
-            std::string char_text = std::string(text, Value(char_start), Value(char_size));
-            std::cout << "ParseMarkupText char: " << char_text;
-            for (std::vector<boost::shared_ptr<GG::Font::FormattingTag> >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
-                boost::shared_ptr<GG::Font::FormattingTag> temp_format_tag = *it;
-                std::cout << " <";
-                if (temp_format_tag->close_tag)
-                    std::cout << "/";
-                std::cout << temp_format_tag->tag_name;
-                std::cout << ">";
-            }
-            std::cout << std::endl;
-            }
-            //END DEBUG
-
-
-            // scan tags for markup tag
-            MarkupTextBlockType current_char_type = PLAIN_TEXT_MARKUP;  // default, if no tag present in current CharData
-            boost::shared_ptr<GG::Font::FormattingTag> current_char_format_tag;
-
-
-            for (std::vector<boost::shared_ptr<GG::Font::FormattingTag> >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
-                boost::shared_ptr<GG::Font::FormattingTag> format_tag = *it;
-                // check for image tag first.  image overrides / ends any other tags
-                if (format_tag->tag_name == IMAGE_TAG) {
-                    current_char_type = IMAGE_MARKUP;
-                    current_char_format_tag = format_tag;
-                    break;
-                // next check for header tag
-                } else if (format_tag->tag_name == HEADING_TAG) {
-                    current_char_type = HEADING_MARKUP;
-                    current_char_format_tag = format_tag;
-                    break;
+                //DEBUG
+                {
+                GG::StrSize char_start = cur_char_data.string_index;
+                GG::StrSize char_size = cur_char_data.string_size;
+                std::string char_text = std::string(text, Value(char_start), Value(char_size));
+                std::cout << "ParseMarkupText char[" << i << "]: " << char_text;
+                for (std::vector<boost::shared_ptr<GG::Font::FormattingTag> >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+                    boost::shared_ptr<GG::Font::FormattingTag> temp_format_tag = *it;
+                    std::cout << " <";
+                    if (temp_format_tag->close_tag)
+                        std::cout << "/";
+                    std::cout << temp_format_tag->tag_name;
+                    std::cout << ">";
                 }
-            }
+                std::cout << std::endl;
+                }
+                //END DEBUG
 
-            // if current char has a format tag, get the params to that tag
-            std::vector<std::string> current_format_tag_params;
-            if (current_char_format_tag) {
 
-                // DEBUG
-                if (current_char_format_tag->close_tag)
-                    std::cout << "format tag </" << current_char_format_tag->tag_name << " ";
-                else
-                    std::cout << "format tag <" << current_char_format_tag->tag_name << " ";
-                // END DBUG
+                // scan tags for markup tag
+                MarkupTextBlockType current_char_type = PLAIN_TEXT_MARKUP;  // default, if no tag present in current CharData
+                boost::shared_ptr<GG::Font::FormattingTag> current_char_format_tag;
 
-                std::vector<GG::Font::Substring> params_temp = current_char_format_tag->params;
-                for (std::vector<GG::Font::Substring>::const_iterator it = params_temp.begin(); it != params_temp.end(); ++it) {
-                    current_format_tag_params.push_back(*it);
+
+                for (std::vector<boost::shared_ptr<GG::Font::FormattingTag> >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
+                    boost::shared_ptr<GG::Font::FormattingTag> format_tag = *it;
+                    // check for image tag first.  image overrides / ends any other tags
+                    if (format_tag->tag_name == IMAGE_TAG) {
+                        current_char_type = IMAGE_MARKUP;
+                        current_char_format_tag = format_tag;
+                        break;
+                    // next check for header tag
+                    } else if (format_tag->tag_name == HEADING_TAG) {
+                        current_char_type = HEADING_MARKUP;
+                        current_char_format_tag = format_tag;
+                        break;
+                    }
+                }
+
+                // if current char has a format tag, get the params to that tag
+                std::vector<std::string> current_format_tag_params;
+                if (current_char_format_tag) {
 
                     // DEBUG
-                    std::cout << current_format_tag_params.back() << " ";
-                    // END DEBUG
-                }
+                    if (current_char_format_tag->close_tag)
+                        std::cout << "format tag </" << current_char_format_tag->tag_name << " ";
+                    else
+                        std::cout << "format tag <" << current_char_format_tag->tag_name << " ";
+                    // END DBUG
 
-                // DEBUG
-                std::cout << ">" << std::endl << std::endl;
-                // END DBUG
-            }
+                    std::vector<GG::Font::Substring> params_temp = current_char_format_tag->params;
+                    for (std::vector<GG::Font::Substring>::const_iterator it = params_temp.begin(); it != params_temp.end(); ++it) {
+                        current_format_tag_params.push_back(*it);
 
-
-            // if current CharData has a markup tag (ie. is not Plain Text), or if current CharData is
-            // is the last, need to make a new MarkupTextBlock entry in retval
-            if (current_char_type != PLAIN_TEXT_MARKUP || i >= char_data_vec.size() - 1) {
-
-                // get last character of current text block
-                if (i < char_data_vec.size() - 1) {
-                    text_block_end = i - 1; // end at preceeding character if closing block due to following tag
-                } else {
-                    text_block_end = i;     // end at current character if it is the last CharData
-                }
-
-
-                // add new MarkupTextBlock entry to retval, as long as the entry is not empty
-                if (text_block_end >= text_block_start) {
-                    GG::StrSize start = char_data_vec[text_block_start].string_index;
-                    GG::StrSize end = char_data_vec[text_block_end].string_index + char_data_vec[text_block_end].string_size;
-
-
-                    MarkupTextBlock block;
-                    block.text = std::string(text, Value(start), Value(end - start));
-                    block.type = open_text_block_type;
-                    block.params = open_text_block_params;
+                        // DEBUG
+                        std::cout << current_format_tag_params.back() << " ";
+                        // END DEBUG
+                    }
 
                     // DEBUG
-                    std::cout << "MarkupTextBlock: " << std::endl;
-                    std::cout << "text: " << block.text << std::endl;
-                    std::cout << "type: " << block.type << std::endl;
-                    std::cout << "params: ";
-                    for (std::vector<std::string>::const_iterator pit = block.params.begin(); pit != block.params.end(); ++pit)
-                        std::cout << *pit << " ";
-                    std::cout << std::endl << std::endl;
-                    // END DEBUG
-
-                    retval.push_back(block);
+                    std::cout << ">" << std::endl << std::endl;
+                    // END DBUG
                 }
 
-                // set new open tag type and start
-                text_block_start = i;
-                open_text_block_type = current_char_type;
-                open_text_block_params = current_format_tag_params;
+
+                // if current CharData has a markup tag (ie. is not Plain Text), or if current CharData is
+                // is the last, need to make a new MarkupTextBlock entry in retval
+                if (current_char_type != PLAIN_TEXT_MARKUP || i >= char_data_vec.size() - 1) {
+                    // DEBUG
+                    if (current_char_type != PLAIN_TEXT_MARKUP)
+                        std::cout << "found markup tag!" << std::endl;
+                    else
+                        std::cout << "reach end of char vector of size: " << char_data_vec.size() << " at index: " << i << std::endl;
+                    // END DEBUG
+
+
+                    // check if this is the first character in the char data vector.  if it is, don't want to
+                    // close a tag yet; just record this character's tag as the open one
+                    if (i > 0) {
+                        // not first character in char data vector.  tag indicates that the previous block has ended.
+
+
+                        // get last character of current text block
+                        if (current_char_type == PLAIN_TEXT_MARKUP)
+                            text_block_end = i;     // end at current character if it is the last CharData
+                        else
+                            text_block_end = i - 1; // end at preceeding character if closing block due to tag
+
+
+                        // add new MarkupTextBlock entry to retval, as long as the entry is not empty
+                        if (text_block_end >= text_block_start) {
+                            // DEBUG
+                            std::cout << "MarkupTextBlock text block start: " << text_block_start <<
+                                         " and end: " << text_block_end << std::endl;
+                            // END DEBUG
+
+                            GG::StrSize start = char_data_vec[text_block_start].string_index;
+                            GG::StrSize end = char_data_vec[text_block_end].string_index + char_data_vec[text_block_end].string_size;
+
+
+                            MarkupTextBlock block;
+                            block.text = std::string(text, Value(start), Value(end - start));
+                            block.type = open_text_block_type;
+                            block.params = open_text_block_params;
+
+                            // DEBUG
+                            std::cout << "MarkupTextBlock: " << std::endl;
+                            std::cout << "text: " << block.text << std::endl;
+                            std::cout << "type: " << block.type << std::endl;
+                            std::cout << "params: ";
+                            for (std::vector<std::string>::const_iterator pit = block.params.begin(); pit != block.params.end(); ++pit)
+                                std::cout << *pit << " ";
+                            std::cout << std::endl << std::endl;
+                            // END DEBUG
+
+                            retval.push_back(block);
+                        }
+                    }
+
+                    // set new open tag type and start index
+                    text_block_start = i;
+                    open_text_block_type = current_char_type;
+                    open_text_block_params = current_format_tag_params;
+                }
             }
         }
 
@@ -322,21 +342,42 @@ void MarkupBox::MarkupSurface::Refresh() {
     // appropriately, and adjust available_Width and top and left to fit around image.
 
 
-    // if just text:
-    GG::Control* control = new LinkText(GG::X0, top, Width(), m_text, plain_font, format, ClientUI::TextColor());
+    for (std::vector<MarkupTextBlock>::const_iterator it = markup_text_blocks.begin(); it != markup_text_blocks.end(); ++it) {
+        const MarkupTextBlock& block = *it;
 
+        // if just text:
+        GG::Control* control = 0;
 
-    m_controls.push_back(control);
-    AttachChild(control);
+        if (block.type == PLAIN_TEXT_MARKUP) {
+            control = new LinkText(GG::X0, top, Width(), block.text, plain_font, format, ClientUI::TextColor());
+        } else if (block.type == HEADING_MARKUP) {
+            control = new LinkText(GG::X0, top, Width(), block.text, header_font, format, ClientUI::TextColor());
+        } else if (block.type == IMAGE_MARKUP) {
+            std::string filename = "";
+            if (!block.params.empty())
+                filename = block.params[0];
+            boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / filename, true);
+            GG::X tex_width = texture->Width();
+            GG::Y tex_height = texture->Height();
+            control = new GG::StaticGraphic(left, top, tex_width, tex_height, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        } else {
+            std::cout << "unrecognized markup type" << std::endl;
+            continue;
+        }
 
-    control->MoveTo(GG::Pt(GG::X0, top));
-    top += control->Height() + EDGE_PAD;
+        m_controls.push_back(control);
+        AttachChild(control);
 
-    std::cout << "MarkupSurface::Refresh control (x,y): " << control->UpperLeft().x << ", " << control->UpperLeft().y <<
-                                               " (w,h): " << control->Width() << ", " << control->Height() << std::endl;
+        control->MoveTo(GG::Pt(left, top));
+        top += control->Height() + EDGE_PAD;
+
+        std::cout << "MarkupSurface::Refresh control (x,y): " << control->UpperLeft().x << ", " << control->UpperLeft().y <<
+                                                   " (w,h): " << control->Width() << ", " << control->Height() << std::endl;
+    }
 
     Resize(GG::Pt(Width(), GG::Y(top)));
-    // END TEMP / TEST
+
+    std::cout << std::endl << std::endl << "#############################################################" << std::endl << std::endl;
 }
 
 void MarkupBox::MarkupSurface::Render() {
@@ -529,8 +570,7 @@ void MarkupBox::AdjustScrolls() {
 
     GG::Y surface_height = m_surface->Height();
     GG::Y this_height = Height();
-
-    int line_height = ClientUI::Pts();
+    GG::Y line_height = ClientUI::GetFont()->Lineskip();
 
     if (m_vscroll) {
         if (surface_height <= this_height) {
@@ -549,7 +589,7 @@ void MarkupBox::AdjustScrolls() {
         } else {
             // there is a scrollbar already and it's still needed.  adjust scroll range
             m_vscroll->SizeScroll(0 /* min value scrollbar can take */, Value(surface_height) /* max value scrollbar can take */,
-                                  static_cast<unsigned int>(line_height) /* size of one line tick of bar */,
+                                  static_cast<unsigned int>(Value(line_height)) /* size of one line tick of bar */,
                                   static_cast<unsigned int>(Value(this_height)) /* size of one page tick of bar */);
         }
     } else if (!m_vscroll) {
@@ -572,7 +612,7 @@ void MarkupBox::AdjustScrolls() {
 
             // adjust range of scrolling and size of increments and pages after potentially resizing surface during refresh
             m_vscroll->SizeScroll(0, Value(surface_height),
-                                  static_cast<unsigned int>(line_height),
+                                  static_cast<unsigned int>(Value(line_height)),
                                   static_cast<unsigned int>(Value(this_height)));
 
             // show new scrollbar and connect it functionally to this control
