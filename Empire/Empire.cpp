@@ -2462,7 +2462,7 @@ void Empire::UpdateTradeSpending()
         Building *building = universe_object_cast<Building*>(*it);
         if (!building) continue;
         //if (building->Operating())
-            m_maintenance_total_cost += GetBuildingType(building->BuildingTypeName())->MaintenanceCost();
+            m_maintenance_total_cost += building->GetBuildingType()->MaintenanceCost();
     }
     m_resource_pools[RE_TRADE]->ChangedSignal();
 }

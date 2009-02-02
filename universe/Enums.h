@@ -297,11 +297,11 @@ GG_ENUM_STREAM_OUT(PlanetDensity)
 /** starlane frequencies during universe generation */
 enum StarlaneFrequency {
     INVALID_STARLANE_FREQENCY = -1,
-    LANES_NONE, 
-    LANES_FEW, 
-    LANES_SOME, 
-    LANES_SEVERAL, 
-    LANES_MANY, 
+    LANES_NONE,
+    LANES_FEW,
+    LANES_SOME,
+    LANES_SEVERAL,
+    LANES_MANY,
     LANES_VERY_MANY,
     NUM_STARLANE_FREQENCIES     ///< keep this last, the number of starlane frequency options
 };

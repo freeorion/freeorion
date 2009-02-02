@@ -72,7 +72,7 @@ double PopCenter::FuturePopGrowth() const
 {
     double max = GetMeter(METER_POPULATION)->Max();
     double cur = GetMeter(METER_POPULATION)->Current();
-    Logger().debugStream() << "PopCenter::FuturePopGrowth  growth max: " << FuturePopGrowthMax() << "  allocated food: " << AllocatedFood();
+    //Logger().debugStream() << "PopCenter::FuturePopGrowth  growth max: " << FuturePopGrowthMax() << "  allocated food: " << AllocatedFood();
 
     return std::max(-cur, std::min(FuturePopGrowthMax(), std::min(AllocatedFood(), max) - cur));
 }

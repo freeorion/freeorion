@@ -151,7 +151,7 @@ double ResourcePool::GroupAvailable(int system_id) const
 }
 
 void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec) {
-    Logger().debugStream() << "ResourcePool::SetResourceCenters for type " << boost::lexical_cast<std::string>(m_type);
+    //Logger().debugStream() << "ResourcePool::SetResourceCenters for type " << boost::lexical_cast<std::string>(m_type);
     m_resource_centers = resource_center_vec;
     m_resource_center_objs.clear();
     for (std::vector<ResourceCenter*>::const_iterator it = m_resource_centers.begin(); it != m_resource_centers.end(); ++it) {
@@ -161,19 +161,21 @@ void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resour
             Logger().errorStream() << "ResourcePool::SetResourceCenters couldn't cast a ResourceCenter to a UniverseObject";
             continue;
         }
-        Logger().debugStream() << "... adding object: " << obj->Name() << " (" << obj->ID() << ")";
+        //Logger().debugStream() << "... adding object: " << obj->Name() << " (" << obj->ID() << ")";
         m_resource_center_objs[rc] = obj;
     }
 }
 
 void ResourcePool::SetSystemSupplyGroups(const std::set<std::set<int> >& supply_system_groups) {
-    Logger().debugStream() << "ResourcePool::SetSystemSupplyGroups for type " << boost::lexical_cast<std::string>(m_type);
+    //Logger().debugStream() << "ResourcePool::SetSystemSupplyGroups for type " << boost::lexical_cast<std::string>(m_type);
     m_supply_system_groups_resource_production.clear();         // get rid of old data
     // add a (zero-valued, for now) entry in the map from sets to production amounts for each group.  will accumulate actual production later
     for (std::set<std::set<int> >::const_iterator it = supply_system_groups.begin(); it != supply_system_groups.end(); ++it) {
-        Logger().debugStream() << "... group: ";
-        for (std::set<int>::const_iterator set_it = it->begin(); set_it != it->end(); ++set_it)
-            Logger().debugStream() << "... ... " << *set_it;
+        //// DEBUG
+        //Logger().debugStream() << "... group: ";
+        //for (std::set<int>::const_iterator set_it = it->begin(); set_it != it->end(); ++set_it)
+        //    Logger().debugStream() << "... ... " << *set_it;
+        //// END DBUG
         m_supply_system_groups_resource_production[*it] = 0.0;
     }
 }

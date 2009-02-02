@@ -79,6 +79,18 @@ namespace {
         }
     }
 
+    void LoadEmpireNames(std::list<std::string>& names)
+    {
+        boost::filesystem::ifstream ifs(GetSettingsDir() / "empire_names.txt");
+        while (ifs) {
+            std::string latest_name;
+            std::getline(ifs, latest_name);
+            if (latest_name != "") {
+                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
+            }
+        }
+    }
+
     ////////////////////////////////////////////////////////////////
     // templated implementations of Universe graph search methods //
     ////////////////////////////////////////////////////////////////
@@ -379,7 +391,7 @@ Universe::EffectAccountingInfo::EffectAccountingInfo() :
 // class Universe
 /////////////////////////////////////////////
 // static(s)
-const bool Universe::ALL_OBJECTS_VISIBLE = false;
+const bool Universe::ALL_OBJECTS_VISIBLE = true;
 double Universe::s_universe_width = 1000.0;
 bool Universe::s_inhibit_universe_object_signals = false;
 int Universe::s_encoding_empire = ALL_EMPIRES;
@@ -3045,25 +3057,54 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #ifdef FREEORION_BUILD_SERVER
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
+    // load empire names
+    static std::list<std::string> empire_names;
+    if (empire_names.empty())
+        LoadEmpireNames(empire_names);
+
     std::size_t i = 0;
+
     std::vector<GG::Clr> colors = EmpireColors();
+
     for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
-        std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
+        std::string empire_name = "";
 
         GG::Clr color;
         std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.find((*it)->ID());
-        if (setup_data_it != player_setup_data.end()) { // first try to use user-assigned colors
+        if (setup_data_it != player_setup_data.end()) {
+            // use user-assigned name and colour
             empire_name = setup_data_it->second.m_empire_name;
             color = setup_data_it->second.m_empire_color;
+
+            // ensure no other empire gets auto-assigned this colour
             std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
             if (color_it != colors.end())
                 colors.erase(color_it);
-        } else if (!colors.empty()) { // failing that, use other built-in colors
-            int color_idx = RandInt(0, colors.size() - 1);
-            color = colors[color_idx];
-            colors.erase(colors.begin() + color_idx);
-        } else { // as a last resort, make up a color
-            color = GG::FloatClr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+
+        } else {
+            // automatically assign colour
+            if (!colors.empty()) {
+                // a list of colours is available.  pick a colour
+                int color_idx = RandInt(0, colors.size() - 1);
+                color = colors[color_idx];
+                colors.erase(colors.begin() + color_idx);
+            } else {
+                // as a last resort, make up a color
+                color = GG::FloatClr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+            }
+
+            // automatically pick a name
+            if (!empire_names.empty()) {
+                // pick a name from the list of empire names
+                int empire_name_idx = RandSmallInt(0, static_cast<int>(empire_names.size()) - 1);
+                std::list<std::string>::iterator it = empire_names.begin();
+                std::advance(it, empire_name_idx);
+                empire_name = *it;
+                empire_names.erase(it);
+            } else {
+                // use a generic name
+                empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
+            }
         }
 
         int home_planet_id = homeworlds[i];

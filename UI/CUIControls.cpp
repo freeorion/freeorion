@@ -481,6 +481,7 @@ namespace {
 
 ///////////////////////////////////////
 // class CUIScroll::ScrollTab
+///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color, 
                                 GG::Clr border_color) : 
     Button(GG::X(orientation == GG::VERTICAL ? 0 : 2),
@@ -863,7 +864,7 @@ void CUILinkTextMultiEdit::SetText(const std::string& str)
     // Since highlighting links on rollover also involves setting text, there are a lot of potentially unnecessary
     // calls to SetText and FindLinks.  This check for whether text is already being set eliminates many of those
     // calls when they aren't necessary, since the results will be overridden later anyway by the outermost (or
-    // lowest on stack, or first ) call to SetText
+    // lowest on stack, or first) call to SetText
     if (!m_already_setting_text_so_dont_link) {
         m_already_setting_text_so_dont_link = true;
         CUIMultiEdit::SetText(str);
@@ -873,8 +874,6 @@ void CUILinkTextMultiEdit::SetText(const std::string& str)
     } else {
         CUIMultiEdit::SetText(str);
     }
-    //CUIMultiEdit::SetText(str);
-    //FindLinks();
 }
 
 void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)
@@ -1416,4 +1415,44 @@ void FPSIndicator::Render()
 void FPSIndicator::UpdateEnabled()
 {
     m_enabled = GetOptionsDB().Get<bool>("show-fps");
+}
+
+//////////////////////////////////////////////////
+// ShadowedTextControl
+//////////////////////////////////////////////////
+ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                                         GG::Clr color, GG::Flags<GG::TextFormat> format,
+                                         GG::Flags<GG::WndFlag> flags) :
+    GG::TextControl(x, y, w, h, str, font, color, format, flags)
+{}
+
+ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                                         GG::Clr color, GG::Flags<GG::TextFormat> format,
+                                         GG::Flags<GG::WndFlag> flags) :
+    GG::TextControl(x, y, str, font, color, format, flags)
+{}
+
+
+void ShadowedTextControl::Render()
+{
+    GG::Clr text_colour = TextColor();          // save original colour
+
+    SetTextColor(GG::CLR_BLACK);                // render shadows in opaque black
+
+    OffsetMove(GG::Pt(-GG::X1, GG::Y(0)));      // shadow to left
+    TextControl::Render();
+
+    OffsetMove(GG::Pt(GG::X1, GG::Y1));         // up
+    TextControl::Render();
+
+    OffsetMove(GG::Pt(GG::X1, -GG::Y1));        // right
+    TextControl::Render();
+
+    OffsetMove(GG::Pt(-GG::X1, -GG::Y1));       // down
+    TextControl::Render();
+
+    SetTextColor(text_colour);                  // restore original colour
+
+    OffsetMove(GG::Pt(GG::X(0), GG::Y1));       // render main coloured text
+    TextControl::Render();
 }

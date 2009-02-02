@@ -106,12 +106,13 @@ std::vector<UniverseObject*> System::FindObjects() const
 {
     Universe& universe = GetUniverse();
     std::vector<UniverseObject*> retval;
-    // add objects contained in this system, and objects contained in those objects
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        UniverseObject* object = universe.Object(it->second);
-        retval.push_back(object);
-        std::vector<UniverseObject*> contained_objects = object->FindObjects();
-        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(retval));
+        UniverseObject* obj = universe.Object(it->second);
+        if (!obj) {
+            Logger().errorStream() << "System::FindObjects couldn't get a UniverseObject for an object ID in the system";
+            continue;
+        }
+        retval.push_back(obj);
     }
     return retval;
 }
@@ -245,10 +246,10 @@ int System::Insert(UniverseObject* obj, int orbit)
         return -1;
     }
 
-    Logger().debugStream() << "System::Insert system " << this->Name() <<  " (object " << obj->Name() << ", orbit " << orbit << ")";
+    //Logger().debugStream() << "System::Insert system " << this->Name() <<  " (object " << obj->Name() << ", orbit " << orbit << ")";
     //Logger().debugStream() << "..initial objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-    //    Logger().debugStream() << "...." << GetUniverse().Object(it->second)->Name();
+    //    Logger().debugStream() << ".... id: " << it->second << " name: " << GetUniverse().Object(it->second)->Name();
     //Logger().debugStream() << "..initial object systemid: " << obj->SystemID();
 
     if (orbit < -1) {

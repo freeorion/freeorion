@@ -97,6 +97,37 @@ namespace {
         return std::make_pair(std::min(one, two), std::max(one, two));
     }
 
+
+    static bool checked_gl_version_already = false;
+    void CheckGLVersion() {
+        // only execute once
+        if (checked_gl_version_already)
+            return;
+        else
+            checked_gl_version_already = true;
+
+        // get OpenGL version string and parse to get version number
+        const GLubyte* gl_version = glGetString(GL_VERSION);
+        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
+        Logger().debugStream() << "OpenGL version string: " << boost::lexical_cast<std::string>(gl_version);
+
+        float version_number = 0.0;
+        std::istringstream iss(gl_version_string);
+        iss >> version_number;
+        version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
+
+        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+
+        if (version_number < 1.5) {
+            Logger().errorStream() << "OpenGL version number less than 1.5.  FreeOrion uses OpenGL 1.5 features and may crash on this system.";
+            std::cerr << "OpenGL version number " << DoubleToString(version_number, 2, false, false) << " is less than 1.5." << std::endl;      // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+            std::cerr << "FreeOrion requires OpenGL 1.5 and may crash on this system." << std::endl;
+        } else if (version_number < 2.0) {
+            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion reccomended OpenGL version is 2.0 or greater and you may have problems on this system.";
+        }
+    }
+
+
     // disambiguate overloaded function with a function pointer
     void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
 
@@ -220,9 +251,8 @@ void MapWnd::FleetETAMapIndicator::Render()
 
 // MapWnd
 // static(s)
-double           MapWnd::s_min_scale_factor = 0.35;
-double           MapWnd::s_max_scale_factor = 8.0;
-const GG::X MapWnd::SIDE_PANEL_WIDTH(360);
+double          MapWnd::s_min_scale_factor = 0.35;
+double          MapWnd::s_max_scale_factor = 8.0;
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -255,26 +285,29 @@ MapWnd::MapWnd() :
     m_toolbar->Hide();
 
     // system-view side panel
-    m_side_panel = new SidePanel(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y, SIDE_PANEL_WIDTH, GG::GUI::GetGUI()->AppHeight());
-    GG::Connect(m_side_panel->SystemSelectedSignal, &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
-    GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
-    //GG::Connect(m_side_panel->ResourceCenterChangedSignal, &MapWnd::UpdateMetersAndResourcePools, this);                        // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X APP_WIDTH(GG::GUI::GetGUI()->AppWidth());
+    const GG::Y APP_HEIGHT(GG::GUI::GetGUI()->AppHeight());
 
-    m_sitrep_panel = new SitRepPanel( (GG::GUI::GetGUI()->AppWidth()-SITREP_PANEL_WIDTH)/2, (GG::GUI::GetGUI()->AppHeight()-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
+    m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT);
+    GG::Connect(m_side_panel->SystemSelectedSignal,         &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
+    GG::Connect(m_side_panel->ResourceCenterChangedSignal,  &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
+
+    m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, (APP_HEIGHT-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
 
-    m_research_wnd = new ResearchWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_research_wnd = new ResearchWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
-    m_production_wnd = new ProductionWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_production_wnd = new ProductionWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
     GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
 
-    m_design_wnd = new DesignWnd(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() - m_toolbar->Height());
+    m_design_wnd = new DesignWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
@@ -358,7 +391,7 @@ MapWnd::MapWnd() :
     m_chat_display->SetMaxLinesOfHistory(100);
     m_chat_display->Hide();
 
-    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
+    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), APP_HEIGHT - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
                               ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
     AttachChild(m_chat_edit);
     m_chat_edit->Hide();
@@ -1106,6 +1139,11 @@ void MapWnd::InitTurn(int turn_number)
     m_production_wnd->Update();
 
     Logger().debugStream() << "Turn initialization graphic buffer clearing";
+
+
+    CheckGLVersion();
+
+
     // clear out all the old buffers
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
          it != m_star_core_quad_vertices.end();
@@ -1177,7 +1215,7 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     if (m_starlane_fleet_supply_colors.m_name) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glDeleteBuffersARB(1, &m_starlane_fleet_supply_colors.m_name);
 #else
         glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
@@ -1292,7 +1330,7 @@ void MapWnd::InitTurn(int turn_number)
         m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
     }
     if (!raw_starlane_colors.empty()) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glGenBuffersARB(1, &m_starlane_colors.m_name);
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
         glBufferDataARB(GL_ARRAY_BUFFER_ARB,
@@ -1819,13 +1857,13 @@ void MapWnd::RenderGalaxyGas()
         // basis, however, since GL 2.0 will soon be required for the use of
         // Ogre, shaders, etc.  This note applies to all such uses of the ARB
         // versions of GL functions and macros.
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
         glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
@@ -1851,13 +1889,13 @@ void MapWnd::RenderSystems()
                  it != m_star_halo_quad_vertices.end();
                  ++it) {
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
                 glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
@@ -1874,13 +1912,13 @@ void MapWnd::RenderSystems()
                  it != m_star_core_quad_vertices.end();
                  ++it) {
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, it->second.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
 #endif
                 glVertexPointer(2, GL_FLOAT, 0, 0);
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
                 glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_star_texture_coords.m_name);
 #else
                 glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
@@ -1891,7 +1929,7 @@ void MapWnd::RenderSystems()
         }
 
 
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
         glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 #else
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1929,7 +1967,7 @@ void MapWnd::RenderStarlanes()
         glVertexPointer(2, GL_FLOAT, 0, 0);
 
         if (coloured) {
-#ifdef FREEORION_WIN32
+#ifdef USE_GL_BIND_BUFFER_ARB
             glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_starlane_colors.m_name);
 #else
             glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
@@ -2358,13 +2396,21 @@ void MapWnd::Cleanup()
 void MapWnd::Sanitize()
 {
     Cleanup();
-    m_side_panel->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - SIDE_PANEL_WIDTH, m_toolbar->LowerRight().y));
+
+    const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
+    const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
+
+    GG::Pt sp_ul = GG::Pt(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y);
+    GG::Pt sp_lr = sp_ul + GG::Pt(SIDEPANEL_WIDTH, m_side_panel->Height());
+
+    m_side_panel->SizeMove(sp_ul, sp_lr);
     m_chat_display->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN));
     m_chat_display->Clear();
-    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::GUI::GetGUI()->AppHeight() - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
-    m_sitrep_panel->MoveTo(GG::Pt((GG::GUI::GetGUI()->AppWidth() - SITREP_PANEL_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - SITREP_PANEL_HEIGHT) / 2));
+    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), APP_HEIGHT - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
+    m_sitrep_panel->MoveTo(GG::Pt((APP_WIDTH - SITREP_PANEL_WIDTH) / 2, (APP_HEIGHT - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
-    MoveTo(GG::Pt(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight()));
+    MoveTo(GG::Pt(-APP_WIDTH, -APP_HEIGHT));
     m_zoom_factor = 1.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();

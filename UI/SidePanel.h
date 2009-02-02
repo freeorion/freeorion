@@ -31,7 +31,7 @@ public:
     class PlanetPanel;
 
     /** \name Structors */ //@{
-    SidePanel(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    SidePanel(GG::X x, GG::Y y, GG::Y h);
     ~SidePanel();
     //@}
 
@@ -46,6 +46,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void        Render();
+    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     static void         Refresh();    ///< causes all sidepanels to refresh / update indicators
 
@@ -55,10 +56,9 @@ public:
     void                SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
     //@}
 
-    static void         SetSystem(int system_id); ///< sets the system currently being viewed in all side panels
+    static void         SetSystem(int system_id);       ///< sets the system currently being viewed in all side panels
 
-    static const int            MAX_PLANET_DIAMETER; // size of a huge planet, in on-screen pixels
-    static const int            MIN_PLANET_DIAMETER; // size of a tiny planet, in on-screen pixels
+    static const int            EDGE_PAD;               ///< spacing between widgets and edges of sidepanel
 
     mutable boost::signal<void (int)>   PlanetSelectedSignal;           ///< emitted when a rotating planet in the side panel is clicked by the user
     mutable boost::signal<void (int)>   SystemSelectedSignal;           ///< emitted when something in the sidepanel wants to change the selected system, including the droplist or back/forward arrows
@@ -66,6 +66,8 @@ public:
 
 private:
     class PlanetPanelContainer;
+
+    void                DoLayout();
 
     void                RefreshImpl();
     void                SetSystemImpl();
@@ -93,8 +95,6 @@ private:
 
     std::set<boost::signals::connection>                m_system_connections;
     std::map<const Fleet*, boost::signals::connection>  m_fleet_state_change_signals;
-
-    static const int            EDGE_PAD;
 };
 
 #endif // _SidePanel_h_

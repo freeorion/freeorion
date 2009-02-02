@@ -26,11 +26,12 @@
 
 namespace {
     const GG::X MAIN_MENU_WIDTH(200);
-    const GG::Y MAIN_MENU_HEIGHT(340);
+    const GG::Y MAIN_MENU_HEIGHT(380);
 
     void Options(OptionsDB& db)
     {
         db.AddFlag("force-external-server",  "OPTIONS_DB_FORCE_EXTERNAL_SERVER", false);
+        db.Add<std::string>("external-server-address",  "OPTIONS_DB_EXTERNAL_SERVER_ADDRESS", "localhost");
         db.Add("UI.main-menu.x", "OPTIONS_DB_UI_MAIN_MENU_X", 0.75, RangedValidator<double>(0.0, 1.0));
         db.Add("UI.main-menu.y", "OPTIONS_DB_UI_MAIN_MENU_Y", 0.47, RangedValidator<double>(0.0, 1.0));
     }
@@ -39,12 +40,11 @@ namespace {
 
 }
 
-//****************************************************************************************************
 class CreditsWnd : public GG::Wnd
 {
 public:
     CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co);
-        
+
     virtual void Render();
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_bRender=false;}
 
@@ -159,15 +159,17 @@ IntroScreen::IntroScreen() :
 
     //create buttons
     m_single_player = new CUIButton(GG::X(15), GG::Y(12), GG::X(160), UserString("INTRO_BTN_SINGLE_PLAYER"));
-    m_multi_player = new CUIButton(GG::X(15), GG::Y(52), GG::X(160), UserString("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game = new CUIButton(GG::X(15), GG::Y(92), GG::X(160), UserString("INTRO_BTN_LOAD_GAME"));
-    m_options = new CUIButton(GG::X(15), GG::Y(132), GG::X(160), UserString("INTRO_BTN_OPTIONS"));
-    m_about = new CUIButton(GG::X(15), GG::Y(172), GG::X(160), UserString("INTRO_BTN_ABOUT"));
-    m_credits = new CUIButton(GG::X(15), GG::Y(212), GG::X(160), UserString("INTRO_BTN_CREDITS"));
-    m_exit_game = new CUIButton(GG::X(15), GG::Y(282), GG::X(160), UserString("INTRO_BTN_EXIT"));
-    
+    m_quick_start = new CUIButton(GG::X(15), GG::Y(52), GG::X(160), UserString("INTRO_BTN_QUICK_START"));
+    m_multi_player = new CUIButton(GG::X(15), GG::Y(92), GG::X(160), UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game = new CUIButton(GG::X(15), GG::Y(132), GG::X(160), UserString("INTRO_BTN_LOAD_GAME"));
+    m_options = new CUIButton(GG::X(15), GG::Y(172), GG::X(160), UserString("INTRO_BTN_OPTIONS"));
+    m_about = new CUIButton(GG::X(15), GG::Y(212), GG::X(160), UserString("INTRO_BTN_ABOUT"));
+    m_credits = new CUIButton(GG::X(15), GG::Y(252), GG::X(160), UserString("INTRO_BTN_CREDITS"));
+    m_exit_game = new CUIButton(GG::X(15), GG::Y(322), GG::X(160), UserString("INTRO_BTN_EXIT"));
+
     //attach buttons
     AttachChild(m_single_player);
+    AttachChild(m_quick_start);
     AttachChild(m_multi_player);
     AttachChild(m_load_game);
     AttachChild(m_options);
@@ -177,6 +179,7 @@ IntroScreen::IntroScreen() :
 
     //connect signals and slots
     GG::Connect(m_single_player->ClickedSignal, &IntroScreen::OnSinglePlayer, this);
+    GG::Connect(m_quick_start->ClickedSignal, &IntroScreen::OnQuickStart, this);
     GG::Connect(m_multi_player->ClickedSignal, &IntroScreen::OnMultiPlayer, this);
     GG::Connect(m_load_game->ClickedSignal, &IntroScreen::OnLoadGame, this);
     GG::Connect(m_options->ClickedSignal, &IntroScreen::OnOptions, this);
@@ -198,6 +201,13 @@ void IntroScreen::OnSinglePlayer()
     delete m_credits_wnd;
     m_credits_wnd = 0;
     HumanClientApp::GetApp()->NewSinglePlayerGame();
+}
+
+void IntroScreen::OnQuickStart()
+{
+    delete m_credits_wnd;
+    m_credits_wnd = 0;
+    HumanClientApp::GetApp()->NewSinglePlayerGame(true);
 }
 
 void IntroScreen::OnMultiPlayer()

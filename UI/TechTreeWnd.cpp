@@ -7,6 +7,7 @@
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/AppInterface.h"
+#include "EncyclopediaDetailPanel.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Tech.h"
@@ -635,302 +636,6 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
     }
 }
 
-
-//////////////////////////////////////////////////
-// TechTreeWnd::TechDetailPanel                 //
-//////////////////////////////////////////////////
-/** A panel of text controls and/or graphics that shows a greater level of detail about a tech (such
-    as its full description text and effects text) than what appears in the tech graph. */
-class TechTreeWnd::TechDetailPanel : public CUIWnd
-{
-public:
-    TechDetailPanel(GG::X w, GG::Y h);
-
-    const Tech* CurrentTech() const {return m_tech;}
-
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void Render();
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
-
-    /* need to redefine this so that icons and name can be put at the top of the Wnd, rather
-       than being restricted to the client area of a CUIWnd */
-    GG::Pt ClientUpperLeft() const;
-
-    void SetTech(const Tech* tech)  {m_tech = tech; Reset();}
-
-private:
-    static const GG::X TEXT_MARGIN_X;
-    static const GG::Y TEXT_MARGIN_Y;
-
-    void Reset();
-    void DoLayout();
-
-    const Tech*         m_tech;
-    GG::TextControl*    m_tech_name_text;
-    GG::TextControl*    m_cost_text;
-    GG::TextControl*    m_summary_text;
-    CUIMultiEdit*       m_description_box;
-    GG::StaticGraphic*  m_tech_graphic;
-    GG::StaticGraphic*  m_category_graphic;
-};
-const GG::X TechTreeWnd::TechDetailPanel::TEXT_MARGIN_X(3);
-const GG::Y TechTreeWnd::TechDetailPanel::TEXT_MARGIN_Y(3);
-
-TechTreeWnd::TechDetailPanel::TechDetailPanel(GG::X w, GG::Y h) :
-    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
-    m_tech(0)
-{
-    const int PTS = ClientUI::Pts();
-    const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
-    const int SUMMARY_PTS = PTS*4/3;
-
-    m_tech_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS), ClientUI::TextColor());
-    m_cost_text =      new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),     ClientUI::TextColor());
-    m_summary_text =   new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),  ClientUI::TextColor());
-    m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
-    m_description_box->SetColor(GG::CLR_ZERO);
-    m_description_box->SetInteriorColor(GG::CLR_ZERO);
-
-    m_tech_graphic = 0;
-    m_category_graphic = 0;
-
-    AttachChild(m_tech_name_text);
-    AttachChild(m_cost_text);
-    AttachChild(m_summary_text);
-    AttachChild(m_description_box);
-
-    DoLayout();
-}
-
-void TechTreeWnd::TechDetailPanel::DoLayout()
-{
-    const int PTS = ClientUI::Pts();
-    const int NAME_PTS = PTS*3/2;
-    const int COST_PTS = PTS;
-    const int SUMMARY_PTS = PTS*4/3;
-
-    const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
-
-    // name
-    GG::Pt ul = GG::Pt();
-    GG::Pt lr = ul + GG::Pt(Width(), GG::Y(NAME_PTS + 4));
-    m_tech_name_text->SizeMove(ul, lr);
-
-    // cost / turns
-    ul += GG::Pt(GG::X0, m_tech_name_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(COST_PTS + 4));
-    m_cost_text->SizeMove(ul, lr);
-
-    // one line summary
-    ul += GG::Pt(GG::X0, m_cost_text->Height());
-    lr = ul + GG::Pt(Width(), GG::Y(SUMMARY_PTS + 4));
-    m_summary_text->SizeMove(ul, lr);
-
-    // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(GG::X1, ICON_SIZE + TEXT_MARGIN_Y + 1);
-    lr = ul + GG::Pt(Width() - TEXT_MARGIN_X - BORDER_RIGHT, Height() - BORDER_BOTTOM - ul.y - TEXT_MARGIN_Y);
-    m_description_box->SizeMove(ul, lr);
-
-    // icons
-    if (m_tech_graphic) {
-        ul = GG::Pt(GG::X1, GG::Y1);
-        lr = ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-        m_tech_graphic->SizeMove(ul, lr);
-    }
-    if (m_category_graphic) {
-        lr = GG::Pt(Width() - BORDER_RIGHT, GG::Y(ICON_SIZE + 1));
-        ul = lr - GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-        m_category_graphic->SizeMove(ul, lr);
-    }
-}
-
-void TechTreeWnd::TechDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
-    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
-
-    // maybe later do something interesting with docking
-    GG::Wnd::SizeMove(ul, lr);
-
-    if (Visible() && old_size != GG::Wnd::Size())
-        DoLayout();
-}
-
-GG::Pt TechTreeWnd::TechDetailPanel::ClientUpperLeft() const
-{
-    return GG::Wnd::UpperLeft();
-}
-
-void TechTreeWnd::TechDetailPanel::Render()
-{
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    const GG::Y ICON_HEIGHT = m_summary_text->LowerRight().y - m_tech_name_text->UpperLeft().y;
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_HEIGHT + BORDER_BOTTOM);
-    GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
-
-   // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
-
-    // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // draw outer border on pixel inside of the outer edge of the window
-    glPolygonMode(GL_BACK, GL_LINE);
-    glBegin(GL_POLYGON);
-        glColor(ClientUI::WndOuterBorderColor());
-        glVertex(ul.x, ul.y);
-        glVertex(lr.x, ul.y);
-        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
-        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
-        glVertex(ul.x, lr.y);
-        glVertex(ul.x, ul.y);
-    glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
-
-    // draw inner border, including extra resize-tab lines
-    glBegin(GL_LINE_STRIP);
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_ul.x, cl_ul.y);
-        glVertex(cl_lr.x, cl_ul.y);
-        glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
-        glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
-        glVertex(cl_ul.x, cl_lr.y);
-        glVertex(cl_ul.x, cl_ul.y);
-    glEnd();
-    glBegin(GL_LINES);
-        // draw the extra lines of the resize tab
-        glColor(ClientUI::WndInnerBorderColor());
-        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
-        glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-        
-        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
-        glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
-}
-
-void TechTreeWnd::TechDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (m_drag_offset != GG::Pt(-GG::X1, -GG::Y1)) {  // resize-dragging
-        GG::Pt new_lr = pt - m_drag_offset;
-
-        // constrain to within parent
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt max_lr = parent->ClientLowerRight();
-            new_lr.x = std::min(new_lr.x, max_lr.x);
-            new_lr.y = std::min(new_lr.y, max_lr.y);
-        }        
-
-        Resize(new_lr - UpperLeft());
-    } else {    // normal-dragging
-        GG::Pt final_move = move;
-
-        if (GG::Wnd* parent = Parent()) {
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
-            GG::Pt new_ul = ul + move, new_lr = lr + move;
-
-            GG::Pt min_ul = parent->ClientUpperLeft() + GG::Pt(GG::X1, GG::Y1);
-            GG::Pt max_lr = parent->ClientLowerRight();
-            GG::Pt max_ul = max_lr - Size();
-
-            new_ul.x = std::max(min_ul.x, std::min(max_ul.x, new_ul.x));
-            new_ul.y = std::max(min_ul.y, std::min(max_ul.y, new_ul.y));
-
-            final_move = new_ul - ul;
-        }
-
-        GG::Wnd::LDrag(pt, final_move, mod_keys);
-    }
-}
-
-void TechTreeWnd::TechDetailPanel::Reset()
-{
-    if (m_tech_graphic) {
-        DeleteChild(m_tech_graphic);
-        m_tech_graphic = 0;
-    }
-    if (m_category_graphic) {
-        DeleteChild(m_category_graphic);
-        m_category_graphic = 0;
-    }
-
-    if (!m_tech) {
-        m_tech_name_text->SetText("");
-        m_summary_text->SetText("");
-        m_cost_text->SetText("");
-        m_description_box->SetText("");
-        return;
-    }
-
-    m_tech_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10),
-                                           ClientUI::TechTexture(m_tech->Name()),
-                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_tech_graphic->Show();
-    m_tech_graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
-    AttachChild(m_tech_graphic);
-
-    m_category_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(10), GG::Y(10),
-                                               ClientUI::CategoryIcon(m_tech->Category()),
-                                               GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_category_graphic->Show();
-    m_category_graphic->SetColor(ClientUI::CategoryColor(m_tech->Category()));
-    AttachChild(m_category_graphic);
-
-
-    DoLayout();
-
-    m_tech_name_text->SetText(UserString(m_tech->Name()));
-    using boost::io::str;
-
-    m_summary_text->SetText("<i>" + str(FlexibleFormat(UserString("TECH_DETAIL_TYPE_STR"))
-                                        % UserString(m_tech->Category())
-                                        % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
-                                        % UserString(m_tech->ShortDescription()))
-                            + "</i>");
-
-    m_summary_text->SetColor(ClientUI::CategoryColor(m_tech->Category()));
- 
-    m_cost_text->SetText(str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR"))
-                             % static_cast<int>(m_tech->ResearchCost() + 0.5)
-                             % m_tech->ResearchTurns()));
-
-
-    std::string description_str = str(FlexibleFormat(UserString("TECH_DETAIL_DESCRIPTION_STR"))
-                                      % UserString(m_tech->Description()));
-
-
-    if (!m_tech->Effects().empty()) {
-        description_str += str(FlexibleFormat(UserString("TECH_DETAIL_EFFECTS_STR"))
-                               % EffectsDescription(m_tech->Effects()));
-    }
-
-
-    const std::vector<ItemSpec>& unlocked_items = m_tech->UnlockedItems();
-    if (!unlocked_items.empty())
-        description_str += UserString("TECH_DETAIL_UNLOCKS_SECTION_STR");
-    for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
-        description_str += str(FlexibleFormat(UserString("TECH_DETAIL_UNLOCKED_ITEM_STR"))
-                               % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
-                               % UserString(unlocked_items[i].name));
-    }
-
-
-    m_description_box->SetText(description_str);
-}
 
 //////////////////////////////////////////////////
 // TechTreeWnd::TechNavigator                   //
@@ -2502,7 +2207,7 @@ const GG::Y TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT(200);
 
 TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::CLICKABLE),
-    m_tech_detail_panel(0),
+    m_enc_detail_panel(0),
     m_tech_navigator(0),
     m_layout_panel(0),
     m_tech_list(0)
@@ -2522,11 +2227,11 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     GG::Connect(m_tech_list->TechClickedSignal, &TechTreeWnd::TechClickedSlot, this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal, &TechTreeWnd::TechDoubleClickedSlot, this);
 
-    m_tech_detail_panel = new TechDetailPanel(m_layout_panel->ClientWidth() - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
-    AttachChild(m_tech_detail_panel);
+    m_enc_detail_panel = new EncyclopediaDetailPanel(m_layout_panel->ClientWidth() - NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
+    AttachChild(m_enc_detail_panel);
 
     m_tech_navigator = new TechNavigator(NAVIGATOR_WIDTH, NAVIGATOR_AND_DETAIL_HEIGHT);
-    m_tech_navigator->MoveTo(GG::Pt(m_tech_detail_panel->Width(), GG::Y1));
+    m_tech_navigator->MoveTo(GG::Pt(m_enc_detail_panel->Width(), GG::Y1));
     GG::Connect(m_tech_navigator->TechClickedSignal, &TechTreeWnd::CenterOnTech, this);
     m_layout_panel->AttachChild(m_tech_navigator);
 
@@ -2593,8 +2298,8 @@ void TechTreeWnd::Update(const Tech* tech)
 
 void TechTreeWnd::Clear()
 {
-    m_tech_navigator->SetTech(0);
-    m_tech_detail_panel->SetTech(0);
+    m_tech_navigator->SetTech(0);    
+    m_enc_detail_panel->UnsetAll();
     m_layout_panel->Clear();
 }
 
@@ -2790,7 +2495,7 @@ void TechTreeWnd::TechBrowsedSlot(const Tech* tech)
 void TechTreeWnd::TechClickedSlot(const Tech* tech)
 {
     m_tech_navigator->SetTech(tech);
-    m_tech_detail_panel->SetTech(tech);
+    m_enc_detail_panel->SetItem(tech);
     TechSelectedSignal(tech);
 }
 

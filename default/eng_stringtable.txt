@@ -79,6 +79,8 @@ New Fleet %1%
 NEW_FLEET_NAME_NO_NUMBER
 New Fleet
 
+NOT_APPLICABLE
+N/A
 
 ##########################
 # Status Update Messages #
@@ -173,6 +175,9 @@ Sets how wide to render fleet supply lines.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
+
+OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
+Address to connect to in external server mode. If used, this client becomes the manager of the game.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
@@ -393,6 +398,15 @@ Auto-select the top fleet when a fleet window is opened.  Consider using this fl
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
 
+OPTIONS_DB_UI_SIDEPANEL_WIDTH
+Sets size of system sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
+Sets size of largest-rendered rotating planets on sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
+Sets size of smallest-rendered rotating planets on sidepanel.
+
 OPTIONS_DB_GAMESETUP_STARS
 The number of stars in the galaxy to be generated.
 
@@ -539,6 +553,9 @@ FreeOrion Main Menu
 
 INTRO_BTN_SINGLE_PLAYER
 Single Player
+
+INTRO_BTN_QUICK_START
+Quick Start
 
 INTRO_BTN_MULTI_PLAYER
 Multi Player
@@ -1130,7 +1147,42 @@ Side Panel
 SP_SYSTEM_PRODUCTION
 System Production
 
+RESOURCE_PRODUCTION_TOOLTIP
+System %1%: %2%
+
+RESOURCE_ALLOCATION_TOOLTIP
+System %1%: %2%
+
+FOOD_CONSUMPTION
+Food Consumption
+
+MINERALS_CONSUMPTION
+Minerals Consumption
+
+INDUSTRY_CONSUMPTION
+Industrial Consumption
+
+RESEARCH_CONSUMPTION
+Research Consumption
+
+TRADE_CONSUMPTION
+Trade Consumption
+
+INTERSYSTEM_EXCHANGE_TOOLTIP
+Inter-System Exchange
+
+IMPORT_EXPORT_TOOLTIP
+Import / Export
+
+RESOURCE_IMPORT
+Importing
+
+RESOURCE_EXPORT
+Available for Export
+
+
 ##Planet Panel#############
+
 PLANET_PANEL
 Planet Panel
 
@@ -1146,6 +1198,7 @@ Size
 PL_COLONIZE
 Colonize
 
+
 ##Population Panel#########
 
 PP_POPULATION
@@ -1153,6 +1206,7 @@ Population
 
 PP_HEALTH
 Health
+
 
 ## Resources Panel ##########
 
@@ -1180,6 +1234,7 @@ Trade Level
 RP_CONSTRUCTION
 Construction Infrastructure
 
+
 ## Military Panel ##########
 
 MP_SUPPLY
@@ -1197,6 +1252,7 @@ Detection
 MP_STEALTH
 Stealth
 
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1208,6 +1264,7 @@ BP_COMPLETE_BUILDING_TOOLTIP
 '''%1%
 
 %2%'''
+
 
 ## General Tooltips#########
 
@@ -1243,6 +1300,12 @@ Special <i>%1%</i>
 
 TT_UNKNOWN
 Unknown
+
+TT_RESOURCE_PRODUCTION
+%1% produces %2%
+
+TT_RESOURCE_ALLOCATION
+%1% consumes %2%
 
 ## Misc. Sidepanel##########
 
@@ -1338,29 +1401,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Never
 
-TECH_DETAIL_TYPE_STR
-%1% %2% - %3%
-
-TECH_DETAIL_DESCRIPTION_STR
-%1%
-
-TECH_DETAIL_EFFECTS_STR
-'''
-
-<u>Effects</u>
-
-%1%'''
-
-TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-<u>Unlocks</u>
-
-'''
-
-TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
 
 TECH_WND_TECH_COMPLETED
 COMPLETED
@@ -1603,7 +1643,19 @@ Attack: %2%
 Defense: %3%
 Speed: %4%'''
 
+ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
+'''
 
+<u>Unlocks</u>
+
+'''
+
+ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
+'''%1%: %2%
+'''
+
+ENC_TECH_DETAIL_TYPE_STR
+%1% %2% - %3%
 
 ####################
 # Combat Messages  #

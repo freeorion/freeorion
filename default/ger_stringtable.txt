@@ -147,6 +147,9 @@ Render gassy substance around systems to give galaxy shape.  May slow rendering 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
+OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
+Address to connect to in external server mode. If used, this client becomes the manager of the game.
+
 OPTIONS_DB_UI_MAIN_MENU_X
 Position of the center of the intro screen main menu, as a portion of the application's total width.
 
@@ -395,6 +398,15 @@ Auto-select the top fleet when a fleet window is opened.  Consider using this fl
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Close open windows such as fleet windows and the system-view side panel when you right-click on the main map.
+
+OPTIONS_DB_UI_SIDEPANEL_WIDTH
+Sets size of system sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
+Sets size of largest-rendered rotating planets on sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
+Sets size of smallest-rendered rotating planets on sidepanel.
 
 OPTIONS_DB_GAMESETUP_STARS
 The number of stars in the galaxy to be generated.
@@ -1736,6 +1748,9 @@ Der Planet %planet% im %system% - System wurde besiedelt.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 Die Flotte %fleet% ist im %system% - System angekommen und erwartet weitere Befehle.
+
+SITREP_EMPIRE_ELIMINATED
+Das Imperium %name% wurde ausgeloescht.
 
 
 ####################

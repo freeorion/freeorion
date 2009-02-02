@@ -400,6 +400,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         m_num_expected_players = m_player_save_game_data.size();
         server.CreateAIClients(std::vector<PlayerSetupData>(m_num_expected_players - 1), m_expected_ai_player_names);
     }
+
+    Base::post_event(CheckStartConditions()); // force immediate check if all expected AIs are present, so that the FSM won't get stuck in this state waiting for JoinGame messages that will never come since no other AIs are left to join
 }
 
 WaitingForSPGameJoiners::~WaitingForSPGameJoiners()
@@ -442,6 +444,23 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 
     return discard_event();
 }
+
+boost::statechart::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
+    ServerApp& server = Server();
+
+    if (static_cast<int>(server.m_networking.NumPlayers()) == m_num_expected_players) {
+        if (m_setup_data->m_new_game)
+            server.NewGameInit(m_setup_data);
+        else
+            server.LoadGameInit(m_player_save_game_data, m_server_save_game_data);
+        return transit<PlayingGame>();
+    }
+
+    return discard_event();
+}
+
 
 
 ////////////////////////////////////////////////////////////

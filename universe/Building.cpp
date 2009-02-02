@@ -57,7 +57,7 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
     AddOwner(empire_id);
     const BuildingType* type = GetBuildingType();
     if (type)
-        Rename(type->Name());
+        Rename(UserString(type->Name()));
     else
         Rename(UserString("ENC_BUILDING"));
 }

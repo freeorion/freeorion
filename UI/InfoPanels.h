@@ -324,6 +324,7 @@ public:
     void            Update();
 
     void            SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
+    void            ClearToolTip(MeterType meter_type);
 
 private:
     std::vector<StatisticIcon*>         m_icons;
@@ -391,13 +392,14 @@ private:
   * over the system resource production summary. */
 class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system);
+    SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int empire_id = ALL_EMPIRES);
 
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
 
     virtual void    Render();
 
 private:
+    void            Clear();
     void            Initialize();
     virtual void    UpdateImpl(std::size_t mode, const GG::Wnd* target);
 
@@ -407,15 +409,18 @@ private:
 
     ResourceType        m_resource_type;
     const System*       m_system;
+    int                 m_empire_id;
+
+    double              m_production;               // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated
+    double              m_allocation;               // set by UpdateAllocation - used like m_production
 
     GG::TextControl*    m_production_label;
     GG::TextControl*    m_allocation_label;
-
     GG::TextControl*    m_import_export_label;
-    GG::TextControl*    m_import_export_amount;
 
     std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_production_labels_and_amounts;
     std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_allocation_labels_and_amounts;
+    std::vector<std::pair<GG::TextControl*, GG::TextControl*> > m_import_export_labels_and_amounts;
 
     GG::Y               row_height;
 
@@ -426,8 +431,6 @@ private:
     static const GG::X  LABEL_WIDTH;
     static const GG::X  VALUE_WIDTH;
     static const int    EDGE_PAD;
-
-    bool initialized;
 };
 
 #endif

@@ -27,7 +27,7 @@ public:
     /** \name Accessors */ //@{
     /** returns the BuildingType object for this building, specific to the owning empire (or the default version if there
         is other than exactly one owner) */
-    const BuildingType* GetBuildingType() const;
+    const BuildingType*     GetBuildingType() const;
 
     const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
     int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
