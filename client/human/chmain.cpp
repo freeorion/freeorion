@@ -120,11 +120,14 @@ int main(int argc, char* argv[])
         root->setRenderSystem(selected_render_system);
 
         selected_render_system->setConfigOption("Full Screen", GetOptionsDB().Get<bool>("fullscreen") ? "Yes" : "No");
+        std::string video_mode_str =
+            boost::io::str(boost::format("%1% x %2% @ %3%-bit colour") %
+                           GetOptionsDB().Get<int>("app-width") %
+                           GetOptionsDB().Get<int>("app-height") %
+                           GetOptionsDB().Get<int>("color-depth"));
+        selected_render_system->setConfigOption("Video Mode", video_mode_str);
 
         RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());
-        window->resize(GetOptionsDB().Get<int>("app-width"),
-                       GetOptionsDB().Get<int>("app-height"));
-        Ogre::WindowEventUtilities::messagePump();
         SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
 
         Camera* camera = scene_manager->createCamera("Camera");
