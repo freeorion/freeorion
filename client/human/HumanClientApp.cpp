@@ -158,6 +158,11 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
 
+#ifdef FREEORION_WIN32
+    GLenum error = glewInit();
+    assert(error == GLEW_OK);
+#endif
+
     m_fsm->initiate();
 }
 

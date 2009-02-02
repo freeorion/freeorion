@@ -9,7 +9,7 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
-#include <GG/SDL/SDLGUI.h>
+#include <GG/GUI.h>
 
 #include <boost/format.hpp>
 

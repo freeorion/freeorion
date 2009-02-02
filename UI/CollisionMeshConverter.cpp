@@ -36,6 +36,13 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include <boost/cast.hpp>
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
 
 //------------------------------------------------------------------------------------------------
 CollisionMeshConverter::CollisionMeshConverter(Ogre::Entity* entity, const Ogre::Matrix4& transform) :
