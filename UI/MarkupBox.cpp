@@ -114,16 +114,16 @@ namespace {
 
 
                 for (std::vector<boost::shared_ptr<GG::Font::FormattingTag> >::const_iterator it = tags.begin(); it != tags.end(); ++it) {
-                    boost::shared_ptr<GG::Font::FormattingTag> format_tag = *it;
+                    boost::shared_ptr<GG::Font::FormattingTag> format_tag_temp = *it;
                     // check for image tag first.  image overrides / ends any other tags
-                    if (format_tag->tag_name == IMAGE_TAG) {
+                    if (format_tag_temp->tag_name == IMAGE_TAG) {
                         current_char_type = IMAGE_MARKUP;
-                        current_char_format_tag = format_tag;
+                        current_char_format_tag = format_tag_temp;
                         break;
                     // next check for header tag
-                    } else if (format_tag->tag_name == HEADING_TAG) {
+                    } else if (format_tag_temp->tag_name == HEADING_TAG) {
                         current_char_type = HEADING_MARKUP;
-                        current_char_format_tag = format_tag;
+                        current_char_format_tag = format_tag_temp;
                         break;
                     }
                 }
@@ -157,18 +157,12 @@ namespace {
                 // if current CharData has a markup tag (ie. is not Plain Text), or if current CharData is
                 // is the last, need to make a new MarkupTextBlock entry in retval
                 if (current_char_type != PLAIN_TEXT_MARKUP || i >= char_data_vec.size() - 1) {
-                    // DEBUG
-                    if (current_char_type != PLAIN_TEXT_MARKUP)
-                        std::cout << "found markup tag!" << std::endl;
-                    else
-                        std::cout << "reach end of char vector of size: " << char_data_vec.size() << " at index: " << i << std::endl;
-                    // END DEBUG
-
 
                     // check if this is the first character in the char data vector.  if it is, don't want to
                     // close a tag yet; just record this character's tag as the open one
                     if (i > 0) {
-                        // not first character in char data vector.  tag indicates that the previous block has ended.
+                        // current CharData is not first character in char data vector.
+                        // rather, a tag indicates that the previous block has ended
 
 
                         // get last character of current text block
@@ -176,6 +170,23 @@ namespace {
                             text_block_end = i;     // end at current character if it is the last CharData
                         else
                             text_block_end = i - 1; // end at preceeding character if closing block due to tag
+
+
+
+                        // DEBUG
+                        if (current_char_type != PLAIN_TEXT_MARKUP) {
+                            if (current_char_format_tag->close_tag) {
+                                std::cout << "found markup close tag!" << std::endl;
+                                current_char_type = PLAIN_TEXT_MARKUP;
+                            } else {
+                                std::cout << "found markup tag!" << std::endl;
+                            }
+                        } else {
+                            std::cout << "reached end of char vector of size: " << char_data_vec.size() <<
+                                         " at index: " << i << std::endl;
+                        }
+                        // END DEBUG
+
 
 
                         // add new MarkupTextBlock entry to retval, as long as the entry is not empty
@@ -187,10 +198,11 @@ namespace {
 
                             GG::StrSize start = char_data_vec[text_block_start].string_index;
                             GG::StrSize end = char_data_vec[text_block_end].string_index + char_data_vec[text_block_end].string_size;
+                            std::string block_text_temp = std::string(text, Value(start), Value(end - start));
 
 
                             MarkupTextBlock block;
-                            block.text = std::string(text, Value(start), Value(end - start));
+                            block.text = block_text_temp.substr(0, block_text_temp.find_last_not_of("\n") + 1); // strip trailing newlines
                             block.type = open_text_block_type;
                             block.params = open_text_block_params;
 
@@ -208,10 +220,19 @@ namespace {
                         }
                     }
 
-                    // set new open tag type and start index
-                    text_block_start = i;
-                    open_text_block_type = current_char_type;
-                    open_text_block_params = current_format_tag_params;
+
+                    // set new open tag type and start index.  if current tag is an open tag, it is the start
+                    // of a new text block.  if it is a close tag, it is not part of a new block, and the new
+                    // block starts at a later character
+                    if (current_char_format_tag && current_char_format_tag->close_tag) {
+                        text_block_start = i + 1;
+                        open_text_block_type = PLAIN_TEXT_MARKUP;
+                        open_text_block_params.clear();
+                    } else {
+                        text_block_start = i;
+                        open_text_block_type = current_char_type;
+                        open_text_block_params = current_format_tag_params;
+                    }
                 }
             }
         }
@@ -375,7 +396,7 @@ void MarkupBox::MarkupSurface::Refresh() {
                                                    " (w,h): " << control->Width() << ", " << control->Height() << std::endl;
     }
 
-    Resize(GG::Pt(Width(), GG::Y(top)));
+    Resize(GG::Pt(Width(), GG::Y(top + plain_font->Lineskip())));
 
     std::cout << std::endl << std::endl << "#############################################################" << std::endl << std::endl;
 }
@@ -391,8 +412,7 @@ void MarkupBox::MarkupSurface::Render() {
 MarkupBox::MarkupBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::WndFlag> flags) :
     GG::Control(x, y, w, h, flags),
     m_vscroll(0),
-    m_surface(0),
-    m_preserve_scroll_position_on_next_text_set(false)
+    m_surface(0)
 {
     RegisterMarkupTags();
     m_surface = new MarkupSurface(GG::X0 + EDGE_PAD, GG::Y0 + EDGE_PAD, w - 2*EDGE_PAD, h - 2*EDGE_PAD, str);
@@ -407,8 +427,7 @@ MarkupBox::MarkupBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
 MarkupBox::MarkupBox() :
     GG::Control(),
     m_vscroll(0),
-    m_surface(0),
-    m_preserve_scroll_position_on_next_text_set(false)
+    m_surface(0)
 {
     RegisterMarkupTags();
     m_surface = new MarkupSurface(GG::X0, GG::Y0, GG::X0, GG::Y0, "");
@@ -489,12 +508,6 @@ void MarkupBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void MarkupBox::SetText(const std::string& str) {
-    if (m_preserve_scroll_position_on_next_text_set) {
-        m_preserve_scroll_position_on_next_text_set = false;
-        m_surface->SetText(str);
-        return;
-    }
-
     // save old surface size
     GG::Pt old_surface_size = m_surface->Size();
 
@@ -506,15 +519,12 @@ void MarkupBox::SetText(const std::string& str) {
         AdjustScrolls();
 }
 
-void MarkupBox::PreserveScrollPositionOnNextTextSet() {
-    m_preserve_scroll_position_on_next_text_set = true;
-}
-
 void MarkupBox::Refresh() {
     m_surface->Refresh();
 }
 
 void MarkupBox::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
+    std::cout << "MarkupBox::MouseWheel move: " << move << std::endl;
     if (!Disabled() && m_vscroll) {
         for (int i = 0; i < move; ++i)
             m_vscroll->ScrollLineDecr();
@@ -570,7 +580,7 @@ void MarkupBox::AdjustScrolls() {
 
     GG::Y surface_height = m_surface->Height();
     GG::Y this_height = Height();
-    GG::Y line_height = ClientUI::GetFont()->Lineskip();
+    GG::Y line_height = ClientUI::GetFont()->Lineskip() * 3;
 
     if (m_vscroll) {
         if (surface_height <= this_height) {

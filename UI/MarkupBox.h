@@ -7,6 +7,9 @@
 namespace GG {
     class Scroll;
 }
+namespace {
+    struct MarkupTextBlock;
+}
 
 
 /** A control similar to GG::MultiEdit that displayed text, links, and images with layout determined
@@ -37,12 +40,6 @@ public:
     void                Clear();
 
     void                Refresh();
-
-    /** Ensures that the next call to SetText() preserves the scroll position.  Useful when repeatedly
-      * setting the same text with slight changes in markup that will not affect the layout, such as
-      * when responding to mouseovers of links in text. */
-    void                PreserveScrollPositionOnNextTextSet();
-
     //@}
 
 private:
@@ -51,12 +48,11 @@ private:
     void                AdjustScrolls();    ///< sets the sizes of the scroll-space and the screen-space of the scrolls
     void                VScrolled(int upper, int ignored1, int ignored2, int ignored3);
 
-    GG::Scroll*     m_vscroll;              ///< scrollbar used to scroll through marked up text
-    MarkupSurface*  m_surface;              ///< all contents are attached as children of surface so that scrolling only needs to update the surface position to move all contents
+    GG::Scroll*                     m_vscroll;      ///< scrollbar used to scroll through marked up text
+    MarkupSurface*                  m_surface;      ///< all contents are attached as children of surface so that scrolling only needs to update the surface position to move all contents
 
-    GG::Y           m_surface_top;          ///< position, relative to top of MarkupBox where MarkupSurface is located.  Used to keep track of scrolling position.
-
-    bool            m_preserve_scroll_position_on_next_text_set;
+    GG::Y                           m_surface_top;  ///< position, relative to top of MarkupBox where MarkupSurface is located.  Used to keep track of scrolling position.
+    std::vector<MarkupTextBlock>    m_text_blocks;  ///< result of parsing raw text.  each entry can be rendered as a single GG::Control
 };
 
 
