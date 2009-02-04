@@ -2,8 +2,14 @@
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
 
-#include <AL/alc.h>
-#include <AL/alut.h>
+#ifdef FREEORION_MACOSX
+# include <OpenAL/alc.h>
+# include <OpenAL/alut.h>
+#else
+# include <AL/alc.h>
+# include <AL/alut.h>
+#endif
+
 
 namespace {
     const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
@@ -12,7 +18,8 @@ namespace {
     {
         ALCcontext *m_context;
         ALCdevice *m_device;
-       
+        ALenum error_code;
+
         m_device = alcOpenDevice(NULL); /* currently only select the default output device - usually a NULL-terminated
                                          * string desctribing a device can be passed here (of type ALchar*)
                                          */
@@ -20,23 +27,52 @@ namespace {
             Logger().errorStream() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
         } else {
             m_context = alcCreateContext(m_device,NULL); // instead of NULL we can pass a ALCint* pointing to a set of
-            alcMakeContextCurrent(m_context);            // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
-            alutInitWithoutContext(NULL,NULL); // we need to init alut or we won't be able to read .wav files
-            alListenerf(AL_GAIN,1.0);
-            alGenSources(num_sources, sources);
-            alGenBuffers(2, music_buffers);
-            for (int i = 0; i < num_sources; ++i) {
-                alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
+                                                         // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
+
+            if ((m_context != NULL) && (alcMakeContextCurrent(m_context) == AL_TRUE))
+            {
+                alutInitWithoutContext(NULL,NULL); // we need to init alut or we won't be able to read .wav files
+                alListenerf(AL_GAIN,1.0);
+                alGetError(); // clear possible previous errors (just to be certain)
+                alGenSources(num_sources, sources);
+                error_code = alGetError();
+                if(error_code != AL_NO_ERROR)
+                {
+                    Logger().errorStream() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                    alcMakeContextCurrent(NULL);
+                    alcDestroyContext(m_context);
+                }
+                else
+                {
+                    alGetError();
+                    alGenBuffers(2, music_buffers);
+                    error_code = alGetError();
+                    if(error_code != AL_NO_ERROR)
+                    {
+                        Logger().errorStream() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
+                        alDeleteBuffers(2, music_buffers);
+                        alcMakeContextCurrent(NULL);
+                        alcDestroyContext(m_context);
+                    }
+                    else
+                    {
+                        for (int i = 0; i < num_sources; ++i)
+                        {
+                            alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
+                        }
+                        Logger().debugStream() << "OpenAL initialized. Version "
+                                               << alGetString(AL_VERSION)
+                                               << "Renderer "
+                                               << alGetString(AL_RENDERER)
+                                               << "Vendor "
+                                               << alGetString(AL_VENDOR) << "\n"
+                                               << "Extensions: "
+                                               << alGetString(AL_EXTENSIONS) << "\n";
+                    }
+                }
             }
-            Logger().debugStream() << "OpenAL initialized. Version "
-                                   << alGetString(AL_VERSION)
-                                   << "Renderer "
-                                   << alGetString(AL_RENDERER)
-                                   << "Vendor "
-                                   << alGetString(AL_VENDOR)
-                                   << "\nExtensions: "
-                                   << alGetString(AL_EXTENSIONS)
-                                   << "\n";
+            else
+                Logger().errorStream() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
         }
     }
 
@@ -312,6 +348,8 @@ void Sound::DoFrame()
         if (state == AL_STOPPED)  /// this may happen if the source plays all its buffers before we manage to refill them
             alSourcePlay(m_sources[0]);
     }
+
+    std::cerr << "Sound::DoFrame()\n";
 } 
 
 bool Sound::UISoundsTemporarilyDisabled() const

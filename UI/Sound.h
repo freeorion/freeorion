@@ -2,7 +2,11 @@
 #ifndef _Sound_h_
 #define _Sound_h_
 
-#include <AL/al.h>
+#ifdef FREEORION_MACOSX
+# include <OpenAL/al.h>
+#else
+# include <AL/al.h>
+#endif
 
 #include <vorbis/vorbisfile.h>
 

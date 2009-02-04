@@ -75,6 +75,7 @@ public:
 
 private:
     virtual void HandleSystemEvents();
+    virtual void RenderBegin();
 
     void HandleMessage(Message& msg);
     void HandleSaveGameDataRequest();

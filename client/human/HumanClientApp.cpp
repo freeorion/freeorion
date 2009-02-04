@@ -436,9 +436,7 @@ void HumanClientApp::Enter2DMode()
 }
 
 void HumanClientApp::Exit2DMode()
-{
-    OgreGUI::Exit2DMode();
-}
+{ OgreGUI::Exit2DMode(); }
 
 void HumanClientApp::StartTurn()
 {
@@ -461,6 +459,12 @@ void HumanClientApp::HandleSystemEvents()
         Networking().GetMessage(msg);
         HandleMessage(msg);
     }
+}
+
+void HumanClientApp::RenderBegin()
+{
+    OgreGUI::RenderBegin();
+    Sound::GetSound().DoFrame();
 }
 
 void HumanClientApp::HandleMessage(Message& msg)
