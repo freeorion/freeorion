@@ -3,9 +3,12 @@
 #define _CUISpin_h_
 
 #include "CUIControls.h"
-#include <GG/Spin.h>
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
+
+#include <GG/Spin.h>
+
 
 namespace detail {
     struct PlayValueChangedSound
@@ -50,8 +53,7 @@ namespace detail {
         if (!sound_dir.empty() && sound_dir[sound_dir.size() - 1] != '/')
             sound_dir += '/';
         sound_dir += "data/sound/";
-        if (GetOptionsDB().Get<bool>("UI.sound.enabled"))
-            HumanClientApp::GetApp()->PlaySound(sound_dir + GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+        Sound::GetSound().PlaySound(sound_dir + GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
     }
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
 }

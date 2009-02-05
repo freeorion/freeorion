@@ -5,6 +5,7 @@
 #include "FleetWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
+#include "Sound.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/System.h"
@@ -15,9 +16,8 @@
 
 
 namespace {
-    bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
-    void PlayFleetButtonOpenSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"));}
-    void PlayFleetButtonRolloverSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"));}
+    void PlayFleetButtonOpenSound() {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);}
+    void PlayFleetButtonRolloverSound() {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);}
 }
 
 

@@ -6,9 +6,7 @@
 #include "../../util/Process.h"
 #include "../../UI/ClientUI.h"
 
-#include <GG/SDL/SDLGUI.h>
-
-#include <boost/filesystem/path.hpp>
+#include <GG/Ogre/OgreGUI.h>
 
 #include <string>
 #include <map>
@@ -18,15 +16,28 @@
 
 struct HumanClientFSM;
 class MultiplayerLobbyWnd;
+namespace Ogre {
+    class Root;
+    class RenderWindow;
+    class SceneManager;
+    class Camera;
+    class Viewport;
+}
 
 /** the application framework class for the human player FreeOrion client. */
-class HumanClientApp : public ClientApp, public GG::SDLGUI
+class HumanClientApp :
+    public ClientApp,
+    public GG::OgreGUI
 {
 public:
     class CleanQuit : public std::exception {};
 
     /** \name Structors */ //@{
-    HumanClientApp();
+    HumanClientApp(Ogre::Root* root,
+                   Ogre::RenderWindow* window,
+                   Ogre::SceneManager* scene_manager,
+                   Ogre::Camera* camera,
+                   Ogre::Viewport* viewport);
     virtual ~HumanClientApp();
     //@}
 
@@ -49,30 +60,13 @@ public:
     void LoadSinglePlayerGame(); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void SetSaveFileName(const std::string& filename); ///< records the current game's filename
 
+    Ogre::SceneManager* SceneManager();
+    Ogre::Camera*       Camera();
+    Ogre::Viewport*     Viewport();
+
     virtual void Enter2DMode();
     virtual void Exit2DMode();
     virtual void StartTurn();
-
-    /** plays a music file.  The file will be played in an infinitve loop if \a loop is < 0, and it will be played \a loops + 1 times otherwise. */
-    virtual void PlayMusic(const boost::filesystem::path& path, int loops = 0);
-    
-    /** stops playing music */
-    virtual void StopMusic();
-
-    /** plays a sound file.*/
-    virtual void PlaySound(const boost::filesystem::path& path);
-
-    /** frees the cached sound data associated with the filename.*/
-    virtual void FreeSound(const boost::filesystem::path& path);
-
-    /** frees all cached sound data.*/
-    virtual void FreeAllSounds();
-
-    /** sets the music volume from 0 (muted) to 255 (full volume); \a vol is range-adjusted */
-    virtual void SetMusicVolume(int vol);
-
-    /** sets the UI sounds volume from 0 (muted) to 255 (full volume); \a vol is range-adjusted */
-    virtual void SetUISoundsVolume(int vol);
 
     virtual void Exit(int code);
     //@}
@@ -80,17 +74,8 @@ public:
     static HumanClientApp* GetApp(); ///< returns HumanClientApp pointer to the single instance of the app
 
 private:
-    virtual void SDLInit();
-    virtual void GLInit();
-    virtual void Initialize();
-
     virtual void HandleSystemEvents();
-    virtual void HandleNonGGEvent(const SDL_Event& event);
-
     virtual void RenderBegin();
-
-    virtual void FinalCleanup();
-    virtual void SDLQuit();
 
     void HandleMessage(Message& msg);
     void HandleSaveGameDataRequest();
@@ -108,6 +93,10 @@ private:
     int                         m_turns_since_autosave; ///< the number of turns that have elapsed since the last autosave
     bool                        m_in_save_game_cycle; ///< true during SaveGame()'s send-request, receive-save-game-data-request, send-save-game-data cycle
     bool                        m_connected;          ///< true if we are in a state in which we are supposed to be connected to the server
+    Ogre::Root*                 m_root;
+    Ogre::SceneManager*         m_scene_manager;
+    Ogre::Camera*               m_camera;
+    Ogre::Viewport*             m_viewport;
 
     friend struct HumanClientFSM;
     friend struct IntroMenu;

@@ -5,6 +5,7 @@
 #include "ClientUI.h"
 #include "CUIDrawUtil.h"
 #include "CUISpin.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -20,50 +21,34 @@
 #include <limits>
 
 namespace {
-    bool PlaySounds()
-    {
-        return GetOptionsDB().Get<bool>("UI.sound.enabled");
-    }
-
     void PlayButtonClickSound()
-    {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
-    }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
     void PlayTurnButtonClickSound()
-    {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"));
-    }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
 
     struct PlayButtonCheckSound
     {
         PlayButtonCheckSound(bool play_only_when_checked) : m_play_only_when_checked(play_only_when_checked) {}
         void operator()(bool checked) const
         {
-            if ((!m_play_only_when_checked || checked) && PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"));
+            if (!m_play_only_when_checked || checked)
+                Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
         }
         const bool m_play_only_when_checked;
     };
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
-    {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-select"));
-    }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
 
     void PlayDropDownListOpenSound()
-    {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"));
-    }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
 
     void PlayItemDropSound(GG::ListBox::iterator)
-    {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.item-drop"));
-    }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
 
     void PlayTextTypingSound(const std::string&)
-    {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.text-typing"));
-    }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
     {
@@ -149,8 +134,8 @@ bool CUIButton::InWindow(const GG::Pt& pt) const
 void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled()) {
-        if (State() != BN_ROLLOVER && PlaySounds())
-            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        if (State() != BN_ROLLOVER)
+            Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
         SetState(BN_ROLLOVER);
     }
 }
@@ -267,8 +252,8 @@ bool CUIArrowButton::FillBackgroundWithWndColor() const
 void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled()) {
-        if (State() != BN_ROLLOVER && PlaySounds())
-            HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        if (State() != BN_ROLLOVER)
+            Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
         SetState(BN_ROLLOVER);
     }
 }
@@ -597,7 +582,7 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_being_dragged && !m_mouse_here) {
-        if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+        Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
         m_mouse_here = true;
     }
 }
@@ -723,7 +708,7 @@ void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"));
+    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
     m_mouse_here = true;
 }
 

@@ -66,15 +66,20 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
 ////////////////////////////////////////////////////////////
 IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx),
-    m_intro_screen(new IntroScreen)
+    m_combat_wnd(GetOptionsDB().Get<bool>("tech-demo") ? new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()) : 0),
+    m_intro_screen(GetOptionsDB().Get<bool>("tech-demo") ? 0 : new IntroScreen)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
-    Client().Register(m_intro_screen);
+    if (GetOptionsDB().Get<bool>("tech-demo"))
+        Client().Register(m_combat_wnd);
+    else
+        Client().Register(m_intro_screen);
 }
 
 IntroMenu::~IntroMenu()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
+    delete m_combat_wnd;
     delete m_intro_screen;
 }
 
@@ -161,14 +166,16 @@ MPLobby::MPLobby(my_context ctx) :
     m_lobby_wnd(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby";
-    context<IntroMenu>().m_intro_screen->Hide();
+    if (context<IntroMenu>().m_intro_screen)
+        context<IntroMenu>().m_intro_screen->Hide();
 }
 
 MPLobby::~MPLobby()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
     delete m_lobby_wnd;
-    context<IntroMenu>().m_intro_screen->Show();
+    if (context<IntroMenu>().m_intro_screen)
+        context<IntroMenu>().m_intro_screen->Show();
 }
 
 boost::statechart::result MPLobby::react(const Disconnection& d)
@@ -510,7 +517,7 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 ////////////////////////////////////////////////////////////
 ResolvingCombat::ResolvingCombat(my_context ctx) :
     Base(ctx),
-    m_combat_wnd(new CombatWnd((Client().AppWidth() - CombatWnd::WIDTH) / 2, Client().AppHeight()))
+    m_combat_wnd(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
     Client().Register(m_combat_wnd);
@@ -525,20 +532,20 @@ ResolvingCombat::~ResolvingCombat()
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
-    m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
+    //m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return discard_event();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
-    m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
+    //m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return discard_event();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatEnd& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
-    m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
+    //m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return transit<WaitingForTurnDataIdle>();
 }

@@ -5,6 +5,7 @@
 #include "IntroScreen.h"
 #include "MapWnd.h"
 #include "SidePanel.h"
+#include "Sound.h"
 #include "../util/AppInterface.h"
 
 #undef int64_t
@@ -271,29 +272,51 @@ GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
     return GG::Clr();
 }
 
+std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes()
+{
+    static std::map<PlanetType, std::string> prefixes;
+    if (prefixes.empty()) {
+        prefixes[PT_SWAMP] = "Swamp";
+        prefixes[PT_TOXIC] = "Toxic";
+        prefixes[PT_INFERNO] = "Inferno";
+        prefixes[PT_RADIATED] = "Radiated";
+        prefixes[PT_BARREN] = "Barren";
+        prefixes[PT_TUNDRA] = "Tundra";
+        prefixes[PT_DESERT] = "Desert";
+        prefixes[PT_TERRAN] = "Terran";
+        prefixes[PT_OCEAN] = "Ocean";
+        prefixes[PT_GASGIANT] = "GasGiant";
+    }
+    return prefixes;
+}
+
 std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
 {
     static std::map<StarType, std::string> prefixes;
-    prefixes[STAR_BLUE] = "blue";
-    prefixes[STAR_WHITE] = "white";
-    prefixes[STAR_YELLOW] = "yellow";
-    prefixes[STAR_ORANGE] = "orange";
-    prefixes[STAR_RED] = "red";
-    prefixes[STAR_NEUTRON] = "neutron";
-    prefixes[STAR_BLACK] = "blackhole";
+    if (prefixes.empty()) {
+        prefixes[STAR_BLUE] = "blue";
+        prefixes[STAR_WHITE] = "white";
+        prefixes[STAR_YELLOW] = "yellow";
+        prefixes[STAR_ORANGE] = "orange";
+        prefixes[STAR_RED] = "red";
+        prefixes[STAR_NEUTRON] = "neutron";
+        prefixes[STAR_BLACK] = "blackhole";
+    }
     return prefixes;
 }
 
 std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 {
     static std::map<StarType, std::string> prefixes;
-    prefixes[STAR_BLUE] = "halo_blue";
-    prefixes[STAR_WHITE] = "halo_white";
-    prefixes[STAR_YELLOW] = "halo_yellow";
-    prefixes[STAR_ORANGE] = "halo_orange";
-    prefixes[STAR_RED] = "halo_red";
-    prefixes[STAR_NEUTRON] = "halo_neutron";
-    prefixes[STAR_BLACK] = "halo_blackhole";
+    if (prefixes.empty()) {
+        prefixes[STAR_BLUE] = "halo_blue";
+        prefixes[STAR_WHITE] = "halo_white";
+        prefixes[STAR_YELLOW] = "halo_yellow";
+        prefixes[STAR_ORANGE] = "halo_orange";
+        prefixes[STAR_RED] = "halo_red";
+        prefixes[STAR_NEUTRON] = "halo_neutron";
+        prefixes[STAR_BLACK] = "halo_blackhole";
+    }
     return prefixes;
 }
 
@@ -580,8 +603,8 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 {
     GG::ThreeButtonDlg dlg(GG::X(320),GG::Y(200),message,GetFont(Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
-    if (play_alert_sound && GetOptionsDB().Get<bool>("UI.sound.enabled"))
-        HumanClientApp::GetApp()->PlaySound(SoundDir() / "alert.wav");
+    if (play_alert_sound)
+        Sound::GetSound().PlaySound(SoundDir() / "alert.wav", true);
     dlg.Run();
 }
 
@@ -639,19 +662,6 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
         rand_int.reset(new SmallIntDistType(SmallIntDist(0, textures.size() - 1)));
     }
     return prefixed_textures_it->second;
-}
-
-TempUISoundDisabler::TempUISoundDisabler() :
-    m_was_enabled(GetOptionsDB().Get<bool>("UI.sound.enabled"))
-{
-    if (m_was_enabled)
-        GetOptionsDB().Set("UI.sound.enabled", false);
-}
-
-TempUISoundDisabler::~TempUISoundDisabler()
-{
-    if (m_was_enabled)
-        GetOptionsDB().Set("UI.sound.enabled", true);
 }
 
 StreamableColor::StreamableColor() :

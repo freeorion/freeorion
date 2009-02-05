@@ -6,6 +6,7 @@
 #include "FleetWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
+#include "Sound.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
@@ -22,7 +23,7 @@
 
 namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
-    void PlaySystemIconRolloverSound() {if (PlaySounds()) HumanClientApp::GetApp()->PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
+    void PlaySystemIconRolloverSound() {if (PlaySounds()) Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
 }
 
 ////////////////////////////////////////////////

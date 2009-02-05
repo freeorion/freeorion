@@ -54,91 +54,6 @@ def DirHeaders(dir):
     from fnmatch import fnmatchcase
     return [i for i in os.listdir(dir) if fnmatchcase(i, '*.h')]
 
-pc_file_link_flags_used = []
-pc_file_lib_paths_used = []
-pc_file_libs_used = []
-
-def CreateGiGiPCFile(target, source, env):
-    values = {
-        'prefix' : env['prefix'],
-        'libdir' : env.subst(env['libdir']),
-        'incdir' : env.subst(env['incdir']),
-        'version' : gigi_version,
-        'gigi_libs' : ''
-    }
-    for flag in env['LINKFLAGS']:
-        pc_file_link_flags_used.append(flag)
-        values['gigi_libs'] += ' ' + (flag[0] != '$' and flag or env.subst(flag))
-    for path in env['LIBPATH']:
-        if path.find('SDL') == -1:
-            pc_file_lib_paths_used.append(path)
-            values['gigi_libs'] += ' -L' + (path[0] != '$' and path or env.subst(path))
-    for lib in env['LIBS']:
-        if lib.find('IL') == -1 and lib.find('SDL') == -1:
-            pc_file_libs_used.append(lib)
-            values['gigi_libs'] += ' -l' + (lib[0] != '$' and lib or env.subst(lib))
-    for tgt, src in zip(target, source):
-        pc = open(str(tgt), 'w')
-        pc_in = open(str(src), 'r')
-        pc.write(pc_in.read() % values)
-        pc.close()
-        pc_in.close()
-    return None
-
-def CreateGiGiSDLPCFile(target, source, env):
-    values = {
-        'prefix' : env['prefix'],
-        'incdir' : env.subst(env['incdir']),
-        'version' : gigi_version,
-        'gigi_sdl_libs' : ''
-    }
-    for flag in env['LINKFLAGS']:
-        if flag not in pc_file_link_flags_used:
-            pc_file_link_flags_used.append(flag)
-            values['gigi_sdl_libs'] += ' ' + (flag[0] != '$' and flag or env.subst(flag))
-    for path in env['LIBPATH']:
-        if path.find('net') == -1 and path not in pc_file_lib_paths_used:
-            pc_file_lib_paths_used.append(path)
-            values['gigi_sdl_libs'] += ' -L' + (path[0] != '$' and path or env.subst(path))
-    for lib in env['LIBS']:
-        if lib.find('net') == -1 and lib not in pc_file_libs_used:
-            pc_file_libs_used.append(lib)
-            values['gigi_sdl_libs'] += ' -l' + (lib[0] != '$' and lib or env.subst(lib))
-    for tgt, src in zip(target, source):
-        pc = open(str(tgt), 'w')
-        pc_in = open(str(src), 'r')
-        pc.write(pc_in.read() % values)
-        pc.close()
-        pc_in.close()
-    return None
-
-def CreateGiGiNetPCFile(target, source, env):
-    values = {
-        'prefix' : env['prefix'],
-        'incdir' : env.subst(env['incdir']),
-        'version' : gigi_version,
-        'gigi_net_libs' : ''
-    }
-    for flag in env['LINKFLAGS']:
-        if flag not in pc_file_link_flags_used:
-            pc_file_link_flags_used.append(flag)
-            values['gigi_net_libs'] += ' ' + (flag[0] != '$' and flag or env.subst(flag))
-    for path in env['LIBPATH']:
-        if path not in pc_file_lib_paths_used:
-            pc_file_lib_paths_used.append(path)
-            values['gigi_net_libs'] += ' -L' + (path[0] != '$' and path or env.subst(path))
-    for lib in env['LIBS']:
-        if lib not in pc_file_libs_used:
-            pc_file_libs_used.append(lib)
-            values['gigi_net_libs'] += ' -l' + (lib[0] != '$' and lib or env.subst(lib))
-    for tgt, src in zip(target, source):
-        pc = open(str(tgt), 'w')
-        pc_in = open(str(src), 'r')
-        pc.write(pc_in.read() % values)
-        pc.close()
-        pc_in.close()
-    return None
-
 def AppendPackagePaths(package, env):
     root = OptionValue('with_' + package, env)
     inc = OptionValue('with_%s_include' % package, env)
@@ -299,64 +214,6 @@ def BoostLibWin32Name(name, env):
     version_tag = '-' + boost_version_string.replace('.', '_')
     return 'boost_' + name + toolset_tag + threading_and_abi_tag + version_tag
 
-def CheckSDL(context, options, conf, sdl_config, check_lib):
-    ret = True
-    AppendPackagePaths('sdl', context.env)
-    context.Message('Checking for sdl-config... ')
-    if sdl_config:
-        context.Result('yes')
-    else:
-        context.Result('no')
-    build_dynamic = OptionValue('dynamic', context.env)
-    sdl_root = OptionValue('with_sdl', context.env)
-    found_it_with_sdl_config = False
-    if sdl_config:
-        sdl_config_prefix_flag = sdl_root and ('--prefix=' + sdl_root) or ''
-        context.env.ParseConfig('sdl-config ' + sdl_config_prefix_flag + ' --cflags ' + (build_dynamic and '--libs' or '--static-libs'))
-        found_it_with_sdl_config = True
-    if not found_it_with_sdl_config:
-        if not conf.CheckCHeader(os.path.join('SDL', 'SDL.h')) and not conf.CheckCHeader('SDL.h'):
-            context.Message('SDL configuration... ')
-            context.Result(False)
-            return False
-        if check_lib and not conf.CheckLib('SDL', 'SDL_Init'):
-            context.Message('SDL configuration... ')
-            context.Result(False)
-            return False
-    version_regex = re.compile(r'SDL_MAJOR_VERSION\s*(\d+).*SDL_MINOR_VERSION\s*(\d+).*SDL_PATCHLEVEL\s*(\d+)', re.DOTALL)
-    if not conf.CheckVersionHeader('SDL', os.path.join('SDL', 'SDL_version.h'), version_regex, sdl_version, True) \
-           and not conf.CheckVersionHeader('SDL', 'SDL_version.h', version_regex, sdl_version, True):
-        context.Message('SDL configuration... ')
-        context.Result(False)
-        return False
-    if check_lib:
-        context.Message('Linking SDL/OpenGL test app... ')
-        link_test_app = """
-#include <SDL/SDL.h>
-#include <SDL/SDL_opengl.h>
-int main(int argc, char** argv)
-{
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_SetVideoMode(640, 480, SDL_GetVideoInfo()->vfmt->BitsPerPixel, SDL_OPENGL);
-    glBegin(GL_TRIANGLES);
-    glEnd();
-    return 0;
-}
-"""
-        if context.TryLink(link_test_app, '.c'):
-            context.Result(True)
-        else:
-            context.Result(False)
-            ret = False
-    context.Message('SDL configuration... ')
-    context.Result(ret)
-    return ret
-
 def CheckLibLTDL(context):
     retval = True
     context.Message('Generating GG/libltdl/config.h using GG/libltdl/configure... ')
@@ -405,3 +262,17 @@ def GetRepositoryRevision():
                 return ' [Rev ' + i[10:-1] + ']'
     except: 
         return None
+
+def CreateOgrePluginsFile(target, source, env):
+    values = {
+        'plugin1' : 'RenderSystem_GL' + env['SHLIBSUFFIX'],
+        'plugin2' : 'Plugin_ParticleFX' + env['SHLIBSUFFIX'],
+        'plugin3' : 'Plugin_OctreeSceneManager' + env['SHLIBSUFFIX']
+    }
+    for tgt, src in zip(target, source):
+        pc = open(str(tgt), 'w')
+        pc_in = open(str(src), 'r')
+        pc.write(pc_in.read() % values)
+        pc.close()
+        pc_in.close()
+    return None

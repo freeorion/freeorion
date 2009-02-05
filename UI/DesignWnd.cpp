@@ -6,8 +6,9 @@
 #include "ClientUI.h"
 #include "CUIWnd.h"
 #include "CUIControls.h"
-#include "InfoPanels.h"
 #include "EncyclopediaDetailPanel.h"
+#include "InfoPanels.h"
+#include "Sound.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "../universe/ShipDesign.h"
@@ -1879,7 +1880,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_part_palette(0),
     m_main_panel(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     EnableChildClipping(true);
 
     GG::X base_selector_width(300);

@@ -2,6 +2,7 @@
 
 #include "CUIControls.h"
 #include "CUISpin.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -54,7 +55,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_planet_density_list(0),
     m_specials_freq_list(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     const GG::X LABELS_WIDTH = (w - CONTROL_MARGIN) / 2;
     const GG::X DROPLIST_WIDTH = LABELS_WIDTH;
@@ -272,7 +273,7 @@ void GalaxySetupPanel::DetachSignalChildren()
 
 void GalaxySetupPanel::SettingChanged_(int)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     SettingsChangedSignal();
 }
 
@@ -302,7 +303,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_ok(0),
     m_cancel(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     GG::Y ypos;
 
     m_galaxy_setup_panel = new GalaxySetupPanel(GG::X0, GG::Y(4));

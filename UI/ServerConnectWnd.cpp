@@ -1,13 +1,13 @@
 #include "ServerConnectWnd.h"
 
 #include "ClientUI.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <GG/Button.h>
 #include <GG/Layout.h>
 #include <GG/TextControl.h>
-#include <GG/SDL/SDLGUI.h>
 
 #include <boost/cast.hpp>
 
@@ -43,7 +43,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_ok_bn(0),
     m_cancel_bn(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::TextControl* player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);

@@ -11,6 +11,7 @@
 #include "../Empire/Empire.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
@@ -1192,7 +1193,7 @@ void ResourcePanel::PrimaryFocusDropListSelectionChanged(GG::DropDownList::itera
         throw std::invalid_argument("PrimaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
         break;
     }
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     PrimaryFocusChangedSignal(focus);
 }
 
@@ -1222,7 +1223,7 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(GG::DropDownList::ite
         throw std::invalid_argument("SecondaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
         break;
     }
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
     SecondaryFocusChangedSignal(focus);
 }
 

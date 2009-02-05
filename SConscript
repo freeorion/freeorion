@@ -110,15 +110,14 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
     # This is here so it doesn't get lost, but it is not part of the normal
     # build -- it only exists to make small changes very quick by avoiding
     # relinking the entire FreeOrion app.
-    #lib_obj = env.SharedObject(source = 'UI/MapWnd.cpp',
+    #lib_obj = env.SharedObject(source = 'UI/CombatWnd.cpp',
     #                           CPPDEFINES = env['CPPDEFINES'] + env['target_defines'])
-    #libs.append(env.SharedLibrary('MapWnd', [lib_obj]))
+    #libs.append(env.SharedLibrary('CombatWnd', [lib_obj]))
     target_sources = [
         'client/ClientApp.cpp',
         'client/ClientFSMEvents.cpp',
         'client/human/HumanClientFSM.cpp',
         'client/human/HumanClientApp.cpp',
-        'client/human/HumanClientAppSoundOpenAL.cpp',
         'client/human/chmain.cpp',
         'network/ClientNetworking.cpp',
         'UI/About.cpp',
@@ -135,6 +134,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/InfoPanels.cpp',
         'UI/IntroScreen.cpp',
         'UI/LinkText.cpp',
+        'UI/CollisionMeshConverter.cpp',
         'UI/CombatWnd.cpp',
         'UI/MapWnd.cpp',
         'UI/MultiplayerLobbyWnd.cpp',
@@ -146,6 +146,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/ServerConnectWnd.cpp',
         'UI/SidePanel.cpp',
         'UI/SitRepPanel.cpp',
+        'UI/Sound.cpp',
         'UI/SystemIcon.cpp',
         'UI/TechTreeWnd.cpp',
         'UI/TurnProgressWnd.cpp',

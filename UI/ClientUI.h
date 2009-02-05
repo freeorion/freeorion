@@ -185,8 +185,9 @@ public:
 
     static GG::Clr      CategoryColor(const std::string& category_name);
 
-    static std::map<StarType, std::string>& StarTypeFilePrefixes();
-    static std::map<StarType, std::string>& HaloStarTypeFilePrefixes();
+    static std::map<PlanetType, std::string>& PlanetTypeFilePrefixes();
+    static std::map<StarType, std::string>&   StarTypeFilePrefixes();
+    static std::map<StarType, std::string>&   HaloStarTypeFilePrefixes();
     //!@}
 
 private:
@@ -199,19 +200,6 @@ private:
     PrefixedTextures  m_prefixed_textures;
 
     static ClientUI*  s_the_UI;            //!< pointer to the one and only ClientUI object
-};
-
-/** temporarily disables UI sound effects, saving the old state (on or off), for later restoration upon object destruction.  TempSoundDisablers
-    should be created at the beginning of any function in which Controls that emit sounds are to be programmatically altered, e.g. the
-    ctor of a window class that contains a ListBox with an initially-selected item.  If this were not done, the list-select sound would be
-    played when the window was constructed, which would make the sound seem to be malfunctioning. */
-struct TempUISoundDisabler
-{
-    TempUISoundDisabler();
-    ~TempUISoundDisabler();
-
-private:
-    bool m_was_enabled;
 };
 
 /** This exists as a way of allowing UI colors to be specified on the command line with one option and "(r,g,b,a)", instead of one option per color

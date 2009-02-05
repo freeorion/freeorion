@@ -4,6 +4,7 @@
 #include "CUIControls.h"
 #include "CUIDrawUtil.h"
 #include "CUIWnd.h"
+#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/AppInterface.h"
 #include "EncyclopediaDetailPanel.h"
@@ -2211,7 +2212,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
     m_layout_panel(0),
     m_tech_list(0)
 {
-    TempUISoundDisabler sound_disabler;
+    Sound::TempUISoundDisabler sound_disabler;
 
     const GG::X NAVIGATOR_WIDTH(214);
 

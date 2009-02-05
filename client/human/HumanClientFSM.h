@@ -145,6 +145,7 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenu
     boost::statechart::result react(const HostMPGameRequested& a);
     boost::statechart::result react(const JoinMPGameRequested& a);
 
+    CombatWnd* m_combat_wnd; // TODO: Remove this; it is only here for prototyping.
     IntroScreen* m_intro_screen;
 
     CLIENT_ACCESSOR
