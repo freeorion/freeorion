@@ -512,23 +512,102 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     // NOTE: Below is temporary code for combat system prototyping! //
     //////////////////////////////////////////////////////////////////
 
+    int system_id = 0;
+    StarType star_type = STAR_BLUE;
+    std::vector<int> planet_ids(10);
+    for (int i = 0; i < 10; ++i) {
+        planet_ids[i] = i;
+    }
+    std::vector<PlanetType> planet_types(10);
+    planet_types[0] = PT_SWAMP;
+    planet_types[1] = PT_TOXIC;
+    planet_types[2] = PT_TERRAN;
+    planet_types[3] = PT_INFERNO;
+    planet_types[4] = PT_RADIATED;
+    planet_types[5] = PT_BARREN;
+    planet_types[6] = PT_TUNDRA;
+    planet_types[7] = PT_GASGIANT;
+    planet_types[8] = PT_DESERT;
+    planet_types[9] = PT_OCEAN;
+    std::vector<PlanetSize> planet_sizes(10);
+    planet_sizes[0] = SZ_SMALL;
+    planet_sizes[1] = SZ_LARGE;
+    planet_sizes[2] = SZ_LARGE;
+    planet_sizes[3] = SZ_MEDIUM;
+    planet_sizes[4] = SZ_LARGE;
+    planet_sizes[5] = SZ_SMALL;
+    planet_sizes[6] = SZ_MEDIUM;
+    planet_sizes[7] = SZ_GASGIANT;
+    planet_sizes[8] = SZ_TINY;
+    planet_sizes[9] = SZ_HUGE;
+
+#if 1
+    std::map<PlanetType, std::size_t> textures_available;
+    std::size_t max_textures_available = 0;
+    {
+        namespace fs = boost::filesystem;
+        fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
+        assert(fs::is_directory(dir));
+        fs::directory_iterator end_it;
+        for (std::map<PlanetType, std::string>::const_iterator type_it =
+                 ClientUI::PlanetTypeFilePrefixes().begin();
+             type_it != ClientUI::PlanetTypeFilePrefixes().end();
+             ++type_it) {
+            std::set<std::string> current_textures;
+            for (fs::directory_iterator it(dir); it != end_it; ++it) {
+                try {
+                    if (fs::exists(*it) &&
+                        !fs::is_directory(*it) &&
+                        boost::algorithm::starts_with(it->filename(), type_it->second)) {
+                        current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
+                    }
+                } catch (const fs::filesystem_error& e) {
+                    // ignore files for which permission is denied, and rethrow other exceptions
+                    if (e.code() != boost::system::posix_error::permission_denied)
+                        throw;
+                }
+            }
+            textures_available[type_it->first] = current_textures.size();
+            max_textures_available = std::max(max_textures_available, current_textures.size());
+        }
+    }
+    std::size_t planet_id_interval = 100 * max_textures_available;
+
+    std::ifstream ifs("demo_planet_params.txt");
+    if (ifs) {
+        ifs >> system_id >> star_type;
+        std::cout << system_id << " " << star_type << "\n";
+        for (std::size_t i = 0; ifs && i < planet_ids.size(); ++i) {
+            ifs >> planet_ids[i] >> planet_types[i] >> planet_sizes[i];
+            std::cout << planet_ids[i] << " " << planet_types[i] << " " << planet_sizes[i] << "\n";
+            int offset =
+                planet_id_interval * i /
+                textures_available[planet_types[i]] *
+                textures_available[planet_types[i]];
+            planet_ids[i] += offset;
+            std::cout << planet_ids[i] << " "
+                      << (planet_ids[i] % textures_available[planet_types[i]]) << "\n";
+        }
+    }
+#endif
+
     // a sample system
     std::vector<Planet*> planets;
-    planets.push_back(new Planet(PT_SWAMP, SZ_SMALL));
-    planets.push_back(new Planet(PT_TOXIC, SZ_LARGE));
-    planets.push_back(new Planet(PT_TERRAN, SZ_LARGE));
-    planets.push_back(new Planet(PT_INFERNO, SZ_MEDIUM));
-    planets.push_back(new Planet(PT_RADIATED, SZ_LARGE));
-    planets.push_back(new Planet(PT_BARREN, SZ_SMALL));
-    planets.push_back(new Planet(PT_TUNDRA, SZ_MEDIUM));
-    planets.push_back(new Planet(PT_GASGIANT, SZ_GASGIANT));
-    planets.push_back(new Planet(PT_DESERT, SZ_TINY));
-    planets.push_back(new Planet(PT_OCEAN, SZ_HUGE));
+    planets.push_back(new Planet(planet_types[0], planet_sizes[0]));
+    planets.push_back(new Planet(planet_types[1], planet_sizes[1]));
+    planets.push_back(new Planet(planet_types[2], planet_sizes[2]));
+    planets.push_back(new Planet(planet_types[3], planet_sizes[3]));
+    planets.push_back(new Planet(planet_types[4], planet_sizes[4]));
+    planets.push_back(new Planet(planet_types[5], planet_sizes[5]));
+    planets.push_back(new Planet(planet_types[6], planet_sizes[6]));
+    planets.push_back(new Planet(planet_types[7], planet_sizes[7]));
+    planets.push_back(new Planet(planet_types[8], planet_sizes[8]));
+    planets.push_back(new Planet(planet_types[9], planet_sizes[9]));
 
-    System system(STAR_BLUE, planets.size(), "Sample", 0.0, 0.0);
+    System system(star_type, planets.size(), "Sample", 0.0, 0.0);
     for (std::size_t i = 0; i < planets.size(); ++i) {
-        GetUniverse().InsertID(planets[i], i);
-        system.Insert(i, i);
+        GetUniverse().InsertID(planets[i], planet_ids[i]);
+        system.Insert(planet_ids[i], i);
         assert(system.Contains(i));
         assert(system.begin() != system.end());
     }
