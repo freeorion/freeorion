@@ -11,8 +11,6 @@
 #include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
 
-#include <boost/format.hpp>
-
 namespace {
     const GG::X TEXT_MARGIN_X(3);
     const GG::Y TEXT_MARGIN_Y(3);
@@ -347,17 +345,15 @@ void EncyclopediaDetailPanel::Reset() {
     }
 
     // Set Text
-    using boost::format;
-
     m_name_text->SetText(name);
 
-    m_summary_text->SetText(str(format(UserString("ENC_DETAIL_TYPE_STR"))
+    m_summary_text->SetText(str(FlexibleFormat(UserString("ENC_DETAIL_TYPE_STR"))
         % specific_type
         % general_type));
     if (color != GG::CLR_ZERO)
         m_summary_text->SetColor(color);
 
-    m_cost_text->SetText(str(format(UserString("ENC_COST_AND_TURNS_STR"))
+    m_cost_text->SetText(str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
         % static_cast<int>(cost + 0.5)
         % cost_units
         % turns));

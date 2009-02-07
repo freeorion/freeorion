@@ -18,7 +18,6 @@
 #include <GG/TabWnd.h>
 
 #include <boost/cast.hpp>
-#include <boost/format.hpp>
 #include <boost/function.hpp>
 
 #include <algorithm>
