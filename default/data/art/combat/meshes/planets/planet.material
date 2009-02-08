@@ -40,7 +40,7 @@ fragment_program gas_giant_frag glsl
 
 // This is here just to quiet Ogre warnings.  This material is referenced in
 // the sphere.mesh file, but is never used.
-material 01_-_Default
+material 01-Default
 {
     technique
     {
@@ -126,6 +126,8 @@ material atmosphereless_planet
             {
                 param_named day_texture int 0
                 param_named night_texture int 1
+                param_named normal_texture int 2
+                param_named lights_texture int 3
             }
 
             texture_unit
@@ -136,6 +138,16 @@ material atmosphereless_planet
             texture_unit
             {
                 texture Barren01Night.png 2d 0
+            }
+
+            texture_unit
+            {
+                texture Barren01Normal.png 2d 0
+            }
+
+            texture_unit
+            {
+                texture Barren01LightsA.png 2d 0
             }
         }
     }
