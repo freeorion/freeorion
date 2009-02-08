@@ -1,54 +1,43 @@
-material backgrounds/star_back
-{
-    technique
-    {
-        pass
-        {
+material backgrounds/star_back {
+    technique {
+        pass {
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
 
-            texture_unit
-            {
+            texture_unit {
                 texture blue01back.png
             }
         }
 
-        pass
-        {
+        pass {
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
 
-            texture_unit
-            {
+            texture_unit {
                 texture blue01rainbow.png
                 scale 0.75 0.75
                 tex_address_mode clamp
             }
         }
 
-        pass
-        {
+        pass {
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
 
             texture_unit
-            {
-                texture blue01rays.png
-            }
+            { texture blue01rays.png }
         }
 
-        pass
-        {
+        pass {
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
             depth_check off
 
-            texture_unit
-            {
+            texture_unit {
                 texture blue01horizontal_flare.png 0
                 scale 0.5 0.05
                 scroll 0.5 0
@@ -57,15 +46,13 @@ material backgrounds/star_back
             }
         }
 
-        pass
-        {
+        pass {
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
             depth_check off
 
-            texture_unit
-            {
+            texture_unit {
                 texture blue01horizontal_flare.png 0
                 scale -0.5 0.05
                 scroll 0.5 0
@@ -76,18 +63,14 @@ material backgrounds/star_back
     }
 }
 
-material backgrounds/star_core
-{
-    technique
-    {
-        pass
-        {
+material backgrounds/star_core {
+    technique {
+        pass {
             lighting off
             scene_blend src_alpha dest_alpha
             depth_write off
 
-            texture_unit
-            {
+            texture_unit {
                 texture blue01core.png
                 scale 0.25 0.25
                 tex_address_mode clamp

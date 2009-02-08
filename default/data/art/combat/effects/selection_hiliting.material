@@ -1,44 +1,32 @@
 vertex_program hiliting_vert glsl
-{
-    source selection_hiliting.vert
-}
+{ source selection_hiliting.vert }
 
 fragment_program hiliting_frag glsl
-{
-    source selection_hiliting.frag
-}
+{ source selection_hiliting.frag }
 
-material effects/selection/dry_run
-{
-    technique
-    {
-        pass
-        {
+material effects/selection/dry_run {
+    technique {
+        pass {
             depth_write off
             colour_write off
         }
     }
 }
 
-material effects/selection/outline_hiliting
-{
-    technique
-    {
-        pass
-        {
+material effects/selection/outline_hiliting {
+    technique {
+        pass {
             scene_blend src_alpha dest_alpha
             depth_write off
             lighting off
             cull_hardware none
             cull_software none
 
-            vertex_program_ref hiliting_vert
-            {
+            vertex_program_ref hiliting_vert {
                 param_named hiliting_size float 0.1
                 param_named_auto time time_0_x 100
             }
-            fragment_program_ref hiliting_frag
-            {
+            fragment_program_ref hiliting_frag {
                 param_named hiliting_color float4 1.0 1.0 0.0 0.4
                 param_named_auto time time_0_x 100
             }
@@ -46,28 +34,19 @@ material effects/selection/outline_hiliting
     }
 }
 
-material effects/selection/filled_hiliting_1 : effects/selection/outline_hiliting
-{
-    technique
-    {
-        pass
-        {
+material effects/selection/filled_hiliting_1 : effects/selection/outline_hiliting {
+    technique {
+        pass {
             scene_blend alpha_blend
             fragment_program_ref hiliting_frag
-            {
-                param_named hiliting_color float4 1.0 1.0 0.0 0.0
-            }
+            { param_named hiliting_color float4 1.0 1.0 0.0 0.0 }
         }
     }
 }
 
-material effects/selection/filled_hiliting_2 : effects/selection/outline_hiliting
-{
-    technique
-    {
+material effects/selection/filled_hiliting_2 : effects/selection/outline_hiliting {
+    technique {
         pass
-        {
-            depth_check off
-        }
+        { depth_check off }
     }
 }

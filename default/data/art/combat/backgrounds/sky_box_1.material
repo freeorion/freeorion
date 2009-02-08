@@ -1,14 +1,10 @@
-material backgrounds/sky_box_1
-{
-    technique
-    {
-        pass
-        {
+material backgrounds/sky_box_1 {
+    technique {
+        pass {
             lighting off
             depth_write off
 
-            texture_unit
-            {
+            texture_unit {
                 cubic_texture sky_box_1.png separateUV
                 tex_address_mode clamp
             }
