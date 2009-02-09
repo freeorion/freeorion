@@ -11,11 +11,17 @@ void main()
 {
     vec3 daytime = texture2D(day_texture, tex_coord).rgb * diffuse;
     vec3 color = daytime;
-    if (diffuse < -TERMINATOR)
-        color = texture2D(night_texture, tex_coord).rgb;
+    if (diffuse < -TERMINATOR) {
+        vec3 nighttime = texture2D(night_texture, tex_coord).rgb;
+        vec3 city_lights = texture2D(lights_texture, tex_coord).rgb;
+        color = clamp(nighttime + city_lights, 0.0, 1.0);
+    }
     if (abs(diffuse) < TERMINATOR) {
         vec3 nighttime = texture2D(night_texture, tex_coord).rgb;
-        color = mix(nighttime, daytime, (diffuse + TERMINATOR) / (2.0 * TERMINATOR));
+        vec3 city_lights = texture2D(lights_texture, tex_coord).rgb;
+        vec3 combined_night_side = clamp(nighttime + city_lights, 0.0, 1.0);
+        color = mix(combined_night_side, daytime,
+                    (diffuse + TERMINATOR) / (2.0 * TERMINATOR));
     }
 
     // renormalize to [-1, 1]

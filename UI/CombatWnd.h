@@ -129,6 +129,7 @@ private:
     // The scene nodes representing ships in the system and their associated
     // collision meshes, indexed by ship object id.
     std::map<int, std::pair<Ogre::SceneNode*, btTriangleMesh*> > m_ship_assets;
+    std::vector<Ogre::TexturePtr> m_city_lights_textures;
 
     // The collision detection system
     btDefaultCollisionConfiguration* m_collision_configuration;

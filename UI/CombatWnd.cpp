@@ -32,6 +32,8 @@
 #include <btBulletCollisionCommon.h>
 
 #include <GG/GUI.h>
+#include "../GG/src/GIL/image.hpp"
+#include "../GG/src/GIL/extension/io/png_dynamic_io.hpp"
 
 #include <boost/cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -40,6 +42,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/system/system_error.hpp>
+
 
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
@@ -88,6 +91,8 @@ namespace {
 
     // The time it takes to recenter on a new point, in seconds.
     const Ogre::Real CAMERA_RECENTER_TIME = 0.33333;
+
+    const unsigned int NO_CITY_LIGHTS = std::numeric_limits<unsigned int>::max();
 
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
@@ -218,6 +223,73 @@ namespace {
             retval.m_normal = FromCollisionVector(collision_results.m_hitNormalWorld);
         }
         return retval;
+    }
+
+    struct BadLightsTexture :
+        GG::ExceptionBase
+    {
+        BadLightsTexture(const std::string& msg) throw() : ExceptionBase(msg) {}
+        virtual const char* type() const throw() {return "BadLightsTexture";}
+    };
+
+    Ogre::TexturePtr PlanetLightsTexture(const std::string& base_name,
+                                         unsigned int light_level)
+    {
+        assert(light_level == NO_CITY_LIGHTS || 0 <= light_level && light_level < 10);
+        std::string filename = base_name;
+        unsigned int channel = 0;
+        if (light_level < 4) {
+            filename += "LightsA.png";
+            channel = light_level;
+        } else if (light_level < 8) {
+            filename += "LightsB.png";
+            channel = light_level - 4;
+        } else if (light_level == 8) {
+            filename += "Day.png";
+            channel = 3;
+        } else {
+            filename += "Night.png";
+            channel = 3;
+        }
+
+        namespace fs = boost::filesystem;
+        fs::path path(ClientUI::ArtDir() / "combat" / "meshes" / "planets" / filename);
+
+        if (!fs::exists(path))
+            throw BadLightsTexture("Texture file \"" + filename + "\" does not exist");
+
+        if (!fs::is_regular_file(path))
+            throw BadLightsTexture("Texture \"file\" \"" + filename + "\" is not a file");
+
+        boost::gil::gray8_image_t final_image;
+        if (light_level == NO_CITY_LIGHTS) {
+            boost::gil::point2<std::ptrdiff_t> dimensions;
+            try {
+                dimensions = boost::gil::png_read_dimensions(path.string());
+            } catch (const std::ios_base::failure &) {
+                throw BadLightsTexture("Texture \"" + path.string() +
+                                       "\" could not be read as a PNG file");
+            }
+            final_image.recreate(dimensions);
+        } else {
+            boost::gil::rgba8_image_t source_image;
+            try {
+                boost::gil::png_read_image(path.string(), source_image);
+            } catch (const std::ios_base::failure &) {
+                throw BadLightsTexture("Texture \"" + path.string() +
+                                       "\" could not be read as a 32-bit RGBA PNG file");
+            }
+            final_image.recreate(source_image.dimensions());
+            copy_pixels(nth_channel_view(const_view(source_image), channel), view(final_image));
+        }
+
+        const void* image_data = interleaved_view_get_raw_data(const_view(final_image));
+        std::size_t image_size = final_image.width() * final_image.height();
+        Ogre::DataStreamPtr stream(
+            new Ogre::MemoryDataStream(const_cast<void*>(image_data), image_size));
+        return Ogre::TextureManager::getSingleton().loadRawData(
+            base_name + "_city_lights", "General", stream,
+            final_image.width(), final_image.height(), Ogre::PF_BYTE_L);
     }
 
     void AddOptions(OptionsDB& db)
@@ -630,6 +702,11 @@ CombatWnd::~CombatWnd()
         delete it->second.second;
     }
 
+    for (std::size_t i = 0; i < m_city_lights_textures.size(); ++i) {
+        Ogre::TextureManager::getSingleton().remove(m_city_lights_textures[i]->getName());
+    }
+    m_city_lights_textures.clear();
+
     m_collision_shapes.clear();
     m_collision_objects.clear();
     delete m_collision_world;
@@ -822,6 +899,16 @@ void CombatWnd::InitCombat(const System& system)
                     material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
                     entity->setMaterialName(new_material_name);
                     node->attachObject(entity);
+                } else {
+                    assert(material_name == "atmosphereless_planet");
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "Normal.png");
+                    // TODO: Get the integer city lights level of
+                    // NO_CITY_LIGHTS or in the range [0, 9] somehow, and
+                    // supply it here.  Right now, we're using a hardcoded 2
+                    // just for demo purposes.
+                    Ogre::TexturePtr texture = PlanetLightsTexture(base_name, 2);
+                    m_city_lights_textures.push_back(texture);
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->setTextureName(texture->getName());
                 }
             }
 
@@ -837,6 +924,21 @@ void CombatWnd::InitCombat(const System& system)
 
 void CombatWnd::Render()
 {
+#if 0 // TODO: Remove this.  It makes the planets all rotate, to test normal and parallax mapping.
+    for (std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > >::iterator it =
+             m_planet_assets.begin();
+         it != m_planet_assets.end();
+         ++it) {
+        it->second.first->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
+        if (dynamic_cast<Ogre::Entity*>(it->second.first->getAttachedObject(0))) {
+            Ogre::Vector3 light_dir = -it->second.first->getPosition();
+            light_dir.normalise();
+            light_dir = it->second.first->getOrientation().Inverse() * light_dir;
+            m_planet_assets[it->first].second.back()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+        }
+    }
+#endif
+
     // render two small lens flares that oppose the star's position relative to
     // the center of the viewport
     GG::Pt star_pt = ProjectToPixel(*m_camera, Ogre::Vector3(0.0, 0.0, 0.0));
