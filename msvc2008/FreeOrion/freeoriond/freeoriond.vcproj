@@ -21,8 +21,7 @@
 			OutputDirectory="../../../"
 			IntermediateDirectory="Release"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
-			CharacterSet="2"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -44,7 +43,7 @@
 				Optimization="3"
 				AdditionalIncludeDirectories="../../../log4cpp/;../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;../../../GG/;../../include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;GIGI_EXPORTS;FREEORION_BUILD_SERVER;FREEORION_WIN32;BOOST_SIGNALS_STATIC_LINK;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
-				StringPooling="true"
+				StringPooling="false"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				EnableEnhancedInstructionSet="2"
@@ -67,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib wsock32.lib zdll.lib freetype214MT.lib cdt.lib common.lib graph.lib pathplan.lib libexpat.lib"
+				AdditionalDependencies="opengl32.lib glu32.lib zlib1.lib wsock32.lib cdt.lib common.lib graph.lib pathplan.lib libexpat.lib"
 				OutputFile="../../../freeoriond.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;C:\Python25\libs"

@@ -20,8 +20,8 @@
 			OutputDirectory="../../../"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
+			CharacterSet="0"
+			WholeProgramOptimization="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -41,11 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				EnableIntrinsicFunctions="true"
+				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="../../../../include/;../../../GG/;../../../../include/OGRE;&quot;../../../../Boost/include/boost-1_36&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GIGI_OGRE_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
+				MinimalRebuild="true"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="true"
+				EnableFunctionLevelLinking="false"
+				EnableEnhancedInstructionSet="2"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -62,12 +64,17 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="OgreMain.lib GiGi.lib opengl32.lib"
 				OutputFile="../../../GiGiOgre.dll"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;../../../"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
-				OptimizeReferences="2"
-				EnableCOMDATFolding="2"
+				SubSystem="1"
+				OptimizeReferences="0"
+				EnableCOMDATFolding="0"
+				LinkTimeCodeGeneration="0"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				ImportLibrary=""
 				TargetMachine="1"
 			/>
 			<Tool

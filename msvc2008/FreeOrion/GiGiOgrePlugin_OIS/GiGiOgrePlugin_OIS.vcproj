@@ -18,9 +18,9 @@
 		<Configuration
 			Name="Release|Win32"
 			OutputDirectory="../../../"
-			IntermediateDirectory="Release"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			CharacterSet="2"
+			CharacterSet="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -39,15 +39,17 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
+				Optimization="3"
 				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;../../../GG/;../../include;../../../../include/OGRE;../../../../include/OGRE/OIS"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GIGI_OGRE_PLUGIN_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				IgnoreStandardIncludePath="false"
+				StringPooling="false"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="0"
 				RuntimeLibrary="2"
+				EnableEnhancedInstructionSet="2"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -63,14 +65,21 @@
 				UseLibraryDependencyInputs="false"
 				AdditionalDependencies="GiGi.lib GiGiOgre.lib OgreMain.lib OIS.lib"
 				OutputFile="../../../GiGiOgrePlugin_OIS.dll"
-				LinkIncremental="2"
+				LinkIncremental="0"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/;../../../"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="LIBCMT"
 				GenerateDebugInformation="true"
-				ResourceOnlyDLL="true"
-				SupportUnloadOfDelayLoadedDLL="true"
+				SubSystem="1"
+				EntryPointSymbol=""
+				ResourceOnlyDLL="false"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				SupportUnloadOfDelayLoadedDLL="false"
+				ImportLibrary=""
 				TargetMachine="1"
+				CLRThreadAttribute="0"
+				CLRImageType="0"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -116,6 +125,14 @@
 						</File>
 						<File
 							RelativePath="..\..\..\GG\src\Ogre\Plugins\OgreGUIInputPlugin.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\GG\src\Ogre\Plugins\OISInput.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\GG\src\Ogre\Plugins\OISInput.h"
 							>
 						</File>
 					</Filter>
