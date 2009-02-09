@@ -902,11 +902,12 @@ void CombatWnd::InitCombat(const System& system)
                 } else {
                     assert(material_name == "atmosphereless_planet");
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "Normal.png");
-                    // TODO: Get the integer city lights level of
-                    // NO_CITY_LIGHTS or in the range [0, 9] somehow, and
-                    // supply it here.  Right now, we're using a hardcoded 2
-                    // just for demo purposes.
-                    Ogre::TexturePtr texture = PlanetLightsTexture(base_name, 2);
+                    double pop = planet->GetMeter(METER_POPULATION)->Current();
+                    unsigned int lights_level = NO_CITY_LIGHTS;
+                    const double MIN_POP_FOR_LIGHTS = 5.0;
+                    if (MIN_POP_FOR_LIGHTS < pop)
+                        lights_level = std::fmod(pop - 5.0, (100.0 - MIN_POP_FOR_LIGHTS) / 10.0);
+                    Ogre::TexturePtr texture = PlanetLightsTexture(base_name, lights_level);
                     m_city_lights_textures.push_back(texture);
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->setTextureName(texture->getName());
                 }
