@@ -151,9 +151,12 @@ int main(int argc, char* argv[])
         Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
     } catch (const  boost::io::format_error& e) {
         Logger().errorStream() << "main() caught exception(boost::io::format_error): " << e.what();
+    } catch (const GG::ExceptionBase& e) {
+        Logger().errorStream() << "main() caught exception(" << e.type() << "): " << e.what();
     } catch (const std::exception& e) {
         Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
     }
+
     if (root) {
         root->unloadPlugin(OGRE_INPUT_PLUGIN_NAME);
         delete root;
