@@ -6,7 +6,13 @@ import re
 from build_config import *
 from build_support import *
 
-env = Environment()
+if str(Platform()) == 'win32':
+    env = Environment(ENV = {'PATH' : os.environ['PATH'],
+                             'LIB' : os.environ['LIB'],
+                             'INCLUDE' : os.environ['INCLUDE']})
+else:
+    env = Environment()
+
 # Do not put a .sconsign file into every directory
 env.SConsignFile()
 
@@ -479,6 +485,7 @@ else:
 if str(Platform()) == 'win32':
     if env['multithreaded']:
         if env['dynamic']:
+            env.AppendUnique(CPPDEFINES = ['BOOST_ALL_DYN_LINK'])
             if env['debug']:
                 code_generation_flag = '/MDd'
             else:
