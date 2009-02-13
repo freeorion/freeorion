@@ -44,6 +44,18 @@ namespace {
             new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename")));
         return *string_table;
     }
+
+    std::string ClrToString(GG::Clr clr) {
+        unsigned int r = static_cast<int>(clr.r);
+        unsigned int g = static_cast<int>(clr.g);
+        unsigned int b = static_cast<int>(clr.b);
+        unsigned int a = static_cast<int>(clr.a);
+        std::string retval = "(" + boost::lexical_cast<std::string>(r) + ", " +
+                                   boost::lexical_cast<std::string>(g) + ", " +
+                                   boost::lexical_cast<std::string>(b) + ", " +
+                                   boost::lexical_cast<std::string>(a) + ")";
+        return retval;
+    }
 }
 
 /////////////////////////////////////////////////////
@@ -79,11 +91,41 @@ XMLElement ClrToXML(const GG::Clr& clr)
 
 GG::Clr XMLToClr(const XMLElement& clr)
 {
-    GG::Clr retval;
-    retval.r = boost::lexical_cast<int>(clr.Child("red").Text());
-    retval.g = boost::lexical_cast<int>(clr.Child("green").Text());
-    retval.b = boost::lexical_cast<int>(clr.Child("blue").Text());
-    retval.a = boost::lexical_cast<int>(clr.Child("alpha").Text());
+    GG::Clr retval = GG::CLR_BLACK;
+    if (clr.ContainsAttribute("hex")) {
+        // get colour components as a single string representing three pairs of hex digits
+        // from 00 to FF and an optional fourth hex digit pair for alpha
+        const std::string& hex_colour = clr.Attribute("hex");
+        std::istringstream iss(hex_colour);
+        unsigned long rgba = 0;
+        if (!(iss >> std::hex >> rgba).fail()) {
+            if (hex_colour.size() == 6) {
+                retval.r = (rgba >> 16) & 0xFF;
+                retval.g = (rgba >> 8)  & 0xFF;
+                retval.b = rgba         & 0xFF;
+                retval.a = 255;
+            } else {
+                retval.r = (rgba >> 24) & 0xFF;
+                retval.g = (rgba >> 16) & 0xFF;
+                retval.b = (rgba >> 8)  & 0xFF;
+                retval.a = rgba         & 0xFF;
+            }
+            //std::cout << "hex colour: " << hex_colour << " int: " << rgba << " RGBA: " << ClrToString(retval) << std::endl;
+        } else {
+            std::cerr << "XMLToClr could not interpret hex colour string \"" << hex_colour << "\"" << std::endl;
+        }
+    } else {
+        // get colours listed as RGBA components ranging 0 to 255 as integers
+        if (clr.ContainsChild("red"))
+            retval.r = boost::lexical_cast<int>(clr.Child("red").Text());
+        if (clr.ContainsChild("green"))
+            retval.g = boost::lexical_cast<int>(clr.Child("green").Text());
+        if (clr.ContainsChild("blue"))
+            retval.b = boost::lexical_cast<int>(clr.Child("blue").Text());
+        if (clr.ContainsChild("alpha"))
+            retval.a = boost::lexical_cast<int>(clr.Child("alpha").Text());
+        //std::cout << "non hex colour RGBA: " << ClrToString(retval) << std::endl;
+    }
     return retval;
 }
 
