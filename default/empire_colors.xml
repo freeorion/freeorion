@@ -1,11 +1,5 @@
 <?xml version="1.0"?>
 <XMLDoc>
- <GG::Clr>
-   <red>255</red>
-   <green>0</green>
-   <blue>0</blue>
-   <alpha>255</alpha>
-</GG::Clr>
 <GG::Clr>
    <red>0</red>
    <green>255</green>
@@ -16,6 +10,12 @@
    <red>0</red>
    <green>0</green>
    <blue>255</blue>
+   <alpha>255</alpha>
+</GG::Clr>
+<GG::Clr>
+   <red>255</red>
+   <green>0</green>
+   <blue>0</blue>
    <alpha>255</alpha>
 </GG::Clr>
 <GG::Clr>
@@ -49,6 +49,12 @@
    <alpha>255</alpha>
 </GG::Clr>
 <GG::Clr>
+   <red>94</red>
+   <green>120</green>
+   <blue>0</blue>
+   <alpha>255</alpha>
+</GG::Clr>
+<GG::Clr>
    <red>17</red>
    <green>147</green>
    <blue>255</blue>
@@ -61,8 +67,26 @@
    <alpha>255</alpha>
 </GG::Clr>
 <GG::Clr>
-   <red>94</red>
-   <green>120</green>
+   <red>108</red>
+   <green>94</green>
+   <blue>0</blue>
+   <alpha>255</alpha>
+</GG::Clr>
+<GG::Clr>
+   <red>176</red>
+   <green>112</green>
+   <blue>255</blue>
+   <alpha>255</alpha>
+</GG::Clr>
+<GG::Clr>
+   <red>215</red>
+   <green>255</green>
+   <blue>0</blue>
+   <alpha>255</alpha>
+</GG::Clr>
+<GG::Clr>
+   <red>142</red>
+   <green>68</green>
    <blue>0</blue>
    <alpha>255</alpha>
 </GG::Clr>
@@ -79,29 +103,11 @@
    <alpha>255</alpha>
 </GG::Clr>
 <GG::Clr>
-   <red>0</red>
-   <green>68</green>
-   <blue>93</blue>
+   <red>135</red>
+   <green>147</green>
+   <blue>255</blue>
    <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>142</red>
-   <green>68</green>
-   <blue>0</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>192</red>
-   <green>250</green>
-   <blue>0</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>99</red>
-   <green>63</green>
-   <blue>211</blue>
-   <alpha>255</alpha>
-</GG::Clr>
+</GG::Clr>>
 <GG::Clr>
    <red>78</red>
    <green>0</green>
@@ -109,40 +115,14 @@
    <alpha>255</alpha>
 </GG::Clr>
 <GG::Clr>
-   <red>108</red>
-   <green>94</green>
-   <blue>0</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>75</red>
-   <green>125</green>
-   <blue>0</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>135</red>
-   <green>147</green>
-   <blue>255</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>176</red>
-   <green>112</green>
-   <blue>255</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
-   <red>0</red>
-   <green>80</green>
-   <blue>12</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>
    <red>0</red>
    <green>120</green>
    <blue>111</blue>
    <alpha>255</alpha>
-</GG::Clr>
-
+</GG::Clr><GG::Clr>
+   <red>99</red>
+   <green>63</green>
+   <blue>211</blue>
+   <alpha>255</alpha>
+</GG::Clr
 </XMLDoc>
