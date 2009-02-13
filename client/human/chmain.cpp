@@ -147,14 +147,19 @@ int main(int argc, char* argv[])
         // do nothing
     } catch (const std::invalid_argument& e) {
         Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
+        std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
     } catch (const std::runtime_error& e) {
         Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+        std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
     } catch (const  boost::io::format_error& e) {
         Logger().errorStream() << "main() caught exception(boost::io::format_error): " << e.what();
+        std::cerr << "main() caught exception(boost::io::format_error): " << e.what() << std::endl;
     } catch (const GG::ExceptionBase& e) {
         Logger().errorStream() << "main() caught exception(" << e.type() << "): " << e.what();
+        std::cerr << "main() caught exception(" << e.type() << "): " << e.what() << std::endl;
     } catch (const std::exception& e) {
         Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
+        std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
     }
 
     if (root) {
