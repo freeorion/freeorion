@@ -1066,7 +1066,7 @@ void CUIToolBar::Render()
 // class EmpireColorSelector
 ///////////////////////////////////////
 EmpireColorSelector::EmpireColorSelector(GG::Y h) : 
-    CUIDropDownList(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH, h, 5 * h)
+    CUIDropDownList(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH, h, 12 * h)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
     for (unsigned int i = 0; i < colors.size(); ++i) {
