@@ -1164,7 +1164,7 @@ void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod
     UpdateCameraPosition();
 }
 
-void CombatWnd::KeyPress(GG::Key key, GG::Flags<GG::ModKey> mod_keys)
+void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
