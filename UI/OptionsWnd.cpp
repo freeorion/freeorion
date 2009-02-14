@@ -768,6 +768,7 @@ void OptionsWnd::Init()
     BeginPage(UserString("OPTIONS_PAGE_COMBAT"));
     BoolOption("combat.enable-glow", UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
     BoolOption("combat.enable-skybox", UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
+    BoolOption("combat.enable-lens-flare", UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
     BoolOption("combat.filled-selection", UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
     EndPage();
 

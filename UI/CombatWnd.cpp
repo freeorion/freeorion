@@ -299,6 +299,8 @@ namespace {
                true, Validator<bool>());
         db.Add("combat.enable-skybox", "OPTIONS_DB_COMBAT_ENABLE_SKYBOX",
                true, Validator<bool>());
+        db.Add("combat.enable-lens-flare", "OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE",
+               true, Validator<bool>());
         db.Add("combat.filled-selection", "OPTIONS_DB_COMBAT_FILLED_SELECTION",
                false, Validator<bool>());
     }
@@ -945,6 +947,24 @@ void CombatWnd::Render()
     }
 #endif
 
+    RenderLensFlare();
+
+    if (m_selection_rect.ul != m_selection_rect.lr) {
+        glColor4f(1.0, 1.0, 1.0, 0.5);
+        glBegin(GL_LINE_LOOP);
+        glVertex(m_selection_rect.lr.x, m_selection_rect.ul.y);
+        glVertex(m_selection_rect.ul.x, m_selection_rect.ul.y);
+        glVertex(m_selection_rect.ul.x, m_selection_rect.lr.y);
+        glVertex(m_selection_rect.lr.x, m_selection_rect.lr.y);
+        glEnd();
+    }
+}
+
+void CombatWnd::RenderLensFlare()
+{
+    if (!GetOptionsDB().Get<bool>("combat.enable-lens-flare"))
+        return;
+
     // render two small lens flares that oppose the star's position relative to
     // the center of the viewport
     GG::Pt star_pt = ProjectToPixel(*m_camera, Ogre::Vector3(0.0, 0.0, 0.0));
@@ -970,16 +990,6 @@ void CombatWnd::Render()
             m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr, m_small_flare->DefaultTexCoords());
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
-    }
-
-    if (m_selection_rect.ul != m_selection_rect.lr) {
-        glColor4f(1.0, 1.0, 1.0, 0.5);
-        glBegin(GL_LINE_LOOP);
-        glVertex(m_selection_rect.lr.x, m_selection_rect.ul.y);
-        glVertex(m_selection_rect.ul.x, m_selection_rect.ul.y);
-        glVertex(m_selection_rect.ul.x, m_selection_rect.lr.y);
-        glVertex(m_selection_rect.lr.x, m_selection_rect.lr.y);
-        glEnd();
     }
 }
 

@@ -473,6 +473,9 @@ Toggles glow effects on and off.
 OPTIONS_DB_COMBAT_ENABLE_SKYBOX
 Toggles background skybox on and off.
 
+OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
+Toggles lens flares on and off.
+
 OPTIONS_DB_COMBAT_FILLED_SELECTION
 Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
@@ -1092,6 +1095,9 @@ Glow
 
 OPTIONS_COMBAT_ENABLE_SKYBOX
 Skybox
+
+OPTIONS_COMBAT_ENABLE_LENS_FLARES
+Lens Flares
 
 OPTIONS_COMBAT_FILLED_SELECTION
 Filled selection

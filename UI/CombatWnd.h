@@ -86,6 +86,8 @@ private:
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
 
+    void RenderLensFlare();
+
     void LookAt(Ogre::SceneNode* look_at_node);
     void LookAt(const Ogre::Vector3& look_at_point);
     void UpdateCameraPosition();
