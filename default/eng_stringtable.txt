@@ -470,6 +470,9 @@ The volume (0 to 255) at which music should be played.
 OPTIONS_DB_COMBAT_ENABLE_GLOW
 Toggles glow effects on and off.
 
+OPTIONS_DB_COMBAT_ENABLE_SKYBOX
+Toggles background skybox on and off.
+
 OPTIONS_DB_COMBAT_FILLED_SELECTION
 Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
@@ -1086,6 +1089,9 @@ Background
 
 OPTIONS_COMBAT_ENABLE_GLOW
 Glow
+
+OPTIONS_COMBAT_ENABLE_SKYBOX
+Skybox
 
 OPTIONS_COMBAT_FILLED_SELECTION
 Filled selection

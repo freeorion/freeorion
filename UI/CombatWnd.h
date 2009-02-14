@@ -90,6 +90,7 @@ private:
     void LookAt(const Ogre::Vector3& look_at_point);
     void UpdateCameraPosition();
     void UpdateStarFromCameraPosition();
+    void UpdateSkyBox();
     void EndSelectionDrag();
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);

@@ -297,6 +297,8 @@ namespace {
         db.AddFlag("tech-demo", "Try out the 3D combat tech demo.");
         db.Add("combat.enable-glow", "OPTIONS_DB_COMBAT_ENABLE_GLOW",
                true, Validator<bool>());
+        db.Add("combat.enable-skybox", "OPTIONS_DB_COMBAT_ENABLE_SKYBOX",
+               true, Validator<bool>());
         db.Add("combat.filled-selection", "OPTIONS_DB_COMBAT_FILLED_SELECTION",
                false, Validator<bool>());
     }
@@ -495,6 +497,9 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     GG::Connect(GetOptionsDB().OptionChangedSignal("combat.enable-glow"),
                 &CombatWnd::UpdateStarFromCameraPosition, this);
 
+    GG::Connect(GetOptionsDB().OptionChangedSignal("combat.enable-skybox"),
+                &CombatWnd::UpdateSkyBox, this);
+
     Ogre::Root::getSingleton().addFrameListener(this);
     m_scene_manager->addRenderQueueListener(m_stencil_op_frame_listener);
 
@@ -555,7 +560,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star->setPosition(Ogre::Vector3(0.0, 0.0, 0.0));
     star->setAttenuation(SYSTEM_RADIUS * 0.51, 1.0, 0.0, 0.0);
 
-    m_scene_manager->setSkyBox(true, "backgrounds/sky_box_1", 50.0);
+    UpdateSkyBox();
 
     m_camera->setNearClipDistance(NEAR_CLIP);
     m_camera->setFarClipDistance(FAR_CLIP);
@@ -1351,6 +1356,17 @@ void CombatWnd::UpdateStarFromCameraPosition()
         m_initial_left_horizontal_flare_scroll + m_left_horizontal_flare_scroll_offset);
     back_material->getTechnique(0)->getPass(4)->getTextureUnitState(0)->setTextureUScroll(
         m_initial_right_horizontal_flare_scroll + m_right_horizontal_flare_scroll_offset);
+}
+
+void CombatWnd::UpdateSkyBox()
+{
+    Ogre::String skybox_material_name = "backgrounds/sky_box_1";
+    Ogre::Real skybox_distance = 50.0;
+    if (GetOptionsDB().Get<bool>("combat.enable-skybox")) {
+        m_scene_manager->setSkyBox(true, skybox_material_name, skybox_distance);
+    } else {
+        m_scene_manager->setSkyBox(false, skybox_material_name, skybox_distance);
+    }
 }
 
 void CombatWnd::EndSelectionDrag()
