@@ -1073,6 +1073,22 @@ void CombatWnd::Zoom(int move, GG::Flags<GG::ModKey> mod_keys)
     UpdateCameraPosition();
 }
 
+void CombatWnd::HandleRotation(const GG::Pt& delta)
+{
+    Ogre::Radian delta_pitch =
+        Value(-delta.y * 1.0 / GG::GUI::GetGUI()->AppHeight()) * Ogre::Radian(Ogre::Math::PI);
+    m_pitch += delta_pitch;
+    if (m_pitch < Ogre::Radian(0.0))
+        m_pitch = Ogre::Radian(0.0);
+    if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
+        m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
+    Ogre::Radian delta_roll =
+        Value(-delta.x * 1.0 / GG::GUI::GetGUI()->AppWidth()) * Ogre::Radian(Ogre::Math::PI);
+    m_roll += delta_roll;
+
+    UpdateCameraPosition();
+}
+
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS) {
@@ -1133,20 +1149,8 @@ void CombatWnd::MDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey
         GG::GUI::GetGUI()->MinDragDistance() * GG::GUI::GetGUI()->MinDragDistance() <
         static_cast<unsigned int>(Value(delta_pos.x * delta_pos.x) + Value(delta_pos.y * delta_pos.y))) {
         m_last_pos = pt;
-
-        Ogre::Radian delta_pitch =
-            Value(-delta_pos.y * 1.0 / GG::GUI::GetGUI()->AppHeight()) * Ogre::Radian(Ogre::Math::PI);
-        m_pitch += delta_pitch;
-        if (m_pitch < Ogre::Radian(0.0))
-            m_pitch = Ogre::Radian(0.0);
-        if (Ogre::Radian(Ogre::Math::HALF_PI) < m_pitch)
-            m_pitch = Ogre::Radian(Ogre::Math::HALF_PI);
-        Ogre::Radian delta_roll =
-            Value(-delta_pos.x * 1.0 / GG::GUI::GetGUI()->AppWidth()) * Ogre::Radian(Ogre::Math::PI);
-        m_roll += delta_roll;
-
+        HandleRotation(delta_pos);
         UpdateCameraPosition();
-
         m_mouse_dragged = true;
     }
 }
@@ -1194,6 +1198,15 @@ void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
     // TODO: This quick-quit is for prototyping only.
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
+
+    const int SCALE = 5;
+    switch (key) {
+    case GG::GGK_UP: HandleRotation(GG::Pt(GG::X0, GG::Y(SCALE))); break;
+    case GG::GGK_DOWN: HandleRotation(GG::Pt(GG::X0, GG::Y(-SCALE))); break;
+    case GG::GGK_RIGHT: HandleRotation(GG::Pt(GG::X(2 * -SCALE), GG::Y0)); break;
+    case GG::GGK_LEFT: HandleRotation(GG::Pt(GG::X(2 * SCALE), GG::Y0)); break;
+    default: break;
+    }
 }
 
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
