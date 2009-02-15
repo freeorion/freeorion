@@ -74,7 +74,6 @@ public:
 
     //! \name Mutators //!@{
     virtual void   Render();
-    virtual void   KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
     virtual void   LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void   LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -86,7 +85,6 @@ public:
     void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
-    void           HandlePlayerChatMessage(const std::string& msg); //!< displays incoming player chat text
 
     mutable SystemLeftClickedSignalType  SystemLeftClickedSignal;
     mutable SystemRightClickedSignalType SystemRightClickedSignal;
@@ -226,6 +224,8 @@ private:
     void DisableAlphaNumAccels();
     void EnableAlphaNumAccels();                //!< Re-enable accelerators disabled by DisableAlphaNumAccels
 
+    void ChatMessageSentSlot();
+
     void CloseAllPopups();
     void HideAllPopups();
     void ShowAllPopups();
@@ -247,8 +247,6 @@ private:
     ResearchWnd*                m_research_wnd;     //!< research screen
     ProductionWnd*              m_production_wnd;   //!< production screen
     DesignWnd*                  m_design_wnd;       //!< design screen
-    GG::MultiEdit*              m_chat_display;     //!< (read-only) MP-chat output multi-line edit box
-    CUIEdit*                    m_chat_edit;        //!< MP-chat input edit box
 
     std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
     std::vector<boost::signals::connection>         m_fleet_state_change_signals;

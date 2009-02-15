@@ -4,6 +4,7 @@
 #include "../../Empire/Empire.h"
 #include "../../network/Networking.h"
 #include "../../util/MultiplayerCommon.h"
+#include "../../UI/ChatWnd.h"
 #include "../../UI/CombatWnd.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/TurnProgressWnd.h"
@@ -507,7 +508,7 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
     else
         sender_colour = GG::CLR_WHITE;
     std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + msg.m_message.Text() + "</rgba>\n";
-    Client().m_ui->GetMapWnd()->HandlePlayerChatMessage(wrapped_text);
+    GetChatWnd()->HandlePlayerChatMessage(wrapped_text);
     return discard_event();
 }
 

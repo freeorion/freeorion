@@ -4,6 +4,7 @@
 
 #include "MapWnd.h"
 
+#include "ChatWnd.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "../universe/Fleet.h"
@@ -46,13 +47,6 @@ namespace {
     const GG::Y SITREP_PANEL_HEIGHT(300);
     const int MIN_SYSTEM_NAME_SIZE = 10;
     const int LAYOUT_MARGIN = 5;
-    const GG::X CHAT_WIDTH(400);
-    const GG::Y CHAT_HEIGHT(400);
-    const GG::Y CHAT_EDIT_HEIGHT(30);
-
-    int g_chat_display_show_time = 0;
-    std::deque<std::string> g_chat_edit_history;
-    int g_history_position = 0; // the current edit contents are in history position 0
 
     struct BoolToVoidAdapter
     {
@@ -63,8 +57,6 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.chat-hide-interval",             "OPTIONS_DB_UI_CHAT_HIDE_INTERVAL",         10,     RangedValidator<int>(0, 3600));
-        db.Add("UI.chat-edit-history",              "OPTIONS_DB_UI_CHAT_EDIT_HISTORY",          50,     RangedValidator<int>(0, 1000));
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                true,   Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",         true,   Validator<bool>());
         db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",    true,   Validator<bool>());
@@ -307,7 +299,7 @@ MapWnd::MapWnd() :
     m_design_wnd->Hide();
 
     // turn button
-    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), END_TURN_BTN_WIDTH, "" );
+    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), END_TURN_BTN_WIDTH, "");
     m_toolbar->AttachChild(m_turn_update);
     GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
@@ -377,29 +369,11 @@ MapWnd::MapWnd() :
                                0,0,3,3,true,true,false,true);
     m_toolbar->AttachChild(m_food);
 
-    // chat display and chat input box
-    m_chat_display = new GG::MultiEdit(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN, CHAT_WIDTH, CHAT_HEIGHT, "", ClientUI::GetFont(), GG::CLR_ZERO, 
-                                       GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT | GG::MULTI_NO_VSCROLL, 
-                                       ClientUI::TextColor(), GG::CLR_ZERO, GG::Flags<GG::WndFlag>());
-    AttachChild(m_chat_display);
-    m_chat_display->SetMaxLinesOfHistory(100);
-    m_chat_display->Hide();
-
-    m_chat_edit = new CUIEdit(GG::X(LAYOUT_MARGIN), APP_HEIGHT - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN, CHAT_WIDTH, "", 
-                              ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), GG::CLR_ZERO);
-    AttachChild(m_chat_edit);
-    m_chat_edit->Hide();
-    EnableAlphaNumAccels();
-
     m_menu_showing = false;
 
     //clear background images
     m_backgrounds.clear();
     m_bg_scroll_rate.clear();
-
-    ConnectKeyboardAcceleratorSignals();
-
-    g_chat_edit_history.push_front("");
 
 #if TEST_BROWSE_INFO
     boost::shared_ptr<GG::BrowseInfoWnd> browser_wnd(new BrowseFoo());
@@ -469,13 +443,6 @@ void MapWnd::Render()
 
     RenderStarfields();
 
-    unsigned int interval = GetOptionsDB().Get<int>("UI.chat-hide-interval");
-    if (!m_chat_edit->Visible() && g_chat_display_show_time && interval && 
-        (interval < (GG::GUI::GetGUI()->Ticks() - g_chat_display_show_time) / 1000)) {
-        m_chat_display->Hide();
-        g_chat_display_show_time = 0;
-    }
-
     GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
     glPushMatrix();
     glLoadIdentity();
@@ -506,123 +473,6 @@ void MapWnd::Render()
     glPopMatrix();
 }
 
-void MapWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-{
-    switch (key) {
-    case GG::GGK_TAB: { // auto-complete current chat edit word
-        if (m_chat_edit->Visible()) {
-            std::string text = m_chat_edit->Text();
-            std::pair<GG::CPSize, GG::CPSize> cursor_pos = m_chat_edit->CursorPosn();
-            if (cursor_pos.first == cursor_pos.second && 0 < cursor_pos.first && cursor_pos.first <= text.size()) {
-                std::string::size_type word_start = text.substr(0, Value(cursor_pos.first)).find_last_of(" :");
-                if (word_start == std::string::npos)
-                    word_start = 0;
-                else
-                    ++word_start;
-                std::string partial_word = text.substr(word_start, Value(cursor_pos.first - word_start));
-                if (partial_word == "")
-                    return;
-                std::set<std::string> names;
-                // add player and empire names
-                for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-                    names.insert(it->second->Name());
-                    names.insert(it->second->PlayerName());
-                }
-                // add system names
-                std::vector<System*> systems = GetUniverse().FindObjects<System>();
-                for (unsigned int i = 0; i < systems.size(); ++i) {
-                    if (systems[i]->Name() != "")
-                        names.insert(systems[i]->Name());
-                }
-
-                if (names.find(partial_word) != names.end()) { // if there's an exact match, just add a space
-                    text.insert(Value(cursor_pos.first), " ");
-                    m_chat_edit->SetText(text);
-                    m_chat_edit->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
-                } else { // no exact match; look for possible completions
-                    // find the range of strings in names that is at least partially matched by partial_word
-                    std::set<std::string>::iterator lower_bound = names.lower_bound(partial_word);
-                    std::set<std::string>::iterator upper_bound = lower_bound;
-                    while (upper_bound != names.end() && upper_bound->find(partial_word) == 0)
-                        ++upper_bound;
-                    if (lower_bound == upper_bound)
-                        return;
-
-                    // find the common portion of the strings in (upper_bound, lower_bound)
-                    unsigned int common_end = partial_word.size();
-                    for ( ; common_end < lower_bound->size(); ++common_end) {
-                        std::set<std::string>::iterator it = lower_bound;
-                        char ch = (*it++)[common_end];
-                        bool match = true;
-                        for ( ; it != upper_bound; ++it) {
-                            if ((*it)[common_end] != ch) {
-                                match = false;
-                                break;
-                            }
-                        }
-                        if (!match)
-                            break;
-                    }
-                    unsigned int chars_to_add = common_end - partial_word.size();
-                    bool full_completion = common_end == lower_bound->size();
-                    text.insert(Value(cursor_pos.first), lower_bound->substr(partial_word.size(), chars_to_add) + (full_completion ? " " : ""));
-                    m_chat_edit->SetText(text);
-                    GG::CPSize move_cursor_to = cursor_pos.first + chars_to_add + (full_completion ? GG::CP1 : GG::CP0);
-                    m_chat_edit->SelectRange(move_cursor_to, move_cursor_to);
-                }
-            }
-        }
-        break;
-    }
-    case GG::GGK_RETURN:
-    case GG::GGK_KP_ENTER: { // send chat message
-        if (m_chat_edit->Visible()) {
-            std::string edit_text = m_chat_edit->Text();
-            if (edit_text != "") {
-                if (g_chat_edit_history.size() == 1 || g_chat_edit_history[1] != edit_text) {
-                    g_chat_edit_history[0] = edit_text;
-                    g_chat_edit_history.push_front("");
-                } else {
-                    g_chat_edit_history[0] = "";
-                }
-                while (GetOptionsDB().Get<int>("UI.chat-edit-history") < static_cast<int>(g_chat_edit_history.size()) + 1)
-                    g_chat_edit_history.pop_back();
-                g_history_position = 0;
-                HumanClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
-            }
-            m_chat_edit->Clear();
-            m_chat_edit->Hide();
-            EnableAlphaNumAccels();
-
-            GG::GUI::GetGUI()->SetFocusWnd(this);
-            g_chat_display_show_time = GG::GUI::GetGUI()->Ticks();
-        }
-        break;
-    }
-
-    case GG::GGK_UP: {
-        if (m_chat_edit->Visible() && g_history_position < static_cast<int>(g_chat_edit_history.size()) - 1) {
-            g_chat_edit_history[g_history_position] = m_chat_edit->Text();
-            ++g_history_position;
-            m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
-        }
-        break;
-    }
-
-    case GG::GGK_DOWN: {
-        if (m_chat_edit->Visible() && 0 < g_history_position) {
-            g_chat_edit_history[g_history_position] = m_chat_edit->Text();
-            --g_history_position;
-            m_chat_edit->SetText(g_chat_edit_history[g_history_position]);
-        }
-        break;
-    }
-
-    default:
-        break;
-    }
-}
-
 void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
 {
     m_drag_offset = pt - ClientUpperLeft();
@@ -634,8 +484,6 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ClientUpperLeft();
     m_side_panel->OffsetMove(-final_move);
-    m_chat_display->OffsetMove(-final_move);
-    m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
@@ -1082,7 +930,7 @@ void MapWnd::InitTurn(int turn_number)
         ShowSitRep();
 
 
-    m_chat_edit->Hide();
+    GetChatWnd()->HideEdit();
     EnableAlphaNumAccels();
 
 
@@ -1289,8 +1137,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     GG::Pt map_move = map_ul - ul;
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
-    m_chat_display->OffsetMove(-map_move);
-    m_chat_edit->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
@@ -1298,8 +1144,6 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
-    m_chat_display->OffsetMove(-final_move);
-    m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
@@ -1319,13 +1163,6 @@ void MapWnd::HideSystemNames()
     }
 }
 
-void MapWnd::HandlePlayerChatMessage(const std::string& msg)
-{
-    *m_chat_display += msg;
-    m_chat_display->Show();
-    g_chat_display_show_time = GG::GUI::GetGUI()->Ticks();
-}
-
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
@@ -1335,8 +1172,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
                              static_cast<GG::Y>((current_y - y) * m_zoom_factor));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
-    m_chat_display->OffsetMove(-map_move);
-    m_chat_edit->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
@@ -1344,8 +1179,6 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
-    m_chat_display->OffsetMove(-final_move);
-    m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
@@ -1652,8 +1485,6 @@ void MapWnd::Zoom(int delta)
                     static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
-    m_chat_display->OffsetMove(-map_move);
-    m_chat_edit->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
@@ -1661,8 +1492,6 @@ void MapWnd::Zoom(int delta)
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
-    m_chat_display->OffsetMove(-final_move);
-    m_chat_edit->OffsetMove(-final_move);
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
@@ -2242,9 +2071,6 @@ void MapWnd::Sanitize()
     GG::Pt sp_lr = sp_ul + GG::Pt(SIDEPANEL_WIDTH, m_side_panel->Height());
 
     m_side_panel->SizeMove(sp_ul, sp_lr);
-    m_chat_display->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + LAYOUT_MARGIN));
-    m_chat_display->Clear();
-    m_chat_edit->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), APP_HEIGHT - CHAT_EDIT_HEIGHT - LAYOUT_MARGIN));
     m_sitrep_panel->MoveTo(GG::Pt((APP_WIDTH - SITREP_PANEL_WIDTH) / 2, (APP_HEIGHT - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
     MoveTo(GG::Pt(-APP_WIDTH, -APP_HEIGHT));
@@ -2274,16 +2100,12 @@ bool MapWnd::ReturnToMap()
 
 bool MapWnd::OpenChatWindow()
 {
-    if (!m_chat_display->Visible() || !m_chat_edit->Visible()) {
-        EnableAlphaNumAccels();
-        m_chat_display->Show();
+    bool retval = true;
+    if (GetChatWnd()->OpenForInput())
         DisableAlphaNumAccels();
-        m_chat_edit->Show();
-        GG::GUI::GetGUI()->SetFocusWnd(m_chat_edit);
-        g_chat_display_show_time = GG::GUI::GetGUI()->Ticks();
-        return true;
-    }
-    return false;
+    else
+        retval = false;
+    return retval;
 }
 
 bool MapWnd::EndTurn()
@@ -2925,48 +2747,88 @@ bool MapWnd::ZoomToNextFleet()
 
 void MapWnd::ConnectKeyboardAcceleratorSignals()
 {
-    // disconnect and clear old signals
-    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin(); it != m_keyboard_accelerator_signals.end(); ++it)
-        it->disconnect();
-    m_keyboard_accelerator_signals.clear();
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE),
+                    &MapWnd::ReturnToMap, this));
 
-    // connect new signals
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_ESCAPE),   &MapWnd::ReturnToMap, this);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),
+                    &MapWnd::OpenChatWindow, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER),
+                    &MapWnd::OpenChatWindow, this));
 
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),   &MapWnd::OpenChatWindow, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER), &MapWnd::OpenChatWindow, this);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN,   GG::MOD_KEY_CTRL),
+                    &MapWnd::EndTurn, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),
+                    &MapWnd::EndTurn, this));
 
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN,   GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),   &MapWnd::EndTurn, this);
-
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2),       &MapWnd::ToggleSitRep, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3),       &MapWnd::ToggleResearch, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4),       &MapWnd::ToggleProduction, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5),       &MapWnd::ToggleDesign, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),      &MapWnd::ShowMenu, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s),        &MapWnd::CloseSystemView, this);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F2),
+                    &MapWnd::ToggleSitRep, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F3),
+                    &MapWnd::ToggleResearch, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F4),
+                    &MapWnd::ToggleProduction, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F5),
+                    &MapWnd::ToggleDesign, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),
+                    &MapWnd::ShowMenu, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_s),
+                    &MapWnd::CloseSystemView, this));
 
     // Keys for zooming
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),        &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),  &MapWnd::KeyboardZoomIn, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),        &MapWnd::KeyboardZoomOut, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS), &MapWnd::KeyboardZoomOut, this);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),
+                    &MapWnd::KeyboardZoomIn, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),
+                    &MapWnd::KeyboardZoomIn, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),
+                    &MapWnd::KeyboardZoomOut, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS),
+                    &MapWnd::KeyboardZoomOut, this));
 
     // Keys for showing systems
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d),        &MapWnd::ZoomToHomeSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x),        &MapWnd::ZoomToPrevOwnedSystem, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c),        &MapWnd::ZoomToNextOwnedSystem, this);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_d),
+                    &MapWnd::ZoomToHomeSystem, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_x),
+                    &MapWnd::ZoomToPrevOwnedSystem, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_c),
+                    &MapWnd::ZoomToNextOwnedSystem, this));
 
     // Keys for showing fleets
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),        &MapWnd::ZoomToPrevIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),        &MapWnd::ZoomToNextIdleFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),        &MapWnd::ZoomToPrevFleet, this);
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),        &MapWnd::ZoomToNextFleet, this);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),
+                    &MapWnd::ZoomToPrevIdleFleet, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),
+                    &MapWnd::ZoomToNextIdleFleet, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),
+                    &MapWnd::ZoomToPrevFleet, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
+                    &MapWnd::ZoomToNextFleet, this));
 
 #ifndef FREEORION_RELEASE
     // Previously-used but presently ignored development-only key combo for dumping
     // ValueRef, Condition, and Effect regression tests using the current Universe
-    GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL),  &RequestRegressionTestDump);
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r, GG::MOD_KEY_CTRL),
+                    &RequestRegressionTestDump));
 #endif
 }
 
@@ -3007,6 +2869,8 @@ void MapWnd::SetAccelerators()
 #ifndef FREEORION_RELEASE
     GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r, GG::MOD_KEY_CTRL);
 #endif
+
+    ConnectKeyboardAcceleratorSignals();
 }
 
 void MapWnd::RemoveAccelerators()
@@ -3017,6 +2881,14 @@ void MapWnd::RemoveAccelerators()
         i = GG::GUI::GetGUI()->accel_begin();
     }
     m_disabled_accels_list.clear();
+
+    for (std::set<boost::signals::connection>::iterator it =
+             m_keyboard_accelerator_signals.begin();
+         it != m_keyboard_accelerator_signals.end();
+         ++it) {
+        it->disconnect();
+    }
+    m_keyboard_accelerator_signals.clear();
 }
 
 void MapWnd::DisableAlphaNumAccels()
@@ -3044,6 +2916,14 @@ void MapWnd::EnableAlphaNumAccels()
         GG::GUI::GetGUI()->SetAccelerator(*i);
     }
     m_disabled_accels_list.clear();
+}
+
+void MapWnd::ChatMessageSentSlot()
+{
+    if (!m_disabled_accels_list.empty()) {
+        EnableAlphaNumAccels();
+        GG::GUI::GetGUI()->SetFocusWnd(this);
+    }
 }
 
 void MapWnd::CloseAllPopups()

@@ -122,6 +122,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'network/ClientNetworking.cpp',
         'UI/About.cpp',
         'UI/BuildDesignatorWnd.cpp',
+        'UI/ChatWnd.cpp',
         'UI/ClientUI.cpp',
         'UI/CUIControls.cpp',
         'UI/CUIDrawUtil.cpp',

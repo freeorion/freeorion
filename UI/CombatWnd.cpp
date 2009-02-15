@@ -1,5 +1,6 @@
 #include "CombatWnd.h"
 
+#include "ChatWnd.h"
 #include "ClientUI.h"
 #include "CollisionMeshConverter.h"
 #include "CUIControls.h"
@@ -294,7 +295,7 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.AddFlag("tech-demo", "Try out the 3D combat tech demo.");
+        db.AddFlag("tech-demo", "Try out the 3D combat tech demo.", false);
         db.Add("combat.enable-glow", "OPTIONS_DB_COMBAT_ENABLE_GLOW",
                true, Validator<bool>());
         db.Add("combat.enable-skybox", "OPTIONS_DB_COMBAT_ENABLE_SKYBOX",
@@ -586,7 +587,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     AttachChild(m_fps_text);
 
-
     //////////////////////////////////////////////////////////////////
     // NOTE: Below is temporary code for combat system prototyping! //
     //////////////////////////////////////////////////////////////////
@@ -721,6 +721,8 @@ CombatWnd::~CombatWnd()
     delete m_collision_dispatcher;
     delete m_collision_configuration;
 
+    RemoveAccelerators();
+
     // TODO: delete nodes and materials in m_planet_assets (or maybe everything
     // via some Ogre function?)
 }
@@ -728,6 +730,8 @@ CombatWnd::~CombatWnd()
 void CombatWnd::InitCombat(const System& system)
 {
     // TODO: move all of this to the ctor after prototyping is complete
+
+    SetAccelerators();
 
     // build list of available star textures, by type
     std::set<std::string> star_textures;
@@ -1046,6 +1050,29 @@ void CombatWnd::LookAt(const Ogre::Vector3& look_at_point)
     }
 }
 
+void CombatWnd::Zoom(int move, GG::Flags<GG::ModKey> mod_keys)
+{
+    Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
+    if (m_look_at_scene_node)
+        bounding_sphere = m_look_at_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
+    const Ogre::Real EFFECTIVE_MIN_DISTANCE =
+        std::max(bounding_sphere.getRadius() * Ogre::Real(1.05), MIN_ZOOM_IN_DISTANCE);
+
+    Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
+    Ogre::Real scale_factor = 1.0;
+    if (mod_keys & GG::MOD_KEY_SHIFT)
+        scale_factor *= 2.0;
+    if (mod_keys & GG::MOD_KEY_CTRL)
+        scale_factor /= 4.0;
+    Ogre::Real total_move = move_incr * scale_factor * -move;
+    if (m_distance_to_look_at_point + total_move < EFFECTIVE_MIN_DISTANCE)
+        total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_look_at_point + total_move);
+    else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_look_at_point + total_move)
+        total_move -= (m_distance_to_look_at_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
+    m_distance_to_look_at_point += total_move;
+    UpdateCameraPosition();
+}
+
 void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_selection_drag_start != INVALID_SELECTION_DRAG_POS) {
@@ -1158,43 +1185,15 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
-    if (m_look_at_scene_node)
-        bounding_sphere = m_look_at_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
-    const Ogre::Real EFFECTIVE_MIN_DISTANCE =
-        std::max(bounding_sphere.getRadius() * Ogre::Real(1.05), MIN_ZOOM_IN_DISTANCE);
-
-    Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
-    Ogre::Real scale_factor = 1.0;
-    if (mod_keys & GG::MOD_KEY_SHIFT)
-        scale_factor *= 2.0;
-    if (mod_keys & GG::MOD_KEY_CTRL)
-        scale_factor /= 4.0;
-    Ogre::Real total_move = move_incr * scale_factor * -move;
-    if (m_distance_to_look_at_point + total_move < EFFECTIVE_MIN_DISTANCE)
-        total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_look_at_point + total_move);
-    else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_look_at_point + total_move)
-        total_move -= (m_distance_to_look_at_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
-    m_distance_to_look_at_point += total_move;
-    UpdateCameraPosition();
+    if (move)
+        Zoom(move, mod_keys);
 }
 
 void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
+    // TODO: This quick-quit is for prototyping only.
     if (key == GG::GGK_q && mod_keys & GG::MOD_KEY_CTRL)
         m_exit = true;
-
-    if (key == GG::GGK_F10 && !mod_keys && !m_menu_showing) {
-        m_menu_showing = true;
-#if 0 // TODO: Use the full in-game menu when the code is a bit more developed.
-        InGameMenu menu;
-        menu.Run();
-#else
-        OptionsWnd options_wnd;
-        options_wnd.Run();
-#endif
-        m_menu_showing = false;
-    }
 }
 
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
@@ -1481,4 +1480,199 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
     m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
     m_collision_world->addCollisionObject(&m_collision_objects.back());
     m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
+}
+
+bool CombatWnd::OpenChatWindow()
+{
+    bool retval = true;
+    if (GetChatWnd()->OpenForInput())
+        DisableAlphaNumAccels();
+    else
+        retval = false;
+    return retval;
+}
+
+bool CombatWnd::EndTurn()
+{
+    // TODO
+    return true;
+}
+
+bool CombatWnd::ShowMenu()
+{
+    if (!m_menu_showing) {
+        m_menu_showing = true;
+#if 0 // TODO: Use the full in-game menu when the code is a bit more developed.
+        InGameMenu menu;
+        menu.Run();
+#else
+        OptionsWnd options_wnd;
+        options_wnd.Run();
+#endif
+        m_menu_showing = false;
+    }
+    return true;
+}
+
+bool CombatWnd::KeyboardZoomIn()
+{
+    Zoom(1, GG::Flags<GG::ModKey>());
+    return true;
+}
+
+bool CombatWnd::KeyboardZoomOut()
+{
+    Zoom(-1, GG::Flags<GG::ModKey>());
+    return true;
+}
+
+bool CombatWnd::ZoomToPrevIdleUnit()
+{
+    // TODO
+    return true;
+}
+
+bool CombatWnd::ZoomToNextIdleUnit()
+{
+    // TODO
+    return true;
+}
+
+bool CombatWnd::ZoomToPrevUnit()
+{
+    // TODO
+    return true;
+}
+
+bool CombatWnd::ZoomToNextUnit()
+{
+    // TODO
+    return true;
+}
+
+void CombatWnd::ConnectKeyboardAcceleratorSignals()
+{
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN),
+                    &CombatWnd::OpenChatWindow, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER),
+                    &CombatWnd::OpenChatWindow, this));
+
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_RETURN, GG::MOD_KEY_CTRL),
+                    &CombatWnd::EndTurn, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL),
+                    &CombatWnd::EndTurn, this));
+
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_F10),
+                    &CombatWnd::ShowMenu, this));
+
+    // Keys for zooming
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_e),
+                    &CombatWnd::KeyboardZoomIn, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_PLUS),
+                    &CombatWnd::KeyboardZoomIn, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_r),
+                    &CombatWnd::KeyboardZoomOut, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_KP_MINUS),
+                    &CombatWnd::KeyboardZoomOut, this));
+
+    // Keys for showing units
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_f),
+                    &CombatWnd::ZoomToPrevIdleUnit, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_g),
+                    &CombatWnd::ZoomToNextIdleUnit, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_v),
+                    &CombatWnd::ZoomToPrevUnit, this));
+    m_keyboard_accelerator_signals.insert(
+        GG::Connect(GG::GUI::GetGUI()->AcceleratorSignal(GG::GGK_b),
+                    &CombatWnd::ZoomToNextUnit, this));
+}
+
+void CombatWnd::SetAccelerators()
+{
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER);
+
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_RETURN, GG::MOD_KEY_CTRL);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_ENTER, GG::MOD_KEY_CTRL);
+
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_F10);
+
+    // Keys for zooming
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_e);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_r);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_PLUS);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_KP_MINUS);
+
+    // Keys for showing units
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_f);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_g);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_v);
+    GG::GUI::GetGUI()->SetAccelerator(GG::GGK_b);
+
+    ConnectKeyboardAcceleratorSignals();
+}
+
+void CombatWnd::RemoveAccelerators()
+{
+    GG::GUI::accel_iterator i = GG::GUI::GetGUI()->accel_begin();
+    while (i != GG::GUI::GetGUI()->accel_end()) {
+        GG::GUI::GetGUI()->RemoveAccelerator(i);
+        i = GG::GUI::GetGUI()->accel_begin();
+    }
+    m_disabled_accels_list.clear();
+
+    for (std::set<boost::signals::connection>::iterator it =
+             m_keyboard_accelerator_signals.begin();
+         it != m_keyboard_accelerator_signals.end();
+         ++it) {
+        it->disconnect();
+    }
+    m_keyboard_accelerator_signals.clear();
+}
+
+void CombatWnd::DisableAlphaNumAccels()
+{
+    for (GG::GUI::const_accel_iterator i = GG::GUI::GetGUI()->accel_begin();
+         i != GG::GUI::GetGUI()->accel_end(); ++i) {
+        if (i->second != 0) // we only want to disable mod_keys without modifiers
+            continue; 
+        GG::Key key = i->first;
+        if ((key >= GG::GGK_a && key <= GG::GGK_z) || 
+            (key >= GG::GGK_0 && key <= GG::GGK_9)) {
+            m_disabled_accels_list.insert(key);
+        }
+    }
+    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
+         i != m_disabled_accels_list.end(); ++i) {
+        GG::GUI::GetGUI()->RemoveAccelerator(*i);
+    }
+}
+
+void CombatWnd::EnableAlphaNumAccels()
+{
+    for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
+         i != m_disabled_accels_list.end(); ++i) {
+        GG::GUI::GetGUI()->SetAccelerator(*i);
+    }
+    m_disabled_accels_list.clear();
+}
+
+void CombatWnd::ChatMessageSentSlot()
+{
+    if (!m_disabled_accels_list.empty()) {
+        EnableAlphaNumAccels();
+        GG::GUI::GetGUI()->SetFocusWnd(this);
+    }
 }

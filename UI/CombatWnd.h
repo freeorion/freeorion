@@ -48,6 +48,7 @@ public:
     virtual ~CombatWnd();
 
     void InitCombat(const System& system);
+    void HandlePlayerChatMessage(const std::string& msg);
 
     virtual void Render();
 
@@ -90,6 +91,7 @@ private:
 
     void LookAt(Ogre::SceneNode* look_at_node);
     void LookAt(const Ogre::Vector3& look_at_point);
+    void Zoom(int move, GG::Flags<GG::ModKey> mod_keys);
     void UpdateCameraPosition();
     void UpdateStarFromCameraPosition();
     void UpdateSkyBox();
@@ -98,6 +100,24 @@ private:
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
     void DeselectAll();
     void AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y);
+
+    // Keyboard accelerator handlers, etc.  See MapWnd for implementation
+    // notes.
+    bool OpenChatWindow();
+    bool EndTurn();
+    bool ShowMenu();
+    bool KeyboardZoomIn();
+    bool KeyboardZoomOut();
+    bool ZoomToPrevIdleUnit();
+    bool ZoomToNextIdleUnit();
+    bool ZoomToPrevUnit();
+    bool ZoomToNextUnit();
+    void ConnectKeyboardAcceleratorSignals();
+    void SetAccelerators();
+    void RemoveAccelerators();
+    void DisableAlphaNumAccels();
+    void EnableAlphaNumAccels();
+    void ChatMessageSentSlot();
 
     Ogre::SceneManager* m_scene_manager;
     Ogre::Camera* m_camera;
@@ -152,6 +172,8 @@ private:
     FPSIndicator* m_fps_text;
 
     bool m_menu_showing;
+    std::set<boost::signals::connection> m_keyboard_accelerator_signals;
+    std::set<GG::Key> m_disabled_accels_list;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };
