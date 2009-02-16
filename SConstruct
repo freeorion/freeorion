@@ -177,6 +177,9 @@ if str(Platform()) == 'win32':
 ##################################################
 # check configuration                            #
 ##################################################
+if os.environ.has_key('PKG_CONFIG_PATH'):
+    env['ENV']['PKG_CONFIG_PATH'] = os.environ['PKG_CONFIG_PATH']
+
 if not env.GetOption('clean'):
     if not preconfigured:
         conf = env.Configure(custom_tests = {'CheckVersionHeader' : CheckVersionHeader,
