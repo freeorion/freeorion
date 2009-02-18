@@ -77,6 +77,8 @@ void SigHandler(int sig)
 namespace {
     const unsigned int SERVER_CONNECT_TIMEOUT = 30000; // in ms
 
+    const bool INSTRUMENT_MESSAGE_HANDLING = false;
+
     // command-line options
     void AddOptions(OptionsDB& db)
     {
@@ -469,7 +471,8 @@ void HumanClientApp::RenderBegin()
 
 void HumanClientApp::HandleMessage(Message& msg)
 {
-    std::cout << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")" << std::endl;
+    if (INSTRUMENT_MESSAGE_HANDLING)
+        std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
     switch (msg.Type()) {
     case Message::HOST_MP_GAME:          m_fsm->process_event(HostMPGame(msg)); break;
@@ -498,7 +501,8 @@ void HumanClientApp::HandleMessage(Message& msg)
 
 void HumanClientApp::HandleSaveGameDataRequest()
 {
-    std::cout << "HumanClientApp::HandleSaveGameDataRequest(" << MessageTypeStr(Message::SAVE_GAME) << ")" << std::endl;
+    if (INSTRUMENT_MESSAGE_HANDLING)
+        std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << MessageTypeStr(Message::SAVE_GAME) << ")\n";
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
     Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));

@@ -723,10 +723,6 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
         order_set.reset(new OrderSet(*existing_orders));
     else
         order_set.reset(new OrderSet(received_orders));
-    std::cout << "Received save game data from player "
-              << player_connection->PlayerName()
-              << " ... " << std::distance(order_set->begin(), order_set->end()) << " orders received"
-              << std::endl;
     if (!ui_data_available)
         ui_data.reset();
     if (!save_state_string_available)
