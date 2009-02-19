@@ -8,7 +8,9 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/function.hpp>
 #include <boost/iterator/filter_iterator.hpp>
+#include <boost/signal.hpp>
 
+#include <queue>
 #include <set>
 
 
@@ -16,12 +18,14 @@ class DiscoveryServer;
 class Message;
 class PlayerConnection;
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
+typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectionFn;
+typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;
+typedef boost::function<void ()> NullaryFn;
 
-/** Encapsulates the networking facilities of the server.  This class listens for incoming UDP LAN server-discovery
-    requests and TCP player connections.  The server also sends and receives messages over the TCP player connections.
-    Note that all the networking code runs in the main thread.  Note that iterating from begin() to end() will iterate
-    over only the established PlayerConnections.  Unestablished ones will be skipped; see PlayerConnection for further
-    information on established vs. unestablished player connections. */
+/** Encapsulates the networking facilities of the server.  This class listens
+    for incoming UDP LAN server-discovery requests and TCP player connections.
+    The server also sends and receives messages over the TCP player
+    connections. */
 class ServerNetworking
 {
 private:
@@ -32,29 +36,51 @@ private:
 public:
     typedef std::set<PlayerConnectionPtr>::iterator iterator;
     typedef std::set<PlayerConnectionPtr>::const_iterator const_iterator;
-    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator> established_iterator;
-    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator> const_established_iterator;
+    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator>
+    established_iterator;
+    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>
+    const_established_iterator;
 
     /** \name Structors */ //@{
     /** Basic ctor. */
     ServerNetworking(boost::asio::io_service& io_service,
-                     boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                     boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
-                     boost::function<void (PlayerConnectionPtr)> disconnected_callback);
+                     MessageAndConnectionFn nonplayer_message_callback,
+                     MessageAndConnectionFn player_message_callback,
+                     ConnectionFn disconnected_callback);
 
     ~ServerNetworking(); //< Dtor.
     //@}
 
     /** \name Accessors */ //@{
-    bool empty() const;             ///< Returns true if size() == 0.
-    std::size_t size() const;       ///< Returns the \a total number of PlayerConnections (not just established ones).
-    const_iterator begin() const;   ///< Returns an iterator to the first PlayerConnection object.
-    const_iterator end() const;     ///< Returns an iterator to the one-past-the-last PlayerConnection object.
-    std::size_t NumPlayers() const; ///< Returns the number of established-player PlayerConnections.
-    const_established_iterator GetPlayer(int id) const;   ///< Returns an iterator to the established PlayerConnection object with ID \a id, or end() if none is found.
-    const_established_iterator established_begin() const; ///< Returns an iterator to the first \a established PlayerConnection object.
-    const_established_iterator established_end() const;   ///< Returns an iterator to the one-past-the-last \a established PlayerConnection object.
-    int GreatestPlayerID() const;   ///< Returns the highest player ID of all the established players.
+    /** Returns true if size() == 0. */
+    bool empty() const;
+
+    /** Returns the \a total number of PlayerConnections (not just established
+        ones). */
+    std::size_t size() const;
+
+    /** Returns an iterator to the first PlayerConnection object. */
+    const_iterator begin() const;
+
+    /** Returns an iterator to the one-past-the-last PlayerConnection object. */
+    const_iterator end() const;
+
+    /** Returns the number of established-player PlayerConnections. */
+    std::size_t NumPlayers() const;
+
+    /** Returns an iterator to the established PlayerConnection object with ID
+        \a id, or end() if none is found. */
+    const_established_iterator GetPlayer(int id) const;
+
+    /** Returns an iterator to the first \a established PlayerConnection object. */
+    const_established_iterator established_begin() const;
+
+    /** Returns an iterator to the one-past-the-last \a established
+        PlayerConnection object. */
+    const_established_iterator established_end() const;
+
+    /** Returns the highest player ID of all the established players. */
+    int GreatestPlayerID() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -73,33 +99,54 @@ public:
     /** Disconnects the server from all clients. */
     void DisconnectAll();
 
-    iterator begin();                         ///< Returns an iterator to the first PlayerConnection object.
-    iterator end();                           ///< Returns an iterator to the one-past-the-last PlayerConnection object.
-    established_iterator GetPlayer(int id);   ///< Returns an iterator to the established PlayerConnection object with ID \a id, or end() if none is found.
-    established_iterator established_begin(); ///< Returns an iterator to the first established PlayerConnection object.
-    established_iterator established_end();   ///< Returns an iterator to the one-past-the-last established PlayerConnection object.
+    /** Returns an iterator to the first PlayerConnection object. */
+    iterator begin();
+
+    /** Returns an iterator to the one-past-the-last PlayerConnection object. */
+    iterator end();
+
+    /** Returns an iterator to the established PlayerConnection object with ID
+        \a id, or end() if none is found. */
+    established_iterator GetPlayer(int id);
+
+    /** Returns an iterator to the first established PlayerConnection
+        object. */
+    established_iterator established_begin();
+
+    /** Returns an iterator to the one-past-the-last established
+        PlayerConnection object. */
+    established_iterator established_end();
+
+    /** Dequeues and executes the next event in the queue.  Results in a noop
+        if the queue is empty. */
+    void HandleNextEvent();
     //@}
 
 private:
     void Init();
     void AcceptNextConnection();
-    void AcceptConnection(PlayerConnectionPtr player_connection, const boost::system::error_code& error);
+    void AcceptConnection(PlayerConnectionPtr player_connection,
+                          const boost::system::error_code& error);
     void DisconnectImpl(PlayerConnectionPtr player_connection);
+    void EnqueueEvent(const NullaryFn& fn);
 
     DiscoveryServer*               m_discovery_server;
     boost::asio::ip::tcp::acceptor m_player_connection_acceptor;
     PlayerConnections              m_player_connections;
+    std::queue<NullaryFn>          m_event_queue;
 
-    boost::function<void (Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
-    boost::function<void (Message&, PlayerConnectionPtr)> m_player_message_callback;
-    boost::function<void (PlayerConnectionPtr)>           m_disconnected_callback;
+    MessageAndConnectionFn m_nonplayer_message_callback;
+    MessageAndConnectionFn m_player_message_callback;
+    ConnectionFn           m_disconnected_callback;
 };
 
-/** Encapsulates the connection to a single player.  This object should have nearly the same lifetime as the socket it
-    represents, except that the object is constructed just before the socket connection is made.  A newly-constructed
-    PlayerConnection has no associated player ID, player name, nor host-player status.  Once a PlayerConnection is
-    accepted by the server as an actual player in a game, EstablishPlayer() should be called.  This establishes the
-    aforementioned properties. */
+/** Encapsulates the connection to a single player.  This object should have
+    nearly the same lifetime as the socket it represents, except that the
+    object is constructed just before the socket connection is made.  A
+    newly-constructed PlayerConnection has no associated player ID, player
+    name, nor host-player status.  Once a PlayerConnection is accepted by the
+    server as an actual player in a game, EstablishPlayer() should be called.
+    This establishes the aforementioned properties. */
 class PlayerConnection :
     public boost::enable_shared_from_this<PlayerConnection>
 {
@@ -109,35 +156,55 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    bool               EstablishedPlayer() const;           ///< Returns true iff EstablishPlayer() has been called on this connection.
-    int                ID() const;                          ///< Returns the ID of the player associated with this connection, if any.
-    const std::string& PlayerName() const;                  ///< Returns the name of the player associated with this connection, if any.
-    bool               Host() const;                        ///< Returns true iff the player associated with this connection, if any, is the host of the current game.
+    /** Returns true iff EstablishPlayer() has been called on this
+        connection. */
+    bool EstablishedPlayer() const;
+
+    /** Returns the ID of the player associated with this connection, if
+        any. */
+    int ID() const;
+
+    /** Returns the name of the player associated with this connection, if
+        any. */
+    const std::string& PlayerName() const;
+
+    /** Returns true iff the player associated with this connection, if any,
+        is the host of the current game. */
+    bool Host() const;
     //@}
 
     /** \name Mutators */ //@{
-    void               Start();                             ///< Starts the connection reading incoming messages on it socket.
-    void               SendMessage(const Message& message); ///< Sends \a message to out on the connection.
+    /** Starts the connection reading incoming messages on it socket. */
+    void Start();
 
-    /** Establishes a connection as a player with a specific name and id.  This function must only be called once. */
-    void               EstablishPlayer(int id, const std::string& player_name, bool host);
+    /** Sends \a message to out on the connection. */
+    void SendMessage(const Message& message);
+
+    /** Establishes a connection as a player with a specific name and id.
+        This function must only be called once. */
+    void EstablishPlayer(int id, const std::string& player_name, bool host);
     //@}
 
+    mutable boost::signal<void (const NullaryFn&)> EventSignal;
+
     /** Creates a new PlayerConnection and returns it as a shared_ptr. */
-    static PlayerConnectionPtr NewConnection(boost::asio::io_service& io_service,
-                                             boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                                             boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
-                                             boost::function<void (PlayerConnectionPtr)> disconnected_callback);
+    static PlayerConnectionPtr
+    NewConnection(boost::asio::io_service& io_service,
+                  MessageAndConnectionFn nonplayer_message_callback,
+                  MessageAndConnectionFn player_message_callback,
+                  ConnectionFn disconnected_callback);
 
 private:
     typedef boost::array<int, 5> MessageHeaderBuffer;
 
     PlayerConnection(boost::asio::io_service& io_service,
-                     boost::function<void (Message&, PlayerConnectionPtr)> nonplayer_message_callback,
-                     boost::function<void (Message&, PlayerConnectionPtr)> player_message_callback,
-                     boost::function<void (PlayerConnectionPtr)> disconnected_callback);
-    void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
-    void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
+                     MessageAndConnectionFn nonplayer_message_callback,
+                     MessageAndConnectionFn player_message_callback,
+                     ConnectionFn disconnected_callback);
+    void HandleMessageBodyRead(boost::system::error_code error,
+                               std::size_t bytes_transferred);
+    void HandleMessageHeaderRead(boost::system::error_code error,
+                                 std::size_t bytes_transferred);
     void AsyncReadMessage();
 
     boost::asio::ip::tcp::socket m_socket;
@@ -148,11 +215,14 @@ private:
     bool                         m_host;
     bool                         m_new_connection;
 
-    boost::function<void (Message&, PlayerConnectionPtr)> m_nonplayer_message_callback;
-    boost::function<void (Message&, PlayerConnectionPtr)> m_player_message_callback;
-    boost::function<void (PlayerConnectionPtr)>           m_disconnected_callback;
+    MessageAndConnectionFn m_nonplayer_message_callback;
+    MessageAndConnectionFn m_player_message_callback;
+    ConnectionFn           m_disconnected_callback;
 
-    enum { HEADER_SIZE = MessageHeaderBuffer::static_size * sizeof(MessageHeaderBuffer::value_type) };
+    enum {
+        HEADER_SIZE =
+        MessageHeaderBuffer::static_size * sizeof(MessageHeaderBuffer::value_type)
+    };
 
     friend class ServerNetworking;
 };

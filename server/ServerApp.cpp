@@ -155,18 +155,23 @@ Universe& ServerApp::GetUniverse()
 { return s_app->m_universe; }
 
 EmpireManager& ServerApp::Empires()
-{ return ServerApp::GetApp()->m_empires; }
+{ return s_app->m_empires; }
 
 CombatModule* ServerApp::CurrentCombat()
-{ return ServerApp::GetApp()->m_current_combat; }
+{ return s_app->m_current_combat; }
 
 ServerNetworking& ServerApp::Networking()
-{ return ServerApp::GetApp()->m_networking; }
+{ return s_app->m_networking; }
 
 void ServerApp::Run()
 {
     try {
-        m_io_service.run();
+        while (1) {
+            if (m_io_service.run_one())
+                m_networking.HandleNextEvent();
+            else
+                break;
+        }
     } catch (...) {
         CleanupAIs();
         throw;
@@ -181,7 +186,7 @@ void ServerApp::CleanupAIs()
     }
 }
 
-void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connection)
+void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection)
 {
     if (msg.SendingPlayer() != player_connection->ID()) {
         m_log_category.errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs "
@@ -214,7 +219,7 @@ void ServerApp::HandleMessage(Message& msg, PlayerConnectionPtr player_connectio
     }
 }
 
-void ServerApp::HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection)
+void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection)
 {
     switch (msg.Type()) {
     case Message::HOST_SP_GAME: m_fsm.process_event(HostSPGame(msg, player_connection)); break;

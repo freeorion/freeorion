@@ -2,7 +2,7 @@
 #ifndef _Message_h_
 #define _Message_h_
 
-#include <boost/shared_ptr.hpp>
+#include <boost/shared_array.hpp>
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -93,10 +93,6 @@ public:
             int receiving_player,
             const std::string& text,
             bool synchronous_response = false);
-
-    Message(const Message& rhs);            ///< Copy ctor.
-    ~Message();                             ///< Dtor.
-    Message& operator=(const Message& rhs); ///< Assignment.
     //@}
 
     /** \name Accessors */ //@{
@@ -121,7 +117,8 @@ private:
     int           m_receiving_player;
     bool          m_synchronous_response;
     int           m_message_size;
-    char*         m_message_text;
+
+    boost::shared_array<char> m_message_text;
 
     friend void BufferToHeader(const int* header_buf, Message& message);
 };

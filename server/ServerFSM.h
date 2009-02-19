@@ -4,6 +4,7 @@
 
 #include "../network/Message.h"
 
+#include <boost/shared_ptr.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/seq/elem.hpp>

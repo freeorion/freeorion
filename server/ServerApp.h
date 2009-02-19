@@ -131,10 +131,10 @@ private:
     void CleanupAIs();      ///< cleans up AI processes
 
     /** handles an incoming message from the server with the appropriate action or response */
-    void HandleMessage(Message& msg, PlayerConnectionPtr player_connection);
+    void HandleMessage(Message msg, PlayerConnectionPtr player_connection);
 
     /** when Messages arrive from connections that are not established players, they arrive via a call to this function*/
-    void HandleNonPlayerMessage(Message& msg, PlayerConnectionPtr player_connection);
+    void HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection);
 
     /** called by ServerNetworking when a player's TCP connection is closed*/
     void PlayerDisconnected(PlayerConnectionPtr player_connection);
