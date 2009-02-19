@@ -38,7 +38,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost
     GG::X width(0);
     const std::set<int>& owners = system->Owners();
     if (owners.size() <= 1) {
-        GG::Clr text_color = ClientUI::TextColor();
+        GG::Clr text_color = ClientUI::SystemNameTextColor();
         if (!owners.empty())
             text_color = Empires().Lookup(*owners.begin())->Color();
         GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, str, font, text_color);
@@ -190,7 +190,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int n, bool moving) const
     assert(n > 0);
     // determine where the nth fleetbutton should be located
     GG::Pt retval = GG::Pt();
-    const int FLEETBUTTON_SIZE = FleetButtonSize();
+    const int FLEETBUTTON_SIZE = ClientUI::SmallFleetButtonSize();
 
     if (moving) {   // moving at bottom left
         retval += GG::Pt(-GG::X(FLEETBUTTON_SIZE), Height());
@@ -200,11 +200,6 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int n, bool moving) const
         retval += GG::Pt(Width(), -GG::Y(FLEETBUTTON_SIZE)*n);
         return retval;
     }
-}
-
-int SystemIcon::FleetButtonSize() const
-{
-    return static_cast<int>(Value(Height()) * ClientUI::FleetButtonSize());
 }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -364,7 +359,7 @@ void SystemIcon::RefreshFleetButtons()
         //    Logger().debugStream() << "... " << *it1;
 
         if (!fleet_IDs.empty()) {
-            fb = new FleetButton(empire->Color(), fleet_IDs);
+            fb = new FleetButton(fleet_IDs);
             m_stationary_fleet_markers[empire_id] = fb;
             AttachChild(m_stationary_fleet_markers[empire_id]);
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this, false));
@@ -372,7 +367,7 @@ void SystemIcon::RefreshFleetButtons()
 
         fleet_IDs = m_system.FindObjectIDs(OrderedMovingFleetVisitor(it->first));
         if (!fleet_IDs.empty()) {
-            fb = new FleetButton(empire->Color(), fleet_IDs);
+            fb = new FleetButton(fleet_IDs);
             m_moving_fleet_markers[empire_id] = fb;
             AttachChild(m_moving_fleet_markers[empire_id]);
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this, true));
@@ -428,9 +423,9 @@ void SystemIcon::HideName()
 
 void SystemIcon::DoFleetButtonLayout()
 {
-    const int FLEETBUTTON_SIZE = FleetButtonSize();
+    const int FLEETBUTTON_SIZE = ClientUI::SmallFleetButtonSize();
     const GG::Pt SIZE = GG::Pt(GG::X(FLEETBUTTON_SIZE), GG::Y(FLEETBUTTON_SIZE));
-    
+
     // stationary fleet buttons
     int empire_num = 1;
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
@@ -438,7 +433,7 @@ void SystemIcon::DoFleetButtonLayout()
         ++empire_num;
         it->second->SizeMove(ul, ul + SIZE);
     }
-    
+
     // departing fleet buttons
     empire_num = 1;
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {

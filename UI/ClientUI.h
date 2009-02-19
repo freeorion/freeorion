@@ -137,41 +137,36 @@ public:
     static GG::Clr      EditIntColor();
     static GG::Clr      MultieditIntColor();
 
-    static GG::Clr      StatIncrColor();        //!< used to color increasing stats text (eg "+2")
-    static GG::Clr      StatDecrColor();        //!< used to color decreasing stats text (eg "-3")
+    static GG::Clr      StatIncrColor();                        //!< used to color increasing stats text (eg "+2")
+    static GG::Clr      StatDecrColor();                        //!< used to color decreasing stats text (eg "-3")
 
     static int          SystemIconSize();                       //!< the width/height of a System/Icon at zoom = 1.0
+    static GG::Clr      SystemNameTextColor();                  //!< the colour of system names that aren't owned by any player (as far as this client knows)
     static double       SystemSelectionIndicatorSize();         //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
 
-    static double       FleetButtonSize();                      //!< the width/height of a FleetButton, relative to the size of a SystemIcon
+    static int          LargeFleetButtonSize();                 //!< the width/height of a (large) single-fleet button
+    static int          SmallFleetButtonSize();                 //!< the width/height of a (small) single fleet button
+    static int          TinyFleetButtonSize();                  //!< the width/height of a (tiny) multi-fleet button
 
-    boost::shared_ptr<GG::Texture>
-                        FleetHeadIcon(const Fleet* fleet);      //!< the "head" icon for \a fleet
-    boost::shared_ptr<GG::Texture>
-                        FleetSizeIcon(const Fleet* fleet);      //!< the "size" icon for \a fleet
-    boost::shared_ptr<GG::Texture>
-                        FleetSizeIcon(unsigned int fleet_size); //!< the "size" icon for a fleet of size \a fleet_size
+    static boost::shared_ptr<GG::Texture>   FleetHeadIcon(const Fleet* fleet = 0);  //!< the "head" icon for \a fleet or a generic icon if \a fleet is 0
+    static boost::shared_ptr<GG::Texture>   FleetSizeIcon(const Fleet* fleet = 0);  //!< the "size" icon for \a fleet (defaults to the size icon for a single ship fleet if \a fleet is 0)
+    static boost::shared_ptr<GG::Texture>   FleetSizeIcon(unsigned int fleet_size); //!< the "size" icon for a fleet of size \a fleet_size
+
+    static boost::shared_ptr<GG::Texture>   FleetTinyIcon(const Fleet* fleet = 0);  //!< the icon for \a fleet when shown very small
+    static boost::shared_ptr<GG::Texture>   MultiFleetTinyIcon();                   //!< the icon to represent multiple fleets when shown very small
 
     // SidePanel
     static GG::Clr      SidePanelColor();
 
     // Content Texture Getters
-    static boost::shared_ptr<GG::Texture>
-                        ShipIcon(int design_id);
-    static boost::shared_ptr<GG::Texture>
-                        BuildingTexture(const std::string& building_type_name);
-    static boost::shared_ptr<GG::Texture> 
-                        CategoryIcon(const std::string& category_name);
-    static boost::shared_ptr<GG::Texture>
-                        TechTexture(const std::string& tech_name);
-    static boost::shared_ptr<GG::Texture>
-                        SpecialTexture(const std::string& special_name);
-    static boost::shared_ptr<GG::Texture>
-                        MeterIcon(MeterType meter_type);
-    static boost::shared_ptr<GG::Texture>
-                        PartTexture(const std::string& part_name);
-    static boost::shared_ptr<GG::Texture>
-                        HullTexture(const std::string& hull_name);
+    static boost::shared_ptr<GG::Texture>   ShipIcon(int design_id);
+    static boost::shared_ptr<GG::Texture>   BuildingTexture(const std::string& building_type_name);
+    static boost::shared_ptr<GG::Texture>   CategoryIcon(const std::string& category_name);
+    static boost::shared_ptr<GG::Texture>   TechTexture(const std::string& tech_name);
+    static boost::shared_ptr<GG::Texture>   SpecialTexture(const std::string& special_name);
+    static boost::shared_ptr<GG::Texture>   MeterIcon(MeterType meter_type);
+    static boost::shared_ptr<GG::Texture>   PartTexture(const std::string& part_name);
+    static boost::shared_ptr<GG::Texture>   HullTexture(const std::string& hull_name);
 
     // research screen
     static GG::Clr      KnownTechFillColor();

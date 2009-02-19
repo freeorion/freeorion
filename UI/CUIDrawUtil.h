@@ -42,13 +42,6 @@ void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orie
 /** returns true iff \a pt falls within the isosceles triangle described by the other parameters */
 bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation);
 
-/** renders a semi-triangular shape with two equal-length sides, oriented in the desired direction.  
-    Only SHAPE_LEFT and SHAPE_RIGHT are supported. */
-void FleetMarker(const GG::Pt& ul, GG::Pt lr, ShapeOrientation orientation, GG::Clr color);
-
-/** returns true iff \a pt falls within the fleet marker described by the other parameters */
-bool InFleetMarker(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation);
-
 /** Draws a filled portion of a circle when \a filled_shape is true (calling glBegin(GL_TRIANGLE_FAN); glVertex2f() ...; glEnd();),
     or provides the vertices for a portion of a circle (calling glVertex2f() ...;). when \a filled_shape is false. */
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);

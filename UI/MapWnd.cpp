@@ -104,13 +104,8 @@ namespace {
 
         Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
 
-        if (version_number < 1.5) {
-            Logger().errorStream() << "OpenGL version number less than 1.5.  FreeOrion uses OpenGL 1.5 features and may crash on this system.";
-            std::cerr << "OpenGL version number " << DoubleToString(version_number, 2, false, false) << " is less than 1.5." << std::endl;      // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
-            std::cerr << "FreeOrion requires OpenGL 1.5 and may crash on this system." << std::endl;
-        } else if (version_number < 2.0) {
-            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion reccomended OpenGL version is 2.0 or greater and you may have problems on this system.";
-        }
+        if (version_number < 2.0)
+            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion requires OpenGL version 2.0 or greater, so you may have problems on this system.";
     }
 
 
@@ -237,8 +232,8 @@ void MapWnd::FleetETAMapIndicator::Render()
 
 // MapWnd
 // static(s)
-double          MapWnd::s_min_scale_factor = 0.35;
 double          MapWnd::s_max_scale_factor = 8.0;
+double          MapWnd::s_min_scale_factor = MapWnd::s_max_scale_factor / pow(ZOOM_STEP_SIZE, 14.0);
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -867,8 +862,8 @@ void MapWnd::InitTurn(int turn_number)
     m_moving_fleet_buttons.clear();
 
     // disconnect old moving fleet statechangedsignal connections
-    for (std::vector<boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
-        it->disconnect();
+    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+        it->second.disconnect();
     m_fleet_state_change_signals.clear();
 
     Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
@@ -889,14 +884,14 @@ void MapWnd::InitTurn(int turn_number)
 
         // create new fleetbutton for this cluster of fleets
         for (std::map<int, std::vector<int> >::iterator ID_it = IDs_by_empire_color.begin(); ID_it != IDs_by_empire_color.end(); ++ID_it) {
-            FleetButton* fb = new FleetButton(Empires().Lookup(ID_it->first)->Color(), ID_it->second);
+            FleetButton* fb = new FleetButton(ID_it->second);
             m_moving_fleet_buttons.push_back(fb);
             AttachChild(fb);
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }
     // position fleetbuttons
-    DoMovingFleetButtonsLayout();
+    DoFleetButtonsLayout();
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
         SetFleetMovementLine(*it);
@@ -909,7 +904,7 @@ void MapWnd::InitTurn(int turn_number)
             Logger().errorStream() << "MapWnd::InitTurn couldn't cast a (supposed) moving fleet pointer to a Fleet*";
             continue;
         }
-        m_fleet_state_change_signals.push_back(GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet)));
+        m_fleet_state_change_signals[moving_fleet->ID()] = GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet));
     }
 
     MoveChildUp(m_side_panel);
@@ -1130,7 +1125,7 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     m_zoom_factor = data.map_zoom_factor;
 
     DoSystemIconsLayout();
-    DoMovingFleetButtonsLayout();
+    DoFleetButtonsLayout();
 
     GG::Pt ul = UpperLeft();
     GG::Pt map_ul = GG::Pt(GG::X(data.map_left), GG::Y(data.map_top));
@@ -1418,9 +1413,9 @@ void MapWnd::DoSystemIconsLayout()
     }
 }
 
-void MapWnd::DoMovingFleetButtonsLayout()
+void MapWnd::DoFleetButtonsLayout()
 {
-    const int FLEET_BUTTON_SIZE = FleetButtonSize();
+    const int FLEET_BUTTON_SIZE = ClientUI::SmallFleetButtonSize();
     // position and resize unattached (to system icons) fleet icons
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
@@ -1434,11 +1429,6 @@ void MapWnd::DoMovingFleetButtonsLayout()
 int MapWnd::SystemIconSize() const
 {
     return static_cast<int>(ClientUI::SystemIconSize() * m_zoom_factor);
-}
-
-int MapWnd::FleetButtonSize() const
-{
-    return static_cast<int>(SystemIconSize() * ClientUI::FleetButtonSize());
 }
 
 void MapWnd::Zoom(int delta)
@@ -1478,7 +1468,7 @@ void MapWnd::Zoom(int delta)
         ShowSystemNames();
 
     DoSystemIconsLayout();
-    DoMovingFleetButtonsLayout();
+    DoFleetButtonsLayout();
 
     // translate map and UI widgets to account for the change in upper left due to zooming
     GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),

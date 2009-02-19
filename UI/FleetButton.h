@@ -9,43 +9,44 @@ class Fleet;
 class FleetWnd;
 class UniverseObject;
 
-/** represents a group of same-empire fleets at the same location.  Clicking a FleetButton brings up a fleet window 
-    from which the user can view and/or give orders to the fleets shown. */
+/** represents one or more fleets of an empire at a location on the map. */
 class FleetButton : public GG::Button
 {
 public:
+    enum SizeType {
+        FLEET_BUTTON_TINY,
+        FLEET_BUTTON_SMALL,
+        FLEET_BUTTON_LARGE
+    };
+
     /** \name Structors */ //@{
-    FleetButton(GG::Clr color, const std::vector<int>& fleet_IDs); ///< basic  ctor
-    FleetButton(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, const std::vector<int>& fleet_IDs); ///< ctor to specify size and location
+    FleetButton(const std::vector<int>& fleet_IDs, SizeType size = FLEET_BUTTON_SMALL);
+    FleetButton(int fleet_id, SizeType size = FLEET_BUTTON_SMALL);
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool           InWindow(const GG::Pt& pt) const;
+    virtual bool                InWindow(const GG::Pt& pt) const;   ///< returns true if \a pt is within or over the button
 
-    const std::vector<Fleet*>& Fleets() const {return m_fleets;} ///< returns the fleets represented by this control
-
-    /** returns the orientation of the fleet marker (will be one of SHAPE_LEFT ans SHAPE_RIGHT) */
-    ShapeOrientation Orientation() const {return m_orientation;}
+    const std::vector<Fleet*>&  Fleets() const {return m_fleets;}   ///< returns the fleets represented by this control
     //@}
 
     /** \name Mutators */ //@{
-    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-
-    /** sets the orientation of the fleet marker (must be one of SHAPE_LEFT and SHAPE_RIGHT; 
-        otherwise, SHAPE_LEFT will be used) */
-    void SetOrientation(ShapeOrientation orientation) {m_orientation = orientation;}
+    virtual void                MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    //@}
 
 protected:
     /** \name Mutators */ //@{
-    virtual void   RenderUnpressed();
-    virtual void   RenderPressed();
-    virtual void   RenderRollover();
+    virtual void                RenderUnpressed();
+    virtual void                RenderPressed();
+    virtual void                RenderRollover();
     //@}
 
 private:
-    std::vector<Fleet*> m_fleets;   ///< the fleets represented by this button
-    ShapeOrientation m_orientation;
+    void Init(const std::vector<int>& fleet_IDs, SizeType size);
+
+    std::vector<Fleet*>             m_fleets;       ///< the fleets represented by this button
+    boost::shared_ptr<GG::Texture>  m_head_icon;    ///< icon texture representing type of fleet
+    boost::shared_ptr<GG::Texture>  m_size_icon;    ///< icon texture representing number of ships in fleet
 };
 
 #endif // _FleetButton_h_

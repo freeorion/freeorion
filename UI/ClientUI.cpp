@@ -47,77 +47,90 @@ const Tech* GetTech(const std::string& name);
 namespace fs = boost::filesystem;
 
 // static members
-fs::path ClientUI::ArtDir()                    { return GetSettingsDir() / "data" / "art"; }
-fs::path ClientUI::SoundDir()                  { return GetSettingsDir() / "data" / "sound"; }
+fs::path ClientUI::ArtDir()                     { return GetSettingsDir() / "data" / "art"; }
+fs::path ClientUI::SoundDir()                   { return GetSettingsDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                   { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
-std::string ClientUI::BoldFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
-std::string ClientUI::TitleFont()              { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
+std::string ClientUI::Font()                    { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
+std::string ClientUI::BoldFont()                { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
+std::string ClientUI::TitleFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
 
-int         ClientUI::Pts()                    { return GetOptionsDB().Get<int>("UI.font-size"); }
-int         ClientUI::TitlePts()               { return GetOptionsDB().Get<int>("UI.title-font-size"); }
+int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
+int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
 
-GG::Clr     ClientUI::TextColor()              { return GetOptionsDB().Get<StreamableColor>("UI.text-color").ToClr(); }
+GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<StreamableColor>("UI.text-color").ToClr(); }
 
 // windows
-GG::Clr     ClientUI::WndColor()               { return GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr(); }
-GG::Clr     ClientUI::WndBorderColor()         { return GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr(); }
-GG::Clr     ClientUI::WndOuterBorderColor()    { return GetOptionsDB().Get<StreamableColor>("UI.wnd-outer-border-color").ToClr(); }
-GG::Clr     ClientUI::WndInnerBorderColor()    { return GetOptionsDB().Get<StreamableColor>("UI.wnd-inner-border-color").ToClr(); }
+GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr(); }
+GG::Clr     ClientUI::WndBorderColor()          { return GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr(); }
+GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<StreamableColor>("UI.wnd-outer-border-color").ToClr(); }
+GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<StreamableColor>("UI.wnd-inner-border-color").ToClr(); }
 
 // controls
-GG::Clr     ClientUI::CtrlColor()              { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr(); }
-GG::Clr     ClientUI::CtrlBorderColor()        { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr(); }
+GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr(); }
+GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr(); }
 
-GG::Clr     ClientUI::ButtonColor()            { return GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr(); }
+GG::Clr     ClientUI::ButtonColor()             { return GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr(); }
 
-GG::Clr     ClientUI::StateButtonColor()       { return GetOptionsDB().Get<StreamableColor>("UI.state-button-color").ToClr(); }
+GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<StreamableColor>("UI.state-button-color").ToClr(); }
 
-GG::Clr     ClientUI::ScrollTabColor()         { return GetOptionsDB().Get<StreamableColor>("UI.scroll-tab-color").ToClr(); }
-int         ClientUI::ScrollWidth()            { return GetOptionsDB().Get<int>("UI.scroll-width"); }
+GG::Clr     ClientUI::ScrollTabColor()          { return GetOptionsDB().Get<StreamableColor>("UI.scroll-tab-color").ToClr(); }
+int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("UI.scroll-width"); }
 
-GG::Clr     ClientUI::DropDownListIntColor()   { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-interior-color").ToClr(); }
-GG::Clr     ClientUI::DropDownListArrowColor() { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-arrow-color").ToClr(); }
+GG::Clr     ClientUI::DropDownListIntColor()    { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-interior-color").ToClr(); }
+GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-arrow-color").ToClr(); }
 
-GG::Clr     ClientUI::EditHiliteColor()        { return GetOptionsDB().Get<StreamableColor>("UI.edit-hilite").ToClr(); }
-GG::Clr     ClientUI::EditIntColor()           { return GetOptionsDB().Get<StreamableColor>("UI.edit-interior").ToClr(); }
-GG::Clr     ClientUI::MultieditIntColor()      { return GetOptionsDB().Get<StreamableColor>("UI.multiedit-interior").ToClr(); }
+GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<StreamableColor>("UI.edit-hilite").ToClr(); }
+GG::Clr     ClientUI::EditIntColor()            { return GetOptionsDB().Get<StreamableColor>("UI.edit-interior").ToClr(); }
+GG::Clr     ClientUI::MultieditIntColor()       { return GetOptionsDB().Get<StreamableColor>("UI.multiedit-interior").ToClr(); }
 
-GG::Clr     ClientUI::StatIncrColor()          { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
-GG::Clr     ClientUI::StatDecrColor()          { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
+GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
+GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
 
-int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
-double      ClientUI::FleetButtonSize()                 { return GetOptionsDB().Get<double>("UI.fleet-button-size"); }
+int         ClientUI::SystemIconSize()          { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
+GG::Clr     ClientUI::SystemNameTextColor()     { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unonwed-color").ToClr(); }
+double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
+
+int         ClientUI::LargeFleetButtonSize()    { return GetOptionsDB().Get<int>("UI.large-fleet-button-size"); }
+int         ClientUI::SmallFleetButtonSize()    { return GetOptionsDB().Get<int>("UI.small-fleet-button-size"); }
+int         ClientUI::TinyFleetButtonSize()     { return GetOptionsDB().Get<int>("UI.tiny-fleet-button-size"); }
+
 
 boost::shared_ptr<GG::Texture> ClientUI::FleetHeadIcon(const Fleet* fleet)
 {
-    if (!fleet) {
-        Logger().errorStream() << "ClientUI::FleetHeadIcon requested icon of null fleet";
-        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-monster.png", true);
-    }
+    if (!fleet)
+        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-monster.png", true);
     if (fleet->HasColonyShips())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-colony.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-colony.png", true);
     if (fleet->HasArmedShips())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-warship.png", true);
+        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-warship.png", true);
     // else
-    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "head-scout.png", true);
+    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-scout.png", true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::FleetSizeIcon(const Fleet* fleet)
 {
-    if (!fleet) {
-        Logger().errorStream() << "ClientUI::FleetSizeIcon requested icon of null fleet";
+    if (!fleet)
         return FleetSizeIcon(1u);
-    }
     return FleetSizeIcon(fleet->NumShips());
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::FleetSizeIcon(unsigned int fleet_size)
 {
-    return ClientUI::GetModuloTexture(ArtDir() / "icons" / "fleet", "tail-", fleet_size, true);
+    if (fleet_size == 0)
+        fleet_size = 1; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
+    return s_the_UI->GetModuloTexture(ArtDir() / "icons" / "fleet", "big-tail-", fleet_size, true);
 }
 
-double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
+boost::shared_ptr<GG::Texture> ClientUI::FleetTinyIcon(const Fleet* fleet)
+{
+    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "tiny-fleet.png", true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::MultiFleetTinyIcon()
+{
+    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "tiny-fleet-multi.png", true);
+}
+
 
 // SidePanel
 GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }
@@ -449,8 +462,11 @@ namespace {
         // misc
         db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,         RangedValidator<int>(8, 30));
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
-        db.Add("UI.fleet-button-size",              "OPTIONS_DB_UI_FLEET_BUTTON_SIZE",              1.0,        RangedValidator<double>(0.2, 2));
+        db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
         db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedValidator<double>(0.5, 5));
+        db.Add("UI.large-fleet-button-size",        "OPTIONS_DB_UI_LARGE_FLEET_BUTTON_SIZE",        24,         RangedValidator<int>(8, 48));
+        db.Add("UI.small-fleet-button-size",        "OPTIONS_DB_UI_SMALL_FLEET_BUTTON_SIZE",        16,         RangedValidator<int>(8, 32));
+        db.Add("UI.tiny-fleet-button-size",         "OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE",         10,         RangedValidator<int>(4, 24));
 
         // UI behavior
         db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  1000,       RangedValidator<int>(0, 3000));
@@ -668,14 +684,14 @@ StreamableColor::StreamableColor() :
     r(0),
     g(0),
     b(0),
-    a(0)    
+    a(0)
 {}
 
 StreamableColor::StreamableColor(const GG::Clr& clr) :
     r(clr.r),
     g(clr.g),
     b(clr.b),
-    a(clr.a)    
+    a(clr.a)
 {}
 
 GG::Clr StreamableColor::ToClr() const

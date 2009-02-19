@@ -1456,3 +1456,143 @@ void ShadowedTextControl::Render()
     OffsetMove(GG::Pt(GG::X(0), GG::Y1));       // render main coloured text
     TextControl::Render();
 }
+
+
+//////////////////////////////////////////////////
+// MultiTextureStaticGraphic
+//////////////////////////////////////////////////
+
+/** creates a MultiTextureStaticGraphic from multiple pre-existing Textures which are rendered back-to-front in the
+      * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
+      * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
+      * associated styles use the style GRAPHIC_NONE. */
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<boost::shared_ptr<GG::Texture> >& textures,
+                                                     std::vector<GG::Flags<GG::GraphicStyle> > styles, GG::Flags<GG::WndFlag> flags) :
+    GG::Control(x, y, w, h, flags),
+    m_graphics(),
+    m_styles(styles)
+{
+    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it)
+        m_graphics.push_back(GG::SubTexture(*it, GG::X0, GG::Y0, (*it)->DefaultWidth(), (*it)->DefaultHeight()));
+    Init();
+}
+
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<GG::SubTexture>& subtextures,
+                                                     std::vector<GG::Flags<GG::GraphicStyle> > styles, GG::Flags<GG::WndFlag> flags) :
+    GG::Control(x, y, w, h, flags),
+    m_graphics(subtextures),
+    m_styles(styles)
+{
+    Init();
+}
+
+MultiTextureStaticGraphic::MultiTextureStaticGraphic() :
+    m_graphics(),
+    m_styles()
+{}
+
+GG::Rect MultiTextureStaticGraphic::RenderedArea(const GG::SubTexture& subtexture, GG::Flags<GG::GraphicStyle> style) const
+{
+    // copied from GG::StaticGraphic
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt window_sz(lr - ul);
+    GG::Pt graphic_sz(subtexture.Width(), subtexture.Height());
+    GG::Pt pt1, pt2(graphic_sz); // (unscaled) default graphic size
+    if (style & GG::GRAPHIC_FITGRAPHIC) {
+        if (style & GG::GRAPHIC_PROPSCALE) {
+            double scale_x = Value(window_sz.x) / static_cast<double>(Value(graphic_sz.x));
+            double scale_y = Value(window_sz.y) / static_cast<double>(Value(graphic_sz.y));
+            double scale = std::min(scale_x, scale_y);
+            pt2.x = graphic_sz.x * scale;
+            pt2.y = graphic_sz.y * scale;
+        } else {
+            pt2 = window_sz;
+        }
+    } else if (style & GG::GRAPHIC_SHRINKFIT) {
+        if (style & GG::GRAPHIC_PROPSCALE) {
+            double scale_x = (graphic_sz.x > window_sz.x) ? Value(window_sz.x) / static_cast<double>(Value(graphic_sz.x)) : 1.0;
+            double scale_y = (graphic_sz.y > window_sz.y) ? Value(window_sz.y) / static_cast<double>(Value(graphic_sz.y)) : 1.0;
+            double scale = std::min(scale_x, scale_y);
+            pt2.x = graphic_sz.x * scale;
+            pt2.y = graphic_sz.y * scale;
+        } else {
+            pt2 = window_sz;
+        }
+    }
+
+    GG::X x_shift(0);
+    if (style & GG::GRAPHIC_LEFT) {
+        x_shift = ul.x;
+    } else if (style & GG::GRAPHIC_CENTER) {
+        x_shift = ul.x + (window_sz.x - (pt2.x - pt1.x)) / 2;
+    } else { // style & GG::GRAPHIC_RIGHT
+        x_shift = lr.x - (pt2.x - pt1.x);
+    }
+    pt1.x += x_shift;
+    pt2.x += x_shift;
+
+    GG::Y y_shift(0);
+    if (style & GG::GRAPHIC_TOP) {
+        y_shift = ul.y;
+    } else if (style & GG::GRAPHIC_VCENTER) {
+        y_shift = ul.y + (window_sz.y - (pt2.y - pt1.y)) / 2;
+    } else { // style & GRAPHIC_BOTTOM
+        y_shift = lr.y - (pt2.y - pt1.y);
+    }
+    pt1.y += y_shift;
+    pt2.y += y_shift;
+
+    return GG::Rect(pt1, pt2);
+}
+
+void MultiTextureStaticGraphic::Render()
+{
+    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
+    glColor(color_to_use);
+    for (std::vector<GG::SubTexture>::size_type i = 0; i < m_graphics.size(); ++i) {
+        GG::Rect rendered_area = RenderedArea(m_graphics[i], m_styles[i]);
+        m_graphics[i].OrthoBlit(rendered_area.ul, rendered_area.lr);
+    }
+}
+
+void MultiTextureStaticGraphic::Init()
+{
+    ValidateStyles();
+    SetColor(GG::CLR_WHITE);
+}
+
+void MultiTextureStaticGraphic::ValidateStyles()
+{
+    // ensure enough styles for graphics
+    unsigned int num_graphics = m_graphics.size();
+    m_styles.resize(num_graphics, GG::GRAPHIC_CENTER);
+
+
+    for (std::vector<GG::Flags<GG::GraphicStyle> >::iterator it = m_styles.begin(); it != m_styles.end(); ++it) {
+        GG::Flags<GG::GraphicStyle>& style = *it;
+
+        int dup_ct = 0;   // duplication count
+        if (style & GG::GRAPHIC_LEFT) ++dup_ct;
+        if (style & GG::GRAPHIC_RIGHT) ++dup_ct;
+        if (style & GG::GRAPHIC_CENTER) ++dup_ct;
+        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use GG::GRAPHIC_CENTER by default
+            style &= ~(GG::GRAPHIC_RIGHT | GG::GRAPHIC_LEFT);
+            style |= GG::GRAPHIC_CENTER;
+        }
+        dup_ct = 0;
+        if (style & GG::GRAPHIC_TOP) ++dup_ct;
+        if (style & GG::GRAPHIC_BOTTOM) ++dup_ct;
+        if (style & GG::GRAPHIC_VCENTER) ++dup_ct;
+        if (dup_ct != 1) {   // exactly one must be picked; when none or multiples are picked, use GG::GRAPHIC_VCENTER by default
+            style &= ~(GG::GRAPHIC_TOP | GG::GRAPHIC_BOTTOM);
+            style |= GG::GRAPHIC_VCENTER;
+        }
+        dup_ct = 0;
+        if (style & GG::GRAPHIC_FITGRAPHIC) ++dup_ct;
+        if (style & GG::GRAPHIC_SHRINKFIT) ++dup_ct;
+        if (dup_ct > 1) {   // mo more than one may be picked; when both are picked, use GG::GRAPHIC_SHRINKFIT by default
+            style &= ~GG::GRAPHIC_FITGRAPHIC;
+            style |= GG::GRAPHIC_SHRINKFIT;
+        }
+    }
+}

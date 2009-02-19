@@ -380,8 +380,17 @@ Sets UI scroll width.
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Sets size of system icons.
 
-OPTIONS_DB_UI_FLEET_BUTTON_SIZE
-Sets size of fleet buttons (relative to system icon).
+OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
+Sets colour of unowned system names on galaxy map.
+
+OPTIONS_DB_UI_LARGE_FLEET_BUTTON_SIZE
+Sets size of large fleet buttons representing a single fleet at close-in zoom levels.
+
+OPTIONS_DB_UI_SMALL_FLEET_BUTTON_SIZE
+Sets size of small fleet buttons representing a single fleet at medium zoom levels.
+
+OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE
+Sets size of tiny fleet buttons representing a multiple fleets as far-out zoom levels.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator (relative to system icon).

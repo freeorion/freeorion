@@ -61,7 +61,6 @@ public:
 
     double         ZoomFactor() const;
     int            SystemIconSize() const;
-    int            FleetButtonSize() const;
     SidePanel*     GetSidePanel() const;
     void           GetSaveGameUIData(SaveGameUIData& data) const;   //!< populates the relevant UI state that should be restored after a save-and-load cycle
     bool           InProductionViewMode() const;                    //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
@@ -161,7 +160,7 @@ private:
     class FleetETAMapIndicator;
 
     void Zoom(int delta);                           //!< changes the zoomlevel of the main map
-    void DoMovingFleetButtonsLayout();              //!< does layout of fleet buttons for moving fleets
+    void DoFleetButtonsLayout();                    //!< does layout of fleet buttons
     void DoSystemIconsLayout();                     //!< does layout of system icons
 
     void RenderStarfields();                        //!< renders the background starfiends
@@ -248,8 +247,11 @@ private:
     ProductionWnd*              m_production_wnd;   //!< production screen
     DesignWnd*                  m_design_wnd;       //!< design screen
 
-    std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< moving fleets in the main map (SystemIcons contain stationary fleet buttons)
-    std::vector<boost::signals::connection>         m_fleet_state_change_signals;
+    std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< icons representing one or more fleets moving around map
+    std::map<System*, FleetButton*>                 m_system_fleet_buttons;                 //!< icons representing one or more fleets stationary at a system
+    std::map<int, boost::signals::connection>       m_fleet_state_change_signals;
+
+    std::vector<boost::signals::connection>         m_system_fleet_state_change_signals;
 
     std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
 

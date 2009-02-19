@@ -93,7 +93,6 @@ private:
     void    Init(); //!< common constructor tasks
 
     GG::Pt  NthFleetButtonUpperLeft(int n, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown, not empire id
-    int     FleetButtonSize() const;                            //!< returns absolute size of fleetbuttons at current zoom level
 
     void    FleetInserted(Fleet& fleet);
     void    FleetRemoved(Fleet& fleet);

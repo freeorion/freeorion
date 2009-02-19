@@ -380,6 +380,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\ChatWnd.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\ChatWnd.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Ui\ClientUI.cpp"
 				>
 			</File>
