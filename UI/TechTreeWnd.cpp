@@ -1624,7 +1624,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     m_selected_tech = selected_tech;
 
     GVC_t* gvc = gvContext();
-    Agraph_t* graph = agopen("FreeOrion Tech Graph", AGDIGRAPHSTRICT);
+    Agraph_t* graph = agopen(const_cast<char*>("FreeOrion Tech Graph"), AGDIGRAPHSTRICT);
 
     const double RANK_SEP = Value(TECH_PANEL_LAYOUT_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing") * m_scale;
     const double NODE_SEP = Value(TECH_PANEL_LAYOUT_HEIGHT) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing") * m_scale;
@@ -1632,21 +1632,21 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT) * m_scale;
 
     // default graph properties
-    agraphattr(graph, "rankdir", "LR");
+    agraphattr(graph, const_cast<char*>("rankdir"), const_cast<char*>("LR"));
     //agraphattr(graph, "ordering", "in");
-    agraphattr(graph, "ranksep", const_cast<char*>(boost::lexical_cast<std::string>(RANK_SEP).c_str()));
-    agraphattr(graph, "nodesep", const_cast<char*>(boost::lexical_cast<std::string>(NODE_SEP).c_str())); 
-    agraphattr(graph, "arrowhead", "none");
-    agraphattr(graph, "arrowtail", "none");
+    agraphattr(graph, const_cast<char*>("ranksep"), const_cast<char*>(boost::lexical_cast<std::string>(RANK_SEP).c_str()));
+    agraphattr(graph, const_cast<char*>("nodesep"), const_cast<char*>(boost::lexical_cast<std::string>(NODE_SEP).c_str())); 
+    agraphattr(graph, const_cast<char*>("arrowhead"), const_cast<char*>("none"));
+    agraphattr(graph, const_cast<char*>("arrowtail"), const_cast<char*>("none"));
 
     // default node properties
-    agnodeattr(graph, "shape", "box");
-    agnodeattr(graph, "fixedsize", "true");
-    agnodeattr(graph, "width", const_cast<char*>(boost::lexical_cast<std::string>(WIDTH).c_str()));
-    agnodeattr(graph, "height", const_cast<char*>(boost::lexical_cast<std::string>(HEIGHT).c_str()));
+    agnodeattr(graph, const_cast<char*>("shape"), const_cast<char*>("box"));
+    agnodeattr(graph, const_cast<char*>("fixedsize"), const_cast<char*>("true"));
+    agnodeattr(graph, const_cast<char*>("width"), const_cast<char*>(boost::lexical_cast<std::string>(WIDTH).c_str()));
+    agnodeattr(graph, const_cast<char*>("height"), const_cast<char*>(boost::lexical_cast<std::string>(HEIGHT).c_str()));
 
     // default edge properties
-    agedgeattr(graph, "tailclip", "false");
+    agedgeattr(graph, const_cast<char*>("tailclip"), const_cast<char*>("false"));
 
     Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
 
@@ -1673,7 +1673,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
     Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
 
-    gvLayout(gvc, graph, "dot");
+    gvLayout(gvc, graph, const_cast<char*>("dot"));
 
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
