@@ -60,10 +60,10 @@ namespace {
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                true,   Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",         true,   Validator<bool>());
         db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",    true,   Validator<bool>());
-        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",            2.5,    RangedValidator<double>(0.1, 15.0));
+        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",            2.5,    RangedStepValidator<double>(0.1, 0.1, 15.0));
         db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",   true,   Validator<bool>());
         db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",            true,   Validator<bool>());
-        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",       3.0,    RangedValidator<double>(0.1, 15.0));
+        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",       3.0,    RangedStepValidator<double>(0.1, 0.1, 15.0));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 

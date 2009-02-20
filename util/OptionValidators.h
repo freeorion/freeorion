@@ -120,7 +120,7 @@ struct RangedStepValidator : public Validator<T>
 public:
     RangedStepValidator(const T& step, const T& min, const T& max) : m_step_size(step), m_origin(T()), m_min(min), m_max(max) {}
     RangedStepValidator(const T& step, const T& origin, const T& min, const T& max) : m_step_size (step), m_origin (origin), m_min (min), m_max (max) {}
-        
+
     virtual boost::any Validate(const std::string& str) const
     {
         T val = boost::lexical_cast<T>(str);
@@ -130,7 +130,7 @@ public:
             throw boost::bad_lexical_cast();
         return boost::any(val);
     }
-        
+
     virtual RangedStepValidator *Clone() const
     {
         return new RangedStepValidator<T>(m_step_size, m_origin, m_min, m_max);

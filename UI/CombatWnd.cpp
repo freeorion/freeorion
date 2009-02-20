@@ -54,7 +54,7 @@ namespace {
     const Ogre::Real NEAR_CLIP = 0.01;
     const Ogre::Real FAR_CLIP = 3020.0;
 
-    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = SYSTEM_RADIUS;
+    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0*SYSTEM_RADIUS;
     const Ogre::Real MIN_ZOOM_IN_DISTANCE = 0.5;
 
     // collision dection system params

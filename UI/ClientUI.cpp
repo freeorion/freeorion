@@ -398,7 +398,7 @@ namespace {
         db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",   32,         RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              "OPTIONS_DB_SHOW_FPS",      false);
         db.Add("limit-fps",             "OPTIONS_DB_LIMIT_FPS",     true);
-        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",       60.0,       RangedValidator<double>(10.0, 200.0));
+        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",       60.0,       RangedStepValidator<double>(1.0, 10.0, 200.0));
 
         // sound
         db.Add("UI.sound.enabled",                              "OPTIONS_DB_UI_SOUND_ENABLED",                  true,                   Validator<bool>());
@@ -467,13 +467,13 @@ namespace {
         // galaxy map
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedValidator<double>(0.5, 5));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedStepValidator<double>(0.1, 0.5, 5));
         db.Add("UI.large-fleet-button-size",        "OPTIONS_DB_UI_LARGE_FLEET_BUTTON_SIZE",        24,         RangedValidator<int>(8, 48));
         db.Add("UI.small-fleet-button-size",        "OPTIONS_DB_UI_SMALL_FLEET_BUTTON_SIZE",        16,         RangedValidator<int>(8, 32));
         db.Add("UI.tiny-fleet-button-size",         "OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE",         10,         RangedValidator<int>(4, 24));
-        db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedValidator<double>(0.125, 4.0));
-        db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedValidator<double>(0.125, 4.0));
-        db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedValidator<double>(0.125, 4.0));
+        db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
 
         // UI behavior
         db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  100,        RangedValidator<int>(0, 3000));
