@@ -138,6 +138,7 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void FleetButton::RenderUnpressed() {
+    glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_head_icon)
         m_head_icon->OrthoBlit(ul, lr);

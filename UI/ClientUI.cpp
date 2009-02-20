@@ -87,13 +87,15 @@ GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<Stre
 GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
 
 int         ClientUI::SystemIconSize()          { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
-GG::Clr     ClientUI::SystemNameTextColor()     { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unonwed-color").ToClr(); }
+GG::Clr     ClientUI::SystemNameTextColor()     { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
 double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
 
 int         ClientUI::LargeFleetButtonSize()    { return GetOptionsDB().Get<int>("UI.large-fleet-button-size"); }
 int         ClientUI::SmallFleetButtonSize()    { return GetOptionsDB().Get<int>("UI.small-fleet-button-size"); }
 int         ClientUI::TinyFleetButtonSize()     { return GetOptionsDB().Get<int>("UI.tiny-fleet-button-size"); }
-
+double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
+double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
+double      ClientUI::LargeFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.large-fleet-button-minimum-zoom"); }
 
 boost::shared_ptr<GG::Texture> ClientUI::FleetHeadIcon(const Fleet* fleet)
 {
@@ -461,15 +463,20 @@ namespace {
 
         // misc
         db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,         RangedValidator<int>(8, 30));
+
+        // galaxy map
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
         db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedValidator<double>(0.5, 5));
         db.Add("UI.large-fleet-button-size",        "OPTIONS_DB_UI_LARGE_FLEET_BUTTON_SIZE",        24,         RangedValidator<int>(8, 48));
         db.Add("UI.small-fleet-button-size",        "OPTIONS_DB_UI_SMALL_FLEET_BUTTON_SIZE",        16,         RangedValidator<int>(8, 32));
         db.Add("UI.tiny-fleet-button-size",         "OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE",         10,         RangedValidator<int>(4, 24));
+        db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedValidator<double>(0.125, 4.0));
+        db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedValidator<double>(0.125, 4.0));
+        db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedValidator<double>(0.125, 4.0));
 
         // UI behavior
-        db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  1000,       RangedValidator<int>(0, 3000));
+        db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  100,        RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows",         "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",         false);
         db.Add("UI.fleet-autoselect",               "OPTIONS_DB_UI_FLEET_AUTOSELECT",               true);
         db.Add("UI.window-quickclose",              "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",              true);

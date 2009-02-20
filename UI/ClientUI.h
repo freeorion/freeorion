@@ -148,6 +148,10 @@ public:
     static int          SmallFleetButtonSize();                 //!< the width/height of a (small) single fleet button
     static int          TinyFleetButtonSize();                  //!< the width/height of a (tiny) multi-fleet button
 
+    static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to shown tiny (any) fleet icons
+    static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to shown small fleet icons
+    static double       LargeFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to shown large fleet icons
+
     static boost::shared_ptr<GG::Texture>   FleetHeadIcon(const Fleet* fleet = 0);  //!< the "head" icon for \a fleet or a generic icon if \a fleet is 0
     static boost::shared_ptr<GG::Texture>   FleetSizeIcon(const Fleet* fleet = 0);  //!< the "size" icon for \a fleet (defaults to the size icon for a single ship fleet if \a fleet is 0)
     static boost::shared_ptr<GG::Texture>   FleetSizeIcon(unsigned int fleet_size); //!< the "size" icon for a fleet of size \a fleet_size

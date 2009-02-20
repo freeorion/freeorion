@@ -715,30 +715,48 @@ void OptionsWnd::Init()
     IntOption("UI.chat-edit-history",           UserString("OPTIONS_CHAT_HISTORY"));
     IntOption("UI.chat-hide-interval",          UserString("OPTIONS_CHAT_HIDE"));
     EndSection();
-    BeginSection(UserString("OPTIONS_GALAXY_MAP"));
-    BoolOption("UI.galaxy-gas-background",          UserString("OPTIONS_GALAXY_MAP_GAS"));
-    BoolOption("UI.galaxy-starfields",              UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
-    BoolOption("UI.optimized-system-rendering",     UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
-    DoubleOption("UI.starlane-thickness",           UserString("OPTIONS_STARLANE_THICKNESS"));
-    BoolOption("UI.resource-starlane-colouring",    UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
-    BoolOption("UI.fleet-supply-lines",             UserString("OPTIONS_FLEET_SUPPLY_LINES"));
-    DoubleOption("UI.fleet-supply-line-width",      UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    EndPage();
+
+    // Galaxy Map Page
+    BeginPage(UserString("OPTIONS_GALAXY_MAP"));
+    BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
+    IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_FLEET_ICONS"));
+    IntOption("UI.large-fleet-button-size",             UserString("OPTIONS_UI_LARGE_FLEET_BUTTON_SIZE"));
+    IntOption("UI.small-fleet-button-size",             UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_SIZE"));
+    IntOption("UI.tiny-fleet-button-size",              UserString("OPTIONS_UI_TINY_FLEET_BUTTON_SIZE"));
+    DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.large-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_LARGE_FLEET_BUTTON_MIN_ZOOM"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
+    BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption("UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
+    DoubleOption("UI.starlane-thickness",               UserString("OPTIONS_STARLANE_THICKNESS"));
+    BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
+    BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
+    DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    EndSection();
     EndPage();
 
     // Colors tab
     BeginPage(UserString("OPTIONS_PAGE_COLORS"));
     BeginSection(UserString("OPTIONS_GENERAL_COLORS"));
-    ColorOption("UI.text-color", UserString("OPTIONS_TEXT_COLOR"));
+    ColorOption("UI.text-color",                    UserString("OPTIONS_TEXT_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_WINDOW_COLORS"));
-    ColorOption("UI.ctrl-color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.ctrl-border-color", UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption("UI.ctrl-color",                    UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.ctrl-border-color",             UserString("OPTIONS_BORDER_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_CONTROL_COLORS"));
-    ColorOption("UI.wnd-color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.wnd-border-color", UserString("OPTIONS_BORDER_COLOR"));
-    ColorOption("UI.wnd-inner-border-color", UserString("OPTIONS_INNER_BORDER_COLOR"));
-    ColorOption("UI.wnd-outer-border-color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
+    ColorOption("UI.wnd-color",                     UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.wnd-border-color",              UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption("UI.wnd-inner-border-color",        UserString("OPTIONS_INNER_BORDER_COLOR"));
+    ColorOption("UI.wnd-outer-border-color",        UserString("OPTIONS_OUTER_BORDER_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_EDIT_COLORS"));
     ColorOption("UI.edit-hilite", UserString("OPTIONS_HIGHLIGHT_COLOR"));
@@ -746,45 +764,45 @@ void OptionsWnd::Init()
     EndSection();
     BeginSection(UserString("OPTIONS_TECH_COLORS"));
     BeginSection(UserString("OPTIONS_KNOWN_TECH_COLORS"));
-    ColorOption("UI.known-tech", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.known-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption("UI.known-tech",                    UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.known-tech-border",             UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption("UI.researchable-tech", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.researchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption("UI.researchable-tech",             UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.researchable-tech-border",      UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
-    ColorOption("UI.unresearchable-tech", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption("UI.unresearchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption("UI.unresearchable-tech",           UserString("OPTIONS_FILL_COLOR"));
+    ColorOption("UI.unresearchable-tech-border",    UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_TECH_PROGRESS_COLORS"));
-    ColorOption("UI.tech-progress", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
-    ColorOption("UI.tech-progress-background", UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
+    ColorOption("UI.tech-progress",                 UserString("OPTIONS_PROGRESS_BAR_COLOR"));
+    ColorOption("UI.tech-progress-background",      UserString("OPTIONS_PROGRESS_BACKGROUND_COLOR"));
     EndSection();
     EndSection();
     EndPage();
 
     // combat settings tab
     BeginPage(UserString("OPTIONS_PAGE_COMBAT"));
-    BoolOption("combat.enable-glow", UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
-    BoolOption("combat.enable-skybox", UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
-    BoolOption("combat.enable-lens-flare", UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
-    BoolOption("combat.filled-selection", UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
+    BoolOption("combat.enable-glow",                UserString("OPTIONS_COMBAT_ENABLE_GLOW"));
+    BoolOption("combat.enable-skybox",              UserString("OPTIONS_COMBAT_ENABLE_SKYBOX"));
+    BoolOption("combat.enable-lens-flare",          UserString("OPTIONS_COMBAT_ENABLE_LENS_FLARES"));
+    BoolOption("combat.filled-selection",           UserString("OPTIONS_COMBAT_FILLED_SELECTION"));
     EndPage();
 
 
     // Misc. settings tab
     BeginPage(UserString("OPTIONS_PAGE_AUTOSAVE"));
-    BoolOption("autosave.single-player", UserString("OPTIONS_SINGLEPLAYER"));
-    BoolOption("autosave.multiplayer", UserString("OPTIONS_MULTIPLAYER"));
-    IntOption("autosave.saves", UserString("OPTIONS_AUTOSAVE_TO_KEEP"));
-    IntOption("autosave.turns", UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    BoolOption("autosave.single-player",            UserString("OPTIONS_SINGLEPLAYER"));
+    BoolOption("autosave.multiplayer",              UserString("OPTIONS_MULTIPLAYER"));
+    IntOption("autosave.saves",                     UserString("OPTIONS_AUTOSAVE_TO_KEEP"));
+    IntOption("autosave.turns",                     UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
     EndPage();
 
     // Directories tab
     BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption("settings-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetGlobalDir());
-    DirectoryOption("save-dir", UserString("OPTIONS_FOLDER_SAVE"), GetGlobalDir());
+    DirectoryOption("settings-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetGlobalDir());
+    DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetGlobalDir());
     EndPage();
 
     // Connect the done and cancel button

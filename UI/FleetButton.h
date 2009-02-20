@@ -3,7 +3,6 @@
 #define _FleetButton_h_
 
 #include <GG/Button.h>
-#include "CUIDrawUtil.h"
 
 class Fleet;
 class FleetWnd;
@@ -14,14 +13,15 @@ class FleetButton : public GG::Button
 {
 public:
     enum SizeType {
+        FLEET_BUTTON_NONE,
         FLEET_BUTTON_TINY,
         FLEET_BUTTON_SMALL,
         FLEET_BUTTON_LARGE
     };
 
     /** \name Structors */ //@{
-    FleetButton(const std::vector<int>& fleet_IDs, SizeType size = FLEET_BUTTON_SMALL);
-    FleetButton(int fleet_id, SizeType size = FLEET_BUTTON_SMALL);
+    FleetButton(const std::vector<int>& fleet_IDs, SizeType size = FLEET_BUTTON_LARGE);
+    FleetButton(int fleet_id, SizeType size = FLEET_BUTTON_LARGE);
     //@}
 
     /** \name Accessors */ //@{

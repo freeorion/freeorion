@@ -156,7 +156,7 @@ OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
-Render starsfields around systems. May slow rendering on older systems.
+Render starfields around systems. May slow rendering on older systems.
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
@@ -168,7 +168,7 @@ OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
-Toggles whether to show fleet supply lines with empire-coloured indica
+Toggles whether to show fleet supply lines with empire-coloured indica.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
 Sets how wide to render fleet supply lines.
@@ -391,6 +391,15 @@ Sets size of small fleet buttons representing a single fleet at medium zoom leve
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE
 Sets size of tiny fleet buttons representing a multiple fleets as far-out zoom levels.
+
+OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which large fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which small fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which tiny fleet icons are shown.  At smaller zooms, no fleet icons are shown on the galaxy map.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator (relative to system icon).
@@ -830,7 +839,7 @@ OPTIONS_SINGLEPLAYER
 Single player
 
 OPTIONS_MULTIPLAYER
-Mulitplayer
+Multiplayer
 
 OPTIONS_AUTOSAVE_TO_KEEP
 Autosaves to keep
@@ -909,6 +918,42 @@ Chat-hide delay
 
 OPTIONS_GALAXY_MAP
 Galaxy Map
+
+OPTIONS_SYSTEM_ICONS
+System Icons
+
+OPTIONS_UI_SYSTEM_ICON_SIZE
+System icon size
+
+OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
+System selection indicator size
+
+OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
+Unowned systen name colour
+
+OPTIONS_FLEET_ICONS
+Fleet Icons
+
+OPTIONS_UI_LARGE_FLEET_BUTTON_SIZE
+Large fleet icon size
+
+OPTIONS_UI_SMALL_FLEET_BUTTON_SIZE
+Small fleet icon size
+
+OPTIONS_UI_TINY_FLEET_BUTTON_SIZE
+Tiny fleet icon size
+
+OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
+Tiny fleet icon minimum zoom
+
+OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
+Small fleet icon minimum zoom
+
+OPTIONS_UI_LARGE_FLEET_BUTTON_MIN_ZOOM
+Large fleet icon minimum zoom
+
+OPTIONS_GALAXY_MAP_GENERAL
+General
 
 OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
@@ -1641,7 +1686,7 @@ ENC_RP
 RP
 
 # indication of cost to produce or research thing that is shown.  May be omitted if thing shown can't
-# be produced or research (eg. specials)
+# be produced or research (e.g. specials)
 # %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
 # %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
@@ -1797,10 +1842,10 @@ SITREP_VICTORY
 ####################
 
 TECH_VICTORY
-The %1% empire has achived a technological victory.
+The %1% empire has achieved a technological victory.
 
 ALL_ENEMIES_ELIMINATED_VICTORY
-The %1% empire has achived a sole-survivor victory.
+The %1% empire has achieved a sole-survivor victory.
 
 
 ####################
@@ -1832,16 +1877,16 @@ TUNNELS_SPECIAL_DESCRIPTION
 This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
 
 TECHTONIC_INSTABILITY_SPECIAL
-Techtonically Unstable
+Tectonically Unstable
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+This planet is tectonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
 
 SOLID_CORE_SPECIAL
 Solid Core
 
 SOLID_CORE_SPECIAL_DESC
-This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
+This planet's core has solidified, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
 
 HIGH_AXIAL_TILT_SPECIAL
 High Axial Tilt
@@ -2263,7 +2308,7 @@ turn of creation
 DESC_VAR_CURRENTTURN
 the current turn
 
-# this one is intentially left empty
+# this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%
 
@@ -2626,7 +2671,7 @@ LRN_PHYS_BRAIN
 The Physical Brain
 
 LRN_PHYS_BRAIN_DESC
-The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+The structures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
 
 LRN_ALGO_ELEGANCE
 Algorithmic Elegance
@@ -2638,13 +2683,13 @@ LRN_TRANSLING_THT
 Translinguistics
 
 LRN_TRANSLING_THT_DESC
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truly great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
 
 LRN_PSIONICS
 Psionics
 
 LRN_PSIONICS_DESC
-Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
+Through deep introspection or artificial enhancement, the brain may develop abilities to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possession have profound implications for the relationship between talented and untalented beings.
 
 LRN_ARTIF_MINDS
 Artificial Minds
@@ -2656,13 +2701,13 @@ LRN_XENOARCH
 Xenoarchaeology
 
 LRN_XENOARCH_DESC
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
 
 LRN_GRAVITONICS
 Gravitonics
 
 LRN_GRAVITONICS_DESC
-Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+Analogous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloquial "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is perceived as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
 
 LRN_EVERYTHING
 Theory of Everything
@@ -2680,7 +2725,7 @@ LRN_MIND_VOID
 Mind of the Void
 
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detached observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
 
 LRN_TIME_MECH
 Temporal Mechanics
@@ -2692,19 +2737,19 @@ LRN_NDIM_SUBSPACE
 N-Dimensional Subspace
 
 LRN_NDIM_SUBSPACE_DESC
-Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
+Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existence previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
 
 LRN_UNIF_CONC
 Unified Consciousness
 
 LRN_UNIF_CONC_DESC
-Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truely joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
+Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truly joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
 
 LRN_TRANSCEND
 Singularity of Transcendence
 
 LRN_TRANSCEND_DESC
-What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infinitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
 
 GRO_PLANET_ECOL
 Planetary Ecology
@@ -2716,7 +2761,7 @@ GRO_GENETIC_ENG
 Genetic Engineering
 
 GRO_GENETIC_ENG_DESC
-The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existant or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
+The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
 
 GRO_MEDICAL_PATH
 Medical Pathology
@@ -2728,16 +2773,16 @@ GRO_INDUSTY_FARM
 Industrial Farming
 
 GRO_INDUSTY_FARM_DESC
-Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced socieites, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanims.
+Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced societies, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanisms.
 
 GRO_ENV_ENCAPSUL
-Environmenal Encapsulation
+Environmental Encapsulation
 
 GRO_ENV_ENCAPSUL_DESC
 Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
 
 GRO_SYMBIOTIC_BIO
-Symbotic Biology
+Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
 From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
@@ -2752,19 +2797,19 @@ GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
 
 GRO_LIFECYCLE_MAN_DESC
-Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphises, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
+Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphoses, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
 
 GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-Early genetics is limited by the available samples of naturally occuring organims on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revalations may be reached, spurring new developments in more familiar genetic systems.
+Early genetics is limited by the available samples of naturally occurring organisms on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revelations may be reached, spurring new developments in more familiar genetic systems.
 
 GRO_NANOTECH_MED
 Nanotech Medicine
 
 GRO_NANOTECH_MED_DESC
-While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
+While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corrective measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surgeries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
 
 GRO_ORBIT_FARMING
 Orbital Farming
@@ -2782,7 +2827,7 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
+Regardless of how well understood, or how adeptly improved, a biological system is limited by its inherent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
 
 GRO_NANO_CYBERNET
 Nanotech Cybernetics
@@ -2794,19 +2839,19 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
+The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
 
 PRO_MICROGRAV_MAN
 Microgravity Manufacturing
 
 PRO_MICROGRAV_MAN_DESC
-The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
+The microgravity of low planetary orbit offers great potential for  novel manufacturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
 
 PRO_PLANET_GEOL
 Planetary Geology
 
 PRO_PLANET_GEOL_DESC
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
+Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
 
 PRO_ROBOTIC_PROD
 Robotic Production
@@ -2848,13 +2893,13 @@ PRO_INTSTEL_COPRO
 Interstellar Co-Production
 
 PRO_INTSTEL_COPRO_DESC
-Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems.  Later planetary regional cooperation permits some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefitting from concentrated expertize and economy of scale.  Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility.  The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
+Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems.  Later planetary regional cooperation permits some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefitting from concentrated expertise and economy of scale.  Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility.  The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly
 
 PRO_NDIM_ASSMB_DESC
-The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existance is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
+The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
 
 PRO_SINGULAR_GEN
 Singularity Generation
@@ -2878,7 +2923,7 @@ CON_ORBITAL_CON
 Orbital Construction
 
 CON_ORBITAL_CON_DESC
-On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
+On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
 
 CON_ARCH_PSYCH
 Architectural Psychology
@@ -2896,7 +2941,7 @@ CON_ORGANIC_STRC
 Organic Structures
 
 CON_ORGANIC_STRC_DESC
-Buildings formed of inanitmate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
+Buildings formed of inanimate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
 
 CON_METRO_INFRA
 Metroplex Infrastructure
@@ -2908,19 +2953,19 @@ CON_TRANS_STRC
 Transforming Structures
 
 CON_TRANS_STRC_DESC
-A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebulding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
+A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebuilding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
 
 CON_ARCH_MONOFILS
 Architectural Monofilaments
 
 CON_ARCH_MONOFILS_DESC
-Essentially unbreakable and merely a few atoms in diamater, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibative.
+Essentially unbreakable and merely a few atoms in diameter, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibitive.
 
 CON_SELFGRAV_STRC
 Self-Gravitating Structures
 
 CON_SELFGRAV_STRC_DESC
-As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artifical mass is designed and built with its purpose in mind.
+As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artificial mass is designed and built with its purpose in mind.
 
 CON_ASYMP_MATS
 Asymptotic Materials
@@ -2932,13 +2977,13 @@ CON_STRC_INT_FLDS
 Structural Integrity Fields
 
 CON_STRC_INT_FLDS_DESC
-Advanced materials and architecture can greatly extend the practical size of rigid structures.  Eventually however, the stresses placed on load-bearing matter approach the magnitude of the strong nuclear force which holds atomic nuclei together, at which point alternative sources of support become essential.  Projected energy support fields may serve this purose, and replacing or augmenting fixed supports in this manner allows a drastic reduction in the necessary structural materials mass and volume.  As well, such methods may allow dynamic adjustment of reinforcement in response to rapidly changing stress patterns, whereas fixed supports must remain in place even when not being actively used.
+Advanced materials and architecture can greatly extend the practical size of rigid structures.  Eventually however, the stresses placed on load-bearing matter approach the magnitude of the strong nuclear force which holds atomic nuclei together, at which point alternative sources of support become essential.  Projected energy support fields may serve this purpose, and replacing or augmenting fixed supports in this manner allows a drastic reduction in the necessary structural materials mass and volume.  As well, such methods may allow dynamic adjustment of reinforcement in response to rapidly changing stress patterns, whereas fixed supports must remain in place even when not being actively used.
 
 CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
 
 CON_CONTGRAV_ARCH_DESC
-By fully controlling the orientation and strength of gravitational forces acting upon and existant within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down.  The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections.  Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas.  Such versatility permits great new functional designs for social, manufacturing or other uses.
+By fully controlling the orientation and strength of gravitational forces acting upon and existent within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down.  The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections.  Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas.  Such versatility permits great new functional designs for social, manufacturing or other uses.
 
 CON_GAL_INFRA
 Galactic Infrastructure
@@ -2950,13 +2995,13 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resiliance, portability and novel design possibilities.
+When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resilience, portability and novel design possibilities.
 
 CON_ART_HEAVENLY
 Artificial Heavenly Bodies
 
 CON_ART_HEAVENLY_DESC
-When roughly the mass of a small moon or larger, it is no longer suffient to conceive of what is wrought as a "structure", "station" or "ship".  Rather, beyond this scale, the object becomes more like a heavenly body; its gravitational pull influences orbital motions, it may retain an thin atmosphere on its surface, and it may be orbitted by, rather than orbitting with, lesser structures.  At even larger scales, entire planets may be built, or rebuilt, or even new stars may be formed and ignited, broadcasting the power and determination of their creators throughout the universe.
+When roughly the mass of a small moon or larger, it is no longer sufficient to conceive of what is wrought as a "structure", "station" or "ship".  Rather, beyond this scale, the object becomes more like a heavenly body; its gravitational pull influences orbital motions, it may retain an thin atmosphere on its surface, and it may be orbited by, rather than orbiting with, lesser structures.  At even larger scales, entire planets may be built, or rebuilt, or even new stars may be formed and ignited, broadcasting the power and determination of their creators throughout the universe.
 
 CON_TRANS_ARCH
 Transcendent Architecture
@@ -2974,25 +3019,25 @@ ECO_MARKET_ECON
 Market Economics
 
 ECO_MARKET_ECON_DESC
-The free exchange of goods and services between individuals and groups, whether by simple barter or through a commonly accepted credit currency, can be a effective and dynamic economic system.  In the idealized case, the market is fully self-regulating, with supply and demand forces pushing the economy towards optimally efficient resource use and worker employment.  As well, the opportunity for personal gain in such systems can be a powerful motivator for innovation and worker effort.  Caution must be observed however, as that same motivation can also lead to explotation and collusion amongst the priviledged and successful, which can negate and undo much of the system's proported benefits.
+The free exchange of goods and services between individuals and groups, whether by simple barter or through a commonly accepted credit currency, can be a effective and dynamic economic system.  In the idealized case, the market is fully self-regulating, with supply and demand forces pushing the economy towards optimally efficient resource use and worker employment.  As well, the opportunity for personal gain in such systems can be a powerful motivator for innovation and worker effort.  Caution must be observed however, as that same motivation can also lead to exploitation and collusion amongst the privileged and successful, which can negate and undo much of the system's proported benefits.
 
 ECO_PLANNED_ECON
 Planned Economics
 
 ECO_PLANNED_ECON_DESC
-By identifying and prioritizing needs and specific goals for society, then actively implementing the necessary steps to realize them, a focused and stable economic system may be achieved.  Whether the path taken is decided by high-level central planners or through distributed local bodies, in the ideal case all unnecessary diversions and waste are eliminated and all resources are focused on the top priorities.  As well, a collective purpose and effective planning eliminates innactivity and waste by ensuring a opportunity to contrbute for all workers.  Caution must be observed, however, as individuals may lack dedication to the communal goals or the specific plan to achieve them, which may undermine worker motivation.
+By identifying and prioritizing needs and specific goals for society, then actively implementing the necessary steps to realize them, a focused and stable economic system may be achieved.  Whether the path taken is decided by high-level central planners or through distributed local bodies, in the ideal case all unnecessary diversions and waste are eliminated and all resources are focused on the top priorities.  As well, a collective purpose and effective planning eliminates inactivity and waste by ensuring a opportunity to contribute for all workers.  Caution must be observed, however, as individuals may lack dedication to the communal goals or the specific plan to achieve them, which may undermine worker motivation.
 
 ECO_EXTERN_INTEG
 Externality Integration
 
 ECO_EXTERN_INTEG_DESC
-Unsophisticated economic systems feature decision-making based on factors affecting only the decision-makers directly.  Other factors, or externalities, that affect non-decision makers exclusively, are not considered, which has accordingly unexpected consequences, resulting in an overall loss of economic efficiency in an otherwise ideal system.  By integrating factors such as environmental degredation, tragedies of the commons, or consequences of networking effects, the overall economy can be brought closer to its theoretical ideal form.
+Unsophisticated economic systems feature decision-making based on factors affecting only the decision-makers directly.  Other factors, or externalities, that affect non-decision makers exclusively, are not considered, which has accordingly unexpected consequences, resulting in an overall loss of economic efficiency in an otherwise ideal system.  By integrating factors such as environmental degradation, tragedies of the commons, or consequences of networking effects, the overall economy can be brought closer to its theoretical ideal form.
 
 ECO_ECON_SPECTRO
 Economic Spectroscopy
 
 ECO_ECON_SPECTRO_DESC
-With careful analysis and well-formed models, a linearly independent set of basis states as a frequency parameterization of an economy may be constructed.  Cyclical economic trends and indicators of particular recurrance periods may then be studied independently, and may be amplitude- or phase-adjusted to achieve desired economic goals.  Such manipulations must be conducted with great caution however, as simultaneously phase-matched cyclical effects which initially appear to be unbounded growth will inevitably reach a peak, after which the economic collapse will be equally dramatic.
+With careful analysis and well-formed models, a linearly independent set of basis states as a frequency parameterization of an economy may be constructed.  Cyclical economic trends and indicators of particular recurrence periods may then be studied independently, and may be amplitude- or phase-adjusted to achieve desired economic goals.  Such manipulations must be conducted with great caution however, as simultaneously phase-matched cyclical effects which initially appear to be unbounded growth will inevitably reach a peak, after which the economic collapse will be equally dramatic.
 
 ECO_INTSTEL_TRADE
 Interstellar Trade
@@ -3004,7 +3049,7 @@ ECO_ENV_ADAPTION
 Environmental Adaptation
 
 ECO_ENV_ADAPTION_DESC
-When the colonization of space begins, the great variety of planetary environments that are encountered will seem to be nothing but a hindrance, as most environments are inhospitable to any given race, and population growth and expansion are thus limited.  However, as expantion continues and empires become established in multiple star systems, environmental diversity becomes increasingly beneficial if properly harnessed.  Each environment provides its own set of direct and indirect benefits, particularly for the creation or extraction of physical and conceptual commodities, which may then be traded and shared between systems.  By adapting the economic system of each world to best suit its unique characteristics, these benefits are maximized.
+When the colonization of space begins, the great variety of planetary environments that are encountered will seem to be nothing but a hindrance, as most environments are inhospitable to any given race, and population growth and expansion are thus limited.  However, as expansion continues and empires become established in multiple star systems, environmental diversity becomes increasingly beneficial if properly harnessed.  Each environment provides its own set of direct and indirect benefits, particularly for the creation or extraction of physical and conceptual commodities, which may then be traded and shared between systems.  By adapting the economic system of each world to best suit its unique characteristics, these benefits are maximized.
 
 ECO_GAL_MONEY_POL
 Galactic Monetary Policy
@@ -3022,25 +3067,25 @@ ECO_PLANET_COLONY
 Planetary Colonialism
 
 ECO_PLANET_COLONY_DESC
-When an expending empire encoutners a planet that is rich in resources and which is populated by primitive native sentients, the opportunity arises to treat the planet as a colonial posession.  A large and well-adapted workforce is immediately available, and can often be a source of information about the non-obvious unique resources of the planet.  Care must be taken, however, to ensure that the native population, or at least its leaders, remains inclined to participate in the economic partnership, as former colonial workers can make an equally well-adapted rebel army.
+When an expending empire encounters a planet that is rich in resources and which is populated by primitive native sentients, the opportunity arises to treat the planet as a colonial possession.  A large and well-adapted workforce is immediately available, and can often be a source of information about the non-obvious unique resources of the planet.  Care must be taken, however, to ensure that the native population, or at least its leaders, remains inclined to participate in the economic partnership, as former colonial workers can make an equally well-adapted rebel army.
 
 ECO_ECON_PRESCIEN
 Economic Prescience
 
 ECO_ECON_PRESCIEN_DESC
-Feedback control systems often consider the present, the past, and projected future states of a system when making correctional adjustments.  Making projections is error-prone to the point of uselessness, however, for any highly complex and non-deterministic systems of interacting sentients such as an economy or society.  To resolve this difficultly, precognitive projection can be employed to reveal many of the possible future time-paths and their relative probabilities, as well as the best adjustments to make to adjust these probablities as desired.  By this method, the unpredictable and often illogical choices of sentients may be isolated, and the economy can finally be described and controlled as well as a macroscopic physical system.
+Feedback control systems often consider the present, the past, and projected future states of a system when making correctional adjustments.  Making projections is error-prone to the point of uselessness, however, for any highly complex and non-deterministic systems of interacting sentients such as an economy or society.  To resolve this difficultly, precognitive projection can be employed to reveal many of the possible future time-paths and their relative probabilities, as well as the best adjustments to make to adjust these probabilities as desired.  By this method, the unpredictable and often illogical choices of sentients may be isolated, and the economy can finally be described and controlled as well as a macroscopic physical system.
 
 ECO_STAB_HYPGROW
 Stabilized Hypergrowth
 
 ECO_STAB_HYPGROW_DESC
-Economic activity functions as a positive feedback into its own growth.  An exponential growth curve naturally follows from this in many cases, and economic growth is thus often described as a ratio of the economy's size.  Occasional bursts of hyperexponential growth intermittantly occur, but are unstable and followed by painful corrections.  However, through proper structuring and management, and careful cultivation of the necessary conditions for it to begin, indefinite hyperexponential growth may be maintained.
+Economic activity functions as a positive feedback into its own growth.  An exponential growth curve naturally follows from this in many cases, and economic growth is thus often described as a ratio of the economy's size.  Occasional bursts of hyperexponential growth intermittently occur, but are unstable and followed by painful corrections.  However, through proper structuring and management, and careful cultivation of the necessary conditions for it to begin, indefinite hyperexponential growth may be maintained.
 
 ECO_ECON_HEGEMONY
 Economic Hegemony
 
 ECO_ECON_HEGEMONY_DESC
-An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
+An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targeted manipulations.  By extension, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
 SHP_SPACE_TACTICS
 Space Tactics
@@ -3058,7 +3103,7 @@ SHP_NAVIGATION
 Interstellar Navigation
 
 SHP_NAVIGATION_DESC
-'''Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.
+'''Starlanes form a relatively restrictive network of possible paths, but interstellar travel is complicated and risky without proper navigation techniques.
 
 In future, this tech might do something related to starlanes or ship speed or range...'''
 
@@ -3197,13 +3242,13 @@ ECO_SINKHOLE
 Economic Sinkholes
 
 ECO_SINKHOLE_DESC
-When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propegates out in all directions however, and is difficult or impossible to target selectively.
+When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propagates out in all directions however, and is difficult or impossible to target selectively.
 
 GRO_SELF_ROTATING_CROPS
 Self-Rotating Crops
 
 GRO_SELF_ROTATING_CROPS_DESC
-'''High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvinating, plants every few growing seasons.
+'''High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvenating, plants every few growing seasons.
 
 + 5 to max farming per 10 population on primary farming focused worlds.'''
 
@@ -3217,7 +3262,7 @@ GRO_HABITATION_DOMES
 Habitation Domes
 
 GRO_HABITATION_DOMES_DESC
-'''While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habibation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.
+'''While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habitation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.
 
 Increases by +2 the maximum population of Terrible environment worlds with current construction of at least 20.'''
 
@@ -3266,19 +3311,19 @@ LRN_OBSERVATORY_I
 Observatory
 
 LRN_OBSERVATORY_I_DESC
-The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
+The natural extension of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
 
 LRN_AUTOLAB_I
 Basic Autolabs
 
 LRN_AUTOLAB_I_DESC
-Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
+Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to pursue, and extract the resulting information from them.  A specialized control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant research, but lacking in industrial or minerals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
 
 LRN_THEOREM_PROVER
 Automatic Theorem Prover
 
 LRN_THEOREM_PROVER_DESC
-Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
+Abstract mathematical discoveries frequently have practical, if unforeseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorem Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
 
 LRN_COLLECTIVE_NET
 Collective Thought Network
@@ -3320,22 +3365,22 @@ PRO_AUTOFACTORY_I
 Basic Autofactories
 
 PRO_AUTOFACTORY_I_DESC
-Automated factories greatly increase industirial output without direct supervision, however it remains necessary to provide guidance to such labs regarding what needs to be produced.  A specailzed control centre is required to facilitate these exchanges, and the language in which they are conducted requires extensive research prior to implementation.  Consequently, the use of automated factories may only be practical for empires that conduct large amouts of research.  Conversely, empires with minimal research, but much existing production capacity, may find other production-enhancing methods more practical.
+Automated factories greatly increase industrial output without direct supervision, however it remains necessary to provide guidance to such labs regarding what needs to be produced.  A specialized control centre is required to facilitate these exchanges, and the language in which they are conducted requires extensive research prior to implementation.  Consequently, the use of automated factories may only be practical for empires that conduct large amounts of research.  Conversely, empires with minimal research, but much existing production capacity, may find other production-enhancing methods more practical.
 
 PRO_HEAVY_MINING_I
 Heavy Mining Processors
 
 PRO_HEAVY_MINING_I_DESC
-When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is condusive, partially automated bulk mining activites can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilties.
+When increased minerals production is the only concern, no environmental damage considerations exist, and the environment itself is conducive, partially automated bulk mining activities can be optimal.  Significant processing capacity is required, however, necessitating the use of centralized ore-processing facilities.
 
 PRO_ENVIRO_MINING_I
 Environmentally-Conscious Mining
 
 PRO_ENVIRO_MINING_I_DESC
-'''Many mining methods are incompatiable with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionaly, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.
+'''Many mining methods are incompatible with highly populous planets, due to environmental damage.  Careful consideration of Planetary Ecology is required to permit limited mining techniques to be employed without such downsides.  Minerals production is less per unit of population than more extreme methods, however additional population may somewhat offset this.  Additionally, these limited techniques are only applicable to worlds capable of supporting high populations: Superb or Optimal for a given race.
 
 Increases minerals production by +2 per 10 population on primary mining focused worlds.
-Increases minreals production by +1 per 10 population on primary balanced and secondary mining focused worlds.
+Increases minerals production by +1 per 10 population on primary balanced and secondary mining focused worlds.
 Multiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.'''
 
 PRO_ASTEROID_MINE
@@ -3348,13 +3393,13 @@ PRO_ORBITAL_MINE
 Orbital Mining
 
 PRO_ORBITAL_MINE_DESC
-On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
+On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minerals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
 
 PRO_CORE_MINE
 Deep Core Mining
 
 PRO_CORE_MINE_DESC
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
 
 PRO_ART_BLACK_HOLE
 Artificial Black Hole
@@ -3393,12 +3438,12 @@ PRO_MINING_ENGINEERING_DESC
 '''Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probable locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.
 
 Bonuses depend on planet type:
-Barren and Inferno recive +4 per 10 population of planet at mining focused worlds.
-Desert, Radiated and Toxic recive +2.
-Tundra and Terran recive +1.
+Barren and Inferno receive +4 per 10 population of planet at mining focused worlds.
+Desert, Radiated and Toxic receive +2.
+Tundra and Terran receive +1.
 Ocean and Swap receive no bonus.
 
-Large research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the popluations of these planet types.'''
+Large research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the populations of these planet types.'''
 
 PRO_INDUSTRY_CENTRE_I
 Industrial Centres
@@ -3430,7 +3475,7 @@ SHP_LIGHTHOUSE
 Interstellar Lighthouses
 
 SHP_LIGHTHOUSE_DESC
-Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significantly safer.
+Useful for ships traveling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significantly safer.
 
 SHP_FLEET_LOGISTICS
 Fleet Logistics
@@ -3509,7 +3554,7 @@ PRO_INDUSTRY_CENTRE_II
 Greater Industrial Centre
 
 PRO_INDUSTRY_CENTRE_II_DESC
-Improved centralized management of dispersed industrial activities increases the range and size of increased industiral output provided.
+Improved centralized management of dispersed industrial activities increases the range and size of increased industrial output provided.
 
 PRO_INDUSTRY_CENTRE_III
 Supreme Industrial Centre
@@ -3525,7 +3570,7 @@ BLD_OBSERVATORY
 Observatory
 
 BLD_OBSERVATORY_DESC
-'''The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more reasily detected by friendly planets within range of the Observatory.
+'''The natural extension of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more easily detected by friendly planets within range of the Observatory.
 
 Gives +10 to Detection to all friendly planets within distance 200.
 Decreases Stealth on planet where built by 10.'''
@@ -3768,7 +3813,7 @@ FU_ANTIMATTER_TANK
 Antimatter Tank
 
 FU_ANTIMATTER_TANK_DESC
-Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
+Moderate increase to ship range by increasing fuel capacity.  Compact and low mass.
 
 ST_EM_DAMPER
 Electromagnetic Damper

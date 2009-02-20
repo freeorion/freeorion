@@ -8,11 +8,11 @@
 #include "CUIWnd.h"
 #include "../universe/Enums.h"
 #include "../universe/Fleet.h"
+#include "FleetButton.h"
 
 class CUIButton;
 class CUIEdit;
 class CUITurnButton;
-class FleetButton;
 class FleetWnd;
 class MapWndPopup;
 class DesignWnd;
@@ -57,13 +57,15 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    virtual GG::Pt ClientUpperLeft() const;
+    virtual GG::Pt              ClientUpperLeft() const;
 
-    double         ZoomFactor() const;
-    int            SystemIconSize() const;
-    SidePanel*     GetSidePanel() const;
-    void           GetSaveGameUIData(SaveGameUIData& data) const;   //!< populates the relevant UI state that should be restored after a save-and-load cycle
-    bool           InProductionViewMode() const;                    //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
+    double                      ZoomFactor() const;
+    int                         SystemIconSize() const;
+    FleetButton::SizeType       FleetButtonSizeType() const;                    //!< returns what size type (tiny, small, large) fleet buttons on this map are shown at
+
+    SidePanel*                  GetSidePanel() const;
+    void                        GetSaveGameUIData(SaveGameUIData& data) const;   //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    bool                        InProductionViewMode() const;                    //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
 
     /* returns the position on the screen that corresponds to the specified universe X and Y coordinates. */
     GG::Pt                      ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;

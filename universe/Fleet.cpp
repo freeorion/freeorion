@@ -20,7 +20,7 @@ namespace {
     }
 
     void ResupplyFleetIfPossible(Fleet* fleet) {
-        if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+        if (!fleet || fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID)
             return;
         Universe& universe = GetUniverse();
 
@@ -677,9 +677,9 @@ void Fleet::MovementPhase()
 
     std::list<MovePathNode> move_path = this->MovePath();
 
-    if (move_path.empty()) {
+    if (move_path.empty() || move_path.size() == 1) {
+        //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path is empty or has only one entry.  doing nothing";
         ResupplyFleetIfPossible(this);
-        //Logger().debugStream() << "Fleet::MovementPhase: Fleet has empty move path.  aborting.";
         return;
     }
 
@@ -692,12 +692,6 @@ void Fleet::MovementPhase()
     int cur_sys_id = SystemID();
     Universe& universe = GetUniverse();
 
-
-    if (move_path.size() == 1) {
-        //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path has only one entry.  doing nothing";
-        ResupplyFleetIfPossible(this);  // just in case MovePath messed up...
-        return;
-    }
 
 
     std::list<MovePathNode>::const_iterator it = move_path.begin();

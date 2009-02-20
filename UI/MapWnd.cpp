@@ -1415,7 +1415,7 @@ void MapWnd::DoSystemIconsLayout()
 
 void MapWnd::DoFleetButtonsLayout()
 {
-    const int FLEET_BUTTON_SIZE = ClientUI::SmallFleetButtonSize();
+    const int FLEET_BUTTON_SIZE = FleetButtonSizeType();
     // position and resize unattached (to system icons) fleet icons
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
@@ -1429,6 +1429,21 @@ void MapWnd::DoFleetButtonsLayout()
 int MapWnd::SystemIconSize() const
 {
     return static_cast<int>(ClientUI::SystemIconSize() * m_zoom_factor);
+}
+
+FleetButton::SizeType MapWnd::FleetButtonSizeType() const
+{
+    if      (m_zoom_factor > ClientUI::LargeFleetButtonZoomThreshold())
+        return FleetButton::FLEET_BUTTON_LARGE;
+
+    else if (m_zoom_factor > ClientUI::SmallFleetButtonZoomThreshold())
+        return FleetButton::FLEET_BUTTON_SMALL;
+
+    else if (m_zoom_factor > ClientUI::TinyFleetButtonZoomThreshold())
+        return FleetButton::FLEET_BUTTON_TINY;
+
+    else
+        return FleetButton::FLEET_BUTTON_NONE;
 }
 
 void MapWnd::Zoom(int delta)

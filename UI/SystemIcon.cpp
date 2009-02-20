@@ -185,19 +185,31 @@ const boost::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
 const boost::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
 { return m_tiny_texture; }
 
-GG::Pt SystemIcon::NthFleetButtonUpperLeft(int n, bool moving) const
+GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
 {
-    assert(n > 0);
+    assert(button_number > 0);
     // determine where the nth fleetbutton should be located
     GG::Pt retval = GG::Pt();
-    const int FLEETBUTTON_SIZE = ClientUI::SmallFleetButtonSize();
 
-    if (moving) {   // moving at bottom left
-        retval += GG::Pt(-GG::X(FLEETBUTTON_SIZE), Height());
-        retval += GG::Pt(GG::X0, GG::Y(FLEETBUTTON_SIZE)*(n - 1));
+    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    const int FLEETBUTTON_SIZE = map_wnd->FleetButtonSizeType();
+
+    /* Positions of buttons relative to star.  Moving fleet
+     * buttons at top left, stationary buttons at top right.
+     *        6    6
+     *      5 3    3 5 8
+     *  7 4 2 1 __ 1 2 4 7
+     *         /  \
+     *         |  |
+     *         \__/
+     */
+
+    if (moving) {   // moving at top left
+        retval += GG::Pt(-GG::X(FLEETBUTTON_SIZE),  GG::Y(FLEETBUTTON_SIZE)*button_number);
+        retval += GG::Pt(GG::X0,                    GG::Y(FLEETBUTTON_SIZE)*(button_number - 1));
         return retval;
     } else {        // stationary at top right
-        retval += GG::Pt(Width(), -GG::Y(FLEETBUTTON_SIZE)*n);
+        retval += GG::Pt(Width(),                   -GG::Y(FLEETBUTTON_SIZE)*button_number);
         return retval;
     }
 }
