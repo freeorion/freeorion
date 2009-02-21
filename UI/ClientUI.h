@@ -144,20 +144,9 @@ public:
     static GG::Clr      SystemNameTextColor();                  //!< the colour of system names that aren't owned by any player (as far as this client knows)
     static double       SystemSelectionIndicatorSize();         //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
 
-    static int          LargeFleetButtonSize();                 //!< the width/height of a (large) single-fleet button
-    static int          SmallFleetButtonSize();                 //!< the width/height of a (small) single fleet button
-    static int          TinyFleetButtonSize();                  //!< the width/height of a (tiny) multi-fleet button
-
     static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to shown tiny (any) fleet icons
     static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to shown small fleet icons
     static double       LargeFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to shown large fleet icons
-
-    static boost::shared_ptr<GG::Texture>   FleetHeadIcon(const Fleet* fleet = 0);  //!< the "head" icon for \a fleet or a generic icon if \a fleet is 0
-    static boost::shared_ptr<GG::Texture>   FleetSizeIcon(const Fleet* fleet = 0);  //!< the "size" icon for \a fleet (defaults to the size icon for a single ship fleet if \a fleet is 0)
-    static boost::shared_ptr<GG::Texture>   FleetSizeIcon(unsigned int fleet_size); //!< the "size" icon for a fleet of size \a fleet_size
-
-    static boost::shared_ptr<GG::Texture>   FleetTinyIcon(const Fleet* fleet = 0);  //!< the icon for \a fleet when shown very small
-    static boost::shared_ptr<GG::Texture>   MultiFleetTinyIcon();                   //!< the icon to represent multiple fleets when shown very small
 
     // SidePanel
     static GG::Clr      SidePanelColor();

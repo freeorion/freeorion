@@ -1415,15 +1415,16 @@ void MapWnd::DoSystemIconsLayout()
 
 void MapWnd::DoFleetButtonsLayout()
 {
-    FleetButton::SizeType FLEET_BUTTON_SIZE_TYPE = FleetButtonSizeType();
-    const int FLEET_BUTTON_SIZE = FleetButton::SizeForSizeType(FLEET_BUTTON_SIZE_TYPE);
     // position and resize unattached (to system icons) fleet icons
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
-        Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
+    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
+        FleetButton* fb = *it;
+        const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
 
-        GG::Pt button_ul(GG::X(static_cast<int>(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0)), 
-                         GG::Y(static_cast<int>(fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE / 2.0)));
-        m_moving_fleet_buttons[i]->SizeMove(button_ul, button_ul + GG::Pt(GG::X(FLEET_BUTTON_SIZE), GG::Y(FLEET_BUTTON_SIZE)));
+        const Fleet* fleet = *(fb->Fleets().begin());
+        GG::Pt button_ul(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE.x / 2.0,
+                         fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE.y / 2.0);
+
+        fb->MoveTo(button_ul);
     }
 }
 
@@ -1483,7 +1484,7 @@ void MapWnd::Zoom(int delta)
         return; // If delta == 0, no change
     }
 
-    if (m_zoom_factor * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
+    if (m_zoom_factor < ClientUI::TinyFleetButtonZoomThreshold())
         HideSystemNames();
     else
         ShowSystemNames();
@@ -1633,6 +1634,40 @@ void MapWnd::RenderSystems()
         glLoadIdentity();
         for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
             it->second->ManualRender(HALO_SCALE_FACTOR);
+        glPopMatrix();
+    }
+
+    // circles around system icons
+    if (true) {
+        glPushMatrix();
+        glLoadIdentity();
+        const double TWO_PI = 2.0*3.14159;
+        glDisable(GL_TEXTURE_2D);
+        glLineWidth(1.5);
+        glColor(ClientUI::SystemNameTextColor());
+
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+            const SystemIcon* icon = it->second;
+
+            const int ARC_SIZE = icon->EnclosingCircleDiameter();
+
+            GG::Pt ul = icon->UpperLeft(), lr = icon->LowerRight();
+            GG::Pt size = lr - ul;
+            GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+            GG::Pt middle = ul + half_size;
+
+            GG::Pt circle_size = GG::Pt(static_cast<GG::X>(ARC_SIZE),
+                                        static_cast<GG::Y>(ARC_SIZE));
+            GG::Pt circle_half_size = GG::Pt(circle_size.x / 2, circle_size.y / 2);
+            GG::Pt circle_ul = middle - circle_half_size;
+            GG::Pt circle_lr = circle_ul + circle_size;
+
+            glBegin(GL_LINE_STRIP);
+            CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+            glEnd();
+        }
+
+        glEnable(GL_TEXTURE_2D);
         glPopMatrix();
     }
 }

@@ -726,9 +726,6 @@ void OptionsWnd::Init()
     ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_FLEET_ICONS"));
-    IntOption("UI.large-fleet-button-size",             UserString("OPTIONS_UI_LARGE_FLEET_BUTTON_SIZE"));
-    IntOption("UI.small-fleet-button-size",             UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_SIZE"));
-    IntOption("UI.tiny-fleet-button-size",              UserString("OPTIONS_UI_TINY_FLEET_BUTTON_SIZE"));
     DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption("UI.large-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_LARGE_FLEET_BUTTON_MIN_ZOOM"));

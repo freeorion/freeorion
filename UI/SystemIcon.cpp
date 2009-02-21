@@ -188,12 +188,22 @@ const boost::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
 GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
 {
     assert(button_number > 0);
-    // determine where the nth fleetbutton should be located
     GG::Pt retval = GG::Pt();
-
     const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    FleetButton::SizeType FLEETBUTTON_SIZE_TYPE = map_wnd->FleetButtonSizeType();
-    const int FLEETBUTTON_SIZE = FleetButton::SizeForSizeType(FLEETBUTTON_SIZE_TYPE);
+
+    // get fleetbutton size to use for layout, defaulting to size (0, 0)
+    GG::Pt FLEETBUTTON_SIZE = GG::Pt();
+    if (moving) {
+        if (!m_moving_fleet_markers.empty()) {
+            const FleetButton* fb = m_moving_fleet_markers.begin()->second;
+            FLEETBUTTON_SIZE = fb->Size();
+        }
+    } else {
+        if (!m_stationary_fleet_markers.empty()) {
+            const FleetButton* fb = m_stationary_fleet_markers.begin()->second;
+            FLEETBUTTON_SIZE = fb->Size();
+        }
+    }
 
     /* Positions of buttons relative to star.  Moving fleet
      * buttons at top left, stationary buttons at top right.
@@ -204,13 +214,12 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
      *         |  |
      *         \__/
      */
-
     if (moving) {   // moving at top left
-        retval += GG::Pt(-GG::X(FLEETBUTTON_SIZE),  GG::Y(FLEETBUTTON_SIZE)*button_number);
-        retval += GG::Pt(GG::X0,                    GG::Y(FLEETBUTTON_SIZE)*(button_number - 1));
+        retval += GG::Pt(-FLEETBUTTON_SIZE.x,   FLEETBUTTON_SIZE.y*button_number);
+        retval += GG::Pt(GG::X0,                FLEETBUTTON_SIZE.y*(button_number - 1));
         return retval;
     } else {        // stationary at top right
-        retval += GG::Pt(Width(),                   -GG::Y(FLEETBUTTON_SIZE)*button_number);
+        retval += GG::Pt(Width(),               -FLEETBUTTON_SIZE.y*button_number);
         return retval;
     }
 }
@@ -251,29 +260,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 
 void SystemIcon::Render()
-{
-    const int ARC_SIZE = EnclosingCircleDiameter();
-    const double TWO_PI = 2.0*3.14159;
-
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Pt size = lr - ul;
-    GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
-    GG::Pt middle = ul + half_size;
-
-    GG::Pt circle_size = GG::Pt(static_cast<GG::X>(ARC_SIZE),
-                                static_cast<GG::Y>(ARC_SIZE));
-    GG::Pt circle_half_size = GG::Pt(circle_size.x / 2, circle_size.y / 2);
-    GG::Pt circle_ul = middle - circle_half_size;
-    GG::Pt circle_lr = circle_ul + circle_size;
-
-    glDisable(GL_TEXTURE_2D);
-    glLineWidth(1.0);
-    glColor(ClientUI::SystemNameTextColor());
-    glBegin(GL_LINE_STRIP);
-    CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
-    glEnd();
-    glEnable(GL_TEXTURE_2D);
-}
+{}
 
 void SystemIcon::ManualRender(double halo_scale_factor)
 {
@@ -491,7 +478,7 @@ void SystemIcon::PositionSystemName()
 
 bool SystemIcon::InWindow(const GG::Pt& pt) const
 {
-    // Before we blindly check our bounding rect, make sure it doesn't fall in any of our fleets.
+    // check if pt falls in a fleet icon.
     for (std::map<int, FleetButton*>::const_iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         if (it->second->InWindow(pt))
             return true;
@@ -501,7 +488,7 @@ bool SystemIcon::InWindow(const GG::Pt& pt) const
             return true;
     }
 
-    // find if cursor is within require distance of centre of icon
+    // find if cursor is within required distance of centre of icon
     const int RADIUS = EnclosingCircleDiameter() / 2;
     const int RADIUS2 = RADIUS*RADIUS;
 

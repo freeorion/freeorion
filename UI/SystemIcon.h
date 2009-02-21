@@ -43,8 +43,8 @@ public:
     //!@}
 
     //! \name Structors //!@{
-    SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id);    //!< construct from a universe ID at specified size and position
-    ~SystemIcon();                              //!< dtor
+    SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id);     //!< construct from a universe ID at specified size and position
+    ~SystemIcon();                                                      //!< dtor
     //!@}
 
     //! \name Accessors //!@{
@@ -52,17 +52,19 @@ public:
     const FleetButton*  GetFleetButton(const Fleet* fleet) const;
     GG::Pt              FleetButtonCentre(int empire_id, bool moving) const;    //!< returns centre of fleetbutton owned by empire with id \a empire_id, or GG::Pt(INVALID_POSITION, INVALID_POSITION) if there is no such FleetButton for the specified empire.
 
-    const boost::shared_ptr<GG::Texture>& DiscTexture() const; //!< returns the solid star disc texture
-    const boost::shared_ptr<GG::Texture>& HaloTexture() const; //!< returns the transparent star halo texture
-    const boost::shared_ptr<GG::Texture>& TinyTexture() const; //!< returns the alternate texture shown when icon very small
+    const boost::shared_ptr<GG::Texture>& DiscTexture() const;  //!< returns the solid star disc texture
+    const boost::shared_ptr<GG::Texture>& HaloTexture() const;  //!< returns the transparent star halo texture
+    const boost::shared_ptr<GG::Texture>& TinyTexture() const;  //!< returns the alternate texture shown when icon very small
 
-    virtual bool        InWindow(const GG::Pt& pt) const;   //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
+    virtual bool        InWindow(const GG::Pt& pt) const;       //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
+    int                 EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
+
     //!@}
 
     //! \name Mutators //!@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render();
-    void            ManualRender(double halo_scale_factor); //!< Draw disc and halo textures
+    void            ManualRender(double halo_scale_factor);     //!< Draw disc and halo textures
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -93,7 +95,6 @@ private:
     void    Init(); //!< common constructor tasks
 
     GG::Pt  NthFleetButtonUpperLeft(int button_number, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown starting from 1(not empire id)
-    int     EnclosingCircleDiameter() const;                                //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
 
 
     void    FleetInserted(Fleet& fleet);

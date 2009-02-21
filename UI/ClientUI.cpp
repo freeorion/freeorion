@@ -90,49 +90,9 @@ int         ClientUI::SystemIconSize()          { return GetOptionsDB().Get<int>
 GG::Clr     ClientUI::SystemNameTextColor()     { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
 double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
 
-int         ClientUI::LargeFleetButtonSize()    { return GetOptionsDB().Get<int>("UI.large-fleet-button-size"); }
-int         ClientUI::SmallFleetButtonSize()    { return GetOptionsDB().Get<int>("UI.small-fleet-button-size"); }
-int         ClientUI::TinyFleetButtonSize()     { return GetOptionsDB().Get<int>("UI.tiny-fleet-button-size"); }
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
 double      ClientUI::LargeFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.large-fleet-button-minimum-zoom"); }
-
-boost::shared_ptr<GG::Texture> ClientUI::FleetHeadIcon(const Fleet* fleet)
-{
-    if (!fleet)
-        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-monster.png", true);
-    if (fleet->HasColonyShips())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-colony.png", true);
-    if (fleet->HasArmedShips())
-        return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-warship.png", true);
-    // else
-    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "big-head-scout.png", true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::FleetSizeIcon(const Fleet* fleet)
-{
-    if (!fleet)
-        return FleetSizeIcon(1u);
-    return FleetSizeIcon(fleet->NumShips());
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::FleetSizeIcon(unsigned int fleet_size)
-{
-    if (fleet_size == 0)
-        fleet_size = 1; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
-    return s_the_UI->GetModuloTexture(ArtDir() / "icons" / "fleet", "big-tail-", fleet_size, true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::FleetTinyIcon(const Fleet* fleet)
-{
-    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "tiny-fleet.png", true);
-}
-
-boost::shared_ptr<GG::Texture> ClientUI::MultiFleetTinyIcon()
-{
-    return ClientUI::GetTexture(ArtDir() / "icons" / "fleet" / "tiny-fleet-multi.png", true);
-}
-
 
 // SidePanel
 GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }
@@ -468,9 +428,6 @@ namespace {
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
         db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.5,        RangedStepValidator<double>(0.1, 0.5, 5));
-        db.Add("UI.large-fleet-button-size",        "OPTIONS_DB_UI_LARGE_FLEET_BUTTON_SIZE",        24,         RangedValidator<int>(8, 48));
-        db.Add("UI.small-fleet-button-size",        "OPTIONS_DB_UI_SMALL_FLEET_BUTTON_SIZE",        16,         RangedValidator<int>(8, 32));
-        db.Add("UI.tiny-fleet-button-size",         "OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE",         10,         RangedValidator<int>(4, 24));
         db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));

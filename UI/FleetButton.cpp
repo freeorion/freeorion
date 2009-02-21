@@ -20,21 +20,37 @@
 namespace {
     void PlayFleetButtonOpenSound() {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);}
     void PlayFleetButtonRolloverSound() {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);}
+
+    /* returns number of fleet icon size texture to use to represent fleet(s) with the passed number of ships */
+    int FleetSizeIconNumber(int number_ships) {
+        std::cout << "FleetSizeIconNumber(" << number_ships << ")" << std::endl;
+        return number_ships;
+    }
+
+    /* returns prefix of filename used for icons for the indicated fleet button size type */
+    std::string FleetIconSizePrefix(FleetButton::SizeType size_type) {
+        if (size_type == FleetButton::FLEET_BUTTON_LARGE)
+            return "big-";
+        else if (size_type == FleetButton::FLEET_BUTTON_SMALL)
+            return "sml-";
+        else
+            return "";
+    }
 }
 
 ///////////////////////////
 // FleetButton
 ///////////////////////////
-FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size) :
+FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icon(),
     m_size_icon()
 {
-    Init(fleet_IDs, size);
+    Init(fleet_IDs, size_type);
 }
 
-FleetButton::FleetButton(int fleet_id, SizeType size) :
+FleetButton::FleetButton(int fleet_id, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icon(),
@@ -42,10 +58,10 @@ FleetButton::FleetButton(int fleet_id, SizeType size) :
 {
     std::vector<int> fleet_IDs;
     fleet_IDs.push_back(fleet_id);
-    Init(fleet_IDs, size);
+    Init(fleet_IDs, size_type);
 }
 
-void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size) {
+void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // get fleets
     Universe& universe = GetUniverse();
     for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
@@ -95,34 +111,53 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size) {
         SetColor(empire->Color());
 
 
-    // set button size
-    int button_size = SizeForSizeType(size);
-
-    Resize(GG::Pt(GG::X(button_size), GG::Y(button_size)));
-
-
-    // select icon(s) for fleet
+    // select icon(s) for fleet(s)
     if (m_fleets.size() != 1) {
-        m_size_icon.reset();        // use single icon, not head + parts
-
-        if (size == FLEET_BUTTON_TINY)
-            m_head_icon = ClientUI::MultiFleetTinyIcon();
-        else
-            m_head_icon = ClientUI::MultiFleetTinyIcon();   // should not be needed, but just in case
-
+        m_head_icon = FleetHeadIcon(NULL, size_type);
+        int num_ships = 0;
+        for (std::vector<Fleet*>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it)
+            num_ships += (*it)->NumShips();
+        m_size_icon = FleetSizeIcon(num_ships, size_type);
     } else {
         const Fleet* fleet = *m_fleets.begin();
-        m_head_icon = ClientUI::FleetTinyIcon(fleet);
-
-        if (size == FLEET_BUTTON_TINY)
-            m_size_icon.reset();    // use single icon, not head + parts
-        else
-            m_size_icon = ClientUI::FleetSizeIcon(fleet);
+        m_head_icon = FleetHeadIcon(fleet, size_type);
+        m_size_icon = FleetSizeIcon(fleet, size_type);
     }
+
+    // resize to fit icon by first determining necessary size, and then resizing
+    GG::X width(0);
+    GG::Y height(0);
+
+    if (m_head_icon) {
+        std::cout << "fleet init head icon: " << m_head_icon->Filename() << std::endl;
+        width = m_head_icon->DefaultWidth();
+        height = m_head_icon->DefaultHeight();
+    }
+    if (m_size_icon) {
+        std::cout << "fleet init size icon: " << m_size_icon->Filename() << std::endl;
+        width = std::max(width, m_size_icon->DefaultWidth());
+        height = std::max(height, m_size_icon->DefaultHeight());
+    }
+
+    Resize(GG::Pt(width, height));
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
-    return GG::Wnd::InWindow(pt);   // could do something fancy to fit better to shape of icon, but square is probably fine, and easier since shape of icon is a function of its texture
+    // find if cursor is within required distance of centre of icon
+    const int RADIUS = Value(Width()) / 2;
+    const int RADIUS2 = RADIUS*RADIUS;
+
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt size = lr - ul;
+    GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+    GG::Pt middle = ul + half_size;
+
+    GG::Pt delta = pt - middle;
+
+    const int distx = Value(delta.x);
+    const int disty = Value(delta.y);
+
+    return distx*distx + disty*disty <= RADIUS2;
 }
 
 void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -142,23 +177,13 @@ void FleetButton::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     GG::Button::LClick(pt, mod_keys);
 }
 
-int FleetButton::SizeForSizeType(SizeType size_type) {
-    if (size_type == FLEET_BUTTON_TINY)
-        return ClientUI::TinyFleetButtonSize();
-    if (size_type == FLEET_BUTTON_SMALL)
-        return ClientUI::SmallFleetButtonSize();
-    if (size_type == FLEET_BUTTON_LARGE)
-        return ClientUI::LargeFleetButtonSize();
-    return 0;
-}
-
 void FleetButton::RenderUnpressed() {
     glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_head_icon)
-        m_head_icon->OrthoBlit(ul, lr);
+        m_head_icon->OrthoBlit(ul);
     if (m_size_icon)
-        m_size_icon->OrthoBlit(ul, lr);
+        m_size_icon->OrthoBlit(ul);
 }
 
 void FleetButton::RenderPressed() {
@@ -179,4 +204,58 @@ void FleetButton::RenderRollover() {
     glEnable(GL_TEXTURE_2D);
 
     RenderUnpressed();  // TODO: do something else
+}
+
+/////////////////////
+// Free Functions
+/////////////////////
+boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::SizeType size_type) {
+    std::cout << "FleetHeadIcon(" << (fleet ? fleet->Name() : "no fleet") << ", " << size_type << std::endl;
+    if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
+        return boost::shared_ptr<GG::Texture>();
+
+    // get file name prefix for appropriate size of icon
+    std::string size_prefix = FleetIconSizePrefix(size_type);
+    if (size_prefix.empty())
+        return boost::shared_ptr<GG::Texture>();
+
+    // get file name main part depending on type of fleet
+    std::string main_filename = "head-scout.png";
+    if (fleet && fleet->HasColonyShips())
+        main_filename = "head-colony.png";
+    else if (fleet && fleet->HasArmedShips())
+        main_filename = "head-warship.png";
+
+    return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + main_filename), false);
+}
+
+boost::shared_ptr<GG::Texture> FleetSizeIcon(const Fleet* fleet, FleetButton::SizeType size_type) {
+    std::cout << "FleetSizeIcon(" << (fleet ? fleet->Name() : "no fleet") << ", " << size_type << std::endl;
+    if (!fleet)
+        return FleetSizeIcon(1u, size_type);
+    return FleetSizeIcon(fleet->NumShips(), size_type);
+}
+
+boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type) {
+    std::cout << "FleetSizeIcon (fleet_size) (" << fleet_size << ", " << size_type << std::endl;
+
+    if (fleet_size < 1u)
+        fleet_size = 1u; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
+
+    if (size_type == FleetButton::FLEET_BUTTON_NONE)
+        return boost::shared_ptr<GG::Texture>();
+
+    if (size_type == FleetButton::FLEET_BUTTON_TINY) {
+        if (fleet_size > 1u)
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet-multi.png", false);
+        else
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "tiny-fleet.png", false);
+    }
+
+    std::string size_prefix = FleetIconSizePrefix(size_type);
+
+    if (size_prefix.empty())
+        return boost::shared_ptr<GG::Texture>();
+
+    return ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "icons" / "fleet", (size_prefix + "tail-"), FleetSizeIconNumber(fleet_size), false);
 }

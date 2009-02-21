@@ -20,8 +20,8 @@ public:
     };
 
     /** \name Structors */ //@{
-    FleetButton(const std::vector<int>& fleet_IDs, SizeType size = FLEET_BUTTON_LARGE);
-    FleetButton(int fleet_id, SizeType size = FLEET_BUTTON_LARGE);
+    FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type = FLEET_BUTTON_LARGE);
+    FleetButton(int fleet_id, SizeType size_type = FLEET_BUTTON_LARGE);
     //@}
 
     /** \name Accessors */ //@{
@@ -35,8 +35,6 @@ public:
     virtual void                LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
-    static int                  SizeForSizeType(SizeType size_type);
-
 protected:
     /** \name Mutators */ //@{
     virtual void                RenderUnpressed();
@@ -45,11 +43,21 @@ protected:
     //@}
 
 private:
-    void Init(const std::vector<int>& fleet_IDs, SizeType size);
+    void Init(const std::vector<int>& fleet_IDs, SizeType size_type);
 
     std::vector<Fleet*>             m_fleets;       ///< the fleets represented by this button
     boost::shared_ptr<GG::Texture>  m_head_icon;    ///< icon texture representing type of fleet
     boost::shared_ptr<GG::Texture>  m_size_icon;    ///< icon texture representing number of ships in fleet
 };
+
+/* returns head icon for passed fleet at passed icon size */
+boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::SizeType size_type);
+
+/* returns size icon for passed fleet at passed icon size */
+boost::shared_ptr<GG::Texture> FleetSizeIcon(const Fleet* fleet, FleetButton::SizeType size_type);
+
+/* returns head icon for passed fleet size at passed icon size */
+boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);
+
 
 #endif // _FleetButton_h_

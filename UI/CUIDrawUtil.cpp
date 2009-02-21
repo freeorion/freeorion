@@ -282,7 +282,7 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
     else if (theta2 >= 2 * PI)
         theta2 -= int(theta2 / (2 * PI)) * 2 * PI;
 
-    const int      SLICES = std::min(3 + std::max(wd, ht), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
+    const int      SLICES = std::min(std::max(12, 3 + std::max(wd, ht)), 50);  // this is a good guess at how much to tesselate the circle coordinates (50 segments max)
     const double   HORZ_THETA = (2 * PI) / SLICES;
 
     static std::map<int, std::vector<double> > unit_circle_coords;
@@ -303,19 +303,19 @@ void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2,
 
     if (filled_shape) {
         glBegin(GL_TRIANGLE_FAN);
-        glVertex2f(center_x, center_y);
+        glVertex2f(static_cast<GLfloat>(center_x), static_cast<GLfloat>(center_y));
     }
     // point on circle at angle theta1
     double theta1_x = std::cos(-theta1), theta1_y = std::sin(-theta1);
-    glVertex2f(center_x + theta1_x * r, center_y + theta1_y * r);
+    glVertex2f(static_cast<GLfloat>(center_x + theta1_x * r), static_cast<GLfloat>(center_y + theta1_y * r));
     // angles in between theta1 and theta2, if any
     for (int i = first_slice_idx; i <= last_slice_idx; ++i) {
         int X = (i > SLICES ? (i - SLICES) : i) * 2, Y = X + 1;
-        glVertex2f(center_x + unit_vertices[X] * r, center_y + unit_vertices[Y] * r);
+        glVertex2f(static_cast<GLfloat>(center_x + unit_vertices[X] * r), static_cast<GLfloat>(center_y + unit_vertices[Y] * r));
     }
     // theta2
     double theta2_x = std::cos(-theta2), theta2_y = std::sin(-theta2);
-    glVertex2f(center_x + theta2_x * r, center_y + theta2_y * r);
+    glVertex2f(static_cast<GLfloat>(center_x + theta2_x * r), static_cast<GLfloat>(center_y + theta2_y * r));
     if (filled_shape)
         glEnd();
 }
