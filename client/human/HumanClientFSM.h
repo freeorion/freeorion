@@ -146,7 +146,7 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenu
     boost::statechart::result react(const JoinMPGameRequested& a);
 
     CombatWnd* m_combat_wnd; // TODO: Remove this; it is only here for prototyping.
-    IntroScreen* m_intro_screen;
+    std::auto_ptr<IntroScreen> m_intro_screen;
 
     CLIENT_ACCESSOR
 };
@@ -235,7 +235,7 @@ struct MPLobby : boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle>
     boost::statechart::result react(const LobbyHostAbort& msg);
     boost::statechart::result react(const LobbyNonHostExit& msg);
 
-    MultiplayerLobbyWnd* m_lobby_wnd;
+    std::auto_ptr<MultiplayerLobbyWnd> m_lobby_wnd;
 
     CLIENT_ACCESSOR
 };
@@ -337,14 +337,28 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     boost::statechart::result react(const GameStart& msg);
     boost::statechart::result react(const SaveGame& msg);
 
-    TurnProgressWnd* m_turn_progress_wnd;
+    std::auto_ptr<TurnProgressWnd> m_turn_progress_wnd;
 
     CLIENT_ACCESSOR
 };
 
 
 /** The initial substate of WaitingForTurnData. */
-EMPTY_IDLE_STATE(WaitingForTurnData);
+struct WaitingForTurnDataIdle : boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData>
+{
+    typedef boost::statechart::state<WaitingForTurnDataIdle, WaitingForTurnData> Base;
+
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<CombatStart>
+    > reactions;
+
+    WaitingForTurnDataIdle(my_context ctx);
+    ~WaitingForTurnDataIdle();
+
+    boost::statechart::result react(const CombatStart& msg);
+
+    CLIENT_ACCESSOR
+};
 
 
 /** The substate of PlayingGame in which the player is actively playing a turn. */
@@ -388,7 +402,7 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
     boost::statechart::result react(const CombatRoundUpdate& msg);
     boost::statechart::result react(const CombatEnd& msg);
 
-    CombatWnd* m_combat_wnd;
+    std::auto_ptr<CombatWnd> m_combat_wnd;
 
     CLIENT_ACCESSOR
 };

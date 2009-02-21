@@ -15,7 +15,7 @@
 
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 
     struct MPLobbyCancelForwarder
     {
@@ -74,14 +74,13 @@ IntroMenu::IntroMenu(my_context ctx) :
     if (GetOptionsDB().Get<bool>("tech-demo"))
         Client().Register(m_combat_wnd);
     else
-        Client().Register(m_intro_screen);
+        Client().Register(m_intro_screen.get());
 }
 
 IntroMenu::~IntroMenu()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
     delete m_combat_wnd;
-    delete m_intro_screen;
 }
 
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a)
@@ -167,15 +166,14 @@ MPLobby::MPLobby(my_context ctx) :
     m_lobby_wnd(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby";
-    if (context<IntroMenu>().m_intro_screen)
+    if (context<IntroMenu>().m_intro_screen.get())
         context<IntroMenu>().m_intro_screen->Hide();
 }
 
 MPLobby::~MPLobby()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
-    delete m_lobby_wnd;
-    if (context<IntroMenu>().m_intro_screen)
+    if (context<IntroMenu>().m_intro_screen.get())
         context<IntroMenu>().m_intro_screen->Show();
 }
 
@@ -224,11 +222,11 @@ HostMPLobby::HostMPLobby(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) HostMPLobby";
-    context<MPLobby>().m_lobby_wnd =
+    context<MPLobby>().m_lobby_wnd.reset(
         new MultiplayerLobbyWnd(true,
                                 MPLobbyStartGameForwarder(context<HumanClientFSM>()),
-                                MPLobbyCancelForwarder(context<HumanClientFSM>()));
-    Client().Register(context<MPLobby>().m_lobby_wnd);
+                                MPLobbyCancelForwarder(context<HumanClientFSM>())));
+    Client().Register(context<MPLobby>().m_lobby_wnd.get());
 }
 
 HostMPLobby::~HostMPLobby()
@@ -262,11 +260,11 @@ NonHostMPLobby::NonHostMPLobby(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) NonHostMPLobby";
-    context<MPLobby>().m_lobby_wnd =
+    context<MPLobby>().m_lobby_wnd.reset(
         new MultiplayerLobbyWnd(false,
                                 MPLobbyStartGameForwarder(context<HumanClientFSM>()),
-                                MPLobbyCancelForwarder(context<HumanClientFSM>()));
-    Client().Register(context<MPLobby>().m_lobby_wnd);
+                                MPLobbyCancelForwarder(context<HumanClientFSM>())));
+    Client().Register(context<MPLobby>().m_lobby_wnd.get());
 }
 
 NonHostMPLobby::~NonHostMPLobby()
@@ -381,7 +379,7 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     m_turn_progress_wnd(new TurnProgressWnd)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
-    Client().Register(m_turn_progress_wnd);
+    Client().Register(m_turn_progress_wnd.get());
     if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
         m_turn_progress_wnd->UpdateTurnProgress(UserString("NEW_GAME"), -1);
     else if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_LOADED_GAME)
@@ -391,7 +389,6 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
 WaitingForTurnData::~WaitingForTurnData()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnData";
-    delete m_turn_progress_wnd;
     context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN;
 }
 
@@ -432,9 +429,11 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
 
 boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.CombatStart";
-    post_event(msg); // Re-post this event, so that it is the first thing the ResolvingCombat state sees.
-    return transit<ResolvingCombat>();
+    // HACK! I get some long and inscrutable error message if
+    // WaitingForTurnData doesn't have a CombatStart handler, even though
+    // WaitingForTurnDataImpl sctually handles this message.
+    assert(!"Function WaitingForTurnData.CombatStart should never be called!");
+    return discard_event();
 }
 
 boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
@@ -464,6 +463,30 @@ boost::statechart::result WaitingForTurnData::react(const SaveGame& msg)
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.SaveGame";
     Client().HandleSaveGameDataRequest();
     return discard_event();
+}
+
+
+////////////////////////////////////////////////////////////
+// WaitingForTurnDataIdle
+////////////////////////////////////////////////////////////
+WaitingForTurnDataIdle::WaitingForTurnDataIdle(my_context ctx) :
+    Base(ctx)
+{
+    if (TRACE_EXECUTION)
+        Logger().debugStream() << "(HumanClientFSM) WaitingForTurnDataIdle";
+}
+
+WaitingForTurnDataIdle::~WaitingForTurnDataIdle()
+{
+    if (TRACE_EXECUTION)
+        Logger().debugStream() << "(HumanClientFSM) ~WaitingForTurnDataIdle";
+}
+
+boost::statechart::result WaitingForTurnDataIdle::react(const CombatStart& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnDataIdle.CombatStart";
+    post_event(msg); // Re-post this event, so that it is the first thing the ResolvingCombat state sees.
+    return transit<ResolvingCombat>();
 }
 
 
@@ -518,16 +541,19 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 ////////////////////////////////////////////////////////////
 ResolvingCombat::ResolvingCombat(my_context ctx) :
     Base(ctx),
-    m_combat_wnd(0)
+    m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
-    Client().Register(m_combat_wnd);
+    Client().Register(m_combat_wnd.get());
+    Client().m_ui->GetMapWnd()->Hide();
+    context<WaitingForTurnData>().m_turn_progress_wnd->HideAll();
 }
 
 ResolvingCombat::~ResolvingCombat()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
-    delete m_combat_wnd;
+    Client().m_ui->GetMapWnd()->Show();
+    context<WaitingForTurnData>().m_turn_progress_wnd->ShowAll();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
@@ -540,13 +566,11 @@ boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
-    //m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return discard_event();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatEnd& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
-    //m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
     return transit<WaitingForTurnDataIdle>();
 }

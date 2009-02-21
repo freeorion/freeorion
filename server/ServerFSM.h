@@ -27,6 +27,7 @@ struct SinglePlayerSetupData;
 class PlayerConnection;
 class PlayerSaveGameData;
 class ServerSaveGameData;
+class System;
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 
 // Non-Message events
@@ -38,6 +39,17 @@ struct Disconnection : boost::statechart::event<Disconnection>
 };
 
 struct CheckStartConditions : boost::statechart::event<CheckStartConditions>
+{};
+
+struct ResolveCombat : boost::statechart::event<ResolveCombat>
+{
+    ResolveCombat(System* system);
+
+    System* const m_system;
+};
+
+// TODO: For prototyping only.
+struct CombatComplete : boost::statechart::event<CombatComplete>
 {};
 
 
@@ -96,6 +108,7 @@ struct WaitingForTurnEnd;
 // Substates of WaitingForTurnEnd
 struct WaitingForTurnEndIdle;
 struct WaitingForSaveData;
+struct ResolvingCombat;
 
 
 #define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
@@ -269,6 +282,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     boost::statechart::result react(const PlayerChat& msg);
 
     std::string m_save_filename;
+    System* m_combat_location;
 
     SERVER_ACCESSOR
 };
@@ -280,12 +294,14 @@ struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEnd
     typedef boost::statechart::simple_state<WaitingForTurnEndIdle, WaitingForTurnEnd> Base;
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction<ResolveCombat>,
         boost::statechart::custom_reaction<SaveGameRequest>
     > reactions;
 
     WaitingForTurnEndIdle();
     ~WaitingForTurnEndIdle();
 
+    boost::statechart::result react(const ResolveCombat& r);
     boost::statechart::result react(const SaveGameRequest& msg);
 
     SERVER_ACCESSOR
@@ -314,6 +330,22 @@ struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, Waiting
     std::set<int>                   m_needed_reponses;
     std::set<int>                   m_players_responded;
     std::vector<PlayerSaveGameData> m_player_save_game_data;
+
+    SERVER_ACCESSOR
+};
+
+struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTurnEnd>
+{
+    typedef boost::statechart::state<ResolvingCombat, WaitingForTurnEnd> Base;
+
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<CombatComplete>
+    > reactions;
+
+    ResolvingCombat(my_context c);
+    ~ResolvingCombat();
+
+    boost::statechart::result react(const CombatComplete& msg);
 
     SERVER_ACCESSOR
 };

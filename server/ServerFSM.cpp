@@ -5,12 +5,13 @@
 #include "../Empire/Empire.h"
 #include "../network/ServerNetworking.h"
 #include "../network/Message.h"
+#include "../universe/System.h"
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
 
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 
     void RebuildSaveGameEmpireData(std::map<int, SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
     {
@@ -33,6 +34,15 @@ namespace {
         }
     }
 }
+
+
+////////////////////////////////////////////////////////////
+// ResolveCombat
+////////////////////////////////////////////////////////////
+ResolveCombat::ResolveCombat(System* system) :
+    m_system(system)
+{}
+
 
 ////////////////////////////////////////////////////////////
 // MessageEventBase
@@ -665,6 +675,13 @@ WaitingForTurnEndIdle::WaitingForTurnEndIdle() :
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
 
+boost::statechart::result WaitingForTurnEndIdle::react(const ResolveCombat& r)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.ResolveCombat";
+    context<WaitingForTurnEnd>().m_combat_location = r.m_system;
+    return transit<ResolvingCombat>();
+}
+
 boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
@@ -740,4 +757,44 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
     }
 
     return discard_event();
+}
+
+////////////////////////////////////////////////////////////
+// ResolvingCombat
+////////////////////////////////////////////////////////////
+ResolvingCombat::ResolvingCombat(my_context c) :
+    Base(c)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat";
+
+    ServerApp& server = Server();
+
+    server.m_current_combat = new CombatData(*context<WaitingForTurnEnd>().m_combat_location);
+    context<WaitingForTurnEnd>().m_combat_location = 0;
+
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end();
+         ++it) {
+        (*it)->SendMessage(ServerCombatStartMessage((*it)->ID(),
+                                                    server.m_current_combat->m_system.ID()));
+    }
+}
+
+ResolvingCombat::~ResolvingCombat()
+{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ResolvingCombat"; }
+
+boost::statechart::result ResolvingCombat::react(const CombatComplete& cc)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatComplete";
+    ServerApp& server = Server();
+    delete server.m_current_combat;
+    server.m_current_combat = 0;
+
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end();
+         ++it) {
+        (*it)->SendMessage(ServerCombatEndMessage((*it)->ID()));
+    }
+
+    return transit<WaitingForTurnEnd>();
 }

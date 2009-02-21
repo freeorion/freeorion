@@ -23,6 +23,9 @@ public:
 
     void UpdateTurnProgress(const std::string& phase_str, int empire_id);
 
+    void HideAll();
+    void ShowAll();
+
 private:
     GG::TextControl*   m_phase_text;
     GG::TextControl*   m_empire_text;

@@ -33,6 +33,11 @@
 
 namespace fs = boost::filesystem;
 
+namespace {
+    const bool TEST_3D_COMBAT = false;
+}
+
+
 ////////////////////////////////////////////////
 // PlayerSaveGameData
 ////////////////////////////////////////////////
@@ -58,6 +63,13 @@ ServerSaveGameData::ServerSaveGameData() :
 ServerSaveGameData::ServerSaveGameData(const int& current_turn, const std::map<int, std::set<std::string> >& victors) :
     m_current_turn(current_turn),
     m_victors(victors)
+{}
+
+////////////////////////////////////////////////
+// CombatData
+////////////////////////////////////////////////
+CombatData::CombatData(System& s) :
+    m_system(s)
 {}
 
 ////////////////////////////////////////////////
@@ -157,7 +169,7 @@ Universe& ServerApp::GetUniverse()
 EmpireManager& ServerApp::Empires()
 { return s_app->m_empires; }
 
-CombatModule* ServerApp::CurrentCombat()
+CombatData* ServerApp::CurrentCombat()
 { return s_app->m_current_combat; }
 
 ServerNetworking& ServerApp::Networking()
@@ -208,6 +220,10 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
     case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
     case Message::REQUEST_NEW_DESIGN_ID: m_fsm.process_event(RequestDesignID(msg, player_connection)); break;
+
+    // TODO: For prototyping only.
+    case Message::COMBAT_END:            m_fsm.process_event(CombatComplete()); break;
+
 #ifndef FREEORION_RELEASE
     case Message::DEBUG:                 break;
 #endif
@@ -589,6 +605,9 @@ void ServerApp::ProcessTurns()
         if (fleet)
             eta = fleet->ETA().first;
 
+        // TODO: Do movement incrementally, and if the moving fleet encounters
+        // stationary combat fleets or planetary defenses that can hurt it, it
+        // must be resolved as a combat.
         it->second->MovementPhase();
 
         // SitRep for fleets having arrived at destinations, to all owners of those fleets
@@ -607,62 +626,100 @@ void ServerApp::ProcessTurns()
     }
 
     // check for combats, and resolve them.
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it =
+             m_networking.established_begin();
+         player_it != m_networking.established_end();
+         ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
     }
 
     std::vector<System*> sys_vec = universe.FindObjects<System>();
-    bool combat_happend = false;
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        std::vector<CombatAssets> empire_combat_forces;
         System* system = *it;
-
-        std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
-        if (flt_vec.empty()) continue;  // skip systems with no fleets, as these can't have combat
-
-        for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();flt_it != flt_vec.end(); ++flt_it) {
-            Fleet* flt = *flt_it;
-            // a fleet should belong only to one empire!?
-            if (1 == flt->Owners().size()) {
-                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
-
-                if (ecf_it == empire_combat_forces.end()) {
-                    CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
-                    ca.fleets.push_back(flt);
-                    empire_combat_forces.push_back(ca);
-                }
-                else
-                    (*ecf_it).fleets.push_back(flt);
-            }
-        }
-        std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
-        for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();plt_it != plt_vec.end(); ++plt_it) {
-            Planet* plt = *plt_it;
-            // a planet should belong only to one empire!?
-            if (1 == plt->Owners().size()) {
-                std::vector<CombatAssets>::iterator ecf_it = std::find(empire_combat_forces.begin(),empire_combat_forces.end(),CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
-
-                if (ecf_it==empire_combat_forces.end()) {
-                    CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
-                    ca.planets.push_back(plt);
-                    empire_combat_forces.push_back(ca);
-                } else {
-                    (*ecf_it).planets.push_back(plt);
+        if (TEST_3D_COMBAT) {
+            bool combat_conditions_exist = false;
+            std::vector<Fleet*> fleets = system->FindObjects<Fleet>();
+            std::set<int> ids_of_empires_with_combat_fleets_here;
+            std::set<int> ids_of_empires_with_fleets_here;
+            for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+                assert((*it)->Owners().size() == 1);
+                int owner = *(*it)->Owners().begin();
+                if ((*it)->HasArmedShips())
+                    ids_of_empires_with_combat_fleets_here.insert(owner);
+                ids_of_empires_with_fleets_here.insert(owner);
+                if (2 <= ids_of_empires_with_combat_fleets_here.size() ||
+                    ids_of_empires_with_combat_fleets_here.size() < ids_of_empires_with_fleets_here.size()) {
+                    // TODO: Determine whether the empires are enemies.
+                    combat_conditions_exist = true;
+                    break;
                 }
             }
-        }
+            if (!combat_conditions_exist) {
+                // TODO: Find planetary defenses that can harm the fleets here.
+            }
+            if (!combat_conditions_exist) {
+                // TODO: Find space monsters.
+            }
+            if (combat_conditions_exist) {
+                m_fsm.process_event(ResolveCombat(system));
+                while (m_current_combat) {
+                    m_io_service.run_one();
+                    m_networking.HandleNextEvent();
+                }
+            }
+        } else {
+            std::vector<CombatAssets> empire_combat_forces;
 
-        if (empire_combat_forces.size() > 1) {
-            combat_happend=true;
-            CombatSystem combat_system;
-            combat_system.ResolveCombat(system->ID(), empire_combat_forces);
+            std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
+            if (flt_vec.empty())
+                continue;
+
+            for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();
+                 flt_it != flt_vec.end();
+                 ++flt_it) {
+                Fleet* flt = *flt_it;
+                // a fleet should belong only to one empire!?
+                if (1 == flt->Owners().size()) {
+                    std::vector<CombatAssets>::iterator ecf_it =
+                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                                  CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
+
+                    if (ecf_it == empire_combat_forces.end()) {
+                        CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
+                        ca.fleets.push_back(flt);
+                        empire_combat_forces.push_back(ca);
+                    } else {
+                        (*ecf_it).fleets.push_back(flt);
+                    }
+                }
+            }
+            std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
+            for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();
+                 plt_it != plt_vec.end();
+                 ++plt_it) {
+                Planet* plt = *plt_it;
+                // a planet should belong only to one empire!?
+                if (1 == plt->Owners().size()) {
+                    std::vector<CombatAssets>::iterator ecf_it =
+                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                                  CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
+
+                    if (ecf_it == empire_combat_forces.end()) {
+                        CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
+                        ca.planets.push_back(plt);
+                        empire_combat_forces.push_back(ca);
+                    } else {
+                        (*ecf_it).planets.push_back(plt);
+                    }
+                }
+            }
+
+            if (empire_combat_forces.size() > 1) {
+                CombatSystem combat_system;
+                combat_system.ResolveCombat(system->ID(), empire_combat_forces);
+            }
         }
     }
-
-    // commenting out this delay because human client isn't currently displaying combats anyway...
-    //// if a combat happened, give the human user a chance to look at the results
-    //if (combat_happend)
-    //    Sleep(1500);
 
 
     // notify players that production and growth is being processed

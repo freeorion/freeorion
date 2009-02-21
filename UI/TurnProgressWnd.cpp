@@ -9,18 +9,12 @@
 #include <GG/StaticGraphic.h>
 
 
-namespace {
-    const GG::Y PROGRESS_WND_HEIGHT(100);
-
-}
-
-
 ////////////////////////////////////////////////
 // TurnProgressWnd
 ////////////////////////////////////////////////
 TurnProgressWnd::TurnProgressWnd() : 
-    GG::Wnd(GG::X0, (GG::GUI::GetGUI()->AppHeight() - PROGRESS_WND_HEIGHT) / 2,
-            GG::GUI::GetGUI()->AppWidth(), PROGRESS_WND_HEIGHT,  GG::ONTOP | GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
+            GG::ONTOP | GG::CLICKABLE),
     m_splash(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
                                    ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
                                    GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE)),
@@ -33,18 +27,17 @@ TurnProgressWnd::TurnProgressWnd() :
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);
 
-    m_phase_text = new GG::TextControl(GG::X0, GG::Y(20), Width(), GG::Y(ClientUI::Pts() * 2 + 4), "", ClientUI::GetFont(ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-    m_empire_text = new GG::TextControl(GG::X0, GG::Y(50), Width(), GG::Y(ClientUI::Pts() * 2 + 4), "", ClientUI::GetFont(ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    GG::Y text_top = (GG::GUI::GetGUI()->AppHeight() - 100) / 2;
+
+    m_phase_text = new GG::TextControl(GG::X0, text_top + GG::Y(20), Width(), GG::Y(ClientUI::Pts() * 2 + 4), "", ClientUI::GetFont(ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_empire_text = new GG::TextControl(GG::X0, text_top + GG::Y(50), Width(), GG::Y(ClientUI::Pts() * 2 + 4), "", ClientUI::GetFont(ClientUI::Pts() * 2), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
 
     AttachChild(m_phase_text);
     AttachChild(m_empire_text);
 }
 
 TurnProgressWnd::~TurnProgressWnd()
-{
-    delete m_logo;
-    delete m_splash;
-}
+{ delete m_splash; }
 
 void TurnProgressWnd::Render()
 {
@@ -63,4 +56,16 @@ void TurnProgressWnd::UpdateTurnProgress(const std::string& phase_str, int empir
     } else {
         *m_empire_text << "";
     }  
+}
+
+void TurnProgressWnd::HideAll()
+{
+    Hide();
+    GG::GUI::GetGUI()->Remove(m_splash);
+}
+
+void TurnProgressWnd::ShowAll()
+{
+    Show();
+    GG::GUI::GetGUI()->Register(m_splash);
 }

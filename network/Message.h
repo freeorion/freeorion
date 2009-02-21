@@ -275,6 +275,12 @@ Message ServerLobbyExitMessage(int sender, int receiver);
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 Message StartMPGameMessage(int player_id);
 
+/** creates a COMBAT_START message.  This message should only be sent by the server.*/
+Message ServerCombatStartMessage(int receiver, int system_id);
+
+/** creates a COMBAT_START message.  This message should only be sent by the server.*/
+Message ServerCombatEndMessage(int receiver);
+
 
 ////////////////////////////////////////////////
 // Message data extractors

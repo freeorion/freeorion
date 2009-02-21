@@ -550,6 +550,15 @@ Message StartMPGameMessage(int player_id)
     return Message(Message::START_MP_GAME, player_id, -1, "");
 }
 
+Message ServerCombatStartMessage(int receiver, int system_id)
+{
+    return Message(Message::COMBAT_START, -1, receiver,
+                   boost::lexical_cast<std::string>(system_id));
+}
+
+Message ServerCombatEndMessage(int receiver)
+{ return Message(Message::COMBAT_END, -1, receiver, ""); }
+
 
 ////////////////////////////////////////////////
 // Message data extractors

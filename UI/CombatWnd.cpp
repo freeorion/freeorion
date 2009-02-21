@@ -293,6 +293,16 @@ namespace {
             final_image.width(), final_image.height(), Ogre::PF_BYTE_L);
     }
 
+    // TODO: For prototyping only.
+    void DoneButtonClicked()
+    {
+        HumanClientApp::GetApp()->Networking().SendMessage(
+            Message(Message::COMBAT_END,
+                    HumanClientApp::GetApp()->PlayerID(),
+                    -1,
+                    ""));
+    }
+
     void AddOptions(OptionsDB& db)
     {
         db.AddFlag("tech-demo", "Try out the 3D combat tech demo.", false);
@@ -694,6 +704,15 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     InitCombat(system);
 
     AddShip("durgha.mesh", 250.0, 250.0);
+
+    GG::X width(50);
+    CUIButton* done_button =
+        new CUIButton((GG::GUI::GetGUI()->AppWidth() - width) / 2,
+                      GG::GUI::GetGUI()->AppHeight() - GG::Y(20),
+                      width,
+                      "Done");
+    GG::Connect(done_button->ClickedSignal, &DoneButtonClicked);
+    AttachChild(done_button);
 }
 
 CombatWnd::~CombatWnd()

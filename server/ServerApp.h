@@ -18,7 +18,6 @@
 namespace log4cpp {
     class Category;
 }
-class CombatModule;
 class Message;
 class OrderSet;
 struct PlayerSetupData;
@@ -58,6 +57,14 @@ private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Contains the data necessary to resolve a single combat. */
+struct CombatData
+{
+    CombatData(System& s);
+
+    System& m_system;
 };
 
 /** the application framework class for the FreeOrion server. */
@@ -114,7 +121,7 @@ public:
     static ServerApp*             GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
     static Universe&              GetUniverse();    ///< returns server's copy of Universe
     static EmpireManager&         Empires();        ///< returns the server's copy of the Empires
-    static CombatModule*          CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
+    static CombatData*            CurrentCombat();  ///< returns the server's currently executing Combat; may be 0
     static ServerNetworking&      Networking();     ///< returns the networking object for the server
 
 private:
@@ -146,7 +153,7 @@ private:
 
     Universe                  m_universe;
     EmpireManager             m_empires;
-    CombatModule*             m_current_combat;
+    CombatData*               m_current_combat;
     ServerNetworking          m_networking;
 
     log4cpp::Category&        m_log_category;         ///< reference to the log4cpp object used to log events to file
@@ -180,6 +187,7 @@ private:
     friend struct WaitingForTurnEnd;
     friend struct WaitingForTurnEndIdle;
     friend struct WaitingForSaveData;
+    friend struct ResolvingCombat;
 };
 
 // template implementations
