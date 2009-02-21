@@ -390,7 +390,6 @@ void SystemIcon::RefreshFleetButtons()
     // create new fleet buttons
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const int empire_id = it->first;
-        const Empire* empire = it->second;
 
         //std::vector<int> contained_objects = m_system.FindObjectIDs();
         //Logger().debugStream() << "System: " << m_system.Name() << " contained objects: ";

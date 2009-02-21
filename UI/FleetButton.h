@@ -32,7 +32,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void                MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void                FleetButton::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void                LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
     static int                  SizeForSizeType(SizeType size_type);
