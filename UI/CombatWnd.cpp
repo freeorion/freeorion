@@ -850,10 +850,11 @@ void CombatWnd::InitCombat(const System& system)
             const Ogre::Real THIRD_ORBIT_RADIUS = OrbitRadius(2);
             const Ogre::Real ORBIT_RADIUS = OrbitRadius(it->first);
             // Kepler's third law.
-            const Ogre::Real ORBIT_PERIOD =
-                std::sqrt(std::pow(THIRD_ORBIT_PERIOD, 2.0) /
-                          std::pow(THIRD_ORBIT_RADIUS, 3.0) *
-                          std::pow(ORBIT_RADIUS, 3.0));
+            const Ogre::Real ORBIT_PERIOD = static_cast<Ogre::Real>(
+                std::sqrt(std::pow(static_cast<float>(THIRD_ORBIT_PERIOD), 2.0f) /
+                          std::pow(static_cast<float>(THIRD_ORBIT_RADIUS), 3.0f) *
+                          std::pow(static_cast<float>(ORBIT_RADIUS), 3.0f)));
+            
             const Ogre::Real ORBIT_ANGULAR_VELOCITY =
                 2.0 * 3.14159 / ORBIT_PERIOD;
             Ogre::Real rotation = turn_offset * ORBIT_ANGULAR_VELOCITY;
