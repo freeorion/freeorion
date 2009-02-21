@@ -13,14 +13,10 @@
 #include <GG/MultiEdit.h>
 #include <GG/Scroll.h>
 #include <GG/Slider.h>
+#include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 
 #include "LinkText.h"
-
-namespace GG {
-    class StaticGraphic;
-    class GraphicStyle;
-}
 
 
 //! \file All CUI* classes are FreeOrion-style controls incorporating 
@@ -568,7 +564,7 @@ public:
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<boost::shared_ptr<GG::Texture> >& textures,
-                              std::vector<GG::Flags<GG::GraphicStyle> > styles = std::vector<GG::Flags<GG::GraphicStyle> >(),
+                              const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >(),
                               GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
 
     /** creates a MultiTextureStaticGraphic from multiple pre-existing SubTextures which are rendered back-to-front in the
@@ -576,7 +572,7 @@ public:
       * if \a styles is not specified or contains fewer entres than \a subtextures, entries in \a subtextures without 
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<GG::SubTexture>& subtextures,
-                              std::vector<GG::Flags<GG::GraphicStyle> > styles = std::vector<GG::Flags<GG::GraphicStyle> >(),
+                              const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >(),
                               GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
     //@}
 

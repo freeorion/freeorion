@@ -1,5 +1,3 @@
-//CUIControls.cpp
-
 #include "CUIControls.h"
 
 #include "ClientUI.h"
@@ -12,13 +10,13 @@
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
-#include <GG/StaticGraphic.h>
 #include <GG/dialogs/ColorDlg.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 
 #include <limits>
+
 
 namespace {
     void PlayButtonClickSound()
@@ -1467,7 +1465,7 @@ void ShadowedTextControl::Render()
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
       * associated styles use the style GRAPHIC_NONE. */
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<boost::shared_ptr<GG::Texture> >& textures,
-                                                     std::vector<GG::Flags<GG::GraphicStyle> > styles, GG::Flags<GG::WndFlag> flags) :
+                                                     const std::vector<GG::Flags<GG::GraphicStyle> >& styles, GG::Flags<GG::WndFlag> flags) :
     GG::Control(x, y, w, h, flags),
     m_graphics(),
     m_styles(styles)
@@ -1478,7 +1476,7 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, 
 }
 
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::vector<GG::SubTexture>& subtextures,
-                                                     std::vector<GG::Flags<GG::GraphicStyle> > styles, GG::Flags<GG::WndFlag> flags) :
+                                                     const std::vector<GG::Flags<GG::GraphicStyle> >& styles, GG::Flags<GG::WndFlag> flags) :
     GG::Control(x, y, w, h, flags),
     m_graphics(subtextures),
     m_styles(styles)
