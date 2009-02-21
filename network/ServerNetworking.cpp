@@ -359,8 +359,9 @@ ServerNetworking::established_iterator ServerNetworking::established_end()
 void ServerNetworking::HandleNextEvent()
 {
     if (!m_event_queue.empty()) {
-        m_event_queue.front()();
+        boost::function<void ()> f = m_event_queue.front();
         m_event_queue.pop();
+        f();
     }
 }
 
