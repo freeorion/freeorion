@@ -61,7 +61,7 @@ public:
 
     //! \name Mutators //!@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    Render() {}
+    virtual void    Render();
     void            ManualRender(double halo_scale_factor); //!< Draw disc and halo textures
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
@@ -93,12 +93,14 @@ private:
     void    Init(); //!< common constructor tasks
 
     GG::Pt  NthFleetButtonUpperLeft(int button_number, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown starting from 1(not empire id)
+    int     EnclosingCircleDiameter() const;                                //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
+
 
     void    FleetInserted(Fleet& fleet);
     void    FleetRemoved(Fleet& fleet);
     void    FleetStateChanged();
 
-    void PositionSystemName();
+    void    PositionSystemName();
 
     const System&                   m_system;               //!< the System object associated with this SystemIcon
     boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture

@@ -10,6 +10,7 @@
 #include "../util/OptionsDB.h"
 #include "../universe/System.h" 
 #include "../Empire/Empire.h"
+#include "CUIDrawUtil.h"
 
 #include <GG/DrawUtil.h>
 
@@ -25,7 +26,7 @@ namespace {
 // FleetButton
 ///////////////////////////
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size) :
-    GG::Button(),
+    GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icon(),
     m_size_icon()
@@ -34,14 +35,14 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size) :
 }
 
 FleetButton::FleetButton(int fleet_id, SizeType size) :
-    GG::Button(),
+    GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icon(),
     m_size_icon()
 {
-    std::vector<int> fleet_ids;
-    fleet_ids.push_back(fleet_id);
-    Init(fleet_ids, size);
+    std::vector<int> fleet_IDs;
+    fleet_IDs.push_back(fleet_id);
+    Init(fleet_IDs, size);
 }
 
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size) {
@@ -95,11 +96,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size) {
 
 
     // set button size
-    int button_size = ClientUI::TinyFleetButtonSize();
-    if (size == FLEET_BUTTON_SMALL)
-        button_size = ClientUI::SmallFleetButtonSize();
-    else if (size == FLEET_BUTTON_LARGE)
-        button_size = ClientUI::LargeFleetButtonSize();
+    int button_size = SizeForSizeType(size);
 
     Resize(GG::Pt(GG::X(button_size), GG::Y(button_size)));
 
@@ -137,6 +134,24 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
+void FleetButton::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+    if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode()))
+        PlayFleetButtonOpenSound();
+    GG::Button::LClick(pt, mod_keys);
+}
+
+int FleetButton::SizeForSizeType(SizeType size_type) {
+    if (size_type == FLEET_BUTTON_TINY)
+        return ClientUI::TinyFleetButtonSize();
+    if (size_type == FLEET_BUTTON_SMALL)
+        return ClientUI::SmallFleetButtonSize();
+    if (size_type == FLEET_BUTTON_LARGE)
+        return ClientUI::LargeFleetButtonSize();
+    return 0;
+}
+
 void FleetButton::RenderUnpressed() {
     glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -147,9 +162,21 @@ void FleetButton::RenderUnpressed() {
 }
 
 void FleetButton::RenderPressed() {
+    const double TWO_PI = 2.0*3.14159;
+    glDisable(GL_TEXTURE_2D);
+    glColor(Color());
+    CircleArc(UpperLeft(), LowerRight(), 0.0, TWO_PI, true);
+    glEnable(GL_TEXTURE_2D);
+
     RenderUnpressed();  // TODO: do something else
 }
 
 void FleetButton::RenderRollover() {
+    const double TWO_PI = 2.0*3.14159;
+    glDisable(GL_TEXTURE_2D);
+    glColor(GG::CLR_WHITE);
+    CircleArc(UpperLeft(), LowerRight(), 0.0, TWO_PI, true);
+    glEnable(GL_TEXTURE_2D);
+
     RenderUnpressed();  // TODO: do something else
 }

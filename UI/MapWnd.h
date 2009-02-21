@@ -61,6 +61,7 @@ public:
 
     double                      ZoomFactor() const;
     int                         SystemIconSize() const;
+    double                      SystemHaloScaleFactor() const;
     FleetButton::SizeType       FleetButtonSizeType() const;                    //!< returns what size type (tiny, small, large) fleet buttons on this map are shown at
 
     SidePanel*                  GetSidePanel() const;

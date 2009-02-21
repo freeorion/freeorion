@@ -233,7 +233,7 @@ void MapWnd::FleetETAMapIndicator::Render()
 // MapWnd
 // static(s)
 double          MapWnd::s_max_scale_factor = 8.0;
-double          MapWnd::s_min_scale_factor = MapWnd::s_max_scale_factor / pow(ZOOM_STEP_SIZE, 14.0);
+double          MapWnd::s_min_scale_factor = MapWnd::s_max_scale_factor / std::pow(ZOOM_STEP_SIZE, 14.0);
 
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
@@ -1415,7 +1415,8 @@ void MapWnd::DoSystemIconsLayout()
 
 void MapWnd::DoFleetButtonsLayout()
 {
-    const int FLEET_BUTTON_SIZE = FleetButtonSizeType();
+    FleetButton::SizeType FLEET_BUTTON_SIZE_TYPE = FleetButtonSizeType();
+    const int FLEET_BUTTON_SIZE = FleetButton::SizeForSizeType(FLEET_BUTTON_SIZE_TYPE);
     // position and resize unattached (to system icons) fleet icons
     for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
         Fleet* fleet = *m_moving_fleet_buttons[i]->Fleets().begin();
@@ -1429,6 +1430,11 @@ void MapWnd::DoFleetButtonsLayout()
 int MapWnd::SystemIconSize() const
 {
     return static_cast<int>(ClientUI::SystemIconSize() * m_zoom_factor);
+}
+
+double MapWnd::SystemHaloScaleFactor() const
+{
+    return 1.0 + log10(m_zoom_factor);
 }
 
 FleetButton::SizeType MapWnd::FleetButtonSizeType() const
@@ -1582,7 +1588,7 @@ void MapWnd::RenderGalaxyGas()
 
 void MapWnd::RenderSystems()
 {
-    const double HALO_SCALE_FACTOR = 1.0 + log10(m_zoom_factor);
+    const double HALO_SCALE_FACTOR = SystemHaloScaleFactor();
 
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0, 1.0, 1.0, 1.0);

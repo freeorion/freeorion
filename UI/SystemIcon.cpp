@@ -192,7 +192,8 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
     GG::Pt retval = GG::Pt();
 
     const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    const int FLEETBUTTON_SIZE = map_wnd->FleetButtonSizeType();
+    FleetButton::SizeType FLEETBUTTON_SIZE_TYPE = map_wnd->FleetButtonSizeType();
+    const int FLEETBUTTON_SIZE = FleetButton::SizeForSizeType(FLEETBUTTON_SIZE_TYPE);
 
     /* Positions of buttons relative to star.  Moving fleet
      * buttons at top left, stationary buttons at top right.
@@ -214,6 +215,11 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
     }
 }
 
+int SystemIcon::EnclosingCircleDiameter() const
+{
+    return static_cast<const int>(Value(Width())*1.5) + 1;
+}
+
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
@@ -221,8 +227,8 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     if (m_tiny_graphic && lr.x - ul.x < TINY_SIZE) {
         GG::Pt tiny_size = m_tiny_graphic->Size();
         GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
-        GG::Pt tiny_ul(static_cast<GG::X>(middle.x - tiny_size.x / 2.0 + 0.5),
-                       static_cast<GG::Y>(middle.y - tiny_size.y / 2.0 + 0.5));
+        GG::Pt tiny_ul(static_cast<GG::X>(middle.x - tiny_size.x / 2.0),
+                       static_cast<GG::Y>(middle.y - tiny_size.y / 2.0));
         m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
         m_tiny_graphic->Show();
     } else {
@@ -241,7 +247,32 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
     PositionSystemName();
 
-    DoFleetButtonLayout();
+    RefreshFleetButtons();
+}
+
+void SystemIcon::Render()
+{
+    const int ARC_SIZE = EnclosingCircleDiameter();
+    const double TWO_PI = 2.0*3.14159;
+
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt size = lr - ul;
+    GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+    GG::Pt middle = ul + half_size;
+
+    GG::Pt circle_size = GG::Pt(static_cast<GG::X>(ARC_SIZE),
+                                static_cast<GG::Y>(ARC_SIZE));
+    GG::Pt circle_half_size = GG::Pt(circle_size.x / 2, circle_size.y / 2);
+    GG::Pt circle_ul = middle - circle_half_size;
+    GG::Pt circle_lr = circle_ul + circle_size;
+
+    glDisable(GL_TEXTURE_2D);
+    glLineWidth(1.0);
+    glColor(ClientUI::SystemNameTextColor());
+    glBegin(GL_LINE_STRIP);
+    CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
 }
 
 void SystemIcon::ManualRender(double halo_scale_factor)
@@ -354,6 +385,7 @@ void SystemIcon::RefreshFleetButtons()
 
     MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
     FleetButton* fb = 0;
+    FleetButton::SizeType FLEETBUTTON_SIZE = map_wnd->FleetButtonSizeType();
 
     // create new fleet buttons
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
@@ -371,7 +403,7 @@ void SystemIcon::RefreshFleetButtons()
         //    Logger().debugStream() << "... " << *it1;
 
         if (!fleet_IDs.empty()) {
-            fb = new FleetButton(fleet_IDs);
+            fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
             m_stationary_fleet_markers[empire_id] = fb;
             AttachChild(m_stationary_fleet_markers[empire_id]);
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this, false));
@@ -379,7 +411,7 @@ void SystemIcon::RefreshFleetButtons()
 
         fleet_IDs = m_system.FindObjectIDs(OrderedMovingFleetVisitor(it->first));
         if (!fleet_IDs.empty()) {
-            fb = new FleetButton(fleet_IDs);
+            fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
             m_moving_fleet_markers[empire_id] = fb;
             AttachChild(m_moving_fleet_markers[empire_id]);
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this, true));
@@ -435,15 +467,12 @@ void SystemIcon::HideName()
 
 void SystemIcon::DoFleetButtonLayout()
 {
-    const int FLEETBUTTON_SIZE = ClientUI::SmallFleetButtonSize();
-    const GG::Pt SIZE = GG::Pt(GG::X(FLEETBUTTON_SIZE), GG::Y(FLEETBUTTON_SIZE));
-
     // stationary fleet buttons
     int empire_num = 1;
     for (std::map<int, FleetButton*>::iterator it = m_stationary_fleet_markers.begin(); it != m_stationary_fleet_markers.end(); ++it) {
         GG::Pt ul = NthFleetButtonUpperLeft(empire_num, false);
         ++empire_num;
-        it->second->SizeMove(ul, ul + SIZE);
+        it->second->MoveTo(ul);
     }
 
     // departing fleet buttons
@@ -451,14 +480,14 @@ void SystemIcon::DoFleetButtonLayout()
     for (std::map<int, FleetButton*>::iterator it = m_moving_fleet_markers.begin(); it != m_moving_fleet_markers.end(); ++it) {
         GG::Pt ul = NthFleetButtonUpperLeft(empire_num, true);
         ++empire_num;
-        it->second->SizeMove(ul, ul + SIZE);
+        it->second->MoveTo(ul);
     }
 }
 
 void SystemIcon::PositionSystemName()
 {
     if (m_colored_name)
-        m_colored_name->MoveTo(GG::Pt((Width() - m_colored_name->Width()) / 2, Height()));
+        m_colored_name->MoveTo(GG::Pt((Width() - m_colored_name->Width()) / 2, (Height() + GG::Y(EnclosingCircleDiameter() / 2) / 2)));
 }
 
 bool SystemIcon::InWindow(const GG::Pt& pt) const
@@ -473,7 +502,21 @@ bool SystemIcon::InWindow(const GG::Pt& pt) const
             return true;
     }
 
-    return Wnd::InWindow(pt);
+    // find if cursor is within require distance of centre of icon
+    const int RADIUS = EnclosingCircleDiameter() / 2;
+    const int RADIUS2 = RADIUS*RADIUS;
+
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt size = lr - ul;
+    GG::Pt half_size = GG::Pt(size.x / 2, size.y / 2);
+    GG::Pt middle = ul + half_size;
+
+    GG::Pt delta = pt - middle;
+
+    const int distx = Value(delta.x);
+    const int disty = Value(delta.y);
+
+    return distx*distx + disty*disty <= RADIUS2;
 }
 
 void SystemIcon::FleetInserted(Fleet& fleet)

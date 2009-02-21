@@ -467,7 +467,7 @@ namespace {
         // galaxy map
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedStepValidator<double>(0.1, 0.5, 5));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.5,        RangedStepValidator<double>(0.1, 0.5, 5));
         db.Add("UI.large-fleet-button-size",        "OPTIONS_DB_UI_LARGE_FLEET_BUTTON_SIZE",        24,         RangedValidator<int>(8, 48));
         db.Add("UI.small-fleet-button-size",        "OPTIONS_DB_UI_SMALL_FLEET_BUTTON_SIZE",        16,         RangedValidator<int>(8, 32));
         db.Add("UI.tiny-fleet-button-size",         "OPTIONS_DB_UI_TINY_FLEET_BUTTON_SIZE",         10,         RangedValidator<int>(4, 24));
