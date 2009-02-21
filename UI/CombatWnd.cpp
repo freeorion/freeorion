@@ -95,6 +95,8 @@ namespace {
 
     const unsigned int NO_CITY_LIGHTS = std::numeric_limits<unsigned int>::max();
 
+    const unsigned short LOOKAT_NODE_TRACK_HANDLE = 0;
+
     Ogre::Real OrbitRadius(unsigned int orbit)
     {
         assert(orbit < 10);
@@ -1057,7 +1059,8 @@ void CombatWnd::LookAt(const Ogre::Vector3& look_at_point)
     m_look_at_point = look_at_point;
     UpdateCameraPosition();
     m_camera_animation_state->setTimePosition(0.0);
-    Ogre::NodeAnimationTrack* track = m_camera_animation->createNodeTrack(0, m_camera_node);
+    Ogre::NodeAnimationTrack* track =
+        m_camera_animation->createNodeTrack(LOOKAT_NODE_TRACK_HANDLE, m_camera_node);
     const int STEPS = 8;
     const Ogre::Real TIME_INCREMENT = CAMERA_RECENTER_TIME / STEPS;
     const Ogre::Vector3 DISTANCE_INCREMENT = DISTANCE / STEPS;
@@ -1135,7 +1138,7 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_mouse_dragged) {
+    if (!m_mouse_dragged && !m_camera_animation->hasNodeTrack(LOOKAT_NODE_TRACK_HANDLE)) {
         if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
             Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
             assert(clicked_scene_node);
