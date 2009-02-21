@@ -559,7 +559,10 @@ ResolvingCombat::~ResolvingCombat()
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
-    //m_combat_wnd->UpdateCombatTurnProgress(msg.m_message.Text());
+    int system_id = boost::lexical_cast<int>(msg.m_message.Text());
+    System* system = GetUniverse().Object<System>(system_id);
+    assert(system);
+    m_combat_wnd->InitCombat(*system);
     return discard_event();
 }
 
