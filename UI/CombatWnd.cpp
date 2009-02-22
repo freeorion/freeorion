@@ -706,8 +706,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
         InitCombat(&system, std::map<int, UniverseObject*>());
 
-        AddShip("durgha.mesh", 250.0, 250.0);
-        AddShip("seed.mesh",   260.0, 260.0);
+        AddShip("seed.mesh", 250.0, 250.0);
     } else {
         GG::X width(50);
         CUIButton* done_button =
@@ -729,9 +728,9 @@ CombatWnd::~CombatWnd()
 
     m_scene_manager->clearScene();
 
-    for (std::map<int, std::pair<Ogre::SceneNode*, btTriangleMesh*> >::iterator it = m_ship_assets.begin();
+    for (std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> >::iterator it = m_ship_assets.begin();
          it != m_ship_assets.end(); ++it) {
-        delete it->second.second;
+        delete it->second.get<2>();
     }
 
     for (std::size_t i = 0; i < m_city_lights_textures.size(); ++i) {
@@ -991,6 +990,18 @@ void CombatWnd::Render()
             light_dir.normalise();
             light_dir = it->second.first->getOrientation().Inverse() * light_dir;
             m_planet_assets[it->first].second.back()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+        }
+    }
+    for (std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> >::iterator it =
+             m_ship_assets.begin();
+         it != m_ship_assets.end();
+         ++it) {
+        it->second.get<0>()->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
+        if (dynamic_cast<Ogre::Entity*>(it->second.get<0>()->getAttachedObject(0))) {
+            Ogre::Vector3 light_dir = -it->second.get<0>()->getPosition();
+            light_dir.normalise();
+            light_dir = it->second.get<0>()->getOrientation().Inverse() * light_dir;
+            it->second.get<1>()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
         }
     }
 #endif
@@ -1509,8 +1520,12 @@ void CombatWnd::DeselectAll()
 void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y)
 {
     Ogre::Entity* entity = m_scene_manager->createEntity("ship_" + mesh_name, mesh_name);
-    entity->setCastShadows(true);
+    //entity->setCastShadows(true);
     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+    Ogre::MaterialPtr material =
+        Ogre::MaterialManager::getSingleton().getByName("ship");
+    //TODO material = material->clone(new_material_name);
+    entity->setMaterialName("ship");//new_material_name);
     Ogre::SceneNode* node =
         m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
     node->attachObject(entity);
@@ -1521,13 +1536,18 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
 
     node->setPosition(x, y, 0.0);
 
+    Ogre::Vector3 light_dir = -node->getPosition();
+    light_dir.normalise();
+    light_dir = node->getOrientation().Inverse() * light_dir;
+    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;
     btBvhTriangleMeshShape* collision_shape = 0;
     boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
 
     // TODO: use ship's ID
-    m_ship_assets[0] = std::make_pair(node, collision_mesh);
+    m_ship_assets[0] = boost::make_tuple(node, material, collision_mesh);
 
     m_collision_shapes.push_back(collision_shape);
     m_collision_objects.push_back(new btCollisionObject);

@@ -10,6 +10,7 @@
 #include <GG/Wnd.h>
 
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/tuple/tuple.hpp>
 
 
 namespace Ogre {
@@ -157,7 +158,7 @@ private:
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
     // The scene nodes representing ships in the system and their associated
     // collision meshes, indexed by ship object id.
-    std::map<int, std::pair<Ogre::SceneNode*, btTriangleMesh*> > m_ship_assets;
+    std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> > m_ship_assets;
     std::vector<Ogre::TexturePtr> m_city_lights_textures;
 
     // The collision detection system
