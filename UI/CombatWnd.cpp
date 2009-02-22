@@ -679,6 +679,53 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         InitCombat(&system, std::map<int, UniverseObject*>());
 
         AddShip("seed.mesh", 250.0, 250.0);
+
+#if 0
+        std::string mesh_name = "asteroid1.mesh";
+        Ogre::Real x = 270.0;
+        Ogre::Real y = 270.0;
+        Ogre::Entity* entity = m_scene_manager->createEntity("asteroid_" + mesh_name, mesh_name);
+        //entity->setCastShadows(true);
+        entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+        Ogre::MaterialPtr material =
+            Ogre::MaterialManager::getSingleton().getByName("asteroid");
+        //TODO material = material->clone(new_material_name);
+        entity->setMaterialName("asteroid");//new_material_name);
+        Ogre::SceneNode* node =
+            m_scene_manager->getRootSceneNode()->createChildSceneNode("asteroid_" + mesh_name + "_node");
+        node->attachObject(entity);
+
+        // TODO: This is only here because the Durgha model is upside down.  Remove
+        // it when this is fixed.
+        node->yaw(Ogre::Radian(Ogre::Math::PI));
+
+        node->setPosition(x, y, 0.0);
+
+        Ogre::Vector3 light_dir = -node->getPosition();
+        light_dir.normalise();
+        light_dir = node->getOrientation().Inverse() * light_dir;
+        material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+
+        CollisionMeshConverter collision_mesh_converter(entity);
+        btTriangleMesh* collision_mesh = 0;
+        btBvhTriangleMeshShape* collision_shape = 0;
+        boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
+
+        // TODO: Record this mesh and material.
+        //m_ship_assets[0] = boost::make_tuple(node, material, collision_mesh);
+
+        m_collision_shapes.push_back(collision_shape);
+        m_collision_objects.push_back(new btCollisionObject);
+        btMatrix3x3 identity;
+        identity.setIdentity();
+        // TODO: Remove z-flip scaling when models are right.
+        btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
+        m_collision_objects.back().getWorldTransform().setBasis(scaled);
+        m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(node->getPosition()));
+        m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
+        m_collision_world->addCollisionObject(&m_collision_objects.back());
+        m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
+#endif
     } else {
         GG::X width(50);
         CUIButton* done_button =

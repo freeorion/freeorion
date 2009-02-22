@@ -22,13 +22,8 @@ vertex_program gas_giant_vert glsl
 fragment_program gas_giant_frag glsl
 { source gas_giant.frag }
 
-// This is here just to quiet Ogre warnings.  This material is referenced in
-// the sphere.mesh file, but is never used.
-material 01-Default {
-    technique {
-        pass {}
-    }
-}
+fragment_program asteroid_frag glsl
+{ source asteroid.frag }
 
 material planet {
     technique {
@@ -127,6 +122,26 @@ material gas_giant {
 
             texture_unit
             { texture GasGiant01.png 2d 0 }
+        }
+    }
+}
+
+material asteroid {
+    technique {
+        pass {
+            vertex_program_ref atmosphereless_planet_vert
+            { param_named light_dir float3 1.0 0.0 0.0 }
+
+            fragment_program_ref asteroid_frag {
+                param_named color_texture int 0
+                param_named normal_texture int 1
+            }
+
+            texture_unit
+            { texture asteroid1_Color.png 2d 0 }
+
+            texture_unit
+            { texture asteroid1_Normal.png 2d 0 }
         }
     }
 }
