@@ -39,9 +39,16 @@ namespace {
 ////////////////////////////////////////////////////////////
 // ResolveCombat
 ////////////////////////////////////////////////////////////
-ResolveCombat::ResolveCombat(System* system) :
-    m_system(system)
-{}
+ResolveCombat::ResolveCombat(System* system,
+                             std::map<int, UniverseObject*>& combat_universe,
+                             std::set<int>& empire_ids) :
+    m_system(system),
+    m_combat_universe(),
+    m_empire_ids()
+{
+    std::swap(m_combat_universe, combat_universe);
+    std::swap(m_empire_ids, empire_ids);
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -678,7 +685,10 @@ WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 boost::statechart::result WaitingForTurnEndIdle::react(const ResolveCombat& r)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.ResolveCombat";
-    context<WaitingForTurnEnd>().m_combat_location = r.m_system;
+    context<WaitingForTurnEnd>().m_combat_system = r.m_system;
+    ResolveCombat& mr = const_cast<ResolveCombat&>(r);
+    std::swap(context<WaitingForTurnEnd>().m_combat_universe, mr.m_combat_universe);
+    std::swap(context<WaitingForTurnEnd>().m_combat_empire_ids, mr.m_empire_ids);
     return transit<ResolvingCombat>();
 }
 
@@ -769,19 +779,72 @@ ResolvingCombat::ResolvingCombat(my_context c) :
 
     ServerApp& server = Server();
 
-    server.m_current_combat = new CombatData(*context<WaitingForTurnEnd>().m_combat_location);
-    context<WaitingForTurnEnd>().m_combat_location = 0;
+    server.m_current_combat =
+        new CombatData(context<WaitingForTurnEnd>().m_combat_system);
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end();
          ++it) {
-        (*it)->SendMessage(ServerCombatStartMessage((*it)->ID(),
-                                                    server.m_current_combat->m_system.ID()));
+        int player_id = (*it)->ID();
+        int empire_id = server.GetPlayerEmpire(player_id)->EmpireID();
+        if (context<WaitingForTurnEnd>().m_combat_empire_ids.find(empire_id) !=
+            context<WaitingForTurnEnd>().m_combat_empire_ids.end())
+        {
+            (*it)->SendMessage(
+                ServerCombatStartMessage(
+                    player_id,
+                    empire_id,
+                    context<WaitingForTurnEnd>().m_combat_system,
+                    context<WaitingForTurnEnd>().m_combat_universe));
+        }
     }
+
+    context<WaitingForTurnEnd>().m_combat_system = 0;
+    context<WaitingForTurnEnd>().m_combat_universe.clear();
 }
 
 ResolvingCombat::~ResolvingCombat()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ResolvingCombat"; }
+
+boost::statechart::result ResolvingCombat::react(const CombatTurnOrders& msg)
+{
+#if 0
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
+    ServerApp& server = Server();
+    const Message& message = msg.m_message;
+
+    OrderSet* order_set = new OrderSet;
+    ExtractMessageData(message, *order_set);
+
+    // check order validity -- all orders must originate from this empire in order to be considered valid
+    Empire* empire = server.GetPlayerEmpire(message.SendingPlayer());
+    assert(empire);
+    for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
+        OrderPtr order = it->second;
+        assert(order);
+        if (empire->EmpireID() != order->EmpireID()) {
+            throw std::runtime_error(
+                "WaitingForTurnEnd.TurnOrders : Player \"" + empire->PlayerName() +
+                "\" attempted to issue an order for player \"" +
+                Empires().Lookup(order->EmpireID())->PlayerName() + "\"!  Terminating...");
+        }
+    }
+
+    server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS, -1));
+
+    Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
+
+    server.SetEmpireTurnOrders(server.GetPlayerEmpire(message.SendingPlayer())->EmpireID(), order_set);
+
+    if (server.AllOrdersReceived()) {
+        Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.  Processing turn....";
+        server.ProcessTurns();
+        return transit<WaitingForTurnEnd>();
+    }
+
+#endif
+    return discard_event();
+}
 
 boost::statechart::result ResolvingCombat::react(const CombatComplete& cc)
 {
@@ -793,8 +856,16 @@ boost::statechart::result ResolvingCombat::react(const CombatComplete& cc)
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end();
          ++it) {
-        (*it)->SendMessage(ServerCombatEndMessage((*it)->ID()));
+        int player_id = (*it)->ID();
+        int empire_id = server.GetPlayerEmpire(player_id)->EmpireID();
+        if (context<WaitingForTurnEnd>().m_combat_empire_ids.find(empire_id) !=
+            context<WaitingForTurnEnd>().m_combat_empire_ids.end())
+        {
+            (*it)->SendMessage(ServerCombatEndMessage(player_id));
+        }
     }
+
+    context<WaitingForTurnEnd>().m_combat_empire_ids.clear();
 
     return transit<WaitingForTurnEnd>();
 }

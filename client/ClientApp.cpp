@@ -2,6 +2,7 @@
 
 #include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
+#include "../util/CombatOrder.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 
@@ -50,6 +51,9 @@ const EmpireManager& ClientApp::Empires() const
 const OrderSet& ClientApp::Orders() const
 { return m_orders; }
 
+const CombatOrderSet& ClientApp::CombatOrders() const
+{ return m_combat_orders; }
+
 const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
 
@@ -80,6 +84,12 @@ void ClientApp::StartTurn()
     m_orders.Reset();
 }
 
+void ClientApp::StartCombatTurn()
+{
+    m_networking.SendMessage(CombatTurnOrdersMessage(m_player_id, m_combat_orders));
+    m_combat_orders.clear();
+}
+
 Universe& ClientApp::GetUniverse()
 { return m_universe; }
 
@@ -88,6 +98,9 @@ EmpireManager& ClientApp::Empires()
 
 OrderSet& ClientApp::Orders()
 { return m_orders; }
+
+CombatOrderSet& ClientApp::CombatOrders()
+{ return m_combat_orders; }
 
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }

@@ -541,6 +541,7 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 ////////////////////////////////////////////////////////////
 ResolvingCombat::ResolvingCombat(my_context ctx) :
     Base(ctx),
+    m_system(0),
     m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
@@ -554,21 +555,29 @@ ResolvingCombat::~ResolvingCombat()
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
     Client().m_ui->GetMapWnd()->Show();
     context<WaitingForTurnData>().m_turn_progress_wnd->ShowAll();
+    for (std::map<int, UniverseObject*>::iterator it = m_combat_universe.begin();
+         it != m_combat_universe.end();
+         ++it) {
+        delete it->second;
+    }
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
-    int system_id = boost::lexical_cast<int>(msg.m_message.Text());
-    System* system = GetUniverse().Object<System>(system_id);
-    assert(system);
-    m_combat_wnd->InitCombat(*system);
+    System* system = 0;
+    ExtractMessageData(msg.m_message, system, m_combat_universe);
+    m_system.reset(system);
+    m_combat_wnd->InitCombat(m_system.get(), m_combat_universe);
     return discard_event();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
+    CombatData combat_data;
+    ExtractMessageData(msg.m_message, combat_data);
+    // TODO
     return discard_event();
 }
 

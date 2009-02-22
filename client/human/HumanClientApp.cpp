@@ -487,7 +487,7 @@ void HumanClientApp::HandleMessage(Message& msg)
     case Message::TURN_UPDATE:           m_fsm->process_event(TurnUpdate(msg)); break;
     case Message::TURN_PROGRESS:         m_fsm->process_event(TurnProgress(msg)); break;
     case Message::COMBAT_START:          m_fsm->process_event(CombatStart(msg)); break;
-    case Message::COMBAT_ROUND_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg)); break;
+    case Message::COMBAT_TURN_UPDATE:    m_fsm->process_event(CombatRoundUpdate(msg)); break;
     case Message::COMBAT_END:            m_fsm->process_event(CombatEnd(msg)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm->process_event(PlayerChat(msg)); break;
     case Message::VICTORY_DEFEAT :       m_fsm->process_event(VictoryDefeat(msg)); break;

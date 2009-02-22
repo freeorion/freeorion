@@ -16,13 +16,17 @@
 
 struct UniverseObjectVisitor;
 
-/** contains UniverseObjects and connections to other systems (starlanes and wormholes).  All systems are UniversObjects
-   contained within the universe, and (nearly) all systems also contain UniverseObjects.  Systems are searchable using
-   arbirary predicates, much in the same way that the Client- and ServerUniverses are.  Each System consists of a star
-   and 0 or more orbits.  UniversObjects can be placed in the system "at large" or in a particular orbit.  No checking
-   is done to determine whether an object is orbit-bound (like a Planet) or not (like a Fleet) when placing them with
-   the Insert() functions.  Iteration is available over all starlanes and wormholes (together), all system objects,
-   all free system objects (those not in an orbit), and all objects in a paricular orbit.*/
+/** contains UniverseObjects and connections to other systems (starlanes and
+   wormholes).  All systems are UniversObjects contained within the universe,
+   and (nearly) all systems also contain UniverseObjects.  Systems are
+   searchable using arbirary predicates, much in the same way that Universes
+   are.  Each System consists of a star and 0 or more orbits.  UniversObjects
+   can be placed in the system "at large" or in a particular orbit.  No
+   checking is done to determine whether an object is orbit-bound (like a
+   Planet) or not (like a Fleet) when placing them with the Insert()
+   functions.  Iteration is available over all starlanes and wormholes
+   (together), all system objects, all free system objects (those not in an
+   orbit), and all objects in a paricular orbit.*/
 class System : public UniverseObject
 {
 private:

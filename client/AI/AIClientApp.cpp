@@ -12,6 +12,7 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
+#include "../../universe/System.h"
 #include "../../universe/Universe.h"
 #include "../../util/OrderSet.h"
 #include "../../util/Order.h"
@@ -25,7 +26,8 @@
 AIClientApp*  AIClientApp::s_app = 0;
 
 AIClientApp::AIClientApp(int argc, char* argv[]) : 
-    m_AI(0)
+    m_AI(0),
+    m_system(0)
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class AIClientApp");
@@ -173,6 +175,30 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::TURN_PROGRESS:
+        break;
+
+    case Message::COMBAT_START:
+        ExtractMessageData(msg, m_system, m_combat_universe);
+        // TODO: Do we need to do anything here, like decide on overall goals
+        // for this combat, so we don't have to figure such things out each
+        // turn?
+        break;
+
+    case Message::COMBAT_TURN_UPDATE: {
+        CombatData combat_data;
+        ExtractMessageData(msg, combat_data);
+        m_AI->GenerateCombatOrders(combat_data);
+        break;
+    }
+
+    case Message::COMBAT_END:
+        delete m_system;
+        for (std::map<int, UniverseObject*>::iterator it = m_combat_universe.begin();
+             it != m_combat_universe.end();
+             ++it) {
+            delete it->second;
+        }
+        // TODO: If we grabbed any other resources on COMBAT_START, release them here.
         break;
 
     case Message::END_GAME: {

@@ -24,6 +24,7 @@ class Empire;
 class EmpireManager;
 class OrderSet;
 class Universe;
+class UniverseObject;
 
 // NB: Do not try to serialize types that contain longs, since longs are different sizes on 32- and 64-bit
 // architectures.  Replace your longs with long longs for portability.  See longer note in Serialize.cpp for more info.
@@ -37,6 +38,9 @@ void Serialize(FREEORION_OARCHIVE_TYPE& oa, const EmpireManager& empire_manager)
 /** Serializes \a universe to output archive \a oa. */
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe);
 
+/** Serializes \a object_map to output archive \a oa. */
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>& object_map);
+
 /** Serializes \a order_set to output archive \a oa. */
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set);
 
@@ -48,6 +52,9 @@ void Deserialize(FREEORION_IARCHIVE_TYPE& ia, EmpireManager& empire_manager);
 
 /** Deserializes \a universe from input archive \a ia. */
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Universe& universe);
+
+/** Serializes \a object_map from input archive \a ia. */
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& object_map);
 
 /** Deserializes \a order_set from input archive \a ia. */
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set);

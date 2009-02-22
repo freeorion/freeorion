@@ -704,7 +704,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
             assert(system.begin() != system.end());
         }
 
-        InitCombat(system);
+        InitCombat(&system, std::map<int, UniverseObject*>());
 
         AddShip("durgha.mesh", 250.0, 250.0);
     } else {
@@ -748,8 +748,12 @@ CombatWnd::~CombatWnd()
     RemoveAccelerators();
 }
 
-void CombatWnd::InitCombat(const System& system)
+void CombatWnd::InitCombat(System* system,
+                           const std::map<int, UniverseObject*>& combat_universe)
 {
+    m_system = system;
+    m_combat_universe = combat_universe;
+
     SetAccelerators();
 
     // build list of available star textures, by type
@@ -759,7 +763,7 @@ void CombatWnd::InitCombat(const System& system)
         fs::path dir = ClientUI::ArtDir() / "combat" / "backgrounds";
         assert(fs::is_directory(dir));
         fs::directory_iterator end_it;
-        std::string type_str = ClientUI::StarTypeFilePrefixes()[system.Star()];
+        std::string type_str = ClientUI::StarTypeFilePrefixes()[m_system->Star()];
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {
                 if (fs::exists(*it) &&
@@ -777,7 +781,7 @@ void CombatWnd::InitCombat(const System& system)
 
     // pick and assign star textures
     {
-        std::string base_name = *boost::next(star_textures.begin(), system.ID() % star_textures.size());
+        std::string base_name = *boost::next(star_textures.begin(), m_system->ID() % star_textures.size());
         Ogre::MaterialPtr back_material =
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
         Ogre::Technique* technique = back_material->getTechnique(0);
@@ -830,8 +834,13 @@ void CombatWnd::InitCombat(const System& system)
     }
 
     // create planets
-    for (System::const_orbit_iterator it = system.begin(); it != system.end(); ++it) {
-        if (const Planet* planet = GetUniverse().Object<Planet>(it->second)) {
+    for (System::const_orbit_iterator it = m_system->begin(); it != m_system->end(); ++it) {
+        const Planet* planet = 0;
+        if (GetOptionsDB().Get<bool>("tech-demo"))
+            planet = GetUniverse().Object<Planet>(it->second);
+        else
+            planet = universe_object_cast<Planet*>(m_combat_universe[it->second]);
+        if (planet) {
             std::string material_name = PlanetNodeMaterial(planet->Type());
             if (material_name == "don't create")
                 continue;
@@ -963,7 +972,7 @@ void CombatWnd::InitCombat(const System& system)
     }
 
     // create starlane entrance points
-    for (System::const_lane_iterator it = system.begin_lanes(); it != system.begin_lanes(); ++it) {
+    for (System::const_lane_iterator it = m_system->begin_lanes(); it != m_system->begin_lanes(); ++it) {
         // TODO
     }
 }

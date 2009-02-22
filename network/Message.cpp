@@ -2,7 +2,10 @@
 
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../universe/Meter.h"
+#include "../universe/System.h"
 #include "../universe/Universe.h"
+#include "../util/CombatOrder.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 
@@ -56,7 +59,8 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::TURN_PROGRESS)
     GG_ENUM_MAP_INSERT(Message::CLIENT_SAVE_DATA)
     GG_ENUM_MAP_INSERT(Message::COMBAT_START)
-    GG_ENUM_MAP_INSERT(Message::COMBAT_ROUND_UPDATE)
+    GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_UPDATE)
+    GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_ORDERS)
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
     GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_CHAT)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
@@ -550,15 +554,42 @@ Message StartMPGameMessage(int player_id)
     return Message(Message::START_MP_GAME, player_id, -1, "");
 }
 
-Message ServerCombatStartMessage(int receiver, int system_id)
+Message ServerCombatStartMessage(int receiver, int empire_id, const System* system,
+                                 const std::map<int, UniverseObject*>& combat_universe)
 {
-    return Message(Message::COMBAT_START, -1, receiver,
-                   boost::lexical_cast<std::string>(system_id));
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Universe::s_encoding_empire = empire_id;
+        oa << BOOST_SERIALIZATION_NVP(system);
+        Serialize(oa, combat_universe);
+    }
+    return Message(Message::COMBAT_START, -1, receiver, os.str());
+}
+
+Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Universe::s_encoding_empire = empire_id;
+        oa << BOOST_SERIALIZATION_NVP(combat_data);
+    }
+    return Message(Message::COMBAT_TURN_UPDATE, -1, receiver, os.str());
 }
 
 Message ServerCombatEndMessage(int receiver)
 { return Message(Message::COMBAT_END, -1, receiver, ""); }
 
+Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(combat_orders);
+    }
+    return Message(Message::COMBAT_TURN_ORDERS, sender, -1, os.str());
+}
 
 ////////////////////////////////////////////////
 // Message data extractors
@@ -746,6 +777,34 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
         std::cerr << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
                   << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
                   << "Message:\n" << msg.Text() << std::endl;
+        throw;
+    }
+}
+
+void ExtractMessageData(const Message& msg, CombatData& combat_data)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(combat_data);
+    } catch (const boost::archive::archive_exception &e) {
+        std::cerr << "ExtractMessageData(const Message& msg, CombatData& "
+                  << "combat_data) failed!  Message:\n" << msg.Text() << std::endl;
+        throw;
+    }
+}
+
+void ExtractMessageData(const Message& msg, System*& system,
+                        std::map<int, UniverseObject*>& combat_universe)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(system);
+        Deserialize(ia, combat_universe);
+    } catch (const boost::archive::archive_exception &e) {
+        std::cerr << "ExtractMessageData(const Message& msg, System*& "
+                  << "system) failed!  Message:\n" << msg.Text() << std::endl;
         throw;
     }
 }

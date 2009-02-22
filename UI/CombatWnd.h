@@ -28,6 +28,7 @@ namespace GG {
 
 class System;
 class FPSIndicator;
+class UniverseObject;
 
 class bt32BitAxisSweep3;
 class btCollisionDispatcher;
@@ -47,7 +48,8 @@ public:
                Ogre::Viewport* viewport);
     virtual ~CombatWnd();
 
-    void InitCombat(const System& system);
+    void InitCombat(System* system,
+                    const std::map<int, UniverseObject*>& combat_universe);
     void HandlePlayerChatMessage(const std::string& msg);
 
     virtual void Render();
@@ -128,6 +130,9 @@ private:
 
     Ogre::Animation* m_camera_animation;
     Ogre::AnimationState* m_camera_animation_state;
+
+    System* m_system;
+    std::map<int, UniverseObject*> m_combat_universe;
 
     Ogre::Real m_distance_to_look_at_point;
     Ogre::Radian m_pitch;

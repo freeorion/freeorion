@@ -313,3 +313,15 @@ PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_
     AI(AI_),
     host(host_)
 {}
+
+
+////////////////////////////////////////////////
+// CombatData
+////////////////////////////////////////////////
+CombatData::CombatData() :
+    m_system(0)
+{}
+
+CombatData::CombatData(System* system) :
+    m_system(system)
+{}

@@ -59,14 +59,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Contains the data necessary to resolve a single combat. */
-struct CombatData
-{
-    CombatData(System& s);
-
-    System& m_system;
-};
-
 /** the application framework class for the FreeOrion server. */
 class ServerApp
 {

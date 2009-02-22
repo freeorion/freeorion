@@ -33,7 +33,14 @@ private:
 
    void HandleMessage(const Message& msg);
 
-   AIBase*              m_AI;           ///< implementation of AI logic
+   AIBase*              m_AI;     ///< implementation of AI logic
+
+   // system the current combat is in (may be null)
+   System*              m_system;
+
+   // the UniverseObjects contained within m_system; this should be used
+   // instead of GetUniverse() to look up objects in m_system
+   std::map<int, UniverseObject*> m_combat_universe;
 
    static AIClientApp*  s_app;
 };

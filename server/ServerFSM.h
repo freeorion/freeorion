@@ -43,9 +43,13 @@ struct CheckStartConditions : boost::statechart::event<CheckStartConditions>
 
 struct ResolveCombat : boost::statechart::event<ResolveCombat>
 {
-    ResolveCombat(System* system);
+    ResolveCombat(System* system,
+                  std::map<int, UniverseObject*>& combat_universe,
+                  std::set<int>& empire_ids);
 
     System* const m_system;
+    std::map<int, UniverseObject*> m_combat_universe;
+    std::set<int> m_empire_ids;
 };
 
 // TODO: For prototyping only.
@@ -65,7 +69,7 @@ struct MessageEventBase
 
 // Define Boost.Preprocessor list of all Message events
 #define MESSAGE_EVENTS                          \
-        (HostMPGame)                            \
+    (HostMPGame)                                \
         (HostSPGame)                            \
         (StartMPGame)                           \
         (LobbyUpdate)                           \
@@ -75,6 +79,7 @@ struct MessageEventBase
         (JoinGame)                              \
         (SaveGameRequest)                       \
         (TurnOrders)                            \
+        (CombatTurnOrders)                      \
         (ClientSaveData)                        \
         (RequestObjectID)                       \
         (RequestDesignID)                       \
@@ -282,7 +287,9 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     boost::statechart::result react(const PlayerChat& msg);
 
     std::string m_save_filename;
-    System* m_combat_location;
+    System* m_combat_system;
+    std::map<int, UniverseObject*> m_combat_universe;
+    std::set<int> m_combat_empire_ids;
 
     SERVER_ACCESSOR
 };
@@ -339,13 +346,15 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
     typedef boost::statechart::state<ResolvingCombat, WaitingForTurnEnd> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<CombatComplete>
+        boost::statechart::custom_reaction<CombatComplete>,
+        boost::statechart::custom_reaction<CombatTurnOrders>
     > reactions;
 
     ResolvingCombat(my_context c);
     ~ResolvingCombat();
 
     boost::statechart::result react(const CombatComplete& msg);
+    boost::statechart::result react(const CombatTurnOrders& msg);
 
     SERVER_ACCESSOR
 };

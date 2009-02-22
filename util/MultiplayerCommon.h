@@ -15,6 +15,8 @@
 #include <vector>
 
 
+class System;
+
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
 
@@ -184,6 +186,20 @@ struct PlayerInfo
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** The state of combat (units, planets, their health, etc.) at the start of a
+    round of combat. */
+struct CombatData
+{
+    CombatData();
+    CombatData(System* system);
+
+    System* m_system;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 
 // template implementations
 template <class Archive>
@@ -257,4 +273,11 @@ void PlayerInfo::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(AI)
         & BOOST_SERIALIZATION_NVP(host);
 }
+
+template <class Archive>
+void CombatData::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_system);
+}
+
 #endif // _MultiplayerCommon_h_

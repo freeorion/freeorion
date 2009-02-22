@@ -35,6 +35,14 @@ namespace fs = boost::filesystem;
 
 namespace {
     const bool TEST_3D_COMBAT = false;
+
+    void PopulateCombatUniverse(const System& system, std::map<int, UniverseObject*>& combat_universe)
+    {
+        for (System::const_orbit_iterator it = system.begin(); it != system.end(); ++it) {
+            int object_id = it->second;
+            combat_universe[object_id] = GetUniverse().Object(object_id);
+        }
+    }
 }
 
 
@@ -63,13 +71,6 @@ ServerSaveGameData::ServerSaveGameData() :
 ServerSaveGameData::ServerSaveGameData(const int& current_turn, const std::map<int, std::set<std::string> >& victors) :
     m_current_turn(current_turn),
     m_victors(victors)
-{}
-
-////////////////////////////////////////////////
-// CombatData
-////////////////////////////////////////////////
-CombatData::CombatData(System& s) :
-    m_system(s)
 {}
 
 ////////////////////////////////////////////////
@@ -216,6 +217,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::LOBBY_EXIT:            m_fsm.process_event(LobbyNonHostExit(msg, player_connection)); break;
     case Message::SAVE_GAME:             m_fsm.process_event(SaveGameRequest(msg, player_connection)); break;
     case Message::TURN_ORDERS:           m_fsm.process_event(TurnOrders(msg, player_connection)); break;
+    case Message::COMBAT_TURN_ORDERS:    m_fsm.process_event(CombatTurnOrders(msg, player_connection)); break;
     case Message::CLIENT_SAVE_DATA:      m_fsm.process_event(ClientSaveData(msg, player_connection)); break;
     case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
     case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
@@ -655,13 +657,21 @@ void ServerApp::ProcessTurns()
                 }
             }
             if (!combat_conditions_exist) {
-                // TODO: Find planetary defenses that can harm the fleets here.
+                // TODO: Find base and planetary defenses that can harm the
+                // fleets here.
             }
             if (!combat_conditions_exist) {
                 // TODO: Find space monsters.
             }
-            if (combat_conditions_exist) {
-                m_fsm.process_event(ResolveCombat(system));
+            if (combat_conditions_exist
+                // TODO: This second part of this condition is for prototyping only.
+                && ids_of_empires_with_fleets_here.find(GetEmpirePlayerID(Networking::HOST_PLAYER_ID)) !=
+                ids_of_empires_with_fleets_here.end()) {
+                // TODO: Include the empire ID's of empires with base and
+                // planetary defenses found above.
+                std::map<int, UniverseObject*> combat_universe;
+                PopulateCombatUniverse(*system, combat_universe);
+                m_fsm.process_event(ResolveCombat(system, combat_universe, ids_of_empires_with_fleets_here));
                 while (m_current_combat) {
                     m_io_service.run_one();
                     m_networking.HandleNextEvent();

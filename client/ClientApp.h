@@ -40,15 +40,18 @@ public:
     const Universe&         GetUniverse() const; ///< returns client's local copy of Universe
     const EmpireManager&    Empires() const;     ///< returns the set of known Empires
     const OrderSet&         Orders() const;      ///< returns Order set for this client's player
+    const CombatOrderSet&   CombatOrders() const;///< returns CombatOrder set for this client's player
     const ClientNetworking& Networking() const;  ///< returns the networking object for this client's player
     //@}
 
     /** \name Mutators */ //@{
     virtual void            StartTurn();         ///< encodes order sets and sends turn orders message
+    virtual void            StartCombatTurn();   ///< encodes combat order sets and sends combat turn orders message
 
     Universe&               GetUniverse();       ///< returns client's local copy of Universe
     EmpireManager&          Empires();           ///< returns the set of known Empires
     OrderSet&               Orders();            ///< returns Order set for this client's player
+    CombatOrderSet&         CombatOrders();      ///< returns CombatOrder set for this client's player
     ClientNetworking&       Networking();        ///< returns the networking object for this client's player
 
     /** returns a universe object ID which can be used for new objects created by the client.
@@ -79,6 +82,7 @@ protected:
     Universe                  m_universe;
     EmpireManager             m_empires;
     OrderSet                  m_orders;
+    CombatOrderSet            m_combat_orders;
     ClientNetworking          m_networking;
     std::string               m_player_name;
     int                       m_player_id;

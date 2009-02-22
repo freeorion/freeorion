@@ -10,15 +10,22 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
+class CombatData;
+class CombatOrder;
 class EmpireManager;
 class Message;
 struct MultiplayerLobbyData;
 class OrderSet;
+struct PlayerInfo;
 struct SaveGameUIData;
 struct SinglePlayerSetupData;
+struct System;
 class Universe;
-struct PlayerInfo;
+class UniverseObject;
+
+typedef std::vector<CombatOrder> CombatOrderSet;
 
 /** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
 void BufferToHeader(const int* header_buf, Message& message);
@@ -52,7 +59,8 @@ public:
         TURN_PROGRESS,           ///< sent to clients to display a turn progress message
         CLIENT_SAVE_DATA,        ///< sent to the server in response to a server request for the data needed to create a save file
         COMBAT_START,            ///< sent to clients when a combat is about to start
-        COMBAT_ROUND_UPDATE,     ///< sent to clients when a combat round has been resolved
+        COMBAT_TURN_UPDATE,     ///< sent to clients when a combat round has been resolved
+        COMBAT_TURN_ORDERS,      ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
         COMBAT_END,              ///< sent to clients when a combat is concluded
         HUMAN_PLAYER_CHAT,       ///< sent when one player sends a chat message to another in multiplayer
         REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
@@ -276,10 +284,17 @@ Message ServerLobbyExitMessage(int sender, int receiver);
 Message StartMPGameMessage(int player_id);
 
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
-Message ServerCombatStartMessage(int receiver, int system_id);
+Message ServerCombatStartMessage(int receiver, int empire_id, const System* system,
+                                 const std::map<int, UniverseObject*>& combat_universe);
+
+/** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
+Message ServerCombatUpdateMessage(int receiver, const CombatData& combat_data);
 
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
 Message ServerCombatEndMessage(int receiver);
+
+/** creates a COMBAT_TURN_ORDERS message.*/
+Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders);
 
 
 ////////////////////////////////////////////////
@@ -305,5 +320,10 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
 void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat, std::string& reason_string, int& empire_id);
+
+void ExtractMessageData(const Message& msg, CombatData& combat_data);
+
+void ExtractMessageData(const Message& msg, System*& system,
+                        std::map<int, UniverseObject*>& combat_universe);
 
 #endif // _Message_h_
