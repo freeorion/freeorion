@@ -57,13 +57,23 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                true,   Validator<bool>());
-        db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",         true,   Validator<bool>());
-        db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",    true,   Validator<bool>());
-        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",            2.5,    RangedStepValidator<double>(0.1, 0.1, 15.0));
-        db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",   true,   Validator<bool>());
-        db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",            true,   Validator<bool>());
-        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",       3.0,    RangedStepValidator<double>(0.1, 0.1, 15.0));
+        db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,   Validator<bool>());
+        db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,   Validator<bool>());
+        db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,   Validator<bool>());
+        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.5,    RangedStepValidator<double>(0.1, 0.1, 15.0));
+        db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,   Validator<bool>());
+        db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,   Validator<bool>());
+        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           3.0,    RangedStepValidator<double>(0.1, 0.1, 15.0));
+        db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
+
+        db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
+        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
+        db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.5,        RangedStepValidator<double>(0.1, 0.5, 5));
+        db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -111,11 +121,6 @@ namespace {
 
     // disambiguate overloaded function with a function pointer
     void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
-
-    const float STARLANE_GRAY = 127.0f / 255.0f;
-    const float STARLANE_ALPHA = 0.7f;
-
-    const GG::Clr UNOWNED_STARLANE_GRAY_CLR = GG::Clr(72, 72, 72, 255);
 }
 
 ////////////////////////////////////////////////////////////
@@ -618,6 +623,7 @@ void MapWnd::InitTurn(int turn_number)
     std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
     Logger().debugStream() << "ADDING STARLANES";
+    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
     std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
@@ -735,8 +741,7 @@ void MapWnd::InitTurn(int turn_number)
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
-
-                GG::Clr lane_colour = UNOWNED_STARLANE_GRAY_CLR;    // default colour if no empires transfer
+                GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
                     empire = empire_it->second;
@@ -752,9 +757,6 @@ void MapWnd::InitTurn(int turn_number)
                         break;
                     }
                 }
-
-                //if (lane_colour == UNOWNED_STARLANE_GRAY_CLR)
-                //    Logger().debugStream() << "selected unowned gray colour for this full lane";
 
                 raw_starlane_colors.push_back(lane_colour.r);
                 raw_starlane_colors.push_back(lane_colour.g);
@@ -1638,13 +1640,13 @@ void MapWnd::RenderSystems()
     }
 
     // circles around system icons
-    if (true) {
+    if (GetOptionsDB().Get<bool>("UI.system-circles")) {
         glPushMatrix();
         glLoadIdentity();
         const double TWO_PI = 2.0*3.14159;
         glDisable(GL_TEXTURE_2D);
         glLineWidth(1.5);
-        glColor(ClientUI::SystemNameTextColor());
+        glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
         for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
             const SystemIcon* icon = it->second;
@@ -1677,6 +1679,8 @@ void MapWnd::RenderStarlanes()
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
+
 
     if (m_starlane_vertices.m_name && (m_starlane_colors.m_name || !coloured)) {
         glLineStipple(1, 0xffff);   // solid line / no stipple
@@ -1685,7 +1689,7 @@ void MapWnd::RenderStarlanes()
         if (coloured)
             glEnableClientState(GL_COLOR_ARRAY);
         else
-            glColor(UNOWNED_STARLANE_GRAY_CLR);
+            glColor(UNOWNED_LANE_COLOUR);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
         glVertexPointer(2, GL_FLOAT, 0, 0);

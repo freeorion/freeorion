@@ -1,5 +1,6 @@
 #include "PythonAI.h"
 
+#include "../util/MultiplayerCommon.h"
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"

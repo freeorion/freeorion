@@ -22,7 +22,7 @@ struct CombatUpdateMessage
 
     CombatUpdateMessage(const XMLElement&);
     XMLElement XMLEncode() const;
-    
+
     //! Combat asserts info for one empire
     struct EmpireCombatInfo
     {
@@ -51,7 +51,6 @@ struct CombatUpdateMessage
 
     std::string m_system; //! system were the combat take place
     std::vector<EmpireCombatInfo> m_opponents; //! empires which are involved into combat
-
 };
 
 #endif // _Combat_h_

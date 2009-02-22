@@ -707,6 +707,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         InitCombat(&system, std::map<int, UniverseObject*>());
 
         AddShip("durgha.mesh", 250.0, 250.0);
+        AddShip("seed.mesh",   260.0, 260.0);
     } else {
         GG::X width(50);
         CUIButton* done_button =

@@ -28,7 +28,7 @@ void AIBase::GenerateOrders() {
     AIInterface::DoneTurn();
 }
 
-void AIBase::GenerateCombatOrders(const CombatData& combat_orders) {
+void AIBase::GenerateCombatOrders(const CombatData& combat_data) {
     AIInterface::DoneCombatTurn();
 }
 

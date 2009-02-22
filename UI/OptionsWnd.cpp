@@ -721,6 +721,7 @@ void OptionsWnd::Init()
     BeginPage(UserString("OPTIONS_GALAXY_MAP"));
     BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
     IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption("UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
     DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
     BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
     ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
@@ -737,6 +738,7 @@ void OptionsWnd::Init()
     BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
     BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
     DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    ColorOption("UI.unowned-starlane-colour",           UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
     EndSection();
     EndPage();
 

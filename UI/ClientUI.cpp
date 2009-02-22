@@ -424,14 +424,6 @@ namespace {
         // misc
         db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,         RangedValidator<int>(8, 30));
 
-        // galaxy map
-        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
-        db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.5,        RangedStepValidator<double>(0.1, 0.5, 5));
-        db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-
         // UI behavior
         db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  100,        RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows",         "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",         false);
