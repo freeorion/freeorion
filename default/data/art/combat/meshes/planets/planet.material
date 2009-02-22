@@ -138,10 +138,10 @@ material asteroid {
             }
 
             texture_unit
-            { texture asteroid1_Color.png 2d 0 }
+            { texture Asteroid01Color.png 2d 0 }
 
             texture_unit
-            { texture asteroid1_Normal.png 2d 0 }
+            { texture Asteroid01Normal.png 2d 0 }
         }
     }
 }

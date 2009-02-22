@@ -681,7 +681,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         AddShip("seed.mesh", 250.0, 250.0);
 
 #if 0
-        std::string mesh_name = "asteroid1.mesh";
+        std::string mesh_name = "Asteroid01.mesh";
         Ogre::Real x = 270.0;
         Ogre::Real y = 270.0;
         Ogre::Entity* entity = m_scene_manager->createEntity("asteroid_" + mesh_name, mesh_name);
@@ -848,6 +848,28 @@ void CombatWnd::InitCombat(System* system,
                     if (e.code() != boost::system::posix_error::permission_denied)
                         throw;
                 }
+            }
+        }
+    }
+
+    // build list of available asteroid textures and meshes
+    std::set<std::string> asteroid_sets;
+    {
+        const std::string ASTEROID_BASE_NAME = "Asteroid";
+        namespace fs = boost::filesystem;
+        fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
+        fs::directory_iterator end_it;
+        for (fs::directory_iterator it(dir); it != end_it; ++it) {
+            try {
+                if (fs::exists(*it) &&
+                    !fs::is_directory(*it) &&
+                    boost::algorithm::starts_with(it->filename(), ASTEROID_BASE_NAME)) {
+                    asteroid_sets.insert(it->filename().substr(0, ASTEROID_BASE_NAME.size() + 2));
+                }
+            } catch (const fs::filesystem_error& e) {
+                // ignore files for which permission is denied, and rethrow other exceptions
+                if (e.code() != boost::system::posix_error::permission_denied)
+                    throw;
             }
         }
     }
