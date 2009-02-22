@@ -144,9 +144,9 @@ public:
     static GG::Clr      SystemNameTextColor();                  //!< the colour of system names that aren't owned by any player (as far as this client knows)
     static double       SystemSelectionIndicatorSize();         //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
 
-    static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to shown tiny (any) fleet icons
-    static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to shown small fleet icons
-    static double       LargeFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to shown large fleet icons
+    static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
+    static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to show small fleet icons
+    static double       MediumFleetButtonZoomThreshold();       //!< the minimum zoom level of the map at which to show medium fleet icons
 
     // SidePanel
     static GG::Clr      SidePanelColor();

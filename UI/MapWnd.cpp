@@ -72,7 +72,7 @@ namespace {
         db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.5,        RangedStepValidator<double>(0.1, 0.5, 5));
         db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.large-fleet-button-minimum-zoom","OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM",    4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("UI.medium-fleet-button-minimum-zoom","OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM",  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -1442,8 +1442,9 @@ double MapWnd::SystemHaloScaleFactor() const
 
 FleetButton::SizeType MapWnd::FleetButtonSizeType() const
 {
-    if      (m_zoom_factor > ClientUI::LargeFleetButtonZoomThreshold())
-        return FleetButton::FLEET_BUTTON_LARGE;
+    // no FLEET_BUTTON_LARGE as these icons are too big for the map.  (they can be used in the FleetWnd, however)
+    if      (m_zoom_factor > ClientUI::MediumFleetButtonZoomThreshold())
+        return FleetButton::FLEET_BUTTON_MEDIUM;
 
     else if (m_zoom_factor > ClientUI::SmallFleetButtonZoomThreshold())
         return FleetButton::FLEET_BUTTON_SMALL;

@@ -92,7 +92,7 @@ double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().
 
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
-double      ClientUI::LargeFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.large-fleet-button-minimum-zoom"); }
+double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
 
 // SidePanel
 GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }

@@ -225,7 +225,7 @@ private:
 
     boost::signals::connection m_fleet_connection;
 
-    GG::StaticGraphic*  m_fleet_icon;
+    GG::Control*        m_fleet_icon;
     GG::TextControl*    m_fleet_name_text;
     StatisticIcon*      m_num_ships_stat;
     StatisticIcon*      m_fleet_strength_stat;
@@ -607,27 +607,14 @@ void FleetDataPanel::SetFleetIcon()
     const int ICON_OFFSET = Value(Size().y - FLEET_ICON_SZ) / 2;
     boost::shared_ptr<GG::Texture> icon;
 
-    if (m_fleet) { // a regular fleet data panel
-        if (2 <= m_fleet->NumShips() && m_fleet->NumShips() <= 5) {
-            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" /
-                                        (boost::lexical_cast<std::string>(m_fleet->NumShips()) + "shipfleet.png"));
-        } else if (5 < m_fleet->NumShips()) {
-            icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "5shipfleet.png");
-        } else if (m_fleet->NumShips() == 1) {
-            Ship* ship = GetUniverse().Object<Ship>(*m_fleet->begin());
-            const ShipDesign* design = ship->Design();
-            if (design)
-                icon = ClientUI::ShipIcon(design->ID());
-            else
-                icon = ClientUI::ShipIcon(-1);  // default icon
-        }
-    } else { // the "new fleet" data panel
-        icon = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "newfleet.png");
-    }
+    if (m_fleet) {
+        boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(m_fleet, FleetButton::FLEET_BUTTON_LARGE);
+        boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(m_fleet, FleetButton::FLEET_BUTTON_LARGE);
+        std::vector<boost::shared_ptr<GG::Texture> > icons; icons.push_back(head_icon); icons.push_back(size_icon);
 
-    if (icon) {
-        m_fleet_icon = new GG::StaticGraphic(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET), GG::X(FLEET_ICON_SZ), GG::Y(FLEET_ICON_SZ),
-                                             icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_fleet_icon = new MultiTextureStaticGraphic(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET),
+                                                     GG::X(FLEET_ICON_SZ), GG::Y(FLEET_ICON_SZ),
+                                                     icons);
         AttachChild(m_fleet_icon);
     }
 }

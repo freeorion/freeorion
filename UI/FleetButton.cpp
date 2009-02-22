@@ -23,14 +23,32 @@ namespace {
 
     /* returns number of fleet icon size texture to use to represent fleet(s) with the passed number of ships */
     int FleetSizeIconNumber(int number_ships) {
-        std::cout << "FleetSizeIconNumber(" << number_ships << ")" << std::endl;
-        return number_ships;
+        // one ship (or zero?) has no marker.  more marker levels are used for each doubling in the number of ships
+        number_ships = std::min(std::max(number_ships, 1), 129);    // smallest size indicator is for 1 ship, largest is for 128 or greater
+        if (number_ships < 2)
+            return 0;
+        else if (number_ships < 4)
+            return 1;
+        else if (number_ships < 8)
+            return 2;
+        else if (number_ships < 16)
+            return 3;
+        else if (number_ships < 32)
+            return 4;
+        else if (number_ships < 64)
+            return 5;
+        else if (number_ships < 128)
+            return 6;
+        else  //(number_ships >= 128)
+            return 7;
     }
 
     /* returns prefix of filename used for icons for the indicated fleet button size type */
     std::string FleetIconSizePrefix(FleetButton::SizeType size_type) {
         if (size_type == FleetButton::FLEET_BUTTON_LARGE)
             return "big-";
+        else if (size_type == FleetButton::FLEET_BUTTON_MEDIUM)
+            return "med-";
         else if (size_type == FleetButton::FLEET_BUTTON_SMALL)
             return "sml-";
         else
@@ -129,12 +147,10 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     GG::Y height(0);
 
     if (m_head_icon) {
-        std::cout << "fleet init head icon: " << m_head_icon->Filename() << std::endl;
         width = m_head_icon->DefaultWidth();
         height = m_head_icon->DefaultHeight();
     }
     if (m_size_icon) {
-        std::cout << "fleet init size icon: " << m_size_icon->Filename() << std::endl;
         width = std::max(width, m_size_icon->DefaultWidth());
         height = std::max(height, m_size_icon->DefaultHeight());
     }
@@ -210,7 +226,6 @@ void FleetButton::RenderRollover() {
 // Free Functions
 /////////////////////
 boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::SizeType size_type) {
-    std::cout << "FleetHeadIcon(" << (fleet ? fleet->Name() : "no fleet") << ", " << size_type << std::endl;
     if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
         return boost::shared_ptr<GG::Texture>();
 
@@ -230,15 +245,12 @@ boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::Si
 }
 
 boost::shared_ptr<GG::Texture> FleetSizeIcon(const Fleet* fleet, FleetButton::SizeType size_type) {
-    std::cout << "FleetSizeIcon(" << (fleet ? fleet->Name() : "no fleet") << ", " << size_type << std::endl;
     if (!fleet)
         return FleetSizeIcon(1u, size_type);
     return FleetSizeIcon(fleet->NumShips(), size_type);
 }
 
 boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type) {
-    std::cout << "FleetSizeIcon (fleet_size) (" << fleet_size << ", " << size_type << std::endl;
-
     if (fleet_size < 1u)
         fleet_size = 1u; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
 

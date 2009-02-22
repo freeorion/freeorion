@@ -729,7 +729,7 @@ void OptionsWnd::Init()
     BeginSection(UserString("OPTIONS_FLEET_ICONS"));
     DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption("UI.large-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_LARGE_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.medium-fleet-button-minimum-zoom", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
     EndSection();
     BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
     BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));

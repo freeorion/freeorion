@@ -16,6 +16,7 @@ public:
         FLEET_BUTTON_NONE,
         FLEET_BUTTON_TINY,
         FLEET_BUTTON_SMALL,
+        FLEET_BUTTON_MEDIUM,
         FLEET_BUTTON_LARGE
     };
 

@@ -389,8 +389,8 @@ Toggles whether to draw circles around systems.
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Sets colour of unowned system names on galaxy map.
 
-OPTIONS_DB_UI_LARGE_FLEET_BUTTON_MIN_ZOOM
-Sets minimum zoom level at which large fleet icons are shown on the galaxy map.
+OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
 
 OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Sets minimum zoom level at which small fleet icons are shown on the galaxy map.
@@ -940,8 +940,8 @@ Tiny fleet icon minimum zoom
 OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
 Small fleet icon minimum zoom
 
-OPTIONS_UI_LARGE_FLEET_BUTTON_MIN_ZOOM
-Large fleet icon minimum zoom
+OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
+Medium fleet icon minimum zoom
 
 OPTIONS_GALAXY_MAP_GENERAL
 General
