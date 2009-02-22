@@ -68,10 +68,10 @@ namespace OpenSteer {
         
         Vec3 convertToVec3() const;
     
-		// this is necessary so that graphics API's such as DirectX
-		// requiring a pointer to colors can do their conversion
-		// without a lot of copying.
-		float const*const colorFloatArray() const { return &r_; }
+        // this is necessary so that graphics API's such as DirectX requiring
+        // a pointer to colors can do their conversion without a lot of
+        // copying.
+        const float* colorFloatArray() const { return &r_; }
 
         Color& operator+=( Color const& other );
         

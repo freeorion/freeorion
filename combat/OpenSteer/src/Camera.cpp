@@ -303,7 +303,7 @@ OpenSteer::Camera::successorMode (const cameraMode cm) const
 // string naming current camera mode, used by OpenSteerDemo
 
 
-char* 
+const char* 
 OpenSteer::Camera::modeName (void)
 {
     switch (mode)

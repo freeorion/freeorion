@@ -278,7 +278,7 @@ float CombatFighter::maxSpeed() const
 const CombatFighter::Mission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
 
-void CombatFighter::update(const float current_time, const float elapsed_time)
+void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
     if (m_pathing_engine.UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
@@ -740,7 +740,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
         cohesion_vec * COHESION_WEIGHT;
 }
 
-CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
+CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& /*attackee*/)
 {
     // TODO: This should act as WeakestShip(), but should include fighters.
     return CombatObjectPtr();

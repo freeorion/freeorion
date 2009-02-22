@@ -2746,7 +2746,7 @@ namespace {
             }
         }
 
-        void qqqRange (char* string, float range, std::ostringstream& status)
+        void qqqRange (const char* string, float range, std::ostringstream& status)
         {
             status << "\n" << string;
             if (range == 9999.0f) status << "--"; else status << (int) range;

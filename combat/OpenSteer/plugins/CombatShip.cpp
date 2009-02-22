@@ -360,7 +360,7 @@ OpenSteer::Vec3 CombatShip::Steer()
     return OpenSteer::Vec3();
 }
 
-CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
+CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& /*attackee*/)
 {
     // TODO: This should act as WeakestShip(), but should include fighters.
     return CombatObjectPtr();

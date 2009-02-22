@@ -183,9 +183,6 @@ namespace {
     const float gAvoidancePredictTimeMax  = 2;
     float gAvoidancePredictTime = gAvoidancePredictTimeMin;
 
-    bool enableAttackSeek  = true; // for testing (perhaps retain for UI control?)
-    bool enableAttackEvade = true; // for testing (perhaps retain for UI control?)
-
     CtfSeeker* gSeeker = NULL;
 
 
@@ -299,7 +296,7 @@ namespace {
         {
             const Vec3 avoidance =
                 steerToAvoidObstacles (gAvoidancePredictTimeMin,
-                                       (ObstacleGroup&) allObstacles);
+                                       (ObstacleGroup&)allObstacles);
 
             // saved for annotation
             avoiding = (avoidance == Vec3::zero);
@@ -668,7 +665,7 @@ namespace {
         CtfBase::draw();
 
         // select string describing current seeker state
-        char* seekerStateString = "";
+        const char* seekerStateString = "";
         switch (state)
         {
         case running:

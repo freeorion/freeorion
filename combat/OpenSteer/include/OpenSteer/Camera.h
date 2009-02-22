@@ -151,7 +151,7 @@ namespace OpenSteer {
         cameraMode mode;
 
         // string naming current camera mode, used by OpenSteerDemo
-        char* modeName (void);
+        const char* modeName (void);
 
         // select next camera mode, used by OpenSteerDemo
         void selectNextMode (void);

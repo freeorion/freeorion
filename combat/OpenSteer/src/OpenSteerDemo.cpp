@@ -828,7 +828,7 @@ OpenSteer::OpenSteerDemo::updatePhaseTimers (void)
 
 namespace {
 
-    char* appVersionName = "OpenSteerDemo 0.8.2";
+    const char* appVersionName = "OpenSteerDemo 0.8.2";
 
     // The number of our GLUT window
     int windowID;
