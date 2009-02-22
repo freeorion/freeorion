@@ -194,6 +194,20 @@ private:
 };
 
 
+// Tactical combat system geometry free functions:
+
+/** Returns the radius, in tactical combat units, of a system.  Note that the
+    tactical combat map is square. */
+double SystemRadius();
+
+/** Returns the radius, in tactical combat units, of the star at the center of a system. */
+double StarRadius();
+
+/** Returns the radius, in tactical combat units, of orbit \a orbit of a
+    system.  \a orbit must be < 10. */
+double OrbitalRadius(unsigned int orbit);
+
+
 // template implementations
 
 template <class T>

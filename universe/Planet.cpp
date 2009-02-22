@@ -155,6 +155,9 @@ Year Planet::OrbitalPeriod() const
 Radian Planet::InitialOrbitalPosition() const
 { return m_initial_orbital_position; }
 
+Radian Planet::OrbitalPositionOnTurn(int turn) const
+{ return m_initial_orbital_position + OrbitalPeriod() * 2.0 * 3.1415926 / 4 * turn; }
+
 Day Planet::RotationalPeriod() const
 { return m_rotational_period; }
 
@@ -342,17 +345,17 @@ void Planet::SetSize(PlanetSize size)
     StateChangedSignal();
 }
 
-void Planet::SetOrbitalPeriod(int orbit, bool tidal_lock)
+void Planet::SetOrbitalPeriod(unsigned int orbit, bool tidal_lock)
 {
-    const double BASE_PERIOD = 1.0;
-    const double BASE_DISTANCE = 3.0;
-    const double MAX_VARIATION = 0.33;
-    // orbits are 0-based, but the 0th orbit is 1 unit out, not 0 units out
-    const double DISTANCE = orbit + 1.0;
-
-    double period = BASE_PERIOD / (DISTANCE / BASE_DISTANCE);
-    double random_scale_factor = 1.0 - MAX_VARIATION + 2 * MAX_VARIATION * RandZeroToOne();
-    m_orbital_period = period * random_scale_factor;
+    assert(orbit < 10);
+    const double THIRD_ORBIT_PERIOD = 4;
+    const double THIRD_ORBIT_RADIUS = OrbitalRadius(2);
+    const double ORBIT_RADIUS = OrbitalRadius(orbit);
+    // Kepler's third law.
+    m_orbital_period =
+        std::sqrt(std::pow(THIRD_ORBIT_PERIOD, 2.0) /
+                  std::pow(THIRD_ORBIT_RADIUS, 3.0) *
+                  std::pow(ORBIT_RADIUS, 3.0));
 
     if (tidal_lock)
         SetRotationalPeriod(Day(m_orbital_period));
@@ -579,4 +582,26 @@ PlanetEnvironment Planet::Environment(PlanetType type)
     case PT_GASGIANT:
     default:            return PE_UNINHABITABLE;// out of the loop
     }
+}
+
+
+// free functions
+
+double PlanetRadius(PlanetSize size)
+{
+    double retval = 0.0;
+    switch (size) {
+    case INVALID_PLANET_SIZE: retval = 0.0; break;
+    case SZ_NOWORLD:          retval = 0.0; break;
+    case SZ_TINY:             retval = 2.0; break;
+    case SZ_SMALL:            retval = 3.5; break;
+    default:
+    case SZ_MEDIUM:           retval = 5.0; break;
+    case SZ_LARGE:            retval = 7.0; break;
+    case SZ_HUGE:             retval = 9.0; break;
+    case SZ_ASTEROIDS:        retval = 0.0; break;
+    case SZ_GASGIANT:         retval = 11.0; break; // this one goes to eleven
+    case NUM_PLANET_SIZES:    retval = 0.0; break;
+    };
+    return retval;
 }

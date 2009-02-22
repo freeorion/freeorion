@@ -98,6 +98,7 @@ public:
 
     Year                                OrbitalPeriod() const;
     Radian                              InitialOrbitalPosition() const;
+    Radian                              OrbitalPositionOnTurn(int turn) const;
     Day                                 RotationalPeriod() const;
     Degree                              AxialTilt() const;
 
@@ -137,12 +138,12 @@ public:
     void                                SetType(PlanetType type);           ///< sets the type of this Planet to \a type
     void                                SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
 
-    /** randomly generates an orbital period based on the orbit this planet is
-        in, and whether it is tidally locked. */
-    void                                SetOrbitalPeriod(int orbit, bool tidal_lock);
+    /** Sets the orbital period based on the orbit this planet is in. If
+        tidally locked, the rotational period is also adjusted. */
+    void                                SetOrbitalPeriod(unsigned int orbit, bool tidal_lock);
 
     void                                SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet
-    void                                SetHighAxialTilt();                  ///< randomly generates a new, high axial tilt
+    void                                SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
 
     void                                AddBuilding(int building_id);       ///< adds the building to the planet
     bool                                RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
@@ -190,7 +191,17 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+
+// Tactical combat planet geometry free functions:
+
+/** Returns the radius, in tactical combat units, of a planet.  Note that 0.0
+    is returned for PlanetSize enumerators that have no size, whereas
+    PlanetRadius(SZ_MEDIUM) is returned for unknown values. */
+double PlanetRadius(PlanetSize size);
+
+
 // template implementations
+
 template <class Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {

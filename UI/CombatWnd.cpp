@@ -48,18 +48,15 @@
 namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
 
-    const Ogre::Real SYSTEM_RADIUS = 1000.0;
-    const Ogre::Real STAR_RADIUS = 80.0;
-
     const Ogre::Real NEAR_CLIP = 0.01;
     const Ogre::Real FAR_CLIP = 3020.0;
 
-    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0*SYSTEM_RADIUS;
+    const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0 * SystemRadius();
     const Ogre::Real MIN_ZOOM_IN_DISTANCE = 0.5;
 
     // collision dection system params
-    btVector3 WORLD_AABB_MIN(-SYSTEM_RADIUS, -SYSTEM_RADIUS, -SYSTEM_RADIUS / 10.0);
-    btVector3 WORLD_AABB_MAX(SYSTEM_RADIUS, SYSTEM_RADIUS, SYSTEM_RADIUS / 10.0);
+    btVector3 WORLD_AABB_MIN(-SystemRadius(), -SystemRadius(), -SystemRadius() / 10.0);
+    btVector3 WORLD_AABB_MAX(SystemRadius(), SystemRadius(), SystemRadius() / 10.0);
 
     // visibility masks
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
@@ -96,31 +93,6 @@ namespace {
     const unsigned int NO_CITY_LIGHTS = std::numeric_limits<unsigned int>::max();
 
     const unsigned short LOOKAT_NODE_TRACK_HANDLE = 0;
-
-    Ogre::Real OrbitRadius(unsigned int orbit)
-    {
-        assert(orbit < 10);
-        return SYSTEM_RADIUS / 10 * (orbit + 1) - 20.0;
-    }
-
-    Ogre::Real PlanetRadius(PlanetSize size)
-    {
-        Ogre::Real retval = 0;
-        switch (size) {
-        case INVALID_PLANET_SIZE: retval = 0.0; break;
-        case SZ_NOWORLD:          retval = 0.0; break;
-        case SZ_TINY:             retval = 2.0; break;
-        case SZ_SMALL:            retval = 3.5; break;
-        default:
-        case SZ_MEDIUM:           retval = 5.0; break;
-        case SZ_LARGE:            retval = 7.0; break;
-        case SZ_HUGE:             retval = 9.0; break;
-        case SZ_ASTEROIDS:        retval = 0.0; break;
-        case SZ_GASGIANT:         retval = 11.0; break; // this one goes to eleven
-        case NUM_PLANET_SIZES:    retval = 0.0; break;
-        };
-        return retval;
-    }
 
     Ogre::Vector3 Project(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
     {
@@ -485,7 +457,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
     m_camera_animation(m_scene_manager->createAnimation("CameraTrack", CAMERA_RECENTER_TIME)),
     m_camera_animation_state(m_scene_manager->createAnimationState("CameraTrack")),
-    m_distance_to_look_at_point(SYSTEM_RADIUS / 2.0),
+    m_distance_to_look_at_point(SystemRadius() / 2.0),
     m_pitch(0.0),
     m_roll(0.0),
     m_last_pos(),
@@ -551,7 +523,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     Ogre::BillboardSet* star_billboard_set = m_scene_manager->createBillboardSet("StarBackBillboardSet");
     star_billboard_set->setRenderQueueGroup(STAR_BACK_QUEUE);
     star_billboard_set->setMaterialName("backgrounds/star_back");
-    star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
+    star_billboard_set->setDefaultDimensions(StarRadius() * 2.0, StarRadius() * 2.0);
     m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
     star_billboard_set->setVisible(true);
     star_billboard_set->setVisibilityFlags(REGULAR_OBJECTS_MASK);
@@ -564,7 +536,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     star_billboard_set = m_scene_manager->createBillboardSet("StarCoreBillboardSet");
     star_billboard_set->setRenderQueueGroup(STAR_CORE_QUEUE);
     star_billboard_set->setMaterialName("backgrounds/star_core");
-    star_billboard_set->setDefaultDimensions(STAR_RADIUS * 2.0, STAR_RADIUS * 2.0);
+    star_billboard_set->setDefaultDimensions(StarRadius() * 2.0, StarRadius() * 2.0);
     star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
     star_billboard_set->setVisible(true);
     star_billboard_set->setVisibilityFlags(GLOWING_OBJECTS_MASK);
@@ -573,7 +545,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     Ogre::Light* star = m_scene_manager->createLight("Star");
     star->setType(Ogre::Light::LT_POINT);
     star->setPosition(Ogre::Vector3(0.0, 0.0, 0.0));
-    star->setAttenuation(SYSTEM_RADIUS * 0.51, 1.0, 0.0, 0.0);
+    star->setAttenuation(SystemRadius() * 0.51, 1.0, 0.0, 0.0);
 
     UpdateSkyBox();
 
@@ -852,24 +824,10 @@ void CombatWnd::InitCombat(System* system,
             Ogre::Real planet_radius = PlanetRadius(planet->Size());
             node->setScale(planet_radius, planet_radius, planet_radius);
             node->yaw(Ogre::Degree(planet->AxialTilt()));
-            Ogre::Vector3 position(OrbitRadius(it->first), 0.0, 0.0);
-
-            int turn_offset = ClientApp::GetApp()->CurrentTurn();
-            const Ogre::Real THIRD_ORBIT_PERIOD = 4;
-            const Ogre::Real THIRD_ORBIT_RADIUS = OrbitRadius(2);
-            const Ogre::Real ORBIT_RADIUS = OrbitRadius(it->first);
-            // Kepler's third law.
-            const Ogre::Real ORBIT_PERIOD = static_cast<Ogre::Real>(
-                std::sqrt(std::pow(static_cast<float>(THIRD_ORBIT_PERIOD), 2.0f) /
-                          std::pow(static_cast<float>(THIRD_ORBIT_RADIUS), 3.0f) *
-                          std::pow(static_cast<float>(ORBIT_RADIUS), 3.0f)));
-            
-            const Ogre::Real ORBIT_ANGULAR_VELOCITY =
-                2.0 * 3.14159 / ORBIT_PERIOD;
-            Ogre::Real rotation = turn_offset * ORBIT_ANGULAR_VELOCITY;
-
+            Ogre::Vector3 position(OrbitalRadius(it->first), 0.0, 0.0);
             Ogre::Quaternion position_rotation(
-                Ogre::Radian(planet->InitialOrbitalPosition() + rotation),
+                Ogre::Radian(planet->OrbitalPositionOnTurn(
+                                 ClientApp::GetApp()->CurrentTurn())),
                 Ogre::Vector3::UNIT_Z);
             position = position_rotation * position;
             node->setPosition(position);
@@ -1184,7 +1142,7 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
                                                              Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()));
             std::pair<bool, Ogre::Real> intersection =
                 Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
-            const Ogre::Real MAX_DISTANCE_SQ = SYSTEM_RADIUS * SYSTEM_RADIUS;
+            const Ogre::Real MAX_DISTANCE_SQ = SystemRadius() * SystemRadius();
             if (intersection.first) {
                 Ogre::Vector3 intersection_point = ray.getPoint(intersection.second);
                 if (intersection_point.squaredLength() < MAX_DISTANCE_SQ)
@@ -1319,7 +1277,7 @@ void CombatWnd::UpdateStarFromCameraPosition()
         // HACK! The currently-used star cores only cover part of the texture.  Here, we adjust for this, so that the edge
         // of the star as it appears onscreen is actually what we use for the star radius below.
         const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 155.0 / 250.0;
-        const Ogre::Real SAMPLE_INCREMENT = STAR_RADIUS * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
+        const Ogre::Real SAMPLE_INCREMENT = StarRadius() * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
 
         bool occlusions[TOTAL_SAMPLES];
         // left side positions
@@ -1406,8 +1364,8 @@ void CombatWnd::UpdateStarFromCameraPosition()
         };
 
         OcclusionParams occlusion_params = OCCLUSION_PARAMS[occlusion_index];
-        m_left_horizontal_flare_scroll_offset = (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
-        m_right_horizontal_flare_scroll_offset = -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * STAR_RADIUS);
+        m_left_horizontal_flare_scroll_offset = (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
+        m_right_horizontal_flare_scroll_offset = -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
         if (occlusion_params.get<0>() < 0)
             m_left_horizontal_flare_scroll_offset = 1.0;
         if (occlusion_params.get<1>() < 0)

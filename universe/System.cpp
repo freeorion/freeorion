@@ -550,3 +550,18 @@ void System::UpdateOwnership()
         }
     }
 }
+
+
+// free functions
+
+double SystemRadius()
+{ return 1000.0; }
+
+double StarRadius()
+{ return 80.0; }
+
+double OrbitalRadius(unsigned int orbit)
+{
+    assert(orbit < 10);
+    return SystemRadius() / 10 * (orbit + 1) - 20.0;
+}
