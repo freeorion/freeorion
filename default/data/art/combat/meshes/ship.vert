@@ -3,7 +3,7 @@ uniform vec3 light_dir;
 
 varying float front_diffuse; // diffuse color from key light (light_dir, i.e. the star)
 varying float back_diffuse; // diffuse color from fill light (-light_dir, i.e. the skybox)
-varying vec3 specular_base;
+varying float specular_base;
 varying vec2 tex_coord;
 varying vec3 light_vec;
 
@@ -11,12 +11,11 @@ void main()
 {
     vec4 ec_position = gl_ModelViewMatrix * gl_Vertex;
     vec3 normal = normalize(gl_NormalMatrix * gl_Normal);
-    vec3 light_vec = normalize(gl_NormalMatrix * light_dir);
+    light_vec = normalize(gl_NormalMatrix * light_dir);
     vec3 reflect_vec = reflect(-light_vec, normal);
     vec3 view_vec = normalize(vec3(-ec_position));
 
-    float spec_intensity = max(dot(reflect_vec, view_vec), 0.0);
-    specular_base = vec3(spec_intensity);
+    specular_base = max(dot(reflect_vec, view_vec), 0.0);
     front_diffuse = dot(light_vec, normal);
     back_diffuse = dot(-light_vec, normal);
     tex_coord = vec2(gl_MultiTexCoord0);
