@@ -138,14 +138,15 @@ namespace {
 
     std::string PlanetNodeMaterial(PlanetType type)
     {
+        assert(INVALID_PLANET_TYPE < type && type < NUM_PLANET_TYPES);
         if (type == PT_GASGIANT)
             return "gas_giant";
         else if (type == PT_RADIATED || type == PT_BARREN)
             return "atmosphereless_planet";
-        else if (type != PT_ASTEROIDS && type != INVALID_PLANET_TYPE)
-            return "planet";
+        else if (type == PT_ASTEROIDS)
+            return "asteroid";
         else
-            return "don't create";
+            return "planet";
     }
 
     std::string AtmosphereMaterialName(const std::string& base_name)
@@ -365,6 +366,29 @@ namespace {
             }
         }
         return asteroid_sets;
+    }
+
+    const std::vector<Ogre::MaterialPtr>& AsteroidMaterials()
+    {
+        static std::vector<Ogre::MaterialPtr> asteroid_materials;
+        if (asteroid_materials.empty())
+        {
+            const std::set<std::string>& asteroid_sets = AsteroidSets();
+            for (std::set<std::string>::const_iterator it = asteroid_sets.begin();
+                 it != asteroid_sets.end();
+                 ++it) {
+                std::string new_material_name = "asteroid_" + *it;
+                Ogre::MaterialPtr material =
+                    Ogre::MaterialManager::getSingleton().getByName("asteroid");
+                material = material->clone(new_material_name);
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                    setTextureName(*it + "Color.png");
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+                    setTextureName(*it + "Normal.png");
+                asteroid_materials.push_back(material);
+            }
+        }
+        return asteroid_materials;
     }
 
     void AddOptions(OptionsDB& db)
@@ -676,7 +700,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         planet_types[0] = PT_SWAMP;
         planet_types[1] = PT_TOXIC;
         planet_types[2] = PT_TERRAN;
-        planet_types[3] = PT_INFERNO;
+        planet_types[3] = PT_ASTEROIDS;//PT_INFERNO;
         planet_types[4] = PT_RADIATED;
         planet_types[5] = PT_BARREN;
         planet_types[6] = PT_TUNDRA;
@@ -687,7 +711,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         planet_sizes[0] = SZ_SMALL;
         planet_sizes[1] = SZ_LARGE;
         planet_sizes[2] = SZ_LARGE;
-        planet_sizes[3] = SZ_MEDIUM;
+        planet_sizes[3] = SZ_ASTEROIDS;//SZ_MEDIUM;
         planet_sizes[4] = SZ_LARGE;
         planet_sizes[5] = SZ_SMALL;
         planet_sizes[6] = SZ_MEDIUM;
@@ -904,125 +928,213 @@ void CombatWnd::InitCombat(System* system,
             planet = universe_object_cast<Planet*>(m_combat_universe[it->second]);
         if (planet) {
             std::string material_name = PlanetNodeMaterial(planet->Type());
-            if (material_name == "don't create")
-                continue;
+            if (material_name != "asteroid") {
+                std::string planet_name =
+                    "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
 
-            std::string planet_name = "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+                Ogre::SceneNode* node =
+                    m_scene_manager->getRootSceneNode()->createChildSceneNode(
+                        planet_name + " node");
+                Ogre::Real planet_radius = PlanetRadius(planet->Size());
+                node->setScale(planet_radius, planet_radius, planet_radius);
+                node->yaw(Ogre::Degree(planet->AxialTilt()));
+                Ogre::Vector3 position(OrbitalRadius(it->first), 0.0, 0.0);
+                Ogre::Quaternion position_rotation(
+                    Ogre::Radian(planet->OrbitalPositionOnTurn(
+                                     ClientApp::GetApp()->CurrentTurn())),
+                    Ogre::Vector3::UNIT_Z);
+                position = position_rotation * position;
+                node->setPosition(position);
 
-            Ogre::SceneNode* node =
-                m_scene_manager->getRootSceneNode()->createChildSceneNode(planet_name + " node");
-            Ogre::Real planet_radius = PlanetRadius(planet->Size());
-            node->setScale(planet_radius, planet_radius, planet_radius);
-            node->yaw(Ogre::Degree(planet->AxialTilt()));
-            Ogre::Vector3 position(OrbitalRadius(it->first), 0.0, 0.0);
-            Ogre::Quaternion position_rotation(
-                Ogre::Radian(planet->OrbitalPositionOnTurn(
-                                 ClientApp::GetApp()->CurrentTurn())),
-                Ogre::Vector3::UNIT_Z);
-            position = position_rotation * position;
-            node->setPosition(position);
+                // light comes from the star, and the star is at the origin
+                Ogre::Vector3 light_dir = -node->getPosition();
+                light_dir.normalise();
+                light_dir = node->getOrientation().Inverse() * light_dir;
 
-            // light comes from the star, and the star is at the origin
-            Ogre::Vector3 light_dir = -node->getPosition();
-            light_dir.normalise();
-            light_dir = node->getOrientation().Inverse() * light_dir;
+                assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
+                const std::set<std::string>& planet_textures =
+                    PlanetTextures().find(planet->Type())->second;
+                std::string base_name =
+                    *boost::next(planet_textures.begin(), planet->ID() % planet_textures.size());
 
-            assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
-            const std::set<std::string>& planet_textures =
-                PlanetTextures().find(planet->Type())->second;
-            std::string base_name =
-                *boost::next(planet_textures.begin(), planet->ID() % planet_textures.size());
+                // set up a sphere in the collision detection system
+                m_collision_shapes.push_back(new btSphereShape(planet_radius));
+                m_collision_objects.push_back(new btCollisionObject);
+                btMatrix3x3 identity;
+                identity.setIdentity();
+                m_collision_objects.back().getWorldTransform().setBasis(identity);
+                m_collision_objects.back().getWorldTransform().setOrigin(
+                    ToCollisionVector(position));
+                m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
+                m_collision_world->addCollisionObject(&m_collision_objects.back());
 
-            // set up a sphere in the collision detection system
-            m_collision_shapes.push_back(new btSphereShape(planet_radius));
-            m_collision_objects.push_back(new btCollisionObject);
-            btMatrix3x3 identity;
-            identity.setIdentity();
-            m_collision_objects.back().getWorldTransform().setBasis(identity);
-            m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(position));
-            m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
-            m_collision_world->addCollisionObject(&m_collision_objects.back());
+                if (material_name == "gas_giant") {
+                    Ogre::Entity* entity =
+                        m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                    entity->setMaterialName("gas_giant_core");
+                    assert(entity->getNumSubEntities() == 1u);
+                    entity->setCastShadows(true);
+                    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                    node->attachObject(entity);
 
-            if (material_name == "gas_giant") {
-                Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
-                entity->setMaterialName("gas_giant_core");
-                assert(entity->getNumSubEntities() == 1u);
-                entity->setCastShadows(true);
-                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                node->attachObject(entity);
+                    m_collision_objects.back().setUserPointer(
+                        static_cast<Ogre::MovableObject*>(entity));
 
-                m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
-
-                entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
-                entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
-                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-                std::string new_material_name =
-                    material_name + "_" + boost::lexical_cast<std::string>(it->first);
-                Ogre::MaterialPtr material =
-                    Ogre::MaterialManager::getSingleton().getByName(material_name);
-                material = material->clone(new_material_name);
-                m_planet_assets[it->first].second.push_back(material);
-                material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(base_name + ".png");
-                entity->setMaterialName(new_material_name);
-                node->attachObject(entity);
-            } else {
-                Ogre::Entity* entity = m_scene_manager->createEntity(planet_name, "sphere.mesh");
-                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                std::string new_material_name =
-                    material_name + "_" + boost::lexical_cast<std::string>(it->first);
-                Ogre::MaterialPtr material =
-                    Ogre::MaterialManager::getSingleton().getByName(material_name == "planet" ?
-                                                                    PlanetMaterialName(base_name) :
-                                                                    material_name);
-                material = material->clone(new_material_name);
-                m_planet_assets[it->first].second.push_back(material);
-                assert(entity->getNumSubEntities() == 1u);
-                material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(base_name + "Day.png");
-                material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->setTextureName(base_name + "Night.png");
-                entity->setMaterialName(new_material_name);
-                entity->setCastShadows(true);
-                node->attachObject(entity);
-
-                m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
-
-                if (material_name == "planet") {
-                    material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "CloudGloss.png");
-                    entity = m_scene_manager->createEntity(planet_name + " atmosphere", "sphere.mesh");
+                    entity = m_scene_manager->createEntity(
+                        planet_name + " atmosphere", "sphere.mesh");
                     entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                     entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
                     std::string new_material_name =
-                        material_name + "_atmosphere_" + boost::lexical_cast<std::string>(it->first);
+                        material_name + "_" + boost::lexical_cast<std::string>(it->first);
                     Ogre::MaterialPtr material =
-                        Ogre::MaterialManager::getSingleton().getByName(AtmosphereMaterialName(base_name));
+                        Ogre::MaterialManager::getSingleton().getByName(material_name);
                     material = material->clone(new_material_name);
                     m_planet_assets[it->first].second.push_back(material);
-                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
+                        setNamedConstant("light_dir", light_dir);
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                        setTextureName(base_name + ".png");
                     entity->setMaterialName(new_material_name);
                     node->attachObject(entity);
                 } else {
-                    assert(material_name == "atmosphereless_planet");
-                    material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->setTextureName(base_name + "Normal.png");
-                    double pop = planet->GetMeter(METER_POPULATION)->Current();
-                    unsigned int lights_level = NO_CITY_LIGHTS;
-                    const double MIN_POP_FOR_LIGHTS = 5.0;
-                    if (MIN_POP_FOR_LIGHTS < pop)
-                        lights_level = std::fmod(pop - 5.0, (100.0 - MIN_POP_FOR_LIGHTS) / 10.0);
-                    Ogre::TexturePtr texture = PlanetLightsTexture(base_name, lights_level);
-                    m_city_lights_textures.push_back(texture);
-                    material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->setTextureName(texture->getName());
-                }
-            }
+                    Ogre::Entity* entity =
+                        m_scene_manager->createEntity(planet_name, "sphere.mesh");
+                    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                    std::string new_material_name =
+                        material_name + "_" + boost::lexical_cast<std::string>(it->first);
+                    Ogre::MaterialPtr material =
+                        Ogre::MaterialManager::getSingleton().getByName(
+                            material_name == "planet" ?
+                            PlanetMaterialName(base_name) :
+                            material_name);
+                    material = material->clone(new_material_name);
+                    m_planet_assets[it->first].second.push_back(material);
+                    assert(entity->getNumSubEntities() == 1u);
+                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
+                        setNamedConstant("light_dir", light_dir);
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                        setTextureName(base_name + "Day.png");
+                    material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+                        setTextureName(base_name + "Night.png");
+                    entity->setMaterialName(new_material_name);
+                    entity->setCastShadows(true);
+                    node->attachObject(entity);
 
-            m_planet_assets[it->first].first = node;
+                    m_collision_objects.back().setUserPointer(
+                        static_cast<Ogre::MovableObject*>(entity));
+
+                    if (material_name == "planet") {
+                        material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
+                            setTextureName(base_name + "CloudGloss.png");
+                        entity = m_scene_manager->createEntity(
+                            planet_name + " atmosphere", "sphere.mesh");
+                        entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
+                        entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                        entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
+                        std::string new_material_name =
+                            material_name + "_atmosphere_" +
+                            boost::lexical_cast<std::string>(it->first);
+                        Ogre::MaterialPtr material =
+                            Ogre::MaterialManager::getSingleton().getByName(
+                                AtmosphereMaterialName(base_name));
+                        material = material->clone(new_material_name);
+                        m_planet_assets[it->first].second.push_back(material);
+                        material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
+                            setNamedConstant("light_dir", light_dir);
+                        entity->setMaterialName(new_material_name);
+                        node->attachObject(entity);
+                    } else {
+                        assert(material_name == "atmosphereless_planet");
+                        material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
+                            setTextureName(base_name + "Normal.png");
+                        double pop = planet->GetMeter(METER_POPULATION)->Current();
+                        unsigned int lights_level = NO_CITY_LIGHTS;
+                        const double MIN_POP_FOR_LIGHTS = 5.0;
+                        if (MIN_POP_FOR_LIGHTS < pop) {
+                            lights_level =
+                                std::fmod(pop - 5.0, (100.0 - MIN_POP_FOR_LIGHTS) / 10.0);
+                        }
+                        Ogre::TexturePtr texture = PlanetLightsTexture(base_name, lights_level);
+                        m_city_lights_textures.push_back(texture);
+                        material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
+                            setTextureName(texture->getName());
+                    }
+                }
+
+                m_planet_assets[it->first].first = node;
+            } else {
+                const int ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT = 50;
+                const int ORBITAL_RADIUS = OrbitalRadius(it->first);
+                const int ASTEROIDS =
+                    ORBITAL_RADIUS / OrbitalRadius(3) * ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT;
+
+                std::string planet_name =
+                    "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
+
+                const Ogre::Real DELTA_THETA = 2.0 * 3.1415926 / ASTEROIDS;
+                Ogre::Real theta = 0.0;
+                for (int i = 0; i < ASTEROIDS; ++i, theta += DELTA_THETA) {
+                    std::string i_string = boost::lexical_cast<std::string>(i);
+                    Ogre::SceneNode* node =
+                        m_scene_manager->getRootSceneNode()->createChildSceneNode(
+                            planet_name + " node " + i_string);
+                    node->roll(Ogre::Degree(360.0 * RandZeroToOne()));
+                    node->pitch(Ogre::Degree(360.0 * RandZeroToOne()));
+                    node->yaw(Ogre::Degree(360.0 * RandZeroToOne()));
+                    Ogre::Vector3 position(ORBITAL_RADIUS, 0.0, 0.0);
+                    Ogre::Quaternion position_rotation(Ogre::Radian(theta),
+                                                       Ogre::Vector3::UNIT_Z);
+                    position = position_rotation * position;
+                    // bump position a bit
+                    node->setPosition(position);
+
+                    // light comes from the star, and the star is at the origin
+                    Ogre::Vector3 light_dir = -node->getPosition();
+                    light_dir.normalise();
+                    light_dir = node->getOrientation().Inverse() * light_dir;
+
+                    std::string base_name =
+                        *boost::next(asteroid_sets.begin(), i % asteroid_sets.size());
+
+                    Ogre::Entity* entity =
+                        m_scene_manager->createEntity(planet_name + " " + i_string,
+                                                      base_name + ".mesh");
+                    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                    Ogre::MaterialPtr material =
+                        AsteroidMaterials()[i % AsteroidMaterials().size()];
+                    std::string new_material_name = planet_name + " material " + i_string;
+                    material = material->clone(new_material_name);
+                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
+                        setNamedConstant("light_dir", light_dir);
+                    entity->setMaterialName(new_material_name);
+                    entity->setCastShadows(true);
+                    node->attachObject(entity);
+                }
+
+#if 0
+                // set up a sphere in the collision detection system
+                m_collision_shapes.push_back(new btSphereShape(planet_radius));
+                m_collision_objects.push_back(new btCollisionObject);
+                btMatrix3x3 identity;
+                identity.setIdentity();
+                m_collision_objects.back().getWorldTransform().setBasis(identity);
+                m_collision_objects.back().getWorldTransform().setOrigin(
+                    ToCollisionVector(position));
+                m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
+                m_collision_world->addCollisionObject(&m_collision_objects.back());
+
+                m_collision_objects.back().setUserPointer(
+                    static_cast<Ogre::MovableObject*>(entity));
+#endif
+            }
         }
     }
 
     // create starlane entrance points
-    for (System::const_lane_iterator it = m_system->begin_lanes(); it != m_system->begin_lanes(); ++it) {
+    for (System::const_lane_iterator it = m_system->begin_lanes();
+         it != m_system->begin_lanes();
+         ++it) {
         // TODO
     }
 }
