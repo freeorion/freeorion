@@ -163,6 +163,7 @@ private:
     class FleetETAMapIndicator;
 
     void Zoom(int delta);                           //!< changes the zoomlevel of the main map
+    void RefreshFleetButtons();                     //!< removes old / existing and creates new fleet buttons
     void DoFleetButtonsLayout();                    //!< does layout of fleet buttons
     void DoSystemIconsLayout();                     //!< does layout of system icons
 

@@ -64,6 +64,7 @@ Asmodeus
 Aspidiske
 Asteria
 Asterope
+Astley
 Astraea
 Asvins
 Athens
@@ -350,6 +351,7 @@ Nile
 Niyat
 Njord 
 Nocobi
+Norris
 Nunki
 Nusakan
 Oasis
@@ -363,6 +365,7 @@ Orchid
 Orionis
 Othila
 Pagalos
+Pandora
 Pawn
 Peacock
 Peel

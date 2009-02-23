@@ -868,38 +868,19 @@ void MapWnd::InitTurn(int turn_number)
         it->second.disconnect();
     m_fleet_state_change_signals.clear();
 
-    Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
-    typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
-    SortedFleetMap position_sorted_fleets;
-    for (unsigned int i = 0; i < fleets.size(); ++i) {
-        position_sorted_fleets.insert(std::make_pair(std::make_pair(fleets[i]->X(), fleets[i]->Y()), fleets[i]));
-    }
 
-    SortedFleetMap::iterator it = position_sorted_fleets.begin();
-    SortedFleetMap::iterator end_it = position_sorted_fleets.end();
-    while (it != end_it) {
-        SortedFleetMap::iterator local_end_it = position_sorted_fleets.upper_bound(it->first);
-        std::map<int, std::vector<int> > IDs_by_empire_color;
+    // create fleet buttons for moving fleets
+    RefreshFleetButtons();
 
-        for (; it != local_end_it; ++it)
-            IDs_by_empire_color[*it->second->Owners().begin()].push_back(it->second->ID());
 
-        // create new fleetbutton for this cluster of fleets
-        for (std::map<int, std::vector<int> >::iterator ID_it = IDs_by_empire_color.begin(); ID_it != IDs_by_empire_color.end(); ++ID_it) {
-            FleetButton* fb = new FleetButton(ID_it->second);
-            m_moving_fleet_buttons.push_back(fb);
-            AttachChild(fb);
-            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
-        }
-    }
-    // position fleetbuttons
-    DoFleetButtonsLayout();
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
         SetFleetMovementLine(*it);
 
-    // connect fleet change signals to update moving fleet movement lines, so that ordering moving fleets to move
-    // updates their displayed path
+
+    // connect fleet change signals to update moving fleet movement lines, so that ordering
+    // moving fleets to move updates their displayed path
+    Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
     for (Universe::ObjectVec::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
         const Fleet* moving_fleet = universe_object_cast<const Fleet*>(*it);
         if (!moving_fleet) {
@@ -909,7 +890,9 @@ void MapWnd::InitTurn(int turn_number)
         m_fleet_state_change_signals[moving_fleet->ID()] = GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet));
     }
 
+
     MoveChildUp(m_side_panel);
+
 
     // set turn button to current turn
     m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
@@ -1417,17 +1400,60 @@ void MapWnd::DoSystemIconsLayout()
 
 void MapWnd::DoFleetButtonsLayout()
 {
-    // position and resize unattached (to system icons) fleet icons
+    // reposition unattached (to system icons) fleet icons
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
         FleetButton* fb = *it;
-        const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
 
+        const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
         const Fleet* fleet = *(fb->Fleets().begin());
+
         GG::Pt button_ul(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE.x / 2.0,
                          fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE.y / 2.0);
 
         fb->MoveTo(button_ul);
     }
+}
+
+void MapWnd::RefreshFleetButtons()
+{
+    // determine fleets that need buttons, sorted by position, so that all fleets at the same location can
+    // be grouped together to be passed to the button
+    Universe::ObjectVec fleets = GetUniverse().FindObjects(MovingFleetVisitor());
+    typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
+    SortedFleetMap position_sorted_fleets;
+    for (unsigned int i = 0; i < fleets.size(); ++i) {
+        position_sorted_fleets.insert(std::make_pair(std::make_pair(fleets[i]->X(), fleets[i]->Y()), fleets[i]));
+    }
+
+
+    // clear old fleet buttons
+    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+        delete *it;
+    m_moving_fleet_buttons.clear();
+
+
+    // create new fleet buttons for fleets at each unique location
+    const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
+    SortedFleetMap::iterator it = position_sorted_fleets.begin();
+    SortedFleetMap::iterator end_it = position_sorted_fleets.end();
+    while (it != end_it) {
+        // get end of range of fleets at this location
+        SortedFleetMap::iterator local_end_it = position_sorted_fleets.upper_bound(it->first);
+
+        // put into a vector to be passed to the fleetbutton
+        std::vector<int> fleet_ids;
+        for (; it != local_end_it; ++it)
+            fleet_ids.push_back(it->second->ID());
+
+        // create new fleetbutton for this cluster of fleets
+        FleetButton* fb = new FleetButton(fleet_ids, FLEETBUTTON_SIZE);
+        m_moving_fleet_buttons.push_back(fb);
+        AttachChild(fb);
+        GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+    }
+
+    // position fleetbuttons
+    DoFleetButtonsLayout();
 }
 
 int MapWnd::SystemIconSize() const
@@ -1458,6 +1484,8 @@ FleetButton::SizeType MapWnd::FleetButtonSizeType() const
 
 void MapWnd::Zoom(int delta)
 {
+    const FleetButton::SizeType OLD_FLEETBUTTON_SIZE = FleetButtonSizeType();
+
     GG::Pt ul = ClientUpperLeft();
     GG::X_d center_x = GG::GUI::GetGUI()->AppWidth() / 2.0;
     GG::Y_d center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
@@ -1493,7 +1521,14 @@ void MapWnd::Zoom(int delta)
         ShowSystemNames();
 
     DoSystemIconsLayout();
-    DoFleetButtonsLayout();
+
+    // if fleet buttons need to change size, need to fully refresh them (clear and recreate).  If they are the
+    // same size as before the zoom, then can just reposition them without recreating
+    const FleetButton::SizeType NEW_FLEETBUTTON_SIZE = FleetButtonSizeType();
+    if (OLD_FLEETBUTTON_SIZE != NEW_FLEETBUTTON_SIZE)
+        RefreshFleetButtons();
+    else
+        DoFleetButtonsLayout();
 
     // translate map and UI widgets to account for the change in upper left due to zooming
     GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
@@ -1945,7 +1980,7 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
         } else {
             std::copy(btn_fleets.begin(), btn_fleets.end(), std::back_inserter(fleets));
         }
-        
+
         // determine whether this FleetWnd can't be manipulated by the users: can't manipulate other 
         // empires FleetWnds, and can't give orders to your fleets while they're en-route.
         bool read_only = false;
