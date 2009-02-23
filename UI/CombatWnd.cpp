@@ -74,8 +74,8 @@ namespace {
     const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 2;
 
     const std::set<int> STENCIL_OP_RENDER_QUEUES =
-        boost::assign::list_of
-        (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
+                                                   boost::assign::list_of
+                                                   (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
         (SELECTION_HILITING_OUTLINED_RENDER_QUEUE)
         (SELECTION_HILITING_FILLED_1_RENDER_QUEUE)
         (SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
@@ -275,6 +275,96 @@ namespace {
                     HumanClientApp::GetApp()->PlayerID(),
                     -1,
                     ""));
+    }
+
+    const std::map<StarType, std::set<std::string> >& StarTextures()
+    {
+        static std::map<StarType, std::set<std::string> > star_textures;
+        if (star_textures.empty())
+        {
+            namespace fs = boost::filesystem;
+            fs::path dir = ClientUI::ArtDir() / "combat" / "backgrounds";
+            assert(fs::is_directory(dir));
+            fs::directory_iterator end_it;
+            for (std::map<StarType, std::string>::const_iterator type_it =
+                     ClientUI::StarTypeFilePrefixes().begin();
+                 type_it != ClientUI::StarTypeFilePrefixes().end();
+                 ++type_it) {
+                std::set<std::string>& current_textures = star_textures[type_it->first];
+                for (fs::directory_iterator it(dir); it != end_it; ++it) {
+                    try {
+                        if (fs::exists(*it) &&
+                            !fs::is_directory(*it) &&
+                            boost::algorithm::starts_with(it->filename(), type_it->second)) {
+                            current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
+                        }
+                    } catch (const fs::filesystem_error& e) {
+                        // ignore files for which permission is denied, and rethrow other exceptions
+                        if (e.code() != boost::system::posix_error::permission_denied)
+                            throw;
+                    }
+                }
+            }
+        }
+        return star_textures;
+    }
+
+    const std::map<PlanetType, std::set<std::string> >& PlanetTextures()
+    {
+        static std::map<PlanetType, std::set<std::string> > planet_textures;
+        if (planet_textures.empty())
+        {
+            namespace fs = boost::filesystem;
+            fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
+            assert(fs::is_directory(dir));
+            fs::directory_iterator end_it;
+            for (std::map<PlanetType, std::string>::const_iterator type_it =
+                     ClientUI::PlanetTypeFilePrefixes().begin();
+                 type_it != ClientUI::PlanetTypeFilePrefixes().end();
+                 ++type_it) {
+                std::set<std::string>& current_textures = planet_textures[type_it->first];
+                for (fs::directory_iterator it(dir); it != end_it; ++it) {
+                    try {
+                        if (fs::exists(*it) &&
+                            !fs::is_directory(*it) &&
+                            boost::algorithm::starts_with(it->filename(), type_it->second)) {
+                            current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
+                        }
+                    } catch (const fs::filesystem_error& e) {
+                        // ignore files for which permission is denied, and rethrow other exceptions
+                        if (e.code() != boost::system::posix_error::permission_denied)
+                            throw;
+                    }
+                }
+            }
+        }
+        return planet_textures;
+    }
+
+    const std::set<std::string>& AsteroidSets()
+    {
+        static std::set<std::string> asteroid_sets;
+        if (asteroid_sets.empty())
+        {
+            const std::string ASTEROID_BASE_NAME = "Asteroid";
+            namespace fs = boost::filesystem;
+            fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
+            fs::directory_iterator end_it;
+            for (fs::directory_iterator it(dir); it != end_it; ++it) {
+                try {
+                    if (fs::exists(*it) &&
+                        !fs::is_directory(*it) &&
+                        boost::algorithm::starts_with(it->filename(), ASTEROID_BASE_NAME)) {
+                        asteroid_sets.insert(it->filename().substr(0, ASTEROID_BASE_NAME.size() + 2));
+                    }
+                } catch (const fs::filesystem_error& e) {
+                    // ignore files for which permission is denied, and rethrow other exceptions
+                    if (e.code() != boost::system::posix_error::permission_denied)
+                        throw;
+                }
+            }
+        }
+        return asteroid_sets;
     }
 
     void AddOptions(OptionsDB& db)
@@ -775,28 +865,9 @@ void CombatWnd::InitCombat(System* system,
 
     SetAccelerators();
 
-    // build list of available star textures, by type
-    std::set<std::string> star_textures;
-    {
-        namespace fs = boost::filesystem;
-        fs::path dir = ClientUI::ArtDir() / "combat" / "backgrounds";
-        assert(fs::is_directory(dir));
-        fs::directory_iterator end_it;
-        std::string type_str = ClientUI::StarTypeFilePrefixes()[m_system->Star()];
-        for (fs::directory_iterator it(dir); it != end_it; ++it) {
-            try {
-                if (fs::exists(*it) &&
-                    !fs::is_directory(*it) &&
-                    boost::algorithm::starts_with(it->filename(), type_str)) {
-                    star_textures.insert(it->filename().substr(0, type_str.size() + 2));
-                }
-            } catch (const fs::filesystem_error& e) {
-                // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.code() != boost::system::posix_error::permission_denied)
-                    throw;
-            }
-        }
-    }
+    assert(StarTextures().find(m_system->Star()) != StarTextures().end());
+    const std::set<std::string>& star_textures = StarTextures().find(m_system->Star())->second;
+    const std::set<std::string>& asteroid_sets = AsteroidSets();
 
     // pick and assign star textures
     {
@@ -822,56 +893,6 @@ void CombatWnd::InitCombat(System* system,
             ClientUI::GetTexture(
                 ClientUI::ArtDir() / "combat" / "backgrounds" / (base_name + "small_spark.png"),
                 false);
-    }
-
-    // build list of available planet textures, by type
-    std::map<PlanetType, std::set<std::string> > planet_textures;
-    {
-        namespace fs = boost::filesystem;
-        fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
-        assert(fs::is_directory(dir));
-        fs::directory_iterator end_it;
-        for (std::map<PlanetType, std::string>::const_iterator type_it =
-                 ClientUI::PlanetTypeFilePrefixes().begin();
-             type_it != ClientUI::PlanetTypeFilePrefixes().end();
-             ++type_it) {
-            std::set<std::string>& current_textures = planet_textures[type_it->first];
-            for (fs::directory_iterator it(dir); it != end_it; ++it) {
-                try {
-                    if (fs::exists(*it) &&
-                        !fs::is_directory(*it) &&
-                        boost::algorithm::starts_with(it->filename(), type_it->second)) {
-                        current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
-                    }
-                } catch (const fs::filesystem_error& e) {
-                    // ignore files for which permission is denied, and rethrow other exceptions
-                    if (e.code() != boost::system::posix_error::permission_denied)
-                        throw;
-                }
-            }
-        }
-    }
-
-    // build list of available asteroid textures and meshes
-    std::set<std::string> asteroid_sets;
-    {
-        const std::string ASTEROID_BASE_NAME = "Asteroid";
-        namespace fs = boost::filesystem;
-        fs::path dir = ClientUI::ArtDir() / "combat" / "meshes" / "planets";
-        fs::directory_iterator end_it;
-        for (fs::directory_iterator it(dir); it != end_it; ++it) {
-            try {
-                if (fs::exists(*it) &&
-                    !fs::is_directory(*it) &&
-                    boost::algorithm::starts_with(it->filename(), ASTEROID_BASE_NAME)) {
-                    asteroid_sets.insert(it->filename().substr(0, ASTEROID_BASE_NAME.size() + 2));
-                }
-            } catch (const fs::filesystem_error& e) {
-                // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.code() != boost::system::posix_error::permission_denied)
-                    throw;
-            }
-        }
     }
 
     // create planets
@@ -906,9 +927,11 @@ void CombatWnd::InitCombat(System* system,
             light_dir.normalise();
             light_dir = node->getOrientation().Inverse() * light_dir;
 
+            assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
+            const std::set<std::string>& planet_textures =
+                PlanetTextures().find(planet->Type())->second;
             std::string base_name =
-                *boost::next(planet_textures[planet->Type()].begin(),
-                             planet->ID() % planet_textures[planet->Type()].size());
+                *boost::next(planet_textures.begin(), planet->ID() % planet_textures.size());
 
             // set up a sphere in the collision detection system
             m_collision_shapes.push_back(new btSphereShape(planet_radius));
