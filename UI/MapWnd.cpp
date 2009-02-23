@@ -601,11 +601,14 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
-    // this gets cleared here instead of with the movement line stuff because that would clear some movement lines that come from the SystemIcons below
+
+    // this gets cleared here instead of with the movement line stuff because that would
+    // clear some movement lines that come from the SystemIcons below
     m_fleet_lines.clear();
     ClearProjectedFleetMovementLines();
 
-    // systems and starlanes
+
+    // set up system icon textures and starlane rendering
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
     m_system_icons.clear();
@@ -622,7 +625,7 @@ void MapWnd::InitTurn(int turn_number)
     std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
     std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
-    Logger().debugStream() << "ADDING STARLANES";
+    Logger().debugStream() << "ADDING STARLANES, SYSTEM TETURES AND GALAXY GAS";
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
     std::vector<System*> systems = universe.FindObjects<System>();
@@ -690,25 +693,49 @@ void MapWnd::InitTurn(int turn_number)
             const double ROTATION = start_system->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const double COS_THETA = std::cos(ROTATION);
             const double SIN_THETA = std::sin(ROTATION);
-            // This rotates the upper left and lower right corners CCW ROTATION
-            // radians, around start_system.  The initial upper left and lower
-            // right corners are (-GAS_SIZE, -GAS_SIZE) and (GAS_SIZE,
-            // GAS_SIZE), in map coordinates respectively.  See note above
-            // texture coords for why we're making coordinate sets that are 2x
-            // too big.
-            double gas_ul_x = start_system->X() + COS_THETA * -GAS_SIZE + SIN_THETA * GAS_SIZE;
-            double gas_ul_y = start_system->Y() - -SIN_THETA * -GAS_SIZE + COS_THETA * GAS_SIZE;
-            double gas_lr_x = start_system->X() + COS_THETA * GAS_SIZE + SIN_THETA * -GAS_SIZE;
-            double gas_lr_y = start_system->Y() - -SIN_THETA * GAS_SIZE + COS_THETA * -GAS_SIZE;
+
+            // Components of corner points of a quad
+            const double X1 =  1.0, Y1 =  1.0;  // upper right corner (X1, Y1)
+            const double X2 = -1.0, Y2 =  1.0;  // upper left corner  (X2, Y2)
+            const double X3 = -1.0, Y3 = -1.0;  // lower left corner  (X3, Y3)
+            const double X4 =  1.0, Y4 = -1.0;  // lower right corner (X4, Y4)
+
+            // Calculate rotated corner point components after CCW ROTATION radians around origin.
+            const double X1r =  COS_THETA*X1 + SIN_THETA*Y1;
+            const double Y1r = -SIN_THETA*X1 + COS_THETA*Y1;
+            const double X2r =  COS_THETA*X2 + SIN_THETA*Y2;
+            const double Y2r = -SIN_THETA*X2 + COS_THETA*Y2;
+            const double X3r =  COS_THETA*X3 + SIN_THETA*Y3;
+            const double Y3r = -SIN_THETA*X3 + COS_THETA*Y3;
+            const double X4r =  COS_THETA*X4 + SIN_THETA*Y4;
+            const double Y4r = -SIN_THETA*X4 + COS_THETA*Y4;
+
+            // Multiply all coords by GAS_SIZE to get relative scaled rotated quad corner components
+            // See note above texture coords for why we're making coordinate sets that are 2x too big.
+
+            // add to system position to get translated scaled rotated quad corner
+            const double GAS_X1 = start_system->X() + (X1r * GAS_SIZE);
+            const double GAS_Y1 = start_system->Y() + (Y1r * GAS_SIZE);
+            const double GAS_X2 = start_system->X() + (X2r * GAS_SIZE);
+            const double GAS_Y2 = start_system->Y() + (Y2r * GAS_SIZE);
+            const double GAS_X3 = start_system->X() + (X3r * GAS_SIZE);
+            const double GAS_Y3 = start_system->Y() + (Y3r * GAS_SIZE);
+            const double GAS_X4 = start_system->X() + (X4r * GAS_SIZE);
+            const double GAS_Y4 = start_system->Y() + (Y4r * GAS_SIZE);
+
             std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
-            gas_vertices.push_back(gas_lr_x);
-            gas_vertices.push_back(gas_ul_y);
-            gas_vertices.push_back(gas_ul_x);
-            gas_vertices.push_back(gas_ul_y);
-            gas_vertices.push_back(gas_ul_x);
-            gas_vertices.push_back(gas_lr_y);
-            gas_vertices.push_back(gas_lr_x);
-            gas_vertices.push_back(gas_lr_y);
+            // rotated upper right
+            gas_vertices.push_back(GAS_X1);
+            gas_vertices.push_back(GAS_Y1);
+            // rotated upper left
+            gas_vertices.push_back(GAS_X2);
+            gas_vertices.push_back(GAS_Y2);
+            // rotated lower left
+            gas_vertices.push_back(GAS_X3);
+            gas_vertices.push_back(GAS_Y3);
+            // rotated lower right
+            gas_vertices.push_back(GAS_X4);
+            gas_vertices.push_back(GAS_Y4);
         }
 
         // system's starlanes
