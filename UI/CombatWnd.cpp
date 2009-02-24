@@ -1698,10 +1698,12 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
 
     node->setPosition(x, y, 0.0);
 
+#if 0
     Ogre::Vector3 light_dir = -node->getPosition();
     light_dir.normalise();
     light_dir = node->getOrientation().Inverse() * light_dir;
     material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
+#endif
 
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;

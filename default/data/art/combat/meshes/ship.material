@@ -8,7 +8,10 @@ material ship {
     technique {
         pass {
             vertex_program_ref ship_vert
-            { param_named light_dir float3 1.0 0.0 0.0 }
+            {
+                param_named_auto light_pos light_position_object_space 0
+                param_named_auto camera_pos camera_position_object_space
+            }
 
             fragment_program_ref ship_frag {
                 param_named color_texture int 0
