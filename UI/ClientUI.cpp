@@ -86,6 +86,7 @@ GG::Clr     ClientUI::MultieditIntColor()       { return GetOptionsDB().Get<Stre
 GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
 GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
 
+double      ClientUI::SystemCircleSize()        { return GetOptionsDB().Get<double>("UI.system-circle-size"); }
 int         ClientUI::SystemIconSize()          { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
 GG::Clr     ClientUI::SystemNameTextColor()     { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
 double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }

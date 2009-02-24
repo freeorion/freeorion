@@ -306,7 +306,6 @@ private:
     void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type = INVALID_METER_TYPE);
 
 
-    void    GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid);     ///< creates an irregular galaxy and stores the empire homeworlds in the homeworlds vector
     void    PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);        ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
     void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
     bool    ConnectedWithin(int system1, int system2, int maxLaneJumps,

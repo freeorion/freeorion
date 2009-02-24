@@ -214,6 +214,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
      *         |  |
      *         \__/
      */
+
     if (moving) {   // moving at top left
         retval += GG::Pt(-FLEETBUTTON_SIZE.x,   FLEETBUTTON_SIZE.y*button_number);
         retval += GG::Pt(GG::X0,                FLEETBUTTON_SIZE.y*(button_number - 1));
@@ -226,7 +227,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
 
 int SystemIcon::EnclosingCircleDiameter() const
 {
-    return static_cast<const int>(Value(Width())*1.5) + 1;
+    return static_cast<const int>(Value(Width())* GetOptionsDB().Get<double>("UI.system-circle-size")) + 1;
 }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)

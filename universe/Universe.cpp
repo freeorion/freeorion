@@ -161,6 +161,7 @@ namespace {
                                            boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2_index)));
         } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
+            fd; // to quiet warning about unused variable
         }
 
 
@@ -227,6 +228,7 @@ namespace {
                                         &colors[0]);
         } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
+            fd; // to quiet warnings about unused variable
         }
 
 
@@ -1497,7 +1499,7 @@ namespace {
     double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
     {
 #ifdef FREEORION_BUILD_SERVER
-        if(positions.size()==0)
+        if(positions.size() ==0 )
             return 0.0;
 
         unsigned int j;
@@ -1533,8 +1535,7 @@ namespace {
         DoubleDistType    random_angle    = DoubleDist  (0.0,2.0*PI);
         DoubleDistType    random_radius   = DoubleDist  (0.0,  1.0);
 
-        for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
-        {
+        for (i = 0, attempts = 0; i < static_cast<int>(stars) && attempts < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
             double radius = random_radius();
 
             if (radius < center) {
@@ -1542,7 +1543,7 @@ namespace {
                 x = radius * cos( arm_offset + angle );
                 y = radius * sin( arm_offset + angle );
             } else {
-                double arm    = (double)random_arm() * arm_angle;
+                double arm    = static_cast<double>(random_arm()) * arm_angle;
                 double angle  = random_gaussian();
 
                 x = radius * cos( arm_offset + arm + angle + radius * arm_length );
@@ -1556,7 +1557,7 @@ namespace {
                 continue;
 
             // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+            double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x,y), positions);
 
             // If so, we try again.
             if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -1580,8 +1581,8 @@ namespace {
 #ifdef FREEORION_BUILD_SERVER
         const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
         const double rotation = RandDouble(0.0, PI),
-            rotation_sin = std::sin(rotation),
-            rotation_cos = std::cos(rotation);
+                     rotation_sin = std::sin(rotation),
+                     rotation_cos = std::cos(rotation);
         const double gap_constant = .95;
         const double gap_size = 1.0 - gap_constant * gap_constant * gap_constant;
 
@@ -1616,7 +1617,7 @@ namespace {
                 continue;
 
             // See if new star is too close to any existing star.
-            double lowest_dist=CalcNewPosNearestNeighbour(std::pair<double,double>(x,y),positions);
+            double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x, y), positions);
 
             // If so, we try again.
             if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
@@ -1733,8 +1734,7 @@ namespace {
         DoubleDistType   theta_dist = DoubleDist(0.0, 2.0 * PI);
         GaussianDistType radius_dist = GaussianDist(RING_RADIUS, RING_WIDTH / 3.0);
 
-        for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts)
-        {
+        for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
             double theta = theta_dist();
             double radius = radius_dist();
 
@@ -1764,8 +1764,52 @@ namespace {
 #endif
     }
 
+    void IrregularGalaxyPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
+    {
+        Logger().debugStream() << "IrregularGalaxyPositions";
+#ifdef FREEORION_BUILD_SERVER
+        unsigned int positions_placed = 0;
+        for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
+
+            double x = width * RandZeroToOne();
+            double y = height * RandZeroToOne();
+
+            Logger().debugStream() << "... potential position: (" << x << ", " << y << ")";
+
+            // reject positions outside of galaxy: minimum 0, maximum height or width.  shouldn't be a problem,
+            // but I'm copying this from one of the other generation functions and figure it might as well remain
+            if (x < 0 || width <= x || y < 0 || height <= y)
+                continue;
+
+            // See if new star is too close to any existing star.
+            double lowest_dist = CalcNewPosNearestNeighbour(std::pair<double,double>(x,y), positions);
+
+            // If so, we try again.
+            if (lowest_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION && attempts < MAX_ATTEMPTS_PLACE_SYSTEM - 1) {
+                --i;
+                continue;
+            }
+
+            // Add the new star location.
+            positions.push_back(std::make_pair(x, y));
+
+            Logger().debugStream() << "... added system at (" << x << ", " << y << ") after " << attempts << " attempts";
+
+            positions_placed++;
+
+            // Note that attempts is reset for every star.
+            attempts = 0;
+        }
+        Logger().debugStream() << "... placed " << positions_placed << " systems";
+#else
+        throw std::runtime_error("Non-server called Universe::IrregularGalaxyPositions; only server should call this while creating the universe");
+#endif
+    }
+
+
     System* GenerateSystem(Universe &universe, Age age, double x, double y)
     {
+        Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
 #ifdef FREEORION_BUILD_SERVER
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
@@ -1795,7 +1839,7 @@ namespace {
 
         int new_system_id = universe.Insert(system);
         if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
-            throw std::runtime_error("Universe::GenerateIrregularGalaxy() : Attempt to insert system " +
+            throw std::runtime_error("Universe::GenerateSystem() : Attempt to insert system " +
                                      star_name + " into the object map failed.");
         }
         return system;
@@ -1807,6 +1851,7 @@ namespace {
     void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> > &positions, 
                            Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
+        Logger().debugStream() << "GenerateStarField";
 #ifdef FREEORION_BUILD_SERVER
         // generate star field
         for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
@@ -2170,7 +2215,6 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     case SPIRAL_3:
     case SPIRAL_4:
         SpiralGalaxyCalcPositions(positions, 2 + (shape - SPIRAL_2), size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     case CLUSTER: {
         int average_clusters = size / 20; // chosen so that a "typical" size of 100 yields about 5 clusters
@@ -2178,24 +2222,22 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
             average_clusters = 2;
         int clusters = RandSmallInt(average_clusters * 8 / 10, average_clusters * 12 / 10); // +/- 20%
         ClusterGalaxyCalcPositions(positions, clusters, size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     }
     case ELLIPTICAL:
         EllipticalGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     case IRREGULAR:
-        GenerateIrregularGalaxy(size, age, adjacency_grid);
+        IrregularGalaxyPositions(positions, size, s_universe_width, s_universe_width);
         break;
     case RING:
         RingGalaxyCalcPositions(positions, size, s_universe_width, s_universe_width);
-        GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
         break;
     default:
         Logger().errorStream() << "Universe::Universe : Unknown galaxy shape: " << shape << ".  Using IRREGULAR as default.";
-        GenerateIrregularGalaxy(size, age, adjacency_grid);
+        IrregularGalaxyPositions(positions, size, s_universe_width, s_universe_width);
     }
+    GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
 
     PopulateSystems(planet_density, specials_freq);
     GenerateStarlanes(starlane_freq, adjacency_grid);
@@ -2224,50 +2266,9 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 #endif
 }
 
-void Universe::GenerateIrregularGalaxy(int stars, Age age, AdjacencyGrid& adjacency_grid)
-{
-#ifdef FREEORION_BUILD_SERVER
-    SmallIntDistType star_type_gen = SmallIntDist(0, NUM_STAR_TYPES - 1);
-
-    // generate star field
-    for (int star_cnt = 0; star_cnt < stars; ++star_cnt) {
-        // generate new star
-        const double ADJACENCY_BOX_SIZE = UniverseWidth() / ADJACENCY_BOXES;
-
-        bool placed = false;
-        int attempts_left = 25;
-        while (!placed && attempts_left--) {
-            // make sure this system doesn't get slapped down too close to or on top of any systems
-            std::set<System*> neighbors;
-            double x = (s_universe_width - 0.1) * RandZeroToOne(),
-                y = (s_universe_width - 0.1) * RandZeroToOne();
-            GetNeighbors(x, y, adjacency_grid, neighbors);
-
-            bool too_close = false;
-            for (std::set<System*>::iterator it = neighbors.begin(); it != neighbors.end(); ++it) {
-                double x_dist = x - (*it)->X();
-                double y_dist = y - (*it)->Y();
-                if (x_dist * x_dist + y_dist * y_dist < MIN_SYSTEM_SEPARATION * MIN_SYSTEM_SEPARATION) {
-                    too_close = true;
-                    break;
-                }
-            }
-
-            if (!too_close) {
-                System* system = GenerateSystem(*this, age, x, y);
-                adjacency_grid[static_cast<int>(system->X() / ADJACENCY_BOX_SIZE)]
-                    [static_cast<int>(system->Y() / ADJACENCY_BOX_SIZE)].insert(system);
-                placed = true;
-            }
-        }
-    }
-#else
-        throw std::runtime_error("Non-server called Universe::GenerateIrregularGalaxy; only server should call this while creating the universe");
-#endif
-}
-
 void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq)
 {
+    Logger().debugStream() << "PopulateSystems";
 #ifdef FREEORION_BUILD_SERVER
     std::vector<System*> sys_vec = FindObjects<System>();
 
@@ -2352,7 +2353,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
         }
     }
 #else
-        throw std::runtime_error("Non-server called Universe::PopulateSystems; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::PopulateSystems; only server should call this while creating the universe");
 #endif
 }
 
@@ -2494,7 +2495,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
         } // end while
     } // end for n
 #else
-        throw std::runtime_error("Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe");
 #endif
 }
 
@@ -2668,7 +2669,7 @@ void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vecto
         lanesToRemoveIter++;
     }
 #else
-        throw std::runtime_error("Non-server called Universe::CullAngularlyTooCloseLanes; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::CullAngularlyTooCloseLanes; only server should call this while creating the universe");
 #endif
 }
 
@@ -2760,7 +2761,7 @@ void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> 
         lanesToRemoveIter++;
     }
 #else
-        throw std::runtime_error("Non-server called Universe::CullTooLongLanes; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::CullTooLongLanes; only server should call this while creating the universe");
 #endif
 }
 
@@ -2943,7 +2944,7 @@ void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<in
             treeSysListsMapIter = treeSysListsMap.begin();
     }
 #else
-        throw std::runtime_error("Non-server called Universe::GrowSpanningTrees; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::GrowSpanningTrees; only server should call this while creating the universe");
 #endif
 }
 
@@ -3024,7 +3025,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         homeworlds.push_back(planet_id);
     }
 #else
-        throw std::runtime_error("Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe");
 #endif
 }
 
@@ -3048,7 +3049,7 @@ void Universe::NamePlanets()
         }
     }
 #else
-        throw std::runtime_error("Non-server called Universe::NamePlanets; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::NamePlanets; only server should call this while creating the universe");
 #endif
 }
 
@@ -3229,7 +3230,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         battle_fleet->AddShip(ship_id);
     }
 #else
-        throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");
+    throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");
 #endif
 }
 

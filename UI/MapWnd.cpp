@@ -39,14 +39,31 @@
 
 
 namespace {
-    const double ZOOM_STEP_SIZE = 1.25;
-    const int MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
-    const int MAX_NEBULAE = 6;
-    const GG::X END_TURN_BTN_WIDTH(60);
-    const GG::X SITREP_PANEL_WIDTH(400);
-    const GG::Y SITREP_PANEL_HEIGHT(300);
-    const int MIN_SYSTEM_NAME_SIZE = 10;
-    const int LAYOUT_MARGIN = 5;
+    const double    ZOOM_STEP_SIZE = 1.25;
+    const int       ZOOM_IN_MAX_STEPS = 9;
+    const int       ZOOM_IN_MIN_STEPS = -4; // negative zoom steps indicates zooming out
+    const int       ZOOM_TOTAL_STEPS = ZOOM_IN_MAX_STEPS + 1 + ZOOM_IN_MIN_STEPS;
+    const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, static_cast<double>(ZOOM_IN_MAX_STEPS));
+    const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, static_cast<double>(ZOOM_IN_MIN_STEPS));
+    double  ZoomScaleFactor(int steps_in) {
+        if (steps_in > ZOOM_IN_MAX_STEPS) {
+            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
+            steps_in = ZOOM_IN_MAX_STEPS;
+        } else if (steps_in < ZOOM_IN_MIN_STEPS) {
+            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") lower than minimum (" << ZOOM_IN_MIN_STEPS << "), so using min";
+            steps_in = ZOOM_IN_MIN_STEPS;
+        }
+        return std::pow(ZOOM_STEP_SIZE, static_cast<double>(steps_in));
+    }
+
+    const int       MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
+    const int       MAX_NEBULAE = 6;
+    const GG::X     END_TURN_BTN_WIDTH(60);
+    const GG::X     SITREP_PANEL_WIDTH(400);
+    const GG::Y     SITREP_PANEL_HEIGHT(300);
+    const GG::Y     ZOOM_SLIDER_HEIGHT(200);
+    const int       MIN_SYSTEM_NAME_SIZE = 10;
+    const int       LAYOUT_MARGIN = 5;
 
     struct BoolToVoidAdapter
     {
@@ -67,13 +84,13 @@ namespace {
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
         db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
+        db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.2,        RangedStepValidator<double>(0.1, 1.0, 2.5));
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.5,        RangedStepValidator<double>(0.1, 0.5, 5));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedStepValidator<double>(0.1, 0.5, 5));
         db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.medium-fleet-button-minimum-zoom","OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM",  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -195,7 +212,10 @@ std::pair<double, double> MapWnd::MovementLineData::Start() const
     }
 }
 
+
+//////////////////////////////////
 // MapWnd::FleetETAMapIndicator
+//////////////////////////////////
 class MapWnd::FleetETAMapIndicator : public GG::Wnd
 {
 public:
@@ -235,21 +255,37 @@ void MapWnd::FleetETAMapIndicator::Render()
     GG::FlatRectangle(ul, lr, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-// MapWnd
-// static(s)
-double          MapWnd::s_max_scale_factor = 8.0;
-double          MapWnd::s_min_scale_factor = MapWnd::s_max_scale_factor / std::pow(ZOOM_STEP_SIZE, 14.0);
 
+///////////////////////////
+// MapWnd
+///////////////////////////
 MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
-            static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
-            static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5),
+            static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
+            static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppHeight() * 1.5),
             GG::CLICKABLE | GG::DRAGABLE),
-    m_disabled_accels_list(),
     m_backgrounds(),
     m_bg_scroll_rate(),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_factor(1.0),
+    m_side_panel(NULL),
+    m_system_icons(),
+    m_sitrep_panel(NULL),
+    m_research_wnd(NULL),
+    m_production_wnd(NULL),
+    m_design_wnd(NULL),
+    m_moving_fleet_buttons(),
+    m_system_fleet_buttons(),
+    m_fleet_state_change_signals(),
+    m_system_fleet_state_change_signals(),
+    m_keyboard_accelerator_signals(),
+    m_fleet_lines(),
+    m_fleet_eta_map_indicators(),
+    m_projected_fleet_lines(),
+    m_projected_fleet_eta_map_indicators(),
+    m_star_core_quad_vertices(),
+    m_star_halo_quad_vertices(),
+    m_galaxy_gas_quad_vertices(),
     m_star_texture_coords(),
     m_starlane_vertices(),
     m_starlane_colors(),
@@ -257,9 +293,26 @@ MapWnd::MapWnd() :
     m_starlane_fleet_supply_colors(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
+    m_turn_update(NULL),
+    m_popups(),
+    m_menu_showing(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
-    m_in_production_view_mode(false)
+    m_in_production_view_mode(false),
+    m_toolbar(NULL),
+    m_food(NULL),
+    m_mineral(NULL),
+    m_trade(NULL),
+    m_population(NULL),
+    m_research(NULL),
+    m_industry(NULL),
+    m_btn_siterep(NULL),
+    m_btn_research(NULL),
+    m_btn_production(NULL),
+    m_btn_design(NULL),
+    m_btn_menu(NULL),
+    m_FPS(NULL),
+    m_zoom_slider(NULL)
 {
     SetName("MapWnd");
 
@@ -309,6 +362,12 @@ MapWnd::MapWnd() :
     // FPS indicator
     m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
     m_toolbar->AttachChild(m_FPS);
+
+    // Zoom slider
+    //m_zoom_slider = new CUISlider(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+    //                              GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
+    //                              ZOOM_IN_MIN_STEPS, ZOOM_IN_MAX_STEPS, GG::VERTICAL);
+    //AttachChild(m_zoom_slider);
 
     // Subscreen / Menu buttons
     GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
@@ -405,16 +464,16 @@ double MapWnd::ZoomFactor() const
 GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
 {
     GG::Pt cl_ul = ClientUpperLeft();
-    GG::X x((universe_x * m_zoom_factor) + cl_ul.x);
-    GG::Y y((universe_y * m_zoom_factor) + cl_ul.y);
+    GG::X x((universe_x * ZoomFactor()) + cl_ul.x);
+    GG::Y y((universe_y * ZoomFactor()) + cl_ul.y);
     return GG::Pt(x, y);
 }
 
 std::pair<double, double> MapWnd::UniversePositionFromScreenCoords(GG::Pt screen_coords) const
 {
     GG::Pt cl_ul = ClientUpperLeft();
-    double x = Value((screen_coords - cl_ul).x / m_zoom_factor);
-    double y = Value((screen_coords - cl_ul).y / m_zoom_factor);
+    double x = Value((screen_coords - cl_ul).x / ZoomFactor());
+    double y = Value((screen_coords - cl_ul).y / ZoomFactor());
     return std::pair<double, double>(x, y);
 }
 
@@ -427,7 +486,7 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
     data.map_left = Value(UpperLeft().x);
     data.map_top = Value(UpperLeft().y);
-    data.map_zoom_factor = m_zoom_factor;
+    data.map_zoom_factor = ZoomFactor();
 }
 
 bool MapWnd::InProductionViewMode() const
@@ -446,8 +505,8 @@ void MapWnd::Render()
     GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
     glPushMatrix();
     glLoadIdentity();
-    glScalef(m_zoom_factor, m_zoom_factor, 1.0);
-    glTranslatef(Value(origin_offset.x / m_zoom_factor), Value(origin_offset.y / m_zoom_factor), 0.0);
+    glScalef(ZoomFactor(), ZoomFactor(), 1.0);
+    glTranslatef(Value(origin_offset.x / ZoomFactor()), Value(origin_offset.y / ZoomFactor()), 0.0);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -626,7 +685,7 @@ void MapWnd::InitTurn(int turn_number)
 
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
-    if (m_zoom_factor * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
+    if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
         HideSystemNames();
     else
         ShowSystemNames();
@@ -696,8 +755,8 @@ void MapWnd::InitTurnRendering()
 
 
     // adjust size of map window for universe and application size
-    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
-                  static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
+    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
+                  static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
 
     std::vector<System*> systems = universe.FindObjects<System>();
@@ -1177,10 +1236,10 @@ void MapWnd::HideSystemNames()
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
-    GG::X_d current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / m_zoom_factor;
-    GG::Y_d current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / m_zoom_factor;
-    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * m_zoom_factor), 
-                             static_cast<GG::Y>((current_y - y) * m_zoom_factor));
+    GG::X_d current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / ZoomFactor();
+    GG::Y_d current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / ZoomFactor();
+    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()), 
+                             static_cast<GG::Y>((current_y - y) * ZoomFactor()));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
     m_sitrep_panel->OffsetMove(-map_move);
@@ -1423,8 +1482,8 @@ void MapWnd::DoSystemIconsLayout()
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const System& system = it->second->GetSystem();
 
-        GG::Pt icon_ul(GG::X(static_cast<int>(system.X()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0)),
-                       GG::Y(static_cast<int>(system.Y()*m_zoom_factor - SYSTEM_ICON_SIZE / 2.0)));
+        GG::Pt icon_ul(GG::X(static_cast<int>(system.X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system.Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
         it->second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE), GG::Y(SYSTEM_ICON_SIZE)));
     }
 }
@@ -1438,8 +1497,8 @@ void MapWnd::DoFleetButtonsLayout()
         const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
         const Fleet* fleet = *(fb->Fleets().begin());
 
-        GG::Pt button_ul(fleet->X()*m_zoom_factor - FLEET_BUTTON_SIZE.x / 2.0,
-                         fleet->Y()*m_zoom_factor - FLEET_BUTTON_SIZE.y / 2.0);
+        GG::Pt button_ul(fleet->X()*ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
+                         fleet->Y()*ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
 
         fb->MoveTo(button_ul);
     }
@@ -1494,24 +1553,24 @@ void MapWnd::RefreshFleetButtons()
 
 int MapWnd::SystemIconSize() const
 {
-    return static_cast<int>(ClientUI::SystemIconSize() * m_zoom_factor);
+    return static_cast<int>(ClientUI::SystemIconSize() * ZoomFactor());
 }
 
 double MapWnd::SystemHaloScaleFactor() const
 {
-    return 1.0 + log10(m_zoom_factor);
+    return 1.0 + log10(ZoomFactor());
 }
 
 FleetButton::SizeType MapWnd::FleetButtonSizeType() const
 {
     // no FLEET_BUTTON_LARGE as these icons are too big for the map.  (they can be used in the FleetWnd, however)
-    if      (m_zoom_factor > ClientUI::MediumFleetButtonZoomThreshold())
+    if      (ZoomFactor() > ClientUI::MediumFleetButtonZoomThreshold())
         return FleetButton::FLEET_BUTTON_MEDIUM;
 
-    else if (m_zoom_factor > ClientUI::SmallFleetButtonZoomThreshold())
+    else if (ZoomFactor() > ClientUI::SmallFleetButtonZoomThreshold())
         return FleetButton::FLEET_BUTTON_SMALL;
 
-    else if (m_zoom_factor > ClientUI::TinyFleetButtonZoomThreshold())
+    else if (ZoomFactor() > ClientUI::TinyFleetButtonZoomThreshold())
         return FleetButton::FLEET_BUTTON_TINY;
 
     else
@@ -1528,30 +1587,30 @@ void MapWnd::Zoom(int delta)
     GG::X_d ul_offset_x = ul.x - center_x;
     GG::Y_d ul_offset_y = ul.y - center_y;
     if (delta > 0) {
-        if (m_zoom_factor * ZOOM_STEP_SIZE < s_max_scale_factor) {
+        if (ZoomFactor() * ZOOM_STEP_SIZE < ZOOM_MAX) {
             ul_offset_x *= ZOOM_STEP_SIZE;
             ul_offset_y *= ZOOM_STEP_SIZE;
             m_zoom_factor *= ZOOM_STEP_SIZE;
         } else {
-            ul_offset_x *= s_max_scale_factor / m_zoom_factor;
-            ul_offset_y *= s_max_scale_factor / m_zoom_factor;
-            m_zoom_factor = s_max_scale_factor;
+            ul_offset_x *= ZOOM_MAX / ZoomFactor();
+            ul_offset_y *= ZOOM_MAX / ZoomFactor();
+            m_zoom_factor = ZOOM_MAX;
         }
     } else if (delta < 0) {
-        if (s_min_scale_factor < m_zoom_factor / ZOOM_STEP_SIZE) {
+        if (ZOOM_MIN < ZoomFactor() / ZOOM_STEP_SIZE) {
             ul_offset_x /= ZOOM_STEP_SIZE;
             ul_offset_y /= ZOOM_STEP_SIZE;
             m_zoom_factor /= ZOOM_STEP_SIZE;
         } else {
-            ul_offset_x *= s_min_scale_factor / m_zoom_factor;
-            ul_offset_y *= s_min_scale_factor / m_zoom_factor;
-            m_zoom_factor = s_min_scale_factor;
+            ul_offset_x *= ZOOM_MIN / ZoomFactor();
+            ul_offset_y *= ZOOM_MIN / ZoomFactor();
+            m_zoom_factor = ZOOM_MIN;
         }
     } else {
         return; // If delta == 0, no change
     }
 
-    if (m_zoom_factor < ClientUI::TinyFleetButtonZoomThreshold())
+    if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
         HideSystemNames();
     else
         ShowSystemNames();
@@ -1638,11 +1697,11 @@ void MapWnd::RenderNebulae()
 
     //    GG::Pt ul = 
     //        ClientUpperLeft() + 
-    //        GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * m_zoom_factor),
-    //               static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * m_zoom_factor));
+    //        GG::Pt(static_cast<int>((m_nebula_centers[i].x - nebula_width / 2.0) * ZoomFactor()),
+    //               static_cast<int>((m_nebula_centers[i].y - nebula_height / 2.0) * ZoomFactor()));
     //    m_nebulae[i]->OrthoBlit(ul, 
-    //                            ul + GG::Pt(static_cast<int>(nebula_width * m_zoom_factor), 
-    //                                        static_cast<int>(nebula_height * m_zoom_factor)));
+    //                            ul + GG::Pt(static_cast<int>(nebula_width * ZoomFactor()), 
+    //                                        static_cast<int>(nebula_height * ZoomFactor())));
     //}
     //glPopMatrix();
 }
@@ -1690,7 +1749,7 @@ void MapWnd::RenderSystems()
             glMatrixMode(GL_MODELVIEW);
         }
 
-        if (SystemIcon::TINY_SIZE < m_zoom_factor * ClientUI::SystemIconSize()) {
+        if (SystemIcon::TINY_SIZE < ZoomFactor() * ClientUI::SystemIconSize()) {
             for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
                  it != m_star_core_quad_vertices.end();
                  ++it) {
@@ -1877,7 +1936,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
-    GG::X contents_width(static_cast<int>(m_zoom_factor * Universe::UniverseWidth()));
+    GG::X contents_width(static_cast<int>(ZoomFactor() * Universe::UniverseWidth()));
     GG::X app_width =  GG::GUI::GetGUI()->AppWidth();
     GG::Y app_height = GG::GUI::GetGUI()->AppHeight();
     GG::X map_margin_width(app_width / 2.0);

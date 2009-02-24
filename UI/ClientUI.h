@@ -128,7 +128,7 @@ public:
     static GG::Clr      StateButtonColor();
 
     static GG::Clr      ScrollTabColor();
-    static  int         ScrollWidth();
+    static int          ScrollWidth();
 
     static GG::Clr      DropDownListIntColor();
     static GG::Clr      DropDownListArrowColor();
@@ -142,7 +142,8 @@ public:
 
     static int          SystemIconSize();                       //!< the width/height of a System/Icon at zoom = 1.0
     static GG::Clr      SystemNameTextColor();                  //!< the colour of system names that aren't owned by any player (as far as this client knows)
-    static double       SystemSelectionIndicatorSize();         //!< the width/height of a System Selection Indicator, relative to the size of a SystemIcon
+    static double       SystemCircleSize();                     //!< the width/height of the system-enclosing circle, relative to the size of a SystemIcon
+    static double       SystemSelectionIndicatorSize();         //!< the width/height of a system selection indicator, relative to the size of a SystemIcon
 
     static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
     static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to show small fleet icons

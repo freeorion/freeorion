@@ -722,6 +722,7 @@ void OptionsWnd::Init()
     BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
     IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
     BoolOption("UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
+    DoubleOption("UI.system-circle-size",               UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
     BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
     ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
@@ -731,14 +732,16 @@ void OptionsWnd::Init()
     DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption("UI.medium-fleet-button-minimum-zoom", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
     EndSection();
-    BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
-    BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
-    BoolOption("UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BeginSection(UserString("OPTIONS_STARLANES"));
     DoubleOption("UI.starlane-thickness",               UserString("OPTIONS_STARLANE_THICKNESS"));
     BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
     BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
     DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
     ColorOption("UI.unowned-starlane-colour",           UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
+    EndSection();
+    BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
+    BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption("UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
     EndSection();
     EndPage();
 

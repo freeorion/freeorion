@@ -32,6 +32,7 @@ namespace GG {
     class MultiEdit;
     class WndEvent;
     class StaticGraphic;
+    class Slider;
 }
 
 
@@ -301,8 +302,7 @@ private:
 
     FPSIndicator*               m_FPS;
 
-    static double s_min_scale_factor;
-    static double s_max_scale_factor;
+    GG::Slider*                 m_zoom_slider;
 
     struct FleetButtonClickedFunctor
     {

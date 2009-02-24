@@ -145,6 +145,7 @@ int main(int argc, char* argv[])
         app();
     } catch (const HumanClientApp::CleanQuit& e) {
         // do nothing
+        e;  // to quiet warning about unused variable
     } catch (const std::invalid_argument& e) {
         Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;

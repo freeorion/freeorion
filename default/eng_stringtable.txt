@@ -386,6 +386,9 @@ Sets size of system icons.
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Toggles whether to draw circles around systems.
 
+OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
+Sets size of circles around systems on map, relative to system icon size.
+
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Sets colour of unowned system names on galaxy map.
 
@@ -919,11 +922,17 @@ Galaxy Map
 OPTIONS_SYSTEM_ICONS
 System Icons
 
+OPTIONS_OPTIMIZED_SYSTEM_RENDERING
+Optimized system rendering
+
 OPTIONS_UI_SYSTEM_ICON_SIZE
 System icon size
 
 OPTIONS_UI_SYSTEM_CIRCLES
 System enclosing circles
+
+OPTIONS_UI_SYSTEM_CIRCLE_SIZE
+System circle relative size
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 System selection indicator relative size
@@ -952,8 +961,8 @@ Galaxy map gas rendering
 OPTIONS_GALAXY_MAP_STARFIELDS
 Galaxy map starfields rendering
 
-OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Optimized system rendering
+OPTIONS_STARLANES
+Starlanes
 
 OPTIONS_STARLANE_THICKNESS
 Starlane thickness
