@@ -167,6 +167,8 @@ private:
     void DoFleetButtonsLayout();                    //!< does layout of fleet buttons
     void DoSystemIconsLayout();                     //!< does layout of system icons
 
+    void InitTurnRendering();                       //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
+
     void RenderStarfields();                        //!< renders the background starfiends
     void RenderNebulae();                           //!< renders nebulae
     void RenderGalaxyGas();                         //!< renders gassy substance to make shape of galaxy

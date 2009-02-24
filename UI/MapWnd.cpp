@@ -538,14 +538,6 @@ void MapWnd::InitTurn(int turn_number)
 
     Universe& universe = GetUniverse();
 
-    //Logger().debugStream() << "MapWnd::InitTurn universe objects:";
-    //for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
-    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first << " and systemID: " << it->second->SystemID();
-
-    //Logger().debugStream() << "MapWnd::InitTurn universe destroyed objects:";
-    //for (Universe::const_iterator it = universe.beginDestroyed(); it != universe.endDestroyed(); ++it)
-    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
-
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
@@ -557,12 +549,15 @@ void MapWnd::InitTurn(int turn_number)
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
+
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
     UpdateMeterEstimates();
 
+
     const std::set<int>& this_player_explored_systems = empire->ExploredSystems();
     const std::map<int, std::set<int> > this_player_known_starlanes = empire->KnownStarlanes();
+
 
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
@@ -583,8 +578,129 @@ void MapWnd::InitTurn(int turn_number)
     }
 
 
+    // set up system icons, starlanes, galaxy gas rendering
+    InitTurnRendering();
+
+
+
+    // disconnect old moving fleet statechangedsignal connections
+    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+        it->second.disconnect();
+    m_fleet_state_change_signals.clear();
+
+    // connect fleet change signals to update moving fleet movement lines, so that ordering
+    // moving fleets to move updates their displayed path
+    Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
+    for (Universe::ObjectVec::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        const Fleet* moving_fleet = universe_object_cast<const Fleet*>(*it);
+        if (!moving_fleet) {
+            Logger().errorStream() << "MapWnd::InitTurn couldn't cast a (supposed) moving fleet pointer to a Fleet*";
+            continue;
+        }
+        m_fleet_state_change_signals[moving_fleet->ID()] = GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet));
+    }
+
+
+    MoveChildUp(m_side_panel);
+
+
+    // set turn button to current turn
+    m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
+                                          boost::lexical_cast<std::string>(turn_number)));
+    MoveChildUp(m_turn_update);
+
+
+    // are there any sitreps to show?
+    m_sitrep_panel->Update();
+    // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
+    // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
+    m_sitrep_panel->Update();
+
+    empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire && empire->NumSitRepEntries())
+        ShowSitRep();
+
+
+    GetChatWnd()->HideEdit();
+    EnableAlphaNumAccels();
+
+
+    // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
+    if (m_zoom_factor * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
+        HideSystemNames();
+    else
+        ShowSystemNames();
+
+
+    // if we're at the default start position, the odds are very good that this is a fresh game
+    if (ClientUpperLeft() == GG::Pt()) {
+        // center the map on player's home system at the start of the game
+        int capitol_id = empire->CapitolID();
+        UniverseObject *obj = universe.Object(capitol_id);
+        if (obj) {
+            CenterOnMapCoord(obj->X(), obj->Y());
+        } else {
+            // default to centred on whole universe if there is no capitol
+            CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
+        }
+
+        // default the tech tree to be centred on something interesting
+        m_research_wnd->Reset();
+    }
+
+
+    // empire is recreated each turn based on turn update from server, so connections of signals emitted from
+    // the empire must be remade each turn (unlike connections to signals from the sidepanel)
+    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
+    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
+    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
+    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
+    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
+    GG::Connect(empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
+
+
+    m_toolbar->Show();
+    m_FPS->Show();
+    m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
+    DetachChild(m_side_panel);
+    SelectSystem(m_side_panel->SystemID());
+
+    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
+        it->second->UpdateResourcePools();
+
+    m_research_wnd->Update();
+    m_production_wnd->Update();
+}
+
+void MapWnd::InitTurnRendering()
+{
+    Logger().debugStream() << "MapWnd::InitTurnRendering";
+    CheckGLVersion();
+    Universe& universe = GetUniverse();
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+
+
+    // temp storage
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
+    std::vector<float> raw_star_texture_coords;
+    std::vector<float> raw_starlane_vertices;
+    std::vector<unsigned char> raw_starlane_colors;
+    std::vector<float> raw_starlane_supply_vertices;
+    std::vector<unsigned char> raw_starlane_supply_colors;
+    std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
+    std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
+
+
+    // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppWidth() * 1.5),
                   static_cast<GG::Y>(Universe::UniverseWidth() * s_max_scale_factor + GG::GUI::GetGUI()->AppHeight() * 1.5)));
+
+
+    std::vector<System*> systems = universe.FindObjects<System>();
 
 
     // set up backgrounds on first turn
@@ -602,40 +718,72 @@ void MapWnd::InitTurn(int turn_number)
     }
 
 
-    // this gets cleared here instead of with the movement line stuff because that would
-    // clear some movement lines that come from the SystemIcons below
+    // remove any existing fleet movement lines or projected movement lines.  this gets cleared
+    // here instead of with the movement line stuff because that would clear some movement lines
+    // that come from the SystemIcons
     m_fleet_lines.clear();
     ClearProjectedFleetMovementLines();
 
 
-    // set up system icon textures and starlane rendering
+    // create fleet buttons for moving fleets
+    RefreshFleetButtons();
+
+
+    // remove old system icons
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
     m_system_icons.clear();
 
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
-    std::vector<float> raw_star_texture_coords;
-    std::vector<float> raw_starlane_vertices;
-    std::vector<unsigned char> raw_starlane_colors;
-    std::vector<float> raw_starlane_supply_vertices;
-    std::vector<unsigned char> raw_starlane_supply_colors;
 
-    std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
-    std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
-
-    Logger().debugStream() << "ADDING STARLANES, SYSTEM TETURES AND GALAXY GAS";
-    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
-
-    std::vector<System*> systems = universe.FindObjects<System>();
+    // create system icons
     for (unsigned int i = 0; i < systems.size(); ++i) {
-        // system
+        // create new system icon
         const System* start_system = systems[i];
         SystemIcon* icon = new SystemIcon(this, GG::X0, GG::Y0, GG::X(10), start_system->ID());
+        m_system_icons[start_system->ID()] = icon;
+        icon->InstallEventFilter(this);
+        AttachChild(icon);
+
+
+        // connect UI response signals.  TODO: Make these configurable in GUI?
+        GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
+        GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
+        GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
+        GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
+        GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
+        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
+    }
+
+
+    // position system icons
+    DoSystemIconsLayout();
+
+
+    // Generate texture coordinates to be used for subsequent vertex buffer creation.
+    // Note these coordinates assume the texture is twice as large as it should
+    // be.  This allows us to use one set of texture coords for everything, even
+    // though the star-halo textures must be rendered at sizes as much as twice
+    // as large as the star-disc textures.
+    for (std::size_t i = 0; i < systems.size(); ++i) {
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(-0.5);
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(1.5);
+        raw_star_texture_coords.push_back(1.5);
+    }
+
+
+    // create various buffers used for map contents rendering
+    for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+        const SystemIcon* icon = it->second;
+        const System& system = icon->GetSystem();
+
+        // add disc and halo textures for system icon
         {
             // See note above texture coords for why we're making coordinate sets that are 2x too big.
-            const System& system = icon->GetSystem();
             double icon_size = ClientUI::SystemIconSize();
             double icon_ul_x = system.X() - icon_size;
             double icon_ul_y = system.Y() - icon_size;
@@ -671,26 +819,15 @@ void MapWnd::InitTurn(int turn_number)
                 halo_vertices.push_back(icon_lr_y);
             }
         }
-        m_system_icons[start_system->ID()] = icon;
-        icon->InstallEventFilter(this);
-        AttachChild(icon);
-        GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
-        GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
-        GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
-        GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
-        GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
-        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
 
 
-        //Logger().debugStream() << " considering lanes from " << start_system->Name() << " (id: " << start_system->ID() << ")";
-
-        // gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", start_system->ID())) {
+        // add gaseous substance around system
+        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", system.ID())) {
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
             const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
-            const double ROTATION = start_system->ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const double ROTATION = system.ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const double COS_THETA = std::cos(ROTATION);
             const double SIN_THETA = std::sin(ROTATION);
 
@@ -714,14 +851,14 @@ void MapWnd::InitTurn(int turn_number)
             // See note above texture coords for why we're making coordinate sets that are 2x too big.
 
             // add to system position to get translated scaled rotated quad corner
-            const double GAS_X1 = start_system->X() + (X1r * GAS_SIZE);
-            const double GAS_Y1 = start_system->Y() + (Y1r * GAS_SIZE);
-            const double GAS_X2 = start_system->X() + (X2r * GAS_SIZE);
-            const double GAS_Y2 = start_system->Y() + (Y2r * GAS_SIZE);
-            const double GAS_X3 = start_system->X() + (X3r * GAS_SIZE);
-            const double GAS_Y3 = start_system->Y() + (Y3r * GAS_SIZE);
-            const double GAS_X4 = start_system->X() + (X4r * GAS_SIZE);
-            const double GAS_Y4 = start_system->Y() + (Y4r * GAS_SIZE);
+            const double GAS_X1 = system.X() + (X1r * GAS_SIZE);
+            const double GAS_Y1 = system.Y() + (Y1r * GAS_SIZE);
+            const double GAS_X2 = system.X() + (X2r * GAS_SIZE);
+            const double GAS_Y2 = system.Y() + (Y2r * GAS_SIZE);
+            const double GAS_X3 = system.X() + (X3r * GAS_SIZE);
+            const double GAS_Y3 = system.Y() + (Y3r * GAS_SIZE);
+            const double GAS_X4 = system.X() + (X4r * GAS_SIZE);
+            const double GAS_Y4 = system.Y() + (Y4r * GAS_SIZE);
 
             std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
             // rotated upper right
@@ -738,21 +875,14 @@ void MapWnd::InitTurn(int turn_number)
             gas_vertices.push_back(GAS_Y4);
         }
 
-        // system's starlanes
-        for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
+
+        // add system's starlanes
+        for (System::const_lane_iterator lane_it = system.begin_lanes(); lane_it != system.end_lanes(); ++lane_it) {
             bool lane_is_wormhole = lane_it->second;
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
+            const System* start_system = &system;
             const System* dest_system = universe.Object<System>(lane_it->first);
-
-
-            //Logger().debugStream() << " considering lanes to " << dest_system->Name() << " (id: " << dest_system->ID() << ")";
-
-            //Logger().debugStream() << "added starlanes:";
-            //for (std::set<std::pair<int, int> >::const_iterator it = rendered_starlanes.begin(); it != rendered_starlanes.end(); ++it)
-            //    Logger().debugStream() << " ... " << GetUniverse().Object(it->first)->Name() << " to " << GetUniverse().Object(it->second)->Name();
-
-            //Logger().debugStream() << "looking for " << start_system->Name() << " to " << dest_system->Name();
 
             // render starlane between start and dest systems?
 
@@ -771,7 +901,7 @@ void MapWnd::InitTurn(int turn_number)
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                    empire = empire_it->second;
+                    Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
 
                     std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
@@ -798,7 +928,6 @@ void MapWnd::InitTurn(int turn_number)
             }
 
 
-
             // render half-starlane from the current start_system to the current dest_system?
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
@@ -809,7 +938,7 @@ void MapWnd::InitTurn(int turn_number)
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
 
                 for (EmpireManager::iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                    empire = empire_it->second;
+                    Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes = empire->ResourceSupplyOstructedStarlaneTraversals();
 
                     std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
@@ -844,27 +973,9 @@ void MapWnd::InitTurn(int turn_number)
     }
 
 
-    // Note these coordinates assume the texture is twice as large as it should
-    // be.  This allows us to use one set of texture coords for everything, even
-    // though the star-halo textures must be rendered at sizes as much as twice
-    // as large as the star-disc textures.
-    for (std::size_t i = 0; i < systems.size(); ++i) {
-        raw_star_texture_coords.push_back(1.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(1.5);
-        raw_star_texture_coords.push_back(1.5);
-        raw_star_texture_coords.push_back(1.5);
-    }
-
-    DoSystemIconsLayout();
-
-
     // create animated lines indicating fleet supply flow
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        empire = it->second;
+        Empire* empire = it->second;
         const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
             const System* start_sys = universe.Object<System>(lane_it->first);
@@ -884,113 +995,6 @@ void MapWnd::InitTurn(int turn_number)
         }
     }
 
-
-    // remove old fleet buttons for fleets not in systems
-    for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i)
-        DeleteChild(m_moving_fleet_buttons[i]);
-    m_moving_fleet_buttons.clear();
-
-    // disconnect old moving fleet statechangedsignal connections
-    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
-        it->second.disconnect();
-    m_fleet_state_change_signals.clear();
-
-
-    // create fleet buttons for moving fleets
-    RefreshFleetButtons();
-
-
-    // create movement lines (after positioning buttons, so lines will originate from button location)
-    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
-        SetFleetMovementLine(*it);
-
-
-    // connect fleet change signals to update moving fleet movement lines, so that ordering
-    // moving fleets to move updates their displayed path
-    Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
-    for (Universe::ObjectVec::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        const Fleet* moving_fleet = universe_object_cast<const Fleet*>(*it);
-        if (!moving_fleet) {
-            Logger().errorStream() << "MapWnd::InitTurn couldn't cast a (supposed) moving fleet pointer to a Fleet*";
-            continue;
-        }
-        m_fleet_state_change_signals[moving_fleet->ID()] = GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet));
-    }
-
-
-    MoveChildUp(m_side_panel);
-
-
-    // set turn button to current turn
-    m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
-                                          boost::lexical_cast<std::string>(turn_number)));
-    MoveChildUp(m_turn_update);
-
-    // are there any sitreps to show?
-    m_sitrep_panel->Update();
-    // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
-    // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
-    m_sitrep_panel->Update();
-
-    empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->NumSitRepEntries())
-        ShowSitRep();
-
-
-    GetChatWnd()->HideEdit();
-    EnableAlphaNumAccels();
-
-
-    if (m_zoom_factor * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
-        HideSystemNames();
-    else
-        ShowSystemNames();
-
-    // if we're at the default start position, the odds are very good that this is a fresh game
-    if (ClientUpperLeft() == GG::Pt()) {
-        // center the map on player's home system at the start of the game
-        int capitol_id = empire->CapitolID();
-        UniverseObject *obj = universe.Object(capitol_id);
-        if (obj) {
-            CenterOnMapCoord(obj->X(), obj->Y());
-        } else {
-            // default to centred on whole universe if there is no capitol
-            CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
-        }
-
-        // default the tech tree to be centred on something interesting
-        m_research_wnd->Reset();
-    }
-
-    // empire is recreated each turn based on turn update from server, so connections of signals emitted from
-    // the empire must be remade each turn (unlike connections to signals from the sidepanel)
-    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
-    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
-    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
-    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
-    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
-
-    GG::Connect(empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
-
-    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
-
-
-    m_toolbar->Show();
-    m_FPS->Show();
-    m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
-    DetachChild(m_side_panel);
-    SelectSystem(m_side_panel->SystemID());
-
-    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
-        it->second->UpdateResourcePools();
-
-    m_research_wnd->Update();
-    m_production_wnd->Update();
-
-    Logger().debugStream() << "Turn initialization graphic buffer clearing";
-
-
-    CheckGLVersion();
 
 
     // clear out all the old buffers
@@ -1136,8 +1140,8 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
 {
     m_zoom_factor = data.map_zoom_factor;
 
-    DoSystemIconsLayout();
-    DoFleetButtonsLayout();
+    //DoSystemIconsLayout();
+    //RefreshFleetButtons();
 
     GG::Pt ul = UpperLeft();
     GG::Pt map_ul = GG::Pt(GG::X(data.map_left), GG::Y(data.map_top));
@@ -1459,6 +1463,7 @@ void MapWnd::RefreshFleetButtons()
     m_moving_fleet_buttons.clear();
 
 
+
     // create new fleet buttons for fleets at each unique location
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
     SortedFleetMap::iterator it = position_sorted_fleets.begin();
@@ -1481,6 +1486,10 @@ void MapWnd::RefreshFleetButtons()
 
     // position fleetbuttons
     DoFleetButtonsLayout();
+
+    // create movement lines (after positioning buttons, so lines will originate from button location)
+    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+        SetFleetMovementLine(*it);
 }
 
 int MapWnd::SystemIconSize() const
@@ -1547,7 +1556,9 @@ void MapWnd::Zoom(int delta)
     else
         ShowSystemNames();
 
+
     DoSystemIconsLayout();
+
 
     // if fleet buttons need to change size, need to fully refresh them (clear and recreate).  If they are the
     // same size as before the zoom, then can just reposition them without recreating
@@ -1556,6 +1567,7 @@ void MapWnd::Zoom(int delta)
         RefreshFleetButtons();
     else
         DoFleetButtonsLayout();
+
 
     // translate map and UI widgets to account for the change in upper left due to zooming
     GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
