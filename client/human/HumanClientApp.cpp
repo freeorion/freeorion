@@ -419,6 +419,18 @@ void HumanClientApp::Enter2DMode()
     glDisable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
 
+    glDisable(GL_LIGHT0);
+    glDisable(GL_LIGHT1);
+    glDisable(GL_LIGHT2);
+    glDisable(GL_LIGHT3);
+    glDisable(GL_LIGHT4);
+    glDisable(GL_LIGHT5);
+    glDisable(GL_LIGHT6);
+    glDisable(GL_LIGHT7);
+
+    float ambient_light[] = {0.2, 0.2, 0.2, 1.0};
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambient_light);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
