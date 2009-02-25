@@ -1136,7 +1136,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
 
 bool Empire::BuildableItem(BuildType build_type, int design_id, int location) const
 {
-    // special case to check for buildings or orbitals being passed with ids, not names
+    // special case to check for buildings being passed with ids, not names
     if (build_type == BT_BUILDING)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
 

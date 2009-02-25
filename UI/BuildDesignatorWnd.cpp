@@ -135,7 +135,7 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
-    // create build type toggle buttons (ship, building, orbital, all)
+    // create build type toggle buttons (ship, building, all)
     m_build_type_buttons[BT_BUILDING] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
     AttachChild(m_build_type_buttons[BT_BUILDING]);
     m_build_type_buttons[BT_SHIP] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_SHIP"));

@@ -246,7 +246,7 @@ private:
 
     int                         m_previously_selected_system;
 
-    double                      m_zoom_factor;      //!< current zoom level; clamped to [MIN_SCALE_FACTOR, MAX_SCALE_FACTOR]
+    double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
     std::map<int, SystemIcon*>  m_system_icons;     //!< system icons in the main map, indexed by system id
     SitRepPanel*                m_sitrep_panel;     //!< sitrep panel

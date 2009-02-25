@@ -96,7 +96,7 @@ struct SaveGameUIData
 {
     int     map_top;
     int     map_left;
-    double  map_zoom_factor;
+    double  map_zoom_steps_in;
 
 private:
     friend class boost::serialization::access;
@@ -230,7 +230,7 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(map_top)
         & BOOST_SERIALIZATION_NVP(map_left)
-        & BOOST_SERIALIZATION_NVP(map_zoom_factor);
+        & BOOST_SERIALIZATION_NVP(map_zoom_steps_in);
 }
 
 template <class Archive>

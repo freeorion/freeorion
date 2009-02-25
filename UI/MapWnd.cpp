@@ -40,22 +40,11 @@
 
 namespace {
     const double    ZOOM_STEP_SIZE = 1.25;
-    const int       ZOOM_IN_MAX_STEPS = 9;
-    const int       ZOOM_IN_MIN_STEPS = -4; // negative zoom steps indicates zooming out
+    const double    ZOOM_IN_MAX_STEPS = 9.0;
+    const double    ZOOM_IN_MIN_STEPS = -4.0;   // negative zoom steps indicates zooming out
     const int       ZOOM_TOTAL_STEPS = ZOOM_IN_MAX_STEPS + 1 + ZOOM_IN_MIN_STEPS;
-    const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, static_cast<double>(ZOOM_IN_MAX_STEPS));
-    const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, static_cast<double>(ZOOM_IN_MIN_STEPS));
-    double  ZoomScaleFactor(int steps_in) {
-        if (steps_in > ZOOM_IN_MAX_STEPS) {
-            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
-            steps_in = ZOOM_IN_MAX_STEPS;
-        } else if (steps_in < ZOOM_IN_MIN_STEPS) {
-            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") lower than minimum (" << ZOOM_IN_MIN_STEPS << "), so using min";
-            steps_in = ZOOM_IN_MIN_STEPS;
-        }
-        return std::pow(ZOOM_STEP_SIZE, static_cast<double>(steps_in));
-    }
-
+    const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
+    const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
     const int       MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
     const int       MAX_NEBULAE = 6;
     const GG::X     END_TURN_BTN_WIDTH(60);
@@ -64,6 +53,19 @@ namespace {
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
+
+    double  ZoomScaleFactor(double steps_in) {
+        if (steps_in > ZOOM_IN_MAX_STEPS) {
+            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") higher than max (" << ZOOM_IN_MAX_STEPS << "), so using max";
+            steps_in = ZOOM_IN_MAX_STEPS;
+        } else if (steps_in < ZOOM_IN_MIN_STEPS) {
+            Logger().errorStream() << "ZoomScaleFactor passed steps in (" << steps_in << ") lower than minimum (" << ZOOM_IN_MIN_STEPS << "), so using min";
+            steps_in = ZOOM_IN_MIN_STEPS;
+        }
+        return std::pow(ZOOM_STEP_SIZE, steps_in);
+    }
+
+
 
     struct BoolToVoidAdapter
     {
@@ -267,7 +269,7 @@ MapWnd::MapWnd() :
     m_backgrounds(),
     m_bg_scroll_rate(),
     m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
-    m_zoom_factor(1.0),
+    m_zoom_steps_in(0.0),
     m_side_panel(NULL),
     m_system_icons(),
     m_sitrep_panel(NULL),
@@ -458,7 +460,7 @@ GG::Pt MapWnd::ClientUpperLeft() const
 
 double MapWnd::ZoomFactor() const
 {
-    return m_zoom_factor;
+    return std::pow(ZOOM_STEP_SIZE, m_zoom_steps_in);
 }
 
 GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
@@ -486,7 +488,7 @@ void MapWnd::GetSaveGameUIData(SaveGameUIData& data) const
 {
     data.map_left = Value(UpperLeft().x);
     data.map_top = Value(UpperLeft().y);
-    data.map_zoom_factor = ZoomFactor();
+    data.map_zoom_steps_in = m_zoom_steps_in;
 }
 
 bool MapWnd::InProductionViewMode() const
@@ -1197,10 +1199,7 @@ void MapWnd::InitTurnRendering()
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
 {
-    m_zoom_factor = data.map_zoom_factor;
-
-    //DoSystemIconsLayout();
-    //RefreshFleetButtons();
+    m_zoom_steps_in = data.map_zoom_steps_in;
 
     GG::Pt ul = UpperLeft();
     GG::Pt map_ul = GG::Pt(GG::X(data.map_left), GG::Y(data.map_top));
@@ -1579,36 +1578,29 @@ FleetButton::SizeType MapWnd::FleetButtonSizeType() const
 
 void MapWnd::Zoom(int delta)
 {
-    const FleetButton::SizeType OLD_FLEETBUTTON_SIZE = FleetButtonSizeType();
+    if (delta == 0)
+        return;
 
     GG::Pt ul = ClientUpperLeft();
     GG::X_d center_x = GG::GUI::GetGUI()->AppWidth() / 2.0;
     GG::Y_d center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
     GG::X_d ul_offset_x = ul.x - center_x;
     GG::Y_d ul_offset_y = ul.y - center_y;
-    if (delta > 0) {
-        if (ZoomFactor() * ZOOM_STEP_SIZE < ZOOM_MAX) {
-            ul_offset_x *= ZOOM_STEP_SIZE;
-            ul_offset_y *= ZOOM_STEP_SIZE;
-            m_zoom_factor *= ZOOM_STEP_SIZE;
-        } else {
-            ul_offset_x *= ZOOM_MAX / ZoomFactor();
-            ul_offset_y *= ZOOM_MAX / ZoomFactor();
-            m_zoom_factor = ZOOM_MAX;
-        }
-    } else if (delta < 0) {
-        if (ZOOM_MIN < ZoomFactor() / ZOOM_STEP_SIZE) {
-            ul_offset_x /= ZOOM_STEP_SIZE;
-            ul_offset_y /= ZOOM_STEP_SIZE;
-            m_zoom_factor /= ZOOM_STEP_SIZE;
-        } else {
-            ul_offset_x *= ZOOM_MIN / ZoomFactor();
-            ul_offset_y *= ZOOM_MIN / ZoomFactor();
-            m_zoom_factor = ZOOM_MIN;
-        }
-    } else {
-        return; // If delta == 0, no change
-    }
+
+    // increment zoom steps in by delta steps
+
+
+    // save old zoom...
+    const double                OLD_ZOOM = ZoomFactor();
+    const FleetButton::SizeType OLD_FLEETBUTTON_SIZE = FleetButtonSizeType();
+
+    // adjust zoom steps, from which zoom factor is calculated.  (zoom steps in has limited range)
+    m_zoom_steps_in = std::max(std::min(m_zoom_steps_in + static_cast<double>(delta), ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
+
+    // correct map offsets for zoom changes
+    ul_offset_x *= (ZoomFactor() / OLD_ZOOM);
+    ul_offset_y *= (ZoomFactor() / OLD_ZOOM);
+
 
     if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
         HideSystemNames();
@@ -2258,7 +2250,7 @@ void MapWnd::Sanitize()
     m_sitrep_panel->MoveTo(GG::Pt((APP_WIDTH - SITREP_PANEL_WIDTH) / 2, (APP_HEIGHT - SITREP_PANEL_HEIGHT) / 2));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
     MoveTo(GG::Pt(-APP_WIDTH, -APP_HEIGHT));
-    m_zoom_factor = 1.0;
+    m_zoom_steps_in = 0.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();

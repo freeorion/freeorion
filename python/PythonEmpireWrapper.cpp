@@ -32,11 +32,11 @@ namespace {
     const std::string&  NameFromProductionQueueElement(const ProductionQueue::Element& element)         { return element.item.name; }
     int                 DesignIDFromProductionQueueElement(const ProductionQueue::Element& element)     { return element.item.design_id; }
 
-    bool                (Empire::*BuildableItemBuildingOrbital)(BuildType, const std::string&, int) const = &Empire::BuildableItem;
-    bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                           &Empire::BuildableItem;
+    bool                (Empire::*BuildableItemBuilding)(BuildType, const std::string&, int) const =    &Empire::BuildableItem;
+    bool                (Empire::*BuildableItemShip)(BuildType, int, int) const =                       &Empire::BuildableItem;
 
     const ProductionQueue::Element&
-                            (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =          &ProductionQueue::operator[];
+                            (ProductionQueue::*ProductionQueueOperatorSquareBrackets)(int) const =      &ProductionQueue::operator[];
 }
 
 namespace FreeOrionPython {
@@ -91,7 +91,7 @@ namespace FreeOrionPython {
             .def("researchStatus",                  &Empire::ResearchStatus)
             .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        return_internal_reference<>()))
 
-            .def("canBuild",                        BuildableItemBuildingOrbital)
+            .def("canBuild",                        BuildableItemBuilding)
             .def("canBuild",                        BuildableItemShip)
 
             .def("hasExploredSystem",               &Empire::HasExploredSystem)
