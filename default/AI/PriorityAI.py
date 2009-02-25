@@ -59,7 +59,8 @@ def calculateExplorationPriority():
 
     empireID = fo.empireID()
 
-    numExplorableSystemIDs = len(ExplorationAI.explorableSystemIDs)
+    # TODO: Fog of war
+    numExplorableSystemIDs = len(foAI.foAIstate.getExplorableSystems("EST_UNEXPLORED"))
 
     scoutIDs = FleetUtils.getEmpireFleetIDsByRole("MT_EXPLORATION")
     numScouts = len(scoutIDs)
@@ -70,7 +71,7 @@ def calculateExplorationPriority():
 
     print ""
     print "Number of Scouts: " + str(numScouts)
-    print "Number of Systems: " + str(numExplorableSystemIDs)    
+    print "Number of Systems: " + str(numExplorableSystemIDs)
     print "Priority for scouts: " + str(explorationPriority)
 
     if explorationPriority < 0: return 0
@@ -106,7 +107,7 @@ def calculateColonisationPriority():
 # minerals must match production
 def calculateMineralsPriority():
     "calculates the demand for minerals"
-    
+
     empire = fo.getEmpire()
 
     # get current minerals and industry production
@@ -134,10 +135,10 @@ def calculateProductionPriority():
 
     priorityValues = []
 
-    for priority in priorityProduction: 
+    for priority in priorityProduction:
         priorityValues.append(foAI.foAIstate.getPriority(priority))
 
     productionPriority = max(priorityValues)
 
     return productionPriority
-   
+

@@ -159,15 +159,18 @@ namespace FreeOrionPython {
         //     Fleet     //
         ///////////////////
         class_<Fleet, bases<UniverseObject>, noncopyable>("fleet", no_init)
+            .add_property("fuel",                       &Fleet::Fuel)
+            .add_property("maxFuel",                    &Fleet::MaxFuel)    
             .add_property("finalDestinationID",         &Fleet::FinalDestinationID)
+            .add_property("previousSystemID",           &Fleet::PreviousSystemID)
             .add_property("nextSystemID",               &Fleet::NextSystemID)
             .add_property("speed",                      &Fleet::Speed)
             .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
+            .add_property("hasColonyShips",             &Fleet::HasColonyShips)
             .add_property("numShips",                   &Fleet::NumShips)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
-            .add_property("fuel",                       &Fleet::Fuel)
-            .add_property("maxFuel",                    &Fleet::MaxFuel)
+            
         ;
 
         //////////////////
@@ -175,9 +178,11 @@ namespace FreeOrionPython {
         //////////////////
         class_<Ship, bases<UniverseObject>, noncopyable>("ship", no_init)
             .add_property("design",             make_function(&Ship::Design,                return_value_policy<reference_existing_object>()))
+            .add_property("designID",           &Ship::DesignID)
             .add_property("fleetID",            &Ship::FleetID)
             .add_property("getFleet",           make_function(&Ship::GetFleet,              return_value_policy<reference_existing_object>()))
             .add_property("isArmed",            &Ship::IsArmed)
+            .add_property("canColonize",        &Ship::CanColonize)
             .add_property("speed",              &Ship::Speed)
         ;
 

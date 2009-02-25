@@ -22,7 +22,7 @@ def splitFleet(fleetID):
 
     universe = fo.getUniverse()
     empireID = fo.empireID()
-    
+
     fleet = universe.getFleet(fleetID)
 
     if fleet == None: return
@@ -38,11 +38,11 @@ def fleetHasShipWithRole(fleetID, shipRole):
 
     universe = fo.getUniverse()
     fleet = universe.getFleet(fleetID)
-    
+
     if fleet == None: return False
 
     for shipID in fleet.shipIDs:
-        
+
         ship = universe.getShip(shipID)
         if (foAI.foAIstate.getShipRole(ship.design.id) == shipRole):
             return True
@@ -69,7 +69,7 @@ def getShipIDWithRole(fleetID, shipRole):
 
 def getEmpireFleetIDs():
     "returns all fleetIDs of an empire"
-    
+
     universe = fo.getUniverse()
     empireID = fo.empireID()
 
@@ -81,7 +81,7 @@ def getEmpireFleetIDs():
         fleet = universe.getFleet(fleetID)
 
         if (fleet == None): continue
-        if (not fleet.whollyOwnedBy(empireID)): continue    
+        if (not fleet.whollyOwnedBy(empireID)): continue
 
         empireFleetIDs = empireFleetIDs + [fleetID]
 
@@ -99,7 +99,7 @@ def getEmpireFleetIDsByRole(fleetRole):
     for fleetID in fleetIDs:
 
         if not (foAI.foAIstate.getFleetRole(fleetID) == fleetRole): continue
-        
+
         fleetIDsWithRole.append(fleetID)
 
     return fleetIDsWithRole
