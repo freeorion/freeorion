@@ -34,6 +34,7 @@ common_sources = [
     'universe/UniverseObject.cpp',
     'universe/ValueRef.cpp',
     'universe/ValueRefParser.cpp',
+    'util/CombatOrder.cpp',
     'util/DataTable.cpp',
     'util/GZStream.cpp',
     'util/MultiplayerCommon.cpp',
@@ -128,6 +129,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/CUIDrawUtil.cpp',
         'UI/CUIStyle.cpp',
         'UI/CUIWnd.cpp',
+        'UI/EncyclopediaDetailPanel.cpp',
         'UI/FleetButton.cpp',
         'UI/FleetWnd.cpp',
         'UI/GalaxySetupWnd.cpp',
@@ -151,9 +153,19 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/SystemIcon.cpp',
         'UI/TechTreeWnd.cpp',
         'UI/TurnProgressWnd.cpp',
+        'UI/PagedGeometry/BatchedGeometry.cpp',
+        'UI/PagedGeometry/BatchPage.cpp',
+        'UI/PagedGeometry/GrassLoader.cpp',
+        'UI/PagedGeometry/ImpostorPage.cpp',
+        'UI/PagedGeometry/PagedGeometry.cpp',
+        'UI/PagedGeometry/PropertyMaps.cpp',
+        'UI/PagedGeometry/StaticBillboardSet.cpp',
+        'UI/PagedGeometry/TreeLoader2D.cpp',
+        'UI/PagedGeometry/TreeLoader3D.cpp',
+        'UI/PagedGeometry/WindBatchedGeometry.cpp',
+        'UI/PagedGeometry/WindBatchPage.cpp',
         'universe/Universe.cpp',
-        'util/AppInterface.cpp',
-        'UI/EncyclopediaDetailPanel.cpp'
+        'util/AppInterface.cpp'
         ]
     target = 'human'
 
