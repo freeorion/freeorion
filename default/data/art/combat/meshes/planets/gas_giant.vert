@@ -1,5 +1,5 @@
 // -*- C++ -*-
-uniform vec3 light_dir;
+uniform vec4 light_pos;
 uniform vec3 camera_pos;
 
 varying float diffuse;
@@ -13,10 +13,7 @@ void main()
     const float sphere_radius = 1.0;
     const float subsurface_radius = 0.985;
 
-    vec3 normal = normalize(gl_NormalMatrix * gl_Normal);
-    vec3 light_vec = normalize(gl_NormalMatrix * light_dir);
-
-    diffuse = dot(light_vec, normal);
+    diffuse = dot(normalize(light_pos.xyz), gl_Normal);
     tex_coord = vec2(gl_MultiTexCoord0);
 
     vec3 center_vec = normalize(vec3(0.0) - camera_pos.xyz);

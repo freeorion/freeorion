@@ -1,5 +1,5 @@
 // -*- C++ -*-
-uniform vec3 light_dir;
+uniform vec4 light_pos;
 
 varying float diffuse;
 varying vec3 specular;
@@ -9,7 +9,7 @@ void main()
 {
     vec4 ec_position = gl_ModelViewMatrix * gl_Vertex;
     vec3 normal = normalize(gl_NormalMatrix * gl_Normal);
-    vec3 light_vec = normalize(gl_NormalMatrix * light_dir);
+    vec3 light_vec = normalize(gl_NormalMatrix * light_pos.xyz);
     vec3 reflect_vec = reflect(-light_vec, normal);
     vec3 view_vec = normalize(vec3(-ec_position));
 

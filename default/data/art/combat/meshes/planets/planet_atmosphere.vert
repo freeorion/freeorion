@@ -1,5 +1,5 @@
 // -*- C++ -*-
-uniform vec3 light_dir;
+uniform vec4 light_pos;
 uniform vec3 camera_pos;
 
 varying float sun_intensity;
@@ -18,10 +18,7 @@ void main()
 
     vec4 vertex = vec4(gl_Vertex.xyz * atmosphere_radius, 1.0);
 
-    vec3 normal = normalize(gl_NormalMatrix * normalize(gl_Normal));
-    vec3 light_vec = normalize(gl_NormalMatrix * light_dir);
-
-    sun_intensity = max(dot(normal, light_vec), 0.0);
+    sun_intensity = max(dot(gl_Normal, normalize(light_pos.xyz)), 0.0);
 
     vec3 center_vec = normalize(vec3(0.0) - camera_pos.xyz);
     vec3 position_vec = normalize(vertex.xyz - camera_pos.xyz);

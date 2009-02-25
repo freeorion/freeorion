@@ -39,6 +39,11 @@ class btCollisionObject;
 class btDefaultCollisionConfiguration;
 class btTriangleMesh;
 
+namespace Forests {
+    class PagedGeometry;
+    class TreeLoader3D;
+}
+
 class CombatWnd :
     public GG::Wnd,
     public Ogre::FrameListener
@@ -168,6 +173,9 @@ private:
     btCollisionWorld* m_collision_world;
     boost::ptr_vector<btCollisionShape> m_collision_shapes;
     boost::ptr_vector<btCollisionObject> m_collision_objects;
+
+    Forests::PagedGeometry* m_paged_geometry;
+    Forests::TreeLoader3D* m_paged_geometry_loader;
 
     Ogre::Real m_initial_left_horizontal_flare_scroll;
     Ogre::Real m_initial_right_horizontal_flare_scroll;

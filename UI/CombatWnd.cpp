@@ -13,6 +13,11 @@
 
 #include "OptionsWnd.h" // TODO: Remove this later, once the InGameMenu is in use for F10 presses instead.
 
+#include "PagedGeometry/BatchPage.h"
+#include "PagedGeometry/ImpostorPage.h"
+#include "PagedGeometry/PagedGeometry.h"
+#include "PagedGeometry/TreeLoader3D.h"
+
 #include <OgreAnimation.h>
 #include <OgreBillboard.h>
 #include <OgreBillboardSet.h>
@@ -42,6 +47,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/system/system_error.hpp>
 
 
@@ -368,6 +374,8 @@ namespace {
         return asteroid_sets;
     }
 
+#define USE_PAGED_GEOMETRY 0
+#if !USE_PAGED_GEOMETRY
     const std::vector<Ogre::MaterialPtr>& AsteroidMaterials()
     {
         static std::vector<Ogre::MaterialPtr> asteroid_materials;
@@ -389,6 +397,56 @@ namespace {
             }
         }
         return asteroid_materials;
+    }
+#endif
+
+    boost::ptr_vector<Ogre::Entity> AsteroidEntities(Ogre::SceneManager* scene_manager)
+    {
+        boost::ptr_vector<Ogre::Entity> asteroid_entities;
+        if (asteroid_entities.empty())
+        {
+            const std::set<std::string>& asteroid_sets = AsteroidSets();
+            for (std::set<std::string>::const_iterator it = asteroid_sets.begin();
+                 it != asteroid_sets.end();
+                 ++it) {
+                std::string base_name = *it;
+                Ogre::Entity* entity =
+                    scene_manager->createEntity("asteroid mesh  " + base_name,
+                                                base_name + ".mesh");
+                Ogre::MaterialPtr material =
+                    Ogre::MaterialManager::getSingleton().getByName("asteroid");
+                std::string new_material_name = "asteroid material " + base_name;
+                material = material->clone(new_material_name);
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                    setTextureName(*it + "Color.png");
+                material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+                    setTextureName(*it + "Normal.png");
+                entity->setMaterialName(new_material_name);
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+                entity->setCastShadows(true);
+            }
+        }
+        return asteroid_entities;
+    }
+
+    void SetupPagedGeometry(Forests::PagedGeometry*& paged_geometry,
+                            Forests::TreeLoader3D*& paged_geometry_loader,
+                            Ogre::Camera* camera)
+    {
+        if (!paged_geometry) {
+            paged_geometry = new Forests::PagedGeometry;
+            paged_geometry->setCamera(camera);
+            paged_geometry->setPageSize(80);
+            paged_geometry->setInfinite();
+            paged_geometry->addDetailLevel<Forests::BatchPage>(150, 50);
+            paged_geometry->addDetailLevel<Forests::ImpostorPage>(500, 50);
+            paged_geometry_loader =
+                new Forests::TreeLoader3D(
+                    paged_geometry,
+                    Forests::TBounds(-SystemRadius(), -SystemRadius(),
+                                     SystemRadius(), SystemRadius()));
+            paged_geometry->setPageLoader(paged_geometry_loader);
+        }
     }
 
     void AddOptions(OptionsDB& db)
@@ -586,6 +644,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_collision_dispatcher(0),
     m_collision_broadphase(0),
     m_collision_world(0),
+    m_paged_geometry(0),
     m_initial_left_horizontal_flare_scroll(0.0),
     m_initial_right_horizontal_flare_scroll(0.0),
     m_left_horizontal_flare_scroll_offset(0.0),
@@ -793,53 +852,6 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         InitCombat(&system, std::map<int, UniverseObject*>());
 
         AddShip("seed.mesh", 250.0, 250.0);
-
-#if 0
-        std::string mesh_name = "Asteroid01.mesh";
-        Ogre::Real x = 270.0;
-        Ogre::Real y = 270.0;
-        Ogre::Entity* entity = m_scene_manager->createEntity("asteroid_" + mesh_name, mesh_name);
-        //entity->setCastShadows(true);
-        entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-        Ogre::MaterialPtr material =
-            Ogre::MaterialManager::getSingleton().getByName("asteroid");
-        //TODO material = material->clone(new_material_name);
-        entity->setMaterialName("asteroid");//new_material_name);
-        Ogre::SceneNode* node =
-            m_scene_manager->getRootSceneNode()->createChildSceneNode("asteroid_" + mesh_name + "_node");
-        node->attachObject(entity);
-
-        // TODO: This is only here because the Durgha model is upside down.  Remove
-        // it when this is fixed.
-        node->yaw(Ogre::Radian(Ogre::Math::PI));
-
-        node->setPosition(x, y, 0.0);
-
-        Ogre::Vector3 light_dir = -node->getPosition();
-        light_dir.normalise();
-        light_dir = node->getOrientation().Inverse() * light_dir;
-        material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-
-        CollisionMeshConverter collision_mesh_converter(entity);
-        btTriangleMesh* collision_mesh = 0;
-        btBvhTriangleMeshShape* collision_shape = 0;
-        boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
-
-        // TODO: Record this mesh and material.
-        //m_ship_assets[0] = boost::make_tuple(node, material, collision_mesh);
-
-        m_collision_shapes.push_back(collision_shape);
-        m_collision_objects.push_back(new btCollisionObject);
-        btMatrix3x3 identity;
-        identity.setIdentity();
-        // TODO: Remove z-flip scaling when models are right.
-        btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
-        m_collision_objects.back().getWorldTransform().setBasis(scaled);
-        m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(node->getPosition()));
-        m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
-        m_collision_world->addCollisionObject(&m_collision_objects.back());
-        m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
-#endif
     } else {
         GG::X width(50);
         CUIButton* done_button =
@@ -854,6 +866,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
 CombatWnd::~CombatWnd()
 {
+    delete m_paged_geometry;
+
     Ogre::Root::getSingleton().removeFrameListener(this);
     m_scene_manager->removeRenderQueueListener(m_stencil_op_frame_listener);
     m_scene_manager->destroyQuery(m_volume_scene_query);
@@ -919,6 +933,9 @@ void CombatWnd::InitCombat(System* system,
                 false);
     }
 
+    const boost::ptr_vector<Ogre::Entity>& asteroid_entities =
+        AsteroidEntities(m_scene_manager);
+
     // create planets
     for (System::const_orbit_iterator it = m_system->begin(); it != m_system->end(); ++it) {
         const Planet* planet = 0;
@@ -945,11 +962,6 @@ void CombatWnd::InitCombat(System* system,
                     Ogre::Vector3::UNIT_Z);
                 position = position_rotation * position;
                 node->setPosition(position);
-
-                // light comes from the star, and the star is at the origin
-                Ogre::Vector3 light_dir = -node->getPosition();
-                light_dir.normalise();
-                light_dir = node->getOrientation().Inverse() * light_dir;
 
                 assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
                 const std::set<std::string>& planet_textures =
@@ -991,8 +1003,6 @@ void CombatWnd::InitCombat(System* system,
                         Ogre::MaterialManager::getSingleton().getByName(material_name);
                     material = material->clone(new_material_name);
                     m_planet_assets[it->first].second.push_back(material);
-                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
-                        setNamedConstant("light_dir", light_dir);
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
                         setTextureName(base_name + ".png");
                     entity->setMaterialName(new_material_name);
@@ -1011,8 +1021,6 @@ void CombatWnd::InitCombat(System* system,
                     material = material->clone(new_material_name);
                     m_planet_assets[it->first].second.push_back(material);
                     assert(entity->getNumSubEntities() == 1u);
-                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
-                        setNamedConstant("light_dir", light_dir);
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
                         setTextureName(base_name + "Day.png");
                     material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
@@ -1032,17 +1040,11 @@ void CombatWnd::InitCombat(System* system,
                         entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
                         entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                         entity->setQueryFlags(UNSELECTABLE_OBJECT_MASK);
-                        std::string new_material_name =
-                            material_name + "_atmosphere_" +
-                            boost::lexical_cast<std::string>(it->first);
                         Ogre::MaterialPtr material =
                             Ogre::MaterialManager::getSingleton().getByName(
                                 AtmosphereMaterialName(base_name));
-                        material = material->clone(new_material_name);
+                        entity->setMaterialName(material->getName());
                         m_planet_assets[it->first].second.push_back(material);
-                        material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
-                            setNamedConstant("light_dir", light_dir);
-                        entity->setMaterialName(new_material_name);
                         node->attachObject(entity);
                     } else {
                         assert(material_name == "atmosphereless_planet");
@@ -1064,6 +1066,8 @@ void CombatWnd::InitCombat(System* system,
 
                 m_planet_assets[it->first].first = node;
             } else {
+                SetupPagedGeometry(m_paged_geometry, m_paged_geometry_loader, m_camera);
+
                 const int ASTEROIDS_IN_BELT_AT_FOURTH_ORBIT = 50;
                 const int ORBITAL_RADIUS = OrbitalRadius(it->first);
                 const int ASTEROIDS =
@@ -1072,9 +1076,10 @@ void CombatWnd::InitCombat(System* system,
                 std::string planet_name =
                     "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
 
-                const Ogre::Real DELTA_THETA = 2.0 * 3.1415926 / ASTEROIDS;
+                const Ogre::Real DELTA_THETA = 2.0 * Ogre::Math::PI / ASTEROIDS;
                 Ogre::Real theta = 0.0;
                 for (int i = 0; i < ASTEROIDS; ++i, theta += DELTA_THETA) {
+#if !USE_PAGED_GEOMETRY
                     std::string i_string = boost::lexical_cast<std::string>(i);
                     Ogre::SceneNode* node =
                         m_scene_manager->getRootSceneNode()->createChildSceneNode(
@@ -1089,11 +1094,6 @@ void CombatWnd::InitCombat(System* system,
                     // bump position a bit
                     node->setPosition(position);
 
-                    // light comes from the star, and the star is at the origin
-                    Ogre::Vector3 light_dir = -node->getPosition();
-                    light_dir.normalise();
-                    light_dir = node->getOrientation().Inverse() * light_dir;
-
                     std::string base_name =
                         *boost::next(asteroid_sets.begin(), i % asteroid_sets.size());
 
@@ -1103,13 +1103,21 @@ void CombatWnd::InitCombat(System* system,
                     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                     Ogre::MaterialPtr material =
                         AsteroidMaterials()[i % AsteroidMaterials().size()];
-                    std::string new_material_name = planet_name + " material " + i_string;
-                    material = material->clone(new_material_name);
-                    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->
-                        setNamedConstant("light_dir", light_dir);
-                    entity->setMaterialName(new_material_name);
+                    entity->setMaterialName(material->getName());
                     entity->setCastShadows(true);
                     node->attachObject(entity);
+#else
+                    Ogre::Radian yaw(2.0 * Ogre::Math::PI * RandZeroToOne());
+                    Ogre::Vector3 position;
+                    position.z = 25.0 * RandZeroToOne();
+                    position.y = std::sin(theta);
+                    position.x = std::cos(theta);
+                    Ogre::Real scale = Ogre::Math::RangeRandom(0.05f, 0.5f);
+                    m_paged_geometry_loader->addTree(
+                        &asteroid_entities[i % asteroid_entities.size()],
+                        position, yaw, scale
+                    );
+#endif
                 }
 
 #if 0
@@ -1147,24 +1155,12 @@ void CombatWnd::Render()
          it != m_planet_assets.end();
          ++it) {
         it->second.first->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
-        if (dynamic_cast<Ogre::Entity*>(it->second.first->getAttachedObject(0))) {
-            Ogre::Vector3 light_dir = -it->second.first->getPosition();
-            light_dir.normalise();
-            light_dir = it->second.first->getOrientation().Inverse() * light_dir;
-            m_planet_assets[it->first].second.back()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-        }
     }
     for (std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> >::iterator it =
              m_ship_assets.begin();
          it != m_ship_assets.end();
          ++it) {
         it->second.get<0>()->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
-        if (dynamic_cast<Ogre::Entity*>(it->second.get<0>()->getAttachedObject(0))) {
-            Ogre::Vector3 light_dir = -it->second.get<0>()->getPosition();
-            light_dir.normalise();
-            light_dir = it->second.get<0>()->getOrientation().Inverse() * light_dir;
-            it->second.get<1>()->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-        }
     }
 #endif
 
@@ -1445,6 +1441,9 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     if (m_camera_animation_state->hasEnded())
         m_camera_animation->destroyAllTracks();
 
+    if (m_paged_geometry)
+        m_paged_geometry->update();
+
     return !m_exit;
 }
 
@@ -1682,12 +1681,9 @@ void CombatWnd::DeselectAll()
 void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y)
 {
     Ogre::Entity* entity = m_scene_manager->createEntity("ship_" + mesh_name, mesh_name);
-    //entity->setCastShadows(true);
+    entity->setCastShadows(true);
     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-    Ogre::MaterialPtr material =
-        Ogre::MaterialManager::getSingleton().getByName("ship");
-    //TODO material = material->clone(new_material_name);
-    entity->setMaterialName("ship");//new_material_name);
+    entity->setMaterialName("ship");
     Ogre::SceneNode* node =
         m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
     node->attachObject(entity);
@@ -1698,19 +1694,14 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
 
     node->setPosition(x, y, 0.0);
 
-#if 0
-    Ogre::Vector3 light_dir = -node->getPosition();
-    light_dir.normalise();
-    light_dir = node->getOrientation().Inverse() * light_dir;
-    material->getTechnique(0)->getPass(0)->getVertexProgramParameters()->setNamedConstant("light_dir", light_dir);
-#endif
-
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;
     btBvhTriangleMeshShape* collision_shape = 0;
     boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
 
     // TODO: use ship's ID
+    Ogre::MaterialPtr material =
+        Ogre::MaterialManager::getSingleton().getByName("ship");
     m_ship_assets[0] = boost::make_tuple(node, material, collision_mesh);
 
     m_collision_shapes.push_back(collision_shape);
