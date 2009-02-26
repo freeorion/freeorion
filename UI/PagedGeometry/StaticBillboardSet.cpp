@@ -434,6 +434,8 @@ void StaticBillboardSet::build()
 		
 		//Create an entity for the mesh
 		entity = sceneMgr->createEntity(entityName, mesh->getName());
+                const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
+                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
 		entity->setCastShadows(false);
 
 		//Apply texture

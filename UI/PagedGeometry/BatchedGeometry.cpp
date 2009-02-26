@@ -298,6 +298,9 @@ void BatchedGeometry::build()
 			i->second->build();
 		}
 
+		const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
+		setVisibilityFlags(REGULAR_OBJECTS_MASK);
+
 		//Attach the batch to the scene node
 		sceneNode->attachObject(this);
 
