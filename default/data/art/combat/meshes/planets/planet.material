@@ -22,6 +22,9 @@ vertex_program gas_giant_vert glsl
 fragment_program gas_giant_frag glsl
 { source gas_giant.frag }
 
+vertex_program asteroid_vert glsl
+{ source asteroid.vert }
+
 fragment_program asteroid_frag glsl
 { source asteroid.frag }
 
@@ -129,8 +132,8 @@ material gas_giant {
 material asteroid {
     technique {
         pass {
-            vertex_program_ref atmosphereless_planet_vert
-            { param_named_auto light_pos light_position_object_space 0 }
+            vertex_program_ref asteroid_vert
+            {}
 
             fragment_program_ref asteroid_frag {
                 param_named color_texture int 0
