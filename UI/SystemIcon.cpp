@@ -189,7 +189,6 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(int button_number, bool moving) const
 {
     assert(button_number > 0);
     GG::Pt retval = GG::Pt();
-    const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
 
     // get fleetbutton size to use for layout, defaulting to size (0, 0)
     GG::Pt FLEETBUTTON_SIZE = GG::Pt();

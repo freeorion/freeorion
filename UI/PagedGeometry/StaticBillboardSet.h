@@ -49,7 +49,7 @@ public:
 /** Different methods used to render billboards. This can be supplied as a parameter
 to the StaticBillboardSet constructor to manually select how you want billboards
 rendered (although in almost all cases BB_METHOD_ACCELERATED is the best choice).*/
-typedef enum BillboardMethod {
+enum BillboardMethod {
 	/** This mode accelerates the performance of billboards by using vertex shaders
 	to keep billboards facing the camera. Note: If the computer's hardware is not
 	capable	of vertex shaders, it will automatically fall back to BB_METHOD_COMPATIBLE

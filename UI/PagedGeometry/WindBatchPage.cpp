@@ -103,6 +103,7 @@ void WindBatchPage::_updateShaders()
 						case VET_FLOAT2: uvType = "2"; break;
 						case VET_FLOAT3: uvType = "3"; break;
 						case VET_FLOAT4: uvType = "4"; break;
+						default: break;
 				}
 				tmpName << uvType << '_';
 			}
@@ -114,8 +115,6 @@ void WindBatchPage::_updateShaders()
 
 		//If the shader hasn't been created yet, create it
 		if (HighLevelGpuProgramManager::getSingleton().getByName(vertexProgName).isNull()){
-			Pass *pass = mat->getTechnique(0)->getPass(0);
-
 			String vertexProgSource =
 				"void main( \n"
 				"	float4 iPosition : POSITION, \n"
@@ -160,6 +159,7 @@ void WindBatchPage::_updateShaders()
 								case VET_FLOAT2: uvType = "float2"; break;
 								case VET_FLOAT3: uvType = "float3"; break;
 								case VET_FLOAT4: uvType = "float4"; break;
+								default: break;
 							}
 
 

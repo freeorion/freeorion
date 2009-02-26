@@ -385,11 +385,11 @@ float PagedGeometry::getCustomParam(string paramName, float defaultParamValue) c
 
 GeometryPageManager::GeometryPageManager(PagedGeometry *mainGeom)
 : mainGeom(mainGeom)
-	, cacheTimer(0) // Reset the cache timer
-	, scrollBuffer(NULL)
 	, geomGrid(NULL)
+	, scrollBuffer(NULL)
 	, geomGridX(0)
 	, geomGridZ(0)
+	, cacheTimer(0) // Reset the cache timer
 {
 	//Use default cache speeds
 	setCacheSpeed();
@@ -712,7 +712,6 @@ void GeometryPageManager::reloadGeometryPages(const Vector3 &center, Real radius
 	if (z2 < 0) z2 = 0; else if (z2 > geomGridZ-1) z2 = geomGridZ-1;
 
 	//Scan all the grid blocks in the region
-	Real radiusSq = radius * radius;
 	for (int x = x1; x <= x2; ++x) {
 		for (int z = z1; z <= z2; ++z) {
 			GeometryPage *page = _getGridPage(x, z);

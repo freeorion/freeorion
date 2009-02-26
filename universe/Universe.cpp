@@ -159,9 +159,8 @@ namespace {
             boost::dijkstra_shortest_paths(graph, system1_index, &predecessors[0], &distances[0], edge_weight_map, index_map, 
                                            std::less<double>(), std::plus<double>(), std::numeric_limits<int>::max(), 0, 
                                            boost::make_dijkstra_visitor(PathFindingShortCircuitingVisitor(system2_index)));
-        } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
+        } catch (const PathFindingShortCircuitingVisitor::FoundDestination&) {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
-            fd; // to quiet warning about unused variable
         }
 
 
@@ -226,9 +225,8 @@ namespace {
                                                                                boost::record_predecessors(&predecessors[0],
                                                                                                           boost::on_tree_edge()))),
                                         &colors[0]);
-        } catch (const PathFindingShortCircuitingVisitor::FoundDestination& fd) {
+        } catch (const PathFindingShortCircuitingVisitor::FoundDestination&) {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
-            fd; // to quiet warnings about unused variable
         }
 
 

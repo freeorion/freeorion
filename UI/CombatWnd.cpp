@@ -880,7 +880,6 @@ void CombatWnd::InitCombat(System* system,
 
     assert(StarTextures().find(m_system->Star()) != StarTextures().end());
     const std::set<std::string>& star_textures = StarTextures().find(m_system->Star())->second;
-    const std::set<std::string>& asteroid_sets = AsteroidSets();
 
     // pick and assign star textures
     {

@@ -340,7 +340,8 @@ unsigned long ImpostorTexture::GUID = 0;
 //Do not use this constructor yourself - instead, call getTexture()
 //to get/create an ImpostorTexture for an Entity.
 ImpostorTexture::ImpostorTexture(ImpostorPage *group, Entity *entity, Ogre::uint8 renderQueueGroupID)
-: loader(0), renderQueueGroup(renderQueueGroupID)
+: renderQueueGroup(renderQueueGroupID),
+  loader(0)
 {
 	//Store scene manager and entity
 	ImpostorTexture::sceneMgr = group->sceneMgr;

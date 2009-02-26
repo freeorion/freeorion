@@ -47,7 +47,7 @@ class ImpostorBatch;
 class ImpostorTexture;
 
 //Blend modes used by ImpostorPage::setBlendMode()
-typedef enum ImpostorBlendMode {
+enum ImpostorBlendMode {
 	ALPHA_REJECT_IMPOSTOR,
 	ALPHA_BLEND_IMPOSTOR
 };

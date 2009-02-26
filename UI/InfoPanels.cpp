@@ -2404,7 +2404,6 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
     row_height = GG::Y(ClientUI::Pts() * 3/2);
     const GG::X TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
 
-    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
     GG::Y top = GG::Y0;

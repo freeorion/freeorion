@@ -143,9 +143,8 @@ int main(int argc, char* argv[])
         HumanClientApp app(root, window, scene_manager, camera, viewport);
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
         app();
-    } catch (const HumanClientApp::CleanQuit& e) {
+    } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
-        e;  // to quiet warning about unused variable
     } catch (const std::invalid_argument& e) {
         Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
