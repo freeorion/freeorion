@@ -47,7 +47,6 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/system/system_error.hpp>
 
 
@@ -69,6 +68,8 @@ namespace {
     const Ogre::uint32 GLOWING_OBJECTS_MASK = 1 << 1;
 
     // queue groups
+    const int PAGED_GEOMETRY_IMPOSTOR_QUEUE =            Ogre::RENDER_QUEUE_MAIN - 1;
+
     const int SELECTION_HILITING_OBJECT_RENDER_QUEUE =   Ogre::RENDER_QUEUE_MAIN + 1;
 
     const int STAR_BACK_QUEUE =                          Ogre::RENDER_QUEUE_6 + 0;
@@ -80,8 +81,8 @@ namespace {
     const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 2;
 
     const std::set<int> STENCIL_OP_RENDER_QUEUES =
-                                                   boost::assign::list_of
-                                                   (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
+        boost::assign::list_of
+        (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
         (SELECTION_HILITING_OUTLINED_RENDER_QUEUE)
         (SELECTION_HILITING_FILLED_1_RENDER_QUEUE)
         (SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
@@ -374,7 +375,7 @@ namespace {
         return asteroid_sets;
     }
 
-#define USE_PAGED_GEOMETRY 0
+#define USE_PAGED_GEOMETRY 1
 #if !USE_PAGED_GEOMETRY
     const std::vector<Ogre::MaterialPtr>& AsteroidMaterials()
     {
@@ -400,33 +401,30 @@ namespace {
     }
 #endif
 
-    boost::ptr_vector<Ogre::Entity> AsteroidEntities(Ogre::SceneManager* scene_manager)
+    void CreateAsteroidEntities(std::vector<Ogre::Entity*>& asteroid_entities,
+                                Ogre::SceneManager* scene_manager)
     {
-        boost::ptr_vector<Ogre::Entity> asteroid_entities;
-        if (asteroid_entities.empty())
-        {
-            const std::set<std::string>& asteroid_sets = AsteroidSets();
-            for (std::set<std::string>::const_iterator it = asteroid_sets.begin();
-                 it != asteroid_sets.end();
-                 ++it) {
-                std::string base_name = *it;
-                Ogre::Entity* entity =
-                    scene_manager->createEntity("asteroid mesh  " + base_name,
-                                                base_name + ".mesh");
-                Ogre::MaterialPtr material =
-                    Ogre::MaterialManager::getSingleton().getByName("asteroid");
-                std::string new_material_name = "asteroid material " + base_name;
-                material = material->clone(new_material_name);
-                material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
-                    setTextureName(*it + "Color.png");
-                material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
-                    setTextureName(*it + "Normal.png");
-                entity->setMaterialName(new_material_name);
-                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                entity->setCastShadows(true);
-            }
+        const std::set<std::string>& asteroid_sets = AsteroidSets();
+        for (std::set<std::string>::const_iterator it = asteroid_sets.begin();
+             it != asteroid_sets.end();
+             ++it) {
+            std::string base_name = *it;
+            Ogre::Entity* entity =
+                scene_manager->createEntity("asteroid mesh " + base_name,
+                                            base_name + ".mesh");
+            Ogre::MaterialPtr material =
+                Ogre::MaterialManager::getSingleton().getByName("asteroid");
+            std::string new_material_name = "asteroid material " + base_name;
+            material = material->clone(new_material_name);
+            material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+                setTextureName(*it + "Color.png");
+            material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+                setTextureName(*it + "Normal.png");
+            entity->setMaterialName(new_material_name);
+            entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+            entity->setCastShadows(true);
+            asteroid_entities.push_back(entity);
         }
-        return asteroid_entities;
     }
 
     void SetupPagedGeometry(Forests::PagedGeometry*& paged_geometry,
@@ -439,7 +437,8 @@ namespace {
             paged_geometry->setPageSize(80);
             paged_geometry->setInfinite();
             paged_geometry->addDetailLevel<Forests::BatchPage>(150, 50);
-            paged_geometry->addDetailLevel<Forests::ImpostorPage>(500, 50);
+            paged_geometry->addDetailLevel<Forests::ImpostorPage>(
+                500, 50, Ogre::Any(PAGED_GEOMETRY_IMPOSTOR_QUEUE));
             paged_geometry_loader =
                 new Forests::TreeLoader3D(
                     paged_geometry,
@@ -933,8 +932,8 @@ void CombatWnd::InitCombat(System* system,
                 false);
     }
 
-    const boost::ptr_vector<Ogre::Entity>& asteroid_entities =
-        AsteroidEntities(m_scene_manager);
+    std::vector<Ogre::Entity*> asteroid_entities;
+    CreateAsteroidEntities(asteroid_entities, m_scene_manager);
 
     // create planets
     for (System::const_orbit_iterator it = m_system->begin(); it != m_system->end(); ++it) {
@@ -1110,11 +1109,11 @@ void CombatWnd::InitCombat(System* system,
                     Ogre::Radian yaw(2.0 * Ogre::Math::PI * RandZeroToOne());
                     Ogre::Vector3 position;
                     position.z = 25.0 * RandZeroToOne();
-                    position.y = std::sin(theta);
-                    position.x = std::cos(theta);
+                    position.y = ORBITAL_RADIUS * std::sin(theta);
+                    position.x = ORBITAL_RADIUS * std::cos(theta);
                     Ogre::Real scale = Ogre::Math::RangeRandom(0.05f, 0.5f);
                     m_paged_geometry_loader->addTree(
-                        &asteroid_entities[i % asteroid_entities.size()],
+                        asteroid_entities[i % asteroid_entities.size()],
                         position, yaw, scale
                     );
 #endif

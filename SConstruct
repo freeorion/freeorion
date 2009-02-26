@@ -585,9 +585,6 @@ if str(Platform()) == 'win32':
     shutil.copy(os.path.join('..', 'lib', 'GiGiOgre.dll'), '.')
     shutil.copy(os.path.join('..', 'lib', 'GiGiOgrePlugin_OIS.dll'), '.')
 
-# create Ogre plugin config file
-CreateOgrePluginsFile(['ogre_plugins.cfg'], ['ogre_plugins.cfg.in'], env)
-
 Export('env')
 
 # define server objects

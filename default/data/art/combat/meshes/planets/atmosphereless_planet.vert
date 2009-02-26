@@ -5,6 +5,15 @@ varying float diffuse;
 varying vec2 tex_coord;
 varying vec3 light_vec;
 
+uniform vec4 objSpaceLight;
+uniform vec4 lightDiffuse;
+uniform vec4 lightAmbient;
+
+uniform mat4 worldViewProj;
+uniform vec3 camPos;
+uniform float invisibleDist;
+uniform float fadeGap;
+
 void main()
 {
     vec3 light_dir = normalize(light_pos.xyz);
