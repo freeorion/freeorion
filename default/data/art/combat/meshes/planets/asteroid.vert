@@ -25,7 +25,10 @@ void main()
     light_vec = normalize(light_dir * tangent_space);
 
     float dist = distance(camPos.xz, gl_Vertex.xz);
-    alpha = (invisibleDist - dist) / fadeGap;
+    // This is disabled because it causes the PagedGeometry impostors to be 0%
+    // alpha.
+    //alpha = (invisibleDist - dist) / fadeGap;
+    alpha = 1.0;
 
     gl_Position = ftransform();
 }
