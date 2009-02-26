@@ -411,9 +411,10 @@ namespace {
             paged_geometry->setCamera(camera);
             paged_geometry->setPageSize(250);
             paged_geometry->setInfinite();
-            paged_geometry->addDetailLevel<Forests::BatchPage>(150, 50);
+            paged_geometry->addDetailLevel<Forests::BatchPage>(250, 50);
             paged_geometry->addDetailLevel<Forests::ImpostorPage>(
-                3.0 * SystemRadius(), 0, Ogre::Any(PAGED_GEOMETRY_IMPOSTOR_QUEUE));
+                2.0 * SystemRadius(), 1.5 * SystemRadius(),
+                Ogre::Any(PAGED_GEOMETRY_IMPOSTOR_QUEUE));
             paged_geometry_loader =
                 new Forests::TreeLoader3D(
                     paged_geometry,

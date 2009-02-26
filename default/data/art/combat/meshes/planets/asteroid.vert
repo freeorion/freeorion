@@ -1,12 +1,13 @@
 // -*- C++ -*-
 varying float diffuse;
+varying float alpha;
 varying vec2 tex_coord;
 varying vec3 light_vec;
 
+// We don't use some of these, but PagedGeometry expects this interface.
 uniform vec4 objSpaceLight;
 uniform vec4 lightDiffuse;
 uniform vec4 lightAmbient;
-
 uniform mat4 worldViewProj;
 uniform vec3 camPos;
 uniform float invisibleDist;
@@ -22,6 +23,9 @@ void main()
     vec3 binormal = cross(gl_Normal, tangent);
     mat3 tangent_space = mat3(tangent, binormal, gl_Normal);
     light_vec = normalize(light_dir * tangent_space);
+
+    float dist = distance(camPos.xz, gl_Vertex.xz);
+    alpha = (invisibleDist - dist) / fadeGap;
 
     gl_Position = ftransform();
 }

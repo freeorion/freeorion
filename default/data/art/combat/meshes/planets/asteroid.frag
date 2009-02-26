@@ -2,6 +2,7 @@
 uniform sampler2D color_texture, normal_texture;
 
 varying float diffuse;
+varying float alpha;
 varying vec2 tex_coord;
 varying vec3 light_vec;
 
@@ -16,5 +17,5 @@ void main()
     float normal_factor = abs(dot(normal, light_vec));
     color *= normal_factor;
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, alpha);
 }
