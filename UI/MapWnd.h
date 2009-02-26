@@ -41,9 +41,10 @@ class MapWnd : public GG::Wnd
 {
 public:
     //! \name Signal Types //!@{
-    typedef boost::signal<void (int)> SystemLeftClickedSignalType;  //!< emitted when the user left-clicks a star system
-    typedef boost::signal<void (int)> SystemRightClickedSignalType; //!< emitted when the user right-clicks a star system
-    typedef boost::signal<void (int)> SystemBrowsedSignalType;      //!< emitted when the user moves the mouse over a star system
+    typedef boost::signal<void (int)>       SystemLeftClickedSignalType;        //!< emitted when the user left-clicks a star system
+    typedef boost::signal<void (int)>       SystemRightClickedSignalType;       //!< emitted when the user right-clicks a star system
+    typedef boost::signal<void (int)>       SystemBrowsedSignalType;            //!< emitted when the user moves the mouse over a star system
+    typedef boost::signal<void (double)>    ZoomedSignalType;                   //!< emitted when the map zoom factor is changed
     //!@}
 
     //! \name Slot Types //!@{
@@ -89,9 +90,10 @@ public:
     void           ShowSystemNames();                               //!< enables the system name text
     void           HideSystemNames();                               //!< disables the system name text
 
-    mutable SystemLeftClickedSignalType  SystemLeftClickedSignal;
-    mutable SystemRightClickedSignalType SystemRightClickedSignal;
-    mutable SystemBrowsedSignalType      SystemBrowsedSignal;
+    mutable SystemLeftClickedSignalType     SystemLeftClickedSignal;
+    mutable SystemRightClickedSignalType    SystemRightClickedSignal;
+    mutable SystemBrowsedSignalType         SystemBrowsedSignal;
+    mutable ZoomedSignalType                ZoomedSignal;
 
     void            CenterOnMapCoord(double x, double y);           //!< centers the map on map position (x, y)
     void            CenterOnObject(int id);                         //!< centers the map on object with id \a id
@@ -105,7 +107,6 @@ public:
 
     void            SetFleetMovementLine(const FleetButton* fleet_button);          //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
     void            SetFleetMovementLine(const Fleet* fleet);                       //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
-    void            SetFleetETAIndicators(const std::vector<const Fleet*>& fleets); //!< removes existing fleet move line ETA indicators, and adds indicators for the specified \a fleets move lines
 
     /* creates specially-coloured projected fleet movement line for specified fleet following the specified
        route.  Move line originates from the fleet's button location. */
@@ -115,7 +116,10 @@ public:
     void            SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route);
     void            RemoveProjectedFleetMovementLine(const Fleet* fleet);   //!< removes projected fleet movement line for specified fleet.
     void            ClearProjectedFleetMovementLines();                     //!< removes all projected fleet movement lines
+
+    void            SetFleetETAIndicators(const std::vector<const Fleet*>& fleets); //!< removes existing fleet move line ETA indicators, and adds indicators for the specified \a fleets move lines
     void            SetProjectedFleetETAIndicators();                       //!< creates fleet move line ETA indicators for current projected fleet move lines
+    void            ClearProjectFleetETAIndicators();                       //!< removes all projected fleet ETA indactors
 
     void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
@@ -162,6 +166,7 @@ private:
     };
 
     class FleetETAMapIndicator;
+    class MapScaleLine;
 
     void Zoom(int delta);                           //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
     void SetZoom(double steps_in);                  //!< sets zoom level of the main map to zoom step size to the power of \a steps_in
@@ -306,6 +311,7 @@ private:
     FPSIndicator*               m_FPS;
 
     GG::Slider*                 m_zoom_slider;
+    MapScaleLine*               m_scale_line;
 
     struct FleetButtonClickedFunctor
     {

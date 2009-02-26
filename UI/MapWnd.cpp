@@ -45,12 +45,12 @@ namespace {
     const int       ZOOM_TOTAL_STEPS = ZOOM_IN_MAX_STEPS + 1 + ZOOM_IN_MIN_STEPS;
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
-    const int       MIN_NEBULAE = 3; // this min and max are for a 1000.0-width galaxy
-    const int       MAX_NEBULAE = 6;
     const GG::X     END_TURN_BTN_WIDTH(60);
     const GG::X     SITREP_PANEL_WIDTH(400);
     const GG::Y     SITREP_PANEL_HEIGHT(300);
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
+    const GG::Y     SCALE_LINE_HEIGHT(20);
+    const GG::X     SCALE_LINE_MAX_WIDTH(200);
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
 
@@ -141,6 +141,85 @@ namespace {
 }
 
 ////////////////////////////////////////////////////////////
+// MapWnd::MapScaleLine
+////////////////////////////////////////////////////////////
+/** Displays a notched line with number labels to indicate Universe distance on the map. */
+class MapWnd::MapScaleLine : public GG::Control {
+public:
+    MapScaleLine(GG::X x, GG::Y y, GG::X w, GG::Y h) :
+        GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+        m_scale_factor(1.0),
+        m_line_right_x(GG::X1),
+        m_label(NULL)
+    {
+        m_label = new ShadowedTextControl(GG::X0, GG::Y0, GG::X1, h, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER);
+        AttachChild(m_label);
+        Update(1.0);
+    }
+    virtual void Render() {
+        // use GL to draw line and ticks and labels to indicte a length on the map
+        GG::Pt ul = UpperLeft();
+        GG::Pt lr = LowerRight();
+        lr.x = m_line_right_x;
+        ul.y = (ul.y + lr.y)/2;
+        glColor(GG::CLR_WHITE);
+        glLineWidth(2.0);
+
+        glDisable(GL_TEXTURE_2D);
+        glBegin(GL_LINES);
+            // left border
+            glVertex(ul.x, ul.y);
+            glVertex(ul.x, lr.y);
+
+            // right border
+            glVertex(lr.x, ul.y);
+            glVertex(lr.x, lr.y);
+
+            // bottom line
+            glVertex(ul.x, lr.y);
+            glVertex(lr.x, lr.y);
+        glEnd();
+        glEnable(GL_TEXTURE_2D);
+    }
+    void Update(double zoom_factor) {
+        zoom_factor = std::min(std::max(zoom_factor, ZOOM_MIN), ZOOM_MAX);  // sanity range limits to prevent divide by zero
+        m_scale_factor = zoom_factor;
+
+        // determine length of line to draw and how long that is in universe units
+        double AVAILABLE_WIDTH = static_cast<double>(std::max(Value(Width()), 1));
+
+        // length in universe units that could be shown if full AVAILABLE_WIDTH was used
+        double max_shown_length = AVAILABLE_WIDTH / m_scale_factor;
+
+
+        // select an actual shown length in universe units by reducing max_shown_length to a nice round number,
+        // where nice round numbers are numbers beginning with 1, 2 or 5
+
+        // get appropriate power of 10
+        double pow10 = floor(log10(max_shown_length));
+        double shown_length = std::pow(10.0, pow10);
+
+        // see if next higher multiples of 5 or 2 can be used
+        if (shown_length * 5.0 <= max_shown_length)
+            shown_length *= 5.0;
+        else if (shown_length * 2.0 <= max_shown_length)
+            shown_length *= 2.0;
+
+        // determine end of drawn scale line
+        m_line_right_x = GG::X(static_cast<int>(shown_length * m_scale_factor));
+
+        // update text
+        std::string label_text = boost::lexical_cast<std::string>(shown_length) + " uu";
+        m_label->Resize(GG::Pt(GG::X(m_line_right_x), Height()));
+        m_label->SetText(label_text);
+    }
+private:
+    double              m_scale_factor;
+    GG::X               m_line_right_x;
+    GG::TextControl*    m_label;
+};
+
+////////////////////////////////////////////////////////////
 // MapWnd::GLBuffer
 ////////////////////////////////////////////////////////////
 MapWnd::GLBuffer::GLBuffer() :
@@ -168,9 +247,8 @@ void MapWndPopup::Close()
 { CloseClicked(); }
 
 ////////////////////////////////////////////////
-// MapWnd
-////////////////////////////////////////////////
 // MapWnd::MovementLineData
+////////////////////////////////////////////////
 MapWnd::MovementLineData::MovementLineData() : 
     m_colour(GG::CLR_ZERO), 
     m_path(),
@@ -312,7 +390,8 @@ MapWnd::MapWnd() :
     m_btn_design(NULL),
     m_btn_menu(NULL),
     m_FPS(NULL),
-    m_zoom_slider(NULL)
+    m_zoom_slider(NULL),
+    m_scale_line(NULL)
 {
     SetName("MapWnd");
 
@@ -363,10 +442,17 @@ MapWnd::MapWnd() :
     m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
     m_toolbar->AttachChild(m_FPS);
 
+    // Zoom scale line
+    m_scale_line = new MapScaleLine(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+                                    SCALE_LINE_MAX_WIDTH, SCALE_LINE_HEIGHT);
+    m_toolbar->AttachChild(m_scale_line);
+    GG::Connect(this->ZoomedSignal, &MapScaleLine::Update, m_scale_line);
+    m_scale_line->Update(ZoomFactor());
+
     // Zoom slider
     //const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
     //          ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    //m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+    //m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
     //                              GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
     //                              ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
     ////m_zoom_slider->SizeSlider(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX);
@@ -1459,6 +1545,18 @@ void MapWnd::ClearProjectedFleetMovementLines()
     m_projected_fleet_eta_map_indicators.clear();
 }
 
+void MapWnd::SetFleetETAIndicators(const std::vector<const Fleet*>& fleets)
+{
+}
+
+void MapWnd::SetProjectedFleetETAIndicators()
+{
+}
+
+void MapWnd::ClearProjectFleetETAIndicators()
+{
+}
+
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
     if (event.Type() == GG::WndEvent::RClick && FleetUIManager::GetFleetUIManager().empty()) {
@@ -1651,6 +1749,8 @@ void MapWnd::SetZoom(double steps_in)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
+
+    ZoomedSignal(ZoomFactor());
 }
 
 void MapWnd::ZoomSlid(int pos, int low, int high)
