@@ -1054,6 +1054,15 @@ CUIToolBar::CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     GG::Control(x, y, w, h, GG::ONTOP | GG::CLICKABLE)
 {}
 
+bool CUIToolBar::InWindow(const GG::Pt& pt) const
+{
+    const std::list<GG::Wnd*>& children = Children();
+    for (std::list<GG::Wnd*>::const_iterator it = children.begin(); it != children.end(); ++it)
+        if ((*it)->InWindow(pt))
+            return true;
+    return GG::Wnd::InWindow(pt);
+}
+
 void CUIToolBar::Render()
 {
     GG::Pt ul(UpperLeft()),lr(LowerRight());

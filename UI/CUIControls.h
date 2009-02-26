@@ -394,6 +394,10 @@ public:
     CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h);
     //@}
 
+    /** \name Accessors */ //@{
+    virtual bool InWindow(const GG::Pt& pt) const;
+    //@}
+
     /** \name Mutators */ //@{
     void Render();
     //@}

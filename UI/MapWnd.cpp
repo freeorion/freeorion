@@ -39,7 +39,7 @@
 
 
 namespace {
-    const double    ZOOM_STEP_SIZE = 1.25;
+    const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/3.0);
     const double    ZOOM_IN_MAX_STEPS = 9.0;
     const double    ZOOM_IN_MIN_STEPS = -4.0;   // negative zoom steps indicates zooming out
     const int       ZOOM_TOTAL_STEPS = ZOOM_IN_MAX_STEPS + 1 + ZOOM_IN_MIN_STEPS;
@@ -65,8 +65,6 @@ namespace {
         return std::pow(ZOOM_STEP_SIZE, steps_in);
     }
 
-
-
     struct BoolToVoidAdapter
     {
         BoolToVoidAdapter(const boost::function<bool ()>& fn) : m_fn(fn) {}
@@ -79,17 +77,17 @@ namespace {
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,   Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,   Validator<bool>());
         db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,   Validator<bool>());
-        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.5,    RangedStepValidator<double>(0.1, 0.1, 15.0));
+        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.5,    RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,   Validator<bool>());
         db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,   Validator<bool>());
-        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           3.0,    RangedStepValidator<double>(0.1, 0.1, 15.0));
+        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           3.0,    RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
         db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
-        db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.2,        RangedStepValidator<double>(0.1, 1.0, 2.5));
+        db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.0,        RangedStepValidator<double>(0.1, 1.0, 2.5));
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",2.0,        RangedStepValidator<double>(0.1, 0.5, 5));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",1.6,        RangedStepValidator<double>(0.1, 0.5, 5));
         db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.medium-fleet-button-minimum-zoom","OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM",  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
@@ -366,10 +364,14 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_FPS);
 
     // Zoom slider
-    //m_zoom_slider = new CUISlider(GG::X(LAYOUT_MARGIN), m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+    //const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
+    //          ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
+    //m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
     //                              GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
-    //                              ZOOM_IN_MIN_STEPS, ZOOM_IN_MAX_STEPS, GG::VERTICAL);
-    //AttachChild(m_zoom_slider);
+    //                              ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
+    ////m_zoom_slider->SizeSlider(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX);
+    //m_toolbar->AttachChild(m_zoom_slider);
+    //GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
 
     // Subscreen / Menu buttons
     GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
@@ -460,7 +462,7 @@ GG::Pt MapWnd::ClientUpperLeft() const
 
 double MapWnd::ZoomFactor() const
 {
-    return std::pow(ZOOM_STEP_SIZE, m_zoom_steps_in);
+    return ZoomScaleFactor(m_zoom_steps_in);
 }
 
 GG::Pt MapWnd::ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const
@@ -1581,27 +1583,41 @@ void MapWnd::Zoom(int delta)
     if (delta == 0)
         return;
 
-    GG::Pt ul = ClientUpperLeft();
-    GG::X_d center_x = GG::GUI::GetGUI()->AppWidth() / 2.0;
-    GG::Y_d center_y = GG::GUI::GetGUI()->AppHeight() / 2.0;
-    GG::X_d ul_offset_x = ul.x - center_x;
-    GG::Y_d ul_offset_y = ul.y - center_y;
-
     // increment zoom steps in by delta steps
+    double new_zoom_steps_in = m_zoom_steps_in + static_cast<double>(delta);
+    SetZoom(new_zoom_steps_in);
+}
+
+void MapWnd::SetZoom(double steps_in)
+{
+    // impose range limits on zoom steps
+    double new_steps_in = std::max(std::min(steps_in, ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
+
+    // abort if no change
+    if (new_steps_in == m_zoom_steps_in)
+        return;
 
 
-    // save old zoom...
-    const double                OLD_ZOOM = ZoomFactor();
-    const FleetButton::SizeType OLD_FLEETBUTTON_SIZE = FleetButtonSizeType();
+    // save position offsets and old zoom factors
+    GG::Pt                      ul =                    ClientUpperLeft();
+    const GG::X_d               center_x =              GG::GUI::GetGUI()->AppWidth() / 2.0;
+    const GG::Y_d               center_y =              GG::GUI::GetGUI()->AppHeight() / 2.0;
+    GG::X_d                     ul_offset_x =           ul.x - center_x;
+    GG::Y_d                     ul_offset_y =           ul.y - center_y;
+    const double                OLD_ZOOM =              ZoomFactor();
+    const FleetButton::SizeType OLD_FLEETBUTTON_SIZE =  FleetButtonSizeType();
 
-    // adjust zoom steps, from which zoom factor is calculated.  (zoom steps in has limited range)
-    m_zoom_steps_in = std::max(std::min(m_zoom_steps_in + static_cast<double>(delta), ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
+
+    // set new zoom level
+    m_zoom_steps_in = new_steps_in;
+
 
     // correct map offsets for zoom changes
     ul_offset_x *= (ZoomFactor() / OLD_ZOOM);
     ul_offset_y *= (ZoomFactor() / OLD_ZOOM);
 
 
+    // show / hide system names after zooming
     if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
         HideSystemNames();
     else
@@ -1635,6 +1651,11 @@ void MapWnd::Zoom(int delta)
     m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
+}
+
+void MapWnd::ZoomSlid(int pos, int low, int high)
+{
+    SetZoom(static_cast<double>(pos));
 }
 
 void MapWnd::RenderStarfields()
