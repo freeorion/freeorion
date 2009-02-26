@@ -255,14 +255,16 @@ void PagedGeometry::reloadGeometryPage(const Vector3 &point)
 	if (!pageLoader)
 		return;
 
-#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
-	point = _convertToLocal(point);
-#endif
-
 	std::list<GeometryPageManager *>::iterator it;
 	for (it = managerList.begin(); it != managerList.end(); ++it){
 		GeometryPageManager *mgr = *it;
-		mgr->reloadGeometryPage(point);
+		mgr->reloadGeometryPage(
+#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
+			_convertToLocal(point)
+#else
+			point
+#endif
+			);
 	}
 }
 
@@ -271,14 +273,16 @@ void PagedGeometry::reloadGeometryPages(const Ogre::Vector3 &center, Real radius
 	if (!pageLoader)
 		return;
 
-#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
-	center = _convertToLocal(center);
-#endif
-
 	std::list<GeometryPageManager *>::iterator it;
 	for (it = managerList.begin(); it != managerList.end(); ++it){
 		GeometryPageManager *mgr = *it;
-		mgr->reloadGeometryPages(center, radius);
+		mgr->reloadGeometryPages(
+#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
+			_convertToLocal(center)
+#else
+			center
+#endif
+			, radius);
 	}
 }
 

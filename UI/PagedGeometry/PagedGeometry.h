@@ -113,7 +113,7 @@ class PageLoader;
 typedef Ogre::TRect<Ogre::Real> TBounds;
 
 //Enable PagedGeometry::setCoordinateSystem()
-//#define PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
+#define PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
 
 //Enable per-entity user-defined data and callbacks
 //#define PAGEDGEOMETRY_USER_DATA
