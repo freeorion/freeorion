@@ -262,17 +262,3 @@ def GetRepositoryRevision():
                 return ' [Rev ' + i[10:-1] + ']'
     except: 
         return None
-
-def CreateOgrePluginsFile(target, source, env):
-    values = {
-        'plugin1' : 'RenderSystem_GL' + env['SHLIBSUFFIX'],
-        'plugin2' : 'Plugin_ParticleFX' + env['SHLIBSUFFIX'],
-        'plugin3' : 'Plugin_OctreeSceneManager' + env['SHLIBSUFFIX']
-    }
-    for tgt, src in zip(target, source):
-        pc = open(str(tgt), 'w')
-        pc_in = open(str(src), 'r')
-        pc.write(pc_in.read() % values)
-        pc.close()
-        pc_in.close()
-    return None
