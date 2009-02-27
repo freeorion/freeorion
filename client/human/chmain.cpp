@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
         using namespace Ogre;
 
         log_manager = new LogManager();
-        log_manager->createLog("ogre_log.txt", true, false);
+        log_manager->createLog((GetLocalDir() / "ogre.log").string(), true, false);
 
         root = new Root("ogre_plugins.cfg");
 

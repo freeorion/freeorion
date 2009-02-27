@@ -15,6 +15,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ImpostorPage.h"
 #include "StaticBillboardSet.h"
+#include "../../util/Directories.h"
 
 #include <OgreRoot.h>
 #include <OgreTimer.h>
@@ -31,7 +32,6 @@ namespace Forests {
 //-------------------------------------------------------------------------------------
 
 uint32 ImpostorPage::selfInstances = 0;
-
 int ImpostorPage::impostorResolution = 128;
 ColourValue ImpostorPage::impostorBackgroundColor = ColourValue(0.0f, 0.3f, 0.0f, 0.0f);
 BillboardOrigin ImpostorPage::impostorPivot = BBO_CENTER;
@@ -555,7 +555,7 @@ void ImpostorTexture::renderTextures(bool force)
 	for (i = 0; i < sizeof(key); ++i)
 		key[i] = (key[i] % 26) + 'A';
 
-	ResourceGroupManager::getSingleton().addResourceLocation(".", "FileSystem", "BinFolder");
+	ResourceGroupManager::getSingleton().addResourceLocation(GetLocalDir().string(), "FileSystem", "BinFolder");
 	String fileNamePNG = "Impostor." + String(key, sizeof(key)) + '.' + StringConverter::toString(textureSize) + ".png";
 	String fileNameDDS = "Impostor." + String(key, sizeof(key)) + '.' + StringConverter::toString(textureSize) + ".dds";
 
@@ -603,7 +603,7 @@ void ImpostorTexture::renderTextures(bool force)
 		
 #ifdef IMPOSTOR_FILE_SAVE
 		//Save RTT to file
-		renderTarget->writeContentsToFile(fileNamePNG);
+		renderTarget->writeContentsToFile((GetLocalDir() / fileNamePNG).string());
 
 		//Load the render into the appropriate texture view
 		texture = TextureManager::getSingleton().load(fileNamePNG, "BinFolder", TEX_TYPE_2D, MIP_UNLIMITED);
