@@ -1,8 +1,8 @@
 #include "ClientApp.h"
 
+#include "../combat/CombatOrder.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
-#include "../util/CombatOrder.h"
 #include "../universe/UniverseObject.h"
 #include "../Empire/Empire.h"
 

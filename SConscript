@@ -3,6 +3,7 @@ Import('env')
 
 common_sources = [
     'combat/Combat.cpp',
+    'combat/CombatOrder.cpp',
     'combat/OpenSteer/CombatFighter.cpp',
     'combat/OpenSteer/CombatShip.cpp',
     'combat/OpenSteer/lq.c',
@@ -49,7 +50,6 @@ common_sources = [
     'universe/UniverseObject.cpp',
     'universe/ValueRef.cpp',
     'universe/ValueRefParser.cpp',
-    'util/CombatOrder.cpp',
     'util/DataTable.cpp',
     'util/GZStream.cpp',
     'util/MultiplayerCommon.cpp',

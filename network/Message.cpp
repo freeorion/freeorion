@@ -1,11 +1,11 @@
 #include "Message.h"
 
+#include "../combat/CombatOrder.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Meter.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
-#include "../util/CombatOrder.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 
