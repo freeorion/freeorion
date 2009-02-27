@@ -46,9 +46,10 @@ protected:
 private:
     void Init(const std::vector<int>& fleet_IDs, SizeType size_type);
 
-    std::vector<Fleet*>             m_fleets;       ///< the fleets represented by this button
-    boost::shared_ptr<GG::Texture>  m_head_icon;    ///< icon texture representing type of fleet
-    boost::shared_ptr<GG::Texture>  m_size_icon;    ///< icon texture representing number of ships in fleet
+    std::vector<Fleet*>             m_fleets;               ///< the fleets represented by this button
+    boost::shared_ptr<GG::Texture>  m_head_icon;            ///< icon texture representing type of fleet
+    boost::shared_ptr<GG::Texture>  m_size_icon;            ///< icon texture representing number of ships in fleet
+    std::vector<double>             m_vertex_components;    ///< x and y componentes of vertices to use to render this fleet button, relative to centre of the button
 };
 
 /* returns head icon for passed fleet at passed icon size */

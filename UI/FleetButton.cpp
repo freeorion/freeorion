@@ -54,6 +54,69 @@ namespace {
         else
             return "";
     }
+
+    /* returns corner vertex x and y components of a quad centred at (0, 0) of side length 2 that is rotated
+       so the "top" or "up" face is perpendicular to and facing in the direction of \a direction_vector */
+    std::vector<double> VectorAlignedQuadVertices(const GG::Pt& direction_vector, int texture_height, int texture_width) {
+        // get unit vectors parallel and perpendicular to direction vector
+        int x = Value(direction_vector.x), y = Value(direction_vector.y);
+        int mag2 = x*x + y*y;
+
+        // first unit vector parallel to direction_vector
+        double U1X = static_cast<double>(x), U1Y = static_cast<double>(y);
+        if (mag2 > 1) {
+            double mag = std::sqrt(static_cast<double>(mag2));
+            U1X /= mag;
+            U1Y /= mag;
+        } else if (mag2 == 0) {
+            // default to straight up for zero vector
+            U1X =  0.0;
+            U1Y = -1.0;
+        } // else don't need to rescale if vector length already is 1
+
+        // second unit vector perpendicular to first
+        double U2X = -U1Y, U2Y = U1X;
+
+        // multiply unit vectors by (half) texture size to get properly-scaled side vectors
+        double V1X = U1X * texture_height / 2.0;
+        double V1Y = U1Y * texture_height / 2.0;
+        double V2X = U2X * texture_width / 2.0;
+        double V2Y = U2Y * texture_width / 2.0;
+
+        // get components of corner points by adding unit vectors
+        std::vector<double> retval;
+        retval.push_back( V1X - V2X);   retval.push_back( V1Y - V2Y);
+        retval.push_back( V1X + V2X);   retval.push_back( V1Y + V2Y);
+        retval.push_back(-V1X - V2X);   retval.push_back(-V1Y - V2Y);
+        retval.push_back(-V1X + V2X);   retval.push_back(-V1Y + V2Y);
+
+        return retval;
+    }
+
+    /* renders quad with passed vertices and texture */
+    void RenderTexturedQuad(const std::vector<double>& vertsXY, const boost::shared_ptr<GG::Texture>& texture) {
+        if (!texture || vertsXY.size() < 8)
+            return;
+
+        glBindTexture(GL_TEXTURE_2D, texture->OpenGLId());
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        double tex_coord_x = Value(1.0 * texture->DefaultWidth() / texture->Width());
+        double tex_coord_y = Value(1.0 * texture->DefaultHeight() / texture->Height());
+
+        // render texture
+        glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2f(0.0, 0.0);
+            glVertex2d(vertsXY[0], vertsXY[1]);
+            glTexCoord2f(tex_coord_x, 0.0);
+            glVertex2d(vertsXY[2], vertsXY[3]);
+            glTexCoord2f(0.0, tex_coord_y);
+            glVertex2d(vertsXY[4], vertsXY[5]);
+            glTexCoord2f(tex_coord_x, tex_coord_y);
+            glVertex2d(vertsXY[6], vertsXY[7]);
+        glEnd();
+    }
 }
 
 ///////////////////////////
@@ -63,7 +126,8 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icon(),
-    m_size_icon()
+    m_size_icon(),
+    m_vertex_components()
 {
     Init(fleet_IDs, size_type);
 }
@@ -72,7 +136,8 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
     GG::Button(GG::X0, GG::Y0, GG::X1, GG::Y1, "", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_head_icon(),
-    m_size_icon()
+    m_size_icon(),
+    m_vertex_components()
 {
     std::vector<int> fleet_IDs;
     fleet_IDs.push_back(fleet_id);
@@ -129,33 +194,77 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         SetColor(empire->Color());
 
 
-    // select icon(s) for fleet(s)
+    // select icon(s) for fleet(s), and get a fleet for use later
+    const Fleet* first_fleet = NULL;
     if (m_fleets.size() != 1) {
+        first_fleet = *(m_fleets.begin());
+
         m_head_icon = FleetHeadIcon(NULL, size_type);
         int num_ships = 0;
         for (std::vector<Fleet*>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it)
             num_ships += (*it)->NumShips();
         m_size_icon = FleetSizeIcon(num_ships, size_type);
-    } else {
-        const Fleet* fleet = *m_fleets.begin();
-        m_head_icon = FleetHeadIcon(fleet, size_type);
-        m_size_icon = FleetSizeIcon(fleet, size_type);
+    } else if (!m_fleets.empty()) {
+        first_fleet = *m_fleets.begin();
+        m_head_icon = FleetHeadIcon(first_fleet, size_type);
+        m_size_icon = FleetSizeIcon(first_fleet, size_type);
     }
 
     // resize to fit icon by first determining necessary size, and then resizing
-    GG::X width(0);
-    GG::Y height(0);
+    GG::X texture_width(0);
+    GG::Y texture_height(0);
 
     if (m_head_icon) {
-        width = m_head_icon->DefaultWidth();
-        height = m_head_icon->DefaultHeight();
+        texture_width = m_head_icon->DefaultWidth();
+        texture_height = m_head_icon->DefaultHeight();
     }
     if (m_size_icon) {
-        width = std::max(width, m_size_icon->DefaultWidth());
-        height = std::max(height, m_size_icon->DefaultHeight());
+        texture_width = std::max(texture_width, m_size_icon->DefaultWidth());
+        texture_height = std::max(texture_height, m_size_icon->DefaultHeight());
     }
 
-    Resize(GG::Pt(width, height));
+
+    // determine if fleet icon should be rotated.  this should be done if the fleet is moving along
+    // a starlane, which is the case if the fleet is not in a system and has a valid next system
+    GG::Pt direction_vector(GG::X(0), GG::Y(1));    // default, unrotated button orientation
+
+    if (first_fleet && !first_fleet->GetSystem()) {
+        int next_sys_id = first_fleet->NextSystemID();
+        const UniverseObject* obj = GetUniverse().Object(next_sys_id);
+        if (obj) {
+            // fleet is not in a system and has a valid next destination, so can orient it in that direction
+            // fleet icons might not appear on the screen in the exact place corresponding to their 
+            // actual universe position, but if they're moving along a starlane, this code will assume
+            // their apparent position will only be different from their true position in a direction
+            // parallel with the starlane, so the direction from their true position to their destination
+            // position can be used to get a direction vector to orient the icon
+            double dest_x = obj->X(), dest_y = obj->Y();
+            double cur_x = first_fleet->X(), cur_y = first_fleet->Y();
+            const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
+            GG::Pt dest = map_wnd->ScreenCoordsFromUniversePosition(dest_x, dest_y);
+            GG::Pt cur = map_wnd->ScreenCoordsFromUniversePosition(cur_x, cur_y);
+            direction_vector = dest - cur;
+        }
+    }
+
+    // check for unrotated texture
+    if (Value(direction_vector.x) == 0) {
+        // not rotated.  can do simple texture blits
+        m_vertex_components.clear();
+        Resize(GG::Pt(texture_width, texture_height));
+    } else {
+        // texture is rotated, so need some extra math
+
+        // get rotated corner vetex x and y components (x1, y1, x2, y2, x3, y3, x4, y4) for texture of appropriate size
+        m_vertex_components = VectorAlignedQuadVertices(direction_vector, Value(texture_height), Value(texture_width));
+
+        // find x and y extent of rotated quad, and resize this button to enclose it
+        double width =  std::max(m_vertex_components[0], std::max(m_vertex_components[2], std::max(m_vertex_components[4], m_vertex_components[6]))) -
+                        std::min(m_vertex_components[0], std::min(m_vertex_components[2], std::min(m_vertex_components[4], m_vertex_components[6])));
+        double height = std::max(m_vertex_components[1], std::max(m_vertex_components[3], std::max(m_vertex_components[5], m_vertex_components[7]))) -
+                        std::min(m_vertex_components[1], std::min(m_vertex_components[3], std::min(m_vertex_components[5], m_vertex_components[7])));
+        Resize(GG::Pt(GG::X(width), GG::Y(height)));
+    }
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
@@ -196,10 +305,29 @@ void FleetButton::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void FleetButton::RenderUnpressed() {
     glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    if (m_head_icon)
-        m_head_icon->OrthoBlit(ul);
-    if (m_size_icon)
-        m_size_icon->OrthoBlit(ul);
+    if (m_vertex_components.empty()) {
+        if (m_size_icon)
+            m_size_icon->OrthoBlit(ul);
+        if (m_head_icon)
+            m_head_icon->OrthoBlit(ul);
+        return;
+    }
+
+    const double midX = static_cast<double>(Value(ul.x + lr.x))/2.0;
+    const double midY = static_cast<double>(Value(ul.y + lr.y))/2.0;
+
+    std::vector<double> vertsXY;
+    vertsXY.push_back(midX + m_vertex_components[0]);
+    vertsXY.push_back(midY + m_vertex_components[1]);
+    vertsXY.push_back(midX + m_vertex_components[2]);
+    vertsXY.push_back(midY + m_vertex_components[3]);
+    vertsXY.push_back(midX + m_vertex_components[4]);
+    vertsXY.push_back(midY + m_vertex_components[5]);
+    vertsXY.push_back(midX + m_vertex_components[6]);
+    vertsXY.push_back(midY + m_vertex_components[7]);
+
+    RenderTexturedQuad(vertsXY, m_head_icon);
+    RenderTexturedQuad(vertsXY, m_size_icon);
 }
 
 void FleetButton::RenderPressed() {
