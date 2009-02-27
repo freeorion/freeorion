@@ -74,20 +74,21 @@ namespace {
 
     void AddOptions(OptionsDB& db)
     {
-        db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,   Validator<bool>());
-        db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,   Validator<bool>());
-        db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,   Validator<bool>());
-        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.5,    RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,   Validator<bool>());
-        db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,   Validator<bool>());
-        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           3.0,    RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,       Validator<bool>());
+        db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,       Validator<bool>());
+        db.Add("UI.show-galaxy-map-scale",          "OPTIONS_DB_GALAXY_MAP_SCALE_LINE",             true,       Validator<bool>());
+        db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,       Validator<bool>());
+        db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.5,        RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,       Validator<bool>());
+        db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,       Validator<bool>());
+        db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           4.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
         db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
-        db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.0,        RangedStepValidator<double>(0.1, 1.0, 2.5));
+        db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.0,        RangedStepValidator<double>(0.125, 1.0, 2.5));
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
         db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
-        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",1.6,        RangedStepValidator<double>(0.1, 0.5, 5));
+        db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
         db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.medium-fleet-button-minimum-zoom","OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM",  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
@@ -150,13 +151,19 @@ public:
         GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
         m_scale_factor(1.0),
         m_line_right_x(GG::X1),
-        m_label(NULL)
+        m_label(NULL),
+        m_enabled(false)
     {
         m_label = new ShadowedTextControl(GG::X0, GG::Y0, GG::X1, h, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER);
         AttachChild(m_label);
         Update(1.0);
+        GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-scale"), &MapScaleLine::UpdateEnabled, this);
+        UpdateEnabled();
     }
     virtual void Render() {
+        if (!m_enabled)
+            return;
+
         // use GL to draw line and ticks and labels to indicte a length on the map
         GG::Pt ul = UpperLeft();
         GG::Pt lr = LowerRight();
@@ -209,14 +216,23 @@ public:
         m_line_right_x = GG::X(static_cast<int>(shown_length * m_scale_factor));
 
         // update text
-        std::string label_text = boost::lexical_cast<std::string>(shown_length) + " uu";
+        std::string label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
+                                                boost::lexical_cast<std::string>(shown_length));
         m_label->Resize(GG::Pt(GG::X(m_line_right_x), Height()));
         m_label->SetText(label_text);
     }
 private:
+    void UpdateEnabled() {
+        m_enabled = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+        if (m_enabled)
+            AttachChild(m_label);
+        else
+            DetachChild(m_label);
+    }
     double              m_scale_factor;
     GG::X               m_line_right_x;
     GG::TextControl*    m_label;
+    bool                m_enabled;
 };
 
 ////////////////////////////////////////////////////////////

@@ -742,6 +742,7 @@ void OptionsWnd::Init()
     BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
     BoolOption("UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
     BoolOption("UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
+    BoolOption("UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
     EndSection();
     EndPage();
 

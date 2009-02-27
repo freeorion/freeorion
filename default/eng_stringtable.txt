@@ -158,6 +158,9 @@ Render gassy substance around systems to give galaxy shape.  May slow rendering 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
 Render starfields around systems. May slow rendering on older systems.
 
+OPTIONS_DB_GALAXY_MAP_SCALE_LINE
+Show scale line for universe distance on galaxy map.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
 
@@ -961,6 +964,9 @@ Galaxy map gas rendering
 OPTIONS_GALAXY_MAP_STARFIELDS
 Galaxy map starfields rendering
 
+OPTIONS_GALAXY_MAP_SCALE_LINE
+Galaxy distance scale line
+
 OPTIONS_STARLANES
 Starlanes
 
@@ -1190,6 +1196,9 @@ Turn %1%
 
 MAP_INDICATOR_FPS
 %1% FPS
+
+MAP_SCALE_INDICATOR
+%1% uu
 
 MAP_BTN_MENU
 Menu
