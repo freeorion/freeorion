@@ -133,7 +133,7 @@ material asteroid {
     technique {
         pass {
             vertex_program_ref asteroid_vert
-            {}
+            { param_named_auto light_pos light_position_object_space 0 }
 
             fragment_program_ref asteroid_frag {
                 param_named color_texture int 0

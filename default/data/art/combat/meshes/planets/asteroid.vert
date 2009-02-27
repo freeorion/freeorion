@@ -1,4 +1,6 @@
 // -*- C++ -*-
+uniform vec4 light_pos;
+
 varying float diffuse;
 varying float alpha;
 varying vec2 tex_coord;
@@ -15,7 +17,7 @@ uniform float fadeGap;
 
 void main()
 {
-    vec3 light_dir = normalize(objSpaceLight.xyz);
+    vec3 light_dir = normalize(light_pos.xyz);
     diffuse = dot(light_dir, gl_Normal);
     tex_coord = vec2(gl_MultiTexCoord0);
 
