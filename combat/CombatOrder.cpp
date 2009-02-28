@@ -21,7 +21,7 @@ ShipMission::ShipMission(Type type) :
            m_type == ENTER_STARLANE);
 }
 
-ShipMission::ShipMission(Type type, const Vec3& destination) :
+ShipMission::ShipMission(Type type, const OpenSteer::Vec3& destination) :
     m_type(type),
     m_destination(destination),
     m_target()
@@ -30,7 +30,7 @@ ShipMission::ShipMission(Type type, const Vec3& destination) :
            m_type == PATROL_TO);
 }
 
-ShipMission::ShipMission(Type type, int target) :
+ShipMission::ShipMission(Type type, const CombatObjectPtr& target) :
     m_type(type),
     m_destination(),
     m_target(target)
@@ -60,7 +60,7 @@ FighterMission::FighterMission(Type type) :
            m_type == RETURN_TO_BASE);
 }
 
-FighterMission::FighterMission(Type type, const Vec3& destination) :
+FighterMission::FighterMission(Type type, const OpenSteer::Vec3& destination) :
     m_type(type),
     m_destination(destination),
     m_target()
@@ -69,7 +69,7 @@ FighterMission::FighterMission(Type type, const Vec3& destination) :
            m_type == PATROL_TO);
 }
 
-FighterMission::FighterMission(Type type, int target) :
+FighterMission::FighterMission(Type type, const CombatObjectPtr& target) :
     m_type(type),
     m_destination(),
     m_target(target)

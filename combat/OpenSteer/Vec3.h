@@ -53,6 +53,9 @@
 
 #include "Utilities.h"  // for interpolate, etc.
 
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
 
 namespace OpenSteer {
 
@@ -221,6 +224,14 @@ namespace OpenSteer {
         static const Vec3 side;
         static const Vec3 up;
         static const Vec3 forward;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_NVP(x)
+                    & BOOST_SERIALIZATION_NVP(y)
+                    & BOOST_SERIALIZATION_NVP(z);
+            }
     };
 
 

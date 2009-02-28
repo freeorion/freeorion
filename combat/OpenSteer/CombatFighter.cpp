@@ -6,78 +6,10 @@
 #include <boost/cast.hpp>
 #include <boost/assign/list_of.hpp>
 
-// TODO: For prototyping only.
-#include <GL/gl.h>
-
 #include <map>
 
 
 namespace {
-
-#if 0
-    inline void iDrawTriangle (const OpenSteer::Vec3& a,
-                               const OpenSteer::Vec3& b,
-                               const OpenSteer::Vec3& c,
-                               const OpenSteer::Color& color)
-    {
-        OpenSteer::warnIfInUpdatePhase ("iDrawTriangle");
-        glColor3f (color.r(), color.g(), color.b());
-        glBegin (GL_TRIANGLES);
-        {
-            OpenSteer::glVertexVec3 (a);
-            OpenSteer::glVertexVec3 (b);
-            OpenSteer::glVertexVec3 (c);
-        }
-        glEnd ();
-    }
-
-    void drawFighter(const OpenSteer::AbstractVehicle& vehicle, const OpenSteer::Color& color, float aspect)
-    {
-        // "aspect ratio" of body (as seen from above)
-        const float x = aspect;
-        const float y = OpenSteer::sqrtXXX (1 - (x * x));
-
-        // radius and position of vehicle
-        const float r = vehicle.radius();
-        const OpenSteer::Vec3& p = vehicle.position();
-
-        // body shape parameters
-        const OpenSteer::Vec3 f = r * vehicle.forward();
-        const OpenSteer::Vec3 s = r * vehicle.side() * x;
-        const OpenSteer::Vec3 u = r * vehicle.up() * x * 0.5f;
-        const OpenSteer::Vec3 b = r * vehicle.forward() * -y;
-
-        // vertex positions
-        const OpenSteer::Vec3 nose   = p + f;
-        const OpenSteer::Vec3 side1  = p + b - s;
-        const OpenSteer::Vec3 side2  = p + b + s;
-        const OpenSteer::Vec3 top    = p + b + u;
-        const OpenSteer::Vec3 bottom = p + b - u;
-
-        // colors
-        const float j = +0.05f;
-        const float k = -0.05f;
-        const OpenSteer::Color color1 = color + OpenSteer::Color(j, j, k);
-        const OpenSteer::Color color2 = color + OpenSteer::Color(j, k, j);
-        const OpenSteer::Color color3 = color + OpenSteer::Color(k, j, j);
-        const OpenSteer::Color color4 = color + OpenSteer::Color(k, j, k);
-        const OpenSteer::Color color5 = color + OpenSteer::Color(k, k, j);
-
-        // draw body
-        iDrawTriangle (nose,  side1,  top,    color1);  // top, side 1
-        iDrawTriangle (nose,  top,    side2,  color2);  // top, side 2
-        iDrawTriangle (nose,  bottom, side1,  color3);  // bottom, side 1
-        iDrawTriangle (nose,  side2,  bottom, color4);  // bottom, side 2
-        iDrawTriangle (side1, side2,  top,    color5);  // top back
-        iDrawTriangle (side2, side1,  bottom, color5);  // bottom back
-    }
-
-    void drawInterceptor(const OpenSteer::AbstractVehicle& vehicle, const OpenSteer::Color& color)
-    { drawFighter(vehicle, color, 0.4f); }
-
-    void drawBomber(const OpenSteer::AbstractVehicle& vehicle, const OpenSteer::Color& color)
-    { drawFighter(vehicle, color, 1.0f); }
-#endif
 
     ////////////////////////////////////////////////////////////////////////////////
     // TODO: BEGIN section for testing only.
@@ -90,18 +22,18 @@ namespace {
     ////////////////////////////////////////////////////////////////////////////////
 
 #define ECHO_TOKEN(x) (x, #x)
-    std::map<CombatFighter::MissionType, std::string> FIGHTER_MISSION_STRINGS =
+    std::map<FighterMission::Type, std::string> FIGHTER_MISSION_STRINGS =
         boost::assign::map_list_of
-        ECHO_TOKEN(CombatFighter::NONE)
-        ECHO_TOKEN(CombatFighter::MOVE_TO)
-        ECHO_TOKEN(CombatFighter::ATTACK_THIS)
-        ECHO_TOKEN(CombatFighter::DEFEND_THIS)
-        ECHO_TOKEN(CombatFighter::PATROL_TO)
-        ECHO_TOKEN(CombatFighter::ATTACK_FIGHTERS_BOMBERS_FIRST)
-        ECHO_TOKEN(CombatFighter::ATTACK_FIGHTERS_INTERCEPTORS_FIRST)
-        ECHO_TOKEN(CombatFighter::ATTACK_SHIPS_WEAKEST_FIRST)
-        ECHO_TOKEN(CombatFighter::ATTACK_SHIPS_NEAREST_FIRST)
-        ECHO_TOKEN(CombatFighter::RETURN_TO_BASE);
+        ECHO_TOKEN(FighterMission::NONE)
+        ECHO_TOKEN(FighterMission::MOVE_TO)
+        ECHO_TOKEN(FighterMission::ATTACK_THIS)
+        ECHO_TOKEN(FighterMission::DEFEND_THIS)
+        ECHO_TOKEN(FighterMission::PATROL_TO)
+        ECHO_TOKEN(FighterMission::ATTACK_FIGHTERS_BOMBERS_FIRST)
+        ECHO_TOKEN(FighterMission::ATTACK_FIGHTERS_INTERCEPTORS_FIRST)
+        ECHO_TOKEN(FighterMission::ATTACK_SHIPS_WEAKEST_FIRST)
+        ECHO_TOKEN(FighterMission::ATTACK_SHIPS_NEAREST_FIRST)
+        ECHO_TOKEN(FighterMission::RETURN_TO_BASE);
 #undef ECHO_TOKEN
 
     const std::size_t TARGET_FPS = 60;
@@ -180,32 +112,11 @@ void CombatFighterFormation::erase(CombatFighter* fighter)
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// CombatFighter::Mission
-////////////////////////////////////////////////////////////////////////////////
-CombatFighter::Mission::Mission(CombatFighter::MissionType type) :
-    m_type(type),
-    m_destination(),
-    m_target()
-{}
-
-CombatFighter::Mission::Mission(CombatFighter::MissionType type, const OpenSteer::Vec3& destination) :
-    m_type(type),
-    m_destination(destination),
-    m_target()
-{}
-
-CombatFighter::Mission::Mission(CombatFighter::MissionType type, const CombatObjectPtr& target) :
-    m_type(type),
-    m_destination(),
-    m_target(target)
-{}
-
-
-////////////////////////////////////////////////////////////////////////////////
 // CombatFighter
 ////////////////////////////////////////////////////////////////////////////////
 CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
-                             PathingEngine& pathing_engine, const CombatFighterFormationPtr& formation,
+                             int fighter_id, PathingEngine& pathing_engine,
+                             const CombatFighterFormationPtr& formation,
                              int formation_position) :
     m_proximity_token(0),
     m_leader(false),
@@ -218,11 +129,12 @@ CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int e
     m_formation(formation),
     m_pathing_engine(pathing_engine)
     ,m_instrument(false)
-    ,m_last_mission(NONE)
+    ,m_last_mission(FighterMission::NONE)
 { Init(); }
 
 CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
-                             PathingEngine& pathing_engine, const CombatFighterFormationPtr& formation) :
+                             int fighter_id, PathingEngine& pathing_engine,
+                             const CombatFighterFormationPtr& formation) :
     m_proximity_token(0),
     m_leader(true),
     m_type(type),
@@ -234,7 +146,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int e
     m_formation(formation),
     m_pathing_engine(pathing_engine)
     ,m_instrument(false)
-    ,m_last_mission(NONE)
+    ,m_last_mission(FighterMission::NONE)
 { Init(); }
 
 CombatFighter::~CombatFighter()
@@ -278,7 +190,10 @@ float CombatFighter::maxSpeed() const
     return retval;
 }
 
-const CombatFighter::Mission& CombatFighter::CurrentMission() const
+int CombatFighter::ID() const
+{ return m_id; }
+
+const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
 
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
@@ -314,10 +229,10 @@ void CombatFighter::Draw()
 CombatFighterFormationPtr CombatFighter::Formation()
 { return m_formation; }
 
-void CombatFighter::AppendMission(const Mission& mission)
+void CombatFighter::AppendMission(const FighterMission& mission)
 {
     assert(!m_mission_queue.empty());
-    if (m_mission_queue.back().m_type == NONE) {
+    if (m_mission_queue.back().m_type == FighterMission::NONE) {
         assert(m_mission_queue.size() == 1u);
         m_mission_queue.clear();
     }
@@ -327,7 +242,7 @@ void CombatFighter::AppendMission(const Mission& mission)
 void CombatFighter::ClearMissions()
 {
     m_mission_queue.clear();
-    m_mission_queue.push_front(Mission(NONE));
+    m_mission_queue.push_front(FighterMission(FighterMission::NONE));
 }
 
 void CombatFighter::Init()
@@ -362,7 +277,7 @@ void CombatFighter::Init()
     if (m_leader)
         m_proximity_token->UpdatePosition(position());
 
-    m_mission_queue.push_front(Mission(NONE));
+    m_mission_queue.push_front(FighterMission(FighterMission::NONE));
 }
 
 OpenSteer::Vec3 CombatFighter::GlobalFormationPosition()
@@ -386,7 +301,7 @@ void CombatFighter::RemoveMission()
 {
     m_mission_queue.pop_back();
     if (m_mission_queue.empty())
-        m_mission_queue.push_front(Mission(NONE));
+        m_mission_queue.push_front(FighterMission(FighterMission::NONE));
 }
 
 void CombatFighter::UpdateMissionQueue()
@@ -413,17 +328,17 @@ void CombatFighter::UpdateMissionQueue()
     m_mission_destination = OpenSteer::Vec3();
 
     switch (m_mission_queue.back().m_type) {
-    case NONE: {
+    case FighterMission::NONE: {
         assert(m_mission_queue.size() == 1u);
         m_mission_queue.clear();
         if (m_type == INTERCEPTOR)
-            m_mission_queue.push_front(Mission(ATTACK_FIGHTERS_BOMBERS_FIRST));
+            m_mission_queue.push_front(FighterMission(FighterMission::ATTACK_FIGHTERS_BOMBERS_FIRST));
         else
-            m_mission_queue.push_front(Mission(ATTACK_SHIPS_WEAKEST_FIRST));
+            m_mission_queue.push_front(FighterMission(FighterMission::ATTACK_SHIPS_WEAKEST_FIRST));
         if (print_needed) std::cout << "    [STARTING DEFAULT MISSION]\n";
         break;
     }
-    case MOVE_TO: {
+    case FighterMission::MOVE_TO: {
         if (AT_DEST_SQUARED < (position() - m_mission_queue.back().m_destination).lengthSquared()) {
             m_mission_weight = MAX_MISSION_WEIGHT;
             m_mission_destination = m_mission_queue.back().m_destination;
@@ -433,7 +348,7 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case ATTACK_THIS: {
+    case FighterMission::ATTACK_THIS: {
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = target->position();
@@ -445,7 +360,7 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case DEFEND_THIS: {
+    case FighterMission::DEFEND_THIS: {
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             if (m_mission_subtarget = WeakestAttacker(target))
@@ -458,7 +373,7 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case PATROL_TO: {
+    case FighterMission::PATROL_TO: {
         // TODO: Consider making the engagement range dynamically adjustable by the user.
         const float PATROL_ENGAGEMENT_RANGE = 50.0;
         if (AT_DEST_SQUARED < (position() - m_mission_queue.back().m_destination).lengthSquared()) {
@@ -469,7 +384,7 @@ void CombatFighter::UpdateMissionQueue()
                     m_pathing_engine.NearestHostileFighterInRange(position(), m_empire_id,
                                                                   PATROL_ENGAGEMENT_RANGE)) {
                     m_mission_destination = fighter->position();
-                    m_mission_queue.push_back(Mission(ATTACK_THIS, fighter));
+                    m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
                     found_target = true;
                     if (print_needed) std::cout << "    [ENGAGING HOSTILE FIGHTER]\n";
                 }
@@ -478,7 +393,7 @@ void CombatFighter::UpdateMissionQueue()
                     m_pathing_engine.NearestHostileNonFighterInRange(position(), m_empire_id,
                                                                      PATROL_ENGAGEMENT_RANGE)) {
                     m_mission_destination = object->position();
-                    m_mission_queue.push_back(Mission(ATTACK_THIS, object));
+                    m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
                     found_target = true;
                     if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
                 }
@@ -491,14 +406,14 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case ATTACK_FIGHTERS_BOMBERS_FIRST: {
+    case FighterMission::ATTACK_FIGHTERS_BOMBERS_FIRST: {
         CombatFighterPtr fighter = m_pathing_engine.NearestHostileBomber(position(), m_empire_id);
         if (!fighter)
             fighter = m_pathing_engine.NearestHostileInterceptor(position(), m_empire_id);
         if (fighter) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = fighter->position();
-            m_mission_queue.push_back(Mission(ATTACK_THIS, fighter));
+            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE FIGHTER]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -506,14 +421,14 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case ATTACK_FIGHTERS_INTERCEPTORS_FIRST: {
+    case FighterMission::ATTACK_FIGHTERS_INTERCEPTORS_FIRST: {
         CombatFighterPtr fighter = m_pathing_engine.NearestHostileInterceptor(position(), m_empire_id);
         if (!fighter)
             fighter = m_pathing_engine.NearestHostileBomber(position(), m_empire_id);
         if (fighter) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = fighter->position();
-            m_mission_queue.push_back(Mission(ATTACK_THIS, fighter));
+            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE FIGHTER]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -521,11 +436,11 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case ATTACK_SHIPS_WEAKEST_FIRST: {
+    case FighterMission::ATTACK_SHIPS_WEAKEST_FIRST: {
         if (CombatObjectPtr object = WeakestHostileShip()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            m_mission_queue.push_back(Mission(ATTACK_THIS, object));
+            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -534,11 +449,11 @@ void CombatFighter::UpdateMissionQueue()
         m_mission_weight = DEFAULT_MISSION_WEIGHT;
         break;
     }
-    case ATTACK_SHIPS_NEAREST_FIRST: {
+    case FighterMission::ATTACK_SHIPS_NEAREST_FIRST: {
         if (CombatObjectPtr object = m_pathing_engine.NearestHostileShip(position(), m_empire_id)) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            m_mission_queue.push_back(Mission(ATTACK_THIS, object));
+            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -546,7 +461,7 @@ void CombatFighter::UpdateMissionQueue()
         }
         break;
     }
-    case RETURN_TO_BASE: {
+    case FighterMission::RETURN_TO_BASE: {
         if (!m_base.expired()) {
             if (AT_DEST_SQUARED < (position() - m_mission_queue.back().m_destination).lengthSquared()) {
                 m_mission_weight = MAX_MISSION_WEIGHT;

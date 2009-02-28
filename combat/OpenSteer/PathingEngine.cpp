@@ -138,12 +138,12 @@ CombatFighterFormationPtr PathingEngine::AddFighterFormation(std::size_t size)
 
     CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
     formation->SetLeader(
-        CombatFighterPtr(new CombatFighter(CombatObjectPtr(), type, empire_id, *this, formation)));
+        CombatFighterPtr(new CombatFighter(CombatObjectPtr(), type, empire_id, 0/*TODO: Generate a fighter id*/, *this, formation)));
     ++g_population;
 
     for (std::size_t i = 0; i < size; ++i) {
         CombatFighterPtr fighter(
-            new CombatFighter(CombatObjectPtr(), type, empire_id, *this, formation, g_population % size));
+            new CombatFighter(CombatObjectPtr(), type, empire_id, 0/*TODO: Generate a fighter id*/, *this, formation, g_population % size));
         formation->push_back(fighter);
         ++g_population;
         m_objects.insert(fighter);

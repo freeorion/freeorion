@@ -2,27 +2,16 @@
 #ifndef _CombatOrder_h_
 #define _CombatOrder_h_
 
+#include "OpenSteer/PathingEngineFwd.h"
+#include "OpenSteer/AbstractVehicle.h"
+#include "OpenSteer/Vec3.h"
+
+#include <boost/cast.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
 #include <vector>
 
-
-struct Vec3
-{
-    float x, y, z;
-    Vec3 (): x(0), y(0), z(0) {}
-    Vec3 (float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(x)
-                & BOOST_SERIALIZATION_NVP(y)
-                & BOOST_SERIALIZATION_NVP(z);
-        }
-};
 
 struct ShipMission
 {
@@ -88,21 +77,15 @@ struct ShipMission
 
     ShipMission();
     explicit ShipMission(Type type);
-    ShipMission(Type type, const Vec3& destination);
-    ShipMission(Type type, int target);
+    ShipMission(Type type, const OpenSteer::Vec3& destination);
+    ShipMission(Type type, const CombatObjectPtr& target);
 
     Type m_type;
-    Vec3 m_destination;
-    int m_target;
+    OpenSteer::Vec3 m_destination;
+    CombatObjectWeakPtr m_target;
 
-    friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(m_type)
-                & BOOST_SERIALIZATION_NVP(m_destination)
-                & BOOST_SERIALIZATION_NVP(m_target);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 struct FighterMission
@@ -157,21 +140,15 @@ struct FighterMission
 
     FighterMission();
     explicit FighterMission(Type type);
-    FighterMission(Type type, const Vec3& destination);
-    FighterMission(Type type, int target);
+    FighterMission(Type type, const OpenSteer::Vec3& destination);
+    FighterMission(Type type, const CombatObjectPtr& target);
 
     Type m_type;
-    Vec3 m_destination;
-    int m_target;
+    OpenSteer::Vec3 m_destination;
+    CombatObjectWeakPtr m_target;
 
-    friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(m_type)
-                & BOOST_SERIALIZATION_NVP(m_destination)
-                & BOOST_SERIALIZATION_NVP(m_target);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /////////////////////////////////////////////////////
@@ -223,4 +200,23 @@ private:
 /////////////////////////////////////////////////////
 typedef std::vector<CombatOrder> CombatOrderSet;
 
-#endif // _CombatOrder_h_
+
+// implementations
+
+template <class Archive>
+void ShipMission::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_destination)
+        & BOOST_SERIALIZATION_NVP(m_target);
+}
+
+template <class Archive>
+void FighterMission::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_destination)
+        & BOOST_SERIALIZATION_NVP(m_target);
+}
+
+#endif
