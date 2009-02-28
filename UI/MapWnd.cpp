@@ -139,6 +139,23 @@ namespace {
 
     // disambiguate overloaded function with a function pointer
     void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
+
+    /* loads background starfield textures int \a background_textures  */
+    void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
+        if (!background_textures.empty())
+            return;
+
+        std::vector<boost::shared_ptr<GG::Texture> > starfield_textures = ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir(), "starfield", false);
+        double scroll_rate = 1.0;
+        for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = starfield_textures.begin(); it != starfield_textures.end(); ++it) {
+            scroll_rate *= 0.5;
+            background_textures.push_back(*it);
+            scroll_rates.push_back(scroll_rate);
+            glBindTexture(GL_TEXTURE_2D, (*it)->OpenGLId());
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -865,22 +882,8 @@ void MapWnd::InitTurnRendering()
                   static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppHeight() * 1.5)));
 
 
-    std::vector<System*> systems = universe.FindObjects<System>();
-
-
-    // set up backgrounds on first turn
-    if (m_backgrounds.empty()) {
-        std::vector<boost::shared_ptr<GG::Texture> > starfield_textures = ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir(), "starfield", false);
-        double scroll_rate = 1.0;
-        for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = starfield_textures.begin(); it != starfield_textures.end(); ++it) {
-            scroll_rate *= 0.5;
-            m_backgrounds.push_back(*it);
-            m_bg_scroll_rate.push_back(scroll_rate);
-            glBindTexture(GL_TEXTURE_2D, (*it)->OpenGLId());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        }
-    }
+    // set up backgrounds on first turn.  if m_backgrounds already contains textures, does nothing
+    InitBackgrounds(m_backgrounds, m_bg_scroll_rate);
 
 
     // remove any existing fleet movement lines or projected movement lines.  this gets cleared
@@ -890,10 +893,6 @@ void MapWnd::InitTurnRendering()
     ClearProjectedFleetMovementLines();
 
 
-    // create fleet buttons for moving fleets
-    RefreshFleetButtons();
-
-
     // remove old system icons
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         DeleteChild(it->second);
@@ -901,6 +900,7 @@ void MapWnd::InitTurnRendering()
 
 
     // create system icons
+    std::vector<System*> systems = universe.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // create new system icon
         const System* start_system = systems[i];
@@ -922,6 +922,10 @@ void MapWnd::InitTurnRendering()
 
     // position system icons
     DoSystemIconsLayout();
+
+
+    // create fleet buttons for moving fleets
+    RefreshFleetButtons();
 
 
     // Generate texture coordinates to be used for subsequent vertex buffer creation.

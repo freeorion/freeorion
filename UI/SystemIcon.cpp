@@ -222,9 +222,9 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
     double first_fb_angle = PI/4.0;
 
     while (tries < MAX_TRIES) {
-        std::cout << std::endl << std::endl << "System: " << m_system.Name() << " button_number: " << button_number << std::endl;
-        std::cout << "arc_radius: " << arc_radius << std::endl;
-        std::cout << "FB_RADIUS: " << FB_RADIUS << std::endl;
+        //std::cout << std::endl << std::endl << "System: " << m_system.Name() << " button_number: " << button_number << std::endl;
+        //std::cout << "arc_radius: " << arc_radius << std::endl;
+        //std::cout << "FB_RADIUS: " << FB_RADIUS << std::endl;
 
         // determine how many buttons will fit in this shell
         double half_fb_arc_angle = FB_RADIUS/arc_radius;  // small angle approximation theta ~= tan(theta) = opposite / adjacent
@@ -233,15 +233,15 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
         double angle_range = max - min;
         int max_buttons_at_current_radius = std::max(1, static_cast<int>(floor(angle_range / (half_fb_arc_angle * 2.0))));
 
-        std::cout << "90 degres: " << PI/2.0 << std::endl;
-        std::cout << "half_fb_arc_angle*2.0: " << half_fb_arc_angle * 2.0 << std::endl;
-        std::cout << "angle max: " << max << " min: " << min << " range: " << angle_range << std::endl;
+        //std::cout << "90 degres: " << PI/2.0 << std::endl;
+        //std::cout << "half_fb_arc_angle*2.0: " << half_fb_arc_angle * 2.0 << std::endl;
+        //std::cout << "angle max: " << max << " min: " << min << " range: " << angle_range << std::endl;
 
-        std::cout << "max buttons in shell: " << max_buttons_at_current_radius << std::endl;
+        //std::cout << "max buttons in shell: " << max_buttons_at_current_radius << std::endl;
 
         // can button fit in this shell?
         int button_number_in_shell = button_number - buttons_in_previous_shells;
-        std::cout << "button_number_in_shell: " << button_number_in_shell << std::endl;
+        //std::cout << "button_number_in_shell: " << button_number_in_shell << std::endl;
 
         if (button_number_in_shell > max_buttons_at_current_radius) {
             // button can't fit in this shell, so jump up to the next bigger shell
