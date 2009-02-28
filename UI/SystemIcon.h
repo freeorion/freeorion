@@ -94,7 +94,7 @@ public:
 private:
     void    Init(); //!< common constructor tasks
 
-    GG::Pt  NthFleetButtonUpperLeft(int button_number, bool moving) const;  //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown starting from 1(not empire id)
+    GG::Pt  NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton owned by empire \a n, where n is the position in order of fleetbuttons shown starting from 1(not empire id)
 
 
     void    FleetInserted(Fleet& fleet);

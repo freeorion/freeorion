@@ -295,6 +295,18 @@
 				RelativePath="..\..\..\combat\Combat.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\..\combat\CombatOrder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\combat\CombatOrder.h"
+				>
+			</File>
+			<Filter
+				Name="OpenSteer"
+				>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="Empire"

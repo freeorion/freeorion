@@ -251,20 +251,15 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     if (Value(direction_vector.x) == 0) {
         // not rotated.  can do simple texture blits
         m_vertex_components.clear();
-        Resize(GG::Pt(texture_width, texture_height));
     } else {
         // texture is rotated, so need some extra math
-
         // get rotated corner vetex x and y components (x1, y1, x2, y2, x3, y3, x4, y4) for texture of appropriate size
         m_vertex_components = VectorAlignedQuadVertices(direction_vector, Value(texture_height), Value(texture_width));
-
-        // find x and y extent of rotated quad, and resize this button to enclose it
-        double width =  std::max(m_vertex_components[0], std::max(m_vertex_components[2], std::max(m_vertex_components[4], m_vertex_components[6]))) -
-                        std::min(m_vertex_components[0], std::min(m_vertex_components[2], std::min(m_vertex_components[4], m_vertex_components[6])));
-        double height = std::max(m_vertex_components[1], std::max(m_vertex_components[3], std::max(m_vertex_components[5], m_vertex_components[7]))) -
-                        std::min(m_vertex_components[1], std::min(m_vertex_components[3], std::min(m_vertex_components[5], m_vertex_components[7])));
-        Resize(GG::Pt(GG::X(width), GG::Y(height)));
     }
+
+    // size icon according to texture size (average two dimensions)
+    double diameter = (Value(texture_width) + Value(texture_height))/2.0;
+    Resize(GG::Pt(GG::X(diameter), GG::Y(diameter)));
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
