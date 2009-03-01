@@ -156,36 +156,6 @@ namespace {
         }
     }
 
-    /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
-     * between them by the radius of a system on screen (at zoom 1.0) and return result */
-    std::vector<double> StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
-        // get unit vector
-        double deltaX = X2 - X1, deltaY = Y2 - Y1;
-        double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-
-        double ring_radius = GetOptionsDB().Get<int>("UI.system-icon-size") * GetOptionsDB().Get<double>("UI.system-circle-size") / 2.0 + 0.5;
-
-        // safety check.  don't modify original coordinates if they're too close togther
-        if (mag > 2*ring_radius) {
-            // rescale vector to length of ring radius
-            double offsetX = deltaX / mag * ring_radius;
-            double offsetY = deltaY / mag * ring_radius;
-
-            // move start and end points inwards by rescaled vector
-            X1 += offsetX;
-            Y1 += offsetY;
-            X2 -= offsetX;
-            Y2 -= offsetY;
-        }
-
-        // pack into return vector
-        std::vector<double> retval;
-        retval.push_back(X1);
-        retval.push_back(Y1);
-        retval.push_back(X2);
-        retval.push_back(Y2);
-        return retval;
-    }
 }
 
 
@@ -312,6 +282,7 @@ void MapWndPopup::CloseClicked()
 void MapWndPopup::Close()
 { CloseClicked(); }
 
+
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData
 ////////////////////////////////////////////////
@@ -319,8 +290,8 @@ MapWnd::MovementLineData::MovementLineData() :
     m_colour(GG::CLR_ZERO), 
     m_path(),
     m_button(0),
-    m_x(-100000.0),   // UniverseObject::INVALID_POSITION value respecified here to avoid unnecessary include dependency
-    m_y(-100000.0)
+    m_x(UniverseObject::INVALID_POSITION),
+    m_y(UniverseObject::INVALID_POSITION)
 {}
 
 MapWnd::MovementLineData::MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
@@ -355,6 +326,17 @@ std::pair<double, double> MapWnd::MovementLineData::Start() const
         return std::make_pair(m_x, m_y);
     }
 }
+
+
+//////////////////////////////////
+// MapWnd::LaneEndpoints
+//////////////////////////////////
+MapWnd::LaneEndpoints::LaneEndpoints() :
+    X1(UniverseObject::INVALID_POSITION),
+    Y1(UniverseObject::INVALID_POSITION),
+    X2(UniverseObject::INVALID_POSITION),
+    Y2(UniverseObject::INVALID_POSITION)
+{}
 
 
 //////////////////////////////////
@@ -418,6 +400,7 @@ MapWnd::MapWnd() :
     m_research_wnd(NULL),
     m_production_wnd(NULL),
     m_design_wnd(NULL),
+    m_starlane_endpoints(),
     m_moving_fleet_buttons(),
     m_system_fleet_buttons(),
     m_fleet_state_change_signals(),
@@ -1170,7 +1153,6 @@ void MapWnd::InitStarlaneRenderingBuffers()
     std::vector<unsigned char> raw_starlane_colors;
     std::vector<float> raw_starlane_supply_vertices;
     std::vector<unsigned char> raw_starlane_supply_colors;
-    std::set<std::pair<int, int> > rendered_starlanes;      // stored by inserting return value of UnorderedIntPair so different orders of system ids don't create duplicates
     std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
@@ -1178,7 +1160,9 @@ void MapWnd::InitStarlaneRenderingBuffers()
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
 
-    // create buffers for starlane rendering
+    // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
+    m_starlane_endpoints.clear();
+
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         const System& system = icon->GetSystem();
@@ -1192,17 +1176,21 @@ void MapWnd::InitStarlaneRenderingBuffers()
             const System* dest_system = universe.Object<System>(lane_it->first);
 
 
-            // get starlane endpoints for this pair of systems
-            std::vector<double> starlane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+            // check that this lane isn't already in map / being rendered
+            std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());
 
+            if (m_starlane_endpoints.find(lane) == m_starlane_endpoints.end()) {
 
-            // check that this lane isn't already going to be rendered.  skip it if it is.
-            if (rendered_starlanes.find(UnorderedIntPair(start_system->ID(), dest_system->ID())) == rendered_starlanes.end()) {
-                //Logger().debugStream() << " ... lane not found.";
-                rendered_starlanes.insert(UnorderedIntPair(start_system->ID(), dest_system->ID()));
+                // get and store universe position endpoints for this starlane
+                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                m_starlane_endpoints[lane] = lane_endpoints;
+
 
                 // add vertices for this full-length starlane
-                std::copy(starlane_endpoints.begin(), starlane_endpoints.end(), std::back_inserter(raw_starlane_vertices));
+                raw_starlane_vertices.push_back(lane_endpoints.X1);
+                raw_starlane_vertices.push_back(lane_endpoints.Y1);
+                raw_starlane_vertices.push_back(lane_endpoints.X2);
+                raw_starlane_vertices.push_back(lane_endpoints.Y2);
 
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
@@ -1257,11 +1245,12 @@ void MapWnd::InitStarlaneRenderingBuffers()
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
                         // found an empire that has a half lane here, so add it.
                         rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
+                        LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
 
-                        raw_starlane_vertices.push_back(starlane_endpoints[0]);     // X component of first system
-                        raw_starlane_vertices.push_back(starlane_endpoints[1]);     // Y component of first system
-                        raw_starlane_vertices.push_back((starlane_endpoints[0] + starlane_endpoints[2]) * 0.5);  // half way along starlane
-                        raw_starlane_vertices.push_back((starlane_endpoints[1] + starlane_endpoints[3]) * 0.5);
+                        raw_starlane_vertices.push_back(lane_endpoints.X1);
+                        raw_starlane_vertices.push_back(lane_endpoints.Y1);
+                        raw_starlane_vertices.push_back((lane_endpoints.X1 + lane_endpoints.X2) * 0.5);         // half way along starlane
+                        raw_starlane_vertices.push_back((lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5);
 
                         const GG::Clr& lane_colour = empire->Color();
                         raw_starlane_colors.push_back(lane_colour.r);
@@ -1373,6 +1362,36 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+MapWnd::LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)
+{
+    LaneEndpoints retval;
+
+    // get unit vector
+    double deltaX = X2 - X1, deltaY = Y2 - Y1;
+    double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+
+    double ring_radius = GetOptionsDB().Get<int>("UI.system-icon-size") * GetOptionsDB().Get<double>("UI.system-circle-size") / 2.0 + 0.5;
+
+    // safety check.  don't modify original coordinates if they're too close togther
+    if (mag > 2*ring_radius) {
+        // rescale vector to length of ring radius
+        double offsetX = deltaX / mag * ring_radius;
+        double offsetY = deltaY / mag * ring_radius;
+
+        // move start and end points inwards by rescaled vector
+        X1 += offsetX;
+        Y1 += offsetY;
+        X2 -= offsetX;
+        Y2 -= offsetY;
+    }
+
+    retval.X1 = X1;
+    retval.Y1 = Y1;
+    retval.X2 = X2;
+    retval.Y2 = Y2;
+    return retval;
 }
 
 void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)

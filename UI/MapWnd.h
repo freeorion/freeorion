@@ -165,6 +165,15 @@ private:
         double m_x, m_y;                ///< universe x and y at which to originate line (start point isn't in the path) (if m_button is nonzero, its galaxy position should be used instead)
     };
 
+    /* Start and end points in universe coordinates as seen in MapWnd.  Lanes are drawn to
+     * and from a circle surrounding system icons, note the centre of the system icon. The
+     * location of these start ane endpoints is used for rendering the starlane and for
+     * positioning fleet buttons that are moving along the starlane. */
+    struct LaneEndpoints {
+        LaneEndpoints();
+        double X1, Y1, X2, Y2;
+    };
+
     class FleetETAMapIndicator;
     class MapScaleLine;
 
@@ -179,6 +188,9 @@ private:
     void InitTurnRendering();                       //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
     void InitSystemRenderingBuffers();              //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
     void InitStarlaneRenderingBuffers();            //!< initializes or refreshes buffers for rendering of starlanes
+    /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
+     * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
+    LaneEndpoints StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);
 
     void RenderStarfields();                        //!< renders the background starfiends
     void RenderNebulae();                           //!< renders nebulae
@@ -264,10 +276,12 @@ private:
     ProductionWnd*              m_production_wnd;   //!< production screen
     DesignWnd*                  m_design_wnd;       //!< design screen
 
+
+    std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
+
     std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< icons representing one or more fleets moving around map
     std::map<System*, FleetButton*>                 m_system_fleet_buttons;                 //!< icons representing one or more fleets stationary at a system
     std::map<int, boost::signals::connection>       m_fleet_state_change_signals;
-
     std::vector<boost::signals::connection>         m_system_fleet_state_change_signals;
 
     std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
@@ -280,9 +294,8 @@ private:
     std::map<const Fleet*,
              std::vector<FleetETAMapIndicator*> >   m_projected_fleet_eta_map_indicators;   //!< indicators that appear adjacent to projected fleet move lines that indicate the eta for points on a move path
 
-    // OpenGL buffers objects containing vertices, texture coordinates, etc.
-    struct GLBuffer
-    {
+    /* OpenGL buffers objects containing vertices, texture coordinates, etc. */
+    struct GLBuffer {
         GLBuffer();
         GLuint      m_name;
         std::size_t m_size;
