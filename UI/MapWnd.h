@@ -177,6 +177,8 @@ private:
     void ZoomSlid(int pos, int low, int high);
 
     void InitTurnRendering();                       //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
+    void InitSystemRenderingBuffers();              //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
+    void InitStarlaneRenderingBuffers();            //!< initializes or refreshes buffers for rendering of starlanes
 
     void RenderStarfields();                        //!< renders the background starfiends
     void RenderNebulae();                           //!< renders nebulae
@@ -285,14 +287,14 @@ private:
         GLuint      m_name;
         std::size_t m_size;
     };
-    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_core_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GLBuffer> m_galaxy_gas_quad_vertices;
-    GLBuffer m_star_texture_coords;
-    GLBuffer m_starlane_vertices;
-    GLBuffer m_starlane_colors;
-    GLBuffer m_starlane_fleet_supply_vertices;
-    GLBuffer m_starlane_fleet_supply_colors;
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer>  m_star_core_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer>  m_star_halo_quad_vertices;
+    std::map<boost::shared_ptr<GG::Texture>, GLBuffer>  m_galaxy_gas_quad_vertices;
+    GLBuffer                    m_star_texture_coords;
+    GLBuffer                    m_starlane_vertices;
+    GLBuffer                    m_starlane_colors;
+    GLBuffer                    m_starlane_fleet_supply_vertices;
+    GLBuffer                    m_starlane_fleet_supply_colors;
 
     GG::Pt                      m_drag_offset;      //!< distance the cursor is from the upper-left corner of the window during a drag ((-1, -1) if no drag is occurring)
     bool                        m_dragged;          //!< tracks whether or not a drag occurs during a left button down sequence of events
