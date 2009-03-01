@@ -88,9 +88,6 @@ public:
     mutable FleetButtonClickedSignalType    FleetButtonClickedSignal;
     //!@}
 
-    /** The size below which the "tiny" version of the star graphic is used, in pixels. */
-    static const GG::X TINY_SIZE;
-
 private:
     void    Init(); //!< common constructor tasks
 

@@ -27,6 +27,11 @@ namespace {
 
     const double        PI = 3.1415926535;
     const unsigned int  MAX_TRIES = 128;     // most allowed unique fleetbutton locations
+
+    void AddOptions(OptionsDB& db) {
+        db.Add("UI.system-tiny-icon-size-threshold",    "OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD",    10, RangedValidator<int>(1, 16));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ////////////////////////////////////////////////
@@ -76,9 +81,6 @@ void OwnerColoredSystemName::Render()
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
-// static(s)
-const GG::X SystemIcon::TINY_SIZE(8);
-
 SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::CLICKABLE),
     m_system(*GetUniverse().Object<const System>(id)),
@@ -293,14 +295,14 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 
 int SystemIcon::EnclosingCircleDiameter() const
 {
-    return static_cast<const int>(Value(Width())* GetOptionsDB().Get<double>("UI.system-circle-size")) + 1;
+    return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("UI.system-circle-size")) + 1;
 }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
 
-    if (m_tiny_graphic && lr.x - ul.x < TINY_SIZE) {
+    if (m_tiny_graphic && lr.x - ul.x < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold")) {
         GG::Pt tiny_size = m_tiny_graphic->Size();
         GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
         GG::Pt tiny_ul(static_cast<GG::X>(middle.x - tiny_size.x / 2.0),

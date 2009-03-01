@@ -407,6 +407,9 @@ Sets minimum zoom level at which tiny fleet icons are shown.  At smaller zooms, 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator (relative to system icon).
 
+OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
+Sets size of system icon below which the special fixed-size tiny icons will be shown.
+
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip popup delay, in ms.
 
@@ -939,6 +942,9 @@ System circle relative size
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 System selection indicator relative size
+
+OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
+Tiny system icon size threshold
 
 OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
 Unowned systen name colour

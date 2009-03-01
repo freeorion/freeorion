@@ -155,6 +155,37 @@ namespace {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         }
     }
+
+    /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
+     * between them by the radius of a system on screen (at zoom 1.0) and return result */
+    std::vector<double> StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
+        // get unit vector
+        double deltaX = X2 - X1, deltaY = Y2 - Y1;
+        double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+
+        double ring_radius = GetOptionsDB().Get<int>("UI.system-icon-size") * GetOptionsDB().Get<double>("UI.system-circle-size") / 2.0 + 0.5;
+
+        // safety check.  don't modify original coordinates if they're too close togther
+        if (mag > 2*ring_radius) {
+            // rescale vector to length of ring radius
+            double offsetX = deltaX / mag * ring_radius;
+            double offsetY = deltaY / mag * ring_radius;
+
+            // move start and end points inwards by rescaled vector
+            X1 += offsetX;
+            Y1 += offsetY;
+            X2 -= offsetX;
+            Y2 -= offsetY;
+        }
+
+        // pack into return vector
+        std::vector<double> retval;
+        retval.push_back(X1);
+        retval.push_back(Y1);
+        retval.push_back(X2);
+        retval.push_back(Y2);
+        return retval;
+    }
 }
 
 
@@ -1160,17 +1191,19 @@ void MapWnd::InitStarlaneRenderingBuffers()
             const System* start_system = &system;
             const System* dest_system = universe.Object<System>(lane_it->first);
 
-            // render starlane between start and dest systems?
+
+            // get starlane endpoints for this pair of systems
+            std::vector<double> starlane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
             if (rendered_starlanes.find(UnorderedIntPair(start_system->ID(), dest_system->ID())) == rendered_starlanes.end()) {
                 //Logger().debugStream() << " ... lane not found.";
                 rendered_starlanes.insert(UnorderedIntPair(start_system->ID(), dest_system->ID()));
 
-                raw_starlane_vertices.push_back(start_system->X());
-                raw_starlane_vertices.push_back(start_system->Y());
-                raw_starlane_vertices.push_back(dest_system->X());
-                raw_starlane_vertices.push_back(dest_system->Y());
+                // add vertices for this full-length starlane
+                std::copy(starlane_endpoints.begin(), starlane_endpoints.end(), std::back_inserter(raw_starlane_vertices));
+
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
@@ -1191,6 +1224,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
                     }
                 }
 
+                // vertex colours for starlane
                 raw_starlane_colors.push_back(lane_colour.r);
                 raw_starlane_colors.push_back(lane_colour.g);
                 raw_starlane_colors.push_back(lane_colour.b);
@@ -1208,7 +1242,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
             if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
-                // NOTE: this will never find a preexisting half lane
+                // NOTE: this will never find a preexisting half lane   NOTE LATER: I probably wrote that comment, but have no idea what it means...
                 //Logger().debugStream() << "half lane not found... considering possible half lanes to add";
 
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
@@ -1224,10 +1258,10 @@ void MapWnd::InitStarlaneRenderingBuffers()
                         // found an empire that has a half lane here, so add it.
                         rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
 
-                        raw_starlane_vertices.push_back(start_system->X());
-                        raw_starlane_vertices.push_back(start_system->Y());
-                        raw_starlane_vertices.push_back((start_system->X() + dest_system->X()) * 0.5);  // half way along starlane
-                        raw_starlane_vertices.push_back((start_system->Y() + dest_system->Y()) * 0.5);
+                        raw_starlane_vertices.push_back(starlane_endpoints[0]);     // X component of first system
+                        raw_starlane_vertices.push_back(starlane_endpoints[1]);     // Y component of first system
+                        raw_starlane_vertices.push_back((starlane_endpoints[0] + starlane_endpoints[2]) * 0.5);  // half way along starlane
+                        raw_starlane_vertices.push_back((starlane_endpoints[1] + starlane_endpoints[3]) * 0.5);
 
                         const GG::Clr& lane_colour = empire->Color();
                         raw_starlane_colors.push_back(lane_colour.r);
@@ -1905,8 +1939,8 @@ void MapWnd::RenderSystems()
             glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
             glTranslatef(-0.5, -0.5, 0.0);
             for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-                 it != m_star_halo_quad_vertices.end();
-                 ++it) {
+                 it != m_star_halo_quad_vertices.end(); ++it)
+            {
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
                 glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -1918,10 +1952,10 @@ void MapWnd::RenderSystems()
             glMatrixMode(GL_MODELVIEW);
         }
 
-        if (SystemIcon::TINY_SIZE < ZoomFactor() * ClientUI::SystemIconSize()) {
+        if (GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold") < ZoomFactor() * ClientUI::SystemIconSize()) {
             for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-                 it != m_star_core_quad_vertices.end();
-                 ++it) {
+                 it != m_star_core_quad_vertices.end(); ++it)
+            {
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
                 glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -1931,8 +1965,8 @@ void MapWnd::RenderSystems()
             }
         }
 
-
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     } else {
         glColor4f(1.0, 1.0, 1.0, 1.0);
         glPushMatrix();
