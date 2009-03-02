@@ -54,7 +54,6 @@ BOOST_CLASS_EXPORT(CombatShip)
 BOOST_CLASS_EXPORT(CombatFighter)
 BOOST_CLASS_EXPORT(OpenSteer::SphereObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::BoxObstacle)
-BOOST_CLASS_EXPORT(OpenSteer::BoxObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::PlaneObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::RectangleObstacle)
 
