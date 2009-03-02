@@ -75,6 +75,16 @@ namespace OpenSteer {
         class PathIntersection
         {
         public:
+            PathIntersection() :
+                intersect(false),
+                distance(0),
+                surfacePoint(),
+                surfaceNormal(),
+                steerHint(),
+                vehicleOutside(false),
+                obstacle(0)
+                {}
+
             bool intersect; // was an intersection found?
             float distance; // how far was intersection point from vehicle?
             Vec3 surfacePoint; // position of intersection

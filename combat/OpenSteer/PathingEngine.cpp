@@ -25,13 +25,10 @@ PathingEngine::PathingEngine() :
     m_update_number(0)
 {
     // TODO: Change to more appropriate world geometry.
-    const float DIVISION = 10.0f;
+    const std::size_t DIVISION = 10;
     const float DIAMETER = WORLD_RADIUS * 1.1f * 2;
 
-    m_proximity_database =
-        new ProximityDB(OpenSteer::Vec3(),
-                        OpenSteer::Vec3(DIAMETER, DIAMETER, DIAMETER),
-                        OpenSteer::Vec3(DIVISION, DIVISION, DIVISION));
+    m_proximity_database = new ProximityDB(OpenSteer::Vec3(), DIAMETER, DIVISION);
 }
 
 PathingEngine::~PathingEngine()

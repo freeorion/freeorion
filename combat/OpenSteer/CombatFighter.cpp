@@ -249,7 +249,7 @@ void CombatFighter::Init()
 {
     if (m_leader) {
         m_proximity_token =
-            m_pathing_engine.GetProximityDB().AllocateToken(
+            m_pathing_engine.GetProximityDB().Insert(
                 this,
                 m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
                 EmpireFlag(m_empire_id));

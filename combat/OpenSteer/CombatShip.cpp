@@ -91,7 +91,7 @@ float CombatShip::MinNonPDWeaponRange() const
 void CombatShip::Init(const OpenSteer::Vec3& position_)
 {
     m_proximity_token =
-        m_pathing_engine.GetProximityDB().AllocateToken(this, SHIP_FLAG, EmpireFlag(m_empire_id));
+        m_pathing_engine.GetProximityDB().Insert(this, SHIP_FLAG, EmpireFlag(m_empire_id));
 
     SimpleVehicle::reset();
     SimpleVehicle::setMaxForce(3.0);
