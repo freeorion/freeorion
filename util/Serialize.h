@@ -23,6 +23,7 @@
 class Empire;
 class EmpireManager;
 class OrderSet;
+class PathingEngine;
 class Universe;
 class UniverseObject;
 
@@ -44,6 +45,9 @@ void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>
 /** Serializes \a order_set to output archive \a oa. */
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set);
 
+/** Serializes \a pathing_engine to output archive \a oa. */
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const PathingEngine& pathing_engine);
+
 /** Deserializes the single empire \a empire from input archive \a ia. */
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Empire& empire);
 
@@ -58,5 +62,8 @@ void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& ob
 
 /** Deserializes \a order_set from input archive \a ia. */
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set);
+
+/** Deserializes \a pathing_engine from input archive \a ia. */
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, PathingEngine& pathing_engine);
 
 #endif // _Serialize_h_

@@ -146,6 +146,17 @@ namespace OpenSteer {
         Vec3 _forward;  // forward-pointing unit basis vector
         Vec3 _position; // origin of local space
 
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Super)
+                    & BOOST_SERIALIZATION_NVP(_side)
+                    & BOOST_SERIALIZATION_NVP(_up)
+                    & BOOST_SERIALIZATION_NVP(_forward)
+                    & BOOST_SERIALIZATION_NVP(_position);
+            }
+
     public:
 
         // accessors (get and set) for side, up, forward and position

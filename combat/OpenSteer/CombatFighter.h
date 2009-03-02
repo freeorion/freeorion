@@ -45,9 +45,20 @@ public:
     void erase(CombatFighter* fighter);
 
 private:
+    CombatFighterFormation();
+
     CombatFighterPtr m_leader;
     std::list<CombatFighterPtr> m_members;
-    PathingEngine& m_pathing_engine;
+    PathingEngine* m_pathing_engine;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        {
+            ar  & BOOST_SERIALIZATION_NVP(m_leader)
+                & BOOST_SERIALIZATION_NVP(m_members)
+                & BOOST_SERIALIZATION_NVP(m_pathing_engine);
+        }
 };
 
 class CombatFighter :
@@ -80,6 +91,8 @@ public:
     void ClearMissions();
 
 private:
+    CombatFighter();
+
     void Init();
     OpenSteer::Vec3 GlobalFormationPosition();
     void RemoveMission();
@@ -105,11 +118,35 @@ private:
     CombatFighterFormationPtr m_formation;
     OpenSteer::Vec3 m_out_of_formation;
 
-    PathingEngine& m_pathing_engine;
+    PathingEngine* m_pathing_engine;
 
     // TODO: Temporary only!
     bool m_instrument;
     FighterMission::Type m_last_mission;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        {
+            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpenSteer::SimpleVehicle)
+                & BOOST_SERIALIZATION_NVP(m_proximity_token)
+                & BOOST_SERIALIZATION_NVP(m_leader)
+                & BOOST_SERIALIZATION_NVP(m_type)
+                & BOOST_SERIALIZATION_NVP(m_empire_id)
+                & BOOST_SERIALIZATION_NVP(m_id)
+                & BOOST_SERIALIZATION_NVP(m_last_steer)
+                & BOOST_SERIALIZATION_NVP(m_mission_queue)
+                & BOOST_SERIALIZATION_NVP(m_mission_weight)
+                & BOOST_SERIALIZATION_NVP(m_mission_destination)
+                & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
+                & BOOST_SERIALIZATION_NVP(m_base)
+                & BOOST_SERIALIZATION_NVP(m_formation_position)
+                & BOOST_SERIALIZATION_NVP(m_formation)
+                & BOOST_SERIALIZATION_NVP(m_out_of_formation)
+                & BOOST_SERIALIZATION_NVP(m_pathing_engine)
+                & BOOST_SERIALIZATION_NVP(m_instrument)
+                & BOOST_SERIALIZATION_NVP(m_last_mission);
+        }
 };
 
 #endif

@@ -57,6 +57,17 @@ private:
     std::set<CombatFighterFormationPtr> m_fighter_formations;
     ProximityDB* m_proximity_database;
     ObstacleVec m_obstacles;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        {
+            ar  & BOOST_SERIALIZATION_NVP(m_update_number)
+                & BOOST_SERIALIZATION_NVP(m_objects)
+                & BOOST_SERIALIZATION_NVP(m_fighter_formations)
+                & BOOST_SERIALIZATION_NVP(m_proximity_database)
+                & BOOST_SERIALIZATION_NVP(m_obstacles);
+        }
 };
 
 extern const unsigned int INTERCEPTOR_FLAG;

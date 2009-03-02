@@ -32,6 +32,8 @@ public:
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
 
 private:
+    CombatShip();
+
     float MaxWeaponRange() const;
     float MinNonPDWeaponRange() const;
 
@@ -52,7 +54,7 @@ private:
     OpenSteer::Vec3 m_mission_destination; // Only the X and Y values should be nonzero.
     CombatObjectPtr m_mission_subtarget;
 
-    PathingEngine& m_pathing_engine;
+    PathingEngine* m_pathing_engine;
     
     // TODO: This should be computed from the ship design in the final version
     // of this class.
@@ -61,6 +63,25 @@ private:
     // TODO: Temporary only!
     bool m_instrument;
     ShipMission::Type m_last_mission;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        {
+            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpenSteer::SimpleVehicle)
+                & BOOST_SERIALIZATION_NVP(m_proximity_token)
+                & BOOST_SERIALIZATION_NVP(m_empire_id)
+                & BOOST_SERIALIZATION_NVP(m_ship)
+                & BOOST_SERIALIZATION_NVP(m_last_steer)
+                & BOOST_SERIALIZATION_NVP(m_mission_queue)
+                & BOOST_SERIALIZATION_NVP(m_mission_weight)
+                & BOOST_SERIALIZATION_NVP(m_mission_destination)
+                & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
+                & BOOST_SERIALIZATION_NVP(m_pathing_engine)
+                & BOOST_SERIALIZATION_NVP(m_anti_fighter_strength)
+                & BOOST_SERIALIZATION_NVP(m_instrument)
+                & BOOST_SERIALIZATION_NVP(m_last_mission);
+        }
 };
 
 #endif

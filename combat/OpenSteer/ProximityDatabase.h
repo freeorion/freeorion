@@ -4,8 +4,6 @@
 
 #include "Vec3.h"
 
-#include <boost/tuple/tuple.hpp>
-
 #include <map>
 #include <vector>
 
@@ -14,7 +12,34 @@ template <typename T>
 class ProximityDatabase
 {
 public:
-    typedef boost::tuple<T, unsigned int, unsigned int> StoredType;
+    struct StoredType
+    {
+        StoredType() :
+            m_t(),
+            m_type_flags(0),
+            m_empire_ids(0)
+            {}
+
+        StoredType(T t,
+                   unsigned int type_flags,
+                   unsigned int empire_ids) :
+            m_t(t),
+            m_type_flags(type_flags),
+            m_empire_ids(empire_ids)
+            {}
+
+        T m_t;
+        unsigned int m_type_flags;
+        unsigned int m_empire_ids;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_NVP(m_t)
+                    & BOOST_SERIALIZATION_NVP(m_type_flags)
+                    & BOOST_SERIALIZATION_NVP(m_empire_ids);
+            }
+    };
 
     class TokenType
     {
@@ -26,6 +51,12 @@ public:
             { m_db->UpdatePosition(*this, p); }
 
     private:
+        TokenType() :
+            m_object(),
+            m_old_index(-1),
+            m_db(0)
+            {}
+
         TokenType(const StoredType& object, std::size_t index, ProximityDatabase& db) :
             m_object(object),
             m_old_index(index),
@@ -37,6 +68,15 @@ public:
         ProximityDatabase* m_db;
 
         friend class ProximityDatabase<T>;
+
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_NVP(m_object)
+                    & BOOST_SERIALIZATION_NVP(m_old_index)
+                    & BOOST_SERIALIZATION_NVP(m_db);
+            }
     };
 
     ProximityDatabase(const OpenSteer::Vec3& center,
@@ -67,8 +107,8 @@ public:
                 for (typename std::map<T, StoredType>::iterator it = m_grid_cells[i].begin();
                      it != m_grid_cells[i].end();
                      ++it) {
-                    if (type_flags & boost::get<1>(it->second) &&
-                        empire_ids & boost::get<1>(it->second)) {
+                    if (type_flags & it->second.m_type_flags &&
+                        empire_ids & it->second.m_empire_ids) {
                         results.push_back(it->first);
                     }
                 }
@@ -105,8 +145,8 @@ public:
                 for (typename std::map<T, StoredType>::iterator it = m_grid_cells[i].begin();
                      it != m_grid_cells[i].end();
                      ++it) {
-                    if (type_flags & boost::get<1>(it->second) &&
-                        empire_ids & boost::get<2>(it->second)) {
+                    if (type_flags & it->second.m_type_flags &&
+                        empire_ids & it->second.m_empire_ids) {
                         float dist_squared =
                             (center - it->first->position()).lengthSquared();
                         if (dist_squared < nearest_dist_squared) {
@@ -120,13 +160,21 @@ public:
         }
 
 private:
+    ProximityDatabase() :
+        m_origin(),
+        m_dimensions(0),
+        m_cell_dimensions(0),
+        m_cells_per_side(0),
+        m_grid_cells()
+        {}
+
     void UpdatePosition(TokenType& token, const OpenSteer::Vec3& p)
         {
             std::size_t old_index = token.m_old_index;
             std::size_t new_index = GridIndexOf(p);
             if (old_index != new_index) {
-                m_grid_cells[old_index].erase(boost::get<0>(token.m_object));
-                m_grid_cells[new_index][boost::get<0>(token.m_object)] = token.m_object;
+                m_grid_cells[old_index].erase(token.m_object.m_t);
+                m_grid_cells[new_index][token.m_object.m_t] = token.m_object;
                 token.m_old_index = new_index;
             }
         }
@@ -134,9 +182,9 @@ private:
     void Erase(const TokenType& token)
         {
             assert(token.m_old_index < m_grid_cells.size());
-            assert(m_grid_cells[token.m_old_index].find(boost::get<0>(token.m_object)) !=
+            assert(m_grid_cells[token.m_old_index].find(token.m_object.m_t) !=
                    m_grid_cells[token.m_old_index].end());
-            m_grid_cells[token.m_old_index].erase(boost::get<0>(token.m_object));
+            m_grid_cells[token.m_old_index].erase(token.m_object.m_t);
         }
 
     void GridIndicesOf(const OpenSteer::Vec3& vec,
@@ -229,8 +277,8 @@ private:
                         for (typename std::map<T, StoredType>::iterator it = cell.begin();
                              it != cell.end();
                              ++it) {
-                            if (type_flags & boost::get<1>(it->second) &&
-                                empire_ids & boost::get<2>(it->second)) {
+                            if (type_flags & it->second.m_type_flags &&
+                                empire_ids & it->second.m_empire_ids) {
                                 if (find_nearest) {
                                     float dist_squared =
                                         (center - it->first->position()).lengthSquared();
@@ -255,6 +303,17 @@ private:
     std::vector<std::map<T, StoredType> > m_grid_cells;
 
     friend class TokenType;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version)
+        {
+            ar  & BOOST_SERIALIZATION_NVP(m_origin)
+                & BOOST_SERIALIZATION_NVP(m_dimensions)
+                & BOOST_SERIALIZATION_NVP(m_cell_dimensions)
+                & BOOST_SERIALIZATION_NVP(m_cells_per_side)
+                & BOOST_SERIALIZATION_NVP(m_grid_cells);
+        }
 };
 
 #endif

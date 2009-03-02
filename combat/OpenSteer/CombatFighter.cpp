@@ -45,12 +45,16 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 // CombatFighterFormation
 ////////////////////////////////////////////////////////////////////////////////
+CombatFighterFormation::CombatFighterFormation() :
+    m_pathing_engine(0)
+{}
+
 CombatFighterFormation::CombatFighterFormation(PathingEngine& pathing_engine) :
-    m_pathing_engine(pathing_engine)
+    m_pathing_engine(&pathing_engine)
 {}
 
 CombatFighterFormation::~CombatFighterFormation()
-{ m_pathing_engine.RemoveObject(m_leader); }
+{ m_pathing_engine->RemoveObject(m_leader); }
 
 const CombatFighter& CombatFighterFormation::Leader() const
 { return *m_leader; }
@@ -83,7 +87,7 @@ void CombatFighterFormation::SetLeader(const CombatFighterPtr& fighter)
 {
     assert(!m_leader);
     m_leader = fighter;
-    m_pathing_engine.AddObject(m_leader);
+    m_pathing_engine->AddObject(m_leader);
 }
 
 void CombatFighterFormation::push_back(const CombatFighterPtr& fighter)
@@ -114,6 +118,21 @@ void CombatFighterFormation::erase(CombatFighter* fighter)
 ////////////////////////////////////////////////////////////////////////////////
 // CombatFighter
 ////////////////////////////////////////////////////////////////////////////////
+CombatFighter::CombatFighter() :
+    m_proximity_token(0),
+    m_leader(false),
+    m_type(),
+    m_empire_id(-1),
+    m_mission_queue(),
+    m_mission_weight(0.0),
+    m_base(),
+    m_formation_position(-1),
+    m_formation(),
+    m_pathing_engine(0)
+    ,m_instrument(false)
+    ,m_last_mission(FighterMission::NONE)
+{}
+
 CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
                              int fighter_id, PathingEngine& pathing_engine,
                              const CombatFighterFormationPtr& formation,
@@ -127,7 +146,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int e
     m_base(base),
     m_formation_position(formation_position),
     m_formation(formation),
-    m_pathing_engine(pathing_engine)
+    m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 { Init(); }
@@ -144,7 +163,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int e
     m_base(base),
     m_formation_position(-1),
     m_formation(formation),
-    m_pathing_engine(pathing_engine)
+    m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 { Init(); }
@@ -199,7 +218,7 @@ const FighterMission& CombatFighter::CurrentMission() const
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine.UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
+    if (m_pathing_engine->UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
         if (m_leader)
             UpdateMissionQueue();
         steer = Steer();
@@ -249,7 +268,7 @@ void CombatFighter::Init()
 {
     if (m_leader) {
         m_proximity_token =
-            m_pathing_engine.GetProximityDB().Insert(
+            m_pathing_engine->GetProximityDB().Insert(
                 this,
                 m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
                 EmpireFlag(m_empire_id));
@@ -381,8 +400,8 @@ void CombatFighter::UpdateMissionQueue()
             bool found_target = false;
             if (m_type == INTERCEPTOR) {
                 if (CombatFighterPtr fighter =
-                    m_pathing_engine.NearestHostileFighterInRange(position(), m_empire_id,
-                                                                  PATROL_ENGAGEMENT_RANGE)) {
+                    m_pathing_engine->NearestHostileFighterInRange(position(), m_empire_id,
+                                                                   PATROL_ENGAGEMENT_RANGE)) {
                     m_mission_destination = fighter->position();
                     m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
                     found_target = true;
@@ -390,8 +409,8 @@ void CombatFighter::UpdateMissionQueue()
                 }
             } else {
                 if (CombatObjectPtr object =
-                    m_pathing_engine.NearestHostileNonFighterInRange(position(), m_empire_id,
-                                                                     PATROL_ENGAGEMENT_RANGE)) {
+                    m_pathing_engine->NearestHostileNonFighterInRange(position(), m_empire_id,
+                                                                      PATROL_ENGAGEMENT_RANGE)) {
                     m_mission_destination = object->position();
                     m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
                     found_target = true;
@@ -407,9 +426,9 @@ void CombatFighter::UpdateMissionQueue()
         break;
     }
     case FighterMission::ATTACK_FIGHTERS_BOMBERS_FIRST: {
-        CombatFighterPtr fighter = m_pathing_engine.NearestHostileBomber(position(), m_empire_id);
+        CombatFighterPtr fighter = m_pathing_engine->NearestHostileBomber(position(), m_empire_id);
         if (!fighter)
-            fighter = m_pathing_engine.NearestHostileInterceptor(position(), m_empire_id);
+            fighter = m_pathing_engine->NearestHostileInterceptor(position(), m_empire_id);
         if (fighter) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = fighter->position();
@@ -422,9 +441,9 @@ void CombatFighter::UpdateMissionQueue()
         break;
     }
     case FighterMission::ATTACK_FIGHTERS_INTERCEPTORS_FIRST: {
-        CombatFighterPtr fighter = m_pathing_engine.NearestHostileInterceptor(position(), m_empire_id);
+        CombatFighterPtr fighter = m_pathing_engine->NearestHostileInterceptor(position(), m_empire_id);
         if (!fighter)
-            fighter = m_pathing_engine.NearestHostileBomber(position(), m_empire_id);
+            fighter = m_pathing_engine->NearestHostileBomber(position(), m_empire_id);
         if (fighter) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = fighter->position();
@@ -450,7 +469,7 @@ void CombatFighter::UpdateMissionQueue()
         break;
     }
     case FighterMission::ATTACK_SHIPS_NEAREST_FIRST: {
-        if (CombatObjectPtr object = m_pathing_engine.NearestHostileShip(position(), m_empire_id)) {
+        if (CombatObjectPtr object = m_pathing_engine->NearestHostileShip(position(), m_empire_id)) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
             m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
@@ -468,7 +487,7 @@ void CombatFighter::UpdateMissionQueue()
                 m_mission_destination = m_mission_queue.back().m_destination;
             } else {
                 // TODO: Dock up (add entire formation back to base/carrier).
-                m_pathing_engine.RemoveFighterFormation(m_formation);
+                m_pathing_engine->RemoveFighterFormation(m_formation);
                 if (print_needed) std::cout << "    [ARRIVED AT BASE]\n";
                 RemoveMission();
             }
@@ -512,8 +531,8 @@ OpenSteer::Vec3 CombatFighter::Steer()
 
     const OpenSteer::Vec3 static_obstacle_avoidance =
         steerToAvoidObstacles(OBSTACLE_AVOIDANCE_TIME,
-                              m_pathing_engine.Obstacles().begin(),
-                              m_pathing_engine.Obstacles().end());
+                              m_pathing_engine->Obstacles().begin(),
+                              m_pathing_engine->Obstacles().end());
 
     if (static_obstacle_avoidance != OpenSteer::Vec3::zero)
         return static_obstacle_avoidance;
@@ -554,10 +573,10 @@ OpenSteer::Vec3 CombatFighter::Steer()
                                                        COHESION_RADIUS));
         const float NONFIGHTER_RADIUS = std::max(NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS,
                                                  POINT_DEFENSE_AVOIDANCE_RADIUS);
-        m_pathing_engine.GetProximityDB().FindInRadius(position(), FIGHTER_RADIUS, neighbors,
-                                                       FIGHTER_FLAGS, EmpireFlag(m_empire_id));
-        m_pathing_engine.GetProximityDB().FindInRadius(position(), NONFIGHTER_RADIUS, nonfighters,
-                                                       NONFIGHTER_FLAGS);
+        m_pathing_engine->GetProximityDB().FindInRadius(position(), FIGHTER_RADIUS, neighbors,
+                                                        FIGHTER_FLAGS, EmpireFlag(m_empire_id));
+        m_pathing_engine->GetProximityDB().FindInRadius(position(), NONFIGHTER_RADIUS, nonfighters,
+                                                        NONFIGHTER_FLAGS);
     } else {
         for (CombatFighterFormation::const_iterator it = m_formation->begin();
              it != m_formation->end();
@@ -585,7 +604,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     OpenSteer::Vec3 bomber_interceptor_evasion_vec;
     OpenSteer::AVGroup interceptor_neighbors;
     if (m_type == BOMBER) {
-        m_pathing_engine.GetProximityDB().FindInRadius(
+        m_pathing_engine->GetProximityDB().FindInRadius(
             position(), BOMBER_INTERCEPTOR_EVASION_RADIUS, interceptor_neighbors,
             INTERCEPTOR_FLAG, NotEmpireFlag(m_empire_id));
         OpenSteer::Vec3 direction;
@@ -674,7 +693,7 @@ CombatShipPtr CombatFighter::WeakestHostileShip()
 
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
-    m_pathing_engine.GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
+    m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);

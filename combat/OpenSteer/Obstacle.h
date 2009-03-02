@@ -123,6 +123,10 @@ namespace OpenSteer {
         enum seenFromState {outside, inside, both};
         virtual seenFromState seenFrom (void) const = 0;
         virtual void setSeenFrom (seenFromState s) = 0;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {}
     };
 
 
@@ -185,6 +189,14 @@ namespace OpenSteer {
         void setSeenFrom (seenFromState s) {_seenFrom = s;}
     private:
         seenFromState _seenFrom;
+
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(AbstractObstacle)
+                    & BOOST_SERIALIZATION_NVP(_seenFrom);
+            }
     };
 
 
@@ -208,6 +220,14 @@ namespace OpenSteer {
         void findIntersectionWithVehiclePath (const AbstractVehicle& vehicle,
                                               PathIntersection& pi)
             const;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Obstacle)
+                    & BOOST_SERIALIZATION_NVP(radius)
+                    & BOOST_SERIALIZATION_NVP(center);
+            }
     };
 
 
@@ -242,6 +262,15 @@ namespace OpenSteer {
         void findIntersectionWithVehiclePath (const AbstractVehicle& vehicle,
                                               PathIntersection& pi)
             const;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LocalSpaceObstacle)
+                    & BOOST_SERIALIZATION_NVP(width)
+                    & BOOST_SERIALIZATION_NVP(height)
+                    & BOOST_SERIALIZATION_NVP(depth);
+            }
     };
 
 
@@ -286,6 +315,12 @@ namespace OpenSteer {
         {
             return true; // always true for PlaneObstacle
         }
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(LocalSpaceObstacle);
+            }
     };
 
 
@@ -322,6 +357,14 @@ namespace OpenSteer {
 
         // determines if a given point on XY plane is inside obstacle shape
         bool xyPointInsideShape (const Vec3& point, float radius) const;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PlaneObstacle)
+                    & BOOST_SERIALIZATION_NVP(width)
+                    & BOOST_SERIALIZATION_NVP(height);
+            }
     };
 
 

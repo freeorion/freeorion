@@ -1,5 +1,9 @@
 #include "Serialize.h"
 
+#include "../combat/OpenSteer/CombatShip.h"
+#include "../combat/OpenSteer/CombatFighter.h"
+#include "../combat/OpenSteer/Obstacle.h"
+#include "../combat/OpenSteer/PathingEngine.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../universe/Building.h"
@@ -15,13 +19,15 @@
 #undef int64_t
 #endif
 
+#include <boost/static_assert.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/vector.hpp>
-#include <boost/static_assert.hpp>
+#include <boost/serialization/weak_ptr.hpp>
+#include <boost/ptr_container/serialize_ptr_vector.hpp>
 
 
 // exports for boost serialization of polymorphic UniverseObject hierarchy
@@ -42,6 +48,15 @@ BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
 BOOST_CLASS_EXPORT(ProductionQueueOrder)
 BOOST_CLASS_EXPORT(ShipDesignOrder)
+
+// exports for boost serialization of PathingEngine-related classes
+BOOST_CLASS_EXPORT(CombatShip)
+BOOST_CLASS_EXPORT(CombatFighter)
+BOOST_CLASS_EXPORT(OpenSteer::SphereObstacle)
+BOOST_CLASS_EXPORT(OpenSteer::BoxObstacle)
+BOOST_CLASS_EXPORT(OpenSteer::BoxObstacle)
+BOOST_CLASS_EXPORT(OpenSteer::PlaneObstacle)
+BOOST_CLASS_EXPORT(OpenSteer::RectangleObstacle)
 
 // some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
 // that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
@@ -78,6 +93,9 @@ void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set)
 { oa << BOOST_SERIALIZATION_NVP(order_set); }
 
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const PathingEngine& pathing_engine)
+{ oa << BOOST_SERIALIZATION_NVP(pathing_engine); }
+
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Empire& empire)
 { ia >> BOOST_SERIALIZATION_NVP(empire); }
 
@@ -92,3 +110,6 @@ void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& ob
 
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
+
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, PathingEngine& pathing_engine)
+{ ia >> BOOST_SERIALIZATION_NVP(pathing_engine); }

@@ -240,6 +240,25 @@ namespace OpenSteer {
 
         // measure path curvature (1/turning-radius), maintain smoothed version
         void measurePathCurvature (const float elapsedTime);
+
+        friend class boost::serialization::access;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(SimpleVehicle_2)
+                    & BOOST_SERIALIZATION_NVP(serialNumber)
+                    & BOOST_SERIALIZATION_NVP(_mass)
+                    & BOOST_SERIALIZATION_NVP(_radius)
+                    & BOOST_SERIALIZATION_NVP(_speed)
+                    & BOOST_SERIALIZATION_NVP(_maxForce)
+                    & BOOST_SERIALIZATION_NVP(_maxSpeed)
+                    & BOOST_SERIALIZATION_NVP(_curvature)
+                    & BOOST_SERIALIZATION_NVP(_lastForward)
+                    & BOOST_SERIALIZATION_NVP(_lastPosition)
+                    & BOOST_SERIALIZATION_NVP(_smoothedPosition)
+                    & BOOST_SERIALIZATION_NVP(_smoothedCurvature)
+                    & BOOST_SERIALIZATION_NVP(_smoothedAcceleration);
+            }
     };
 
 

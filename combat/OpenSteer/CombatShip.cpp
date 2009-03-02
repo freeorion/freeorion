@@ -36,6 +36,18 @@ namespace {
 ////////////////////////////////////////////////////////////////////////////////
 // CombatShip
 ////////////////////////////////////////////////////////////////////////////////
+CombatShip::CombatShip() :
+    m_proximity_token(0),
+    m_empire_id(-1),
+    m_ship(),
+    m_mission_queue(),
+    m_mission_weight(0.0),
+    m_pathing_engine(0),
+    m_anti_fighter_strength(0)
+    ,m_instrument(false)
+    ,m_last_mission(ShipMission::NONE)
+{}
+
 CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
                        PathingEngine& pathing_engine) :
     m_proximity_token(0),
@@ -43,7 +55,7 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
     m_ship(ship),
     m_mission_queue(),
     m_mission_weight(0.0),
-    m_pathing_engine(pathing_engine),
+    m_pathing_engine(&pathing_engine),
     m_anti_fighter_strength(/*TODO: derive from m_ship*/)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
@@ -64,7 +76,7 @@ const ShipMission& CombatShip::CurrentMission() const
 void CombatShip::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine.UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
+    if (m_pathing_engine->UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
         UpdateMissionQueue();
         steer = Steer();
     }
@@ -91,7 +103,7 @@ float CombatShip::MinNonPDWeaponRange() const
 void CombatShip::Init(const OpenSteer::Vec3& position_)
 {
     m_proximity_token =
-        m_pathing_engine.GetProximityDB().Insert(this, SHIP_FLAG, EmpireFlag(m_empire_id));
+        m_pathing_engine->GetProximityDB().Insert(this, SHIP_FLAG, EmpireFlag(m_empire_id));
 
     SimpleVehicle::reset();
     SimpleVehicle::setMaxForce(3.0);
@@ -198,8 +210,8 @@ void CombatShip::UpdateMissionQueue()
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             bool found_target = false;
             if (CombatObjectPtr object =
-                m_pathing_engine.NearestHostileNonFighterInRange(position(), m_empire_id,
-                                                                 PATROL_ENGAGEMENT_RANGE)) {
+                m_pathing_engine->NearestHostileNonFighterInRange(position(), m_empire_id,
+                                                                  PATROL_ENGAGEMENT_RANGE)) {
                 m_mission_destination = object->position();
                 m_mission_queue.push_back(ShipMission(ShipMission::ATTACK_THIS, object));
                 found_target = true;
@@ -227,7 +239,7 @@ void CombatShip::UpdateMissionQueue()
         break;
     }
     case ShipMission::ATTACK_SHIPS_NEAREST_FIRST: {
-        if (CombatObjectPtr object = m_pathing_engine.NearestHostileShip(position(), m_empire_id)) {
+        if (CombatObjectPtr object = m_pathing_engine->NearestHostileShip(position(), m_empire_id)) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
             m_mission_queue.push_back(ShipMission(ShipMission::ATTACK_THIS, object));
@@ -260,8 +272,8 @@ OpenSteer::Vec3 CombatShip::Steer()
 {
     const OpenSteer::Vec3 avoidance =
         steerToAvoidObstacles(6.0f,
-                              m_pathing_engine.Obstacles().begin(),
-                              m_pathing_engine.Obstacles().end());
+                              m_pathing_engine->Obstacles().begin(),
+                              m_pathing_engine->Obstacles().end());
 
     if (avoidance != OpenSteer::Vec3::zero)
         return avoidance;
@@ -284,7 +296,7 @@ CombatShipPtr CombatShip::WeakestHostileShip()
 
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
-    m_pathing_engine.GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
+    m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
