@@ -156,6 +156,19 @@ namespace {
         }
     }
 
+    /* returns fractional distance along line segment between two points that a third point between them is.
+     * assumes the "mid" point is between the "start" and "end" points, in which case the returned fraction is
+     * between 0.0 and 1.0 */
+    double FractionalDistanceBetweenPoints(double startX, double startY, double midX, double midY, double endX, double endY) {
+        // get magnitudes of vectors
+        double full_deltaX = endX - startX, full_deltaY = endY - startY;
+        double mid_deltaX = midX - startX, mid_deltaY = midY - startY;
+        double full_length = std::sqrt(full_deltaX*full_deltaX + full_deltaY*full_deltaY);
+        if (full_length == 0.0) // safety check
+            full_length = 1.0;
+        double mid_length = std::sqrt(mid_deltaX*mid_deltaX + mid_deltaY*mid_deltaY);
+        return mid_length / full_length;
+    }
 }
 
 
@@ -1176,21 +1189,24 @@ void MapWnd::InitStarlaneRenderingBuffers()
             const System* dest_system = universe.Object<System>(lane_it->first);
 
 
-            // check that this lane isn't already in map / being rendered
-            std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());
+            // check that this lane isn't already in map / being rendered.
+            std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
 
             if (m_starlane_endpoints.find(lane) == m_starlane_endpoints.end()) {
 
-                // get and store universe position endpoints for this starlane
-                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
-                m_starlane_endpoints[lane] = lane_endpoints;
+                // get and store universe position endpoints for this starlane.  make sure to store in the same order
+                // as the system ids in the lane id pair
+                if (start_system->ID() == lane.first)
+                    m_starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                else
+                    m_starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(dest_system->X(), dest_system->Y(), start_system->X(), start_system->Y());
 
 
                 // add vertices for this full-length starlane
-                raw_starlane_vertices.push_back(lane_endpoints.X1);
-                raw_starlane_vertices.push_back(lane_endpoints.Y1);
-                raw_starlane_vertices.push_back(lane_endpoints.X2);
-                raw_starlane_vertices.push_back(lane_endpoints.Y2);
+                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].X1);
+                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].Y1);
+                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].X2);
+                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].Y2);
 
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
@@ -1698,15 +1714,62 @@ void MapWnd::DoSystemIconsLayout()
 
 void MapWnd::DoFleetButtonsLayout()
 {
+    const Universe& universe = GetUniverse();
+
     // reposition unattached (to system icons) fleet icons
     for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
+
+        // get fleet for button
         FleetButton* fb = *it;
 
         const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-        const Fleet* fleet = *(fb->Fleets().begin());
+        const Fleet* fleet = NULL;
 
-        GG::Pt button_ul(fleet->X()*ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
-                         fleet->Y()*ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+        if (fb->Fleets().empty() || !(fleet = *(fb->Fleets().begin()))) {
+            Logger().errorStream() << "DoFleetButtonsLayout couldn't get first fleet for button";
+            continue;
+        }
+
+
+        // get endpoints of lane on screen
+        int sys1_id = fleet->NextSystemID(), sys2_id = fleet->PreviousSystemID();
+        std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
+
+        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
+        if (endpoints_it == m_starlane_endpoints.end()) {
+            Logger().errorStream() << "DoFleetButtonsLayout couldn't find lane for fleet";
+            continue;
+        }
+        const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
+
+
+        // get endpoints of lane in universe.  may be different because on-screen lanes are drawn between
+        // system circles, not system centres
+        const UniverseObject* prev = universe.Object(lane.first);
+        const UniverseObject* next = universe.Object(lane.second);
+        if (!next || !prev) {
+            Logger().errorStream() << "DoFleetButtonsLayout couldn't find next system " << lane.first << " or prev system " << lane.second;
+            continue;
+        }
+
+        LaneEndpoints universe_lane_endpoints;
+        universe_lane_endpoints.X1 = prev->X();
+        universe_lane_endpoints.Y1 = prev->Y();
+        universe_lane_endpoints.X2 = next->X();
+        universe_lane_endpoints.Y2 = next->Y();
+
+
+        // get fractional distance along lane that fleet's universe position is
+        double dist_along_lane = FractionalDistanceBetweenPoints(prev->X(), prev->Y(), fleet->X(), fleet->Y(), next->X(), next->Y());
+
+
+        // get point on lane between lane endpoints that is the same fractional distance as fleet's actual location is between system locations
+        double buttonX = screen_lane_endpoints.X1 + (screen_lane_endpoints.X2 - screen_lane_endpoints.X1) * dist_along_lane;
+        double buttonY = screen_lane_endpoints.Y1 + (screen_lane_endpoints.Y2 - screen_lane_endpoints.Y1) * dist_along_lane;
+
+
+        GG::Pt button_ul(buttonX*ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
+                         buttonY*ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
 
         fb->MoveTo(button_ul);
     }

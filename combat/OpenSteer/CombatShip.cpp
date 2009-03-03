@@ -182,7 +182,7 @@ void CombatShip::UpdateMissionQueue()
             from_target_vec /= from_target_length;
             float weapon_range = m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF ?
                 MaxWeaponRange() : MinNonPDWeaponRange();
-            float standoff_distance = std::min(from_target_length, weapon_range);
+            float standoff_distance = std::min<float>(from_target_length, weapon_range);
             m_mission_destination = target_position + standoff_distance * from_target_vec;
         } else {
             if (print_needed) std::cout << "    [ATTACK TARGET GONE]\n";

@@ -7,7 +7,7 @@
 #include <boost/assign/list_of.hpp>
 
 #include <map>
-
+#include <iostream>
 
 namespace {
 
@@ -336,9 +336,11 @@ void CombatFighter::UpdateMissionQueue()
 
     bool print_needed = false;
     if (m_instrument && m_last_mission != m_mission_queue.back().m_type) {
+        std::string prev_mission = FIGHTER_MISSION_STRINGS[m_last_mission];
+        std::string new_mission = FIGHTER_MISSION_STRINGS[m_mission_queue.back().m_type];
         std::cout << "empire=" << m_empire_id << " type=" << (m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
-                  << "    prev mission=" << FIGHTER_MISSION_STRINGS[m_last_mission] << "\n"
-                  << "    new mission =" << FIGHTER_MISSION_STRINGS[m_mission_queue.back().m_type] << "\n";
+                  << "    prev mission=" << prev_mission.c_str() << "\n"
+                  << "    new mission =" << new_mission.c_str() << "\n";
         print_needed = true;
         m_last_mission = m_mission_queue.back().m_type;
     }

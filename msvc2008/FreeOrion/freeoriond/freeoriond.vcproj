@@ -118,6 +118,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\combat\CombatOrder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\combat\CombatOrder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\combat\CombatSystem.cpp"
 				>
 			</File>
@@ -125,6 +133,66 @@
 				RelativePath="..\..\..\combat\CombatSystem.h"
 				>
 			</File>
+			<Filter
+				Name="OpenSteer"
+				>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\CombatFighter.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\CombatShip.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\Obstacle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\Path.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\PathingEngine.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\Pathway.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\PolylineSegmentedPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\PolylineSegmentedPathwaySegmentRadii.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\PolylineSegmentedPathwaySingleRadius.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\SegmentedPath.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\SegmentedPathway.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\SimpleVehicle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\Vec3.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\Vec3Utilities.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="util"
