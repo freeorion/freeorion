@@ -32,17 +32,15 @@ public:
                                      int empire_id) const;
     std::size_t UpdateNumber() const;
 
-    // TODO: for prototyping only
-    const std::set<CombatObjectPtr>& Objects() const
-        { return m_objects; }
-
     void Update(const float current_time, const float elapsed_time);
 
     void AddObject(const CombatObjectPtr& obj);
     void RemoveObject(const CombatObjectPtr& obj);
 
     // fighters
-    CombatFighterFormationPtr AddFighterFormation(std::size_t size);
+    CombatFighterFormationPtr
+    CreateFighterFormation(CombatShipPtr base, CombatFighterType type, std::size_t size);
+    void AddFighterFormation(const CombatFighterFormationPtr& formation);
     void RemoveFighter(const CombatObjectPtr& fighter);
     void RemoveFighterFormation(const CombatFighterFormationPtr& formation);
     ProximityDB& GetProximityDB();
@@ -52,6 +50,7 @@ public:
     void AddObstacle(OpenSteer::AbstractObstacle* obstacle);
 
 private:
+    int m_next_fighter_id;
     std::size_t m_update_number;
     std::set<CombatObjectPtr> m_objects;
     std::set<CombatFighterFormationPtr> m_fighter_formations;

@@ -14,22 +14,12 @@
 
 class PathingEngine;
 
-enum CombatFighterType {
-    /** A fighter that is better at attacking other fighters than at
-        attacking ships. */
-    INTERCEPTOR,
-
-    /** A fighter that is better at attacking ships than at attacking
-        other fighters. */
-    BOMBER
-};
-
 class CombatFighterFormation
 {
 public:
+    typedef std::list<CombatFighterPtr>::iterator iterator;
     typedef std::list<CombatFighterPtr>::const_iterator const_iterator;
 
-    explicit CombatFighterFormation(PathingEngine& pathing_engine);
     ~CombatFighterFormation();
 
     const CombatFighter& Leader() const;
@@ -39,17 +29,23 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
+    CombatFighter& Leader();
     void SetLeader(const CombatFighterPtr& fighter);
     void push_back(const CombatFighterPtr& fighter);
     void erase(const CombatFighterPtr& fighter);
     void erase(CombatFighter* fighter);
+    iterator begin();
+    iterator end();
 
 private:
     CombatFighterFormation();
+    explicit CombatFighterFormation(PathingEngine& pathing_engine);
 
     CombatFighterPtr m_leader;
     std::list<CombatFighterPtr> m_members;
     PathingEngine* m_pathing_engine;
+
+    friend class PathingEngine;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -68,13 +64,6 @@ class CombatFighter :
 public:
     static const int FORMATION_SIZE = 5;
 
-    CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
-                  int fighter_id, PathingEngine& pathing_engine,
-                  const CombatFighterFormationPtr& formation,
-                  int formation_position);
-    CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
-                  int fighter_id, PathingEngine& pathing_engine,
-                  const CombatFighterFormationPtr& formation);
     ~CombatFighter();
 
     virtual float maxForce() const;
@@ -87,13 +76,21 @@ public:
 
     CombatFighterFormationPtr Formation();
 
+    void EnterSpace();
     void AppendMission(const FighterMission& mission);
     void ClearMissions();
+    void ExitSpace();
 
 private:
     CombatFighter();
+    CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
+                  int fighter_id, PathingEngine& pathing_engine,
+                  const CombatFighterFormationPtr& formation,
+                  int formation_position);
+    CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
+                  int fighter_id, PathingEngine& pathing_engine,
+                  const CombatFighterFormationPtr& formation);
 
-    void Init();
     OpenSteer::Vec3 GlobalFormationPosition();
     void RemoveMission();
     void UpdateMissionQueue();
@@ -123,6 +120,8 @@ private:
     // TODO: Temporary only!
     bool m_instrument;
     FighterMission::Type m_last_mission;
+
+    friend class PathingEngine;
 
     friend class boost::serialization::access;
     template <class Archive>

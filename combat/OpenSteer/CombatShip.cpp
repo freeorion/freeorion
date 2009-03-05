@@ -49,7 +49,7 @@ CombatShip::CombatShip() :
 {}
 
 CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
-                       PathingEngine& pathing_engine) :
+                       const OpenSteer::Vec3& direction, PathingEngine& pathing_engine) :
     m_proximity_token(0),
     m_empire_id(empire_id),
     m_ship(ship),
@@ -59,7 +59,7 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
     m_anti_fighter_strength(/*TODO: derive from m_ship*/)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
-{ Init(position); }
+{ Init(position, direction); }
 
 CombatShip::~CombatShip()
 { delete m_proximity_token; }
@@ -72,6 +72,25 @@ Ship* CombatShip::GetShip() const
 
 const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
+
+void CombatShip::LaunchFighters()
+{
+    assert(!m_unlaunched_formations.empty());
+    // TODO: Launch only the maximum number of formations launchable in a
+    // single combat turn.
+    for (std::set<CombatFighterFormationPtr>::iterator it = m_unlaunched_formations.begin();
+         it != m_unlaunched_formations.end();
+         ++it) {
+        m_pathing_engine->AddFighterFormation(*it);
+    }
+    m_unlaunched_formations.clear();
+}
+
+void CombatShip::RecoverFighters(const CombatFighterFormationPtr& formation)
+{
+    m_unlaunched_formations.insert(formation);
+    m_pathing_engine->RemoveFighterFormation(formation);
+}
 
 void CombatShip::update(const float /*current_time*/, const float elapsed_time)
 {
@@ -100,7 +119,7 @@ float CombatShip::MinNonPDWeaponRange() const
     return 5.0;
 }
 
-void CombatShip::Init(const OpenSteer::Vec3& position_)
+void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
     m_proximity_token =
         m_pathing_engine->GetProximityDB().Insert(this, SHIP_FLAG, EmpireFlag(m_empire_id));
@@ -111,15 +130,21 @@ void CombatShip::Init(const OpenSteer::Vec3& position_)
 
     // TODO: setMass()
 
-    // TODO: For testing only!
-    regenerateOrthonormalBasisUF(OpenSteer::Vec3(-1, 0, 0));
+    regenerateOrthonormalBasis(direction, OpenSteer::Vec3(0, 0, 1));
 
     SimpleVehicle::setPosition(position_);
-    SimpleVehicle::setSpeed(0);//SimpleVehicle::maxSpeed());
+    SimpleVehicle::setSpeed(0);
 
     m_proximity_token->UpdatePosition(position());
 
     m_mission_queue.push_front(ShipMission(ShipMission::NONE));
+
+    // TODO: Based on number of fighter bays and their rates of launch, create
+    // fighters and group them into small formations.
+    // for (...) {
+    //     m_formations.insert(m_pathing_engine->CreateFighterFormation(...));
+    // }
+    m_unlaunched_formations = m_formations;
 }
 
 void CombatShip::RemoveMission()
@@ -131,7 +156,6 @@ void CombatShip::RemoveMission()
 
 void CombatShip::UpdateMissionQueue()
 {
-    //assert(m_leader);
     assert(!m_mission_queue.empty());
 
     const float DEFAULT_MISSION_WEIGHT = 12.0;

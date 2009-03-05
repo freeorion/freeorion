@@ -83,6 +83,9 @@ CombatFighterFormation::const_iterator CombatFighterFormation::begin() const
 CombatFighterFormation::const_iterator CombatFighterFormation::end() const
 { return m_members.end(); }
 
+CombatFighter& CombatFighterFormation::Leader()
+{ return *m_leader; }
+
 void CombatFighterFormation::SetLeader(const CombatFighterPtr& fighter)
 {
     assert(!m_leader);
@@ -98,7 +101,8 @@ void CombatFighterFormation::push_back(const CombatFighterPtr& fighter)
 
 void CombatFighterFormation::erase(const CombatFighterPtr& fighter)
 {
-    std::list<CombatFighterPtr>::iterator it = std::find(m_members.begin(), m_members.end(), fighter);
+    std::list<CombatFighterPtr>::iterator it =
+        std::find(m_members.begin(), m_members.end(), fighter);
     if (it != m_members.end())
         m_members.erase(it);
 }
@@ -113,6 +117,12 @@ void CombatFighterFormation::erase(CombatFighter* fighter)
     if (it != m_members.end())
         m_members.erase(it);
 }
+
+CombatFighterFormation::iterator CombatFighterFormation::begin()
+{ return m_members.begin(); }
+
+CombatFighterFormation::iterator CombatFighterFormation::end()
+{ return m_members.end(); }
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +159,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int e
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
-{ Init(); }
+{}
 
 CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
                              int fighter_id, PathingEngine& pathing_engine,
@@ -166,7 +176,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int e
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
-{ Init(); }
+{}
 
 CombatFighter::~CombatFighter()
 {
@@ -232,21 +242,43 @@ void CombatFighter::update(const float /*current_time*/, const float elapsed_tim
 void CombatFighter::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity, const float elapsed_time)
 { regenerateLocalSpaceForBanking(new_velocity, elapsed_time); }
 
-#if 0
-// TODO: for testing only
-void CombatFighter::Draw()
-{
-    if (!m_leader) {
-        if (m_type == INTERCEPTOR)
-            drawInterceptor(*this, m_empire_id == 0 ? OpenSteer::gRed : OpenSteer::gBlue);
-        else
-            drawBomber(*this, m_empire_id == 0 ? OpenSteer::gDarkRed : OpenSteer::gDarkBlue);
-    }
-}
-#endif
-
 CombatFighterFormationPtr CombatFighter::Formation()
 { return m_formation; }
+
+void CombatFighter::EnterSpace()
+{
+    if (m_leader) {
+        m_proximity_token =
+            m_pathing_engine->GetProximityDB().Insert(
+                this,
+                m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
+                EmpireFlag(m_empire_id));
+    }
+
+    SimpleVehicle::reset();
+    SimpleVehicle::setMaxForce(27);
+    SimpleVehicle::setMaxSpeed(9);
+
+    // TODO: setMass()
+
+    if (m_leader) {
+        CombatObjectPtr base = m_base.lock();
+        assert(base);
+        SimpleVehicle::setPosition(base->position());
+        regenerateOrthonormalBasis(base->forward(), base->up());
+        SimpleVehicle::setSpeed(CombatFighter::maxSpeed());
+    } else {
+        regenerateOrthonormalBasis(m_formation->Leader().forward(),
+                                   m_formation->Leader().up());
+        SimpleVehicle::setPosition(GlobalFormationPosition());
+        SimpleVehicle::setSpeed(0.0);
+    }
+
+    if (m_leader)
+        m_proximity_token->UpdatePosition(position());
+
+    m_mission_queue.push_front(FighterMission(FighterMission::NONE));
+}
 
 void CombatFighter::AppendMission(const FighterMission& mission)
 {
@@ -264,39 +296,10 @@ void CombatFighter::ClearMissions()
     m_mission_queue.push_front(FighterMission(FighterMission::NONE));
 }
 
-void CombatFighter::Init()
+void CombatFighter::ExitSpace()
 {
-    if (m_leader) {
-        m_proximity_token =
-            m_pathing_engine->GetProximityDB().Insert(
-                this,
-                m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
-                EmpireFlag(m_empire_id));
-    }
-
-    SimpleVehicle::reset();
-    SimpleVehicle::setMaxForce(27);
-    SimpleVehicle::setMaxSpeed(9);
-
-    // TODO: setMass()
-
-    if (m_leader) {
-        // TODO: These two lines are for testing only!
-        regenerateOrthonormalBasisUF(OpenSteer::RandomUnitVector());
-        SimpleVehicle::setPosition(OpenSteer::RandomVectorInUnitRadiusSphere() * 20);
-
-        SimpleVehicle::setSpeed(CombatFighter::maxSpeed());
-    } else {
-        regenerateOrthonormalBasis(m_formation->Leader().forward(),
-                                   m_formation->Leader().up());
-        SimpleVehicle::setPosition(GlobalFormationPosition());
-        SimpleVehicle::setSpeed(0.0);
-    }
-
-    if (m_leader)
-        m_proximity_token->UpdatePosition(position());
-
-    m_mission_queue.push_front(FighterMission(FighterMission::NONE));
+    delete m_proximity_token;
+    m_proximity_token = 0;
 }
 
 OpenSteer::Vec3 CombatFighter::GlobalFormationPosition()
@@ -318,6 +321,7 @@ OpenSteer::Vec3 CombatFighter::GlobalFormationPosition()
 
 void CombatFighter::RemoveMission()
 {
+    assert(!m_mission_queue.empty());
     m_mission_queue.pop_back();
     if (m_mission_queue.empty())
         m_mission_queue.push_front(FighterMission(FighterMission::NONE));
@@ -488,10 +492,15 @@ void CombatFighter::UpdateMissionQueue()
                 m_mission_weight = MAX_MISSION_WEIGHT;
                 m_mission_destination = m_mission_queue.back().m_destination;
             } else {
-                // TODO: Dock up (add entire formation back to base/carrier).
-                m_pathing_engine->RemoveFighterFormation(m_formation);
-                if (print_needed) std::cout << "    [ARRIVED AT BASE]\n";
-                RemoveMission();
+                if (CombatObjectPtr b = m_base.lock()) {
+                    CombatShipPtr base = boost::dynamic_pointer_cast<CombatShip>(b);
+                    assert(base);
+                    base->RecoverFighters(m_formation);
+                    if (print_needed) std::cout << "    [ARRIVED AT BASE]\n";
+                    RemoveMission();
+                } else {
+                    // TODO: Rebase!
+                }
             }
         } else {
             if (print_needed) std::cout << "    [BASE GONE]\n";
@@ -517,7 +526,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     }
 
     // A note about obstacle avoidance.  Avoidance of static obstacles (planets,
-    // asteroid feilds, etc.) are represented in static_obstacle_avoidance.  The
+    // asteroid fields, etc.) are represented in static_obstacle_avoidance.  The
     // analogous avoidance of dynamic obstacles (ships, etc.) -- that is, an
     // overriding move away from an object that the fighter is about to collide
     // with -- is represented in dynamic_obstacle_avoidance.  Another object
@@ -564,9 +573,9 @@ OpenSteer::Vec3 CombatFighter::Steer()
     const float POINT_DEFENSE_AVOIDANCE_WEIGHT = 8.0;
 
     // The leader (a "fake" fighter that the real fighters in a formation
-    // follow) takes into account all other fighters in proximity.  Followers
-    // ("real", or "normal" fighters) only consider its fellow formation-mates
-    // its neighbors.
+    // follow) takes into account all other ("fake") fighters in proximity.
+    // Followers ("real", or "normal" fighters) only consider its fellow
+    // formation-mates its neighbors.
     OpenSteer::AVGroup neighbors;
     OpenSteer::AVGroup nonfighters;
     if (m_leader) {
@@ -575,10 +584,12 @@ OpenSteer::Vec3 CombatFighter::Steer()
                                                        COHESION_RADIUS));
         const float NONFIGHTER_RADIUS = std::max(NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS,
                                                  POINT_DEFENSE_AVOIDANCE_RADIUS);
-        m_pathing_engine->GetProximityDB().FindInRadius(position(), FIGHTER_RADIUS, neighbors,
-                                                        FIGHTER_FLAGS, EmpireFlag(m_empire_id));
-        m_pathing_engine->GetProximityDB().FindInRadius(position(), NONFIGHTER_RADIUS, nonfighters,
-                                                        NONFIGHTER_FLAGS);
+        m_pathing_engine->GetProximityDB().FindInRadius(
+            position(), FIGHTER_RADIUS, neighbors,
+            FIGHTER_FLAGS, EmpireFlag(m_empire_id));
+        m_pathing_engine->GetProximityDB().FindInRadius(
+            position(), NONFIGHTER_RADIUS, nonfighters,
+            NONFIGHTER_FLAGS);
     } else {
         for (CombatFighterFormation::const_iterator it = m_formation->begin();
              it != m_formation->end();
@@ -670,7 +681,6 @@ OpenSteer::Vec3 CombatFighter::Steer()
                                                            neighbors_to_use);
 
     return
-        position().normalize() * -1.0f + // TODO: Temporary only!  This is a center-force to keep the fighters moving throught the middle.
         mission_vec * m_mission_weight +
         formation_vec * FORMATION_WEIGHT +
         bomber_interceptor_evasion_vec * BOMBER_INTERCEPTOR_EVASION_WEIGHT +

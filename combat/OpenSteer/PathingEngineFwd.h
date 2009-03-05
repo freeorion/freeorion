@@ -27,4 +27,14 @@ typedef boost::shared_ptr<CombatShip> CombatShipPtr;
 typedef ProximityDatabase<OpenSteer::AbstractVehicle*> ProximityDB;
 typedef ProximityDB::TokenType ProximityDBToken;
 
+enum CombatFighterType {
+    /** A fighter that is better at attacking other fighters than at
+        attacking ships. */
+    INTERCEPTOR,
+
+    /** A fighter that is better at attacking ships than at attacking
+        other fighters. */
+    BOMBER
+};
+
 #endif

@@ -10,9 +10,9 @@
 #include <boost/enable_shared_from_this.hpp>
 
 #include <list>
+#include <set>
 
 
-class PathingEngine;
 class Ship;
 
 class CombatShip :
@@ -21,12 +21,15 @@ class CombatShip :
 {
 public:
     CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
-               PathingEngine& pathing_engine);
+               const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
 
     float AntiFighterStrength() const;
     Ship* GetShip() const;
     const ShipMission& CurrentMission() const;
+
+    void LaunchFighters();
+    void RecoverFighters(const CombatFighterFormationPtr& formation);
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
@@ -37,7 +40,7 @@ private:
     float MaxWeaponRange() const;
     float MinNonPDWeaponRange() const;
 
-    void Init(const OpenSteer::Vec3& position_);
+    void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
     void RemoveMission();
     void UpdateMissionQueue();
     OpenSteer::Vec3 Steer();
@@ -60,6 +63,9 @@ private:
     // of this class.
     float m_anti_fighter_strength;
 
+    std::set<CombatFighterFormationPtr> m_formations;
+    std::set<CombatFighterFormationPtr> m_unlaunched_formations;
+
     // TODO: Temporary only!
     bool m_instrument;
     ShipMission::Type m_last_mission;
@@ -79,6 +85,8 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine)
                 & BOOST_SERIALIZATION_NVP(m_anti_fighter_strength)
+                & BOOST_SERIALIZATION_NVP(m_formations)
+                & BOOST_SERIALIZATION_NVP(m_unlaunched_formations)
                 & BOOST_SERIALIZATION_NVP(m_instrument)
                 & BOOST_SERIALIZATION_NVP(m_last_mission);
         }

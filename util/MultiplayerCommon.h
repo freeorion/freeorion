@@ -2,7 +2,9 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
+#include "Serialize.h"
 #include "XMLDoc.h"
+#include "../combat/OpenSteer/PathingEngine.h"
 #include "../universe/Enums.h"
 
 #include <GG/Clr.h>
@@ -194,10 +196,14 @@ struct CombatData
     CombatData(System* system);
 
     System* m_system;
+    PathingEngine m_pathing_engine;
 
     friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
+    template<class Archive>
+    void save(Archive & ar, const unsigned int version) const;
+    template<class Archive>
+    void load(Archive & ar, const unsigned int version);
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
 
 
@@ -275,9 +281,17 @@ void PlayerInfo::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void CombatData::serialize(Archive& ar, const unsigned int version)
+void CombatData::save(Archive & ar, const unsigned int version) const
 {
     ar  & BOOST_SERIALIZATION_NVP(m_system);
+    Serialize(ar, m_pathing_engine);
+}
+
+template <class Archive>
+void CombatData::load(Archive & ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_system);
+    Deserialize(ar, m_pathing_engine);
 }
 
 #endif // _MultiplayerCommon_h_
