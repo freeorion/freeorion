@@ -1,7 +1,7 @@
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
 import pickle                       # Python object serialization library
 import AIstate
-import FleetUtils
+import FleetUtilsAI
 import ExplorationAI
 import ColonisationAI
 # import TacticsAI
@@ -25,13 +25,13 @@ def startNewGame():
     empireID = fo.empireID()
     universe = fo.getUniverse()
 
-    # initialise AIstate
+    # initialize AIstate
     global foAIstate
     foAIstate = AIstate.AIstate()
-    print "Initialised foAIstate class"
+    print "Initialized foAIstate class"
 
     # split all fleets
-    for fleetID in universe.fleetIDs: FleetUtils.splitFleet(fleetID)
+    for fleetID in universe.fleetIDs: FleetUtilsAI.splitFleet(fleetID)
 
     # assign roles to ships
     shipIDs = []
@@ -44,14 +44,14 @@ def startNewGame():
 
     for shipID in shipIDs:
         ship = universe.getShip(shipID)
-        foAIstate.addShipRole(ship.design.id, FleetUtils.assessShipRole(shipID))
-        # print str(ship.design.id) + ": " + FleetUtils.assessShipRole(shipID)
+        foAIstate.addShipRole(ship.design.id, FleetUtilsAI.assessShipRole(shipID))
+        # print str(ship.design.id) + ": " + FleetUtilsAI.assessShipRole(shipID)
 
     # assign roles to fleets
     for fleetID in universe.fleetIDs:
         if not fleet.whollyOwnedBy(empireID): continue
-        foAIstate.addFleetRole(fleetID, FleetUtils.assessFleetRole(fleetID))
-        # print str(fleetID) + ": " + FleetUtils.assessFleetRole(fleetID)
+        foAIstate.addFleetRole(fleetID, FleetUtilsAI.assessFleetRole(fleetID))
+        # print str(fleetID) + ": " + FleetUtilsAIAIAI.assessFleetRole(fleetID)
 
 
 # called when client receives a load game message
@@ -91,18 +91,19 @@ def generateOrders():
     print ""
     print "TURN: " + str(fo.currentTurn())
 
-    # pre-turn cleanup
-    foAIstate.cleanExplorableSystems(ExplorationAI.getHomeSystemID())
-    foAIstate.cleanFleetRoles()
+    # turn cleanup
+    foAIstate.clean(ExplorationAI.getHomeSystemID(), FleetUtilsAI.getEmpireFleetIDs())
     # ...missions
     # ...demands/priorities
 
     # call AI modules
     PriorityAI.calculatePriorities()
-
-    ExplorationAI.generateExplorationOrders()
-    ColonisationAI.generateColonisationOrders()
-#    ProductionAI.generateProductionOrders()
-#    TacticsAI.generateTacticOrders()
+    
+    ExplorationAI.assignScoutsToExploreSystems()
+    ColonisationAI.assignColonyFleetsToColonise()
+    # ProductionAI.generateProductionOrders()
+    # TacticsAI.generateTacticOrders()
+    FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
+    FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
 
     fo.doneTurn()

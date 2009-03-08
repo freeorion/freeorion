@@ -1,40 +1,33 @@
 import freeOrionAIInterface as fo   # interface used to interact with FreeOrion AI client
 import FreeOrionAI as foAI
-import FleetUtils
+import FleetUtilsAI
+from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
+import AITarget
 
-# TODO: assign scout fleets to closest planets (put in FleetUtils)
-# TODO: do NOT pass empire from main function
-
-def generateExplorationOrders():
-
-    empireID = fo.empireID()
-
-    # get explorable systems and scouting fleets
-    removeInvalidExploreMissions()
-
-    mFleetIDs = FleetUtils.getEmpireFleetIDsByRole("MT_EXPLORATION")
-    fleetIDs = FleetUtils.extractFleetIDsWithoutMission(mFleetIDs) # line can probably be removed
-
+def assignScoutsToExploreSystems():
+    # TODO: use Graph Theory to explore closest systems
+    
+    fleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
+    
     # order fleets to explore
-    explorableSystemIDs = foAI.foAIstate.getExplorableSystems("EST_UNEXPLORED")
+    explorableSystemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED)
     for fleetID in fleetIDs:
         # if fleet already has a mission, continue
-        if foAI.foAIstate.hasMission("MT_EXPLORATION", fleetID): continue
-
+        aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
+        if len(aiFleetMission.getAIFleetMissionTypes()) > 0:
+            continue
+        
         # else send fleet to a system
         for systemID in explorableSystemIDs:
-
             # if system is already being explored, continue
-            if foAI.foAIstate.hasTarget("MT_EXPLORATION", systemID): continue
-
-            # send fleet, register an exploration mission
-            fo.issueFleetMoveOrder(fleetID, systemID)
-            foAI.foAIstate.addMission("MT_EXPLORATION", [fleetID, systemID])
+            aiTarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
+            if foAI.foAIstate.hasAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, aiTarget):
+                continue
+            
+            # add exploration mission to fleet with target unexplored system
+            aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, aiTarget)
             break
-
-    print "Scouts: " + str(FleetUtils.getEmpireFleetIDsByRole("MT_EXPLORATION"))
-    print "Systems being explored (fleet|system): " + str(foAI.foAIstate.getMissions("MT_EXPLORATION"))
-
+        
 def getHomeSystemID():
     "returns the systemID of the home world"
 
@@ -43,30 +36,3 @@ def getHomeSystemID():
     homeworld = universe.getPlanet(empire.homeworldID)
 
     return homeworld.systemID
-
-def removeInvalidExploreMissions():
-    "removes missions if fleet is destroyed or system already explored"
-
-    print "Removing invalid exploration missions:"
-
-    empire = fo.getEmpire()
-    universe = fo.getUniverse()
-    exploreMissions = foAI.foAIstate.getMissions("MT_EXPLORATION")
-
-    # look for invalid missions
-    for fleetID in exploreMissions:
-
-        if empire.hasExploredSystem(exploreMissions[fleetID]):
-            foAI.foAIstate.removeMission("MT_EXPLORATION", fleetID)
-            # print "removed mission " + str(fleetID)
-            continue
-
-        fleet = universe.getFleet(fleetID)
-
-        if (fleet == None):
-            foAI.foAIstate.removeMission("MT_EXPLORATION", fleetID)
-            continue
-
-        if not (fleet.whollyOwnedBy(empire.empireID)):
-            foAI.foAIstate.removeMission("MT_EXPLORATION", fleetID)
-

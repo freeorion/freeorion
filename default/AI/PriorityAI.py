@@ -1,46 +1,38 @@
-import freeOrionAIInterface as fo
-import FreeOrionAI as foAI
+from EnumsAI import AIPriorityType, AIFleetMissionType, AIExplorableSystemType
 import AIstate
-import FleetUtils
-import ExplorationAI    # move into AIstate
 import ColonisationAI
-
-priorityResources =  ["PR_FOOD", "PR_MINERALS", "PR_PRODUCTION", "PR_RESEARCH", "PR_TRADE"]
-priorityProduction = ["PR_EXPLORATION", "PR_COLONISATION", "PR_MILITARY", "PR_BUILDINGS"]
-priorityResearch =   ["PR_LEARNING", "PR_GROWTH", "PR_PRODUCTION", "PR_CONSTRUCTION", "PR_ECONOMICS", "PR_SHIPS"]
-priorityTypes =      ["PR_NONE"] + priorityResources + priorityProduction + priorityResearch
-
-
+import EnumsAI
+import FleetUtilsAI
+import FreeOrionAI as foAI
+import freeOrionAIInterface as fo
 
 def calculatePriorities():
     "calculates the priorities of the AI player"
 
-    empire = fo.getEmpire()
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION, calculateExplorationPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, calculateColonisationPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS, 20)
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_MILITARY, 20)
 
-    foAI.foAIstate.setPriority("PR_EXPLORATION", calculateExplorationPriority())
-    foAI.foAIstate.setPriority("PR_COLONISATION", calculateColonisationPriority())
-    foAI.foAIstate.setPriority("PR_BUILDINGS", 20)
-    foAI.foAIstate.setPriority("PR_MILITARY", 20)
-
-    foAI.foAIstate.setPriority("PR_FOOD", calculateFoodPriority())
-    foAI.foAIstate.setPriority("PR_PRODUCTION", calculateProductionPriority()) # uses all prProds
-    foAI.foAIstate.setPriority("PR_MINERALS", calculateMineralsPriority()) # uses PR_PRODUCTION
-    foAI.foAIstate.setPriority("PR_RESEARCH", 10)
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateProductionPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, 10)
 
     foAI.foAIstate.printPriorities()
 
-
-# attempts to sustain a food stockpile whose size depends on the AI empires population
-# foodStockpile == 0 => returns 100, foodStockpile == foodTarget => returns 0
 def calculateFoodPriority():
     "calculates the AI's need for food"
+    # attempts to sustain a food stockpile whose size depends on the AI empires population
+    # foodStockpile == 0 => returns 100, foodStockpile == foodTarget => returns 0
 
     empire = fo.getEmpire()
-
     foodStockpile = empire.resourceStockpile(fo.resourceType.food)
     foodTarget = empire.population() * AIstate.foodStockpileSize
 
-    if (foodTarget == 0): return 0
+    if (foodTarget == 0):
+        return 0
+
     foodPriority = (foodTarget - foodStockpile) / foodTarget * 100
 
     print ""
@@ -48,47 +40,39 @@ def calculateFoodPriority():
     print "Target food stockpile:   " + str (foodTarget)
     print "Priority for Food:         " + str(foodPriority)
 
-    if foodPriority < 0: return 0
+    if foodPriority < 0:
+        return 0
 
     return foodPriority
 
-
-# looks if there are enough scouts to explore unknown systems
 def calculateExplorationPriority():
-    "calculates the demand for scouts"
+    "calculates the demand for scouts by unexplored systems"
 
-    empireID = fo.empireID()
+    numUnexploredSystems = len(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
 
-    # TODO: Fog of war
-    numExplorableSystemIDs = len(foAI.foAIstate.getExplorableSystems("EST_UNEXPLORED"))
-
-    scoutIDs = FleetUtils.getEmpireFleetIDsByRole("MT_EXPLORATION")
+    scoutIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION)
     numScouts = len(scoutIDs)
 
-    if (numExplorableSystemIDs == 0): return 0
+    if (numUnexploredSystems == 0): return 0
 
-    explorationPriority = (numExplorableSystemIDs - numScouts) / numExplorableSystemIDs * 100
+    explorationPriority = (numUnexploredSystems - numScouts) / numUnexploredSystems * 100
 
     print ""
     print "Number of Scouts: " + str(numScouts)
-    print "Number of Systems: " + str(numExplorableSystemIDs)
+    print "Number of Unexplored systems: " + str(numUnexploredSystems)
     print "Priority for scouts: " + str(explorationPriority)
 
     if explorationPriority < 0: return 0
 
     return explorationPriority
 
-
-# looks if there is enough Colony Ships for colonisable planets
 def calculateColonisationPriority():
-    "calculates the demand for colony ships"
-
-    empireID = fo.empireID()
+    "calculates the demand for colony ships by colonisable planets"
 
     numColonisablePlanetIDs = len(ColonisationAI.colonisablePlanetIDs)
 
-    colonyshipIDs = FleetUtils.getEmpireFleetIDsByRole("MT_COLONISATION")
-    numColonyships = len(FleetUtils.extractFleetIDsWithoutMission(colonyshipIDs))
+    colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
+    numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
 
     if (numColonisablePlanetIDs == 0): return 0
 
@@ -96,17 +80,15 @@ def calculateColonisationPriority():
 
     print ""
     print "Number of Colony Ships: " + str(numColonyships)
-    print "Number of Planets: " + str(numColonisablePlanetIDs)
+    print "Number of Colonisable planets: " + str(numColonisablePlanetIDs)
     print "Priority for colony ships: " + str(colonisationPriority)
 
     if colonisationPriority < 0: return 0
 
     return colonisationPriority
 
-
-# minerals must match production
 def calculateMineralsPriority():
-    "calculates the demand for minerals"
+    "calculates the demand for minerals by industry"
 
     empire = fo.getEmpire()
 
@@ -115,7 +97,7 @@ def calculateMineralsPriority():
     industryProduction = empire.resourceProduction(fo.resourceType.industry)
 
     # match minerals to industry
-    mineralsPriority = foAI.foAIstate.getPriority("PR_PRODUCTION")
+    mineralsPriority = foAI.foAIstate.getPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION)
 
     if (mineralsProduction == 0): return 0
 
@@ -123,22 +105,21 @@ def calculateMineralsPriority():
     if (mineralsProduction < industryProduction): mineralsPriority = mineralsPriority * (industryProduction / mineralsProduction)
 
     print ""
-    print "minerals prod: " + str(mineralsProduction)
-    print "industry prod: " + str(industryProduction)
+    print "minerals production: " + str(mineralsProduction)
+    print "industry production: " + str(industryProduction)
     print "Priority for Minerals: " + str(mineralsPriority)
 
     return mineralsPriority
-
 
 def calculateProductionPriority():
     "calculates the demand for production"
 
     priorityValues = []
 
-    for priority in priorityProduction:
+    for priority in EnumsAI.getAIPriorityProductionTypes():
         priorityValues.append(foAI.foAIstate.getPriority(priority))
 
+    print "priority production values: " + str(priorityValues)
     productionPriority = max(priorityValues)
 
     return productionPriority
-
