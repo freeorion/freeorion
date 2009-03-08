@@ -18,7 +18,7 @@ struct ShipMission
     /** The missions available to ships.  The notion of "weakest" is
         intentionally left fuzzy.  The weakest target is one that is likely to
         die quickly, and also one that is unlikely to kill the ship.  Some
-        relative of scaling these two factors should be employed to come up
+        relative scaling of these two factors should be employed to come up
         with a single weakness value. */
     enum Type {
         /** No mission set.  This mission is treated as
@@ -93,7 +93,7 @@ struct FighterMission
     /** The missions available to fighters.  The notion of "weakest" is
         intentionally left fuzzy.  The weakest target is one that is likely to
         die quickly, and also one that is unlikely to kill the fighter.  Some
-        relative of scaling these two factors should be employed to come up
+        relative scaling of these two factors should be employed to come up
         with a single weakness value. */
     enum Type {
         /** No mission set.  This mission is treated as

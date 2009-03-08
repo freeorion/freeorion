@@ -193,9 +193,11 @@ struct PlayerInfo
 struct CombatData
 {
     CombatData();
-    CombatData(System* system);
+    CombatData(System* system, const std::map<int, UniverseObject*>& combat_universe);
 
+    unsigned int m_combat_turn_number;
     System* m_system;
+    std::map<int, UniverseObject*> m_combat_universe;
     PathingEngine m_pathing_engine;
 
     friend class boost::serialization::access;
@@ -283,14 +285,18 @@ void PlayerInfo::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void CombatData::save(Archive & ar, const unsigned int version) const
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_system);
+    ar  & BOOST_SERIALIZATION_NVP(m_combat_turn_number)
+        & BOOST_SERIALIZATION_NVP(m_system)
+        & BOOST_SERIALIZATION_NVP(m_combat_universe);
     Serialize(ar, m_pathing_engine);
 }
 
 template <class Archive>
 void CombatData::load(Archive & ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_system);
+    ar  & BOOST_SERIALIZATION_NVP(m_combat_turn_number)
+        & BOOST_SERIALIZATION_NVP(m_system)
+        & BOOST_SERIALIZATION_NVP(m_combat_universe);
     Deserialize(ar, m_pathing_engine);
 }
 

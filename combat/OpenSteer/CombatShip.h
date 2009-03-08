@@ -30,6 +30,10 @@ public:
 
     void LaunchFighters();
     void RecoverFighters(const CombatFighterFormationPtr& formation);
+    void AppendMission(const ShipMission& mission);
+    void ClearMissions();
+    void AppendFighterMission(const FighterMission& mission);
+    void ClearFighterMissions();
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
@@ -65,6 +69,7 @@ private:
 
     std::set<CombatFighterFormationPtr> m_formations;
     std::set<CombatFighterFormationPtr> m_unlaunched_formations;
+    std::set<CombatFighterFormationPtr> m_launched_formations;
 
     // TODO: Temporary only!
     bool m_instrument;
@@ -87,6 +92,7 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_anti_fighter_strength)
                 & BOOST_SERIALIZATION_NVP(m_formations)
                 & BOOST_SERIALIZATION_NVP(m_unlaunched_formations)
+                & BOOST_SERIALIZATION_NVP(m_launched_formations)
                 & BOOST_SERIALIZATION_NVP(m_instrument)
                 & BOOST_SERIALIZATION_NVP(m_last_mission);
         }

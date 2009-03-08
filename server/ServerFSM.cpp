@@ -780,7 +780,11 @@ ResolvingCombat::ResolvingCombat(my_context c) :
     ServerApp& server = Server();
 
     server.m_current_combat =
-        new CombatData(context<WaitingForTurnEnd>().m_combat_system);
+        new CombatData(context<WaitingForTurnEnd>().m_combat_system,
+                       context<WaitingForTurnEnd>().m_combat_universe);
+
+    context<WaitingForTurnEnd>().m_combat_system = 0;
+    context<WaitingForTurnEnd>().m_combat_universe.clear();
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end();
@@ -794,13 +798,10 @@ ResolvingCombat::ResolvingCombat(my_context c) :
                 ServerCombatStartMessage(
                     player_id,
                     empire_id,
-                    context<WaitingForTurnEnd>().m_combat_system,
-                    context<WaitingForTurnEnd>().m_combat_universe));
+                    server.m_current_combat->m_system,
+                    server.m_current_combat->m_combat_universe));
         }
     }
-
-    context<WaitingForTurnEnd>().m_combat_system = 0;
-    context<WaitingForTurnEnd>().m_combat_universe.clear();
 }
 
 ResolvingCombat::~ResolvingCombat()

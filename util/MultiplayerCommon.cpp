@@ -319,9 +319,12 @@ PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_
 // CombatData
 ////////////////////////////////////////////////
 CombatData::CombatData() :
+    m_combat_turn_number(1),
     m_system(0)
 {}
 
-CombatData::CombatData(System* system) :
-    m_system(system)
+CombatData::CombatData(System* system, const std::map<int, UniverseObject*>& combat_universe) :
+    m_combat_turn_number(1),
+    m_system(system),
+    m_combat_universe(combat_universe)
 {}

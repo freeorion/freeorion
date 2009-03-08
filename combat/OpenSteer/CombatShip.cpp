@@ -26,10 +26,6 @@ namespace {
         ECHO_TOKEN(ShipMission::ATTACK_SHIPS_NEAREST_FIRST)
         ECHO_TOKEN(ShipMission::ENTER_STARLANE);
 #undef ECHO_TOKEN
-
-    const std::size_t TARGET_FPS = 60;
-    const std::size_t TARGET_SHIP_UPDATES_PER_SEC = 2;
-    const std::size_t UPDATE_SETS = TARGET_FPS / TARGET_SHIP_UPDATES_PER_SEC;
 }
 
 
@@ -82,20 +78,67 @@ void CombatShip::LaunchFighters()
          it != m_unlaunched_formations.end();
          ++it) {
         m_pathing_engine->AddFighterFormation(*it);
+        m_launched_formations.insert(*it);
     }
     m_unlaunched_formations.clear();
 }
 
 void CombatShip::RecoverFighters(const CombatFighterFormationPtr& formation)
 {
+    m_launched_formations.erase(formation);
     m_unlaunched_formations.insert(formation);
     m_pathing_engine->RemoveFighterFormation(formation);
+}
+
+void CombatShip::AppendMission(const ShipMission& mission)
+{
+    assert(!m_mission_queue.empty());
+    if (m_mission_queue.back().m_type == ShipMission::NONE) {
+        assert(m_mission_queue.size() == 1u);
+        m_mission_queue.clear();
+    }
+    m_mission_queue.push_front(mission);
+}
+
+void CombatShip::ClearMissions()
+{
+    m_mission_queue.clear();
+    m_mission_queue.push_front(ShipMission(ShipMission::NONE));
+}
+
+void CombatShip::AppendFighterMission(const FighterMission& mission)
+{
+    assert(!m_launched_formations.empty());
+    for (std::set<CombatFighterFormationPtr>::iterator it = m_launched_formations.begin();
+         it != m_launched_formations.end();
+         ++it) {
+        for (CombatFighterFormation::iterator formation_it = (*it)->begin();
+             formation_it != (*it)->end();
+             ++formation_it) {
+            (*formation_it)->AppendMission(mission);
+        }
+    }
+}
+
+void CombatShip::ClearFighterMissions()
+{
+    assert(!m_launched_formations.empty());
+    for (std::set<CombatFighterFormationPtr>::iterator it = m_launched_formations.begin();
+         it != m_launched_formations.end();
+         ++it) {
+        for (CombatFighterFormation::iterator formation_it = (*it)->begin();
+             formation_it != (*it)->end();
+             ++formation_it) {
+            (*formation_it)->ClearMissions();
+        }
+    }
 }
 
 void CombatShip::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine->UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
+    if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
+        serialNumber % PathingEngine::UPDATE_SETS) {
         UpdateMissionQueue();
         steer = Steer();
     }
@@ -294,16 +337,22 @@ void CombatShip::UpdateMissionQueue()
 
 OpenSteer::Vec3 CombatShip::Steer()
 {
+    const float OBSTACLE_AVOIDANCE_TIME = 6.0;
+
     const OpenSteer::Vec3 avoidance =
-        steerToAvoidObstacles(6.0f,
+        steerToAvoidObstacles(OBSTACLE_AVOIDANCE_TIME,
                               m_pathing_engine->Obstacles().begin(),
                               m_pathing_engine->Obstacles().end());
 
     if (avoidance != OpenSteer::Vec3::zero)
         return avoidance;
 
-    // TODO
-    return OpenSteer::Vec3();
+    // steer towards mission objectives
+    OpenSteer::Vec3 mission_vec;
+    if (m_mission_weight)
+        mission_vec = (m_mission_destination - position()).normalize();
+
+    return mission_vec * m_mission_weight;
 }
 
 CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& /*attackee*/)

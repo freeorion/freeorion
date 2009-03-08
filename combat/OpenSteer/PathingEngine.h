@@ -49,6 +49,10 @@ public:
     void ClearObstacles();
     void AddObstacle(OpenSteer::AbstractObstacle* obstacle);
 
+    static const std::size_t TARGET_FPS;
+    static const std::size_t TARGET_OBJECT_UPDATES_PER_SEC;
+    static const std::size_t UPDATE_SETS;
+
 private:
     int m_next_fighter_id;
     std::size_t m_update_number;

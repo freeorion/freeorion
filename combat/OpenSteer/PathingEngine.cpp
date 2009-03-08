@@ -18,6 +18,10 @@ const unsigned int NONFIGHTER_FLAGS = ~(INTERCEPTOR_FLAG | BOMBER_FLAG);
 ////////////////////////////////////////////////////////////////////////////////
 // PathingEngine
 ////////////////////////////////////////////////////////////////////////////////
+const std::size_t PathingEngine::TARGET_FPS = 60;
+const std::size_t PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC = 2;
+const std::size_t PathingEngine::UPDATE_SETS = TARGET_FPS / TARGET_OBJECT_UPDATES_PER_SEC;
+
 PathingEngine::PathingEngine() :
     m_next_fighter_id(0),
     m_update_number(0)

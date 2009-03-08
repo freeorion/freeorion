@@ -35,10 +35,6 @@ namespace {
         ECHO_TOKEN(FighterMission::ATTACK_SHIPS_NEAREST_FIRST)
         ECHO_TOKEN(FighterMission::RETURN_TO_BASE);
 #undef ECHO_TOKEN
-
-    const std::size_t TARGET_FPS = 60;
-    const std::size_t TARGET_FIGHTER_UPDATES_PER_SEC = 2;
-    const std::size_t UPDATE_SETS = TARGET_FPS / TARGET_FIGHTER_UPDATES_PER_SEC;
 }
 
 
@@ -228,7 +224,8 @@ const FighterMission& CombatFighter::CurrentMission() const
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine->UpdateNumber() % UPDATE_SETS == serialNumber % UPDATE_SETS) {
+    if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
+        serialNumber % PathingEngine::UPDATE_SETS) {
         if (m_leader)
             UpdateMissionQueue();
         steer = Steer();
