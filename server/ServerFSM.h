@@ -43,12 +43,9 @@ struct CheckStartConditions : boost::statechart::event<CheckStartConditions>
 
 struct ResolveCombat : boost::statechart::event<ResolveCombat>
 {
-    ResolveCombat(System* system,
-                  std::map<int, UniverseObject*>& combat_universe,
-                  std::set<int>& empire_ids);
+    ResolveCombat(System* system, std::set<int>& empire_ids);
 
     System* const m_system;
-    std::map<int, UniverseObject*> m_combat_universe;
     std::set<int> m_empire_ids;
 };
 
@@ -288,7 +285,6 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
 
     std::string m_save_filename;
     System* m_combat_system;
-    std::map<int, UniverseObject*> m_combat_universe;
     std::set<int> m_combat_empire_ids;
 
     SERVER_ACCESSOR

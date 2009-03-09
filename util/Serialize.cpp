@@ -1,5 +1,6 @@
 #include "Serialize.h"
 
+#include "../combat/OpenSteer/AsteroidBeltObstacle.h"
 #include "../combat/OpenSteer/CombatShip.h"
 #include "../combat/OpenSteer/CombatFighter.h"
 #include "../combat/OpenSteer/Obstacle.h"
@@ -56,6 +57,7 @@ BOOST_CLASS_EXPORT(OpenSteer::SphereObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::BoxObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::PlaneObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::RectangleObstacle)
+BOOST_CLASS_EXPORT(AsteroidBeltObstacle)
 
 // some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
 // that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the

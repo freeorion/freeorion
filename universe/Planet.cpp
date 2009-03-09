@@ -605,3 +605,6 @@ double PlanetRadius(PlanetSize size)
     };
     return retval;
 }
+
+double AsteroidBeltRadius()
+{ return 12.5; }

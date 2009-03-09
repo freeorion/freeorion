@@ -669,9 +669,7 @@ void ServerApp::ProcessTurns()
                 ids_of_empires_with_fleets_here.end()) {
                 // TODO: Include the empire ID's of empires with base and
                 // planetary defenses found above.
-                std::map<int, UniverseObject*> combat_universe;
-                PopulateCombatUniverse(*system, combat_universe);
-                m_fsm.process_event(ResolveCombat(system, combat_universe, ids_of_empires_with_fleets_here));
+                m_fsm.process_event(ResolveCombat(system, ids_of_empires_with_fleets_here));
                 while (m_current_combat) {
                     m_io_service.run_one();
                     m_networking.HandleNextEvent();

@@ -1,8 +1,13 @@
 #include "MultiplayerCommon.h"
 
 #include "OptionsDB.h"
+#include "../combat/OpenSteer/Obstacle.h"
+#include "../combat/OpenSteer/AsteroidBeltObstacle.h"
 #include "../UI/StringTable.h"
+#include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../universe/Planet.h"
+#include "../universe/System.h"
 
 #include <log4cpp/Priority.hh>
 
@@ -51,9 +56,9 @@ namespace {
         unsigned int b = static_cast<int>(clr.b);
         unsigned int a = static_cast<int>(clr.a);
         std::string retval = "(" + boost::lexical_cast<std::string>(r) + ", " +
-                                   boost::lexical_cast<std::string>(g) + ", " +
-                                   boost::lexical_cast<std::string>(b) + ", " +
-                                   boost::lexical_cast<std::string>(a) + ")";
+            boost::lexical_cast<std::string>(g) + ", " +
+            boost::lexical_cast<std::string>(b) + ", " +
+            boost::lexical_cast<std::string>(a) + ")";
         return retval;
     }
 }
@@ -323,8 +328,28 @@ CombatData::CombatData() :
     m_system(0)
 {}
 
-CombatData::CombatData(System* system, const std::map<int, UniverseObject*>& combat_universe) :
+CombatData::CombatData(System* system) :
     m_combat_turn_number(1),
-    m_system(system),
-    m_combat_universe(combat_universe)
-{}
+    m_system(system)
+{
+    using OpenSteer::SphereObstacle;
+    using OpenSteer::Vec3;
+    m_pathing_engine.AddObstacle(new SphereObstacle(StarRadius(), Vec3()));
+
+    for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
+        m_combat_universe[it->second] = GetUniverse().Object(it->second);
+        if (const Planet* planet = universe_object_cast<Planet*>(m_combat_universe[it->second])) {
+            double orbit_radius = OrbitalRadius(it->first);
+            if (planet->Type() == PT_ASTEROIDS) {
+                m_pathing_engine.AddObstacle(
+                    new AsteroidBeltObstacle(orbit_radius, AsteroidBeltRadius()));
+            } else {
+                int game_turn = CurrentTurn();
+                double rads = planet->OrbitalPositionOnTurn(game_turn);
+                Vec3 position(orbit_radius * std::cos(rads), orbit_radius * std::sin(rads), 0);
+                m_pathing_engine.AddObstacle(
+                    new SphereObstacle(PlanetRadius(planet->Size()), position));
+            }
+        }
+    }
+}

@@ -1053,7 +1053,7 @@ void CombatWnd::InitCombat(System* system,
                 const Ogre::Real DELTA_THETA = 2.0 * Ogre::Math::PI / ASTEROIDS;
                 Ogre::Real theta = 0.0;
                 for (int i = 0; i < ASTEROIDS; ++i, theta += DELTA_THETA) {
-                    const Ogre::Real THICKNESS = 25.0;
+                    const Ogre::Real THICKNESS = AsteroidBeltRadius() * 2.0;
                     Ogre::Radian yaw(2.0 * Ogre::Math::PI * RandZeroToOne());
                     Ogre::Vector3 position;
                     position.z = THICKNESS * (RandZeroToOne() - 0.5);

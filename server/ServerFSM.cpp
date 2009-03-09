@@ -39,14 +39,10 @@ namespace {
 ////////////////////////////////////////////////////////////
 // ResolveCombat
 ////////////////////////////////////////////////////////////
-ResolveCombat::ResolveCombat(System* system,
-                             std::map<int, UniverseObject*>& combat_universe,
-                             std::set<int>& empire_ids) :
+ResolveCombat::ResolveCombat(System* system, std::set<int>& empire_ids) :
     m_system(system),
-    m_combat_universe(),
     m_empire_ids()
 {
-    std::swap(m_combat_universe, combat_universe);
     std::swap(m_empire_ids, empire_ids);
 }
 
@@ -640,7 +636,6 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
     if (server.AllOrdersReceived()) {
         Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.  Processing turn....";
         server.ProcessTurns();
-        return transit<WaitingForTurnEnd>();
     }
 
     return discard_event();
@@ -687,7 +682,6 @@ boost::statechart::result WaitingForTurnEndIdle::react(const ResolveCombat& r)
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.ResolveCombat";
     context<WaitingForTurnEnd>().m_combat_system = r.m_system;
     ResolveCombat& mr = const_cast<ResolveCombat&>(r);
-    std::swap(context<WaitingForTurnEnd>().m_combat_universe, mr.m_combat_universe);
     std::swap(context<WaitingForTurnEnd>().m_combat_empire_ids, mr.m_empire_ids);
     return transit<ResolvingCombat>();
 }
@@ -780,11 +774,9 @@ ResolvingCombat::ResolvingCombat(my_context c) :
     ServerApp& server = Server();
 
     server.m_current_combat =
-        new CombatData(context<WaitingForTurnEnd>().m_combat_system,
-                       context<WaitingForTurnEnd>().m_combat_universe);
+        new CombatData(context<WaitingForTurnEnd>().m_combat_system);
 
     context<WaitingForTurnEnd>().m_combat_system = 0;
-    context<WaitingForTurnEnd>().m_combat_universe.clear();
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end();

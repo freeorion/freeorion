@@ -199,6 +199,10 @@ private:
     PlanetRadius(SZ_MEDIUM) is returned for unknown values. */
 double PlanetRadius(PlanetSize size);
 
+/** Returns the radius, in tactical combat units, of the tube in which an
+    asteroid belt lies. */
+double AsteroidBeltRadius();
+
 
 // template implementations
 
