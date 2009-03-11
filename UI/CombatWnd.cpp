@@ -104,35 +104,9 @@ namespace {
     Ogre::Vector3 Project(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
     {
         Ogre::Vector3 retval(-5.0, -5.0, 1.0);
-
-        Ogre::Matrix4 modelview_ = camera.getViewMatrix();
-        if ((modelview_ * world_pt).z < 0.0) {
-            GLdouble modelview[16];
-            for (std::size_t i = 0; i < 16; ++i) {
-                modelview[i] = modelview_[i % 4][i / 4];
-            }
-            GLdouble projection[16];
-            Ogre::Matrix4 projection_ = camera.getProjectionMatrixWithRSDepth();
-            // TODO: Use _m member of transposed projection_ instead of doing
-            // this "manual" copy.
-            for (std::size_t i = 0; i < 16; ++i) {
-                projection[i] = projection_[i % 4][i / 4];
-            }
-            Ogre::Viewport* viewport_ = camera.getViewport();
-            GLint viewport[4] = {
-                static_cast<GLint>(viewport_->getLeft()),
-                static_cast<GLint>(viewport_->getTop()),
-                static_cast<GLint>(viewport_->getWidth()),
-                static_cast<GLint>(viewport_->getHeight())
-            };
-            GLdouble x, y, z;
-            if (gluProject(world_pt.x, world_pt.y, world_pt.z,
-                           modelview, projection, viewport,
-                           &x, &y, &z)) {
-                retval = Ogre::Vector3(x * 2 - 1.0, y * 2 - 1.0, z * 2 - 1.0);
-            }
-        }
-
+        Ogre::Vector3 eye_space_pt = camera.getViewMatrix() * world_pt;
+        if (eye_space_pt.z < 0.0)
+            retval = camera.getProjectionMatrixWithRSDepth() * eye_space_pt;
         return retval;
     }
 
@@ -1130,8 +1104,6 @@ void CombatWnd::RenderLensFlare()
     if (!GetOptionsDB().Get<bool>("combat.enable-lens-flare"))
         return;
 
-    // TODO: When zoomed far out, make these lens flares much smaller.
-
     // render two small lens flares that oppose the star's position relative to
     // the center of the viewport
     GG::Pt star_pt = ProjectToPixel(*m_camera, Ogre::Vector3(0.0, 0.0, 0.0));
@@ -1142,19 +1114,31 @@ void CombatWnd::RenderLensFlare()
             GG::Pt center(Width() / 2, Height() / 2);
             GG::Pt star_to_center = center - star_pt;
 
-            int big_flare_width = static_cast<int>(180 * m_star_brightness_factor);
-            int small_flare_width = static_cast<int>(120 * m_star_brightness_factor);
+            const Ogre::Real QUADRATIC_ATTENUATION_FACTOR = 5.0e-6;
+            Ogre::Real attenuation =
+                QUADRATIC_ATTENUATION_FACTOR * m_camera->getRealPosition().squaredLength();
 
-            GG::Pt big_flare_ul = center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
+            int big_flare_width =
+                static_cast<int>(180 * m_star_brightness_factor / (1 + attenuation));
+            int small_flare_width =
+                static_cast<int>(120 * m_star_brightness_factor / (1 + attenuation));
+
+            GG::Pt big_flare_ul =
+                center + GG::Pt(star_to_center.x / 2, star_to_center.y / 2) -
                 GG::Pt(GG::X(big_flare_width / 2), GG::Y(big_flare_width / 2));
-            GG::Pt small_flare_ul = center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
+            GG::Pt small_flare_ul =
+                center + GG::Pt(3 * star_to_center.x / 4, 3 * star_to_center.y / 4) -
                 GG::Pt(GG::X(small_flare_width / 2), GG::Y(small_flare_width / 2));
-            GG::Pt big_flare_lr = big_flare_ul + GG::Pt(GG::X(big_flare_width), GG::Y(big_flare_width));
-            GG::Pt small_flare_lr = small_flare_ul + GG::Pt(GG::X(small_flare_width), GG::Y(small_flare_width));
+            GG::Pt big_flare_lr =
+                big_flare_ul + GG::Pt(GG::X(big_flare_width), GG::Y(big_flare_width));
+            GG::Pt small_flare_lr =
+                small_flare_ul + GG::Pt(GG::X(small_flare_width), GG::Y(small_flare_width));
 
             glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-            m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr, m_big_flare->DefaultTexCoords());
-            m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr, m_small_flare->DefaultTexCoords());
+            m_big_flare->OrthoBlit(big_flare_ul, big_flare_lr,
+                                   m_big_flare->DefaultTexCoords());
+            m_small_flare->OrthoBlit(small_flare_ul, small_flare_lr,
+                                     m_small_flare->DefaultTexCoords());
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
     }
@@ -1425,15 +1409,18 @@ void CombatWnd::UpdateStarFromCameraPosition()
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
         const Ogre::Real STAR_CORE_SCALE_FACTOR =
             core_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureUScale();
-        // HACK! The currently-used star cores only cover part of the texture.  Here, we adjust for this, so that the edge
-        // of the star as it appears onscreen is actually what we use for the star radius below.
-        const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 155.0 / 250.0;
-        const Ogre::Real SAMPLE_INCREMENT = StarRadius() * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
+        // HACK! The currently-used star cores only cover part of the texture.
+        // Here, we adjust for this, so that the edge of the star as it
+        // appears onscreen is actually what we use for the star radius below.
+        const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 0.45;
+        const Ogre::Real SAMPLE_INCREMENT =
+            StarRadius() * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
 
         bool occlusions[TOTAL_SAMPLES];
         // left side positions
         for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
-            Ogre::Vector3 direction = SUN_CENTER + (SAMPLES_PER_SIDE - i) * SAMPLE_INCREMENT * -RIGHT - CAMERA_POS;
+            Ogre::Vector3 direction =
+                SUN_CENTER + (SAMPLES_PER_SIDE - i) * SAMPLE_INCREMENT * -RIGHT - CAMERA_POS;
             Ogre::Ray ray(CAMERA_POS, direction);
             RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
             occlusions[i] = false;
@@ -1457,13 +1444,15 @@ void CombatWnd::UpdateStarFromCameraPosition()
 
         // right side positions
         for (int i = 0; i < SAMPLES_PER_SIDE; ++i) {
-            Ogre::Vector3 direction = SUN_CENTER + (i + 1) * SAMPLE_INCREMENT * RIGHT - CAMERA_POS;
+            Ogre::Vector3 direction =
+                SUN_CENTER + (i + 1) * SAMPLE_INCREMENT * RIGHT - CAMERA_POS;
             Ogre::Ray ray(CAMERA_POS, direction);
             RayIntersectionHit hit = RayIntersection(*m_collision_world, ray);
             occlusions[SAMPLES_PER_SIDE + 1 + i] = false;
             if (hit.m_object) {
                 Ogre::Real distance_squared = (hit.m_point - CAMERA_POS).squaredLength();
-                occlusions[SAMPLES_PER_SIDE + 1 + i] = distance_squared < direction.squaredLength();
+                occlusions[SAMPLES_PER_SIDE + 1 + i] =
+                    distance_squared < direction.squaredLength();
             }
         }
 
@@ -1515,8 +1504,12 @@ void CombatWnd::UpdateStarFromCameraPosition()
         };
 
         OcclusionParams occlusion_params = OCCLUSION_PARAMS[occlusion_index];
-        m_left_horizontal_flare_scroll_offset = (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
-        m_right_horizontal_flare_scroll_offset = -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT / RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
+        m_left_horizontal_flare_scroll_offset =
+            (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT /
+            RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
+        m_right_horizontal_flare_scroll_offset =
+            -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT /
+            RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
         if (occlusion_params.get<0>() < 0)
             m_left_horizontal_flare_scroll_offset = 1.0;
         if (occlusion_params.get<1>() < 0)
@@ -1532,12 +1525,14 @@ void CombatWnd::UpdateStarFromCameraPosition()
         Ogre::Math::ACos(m_camera->getRealDirection().dotProduct(star_direction));
     Ogre::Real BRIGHTNESS_AT_MAX_FOVY = 0.25;
     Ogre::Real center_nearness_factor =
-        1.0 - angle_at_view_center_to_star.valueRadians() / (m_camera->getFOVy() / 2.0).valueRadians();
+        1.0 - angle_at_view_center_to_star.valueRadians() /
+        (m_camera->getFOVy() / 2.0).valueRadians();
     m_star_brightness_factor =
         BRIGHTNESS_AT_MAX_FOVY + center_nearness_factor * (1.0 - BRIGHTNESS_AT_MAX_FOVY);
     // Raise the factor to a (smallish) power to create some nonlinearity in the scaling.
     m_star_brightness_factor = Ogre::Math::Pow(m_star_brightness_factor, 1.5);
-    m_star_back_billboard->setColour(Ogre::ColourValue(1.0, 1.0, 1.0, m_star_brightness_factor));
+    m_star_back_billboard->setColour(
+        Ogre::ColourValue(1.0, 1.0, 1.0, m_star_brightness_factor));
 
     Ogre::MaterialPtr back_material =
         Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
