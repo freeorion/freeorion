@@ -307,6 +307,14 @@
 				Name="OpenSteer"
 				>
 				<File
+					RelativePath="..\..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\AsteroidBeltObstacle.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\combat\OpenSteer\CombatFighter.cpp"
 					>
 				</File>
