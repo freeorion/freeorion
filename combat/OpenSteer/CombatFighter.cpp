@@ -262,11 +262,11 @@ void CombatFighter::EnterSpace()
         CombatObjectPtr base = m_base.lock();
         assert(base);
         SimpleVehicle::setPosition(base->position());
-        regenerateOrthonormalBasis(base->forward(), base->up());
+        SimpleVehicle::regenerateOrthonormalBasis(base->forward(), base->up());
         SimpleVehicle::setSpeed(CombatFighter::maxSpeed());
     } else {
-        regenerateOrthonormalBasis(m_formation->Leader().forward(),
-                                   m_formation->Leader().up());
+        SimpleVehicle::regenerateOrthonormalBasis(m_formation->Leader().forward(),
+                                                  m_formation->Leader().up());
         SimpleVehicle::setPosition(GlobalFormationPosition());
         SimpleVehicle::setSpeed(0.0);
     }

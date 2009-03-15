@@ -117,12 +117,15 @@ void AsteroidBeltObstacle::TestCylinderSides(
     const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
     float cylinder_radius, std::set<float>& solutions) const
 {
-    //const float a = 1.0;
-    const float b = 2.0 * (position.x + position.y);
+    OpenSteer::Vec3 p0 = position;
+    OpenSteer::Vec3 p1 = position + direction;
+    OpenSteer::Vec3 p2;
+    const float a = (p1 - p0).lengthSquared();
+    const float b = 2.0 * (p1 - p0).dot(p0 - p2);
     const float c =
-        position.x * position.x + position.y * position.y -
+        p2.lengthSquared() + p0.lengthSquared() - 2 * p2.dot(p0) -
         cylinder_radius * cylinder_radius;
-    const float d = b * b - 4 * c;
+    const float d = b * b - 4 * a * c;
     if (!d) {
         InsertSolution(position, direction, -b / 2.0, solutions);
     } else if (0.0 < d) {
@@ -141,21 +144,20 @@ void AsteroidBeltObstacle::TestBetweenCylinders(
        plane, at Z=z.  The solution is to find the value of the parameter t in
        t = (N * (p2 - p0)) / (N * (p1 - p0)), where:
        N is the normal of the plane, and p2 is a point in the plane, and the
-       line is through p0 and p1.
+       ray is from p0 through p1.
        In our case, p2 == Vec3(0, 0, z), and (p1 - p0) == direction.  If the
        distance from p2 to the point of intersection is between
-       innerer_cylinder_radius and outer_cylinder_radius, we have a hit.
+       inner_cylinder_radius and outer_cylinder_radius, we have a hit.
     */
     const OpenSteer::Vec3 NORMAL(0, 0, 1);
     const OpenSteer::Vec3 PT_IN_PLANE(0, 0, z);
-    float denominator = NORMAL.dot(direction);
-    if (0.0 < denominator) {
+    if (float denominator = NORMAL.dot(direction)) {
         float t = NORMAL.dot(PT_IN_PLANE - position) / denominator;
         OpenSteer::Vec3 intersection = position + direction * t;
         float intersection_radius_squared = (intersection - PT_IN_PLANE).lengthSquared();
         if (inner_cylinder_radius * inner_cylinder_radius < intersection_radius_squared &&
             intersection_radius_squared < outer_cylinder_radius * outer_cylinder_radius) {
-            InsertSolution(position, direction, t, solutions);
+            solutions.insert(t);
         }
     }
 }

@@ -173,7 +173,7 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
 
     // TODO: setMass()
 
-    regenerateOrthonormalBasis(direction, OpenSteer::Vec3(0, 0, 1));
+    SimpleVehicle::regenerateOrthonormalBasis(direction, OpenSteer::Vec3(0, 0, 1));
 
     SimpleVehicle::setPosition(position_);
     SimpleVehicle::setSpeed(0);

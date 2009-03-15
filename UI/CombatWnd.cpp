@@ -5,6 +5,7 @@
 #include "CollisionMeshConverter.h"
 #include "CUIControls.h"
 #include "InGameMenu.h"
+#include "../combat/OpenSteer/PathingEngine.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
@@ -12,6 +13,11 @@
 #include "../util/Version.h"
 
 #include "OptionsWnd.h" // TODO: Remove this later, once the InGameMenu is in use for F10 presses instead.
+
+// TODO: Remove these once the obstacle test code is removed.
+#include "../combat/OpenSteer/AsteroidBeltObstacle.h"
+#include "../combat/OpenSteer/Obstacle.h"
+#include "../combat/OpenSteer/SimpleVehicle.h"
 
 #include "PagedGeometry/BatchPage.h"
 #include "PagedGeometry/ImpostorPage.h"
@@ -51,6 +57,14 @@
 
 
 namespace {
+    const bool TEST_STATIC_OPENSTEER_OBSTACLES = false;
+    PathingEngine g_pathing_engine;
+    std::map<const OpenSteer::AbstractObstacle*, std::string> g_obstacle_names;
+    class FakeVehicle : public OpenSteer::SimpleVehicle
+    {
+        virtual void update(const float, const float) {}
+    };
+
     const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
 
     const Ogre::Real NEAR_CLIP = 0.01;
@@ -101,6 +115,11 @@ namespace {
 
     const unsigned short LOOKAT_NODE_TRACK_HANDLE = 0;
 
+    // HACK! The currently-used star cores only cover part of the texture.
+    // Here, we adjust for this, so that the edge of the star as it appears
+    // onscreen is actually what we use for the star radius below.
+    const Ogre::Real STAR_RADIUS_ADJUSTMENT_FACTOR = 0.45;
+
     Ogre::Vector3 Project(const Ogre::Camera& camera, const Ogre::Vector3& world_pt)
     {
         Ogre::Vector3 retval(-5.0, -5.0, 1.0);
@@ -150,11 +169,23 @@ namespace {
         return retval;
     }
 
-    btVector3 ToCollisionVector(const Ogre::Vector3& vec)
+    btVector3 ToCollision(const Ogre::Vector3& vec)
     { return btVector3(vec.x, vec.y, vec.z); }
 
-    Ogre::Vector3 FromCollisionVector(const btVector3& vec)
+    btVector3 ToCollision(const OpenSteer::Vec3& vec)
+    { return btVector3(vec.x, vec.y, vec.z); }
+
+    Ogre::Vector3 ToOgre(const btVector3& vec)
     { return Ogre::Vector3(vec.x(), vec.y(), vec.z()); }
+
+    Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec)
+    { return Ogre::Vector3(vec.x, vec.y, vec.z); }
+
+    OpenSteer::Vec3 ToOpenSteer(const btVector3& vec)
+    { return OpenSteer::Vec3(vec.x(), vec.y(), vec.z()); }
+
+    OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
+    { return OpenSteer::Vec3(vec.x, vec.y, vec.z); }
 
     struct RayIntersectionHit
     {
@@ -168,16 +199,16 @@ namespace {
     {
         RayIntersectionHit retval;
         btCollisionWorld::ClosestRayResultCallback
-            collision_results(ToCollisionVector(ray.getOrigin()),
-                              ToCollisionVector(ray.getPoint(FAR_CLIP)));
+            collision_results(ToCollision(ray.getOrigin()),
+                              ToCollision(ray.getPoint(FAR_CLIP)));
         world.rayTest(collision_results.m_rayFromWorld,
                       collision_results.m_rayToWorld,
                       collision_results);
         if (collision_results.hasHit()) {
             retval.m_object = reinterpret_cast<Ogre::MovableObject*>(
                 collision_results.m_collisionObject->getUserPointer());
-            retval.m_point = FromCollisionVector(collision_results.m_hitPointWorld);
-            retval.m_normal = FromCollisionVector(collision_results.m_hitNormalWorld);
+            retval.m_point = ToOgre(collision_results.m_hitPointWorld);
+            retval.m_normal = ToOgre(collision_results.m_hitNormalWorld);
         }
         return retval;
     }
@@ -790,15 +821,46 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         planets.push_back(new Planet(planet_types[8], planet_sizes[8]));
         planets.push_back(new Planet(planet_types[9], planet_sizes[9]));
 
-        System system(star_type, planets.size(), "Sample", 0.0, 0.0);
-        for (std::size_t i = 0; i < planets.size(); ++i) {
-            GetUniverse().InsertID(planets[i], planet_ids[i]);
-            system.Insert(planet_ids[i], i);
-            assert(system.Contains(i));
-            assert(system.begin() != system.end());
+        if (TEST_STATIC_OPENSTEER_OBSTACLES) {
+            OpenSteer::AbstractObstacle* o =
+                new OpenSteer::SphereObstacle(STAR_RADIUS_ADJUSTMENT_FACTOR * StarRadius(),
+                                              OpenSteer::Vec3());
+            g_obstacle_names[o] = "Star";
+            g_pathing_engine.AddObstacle(o);
         }
 
-        InitCombat(&system, std::map<int, UniverseObject*>());
+        System system(star_type, planets.size(), "Sample", 0.0, 0.0);
+        std::map<int, UniverseObject*> combat_universe;
+        for (std::size_t i = 0; i < planets.size(); ++i) {
+            Planet* planet = planets[i];
+            GetUniverse().InsertID(planet, planet_ids[i]);
+            combat_universe[planet_ids[i]] = planet;
+            system.Insert(planet_ids[i], i);
+            assert(system.Contains(i));
+            if (TEST_STATIC_OPENSTEER_OBSTACLES) {
+                double orbit_radius = OrbitalRadius(i);
+                if (planet->Type() == PT_ASTEROIDS) {
+                    OpenSteer::AbstractObstacle* o =
+                        new AsteroidBeltObstacle(orbit_radius, AsteroidBeltRadius());
+                    g_obstacle_names[o] =
+                        "Asteroids in orbit " + boost::lexical_cast<std::string>(i);
+                    g_pathing_engine.AddObstacle(o);
+                } else {
+                    double rads =
+                        planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
+                    OpenSteer::Vec3 position(orbit_radius * std::cos(rads),
+                                             orbit_radius * std::sin(rads),
+                                             0);
+                    OpenSteer::AbstractObstacle* o =
+                        new OpenSteer::SphereObstacle(PlanetRadius(planet->Size()), position);
+                    g_obstacle_names[o] =
+                        "Planet in orbit " + boost::lexical_cast<std::string>(i);
+                    g_pathing_engine.AddObstacle(o);
+                }
+            }
+        }
+
+        InitCombat(&system, combat_universe);
 
         AddShip("seed.mesh", 250.0, 250.0);
     } else {
@@ -887,10 +949,7 @@ void CombatWnd::InitCombat(System* system,
     // create planets
     for (System::const_orbit_iterator it = m_system->begin(); it != m_system->end(); ++it) {
         const Planet* planet = 0;
-        if (GetOptionsDB().Get<bool>("tech-demo"))
-            planet = GetUniverse().Object<Planet>(it->second);
-        else
-            planet = universe_object_cast<Planet*>(m_combat_universe[it->second]);
+        planet = universe_object_cast<Planet*>(m_combat_universe[it->second]);
         if (planet) {
             std::string material_name = PlanetNodeMaterial(planet->Type());
             if (material_name != "asteroid") {
@@ -903,12 +962,12 @@ void CombatWnd::InitCombat(System* system,
                 Ogre::Real planet_radius = PlanetRadius(planet->Size());
                 node->setScale(planet_radius, planet_radius, planet_radius);
                 node->yaw(Ogre::Degree(planet->AxialTilt()));
-                Ogre::Vector3 position(OrbitalRadius(it->first), 0.0, 0.0);
-                Ogre::Quaternion position_rotation(
-                    Ogre::Radian(planet->OrbitalPositionOnTurn(
-                                     ClientApp::GetApp()->CurrentTurn())),
-                    Ogre::Vector3::UNIT_Z);
-                position = position_rotation * position;
+                double orbit_radius = OrbitalRadius(it->first);
+                double rads =
+                    planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
+                Ogre::Vector3 position(orbit_radius * std::cos(rads),
+                                       orbit_radius * std::sin(rads),
+                                       0.0);
                 node->setPosition(position);
 
                 assert(PlanetTextures().find(planet->Type()) != PlanetTextures().end());
@@ -924,7 +983,7 @@ void CombatWnd::InitCombat(System* system,
                 identity.setIdentity();
                 m_collision_objects.back().getWorldTransform().setBasis(identity);
                 m_collision_objects.back().getWorldTransform().setOrigin(
-                    ToCollisionVector(position));
+                    ToCollision(position));
                 m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
                 m_collision_world->addCollisionObject(&m_collision_objects.back());
 
@@ -1050,7 +1109,7 @@ void CombatWnd::InitCombat(System* system,
                 identity.setIdentity();
                 m_collision_objects.back().getWorldTransform().setBasis(identity);
                 m_collision_objects.back().getWorldTransform().setOrigin(
-                    ToCollisionVector(position));
+                    ToCollision(position));
                 m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
                 m_collision_world->addCollisionObject(&m_collision_objects.back());
 
@@ -1089,6 +1148,7 @@ void CombatWnd::Render()
     RenderLensFlare();
 
     if (m_selection_rect.ul != m_selection_rect.lr) {
+        glDisable(GL_TEXTURE_2D);
         glColor4f(1.0, 1.0, 1.0, 0.5);
         glBegin(GL_LINE_LOOP);
         glVertex(m_selection_rect.lr.x, m_selection_rect.ul.y);
@@ -1096,6 +1156,23 @@ void CombatWnd::Render()
         glVertex(m_selection_rect.ul.x, m_selection_rect.lr.y);
         glVertex(m_selection_rect.lr.x, m_selection_rect.lr.y);
         glEnd();
+        glEnable(GL_TEXTURE_2D);
+    }
+
+    if (TEST_STATIC_OPENSTEER_OBSTACLES) {
+        glDisable(GL_TEXTURE_2D);
+        glColor4f(1.0, 0.0, 0.0, 0.67);
+        glBegin(GL_QUADS);
+        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 - 1,
+                 GG::GUI::GetGUI()->AppHeight() / 2 - 1);
+        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 - 1,
+                 GG::GUI::GetGUI()->AppHeight() / 2 + 1);
+        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 + 1,
+                 GG::GUI::GetGUI()->AppHeight() / 2 + 1);
+        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 + 1,
+                 GG::GUI::GetGUI()->AppHeight() / 2 - 1);
+        glEnd();
+        glEnable(GL_TEXTURE_2D);
     }
 }
 
@@ -1391,6 +1468,25 @@ void CombatWnd::UpdateCameraPosition()
     m_camera->pitch(m_pitch);
     m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_look_at_point));
     UpdateStarFromCameraPosition();
+    if (TEST_STATIC_OPENSTEER_OBSTACLES) {
+        std::cout << "testing...\n";
+        Ogre::Ray ray = m_camera->getCameraToViewportRay(0.5, 0.5);
+        FakeVehicle vehicle;
+        vehicle.reset();
+        vehicle.regenerateOrthonormalBasis(ToOpenSteer(ray.getDirection()),
+                                           OpenSteer::Vec3(0, 0, 1));
+        vehicle.setPosition(ToOpenSteer(ray.getOrigin()));
+        const PathingEngine::ObstacleVec& obstacles = g_pathing_engine.m_obstacles;
+        for (PathingEngine::ObstacleVec::const_iterator it = obstacles.begin();
+             it != obstacles.end();
+             ++it) {
+            OpenSteer::AbstractObstacle::PathIntersection pi;
+            it->findIntersectionWithVehiclePath(vehicle, pi);
+            if (pi.intersect)
+                std::cout << "    Hit " << g_obstacle_names[&*it] << "\n";
+        }
+        std::cerr << '\n';
+    }
 }
 
 void CombatWnd::UpdateStarFromCameraPosition()
@@ -1409,12 +1505,8 @@ void CombatWnd::UpdateStarFromCameraPosition()
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_core");
         const Ogre::Real STAR_CORE_SCALE_FACTOR =
             core_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->getTextureUScale();
-        // HACK! The currently-used star cores only cover part of the texture.
-        // Here, we adjust for this, so that the edge of the star as it
-        // appears onscreen is actually what we use for the star radius below.
-        const Ogre::Real RADIUS_ADJUSTMENT_FACTOR = 0.45;
         const Ogre::Real SAMPLE_INCREMENT =
-            StarRadius() * RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
+            StarRadius() * STAR_RADIUS_ADJUSTMENT_FACTOR * STAR_CORE_SCALE_FACTOR / SAMPLES_PER_SIDE;
 
         bool occlusions[TOTAL_SAMPLES];
         // left side positions
@@ -1506,10 +1598,10 @@ void CombatWnd::UpdateStarFromCameraPosition()
         OcclusionParams occlusion_params = OCCLUSION_PARAMS[occlusion_index];
         m_left_horizontal_flare_scroll_offset =
             (SAMPLES_PER_SIDE - occlusion_params.get<0>()) * SAMPLE_INCREMENT /
-            RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
+            STAR_RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
         m_right_horizontal_flare_scroll_offset =
             -(SAMPLES_PER_SIDE - occlusion_params.get<1>()) * SAMPLE_INCREMENT /
-            RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
+            STAR_RADIUS_ADJUSTMENT_FACTOR / (2.0 * StarRadius());
         if (occlusion_params.get<0>() < 0)
             m_left_horizontal_flare_scroll_offset = 1.0;
         if (occlusion_params.get<1>() < 0)
@@ -1654,7 +1746,7 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
     // TODO: Remove z-flip scaling when models are right.
     btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
     m_collision_objects.back().getWorldTransform().setBasis(scaled);
-    m_collision_objects.back().getWorldTransform().setOrigin(ToCollisionVector(node->getPosition()));
+    m_collision_objects.back().getWorldTransform().setOrigin(ToCollision(node->getPosition()));
     m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
     m_collision_world->addCollisionObject(&m_collision_objects.back());
     m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
