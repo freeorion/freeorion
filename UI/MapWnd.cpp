@@ -2337,6 +2337,9 @@ void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing
 {
     if (m_in_production_view_mode) return;
 
+    FleetButton::PlayFleetButtonOpenSound();
+
+
     const std::vector<Fleet*>& btn_fleets = fleet_btn.Fleets();
     if (btn_fleets.empty())
         throw std::runtime_error("caught clicked signal for empty fleet button");

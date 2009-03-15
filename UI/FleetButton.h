@@ -26,15 +26,20 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool                InWindow(const GG::Pt& pt) const;   ///< returns true if \a pt is within or over the button
+    virtual bool                InWindow(const GG::Pt& pt) const;       ///< returns true if \a pt is within or over the button
 
-    const std::vector<Fleet*>&  Fleets() const {return m_fleets;}   ///< returns the fleets represented by this control
+    const std::vector<Fleet*>&  Fleets() const {return m_fleets;}       ///< returns the fleets represented by this control
+
+    bool                        Selected() const {return m_selected;}   ///< returns whether this button has been marked selected
     //@}
 
     /** \name Mutators */ //@{
     virtual void                MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void                LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void                        SetSelected(bool selected = true);      ///< sets selection status of button.  if selected = true, marks button as selected.  otherwise marks button as not selected
     //@}
+
+    static void                 PlayFleetButtonOpenSound();
+    static void                 PlayFleetButtonRolloverSound();
 
 protected:
     /** \name Mutators */ //@{
@@ -49,7 +54,9 @@ private:
     std::vector<Fleet*>             m_fleets;               ///< the fleets represented by this button
     boost::shared_ptr<GG::Texture>  m_head_icon;            ///< icon texture representing type of fleet
     boost::shared_ptr<GG::Texture>  m_size_icon;            ///< icon texture representing number of ships in fleet
+    boost::shared_ptr<GG::Texture>  m_selection_texture;    ///< texture shown to indicate button is selected
     std::vector<double>             m_vertex_components;    ///< x and y componentes of vertices to use to render this fleet button, relative to centre of the button
+    bool                            m_selected;             ///< should this button render itself specially to show that it is selected?
 };
 
 /* returns head icon for passed fleet at passed icon size */

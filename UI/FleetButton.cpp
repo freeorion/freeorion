@@ -18,9 +18,6 @@
 
 
 namespace {
-    void PlayFleetButtonOpenSound() {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);}
-    void PlayFleetButtonRolloverSound() {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);}
-
     /* returns number of fleet icon size texture to use to represent fleet(s) with the passed number of ships */
     int FleetSizeIconNumber(int number_ships) {
         // one ship (or zero?) has no marker.  more marker levels are used for each doubling in the number of ships
@@ -127,7 +124,9 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     m_fleets(),
     m_head_icon(),
     m_size_icon(),
-    m_vertex_components()
+    m_selection_texture(),
+    m_vertex_components(),
+    m_selected(false)
 {
     Init(fleet_IDs, size_type);
 }
@@ -137,7 +136,9 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
     m_fleets(),
     m_head_icon(),
     m_size_icon(),
-    m_vertex_components()
+    m_selection_texture(),
+    m_vertex_components(),
+    m_selected(false)
 {
     std::vector<int> fleet_IDs;
     fleet_IDs.push_back(fleet_id);
@@ -260,6 +261,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // size icon according to texture size (average two dimensions)
     double diameter = (Value(texture_width) + Value(texture_height))/2.0;
     Resize(GG::Pt(GG::X(diameter), GG::Y(diameter)));
+
+    // get selection indicator texture
+    m_selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "fleet_selection.png", true);
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
@@ -289,12 +293,10 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
-void FleetButton::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+
+void FleetButton::SetSelected(bool selected)
 {
-    MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd();
-    if (!Disabled() && (!map_wnd || !map_wnd->InProductionViewMode()))
-        PlayFleetButtonOpenSound();
-    GG::Button::LClick(pt, mod_keys);
+    m_selected = selected;
 }
 
 void FleetButton::RenderUnpressed() {
@@ -323,6 +325,12 @@ void FleetButton::RenderUnpressed() {
 
     RenderTexturedQuad(vertsXY, m_head_icon);
     RenderTexturedQuad(vertsXY, m_size_icon);
+
+    if (m_selected && m_selection_texture) {
+        GG::Pt selector_ul = GG::Pt(ul.x - Width()/2, ul.y - Height()/2);
+        GG::Pt selector_lr = GG::Pt(lr.x + Width()/2, lr.y + Height()/2);
+        m_selection_texture->OrthoBlit(selector_ul, selector_lr);
+    }
 }
 
 void FleetButton::RenderPressed() {
@@ -344,6 +352,16 @@ void FleetButton::RenderRollover() {
 
     RenderUnpressed();  // TODO: do something else
 }
+
+void FleetButton::PlayFleetButtonRolloverSound() {
+    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);
+}
+
+void FleetButton::PlayFleetButtonOpenSound() {
+    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);
+}
+
+
 
 /////////////////////
 // Free Functions
