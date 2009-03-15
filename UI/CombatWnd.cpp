@@ -56,8 +56,9 @@
 #include <boost/system/system_error.hpp>
 
 
+#define TEST_STATIC_OPENSTEER_OBSTACLES 0
+
 namespace {
-    const bool TEST_STATIC_OPENSTEER_OBSTACLES = false;
     PathingEngine g_pathing_engine;
     std::map<const OpenSteer::AbstractObstacle*, std::string> g_obstacle_names;
     class FakeVehicle : public OpenSteer::SimpleVehicle
@@ -821,13 +822,13 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         planets.push_back(new Planet(planet_types[8], planet_sizes[8]));
         planets.push_back(new Planet(planet_types[9], planet_sizes[9]));
 
-        if (TEST_STATIC_OPENSTEER_OBSTACLES) {
-            OpenSteer::AbstractObstacle* o =
-                new OpenSteer::SphereObstacle(STAR_RADIUS_ADJUSTMENT_FACTOR * StarRadius(),
-                                              OpenSteer::Vec3());
-            g_obstacle_names[o] = "Star";
-            g_pathing_engine.AddObstacle(o);
-        }
+#if TEST_STATIC_OPENSTEER_OBSTACLES
+        OpenSteer::AbstractObstacle* o =
+            new OpenSteer::SphereObstacle(STAR_RADIUS_ADJUSTMENT_FACTOR * StarRadius(),
+                                          OpenSteer::Vec3());
+        g_obstacle_names[o] = "Star";
+        g_pathing_engine.AddObstacle(o);
+#endif
 
         System system(star_type, planets.size(), "Sample", 0.0, 0.0);
         std::map<int, UniverseObject*> combat_universe;
@@ -837,27 +838,27 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
             combat_universe[planet_ids[i]] = planet;
             system.Insert(planet_ids[i], i);
             assert(system.Contains(i));
-            if (TEST_STATIC_OPENSTEER_OBSTACLES) {
-                double orbit_radius = OrbitalRadius(i);
-                if (planet->Type() == PT_ASTEROIDS) {
-                    OpenSteer::AbstractObstacle* o =
-                        new AsteroidBeltObstacle(orbit_radius, AsteroidBeltRadius());
-                    g_obstacle_names[o] =
-                        "Asteroids in orbit " + boost::lexical_cast<std::string>(i);
-                    g_pathing_engine.AddObstacle(o);
-                } else {
-                    double rads =
-                        planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
-                    OpenSteer::Vec3 position(orbit_radius * std::cos(rads),
-                                             orbit_radius * std::sin(rads),
-                                             0);
-                    OpenSteer::AbstractObstacle* o =
-                        new OpenSteer::SphereObstacle(PlanetRadius(planet->Size()), position);
-                    g_obstacle_names[o] =
-                        "Planet in orbit " + boost::lexical_cast<std::string>(i);
-                    g_pathing_engine.AddObstacle(o);
-                }
+#if TEST_STATIC_OPENSTEER_OBSTACLES
+            double orbit_radius = OrbitalRadius(i);
+            if (planet->Type() == PT_ASTEROIDS) {
+                OpenSteer::AbstractObstacle* o =
+                    new AsteroidBeltObstacle(orbit_radius, AsteroidBeltRadius());
+                g_obstacle_names[o] =
+                    "Asteroids in orbit " + boost::lexical_cast<std::string>(i);
+                g_pathing_engine.AddObstacle(o);
+            } else {
+                double rads =
+                    planet->OrbitalPositionOnTurn(ClientApp::GetApp()->CurrentTurn());
+                OpenSteer::Vec3 position(orbit_radius * std::cos(rads),
+                                         orbit_radius * std::sin(rads),
+                                         0);
+                OpenSteer::AbstractObstacle* o =
+                    new OpenSteer::SphereObstacle(PlanetRadius(planet->Size()), position);
+                g_obstacle_names[o] =
+                    "Planet in orbit " + boost::lexical_cast<std::string>(i);
+                g_pathing_engine.AddObstacle(o);
             }
+#endif
         }
 
         InitCombat(&system, combat_universe);
@@ -1159,21 +1160,21 @@ void CombatWnd::Render()
         glEnable(GL_TEXTURE_2D);
     }
 
-    if (TEST_STATIC_OPENSTEER_OBSTACLES) {
-        glDisable(GL_TEXTURE_2D);
-        glColor4f(1.0, 0.0, 0.0, 0.67);
-        glBegin(GL_QUADS);
-        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 - 1,
-                 GG::GUI::GetGUI()->AppHeight() / 2 - 1);
-        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 - 1,
-                 GG::GUI::GetGUI()->AppHeight() / 2 + 1);
-        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 + 1,
-                 GG::GUI::GetGUI()->AppHeight() / 2 + 1);
-        glVertex(GG::GUI::GetGUI()->AppWidth() / 2 + 1,
-                 GG::GUI::GetGUI()->AppHeight() / 2 - 1);
-        glEnd();
-        glEnable(GL_TEXTURE_2D);
-    }
+#if TEST_STATIC_OPENSTEER_OBSTACLES
+    glDisable(GL_TEXTURE_2D);
+    glColor4f(1.0, 0.0, 0.0, 0.67);
+    glBegin(GL_QUADS);
+    glVertex(GG::GUI::GetGUI()->AppWidth() / 2 - 1,
+             GG::GUI::GetGUI()->AppHeight() / 2 - 1);
+    glVertex(GG::GUI::GetGUI()->AppWidth() / 2 - 1,
+             GG::GUI::GetGUI()->AppHeight() / 2 + 1);
+    glVertex(GG::GUI::GetGUI()->AppWidth() / 2 + 1,
+             GG::GUI::GetGUI()->AppHeight() / 2 + 1);
+    glVertex(GG::GUI::GetGUI()->AppWidth() / 2 + 1,
+             GG::GUI::GetGUI()->AppHeight() / 2 - 1);
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
+#endif
 }
 
 void CombatWnd::RenderLensFlare()
@@ -1468,25 +1469,25 @@ void CombatWnd::UpdateCameraPosition()
     m_camera->pitch(m_pitch);
     m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_look_at_point));
     UpdateStarFromCameraPosition();
-    if (TEST_STATIC_OPENSTEER_OBSTACLES) {
-        std::cout << "testing...\n";
-        Ogre::Ray ray = m_camera->getCameraToViewportRay(0.5, 0.5);
-        FakeVehicle vehicle;
-        vehicle.reset();
-        vehicle.regenerateOrthonormalBasis(ToOpenSteer(ray.getDirection()),
-                                           OpenSteer::Vec3(0, 0, 1));
-        vehicle.setPosition(ToOpenSteer(ray.getOrigin()));
-        const PathingEngine::ObstacleVec& obstacles = g_pathing_engine.m_obstacles;
-        for (PathingEngine::ObstacleVec::const_iterator it = obstacles.begin();
-             it != obstacles.end();
-             ++it) {
-            OpenSteer::AbstractObstacle::PathIntersection pi;
-            it->findIntersectionWithVehiclePath(vehicle, pi);
-            if (pi.intersect)
-                std::cout << "    Hit " << g_obstacle_names[&*it] << "\n";
-        }
-        std::cerr << '\n';
+#if TEST_STATIC_OPENSTEER_OBSTACLES
+    std::cout << "testing...\n";
+    Ogre::Ray ray = m_camera->getCameraToViewportRay(0.5, 0.5);
+    FakeVehicle vehicle;
+    vehicle.reset();
+    vehicle.regenerateOrthonormalBasis(ToOpenSteer(ray.getDirection()),
+                                       OpenSteer::Vec3(0, 0, 1));
+    vehicle.setPosition(ToOpenSteer(ray.getOrigin()));
+    const PathingEngine::ObstacleVec& obstacles = g_pathing_engine.m_obstacles;
+    for (PathingEngine::ObstacleVec::const_iterator it = obstacles.begin();
+         it != obstacles.end();
+         ++it) {
+        OpenSteer::AbstractObstacle::PathIntersection pi;
+        it->findIntersectionWithVehiclePath(vehicle, pi);
+        if (pi.intersect)
+            std::cout << "    Hit " << g_obstacle_names[&*it] << "\n";
     }
+    std::cerr << '\n';
+#endif
 }
 
 void CombatWnd::UpdateStarFromCameraPosition()
