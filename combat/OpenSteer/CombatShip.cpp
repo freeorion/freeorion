@@ -102,6 +102,9 @@ void CombatShip::AppendMission(const ShipMission& mission)
 
 void CombatShip::ClearMissions()
 {
+    // We call this even though we're about to clear the queue, in order to
+    // trigger removal of this ship from the attacker list, if applicable.
+    RemoveMission();
     m_mission_queue.clear();
     m_mission_queue.push_front(ShipMission(ShipMission::NONE));
 }
@@ -190,8 +193,24 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
     m_unlaunched_formations = m_formations;
 }
 
+void CombatShip::PushMission(const ShipMission& mission)
+{
+    m_mission_queue.push_back(mission);
+    if (mission.m_type == ShipMission::ATTACK_THIS ||
+        mission.m_type == ShipMission::ATTACK_THIS_STANDOFF) {
+        assert(mission.m_target.lock());
+        m_pathing_engine->BeginAttack(mission.m_target.lock(), shared_from_this());
+    }
+}
+
 void CombatShip::RemoveMission()
 {
+    if (m_mission_queue.back().m_type == ShipMission::ATTACK_THIS ||
+        m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF) {
+        assert(m_mission_queue.back().m_target.lock());
+        m_pathing_engine->EndAttack(m_mission_queue.back().m_target.lock(),
+                                    shared_from_this());
+    }
     m_mission_queue.pop_back();
     if (m_mission_queue.empty())
         m_mission_queue.push_front(ShipMission(ShipMission::NONE));
@@ -280,7 +299,7 @@ void CombatShip::UpdateMissionQueue()
                 m_pathing_engine->NearestHostileNonFighterInRange(position(), m_empire_id,
                                                                   PATROL_ENGAGEMENT_RANGE)) {
                 m_mission_destination = object->position();
-                m_mission_queue.push_back(ShipMission(ShipMission::ATTACK_THIS, object));
+                PushMission(ShipMission(ShipMission::ATTACK_THIS, object));
                 found_target = true;
                 if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
             }
@@ -296,7 +315,7 @@ void CombatShip::UpdateMissionQueue()
         if (CombatObjectPtr object = WeakestHostileShip()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            m_mission_queue.push_back(ShipMission(ShipMission::ATTACK_THIS, object));
+            PushMission(ShipMission(ShipMission::ATTACK_THIS, object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -309,7 +328,7 @@ void CombatShip::UpdateMissionQueue()
         if (CombatObjectPtr object = m_pathing_engine->NearestHostileShip(position(), m_empire_id)) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            m_mission_queue.push_back(ShipMission(ShipMission::ATTACK_THIS, object));
+            PushMission(ShipMission(ShipMission::ATTACK_THIS, object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -357,7 +376,7 @@ OpenSteer::Vec3 CombatShip::Steer()
 
 CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& /*attackee*/)
 {
-    // TODO: This should act as WeakestShip(), but should include fighters.
+    // TODO: This should act as WeakestHostileShip(), but should include fighters.
     return CombatObjectPtr();
 }
 

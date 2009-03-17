@@ -91,6 +91,7 @@ private:
                   int fighter_id, PathingEngine& pathing_engine,
                   const CombatFighterFormationPtr& formation);
 
+    void PushMission(const FighterMission& mission);
     OpenSteer::Vec3 GlobalFormationPosition();
     void RemoveMission();
     void UpdateMissionQueue();

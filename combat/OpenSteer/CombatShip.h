@@ -45,6 +45,7 @@ private:
     float MinNonPDWeaponRange() const;
 
     void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
+    void PushMission(const ShipMission& mission);
     void RemoveMission();
     void UpdateMissionQueue();
     OpenSteer::Vec3 Steer();

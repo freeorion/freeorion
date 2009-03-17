@@ -299,6 +299,15 @@ void CombatFighter::ExitSpace()
     m_proximity_token = 0;
 }
 
+void CombatFighter::PushMission(const FighterMission& mission)
+{
+    m_mission_queue.push_back(mission);
+    if (mission.m_type == FighterMission::ATTACK_THIS) {
+        assert(mission.m_target.lock());
+        m_pathing_engine->BeginAttack(mission.m_target.lock(), shared_from_this());
+    }
+}
+
 OpenSteer::Vec3 CombatFighter::GlobalFormationPosition()
 {
     OpenSteer::Vec3 retval;
@@ -406,7 +415,7 @@ void CombatFighter::UpdateMissionQueue()
                     m_pathing_engine->NearestHostileFighterInRange(position(), m_empire_id,
                                                                    PATROL_ENGAGEMENT_RANGE)) {
                     m_mission_destination = fighter->position();
-                    m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
+                    PushMission(FighterMission(FighterMission::ATTACK_THIS, fighter));
                     found_target = true;
                     if (print_needed) std::cout << "    [ENGAGING HOSTILE FIGHTER]\n";
                 }
@@ -415,7 +424,7 @@ void CombatFighter::UpdateMissionQueue()
                     m_pathing_engine->NearestHostileNonFighterInRange(position(), m_empire_id,
                                                                       PATROL_ENGAGEMENT_RANGE)) {
                     m_mission_destination = object->position();
-                    m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
+                    PushMission(FighterMission(FighterMission::ATTACK_THIS, object));
                     found_target = true;
                     if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
                 }
@@ -435,7 +444,7 @@ void CombatFighter::UpdateMissionQueue()
         if (fighter) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = fighter->position();
-            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
+            PushMission(FighterMission(FighterMission::ATTACK_THIS, fighter));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE FIGHTER]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -450,7 +459,7 @@ void CombatFighter::UpdateMissionQueue()
         if (fighter) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = fighter->position();
-            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, fighter));
+            PushMission(FighterMission(FighterMission::ATTACK_THIS, fighter));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE FIGHTER]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -462,7 +471,7 @@ void CombatFighter::UpdateMissionQueue()
         if (CombatObjectPtr object = WeakestHostileShip()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
+            PushMission(FighterMission(FighterMission::ATTACK_THIS, object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -475,7 +484,7 @@ void CombatFighter::UpdateMissionQueue()
         if (CombatObjectPtr object = m_pathing_engine->NearestHostileShip(position(), m_empire_id)) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            m_mission_queue.push_back(FighterMission(FighterMission::ATTACK_THIS, object));
+            PushMission(FighterMission(FighterMission::ATTACK_THIS, object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -688,10 +697,43 @@ OpenSteer::Vec3 CombatFighter::Steer()
         cohesion_vec * COHESION_WEIGHT;
 }
 
-CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& /*attackee*/)
+CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
 {
-    // TODO: This should act as WeakestShip(), but should include fighters.
-    return CombatObjectPtr();
+    CombatObjectPtr retval;
+
+    float weakest = FLT_MAX;
+
+    const float BOMBER_SCALE_FACTOR = 1.0;
+    const float INTERCEPTOR_SCALE_FACTOR = 2.0;
+    const float SHIP_SCALE_FACTOR = 4.0;
+
+    PathingEngine::ConstAttackerRange attackers = m_pathing_engine->Attackers(attackee);
+    for (PathingEngine::Attackees::const_iterator it = attackers.first;
+         it != attackers.second;
+         ++it) {
+        CombatFighterPtr fighter;
+        CombatShipPtr ship;
+        // TODO: Some kind of "weakness to fighter attacks" should be taken
+        // into account when calculating strength.
+        float strength = FLT_MAX;
+        if (m_type == INTERCEPTOR &&
+            (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
+            // TODO: Use fighter's hit points, and prefer to attack bombers --
+            // for now, just take any one
+            retval = fighter->shared_from_this();
+            strength =
+                1.0 * (fighter->m_type == INTERCEPTOR ?
+                       INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
+        } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
+            strength = ship->AntiFighterStrength() * SHIP_SCALE_FACTOR;
+        }
+        if (strength < weakest) {
+            retval = ship->shared_from_this();
+            weakest = strength;
+        }
+    }
+
+    return retval;
 }
 
 CombatShipPtr CombatFighter::WeakestHostileShip()
@@ -702,6 +744,7 @@ CombatShipPtr CombatFighter::WeakestHostileShip()
 
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
+    // TODO: NotEmpireFlag() should become EnemyOfEmpireFlag()
     m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {

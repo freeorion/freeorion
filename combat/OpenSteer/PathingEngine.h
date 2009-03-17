@@ -13,6 +13,9 @@ class PathingEngine
 {
 public:
     typedef boost::ptr_vector<OpenSteer::AbstractObstacle> ObstacleVec;
+    typedef std::multimap<CombatObjectPtr, CombatObjectWeakPtr> Attackees;
+    typedef std::pair<Attackees::const_iterator, Attackees::const_iterator> ConstAttackerRange;
+    typedef std::pair<Attackees::iterator, Attackees::iterator> AttackerRange;
 
     PathingEngine();
     ~PathingEngine();
@@ -31,11 +34,15 @@ public:
     CombatShipPtr NearestHostileShip(const OpenSteer::Vec3& position,
                                      int empire_id) const;
     std::size_t UpdateNumber() const;
+    ConstAttackerRange Attackers (const CombatObjectPtr& attackee) const;
 
     void Update(const float current_time, const float elapsed_time);
 
     void AddObject(const CombatObjectPtr& obj);
     void RemoveObject(const CombatObjectPtr& obj);
+
+    void BeginAttack(const CombatObjectPtr& attacker, const CombatObjectPtr& attackee);
+    void EndAttack(const CombatObjectPtr& attacker, const CombatObjectPtr& attackee);
 
     // fighters
     CombatFighterFormationPtr
@@ -58,6 +65,7 @@ private:
     std::size_t m_update_number;
     std::set<CombatObjectPtr> m_objects;
     std::set<CombatFighterFormationPtr> m_fighter_formations;
+    Attackees m_attackees;
     ProximityDB* m_proximity_database;
     ObstacleVec m_obstacles;
 

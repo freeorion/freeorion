@@ -113,6 +113,10 @@ CombatShipPtr PathingEngine::NearestHostileShip(const OpenSteer::Vec3& position,
 std::size_t PathingEngine::UpdateNumber() const
 { return m_update_number; }
 
+PathingEngine::ConstAttackerRange
+PathingEngine::Attackers (const CombatObjectPtr& attackee) const
+{ return m_attackees.equal_range(attackee); }
+
 void PathingEngine::Update(const float current_time, const float elapsed_time)
 {
     // We use a temporary iterator, because an object may remove itself from the
@@ -129,7 +133,27 @@ void PathingEngine::AddObject(const CombatObjectPtr& obj)
 { m_objects.insert(obj); }
 
 void PathingEngine::RemoveObject(const CombatObjectPtr& obj)
-{ m_objects.erase(obj); }
+{
+    m_attackees.erase(obj);
+    m_objects.erase(obj);
+}
+
+void PathingEngine::BeginAttack(const CombatObjectPtr& attacker,
+                                const CombatObjectPtr& attackee)
+{ m_attackees.insert(Attackees::value_type(attackee, attacker)); }
+
+void PathingEngine::EndAttack(const CombatObjectPtr& attacker,
+                              const CombatObjectPtr& attackee)
+{
+    AttackerRange range = m_attackees.equal_range(attackee);
+    if (range.first != range.second) {
+        Attackees::iterator it = range.first;
+        while (it != range.second && it->second.lock() != attacker)
+            ++it;
+        if (it != range.second)
+            m_attackees.erase(it);
+    }
+}
 
 CombatFighterFormationPtr
 PathingEngine::CreateFighterFormation(CombatShipPtr base, CombatFighterType type, std::size_t size)
@@ -176,10 +200,7 @@ void PathingEngine::RemoveFighter(const CombatObjectPtr& f)
     (*formation_it)->erase(fighter);
     if ((*formation_it)->empty())
         m_fighter_formations.erase(formation_it);
-
-    std::set<CombatObjectPtr>::iterator object_it = m_objects.find(f);
-    assert(object_it != m_objects.end());
-    m_objects.erase(object_it);
+    RemoveObject(f);
 }
 
 void PathingEngine::RemoveFighterFormation(const CombatFighterFormationPtr& formation)
