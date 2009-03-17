@@ -48,7 +48,6 @@
 
 
 #include "AbstractVehicle.h"
-#include "Pathway.h"
 #include "Obstacle.h"
 #include "Utilities.h"
 
@@ -109,12 +108,6 @@ namespace OpenSteer {
         // xxx proposed, experimental new seek/flee [cwr 9-16-02]
         Vec3 xxxsteerForFlee (const Vec3& target);
         Vec3 xxxsteerForSeek (const Vec3& target);
-
-        // Path Following behaviors
-        Vec3 steerToFollowPath (const int direction,
-                                const float predictionTime,
-                                Pathway& path);
-        Vec3 steerToStayOnPath (const float predictionTime, Pathway& path);
 
         // ------------------------------------------------------------------------
         // Obstacle Avoidance behavior
@@ -394,100 +387,6 @@ xxxsteerForSeek (const Vec3& target)
     const Vec3 offset = target - position();
     const Vec3 desiredVelocity = offset.truncateLength (maxSpeed ()); //xxxnew
     return desiredVelocity - velocity();
-}
-
-
-// ----------------------------------------------------------------------------
-// Path Following behaviors
-
-
-template<class Super>
-OpenSteer::Vec3
-OpenSteer::SteerLibraryMixin<Super>::
-steerToStayOnPath (const float predictionTime, Pathway& path)
-{
-    // predict our future position
-    const Vec3 futurePosition = predictFuturePosition (predictionTime);
-
-    // find the point on the path nearest the predicted future position
-    Vec3 tangent;
-    float outside;
-    const Vec3 onPath = path.mapPointToPath (futurePosition,
-                                             tangent,     // output argument
-                                             outside);    // output argument
-
-    if (outside < 0)
-    {
-        // our predicted future position was in the path,
-        // return zero steering.
-        return Vec3::zero;
-    }
-    else
-    {
-        // our predicted future position was outside the path, need to
-        // steer towards it.  Use onPath projection of futurePosition
-        // as seek target
-        annotatePathFollowing (futurePosition, onPath, onPath, outside);
-        return steerForSeek (onPath);
-    }
-}
-
-
-template<class Super>
-OpenSteer::Vec3
-OpenSteer::SteerLibraryMixin<Super>::
-steerToFollowPath (const int direction,
-                   const float predictionTime,
-                   Pathway& path)
-{
-    // our goal will be offset from our path distance by this amount
-    const float pathDistanceOffset = direction * predictionTime * speed();
-
-    // predict our future position
-    const Vec3 futurePosition = predictFuturePosition (predictionTime);
-
-    // measure distance along path of our current and predicted positions
-    const float nowPathDistance =
-        path.mapPointToPathDistance (position ());
-    const float futurePathDistance =
-        path.mapPointToPathDistance (futurePosition);
-
-    // are we facing in the correction direction?
-    const bool rightway = ((pathDistanceOffset > 0) ?
-                           (nowPathDistance < futurePathDistance) :
-                           (nowPathDistance > futurePathDistance));
-
-    // find the point on the path nearest the predicted future position
-    // XXX need to improve calling sequence, maybe change to return a
-    // XXX special path-defined object which includes two Vec3s and a 
-    // XXX bool (onPath,tangent (ignored), withinPath)
-    Vec3 tangent;
-    float outside;
-    const Vec3 onPath = path.mapPointToPath (futurePosition,
-                                             // output arguments:
-                                             tangent,
-                                             outside);
-
-    // no steering is required if (a) our future position is inside
-    // the path tube and (b) we are facing in the correct direction
-    if ((outside < 0) && rightway)
-    {
-        // all is well, return zero steering
-        return Vec3::zero;
-    }
-    else
-    {
-        // otherwise we need to steer towards a target point obtained
-        // by adding pathDistanceOffset to our current path position
-
-        float const targetPathDistance = nowPathDistance + pathDistanceOffset;
-        Vec3 const target = path.mapPathDistanceToPoint (targetPathDistance);
-
-        annotatePathFollowing (futurePosition, onPath, target, outside);
-
-        // return steering to seek target on path
-        return steerForSeek (target);
-    }
 }
 
 
