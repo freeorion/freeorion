@@ -1,6 +1,7 @@
 #include "CombatShip.h"
 
 #include "../universe/Ship.h"
+#include "../universe/System.h"
 #include "CombatFighter.h"
 #include "PathingEngine.h"
 
@@ -266,7 +267,8 @@ void CombatShip::UpdateMissionQueue()
             OpenSteer::Vec3 from_target_vec = position() - target_position;
             float from_target_length = from_target_vec.length();
             from_target_vec /= from_target_length;
-            float weapon_range = m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF ?
+            float weapon_range =
+                m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF ?
                 MaxWeaponRange() : MinNonPDWeaponRange();
             float standoff_distance = std::min<float>(from_target_length, weapon_range);
             m_mission_destination = target_position + standoff_distance * from_target_vec;
@@ -311,11 +313,17 @@ void CombatShip::UpdateMissionQueue()
         }
         break;
     }
+    case ShipMission::ATTACK_SHIPS_WEAKEST_FIRST_STANDOFF:
     case ShipMission::ATTACK_SHIPS_WEAKEST_FIRST: {
         if (CombatObjectPtr object = WeakestHostileShip()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            PushMission(ShipMission(ShipMission::ATTACK_THIS, object));
+            PushMission(
+                ShipMission(
+                    m_mission_queue.back().m_type == ShipMission::ATTACK_SHIPS_WEAKEST_FIRST ?
+                    ShipMission::ATTACK_THIS :
+                    ShipMission::ATTACK_THIS_STANDOFF,
+                    object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -324,11 +332,17 @@ void CombatShip::UpdateMissionQueue()
         m_mission_weight = DEFAULT_MISSION_WEIGHT;
         break;
     }
+    case ShipMission::ATTACK_SHIPS_NEAREST_FIRST_STANDOFF:
     case ShipMission::ATTACK_SHIPS_NEAREST_FIRST: {
         if (CombatObjectPtr object = m_pathing_engine->NearestHostileShip(position(), m_empire_id)) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = object->position();
-            PushMission(ShipMission(ShipMission::ATTACK_THIS, object));
+            PushMission(
+                ShipMission(
+                    m_mission_queue.back().m_type == ShipMission::ATTACK_SHIPS_NEAREST_FIRST ?
+                    ShipMission::ATTACK_THIS :
+                    ShipMission::ATTACK_THIS_STANDOFF,
+                    object));
             if (print_needed) std::cout << "    [ENGAGING HOSTILE SHIP]\n";
         } else {
             if (print_needed) std::cout << "    [NO TARGETS]\n";
@@ -336,14 +350,26 @@ void CombatShip::UpdateMissionQueue()
         }
         break;
     }
-    case ShipMission::ATTACK_SHIPS_WEAKEST_FIRST_STANDOFF: {
-        // TODO
-    }
-    case ShipMission::ATTACK_SHIPS_NEAREST_FIRST_STANDOFF: {
-        // TODO
-    }
     case ShipMission::ENTER_STARLANE: {
-        // TODO
+        System* system = GetShip()->GetSystem();
+        assert(system);
+        for (System::const_lane_iterator it = system->begin_lanes();
+             it != system->end_lanes();
+             ++it) {
+            double rads = StarlaneEntranceOrbitalPosition(system->ID(), it->first);
+            double radius = StarlaneEntranceOrbitalRadius();
+            OpenSteer::Vec3 starlane_position(radius * std::cos(rads),
+                                              radius * std::sin(rads),
+                                              0.0);
+            double entrance_radius_squared =
+                StarlaneEntranceRadius() * StarlaneEntranceRadius();
+            if ((starlane_position - position()).lengthSquared() < entrance_radius_squared) {
+                delete m_proximity_token;
+                m_proximity_token = 0;
+                m_pathing_engine->RemoveObject(shared_from_this());
+                break;
+            }
+        }
     }
     }
 
@@ -374,10 +400,45 @@ OpenSteer::Vec3 CombatShip::Steer()
     return mission_vec * m_mission_weight;
 }
 
-CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& /*attackee*/)
+CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
 {
-    // TODO: This should act as WeakestHostileShip(), but should include fighters.
-    return CombatObjectPtr();
+    CombatObjectPtr retval;
+
+    float weakest = FLT_MAX;
+
+    const float NO_PD_FIGHTER_STRENGTH_SCALE_FACTOR = 25.0;
+    const float BOMBER_SCALE_FACTOR = 1.0;
+    const float INTERCEPTOR_SCALE_FACTOR = 2.0;
+
+    PathingEngine::ConstAttackerRange attackers = m_pathing_engine->Attackers(attackee);
+    for (PathingEngine::Attackees::const_iterator it = attackers.first;
+         it != attackers.second;
+         ++it) {
+        CombatFighterPtr fighter;
+        CombatShipPtr ship;
+        // TODO: Some kind of "weakness to fighter attacks" should be taken
+        // into account when calculating strength.
+        float strength = FLT_MAX;
+        if (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock())) {
+            // TODO: Use fighter's hit points, and prefer to attack bombers --
+            // for now, just use 1.0
+            strength =
+                1.0 * (fighter->Type() == INTERCEPTOR ?
+                       INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
+            if (!AntiFighterStrength())
+                strength *= NO_PD_FIGHTER_STRENGTH_SCALE_FACTOR;
+        } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
+            // TODO: Use ship's hit points and our firepower -- for now, just
+            // use 5.0
+            strength = 5.0;
+        }
+        if (strength < weakest) {
+            retval = it->second.lock();
+            weakest = strength;
+        }
+    }
+
+    return retval;
 }
 
 CombatShipPtr CombatShip::WeakestHostileShip()

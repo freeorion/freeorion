@@ -69,6 +69,7 @@ public:
     virtual float maxForce() const;
     virtual float maxSpeed() const;
     int ID() const;
+    CombatFighterType Type() const;
     const FighterMission& CurrentMission() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);

@@ -218,6 +218,9 @@ float CombatFighter::maxSpeed() const
 int CombatFighter::ID() const
 { return m_id; }
 
+CombatFighterType CombatFighter::Type() const
+{ return m_type; }
+
 const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
 
@@ -716,11 +719,12 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
         // TODO: Some kind of "weakness to fighter attacks" should be taken
         // into account when calculating strength.
         float strength = FLT_MAX;
+        // Note that this condition implies that bombers cannot attack
+        // fighters at all.
         if (m_type == INTERCEPTOR &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
             // TODO: Use fighter's hit points, and prefer to attack bombers --
             // for now, just take any one
-            retval = fighter->shared_from_this();
             strength =
                 1.0 * (fighter->m_type == INTERCEPTOR ?
                        INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
@@ -728,7 +732,7 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
             strength = ship->AntiFighterStrength() * SHIP_SCALE_FACTOR;
         }
         if (strength < weakest) {
-            retval = ship->shared_from_this();
+            retval = it->second.lock();
             weakest = strength;
         }
     }

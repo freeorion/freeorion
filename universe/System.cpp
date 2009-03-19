@@ -555,7 +555,7 @@ void System::UpdateOwnership()
 // free functions
 
 double SystemRadius()
-{ return 1000.0; }
+{ return 1000.0 + 50.0; }
 
 double StarRadius()
 { return 80.0; }
@@ -563,5 +563,19 @@ double StarRadius()
 double OrbitalRadius(unsigned int orbit)
 {
     assert(orbit < 10);
-    return SystemRadius() / 10 * (orbit + 1) - 20.0;
+    return (SystemRadius() - 50.0) / 10 * (orbit + 1) - 20.0;
+}
+
+double StarlaneEntranceOrbitalRadius()
+{ return 1000.0 + 25.0; }
+
+double StarlaneEntranceRadius()
+{ return 20.0; }
+
+double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
+{
+    System* system_1 = GetUniverse().Object<System>(from_system);
+    System* system_2 = GetUniverse().Object<System>(to_system);
+    assert(system_1 && system_2);
+    return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());
 }

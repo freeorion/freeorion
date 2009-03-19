@@ -207,6 +207,18 @@ double StarRadius();
     system.  \a orbit must be < 10. */
 double OrbitalRadius(unsigned int orbit);
 
+/** Returns the orbital radius, in tactical combat units, of starlane entrance
+    points out of a system.  */
+double StarlaneEntranceOrbitalRadius();
+
+/** Returns the angular position, in radians, of a starlane entrance point out
+    of the system with id \a from_system.  */
+double StarlaneEntranceOrbitalPosition(int from_system, int to_system);
+
+/** Returns the radius, in tactical combat units, of starlane entrance points
+    out of a system.  */
+double StarlaneEntranceRadius();
+
 
 // template implementations
 
