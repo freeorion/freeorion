@@ -96,6 +96,7 @@ private:
     OpenSteer::Vec3 GlobalFormationPosition();
     void RemoveMission();
     void UpdateMissionQueue();
+    void FireAtHostiles();
     OpenSteer::Vec3 Steer();
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
     CombatShipPtr WeakestHostileShip();
@@ -110,7 +111,7 @@ private:
     std::list<FighterMission> m_mission_queue;
     float m_mission_weight;
     OpenSteer::Vec3 m_mission_destination; // Only the X and Y values should be nonzero.
-    CombatObjectPtr m_mission_subtarget;
+    CombatObjectWeakPtr m_mission_subtarget;
     CombatObjectWeakPtr m_base;
 
     int m_formation_position;

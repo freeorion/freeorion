@@ -380,6 +380,10 @@ void CombatShip::UpdateMissionQueue()
                   << std::endl;
 }
 
+void CombatShip::FireAtHostiles()
+{
+}
+
 OpenSteer::Vec3 CombatShip::Steer()
 {
     const float OBSTACLE_AVOIDANCE_TIME = 6.0;

@@ -48,6 +48,7 @@ private:
     void PushMission(const ShipMission& mission);
     void RemoveMission();
     void UpdateMissionQueue();
+    void FireAtHostiles();
     OpenSteer::Vec3 Steer();
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
     CombatShipPtr WeakestHostileShip();

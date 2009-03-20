@@ -229,8 +229,10 @@ void CombatFighter::update(const float /*current_time*/, const float elapsed_tim
     OpenSteer::Vec3 steer = m_last_steer;
     if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
-        if (m_leader)
+        if (m_leader) {
             UpdateMissionQueue();
+            FireAtHostiles();
+        }
         steer = Steer();
     }
     applySteeringForce(steer, elapsed_time);
@@ -332,6 +334,7 @@ void CombatFighter::RemoveMission()
 {
     assert(!m_mission_queue.empty());
     m_mission_queue.pop_back();
+    m_mission_subtarget.reset();
     if (m_mission_queue.empty())
         m_mission_queue.push_front(FighterMission(FighterMission::NONE));
 }
@@ -397,10 +400,13 @@ void CombatFighter::UpdateMissionQueue()
     case FighterMission::DEFEND_THIS: {
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
-            if (m_mission_subtarget = WeakestAttacker(target))
-                m_mission_destination = m_mission_subtarget->position();
-            else
-                m_mission_destination = target->position();
+            if (m_mission_subtarget.expired()) {
+                m_mission_subtarget = WeakestAttacker(target);
+                if (CombatObjectPtr subtarget = m_mission_subtarget.lock())
+                    m_mission_destination = subtarget->position();
+                else
+                    m_mission_destination = target->position();
+            }
         } else {
             if (print_needed) std::cout << "    [DEFEND TARGET GONE]\n";
             RemoveMission();
@@ -524,6 +530,40 @@ void CombatFighter::UpdateMissionQueue()
                   << "    destination=" << m_mission_destination << "\n"
                   << "    mission_weight=" << m_mission_weight << "\n"
                   << std::endl;
+}
+
+void CombatFighter::FireAtHostiles()
+{
+    assert(m_leader);
+    assert(!m_formation->empty());
+    assert(!m_mission_queue.empty());
+
+    OpenSteer::Vec3 position_to_use = m_formation->Centroid();
+    CombatFighterPtr fighter = *m_formation->begin();
+    // TODO: Get the fighter's weapon range from the fighter itself.
+    const double WEAPON_RANGE = 15.0;
+    const double WEAPON_RANGE_SQUARED = WEAPON_RANGE * WEAPON_RANGE;
+    CombatObjectPtr target = m_mission_subtarget.lock();
+    if (!target && m_mission_queue.back().m_type == FighterMission::ATTACK_THIS) {
+        assert(m_mission_queue.back().m_target.lock());
+        target = m_mission_queue.back().m_target.lock();
+    } else if (!target) {
+        // fire on targets of opportunity
+        if (CombatFighterPtr fighter =
+            m_pathing_engine->NearestHostileFighterInRange(
+                position_to_use, m_empire_id, WEAPON_RANGE)) {
+            target = fighter;
+        } else if (CombatObjectPtr non_fighter =
+                   m_pathing_engine->NearestHostileNonFighterInRange(
+                       position_to_use, m_empire_id, WEAPON_RANGE)) {
+            target = non_fighter;
+        }
+    }
+    if (target &&
+        (target->position() - position_to_use).lengthSquared() < WEAPON_RANGE_SQUARED) {
+        // TODO: Resolve firing and damage.  Take into account the number of
+        // fighters in the formation.
+    }
 }
 
 OpenSteer::Vec3 CombatFighter::Steer()
