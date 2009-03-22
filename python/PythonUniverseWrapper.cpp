@@ -196,7 +196,6 @@ namespace FreeOrionPython {
             .add_property("designedByEmpireID", make_function(&ShipDesign::DesignedByEmpire,    return_value_policy<return_by_value>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,      return_value_policy<return_by_value>()))
             .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,       return_value_policy<return_by_value>()))
-            .add_property("battleSpeed",        make_function(&ShipDesign::Speed,               return_value_policy<return_by_value>()))
             .add_property("defense",            make_function(&ShipDesign::Defense,             return_value_policy<return_by_value>()))
             .add_property("speed",              make_function(&ShipDesign::Speed,               return_value_policy<return_by_value>()))
             .add_property("attack",             make_function(&ShipDesign::Attack,              return_value_policy<return_by_value>()))
