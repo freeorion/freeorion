@@ -7,6 +7,7 @@
 #include <map>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -19,38 +20,139 @@ namespace Effect {
     class EffectsGroup;
 }
 
+/** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part types. */
+struct DirectFireStats
+{
+    DirectFireStats();
+    DirectFireStats(double damage,
+                    double ROF,
+                    double range);
+
+    double m_damage;
+    double m_ROF;
+    double m_range;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int)
+        {
+            ar  & BOOST_SERIALIZATION_NVP(m_damage)
+                & BOOST_SERIALIZATION_NVP(m_ROF)
+                & BOOST_SERIALIZATION_NVP(m_range);
+        }
+};
+
+/** Part stats for the PC_MISSILES part type. */
+struct LRStats
+{
+    LRStats();
+    LRStats(double damage,
+            double ROF,
+            double range,
+            double speed,
+            double stealth,
+            double health,
+            double capacity);
+
+    double m_damage;
+    double m_ROF;
+    double m_range;
+    double m_speed;
+    double m_stealth;
+    double m_health;
+    double m_capacity;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int)
+        {
+            ar  & BOOST_SERIALIZATION_NVP(m_damage)
+                & BOOST_SERIALIZATION_NVP(m_ROF)
+                & BOOST_SERIALIZATION_NVP(m_range)
+                & BOOST_SERIALIZATION_NVP(m_speed)
+                & BOOST_SERIALIZATION_NVP(m_stealth)
+                & BOOST_SERIALIZATION_NVP(m_health)
+                & BOOST_SERIALIZATION_NVP(m_capacity);
+        }
+};
+
+/** Part stats for the PC_FIGHTERS part type. */
+struct FighterStats
+{
+    FighterStats();
+    FighterStats(CombatFighterType type,
+                 double anti_fighter_damage,
+                 double anti_ship_damage,
+                 double launch_rate,
+                 double range,
+                 double speed,
+                 double stealth,
+                 double health,
+                 double detection,
+                 double capacity);
+
+    CombatFighterType m_type;
+    double m_anti_fighter_damage;
+    double m_anti_ship_damage;
+    double m_launch_rate;
+    double m_range;
+    double m_speed;
+    double m_stealth;
+    double m_health;
+    double m_detection;
+    double m_capacity;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int)
+        {
+            ar  & BOOST_SERIALIZATION_NVP(m_type)
+                & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
+                & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
+                & BOOST_SERIALIZATION_NVP(m_launch_rate)
+                & BOOST_SERIALIZATION_NVP(m_range)
+                & BOOST_SERIALIZATION_NVP(m_speed)
+                & BOOST_SERIALIZATION_NVP(m_stealth)
+                & BOOST_SERIALIZATION_NVP(m_health)
+                & BOOST_SERIALIZATION_NVP(m_detection)
+                & BOOST_SERIALIZATION_NVP(m_capacity);
+        }
+};
+
+/** A variant type containing all ShipPartClass-specific stats for a PartType.
+    Note that most parts need only a single value to represent their
+    capabilities.  This is represented by the double variant. */
+typedef boost::variant<double, DirectFireStats, LRStats, FighterStats> PartTypeStats;
+
 /** A type of ship part */
 class PartType {
 public:
     /** \name Structors */ //@{
     PartType();
-    PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
-             double power, double cost, int build_time,
-             std::vector<ShipSlotType> mountable_slot_types, const Condition::ConditionBase* location,
-             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+    PartType(const std::string& name, const std::string& description,
+             ShipPartClass part_class, const PartTypeStats& stats, double cost,
+             int build_time, std::vector<ShipSlotType> mountable_slot_types,
+             const Condition::ConditionBase* location,
              const std::string& graphic);
     ~PartType();
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  Name() const;           ///< returns name of part
-    const std::string&  Description() const;    ///< returns stringtable entry name of description
+    const std::string&   Name() const;           ///< returns name of part
+    std::string          Description() const;    ///< returns description, including a description of the stats and effects of this part
 
-    ShipPartClass       Class() const;          ///< returns that class of part that this is.
+    ShipPartClass        Class() const;          ///< returns that class of part that this is.
 
-    double              Power() const;          ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
+    const PartTypeStats& Stats() const;          ///< returns how good the part is at its function.  might be weapon or shield strength, or cargo hold capacity
 
-    bool                CanMountInSlotType(ShipSlotType slot_type) const;   ///< returns true if this part can be placed in a slot of the indicated type
+    bool                 CanMountInSlotType(ShipSlotType slot_type) const;   ///< returns true if this part can be placed in a slot of the indicated type
 
-    double              Cost() const;           ///< returns cost of part
-    int                 BuildTime() const;      ///< returns additional turns to build design that this part adds
+    double               Cost() const;           ///< returns cost of part
+    int                  BuildTime() const;      ///< returns additional turns to build design that this part adds
 
-    const std::string&  Graphic() const;        ///< returns graphic that represents part in UI
+    const std::string&   Graphic() const;        ///< returns graphic that represents part in UI
 
     const Condition::ConditionBase*
-                        Location() const;       ///< returns the condition that determines the locations where ShipDesign containing part can be produced
+                         Location() const;       ///< returns the condition that determines the locations where ShipDesign containing part can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                        Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part has
+                         Effects() const;        ///< returns the EffectsGroups that encapsulate the effects this part has
     //@}
 
 private:
@@ -59,12 +161,13 @@ private:
 
     ShipPartClass       m_class;
 
-    double              m_power;
+    PartTypeStats       m_stats;
 
     double              m_cost;         // in PP
     int                 m_build_time;   // in turns
 
-    std::vector<ShipSlotType> m_mountable_slot_types;
+    std::vector<ShipSlotType>
+                        m_mountable_slot_types;
 
     const Condition::ConditionBase*
                         m_location;
@@ -120,35 +223,28 @@ const PartType* GetPartType(const std::string& name);
 class HullType {
 public:
     struct Slot {
-        Slot() :
-            type(ShipSlotType(-1)),
-            x(0.5),
-            y(0.5)
-        {};
-        Slot(ShipSlotType slot_type, double x_, double y_) :
-            type(slot_type),
-            x(x_),
-            y(y_)
-        {};
+        Slot();
+        Slot(ShipSlotType slot_type, double x_, double y_);
         ShipSlotType type;
         double x, y;
     };
 
     /** \name Structors */ //@{
     HullType();
-    HullType(const std::string& name, const std::string& description, double speed, double cost,
-             int build_time, const std::vector<Slot>& slots,
-             const Condition::ConditionBase* location,
-             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+    HullType(const std::string& name, const std::string& description, double speed,
+             double starlane_speed, double fuel, double cost, int build_time,
+             const std::vector<Slot>& slots, const Condition::ConditionBase* location,
              const std::string& graphic);
     ~HullType();
     //@}
 
     /** \name Accessors */ //@{
     const std::string&  Name() const;           ///< returns name of hull
-    const std::string&  Description() const;    ///< returns stringtable entry name of description
+    std::string         Description() const;    ///< returns description, including a description of the stats and effects of this hull
 
-    double              Speed() const;          ///< returns speed (?) of hull
+    double              Speed() const;          ///< returns combat speed of hull
+    double              StarlaneSpeed() const;  ///< returns starlane speed of hull
+    double              Fuel() const;           ///< returns fuel capacity of hull
 
     double              Cost() const;           ///< returns cost of hull
     int                 BuildTime() const;      ///< returns base build time for this hull, before parts are added
@@ -170,6 +266,8 @@ private:
     std::string                 m_name;
     std::string                 m_description;
     double                      m_speed;
+    double                      m_starlane_speed;
+    double                      m_fuel;
 
     double                      m_cost;         // in PP
     int                         m_build_time;   // in turns
@@ -240,14 +338,13 @@ public:
     int                             DesignedOnTurn() const;     ///< returns turn on which design was created
 
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
-    double                          BattleSpeed() const;        ///< returns design speed on the battle map
+    double                          Speed() const;              ///< returns design speed on the battle map
 
     bool                            CanColonize() const;
     bool                            IsArmed() const;
 
     /////// TEMPORARY ///////
     double      Defense() const;
-    double      Speed() const;
     double      Attack() const;
     double      Cost() const;
     int         BuildTime() const;
@@ -310,7 +407,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_class)
-        & BOOST_SERIALIZATION_NVP(m_power)
+        & BOOST_SERIALIZATION_NVP(m_stats)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_mountable_slot_types)
@@ -325,6 +422,8 @@ void HullType::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_speed)
+        & BOOST_SERIALIZATION_NVP(m_starlane_speed)
+        & BOOST_SERIALIZATION_NVP(m_fuel)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_slots)

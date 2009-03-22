@@ -24,6 +24,7 @@ symbols<FocusType>              focus_type_p;
 symbols<EmpireAffiliationType>  affiliation_type_p;
 symbols<UnlockableItemType>     unlockable_item_type_p;
 symbols<TechType>               tech_type_p;
+symbols<CombatFighterType>      combat_fighter_type_p;
 symbols<ShipPartClass>          part_class_p;
 symbols<ShipSlotType>           slot_type_p;
 
@@ -113,6 +114,10 @@ namespace {
             ("theory",      TT_THEORY)
             ("application", TT_APPLICATION)
             ("refinement",  TT_REFINEMENT);
+
+        combat_fighter_type_p.add
+            ("interceptor", INTERCEPTOR)
+            ("bomber",      BOMBER);
 
         part_class_p.add
             ("shortrange",      PC_SHORT_RANGE)

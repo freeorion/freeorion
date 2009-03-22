@@ -151,46 +151,62 @@ struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std
     member12 graphic;
 };
 
+struct PartStatsClosure : boost::spirit::closure<PartStatsClosure, PartTypeStats, double, double,
+                                                 double, double, double, double, CombatFighterType,
+                                                 double, double, double, double>
+{
+    member1 this_;
+    member2 damage;
+    member3 rate;
+    member4 range;
+    member5 speed;
+    member6 stealth;
+    member7 health;
+    member8 fighter_type;
+    member9 anti_fighter_damage;
+    member10 anti_ship_damage;
+    member11 detection;
+    member12 capacity;
+};
+
 struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
-                                            double, double, int, std::vector<ShipSlotType>,
-                                            Condition::ConditionBase*,
-                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                            std::string>
+                                            PartTypeStats, double, int, std::vector<ShipSlotType>,
+                                            Condition::ConditionBase*, std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
     member4 part_class;
-    member5 power;
+    member5 stats;
     member6 cost;
     member7 build_time;
     member8 mountable_slot_types;
     member9 location;
-    member10 effects_groups;
-    member11 graphic;
+    member10 graphic;
 };
 
-struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double, int,
-                                            std::vector<HullType::Slot>, Condition::ConditionBase*,
-                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                            std::string>
+struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double,
+                                            double, double, int, std::vector<HullType::Slot>,
+                                            Condition::ConditionBase*, std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
     member4 speed;
-    member5 cost;
-    member6 build_time;
-    member7 slots;
-    member8 location;
-    member9 effects_groups;
-    member10 graphic;
+    member5 starlane_speed;
+    member6 fuel;
+    member7 cost;
+    member8 build_time;
+    member9 slots;
+    member10 location;
+    member11 graphic;
 };
 
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
 extern boost::spirit::rule<Scanner, SpecialClosure::context_t> special_p;
 extern boost::spirit::rule<Scanner, CategoryClosure::context_t> category_p;
 extern boost::spirit::rule<Scanner, TechClosure::context_t> tech_p;
+extern boost::spirit::rule<Scanner, PartStatsClosure::context_t> part_stats_p;
 extern boost::spirit::rule<Scanner, PartClosure::context_t> part_p;
 extern boost::spirit::rule<Scanner, HullClosure::context_t> hull_p;
 

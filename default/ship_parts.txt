@@ -2,7 +2,9 @@ Part
     name = "SR_LASER"
     description = "SR_LASER_DESC"
     class = ShortRange
-    power = 1
+    damage = 1
+    ROF = 1
+    range = 10
     buildcost = 4
     buildtime = 1
     mountableSlotTypes = External
@@ -13,7 +15,9 @@ Part
     name = "SR_ION_CANNON"
     description = "SR_ION_CANNON_DESC"
     class = ShortRange
-    power = 2
+    damage = 2
+    ROF = 1
+    range = 10
     buildcost = 8
     buildtime = 2
     mountableSlotTypes = External
@@ -24,7 +28,13 @@ Part
     name = "LR_NUCLEAR_MISSILE"
     description = "LR_NUCLEAR_MISSILE"
     class = Missiles
-    power = 3
+    damage = 3
+    ROF = 0.5
+    range = 30
+    speed = 15
+    stealth = 0
+    health = 1
+    capacity = 20
     buildcost = 12
     buildtime = 4
     mountableSlotTypes = External
@@ -35,7 +45,7 @@ Part
     name = "AR_LEAD_PLATE"
     description = "AR_LEAD_PLATE_DESC"
     class = Armour
-    power = 1
+    capacity = 1
     buildcost = 6
     buildtime = 1
     mountableSlotTypes = External
@@ -46,7 +56,7 @@ Part
     name = "SH_DEFENSE_GRID"
     description = "SH_DEFENSE_GRID_DESC"
     class = Shield
-    power = 1
+    capacity = 1
     buildcost = 4
     buildtime = 0
     mountableSlotTypes = External
@@ -57,7 +67,7 @@ Part
     name = "SH_DEFLECTOR"
     description = "SH_DEFLECTOR_DESC"
     class = Shield
-    power = 3
+    capacity = 3
     buildcost = 12
     buildtime = 2
     mountableSlotTypes = [External Internal]
@@ -68,71 +78,51 @@ Part
     name = "DT_ACTIVE_RADAR"
     description = "DT_ACTIVE_RADAR_DESC"
     class = Detection
-    power = 3
+    capacity = 10
     buildcost = 12
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxDetection Target.MaxDetection + 10
     graphic = "icons/ship_parts/active_radar.png"
 
 Part
     name = "FU_DEUTERIUM_TANK"
     description = "FU_DEUTERIUM_TANK_DESC"
     class = Fuel
-    power = 3
+    capacity = 5
     buildcost = 8
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 5
     graphic = "icons/ship_parts/deuterium_tank.png"
 
 Part
     name = "FU_ANTIMATTER_TANK"
     description = "FU_ANTIMATTER_TANK_DESC"
     class = Fuel
-    power = 8
+    capacity = 10
     buildcost = 20
     buildtime = 6
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 10
     graphic = "icons/ship_parts/antimatter_tank.png"
 
 Part
     name = "ST_EM_DAMPER"
     description = "ST_EM_DAMPER_DESC"
     class = Stealth
-    power = 2
+    capacity = 5
     buildcost = 20
     buildtime = 6
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxStealth Target.MaxStealth + 5
     graphic = "icons/ship_parts/electromagnetic_damper.png"
 
 Part
     name = "CO_COLONY_POD"
     description = "CO_COLONY_POD_DESC"
     class = Colony
-    power = 1
+    capacity = 1
     buildcost = 40
     buildtime = 10
     mountableSlotTypes = Internal
@@ -144,7 +134,7 @@ Part
     name = "CO_SUSPEND_ANIM_POD"
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
-    power = 5
+    capacity = 5
     buildcost = 80
     buildtime = 12
     mountableSlotTypes = Internal

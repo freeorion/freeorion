@@ -245,10 +245,7 @@ void EncyclopediaDetailPanel::Reset() {
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(m_part->Class()));
         
-        detailed_description = UserString(m_part->Description());
-        if (!m_part->Effects().empty()) {
-            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_part->Effects()));
-        }
+        detailed_description = m_part->Description();
     } else if (m_hull) {
         // Ship Hulls
         name = UserString(m_hull->Name());
@@ -259,10 +256,7 @@ void EncyclopediaDetailPanel::Reset() {
         general_type = UserString("ENC_SHIP_HULL");
         // hulls have no specific types
         
-        detailed_description = UserString(m_hull->Description());
-        if (!m_hull->Effects().empty()) {
-            detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_hull->Effects()));
-        }
+        detailed_description = m_hull->Description();
     } else if (m_tech) {
         // Technologies
         name = UserString(m_tech->Name());

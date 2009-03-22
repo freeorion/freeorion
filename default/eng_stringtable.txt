@@ -82,6 +82,13 @@ New Fleet
 NOT_APPLICABLE
 N/A
 
+BOMBER
+Bomber
+
+INTERCEPTOR
+Interceptor
+
+
 ##########################
 # Status Update Messages #
 ##########################
@@ -3794,6 +3801,47 @@ Economic Sinkhole
 
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
+
+###################################
+# Hull/Part Description Templates #
+###################################
+
+HULL_DESC
+'''Starlane Speed: %1%
+Fuel Capacity: %2%
+Combat Speed: %3%'''
+
+PART_DESC_CAPACITY
+Capacity: %1%
+
+PART_DESC_STRENGTH
+Strength: %1%
+
+PART_DESC_DIRECT_FIRE_STATS
+'''Damage: %1%
+Rate of Fire: %2% shots/turn
+Range: %3%'''
+
+PART_DESC_LR_STATS
+'''Damage: %1%
+Rate of Fire: %2% missiles/turn
+Range: %3%
+Missile Speed: %4%
+Missile Health: %5%
+Missile Stealth: %6%
+Capacity: %7% missiles'''
+
+PART_DESC_FIGHTER_STATS
+'''Fighter Type: %1%
+Fighter Anti-Fighter Damage: %2%
+Fighter Anti-Ship Damage: %3%
+Fighter Launch Rate: %4% fighters/turn
+Fighter Range: %5%
+Fighter Speed: %6%
+Fighter Health: %7%
+Fighter Stealth: %8%
+Fighter Detection: %9%
+Capacity: %10% fighters'''
 
 ##############
 # Ship Parts #

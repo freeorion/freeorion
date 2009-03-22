@@ -2,24 +2,22 @@ Hull
     name = "SH_EMPTY"
     description = "SH_EMPTY_DESC"
     speed = 120
+    starlane_speed = 120
+    fuel = 3
     buildcost = 1
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 3
-
     graphic = ""
 
 Hull
     name = "SH_SMALL"
     description = "SH_SMALL_DESC"
     speed = 80
+    starlane_speed = 80
+    fuel = 3
     buildcost = 10
     buildtime = 4
     slots = [
@@ -31,17 +29,14 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 3
     graphic = ""
 
 Hull
     name = "SH_MEDIUM"
     description = "SH_MEDIUM_DESC"
     speed = 50
+    starlane_speed = 50
+    fuel = 5
     buildcost = 20
     buildtime = 5
     slots = [
@@ -55,17 +50,14 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 5
     graphic = ""
 
 Hull
     name = "SH_LARGE"
     description = "SH_LARGE_DESC"
     speed = 40
+    starlane_speed = 40
+    fuel = 3
     buildcost = 30
     buildtime = 6
     slots = [
@@ -81,17 +73,14 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 3
     graphic = ""
 
 Hull
     name = "SH_HUGE"
     description = "SH_HUGE_DESC"
     speed = 30
+    starlane_speed = 30
+    fuel = 1
     buildcost = 50
     buildtime = 8
     slots = [
@@ -110,9 +99,4 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
-    effectsgroups = 
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetMaxFuel Target.MaxFuel + 1
     graphic = ""

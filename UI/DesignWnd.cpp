@@ -81,7 +81,7 @@ PartControl::PartControl(const PartType* part) :
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),
                                                                                     UserString(m_part->Name()),
-                                                                                    UserString(m_part->Description()))));
+                                                                                    m_part->Description())));
     }
 }
 

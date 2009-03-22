@@ -17,6 +17,7 @@ rule<Scanner, BuildingTypeClosure::context_t>   building_type_p;
 rule<Scanner, SpecialClosure::context_t>        special_p;
 rule<Scanner, TechClosure::context_t>           tech_p;
 rule<Scanner, CategoryClosure::context_t>       category_p;
+rule<Scanner, PartStatsClosure::context_t>      part_stats_p;
 rule<Scanner, PartClosure::context_t>           part_p;
 rule<Scanner, HullClosure::context_t>           hull_p;
 
@@ -90,12 +91,24 @@ namespace {
     ParamLabel type_label("type");
     ParamLabel location_label("location");
     ParamLabel partclass_label("class");
-    ParamLabel power_label("power");
     ParamLabel speed_label("speed");
+    ParamLabel starlane_speed_label("starlane_speed");
     ParamLabel slots_label("slots");
     ParamLabel mountableslottypes_label("mountableslottypes");
     ParamLabel colour_label("colour");
     ParamLabel position_label("position");
+    ParamLabel damage_label("damage");
+    ParamLabel anti_ship_damage_label("antishipdamage");
+    ParamLabel anti_fighter_damage_label("antifighterdamage");
+    ParamLabel ROF_label("rof");
+    ParamLabel range_label("range");
+    ParamLabel stealth_label("stealth");
+    ParamLabel health_label("health");
+    ParamLabel fighter_type_label("fighter_type");
+    ParamLabel launch_rate_label("launch_rate");
+    ParamLabel detection_label("detection");
+    ParamLabel capacity_label("capacity");
+    ParamLabel fuel_label("fuel");
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -179,22 +192,61 @@ namespace {
             slot_type_p[push_back_(ship_slot_type_vec_p.this_, arg1)]
             | ('[' >> +(slot_type_p[push_back_(ship_slot_type_vec_p.this_, arg1)]) >> ']');
 
+        part_stats_p =
+            // FighterStats
+            (type_label >> combat_fighter_type_p[part_stats_p.fighter_type = arg1]
+             >> anti_ship_damage_label >> real_p[part_stats_p.anti_ship_damage = arg1]
+             >> anti_fighter_damage_label >> real_p[part_stats_p.anti_fighter_damage = arg1]
+             >> launch_rate_label >> real_p[part_stats_p.rate = arg1]
+             >> range_label >> real_p[part_stats_p.range = arg1]
+             >> speed_label >> real_p[part_stats_p.speed = arg1]
+             >> stealth_label >> real_p[part_stats_p.stealth = arg1]
+             >> health_label >> real_p[part_stats_p.health = arg1]
+             >> detection_label >> real_p[part_stats_p.detection = arg1]
+             >> capacity_label >> real_p[part_stats_p.capacity = arg1])
+            [part_stats_p.this_ =
+             construct_<FighterStats>(part_stats_p.fighter_type, part_stats_p.anti_ship_damage,
+                                      part_stats_p.anti_fighter_damage, part_stats_p.rate,
+                                      part_stats_p.range, part_stats_p.speed, part_stats_p.stealth,
+                                      part_stats_p.health, part_stats_p.detection, part_stats_p.capacity)]
+
+            // a single double stat
+            | (capacity_label >> real_p[part_stats_p.this_ = arg1])
+
+            // LRStats
+            | (damage_label >> real_p[part_stats_p.damage = arg1]
+               >> ROF_label >> real_p[part_stats_p.rate = arg1]
+               >> range_label >> real_p[part_stats_p.range = arg1]
+               >> speed_label >> real_p[part_stats_p.speed = arg1]
+               >> stealth_label >> real_p[part_stats_p.stealth = arg1]
+               >> health_label >> real_p[part_stats_p.health = arg1]
+               >> capacity_label >> real_p[part_stats_p.capacity = arg1])
+            [part_stats_p.this_ =
+             construct_<LRStats>(part_stats_p.damage, part_stats_p.rate, part_stats_p.range,
+                                 part_stats_p.speed, part_stats_p.stealth, part_stats_p.health,
+                                 part_stats_p.capacity)]
+
+            // DirectFireStats
+            | (damage_label >> real_p[part_stats_p.damage = arg1]
+               >> ROF_label >> real_p[part_stats_p.rate = arg1]
+               >> range_label >> real_p[part_stats_p.range = arg1])
+            [part_stats_p.this_ =
+             construct_<DirectFireStats>(part_stats_p.damage, part_stats_p.rate, part_stats_p.range)];
+
         part_p =
             (str_p("part")
              >> name_label >> name_p[part_p.name = arg1]
              >> description_label >> name_p[part_p.description = arg1]
              >> partclass_label >> part_class_p[part_p.part_class = arg1]
-             >> power_label >> real_p[part_p.power = arg1]
+             >> part_stats_p[part_p.stats = arg1]
              >> buildcost_label >> real_p[part_p.cost = arg1]
              >> buildtime_label >> int_p[part_p.build_time = arg1]
              >> mountableslottypes_label >> ship_slot_type_vec_p[part_p.mountable_slot_types = arg1]
              >> location_label >> condition_p[part_p.location = arg1]
-             >> !(effectsgroups_label >> effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[part_p.graphic = arg1])
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
-                                           part_p.power, part_p.cost, part_p.build_time,
+                                           part_p.stats, part_p.cost, part_p.build_time,
                                            part_p.mountable_slot_types, part_p.location,
-                                           part_p.effects_groups,
                                            part_p.graphic)];
 
         slot_p =
@@ -213,19 +265,19 @@ namespace {
              >> name_label >> name_p[hull_p.name = arg1]
              >> description_label >> name_p[hull_p.description = arg1]
              >> speed_label >> real_p[hull_p.speed = arg1]
+             >> starlane_speed_label >> real_p[hull_p.starlane_speed = arg1]
+             >> fuel_label >> real_p[hull_p.fuel = arg1]
              >> buildcost_label >> real_p[hull_p.cost = arg1]
              >> buildtime_label >> int_p[hull_p.build_time = arg1]
              >> !(slots_label >> slot_vec_p[hull_p.slots = arg1])
              >> location_label >> condition_p[hull_p.location = arg1]
-             >> !(effectsgroups_label >> effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[hull_p.graphic = arg1])
-            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.speed, hull_p.cost,
-                                           hull_p.build_time, hull_p.slots,
-                                           hull_p.location,
-                                           hull_p.effects_groups,
+            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.speed,
+                                           hull_p.starlane_speed, hull_p.fuel, hull_p.cost,
+                                           hull_p.build_time, hull_p.slots, hull_p.location,
                                            hull_p.graphic)];
 
-             return true;
+        return true;
     }
-    bool dumy = Init();
+    bool dummy = Init();
 }

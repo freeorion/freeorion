@@ -40,7 +40,177 @@ namespace {
     };
 
     const phoenix::function<store_hull_type_impl> store_hull_type_;
+
+    std::string PartTypeStatsString(const PartTypeStats& stats)
+    {
+        if (boost::get<double>(&stats))
+            return "capacity stat";
+        else if (boost::get<DirectFireStats>(&stats))
+            return "direct-fire weapon stats";
+        else if (boost::get<LRStats>(&stats))
+            return "long-range weapon stats";
+        else if (boost::get<FighterStats>(&stats))
+            return "fighter bay stats";
+        return "";
+    }
+
+    boost::shared_ptr<const Effect::EffectsGroup>
+    IncreaseMax(MeterType meter_type, const std::string& meter_name, double increase)
+    {
+        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef std::vector<Effect::EffectBase*> Effects;
+        Condition::Self* scope = new Condition::Self;
+        Condition::Self* activation = new Condition::Self;
+        ValueRef::ValueRefBase<double>* vr =
+            new ValueRef::Operation<double>(
+                ValueRef::PLUS,
+                new ValueRef::Variable<double>(false, meter_name),
+                new ValueRef::Constant<double>(increase)
+            );
+        return EffectsGroupPtr(
+            new Effect::EffectsGroup(
+                scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr, true))));
+    }
+
+    struct DescriptionVisitor :
+        public boost::static_visitor<>
+    {
+        DescriptionVisitor(ShipPartClass part_class, std::string& description) :
+            m_class(part_class),
+            m_description(description)
+            {}
+        void operator()(const double& d) const
+            {
+                std::string desc_string =
+                    m_class == PC_FUEL || m_class == PC_COLONY ?
+                    "PART_DESC_CAPACITY" : "PART_DESC_STRENGTH";
+                m_description +=
+                    str(FlexibleFormat(UserString(desc_string)) % d);
+            }
+        void operator()(const DirectFireStats& stats) const
+            {
+                m_description +=
+                    str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
+                        % stats.m_damage
+                        % stats.m_ROF
+                        % stats.m_range);
+            }
+        void operator()(const LRStats& stats) const
+            {
+                m_description +=
+                    str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
+                        % stats.m_damage
+                        % stats.m_ROF
+                        % stats.m_range
+                        % stats.m_speed
+                        % stats.m_health
+                        % stats.m_stealth
+                        % stats.m_capacity);
+            }
+        void operator()(const FighterStats& stats) const
+            {
+                m_description +=
+                    str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
+                        % UserString(stats.m_type == BOMBER ? "BOMBER" : "INTERCEPTOR")
+                        % stats.m_anti_fighter_damage
+                        % stats.m_anti_ship_damage
+                        % stats.m_launch_rate
+                        % stats.m_range
+                        % stats.m_speed
+                        % stats.m_stealth
+                        % stats.m_health
+                        % stats.m_detection
+                        % stats.m_capacity);
+            }
+        const ShipPartClass m_class;
+        std::string& m_description;
+    };
 }
+
+////////////////////////////////////////////////
+// stat variant types                         //
+////////////////////////////////////////////////
+DirectFireStats::DirectFireStats() :
+    m_damage(),
+    m_ROF(),
+    m_range()
+{}
+
+DirectFireStats::DirectFireStats(double damage,
+                                 double ROF,
+                                 double range) :
+    m_damage(damage),
+    m_ROF(ROF),
+    m_range(range)
+{}
+
+LRStats::LRStats() :
+    m_damage(),
+    m_ROF(),
+    m_range(),
+    m_speed(),
+    m_stealth(),
+    m_health()
+{}
+
+LRStats::LRStats(double damage,
+                 double ROF,
+                 double range,
+                 double speed,
+                 double stealth,
+                 double health,
+                 double capacity) :
+    m_damage(damage),
+    m_ROF(ROF),
+    m_range(range),
+    m_speed(speed),
+    m_stealth(stealth),
+    m_health(health),
+    m_capacity(capacity)
+{}
+
+FighterStats::FighterStats() :
+    m_type(),
+    m_anti_fighter_damage(),
+    m_anti_ship_damage(),
+    m_launch_rate(),
+    m_range(),
+    m_speed(),
+    m_stealth(),
+    m_health(),
+    m_detection(),
+    m_capacity()
+{}
+
+FighterStats::FighterStats(CombatFighterType type,
+                           double anti_fighter_damage,
+                           double anti_ship_damage,
+                           double launch_rate,
+                           double range,
+                           double speed,
+                           double stealth,
+                           double health,
+                           double detection,
+                           double capacity) :
+    m_type(type),
+    m_anti_fighter_damage(anti_fighter_damage),
+    m_anti_ship_damage(anti_ship_damage),
+    m_launch_rate(launch_rate),
+    m_range(range),
+    m_speed(speed),
+    m_stealth(stealth),
+    m_health(health),
+    m_detection(detection),
+    m_capacity(capacity)
+{
+    if (type == INTERCEPTOR && m_anti_fighter_damage < m_anti_ship_damage)
+        throw std::runtime_error("Attempted to create an INTERCEPTOR FighterStats with "
+                                 "weaker anti-fighter stat than anti-ship stat.");
+    if (type == BOMBER && m_anti_ship_damage < m_anti_fighter_damage)
+        throw std::runtime_error("Attempted to create a BOMBER FighterStats with weaker "
+                                 "anti-ship stat than anti-fighter stat.");
+}
+
 
 ////////////////////////////////////////////////
 // Free Functions                             //
@@ -130,31 +300,77 @@ PartType::PartType() :
     m_name("invalid part type"),
     m_description("indescribable"),
     m_class(INVALID_SHIP_PART_CLASS),
-    m_power(1.0),
+    m_stats(1.0),
     m_cost(1.0),
     m_build_time(1),
     m_mountable_slot_types(),
     m_location(0),
-    m_effects(0),
     m_graphic("")
 {}
 
-PartType::PartType(const std::string& name, const std::string& description, ShipPartClass part_class,
-                   double power, double cost, int build_time,
-                   std::vector<ShipSlotType> mountable_slot_types, const Condition::ConditionBase* location,
-                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                   const std::string& graphic) :
+PartType::PartType(
+    const std::string& name, const std::string& description,
+    ShipPartClass part_class, const PartTypeStats& stats, double cost, int build_time,
+    std::vector<ShipSlotType> mountable_slot_types,
+    const Condition::ConditionBase* location,
+    const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_class(part_class),
-    m_power(power),
+    m_stats(stats),
     m_cost(cost),
     m_build_time(build_time),
     m_mountable_slot_types(mountable_slot_types),
     m_location(location),
-    m_effects(effects),
     m_graphic(graphic)
-{}
+{
+    switch (m_class) {
+    case PC_SHORT_RANGE:
+    case PC_POINT_DEFENSE:
+        if (!boost::get<DirectFireStats>(&m_stats)) {
+            std::string type_name = m_class == PC_SHORT_RANGE?
+                "PC_SHORT_RANGE" : "PC_POINT_DEFENSE";
+            throw std::runtime_error("PartType::PartType() : Wrong kind of stats specified "
+                                     "for " + type_name + " part \"" + m_name + "\" -- "
+                                     "was " + PartTypeStatsString(m_stats) + "; should have "
+                                     "been " + PartTypeStatsString(DirectFireStats()));
+        }
+        break;
+    case PC_MISSILES:
+        if (!boost::get<LRStats>(&m_stats)) {
+            throw std::runtime_error("PartType::PartType() : Wrong kind of stats specified "
+                                     "for PC_MISSILES part \"" + m_name + "\" -- "
+                                     "was " + PartTypeStatsString(m_stats) + "; should have "
+                                     "been " + PartTypeStatsString(LRStats()));
+        }
+        break;
+    case PC_FIGHTERS:
+        if (!boost::get<FighterStats>(&m_stats)) {
+            throw std::runtime_error("PartType::PartType() : Wrong kind of stats specified "
+                                     "for PC_FIGHTERS part \"" + m_name + "\" -- "
+                                     "was " + PartTypeStatsString(m_stats) + "; should have "
+                                     "been " + PartTypeStatsString(FighterStats()));
+        }
+        break;
+    default:
+        if (!boost::get<double>(&m_stats)) {
+            throw std::runtime_error("PartType::PartType() : Wrong kind of stats specified "
+                                     "for generic part \"" + m_name + "\" -- "
+                                     "was " + PartTypeStatsString(m_stats) + "; should have "
+                                     "been " + PartTypeStatsString(double()));
+        }
+        break;
+    }
+
+    if (m_class == PC_SHIELD)
+        m_effects.push_back(IncreaseMax(METER_SHIELD, "MaxShield", boost::get<double>(m_stats)));
+    else if (m_class == PC_DETECTION)
+        m_effects.push_back(IncreaseMax(METER_DETECTION, "MaxDetection", boost::get<double>(m_stats)));
+    else if (m_class == PC_STEALTH)
+        m_effects.push_back(IncreaseMax(METER_STEALTH, "MaxStealth", boost::get<double>(m_stats)));
+    else if (m_class == PC_FUEL)
+        m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", boost::get<double>(m_stats)));
+}
 
 PartType::~PartType()
 { delete m_location; }
@@ -163,16 +379,19 @@ const std::string& PartType::Name() const {
     return m_name;
 }
 
-const std::string& PartType::Description() const {
-    return m_description;
+std::string PartType::Description() const
+{
+    std::string retval = UserString(m_description) + "\n\n";
+    boost::apply_visitor(DescriptionVisitor(m_class, retval), m_stats);
+    return retval;
 }
 
 ShipPartClass PartType::Class() const {
     return m_class;
 }
 
-double PartType::Power() const {
-    return m_power;
+const PartTypeStats& PartType::Stats() const {
+    return m_stats;
 }
 
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
@@ -208,33 +427,42 @@ const Condition::ConditionBase* PartType::Location() const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
+
+// HullType::Slot
+HullType::Slot::Slot() :
+    type(ShipSlotType(-1)), x(0.5), y(0.5) {}
+HullType::Slot::Slot(ShipSlotType slot_type, double x_, double y_) :
+    type(slot_type), x(x_), y(y_) {}
+
+// HullType
 HullType::HullType() :
     m_name("generic hull type"),
     m_description("indescribable"),
     m_speed(1.0),
+    m_starlane_speed(1.0),
+    m_fuel(1.0),
     m_cost(1.0),
     m_build_time(1),
     m_slots(),
     m_location(0),
-    m_effects(0),
     m_graphic("")
 {}
 
-HullType::HullType(const std::string& name, const std::string& description, double speed, double cost,
-                   int build_time, const std::vector<Slot>& slots,
-                   const Condition::ConditionBase* location,
-                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+HullType::HullType(const std::string& name, const std::string& description, double speed,
+                   double starlane_speed, double fuel, double cost, int build_time,
+                   const std::vector<Slot>& slots, const Condition::ConditionBase* location,
                    const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_speed(speed),
+    m_starlane_speed(starlane_speed),
+    m_fuel(fuel),
     m_cost(cost),
     m_build_time(build_time),
     m_slots(slots),
     m_location(location),
-    m_effects(effects),
     m_graphic(graphic)
-{}
+{ m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", m_fuel)); }
 
 HullType::~HullType()
 { delete m_location; }
@@ -243,12 +471,27 @@ const std::string& HullType::Name() const {
     return m_name;
 }
 
-const std::string& HullType::Description() const {
-    return m_description;
+std::string HullType::Description() const
+{
+    std::string retval = UserString(m_description) + "\n\n";
+    retval +=
+        str(FlexibleFormat(UserString("HULL_DESC"))
+            % m_starlane_speed
+            % m_fuel
+            % m_speed);
+    return retval;
 }
 
 double HullType::Speed() const {
     return m_speed;
+}
+
+double HullType::StarlaneSpeed() const {
+    return m_starlane_speed;
+}
+
+double HullType::Fuel() const {
+    return m_fuel;
 }
 
 double HullType::Cost() const {
@@ -415,10 +658,10 @@ int ShipDesign::DesignedOnTurn() const {
 }
 
 double ShipDesign::StarlaneSpeed() const {
-    return GetHull()->Speed();
+    return GetHull()->StarlaneSpeed();
 }
 
-double ShipDesign::BattleSpeed() const {
+double ShipDesign::Speed() const {
     return GetHull()->Speed();
 }
 
@@ -546,26 +789,26 @@ double ShipDesign::Defense() const {
     for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = part_manager.GetPartType(*it);
         if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
-            total_defense += part->Power();
+            total_defense += boost::get<double>(part->Stats());
     }
     return total_defense;
 }
 
-double ShipDesign::Speed() const {
-    return GetHull()->Speed();
-}
-
 double ShipDesign::Attack() const {
-    // accumulate attack power from all weapon parts in design
+    // accumulate attack stat from all weapon parts in design
     const PartTypeManager& manager = GetPartTypeManager();
 
     double total_attack = 0.0;
     std::vector<std::string> all_parts = Parts();
     for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
         const PartType* part = manager.GetPartType(*it);
-        if (part && (part->Class() == PC_SHORT_RANGE || part->Class() == PC_MISSILES || 
-                     part->Class() == PC_FIGHTERS || part->Class() == PC_POINT_DEFENSE)) {
-            total_attack += part->Power();
+        if (part) {
+            if (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE)
+                total_attack += boost::get<DirectFireStats>(part->Stats()).m_damage;
+            else if (part->Class() == PC_MISSILES)
+                total_attack += boost::get<LRStats>(part->Stats()).m_damage;
+            else if (part->Class() == PC_FIGHTERS)
+                total_attack += boost::get<FighterStats>(part->Stats()).m_anti_ship_damage;
         }
     }
     return total_attack;

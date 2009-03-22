@@ -469,6 +469,26 @@ namespace GG {
 GG_ENUM_STREAM_IN(ResourceType)
 GG_ENUM_STREAM_OUT(ResourceType)
 
+/** Types of fighters. */
+enum CombatFighterType {
+    /** A fighter that is better at attacking other fighters than at
+        attacking ships. */
+    INTERCEPTOR,
+
+    /** A fighter that is better at attacking ships than at attacking
+        other fighters. */
+    BOMBER
+};
+
+namespace GG {
+    GG_ENUM_MAP_BEGIN(CombatFighterType)
+    GG_ENUM_MAP_INSERT(INTERCEPTOR)
+    GG_ENUM_MAP_INSERT(BOMBER)
+    GG_ENUM_MAP_END
+}
+GG_ENUM_STREAM_IN(CombatFighterType)
+GG_ENUM_STREAM_OUT(CombatFighterType)
+
 /** Types "classes" of ship parts */
 enum ShipPartClass {
     INVALID_SHIP_PART_CLASS = -1,
