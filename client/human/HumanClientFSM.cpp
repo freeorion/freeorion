@@ -500,6 +500,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().m_ui->ShowMap();
     Client().m_ui->InitTurn(Client().CurrentTurn());
     Client().m_ui->GetMapWnd()->ReselectLastSystem();
+    Client().m_ui->GetMapWnd()->ReselectLastFleet();
 }
 
 PlayingTurn::~PlayingTurn()

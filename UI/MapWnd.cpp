@@ -110,7 +110,6 @@ namespace {
         return std::make_pair(std::min(one, two), std::max(one, two));
     }
 
-
     static bool checked_gl_version_already = false;
     void CheckGLVersion() {
         // only execute once
@@ -134,10 +133,6 @@ namespace {
         if (version_number < 2.0)
             Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion requires OpenGL version 2.0 or greater, so you may have problems on this system.";
     }
-
-
-    // disambiguate overloaded function with a function pointer
-    void (MapWnd::*SetFleetMovementLineFunc)(const Fleet*) = &MapWnd::SetFleetMovementLine;
 
     /* loads background starfield textures int \a background_textures  */
     void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
@@ -302,7 +297,6 @@ void MapWndPopup::Close()
 MapWnd::MovementLineData::MovementLineData() : 
     m_colour(GG::CLR_ZERO), 
     m_path(),
-    m_button(0),
     m_x(UniverseObject::INVALID_POSITION),
     m_y(UniverseObject::INVALID_POSITION)
 {}
@@ -310,18 +304,9 @@ MapWnd::MovementLineData::MovementLineData() :
 MapWnd::MovementLineData::MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
     m_colour(colour),
     m_path(path),
-    m_button(0),
     m_x(x),
     m_y(y)
 {}
-
-MapWnd::MovementLineData::MovementLineData(const FleetButton* button, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
-    m_colour(colour),
-    m_path(path),
-    m_button(button),
-    m_x(-100000.0),
-    m_y(-100000.0)
-{ assert(button); }
 
 GG::Clr MapWnd::MovementLineData::Colour() const
 { return m_colour; }
@@ -331,13 +316,7 @@ const std::list<MovePathNode>& MapWnd::MovementLineData::Path() const
 
 std::pair<double, double> MapWnd::MovementLineData::Start() const
 {
-    if (m_button) {
-        GG::Pt sz = m_button->Size();
-        GG::Pt fleet_screen_centre = m_button->UpperLeft() + GG::Pt(sz.x / 2, sz.y / 2);
-        return ClientUI::GetClientUI()->GetMapWnd()->UniversePositionFromScreenCoords(fleet_screen_centre);
-    } else {
-        return std::make_pair(m_x, m_y);
-    }
+    return std::make_pair(m_x, m_y);
 }
 
 
@@ -405,7 +384,8 @@ MapWnd::MapWnd() :
             GG::CLICKABLE | GG::DRAGABLE),
     m_backgrounds(),
     m_bg_scroll_rate(),
-    m_previously_selected_system(UniverseObject::INVALID_OBJECT_ID),
+    m_selected_system(UniverseObject::INVALID_OBJECT_ID),
+    m_selected_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_zoom_steps_in(0.0),
     m_side_panel(NULL),
     m_system_icons(),
@@ -414,10 +394,12 @@ MapWnd::MapWnd() :
     m_production_wnd(NULL),
     m_design_wnd(NULL),
     m_starlane_endpoints(),
+    m_stationary_fleet_buttons(),
+    m_departing_fleet_buttons(),
     m_moving_fleet_buttons(),
-    m_system_fleet_buttons(),
+    m_fleet_buttons(),
     m_fleet_state_change_signals(),
-    m_system_fleet_state_change_signals(),
+    m_system_fleet_insert_remove_signals(),
     m_keyboard_accelerator_signals(),
     m_fleet_lines(),
     m_fleet_eta_map_indicators(),
@@ -748,6 +730,7 @@ void MapWnd::InitTurn(int turn_number)
     SetAccelerators();
 
     Universe& universe = GetUniverse();
+    const Universe& const_universe = universe;
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
@@ -793,23 +776,15 @@ void MapWnd::InitTurn(int turn_number)
     InitTurnRendering();
 
 
-
-    // disconnect old moving fleet statechangedsignal connections
-    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
-        it->second.disconnect();
-    m_fleet_state_change_signals.clear();
-
-    // connect fleet change signals to update moving fleet movement lines, so that ordering
-    // moving fleets to move updates their displayed path
-    Universe::ObjectVec fleets = universe.FindObjects(MovingFleetVisitor());
-    for (Universe::ObjectVec::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        const Fleet* moving_fleet = universe_object_cast<const Fleet*>(*it);
-        if (!moving_fleet) {
-            Logger().errorStream() << "MapWnd::InitTurn couldn't cast a (supposed) moving fleet pointer to a Fleet*";
-            continue;
-        }
-        m_fleet_state_change_signals[moving_fleet->ID()] = GG::Connect(moving_fleet->StateChangedSignal, boost::bind(SetFleetMovementLineFunc, this, moving_fleet));
+    // connect system fleet add and remove signals
+    std::vector<const System*> systems = const_universe.FindObjects<System>();
+    for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
+        const System *system = *it;
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal, &MapWnd::FleetAddedOrRemoved, this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal, &MapWnd::FleetAddedOrRemoved, this));
     }
+
+    RefreshFleetSignals();
 
 
     MoveChildUp(m_side_panel);
@@ -929,7 +904,6 @@ void MapWnd::InitTurnRendering()
         GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
         GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
         GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
-        GG::Connect(icon->FleetButtonClickedSignal, &MapWnd::FleetButtonLeftClicked,    this);
     }
 
 
@@ -1494,19 +1468,24 @@ void MapWnd::CenterOnObject(const UniverseObject* obj)
 
 void MapWnd::ReselectLastSystem()
 {
-    SelectSystem(m_previously_selected_system);
+    SelectSystem(m_selected_system);
 }
 
 void MapWnd::SelectSystem(int system_id)
 {
+    // consistency check
+    if (m_selected_system != m_side_panel->SystemID())
+        Logger().errorStream() << "MapWnd already selected system inconsistent with MapWnd's SidePanel's (selected) system id)";
+
     // remove selection indicator from previously selected system
-    int prev_system_id = m_side_panel->SystemID();
-    if (prev_system_id != UniverseObject::INVALID_OBJECT_ID)
-        m_system_icons[prev_system_id]->SetSelected(false);
+    if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
+        m_system_icons[m_selected_system]->SetSelected(false);
 
     // place indicator on newly selected system
     if (system_id != UniverseObject::INVALID_OBJECT_ID)
         m_system_icons[system_id]->SetSelected(true);
+
+    m_selected_system = system_id;   // bookkeeping
 
     // show selected system in sidepanel(s)
     if (m_in_production_view_mode) {
@@ -1535,6 +1514,11 @@ void MapWnd::SelectSystem(int system_id)
     }
 }
 
+void MapWnd::ReselectLastFleet()
+{
+    SelectFleet(m_selected_fleet);
+}
+
 void MapWnd::SelectFleet(int fleet_id)
 {
     SelectFleet(GetUniverse().Object<Fleet>(fleet_id));
@@ -1542,28 +1526,46 @@ void MapWnd::SelectFleet(int fleet_id)
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
-    if (!fleet) return;
-    if (System* system = fleet->GetSystem()) {
-        std::map<int, SystemIcon*>::iterator it = m_system_icons.find(system->ID());
-        if (it != m_system_icons.end())
-            it->second->ClickFleetButton(fleet);
-    } else {
-        for (unsigned int i = 0; i < m_moving_fleet_buttons.size(); ++i) {
-            if (std::find(m_moving_fleet_buttons[i]->Fleets().begin(), m_moving_fleet_buttons[i]->Fleets().end(), fleet) != m_moving_fleet_buttons[i]->Fleets().end()) {
-                m_moving_fleet_buttons[i]->LClick(GG::Pt(), GG::MOD_KEY_NONE);
-                break;
-            }
+    // abort early if don't need to do anything (the passed fleet is already selected)
+    if ((!fleet && m_selected_fleet == UniverseObject::INVALID_OBJECT_ID) ||
+        (fleet && fleet->ID() == m_selected_fleet))
+    {
+        return;
+    }
+
+
+    // remove selection indicator from previously selected fleet
+    if (const Fleet* old_selected_fleet = GetUniverse().Object<Fleet>(m_selected_fleet)) {
+        std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.find(old_selected_fleet);
+        if (it != m_fleet_buttons.end()) {
+            FleetButton* button = it->second;
+            button->SetSelected(false);
         }
     }
+    m_selected_fleet = NULL;
+
+
+    // put indicator on fleet button for selected fleet
+    System* new_system = fleet->GetSystem();  // may be NULL
+
+
+    // get button for fleet to be selected
+    std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
+    if (button_it != m_fleet_buttons.end()) {
+        FleetButton* button = button_it->second;
+        button->SetSelected(true);
+    }
+
+
+    m_selected_fleet = fleet->ID();   // bookkeeping
 }
 
 void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
 {
     assert(fleet_button);
-    for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it) {
-        Fleet* fleet = *it;
-        m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
-    }
+    // each fleet represented by button could have different move path
+    for (std::vector<Fleet*>::const_iterator it = fleet_button->Fleets().begin(); it != fleet_button->Fleets().end(); ++it)
+        SetFleetMovementLine(*it);
 }
 
 void MapWnd::SetFleetMovementLine(const Fleet* fleet)
@@ -1572,77 +1574,35 @@ void MapWnd::SetFleetMovementLine(const Fleet* fleet)
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed a null fleet pointer";
         return;
     }
-
-    if (const System* system = fleet->GetSystem()) {
-        // if fleet is in a system, draw movement line from fleet button near system icon.
-
-        // get system icon
-        std::map<int, SystemIcon*>::const_iterator icon_it = m_system_icons.find(system->ID());
-        if (icon_it != m_system_icons.end()) {
-            const SystemIcon* icon = icon_it->second;
-            // get fleet button
-            const FleetButton* fleet_button = icon->GetFleetButton(fleet);
-
-            if (!fleet_button) {
-                Logger().errorStream() << "MapWnd::SetFleetMovement couldn't get a fleet button for a fleet in a system";
-                return;
-            }
-
-            m_fleet_lines[fleet] = MovementLineData(fleet_button, fleet->MovePath());
-        }
-    } else {
-        // fleet is not in a system, so fleet button is located at fleet's actual location, so can just
-        // create movement line starting at fleet's actual universe position
-        m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
-    }
+    m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
 }
 
 void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route)
 {
+    // ensure passed fleet exists
     if (!fleet)
         return;
 
+    // if route is empty, no projected line to show
     if (travel_route.empty()) {
         RemoveProjectedFleetMovementLine(fleet);
         return;
     }
 
+    // get move path to show.  if there isn't one, show nothing
     std::list<MovePathNode> path = fleet->MovePath(travel_route);
-
     if (path.empty()) {
         // no route to display
         RemoveProjectedFleetMovementLine(fleet);
         return;
     }
 
-    GG::Clr line_colour = Empires().Lookup(*fleet->Owners().begin())->Color();
-
-    // get starting location for fleet line
-    std::pair<double, double> universe_position;
-
-    // check if this MapWnd already has MovementLineData for this fleet
-    std::map<const Fleet*, MovementLineData>::iterator it = m_fleet_lines.find(fleet);
-    if (it != m_fleet_lines.end()) {
-        // there is a fleet line already.  Its x and y are useful for the projected line, so it can be copied and tweaked a bit
-        std::pair<double, double> start = it->second.Start();
-        m_projected_fleet_lines[fleet] = MovementLineData(start.first, start.second, path, line_colour);
-    } else {
-        // there is no preexisting fleet line.  need to make one from scratch
-
-        // -> need fleet position on screen
-
-        // attempt to get system icon
-        std::map<int, SystemIcon*>::const_iterator it = m_system_icons.find(fleet->SystemID());
-        if (it != m_system_icons.end()) {
-            // get fleet button
-            const FleetButton* fleet_button = it->second->GetFleetButton(fleet);
-            assert(fleet_button);
-            m_projected_fleet_lines[fleet] = MovementLineData(fleet_button, path, line_colour);
-        } else {
-            // couldn't get a fleet button, so instead use fleet's own position
-            m_projected_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
-        }
-    }
+    // get colour and create line
+    GG::Clr line_colour = GG::CLR_WHITE;
+    const std::set<int>& owners = fleet->Owners();
+    if (owners.size() == 1)
+        line_colour = Empires().Lookup(*owners.begin())->Color();
+    m_projected_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route)
@@ -1716,10 +1676,60 @@ void MapWnd::DoFleetButtonsLayout()
 {
     const Universe& universe = GetUniverse();
 
-    // reposition unattached (to system icons) fleet icons
-    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
+    const int SYSTEM_ICON_SIZE = SystemIconSize();
 
-        // get fleet for button
+    // position departing fleet buttons
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+        // calculate system icon position
+        const System* system = it->first;
+        GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
+
+        // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
+        std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        if (sys_it == m_system_icons.end()) {
+            Logger().errorStream() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
+            continue;
+        }
+        const SystemIcon* system_icon = sys_it->second;
+
+        // place all buttons
+        int n = 1;
+        std::set<FleetButton*>& buttons = it->second;
+        for (std::set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
+            GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, true);
+            ++n;
+            (*button_it)->MoveTo(ul + icon_ul);
+        }
+    }
+
+    // position stationary fleet buttons
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+        // calculate system icon position
+        const System* system = it->first;
+        GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
+
+        // get system icon itself.  can't use the system icon's UpperLeft to position fleet button due to weirdness that results that I don't want to figure out
+        std::map<int, SystemIcon*>::const_iterator sys_it = m_system_icons.find(system->ID());
+        if (sys_it == m_system_icons.end()) {
+            Logger().errorStream() << "couldn't find system icon for fleet button in DoFleetButtonsLayout";
+            continue;
+        }
+        const SystemIcon* system_icon = sys_it->second;
+
+        // place all buttons
+        int n = 1;
+        std::set<FleetButton*>& buttons = it->second;
+        for (std::set<FleetButton*>::iterator button_it = buttons.begin(); button_it != buttons.end(); ++button_it) {
+            GG::Pt ul = system_icon->NthFleetButtonUpperLeft(n, false);
+            ++n;
+            (*button_it)->MoveTo(ul + icon_ul);
+        }
+    }
+
+    // position moving fleet buttons
+    for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
         FleetButton* fb = *it;
 
         const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
@@ -1777,49 +1787,248 @@ void MapWnd::DoFleetButtonsLayout()
 
 void MapWnd::RefreshFleetButtons()
 {
-    // determine fleets that need buttons, sorted by position, so that all fleets at the same location can
-    // be grouped together to be passed to the button
-    Universe::ObjectVec fleets = GetUniverse().FindObjects(MovingFleetVisitor());
-    typedef std::multimap<std::pair<double, double>, UniverseObject*> SortedFleetMap;
-    SortedFleetMap position_sorted_fleets;
-    for (unsigned int i = 0; i < fleets.size(); ++i) {
-        position_sorted_fleets.insert(std::make_pair(std::make_pair(fleets[i]->X(), fleets[i]->Y()), fleets[i]));
+    // determine fleets that need buttons so that fleets at the same location can
+    // be grouped by empire owner and buttons created
+    const Universe& universe = GetUniverse();
+    const EmpireManager& empires = Empires();
+
+    // for each system, each empire's fleets that are ordered to move, but still at the system: "departing fleets"
+    std::map<const System*, std::map<int, std::vector<const Fleet*> > > departing_fleets;
+    Universe::ConstObjectVec departing_fleet_objects = universe.FindObjects(OrderedMovingFleetVisitor());
+    for (Universe::ConstObjectVec::iterator it = departing_fleet_objects.begin(); it != departing_fleet_objects.end(); ++it) {
+        const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
+
+        // sanity checks
+        if (!fleet) {
+            Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
+            continue;
+        }
+        const System* system = fleet->GetSystem();
+        if (!system) {
+            Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
+            continue;
+        }
+
+        // get owner of fleet
+        int empire_id = -1;
+        const std::set<int>& owners = fleet->Owners();
+        if (owners.size() == 1)
+            empire_id = *(owners.begin());
+
+        // store in map
+        departing_fleets[system][empire_id].push_back(fleet);
     }
+    departing_fleet_objects.clear();
+
+
+    // for each system, each empire's fleets in a system, not ordered to move: "stationary fleets"
+    std::map<const System*, std::map<int, std::vector<const Fleet*> > > stationary_fleets;
+    Universe::ConstObjectVec stationary_fleet_objects = universe.FindObjects(StationaryFleetVisitor());
+    for (Universe::ConstObjectVec::iterator it = stationary_fleet_objects.begin(); it != stationary_fleet_objects.end(); ++it) {
+        const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
+
+        // sanity checks
+        if (!fleet) {
+            Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
+            continue;
+        }
+        const System* system = fleet->GetSystem();
+        if (!system) {
+            Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
+            continue;
+        }
+
+        // get owner of fleet
+        int empire_id = -1;
+        const std::set<int>& owners = fleet->Owners();
+        if (owners.size() == 1)
+            empire_id = *(owners.begin());
+
+        // store in map
+        stationary_fleets[system][empire_id].push_back(fleet);
+    }
+    stationary_fleet_objects.clear();
+
+
+    // for each universe location, map from empire id to fleets moving along starlanes: "moving fleets"
+    std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > > moving_fleets;
+
+    Universe::ConstObjectVec moving_fleet_objects = universe.FindObjects(MovingFleetVisitor());
+    for (Universe::ConstObjectVec::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
+        const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
+
+        // sanity checks
+        if (!fleet) {
+            Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
+            continue;
+        }
+        if (fleet->GetSystem()) {
+            Logger().errorStream() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
+            continue;
+        }
+
+        // get owner of fleet
+        int empire_id = -1;
+        const std::set<int>& owners = fleet->Owners();
+        if (owners.size() == 1)
+            empire_id = *(owners.begin());
+
+        // store in map
+        moving_fleets[std::make_pair(fleet->X(), fleet->Y())][empire_id].push_back(fleet);
+    }
+    moving_fleet_objects.clear();
+
 
 
     // clear old fleet buttons
-    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
+    m_fleet_buttons.clear();            // duplicates pointers in following containers
+
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_stationary_fleet_buttons.clear();
+
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it)
+        for (std::set<FleetButton*>::iterator set_it = it->second.begin(); set_it != it->second.end(); ++set_it)
+            delete *set_it;
+    m_departing_fleet_buttons.clear();
+
+    for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
         delete *it;
     m_moving_fleet_buttons.clear();
 
 
-
-    // create new fleet buttons for fleets at each unique location
+    // create new fleet buttons for fleets...
     const FleetButton::SizeType FLEETBUTTON_SIZE = FleetButtonSizeType();
-    SortedFleetMap::iterator it = position_sorted_fleets.begin();
-    SortedFleetMap::iterator end_it = position_sorted_fleets.end();
-    while (it != end_it) {
-        // get end of range of fleets at this location
-        SortedFleetMap::iterator local_end_it = position_sorted_fleets.upper_bound(it->first);
 
-        // put into a vector to be passed to the fleetbutton
-        std::vector<int> fleet_ids;
-        for (; it != local_end_it; ++it)
-            fleet_ids.push_back(it->second->ID());
 
-        // create new fleetbutton for this cluster of fleets
-        FleetButton* fb = new FleetButton(fleet_ids, FLEETBUTTON_SIZE);
-        m_moving_fleet_buttons.push_back(fb);
-        AttachChild(fb);
-        GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+    // departing fleets
+    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator departing_fleets_it = departing_fleets.begin(); departing_fleets_it != departing_fleets.end(); ++departing_fleets_it) {
+        const System* system = departing_fleets_it->first;
+        const std::map<int, std::vector<const Fleet*> >& empires_map = departing_fleets_it->second;
+
+        // create button for each empire's fleets
+        for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
+            const Empire* empire = empires.Lookup(empire_it->first);
+            const std::vector<const Fleet*> fleets = empire_it->second;
+            if (!empire || fleets.empty())
+                continue;
+
+            // buttons need fleet IDs
+            std::vector<int> fleet_IDs;
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                fleet_IDs.push_back((*fleet_it)->ID());
+
+            // create new fleetbutton for this cluster of fleets
+            FleetButton* fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
+
+            // store
+            m_departing_fleet_buttons[system].insert(fb);
+
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                m_fleet_buttons[*fleet_it] = fb;
+
+            AttachChild(fb);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+        }
     }
+
+
+    // stationary fleets
+    for (std::map<const System*, std::map<int, std::vector<const Fleet*> > >::iterator stationary_fleets_it = stationary_fleets.begin(); stationary_fleets_it != stationary_fleets.end(); ++stationary_fleets_it) {
+        const System* system = stationary_fleets_it->first;
+        const std::map<int, std::vector<const Fleet*> >& empires_map = stationary_fleets_it->second;
+
+        // create button for each empire's fleets
+        for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
+            const Empire* empire = empires.Lookup(empire_it->first);
+            const std::vector<const Fleet*> fleets = empire_it->second;
+            if (!empire || fleets.empty())
+                continue;
+
+            // buttons need fleet IDs
+            std::vector<int> fleet_IDs;
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                fleet_IDs.push_back((*fleet_it)->ID());
+
+            // create new fleetbutton for this cluster of fleets
+            FleetButton* fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
+
+            // store
+            m_stationary_fleet_buttons[system].insert(fb);
+
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                m_fleet_buttons[*fleet_it] = fb;
+
+            AttachChild(fb);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+        }
+    }
+
+
+    // moving fleets
+    for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator moving_fleets_it = moving_fleets.begin(); moving_fleets_it != moving_fleets.end(); ++moving_fleets_it) {
+        const std::map<int, std::vector<const Fleet*> >& empires_map = moving_fleets_it->second;
+
+        // create button for each empire's fleets
+        for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
+            const Empire* empire = empires.Lookup(empire_it->first);
+            const std::vector<const Fleet*>& fleets = empire_it->second;
+            if (!empire || fleets.empty())
+                continue;
+
+            // buttons need fleet IDs
+            std::vector<int> fleet_IDs;
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                fleet_IDs.push_back((*fleet_it)->ID());
+
+            // create new fleetbutton for this cluster of fleets
+            FleetButton* fb = new FleetButton(fleet_IDs, FLEETBUTTON_SIZE);
+
+            // store
+            m_moving_fleet_buttons.insert(fb);
+
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                m_fleet_buttons[*fleet_it] = fb;
+
+            AttachChild(fb);
+            GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
+        }
+    }
+
 
     // position fleetbuttons
     DoFleetButtonsLayout();
 
+
     // create movement lines (after positioning buttons, so lines will originate from button location)
-    for (std::vector<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it)
-        SetFleetMovementLine(*it);
+    for (std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
+        SetFleetMovementLine(it->second);
+}
+
+void MapWnd::FleetAddedOrRemoved(Fleet& fleet)
+{
+    RefreshFleetButtons();
+    RefreshFleetSignals();
+}
+
+void MapWnd::RefreshFleetSignals()
+{
+    const Universe& const_universe = GetUniverse();
+
+    // disconnect old fleet statechangedsignal connections
+    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+        it->second.disconnect();
+    m_fleet_state_change_signals.clear();
+
+
+    // connect fleet change signals to update fleet movement lines, so that ordering
+    // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
+    std::vector<const Fleet*> fleets = const_universe.FindObjects<Fleet>();
+    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        const Fleet *fleet = *it;
+        m_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
+    }
 }
 
 int MapWnd::SystemIconSize() const
@@ -2175,7 +2384,8 @@ void MapWnd::RenderFleetMovementLines()
         RenderMovementLine(it->second);
 }
 
-void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line) {
+void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
+{
     if (move_line.Path().empty() || move_line.Path().size() == 1)
         return;
 
@@ -2333,21 +2543,34 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
     }
 }
 
-void MapWnd::FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing)
+void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 {
-    if (m_in_production_view_mode) return;
+    if (m_in_production_view_mode)
+        return;
 
     FleetButton::PlayFleetButtonOpenSound();
 
 
+    // get fleets represented by button
     const std::vector<Fleet*>& btn_fleets = fleet_btn.Fleets();
     if (btn_fleets.empty())
         throw std::runtime_error("caught clicked signal for empty fleet button");
 
+
+    // get representative fleet and info about it
     Fleet* fleet = btn_fleets[0];
 
     System* system = fleet->GetSystem();
     int owner = *(fleet->Owners().begin());
+
+    bool fleet_departing = false;
+    if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
+        fleet->FinalDestinationID() != fleet->SystemID() &&
+        fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+    {
+        fleet_departing = true;
+    }
+
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open
     FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(fleet);
@@ -2550,7 +2773,8 @@ void MapWnd::Sanitize()
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();
-    m_previously_selected_system = UniverseObject::INVALID_OBJECT_ID;
+    m_selected_system = UniverseObject::INVALID_OBJECT_ID;
+    m_selected_fleet = UniverseObject::INVALID_OBJECT_ID;
 }
 
 bool MapWnd::ReturnToMap()
@@ -3430,6 +3654,6 @@ MapWnd::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_
 
 void MapWnd::FleetButtonClickedFunctor::operator()()
 {
-    m_map_wnd.FleetButtonLeftClicked(m_fleet_btn, false);
+    m_map_wnd.FleetButtonClicked(m_fleet_btn);
 }
 

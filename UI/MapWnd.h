@@ -104,6 +104,7 @@ public:
     void            ReselectLastSystem();                           //!< re-selects the most recently selected system, if a valid one exists
     void            SelectFleet(int fleetID);                       //!< allows programmatic selection of fleets
     void            SelectFleet(Fleet* fleet);                      //!< allows programmatic selection of fleets
+    void            ReselectLastFleet();                            //!< re-selects the most recent selected fleet, if a valid one exists
 
     void            SetFleetMovementLine(const FleetButton* fleet_button);          //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
     void            SetFleetMovementLine(const Fleet* fleet);                       //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
@@ -152,7 +153,6 @@ private:
     {
         MovementLineData();
         MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour = GG::CLR_WHITE);
-        MovementLineData(const FleetButton* button, const std::list<MovePathNode>& path, GG::Clr colour = GG::CLR_WHITE);
 
         GG::Clr Colour() const;                      ///< colour in which to draw line
         const std::list<MovePathNode>& Path() const; ///< path to draw
@@ -161,8 +161,7 @@ private:
     private:
         GG::Clr m_colour;
         std::list<MovePathNode> m_path;
-        const FleetButton* m_button;    ///< fleet button at which this movement path originates (if zero, m_x and m_y should be used instead)
-        double m_x, m_y;                ///< universe x and y at which to originate line (start point isn't in the path) (if m_button is nonzero, its galaxy position should be used instead)
+        double m_x, m_y;                ///< universe x and y at which to originate line (start point isn't in the path)
     };
 
     /* Start and end points in universe coordinates as seen in MapWnd.  Lanes are drawn to
@@ -177,96 +176,100 @@ private:
     class FleetETAMapIndicator;
     class MapScaleLine;
 
-    void Zoom(int delta);                           //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
-    void SetZoom(double steps_in);                  //!< sets zoom level of the main map to zoom step size to the power of \a steps_in
-    void RefreshFleetButtons();                     //!< removes old / existing and creates new fleet buttons
-    void DoFleetButtonsLayout();                    //!< does layout of fleet buttons
-    void DoSystemIconsLayout();                     //!< does layout of system icons
+    void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
+    void            ZoomSlid(int pos, int low, int high);
+    void            SetZoom(double steps_in);                   //!< sets zoom level of the main map to zoom step size to the power of \a steps_in
 
-    void ZoomSlid(int pos, int low, int high);
+    void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
+    void            FleetAddedOrRemoved(Fleet& fleet);
+    void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
+    void            DoSystemIconsLayout();                      //!< does layout of system icons
 
-    void InitTurnRendering();                       //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
-    void InitSystemRenderingBuffers();              //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
-    void InitStarlaneRenderingBuffers();            //!< initializes or refreshes buffers for rendering of starlanes
+    void            RefreshFleetSignals();                      //!< disconnects and reconnects all fleet change signals
+
+    void            InitTurnRendering();                        //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
+    void            InitSystemRenderingBuffers();               //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
+    void            InitStarlaneRenderingBuffers();             //!< initializes or refreshes buffers for rendering of starlanes
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
-    LaneEndpoints StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);
+    LaneEndpoints   StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);
 
-    void RenderStarfields();                        //!< renders the background starfiends
-    void RenderNebulae();                           //!< renders nebulae
-    void RenderGalaxyGas();                         //!< renders gassy substance to make shape of galaxy
-    void RenderSystems();                           //!< renders stars and halos
-    void RenderStarlanes();                         //!< renders the starlanes between the systems
-    void RenderFleetMovementLines();                //!< renders the dashed lines indicating where each fleet is going
-    void RenderMovementLine(const MapWnd::MovementLineData& move_line); //!< renders a single fleet movement line
+    void            RenderStarfields();                         //!< renders the background starfiends
+    void            RenderNebulae();                            //!< renders nebulae
+    void            RenderGalaxyGas();                          //!< renders gassy substance to make shape of galaxy
+    void            RenderSystems();                            //!< renders stars and halos
+    void            RenderStarlanes();                          //!< renders the starlanes between the systems
+    void            RenderFleetMovementLines();                 //!< renders the dashed lines indicating where each fleet is going
+    void            RenderMovementLine(const MapWnd::MovementLineData& move_line);  //!< renders a single fleet movement line
 
-    void CorrectMapPosition(GG::Pt &move_to_pt);    //!< ensures that the map data are positioned sensibly
-    void SystemDoubleClicked(int system_id);
-    void SystemLeftClicked(int system_id);
-    void SystemRightClicked(int system_id);
-    void MouseEnteringSystem(int system_id);
-    void MouseLeavingSystem(int system_id);
-    void PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
-    void FleetButtonLeftClicked(FleetButton& fleet_btn, bool fleet_departing);
-    void UniverseObjectDeleted(const UniverseObject *obj);
-    bool ReturnToMap();
-    bool OpenChatWindow();
-    bool EndTurn();
+    void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
+    void            SystemDoubleClicked(int system_id);
+    void            SystemLeftClicked(int system_id);
+    void            SystemRightClicked(int system_id);
+    void            MouseEnteringSystem(int system_id);
+    void            MouseLeavingSystem(int system_id);
+    void            PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
+    void            FleetButtonClicked(FleetButton& fleet_btn);
+    void            UniverseObjectDeleted(const UniverseObject *obj);
+    bool            ReturnToMap();
+    bool            OpenChatWindow();
+    bool            EndTurn();
 
-    bool ToggleSitRep();
-    void ShowSitRep();
-    void HideSitRep();
+    bool            ToggleSitRep();
+    void            ShowSitRep();
+    void            HideSitRep();
 
-    bool ToggleResearch();
-    void ShowResearch();
-    void HideResearch();
+    bool            ToggleResearch();
+    void            ShowResearch();
+    void            HideResearch();
 
-    bool ToggleProduction();
-    void ShowProduction();
-    void HideProduction();
+    bool            ToggleProduction();
+    void            ShowProduction();
+    void            HideProduction();
 
-    bool ToggleDesign();
-    void ShowDesign();
-    void HideDesign();
+    bool            ToggleDesign();
+    void            ShowDesign();
+    void            HideDesign();
 
-    bool ShowMenu();
-    bool CloseSystemView();                      //!< closes off the current system view
-    bool KeyboardZoomIn();
-    bool KeyboardZoomOut();
-    bool ZoomToHomeSystem();
-    bool ZoomToPrevOwnedSystem();
-    bool ZoomToNextOwnedSystem();
-    bool ZoomToPrevIdleFleet();
-    bool ZoomToNextIdleFleet();
-    bool ZoomToPrevFleet();
-    bool ZoomToNextFleet();
+    bool            ShowMenu();
+    bool            CloseSystemView();                          //!< closes off the current system view
+    bool            KeyboardZoomIn();
+    bool            KeyboardZoomOut();
+    bool            ZoomToHomeSystem();
+    bool            ZoomToPrevOwnedSystem();
+    bool            ZoomToNextOwnedSystem();
+    bool            ZoomToPrevIdleFleet();
+    bool            ZoomToNextIdleFleet();
+    bool            ZoomToPrevFleet();
+    bool            ZoomToNextFleet();
 
-    void ConnectKeyboardAcceleratorSignals();   //!< connects signals from keyboard accelerators to various GUI responses
-    void SetAccelerators();                     //!< tells the GUI which keypress combinations to track and emit signals for when they occur
-    void RemoveAccelerators();                  //!< tells GUI to stop emitting signals for keypresses
+    void            ConnectKeyboardAcceleratorSignals();        //!< connects signals from keyboard accelerators to various GUI responses
+    void            SetAccelerators();                          //!< tells the GUI which keypress combinations to track and emit signals for when they occur
+    void            RemoveAccelerators();                       //!< tells GUI to stop emitting signals for keypresses
 
     /** Disables keyboard accelerators that use an alphanumeric key without modifiers. This is useful if a
      * keyboard input is required, so that the keys aren't interpreted as an accelerator.
      * @note Repeated calls of DisableAlphaNumAccels have to be followed by the same number of calls to 
      * EnableAlphaNumAccels to re-enable the accelerators. */
-    void DisableAlphaNumAccels();
-    void EnableAlphaNumAccels();                //!< Re-enable accelerators disabled by DisableAlphaNumAccels
+    void            DisableAlphaNumAccels();
+    void            EnableAlphaNumAccels();                     //!< Re-enable accelerators disabled by DisableAlphaNumAccels
 
-    void ChatMessageSentSlot();
+    void            ChatMessageSentSlot();
 
-    void CloseAllPopups();
-    void HideAllPopups();
-    void ShowAllPopups();
+    void            CloseAllPopups();
+    void            HideAllPopups();
+    void            ShowAllPopups();
 
-    void FleetWndClosing(FleetWnd* fleet_wnd);
-    void HandleEmpireElimination(int empire_id);    //!< cleans up internal storage of now-invalidated empire ID
+    void            FleetWndClosing(FleetWnd* fleet_wnd);
+    void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
 
-    std::set<GG::Key> m_disabled_accels_list;       //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
+    std::set<GG::Key>           m_disabled_accels_list;                 //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
 
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
-    int                         m_previously_selected_system;
+    int                         m_selected_system;
+    int                         m_selected_fleet;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
@@ -279,10 +282,13 @@ private:
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
-    std::vector<FleetButton*>                       m_moving_fleet_buttons;                 //!< icons representing one or more fleets moving around map
-    std::map<System*, FleetButton*>                 m_system_fleet_buttons;                 //!< icons representing one or more fleets stationary at a system
+    std::map<const System*,std::set<FleetButton*> > m_stationary_fleet_buttons;             //!< icons representing fleets at a system that are not departing, indexed by system
+    std::map<const System*,std::set<FleetButton*> > m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
+    std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
+    std::map<const Fleet*, FleetButton*>            m_fleet_buttons;                        //!< fleet icons, index by fleet
+
     std::map<int, boost::signals::connection>       m_fleet_state_change_signals;
-    std::vector<boost::signals::connection>         m_system_fleet_state_change_signals;
+    std::map<int, std::vector<boost::signals::connection> > m_system_fleet_insert_remove_signals;
 
     std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
 
@@ -328,8 +334,7 @@ private:
     GG::Slider*                 m_zoom_slider;
     MapScaleLine*               m_scale_line;
 
-    struct FleetButtonClickedFunctor
-    {
+    struct FleetButtonClickedFunctor {
         FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd);
         void operator()();
         FleetButton& m_fleet_btn;
