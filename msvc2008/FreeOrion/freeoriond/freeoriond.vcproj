@@ -157,35 +157,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\combat\OpenSteer\Path.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\..\..\combat\OpenSteer\PathingEngine.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\combat\OpenSteer\Pathway.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\combat\OpenSteer\PolylineSegmentedPath.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\combat\OpenSteer\PolylineSegmentedPathwaySegmentRadii.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\combat\OpenSteer\PolylineSegmentedPathwaySingleRadius.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\combat\OpenSteer\SegmentedPath.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\combat\OpenSteer\SegmentedPathway.cpp"
 					>
 				</File>
 				<File
