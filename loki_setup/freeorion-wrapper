@@ -25,7 +25,7 @@ pwd
 
 
 
-if ldd freeorionca | grep "python.*not found"; then
+if ldd freeorionca | grep "libpython.*not found"; then
     echo "python2.5 missing. Using shipped version."
     PYTHON_USE_SHIPPED=1
 else 
