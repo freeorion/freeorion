@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
+<install product="freeorion" 
+         desc="FreeOrion - A free Master of Orion clone" 
+         version="0.3.12.1" 
+         binarypath="/usr/local/bin"
+         promptbinaries="yes" 
+         express="no"
+         once="yes"
+         splash="logo.png"
+         nopromptoverwrite="yes">
+  <readme>
+    README
+  </readme>
+  <eula>
+    COPYING
+  </eula>
+
+  <bool name="unix" if="!|(Linux,FreeBSD)"/>
+  <bool name="has-passwd" script="test -f /etc/passwd" later="yes"/>
+  <bool name="env-test" env="TEST_VALUE"/>
+
+  <component name="Default" version="0.3.12.1" default="yes">
+   <option install="true" required="true">
+    Base Install
+    <lang lang="fr">Installation de base</lang>
+    <lang lang="it">Installazione base</lang>
+    <lang lang="de">Minimale Installation</lang>
+    <help          >Required for play</help>
+    <help lang="fr">Requis pour jouer</help>
+    <help lang="es">Se necesita para jugar</help>
+    <help lang="it">È necessaria per giocare</help>
+    <help lang="de">Zum Spielen benötigt</help>
+
+    <binary binpath="." arch="any" libc="any" icon="icon.xpm" play="yes" symlink="freeorion-start" keepdirs="yes" name="FreeOrion">
+      freeorion
+    </binary>
+
+    <files>      
+      RELEASE-NOTES-V03.txt
+      COPYING
+      README
+      application/ogre_plugins.cfg
+      application/Plugin_*.so
+      application/RenderSystem_GL.so
+      application/License.*
+      application/default
+      application/python2.5
+      application/lib
+    </files>
+    
+    <binary binpath="." keepdirs="yes">
+        application/freeorion
+    </binary>
+    <binary binpath="." keepdirs="yes">
+        application/freeorionca
+    </binary>
+    <binary binpath="." keepdirs="yes">
+        application/freeoriond
+    </binary>
+
+
+   </option>
+  </component>
+
+</install>

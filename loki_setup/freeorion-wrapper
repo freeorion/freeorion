@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# This is a wrapper-script for starting FreeOrion on
+# x86 Linux Systems.
+# 
+#
+# written by Markus Sinner, http://psitronic.de
+
+
+# Change into application directory
+# If this is a symlink, then we
+# need to change into the dir of symlink-target.
+if [ -h $0 ]; then
+  echo "I am Symlink. Following into my targets basedir"
+  ME=`readlink $0`
+else
+  echo "Following into my basedir"
+  ME=$0
+fi
+
+ROOT=`dirname ${ME}`/application
+cd ${ROOT}
+echo -n "CWD: "
+pwd
+
+
+
+if ldd freeorionca | grep "python.*not found"; then
+    echo "python2.5 missing. Using shipped version."
+    PYTHON_USE_SHIPPED=1
+else 
+    echo "python2.5 found. Using it."
+    PYTHON_USE_SHIPPED=0
+fi
+
+# Set Python library home for loading modules
+# If no python 2.5 is detected, use shipped python 2.5
+if [ "$PYTHON_USE_SHIPPED" = "1" ]; then
+    export PYTHONHOME=python2.5
+    export PYTHONPATH=${PYTHONHOME}
+    export PYTHONDEBUG=1
+    export PYTHONVERBOSE=1
+    echo "PYTHONHOME=${PYTHONHOME}"
+    
+    export LD_LIBRARY_PATH=${PYTHONHOME}:${LD_LIBRARY_PATH}
+    export LD_PRELOAD=${PYTHONHOME}/libutil.so.1:${PYTHONHOME}/libpython2.5.so
+fi
+
+if [ "$1" = "--strace" ]; then
+    TRACEFILE=/tmp/freeorion.trace
+    echo "Tracing to ${TRACEFILE}"
+    STRACE="strace -f -o ${TRACEFILE}"
+    shift
+else
+    STRACE=
+fi
+
+export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
+
+# Call with settings-dir to avoid conflicting installations
+${STRACE} ./freeorion --settings-dir ./default $@
