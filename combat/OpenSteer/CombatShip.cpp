@@ -429,21 +429,21 @@ void CombatShip::FireAtHostiles()
             if (!SR_weapons_range)
                 SR_weapons_range = range;
             else
-                SR_weapons_range = std::min(SR_weapons_range, range);
+                SR_weapons_range = (std::min)(SR_weapons_range, range);
         } else if (part->Class() == PC_MISSILES) {
             double range = boost::get<LRStats>(part->Stats()).m_range;
             LR_weapons.insert(std::make_pair(range, part));
             if (!LR_weapons_range)
                 LR_weapons_range = range;
             else
-                LR_weapons_range = std::min(LR_weapons_range, range);
+                LR_weapons_range = (std::min)(LR_weapons_range, range);
         } else if (part->Class() == PC_POINT_DEFENSE) {
             double range = boost::get<DirectFireStats>(part->Stats()).m_range;
             PD_weapons.insert(std::make_pair(range, part));
             if (!PD_weapons_range)
                 PD_weapons_range = range;
             else
-                PD_weapons_range = std::min(PD_weapons_range, range);
+                PD_weapons_range = (std::min)(PD_weapons_range, range);
         }
     }
 
