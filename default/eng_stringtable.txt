@@ -3809,7 +3809,8 @@ An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does 
 HULL_DESC
 '''Starlane Speed: %1%
 Fuel Capacity: %2%
-Combat Speed: %3%'''
+Combat Speed: %3%
+Health: %4%'''
 
 PART_DESC_CAPACITY
 Capacity: %1%
@@ -3836,7 +3837,6 @@ PART_DESC_FIGHTER_STATS
 Fighter Anti-Fighter Damage: %2%
 Fighter Anti-Ship Damage: %3%
 Fighter Launch Rate: %4% fighters/turn
-Fighter Range: %5%
 Fighter Speed: %6%
 Fighter Health: %7%
 Fighter Stealth: %8%

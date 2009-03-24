@@ -5,6 +5,7 @@
 #include "UniverseObject.h"
 #include "Meter.h"
 
+class Fighter;
 class Fleet;
 class ShipDesign;
 
@@ -12,6 +13,10 @@ class ShipDesign;
 class Ship : public UniverseObject
 {
 public:
+    // map from part type name to (number of parts in the design of that type,
+    // number of fighters usable with that part type) pairs
+    typedef std::map<std::string, std::pair<std::size_t, std::size_t> > FighterMap;
+
     /** \name Structors */ //@{
     Ship(); ///< default ctor
     Ship(int empire_id, int design_id);     ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
@@ -30,6 +35,8 @@ public:
     bool                                CanColonize() const;
     double                              Speed() const;
 
+    const FighterMap&                   Fighters() const;
+
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual double                      ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
@@ -43,12 +50,10 @@ public:
     virtual void                        PopGrowthProductionResearchPhase();
     //@}
 
-protected:
-    void                                Init();
-
 private:
     int m_design_id;
     int m_fleet_id;
+    FighterMap m_fighters;
 
     friend class boost::serialization::access;
     template <class Archive>

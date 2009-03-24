@@ -92,7 +92,7 @@ namespace {
     ParamLabel location_label("location");
     ParamLabel partclass_label("class");
     ParamLabel speed_label("speed");
-    ParamLabel starlane_speed_label("starlane_speed");
+    ParamLabel starlane_speed_label("starlanespeed");
     ParamLabel slots_label("slots");
     ParamLabel mountableslottypes_label("mountableslottypes");
     ParamLabel colour_label("colour");
@@ -104,8 +104,8 @@ namespace {
     ParamLabel range_label("range");
     ParamLabel stealth_label("stealth");
     ParamLabel health_label("health");
-    ParamLabel fighter_type_label("fighter_type");
-    ParamLabel launch_rate_label("launch_rate");
+    ParamLabel fighter_type_label("fightertype");
+    ParamLabel launch_rate_label("launchrate");
     ParamLabel detection_label("detection");
     ParamLabel capacity_label("capacity");
     ParamLabel fuel_label("fuel");
@@ -198,16 +198,15 @@ namespace {
              >> anti_ship_damage_label >> real_p[part_stats_p.anti_ship_damage = arg1]
              >> anti_fighter_damage_label >> real_p[part_stats_p.anti_fighter_damage = arg1]
              >> launch_rate_label >> real_p[part_stats_p.rate = arg1]
-             >> range_label >> real_p[part_stats_p.range = arg1]
              >> speed_label >> real_p[part_stats_p.speed = arg1]
              >> stealth_label >> real_p[part_stats_p.stealth = arg1]
              >> health_label >> real_p[part_stats_p.health = arg1]
              >> detection_label >> real_p[part_stats_p.detection = arg1]
-             >> capacity_label >> real_p[part_stats_p.capacity = arg1])
+             >> capacity_label >> int_p[part_stats_p.capacity = arg1])
             [part_stats_p.this_ =
              construct_<FighterStats>(part_stats_p.fighter_type, part_stats_p.anti_ship_damage,
                                       part_stats_p.anti_fighter_damage, part_stats_p.rate,
-                                      part_stats_p.range, part_stats_p.speed, part_stats_p.stealth,
+                                      part_stats_p.speed, part_stats_p.stealth,
                                       part_stats_p.health, part_stats_p.detection, part_stats_p.capacity)]
 
             // a single double stat
@@ -220,7 +219,7 @@ namespace {
                >> speed_label >> real_p[part_stats_p.speed = arg1]
                >> stealth_label >> real_p[part_stats_p.stealth = arg1]
                >> health_label >> real_p[part_stats_p.health = arg1]
-               >> capacity_label >> real_p[part_stats_p.capacity = arg1])
+               >> capacity_label >> int_p[part_stats_p.capacity = arg1])
             [part_stats_p.this_ =
              construct_<LRStats>(part_stats_p.damage, part_stats_p.rate, part_stats_p.range,
                                  part_stats_p.speed, part_stats_p.stealth, part_stats_p.health,
@@ -267,15 +266,16 @@ namespace {
              >> speed_label >> real_p[hull_p.speed = arg1]
              >> starlane_speed_label >> real_p[hull_p.starlane_speed = arg1]
              >> fuel_label >> real_p[hull_p.fuel = arg1]
+             >> health_label >> real_p[hull_p.health = arg1]
              >> buildcost_label >> real_p[hull_p.cost = arg1]
              >> buildtime_label >> int_p[hull_p.build_time = arg1]
              >> !(slots_label >> slot_vec_p[hull_p.slots = arg1])
              >> location_label >> condition_p[hull_p.location = arg1]
              >> graphic_label >> file_name_p[hull_p.graphic = arg1])
             [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.speed,
-                                           hull_p.starlane_speed, hull_p.fuel, hull_p.cost,
-                                           hull_p.build_time, hull_p.slots, hull_p.location,
-                                           hull_p.graphic)];
+                                           hull_p.starlane_speed, hull_p.fuel, hull_p.health,
+                                           hull_p.cost, hull_p.build_time, hull_p.slots,
+                                           hull_p.location, hull_p.graphic)];
 
         return true;
     }

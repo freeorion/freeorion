@@ -32,6 +32,10 @@ struct DirectFireStats
     double m_ROF;
     double m_range;
 
+    /** The factor by which PD damage should be multiplied when used in
+        defense of the ship firing it. */
+    static const double PD_SELF_DEFENSE_FACTOR;
+
     template <class Archive>
     void serialize(Archive& ar, const unsigned int)
         {
@@ -51,7 +55,7 @@ struct LRStats
             double speed,
             double stealth,
             double health,
-            double capacity);
+            int capacity);
 
     double m_damage;
     double m_ROF;
@@ -59,7 +63,7 @@ struct LRStats
     double m_speed;
     double m_stealth;
     double m_health;
-    double m_capacity;
+    int m_capacity;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int)
@@ -82,23 +86,21 @@ struct FighterStats
                  double anti_fighter_damage,
                  double anti_ship_damage,
                  double launch_rate,
-                 double range,
                  double speed,
                  double stealth,
                  double health,
                  double detection,
-                 double capacity);
+                 int capacity);
 
     CombatFighterType m_type;
     double m_anti_fighter_damage;
     double m_anti_ship_damage;
     double m_launch_rate;
-    double m_range;
     double m_speed;
     double m_stealth;
     double m_health;
     double m_detection;
-    double m_capacity;
+    int m_capacity;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int)
@@ -107,7 +109,6 @@ struct FighterStats
                 & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
                 & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
                 & BOOST_SERIALIZATION_NVP(m_launch_rate)
-                & BOOST_SERIALIZATION_NVP(m_range)
                 & BOOST_SERIALIZATION_NVP(m_speed)
                 & BOOST_SERIALIZATION_NVP(m_stealth)
                 & BOOST_SERIALIZATION_NVP(m_health)
@@ -232,7 +233,7 @@ public:
     /** \name Structors */ //@{
     HullType();
     HullType(const std::string& name, const std::string& description, double speed,
-             double starlane_speed, double fuel, double cost, int build_time,
+             double starlane_speed, double fuel, double health, double cost, int build_time,
              const std::vector<Slot>& slots, const Condition::ConditionBase* location,
              const std::string& graphic);
     ~HullType();
@@ -245,6 +246,8 @@ public:
     double              Speed() const;          ///< returns combat speed of hull
     double              StarlaneSpeed() const;  ///< returns starlane speed of hull
     double              Fuel() const;           ///< returns fuel capacity of hull
+
+    double              Health() const;         ///< returns health of hull
 
     double              Cost() const;           ///< returns cost of hull
     int                 BuildTime() const;      ///< returns base build time for this hull, before parts are added
@@ -268,6 +271,7 @@ private:
     double                      m_speed;
     double                      m_starlane_speed;
     double                      m_fuel;
+    double                      m_health;
 
     double                      m_cost;         // in PP
     int                         m_build_time;   // in turns
@@ -372,7 +376,6 @@ public:
 
     ///< returns true if the \a design passed is a valid ShipDesign in terms of its hull and parts.  does not check any other member variables
     static bool                     ValidDesign(const ShipDesign& design);
-
 
 private:
     int                         m_id;

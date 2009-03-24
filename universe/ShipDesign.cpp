@@ -41,17 +41,28 @@ namespace {
 
     const phoenix::function<store_hull_type_impl> store_hull_type_;
 
+    struct PartTypeStringVisitor :
+        public boost::static_visitor<>
+    {
+        PartTypeStringVisitor(std::string& str) :
+            m_str(str)
+            {}
+        void operator()(const double& d) const
+            { m_str = "capacity stat"; }
+        void operator()(const DirectFireStats& stats) const
+            { m_str = "direct-fire weapon stats"; }
+        void operator()(const LRStats& stats) const
+            { m_str = "long-range weapon stats"; }
+        void operator()(const FighterStats& stats) const
+            { m_str = "fighter bay stats"; }
+        std::string& m_str;
+    };
+
     std::string PartTypeStatsString(const PartTypeStats& stats)
     {
-        if (boost::get<double>(&stats))
-            return "capacity stat";
-        else if (boost::get<DirectFireStats>(&stats))
-            return "direct-fire weapon stats";
-        else if (boost::get<LRStats>(&stats))
-            return "long-range weapon stats";
-        else if (boost::get<FighterStats>(&stats))
-            return "fighter bay stats";
-        return "";
+        std::string retval;
+        boost::apply_visitor(PartTypeStringVisitor(retval), stats);
+        return retval;
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
@@ -115,7 +126,6 @@ namespace {
                         % stats.m_anti_fighter_damage
                         % stats.m_anti_ship_damage
                         % stats.m_launch_rate
-                        % stats.m_range
                         % stats.m_speed
                         % stats.m_stealth
                         % stats.m_health
@@ -130,6 +140,8 @@ namespace {
 ////////////////////////////////////////////////
 // stat variant types                         //
 ////////////////////////////////////////////////
+const double DirectFireStats::PD_SELF_DEFENSE_FACTOR = 2.0 / 3.0;
+
 DirectFireStats::DirectFireStats() :
     m_damage(),
     m_ROF(),
@@ -159,7 +171,7 @@ LRStats::LRStats(double damage,
                  double speed,
                  double stealth,
                  double health,
-                 double capacity) :
+                 int capacity) :
     m_damage(damage),
     m_ROF(ROF),
     m_range(range),
@@ -167,14 +179,17 @@ LRStats::LRStats(double damage,
     m_stealth(stealth),
     m_health(health),
     m_capacity(capacity)
-{}
+{
+    if (m_capacity < 0)
+        throw std::runtime_error("Attempted to create a LRStats with a "
+                                 "nonpositive capacity.");
+}
 
 FighterStats::FighterStats() :
     m_type(),
     m_anti_fighter_damage(),
     m_anti_ship_damage(),
     m_launch_rate(),
-    m_range(),
     m_speed(),
     m_stealth(),
     m_health(),
@@ -186,17 +201,15 @@ FighterStats::FighterStats(CombatFighterType type,
                            double anti_fighter_damage,
                            double anti_ship_damage,
                            double launch_rate,
-                           double range,
                            double speed,
                            double stealth,
                            double health,
                            double detection,
-                           double capacity) :
+                           int capacity) :
     m_type(type),
     m_anti_fighter_damage(anti_fighter_damage),
     m_anti_ship_damage(anti_ship_damage),
     m_launch_rate(launch_rate),
-    m_range(range),
     m_speed(speed),
     m_stealth(stealth),
     m_health(health),
@@ -209,6 +222,9 @@ FighterStats::FighterStats(CombatFighterType type,
     if (type == BOMBER && m_anti_ship_damage < m_anti_fighter_damage)
         throw std::runtime_error("Attempted to create a BOMBER FighterStats with weaker "
                                  "anti-ship stat than anti-fighter stat.");
+    if (m_capacity < 0)
+        throw std::runtime_error("Attempted to create a FighterStats with a "
+                                 "nonpositive capacity.");
 }
 
 
@@ -449,20 +465,24 @@ HullType::HullType() :
 {}
 
 HullType::HullType(const std::string& name, const std::string& description, double speed,
-                   double starlane_speed, double fuel, double cost, int build_time,
-                   const std::vector<Slot>& slots, const Condition::ConditionBase* location,
-                   const std::string& graphic) :
+                   double starlane_speed, double fuel, double health, double cost,
+                   int build_time, const std::vector<Slot>& slots,
+                   const Condition::ConditionBase* location, const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_speed(speed),
     m_starlane_speed(starlane_speed),
     m_fuel(fuel),
+    m_health(health),
     m_cost(cost),
     m_build_time(build_time),
     m_slots(slots),
     m_location(location),
     m_graphic(graphic)
-{ m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", m_fuel)); }
+{
+    m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", m_fuel));
+    m_effects.push_back(IncreaseMax(METER_HEALTH, "MaxHealth", m_health));
+}
 
 HullType::~HullType()
 { delete m_location; }
@@ -478,7 +498,8 @@ std::string HullType::Description() const
         str(FlexibleFormat(UserString("HULL_DESC"))
             % m_starlane_speed
             % m_fuel
-            % m_speed);
+            % m_speed
+            % m_health);
     return retval;
 }
 
@@ -492,6 +513,10 @@ double HullType::StarlaneSpeed() const {
 
 double HullType::Fuel() const {
     return m_fuel;
+}
+
+double HullType::Health() const {
+    return m_health;
 }
 
 double HullType::Cost() const {

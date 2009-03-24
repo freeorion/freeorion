@@ -21,14 +21,25 @@ Ship::Ship(int empire_id, int design_id) :
 
     AddOwner(empire_id);
 
-    Init();
-}
-
-void Ship::Init() {
     InsertMeter(METER_FUEL, Meter());
     InsertMeter(METER_SHIELD, Meter());
     InsertMeter(METER_DETECTION, Meter());
     InsertMeter(METER_STEALTH, Meter());
+    InsertMeter(METER_HEALTH, Meter());
+
+    const std::vector<std::string>& part_names = Design()->Parts();
+    for (std::size_t i = 0; i < part_names.size(); ++i) {
+        if (part_names[i] != "") {
+            const PartType* part = GetPartType(part_names[i]);
+            assert(part);
+            if (part->Class() == PC_FIGHTERS) {
+                std::pair<std::size_t, std::size_t>& part_fighters =
+                    m_fighters[part_names[i]];
+                ++part_fighters.first;
+                part_fighters.second = boost::get<FighterStats>(part->Stats()).m_capacity;
+            }
+        }
+    }
 }
 
 const ShipDesign* Ship::Design() const {
@@ -68,6 +79,10 @@ bool Ship::CanColonize() const {
 
 double Ship::Speed() const {
     return Design()->Speed();
+}
+
+const Ship::FighterMap& Ship::Fighters() const {
+    return m_fighters;
 }
 
 const std::string& Ship::PublicName(int empire_id) const {

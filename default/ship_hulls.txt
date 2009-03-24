@@ -2,10 +2,11 @@ Hull
     name = "SH_EMPTY"
     description = "SH_EMPTY_DESC"
     speed = 120
-    starlane_speed = 120
+    starlaneSpeed = 120
     fuel = 3
-    buildcost = 1
-    buildtime = 1
+    health = 30
+    buildCost = 1
+    buildTime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
@@ -16,10 +17,11 @@ Hull
     name = "SH_SMALL"
     description = "SH_SMALL_DESC"
     speed = 80
-    starlane_speed = 80
+    starlaneSpeed = 80
     fuel = 3
-    buildcost = 10
-    buildtime = 4
+    health = 40
+    buildCost = 10
+    buildTime = 4
     slots = [
         Slot type = External position = (0.20, 0.40)
         Slot type = External position = (0.40, 0.40)
@@ -35,10 +37,11 @@ Hull
     name = "SH_MEDIUM"
     description = "SH_MEDIUM_DESC"
     speed = 50
-    starlane_speed = 50
+    starlaneSpeed = 50
     fuel = 5
-    buildcost = 20
-    buildtime = 5
+    health = 50
+    buildCost = 20
+    buildTime = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -56,10 +59,11 @@ Hull
     name = "SH_LARGE"
     description = "SH_LARGE_DESC"
     speed = 40
-    starlane_speed = 40
+    starlaneSpeed = 40
     fuel = 3
-    buildcost = 30
-    buildtime = 6
+    health = 65
+    buildCost = 30
+    buildTime = 6
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
@@ -79,10 +83,11 @@ Hull
     name = "SH_HUGE"
     description = "SH_HUGE_DESC"
     speed = 30
-    starlane_speed = 30
+    starlaneSpeed = 30
     fuel = 1
-    buildcost = 50
-    buildtime = 8
+    health = 80
+    buildCost = 50
+    buildTime = 8
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.25, 0.15)
