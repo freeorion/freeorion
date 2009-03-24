@@ -1,6 +1,8 @@
 #include "CombatShip.h"
 
+#include "../../universe/Enums.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "CombatFighter.h"
 #include "PathingEngine.h"
@@ -144,6 +146,8 @@ void CombatShip::update(const float /*current_time*/, const float elapsed_time)
     if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
         UpdateMissionQueue();
+        if (m_ship->IsArmed())
+            FireAtHostiles();
         steer = Steer();
     }
     applySteeringForce(steer, elapsed_time);
@@ -186,11 +190,31 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
 
     m_mission_queue.push_front(ShipMission(ShipMission::NONE));
 
-    // TODO: Based on number of fighter bays and their rates of launch, create
-    // fighters and group them into small formations.
-    // for (...) {
-    //     m_formations.insert(m_pathing_engine->CreateFighterFormation(...));
-    // }
+    const Ship::FighterMap& fighters = m_ship->Fighters();
+    for (Ship::FighterMap::const_iterator it = fighters.begin(); it != fighters.end(); ++it) {
+        const PartType* part = GetPartType(it->first);
+        assert(part && part->Class() == PC_FIGHTERS);
+        const FighterStats& stats = boost::get<FighterStats>(part->Stats());
+        std::size_t num_fighters = it->second.second;
+        std::size_t formation_size =
+            std::min<std::size_t>(CombatFighter::FORMATION_SIZE,
+                                  stats.m_launch_rate * it->second.first);
+        std::size_t num_formations = num_fighters / formation_size;
+        std::size_t final_formation_size = num_fighters % formation_size;
+        if (final_formation_size)
+            ++num_formations;
+        else
+            final_formation_size = formation_size;
+        for (std::size_t j = 0; j < num_formations; ++j) {
+            std::size_t size =
+                j == num_formations - 1 ? final_formation_size : formation_size;
+            m_formations.insert(
+                m_pathing_engine->CreateFighterFormation(shared_from_this(),
+                                                         stats,
+                                                         size));
+        }
+    }
+
     m_unlaunched_formations = m_formations;
 }
 
@@ -212,6 +236,7 @@ void CombatShip::RemoveMission()
         m_pathing_engine->EndAttack(m_mission_queue.back().m_target.lock(),
                                     shared_from_this());
     }
+    m_mission_subtarget.reset();
     m_mission_queue.pop_back();
     if (m_mission_queue.empty())
         m_mission_queue.push_front(ShipMission(ShipMission::NONE));
@@ -281,10 +306,13 @@ void CombatShip::UpdateMissionQueue()
     case ShipMission::DEFEND_THIS: {
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
-            if (m_mission_subtarget = WeakestAttacker(target))
-                m_mission_destination = m_mission_subtarget->position();
-            else
-                m_mission_destination = target->position();
+            if (m_mission_subtarget.expired()) {
+                m_mission_subtarget = WeakestAttacker(target);
+                if (CombatObjectPtr subtarget = m_mission_subtarget.lock())
+                    m_mission_destination = subtarget->position();
+                else
+                    m_mission_destination = target->position();
+            }
         } else {
             if (print_needed) std::cout << "    [DEFEND TARGET GONE]\n";
             RemoveMission();
@@ -382,6 +410,48 @@ void CombatShip::UpdateMissionQueue()
 
 void CombatShip::FireAtHostiles()
 {
+    const ShipDesign* design = m_ship->Design();
+    const std::vector<std::string>& part_names = design->Parts();
+
+    std::multimap<double, const PartType*> SR_weapons;
+    double SR_weapons_range = 0.0;
+    std::multimap<double, const PartType*> LR_weapons;
+    double LR_weapons_range = 0.0;
+    std::multimap<double, const PartType*> PD_weapons;
+    double PD_weapons_range = 0.0;
+
+    for (std::size_t i = 0; i < part_names.size(); ++i) {
+        const PartType* part = GetPartType(part_names[i]);
+        assert(part);
+        if (part->Class() == PC_SHORT_RANGE) {
+            double range = boost::get<DirectFireStats>(part->Stats()).m_range;
+            SR_weapons.insert(std::make_pair(range, part));
+            if (!SR_weapons_range)
+                SR_weapons_range = range;
+            else
+                SR_weapons_range = std::min(SR_weapons_range, range);
+        } else if (part->Class() == PC_MISSILES) {
+            double range = boost::get<LRStats>(part->Stats()).m_range;
+            LR_weapons.insert(std::make_pair(range, part));
+            if (!LR_weapons_range)
+                LR_weapons_range = range;
+            else
+                LR_weapons_range = std::min(LR_weapons_range, range);
+        } else if (part->Class() == PC_POINT_DEFENSE) {
+            double range = boost::get<DirectFireStats>(part->Stats()).m_range;
+            PD_weapons.insert(std::make_pair(range, part));
+            if (!PD_weapons_range)
+                PD_weapons_range = range;
+            else
+                PD_weapons_range = std::min(PD_weapons_range, range);
+        }
+    }
+
+#if 0
+    double SR_range_squared = SR_weapons_range * SR_weapons_range;
+    double LR_range_squared = LR_weapons_range * LR_weapons_range;
+    double PD_range_squared = PD_weapons_range * PD_weapons_range;
+#endif
 }
 
 OpenSteer::Vec3 CombatShip::Steer()
@@ -427,7 +497,7 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
             // TODO: Use fighter's hit points, and prefer to attack bombers --
             // for now, just use 1.0
             strength =
-                1.0 * (fighter->Type() == INTERCEPTOR ?
+                1.0 * (fighter->Stats().m_type == INTERCEPTOR ?
                        INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
             if (!AntiFighterStrength())
                 strength *= NO_PD_FIGHTER_STRENGTH_SCALE_FACTOR;

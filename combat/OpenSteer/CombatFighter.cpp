@@ -127,48 +127,51 @@ CombatFighterFormation::iterator CombatFighterFormation::end()
 CombatFighter::CombatFighter() :
     m_proximity_token(0),
     m_leader(false),
-    m_type(),
+    m_stats(),
     m_empire_id(-1),
     m_mission_queue(),
     m_mission_weight(0.0),
     m_base(),
     m_formation_position(-1),
     m_formation(),
+    m_health(0),
     m_pathing_engine(0)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
 
-CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
+CombatFighter::CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
                              int fighter_id, PathingEngine& pathing_engine,
                              const CombatFighterFormationPtr& formation,
                              int formation_position) :
     m_proximity_token(0),
     m_leader(false),
-    m_type(type),
+    m_stats(stats),
     m_empire_id(empire_id),
     m_mission_queue(),
     m_mission_weight(0.0),
     m_base(base),
     m_formation_position(formation_position),
     m_formation(formation),
+    m_health(stats.m_health),
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
 
-CombatFighter::CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
+CombatFighter::CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
                              int fighter_id, PathingEngine& pathing_engine,
                              const CombatFighterFormationPtr& formation) :
     m_proximity_token(0),
     m_leader(true),
-    m_type(type),
+    m_stats(stats),
     m_empire_id(empire_id),
     m_mission_queue(),
     m_mission_weight(0.0),
     m_base(base),
     m_formation_position(-1),
     m_formation(formation),
+    m_health(stats.m_health),
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
@@ -218,11 +221,14 @@ float CombatFighter::maxSpeed() const
 int CombatFighter::ID() const
 { return m_id; }
 
-CombatFighterType CombatFighter::Type() const
-{ return m_type; }
+const FighterStats& CombatFighter::Stats() const
+{ return m_stats; }
 
 const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
+
+double CombatFighter::Health() const
+{ return m_health; }
 
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
@@ -253,7 +259,7 @@ void CombatFighter::EnterSpace()
         m_proximity_token =
             m_pathing_engine->GetProximityDB().Insert(
                 this,
-                m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
+                m_stats.m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
                 EmpireFlag(m_empire_id));
     }
 
@@ -303,6 +309,9 @@ void CombatFighter::ExitSpace()
     delete m_proximity_token;
     m_proximity_token = 0;
 }
+
+void CombatFighter::Damage(double d)
+{ m_health = std::max(0.0, m_health - d); }
 
 void CombatFighter::PushMission(const FighterMission& mission)
 {
@@ -354,7 +363,7 @@ void CombatFighter::UpdateMissionQueue()
     if (m_instrument && m_last_mission != m_mission_queue.back().m_type) {
         std::string prev_mission = FIGHTER_MISSION_STRINGS[m_last_mission];
         std::string new_mission = FIGHTER_MISSION_STRINGS[m_mission_queue.back().m_type];
-        std::cout << "empire=" << m_empire_id << " type=" << (m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
+        std::cout << "empire=" << m_empire_id << " type=" << (m_stats.m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
                   << "    prev mission=" << prev_mission.c_str() << "\n"
                   << "    new mission =" << new_mission.c_str() << "\n";
         print_needed = true;
@@ -368,7 +377,7 @@ void CombatFighter::UpdateMissionQueue()
     case FighterMission::NONE: {
         assert(m_mission_queue.size() == 1u);
         m_mission_queue.clear();
-        if (m_type == INTERCEPTOR)
+        if (m_stats.m_type == INTERCEPTOR)
             m_mission_queue.push_front(FighterMission(FighterMission::ATTACK_FIGHTERS_BOMBERS_FIRST));
         else
             m_mission_queue.push_front(FighterMission(FighterMission::ATTACK_SHIPS_WEAKEST_FIRST));
@@ -419,7 +428,7 @@ void CombatFighter::UpdateMissionQueue()
         if (AT_DEST_SQUARED < (position() - m_mission_queue.back().m_destination).lengthSquared()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             bool found_target = false;
-            if (m_type == INTERCEPTOR) {
+            if (m_stats.m_type == INTERCEPTOR) {
                 if (CombatFighterPtr fighter =
                     m_pathing_engine->NearestHostileFighterInRange(position(), m_empire_id,
                                                                    PATROL_ENGAGEMENT_RANGE)) {
@@ -569,7 +578,7 @@ void CombatFighter::FireAtHostiles()
 OpenSteer::Vec3 CombatFighter::Steer()
 {
     static bool once = true;
-    if (once && m_type == BOMBER && m_leader) {
+    if (once && m_stats.m_type == BOMBER && m_leader) {
         //m_instrument = true;
         once = false;
     }
@@ -612,7 +621,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     const float FORMATION_WEIGHT = 8.0f;
 
     const float BOMBER_INTERCEPTOR_EVASION_RADIUS =
-        m_type == BOMBER ? 25.0f : SEPARATION_RADIUS;
+        m_stats.m_type == BOMBER ? 25.0f : SEPARATION_RADIUS;
     const float BOMBER_INTERCEPTOR_EVASION_WEIGHT = 8.0f;
 
     const float NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS = 10.0;
@@ -665,7 +674,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     // steer to avoid interceptors (bombers only)
     OpenSteer::Vec3 bomber_interceptor_evasion_vec;
     OpenSteer::AVGroup interceptor_neighbors;
-    if (m_type == BOMBER) {
+    if (m_stats.m_type == BOMBER) {
         m_pathing_engine->GetProximityDB().FindInRadius(
             position(), BOMBER_INTERCEPTOR_EVASION_RADIUS, interceptor_neighbors,
             INTERCEPTOR_FLAG, NotEmpireFlag(m_empire_id));
@@ -761,12 +770,12 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
         float strength = FLT_MAX;
         // Note that this condition implies that bombers cannot attack
         // fighters at all.
-        if (m_type == INTERCEPTOR &&
+        if (m_stats.m_type == INTERCEPTOR &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
             // TODO: Use fighter's hit points, and prefer to attack bombers --
             // for now, just take any one
             strength =
-                1.0 * (fighter->m_type == INTERCEPTOR ?
+                1.0 * (fighter->m_stats.m_type == INTERCEPTOR ?
                        INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
             strength = ship->AntiFighterStrength() * SHIP_SCALE_FACTOR;

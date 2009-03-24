@@ -3,6 +3,7 @@
 #include "CombatFighter.h"
 #include "CombatShip.h"
 #include "../../universe/Ship.h"
+#include "../../universe/ShipDesign.h"
 #include "../../universe/System.h"
 
 #include <boost/cast.hpp>
@@ -12,6 +13,7 @@
 const unsigned int INTERCEPTOR_FLAG = 1 << 0;
 const unsigned int BOMBER_FLAG = 1 << 1;
 const unsigned int SHIP_FLAG = 1 << 2;
+const unsigned int MISSILE_FLAG = 1 << 3;
 const unsigned int FIGHTER_FLAGS = INTERCEPTOR_FLAG | BOMBER_FLAG;
 const unsigned int NONFIGHTER_FLAGS = ~(INTERCEPTOR_FLAG | BOMBER_FLAG);
 
@@ -156,7 +158,7 @@ void PathingEngine::EndAttack(const CombatObjectPtr& attacker,
 }
 
 CombatFighterFormationPtr
-PathingEngine::CreateFighterFormation(CombatShipPtr base, CombatFighterType type, std::size_t size)
+PathingEngine::CreateFighterFormation(CombatShipPtr base, const FighterStats& stats, std::size_t size)
 {
     assert(base->GetShip()->Owners().size() == 1u);
     int empire_id = *base->GetShip()->Owners().begin();
@@ -164,12 +166,12 @@ PathingEngine::CreateFighterFormation(CombatShipPtr base, CombatFighterType type
     CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
     formation->SetLeader(
         CombatFighterPtr(
-            new CombatFighter(CombatObjectPtr(), type, empire_id, m_next_fighter_id++,
+            new CombatFighter(CombatObjectPtr(), stats, empire_id, m_next_fighter_id++,
                               *this, formation)));
 
     for (std::size_t i = 0; i < size; ++i) {
         CombatFighterPtr fighter(
-            new CombatFighter(CombatObjectPtr(), type, empire_id, m_next_fighter_id++,
+            new CombatFighter(CombatObjectPtr(), stats, empire_id, m_next_fighter_id++,
                               *this, formation, i % size));
         formation->push_back(fighter);
         m_objects.insert(fighter);

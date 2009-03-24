@@ -61,7 +61,7 @@ private:
     std::list<ShipMission> m_mission_queue;
     float m_mission_weight;
     OpenSteer::Vec3 m_mission_destination; // Only the X and Y values should be nonzero.
-    CombatObjectPtr m_mission_subtarget;
+    CombatObjectWeakPtr m_mission_subtarget;
 
     PathingEngine* m_pathing_engine;
     

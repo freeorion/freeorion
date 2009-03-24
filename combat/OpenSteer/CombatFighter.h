@@ -4,6 +4,7 @@
 
 #include "PathingEngineFwd.h"
 
+#include "../../universe/ShipDesign.h"
 #include "SimpleVehicle.h"
 #include "../CombatOrder.h"
 
@@ -69,8 +70,9 @@ public:
     virtual float maxForce() const;
     virtual float maxSpeed() const;
     int ID() const;
-    CombatFighterType Type() const;
+    const FighterStats& Stats() const;
     const FighterMission& CurrentMission() const;
+    double Health() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
@@ -82,13 +84,15 @@ public:
     void ClearMissions();
     void ExitSpace();
 
+    void Damage(double d);
+
 private:
     CombatFighter();
-    CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
+    CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
                   int fighter_id, PathingEngine& pathing_engine,
                   const CombatFighterFormationPtr& formation,
                   int formation_position);
-    CombatFighter(CombatObjectPtr base, CombatFighterType type, int empire_id,
+    CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
                   int fighter_id, PathingEngine& pathing_engine,
                   const CombatFighterFormationPtr& formation);
 
@@ -103,7 +107,7 @@ private:
 
     ProximityDBToken* m_proximity_token;
     bool m_leader;
-    CombatFighterType m_type;
+    FighterStats m_stats;
     int m_empire_id;
     int m_id;
     OpenSteer::Vec3 m_last_steer;
@@ -117,6 +121,8 @@ private:
     int m_formation_position;
     CombatFighterFormationPtr m_formation;
     OpenSteer::Vec3 m_out_of_formation;
+
+    double m_health;
 
     PathingEngine* m_pathing_engine;
 
@@ -133,7 +139,7 @@ private:
             ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpenSteer::SimpleVehicle)
                 & BOOST_SERIALIZATION_NVP(m_proximity_token)
                 & BOOST_SERIALIZATION_NVP(m_leader)
-                & BOOST_SERIALIZATION_NVP(m_type)
+                & BOOST_SERIALIZATION_NVP(m_stats)
                 & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_id)
                 & BOOST_SERIALIZATION_NVP(m_last_steer)

@@ -9,6 +9,8 @@
 #include <set>
 
 
+class FighterStats;
+
 class PathingEngine
 {
 public:
@@ -46,7 +48,7 @@ public:
 
     // fighters
     CombatFighterFormationPtr
-    CreateFighterFormation(CombatShipPtr base, CombatFighterType type, std::size_t size);
+    CreateFighterFormation(CombatShipPtr base, const FighterStats& stats, std::size_t size);
     void AddFighterFormation(const CombatFighterFormationPtr& formation);
     void RemoveFighter(const CombatObjectPtr& fighter);
     void RemoveFighterFormation(const CombatFighterFormationPtr& formation);
@@ -84,6 +86,7 @@ private:
 extern const unsigned int INTERCEPTOR_FLAG;
 extern const unsigned int BOMBER_FLAG;
 extern const unsigned int SHIP_FLAG;
+extern const unsigned int MISSILE_FLAG;
 extern const unsigned int FIGHTER_FLAGS;
 extern const unsigned int NONFIGHTER_FLAGS;
 
