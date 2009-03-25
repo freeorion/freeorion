@@ -105,7 +105,8 @@ FleetWnd* FleetUIManager::NewFleetWnd(std::vector<Fleet*> fleets, int selected_f
         CloseAll();
     FleetWnd* retval = new FleetWnd(fleets, selected_fleet, read_only, flags);
     m_fleet_wnds.insert(retval);
-    GG::Connect(retval->ClosingSignal, &FleetUIManager::FleetWndClosing, this);
+    GG::Connect(retval->ClosingSignal,  &FleetUIManager::FleetWndClosing,   this);
+    GG::Connect(retval->ClickedSignal,  &FleetUIManager::FleetWndClicked,   this);
     GG::GUI::GetGUI()->Register(retval);
     return retval;
 }
@@ -143,24 +144,38 @@ void FleetUIManager::CullEmptyWnds()
             for (std::set<FleetDetailWnd*>::iterator it2 = m_fleet_and_detail_wnds[*temp_it].begin(); it2 != m_fleet_and_detail_wnds[*temp_it].end(); ) {
                 std::set<FleetDetailWnd*>::iterator temp_it2 = it2++;
                 Fleet* fleet = 0;
-                if (!(fleet = (*temp_it2)->GetFleet()) || !fleet->NumShips()) {
+                if (!(fleet = (*temp_it2)->GetFleet()) || !fleet->NumShips())
                     delete *temp_it2;
-                }
             }
         }
     }
 }
 
 void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd)
-{ m_active_fleet_wnd = fleet_wnd; }
+{
+    if (fleet_wnd != m_active_fleet_wnd) {
+        // disconnect old active FleetWnd signal
+        if (m_active_fleet_wnd)
+            m_ative_fleet_wnd_signal.disconnect();
+
+        // set new active FleetWnd
+        m_active_fleet_wnd = fleet_wnd;
+
+        // connect new active FleetWnd selection changed signal
+        m_ative_fleet_wnd_signal = GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal, ActiveFleetWndSelectedFleetsChangedSignal);
+
+        ActiveFleetWndChangedSignal();
+    }
+}
 
 bool FleetUIManager::CloseAll()
 {
     bool retval = !m_fleet_wnds.empty();
     std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
-    for (std::size_t i = 0; i < vec.size(); ++i) {
+
+    for (std::size_t i = 0; i < vec.size(); ++i)
         delete vec[i];
-    }
+
     m_active_fleet_wnd = 0;
     return retval;
 }
@@ -185,6 +200,13 @@ void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd)
 
 void FleetUIManager::FleetDetailWndClosing(FleetWnd* fleet_wnd, FleetDetailWnd* fleet_detail_wnd)
 { m_fleet_and_detail_wnds[fleet_wnd].erase(fleet_detail_wnd); }
+
+void FleetUIManager::FleetWndClicked(FleetWnd* fleet_wnd)
+{
+    if (fleet_wnd == m_active_fleet_wnd)
+        return;
+    SetActiveFleetWnd(fleet_wnd);
+}
 
 
 /** Represents a single fleet.  This class is used as the drop-target in
@@ -1239,6 +1261,12 @@ void FleetWnd::CloseClicked()
     delete this;
 }
 
+void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    MapWndPopup::LClick(pt, mod_keys);
+    ClickedSignal(this);
+}
+
 void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
 {
     if (m_read_only) {
@@ -1264,12 +1292,12 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     }
     GetLayout()->SetBorderMargin(7);
 
-    GG::Connect(m_fleets_lb->SelChangedSignal, &FleetWnd::FleetSelectionChanged, this);
-    GG::Connect(m_fleets_lb->RightClickedSignal, &FleetWnd::FleetRightClicked, this);
-    GG::Connect(m_fleets_lb->DoubleClickedSignal, &FleetWnd::FleetDoubleClicked, this);
-    GG::Connect(m_fleets_lb->ErasedSignal, &FleetWnd::FleetDeleted, this);
+    GG::Connect(m_fleets_lb->SelChangedSignal,      &FleetWnd::FleetSelectionChanged,   this);
+    GG::Connect(m_fleets_lb->RightClickedSignal,    &FleetWnd::FleetRightClicked,       this);
+    GG::Connect(m_fleets_lb->DoubleClickedSignal,   &FleetWnd::FleetDoubleClicked,      this);
+    GG::Connect(m_fleets_lb->ErasedSignal,          &FleetWnd::FleetDeleted,            this);
     if (!m_read_only)
-        GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal, &FleetWnd::CreateNewFleetFromDrops, this);
+        GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal,   &FleetWnd::CreateNewFleetFromDrops, this);
 
     SetName(TitleText());
 
@@ -1351,6 +1379,8 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows)
         FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>((**it)[0]);
         fleet_panel->Select(rows.find(it) != rows.end());
     }
+
+    SelectedFleetsChangedSignal();
 }
 
 void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)

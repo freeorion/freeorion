@@ -385,7 +385,7 @@ MapWnd::MapWnd() :
     m_backgrounds(),
     m_bg_scroll_rate(),
     m_selected_system(UniverseObject::INVALID_OBJECT_ID),
-    m_selected_fleet(UniverseObject::INVALID_OBJECT_ID),
+    m_selected_fleets(),
     m_zoom_steps_in(0.0),
     m_side_panel(NULL),
     m_system_icons(),
@@ -573,7 +573,9 @@ MapWnd::MapWnd() :
     GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
 #endif
 
-    Connect(ClientApp::GetApp()->EmpireEliminatedSignal, &MapWnd::HandleEmpireElimination, this);
+    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,                                    &MapWnd::HandleEmpireElimination,   this);
+    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndChangedSignal,                &MapWnd::SelectedFleetsChanged,     this);
+    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedFleetsChangedSignal,  &MapWnd::SelectedFleetsChanged,     this);
 }
 
 MapWnd::~MapWnd()
@@ -1516,7 +1518,10 @@ void MapWnd::SelectSystem(int system_id)
 
 void MapWnd::ReselectLastFleet()
 {
-    SelectFleet(m_selected_fleet);
+    if (m_selected_fleets.empty())
+        SelectFleet(NULL);
+    else
+        SelectFleet(*(m_selected_fleets.begin()));
 }
 
 void MapWnd::SelectFleet(int fleet_id)
@@ -1526,38 +1531,78 @@ void MapWnd::SelectFleet(int fleet_id)
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
-    // abort early if don't need to do anything (the passed fleet is already selected)
-    if ((!fleet && m_selected_fleet == UniverseObject::INVALID_OBJECT_ID) ||
-        (fleet && fleet->ID() == m_selected_fleet))
-    {
+    if (!fleet)
         return;
-    }
+    if (m_selected_fleets.find(fleet) != m_selected_fleets.end())
+        return;
 
+    // find if there is a FleetWnd for this fleet already open.
+    FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet);
 
-    // remove selection indicator from previously selected fleet
-    if (const Fleet* old_selected_fleet = GetUniverse().Object<Fleet>(m_selected_fleet)) {
-        std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.find(old_selected_fleet);
-        if (it != m_fleet_buttons.end()) {
-            FleetButton* button = it->second;
-            button->SetSelected(false);
+    // if there isn't a FleetWnd for this fleen open, need to open one
+    if (!fleet_wnd) {
+        // to open a new FleetWnd, need to know what fleets to put in the Wnd.  Search
+        // for a FleetButton for this fleet
+        std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.find(fleet);
+
+        // sanity check
+        if (it == m_fleet_buttons.end()) {
+            Logger().errorStream() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
+            return;
         }
+
+
+        // determine whether this fleet's FleetWnd can be manipulated by this player: can't manipulate
+        // other empires' FleetWnds, and can't give orders to own fleets while they're en-route.
+        const System* system = fleet->GetSystem();
+        const std::set<int>& owners = fleet->Owners();
+        bool read_only = false;
+        if (owners.empty() || owners.find(HumanClientApp::GetApp()->EmpireID()) == owners.end() || !system)
+            read_only = true;
+
+
+        // get FleetButton for fleet to be selected, and the fleets it represents
+        const FleetButton* button = it->second;
+        const std::vector<Fleet*>& btn_fleets = button->Fleets();
+        if (btn_fleets.empty()) {
+            Logger().errorStream() << "FleetButton contained no fleets! in MapWnd::SelectFleet";
+            return;
+        }
+
+
+        // create new FleetWnd
+        fleet_wnd = FleetUIManager::GetFleetUIManager().NewFleetWnd(btn_fleets, 0, read_only);
+
+        // opening a new FleetWnd, so play sound
+        FleetButton::PlayFleetButtonOpenSound();
+
+
+        // position new FleetWnd.  default to last user-set position...
+        GG::Pt wnd_position = FleetWnd::LastPosition();
+        // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-left
+        if (wnd_position == GG::Pt())
+            wnd_position = GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - fleet_wnd->Height() - 5);
+
+        fleet_wnd->MoveTo(wnd_position);
+
+
+        // safety check to ensure window is on screen... may be redundant
+        if (GG::GUI::GetGUI()->AppWidth() - 5 < fleet_wnd->LowerRight().x)
+            fleet_wnd->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - fleet_wnd->LowerRight().x, GG::Y0));
+        if (GG::GUI::GetGUI()->AppHeight() - 5 < fleet_wnd->LowerRight().y)
+            fleet_wnd->OffsetMove(GG::Pt(GG::X0, GG::GUI::GetGUI()->AppHeight() - 5 - fleet_wnd->LowerRight().y));
     }
-    m_selected_fleet = NULL;
 
 
-    // put indicator on fleet button for selected fleet
-    System* new_system = fleet->GetSystem();  // may be NULL
+    // make sure selected fleet's FleetWnd is active
+    FleetUIManager::GetFleetUIManager().SetActiveFleetWnd(fleet_wnd);
 
 
-    // get button for fleet to be selected
-    std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
-    if (button_it != m_fleet_buttons.end()) {
-        FleetButton* button = button_it->second;
-        button->SetSelected(true);
-    }
+    // Select fleet in FleetWnd
+    fleet_wnd->SelectFleet(fleet);
 
 
-    m_selected_fleet = fleet->ID();   // bookkeeping
+    std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
 }
 
 void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
@@ -2545,157 +2590,140 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
 void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 {
+    std::cout << "MapWnd::FleetButtonClicked" << std::endl;
+
+    // ignore clicks when in production mode
     if (m_in_production_view_mode)
         return;
 
-    FleetButton::PlayFleetButtonOpenSound();
 
-
-    // get fleets represented by button
+    // get possible fleets to select from, and a pointer to one of those fleets
     const std::vector<Fleet*>& btn_fleets = fleet_btn.Fleets();
-    if (btn_fleets.empty())
-        throw std::runtime_error("caught clicked signal for empty fleet button");
+    if (btn_fleets.empty()) {
+        Logger().errorStream() << "Clicked FleetButton contained no fleets!";
+        return;
+    }
+    Fleet* first_fleet = btn_fleets[0];
 
 
-    // get representative fleet and info about it
-    Fleet* fleet = btn_fleets[0];
 
-    System* system = fleet->GetSystem();
-    int owner = *(fleet->Owners().begin());
+    //// determine if the clicked FleetButton was for departing fleets, statinary fleets, or moving fleets.
+    //// determine this by looking at the representative fleet from the button.  if that fleet is departing,
+    //// then the button is a departing FleetButton, and similalry for stationary or moving fleets
+    //// get fleets represented by button
+    //bool fleet_departing = false, fleet_moving = false, fleet_stationary = false;
 
-    bool fleet_departing = false;
-    if (fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
-        fleet->FinalDestinationID() != fleet->SystemID() &&
-        fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID)
-    {
-        fleet_departing = true;
+    //if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID) {               // fleet is not in a system
+    //    fleet_moving = true;
+    //} else if (                                                                 // fleet is in a system
+    //    fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&     // and has a destination
+    //    fleet->FinalDestinationID() != fleet->SystemID()                        // destination is not system where fleet is
+    //   ) {
+    //    fleet_departing = true;
+    //} else {                                                                    // otherwise...
+    //    fleet_stationary = true;
+    //}
+
+
+    // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
+    // is a single selected fleet in the window, and if so, what fleet that is
+    FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
+    Fleet* already_selected_fleet = NULL;
+    if (wnd_for_button) {
+        // there is already FleetWnd for this button open.
+
+        // check which fleet(s) is/are selected in the button's FleetWnd
+        std::set<Fleet*> selected_fleets = wnd_for_button->SelectedFleets();
+
+        // record selected fleet if just one fleet is selected.  otherwise, keep default NULL
+        // to indicate that no one fleet is selected
+        if (selected_fleets.size() == 1)
+            already_selected_fleet = *(selected_fleets.begin());
     }
 
 
-    // find if a FleetWnd for this FleetButton's fleet(s) is already open
-    FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(fleet);
+    // pick fleet to select from fleets represented by the clicked FleetButton.
+    Fleet* fleet_to_select = NULL;
 
-    if (!wnd_for_button) {
-        // get all fleets at this location.  may be in a system, in which case fleets are separated into
-        // departing or stationary; or may be away from any system, moving
-        std::vector<Fleet*> fleets;
-        if (system) {
-            const System::ObjectVec owned_fleets = system->FindObjects(OwnedVisitor<Fleet>(owner));
-            for (System::ObjectVec::const_iterator it = owned_fleets.begin(); it != owned_fleets.end(); ++it) {
-                Fleet* owned_fleet = universe_object_cast<Fleet*>(*it);
-                if (owned_fleet)
-                    fleets.push_back(owned_fleet);
-            }
-        } else {
-            std::copy(btn_fleets.begin(), btn_fleets.end(), std::back_inserter(fleets));
-        }
-
-        // determine whether this FleetWnd can't be manipulated by the users: can't manipulate other 
-        // empires FleetWnds, and can't give orders to your fleets while they're en-route.
-        bool read_only = false;
-        if (owner != HumanClientApp::GetApp()->EmpireID() || !system)
-            read_only = true;
-
-        wnd_for_button = FleetUIManager::GetFleetUIManager().NewFleetWnd(fleets, 0, read_only);
-
-        // position new FleetWnd.  default to last user-set position...
-        GG::Pt wnd_position = FleetWnd::LastPosition();
-        // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-right
-        if (wnd_position == GG::Pt())
-            wnd_position = GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - wnd_for_button->Height() - 5);
-
-        wnd_for_button->MoveTo(wnd_position);
-
-        // safety check to ensure window is on screen... may be redundant
-        if (GG::GUI::GetGUI()->AppWidth() - 5 < wnd_for_button->LowerRight().x)
-            wnd_for_button->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - wnd_for_button->LowerRight().x, GG::Y0));
-        if (GG::GUI::GetGUI()->AppHeight() - 5 < wnd_for_button->LowerRight().y)
-            wnd_for_button->OffsetMove(GG::Pt(GG::X0, GG::GUI::GetGUI()->AppHeight() - 5 - wnd_for_button->LowerRight().y));
-     }
+    //if (fleet_moving) {
+        // all fleets in button are valid selection targets.
 
 
-    // if active fleet wnd hasn't changed, cycle through fleets
-    if (FleetUIManager::GetFleetUIManager().ActiveFleetWnd() == wnd_for_button) {
-        std::set<Fleet*> selected_fleets = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleets();
+    if (!already_selected_fleet || btn_fleets.size() == 1) {
+        // no (single) fleet is already selected, or there is only one selectable fleet, 
+        // so select first fleet in button
+        fleet_to_select = (*btn_fleets.begin());
 
-        const UniverseObject* selected_fleet = 0;
-
-        if (selected_fleets.empty()) {
-            // do nothing
-        } else if (selected_fleets.size() > 1) {
-            return; // don't mess up user's carefully selected fleets
-        } else {
-            selected_fleet = universe_object_cast<UniverseObject*>(*(selected_fleets.begin()));
-        }
-
-        if (system) {
-            System::ObjectVec departing_fleets = system->FindObjects(OrderedMovingFleetVisitor(owner));
-            System::ObjectVec stationary_fleets = system->FindObjects(StationaryFleetVisitor(owner));
-
-            if (departing_fleets.empty() && stationary_fleets.empty()) return;
-
-            if ((fleet_departing && !departing_fleets.empty()) || stationary_fleets.empty()) {
-                // are assured there is at least one departing fleet
-
-                // attempt to find already-selected fleet in departing fleets
-                System::ObjectVec::iterator it;
-                if (selected_fleet)
-                    it = std::find(departing_fleets.begin(), departing_fleets.end(), selected_fleet);
-                else
-                    it = departing_fleets.end();
-
-                if (it == departing_fleets.end() || it == departing_fleets.end() - 1) {
-                    // selected fleet wasn't found, or it was found at the end, so select the first departing fleet
-
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(departing_fleets.front()));
-                } else {
-                    // it was found, and wasn't at the end, so select the next fleet after it
-                    ++it;
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
-                }
-            } else {
-                // are assured there is at least one stationary fleet
-
-                // attempt to find already-selected fleet in departing fleets
-                System::ObjectVec::iterator it;
-                if (selected_fleet)
-                    it = std::find(stationary_fleets.begin(), stationary_fleets.end(), selected_fleet);
-                else
-                    it = stationary_fleets.end();
-
-                if (it == stationary_fleets.end() || it == stationary_fleets.end() - 1) {
-                    // it wasn't found, or it was found at the end, so select the first stationary fleet
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(stationary_fleets.front()));
-                } else {
-                    // it was found, and wasn't at the end, so select the next fleet after it
-                    ++it;
-                    FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
-                }
-            }
-        } else {
-            if (btn_fleets.empty()) return;
-            // are assured there is at least one moving fleet
-
-            // attempt to find already-selected fleet in moving fleets
-            std::vector<Fleet*>::const_iterator it;
-            if (selected_fleet)
-                it = std::find(btn_fleets.begin(), btn_fleets.end(), selected_fleet);
-            else
-                it == btn_fleets.end();
-
-            if (it == btn_fleets.end() || it == btn_fleets.end() - 1) {
-                // it wasn't found, or it was found at the end, so select the first moving fleet
-                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(btn_fleets.front()));
-            } else {
-                // it was found, and wasn't at the end, so select the next fleet after it
-                ++it;
-                FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectFleet(universe_object_cast<Fleet*>(*it));
-            }
-        }
     } else {
-        FleetUIManager::GetFleetUIManager().SetActiveFleetWnd(wnd_for_button);
+        // select next fleet after already-selected fleet, or first fleet if already-selected
+        // fleet is the last fleet in the button.
+
+        // to do this, scan through button's fleets to find already_selected_fleet
+        for (std::vector<Fleet*>::const_iterator it = btn_fleets.begin(); it != btn_fleets.end(); ++it) {
+            if (*it == already_selected_fleet) {
+                // found already selected fleet.  get NEXT fleet
+                ++it;
+                // if next fleet iterator is past end of fleets, loop around to first fleet
+                if (it == btn_fleets.end())
+                    it = btn_fleets.begin();
+                // get fleet to select out of iterator
+                fleet_to_select = *it;
+                break;
+            }
+        }
     }
 
+    /*} else if (fleet_stationary) {
+
+    } else {
+
+    }*/
+
+
+    // select chosen fleet
+    if (fleet_to_select)
+        SelectFleet(fleet_to_select);
+}
+
+void MapWnd::SelectedFleetsChanged()
+{
+    // get selected fleets
+    std::set<Fleet*> selected_fleets;
+    if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
+        selected_fleets = fleet_wnd->SelectedFleets();
+
+
+    // if old and new sets of selected fleets are the same, don't need to change anything
+    if (selected_fleets == m_selected_fleets)
+        return;
+
+
+    // clear old selection indicators
+    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        const Fleet* fleet = *it;
+        std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
+        if (button_it != m_fleet_buttons.end())
+            (button_it->second)->SetSelected(false);
+    }
+
+
+    // remove old move lines / ETA indicators
+
+
+    // set new selected fleets
+    m_selected_fleets = selected_fleets;
+
+
+    // add new selection indicators
+    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        const Fleet* fleet = *it;
+        std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
+        if (button_it != m_fleet_buttons.end())
+            (button_it->second)->SetSelected(true);
+    }
+
+
+    // add new move lines / ETA indicators
 }
 
 void MapWnd::HandleEmpireElimination(int empire_id)
@@ -2773,8 +2801,53 @@ void MapWnd::Sanitize()
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();
+
     m_selected_system = UniverseObject::INVALID_OBJECT_ID;
-    m_selected_fleet = UniverseObject::INVALID_OBJECT_ID;
+    m_selected_fleets.clear();
+
+    m_starlane_endpoints.clear();
+    m_stationary_fleet_buttons.clear();
+    m_departing_fleet_buttons.clear();
+    m_moving_fleet_buttons.clear();
+    for(std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
+        delete it->second;
+    m_fleet_buttons.clear();
+
+    for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
+        it->second.disconnect();
+    m_fleet_state_change_signals.clear();
+
+    for (std::map<int, std::vector<boost::signals::connection> >::iterator it = m_system_fleet_insert_remove_signals.begin(); it != m_system_fleet_insert_remove_signals.end(); ++it) {
+        std::vector<boost::signals::connection>& vec = it->second;
+        for (std::vector<boost::signals::connection>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
+            vec_it->disconnect();
+        vec.clear();
+    }
+    m_system_fleet_insert_remove_signals.clear();
+
+    for (std::set<boost::signals::connection>::iterator it = m_keyboard_accelerator_signals.begin(); it != m_keyboard_accelerator_signals.end(); ++it)
+        it->disconnect();
+    m_keyboard_accelerator_signals.clear();
+
+    m_fleet_lines.clear();
+
+    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it = m_fleet_eta_map_indicators.begin(); it != m_fleet_eta_map_indicators.end(); ++it) {
+        std::vector<FleetETAMapIndicator*>& vec = it->second;
+        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
+            delete *vec_it;
+        vec.clear();
+    }
+    m_fleet_eta_map_indicators.clear();
+
+    m_projected_fleet_lines.clear();
+
+    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it = m_projected_fleet_eta_map_indicators.begin(); it != m_projected_fleet_eta_map_indicators.end(); ++it) {
+        std::vector<FleetETAMapIndicator*>& vec = it->second;
+        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
+            delete *vec_it;
+        vec.clear();
+    }
+    m_projected_fleet_eta_map_indicators.clear();
 }
 
 bool MapWnd::ReturnToMap()

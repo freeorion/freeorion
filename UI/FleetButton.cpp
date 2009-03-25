@@ -293,10 +293,10 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     }
 }
 
-
 void FleetButton::SetSelected(bool selected)
 {
     m_selected = selected;
+    std::cout << "FleetButton " << this << " selected: " << m_selected << std::endl;
 }
 
 void FleetButton::RenderUnpressed() {
@@ -326,6 +326,7 @@ void FleetButton::RenderUnpressed() {
     RenderTexturedQuad(vertsXY, m_head_icon);
     RenderTexturedQuad(vertsXY, m_size_icon);
 
+    std::cout << "FleetButton " << this << " Render selected: " << m_selected << " texture: " << m_selection_texture << std::endl;
     if (m_selected && m_selection_texture) {
         GG::Pt selector_ul = GG::Pt(ul.x - Width()/2, ul.y - Height()/2);
         GG::Pt selector_lr = GG::Pt(lr.x + Width()/2, lr.y + Height()/2);

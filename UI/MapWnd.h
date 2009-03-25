@@ -203,16 +203,22 @@ private:
     void            RenderMovementLine(const MapWnd::MovementLineData& move_line);  //!< renders a single fleet movement line
 
     void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
+
     void            SystemDoubleClicked(int system_id);
     void            SystemLeftClicked(int system_id);
     void            SystemRightClicked(int system_id);
     void            MouseEnteringSystem(int system_id);
     void            MouseLeavingSystem(int system_id);
+
     void            PlotFleetMovement(int system_id, bool execute_move);   //!< issues fleet move orders to appropriate fleets in active FleetWnd
+
     void            FleetButtonClicked(FleetButton& fleet_btn);
+
     void            UniverseObjectDeleted(const UniverseObject *obj);
+
     bool            ReturnToMap();
     bool            OpenChatWindow();
+
     bool            EndTurn();
 
     bool            ToggleSitRep();
@@ -232,9 +238,12 @@ private:
     void            HideDesign();
 
     bool            ShowMenu();
+
     bool            CloseSystemView();                          //!< closes off the current system view
+
     bool            KeyboardZoomIn();
     bool            KeyboardZoomOut();
+
     bool            ZoomToHomeSystem();
     bool            ZoomToPrevOwnedSystem();
     bool            ZoomToNextOwnedSystem();
@@ -260,7 +269,8 @@ private:
     void            HideAllPopups();
     void            ShowAllPopups();
 
-    void            FleetWndClosing(FleetWnd* fleet_wnd);
+    void            SelectedFleetsChanged();
+
     void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
 
     std::set<GG::Key>           m_disabled_accels_list;                 //!< the list of Accelerators disabled by \a DisableAlphaNumAccels
@@ -269,7 +279,7 @@ private:
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     int                         m_selected_system;
-    int                         m_selected_fleet;
+    std::set<Fleet*>            m_selected_fleets;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
