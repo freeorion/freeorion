@@ -102,6 +102,7 @@ namespace {
     ParamLabel anti_fighter_damage_label("antifighterdamage");
     ParamLabel ROF_label("rof");
     ParamLabel range_label("range");
+    ParamLabel fighter_weapon_range_label("fighterweaponrange");
     ParamLabel stealth_label("stealth");
     ParamLabel health_label("health");
     ParamLabel fighter_type_label("fightertype");
@@ -198,6 +199,7 @@ namespace {
              >> anti_ship_damage_label >> real_p[part_stats_p.anti_ship_damage = arg1]
              >> anti_fighter_damage_label >> real_p[part_stats_p.anti_fighter_damage = arg1]
              >> launch_rate_label >> real_p[part_stats_p.rate = arg1]
+             >> fighter_weapon_range_label >> real_p[part_stats_p.range = arg1]
              >> speed_label >> real_p[part_stats_p.speed = arg1]
              >> stealth_label >> real_p[part_stats_p.stealth = arg1]
              >> health_label >> real_p[part_stats_p.health = arg1]
@@ -206,8 +208,9 @@ namespace {
             [part_stats_p.this_ =
              construct_<FighterStats>(part_stats_p.fighter_type, part_stats_p.anti_ship_damage,
                                       part_stats_p.anti_fighter_damage, part_stats_p.rate,
-                                      part_stats_p.speed, part_stats_p.stealth,
-                                      part_stats_p.health, part_stats_p.detection, part_stats_p.capacity)]
+                                      part_stats_p.range, part_stats_p.speed,
+                                      part_stats_p.stealth, part_stats_p.health,
+                                      part_stats_p.detection, part_stats_p.capacity)]
 
             // a single double stat
             | (capacity_label >> real_p[part_stats_p.this_ = arg1])

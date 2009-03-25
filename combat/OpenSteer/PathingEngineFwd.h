@@ -19,8 +19,10 @@ class CombatFighter;
 class CombatShip;
 class PathingEngine;
 
-typedef boost::shared_ptr<OpenSteer::AbstractVehicle> CombatObjectPtr;
-typedef boost::weak_ptr<OpenSteer::AbstractVehicle> CombatObjectWeakPtr;
+class CombatObject;
+
+typedef boost::shared_ptr<CombatObject> CombatObjectPtr;
+typedef boost::weak_ptr<CombatObject> CombatObjectWeakPtr;
 typedef boost::shared_ptr<CombatFighterFormation> CombatFighterFormationPtr;
 typedef boost::shared_ptr<CombatFighter> CombatFighterPtr;
 typedef boost::shared_ptr<CombatShip> CombatShipPtr;

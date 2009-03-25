@@ -72,6 +72,9 @@ Ship* CombatShip::GetShip() const
 const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
 
+double CombatShip::Health() const
+{ return m_ship->GetMeter(METER_HEALTH)->Current(); }
+
 void CombatShip::LaunchFighters()
 {
     assert(!m_unlaunched_formations.empty());
@@ -157,6 +160,12 @@ void CombatShip::update(const float /*current_time*/, const float elapsed_time)
 
 void CombatShip::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity, const float elapsed_time)
 { regenerateLocalSpaceForBanking(new_velocity, elapsed_time); }
+
+void CombatShip::Damage(double d)
+{
+    assert(0.0 < d);
+    return m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-d);
+}
 
 float CombatShip::MaxWeaponRange() const
 {

@@ -3,7 +3,6 @@
 #define _CombatOrder_h_
 
 #include "OpenSteer/PathingEngineFwd.h"
-#include "OpenSteer/AbstractVehicle.h"
 #include "OpenSteer/Vec3.h"
 
 #include <boost/cast.hpp>

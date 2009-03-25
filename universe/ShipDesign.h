@@ -86,6 +86,7 @@ struct FighterStats
                  double anti_fighter_damage,
                  double anti_ship_damage,
                  double launch_rate,
+                 double fighter_weapon_range,
                  double speed,
                  double stealth,
                  double health,
@@ -96,6 +97,7 @@ struct FighterStats
     double m_anti_fighter_damage;
     double m_anti_ship_damage;
     double m_launch_rate;
+    double m_fighter_weapon_range;
     double m_speed;
     double m_stealth;
     double m_health;
@@ -109,6 +111,7 @@ struct FighterStats
                 & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
                 & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
                 & BOOST_SERIALIZATION_NVP(m_launch_rate)
+                & BOOST_SERIALIZATION_NVP(m_fighter_weapon_range)
                 & BOOST_SERIALIZATION_NVP(m_speed)
                 & BOOST_SERIALIZATION_NVP(m_stealth)
                 & BOOST_SERIALIZATION_NVP(m_health)

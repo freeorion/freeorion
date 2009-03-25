@@ -4,8 +4,8 @@
 
 #include "PathingEngineFwd.h"
 
+#include "CombatObject.h"
 #include "../../universe/ShipDesign.h"
-#include "SimpleVehicle.h"
 #include "../CombatOrder.h"
 
 #include <boost/enable_shared_from_this.hpp>
@@ -59,7 +59,7 @@ private:
 };
 
 class CombatFighter :
-    public OpenSteer::SimpleVehicle,
+    public CombatObject,
     public boost::enable_shared_from_this<CombatFighter>
 {
 public:
@@ -72,7 +72,7 @@ public:
     int ID() const;
     const FighterStats& Stats() const;
     const FighterMission& CurrentMission() const;
-    double Health() const;
+    virtual double Health() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
@@ -84,7 +84,7 @@ public:
     void ClearMissions();
     void ExitSpace();
 
-    void Damage(double d);
+    virtual void Damage(double d);
 
 private:
     CombatFighter();
@@ -136,7 +136,7 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
         {
-            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpenSteer::SimpleVehicle)
+            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
                 & BOOST_SERIALIZATION_NVP(m_proximity_token)
                 & BOOST_SERIALIZATION_NVP(m_leader)
                 & BOOST_SERIALIZATION_NVP(m_stats)

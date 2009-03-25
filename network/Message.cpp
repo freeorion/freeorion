@@ -1,6 +1,7 @@
 #include "Message.h"
 
 #include "../combat/CombatOrder.h"
+#include "../combat/OpenSteer/CombatObject.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Meter.h"

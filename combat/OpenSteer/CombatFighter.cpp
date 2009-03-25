@@ -549,13 +549,15 @@ void CombatFighter::FireAtHostiles()
 
     OpenSteer::Vec3 position_to_use = m_formation->Centroid();
     CombatFighterPtr fighter = *m_formation->begin();
-    // TODO: Get the fighter's weapon range from the fighter itself.
-    const double WEAPON_RANGE = 15.0;
+    const double WEAPON_RANGE = m_stats.m_fighter_weapon_range;
     const double WEAPON_RANGE_SQUARED = WEAPON_RANGE * WEAPON_RANGE;
     CombatObjectPtr target = m_mission_subtarget.lock();
+    double base_damage = m_stats.m_anti_fighter_damage;
     if (!target && m_mission_queue.back().m_type == FighterMission::ATTACK_THIS) {
         assert(m_mission_queue.back().m_target.lock());
         target = m_mission_queue.back().m_target.lock();
+        if (!boost::dynamic_pointer_cast<CombatFighter>(target))
+            base_damage = m_stats.m_anti_ship_damage;
     } else if (!target) {
         // fire on targets of opportunity
         if (CombatFighterPtr fighter =
@@ -566,12 +568,12 @@ void CombatFighter::FireAtHostiles()
                    m_pathing_engine->NearestHostileNonFighterInRange(
                        position_to_use, m_empire_id, WEAPON_RANGE)) {
             target = non_fighter;
+            base_damage = m_stats.m_anti_ship_damage;
         }
     }
     if (target &&
         (target->position() - position_to_use).lengthSquared() < WEAPON_RANGE_SQUARED) {
-        // TODO: Resolve firing and damage.  Take into account the number of
-        // fighters in the formation.
+        target->Damage(base_damage * m_formation->size());
     }
 }
 
@@ -643,11 +645,9 @@ OpenSteer::Vec3 CombatFighter::Steer()
         const float NONFIGHTER_RADIUS = std::max(NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS,
                                                  POINT_DEFENSE_AVOIDANCE_RADIUS);
         m_pathing_engine->GetProximityDB().FindInRadius(
-            position(), FIGHTER_RADIUS, neighbors,
-            FIGHTER_FLAGS, EmpireFlag(m_empire_id));
+            position(), FIGHTER_RADIUS, neighbors, FIGHTER_FLAGS, EmpireFlag(m_empire_id));
         m_pathing_engine->GetProximityDB().FindInRadius(
-            position(), NONFIGHTER_RADIUS, nonfighters,
-            NONFIGHTER_FLAGS);
+            position(), NONFIGHTER_RADIUS, nonfighters, NONFIGHTER_FLAGS);
     } else {
         for (CombatFighterFormation::const_iterator it = m_formation->begin();
              it != m_formation->end();
@@ -755,10 +755,6 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
 
     float weakest = FLT_MAX;
 
-    const float BOMBER_SCALE_FACTOR = 1.0;
-    const float INTERCEPTOR_SCALE_FACTOR = 2.0;
-    const float SHIP_SCALE_FACTOR = 4.0;
-
     PathingEngine::ConstAttackerRange attackers = m_pathing_engine->Attackers(attackee);
     for (PathingEngine::Attackees::const_iterator it = attackers.first;
          it != attackers.second;
@@ -772,13 +768,9 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
         // fighters at all.
         if (m_stats.m_type == INTERCEPTOR &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
-            // TODO: Use fighter's hit points, and prefer to attack bombers --
-            // for now, just take any one
-            strength =
-                1.0 * (fighter->m_stats.m_type == INTERCEPTOR ?
-                       INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
+            strength = fighter->m_stats.m_stealth;
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
-            strength = ship->AntiFighterStrength() * SHIP_SCALE_FACTOR;
+            strength = ship->Health() * (1.0 + ship->AntiFighterStrength());
         }
         if (strength < weakest) {
             retval = it->second.lock();

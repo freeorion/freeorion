@@ -4,7 +4,7 @@
 
 #include "PathingEngineFwd.h"
 
-#include "SimpleVehicle.h"
+#include "CombatObject.h"
 #include "../CombatOrder.h"
 
 #include <boost/enable_shared_from_this.hpp>
@@ -16,7 +16,7 @@
 class Ship;
 
 class CombatShip :
-    public OpenSteer::SimpleVehicle,
+    public CombatObject,
     public boost::enable_shared_from_this<CombatShip>
 {
 public:
@@ -27,6 +27,7 @@ public:
     float AntiFighterStrength() const;
     Ship* GetShip() const;
     const ShipMission& CurrentMission() const;
+    virtual double Health() const;
 
     void LaunchFighters();
     void RecoverFighters(const CombatFighterFormationPtr& formation);
@@ -37,6 +38,8 @@ public:
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
+
+    virtual void Damage(double d);
 
 private:
     CombatShip();
@@ -64,7 +67,7 @@ private:
     CombatObjectWeakPtr m_mission_subtarget;
 
     PathingEngine* m_pathing_engine;
-    
+
     // TODO: This should be computed from the ship design in the final version
     // of this class.
     float m_anti_fighter_strength;
@@ -81,7 +84,7 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
         {
-            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(OpenSteer::SimpleVehicle)
+            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
                 & BOOST_SERIALIZATION_NVP(m_proximity_token)
                 & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_ship)
