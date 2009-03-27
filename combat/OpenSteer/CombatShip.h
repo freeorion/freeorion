@@ -37,7 +37,8 @@ public:
     void ClearFighterMissions();
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
-    virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
+    virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
+                                      const float elapsedTime);
 
     virtual void Damage(double d);
 
@@ -72,8 +73,14 @@ private:
     // of this class.
     float m_anti_fighter_strength;
 
-    std::set<CombatFighterFormationPtr> m_formations;
-    std::set<CombatFighterFormationPtr> m_unlaunched_formations;
+    // map from part type name to (number of parts in the design of that type,
+    // the unlaunched fighters of that part type) pairs
+    typedef std::map<
+        std::string,
+        std::pair<std::size_t, std::vector<CombatFighterPtr> >
+    > FighterMap;
+
+    FighterMap m_unlaunched_fighters;
     std::set<CombatFighterFormationPtr> m_launched_formations;
 
     // TODO: Temporary only!
@@ -95,8 +102,7 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine)
                 & BOOST_SERIALIZATION_NVP(m_anti_fighter_strength)
-                & BOOST_SERIALIZATION_NVP(m_formations)
-                & BOOST_SERIALIZATION_NVP(m_unlaunched_formations)
+                & BOOST_SERIALIZATION_NVP(m_unlaunched_fighters)
                 & BOOST_SERIALIZATION_NVP(m_launched_formations)
                 & BOOST_SERIALIZATION_NVP(m_instrument)
                 & BOOST_SERIALIZATION_NVP(m_last_mission);

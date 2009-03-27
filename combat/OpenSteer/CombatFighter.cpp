@@ -82,13 +82,6 @@ CombatFighterFormation::const_iterator CombatFighterFormation::end() const
 CombatFighter& CombatFighterFormation::Leader()
 { return *m_leader; }
 
-void CombatFighterFormation::SetLeader(const CombatFighterPtr& fighter)
-{
-    assert(!m_leader);
-    m_leader = fighter;
-    m_pathing_engine->AddObject(m_leader);
-}
-
 void CombatFighterFormation::push_back(const CombatFighterPtr& fighter)
 {
     assert(fighter);
@@ -120,15 +113,25 @@ CombatFighterFormation::iterator CombatFighterFormation::begin()
 CombatFighterFormation::iterator CombatFighterFormation::end()
 { return m_members.end(); }
 
+void CombatFighterFormation::SetLeader(const CombatFighterPtr& fighter)
+{
+    assert(!m_leader);
+    m_leader = fighter;
+    m_pathing_engine->AddObject(m_leader);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // CombatFighter
 ////////////////////////////////////////////////////////////////////////////////
+const std::size_t CombatFighter::FORMATION_SIZE = 5;
+
 CombatFighter::CombatFighter() :
     m_proximity_token(0),
     m_leader(false),
     m_stats(),
     m_empire_id(-1),
+    m_id(-1),
     m_mission_queue(),
     m_mission_weight(0.0),
     m_base(),
@@ -140,38 +143,39 @@ CombatFighter::CombatFighter() :
     ,m_last_mission(FighterMission::NONE)
 {}
 
-CombatFighter::CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
-                             int fighter_id, PathingEngine& pathing_engine,
-                             const CombatFighterFormationPtr& formation,
-                             int formation_position) :
+CombatFighter::CombatFighter(CombatObjectPtr base, int empire_id,
+                             PathingEngine& pathing_engine) :
     m_proximity_token(0),
-    m_leader(false),
-    m_stats(stats),
+    m_leader(true),
+    m_stats(),
+    m_part_name(),
     m_empire_id(empire_id),
+    m_id(pathing_engine.NextFighterID()),
     m_mission_queue(),
     m_mission_weight(0.0),
     m_base(base),
-    m_formation_position(formation_position),
-    m_formation(formation),
-    m_health(stats.m_health),
+    m_formation_position(-1),
+    m_formation(),
+    m_health(m_stats.m_health),
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
 
-CombatFighter::CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
-                             int fighter_id, PathingEngine& pathing_engine,
-                             const CombatFighterFormationPtr& formation) :
+CombatFighter::CombatFighter(CombatObjectPtr base, const PartType& part, int empire_id,
+                             PathingEngine& pathing_engine) :
     m_proximity_token(0),
-    m_leader(true),
-    m_stats(stats),
+    m_leader(false),
+    m_stats(boost::get<FighterStats>(part.Stats())),
+    m_part_name(part.Name()),
     m_empire_id(empire_id),
+    m_id(pathing_engine.NextFighterID()),
     m_mission_queue(),
     m_mission_weight(0.0),
     m_base(base),
     m_formation_position(-1),
-    m_formation(formation),
-    m_health(stats.m_health),
+    m_formation(),
+    m_health(0),
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
@@ -223,6 +227,9 @@ int CombatFighter::ID() const
 
 const FighterStats& CombatFighter::Stats() const
 { return m_stats; }
+
+const std::string& CombatFighter::PartName() const
+{ return m_part_name; }
 
 const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
@@ -312,6 +319,9 @@ void CombatFighter::ExitSpace()
 
 void CombatFighter::Damage(double d)
 { m_health = std::max(0.0, m_health - d); }
+
+void CombatFighter::SetFormation(const CombatFighterFormationPtr& formation)
+{ m_formation = formation; }
 
 void CombatFighter::PushMission(const FighterMission& mission)
 {

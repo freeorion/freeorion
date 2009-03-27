@@ -2,7 +2,10 @@
 #ifndef PATHING_ENGINE_H
 #define PATHING_ENGINE_H
 
+#include "CombatFighter.h"
+#include "CombatShip.h"
 #include "PathingEngineFwd.h"
+#include "../../universe/Ship.h"
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
@@ -42,13 +45,15 @@ public:
 
     void AddObject(const CombatObjectPtr& obj);
     void RemoveObject(const CombatObjectPtr& obj);
+    int NextFighterID();
 
     void BeginAttack(const CombatObjectPtr& attacker, const CombatObjectPtr& attackee);
     void EndAttack(const CombatObjectPtr& attacker, const CombatObjectPtr& attackee);
 
     // fighters
+    template <class Iter>
     CombatFighterFormationPtr
-    CreateFighterFormation(CombatShipPtr base, const FighterStats& stats, std::size_t size);
+    CreateFighterFormation(CombatShipPtr base, Iter first, Iter last);
     void AddFighterFormation(const CombatFighterFormationPtr& formation);
     void RemoveFighter(const CombatObjectPtr& fighter);
     void RemoveFighterFormation(const CombatFighterFormationPtr& formation);
@@ -63,6 +68,9 @@ public:
     static const std::size_t UPDATE_SETS;
 
 private:
+    void RemoveFighter(const CombatFighterPtr& fighter,
+                       std::set<CombatFighterFormationPtr>::iterator formation_it);
+
     int m_next_fighter_id;
     std::size_t m_update_number;
     std::set<CombatObjectPtr> m_objects;
@@ -75,9 +83,11 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
         {
-            ar  & BOOST_SERIALIZATION_NVP(m_update_number)
+            ar  & BOOST_SERIALIZATION_NVP(m_next_fighter_id)
+                & BOOST_SERIALIZATION_NVP(m_update_number)
                 & BOOST_SERIALIZATION_NVP(m_objects)
                 & BOOST_SERIALIZATION_NVP(m_fighter_formations)
+                & BOOST_SERIALIZATION_NVP(m_attackees)
                 & BOOST_SERIALIZATION_NVP(m_proximity_database)
                 & BOOST_SERIALIZATION_NVP(m_obstacles);
         }
@@ -95,5 +105,33 @@ inline unsigned int EmpireFlag(int empire_id)
 
 inline unsigned int NotEmpireFlag(int empire_id)
 { return ~(1 << static_cast<unsigned int>(empire_id)); }
+
+
+// implementations
+
+template <class Iter>
+CombatFighterFormationPtr
+PathingEngine::CreateFighterFormation(CombatShipPtr base, Iter first, Iter last)
+{
+    assert(first != last);
+    assert(base->GetShip()->Owners().size() == 1u);
+    int empire_id = *base->GetShip()->Owners().begin();
+
+    CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
+    formation->SetLeader(
+        CombatFighterPtr(
+            new CombatFighter(CombatObjectPtr(), empire_id, *this)));
+
+    for (Iter it = first; it != last; ++it) {
+        CombatFighterPtr fighter = *it;
+        fighter->SetFormation(formation);
+        formation->push_back(fighter);
+        m_objects.insert(fighter);
+    }
+
+    m_fighter_formations.insert(formation);
+
+    return formation;
+}
 
 #endif

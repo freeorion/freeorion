@@ -1,8 +1,5 @@
 #include "PathingEngine.h"
 
-#include "CombatFighter.h"
-#include "CombatShip.h"
-#include "../../universe/Ship.h"
 #include "../../universe/ShipDesign.h"
 #include "../../universe/System.h"
 
@@ -140,6 +137,9 @@ void PathingEngine::RemoveObject(const CombatObjectPtr& obj)
     m_objects.erase(obj);
 }
 
+int PathingEngine::NextFighterID()
+{ return m_next_fighter_id++; }
+
 void PathingEngine::BeginAttack(const CombatObjectPtr& attacker,
                                 const CombatObjectPtr& attackee)
 { m_attackees.insert(Attackees::value_type(attackee, attacker)); }
@@ -157,31 +157,6 @@ void PathingEngine::EndAttack(const CombatObjectPtr& attacker,
     }
 }
 
-CombatFighterFormationPtr
-PathingEngine::CreateFighterFormation(CombatShipPtr base, const FighterStats& stats, std::size_t size)
-{
-    assert(base->GetShip()->Owners().size() == 1u);
-    int empire_id = *base->GetShip()->Owners().begin();
-
-    CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
-    formation->SetLeader(
-        CombatFighterPtr(
-            new CombatFighter(CombatObjectPtr(), stats, empire_id, m_next_fighter_id++,
-                              *this, formation)));
-
-    for (std::size_t i = 0; i < size; ++i) {
-        CombatFighterPtr fighter(
-            new CombatFighter(CombatObjectPtr(), stats, empire_id, m_next_fighter_id++,
-                              *this, formation, i % size));
-        formation->push_back(fighter);
-        m_objects.insert(fighter);
-    }
-
-    m_fighter_formations.insert(formation);
-
-    return formation;
-}
-
 void PathingEngine::AddFighterFormation(const CombatFighterFormationPtr& formation)
 {
     formation->Leader().EnterSpace();
@@ -197,20 +172,19 @@ void PathingEngine::RemoveFighter(const CombatObjectPtr& f)
     assert(boost::dynamic_pointer_cast<CombatFighter>(f));
     CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(f);
     CombatFighterFormationPtr formation = fighter->Formation();
-    std::set<CombatFighterFormationPtr>::iterator formation_it = m_fighter_formations.find(formation);
+    std::set<CombatFighterFormationPtr>::iterator formation_it =
+        m_fighter_formations.find(formation);
     assert(formation_it != m_fighter_formations.end());
-    (*formation_it)->erase(fighter);
-    if ((*formation_it)->empty())
-        m_fighter_formations.erase(formation_it);
-    RemoveObject(f);
+    RemoveFighter(fighter, formation_it);
 }
 
 void PathingEngine::RemoveFighterFormation(const CombatFighterFormationPtr& formation)
 {
+    std::set<CombatFighterFormationPtr>::iterator formation_it =
+        m_fighter_formations.find(formation);
     while (!formation->empty()) {
-        RemoveFighter(*formation->begin());
+        RemoveFighter(*formation->begin(), formation_it);
     }
-    m_fighter_formations.erase(formation);
 }
 
 ProximityDB& PathingEngine::GetProximityDB()
@@ -221,3 +195,13 @@ void PathingEngine::ClearObstacles()
 
 void PathingEngine::AddObstacle(OpenSteer::AbstractObstacle* obstacle)
 { m_obstacles.push_back(obstacle); }
+
+void PathingEngine::RemoveFighter(const CombatFighterPtr& fighter,
+                                  std::set<CombatFighterFormationPtr>::iterator formation_it)
+{
+    assert(formation_it != m_fighter_formations.end());
+    (*formation_it)->erase(fighter);
+    if ((*formation_it)->empty())
+        m_fighter_formations.erase(formation_it);
+    RemoveObject(fighter);
+}

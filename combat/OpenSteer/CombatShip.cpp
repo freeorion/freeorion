@@ -77,23 +77,54 @@ double CombatShip::Health() const
 
 void CombatShip::LaunchFighters()
 {
-    assert(!m_unlaunched_formations.empty());
-    // TODO: Launch only the maximum number of formations launchable in a
-    // single combat turn.
-    for (std::set<CombatFighterFormationPtr>::iterator it = m_unlaunched_formations.begin();
-         it != m_unlaunched_formations.end();
+    // Note that this just launches the fighters that can be launched on this
+    // turn.  There is currently no code that accounts for turns(!), so we're
+    // only launching part of the fighters here and not providing for the
+    // launches of the rest.
+
+    for (FighterMap::iterator it = m_unlaunched_fighters.begin();
+         it != m_unlaunched_fighters.end();
          ++it) {
-        m_pathing_engine->AddFighterFormation(*it);
-        m_launched_formations.insert(*it);
+        const PartType* part = GetPartType(it->first);
+        assert(part && part->Class() == PC_FIGHTERS);
+        const FighterStats& stats = boost::get<FighterStats>(part->Stats());
+
+        std::vector<CombatFighterPtr>& fighters_vec = it->second.second;
+        std::size_t num_fighters = fighters_vec.size();
+        std::size_t launch_size =
+            std::min<std::size_t>(num_fighters, stats.m_launch_rate * it->second.first);
+
+        std::size_t formation_size =
+            std::min(CombatFighter::FORMATION_SIZE, launch_size);
+        std::size_t num_formations = launch_size / formation_size;
+        std::size_t final_formation_size = launch_size % formation_size;
+        if (final_formation_size)
+            ++num_formations;
+        else
+            final_formation_size = formation_size;
+        for (std::size_t j = 0; j < num_formations; ++j) {
+            std::size_t size =
+                j == num_formations - 1 ? final_formation_size : formation_size;
+            std::set<CombatFighterFormationPtr>::iterator formation_it =
+                m_launched_formations.insert(
+                    m_pathing_engine->CreateFighterFormation(
+                        shared_from_this(),
+                        fighters_vec.end() - size,
+                        fighters_vec.end())).first;
+            fighters_vec.resize(fighters_vec.size() - size);
+            m_pathing_engine->AddFighterFormation(*formation_it);
+        }
     }
-    m_unlaunched_formations.clear();
 }
 
 void CombatShip::RecoverFighters(const CombatFighterFormationPtr& formation)
 {
+    assert(!formation->empty());
     m_launched_formations.erase(formation);
-    m_unlaunched_formations.insert(formation);
     m_pathing_engine->RemoveFighterFormation(formation);
+    std::vector<CombatFighterPtr>& fighter_vec =
+        m_unlaunched_fighters[(*formation->begin())->PartName()].second;
+    fighter_vec.insert(fighter_vec.end(), formation->begin(), formation->end());
 }
 
 void CombatShip::AppendMission(const ShipMission& mission)
@@ -158,7 +189,8 @@ void CombatShip::update(const float /*current_time*/, const float elapsed_time)
     m_proximity_token->UpdatePosition(position());
 }
 
-void CombatShip::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity, const float elapsed_time)
+void CombatShip::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity,
+                                      const float elapsed_time)
 { regenerateLocalSpaceForBanking(new_velocity, elapsed_time); }
 
 void CombatShip::Damage(double d)
@@ -203,28 +235,17 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
     for (Ship::FighterMap::const_iterator it = fighters.begin(); it != fighters.end(); ++it) {
         const PartType* part = GetPartType(it->first);
         assert(part && part->Class() == PC_FIGHTERS);
-        const FighterStats& stats = boost::get<FighterStats>(part->Stats());
         std::size_t num_fighters = it->second.second;
-        std::size_t formation_size =
-            std::min<std::size_t>(CombatFighter::FORMATION_SIZE,
-                                  stats.m_launch_rate * it->second.first);
-        std::size_t num_formations = num_fighters / formation_size;
-        std::size_t final_formation_size = num_fighters % formation_size;
-        if (final_formation_size)
-            ++num_formations;
-        else
-            final_formation_size = formation_size;
-        for (std::size_t j = 0; j < num_formations; ++j) {
-            std::size_t size =
-                j == num_formations - 1 ? final_formation_size : formation_size;
-            m_formations.insert(
-                m_pathing_engine->CreateFighterFormation(shared_from_this(),
-                                                         stats,
-                                                         size));
+
+        m_unlaunched_fighters[it->first].first = it->second.first;
+        std::vector<CombatFighterPtr>& fighter_vec =
+            m_unlaunched_fighters[it->first].second;
+        fighter_vec.resize(num_fighters);
+        for (std::size_t i = 0; i < num_fighters; ++i) {
+            fighter_vec[i].reset(
+                new CombatFighter(shared_from_this(), *part, m_empire_id, *m_pathing_engine));
         }
     }
-
-    m_unlaunched_formations = m_formations;
 }
 
 void CombatShip::PushMission(const ShipMission& mission)

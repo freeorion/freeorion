@@ -15,6 +15,8 @@
 
 class PathingEngine;
 
+// TODO: Move mission queue mutators to to formation, which will only set them
+// on the (fake) leader.
 class CombatFighterFormation
 {
 public:
@@ -31,7 +33,6 @@ public:
     const_iterator end() const;
 
     CombatFighter& Leader();
-    void SetLeader(const CombatFighterPtr& fighter);
     void push_back(const CombatFighterPtr& fighter);
     void erase(const CombatFighterPtr& fighter);
     void erase(CombatFighter* fighter);
@@ -41,6 +42,7 @@ public:
 private:
     CombatFighterFormation();
     explicit CombatFighterFormation(PathingEngine& pathing_engine);
+    void SetLeader(const CombatFighterPtr& fighter);
 
     CombatFighterPtr m_leader;
     std::list<CombatFighterPtr> m_members;
@@ -63,19 +65,23 @@ class CombatFighter :
     public boost::enable_shared_from_this<CombatFighter>
 {
 public:
-    static const int FORMATION_SIZE = 5;
+    static const std::size_t FORMATION_SIZE;
 
+    CombatFighter(CombatObjectPtr base, const PartType& part, int empire_id,
+                  PathingEngine& pathing_engine);
     ~CombatFighter();
 
     virtual float maxForce() const;
     virtual float maxSpeed() const;
     int ID() const;
     const FighterStats& Stats() const;
+    const std::string& PartName() const;
     const FighterMission& CurrentMission() const;
     virtual double Health() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
-    virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity, const float elapsedTime);
+    virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
+                                      const float elapsedTime);
 
     CombatFighterFormationPtr Formation();
 
@@ -88,14 +94,9 @@ public:
 
 private:
     CombatFighter();
-    CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
-                  int fighter_id, PathingEngine& pathing_engine,
-                  const CombatFighterFormationPtr& formation,
-                  int formation_position);
-    CombatFighter(CombatObjectPtr base, const FighterStats& stats, int empire_id,
-                  int fighter_id, PathingEngine& pathing_engine,
-                  const CombatFighterFormationPtr& formation);
+    CombatFighter(CombatObjectPtr base, int empire_id, PathingEngine& pathing_engine);
 
+    void SetFormation(const CombatFighterFormationPtr& formation);
     void PushMission(const FighterMission& mission);
     OpenSteer::Vec3 GlobalFormationPosition();
     void RemoveMission();
@@ -108,6 +109,7 @@ private:
     ProximityDBToken* m_proximity_token;
     bool m_leader;
     FighterStats m_stats;
+    std::string m_part_name;
     int m_empire_id;
     int m_id;
     OpenSteer::Vec3 m_last_steer;
@@ -140,6 +142,7 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_proximity_token)
                 & BOOST_SERIALIZATION_NVP(m_leader)
                 & BOOST_SERIALIZATION_NVP(m_stats)
+                & BOOST_SERIALIZATION_NVP(m_part_name)
                 & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_id)
                 & BOOST_SERIALIZATION_NVP(m_last_steer)
@@ -151,6 +154,7 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_formation_position)
                 & BOOST_SERIALIZATION_NVP(m_formation)
                 & BOOST_SERIALIZATION_NVP(m_out_of_formation)
+                & BOOST_SERIALIZATION_NVP(m_health)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine)
                 & BOOST_SERIALIZATION_NVP(m_instrument)
                 & BOOST_SERIALIZATION_NVP(m_last_mission);
