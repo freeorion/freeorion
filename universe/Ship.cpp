@@ -36,7 +36,7 @@ Ship::Ship(int empire_id, int design_id) :
                 std::pair<std::size_t, std::size_t>& part_fighters =
                     m_fighters[part_names[i]];
                 ++part_fighters.first;
-                part_fighters.second = boost::get<FighterStats>(part->Stats()).m_capacity;
+                part_fighters.second += boost::get<FighterStats>(part->Stats()).m_capacity;
             }
         }
     }
