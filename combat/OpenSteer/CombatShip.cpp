@@ -152,11 +152,7 @@ void CombatShip::AppendFighterMission(const FighterMission& mission)
     for (std::set<CombatFighterFormationPtr>::iterator it = m_launched_formations.begin();
          it != m_launched_formations.end();
          ++it) {
-        for (CombatFighterFormation::iterator formation_it = (*it)->begin();
-             formation_it != (*it)->end();
-             ++formation_it) {
-            (*formation_it)->AppendMission(mission);
-        }
+        (*it)->Leader().AppendMission(mission);
     }
 }
 
@@ -166,11 +162,7 @@ void CombatShip::ClearFighterMissions()
     for (std::set<CombatFighterFormationPtr>::iterator it = m_launched_formations.begin();
          it != m_launched_formations.end();
          ++it) {
-        for (CombatFighterFormation::iterator formation_it = (*it)->begin();
-             formation_it != (*it)->end();
-             ++formation_it) {
-            (*formation_it)->ClearMissions();
-        }
+        (*it)->Leader().ClearMissions();
     }
 }
 

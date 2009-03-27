@@ -15,8 +15,6 @@
 
 class PathingEngine;
 
-// TODO: Move mission queue mutators to to formation, which will only set them
-// on the (fake) leader.
 class CombatFighterFormation
 {
 public:

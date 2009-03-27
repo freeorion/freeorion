@@ -297,6 +297,7 @@ void CombatFighter::EnterSpace()
 
 void CombatFighter::AppendMission(const FighterMission& mission)
 {
+    assert(m_leader);
     assert(!m_mission_queue.empty());
     if (m_mission_queue.back().m_type == FighterMission::NONE) {
         assert(m_mission_queue.size() == 1u);
@@ -307,6 +308,7 @@ void CombatFighter::AppendMission(const FighterMission& mission)
 
 void CombatFighter::ClearMissions()
 {
+    assert(m_leader);
     m_mission_queue.clear();
     m_mission_queue.push_front(FighterMission(FighterMission::NONE));
 }
