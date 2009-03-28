@@ -2050,6 +2050,10 @@ void MapWnd::RefreshFleetButtons()
     DoFleetButtonsLayout();
 
 
+    // add selection indicators to fleetbuttons
+    RefreshFleetButtonSelectionIndicators();
+
+
     // create movement lines (after positioning buttons, so lines will originate from button location)
     for (std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
         SetFleetMovementLine(it->second);
@@ -2679,29 +2683,40 @@ void MapWnd::SelectedFleetsChanged()
     if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         selected_fleets = fleet_wnd->SelectedFleets();
 
-
     // if old and new sets of selected fleets are the same, don't need to change anything
     if (selected_fleets == m_selected_fleets)
         return;
 
+    // set new selected fleets
+    m_selected_fleets = selected_fleets;
 
-    std::cout << "MapWnd::SelectedFleetsChanged()" << std::endl;
+    // update fleetbutton selection indicators
+    RefreshFleetButtonSelectionIndicators();
+}
 
+void MapWnd::RefreshFleetButtonSelectionIndicators()
+{
+    std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
-    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
-        const Fleet* fleet = *it;
-        std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
-        if (button_it != m_fleet_buttons.end())
-            (button_it->second)->SetSelected(false);
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+        std::set<FleetButton*>& set = it->second;
+        for (std::set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
+            (*button_it)->SetSelected(false);
+    }
+
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+        std::set<FleetButton*>& set = it->second;
+        for (std::set<FleetButton*>::iterator button_it = set.begin(); button_it != set.end(); ++button_it)
+            (*button_it)->SetSelected(false);
+    }
+
+    for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
+        (*it)->SetSelected(false);
     }
 
 
-    // remove old move lines / ETA indicators
-
-
-    // set new selected fleets
-    m_selected_fleets = selected_fleets;
+    // TODO: remove old move lines / ETA indicators
 
 
     // add new selection indicators
@@ -2713,7 +2728,7 @@ void MapWnd::SelectedFleetsChanged()
     }
 
 
-    // add new move lines / ETA indicators
+    // TODO: add new move lines / ETA indicators
 }
 
 void MapWnd::HandleEmpireElimination(int empire_id)

@@ -296,11 +296,9 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void FleetButton::SetSelected(bool selected)
 {
     m_selected = selected;
-    std::cout << "FleetButton " << this << " SetSelected(" << m_selected << ")" << std::endl;
 }
 
 void FleetButton::RenderUnpressed() {
-    std::cout << "FleetButton " << this << " RenderUnpressed.  Selected: " << m_selected << std::endl;
     glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_vertex_components.empty()) {

@@ -181,6 +181,7 @@ private:
     void            SetZoom(double steps_in);                   //!< sets zoom level of the main map to zoom step size to the power of \a steps_in
 
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
+    void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetAddedOrRemoved(Fleet& fleet);
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
     void            DoSystemIconsLayout();                      //!< does layout of system icons
