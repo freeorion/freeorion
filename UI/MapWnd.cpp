@@ -1531,9 +1531,14 @@ void MapWnd::SelectFleet(int fleet_id)
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
+    // can't select no fleet... even if one or more FleetWnd are open... wouldn't know which to alter
     if (!fleet)
         return;
-    if (m_selected_fleets.find(fleet) != m_selected_fleets.end())
+
+    std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
+
+    // if indicated fleet is already the only selected fleet in the active FleetWnd, don't need to do anything
+    if (m_selected_fleets.size() == 1 && m_selected_fleets.find(fleet) != m_selected_fleets.end())
         return;
 
     // find if there is a FleetWnd for this fleet already open.
@@ -1598,11 +1603,10 @@ void MapWnd::SelectFleet(Fleet* fleet)
     FleetUIManager::GetFleetUIManager().SetActiveFleetWnd(fleet_wnd);
 
 
-    // Select fleet in FleetWnd
+    // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.  
+    // this->m_selected_fleets will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
+    // signals being emitted and connected to MapWnd::SelectedFleetsChanged
     fleet_wnd->SelectFleet(fleet);
-
-
-    std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
 }
 
 void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
@@ -2606,25 +2610,6 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
     Fleet* first_fleet = btn_fleets[0];
 
 
-
-    //// determine if the clicked FleetButton was for departing fleets, statinary fleets, or moving fleets.
-    //// determine this by looking at the representative fleet from the button.  if that fleet is departing,
-    //// then the button is a departing FleetButton, and similalry for stationary or moving fleets
-    //// get fleets represented by button
-    //bool fleet_departing = false, fleet_moving = false, fleet_stationary = false;
-
-    //if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID) {               // fleet is not in a system
-    //    fleet_moving = true;
-    //} else if (                                                                 // fleet is in a system
-    //    fleet->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&     // and has a destination
-    //    fleet->FinalDestinationID() != fleet->SystemID()                        // destination is not system where fleet is
-    //   ) {
-    //    fleet_departing = true;
-    //} else {                                                                    // otherwise...
-    //    fleet_stationary = true;
-    //}
-
-
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that is
     FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
@@ -2645,39 +2630,41 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
     // pick fleet to select from fleets represented by the clicked FleetButton.
     Fleet* fleet_to_select = NULL;
 
-    //if (fleet_moving) {
-        // all fleets in button are valid selection targets.
-
 
     if (!already_selected_fleet || btn_fleets.size() == 1) {
-        // no (single) fleet is already selected, or there is only one selectable fleet, 
+        // no (single) fleet is already selected, or there is only one selectable fleet,
         // so select first fleet in button
-        fleet_to_select = (*btn_fleets.begin());
+        fleet_to_select = *btn_fleets.begin();
 
     } else {
         // select next fleet after already-selected fleet, or first fleet if already-selected
         // fleet is the last fleet in the button.
 
         // to do this, scan through button's fleets to find already_selected_fleet
+        bool found_already_selected_fleet = false;
         for (std::vector<Fleet*>::const_iterator it = btn_fleets.begin(); it != btn_fleets.end(); ++it) {
             if (*it == already_selected_fleet) {
-                // found already selected fleet.  get NEXT fleet
+                // found already selected fleet.  get NEXT fleet.  don't need to worry about
+                // there not being enough fleets to do this because if above checks for case
+                // of there being only one fleet in this button
                 ++it;
                 // if next fleet iterator is past end of fleets, loop around to first fleet
                 if (it == btn_fleets.end())
                     it = btn_fleets.begin();
                 // get fleet to select out of iterator
                 fleet_to_select = *it;
+                found_already_selected_fleet = true;
                 break;
             }
         }
+
+        if (!found_already_selected_fleet) {
+            // didn't find already-selected fleet.  the selected fleet might have been moving when the
+            // click button was for stationary fleets, or vice versa.  regardless, just default back
+            // to selecting the first fleet for this button
+            fleet_to_select = *btn_fleets.begin();
+        }
     }
-
-    /*} else if (fleet_stationary) {
-
-    } else {
-
-    }*/
 
 
     // select chosen fleet
@@ -2696,6 +2683,9 @@ void MapWnd::SelectedFleetsChanged()
     // if old and new sets of selected fleets are the same, don't need to change anything
     if (selected_fleets == m_selected_fleets)
         return;
+
+
+    std::cout << "MapWnd::SelectedFleetsChanged()" << std::endl;
 
 
     // clear old selection indicators
@@ -2719,7 +2709,7 @@ void MapWnd::SelectedFleetsChanged()
         const Fleet* fleet = *it;
         std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
         if (button_it != m_fleet_buttons.end())
-            (button_it->second)->SetSelected(true);
+            button_it->second->SetSelected(true);
     }
 
 

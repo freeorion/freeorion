@@ -1325,6 +1325,7 @@ void FleetWnd::SelectFleet(Fleet* fleet)
             m_current_fleet = it;
             m_fleet_detail_panel->SetFleet(fleet);
             m_fleets_lb->BringRowIntoView(it);
+            SelectedFleetsChangedSignal();
             break;
         }
     }
