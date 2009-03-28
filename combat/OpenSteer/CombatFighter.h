@@ -80,7 +80,7 @@ public:
     virtual double Health() const;
     virtual double FractionalHealth() const;
     virtual double AntiFighterStrength() const;
-    virtual double AntiShipStrength() const;
+    virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,

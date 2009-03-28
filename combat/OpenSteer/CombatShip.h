@@ -30,7 +30,7 @@ public:
     virtual double Health() const;
     virtual double FractionalHealth() const;
     virtual double AntiFighterStrength() const;
-    virtual double AntiShipStrength() const;
+    virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
 
     void LaunchFighters();
     void RecoverFighters(const CombatFighterFormationPtr& formation);
@@ -72,8 +72,9 @@ private:
 
     PathingEngine* m_pathing_engine;
 
-    float m_raw_anti_fighter_strength;
-    float m_raw_anti_ship_strength;
+    double m_raw_PD_strength;
+    double m_raw_SR_strength;
+    double m_raw_LR_strength;
 
     // map from part type name to (number of parts in the design of that type,
     // the unlaunched fighters of that part type) pairs
@@ -103,8 +104,9 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_mission_destination)
                 & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine)
-                & BOOST_SERIALIZATION_NVP(m_raw_anti_fighter_strength)
-                & BOOST_SERIALIZATION_NVP(m_raw_anti_ship_strength)
+                & BOOST_SERIALIZATION_NVP(m_raw_PD_strength)
+                & BOOST_SERIALIZATION_NVP(m_raw_SR_strength)
+                & BOOST_SERIALIZATION_NVP(m_raw_LR_strength)
                 & BOOST_SERIALIZATION_NVP(m_unlaunched_fighters)
                 & BOOST_SERIALIZATION_NVP(m_launched_formations)
                 & BOOST_SERIALIZATION_NVP(m_instrument)

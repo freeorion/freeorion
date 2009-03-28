@@ -266,7 +266,7 @@ double CombatFighter::FractionalHealth() const
 double CombatFighter::AntiFighterStrength() const
 { return m_stats.m_anti_fighter_damage * m_stats.m_fighter_weapon_range * FractionalHealth(); }
 
-double CombatFighter::AntiShipStrength() const
+double CombatFighter::AntiShipStrength(CombatShipPtr/* target = CombatShipPtr()*/) const
 { return m_stats.m_anti_ship_damage * m_stats.m_fighter_weapon_range * FractionalHealth(); }
 
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
