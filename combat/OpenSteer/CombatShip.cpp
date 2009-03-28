@@ -95,7 +95,7 @@ void CombatShip::LaunchFighters()
             std::min<std::size_t>(num_fighters, stats.m_launch_rate * it->second.first);
 
         std::size_t formation_size =
-            std::min(CombatFighter::FORMATION_SIZE, launch_size);
+            (std::min)(CombatFighter::FORMATION_SIZE, launch_size);
         std::size_t num_formations = launch_size / formation_size;
         std::size_t final_formation_size = launch_size % formation_size;
         if (final_formation_size)

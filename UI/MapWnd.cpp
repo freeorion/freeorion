@@ -1519,7 +1519,7 @@ void MapWnd::SelectSystem(int system_id)
 void MapWnd::ReselectLastFleet()
 {
     if (m_selected_fleets.empty())
-        SelectFleet(NULL);
+        SelectFleet(static_cast<Fleet*>(0));
     else
         SelectFleet(*(m_selected_fleets.begin()));
 }
