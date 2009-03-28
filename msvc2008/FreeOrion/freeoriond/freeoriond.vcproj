@@ -53,7 +53,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4099;4251;4800;4267;4275;4244;4101;4258;4996;4312;4311"
+				DisableSpecificWarnings="4099;4251;4800;4267;4275;4244;4101;4258;4996;4312;4311;4091"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

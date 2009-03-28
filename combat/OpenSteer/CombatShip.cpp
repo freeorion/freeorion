@@ -516,8 +516,8 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
     float weakest = FLT_MAX;
 
     // This enforces the preference for attacking bombers over interceptors.
-    const float BOMBER_SCALE_FACTOR = 0.95;
-    const float INTERCEPTOR_SCALE_FACTOR = 1.0;
+    const float BOMBER_SCALE_FACTOR = 0.95f;
+    const float INTERCEPTOR_SCALE_FACTOR = 1.0f;
 
     PathingEngine::ConstAttackerRange attackers = m_pathing_engine->Attackers(attackee);
     for (PathingEngine::Attackees::const_iterator it = attackers.first;

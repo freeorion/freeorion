@@ -2,7 +2,7 @@
 
 
 namespace {
-    const float SQUARE_APPROX_FACTOR = 0.83486238532110091;
+    const float SQUARE_APPROX_FACTOR = 0.83486238532110091f;
 }
 
 AsteroidBeltObstacle::AsteroidBeltObstacle(float r, float tr) :
@@ -12,7 +12,7 @@ AsteroidBeltObstacle::AsteroidBeltObstacle(float r, float tr) :
 
 AsteroidBeltObstacle::AsteroidBeltObstacle() :
     m_radius(1),
-    m_tube_radius(0.1)
+    m_tube_radius(0.1f)
 {}
 
 void AsteroidBeltObstacle::findIntersectionWithVehiclePath(

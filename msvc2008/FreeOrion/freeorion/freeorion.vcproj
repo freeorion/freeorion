@@ -56,7 +56,7 @@
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
-				DisableSpecificWarnings="4396;4251;4275;4099;4800"
+				DisableSpecificWarnings="4396;4251;4275;4099;4800;4091"
 				ShowIncludes="false"
 			/>
 			<Tool
