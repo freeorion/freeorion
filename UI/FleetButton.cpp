@@ -296,10 +296,11 @@ void FleetButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 void FleetButton::SetSelected(bool selected)
 {
     m_selected = selected;
-    std::cout << "FleetButton " << this << " selected: " << m_selected << std::endl;
+    std::cout << "FleetButton " << this << " SetSelected(" << m_selected << ")" << std::endl;
 }
 
 void FleetButton::RenderUnpressed() {
+    std::cout << "FleetButton " << this << " RenderUnpressed.  Selected: " << m_selected << std::endl;
     glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_vertex_components.empty()) {
@@ -307,29 +308,28 @@ void FleetButton::RenderUnpressed() {
             m_size_icon->OrthoBlit(ul);
         if (m_head_icon)
             m_head_icon->OrthoBlit(ul);
-        return;
+    } else {
+        const double midX = static_cast<double>(Value(ul.x + lr.x))/2.0;
+        const double midY = static_cast<double>(Value(ul.y + lr.y))/2.0;
+
+        std::vector<double> vertsXY;
+        vertsXY.push_back(midX + m_vertex_components[0]);
+        vertsXY.push_back(midY + m_vertex_components[1]);
+        vertsXY.push_back(midX + m_vertex_components[2]);
+        vertsXY.push_back(midY + m_vertex_components[3]);
+        vertsXY.push_back(midX + m_vertex_components[4]);
+        vertsXY.push_back(midY + m_vertex_components[5]);
+        vertsXY.push_back(midX + m_vertex_components[6]);
+        vertsXY.push_back(midY + m_vertex_components[7]);
+
+        RenderTexturedQuad(vertsXY, m_head_icon);
+        RenderTexturedQuad(vertsXY, m_size_icon);
     }
 
-    const double midX = static_cast<double>(Value(ul.x + lr.x))/2.0;
-    const double midY = static_cast<double>(Value(ul.y + lr.y))/2.0;
-
-    std::vector<double> vertsXY;
-    vertsXY.push_back(midX + m_vertex_components[0]);
-    vertsXY.push_back(midY + m_vertex_components[1]);
-    vertsXY.push_back(midX + m_vertex_components[2]);
-    vertsXY.push_back(midY + m_vertex_components[3]);
-    vertsXY.push_back(midX + m_vertex_components[4]);
-    vertsXY.push_back(midY + m_vertex_components[5]);
-    vertsXY.push_back(midX + m_vertex_components[6]);
-    vertsXY.push_back(midY + m_vertex_components[7]);
-
-    RenderTexturedQuad(vertsXY, m_head_icon);
-    RenderTexturedQuad(vertsXY, m_size_icon);
-
-    std::cout << "FleetButton " << this << " Render selected: " << m_selected << " texture: " << m_selection_texture << std::endl;
     if (m_selected && m_selection_texture) {
         GG::Pt selector_ul = GG::Pt(ul.x - Width()/2, ul.y - Height()/2);
         GG::Pt selector_lr = GG::Pt(lr.x + Width()/2, lr.y + Height()/2);
+        glColor(GG::CLR_WHITE);
         m_selection_texture->OrthoBlit(selector_ul, selector_lr);
     }
 }
