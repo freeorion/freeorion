@@ -344,17 +344,30 @@ public:
     int                             DesignedByEmpire() const;   ///< returns id of empire that created design
     int                             DesignedOnTurn() const;     ///< returns turn on which design was created
 
+    double                          Cost() const;               ///< returns the cost per turn to build a ship of this design
+    int                             BuildTime() const;          ///< returns the time in turns it takes to build a ship of this design
+
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
     double                          Speed() const;              ///< returns design speed on the battle map
 
     bool                            CanColonize() const;
     bool                            IsArmed() const;
 
+    /** Returns a map from ranges to stats for only the SR weapons in this
+        design. */
+    const std::multimap<double, DirectFireStats>& SRWeapons() const;
+
+    /** Returns a map from ranges to stats for only the LR weapons in this
+        design. */
+    const std::multimap<double, LRStats>& LRWeapons() const;
+
+    /** Returns a map from ranges to stats for only the PD weapons in this
+        design. */
+    const std::multimap<double, DirectFireStats>& PDWeapons() const;
+
     /////// TEMPORARY ///////
     double      Defense() const;
     double      Attack() const;
-    double      Cost() const;
-    int         BuildTime() const;
     /////// TEMPORARY ///////
 
     const std::string&              Hull() const;                           ///< returns name of hull on which design is based
@@ -381,6 +394,8 @@ public:
     static bool                     ValidDesign(const ShipDesign& design);
 
 private:
+    void BuildStatCaches();
+
     int                         m_id;
 
     std::string                 m_name;
@@ -394,6 +409,16 @@ private:
 
     std::string                 m_graphic;
     std::string                 m_3D_model;
+
+    // Note that these are fine to compute on demand and cache here -- it is
+    // not necessary to serialize them. */
+    bool m_is_armed;
+    bool m_can_colonize;
+    double m_build_cost;
+    int m_build_turns;
+    std::multimap<double, DirectFireStats> m_SR_weapons;
+    std::multimap<double, LRStats> m_LR_weapons;
+    std::multimap<double, DirectFireStats> m_PD_weapons;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -450,6 +475,8 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_parts)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_3D_model);
+    if (Archive::is_loading::value)
+        BuildStatCaches();
 }
 
 #endif // _ShipDesign_h_

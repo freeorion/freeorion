@@ -704,7 +704,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     OpenSteer::Vec3 dynamic_obstacle_avoidance;
     if (m_leader) {
         for (std::size_t i = 0; i < nonfighters.size(); ++i) {
-            // TODO: Add code to handle non-ships.
+            // TODO: Add code to handle non-ships as necessary.
             CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(nonfighters[i]);
             // handle PD avoidance
             OpenSteer::Vec3 away_vec = position() - ship->position();
@@ -773,14 +773,12 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
          ++it) {
         CombatFighterPtr fighter;
         CombatShipPtr ship;
-        // TODO: Some kind of "weakness to fighter attacks" should be taken
-        // into account when calculating strength.
         float strength = FLT_MAX;
         // Note that this condition implies that bombers cannot attack
         // fighters at all.
         if (m_stats.m_type == INTERCEPTOR &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
-            strength = fighter->m_stats.m_stealth;
+            strength = fighter->Health();
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
             strength = ship->Health() * (1.0 + ship->AntiFighterStrength());
         }
@@ -795,10 +793,6 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
 
 CombatShipPtr CombatFighter::WeakestHostileShip()
 {
-    // TODO: Note that the efficient evaluation of this mission requires a
-    // single fighter-vulerability number and a single fighter-attack number to
-    // be calculated per design.
-
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
     // TODO: NotEmpireFlag() should become EnemyOfEmpireFlag()
@@ -806,9 +800,7 @@ CombatShipPtr CombatFighter::WeakestHostileShip()
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
-        // TODO: Some kind of "weakness to fighter attacks" should be taken into
-        // account here later.
-        if (ship->AntiFighterStrength() < weakest) {
+        if (ship->Health() * ship->AntiFighterStrength() < weakest) {
             retval = ship->shared_from_this();
             weakest = ship->AntiFighterStrength();
         }

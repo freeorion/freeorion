@@ -13,7 +13,17 @@
 #include <map>
 
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
+
 namespace {
+    const float NO_PD_FIGHTER_ATACK_SCALE_FACTOR = 50.0;
+
 #define ECHO_TOKEN(x) (x, #x)
     std::map<ShipMission::Type, std::string> SHIP_MISSION_STRINGS =
         boost::assign::map_list_of
@@ -42,7 +52,7 @@ CombatShip::CombatShip() :
     m_mission_queue(),
     m_mission_weight(0.0),
     m_pathing_engine(0),
-    m_anti_fighter_strength(0)
+    m_raw_anti_fighter_strength(0.0)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 {}
@@ -55,7 +65,7 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
     m_mission_queue(),
     m_mission_weight(0.0),
     m_pathing_engine(&pathing_engine),
-    m_anti_fighter_strength(/*TODO: derive from m_ship*/)
+    m_raw_anti_fighter_strength(0.0)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 { Init(position, direction); }
@@ -64,7 +74,7 @@ CombatShip::~CombatShip()
 { delete m_proximity_token; }
 
 float CombatShip::AntiFighterStrength() const
-{ return m_anti_fighter_strength; }
+{ return m_raw_anti_fighter_strength * Health() / MaxHealth(); }
 
 Ship* CombatShip::GetShip() const
 { return m_ship; }
@@ -95,7 +105,7 @@ void CombatShip::LaunchFighters()
             std::min<std::size_t>(num_fighters, stats.m_launch_rate * it->second.first);
 
         std::size_t formation_size =
-            (std::min)(CombatFighter::FORMATION_SIZE, launch_size);
+            std::min(CombatFighter::FORMATION_SIZE, launch_size);
         std::size_t num_formations = launch_size / formation_size;
         std::size_t final_formation_size = launch_size % formation_size;
         if (final_formation_size)
@@ -193,15 +203,32 @@ void CombatShip::Damage(double d)
 
 float CombatShip::MaxWeaponRange() const
 {
-    // TODO: Use ship design to determine this.
-    return 20.0;
+    float retval = 0.0;
+    const ShipDesign& design = *m_ship->Design();
+    if (!design.SRWeapons().empty())
+        retval = std::max<float>(retval, design.SRWeapons().rbegin()->first);
+    if (!design.LRWeapons().empty())
+        retval = std::max<float>(retval, design.LRWeapons().rbegin()->first);
+    if (!design.PDWeapons().empty())
+        retval = std::max<float>(retval, design.PDWeapons().rbegin()->first);
+    return retval;
 }
 
 float CombatShip::MinNonPDWeaponRange() const
 {
-    // TODO: Use ship design to determine this.
-    return 5.0;
+    float retval = FLT_MAX;
+    const ShipDesign& design = *m_ship->Design();
+    if (!design.SRWeapons().empty())
+        retval = std::min<float>(retval, design.SRWeapons().begin()->first);
+    if (!design.LRWeapons().empty())
+        retval = std::min<float>(retval, design.LRWeapons().begin()->first);
+    if (retval == FLT_MAX)
+        retval = 0.0;
+    return retval;
 }
+
+double CombatShip::MaxHealth() const
+{ return m_ship->GetMeter(METER_HEALTH)->Max(); }
 
 void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
@@ -236,6 +263,31 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         for (std::size_t i = 0; i < num_fighters; ++i) {
             fighter_vec[i].reset(
                 new CombatFighter(shared_from_this(), *part, m_empire_id, *m_pathing_engine));
+        }
+    }
+
+    const std::vector<std::string>& part_names = m_ship->Design()->Parts();
+    for (std::size_t i = 0; i < part_names.size(); ++i) {
+        if (part_names[i].empty())
+            continue;
+
+        const PartType* part = GetPartType(part_names[i]);
+        assert(part);
+        if (part->Class() == PC_POINT_DEFENSE) {
+            const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
+            m_raw_anti_fighter_strength += stats.m_damage * stats.m_ROF * stats.m_range;
+        } else if (part->Class() == PC_SHORT_RANGE) {
+            const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
+            m_raw_anti_ship_strength += stats.m_damage * stats.m_ROF * stats.m_range;
+        } else if (part->Class() == PC_MISSILES) {
+            // TODO: Consider splitting anti-ship damage up into SR and LR,
+            // and account for targets' PD when determining LR strength.  It
+            // may also be useful to do design-to-design LR attack
+            // calculations and cache them; then it would only be necessary to
+            // do such calcs once per pair, then scale the result by
+            // attacker.Health() / defender.Health() at the point of use.
+            const LRStats& stats = boost::get<LRStats>(part->Stats());
+            m_raw_anti_ship_strength += stats.m_damage * stats.m_ROF * stats.m_range;
         }
     }
 }
@@ -432,48 +484,9 @@ void CombatShip::UpdateMissionQueue()
 
 void CombatShip::FireAtHostiles()
 {
-    const ShipDesign* design = m_ship->Design();
-    const std::vector<std::string>& part_names = design->Parts();
-
-    std::multimap<double, const PartType*> SR_weapons;
-    double SR_weapons_range = 0.0;
-    std::multimap<double, const PartType*> LR_weapons;
-    double LR_weapons_range = 0.0;
-    std::multimap<double, const PartType*> PD_weapons;
-    double PD_weapons_range = 0.0;
-
-    for (std::size_t i = 0; i < part_names.size(); ++i) {
-        const PartType* part = GetPartType(part_names[i]);
-        assert(part);
-        if (part->Class() == PC_SHORT_RANGE) {
-            double range = boost::get<DirectFireStats>(part->Stats()).m_range;
-            SR_weapons.insert(std::make_pair(range, part));
-            if (!SR_weapons_range)
-                SR_weapons_range = range;
-            else
-                SR_weapons_range = (std::min)(SR_weapons_range, range);
-        } else if (part->Class() == PC_MISSILES) {
-            double range = boost::get<LRStats>(part->Stats()).m_range;
-            LR_weapons.insert(std::make_pair(range, part));
-            if (!LR_weapons_range)
-                LR_weapons_range = range;
-            else
-                LR_weapons_range = (std::min)(LR_weapons_range, range);
-        } else if (part->Class() == PC_POINT_DEFENSE) {
-            double range = boost::get<DirectFireStats>(part->Stats()).m_range;
-            PD_weapons.insert(std::make_pair(range, part));
-            if (!PD_weapons_range)
-                PD_weapons_range = range;
-            else
-                PD_weapons_range = (std::min)(PD_weapons_range, range);
-        }
-    }
-
-#if 0
-    double SR_range_squared = SR_weapons_range * SR_weapons_range;
-    double LR_range_squared = LR_weapons_range * LR_weapons_range;
-    double PD_range_squared = PD_weapons_range * PD_weapons_range;
-#endif
+    //const ShipDesign& design = *m_ship->Design();
+    // TODO: Don't forget to take into account the ineffectiveness of PD
+    // against ships, and non-PD against fighters.
 }
 
 OpenSteer::Vec3 CombatShip::Steer()
@@ -502,9 +515,9 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
 
     float weakest = FLT_MAX;
 
-    const float NO_PD_FIGHTER_STRENGTH_SCALE_FACTOR = 25.0;
-    const float BOMBER_SCALE_FACTOR = 1.0;
-    const float INTERCEPTOR_SCALE_FACTOR = 2.0;
+    // This enforces the preference for attacking bombers over interceptors.
+    const float BOMBER_SCALE_FACTOR = 0.95;
+    const float INTERCEPTOR_SCALE_FACTOR = 1.0;
 
     PathingEngine::ConstAttackerRange attackers = m_pathing_engine->Attackers(attackee);
     for (PathingEngine::Attackees::const_iterator it = attackers.first;
@@ -512,21 +525,17 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
          ++it) {
         CombatFighterPtr fighter;
         CombatShipPtr ship;
-        // TODO: Some kind of "weakness to fighter attacks" should be taken
-        // into account when calculating strength.
         float strength = FLT_MAX;
         if (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock())) {
-            // TODO: Use fighter's hit points, and prefer to attack bombers --
-            // for now, just use 1.0
             strength =
-                1.0 * (fighter->Stats().m_type == INTERCEPTOR ?
-                       INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
-            if (!AntiFighterStrength())
-                strength *= NO_PD_FIGHTER_STRENGTH_SCALE_FACTOR;
+                fighter->Health() * (fighter->Stats().m_type == INTERCEPTOR ?
+                                     INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
+            if (AntiFighterStrength())
+                strength /= AntiFighterStrength();
+            else
+                strength *= NO_PD_FIGHTER_ATACK_SCALE_FACTOR;
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
-            // TODO: Use ship's hit points and our firepower -- for now, just
-            // use 5.0
-            strength = 5.0;
+            strength = ship->Health() / (m_raw_anti_ship_strength * Health() / MaxHealth());
         }
         if (strength < weakest) {
             retval = it->second.lock();
@@ -539,21 +548,15 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
 
 CombatShipPtr CombatShip::WeakestHostileShip()
 {
-    // TODO: Note that the efficient evaluation of this mission requires a
-    // single fighter-vulerability number and a single fighter-attack number to
-    // be calculated per design.
-
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
     m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
-        // TODO: Some kind of "weakness to fighter attacks" should be taken into
-        // account here later.
-        if (ship->AntiFighterStrength() < weakest) {
+        if (ship->Health() < weakest) {
             retval = ship->shared_from_this();
-            weakest = ship->AntiFighterStrength();
+            weakest = ship->Health();
         }
     }
     return retval;

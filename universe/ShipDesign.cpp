@@ -628,7 +628,11 @@ ShipDesign::ShipDesign() :
     m_hull(""),
     m_parts(),
     m_graphic(""),
-    m_3D_model("")
+    m_3D_model(""),
+    m_is_armed(false),
+    m_can_colonize(false),
+    m_build_cost(0.0),
+    m_build_turns(0)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
@@ -642,10 +646,15 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_hull(hull),
     m_parts(parts),
     m_graphic(graphic),
-    m_3D_model(model)
+    m_3D_model(model),
+    m_is_armed(false),
+    m_can_colonize(false),
+    m_build_cost(0.0),
+    m_build_turns(0)
 {
     if (!ValidDesign(m_hull, m_parts))
         Logger().errorStream() << "constructing an invalid ShipDesign!";
+    BuildStatCaches();
 }
 
 int ShipDesign::ID() const {
@@ -685,12 +694,72 @@ int ShipDesign::DesignedOnTurn() const {
     return m_designed_on_turn;
 }
 
+double ShipDesign::Cost() const {
+    return m_build_cost;
+}
+
+int ShipDesign::BuildTime() const {
+    return m_build_turns;
+}
+
 double ShipDesign::StarlaneSpeed() const {
     return GetHull()->StarlaneSpeed();
 }
 
 double ShipDesign::Speed() const {
     return GetHull()->Speed();
+}
+
+const std::multimap<double, DirectFireStats>& ShipDesign::SRWeapons() const
+{ return m_SR_weapons; }
+
+const std::multimap<double, LRStats>& ShipDesign::LRWeapons() const
+{ return m_LR_weapons; }
+
+const std::multimap<double, DirectFireStats>& ShipDesign::PDWeapons() const
+{ return m_PD_weapons; }
+
+//// TEMPORARY
+double ShipDesign::Defense() const {
+    // accumulate defense from defensive parts in design.
+    double total_defense = 0.0;
+    const PartTypeManager& part_manager = GetPartTypeManager();
+    std::vector<std::string> all_parts = Parts();
+    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
+        const PartType* part = part_manager.GetPartType(*it);
+        if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
+            total_defense += boost::get<double>(part->Stats());
+    }
+    return total_defense;
+}
+
+double ShipDesign::Attack() const {
+    // accumulate attack stat from all weapon parts in design
+    const PartTypeManager& manager = GetPartTypeManager();
+
+    double total_attack = 0.0;
+    std::vector<std::string> all_parts = Parts();
+    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
+        const PartType* part = manager.GetPartType(*it);
+        if (part) {
+            if (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE)
+                total_attack += boost::get<DirectFireStats>(part->Stats()).m_damage;
+            else if (part->Class() == PC_MISSILES)
+                total_attack += boost::get<LRStats>(part->Stats()).m_damage;
+            else if (part->Class() == PC_FIGHTERS)
+                total_attack += boost::get<FighterStats>(part->Stats()).m_anti_ship_damage;
+        }
+    }
+    return total_attack;
+}
+//// END TEMPORARY
+
+bool ShipDesign::CanColonize() const {
+    return m_can_colonize;
+}
+
+bool ShipDesign::IsArmed() const {
+    return m_is_armed;
 }
 
 const std::string& ShipDesign::Hull() const {
@@ -808,104 +877,54 @@ bool ShipDesign::ValidDesign(const ShipDesign& design) {
     return ValidDesign(design.m_hull, design.m_parts);
 }
 
-//// TEMPORARY
-double ShipDesign::Defense() const {
-    // accumulate defense from defensive parts in design.
-    double total_defense = 0.0;
-    const PartTypeManager& part_manager = GetPartTypeManager();
-    std::vector<std::string> all_parts = Parts();
-    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
-        if (part && (part->Class() == PC_SHIELD || part->Class() == PC_ARMOUR))
-            total_defense += boost::get<double>(part->Stats());
-    }
-    return total_defense;
-}
+void ShipDesign::BuildStatCaches()
+{
+    const HullType* hull = GetHullType(m_hull);
+    assert(hull);
+    m_build_turns += hull->BuildTime();
+    m_build_cost += hull->Cost() * hull->BuildTime();
 
-double ShipDesign::Attack() const {
-    // accumulate attack stat from all weapon parts in design
-    const PartTypeManager& manager = GetPartTypeManager();
+    for (std::vector<std::string>::const_iterator it = m_parts.begin();
+         it != m_parts.end();
+         ++it) {
+        if (it->empty())
+            continue;
 
-    double total_attack = 0.0;
-    std::vector<std::string> all_parts = Parts();
-    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
-        const PartType* part = manager.GetPartType(*it);
-        if (part) {
-            if (part->Class() == PC_SHORT_RANGE || part->Class() == PC_POINT_DEFENSE)
-                total_attack += boost::get<DirectFireStats>(part->Stats()).m_damage;
-            else if (part->Class() == PC_MISSILES)
-                total_attack += boost::get<LRStats>(part->Stats()).m_damage;
-            else if (part->Class() == PC_FIGHTERS)
-                total_attack += boost::get<FighterStats>(part->Stats()).m_anti_ship_damage;
+        const PartType* part = GetPartType(*it);
+        assert(part);
+
+        m_build_turns += part->BuildTime();
+        m_build_cost += part->Cost() * part->BuildTime();
+
+        switch (part->Class()) {
+        case PC_SHORT_RANGE: {
+            const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
+            m_SR_weapons.insert(std::make_pair(stats.m_range, stats));
+            m_is_armed = true;
+            break;
+        }
+        case PC_MISSILES: {
+            const LRStats& stats = boost::get<LRStats>(part->Stats());
+            m_LR_weapons.insert(std::make_pair(stats.m_range, stats));
+            m_is_armed = true;
+            break;
+        }
+        case PC_FIGHTERS:
+            m_is_armed = true;
+            break;
+        case PC_POINT_DEFENSE: {
+            const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
+            m_PD_weapons.insert(std::make_pair(stats.m_range, stats));
+            m_is_armed = true;
+            break;
+        }
+        case PC_COLONY:
+            m_can_colonize = true;
+            break;
+        default:
+            break;
         }
     }
-    return total_attack;
-}
 
-bool ShipDesign::CanColonize() const {
-    const PartTypeManager& part_manager = GetPartTypeManager();
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
-        if (part && part->Class() == PC_COLONY)
-            return true;
-    }
-
-    // KLUDGE!!! REMOVE THIS!!!
-    if (m_name == "Colony Ship")
-        return true;
-    // END KLUDGE!!!
-
-    return false;
-}
-
-bool ShipDesign::IsArmed() const {
-    //const PartTypeManager& part_manager = GetPartTypeManager();
-    //for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-    //    const PartType* part = part_manager.GetPartType(*it);
-    //    if (part && part->Class() == PC_COLONY)   // TODO: check if any part is a weapon
-    //        return true;
-    //}
-
-    // KLUDGE!!! REMOVE THIS!!!
-    return Attack() > 0;
-    // END KLUDGE!!!
-}
-
-double ShipDesign::Cost() const {
-    // accumulate cost from hull and all parts in design
-    double total_cost = 0.0;
-
-    const PartTypeManager& part_manager = GetPartTypeManager();
-    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
-        if (part)
-            total_cost += part->Cost();
-    }
-
-    const HullTypeManager& hull_manager = GetHullTypeManager();
-    const HullType* hull = hull_manager.GetHullType(m_hull);
-    if (hull)
-        total_cost += hull->Cost();
-
-    return total_cost;
-}
-
-int ShipDesign::BuildTime() const {
-    // accumulate time from hull and all parts in design
-    int total_turns = 0;
-
-    const PartTypeManager& part_manager = GetPartTypeManager();
-    std::vector<std::string> all_parts = Parts();
-    for (std::vector<std::string>::const_iterator it = all_parts.begin(); it != all_parts.end(); ++it) {
-        const PartType* part = part_manager.GetPartType(*it);
-        if (part)
-            total_turns += part->BuildTime();
-    }
-
-    const HullTypeManager& hull_manager = GetHullTypeManager();
-    const HullType* hull = hull_manager.GetHullType(m_hull);
-    if (hull)
-        total_turns += hull->BuildTime();
-
-    return total_turns;
+    m_build_cost /= m_build_turns;
 }

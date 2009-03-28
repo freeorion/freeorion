@@ -47,6 +47,7 @@ private:
 
     float MaxWeaponRange() const;
     float MinNonPDWeaponRange() const;
+    double MaxHealth() const;
 
     void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
     void PushMission(const ShipMission& mission);
@@ -69,9 +70,8 @@ private:
 
     PathingEngine* m_pathing_engine;
 
-    // TODO: This should be computed from the ship design in the final version
-    // of this class.
-    float m_anti_fighter_strength;
+    float m_raw_anti_fighter_strength;
+    float m_raw_anti_ship_strength;
 
     // map from part type name to (number of parts in the design of that type,
     // the unlaunched fighters of that part type) pairs
@@ -101,7 +101,8 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_mission_destination)
                 & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine)
-                & BOOST_SERIALIZATION_NVP(m_anti_fighter_strength)
+                & BOOST_SERIALIZATION_NVP(m_raw_anti_fighter_strength)
+                & BOOST_SERIALIZATION_NVP(m_raw_anti_ship_strength)
                 & BOOST_SERIALIZATION_NVP(m_unlaunched_fighters)
                 & BOOST_SERIALIZATION_NVP(m_launched_formations)
                 & BOOST_SERIALIZATION_NVP(m_instrument)
