@@ -52,7 +52,8 @@ CombatShip::CombatShip() :
     m_mission_queue(),
     m_mission_weight(0.0),
     m_pathing_engine(0),
-    m_raw_anti_fighter_strength(0.0)
+    m_raw_anti_fighter_strength(0.0),
+    m_raw_anti_ship_strength(0.0)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 {}
@@ -65,7 +66,8 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
     m_mission_queue(),
     m_mission_weight(0.0),
     m_pathing_engine(&pathing_engine),
-    m_raw_anti_fighter_strength(0.0)
+    m_raw_anti_fighter_strength(0.0),
+    m_raw_anti_ship_strength(0.0)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 { Init(position, direction); }
@@ -73,17 +75,26 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
 CombatShip::~CombatShip()
 { delete m_proximity_token; }
 
-float CombatShip::AntiFighterStrength() const
-{ return m_raw_anti_fighter_strength * Health() / MaxHealth(); }
-
 Ship* CombatShip::GetShip() const
 { return m_ship; }
 
 const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
 
+double CombatShip::HealthAndShield() const
+{ return Health() + m_ship->GetMeter(METER_SHIELD)->Current(); }
+
 double CombatShip::Health() const
 { return m_ship->GetMeter(METER_HEALTH)->Current(); }
+
+double CombatShip::FractionalHealth() const
+{ return Health() / m_ship->GetMeter(METER_HEALTH)->Max(); }
+
+double CombatShip::AntiFighterStrength() const
+{ return m_raw_anti_fighter_strength * FractionalHealth(); }
+
+double CombatShip::AntiShipStrength() const
+{return m_raw_anti_ship_strength * FractionalHealth(); }
 
 void CombatShip::LaunchFighters()
 {
@@ -198,7 +209,10 @@ void CombatShip::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity,
 void CombatShip::Damage(double d)
 {
     assert(0.0 < d);
-    return m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-d);
+    double shield_damage = std::min(d, m_ship->GetMeter(METER_SHIELD)->Current());
+    m_ship->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+    d -= shield_damage;
+    m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-d);
 }
 
 float CombatShip::MaxWeaponRange() const
@@ -226,9 +240,6 @@ float CombatShip::MinNonPDWeaponRange() const
         retval = 0.0;
     return retval;
 }
-
-double CombatShip::MaxHealth() const
-{ return m_ship->GetMeter(METER_HEALTH)->Max(); }
 
 void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
@@ -285,7 +296,8 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
             // may also be useful to do design-to-design LR attack
             // calculations and cache them; then it would only be necessary to
             // do such calcs once per pair, then scale the result by
-            // attacker.Health() / defender.Health() at the point of use.
+            // attacker.FractionalHealth() / defender.FractionalHealth() at
+            // the point of use.
             const LRStats& stats = boost::get<LRStats>(part->Stats());
             m_raw_anti_ship_strength += stats.m_damage * stats.m_ROF * stats.m_range;
         }
@@ -528,14 +540,14 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
         float strength = FLT_MAX;
         if (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock())) {
             strength =
-                fighter->Health() * (fighter->Stats().m_type == INTERCEPTOR ?
-                                     INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
+                fighter->HealthAndShield() * (fighter->Stats().m_type == INTERCEPTOR ?
+                                              INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
             if (AntiFighterStrength())
                 strength /= AntiFighterStrength();
             else
                 strength *= NO_PD_FIGHTER_ATACK_SCALE_FACTOR;
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
-            strength = ship->Health() / (m_raw_anti_ship_strength * Health() / MaxHealth());
+            strength = ship->HealthAndShield() * (1.0 + AntiShipStrength());
         }
         if (strength < weakest) {
             retval = it->second.lock();
@@ -550,13 +562,14 @@ CombatShipPtr CombatShip::WeakestHostileShip()
 {
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
+    // TODO: Replace NotEmpireFlag with EnemyOfEmpireFlag later.
     m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
-        if (ship->Health() < weakest) {
+        if (ship->HealthAndShield() * (1.0 + AntiShipStrength()) < weakest) {
             retval = ship->shared_from_this();
-            weakest = ship->Health();
+            weakest = ship->HealthAndShield() * (1.0 + AntiShipStrength());
         }
     }
     return retval;

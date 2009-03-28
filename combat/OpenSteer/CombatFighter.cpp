@@ -9,6 +9,15 @@
 #include <map>
 #include <iostream>
 
+
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
+
 namespace {
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -54,6 +63,17 @@ CombatFighterFormation::~CombatFighterFormation()
 
 const CombatFighter& CombatFighterFormation::Leader() const
 { return *m_leader; }
+
+double CombatFighterFormation::Damage(double d)
+{
+    for (iterator it = begin(); it != end(); ) {
+        CombatFighterPtr f = *it++;
+        double damage_to_this_fighter = std::min(d, f->HealthAndShield());
+        f->Damage(damage_to_this_fighter);
+        d -= damage_to_this_fighter;
+    }
+    return d;
+}
 
 OpenSteer::Vec3 CombatFighterFormation::Centroid() const
 {
@@ -234,8 +254,20 @@ const std::string& CombatFighter::PartName() const
 const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
 
+double CombatFighter::HealthAndShield() const
+{ return m_health; }
+
 double CombatFighter::Health() const
 { return m_health; }
+
+double CombatFighter::FractionalHealth() const
+{ return m_health / m_stats.m_health; }
+
+double CombatFighter::AntiFighterStrength() const
+{ return m_stats.m_anti_fighter_damage * m_stats.m_fighter_weapon_range * FractionalHealth(); }
+
+double CombatFighter::AntiShipStrength() const
+{ return m_stats.m_anti_ship_damage * m_stats.m_fighter_weapon_range * FractionalHealth(); }
 
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
@@ -254,7 +286,8 @@ void CombatFighter::update(const float /*current_time*/, const float elapsed_tim
         m_proximity_token->UpdatePosition(position());
 }
 
-void CombatFighter::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity, const float elapsed_time)
+void CombatFighter::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity,
+                                         const float elapsed_time)
 { regenerateLocalSpaceForBanking(new_velocity, elapsed_time); }
 
 CombatFighterFormationPtr CombatFighter::Formation()
@@ -375,7 +408,8 @@ void CombatFighter::UpdateMissionQueue()
     if (m_instrument && m_last_mission != m_mission_queue.back().m_type) {
         std::string prev_mission = FIGHTER_MISSION_STRINGS[m_last_mission];
         std::string new_mission = FIGHTER_MISSION_STRINGS[m_mission_queue.back().m_type];
-        std::cout << "empire=" << m_empire_id << " type=" << (m_stats.m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
+        std::cout << "empire=" << m_empire_id
+                  << " type=" << (m_stats.m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
                   << "    prev mission=" << prev_mission.c_str() << "\n"
                   << "    new mission =" << new_mission.c_str() << "\n";
         print_needed = true;
@@ -560,7 +594,7 @@ void CombatFighter::FireAtHostiles()
     assert(!m_mission_queue.empty());
 
     OpenSteer::Vec3 position_to_use = m_formation->Centroid();
-    CombatFighterPtr fighter = *m_formation->begin();
+    CombatFighterPtr fighter;
     const double WEAPON_RANGE = m_stats.m_fighter_weapon_range;
     const double WEAPON_RANGE_SQUARED = WEAPON_RANGE * WEAPON_RANGE;
     CombatObjectPtr target = m_mission_subtarget.lock();
@@ -568,12 +602,11 @@ void CombatFighter::FireAtHostiles()
     if (!target && m_mission_queue.back().m_type == FighterMission::ATTACK_THIS) {
         assert(m_mission_queue.back().m_target.lock());
         target = m_mission_queue.back().m_target.lock();
-        if (!boost::dynamic_pointer_cast<CombatFighter>(target))
+        if (!(fighter = boost::dynamic_pointer_cast<CombatFighter>(target)))
             base_damage = m_stats.m_anti_ship_damage;
     } else if (!target) {
         // fire on targets of opportunity
-        if (CombatFighterPtr fighter =
-            m_pathing_engine->NearestHostileFighterInRange(
+        if (fighter = m_pathing_engine->NearestHostileFighterInRange(
                 position_to_use, m_empire_id, WEAPON_RANGE)) {
             target = fighter;
         } else if (CombatObjectPtr non_fighter =
@@ -585,7 +618,16 @@ void CombatFighter::FireAtHostiles()
     }
     if (target &&
         (target->position() - position_to_use).lengthSquared() < WEAPON_RANGE_SQUARED) {
-        target->Damage(base_damage * m_formation->size());
+        double d = base_damage * m_formation->size();
+        // TODO: Note that here we are damaging the target fighter's entire
+        // formation, so we don't waste the potentially large damage of this
+        // formation on the single fighter we've targetted.  If this still
+        // proves to be a waste of firepower, we'll need to add a loop here to
+        // find more hostiles (fighters or otherwise) to attack.
+        if (fighter)
+            fighter->Formation()->Damage(d);
+        else
+            target->Damage(d);
     }
 }
 
@@ -774,13 +816,13 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
         CombatFighterPtr fighter;
         CombatShipPtr ship;
         float strength = FLT_MAX;
-        // Note that this condition implies that bombers cannot attack
-        // fighters at all.
+        // Note that this condition (type == INTERCEPTOR) implies that bombers
+        // cannot attack fighters at all.
         if (m_stats.m_type == INTERCEPTOR &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
-            strength = fighter->Health();
+            strength = fighter->HealthAndShield() * (1.0 + fighter->AntiFighterStrength());
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
-            strength = ship->Health() * (1.0 + ship->AntiFighterStrength());
+            strength = ship->HealthAndShield() * (1.0 + ship->AntiFighterStrength());
         }
         if (strength < weakest) {
             retval = it->second.lock();
@@ -800,9 +842,9 @@ CombatShipPtr CombatFighter::WeakestHostileShip()
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
-        if (ship->Health() * ship->AntiFighterStrength() < weakest) {
+        if (ship->HealthAndShield() * (1.0 + ship->AntiFighterStrength()) < weakest) {
             retval = ship->shared_from_this();
-            weakest = ship->AntiFighterStrength();
+            weakest = ship->HealthAndShield() * (1.0 + ship->AntiFighterStrength());
         }
     }
     return retval;

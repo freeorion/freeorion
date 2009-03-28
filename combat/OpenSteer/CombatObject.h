@@ -11,7 +11,11 @@ class CombatObject :
     public OpenSteer::SimpleVehicle
 {
 public:
+    virtual double HealthAndShield() const = 0;
     virtual double Health() const = 0;
+    virtual double FractionalHealth() const = 0;
+    virtual double AntiFighterStrength() const = 0;
+    virtual double AntiShipStrength() const = 0;
     virtual void Damage(double d) = 0;
 
     template <class Archive>

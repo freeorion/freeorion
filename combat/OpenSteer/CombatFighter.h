@@ -31,6 +31,7 @@ public:
     const_iterator end() const;
 
     CombatFighter& Leader();
+    double Damage(double d);
     void push_back(const CombatFighterPtr& fighter);
     void erase(const CombatFighterPtr& fighter);
     void erase(CombatFighter* fighter);
@@ -75,7 +76,11 @@ public:
     const FighterStats& Stats() const;
     const std::string& PartName() const;
     const FighterMission& CurrentMission() const;
+    virtual double HealthAndShield() const;
     virtual double Health() const;
+    virtual double FractionalHealth() const;
+    virtual double AntiFighterStrength() const;
+    virtual double AntiShipStrength() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,

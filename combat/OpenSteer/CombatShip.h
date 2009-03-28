@@ -24,10 +24,13 @@ public:
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
 
-    float AntiFighterStrength() const;
     Ship* GetShip() const;
     const ShipMission& CurrentMission() const;
+    virtual double HealthAndShield() const;
     virtual double Health() const;
+    virtual double FractionalHealth() const;
+    virtual double AntiFighterStrength() const;
+    virtual double AntiShipStrength() const;
 
     void LaunchFighters();
     void RecoverFighters(const CombatFighterFormationPtr& formation);
@@ -47,7 +50,6 @@ private:
 
     float MaxWeaponRange() const;
     float MinNonPDWeaponRange() const;
-    double MaxHealth() const;
 
     void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
     void PushMission(const ShipMission& mission);
