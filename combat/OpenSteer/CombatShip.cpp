@@ -54,7 +54,8 @@ CombatShip::CombatShip() :
     m_pathing_engine(0),
     m_raw_PD_strength(0.0),
     m_raw_SR_strength(0.0),
-    m_raw_LR_strength(0.0)
+    m_raw_LR_strength(0.0),
+    m_is_PD_ship(false)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 {}
@@ -69,7 +70,8 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
     m_pathing_engine(&pathing_engine),
     m_raw_PD_strength(0.0),
     m_raw_SR_strength(0.0),
-    m_raw_LR_strength(0.0)
+    m_raw_LR_strength(0.0),
+    m_is_PD_ship(false)
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 { Init(position, direction); }
@@ -285,6 +287,7 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         }
     }
 
+    double PD_minus_non_PD = 0.0;
     const std::vector<std::string>& part_names = m_ship->Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {
         if (part_names[i].empty())
@@ -295,14 +298,18 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         if (part->Class() == PC_POINT_DEFENSE) {
             const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
             m_raw_PD_strength += stats.m_damage * stats.m_ROF * stats.m_range;
+            PD_minus_non_PD += stats.m_damage;
         } else if (part->Class() == PC_SHORT_RANGE) {
             const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
             m_raw_SR_strength += stats.m_damage * stats.m_ROF * stats.m_range;
+            PD_minus_non_PD -= stats.m_damage;
         } else if (part->Class() == PC_MISSILES) {
             const LRStats& stats = boost::get<LRStats>(part->Stats());
             m_raw_LR_strength += stats.m_damage * stats.m_ROF * stats.m_range;
+            PD_minus_non_PD -= stats.m_damage;
         }
     }
+    m_is_PD_ship = 0.0 < PD_minus_non_PD;
 }
 
 void CombatShip::PushMission(const ShipMission& mission)
@@ -393,12 +400,46 @@ void CombatShip::UpdateMissionQueue()
     case ShipMission::DEFEND_THIS: {
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
-            if (m_mission_subtarget.expired()) {
-                m_mission_subtarget = WeakestAttacker(target);
-                if (CombatObjectPtr subtarget = m_mission_subtarget.lock())
-                    m_mission_destination = subtarget->position();
-                else
-                    m_mission_destination = target->position();
+            if (m_is_PD_ship) {
+                PathingEngine::ConstAttackerRange attackers =
+                    m_pathing_engine->Attackers(target);
+                CombatShipPtr ship;
+                for (PathingEngine::Attackees::const_iterator it = attackers.first;
+                     it != attackers.second;
+                     ++it) {
+                    if (CombatShipPtr tmp =
+                        boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
+                        if (!ship || ship->m_raw_LR_strength < tmp->m_raw_LR_strength)
+                            ship = tmp;
+                    }
+                }
+                if (ship) {
+                    m_mission_weight = MAX_MISSION_WEIGHT;
+                    OpenSteer::Vec3 target_position = target->position();
+                    OpenSteer::Vec3 attacker_position = ship->position();
+                    OpenSteer::Vec3 target_to_attacker =
+                        (attacker_position - target_position).normalize();
+                    double min_PD_range = m_ship->Design()->PDWeapons().begin()->first;
+                    m_mission_destination =
+                        target_position + target_to_attacker * min_PD_range / 2.0;
+                } else {
+                    // No attacker found; just get close to the target to keep
+                    // it blanketted with PD.
+                    OpenSteer::Vec3 target_position = target->position();
+                    OpenSteer::Vec3 target_to_here =
+                        (position() - target->position()).normalize();
+                    double min_PD_range = m_ship->Design()->PDWeapons().begin()->first;
+                    m_mission_destination =
+                        target_position + target_to_here * min_PD_range / 3.0;
+                }
+            } else {
+                if (m_mission_subtarget.expired()) {
+                    m_mission_subtarget = WeakestAttacker(target);
+                    if (CombatObjectPtr subtarget = m_mission_subtarget.lock())
+                        m_mission_destination = subtarget->position();
+                    else
+                        m_mission_destination = target->position();
+                }
             }
         } else {
             if (print_needed) std::cout << "    [DEFEND TARGET GONE]\n";
@@ -497,9 +538,17 @@ void CombatShip::UpdateMissionQueue()
 
 void CombatShip::FireAtHostiles()
 {
+    assert(!m_mission_queue.empty());
+
+#if 0
     //const ShipDesign& design = *m_ship->Design();
-    // TODO: Don't forget to take into account the ineffectiveness of PD
-    // against ships, and non-PD against fighters.
+    const double PD_VS_SHIP_FACTOR = 1.0 / 50.0;
+    const double NON_PD_VS_FIGHTER_FACTOR = 1.0 / 50.0;
+
+    CombatObjectPtr target = m_mission_subtarget.lock();
+    if () {
+    }
+#endif
 }
 
 OpenSteer::Vec3 CombatShip::Steer()

@@ -816,9 +816,7 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
         CombatFighterPtr fighter;
         CombatShipPtr ship;
         float strength = FLT_MAX;
-        // Note that this condition (type == INTERCEPTOR) implies that bombers
-        // cannot attack fighters at all.
-        if (m_stats.m_type == INTERCEPTOR &&
+        if (m_stats.m_anti_fighter_damage &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
             strength = fighter->HealthAndShield() * (1.0 + fighter->AntiFighterStrength());
         } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {

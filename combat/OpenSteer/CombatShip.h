@@ -75,6 +75,7 @@ private:
     double m_raw_PD_strength;
     double m_raw_SR_strength;
     double m_raw_LR_strength;
+    bool m_is_PD_ship;
 
     // map from part type name to (number of parts in the design of that type,
     // the unlaunched fighters of that part type) pairs
