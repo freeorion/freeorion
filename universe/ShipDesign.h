@@ -365,6 +365,17 @@ public:
         design. */
     const std::multimap<double, DirectFireStats>& PDWeapons() const;
 
+    double MinSRRange() const;
+    double MaxSRRange() const;
+    double MinLRRange() const;
+    double MaxLRRange() const;
+    double MinPDRange() const;
+    double MaxPDRange() const;
+    double MinWeaponRange() const;
+    double MaxWeaponRange() const;
+    double MinNonPDWeaponRange() const;
+    double MaxNonPDWeaponRange() const;
+
     /////// TEMPORARY ///////
     double      Defense() const;
     double      Attack() const;
@@ -419,6 +430,16 @@ private:
     std::multimap<double, DirectFireStats> m_SR_weapons;
     std::multimap<double, LRStats> m_LR_weapons;
     std::multimap<double, DirectFireStats> m_PD_weapons;
+    double m_min_SR_range;
+    double m_max_SR_range;
+    double m_min_LR_range;
+    double m_max_LR_range;
+    double m_min_PD_range;
+    double m_max_PD_range;
+    double m_min_weapon_range;
+    double m_max_weapon_range;
+    double m_min_non_PD_weapon_range;
+    double m_max_non_PD_weapon_range;
 
     friend class boost::serialization::access;
     template <class Archive>

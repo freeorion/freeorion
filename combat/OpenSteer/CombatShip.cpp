@@ -24,6 +24,66 @@
 namespace {
     const float NO_PD_FIGHTER_ATACK_SCALE_FACTOR = 50.0;
 
+    const double PD_VS_SHIP_FACTOR = 1.0 / 50.0;
+    const double NON_PD_VS_FIGHTER_FACTOR = 1.0 / 50.0;
+
+    template <class Stats>
+    struct CopyStatPtr
+    {
+        const Stats* operator()(const std::pair<double, Stats>& elem)
+            { return &elem.second; }
+    };
+
+    void FireAt(CombatObjectPtr target,
+                CombatFighterPtr fighter,
+                double range_squared,
+                double health_factor,
+                CombatShip::DFVec& unfired_SR_weapons,
+                CombatShip::LRVec& unfired_LR_weapons,
+                CombatShip::DFVec& unfired_PD_weapons)
+    {
+        for (CombatShip::DFVec::reverse_iterator it = unfired_SR_weapons.rbegin();
+             it != unfired_SR_weapons.rend();
+             ++it) {
+            if (range_squared < (*it)->m_range * (*it)->m_range) {
+                double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
+                if (fighter)
+                    damage *= NON_PD_VS_FIGHTER_FACTOR;
+                target->Damage(damage);
+            } else {
+                unfired_SR_weapons.resize(std::distance(it, unfired_SR_weapons.rend()));
+                break;
+            }
+        }
+        for (CombatShip::LRVec::reverse_iterator it = unfired_LR_weapons.rbegin();
+             it != unfired_LR_weapons.rend();
+             ++it) {
+            if (range_squared < (*it)->m_range * (*it)->m_range) {
+                double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
+                if (fighter)
+                    damage *= NON_PD_VS_FIGHTER_FACTOR;
+                target->Damage(damage);
+            } else {
+                unfired_LR_weapons.resize(std::distance(it, unfired_LR_weapons.rend()));
+                break;
+            }
+        }
+        for (CombatShip::DFVec::reverse_iterator it = unfired_PD_weapons.rbegin();
+             it != unfired_PD_weapons.rend();
+             ++it) {
+            if (range_squared < (*it)->m_range * (*it)->m_range) {
+                double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
+                if (fighter)
+                    fighter->Formation()->Damage(damage);
+                else
+                    target->Damage(damage * PD_VS_SHIP_FACTOR);
+            } else {
+                unfired_PD_weapons.resize(std::distance(it, unfired_PD_weapons.rend()));
+                break;
+            }
+        }
+    }
+
 #define ECHO_TOKEN(x) (x, #x)
     std::map<ShipMission::Type, std::string> SHIP_MISSION_STRINGS =
         boost::assign::map_list_of
@@ -225,31 +285,11 @@ void CombatShip::Damage(double d)
     m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-d);
 }
 
-float CombatShip::MaxWeaponRange() const
-{
-    float retval = 0.0;
-    const ShipDesign& design = *m_ship->Design();
-    if (!design.SRWeapons().empty())
-        retval = std::max<float>(retval, design.SRWeapons().rbegin()->first);
-    if (!design.LRWeapons().empty())
-        retval = std::max<float>(retval, design.LRWeapons().rbegin()->first);
-    if (!design.PDWeapons().empty())
-        retval = std::max<float>(retval, design.PDWeapons().rbegin()->first);
-    return retval;
-}
+double CombatShip::MaxWeaponRange() const
+{ return m_ship->Design()->MaxWeaponRange() * FractionalHealth(); }
 
-float CombatShip::MinNonPDWeaponRange() const
-{
-    float retval = FLT_MAX;
-    const ShipDesign& design = *m_ship->Design();
-    if (!design.SRWeapons().empty())
-        retval = std::min<float>(retval, design.SRWeapons().begin()->first);
-    if (!design.LRWeapons().empty())
-        retval = std::min<float>(retval, design.LRWeapons().begin()->first);
-    if (retval == FLT_MAX)
-        retval = 0.0;
-    return retval;
-}
+double CombatShip::MinNonPDWeaponRange() const
+{ return m_ship->Design()->MinNonPDWeaponRange() * FractionalHealth(); }
 
 void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
@@ -386,11 +426,12 @@ void CombatShip::UpdateMissionQueue()
             OpenSteer::Vec3 from_target_vec = position() - target_position;
             float from_target_length = from_target_vec.length();
             from_target_vec /= from_target_length;
-            float weapon_range =
-                m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF ?
-                MaxWeaponRange() : MinNonPDWeaponRange();
-            float standoff_distance = std::min<float>(from_target_length, weapon_range);
-            m_mission_destination = target_position + standoff_distance * from_target_vec;
+            const float WEAPON_RANGE_FACTOR = 0.9;
+            float distance =
+                std::min<float>(MaxWeaponRange() * WEAPON_RANGE_FACTOR, from_target_length);
+            if (m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF)
+                distance = MinNonPDWeaponRange() * WEAPON_RANGE_FACTOR;
+            m_mission_destination = target_position + distance * from_target_vec;
         } else {
             if (print_needed) std::cout << "    [ATTACK TARGET GONE]\n";
             RemoveMission();
@@ -536,19 +577,62 @@ void CombatShip::UpdateMissionQueue()
                   << std::endl;
 }
 
+void CombatShip::FirePDDefensively(DFVec& unfired_PD_weapons)
+{
+    // TODO
+}
+
 void CombatShip::FireAtHostiles()
 {
     assert(!m_mission_queue.empty());
 
-#if 0
-    //const ShipDesign& design = *m_ship->Design();
-    const double PD_VS_SHIP_FACTOR = 1.0 / 50.0;
-    const double NON_PD_VS_FIGHTER_FACTOR = 1.0 / 50.0;
+    const ShipDesign& design = *m_ship->Design();
 
+    DFVec unfired_SR_weapons(design.SRWeapons().size());
+    LRVec unfired_LR_weapons(design.LRWeapons().size());
+    DFVec unfired_PD_weapons(design.PDWeapons().size());
+    std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
+                   unfired_SR_weapons.begin(), CopyStatPtr<DirectFireStats>());
+    std::transform(design.LRWeapons().begin(), design.LRWeapons().end(),
+                   unfired_LR_weapons.begin(), CopyStatPtr<LRStats>());
+    std::transform(design.PDWeapons().begin(), design.PDWeapons().end(),
+                   unfired_PD_weapons.begin(), CopyStatPtr<DirectFireStats>());
+
+    const double MAX_WEAPON_RANGE_SQUARED = MaxWeaponRange() * MaxWeaponRange();
+
+    FirePDDefensively(unfired_PD_weapons);
+
+    CombatFighterPtr fighter;
     CombatObjectPtr target = m_mission_subtarget.lock();
-    if () {
+    if (!target &&
+        (m_mission_queue.back().m_type == ShipMission::ATTACK_THIS ||
+         m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF)) {
+        assert(m_mission_queue.back().m_target.lock());
+        target = m_mission_queue.back().m_target.lock();
+        if ((target->position() - position()).lengthSquared() <
+            MAX_WEAPON_RANGE_SQUARED) {
+            fighter = boost::dynamic_pointer_cast<CombatFighter>(target);
+        } else {
+            target.reset();
+        }
     }
-#endif
+
+    if (target) {
+        double range_squared = (target->position() - position()).lengthSquared();
+        FireAt(target, fighter, range_squared, FractionalHealth(),
+               unfired_SR_weapons, unfired_LR_weapons, unfired_PD_weapons);
+    }
+
+    // now find a target of opportunity, if we didn't fire all our weapons already
+    if (!unfired_SR_weapons.empty() &&
+        !unfired_LR_weapons.empty() &&
+        !unfired_PD_weapons.empty() &&
+        (target = m_pathing_engine->NearestHostileShip(position(), m_empire_id))) {
+        double range_squared = (target->position() - position()).lengthSquared();
+        fighter = boost::dynamic_pointer_cast<CombatFighter>(target);
+        FireAt(target, fighter, range_squared, FractionalHealth(),
+               unfired_SR_weapons, unfired_LR_weapons, unfired_PD_weapons);
+    }
 }
 
 OpenSteer::Vec3 CombatShip::Steer()

@@ -632,7 +632,17 @@ ShipDesign::ShipDesign() :
     m_is_armed(false),
     m_can_colonize(false),
     m_build_cost(0.0),
-    m_build_turns(0)
+    m_build_turns(0),
+    m_min_SR_range(DBL_MAX),
+    m_max_SR_range(0.0),
+    m_min_LR_range(DBL_MAX),
+    m_max_LR_range(0.0),
+    m_min_PD_range(DBL_MAX),
+    m_max_PD_range(0.0),
+    m_min_weapon_range(DBL_MAX),
+    m_max_weapon_range(0.0),
+    m_min_non_PD_weapon_range(DBL_MAX),
+    m_max_non_PD_weapon_range(0.0)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
@@ -650,7 +660,17 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_is_armed(false),
     m_can_colonize(false),
     m_build_cost(0.0),
-    m_build_turns(0)
+    m_build_turns(0),
+    m_min_SR_range(DBL_MAX),
+    m_max_SR_range(0.0),
+    m_min_LR_range(DBL_MAX),
+    m_max_LR_range(0.0),
+    m_min_PD_range(DBL_MAX),
+    m_max_PD_range(0.0),
+    m_min_weapon_range(DBL_MAX),
+    m_max_weapon_range(0.0),
+    m_min_non_PD_weapon_range(DBL_MAX),
+    m_max_non_PD_weapon_range(0.0)
 {
     if (!ValidDesign(m_hull, m_parts))
         Logger().errorStream() << "constructing an invalid ShipDesign!";
@@ -718,6 +738,36 @@ const std::multimap<double, LRStats>& ShipDesign::LRWeapons() const
 
 const std::multimap<double, DirectFireStats>& ShipDesign::PDWeapons() const
 { return m_PD_weapons; }
+
+double ShipDesign::MinSRRange() const
+{ return m_min_SR_range; }
+
+double ShipDesign::MaxSRRange() const
+{ return m_max_SR_range; }
+
+double ShipDesign::MinLRRange() const
+{ return m_min_LR_range; }
+
+double ShipDesign::MaxLRRange() const
+{ return m_max_LR_range; }
+
+double ShipDesign::MinPDRange() const
+{ return m_min_PD_range; }
+
+double ShipDesign::MaxPDRange() const
+{ return m_max_PD_range; }
+
+double ShipDesign::MinWeaponRange() const
+{ return m_min_weapon_range; }
+
+double ShipDesign::MaxWeaponRange() const
+{ return m_max_weapon_range; }
+
+double ShipDesign::MinNonPDWeaponRange() const
+{ return m_min_non_PD_weapon_range; }
+
+double ShipDesign::MaxNonPDWeaponRange() const
+{ return m_max_non_PD_weapon_range; }
 
 //// TEMPORARY
 double ShipDesign::Defense() const {
@@ -901,12 +951,24 @@ void ShipDesign::BuildStatCaches()
             const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
             m_SR_weapons.insert(std::make_pair(stats.m_range, stats));
             m_is_armed = true;
+            m_min_SR_range = std::min(m_min_SR_range, stats.m_range);
+            m_max_SR_range = std::max(m_max_SR_range, stats.m_range);
+            m_min_weapon_range = std::min(m_min_weapon_range, stats.m_range);
+            m_max_weapon_range = std::max(m_max_weapon_range, stats.m_range);
+            m_min_non_PD_weapon_range = std::min(m_min_non_PD_weapon_range, stats.m_range);
+            m_max_non_PD_weapon_range = std::max(m_max_non_PD_weapon_range, stats.m_range);
             break;
         }
         case PC_MISSILES: {
             const LRStats& stats = boost::get<LRStats>(part->Stats());
             m_LR_weapons.insert(std::make_pair(stats.m_range, stats));
             m_is_armed = true;
+            m_min_LR_range = std::min(m_min_LR_range, stats.m_range);
+            m_max_LR_range = std::max(m_max_LR_range, stats.m_range);
+            m_min_weapon_range = std::min(m_min_weapon_range, stats.m_range);
+            m_max_weapon_range = std::max(m_max_weapon_range, stats.m_range);
+            m_min_non_PD_weapon_range = std::min(m_min_non_PD_weapon_range, stats.m_range);
+            m_max_non_PD_weapon_range = std::max(m_max_non_PD_weapon_range, stats.m_range);
             break;
         }
         case PC_FIGHTERS:
@@ -916,6 +978,10 @@ void ShipDesign::BuildStatCaches()
             const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
             m_PD_weapons.insert(std::make_pair(stats.m_range, stats));
             m_is_armed = true;
+            m_min_PD_range = std::min(m_min_PD_range, stats.m_range);
+            m_max_PD_range = std::max(m_max_PD_range, stats.m_range);
+            m_min_weapon_range = std::min(m_min_weapon_range, stats.m_range);
+            m_max_weapon_range = std::max(m_max_weapon_range, stats.m_range);
             break;
         }
         case PC_COLONY:
@@ -925,6 +991,17 @@ void ShipDesign::BuildStatCaches()
             break;
         }
     }
+
+    if (m_SR_weapons.empty())
+        m_min_SR_range = 0.0;
+    if (m_LR_weapons.empty())
+        m_min_LR_range = 0.0;
+    if (m_PD_weapons.empty())
+        m_min_PD_range = 0.0;
+    if (!m_min_SR_range && !m_min_LR_range && !m_min_PD_range)
+        m_min_weapon_range = 0.0;
+    if (!m_min_LR_range && !m_min_PD_range)
+        m_min_non_PD_weapon_range = 0.0;
 
     m_build_cost /= m_build_turns;
 }

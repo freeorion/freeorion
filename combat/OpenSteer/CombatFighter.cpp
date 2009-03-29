@@ -597,15 +597,22 @@ void CombatFighter::FireAtHostiles()
     CombatFighterPtr fighter;
     const double WEAPON_RANGE = m_stats.m_fighter_weapon_range;
     const double WEAPON_RANGE_SQUARED = WEAPON_RANGE * WEAPON_RANGE;
-    CombatObjectPtr target = m_mission_subtarget.lock();
     double base_damage = m_stats.m_anti_fighter_damage;
+
+    CombatObjectPtr target = m_mission_subtarget.lock();
     if (!target && m_mission_queue.back().m_type == FighterMission::ATTACK_THIS) {
         assert(m_mission_queue.back().m_target.lock());
         target = m_mission_queue.back().m_target.lock();
-        if (!(fighter = boost::dynamic_pointer_cast<CombatFighter>(target)))
-            base_damage = m_stats.m_anti_ship_damage;
-    } else if (!target) {
-        // fire on targets of opportunity
+        if ((target->position() - position_to_use).lengthSquared() < WEAPON_RANGE_SQUARED) {
+            if (!(fighter = boost::dynamic_pointer_cast<CombatFighter>(target)))
+                base_damage = m_stats.m_anti_ship_damage;
+        } else {
+            target.reset();
+        }
+    }
+
+    // find a target of opportunity
+    if (!target) {
         if (fighter = m_pathing_engine->NearestHostileFighterInRange(
                 position_to_use, m_empire_id, WEAPON_RANGE)) {
             target = fighter;
@@ -616,8 +623,8 @@ void CombatFighter::FireAtHostiles()
             base_damage = m_stats.m_anti_ship_damage;
         }
     }
-    if (target &&
-        (target->position() - position_to_use).lengthSquared() < WEAPON_RANGE_SQUARED) {
+
+    if (target) {
         double d = base_damage * m_formation->size();
         // TODO: Note that here we are damaging the target fighter's entire
         // formation, so we don't waste the potentially large damage of this

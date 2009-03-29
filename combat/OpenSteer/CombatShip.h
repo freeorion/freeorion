@@ -14,12 +14,17 @@
 
 
 class Ship;
+struct DirectFireStats;
+struct LRStats;
 
 class CombatShip :
     public CombatObject,
     public boost::enable_shared_from_this<CombatShip>
 {
 public:
+    typedef std::vector<const DirectFireStats*> DFVec;
+    typedef std::vector<const LRStats*> LRVec;
+
     CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
@@ -48,13 +53,14 @@ public:
 private:
     CombatShip();
 
-    float MaxWeaponRange() const;
-    float MinNonPDWeaponRange() const;
+    double MaxWeaponRange() const;
+    double MinNonPDWeaponRange() const;
 
     void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
     void PushMission(const ShipMission& mission);
     void RemoveMission();
     void UpdateMissionQueue();
+    void FirePDDefensively(DFVec& unfired_PD_weapons);
     void FireAtHostiles();
     OpenSteer::Vec3 Steer();
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
