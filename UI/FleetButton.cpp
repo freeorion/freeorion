@@ -114,6 +114,11 @@ namespace {
             glVertex2d(vertsXY[6], vertsXY[7]);
         glEnd();
     }
+
+    void AddOptions(OptionsDB& db) {
+        db.Add("UI.fleet-selection-indicator-size", "OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE", 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ///////////////////////////
@@ -301,15 +306,15 @@ void FleetButton::SetSelected(bool selected)
 void FleetButton::RenderUnpressed() {
     glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
+    const double midX = static_cast<double>(Value(ul.x + lr.x))/2.0;
+    const double midY = static_cast<double>(Value(ul.y + lr.y))/2.0;
+
     if (m_vertex_components.empty()) {
         if (m_size_icon)
             m_size_icon->OrthoBlit(ul);
         if (m_head_icon)
             m_head_icon->OrthoBlit(ul);
     } else {
-        const double midX = static_cast<double>(Value(ul.x + lr.x))/2.0;
-        const double midY = static_cast<double>(Value(ul.y + lr.y))/2.0;
-
         std::vector<double> vertsXY;
         vertsXY.push_back(midX + m_vertex_components[0]);
         vertsXY.push_back(midY + m_vertex_components[1]);
@@ -325,10 +330,15 @@ void FleetButton::RenderUnpressed() {
     }
 
     if (m_selected && m_selection_texture) {
-        GG::Pt selector_ul = GG::Pt(ul.x - Width()/2, ul.y - Height()/2);
-        GG::Pt selector_lr = GG::Pt(lr.x + Width()/2, lr.y + Height()/2);
+        double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
+        double sel_ind_half_size = Value(Width()) * sel_ind_scale / 2.0;
+
+        GG::Pt button_mid = GG::Pt(GG::X(midX), GG::Y(midY));
+        GG::Pt sel_ul = button_mid - GG::Pt(GG::X(sel_ind_half_size), GG::Y(sel_ind_half_size));
+        GG::Pt sel_lr = button_mid + GG::Pt(GG::X(sel_ind_half_size), GG::Y(sel_ind_half_size));
+
         glColor(GG::CLR_WHITE);
-        m_selection_texture->OrthoBlit(selector_ul, selector_lr);
+        m_selection_texture->OrthoBlit(sel_ul, sel_lr);
     }
 }
 
@@ -339,7 +349,7 @@ void FleetButton::RenderPressed() {
     CircleArc(UpperLeft(), LowerRight(), 0.0, TWO_PI, true);
     glEnable(GL_TEXTURE_2D);
 
-    RenderUnpressed();  // TODO: do something else
+    RenderUnpressed();
 }
 
 void FleetButton::RenderRollover() {
@@ -349,7 +359,7 @@ void FleetButton::RenderRollover() {
     CircleArc(UpperLeft(), LowerRight(), 0.0, TWO_PI, true);
     glEnable(GL_TEXTURE_2D);
 
-    RenderUnpressed();  // TODO: do something else
+    RenderUnpressed();
 }
 
 void FleetButton::PlayFleetButtonRolloverSound() {

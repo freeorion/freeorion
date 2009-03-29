@@ -1562,8 +1562,33 @@ void MapWnd::SelectFleet(Fleet* fleet)
         // fleets at the same universe location
         std::vector<Fleet*> wnd_fleets;
         if (system) {
-            // get all fleets in system
-            wnd_fleets = system->FindObjects<Fleet>();
+            // Can't just get the fleets represented by a single FleetButton (as is done for
+            // moving fleets) because a single FleetButton at a system represents only
+            // departing or only stationary fleets, while the FleetWnd should contain both.
+
+            // get all fleets in system.
+            std::vector<Fleet*> all_system_fleets = system->FindObjects<Fleet>();
+
+            // determine which empire's fleets to populate new FleetWnd with
+            int owner = ALL_EMPIRES;
+            if (owners.size() == 1) {
+                owner = *owners.begin();
+
+                // transfer appropriately owned fleets
+                for (std::vector<Fleet*>::const_iterator it = all_system_fleets.begin(); it != all_system_fleets.end(); ++it) {
+                    Fleet* wnd_fleet = *it;
+                    if (wnd_fleet->OwnedBy(owner))
+                        wnd_fleets.push_back(wnd_fleet);
+                }
+            } else {
+                // couldn't get a single empire whose fleets to show, so show all fleets
+                wnd_fleets = all_system_fleets;
+            }
+
+            // could also find the set of FleetButton for this system, and find the button (or buttons?)
+            // in the set that contains a fleet owned by selected fleet's empire, but the above seemed
+            // abit simpler
+
         } else {
             // get all (moving) fleets represented by fleet button for this fleet
             std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.find(fleet);

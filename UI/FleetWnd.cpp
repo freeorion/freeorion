@@ -1020,9 +1020,9 @@ void FleetDetailPanel::Init()
     GetLayout()->SetRowStretch(1, 1.0);
     GetLayout()->SetMinimumRowHeight(2, GG::Y(ClientUI::Pts() + 4));
 
-    GG::Connect(m_ships_lb->SelChangedSignal, &FleetDetailPanel::ShipSelectionChanged, this);
-    GG::Connect(m_ships_lb->BrowsedSignal, &FleetDetailPanel::ShipBrowsed, this);
-    GG::Connect(m_ships_lb->RightClickedSignal, &FleetDetailPanel::ShipRightClicked, this);
+    GG::Connect(m_ships_lb->SelChangedSignal,   &FleetDetailPanel::ShipSelectionChanged,    this);
+    GG::Connect(m_ships_lb->BrowsedSignal,      &FleetDetailPanel::ShipBrowsed,             this);
+    GG::Connect(m_ships_lb->RightClickedSignal, &FleetDetailPanel::ShipRightClicked,        this);
 }
 
 void FleetDetailPanel::Refresh()
@@ -1296,6 +1296,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     GetLayout()->SetBorderMargin(7);
 
     GG::Connect(m_fleets_lb->SelChangedSignal,      &FleetWnd::FleetSelectionChanged,   this);
+    GG::Connect(m_fleets_lb->LeftClickedSignal,     &FleetWnd::FleetLeftClicked,        this);
     GG::Connect(m_fleets_lb->RightClickedSignal,    &FleetWnd::FleetRightClicked,       this);
     GG::Connect(m_fleets_lb->DoubleClickedSignal,   &FleetWnd::FleetDoubleClicked,      this);
     GG::Connect(m_fleets_lb->ErasedSignal,          &FleetWnd::FleetDeleted,            this);
@@ -1384,6 +1385,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows)
         fleet_panel->Select(rows.find(it) != rows.end());
     }
 
+    ClickedSignal(this);
     SelectedFleetsChangedSignal();
 }
 
@@ -1425,8 +1427,14 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
     }
 }
 
+void FleetWnd::FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt)
+{
+    ClickedSignal(this);
+}
+
 void FleetWnd::FleetDoubleClicked(GG::ListBox::iterator it)
 {
+    ClickedSignal(this);
     Fleet* row_fleet = FleetInRow(it);
     int num_open_windows = FleetUIManager::GetFleetUIManager().OpenDetailWnds(this);
     GG::Pt window_posn(std::max(GG::X0, 25 + LowerRight().x + num_open_windows * 25),

@@ -732,6 +732,7 @@ void OptionsWnd::Init()
     DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption("UI.small-fleet-button-minimum-zoom",  UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption("UI.medium-fleet-button-minimum-zoom", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
+    DoubleOption("UI.fleet-selection-indicator-size",   UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
     EndSection();
     BeginSection(UserString("OPTIONS_STARLANES"));
     DoubleOption("UI.starlane-thickness",               UserString("OPTIONS_STARLANE_THICKNESS"));

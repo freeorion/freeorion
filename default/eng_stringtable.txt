@@ -411,6 +411,9 @@ Sets minimum zoom level at which small fleet icons are shown on the galaxy map.
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
 Sets minimum zoom level at which tiny fleet icons are shown.  At smaller zooms, no fleet icons are shown on the galaxy map.
 
+OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
+Sets size of fleet selection indicator (relative to fleet icon).
+
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator (relative to system icon).
 
@@ -967,6 +970,9 @@ Small fleet icon minimum zoom
 
 OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Medium fleet icon minimum zoom
+
+OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
+Fleet selection indicator relative size
 
 OPTIONS_GALAXY_MAP_GENERAL
 General

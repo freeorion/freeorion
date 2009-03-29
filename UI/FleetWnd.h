@@ -116,6 +116,7 @@ private:
     void                Init(const std::vector<Fleet*>& fleets, int selected_fleet);
     void                FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void                FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void                FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     void                FleetDoubleClicked(GG::ListBox::iterator it);
     void                FleetDeleted(GG::ListBox::iterator it);
     Fleet*              FleetInRow(GG::ListBox::iterator it) const;
