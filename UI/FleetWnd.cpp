@@ -76,7 +76,7 @@ FleetUIManager::iterator FleetUIManager::end() const
 FleetWnd* FleetUIManager::ActiveFleetWnd() const
 { return m_active_fleet_wnd; }
 
-FleetWnd* FleetUIManager::WndForFleet(Fleet* fleet) const
+FleetWnd* FleetUIManager::WndForFleet(const Fleet* fleet) const
 {
     assert(fleet);
     FleetWnd* retval = 0;
@@ -177,6 +177,9 @@ bool FleetUIManager::CloseAll()
         delete vec[i];
 
     m_active_fleet_wnd = 0;
+
+    ActiveFleetWndChangedSignal();
+
     return retval;
 }
 

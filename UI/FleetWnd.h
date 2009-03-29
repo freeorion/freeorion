@@ -37,7 +37,7 @@ public:
     iterator        begin() const;
     iterator        end() const;
     FleetWnd*       ActiveFleetWnd() const;
-    FleetWnd*       WndForFleet(Fleet* fleet) const;
+    FleetWnd*       WndForFleet(const Fleet* fleet) const;
     std::size_t     OpenDetailWnds(FleetWnd* fleet_wnd) const;
     //@}
 

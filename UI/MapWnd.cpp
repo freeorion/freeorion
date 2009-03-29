@@ -1535,7 +1535,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     if (!fleet)
         return;
 
-    std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
+    //std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
 
     // if indicated fleet is already the only selected fleet in the active FleetWnd, don't need to do anything
     if (m_selected_fleets.size() == 1 && m_selected_fleets.find(fleet) != m_selected_fleets.end())
@@ -1546,37 +1546,37 @@ void MapWnd::SelectFleet(Fleet* fleet)
 
     // if there isn't a FleetWnd for this fleen open, need to open one
     if (!fleet_wnd) {
-        // to open a new FleetWnd, need to know what fleets to put in the Wnd.  Search
-        // for a FleetButton for this fleet
-        std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.find(fleet);
-
-        // sanity check
-        if (it == m_fleet_buttons.end()) {
-            Logger().errorStream() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
-            return;
-        }
-
+        //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
 
         // determine whether this fleet's FleetWnd can be manipulated by this player: can't manipulate
         // other empires' FleetWnds, and can't give orders to own fleets while they're en-route.
-        const System* system = fleet->GetSystem();
+        System* system = fleet->GetSystem();
         const std::set<int>& owners = fleet->Owners();
         bool read_only = false;
-        if (owners.empty() || owners.find(HumanClientApp::GetApp()->EmpireID()) == owners.end() || !system)
+        if (!system || owners.empty() || owners.find(HumanClientApp::GetApp()->EmpireID()) == owners.end())
             read_only = true;
 
 
-        // get FleetButton for fleet to be selected, and the fleets it represents
-        const FleetButton* button = it->second;
-        const std::vector<Fleet*>& btn_fleets = button->Fleets();
-        if (btn_fleets.empty()) {
-            Logger().errorStream() << "FleetButton contained no fleets! in MapWnd::SelectFleet";
-            return;
+        // need to know what fleets to put in the Wnd.  All fleets at the location of the fleet being
+        // selected should be in the FleetWnd.  This is either all fleets at the same System, or all
+        // fleets at the same universe location
+        std::vector<Fleet*> wnd_fleets;
+        if (system) {
+            // get all fleets in system
+            wnd_fleets = system->FindObjects<Fleet>();
+        } else {
+            // get all (moving) fleets represented by fleet button for this fleet
+            std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.find(fleet);
+            if (it == m_fleet_buttons.end()) {
+                Logger().errorStream() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
+                return;
+            }
+            wnd_fleets = it->second->Fleets();
         }
 
 
         // create new FleetWnd
-        fleet_wnd = FleetUIManager::GetFleetUIManager().NewFleetWnd(btn_fleets, 0, read_only);
+        fleet_wnd = FleetUIManager::GetFleetUIManager().NewFleetWnd(wnd_fleets, 0, read_only);
 
         // opening a new FleetWnd, so play sound
         FleetButton::PlayFleetButtonOpenSound();
@@ -2598,7 +2598,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
 void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 {
-    std::cout << "MapWnd::FleetButtonClicked" << std::endl;
+    //std::cout << "MapWnd::FleetButtonClicked" << std::endl;
 
     // ignore clicks when in production mode
     if (m_in_production_view_mode)
@@ -2619,6 +2619,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
     FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
     Fleet* already_selected_fleet = NULL;
     if (wnd_for_button) {
+        //std::cout << "FleetButtonClicked found open fleetwnd for fleet" << std::endl;
         // there is already FleetWnd for this button open.
 
         // check which fleet(s) is/are selected in the button's FleetWnd
@@ -2628,6 +2629,8 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
         // to indicate that no one fleet is selected
         if (selected_fleets.size() == 1)
             already_selected_fleet = *(selected_fleets.begin());
+    } else {
+        //std::cout << "FleetButtonClicked did not find open fleetwnd for fleet" << std::endl;
     }
 
 
@@ -2696,7 +2699,7 @@ void MapWnd::SelectedFleetsChanged()
 
 void MapWnd::RefreshFleetButtonSelectionIndicators()
 {
-    std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
+    //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
     for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
