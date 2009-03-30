@@ -50,11 +50,15 @@ public:
 
     virtual void Damage(double d);
 
+    static const double PD_VS_SHIP_FACTOR;
+    static const double NON_PD_VS_FIGHTER_FACTOR;
+
 private:
     CombatShip();
 
     double MaxWeaponRange() const;
     double MinNonPDWeaponRange() const;
+    double MaxPDRange() const;
 
     void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
     void PushMission(const ShipMission& mission);

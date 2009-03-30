@@ -304,8 +304,8 @@ void CombatFighter::EnterSpace()
     }
 
     SimpleVehicle::reset();
-    SimpleVehicle::setMaxForce(27);
-    SimpleVehicle::setMaxSpeed(9);
+    SimpleVehicle::setMaxForce(3.0 * 9.0);
+    SimpleVehicle::setMaxSpeed(m_stats.m_speed);
 
     // TODO: setMass()
 
@@ -353,7 +353,7 @@ void CombatFighter::ExitSpace()
 }
 
 void CombatFighter::Damage(double d)
-{ m_health = (std::max)(0.0, m_health - d); }
+{ m_health = std::max(0.0, m_health - d); }
 
 void CombatFighter::SetFormation(const CombatFighterFormationPtr& formation)
 { m_formation = formation; }
@@ -401,7 +401,7 @@ void CombatFighter::UpdateMissionQueue()
     const float DEFAULT_MISSION_WEIGHT = 12.0;
     const float MAX_MISSION_WEIGHT = 48.0;
 
-    const float AT_DESTINATION = 3.0;
+    const float AT_DESTINATION = std::max(3.0f, speed());
     const float AT_DEST_SQUARED = AT_DESTINATION * AT_DESTINATION;
 
     bool print_needed = false;
@@ -700,11 +700,11 @@ OpenSteer::Vec3 CombatFighter::Steer()
     OpenSteer::AVGroup neighbors;
     OpenSteer::AVGroup nonfighters;
     if (m_leader) {
-        const float FIGHTER_RADIUS = (std::max)(SEPARATION_RADIUS,
-                                               (std::max)(ALIGNMENT_RADIUS,
-                                                          COHESION_RADIUS));
-        const float NONFIGHTER_RADIUS = (std::max)(NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS,
-                                                   POINT_DEFENSE_AVOIDANCE_RADIUS);
+        const float FIGHTER_RADIUS = std::max(SEPARATION_RADIUS,
+                                              std::max(ALIGNMENT_RADIUS,
+                                                       COHESION_RADIUS));
+        const float NONFIGHTER_RADIUS = std::max(NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS,
+                                                 POINT_DEFENSE_AVOIDANCE_RADIUS);
         m_pathing_engine->GetProximityDB().FindInRadius(
             position(), FIGHTER_RADIUS, neighbors, FIGHTER_FLAGS, EmpireFlag(m_empire_id));
         m_pathing_engine->GetProximityDB().FindInRadius(
@@ -761,7 +761,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
             away_vec /= away_vec_length;
             point_defense_evasion_vec += away_vec * ship->AntiFighterStrength();
             float collision_avoidance_scale_factor =
-                (std::max)(0.0f, NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS - away_vec_length) /
+                std::max(0.0f, NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS - away_vec_length) /
                 NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS;
             nonfighter_obstacle_evasion_vec += away_vec * collision_avoidance_scale_factor;
             if (OBSTACLE_AVOIDANCE_TIME * speed() < away_vec_length)
