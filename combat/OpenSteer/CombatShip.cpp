@@ -5,6 +5,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "CombatFighter.h"
+#include "Missile.h"
 #include "PathingEngine.h"
 
 #include <boost/cast.hpp>
@@ -24,22 +25,35 @@
 namespace {
     const float NO_PD_FIGHTER_ATTACK_SCALE_FACTOR = 50.0;
 
-    template <class Stats>
-    struct CopyStatPtr
+    template <class Stats, bool IncludeDamage = false>
+    struct CopyStatsPtr
     {
         const Stats* operator()(const std::pair<double, Stats>& elem)
             { return &elem.second; }
+    };
+
+    template <class Stats>
+    struct CopyStatsPtr<Stats, true>
+    {
+        CopyStatsPtr(double health_factor) : m_health_factor(health_factor) {}
+        std::pair<const Stats*, double> operator()(const std::pair<double, Stats>& elem)
+            {
+                return std::make_pair(
+                    &elem.second,
+                    elem.second.m_damage * elem.second.m_ROF * m_health_factor);
+            }
+        const double m_health_factor;
     };
 
     void FireAt(CombatObjectPtr target,
                 CombatFighterPtr fighter,
                 double range_squared,
                 double health_factor,
-                CombatShip::DFVec& unfired_SR_weapons,
+                CombatShip::SRVec& unfired_SR_weapons,
                 CombatShip::LRVec& unfired_LR_weapons,
-                CombatShip::DFVec& unfired_PD_weapons)
+                CombatShip::PDList& unfired_PD_weapons)
     {
-        for (CombatShip::DFVec::reverse_iterator it = unfired_SR_weapons.rbegin();
+        for (CombatShip::SRVec::reverse_iterator it = unfired_SR_weapons.rbegin();
              it != unfired_SR_weapons.rend();
              ++it) {
             double weapon_range = (*it)->m_range * health_factor;
@@ -69,13 +83,13 @@ namespace {
                 break;
             }
         }
-        for (CombatShip::DFVec::reverse_iterator it = unfired_PD_weapons.rbegin();
+        for (CombatShip::PDList::reverse_iterator it = unfired_PD_weapons.rbegin();
              it != unfired_PD_weapons.rend();
              ++it) {
-            double weapon_range = (*it)->m_range * health_factor;
+            double weapon_range = it->first->m_range * health_factor;
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
-                double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
+                double damage = it->second;
                 if (fighter)
                     fighter->Formation()->Damage(damage);
                 else
@@ -457,10 +471,10 @@ void CombatShip::UpdateMissionQueue()
                 for (PathingEngine::Attackees::const_iterator it = attackers.first;
                      it != attackers.second;
                      ++it) {
-                    if (CombatShipPtr tmp =
+                    if (CombatShipPtr temp =
                         boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
-                        if (!ship || ship->m_raw_LR_strength < tmp->m_raw_LR_strength)
-                            ship = tmp;
+                        if (!ship || ship->m_raw_LR_strength < temp->m_raw_LR_strength)
+                            ship = temp;
                     }
                 }
                 if (ship) {
@@ -586,13 +600,37 @@ void CombatShip::UpdateMissionQueue()
                   << std::endl;
 }
 
-void CombatShip::FirePDDefensively(DFVec& unfired_PD_weapons)
+void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
 {
+    if (unfired_PD_weapons.empty())
+        return;
+
+    double health_factor = FractionalHealth();
     OpenSteer::AVGroup all;
     // TODO: NotEmpireFlag() should become EnemyOfEmpireFlag()
-    m_pathing_engine->GetProximityDB().FindAll(
-        all, MISSILE_FLAG | FIGHTER_FLAGS, NotEmpireFlag(m_empire_id));
-    
+    m_pathing_engine->GetProximityDB().FindInRadius(
+        position(), MaxPDRange(), all,
+        FIGHTER_FLAGS | MISSILE_FLAG, NotEmpireFlag(m_empire_id));
+    for (std::size_t i = 0; i < all.size(); ++i) {
+        CombatObject* obj = boost::polymorphic_downcast<CombatObject*>(all[i]);
+        double distance_squared = (obj->position() - position()).lengthSquared();
+        for (PDList::reverse_iterator it = unfired_PD_weapons.rbegin();
+             it != unfired_PD_weapons.rend(); ) {
+            double weapon_range = it->first->m_range * health_factor;
+            if (distance_squared < weapon_range * weapon_range) {
+                double damage = std::min(obj->HealthAndShield(), it->second);
+                obj->Damage(damage);
+                it->second -= damage;
+                if (!it->second) {
+                    PDList::reverse_iterator temp = boost::next(it);
+                    unfired_PD_weapons.erase((--it).base());
+                    it = temp;
+                }
+                if (!obj->HealthAndShield())
+                    break;
+            }
+        }
+    }
 }
 
 void CombatShip::FireAtHostiles()
@@ -601,15 +639,16 @@ void CombatShip::FireAtHostiles()
 
     const ShipDesign& design = *m_ship->Design();
 
-    DFVec unfired_SR_weapons(design.SRWeapons().size());
+    SRVec unfired_SR_weapons(design.SRWeapons().size());
     LRVec unfired_LR_weapons(design.LRWeapons().size());
-    DFVec unfired_PD_weapons(design.PDWeapons().size());
+    PDList unfired_PD_weapons;
     std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
-                   unfired_SR_weapons.begin(), CopyStatPtr<DirectFireStats>());
+                   unfired_SR_weapons.begin(), CopyStatsPtr<DirectFireStats>());
     std::transform(design.LRWeapons().begin(), design.LRWeapons().end(),
-                   unfired_LR_weapons.begin(), CopyStatPtr<LRStats>());
+                   unfired_LR_weapons.begin(), CopyStatsPtr<LRStats>());
     std::transform(design.PDWeapons().begin(), design.PDWeapons().end(),
-                   unfired_PD_weapons.begin(), CopyStatPtr<DirectFireStats>());
+                   std::back_inserter(unfired_PD_weapons),
+                   CopyStatsPtr<DirectFireStats, true>(FractionalHealth()));
 
     const double MAX_WEAPON_RANGE_SQUARED = MaxWeaponRange() * MaxWeaponRange();
 

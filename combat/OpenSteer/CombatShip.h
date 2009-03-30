@@ -22,8 +22,9 @@ class CombatShip :
     public boost::enable_shared_from_this<CombatShip>
 {
 public:
-    typedef std::vector<const DirectFireStats*> DFVec;
+    typedef std::vector<const DirectFireStats*> SRVec;
     typedef std::vector<const LRStats*> LRVec;
+    typedef std::list<std::pair<const DirectFireStats*, double> > PDList;
 
     CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
@@ -64,7 +65,7 @@ private:
     void PushMission(const ShipMission& mission);
     void RemoveMission();
     void UpdateMissionQueue();
-    void FirePDDefensively(DFVec& unfired_PD_weapons);
+    void FirePDDefensively(PDList& unfired_PD_weapons);
     void FireAtHostiles();
     OpenSteer::Vec3 Steer();
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
