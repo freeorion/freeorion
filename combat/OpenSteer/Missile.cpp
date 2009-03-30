@@ -80,7 +80,7 @@ void Missile::regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
 {}
 
 void Missile::Damage(double d)
-{ m_health = std::max(0.0, m_health - d); }
+{ m_health = (std::max)(0.0, m_health - d); }
 
 void Missile::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {

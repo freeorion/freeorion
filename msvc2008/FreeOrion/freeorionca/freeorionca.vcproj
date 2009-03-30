@@ -340,6 +340,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\combat\OpenSteer\Missile.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\combat\OpenSteer\Missile.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\combat\OpenSteer\Obstacle.cpp"
 					>
 				</File>
