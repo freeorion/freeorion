@@ -56,7 +56,7 @@ namespace {
         for (CombatShip::SRVec::reverse_iterator it = unfired_SR_weapons.rbegin();
              it != unfired_SR_weapons.rend();
              ++it) {
-            double weapon_range = (*it)->m_range * health_factor;
+            double weapon_range = (*it)->m_range;
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
                 double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
@@ -71,7 +71,7 @@ namespace {
         for (CombatShip::LRVec::reverse_iterator it = unfired_LR_weapons.rbegin();
              it != unfired_LR_weapons.rend();
              ++it) {
-            double weapon_range = (*it)->m_range * health_factor;
+            double weapon_range = (*it)->m_range;
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
                 double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
@@ -86,7 +86,7 @@ namespace {
         for (CombatShip::PDList::reverse_iterator it = unfired_PD_weapons.rbegin();
              it != unfired_PD_weapons.rend();
              ++it) {
-            double weapon_range = it->first->m_range * health_factor;
+            double weapon_range = it->first->m_range;
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
                 double damage = it->second;
@@ -306,13 +306,13 @@ void CombatShip::Damage(double d)
 }
 
 double CombatShip::MaxWeaponRange() const
-{ return m_ship->Design()->MaxWeaponRange() * FractionalHealth(); }
+{ return m_ship->Design()->MaxWeaponRange(); }
 
 double CombatShip::MinNonPDWeaponRange() const
-{ return m_ship->Design()->MinNonPDWeaponRange() * FractionalHealth(); }
+{ return m_ship->Design()->MinNonPDWeaponRange(); }
 
 double CombatShip::MaxPDRange() const
-{ return m_ship->Design()->MaxPDRange() * FractionalHealth(); }
+{ return m_ship->Design()->MaxPDRange(); }
 
 void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
@@ -605,7 +605,6 @@ void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
     if (unfired_PD_weapons.empty())
         return;
 
-    double health_factor = FractionalHealth();
     OpenSteer::AVGroup all;
     // TODO: NotEmpireFlag() should become EnemyOfEmpireFlag()
     m_pathing_engine->GetProximityDB().FindInRadius(
@@ -616,7 +615,7 @@ void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
         double distance_squared = (obj->position() - position()).lengthSquared();
         for (PDList::reverse_iterator it = unfired_PD_weapons.rbegin();
              it != unfired_PD_weapons.rend(); ) {
-            double weapon_range = it->first->m_range * health_factor;
+            double weapon_range = it->first->m_range;
             if (distance_squared < weapon_range * weapon_range) {
                 double damage = std::min(obj->HealthAndShield(), it->second);
                 obj->Damage(damage);
