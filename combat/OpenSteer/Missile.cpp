@@ -3,6 +3,14 @@
 #include "PathingEngine.h"
 
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
+
 Missile::Missile() :
     m_proximity_token(0),
     m_empire_id(-1),
@@ -55,13 +63,8 @@ void Missile::update(const float /*current_time*/, const float elapsed_time)
         float distance_squared = (m_destination - position()).lengthSquared();
         CombatObjectPtr target = m_target.lock();
         if (distance_squared < AT_DEST_SQUARED) {
-            if (target) {
-                if (CombatFighterPtr fighter =
-                    boost::dynamic_pointer_cast<CombatFighter>(target))
-                    target->Damage(m_stats.m_damage * CombatShip::NON_PD_VS_FIGHTER_FACTOR);
-                else
-                    target->Damage(m_stats.m_damage);
-            }
+            if (target)
+                target->Damage(m_stats.m_damage, NON_PD_DAMAGE);
             // TODO: Remove self from engine.
             return;
         } else {
@@ -79,8 +82,15 @@ void Missile::regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                    const float elapsedTime)
 {}
 
-void Missile::Damage(double d)
-{ m_health = (std::max)(0.0, m_health - d); }
+void Missile::Damage(double d, DamageSource source)
+{
+    if (source == NON_PD_DAMAGE)
+        d *= CombatShip::NON_PD_VS_FIGHTER_FACTOR;
+    m_health = std::max(0.0, m_health - d);
+}
+
+void Missile::Damage(const CombatFighterPtr& source)
+{ assert(!"Missiles can't attack fighters."); }
 
 void Missile::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {

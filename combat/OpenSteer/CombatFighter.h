@@ -93,12 +93,14 @@ public:
     void ClearMissions();
     void ExitSpace();
 
-    virtual void Damage(double d);
+    virtual void Damage(double d, DamageSource source);
+    virtual void Damage(const CombatFighterPtr& source);
 
 private:
     CombatFighter();
     CombatFighter(CombatObjectPtr base, int empire_id, PathingEngine& pathing_engine);
 
+    void DamageImpl(double d);
     void SetFormation(const CombatFighterFormationPtr& formation);
     void PushMission(const FighterMission& mission);
     OpenSteer::Vec3 GlobalFormationPosition();
@@ -136,6 +138,7 @@ private:
     FighterMission::Type m_last_mission;
 
     friend class PathingEngine;
+    friend double CombatFighterFormation::Damage(double);
 
     friend class boost::serialization::access;
     template <class Archive>

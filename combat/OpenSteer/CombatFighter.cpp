@@ -69,7 +69,7 @@ double CombatFighterFormation::Damage(double d)
     for (iterator it = begin(); it != end(); ) {
         CombatFighterPtr f = *it++;
         double damage_to_this_fighter = std::min(d, f->HealthAndShield());
-        f->Damage(damage_to_this_fighter);
+        f->DamageImpl(damage_to_this_fighter);
         d -= damage_to_this_fighter;
     }
     return d;
@@ -352,7 +352,21 @@ void CombatFighter::ExitSpace()
     m_proximity_token = 0;
 }
 
-void CombatFighter::Damage(double d)
+void CombatFighter::Damage(double d, DamageSource source)
+{
+    if (source == PD_DAMAGE)
+        m_formation->Damage(d);
+    else
+        DamageImpl(d * CombatShip::NON_PD_VS_FIGHTER_FACTOR);
+}
+
+void CombatFighter::Damage(const CombatFighterPtr& source)
+{
+    double damage = source->Stats().m_anti_fighter_damage * source->Formation()->size();
+    m_formation->Damage(damage);
+}
+
+void CombatFighter::DamageImpl(double d)
 { m_health = std::max(0.0, m_health - d); }
 
 void CombatFighter::SetFormation(const CombatFighterFormationPtr& formation)
@@ -594,48 +608,28 @@ void CombatFighter::FireAtHostiles()
     assert(!m_mission_queue.empty());
 
     OpenSteer::Vec3 position_to_use = m_formation->Centroid();
-    CombatFighterPtr fighter;
     const double WEAPON_RANGE = m_stats.m_fighter_weapon_range;
     const double WEAPON_RANGE_SQUARED = WEAPON_RANGE * WEAPON_RANGE;
-    double base_damage = m_stats.m_anti_fighter_damage;
 
     CombatObjectPtr target = m_mission_subtarget.lock();
     if (!target && m_mission_queue.back().m_type == FighterMission::ATTACK_THIS) {
         assert(m_mission_queue.back().m_target.lock());
         target = m_mission_queue.back().m_target.lock();
-        if ((target->position() - position_to_use).lengthSquared() < WEAPON_RANGE_SQUARED) {
-            if (!(fighter = boost::dynamic_pointer_cast<CombatFighter>(target)))
-                base_damage = m_stats.m_anti_ship_damage;
-        } else {
+        if (WEAPON_RANGE_SQUARED < (target->position() - position_to_use).lengthSquared())
             target.reset();
-        }
     }
 
     // find a target of opportunity
     if (!target) {
-        if (fighter = m_pathing_engine->NearestHostileFighterInRange(
-                position_to_use, m_empire_id, WEAPON_RANGE)) {
-            target = fighter;
-        } else if (CombatObjectPtr non_fighter =
-                   m_pathing_engine->NearestHostileNonFighterInRange(
-                       position_to_use, m_empire_id, WEAPON_RANGE)) {
-            target = non_fighter;
-            base_damage = m_stats.m_anti_ship_damage;
+        if (!(target = m_pathing_engine->NearestHostileFighterInRange(
+                  position_to_use, m_empire_id, WEAPON_RANGE))) {
+            target = m_pathing_engine->NearestHostileNonFighterInRange(
+                position_to_use, m_empire_id, WEAPON_RANGE);
         }
     }
 
-    if (target) {
-        double d = base_damage * m_formation->size();
-        // TODO: Note that here we are damaging the target fighter's entire
-        // formation, so we don't waste the potentially large damage of this
-        // formation on the single fighter we've targetted.  If this still
-        // proves to be a waste of firepower, we'll need to add a loop here to
-        // find more hostiles (fighters or otherwise) to attack.
-        if (fighter)
-            fighter->Formation()->Damage(d);
-        else
-            target->Damage(d);
-    }
+    if (target)
+        target->Damage(shared_from_this());
 }
 
 OpenSteer::Vec3 CombatFighter::Steer()
@@ -821,13 +815,12 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
          it != attackers.second;
          ++it) {
         CombatFighterPtr fighter;
-        CombatShipPtr ship;
         float strength = FLT_MAX;
         if (m_stats.m_anti_fighter_damage &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
             strength = fighter->HealthAndShield() * (1.0 + fighter->AntiFighterStrength());
-        } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
-            strength = ship->HealthAndShield() * (1.0 + ship->AntiFighterStrength());
+        } else if (CombatObjectPtr ptr = it->second.lock()) {
+            strength = ptr->HealthAndShield() * (1.0 + ptr->AntiFighterStrength());
         }
         if (strength < weakest) {
             retval = it->second.lock();

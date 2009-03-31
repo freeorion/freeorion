@@ -46,7 +46,6 @@ namespace {
     };
 
     void FireAt(CombatObjectPtr target,
-                CombatFighterPtr fighter,
                 double range_squared,
                 double health_factor,
                 CombatShip::SRVec& unfired_SR_weapons,
@@ -60,9 +59,7 @@ namespace {
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
                 double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
-                if (fighter)
-                    damage *= CombatShip::NON_PD_VS_FIGHTER_FACTOR;
-                target->Damage(damage);
+                target->Damage(damage, CombatObject::NON_PD_DAMAGE);
             } else {
                 unfired_SR_weapons.resize(std::distance(it, unfired_SR_weapons.rend()));
                 break;
@@ -75,9 +72,7 @@ namespace {
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
                 double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
-                if (fighter)
-                    damage *= CombatShip::NON_PD_VS_FIGHTER_FACTOR;
-                target->Damage(damage);
+                target->Damage(damage, CombatObject::NON_PD_DAMAGE);
             } else {
                 unfired_LR_weapons.resize(std::distance(it, unfired_LR_weapons.rend()));
                 break;
@@ -89,11 +84,7 @@ namespace {
             double weapon_range = it->first->m_range;
             double weapon_range_squared = weapon_range * weapon_range;
             if (range_squared < weapon_range_squared) {
-                double damage = it->second;
-                if (fighter)
-                    fighter->Formation()->Damage(damage);
-                else
-                    target->Damage(damage * CombatShip::PD_VS_SHIP_FACTOR);
+                target->Damage(it->second, CombatObject::PD_DAMAGE);
             } else {
                 unfired_PD_weapons.resize(std::distance(it, unfired_PD_weapons.rend()));
                 break;
@@ -296,13 +287,24 @@ void CombatShip::regenerateLocalSpace(const OpenSteer::Vec3& new_velocity,
                                       const float elapsed_time)
 { regenerateLocalSpaceForBanking(new_velocity, elapsed_time); }
 
-void CombatShip::Damage(double d)
+void CombatShip::Damage(double d, DamageSource source)
 {
     assert(0.0 < d);
+    if (source == PD_DAMAGE)
+        d *= PD_VS_SHIP_FACTOR;
     double shield_damage = std::min(d, m_ship->GetMeter(METER_SHIELD)->Current());
     m_ship->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
     d -= shield_damage;
     m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-d);
+}
+
+void CombatShip::Damage(const CombatFighterPtr& source)
+{
+    double damage = source->Stats().m_anti_ship_damage * source->Formation()->size();
+    double shield_damage = std::min(damage, m_ship->GetMeter(METER_SHIELD)->Current());
+    m_ship->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+    damage -= shield_damage;
+    m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-damage);
 }
 
 double CombatShip::MaxWeaponRange() const
@@ -618,7 +620,14 @@ void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
             double weapon_range = it->first->m_range;
             if (distance_squared < weapon_range * weapon_range) {
                 double damage = std::min(obj->HealthAndShield(), it->second);
-                obj->Damage(damage);
+                // HACK! This looks weird, but does what we want.  Non-PD
+                // damage on a fighter only affects the fighter itself -- it
+                // is not spread out over its formation mates.  This is
+                // appropriate here, since we already have our in-range
+                // targets.  Finally, since non-PD damage on fighters and
+                // missiles gets multiplied by CombatShip::
+                // NON_PD_VS_FIGHTER_FACTOR, we divide by it here.
+                obj->Damage(damage / CombatShip::NON_PD_VS_FIGHTER_FACTOR, NON_PD_DAMAGE);
                 it->second -= damage;
                 if (!it->second) {
                     PDList::reverse_iterator temp = boost::next(it);
@@ -660,17 +669,13 @@ void CombatShip::FireAtHostiles()
          m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF)) {
         assert(m_mission_queue.back().m_target.lock());
         target = m_mission_queue.back().m_target.lock();
-        if ((target->position() - position()).lengthSquared() <
-            MAX_WEAPON_RANGE_SQUARED) {
-            fighter = boost::dynamic_pointer_cast<CombatFighter>(target);
-        } else {
+        if (MAX_WEAPON_RANGE_SQUARED < (target->position() - position()).lengthSquared())
             target.reset();
-        }
     }
 
     if (target) {
         double range_squared = (target->position() - position()).lengthSquared();
-        FireAt(target, fighter, range_squared, FractionalHealth(),
+        FireAt(target, range_squared, FractionalHealth(),
                unfired_SR_weapons, unfired_LR_weapons, unfired_PD_weapons);
     }
 
@@ -680,8 +685,7 @@ void CombatShip::FireAtHostiles()
         !unfired_PD_weapons.empty() &&
         (target = m_pathing_engine->NearestHostileShip(position(), m_empire_id))) {
         double range_squared = (target->position() - position()).lengthSquared();
-        fighter = boost::dynamic_pointer_cast<CombatFighter>(target);
-        FireAt(target, fighter, range_squared, FractionalHealth(),
+        FireAt(target, range_squared, FractionalHealth(),
                unfired_SR_weapons, unfired_LR_weapons, unfired_PD_weapons);
     }
 }
@@ -730,9 +734,9 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
             strength /= (1.0 + AntiFighterStrength());
             if (AntiFighterStrength())
                 strength *= NO_PD_FIGHTER_ATTACK_SCALE_FACTOR;
-        } else if (ship = boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
+        } else if (CombatObjectPtr ptr = it->second.lock()) {
             strength =
-                ship->HealthAndShield() * (1.0 + ship->AntiShipStrength(shared_from_this()));
+                ptr->HealthAndShield() * (1.0 + ptr->AntiShipStrength(shared_from_this()));
         }
         if (strength < weakest) {
             retval = it->second.lock();

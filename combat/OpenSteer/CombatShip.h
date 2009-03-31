@@ -49,7 +49,8 @@ public:
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                       const float elapsedTime);
 
-    virtual void Damage(double d);
+    virtual void Damage(double d, DamageSource source);
+    virtual void Damage(const CombatFighterPtr& source);
 
     static const double PD_VS_SHIP_FACTOR;
     static const double NON_PD_VS_FIGHTER_FACTOR;

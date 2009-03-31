@@ -30,7 +30,8 @@ public:
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                       const float elapsedTime);
 
-    virtual void Damage(double d);
+    virtual void Damage(double d, DamageSource source);
+    virtual void Damage(const CombatFighterPtr& source);
 
 private:
     Missile();
