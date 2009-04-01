@@ -22,6 +22,24 @@ class CombatShip :
     public boost::enable_shared_from_this<CombatShip>
 {
 public:
+    struct RangeDamage
+    {
+        RangeDamage();
+        RangeDamage(double range, double damage);
+
+        double m_range;
+        double m_damage;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_NVP(m_range)
+                    & BOOST_SERIALIZATION_NVP(m_damage);
+            }
+    };
+    typedef std::vector<RangeDamage> SRVec;
+    typedef std::list<RangeDamage> PDList;
+
     CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
@@ -53,24 +71,6 @@ public:
     static const double NON_PD_VS_FIGHTER_FACTOR;
 
 private:
-    struct RangeDamage
-    {
-        RangeDamage();
-        RangeDamage(double range, double damage);
-
-        double m_range;
-        double m_damage;
-
-        template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
-            {
-                ar  & BOOST_SERIALIZATION_NVP(m_range)
-                    & BOOST_SERIALIZATION_NVP(m_damage);
-            }
-    };
-    typedef std::vector<RangeDamage> SRVec;
-    typedef std::list<RangeDamage> PDList;
-
     CombatShip();
 
     double MaxWeaponRange() const;
