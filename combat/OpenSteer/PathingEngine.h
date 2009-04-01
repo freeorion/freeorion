@@ -42,6 +42,7 @@ public:
     ConstAttackerRange Attackers (const CombatObjectPtr& attackee) const;
 
     void Update(const float current_time, const float elapsed_time);
+    void TurnStarted(unsigned int number);
 
     void AddObject(const CombatObjectPtr& obj);
     void RemoveObject(const CombatObjectPtr& obj);

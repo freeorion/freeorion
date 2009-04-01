@@ -24,6 +24,7 @@ public:
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const = 0;
     virtual void Damage(double d, DamageSource source) = 0;
     virtual void Damage(const CombatFighterPtr& source) = 0;
+    virtual void TurnStarted(unsigned int number) = 0;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)

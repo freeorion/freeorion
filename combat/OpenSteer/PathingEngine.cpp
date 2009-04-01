@@ -7,6 +7,8 @@
 #include <boost/assign/list_of.hpp>
 
 
+const unsigned int ENTER_STARLANE_DELAY_TURNS = 5;
+
 const unsigned int INTERCEPTOR_FLAG = 1 << 0;
 const unsigned int BOMBER_FLAG = 1 << 1;
 const unsigned int SHIP_FLAG = 1 << 2;
@@ -116,14 +118,25 @@ PathingEngine::ConstAttackerRange
 PathingEngine::Attackers (const CombatObjectPtr& attackee) const
 { return m_attackees.equal_range(attackee); }
 
+void PathingEngine::TurnStarted(unsigned int number)
+{
+    for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
+         it != m_objects.end(); ) {
+        if (!(*it)->HealthAndShield())
+            m_objects.erase(it++);
+        else
+            (*it++)->TurnStarted(number);
+    }
+}
+
 void PathingEngine::Update(const float current_time, const float elapsed_time)
 {
     // We use a temporary iterator, because an object may remove itself from the
     // engine during its update.
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
          it != m_objects.end(); ) {
-        std::set<CombatObjectPtr>::iterator temp_it = it++;
-        (*temp_it)->update(current_time, elapsed_time);
+        CombatObjectPtr ptr = *it++;
+        ptr->update(current_time, elapsed_time);
     }
     ++m_update_number;
 }

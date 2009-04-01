@@ -95,6 +95,7 @@ public:
 
     virtual void Damage(double d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
+    virtual void TurnStarted(unsigned int number);
 
 private:
     CombatFighter();
@@ -131,6 +132,10 @@ private:
 
     double m_health;
 
+    unsigned int m_last_queue_update_turn;
+    unsigned int m_last_fired_turn;
+    unsigned int m_turn;
+
     PathingEngine* m_pathing_engine;
 
     // TODO: Temporary only!
@@ -161,9 +166,10 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_formation)
                 & BOOST_SERIALIZATION_NVP(m_out_of_formation)
                 & BOOST_SERIALIZATION_NVP(m_health)
-                & BOOST_SERIALIZATION_NVP(m_pathing_engine)
-                & BOOST_SERIALIZATION_NVP(m_instrument)
-                & BOOST_SERIALIZATION_NVP(m_last_mission);
+                & BOOST_SERIALIZATION_NVP(m_last_queue_update_turn)
+                & BOOST_SERIALIZATION_NVP(m_last_fired_turn)
+                & BOOST_SERIALIZATION_NVP(m_turn)
+                & BOOST_SERIALIZATION_NVP(m_pathing_engine);
         }
 };
 

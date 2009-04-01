@@ -24,73 +24,20 @@
 
 namespace {
     const float NO_PD_FIGHTER_ATTACK_SCALE_FACTOR = 50.0;
-
-    template <class Stats, bool IncludeDamage = false>
-    struct CopyStatsPtr
-    {
-        const Stats* operator()(const std::pair<double, Stats>& elem)
-            { return &elem.second; }
-    };
+    const double INVALID_TURN = -1.0;
 
     template <class Stats>
-    struct CopyStatsPtr<Stats, true>
+    struct CopyStats
     {
-        CopyStatsPtr(double health_factor) : m_health_factor(health_factor) {}
-        std::pair<const Stats*, double> operator()(const std::pair<double, Stats>& elem)
+        CopyStats(double health_factor) : m_health_factor(health_factor) {}
+        CombatShip::RangeDamage operator()(const std::pair<double, Stats>& elem)
             {
-                return std::make_pair(
-                    &elem.second,
+                return CombatShip::RangeDamage(
+                    elem.second.m_range,
                     elem.second.m_damage * elem.second.m_ROF * m_health_factor);
             }
         const double m_health_factor;
     };
-
-    void FireAt(CombatObjectPtr target,
-                double range_squared,
-                double health_factor,
-                CombatShip::SRVec& unfired_SR_weapons,
-                CombatShip::LRVec& unfired_LR_weapons,
-                CombatShip::PDList& unfired_PD_weapons)
-    {
-        for (CombatShip::SRVec::reverse_iterator it = unfired_SR_weapons.rbegin();
-             it != unfired_SR_weapons.rend();
-             ++it) {
-            double weapon_range = (*it)->m_range;
-            double weapon_range_squared = weapon_range * weapon_range;
-            if (range_squared < weapon_range_squared) {
-                double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
-                target->Damage(damage, CombatObject::NON_PD_DAMAGE);
-            } else {
-                unfired_SR_weapons.resize(std::distance(it, unfired_SR_weapons.rend()));
-                break;
-            }
-        }
-        for (CombatShip::LRVec::reverse_iterator it = unfired_LR_weapons.rbegin();
-             it != unfired_LR_weapons.rend();
-             ++it) {
-            double weapon_range = (*it)->m_range;
-            double weapon_range_squared = weapon_range * weapon_range;
-            if (range_squared < weapon_range_squared) {
-                double damage = (*it)->m_damage * (*it)->m_ROF * health_factor;
-                target->Damage(damage, CombatObject::NON_PD_DAMAGE);
-            } else {
-                unfired_LR_weapons.resize(std::distance(it, unfired_LR_weapons.rend()));
-                break;
-            }
-        }
-        for (CombatShip::PDList::reverse_iterator it = unfired_PD_weapons.rbegin();
-             it != unfired_PD_weapons.rend();
-             ++it) {
-            double weapon_range = it->first->m_range;
-            double weapon_range_squared = weapon_range * weapon_range;
-            if (range_squared < weapon_range_squared) {
-                target->Damage(it->second, CombatObject::PD_DAMAGE);
-            } else {
-                unfired_PD_weapons.resize(std::distance(it, unfired_PD_weapons.rend()));
-                break;
-            }
-        }
-    }
 
 #define ECHO_TOKEN(x) (x, #x)
     std::map<ShipMission::Type, std::string> SHIP_MISSION_STRINGS =
@@ -111,6 +58,20 @@ namespace {
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// CombatShip::RangeDamage
+////////////////////////////////////////////////////////////////////////////////
+CombatShip::RangeDamage::RangeDamage() :
+    m_range(),
+    m_damage()
+{}
+
+CombatShip::RangeDamage::RangeDamage(double range, double damage) :
+    m_range(range),
+    m_damage(damage)
+{}
+
+
+////////////////////////////////////////////////////////////////////////////////
 // CombatShip
 ////////////////////////////////////////////////////////////////////////////////
 const double CombatShip::PD_VS_SHIP_FACTOR = 1.0 / 50.0;
@@ -122,11 +83,17 @@ CombatShip::CombatShip() :
     m_ship(),
     m_mission_queue(),
     m_mission_weight(0.0),
+    m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
+    m_next_LR_fire_turns(),
+    m_turn_start_health(),
+    m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(0),
     m_raw_PD_strength(0.0),
     m_raw_SR_strength(0.0),
     m_raw_LR_strength(0.0),
-    m_is_PD_ship(false)
+    m_is_PD_ship(false),
+    m_unfired_SR_weapons(),
+    m_unfired_PD_weapons()
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 {}
@@ -138,11 +105,17 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
     m_ship(ship),
     m_mission_queue(),
     m_mission_weight(0.0),
+    m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
+    m_next_LR_fire_turns(m_ship->Design()->LRWeapons().size(), INVALID_TURN),
+    m_turn_start_health(m_ship->GetMeter(METER_HEALTH)->Current()),
+    m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(&pathing_engine),
     m_raw_PD_strength(0.0),
     m_raw_SR_strength(0.0),
     m_raw_LR_strength(0.0),
-    m_is_PD_ship(false)
+    m_is_PD_ship(false),
+    m_unfired_SR_weapons(),
+    m_unfired_PD_weapons()
     ,m_instrument(false)
     ,m_last_mission(ShipMission::NONE)
 { Init(position, direction); }
@@ -163,7 +136,7 @@ double CombatShip::Health() const
 { return m_ship->GetMeter(METER_HEALTH)->Current(); }
 
 double CombatShip::FractionalHealth() const
-{ return Health() / m_ship->GetMeter(METER_HEALTH)->Max(); }
+{ return m_turn_start_health / m_ship->GetMeter(METER_HEALTH)->Max(); }
 
 double CombatShip::AntiFighterStrength() const
 { return m_raw_PD_strength * FractionalHealth(); }
@@ -273,7 +246,8 @@ void CombatShip::update(const float /*current_time*/, const float elapsed_time)
     OpenSteer::Vec3 steer = m_last_steer;
     if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
-        UpdateMissionQueue();
+        if (m_last_queue_update_turn != m_turn)
+            UpdateMissionQueue();
         if (m_ship->IsArmed())
             FireAtHostiles();
         steer = Steer();
@@ -305,6 +279,27 @@ void CombatShip::Damage(const CombatFighterPtr& source)
     m_ship->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
     damage -= shield_damage;
     m_ship->GetMeter(METER_HEALTH)->AdjustCurrent(-damage);
+}
+
+void CombatShip::TurnStarted(unsigned int number)
+{
+    m_turn = number;
+    m_turn_start_health = Health();
+    if (m_turn - m_enter_starlane_start_turn == ENTER_STARLANE_DELAY_TURNS) {
+        delete m_proximity_token;
+        m_proximity_token = 0;
+        m_pathing_engine->RemoveObject(shared_from_this());
+    } else {
+        const ShipDesign& design = *m_ship->Design();
+        m_unfired_SR_weapons.resize(design.SRWeapons().size());
+        m_unfired_PD_weapons.clear();
+        std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
+                       m_unfired_SR_weapons.begin(),
+                       CopyStats<DirectFireStats>(FractionalHealth()));
+        std::transform(design.PDWeapons().begin(), design.PDWeapons().end(),
+                       std::back_inserter(m_unfired_PD_weapons),
+                       CopyStats<DirectFireStats>(FractionalHealth()));
+    }
 }
 
 double CombatShip::MaxWeaponRange() const
@@ -419,6 +414,8 @@ void CombatShip::UpdateMissionQueue()
         print_needed = true;
         m_last_mission = m_mission_queue.back().m_type;
     }
+
+    m_last_queue_update_turn = m_turn;
 
     m_mission_weight = 0.0;
     m_mission_destination = OpenSteer::Vec3();
@@ -586,9 +583,7 @@ void CombatShip::UpdateMissionQueue()
             double entrance_radius_squared =
                 StarlaneEntranceRadius() * StarlaneEntranceRadius();
             if ((starlane_position - position()).lengthSquared() < entrance_radius_squared) {
-                delete m_proximity_token;
-                m_proximity_token = 0;
-                m_pathing_engine->RemoveObject(shared_from_this());
+                m_enter_starlane_start_turn = m_turn;
                 break;
             }
         }
@@ -602,9 +597,9 @@ void CombatShip::UpdateMissionQueue()
                   << std::endl;
 }
 
-void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
+void CombatShip::FirePDDefensively()
 {
-    if (unfired_PD_weapons.empty())
+    if (m_unfired_PD_weapons.empty())
         return;
 
     OpenSteer::AVGroup all;
@@ -615,11 +610,10 @@ void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatObject* obj = boost::polymorphic_downcast<CombatObject*>(all[i]);
         double distance_squared = (obj->position() - position()).lengthSquared();
-        for (PDList::reverse_iterator it = unfired_PD_weapons.rbegin();
-             it != unfired_PD_weapons.rend(); ) {
-            double weapon_range = it->first->m_range;
-            if (distance_squared < weapon_range * weapon_range) {
-                double damage = std::min(obj->HealthAndShield(), it->second);
+        for (PDList::reverse_iterator it = m_unfired_PD_weapons.rbegin();
+             it != m_unfired_PD_weapons.rend(); ) {
+            if (distance_squared < it->m_range * it->m_range) {
+                double damage = std::min(obj->HealthAndShield(), it->m_damage);
                 // HACK! This looks weird, but does what we want.  Non-PD
                 // damage on a fighter only affects the fighter itself -- it
                 // is not spread out over its formation mates.  This is
@@ -628,10 +622,10 @@ void CombatShip::FirePDDefensively(PDList& unfired_PD_weapons)
                 // missiles gets multiplied by CombatShip::
                 // NON_PD_VS_FIGHTER_FACTOR, we divide by it here.
                 obj->Damage(damage / CombatShip::NON_PD_VS_FIGHTER_FACTOR, NON_PD_DAMAGE);
-                it->second -= damage;
-                if (!it->second) {
+                it->m_damage -= damage;
+                if (!it->m_damage) {
                     PDList::reverse_iterator temp = boost::next(it);
-                    unfired_PD_weapons.erase((--it).base());
+                    m_unfired_PD_weapons.erase((--it).base());
                     it = temp;
                 }
                 if (!obj->HealthAndShield())
@@ -645,24 +639,10 @@ void CombatShip::FireAtHostiles()
 {
     assert(!m_mission_queue.empty());
 
-    const ShipDesign& design = *m_ship->Design();
-
-    SRVec unfired_SR_weapons(design.SRWeapons().size());
-    LRVec unfired_LR_weapons(design.LRWeapons().size());
-    PDList unfired_PD_weapons;
-    std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
-                   unfired_SR_weapons.begin(), CopyStatsPtr<DirectFireStats>());
-    std::transform(design.LRWeapons().begin(), design.LRWeapons().end(),
-                   unfired_LR_weapons.begin(), CopyStatsPtr<LRStats>());
-    std::transform(design.PDWeapons().begin(), design.PDWeapons().end(),
-                   std::back_inserter(unfired_PD_weapons),
-                   CopyStatsPtr<DirectFireStats, true>(FractionalHealth()));
-
     const double MAX_WEAPON_RANGE_SQUARED = MaxWeaponRange() * MaxWeaponRange();
 
-    FirePDDefensively(unfired_PD_weapons);
+    FirePDDefensively();
 
-    CombatFighterPtr fighter;
     CombatObjectPtr target = m_mission_subtarget.lock();
     if (!target &&
         (m_mission_queue.back().m_type == ShipMission::ATTACK_THIS ||
@@ -673,20 +653,58 @@ void CombatShip::FireAtHostiles()
             target.reset();
     }
 
-    if (target) {
-        double range_squared = (target->position() - position()).lengthSquared();
-        FireAt(target, range_squared, FractionalHealth(),
-               unfired_SR_weapons, unfired_LR_weapons, unfired_PD_weapons);
-    }
+    if (target)
+        FireAt(target);
 
-    // now find a target of opportunity, if we didn't fire all our weapons already
-    if (!unfired_SR_weapons.empty() &&
-        !unfired_LR_weapons.empty() &&
-        !unfired_PD_weapons.empty() &&
-        (target = m_pathing_engine->NearestHostileShip(position(), m_empire_id))) {
-        double range_squared = (target->position() - position()).lengthSquared();
-        FireAt(target, range_squared, FractionalHealth(),
-               unfired_SR_weapons, unfired_LR_weapons, unfired_PD_weapons);
+    // now find a target of opportunity, in case we didn't fire all of our
+    // weapons already
+    if (target = m_pathing_engine->NearestHostileShip(position(), m_empire_id))
+        FireAt(target);
+}
+
+void CombatShip::FireAt(CombatObjectPtr target)
+{
+    double range_squared = (target->position() - position()).lengthSquared();
+    double health_factor = FractionalHealth();
+
+    for (CombatShip::SRVec::reverse_iterator it = m_unfired_SR_weapons.rbegin();
+         it != m_unfired_SR_weapons.rend();
+         ++it) {
+        if (range_squared < it->m_range * it->m_range) {
+            target->Damage(it->m_damage, CombatObject::NON_PD_DAMAGE);
+        } else {
+            m_unfired_SR_weapons.resize(std::distance(it, m_unfired_SR_weapons.rend()));
+            break;
+        }
+    }
+    std::size_t i = 0;
+    for (std::multimap<double, LRStats>::const_iterator it =
+             m_ship->Design()->LRWeapons().begin();
+         it != m_ship->Design()->LRWeapons().end();
+         ++it, ++i) {
+        if (m_next_LR_fire_turns[i] < m_turn) {
+            double weapon_range_squared = it->first * it->first;
+            if (range_squared < weapon_range_squared) {
+                OpenSteer::Vec3 direction = (target->position() - position()).normalize();
+                CombatObjectPtr missile(
+                    new Missile(m_empire_id, it->second, target,
+                                position(), direction, *m_pathing_engine));
+                m_pathing_engine->AddObject(missile);
+                if (m_next_LR_fire_turns[i] == INVALID_TURN)
+                    m_next_LR_fire_turns[i] = m_turn;
+                m_next_LR_fire_turns[i] += it->second.m_ROF * health_factor;
+            }
+        }
+    }
+    for (CombatShip::PDList::iterator it = m_unfired_PD_weapons.begin();
+         it != m_unfired_PD_weapons.end();
+         ++it) {
+        if (range_squared < it->m_range * it->m_range) {
+            target->Damage(it->m_damage, CombatObject::PD_DAMAGE);
+        } else {
+            m_unfired_PD_weapons.erase(it, m_unfired_PD_weapons.end());
+            break;
+        }
     }
 }
 

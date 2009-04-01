@@ -158,6 +158,9 @@ CombatFighter::CombatFighter() :
     m_formation_position(-1),
     m_formation(),
     m_health(0),
+    m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
+    m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
+    m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(0)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
@@ -177,6 +180,9 @@ CombatFighter::CombatFighter(CombatObjectPtr base, int empire_id,
     m_formation_position(-1),
     m_formation(),
     m_health(m_stats.m_health),
+    m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
+    m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
+    m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
@@ -196,6 +202,9 @@ CombatFighter::CombatFighter(CombatObjectPtr base, const PartType& part, int emp
     m_formation_position(-1),
     m_formation(),
     m_health(0),
+    m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
+    m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
+    m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
@@ -261,7 +270,7 @@ double CombatFighter::Health() const
 { return m_health; }
 
 double CombatFighter::FractionalHealth() const
-{ return m_health / m_stats.m_health; }
+{ return 1.0; }
 
 double CombatFighter::AntiFighterStrength() const
 { return m_stats.m_anti_fighter_damage * m_stats.m_fighter_weapon_range; }
@@ -275,8 +284,10 @@ void CombatFighter::update(const float /*current_time*/, const float elapsed_tim
     if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
         if (m_leader) {
-            UpdateMissionQueue();
-            FireAtHostiles();
+            if (m_last_queue_update_turn != m_turn)
+                UpdateMissionQueue();
+            if (m_last_fired_turn != m_turn)
+                FireAtHostiles();
         }
         steer = Steer();
     }
@@ -366,6 +377,11 @@ void CombatFighter::Damage(const CombatFighterPtr& source)
     m_formation->Damage(damage);
 }
 
+void CombatFighter::TurnStarted(unsigned int number)
+{
+    
+}
+
 void CombatFighter::DamageImpl(double d)
 { m_health = std::max(0.0, m_health - d); }
 
@@ -429,6 +445,8 @@ void CombatFighter::UpdateMissionQueue()
         print_needed = true;
         m_last_mission = m_mission_queue.back().m_type;
     }
+
+    m_last_queue_update_turn = m_turn;
 
     m_mission_weight = 0.0;
     m_mission_destination = OpenSteer::Vec3();
@@ -628,8 +646,10 @@ void CombatFighter::FireAtHostiles()
         }
     }
 
-    if (target)
+    if (target) {
         target->Damage(shared_from_this());
+        m_last_fired_turn = m_turn;
+    }
 }
 
 OpenSteer::Vec3 CombatFighter::Steer()

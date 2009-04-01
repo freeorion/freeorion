@@ -22,13 +22,13 @@ Missile::Missile() :
     m_pathing_engine()
 {}
 
-Missile::Missile(int empire_id, const PartType& part, CombatObjectPtr target,
+Missile::Missile(int empire_id, const LRStats& stats, CombatObjectPtr target,
                  const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
                  PathingEngine& pathing_engine) :
     m_proximity_token(0),
     m_empire_id(empire_id),
     m_last_steer(),
-    m_stats(boost::get<LRStats>(part.Stats())),
+    m_stats(stats),
     m_destination(target->position()),
     m_target(target),
     m_health(m_stats.m_health),
@@ -65,7 +65,9 @@ void Missile::update(const float /*current_time*/, const float elapsed_time)
         if (distance_squared < AT_DEST_SQUARED) {
             if (target)
                 target->Damage(m_stats.m_damage, NON_PD_DAMAGE);
-            // TODO: Remove self from engine.
+            delete m_proximity_token;
+            m_proximity_token = 0;
+            m_pathing_engine->RemoveObject(shared_from_this());
             return;
         } else {
             if (target)
@@ -91,6 +93,9 @@ void Missile::Damage(double d, DamageSource source)
 
 void Missile::Damage(const CombatFighterPtr& source)
 { assert(!"Missiles can't attack fighters."); }
+
+void Missile::TurnStarted(unsigned int number)
+{}
 
 void Missile::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {

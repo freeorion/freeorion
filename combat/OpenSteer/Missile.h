@@ -15,7 +15,7 @@ class Missile :
     public boost::enable_shared_from_this<Missile>
 {
 public:
-    Missile(int empire_id, const PartType& part, CombatObjectPtr target,
+    Missile(int empire_id, const LRStats& stats, CombatObjectPtr target,
             const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
             PathingEngine& pathing_engine);
     ~Missile();
@@ -32,6 +32,7 @@ public:
 
     virtual void Damage(double d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
+    virtual void TurnStarted(unsigned int number);
 
 private:
     Missile();
@@ -55,8 +56,11 @@ private:
             ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
                 & BOOST_SERIALIZATION_NVP(m_proximity_token)
                 & BOOST_SERIALIZATION_NVP(m_empire_id)
+                & BOOST_SERIALIZATION_NVP(m_last_steer)
+                & BOOST_SERIALIZATION_NVP(m_stats)
                 & BOOST_SERIALIZATION_NVP(m_destination)
                 & BOOST_SERIALIZATION_NVP(m_target)
+                & BOOST_SERIALIZATION_NVP(m_health)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine);
         }
 };

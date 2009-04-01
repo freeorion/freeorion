@@ -30,4 +30,6 @@ typedef boost::shared_ptr<CombatShip> CombatShipPtr;
 typedef ProximityDatabase<OpenSteer::AbstractVehicle*> ProximityDB;
 typedef ProximityDB::TokenType ProximityDBToken;
 
+extern const unsigned int ENTER_STARLANE_DELAY_TURNS;
+
 #endif

@@ -22,10 +22,6 @@ class CombatShip :
     public boost::enable_shared_from_this<CombatShip>
 {
 public:
-    typedef std::vector<const DirectFireStats*> SRVec;
-    typedef std::vector<const LRStats*> LRVec;
-    typedef std::list<std::pair<const DirectFireStats*, double> > PDList;
-
     CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
@@ -51,11 +47,30 @@ public:
 
     virtual void Damage(double d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
+    virtual void TurnStarted(unsigned int number);
 
     static const double PD_VS_SHIP_FACTOR;
     static const double NON_PD_VS_FIGHTER_FACTOR;
 
 private:
+    struct RangeDamage
+    {
+        RangeDamage();
+        RangeDamage(double range, double damage);
+
+        double m_range;
+        double m_damage;
+
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_NVP(m_range)
+                    & BOOST_SERIALIZATION_NVP(m_damage);
+            }
+    };
+    typedef std::vector<RangeDamage> SRVec;
+    typedef std::list<RangeDamage> PDList;
+
     CombatShip();
 
     double MaxWeaponRange() const;
@@ -66,8 +81,9 @@ private:
     void PushMission(const ShipMission& mission);
     void RemoveMission();
     void UpdateMissionQueue();
-    void FirePDDefensively(PDList& unfired_PD_weapons);
+    void FirePDDefensively();
     void FireAtHostiles();
+    void FireAt(CombatObjectPtr target);
     OpenSteer::Vec3 Steer();
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
     CombatShipPtr WeakestHostileShip();
@@ -82,12 +98,21 @@ private:
     OpenSteer::Vec3 m_mission_destination; // Only the X and Y values should be nonzero.
     CombatObjectWeakPtr m_mission_subtarget;
 
+    unsigned int m_last_queue_update_turn;
+    unsigned int m_enter_starlane_start_turn;
+    std::vector<double> m_next_LR_fire_turns;
+    double m_turn_start_health;
+    unsigned int m_turn;
+
     PathingEngine* m_pathing_engine;
 
     double m_raw_PD_strength;
     double m_raw_SR_strength;
     double m_raw_LR_strength;
     bool m_is_PD_ship;
+
+    SRVec m_unfired_SR_weapons;
+    PDList m_unfired_PD_weapons;
 
     // map from part type name to (number of parts in the design of that type,
     // the unlaunched fighters of that part type) pairs
@@ -116,10 +141,18 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_mission_weight)
                 & BOOST_SERIALIZATION_NVP(m_mission_destination)
                 & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
+                & BOOST_SERIALIZATION_NVP(m_last_queue_update_turn)
+                & BOOST_SERIALIZATION_NVP(m_next_LR_fire_turns)
+                & BOOST_SERIALIZATION_NVP(m_turn_start_health)
+                & BOOST_SERIALIZATION_NVP(m_turn)
+                & BOOST_SERIALIZATION_NVP(m_enter_starlane_start_turn)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine)
                 & BOOST_SERIALIZATION_NVP(m_raw_PD_strength)
                 & BOOST_SERIALIZATION_NVP(m_raw_SR_strength)
                 & BOOST_SERIALIZATION_NVP(m_raw_LR_strength)
+                & BOOST_SERIALIZATION_NVP(m_is_PD_ship)
+                & BOOST_SERIALIZATION_NVP(m_unfired_SR_weapons)
+                & BOOST_SERIALIZATION_NVP(m_unfired_PD_weapons)
                 & BOOST_SERIALIZATION_NVP(m_unlaunched_fighters)
                 & BOOST_SERIALIZATION_NVP(m_launched_formations)
                 & BOOST_SERIALIZATION_NVP(m_instrument)
