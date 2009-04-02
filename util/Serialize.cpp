@@ -21,6 +21,7 @@
 #endif
 
 #include <boost/static_assert.hpp>
+#include <boost/detail/endian.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>
@@ -62,7 +63,7 @@ BOOST_CLASS_EXPORT(AsteroidBeltObstacle)
 // some endianness and size checks to ensure portability of binary save files; of one or more of these fails, it means
 // that FreeOrion is not supported on your platform/compiler pair, and must be modified to provide data of the
 // appropriate size(s).
-#if !defined(OGRE_CONFIG_LITTLE_ENDIAN) && !defined(_MSC_VER)
+#ifndef BOOST_LITTLE_ENDIAN
 #  error "Incompatible endianness for binary serialization."
 #endif
 BOOST_STATIC_ASSERT(sizeof(char) == 1);
