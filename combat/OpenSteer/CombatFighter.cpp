@@ -1,5 +1,6 @@
 #include "CombatFighter.h"
 
+#include "../CombatEventListener.h"
 #include "CombatShip.h"
 #include "PathingEngine.h"
 
@@ -282,6 +283,9 @@ double CombatFighter::AntiFighterStrength() const
 double CombatFighter::AntiShipStrength(CombatShipPtr/* target = CombatShipPtr()*/) const
 { return Stats().m_anti_ship_damage * Stats().m_fighter_weapon_range; }
 
+bool CombatFighter::IsFighter() const
+{ return true; }
+
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
@@ -341,6 +345,8 @@ void CombatFighter::EnterSpace()
         m_proximity_token->UpdatePosition(position());
 
     m_mission_queue.push_front(FighterMission(FighterMission::NONE));
+
+    Listener().FighterLaunched(shared_from_this());
 }
 
 void CombatFighter::AppendMission(const FighterMission& mission)
@@ -365,6 +371,7 @@ void CombatFighter::ExitSpace()
 {
     delete m_proximity_token;
     m_proximity_token = 0;
+    Listener().FighterDocked(shared_from_this());
 }
 
 void CombatFighter::Damage(double d, DamageSource source)
@@ -382,9 +389,10 @@ void CombatFighter::Damage(const CombatFighterPtr& source)
 }
 
 void CombatFighter::TurnStarted(unsigned int number)
-{
-    
-}
+{ m_turn = number; }
+
+void CombatFighter::SignalDestroyed()
+{ Listener().FighterDestroyed(shared_from_this()); }
 
 void CombatFighter::DamageImpl(double d)
 { m_health = std::max(0.0, m_health - d); }
@@ -480,8 +488,11 @@ void CombatFighter::UpdateMissionQueue()
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             m_mission_destination = target->position();
-            if (CombatFighterPtr f = boost::dynamic_pointer_cast<CombatFighter>(target))
+            if (target->IsFighter()) {
+                assert(boost::dynamic_pointer_cast<CombatFighter>(target));
+                CombatFighterPtr f = boost::static_pointer_cast<CombatFighter>(target);
                 m_mission_destination = f->Formation()->Centroid();
+            }
         } else {
             if (print_needed) std::cout << "    [ATTACK TARGET GONE]\n";
             RemoveMission();
@@ -599,8 +610,8 @@ void CombatFighter::UpdateMissionQueue()
                 m_mission_destination = m_mission_queue.back().m_destination;
             } else {
                 if (CombatObjectPtr b = m_base.lock()) {
-                    CombatShipPtr base = boost::dynamic_pointer_cast<CombatShip>(b);
-                    assert(base);
+                    assert(boost::dynamic_pointer_cast<CombatShip>(b));
+                    CombatShipPtr base = boost::static_pointer_cast<CombatShip>(b);
                     base->RecoverFighters(m_formation);
                     if (print_needed) std::cout << "    [ARRIVED AT BASE]\n";
                     RemoveMission();
@@ -643,16 +654,18 @@ void CombatFighter::FireAtHostiles()
 
     // find a target of opportunity
     if (!target) {
-        if (!(target = m_pathing_engine->NearestHostileFighterInRange(
-                  position_to_use, m_empire_id, WEAPON_RANGE))) {
-            target = m_pathing_engine->NearestHostileNonFighterInRange(
-                position_to_use, m_empire_id, WEAPON_RANGE);
-        }
+        target = m_pathing_engine->NearestHostileFighterInRange(
+            position_to_use, m_empire_id, WEAPON_RANGE);
+    }
+    if (!target) {
+        target = m_pathing_engine->NearestHostileNonFighterInRange(
+            position_to_use, m_empire_id, WEAPON_RANGE);
     }
 
     if (target) {
         target->Damage(shared_from_this());
         m_last_fired_turn = m_turn;
+        Listener().FighterFired(shared_from_this(), target);
     }
 }
 

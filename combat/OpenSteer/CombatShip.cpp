@@ -1,8 +1,9 @@
 #include "CombatShip.h"
 
 #include "../../universe/Enums.h"
-#include "../universe/ShipDesign.h"
-#include "../universe/System.h"
+#include "../../universe/ShipDesign.h"
+#include "../../universe/System.h"
+#include "../CombatEventListener.h"
 #include "CombatFighter.h"
 #include "Missile.h"
 #include "PathingEngine.h"
@@ -153,6 +154,9 @@ double CombatShip::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) 
     return sr + lr;
 }
 
+bool CombatShip::IsFighter() const
+{ return false; }
+
 void CombatShip::LaunchFighters()
 {
     // Note that this just launches the fighters that can be launched on this
@@ -205,6 +209,11 @@ void CombatShip::RecoverFighters(const CombatFighterFormationPtr& formation)
         *m_unlaunched_fighters.find((*formation->begin())->PartName());
     std::vector<CombatFighterPtr>& fighter_vec = map_entry.second.second;
     fighter_vec.insert(fighter_vec.end(), formation->begin(), formation->end());
+    for (CombatFighterFormation::const_iterator it = formation->begin();
+         it != formation->end();
+         ++it) {
+        (*it)->ExitSpace();
+    }
     m_ship->AddFighters(map_entry.first, formation->size());
 }
 
@@ -292,6 +301,7 @@ void CombatShip::TurnStarted(unsigned int number)
     m_turn = number;
     m_turn_start_health = Health();
     if (m_turn - m_enter_starlane_start_turn == ENTER_STARLANE_DELAY_TURNS) {
+        Listener().ShipEnteredStarlane(shared_from_this());
         delete m_proximity_token;
         m_proximity_token = 0;
         m_pathing_engine->RemoveObject(shared_from_this());
@@ -307,6 +317,9 @@ void CombatShip::TurnStarted(unsigned int number)
                        CopyStats<DirectFireStats>(FractionalHealth()));
     }
 }
+
+void CombatShip::SignalDestroyed()
+{ Listener().ShipDestroyed(shared_from_this()); }
 
 double CombatShip::MaxWeaponRange() const
 { return m_ship->Design()->MaxWeaponRange(); }
@@ -451,8 +464,11 @@ void CombatShip::UpdateMissionQueue()
         if (CombatObjectPtr target = m_mission_queue.back().m_target.lock()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             OpenSteer::Vec3 target_position = target->position();
-            if (CombatFighterPtr f = boost::dynamic_pointer_cast<CombatFighter>(target))
+            if (target->IsFighter()) {
+                assert(boost::dynamic_pointer_cast<CombatFighter>(target));
+                CombatFighterPtr f = boost::static_pointer_cast<CombatFighter>(target);
                 target_position = f->Formation()->Centroid();
+            }
             OpenSteer::Vec3 from_target_vec = position() - target_position;
             float from_target_length = from_target_vec.length();
             from_target_vec /= from_target_length;
@@ -621,6 +637,15 @@ void CombatShip::FirePDDefensively()
         for (PDList::reverse_iterator it = m_unfired_PD_weapons.rbegin();
              it != m_unfired_PD_weapons.rend(); ) {
             if (distance_squared < it->m_range * it->m_range) {
+                CombatObjectPtr shared_obj;
+                if (obj->IsFighter()) {
+                    shared_obj =
+                        boost::polymorphic_downcast<CombatFighter*>(obj)->shared_from_this();
+                } else {
+                    shared_obj =
+                        boost::polymorphic_downcast<Missile*>(obj)->shared_from_this();
+                }
+                Listener().ShipFired(shared_from_this(), shared_obj, it->m_name);
                 double damage = std::min(obj->HealthAndShield(), it->m_damage);
                 // HACK! This looks weird, but does what we want.  Non-PD
                 // damage on a fighter only affects the fighter itself -- it
@@ -679,6 +704,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
          it != m_unfired_SR_weapons.rend();
          ++it) {
         if (range_squared < it->m_range * it->m_range) {
+            Listener().ShipFired(shared_from_this(), target, it->m_name);
             target->Damage(it->m_damage, CombatObject::NON_PD_DAMAGE);
         } else {
             m_unfired_SR_weapons.resize(std::distance(it, m_unfired_SR_weapons.rend()));
@@ -694,7 +720,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
             double weapon_range_squared = it->first * it->first;
             if (range_squared < weapon_range_squared) {
                 OpenSteer::Vec3 direction = (target->position() - position()).normalize();
-                CombatObjectPtr missile(
+                MissilePtr missile(
                     new Missile(m_empire_id, *it->second, target,
                                 position(), direction, *m_pathing_engine));
                 m_pathing_engine->AddObject(missile);
@@ -703,6 +729,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
                     m_next_LR_fire_turns[i] = m_turn;
                 m_next_LR_fire_turns[i] +=
                     boost::get<LRStats>(it->second->Stats()).m_ROF * health_factor;
+                Listener().MissileLaunched(missile);
             }
         }
     }
@@ -710,6 +737,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
          it != m_unfired_PD_weapons.end();
          ++it) {
         if (range_squared < it->m_range * it->m_range) {
+            Listener().ShipFired(shared_from_this(), target, it->m_name);
             target->Damage(it->m_damage, CombatObject::PD_DAMAGE);
         } else {
             m_unfired_PD_weapons.erase(it, m_unfired_PD_weapons.end());

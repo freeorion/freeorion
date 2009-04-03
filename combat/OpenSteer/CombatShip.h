@@ -53,6 +53,7 @@ public:
     virtual double FractionalHealth() const;
     virtual double AntiFighterStrength() const;
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
+    virtual bool IsFighter() const;
 
     void LaunchFighters();
     void RecoverFighters(const CombatFighterFormationPtr& formation);
@@ -68,6 +69,7 @@ public:
     virtual void Damage(double d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
     virtual void TurnStarted(unsigned int number);
+    virtual void SignalDestroyed();
 
     static const double PD_VS_SHIP_FACTOR;
     static const double NON_PD_VS_FIGHTER_FACTOR;

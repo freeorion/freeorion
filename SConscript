@@ -6,6 +6,7 @@ common_sources = [
     'combat/CombatOrder.cpp',
     'combat/OpenSteer/AsteroidBeltObstacle.cpp',
     'combat/OpenSteer/CombatFighter.cpp',
+    'combat/OpenSteer/CombatObject.cpp',
     'combat/OpenSteer/CombatShip.cpp',
     'combat/OpenSteer/Missile.cpp',
     'combat/OpenSteer/Obstacle.cpp',

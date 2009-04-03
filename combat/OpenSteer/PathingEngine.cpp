@@ -122,16 +122,29 @@ void PathingEngine::TurnStarted(unsigned int number)
 {
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
          it != m_objects.end(); ) {
-        if (!(*it)->HealthAndShield())
-            m_objects.erase(it++);
-        else
+        if (!(*it)->HealthAndShield()) {
+            if ((*it)->IsFighter()) {
+                assert(boost::dynamic_pointer_cast<CombatFighter>(*it));
+                CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(*it);
+                std::set<CombatFighterFormationPtr>::iterator formation_it =
+                    m_fighter_formations.find(fighter->Formation());
+                assert(formation_it != m_fighter_formations.end());
+                fighter->SignalDestroyed();
+                RemoveFighter(fighter, formation_it);
+            } else {
+                (*it)->SignalDestroyed();
+                RemoveObject(*it);
+            }
+            ++it;
+        } else {
             (*it++)->TurnStarted(number);
+        }
     }
 }
 
 void PathingEngine::Update(const float current_time, const float elapsed_time)
 {
-    // We use a temporary iterator, because an object may remove itself from the
+    // We use a temporary pointer, because an object may remove itself from the
     // engine during its update.
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
          it != m_objects.end(); ) {

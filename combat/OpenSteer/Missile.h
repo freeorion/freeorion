@@ -27,6 +27,7 @@ public:
     virtual double FractionalHealth() const;
     virtual double AntiFighterStrength() const;
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
+    virtual bool IsFighter() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
@@ -35,6 +36,7 @@ public:
     virtual void Damage(double d, DamageSource source);
     virtual void Damage(const CombatFighterPtr& source);
     virtual void TurnStarted(unsigned int number);
+    virtual void SignalDestroyed();
 
 private:
     Missile();

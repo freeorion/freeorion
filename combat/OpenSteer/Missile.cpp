@@ -1,5 +1,6 @@
 #include "Missile.h"
 
+#include "../CombatEventListener.h"
 #include "PathingEngine.h"
 
 
@@ -65,6 +66,9 @@ double Missile::AntiFighterStrength() const
 double Missile::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) const
 { return 0.0; }
 
+bool Missile::IsFighter() const
+{ return false; }
+
 void Missile::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
@@ -75,8 +79,12 @@ void Missile::update(const float /*current_time*/, const float elapsed_time)
         float distance_squared = (m_destination - position()).lengthSquared();
         CombatObjectPtr target = m_target.lock();
         if (distance_squared < AT_DEST_SQUARED) {
-            if (target)
+            if (target) {
+                Listener().MissileExploded(shared_from_this());
                 target->Damage(Stats().m_damage, NON_PD_DAMAGE);
+            } else {
+                Listener().MissileRemoved(shared_from_this());
+            }
             delete m_proximity_token;
             m_proximity_token = 0;
             m_pathing_engine->RemoveObject(shared_from_this());
@@ -104,10 +112,13 @@ void Missile::Damage(double d, DamageSource source)
 }
 
 void Missile::Damage(const CombatFighterPtr& source)
-{ assert(!"Missiles can't attack fighters."); }
+{ assert(!"Fighters can't attack missiles."); }
 
 void Missile::TurnStarted(unsigned int number)
 {}
+
+void Missile::SignalDestroyed()
+{ Listener().MissileRemoved(shared_from_this()); }
 
 void Missile::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
 {
