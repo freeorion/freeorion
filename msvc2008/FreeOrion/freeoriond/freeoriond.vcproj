@@ -149,6 +149,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\combat\OpenSteer\CombatObject.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\combat\OpenSteer\CombatShip.cpp"
 					>
 				</File>
