@@ -14,29 +14,41 @@
 Missile::Missile() :
     m_proximity_token(0),
     m_empire_id(-1),
+    m_part_name(),
     m_last_steer(),
-    m_stats(),
     m_destination(),
     m_target(),
     m_health(0.0),
-    m_pathing_engine()
+    m_pathing_engine(),
+    m_stats(0)
 {}
 
-Missile::Missile(int empire_id, const LRStats& stats, CombatObjectPtr target,
+Missile::Missile(int empire_id, const PartType& part, CombatObjectPtr target,
                  const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
                  PathingEngine& pathing_engine) :
     m_proximity_token(0),
     m_empire_id(empire_id),
+    m_part_name(part.Name()),
     m_last_steer(),
-    m_stats(stats),
     m_destination(target->position()),
     m_target(target),
-    m_health(m_stats.m_health),
-    m_pathing_engine(&pathing_engine)
+    m_health(Stats().m_health),
+    m_pathing_engine(&pathing_engine),
+    m_stats(0)
 { Init(position, direction); }
 
 Missile::~Missile()
 { delete m_proximity_token; }
+
+const LRStats& Missile::Stats() const
+{
+    if (!m_stats)
+        m_stats = &boost::get<LRStats>(GetPartType(m_part_name)->Stats());
+    return *m_stats;
+}
+
+const std::string& Missile::PartName() const
+{ return m_part_name; }
 
 double Missile::HealthAndShield() const
 { return m_health; }
@@ -64,7 +76,7 @@ void Missile::update(const float /*current_time*/, const float elapsed_time)
         CombatObjectPtr target = m_target.lock();
         if (distance_squared < AT_DEST_SQUARED) {
             if (target)
-                target->Damage(m_stats.m_damage, NON_PD_DAMAGE);
+                target->Damage(Stats().m_damage, NON_PD_DAMAGE);
             delete m_proximity_token;
             m_proximity_token = 0;
             m_pathing_engine->RemoveObject(shared_from_this());
@@ -105,7 +117,7 @@ void Missile::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& dire
 
     SimpleVehicle::reset();
     SimpleVehicle::setMaxForce(9.0 * 18.0);
-    SimpleVehicle::setMaxSpeed(m_stats.m_speed);
+    SimpleVehicle::setMaxSpeed(Stats().m_speed);
 
     // TODO: setMass()
 

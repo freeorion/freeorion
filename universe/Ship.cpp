@@ -37,6 +37,11 @@ Ship::Ship(int empire_id, int design_id) :
                     m_fighters[part_names[i]];
                 ++part_fighters.first;
                 part_fighters.second += boost::get<FighterStats>(part->Stats()).m_capacity;
+            } else if (part->Class() == PC_MISSILES) {
+                std::pair<std::size_t, std::size_t>& part_missiles =
+                    m_missiles[part_names[i]];
+                ++part_missiles.first;
+                part_missiles.second += boost::get<LRStats>(part->Stats()).m_capacity;
             }
         }
     }
@@ -81,8 +86,12 @@ double Ship::Speed() const {
     return Design()->Speed();
 }
 
-const Ship::FighterMap& Ship::Fighters() const {
+const Ship::ConsumablesMap& Ship::Fighters() const {
     return m_fighters;
+}
+
+const Ship::ConsumablesMap& Ship::Missiles() const {
+    return m_missiles;
 }
 
 const std::string& Ship::PublicName(int empire_id) const {
@@ -106,6 +115,47 @@ void Ship::SetFleetID(int fleet_id)
 {
     m_fleet_id = fleet_id;
     StateChangedSignal();
+}
+
+void Ship::Resupply()
+{
+    Meter* meter = GetMeter(METER_FUEL);
+    assert(meter);
+    meter->SetCurrent(meter->Max());
+    for (ConsumablesMap::iterator it = m_fighters.begin();
+         it != m_fighters.end();
+         ++it) {
+        it->second.second =
+            it->second.first *
+            boost::get<FighterStats>(GetPartType(it->first)->Stats()).m_capacity;
+    }
+    for (ConsumablesMap::iterator it = m_missiles.begin();
+         it != m_missiles.end();
+         ++it) {
+        it->second.second =
+            it->second.first *
+            boost::get<LRStats>(GetPartType(it->first)->Stats()).m_capacity;
+    }
+}
+
+void Ship::AddFighters(const std::string& part_name, std::size_t n)
+{
+    assert(m_fighters[part_name].second + n <=
+           m_fighters[part_name].first *
+           boost::get<FighterStats>(GetPartType(part_name)->Stats()).m_capacity);
+    m_fighters[part_name].second += n;
+}
+
+void Ship::RemoveFighters(const std::string& part_name, std::size_t n)
+{
+    assert(m_fighters[part_name].second < n);
+    m_fighters[part_name].second -= n;
+}
+
+void Ship::RemoveMissiles(const std::string& part_name, std::size_t n)
+{
+    assert(m_missiles[part_name].second < n);
+    m_missiles[part_name].second -= n;
 }
 
 void Ship::MoveTo(double x, double y)

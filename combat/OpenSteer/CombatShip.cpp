@@ -1,7 +1,6 @@
 #include "CombatShip.h"
 
 #include "../../universe/Enums.h"
-#include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "CombatFighter.h"
@@ -30,11 +29,13 @@ namespace {
     struct CopyStats
     {
         CopyStats(double health_factor) : m_health_factor(health_factor) {}
-        CombatShip::RangeDamage operator()(const std::pair<double, Stats>& elem)
+        CombatShip::DirectWeapon operator()(const std::pair<double, const PartType*>& elem)
             {
-                return CombatShip::RangeDamage(
-                    elem.second.m_range,
-                    elem.second.m_damage * elem.second.m_ROF * m_health_factor);
+                const Stats& stats = boost::get<Stats>(elem.second->Stats());
+                return CombatShip::DirectWeapon(
+                    elem.second->Name(),
+                    stats.m_range,
+                    stats.m_damage * stats.m_ROF * m_health_factor);
             }
         const double m_health_factor;
     };
@@ -58,14 +59,16 @@ namespace {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// CombatShip::RangeDamage
+// CombatShip::DirectWeapon
 ////////////////////////////////////////////////////////////////////////////////
-CombatShip::RangeDamage::RangeDamage() :
+CombatShip::DirectWeapon::DirectWeapon() :
+    m_name(),
     m_range(),
     m_damage()
 {}
 
-CombatShip::RangeDamage::RangeDamage(double range, double damage) :
+CombatShip::DirectWeapon::DirectWeapon(const std::string& name, double range, double damage) :
+    m_name(name),
     m_range(range),
     m_damage(damage)
 {}
@@ -189,6 +192,7 @@ void CombatShip::LaunchFighters()
             fighters_vec.resize(fighters_vec.size() - size);
             m_pathing_engine->AddFighterFormation(*formation_it);
         }
+        m_ship->RemoveFighters(it->first, launch_size);
     }
 }
 
@@ -197,9 +201,11 @@ void CombatShip::RecoverFighters(const CombatFighterFormationPtr& formation)
     assert(!formation->empty());
     m_launched_formations.erase(formation);
     m_pathing_engine->RemoveFighterFormation(formation);
-    std::vector<CombatFighterPtr>& fighter_vec =
-        m_unlaunched_fighters[(*formation->begin())->PartName()].second;
+    FighterMap::value_type& map_entry =
+        *m_unlaunched_fighters.find((*formation->begin())->PartName());
+    std::vector<CombatFighterPtr>& fighter_vec = map_entry.second.second;
     fighter_vec.insert(fighter_vec.end(), formation->begin(), formation->end());
+    m_ship->AddFighters(map_entry.first, formation->size());
 }
 
 void CombatShip::AppendMission(const ShipMission& mission)
@@ -331,8 +337,8 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
 
     m_mission_queue.push_front(ShipMission(ShipMission::NONE));
 
-    const Ship::FighterMap& fighters = m_ship->Fighters();
-    for (Ship::FighterMap::const_iterator it = fighters.begin(); it != fighters.end(); ++it) {
+    const Ship::ConsumablesMap& fighters = m_ship->Fighters();
+    for (Ship::ConsumablesMap::const_iterator it = fighters.begin(); it != fighters.end(); ++it) {
         const PartType* part = GetPartType(it->first);
         assert(part && part->Class() == PC_FIGHTERS);
         std::size_t num_fighters = it->second.second;
@@ -346,6 +352,8 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
                 new CombatFighter(shared_from_this(), *part, m_empire_id, *m_pathing_engine));
         }
     }
+
+    m_missiles = m_ship->Missiles();
 
     double PD_minus_non_PD = 0.0;
     const std::vector<std::string>& part_names = m_ship->Design()->Parts();
@@ -678,7 +686,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
         }
     }
     std::size_t i = 0;
-    for (std::multimap<double, LRStats>::const_iterator it =
+    for (std::multimap<double, const PartType*>::const_iterator it =
              m_ship->Design()->LRWeapons().begin();
          it != m_ship->Design()->LRWeapons().end();
          ++it, ++i) {
@@ -687,12 +695,14 @@ void CombatShip::FireAt(CombatObjectPtr target)
             if (range_squared < weapon_range_squared) {
                 OpenSteer::Vec3 direction = (target->position() - position()).normalize();
                 CombatObjectPtr missile(
-                    new Missile(m_empire_id, it->second, target,
+                    new Missile(m_empire_id, *it->second, target,
                                 position(), direction, *m_pathing_engine));
                 m_pathing_engine->AddObject(missile);
+                m_ship->RemoveMissiles(it->second->Name(), 1);
                 if (m_next_LR_fire_turns[i] == INVALID_TURN)
                     m_next_LR_fire_turns[i] = m_turn;
-                m_next_LR_fire_turns[i] += it->second.m_ROF * health_factor;
+                m_next_LR_fire_turns[i] +=
+                    boost::get<LRStats>(it->second->Stats()).m_ROF * health_factor;
             }
         }
     }

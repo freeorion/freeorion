@@ -355,15 +355,15 @@ public:
 
     /** Returns a map from ranges to stats for only the SR weapons in this
         design. */
-    const std::multimap<double, DirectFireStats>& SRWeapons() const;
+    const std::multimap<double, const PartType*>& SRWeapons() const;
 
     /** Returns a map from ranges to stats for only the LR weapons in this
         design. */
-    const std::multimap<double, LRStats>& LRWeapons() const;
+    const std::multimap<double, const PartType*>& LRWeapons() const;
 
     /** Returns a map from ranges to stats for only the PD weapons in this
         design. */
-    const std::multimap<double, DirectFireStats>& PDWeapons() const;
+    const std::multimap<double, const PartType*>& PDWeapons() const;
 
     double MinSRRange() const;
     double MaxSRRange() const;
@@ -422,14 +422,14 @@ private:
     std::string                 m_3D_model;
 
     // Note that these are fine to compute on demand and cache here -- it is
-    // not necessary to serialize them. */
+    // not necessary to serialize them.
     bool m_is_armed;
     bool m_can_colonize;
     double m_build_cost;
     int m_build_turns;
-    std::multimap<double, DirectFireStats> m_SR_weapons;
-    std::multimap<double, LRStats> m_LR_weapons;
-    std::multimap<double, DirectFireStats> m_PD_weapons;
+    std::multimap<double, const PartType*> m_SR_weapons;
+    std::multimap<double, const PartType*> m_LR_weapons;
+    std::multimap<double, const PartType*> m_PD_weapons;
     double m_min_SR_range;
     double m_max_SR_range;
     double m_min_LR_range;

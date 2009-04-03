@@ -17,6 +17,7 @@ namespace OpenSteer {
 class CombatFighterFormation;
 class CombatFighter;
 class CombatShip;
+class Missile;
 class PathingEngine;
 
 class CombatObject;
@@ -26,6 +27,7 @@ typedef boost::weak_ptr<CombatObject> CombatObjectWeakPtr;
 typedef boost::shared_ptr<CombatFighterFormation> CombatFighterFormationPtr;
 typedef boost::shared_ptr<CombatFighter> CombatFighterPtr;
 typedef boost::shared_ptr<CombatShip> CombatShipPtr;
+typedef boost::shared_ptr<Missile> MissilePtr;
 
 typedef ProximityDatabase<OpenSteer::AbstractVehicle*> ProximityDB;
 typedef ProximityDB::TokenType ProximityDBToken;

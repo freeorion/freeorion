@@ -39,9 +39,7 @@ namespace {
             for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it) {
                 Ship* ship = universe.Object<Ship>(*ship_it);
                 assert(ship);
-                Meter* meter = ship->GetMeter(METER_FUEL);
-                assert(meter);
-                meter->SetCurrent(meter->Max());
+                ship->Resupply();
             }
         }
     }

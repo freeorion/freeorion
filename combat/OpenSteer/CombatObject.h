@@ -1,6 +1,6 @@
 // -*- C++ -*-
-#ifndef COMBAT_OBJECT_H
-#define COMBAT_OBJECT_H
+#ifndef _CombatObject_h_
+#define _CombatObject_h_
 
 #include "PathingEngineFwd.h"
 #include "SimpleVehicle.h"

@@ -6,6 +6,7 @@
 
 #include "CombatObject.h"
 #include "../CombatOrder.h"
+#include "../../universe/Ship.h"
 
 #include <boost/enable_shared_from_this.hpp>
 
@@ -13,7 +14,6 @@
 #include <set>
 
 
-class Ship;
 struct DirectFireStats;
 struct LRStats;
 
@@ -22,23 +22,25 @@ class CombatShip :
     public boost::enable_shared_from_this<CombatShip>
 {
 public:
-    struct RangeDamage
+    struct DirectWeapon
     {
-        RangeDamage();
-        RangeDamage(double range, double damage);
+        DirectWeapon();
+        DirectWeapon(const std::string& name, double range, double damage);
 
+        std::string m_name;
         double m_range;
         double m_damage;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)
             {
-                ar  & BOOST_SERIALIZATION_NVP(m_range)
+                ar  & BOOST_SERIALIZATION_NVP(m_name)
+                    & BOOST_SERIALIZATION_NVP(m_range)
                     & BOOST_SERIALIZATION_NVP(m_damage);
             }
     };
-    typedef std::vector<RangeDamage> SRVec;
-    typedef std::list<RangeDamage> PDList;
+    typedef std::vector<DirectWeapon> SRVec;
+    typedef std::list<DirectWeapon> PDList;
 
     CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
@@ -123,6 +125,8 @@ private:
 
     FighterMap m_unlaunched_fighters;
     std::set<CombatFighterFormationPtr> m_launched_formations;
+
+    Ship::ConsumablesMap m_missiles;
 
     // TODO: Temporary only!
     bool m_instrument;

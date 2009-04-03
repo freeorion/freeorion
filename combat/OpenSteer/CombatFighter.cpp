@@ -149,7 +149,6 @@ const std::size_t CombatFighter::FORMATION_SIZE = 5;
 CombatFighter::CombatFighter() :
     m_proximity_token(0),
     m_leader(false),
-    m_stats(),
     m_empire_id(-1),
     m_id(-1),
     m_mission_queue(),
@@ -161,7 +160,8 @@ CombatFighter::CombatFighter() :
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
-    m_pathing_engine(0)
+    m_pathing_engine(0),
+    m_stats(0)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
@@ -170,7 +170,6 @@ CombatFighter::CombatFighter(CombatObjectPtr base, int empire_id,
                              PathingEngine& pathing_engine) :
     m_proximity_token(0),
     m_leader(true),
-    m_stats(),
     m_part_name(),
     m_empire_id(empire_id),
     m_id(pathing_engine.NextFighterID()),
@@ -179,11 +178,12 @@ CombatFighter::CombatFighter(CombatObjectPtr base, int empire_id,
     m_base(base),
     m_formation_position(-1),
     m_formation(),
-    m_health(m_stats.m_health),
+    m_health(0),
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
-    m_pathing_engine(&pathing_engine)
+    m_pathing_engine(&pathing_engine),
+    m_stats(0)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
@@ -192,7 +192,6 @@ CombatFighter::CombatFighter(CombatObjectPtr base, const PartType& part, int emp
                              PathingEngine& pathing_engine) :
     m_proximity_token(0),
     m_leader(false),
-    m_stats(boost::get<FighterStats>(part.Stats())),
     m_part_name(part.Name()),
     m_empire_id(empire_id),
     m_id(pathing_engine.NextFighterID()),
@@ -205,7 +204,8 @@ CombatFighter::CombatFighter(CombatObjectPtr base, const PartType& part, int emp
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
-    m_pathing_engine(&pathing_engine)
+    m_pathing_engine(&pathing_engine),
+    m_stats(0)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
@@ -255,7 +255,11 @@ int CombatFighter::ID() const
 { return m_id; }
 
 const FighterStats& CombatFighter::Stats() const
-{ return m_stats; }
+{
+    if (!m_stats)
+        m_stats = &boost::get<FighterStats>(GetPartType(m_part_name)->Stats());
+    return *m_stats;
+}
 
 const std::string& CombatFighter::PartName() const
 { return m_part_name; }
@@ -273,10 +277,10 @@ double CombatFighter::FractionalHealth() const
 { return 1.0; }
 
 double CombatFighter::AntiFighterStrength() const
-{ return m_stats.m_anti_fighter_damage * m_stats.m_fighter_weapon_range; }
+{ return Stats().m_anti_fighter_damage * Stats().m_fighter_weapon_range; }
 
 double CombatFighter::AntiShipStrength(CombatShipPtr/* target = CombatShipPtr()*/) const
-{ return m_stats.m_anti_ship_damage * m_stats.m_fighter_weapon_range; }
+{ return Stats().m_anti_ship_damage * Stats().m_fighter_weapon_range; }
 
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
@@ -310,13 +314,13 @@ void CombatFighter::EnterSpace()
         m_proximity_token =
             m_pathing_engine->GetProximityDB().Insert(
                 this,
-                m_stats.m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
+                Stats().m_type == INTERCEPTOR ? INTERCEPTOR_FLAG : BOMBER_FLAG,
                 EmpireFlag(m_empire_id));
     }
 
     SimpleVehicle::reset();
     SimpleVehicle::setMaxForce(3.0 * 9.0);
-    SimpleVehicle::setMaxSpeed(m_stats.m_speed);
+    SimpleVehicle::setMaxSpeed(Stats().m_speed);
 
     // TODO: setMass()
 
@@ -439,7 +443,7 @@ void CombatFighter::UpdateMissionQueue()
         std::string prev_mission = FIGHTER_MISSION_STRINGS[m_last_mission];
         std::string new_mission = FIGHTER_MISSION_STRINGS[m_mission_queue.back().m_type];
         std::cout << "empire=" << m_empire_id
-                  << " type=" << (m_stats.m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
+                  << " type=" << (Stats().m_type ? "BOMBER" : "INTERCEPTOR") << "\n"
                   << "    prev mission=" << prev_mission.c_str() << "\n"
                   << "    new mission =" << new_mission.c_str() << "\n";
         print_needed = true;
@@ -455,7 +459,7 @@ void CombatFighter::UpdateMissionQueue()
     case FighterMission::NONE: {
         assert(m_mission_queue.size() == 1u);
         m_mission_queue.clear();
-        if (m_stats.m_type == INTERCEPTOR)
+        if (Stats().m_type == INTERCEPTOR)
             m_mission_queue.push_front(FighterMission(FighterMission::ATTACK_FIGHTERS_BOMBERS_FIRST));
         else
             m_mission_queue.push_front(FighterMission(FighterMission::ATTACK_SHIPS_WEAKEST_FIRST));
@@ -506,7 +510,7 @@ void CombatFighter::UpdateMissionQueue()
         if (AT_DEST_SQUARED < (position() - m_mission_queue.back().m_destination).lengthSquared()) {
             m_mission_weight = DEFAULT_MISSION_WEIGHT;
             bool found_target = false;
-            if (m_stats.m_type == INTERCEPTOR) {
+            if (Stats().m_type == INTERCEPTOR) {
                 if (CombatFighterPtr fighter =
                     m_pathing_engine->NearestHostileFighterInRange(position(), m_empire_id,
                                                                    PATROL_ENGAGEMENT_RANGE)) {
@@ -626,7 +630,7 @@ void CombatFighter::FireAtHostiles()
     assert(!m_mission_queue.empty());
 
     OpenSteer::Vec3 position_to_use = m_formation->Centroid();
-    const double WEAPON_RANGE = m_stats.m_fighter_weapon_range;
+    const double WEAPON_RANGE = Stats().m_fighter_weapon_range;
     const double WEAPON_RANGE_SQUARED = WEAPON_RANGE * WEAPON_RANGE;
 
     CombatObjectPtr target = m_mission_subtarget.lock();
@@ -655,7 +659,7 @@ void CombatFighter::FireAtHostiles()
 OpenSteer::Vec3 CombatFighter::Steer()
 {
     static bool once = true;
-    if (once && m_stats.m_type == BOMBER && m_leader) {
+    if (once && Stats().m_type == BOMBER && m_leader) {
         //m_instrument = true;
         once = false;
     }
@@ -698,7 +702,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     const float FORMATION_WEIGHT = 8.0f;
 
     const float BOMBER_INTERCEPTOR_EVASION_RADIUS =
-        m_stats.m_type == BOMBER ? 25.0f : SEPARATION_RADIUS;
+        Stats().m_type == BOMBER ? 25.0f : SEPARATION_RADIUS;
     const float BOMBER_INTERCEPTOR_EVASION_WEIGHT = 8.0f;
 
     const float NONFIGHTER_OBSTACLE_AVOIDANCE_RADIUS = 10.0;
@@ -749,7 +753,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     // steer to avoid interceptors (bombers only)
     OpenSteer::Vec3 bomber_interceptor_evasion_vec;
     OpenSteer::AVGroup interceptor_neighbors;
-    if (m_stats.m_type == BOMBER) {
+    if (Stats().m_type == BOMBER) {
         m_pathing_engine->GetProximityDB().FindInRadius(
             position(), BOMBER_INTERCEPTOR_EVASION_RADIUS, interceptor_neighbors,
             INTERCEPTOR_FLAG, NotEmpireFlag(m_empire_id));
@@ -836,7 +840,7 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
          ++it) {
         CombatFighterPtr fighter;
         float strength = FLT_MAX;
-        if (m_stats.m_anti_fighter_damage &&
+        if (Stats().m_anti_fighter_damage &&
             (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
             strength = fighter->HealthAndShield() * (1.0 + fighter->AntiFighterStrength());
         } else if (CombatObjectPtr ptr = it->second.lock()) {

@@ -730,13 +730,13 @@ double ShipDesign::Speed() const {
     return GetHull()->Speed();
 }
 
-const std::multimap<double, DirectFireStats>& ShipDesign::SRWeapons() const
+const std::multimap<double, const PartType*>& ShipDesign::SRWeapons() const
 { return m_SR_weapons; }
 
-const std::multimap<double, LRStats>& ShipDesign::LRWeapons() const
+const std::multimap<double, const PartType*>& ShipDesign::LRWeapons() const
 { return m_LR_weapons; }
 
-const std::multimap<double, DirectFireStats>& ShipDesign::PDWeapons() const
+const std::multimap<double, const PartType*>& ShipDesign::PDWeapons() const
 { return m_PD_weapons; }
 
 double ShipDesign::MinSRRange() const
@@ -949,7 +949,7 @@ void ShipDesign::BuildStatCaches()
         switch (part->Class()) {
         case PC_SHORT_RANGE: {
             const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
-            m_SR_weapons.insert(std::make_pair(stats.m_range, stats));
+            m_SR_weapons.insert(std::make_pair(stats.m_range, part));
             m_is_armed = true;
             m_min_SR_range = std::min(m_min_SR_range, stats.m_range);
             m_max_SR_range = std::max(m_max_SR_range, stats.m_range);
@@ -961,7 +961,7 @@ void ShipDesign::BuildStatCaches()
         }
         case PC_MISSILES: {
             const LRStats& stats = boost::get<LRStats>(part->Stats());
-            m_LR_weapons.insert(std::make_pair(stats.m_range, stats));
+            m_LR_weapons.insert(std::make_pair(stats.m_range, part));
             m_is_armed = true;
             m_min_LR_range = std::min(m_min_LR_range, stats.m_range);
             m_max_LR_range = std::max(m_max_LR_range, stats.m_range);
@@ -976,7 +976,7 @@ void ShipDesign::BuildStatCaches()
             break;
         case PC_POINT_DEFENSE: {
             const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
-            m_PD_weapons.insert(std::make_pair(stats.m_range, stats));
+            m_PD_weapons.insert(std::make_pair(stats.m_range, part));
             m_is_armed = true;
             m_min_PD_range = std::min(m_min_PD_range, stats.m_range);
             m_max_PD_range = std::max(m_max_PD_range, stats.m_range);

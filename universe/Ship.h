@@ -14,8 +14,8 @@ class Ship : public UniverseObject
 {
 public:
     // map from part type name to (number of parts in the design of that type,
-    // number of fighters usable with that part type) pairs
-    typedef std::map<std::string, std::pair<std::size_t, std::size_t> > FighterMap;
+    // number of fighters (or missiles) available of that type) pairs
+    typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
 
     /** \name Structors */ //@{
     Ship(); ///< default ctor
@@ -23,37 +23,46 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const ShipDesign*                   Design() const;                     ///< returns the design of the ship, containing engine type, weapons, etc.
-    int                                 DesignID() const;                   ///< returns the design id of the ship
-    int                                 FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
-    Fleet*                              GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
+    const ShipDesign*          Design() const;                     ///< returns the design of the ship, containing engine type, weapons, etc.
+    int                        DesignID() const;                   ///< returns the design id of the ship
+    int                        FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
+    Fleet*                     GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
 
-    virtual Visibility                  GetVisibility(int empire_id) const;
-    virtual const std::string&          PublicName(int empire_id) const;
+    virtual Visibility         GetVisibility(int empire_id) const;
+    virtual const std::string& PublicName(int empire_id) const;
 
-    bool                                IsArmed() const;
-    bool                                CanColonize() const;
-    double                              Speed() const;
+    bool                       IsArmed() const;
+    bool                       CanColonize() const;
+    double                     Speed() const;
 
-    const FighterMap&                   Fighters() const;
+    const ConsumablesMap&      Fighters() const;
+    const ConsumablesMap&      Missiles() const;
 
-    virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
+    virtual UniverseObject*    Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double                      ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
+    virtual double             ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
     //@}
 
     /** \name Mutators */ //@{
-    void                                SetFleetID(int fleet_id);                           ///< sets the ID of the fleet the ship resides in
-    virtual void                        MoveTo(double x, double y);
+    void                       SetFleetID(int fleet_id);                           ///< sets the ID of the fleet the ship resides in
 
-    virtual void                        MovementPhase();
-    virtual void                        PopGrowthProductionResearchPhase();
+    void                       Resupply();
+
+    void                       AddFighters(const std::string& part_name, std::size_t n);
+    void                       RemoveFighters(const std::string& part_name, std::size_t n);
+    void                       RemoveMissiles(const std::string& part_name, std::size_t n);
+
+    virtual void               MoveTo(double x, double y);
+
+    virtual void               MovementPhase();
+    virtual void               PopGrowthProductionResearchPhase();
     //@}
 
 private:
     int m_design_id;
     int m_fleet_id;
-    FighterMap m_fighters;
+    ConsumablesMap m_fighters;
+    ConsumablesMap m_missiles;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -66,9 +75,9 @@ void Ship::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(m_design_id)
-        & BOOST_SERIALIZATION_NVP(m_fleet_id);
+        & BOOST_SERIALIZATION_NVP(m_fleet_id)
+        & BOOST_SERIALIZATION_NVP(m_fighters)
+        & BOOST_SERIALIZATION_NVP(m_missiles);
 }
 
 #endif // _Ship_h_
-
-

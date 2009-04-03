@@ -114,7 +114,6 @@ private:
 
     ProximityDBToken* m_proximity_token;
     bool m_leader;
-    FighterStats m_stats;
     std::string m_part_name;
     int m_empire_id;
     int m_id;
@@ -138,6 +137,9 @@ private:
 
     PathingEngine* m_pathing_engine;
 
+    // not serialized
+    mutable const FighterStats* m_stats;
+
     // TODO: Temporary only!
     bool m_instrument;
     FighterMission::Type m_last_mission;
@@ -152,7 +154,6 @@ private:
             ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
                 & BOOST_SERIALIZATION_NVP(m_proximity_token)
                 & BOOST_SERIALIZATION_NVP(m_leader)
-                & BOOST_SERIALIZATION_NVP(m_stats)
                 & BOOST_SERIALIZATION_NVP(m_part_name)
                 & BOOST_SERIALIZATION_NVP(m_empire_id)
                 & BOOST_SERIALIZATION_NVP(m_id)
