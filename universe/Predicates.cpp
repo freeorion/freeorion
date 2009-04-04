@@ -52,7 +52,7 @@ UniverseObject* UniverseObjectVisitor::Visit(System* obj) const
 StationaryFleetVisitor::~StationaryFleetVisitor()
 {}
 
-StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = -1*/) :
+StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
 {
 }
@@ -61,7 +61,7 @@ UniverseObject* StationaryFleetVisitor::Visit(Fleet* obj) const
 {
     if ((obj->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
          obj->FinalDestinationID() == obj->SystemID()) && 
-        (empire_id == -1 || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
+        (empire_id == ALL_EMPIRES || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
         return obj;
     return 0;
 }
@@ -72,7 +72,7 @@ UniverseObject* StationaryFleetVisitor::Visit(Fleet* obj) const
 OrderedMovingFleetVisitor::~OrderedMovingFleetVisitor()
 {}
 
-OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = -1*/) :
+OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
 {
 }
@@ -82,7 +82,7 @@ UniverseObject* OrderedMovingFleetVisitor::Visit(Fleet* obj) const
     if (obj->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
         obj->FinalDestinationID() != obj->SystemID() &&
         obj->SystemID() != UniverseObject::INVALID_OBJECT_ID && 
-        (empire_id == -1 || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
+        (empire_id == ALL_EMPIRES || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
         return obj;
     return 0;
 }
@@ -93,7 +93,7 @@ UniverseObject* OrderedMovingFleetVisitor::Visit(Fleet* obj) const
 MovingFleetVisitor::~MovingFleetVisitor()
 {}
 
-MovingFleetVisitor::MovingFleetVisitor(int empire/* = -1*/) :
+MovingFleetVisitor::MovingFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
 {
 }
@@ -102,7 +102,7 @@ UniverseObject* MovingFleetVisitor::Visit(Fleet* obj) const
 {
     if (obj->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
         obj->SystemID() == UniverseObject::INVALID_OBJECT_ID && 
-        (empire_id == -1 || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
+        (empire_id == ALL_EMPIRES || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
         return obj;
     return 0;
 }

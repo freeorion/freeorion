@@ -222,7 +222,7 @@ public:
     static const GG::Y FLEET_NAME_HT;
     static const GG::X STAT_ICON_WD;
 
-    FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet, int empire = -1, int system_id = -1, double x = 0.0, double y = 0.0);
+    FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet, int empire = ALL_EMPIRES, int system_id = UniverseObject::INVALID_OBJECT_ID, double x = 0.0, double y = 0.0);
 
     virtual void DropsAcceptable(DropsAcceptableIter first,
                                  DropsAcceptableIter last,
@@ -498,7 +498,7 @@ namespace {
 // FleetDataPanel
 ////////////////////////////////////////////////
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet,
-                               int empire/* = -1*/, int system_id/* = -1*/, double x/* = 0.0*/, double y/* = 0.0*/) :
+                               int empire/* = ALL_EMPIRES*/, int system_id/* = UniverseObject::INVALID_OBJECT_ID*/, double x/* = 0.0*/, double y/* = 0.0*/) :
     Control(GG::X0, GG::Y0, w, h, fleet ? GG::Flags<GG::WndFlag>() : GG::CLICKABLE),
     m_fleet(fleet),
     m_empire(empire),

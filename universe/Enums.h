@@ -554,10 +554,8 @@ MeterType ResourceToMeter(ResourceType type);
 ResourceType MeterToResource(MeterType type);
 
 
-/** the value used for the encoding empire when all data are desired, not just those visible to one empire */
-enum EncodingVisbility {
-    ALL_EMPIRES = -1
-};
+static const int ALL_EMPIRES = -1;
+
 
 /** degrees of visibility an Empire or UniverseObject can have for an UniverseObject.  determines how much information the empire
     gets about the (non)visible object. */

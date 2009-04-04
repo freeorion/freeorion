@@ -135,110 +135,141 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
     if (route.empty())
         return retval;                                      // nowhere to go => empty path
+    // if (route.size() == 1) do nothing special.  this fleet is probably on the starlane leading to
+    //                        its final destination.  normal looping to read destination should work fine
     if (route.size() == 2 && route.front() == route.back())
         return retval;                                      // nowhere to go => empty path
     if (this->Speed() < FLEET_MOVEMENT_EPSILON) {
-        retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_NEVER, this->SystemID()));
+        retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_NEVER, this->SystemID(), UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID));
         return retval;                                      // can't move => path is just this system with explanitory ETA
     }
 
-    double fuel = Fuel();
-    double max_fuel = MaxFuel();
+    double fuel =       Fuel();
+    double max_fuel =   MaxFuel();
 
     //Logger().debugStream() << "Fleet " << this->Name() << "MovePath fuel: " << fuel << " sys id: " << this->SystemID();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     std::set<int> fleet_supplied_systems;
     const std::set<int>& owners = this->Owners();
-    //Logger().debugStream()<< " ... owners.size: " << owners.size();
     for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
         //Logger().debugStream() << " ... ... owner: " << *it;
         const Empire* empire = Empires().Lookup(*it);
         std::set<int> empire_fleet_supplied_systems;
         if (empire)
             empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
-        //Logger().debugStream() << " ... ... supplied systems size: " << empire_fleet_supplied_systems.size();
         fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
     }
 
-    //Logger().debugStream() << " ... all supplyable systems: ";
-    //for (std::set<int>::const_iterator it = fleet_supplied_systems.begin(); it != fleet_supplied_systems.end(); ++it)
-    //    Logger().debugStream() << "sys id: " << *it;
 
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0 && this->GetSystem() && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
-        retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_OUT_OF_RANGE, this->SystemID()));
-        return retval;                                      // can't move => path is just this system with explanitory ETA
+        MovePathNode node(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
+                          this->SystemID(),
+                          UniverseObject::INVALID_OBJECT_ID,
+                          UniverseObject::INVALID_OBJECT_ID);
+        retval.push_back(node);
+        return retval;      // can't move => path is just this system with explanitory ETA
     }
 
 
-    // node for initial position of fleet
-    MovePathNode cur_pos(this->X(), this->Y(), true, 0, this->SystemID());
+    const Universe& universe = GetUniverse();
 
 
-    // get current system of fleet, if it is in a system, and next system reached in path
-    const System* cur_system = 0;
+    // get iterator pointing to System* on route that is the first after where this fleet is currently.
+    // if this fleet is in a system, the iterator will point to the system after the current in the route
+    // if this fleet is not in a system, the iterator will point to the first system in the route
     std::list<System*>::const_iterator route_it = route.begin();
-    if ((*route_it)->ID() == SystemID()) {
-        cur_system = *route_it;
-        ++route_it;
-    }
+    if ((*route_it)->ID() == SystemID())
+        ++route_it;     // first system in route is current system of this fleet.  skip to the next system
     if (route_it == route.end())
+        return retval;  // current system of this fleet is the *only* system in the route.  path is empty.
+
+
+    // get current, previous and next systems of fleet
+    const System* cur_system = this->GetSystem();                                   // may be NULL
+    const System* prev_system = universe.Object<System>(this->PreviousSystemID());  // may be NULL if this fleet is not moving or ordered to move
+    const System* next_system = *route_it;  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    if (!next_system) {
+        Logger().errorStream() << "Fleet::MovePath couldn't get next system for this fleet " << this->Name();
         return retval;
-    const System* next_system = *route_it;
-
-    MovePathNode next_sys_pos(next_system->X(), next_system->Y(), false, -1, next_system->SystemID());
+    }
 
 
-    double dist_to_next_system = std::sqrt((next_sys_pos.x - cur_pos.x)*(next_sys_pos.x - cur_pos.x) + (next_sys_pos.y - cur_pos.y)*(next_sys_pos.y - cur_pos.y));
-    double turn_dist_remaining = m_speed;                           // additional distance that can be travelled in current turn of fleet movement being simulated
-    bool new_turn = true;                                           // does / should the next update iteration be the start of a new turn?
+    const int       TOO_LONG =              100;        // limit on turns to simulate
+    int             turns_taken =           0;
+    double          turn_dist_remaining =   m_speed;    // additional distance that can be travelled in current turn of fleet movement being simulated
+    bool            new_turn =              true;       // does / should the next update iteration be the start of a new turn?
+    double          cur_x =                 this->X();
+    double          cur_y =                 this->Y();
+    double          next_x =                next_system->X();
+    double          next_y =                next_system->Y();
+    double          dist_to_next_system =   std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
 
 
-    // count turns to get to destination by simulating movement steps, accounting for fuel needs and resupply
-
-    const int TOO_LONG = 200;                                       // limit on turns to simulate
-    int turns_taken = 0;
+    // simulate fleet movement given known speed, starting position, fuel limit and systems on route
+    // need to populate retval with MovePathNodes that indicate the correct position, whether this
+    // fleet will end a turn at the node, the turns it will take to reach the node, and (when appliable)
+    // the current (if at a system), previous and next system IDs at which the fleet will be.  the
+    // previou and next system ids are needed to know what starlane a given node is located on, if any.
+    // nodes at systems don't need previous system ids to be valid, but should have next system ids
+    // valid so that when rendering starlanes using the returned move path, lines departing a system
+    // can be drawn on the correct side of the system icon
 
     while (turns_taken < TOO_LONG) {
-        cur_pos.eta = turns_taken;
-        cur_pos.turn_end = new_turn;
-        if (!cur_system)
-            cur_pos.object_id = INVALID_OBJECT_ID;
+        // previous loop iteration moved cur_x and cur_y along movement direction as far as the
+        // next System on the route, or as far as this fleet could move on the turn being 
+        // simulated, whichever is less.
+
+        // create MovePathNote from current position to represent this stop
+        MovePathNode cur_pos(cur_x, cur_y, new_turn, turns_taken,
+                             (cur_system ? cur_system->ID() : INVALID_OBJECT_ID),
+                             (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
+                             (next_system ? next_system->ID() : INVALID_OBJECT_ID));
 
         //if (cur_system) Logger().debugStream() << " ... at system: " << cur_system->Name();
 
+        // check if this MovePathNode is close enough to the next system on the route to qualify as
+        // at that system.  if it is at the next system, update the cur_pos MovePathNode accordingly
         // check for arrival at next system on path
-        if (dist_to_next_system < FLEET_MOVEMENT_EPSILON) {
-            // update current system and position, and next system and position
+        if (dist_to_next_system > FLEET_MOVEMENT_EPSILON) {
+
+            // not close enough to next system.  fleet will end turn
+            // add MovePathNode for current position to list of MovePathNode.
+            retval.push_back(cur_pos);
+
+        } else {
+
+            // at next system.  update current position and object id in cur_pos MovePathNode
             cur_system = next_system;
+            cur_x = cur_system->X();    // update positions to ensure no round-off-errors
+            cur_y = cur_system->Y();
+            cur_pos.x = cur_x;
+            cur_pos.y = cur_y;
+            cur_pos.object_id = cur_system->ID();
 
-            cur_pos.x = next_system->X();
-            cur_pos.y = next_system->Y();
-            // cur_pos.turn_end                     // set previously; don't want to modify here
-            // cur_pos.turns_taken                  // set previously; don't want to modify here
-            cur_pos.object_id = next_system->ID();
 
+            // add node to retval list of MovePathNodes
             ++route_it;
             if (route_it == route.end()) {
-                cur_pos.turn_end = true;
+                cur_pos.turn_end = true;    // if reached last System on route, need to make sure turn_end is set true since there won't be any more loop iterations
                 retval.push_back(cur_pos);
                 break;
             } else {
                 retval.push_back(cur_pos);
             }
 
-            next_system = *route_it;
-            next_sys_pos.x = next_system->X();
-            next_sys_pos.y = next_system->Y();
-            next_sys_pos.eta = ETA_UNKNOWN;         // will be set later
-            next_sys_pos.turn_end = false;          // may be set later
-            next_sys_pos.object_id = next_system->ID();
 
-            dist_to_next_system = std::sqrt((next_sys_pos.x - cur_pos.x)*(next_sys_pos.x - cur_pos.x) + (next_sys_pos.y - cur_pos.y)*(next_sys_pos.y - cur_pos.y));
-        } else {
-            retval.push_back(cur_pos);
+            // update next system on route and distance to it from current position
+            next_system = *route_it;
+            next_x = next_system->X();
+            next_y = next_system->Y();
+            dist_to_next_system = std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
+
+
+            // update previous system for future loop iterations
+            prev_system = cur_system;
         }
 
         //Logger().debugStream() << " ... dist to next system: " << dist_to_next_system;
@@ -290,20 +321,21 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
             //Logger().debugStream() << " ... fleet moving " << dist_travelled_this_step << " this iteration.  dist to next system: " << dist_to_next_system << " and turn_dist_remaining: " << turn_dist_remaining;
 
-            double x_dist = next_sys_pos.x - cur_pos.x;
-            double y_dist = next_sys_pos.y - cur_pos.y;
+            double x_dist = next_x - cur_x;
+            double y_dist = next_y - cur_y;
             // dist_to_next_system = std::sqrt(x_dist * x_dist + y_dist * y_dist);  // should already equal this distance, so don't need to recalculate
             double unit_vec_x = x_dist / dist_to_next_system;
             double unit_vec_y = y_dist / dist_to_next_system;
 
-            cur_pos.x += unit_vec_x*dist_travelled_this_step;
-            cur_pos.y += unit_vec_y*dist_travelled_this_step;
+            cur_x += unit_vec_x*dist_travelled_this_step;
+            cur_y += unit_vec_y*dist_travelled_this_step;
 
             turn_dist_remaining -= dist_travelled_this_step;
             dist_to_next_system -= dist_travelled_this_step;
 
-            if (dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON && dist_to_next_system >= FLEET_MOVEMENT_EPSILON)
-                cur_system = 0;
+            // if moved away any distance from a system, are no longer in that system
+            if (dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON)
+                cur_system = NULL;
         }
 
 
@@ -318,12 +350,18 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         }
     }
 
+    // done looping, but check for "early" termination due to too many iterations.  need to add an extra
+    // MovePathNode to indicate this is why the move path ends
     if (turns_taken >= TOO_LONG) {
         //Logger().debugStream() << " ... fleet path took too long or went out of range.";
         if (turns_taken == TOO_LONG)
             turns_taken = ETA_NEVER;
-        cur_pos.eta = turns_taken;
-        cur_pos.turn_end = true;
+
+        MovePathNode cur_pos(cur_x, cur_y, true, turns_taken,
+                             INVALID_OBJECT_ID,
+                             (prev_system ? prev_system->ID() : INVALID_OBJECT_ID),
+                             (next_system ? next_system->ID() : INVALID_OBJECT_ID));
+
         retval.push_back(cur_pos);
     }
 
@@ -738,6 +776,7 @@ void Fleet::MovementPhase()
                 //Logger().debugStream() << "... ... inserted fleet into system";
                 break;
             } else {
+                // TODO: Only consume fuel if fleet is NOT travelling along a starlane that its empire can send fleet supply along.
                 fuel_consumed += 1.0;                       // fleet will continue past this system this turn.  fuel is consumed to do so.
                 //Logger().debugStream() << "... ...fuel consumed";
             }

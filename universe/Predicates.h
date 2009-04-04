@@ -18,6 +18,8 @@ class System;
 
 #include <string>
 
+extern const int ALL_EMPIRES;
+
 /** a more efficient replacement for dynamic_cast that only works for UniverseObject and its subclasses */
 template <class T1, class T2>
 T1 universe_object_cast(T2 ptr);
@@ -58,7 +60,7 @@ struct UniverseObjectSubclassVisitor : UniverseObjectVisitor
     searches, rather than Universe ones. */
 struct StationaryFleetVisitor : UniverseObjectVisitor
 {
-    StationaryFleetVisitor(int empire = -1);
+    StationaryFleetVisitor(int empire = ALL_EMPIRES);
     virtual UniverseObject* Visit(Fleet* obj) const;
     virtual ~StationaryFleetVisitor();
     const int empire_id;
@@ -69,7 +71,7 @@ struct StationaryFleetVisitor : UniverseObjectVisitor
     searches, rather than Universe ones. */
 struct OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
-    OrderedMovingFleetVisitor(int empire = -1);
+    OrderedMovingFleetVisitor(int empire = ALL_EMPIRES);
     virtual UniverseObject* Visit(Fleet* obj) const;
     virtual ~OrderedMovingFleetVisitor();
     const int empire_id;
@@ -79,7 +81,7 @@ struct OrderedMovingFleetVisitor : UniverseObjectVisitor
     If the given empire is -1, all moving fleets will be returned. */
 struct MovingFleetVisitor : UniverseObjectVisitor
 {
-    MovingFleetVisitor(int empire = -1);
+    MovingFleetVisitor(int empire = ALL_EMPIRES);
     virtual UniverseObject* Visit(Fleet* obj) const;
     virtual ~MovingFleetVisitor();
     const int empire_id;
@@ -89,7 +91,7 @@ struct MovingFleetVisitor : UniverseObjectVisitor
 template <class T>
 struct OwnedVisitor : UniverseObjectVisitor
 {
-    OwnedVisitor(int empire = -1);
+    OwnedVisitor(int empire = ALL_EMPIRES);
     virtual T* Visit(T* obj) const;
     virtual ~OwnedVisitor() {} 
     const int empire_id;
@@ -99,7 +101,7 @@ struct OwnedVisitor : UniverseObjectVisitor
 template <class T>
 struct WhollyOwnedVisitor : UniverseObjectVisitor
 {
-    WhollyOwnedVisitor(int empire = -1);
+    WhollyOwnedVisitor(int empire = ALL_EMPIRES);
     virtual T* Visit(T* obj) const;
     virtual ~WhollyOwnedVisitor() {}
     const int empire_id;

@@ -264,7 +264,7 @@ public:
     /** HACK! This must be set to the encoding empire's id when serializing a Universe, so that only the relevant parts
         of the Universe are serialized.  The use of this global variable is done just so I don't have to rewrite any
         custom boost::serialization classes that implement empire-dependent visibility. */
-    static int s_encoding_empire;
+    static int                  s_encoding_empire;
 
 private:
     typedef std::vector< std::vector<double> > DistanceMatrix;

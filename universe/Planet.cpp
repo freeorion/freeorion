@@ -462,7 +462,7 @@ void Planet::Conquer(int conquerer)
         UniverseObject* obj = *it;
 
         // get current owner of object
-        int owner = -1;
+        int owner = ALL_EMPIRES;
         const std::set<int>& owners = obj->Owners();
         if (!owners.empty())
             owner = *(owners.begin());

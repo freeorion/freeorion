@@ -472,7 +472,7 @@ void CombatShip::UpdateMissionQueue()
             OpenSteer::Vec3 from_target_vec = position() - target_position;
             float from_target_length = from_target_vec.length();
             from_target_vec /= from_target_length;
-            const float WEAPON_RANGE_FACTOR = 0.9;
+            const float WEAPON_RANGE_FACTOR = 0.9f;
             float distance =
                 std::min<float>(MaxWeaponRange() * WEAPON_RANGE_FACTOR, from_target_length);
             if (m_mission_queue.back().m_type == ShipMission::ATTACK_THIS_STANDOFF)

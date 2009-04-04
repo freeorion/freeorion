@@ -64,7 +64,7 @@ namespace {
         if (!system || !ship)
             return 0;
 
-        int owner_empire_id = -1;
+        int owner_empire_id = ALL_EMPIRES;
         const std::set<int>& owners = ship->Owners();
         if (!owners.empty())
             owner_empire_id = *(owners.begin());
@@ -93,7 +93,7 @@ namespace {
         if (!ship)
             return 0;
 
-        int owner_empire_id = -1;
+        int owner_empire_id = ALL_EMPIRES;
         const std::set<int>& owners = ship->Owners();
         if (!owners.empty())
             owner_empire_id = *(owners.begin());
@@ -146,7 +146,7 @@ namespace {
 
         // recalculate route from the shortest path between first system on path and final destination
 
-        int owner = -1;
+        int owner = ALL_EMPIRES;
         const std::set<int>& owners = fleet->Owners();
         if (!owners.empty())
             owner = *owners.begin();

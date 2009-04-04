@@ -164,6 +164,43 @@ namespace {
         double mid_length = std::sqrt(mid_deltaX*mid_deltaX + mid_deltaY*mid_deltaY);
         return mid_length / full_length;
     }
+
+    /* Returns apparent map X and Y position of an object at universe position \a X and \a Y for an object
+     * that is located on a starlane between systems with ids \a lane_start_sys_id and \a lane_end_sys_id 
+     * The apparent position of an object depends on its actual position, the actual positions of the systems
+     * at the ends of the lane, and the apparent positions of the ends of the lanes.  The apparent position of
+     * objects on the lane is compressed into the space between the apparent ends of the lane, but is proportional
+     * to the distance of the actual position along the lane. */
+    std::pair<double, double> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
+        std::pair<int, int> lane = UnorderedIntPair(lane_start_sys_id, lane_end_sys_id);
+
+        // get endpoints of lane in universe.  may be different because on-screen lanes are drawn between
+        // system circles, not system centres
+        const Universe& universe = GetUniverse();
+        const UniverseObject* prev = universe.Object(lane.first);
+        const UniverseObject* next = universe.Object(lane.second);
+        if (!next || !prev) {
+            Logger().errorStream() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
+            return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        }
+
+        LaneEndpoints universe_lane_endpoints;
+        universe_lane_endpoints.X1 = prev->X();
+        universe_lane_endpoints.Y1 = prev->Y();
+        universe_lane_endpoints.X2 = next->X();
+        universe_lane_endpoints.Y2 = next->Y();
+
+
+        // get fractional distance along lane that fleet's universe position is
+        double dist_along_lane = FractionalDistanceBetweenPoints(prev->X(), prev->Y(), X, Y, next->X(), next->Y());
+
+
+        // get point on lane between lane endpoints that is the same fractional distance as fleet's actual location is between system locations
+        double buttonX = screen_lane_endpoints.X1 + (screen_lane_endpoints.X2 - screen_lane_endpoints.X1) * dist_along_lane;
+        double buttonY = screen_lane_endpoints.Y1 + (screen_lane_endpoints.Y2 - screen_lane_endpoints.Y1) * dist_along_lane;
+
+        return std::make_pair(buttonX, buttonY);
+    }
 }
 
 
@@ -294,36 +331,23 @@ void MapWndPopup::Close()
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData
 ////////////////////////////////////////////////
-MapWnd::MovementLineData::MovementLineData() : 
-    m_colour(GG::CLR_ZERO), 
-    m_path(),
-    m_x(UniverseObject::INVALID_POSITION),
-    m_y(UniverseObject::INVALID_POSITION)
+MapWnd::MovementLineData::MovementLineData() :
+    previous_system_id(UniverseObject::INVALID_OBJECT_ID),
+    colour(GG::CLR_ZERO), 
+    path()
 {}
 
-MapWnd::MovementLineData::MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour/* = GG::CLR_WHITE*/) :
-    m_colour(colour),
-    m_path(path),
-    m_x(x),
-    m_y(y)
+MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_, int previous_system_id_, GG::Clr colour_/* = GG::CLR_WHITE*/) :
+    previous_system_id(previous_system_id_),
+    colour(colour_),
+    path(path_)
 {}
-
-GG::Clr MapWnd::MovementLineData::Colour() const
-{ return m_colour; }
-
-const std::list<MovePathNode>& MapWnd::MovementLineData::Path() const
-{ return m_path; }
-
-std::pair<double, double> MapWnd::MovementLineData::Start() const
-{
-    return std::make_pair(m_x, m_y);
-}
 
 
 //////////////////////////////////
-// MapWnd::LaneEndpoints
+//LaneEndpoints
 //////////////////////////////////
-MapWnd::LaneEndpoints::LaneEndpoints() :
+LaneEndpoints::LaneEndpoints() :
     X1(UniverseObject::INVALID_POSITION),
     Y1(UniverseObject::INVALID_POSITION),
     X2(UniverseObject::INVALID_POSITION),
@@ -1356,7 +1380,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-MapWnd::LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)
+LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)
 {
     LaneEndpoints retval;
 
@@ -1648,7 +1672,16 @@ void MapWnd::SetFleetMovementLine(const Fleet* fleet)
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed a null fleet pointer";
         return;
     }
-    m_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), fleet->MovePath());
+
+    // get colour: empire colour, or white if no single empire applicable
+    GG::Clr line_colour = GG::CLR_WHITE;
+    const std::set<int>& owners = fleet->Owners();
+    if (owners.size() == 1)
+        if (Empire* empire = Empires().Lookup(*owners.begin()))
+            line_colour = empire->Color();
+
+    // create and store line
+    m_fleet_lines[fleet] = MovementLineData(fleet->MovePath(), fleet->PreviousSystemID(), line_colour);
 }
 
 void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route)
@@ -1671,12 +1704,15 @@ void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<S
         return;
     }
 
-    // get colour and create line
+    // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
     const std::set<int>& owners = fleet->Owners();
     if (owners.size() == 1)
-        line_colour = Empires().Lookup(*owners.begin())->Color();
-    m_projected_fleet_lines[fleet] = MovementLineData(fleet->X(), fleet->Y(), path, line_colour);
+        if (Empire* empire = Empires().Lookup(*owners.begin()))
+            line_colour = empire->Color();
+
+    // create and store line
+    m_projected_fleet_lines[fleet] = MovementLineData(path, fleet->PreviousSystemID(), line_colour);
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route)
@@ -1809,54 +1845,41 @@ void MapWnd::DoFleetButtonsLayout()
         const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
         const Fleet* fleet = NULL;
 
+        // skip button if it has no fleets (somehow...?) or if the first fleet in the button is NULL
         if (fb->Fleets().empty() || !(fleet = *(fb->Fleets().begin()))) {
             Logger().errorStream() << "DoFleetButtonsLayout couldn't get first fleet for button";
             continue;
         }
 
+        std::pair<double, double> button_pos = MovingFleetMapPositionOnLane(fleet);
+        if (button_pos == std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION))
+            continue;   // skip positioning flees for which problems occurred...
 
-        // get endpoints of lane on screen
-        int sys1_id = fleet->NextSystemID(), sys2_id = fleet->PreviousSystemID();
-        std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
-
-        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
-        if (endpoints_it == m_starlane_endpoints.end()) {
-            Logger().errorStream() << "DoFleetButtonsLayout couldn't find lane for fleet";
-            continue;
-        }
-        const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
-
-
-        // get endpoints of lane in universe.  may be different because on-screen lanes are drawn between
-        // system circles, not system centres
-        const UniverseObject* prev = universe.Object(lane.first);
-        const UniverseObject* next = universe.Object(lane.second);
-        if (!next || !prev) {
-            Logger().errorStream() << "DoFleetButtonsLayout couldn't find next system " << lane.first << " or prev system " << lane.second;
-            continue;
-        }
-
-        LaneEndpoints universe_lane_endpoints;
-        universe_lane_endpoints.X1 = prev->X();
-        universe_lane_endpoints.Y1 = prev->Y();
-        universe_lane_endpoints.X2 = next->X();
-        universe_lane_endpoints.Y2 = next->Y();
-
-
-        // get fractional distance along lane that fleet's universe position is
-        double dist_along_lane = FractionalDistanceBetweenPoints(prev->X(), prev->Y(), fleet->X(), fleet->Y(), next->X(), next->Y());
-
-
-        // get point on lane between lane endpoints that is the same fractional distance as fleet's actual location is between system locations
-        double buttonX = screen_lane_endpoints.X1 + (screen_lane_endpoints.X2 - screen_lane_endpoints.X1) * dist_along_lane;
-        double buttonY = screen_lane_endpoints.Y1 + (screen_lane_endpoints.Y2 - screen_lane_endpoints.Y1) * dist_along_lane;
-
-
-        GG::Pt button_ul(buttonX*ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
-                         buttonY*ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+        // position button
+        GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
+                         button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
 
         fb->MoveTo(button_ul);
     }
+}
+
+std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const
+{
+    // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
+    int sys1_id = fleet->NextSystemID(), sys2_id = fleet->PreviousSystemID();
+    std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
+
+    // get apparent positions of endpoints for this lane that have been pre-calculated
+    std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
+    if (endpoints_it == m_starlane_endpoints.end()) {
+        Logger().errorStream() << "MovingFleetMapPositionOnLane couldn't find lane for fleet";
+        // skip current fleetbutton if there are no endpoints available
+        return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+    }
+    const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
+
+    // return apparent position of fleet on starlane
+    return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
 }
 
 void MapWnd::RefreshFleetButtons()
@@ -2464,45 +2487,74 @@ void MapWnd::RenderFleetMovementLines()
 
 void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
 {
-    if (move_line.Path().empty() || move_line.Path().size() == 1)
+    const std::list<MovePathNode>& path = move_line.path;
+    if (path.empty() || path.size() == 1)   // note: if between two systems on a starlane, and next system is last on path, path will contain nodes: one for the
+        return; // no line to show
+
+    const Universe& universe = GetUniverse();
+
+    //std::cout << "move_line path: ";
+    //for (std::list<MovePathNode>::const_iterator it = path.begin(); it != path.end(); ++it)
+    //    std::cout << it->object_id << " (" << it->x << ", " << it->y << "),  ";
+    //std::cout << std::endl;
+
+
+    // Get starlane along which current segment of movement line is travelling.  Use this to look
+    // up lane in m_starlane_endpoints.  Pass systems at end of lane, node position and starlane's endpoints
+    // to ScreenPosOnStarane to get apparent screen node position.
+    // Restart line strip when passing through a system.  need to transform the system's
+    // move path node's position twice: once for incoming starlane and once for outgoing starlane.
+
+
+    // set lane_start_obj to be the object at the start of the current lane the path is traversing.  
+    // This is move_line's previous_system_id.
+    const UniverseObject* lane_start_obj = universe.Object(move_line.previous_system_id);
+    if (!lane_start_obj && path.begin()->object_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "RenderMovementLine couldn't get an object at the start of the move path / lane";
         return;
+    }
+    // lane_end_obj is the object at which the lane being traversed ends.  default this to be...
 
-    // get starting vertex
-    std::pair<double, double> start = move_line.Start();
-    double prev_vertex_x = start.first, prev_vertex_y = start.second;
+    // TODO: Consider adding next_system_id and previous_system_id to MovePathNode and removing move_line.previous_system_id
+    // then: populate new MovePathNode fields while calculating a fleet's path.
 
-    bool started = false;
-
-    // draw lines connecting starting to second vertex, second to third, etc, 
-    std::list<MovePathNode>::const_iterator path_it = move_line.Path().begin();
-    ++path_it;
-    for (; path_it != move_line.Path().end(); ++path_it) {
+    // draw lines connecting first to second vertex, second to third, etc,
+    bool started = false;   // have any lines been drawn? (more specifically, has glBegin been called in the loop?)
+    const MovePathNode& first_node = *path.begin();
+    double prev_vertex_x = first_node.x, prev_vertex_y = first_node.y;
+    for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
         // if this vertex can be reached, add vertices for line from previous to this vertex
         if (path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
             break;  // don't render additional legs of path that aren't reachable
 
+        // get next node position
         double cur_vertex_x = path_it->x, cur_vertex_y = path_it->y;
 
         // skip zero-length line segments since they seem to cause problems...
+        // this also skips to the second node after fetching the first node on the first pass, since
+        // the first node has the same position as prev_vertex_? before the loop starts
         if (cur_vertex_x == prev_vertex_x && cur_vertex_y == prev_vertex_y)
             continue;
 
+        // does glBegin need to be called for this line?
         if (!started) {
             // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
             // when the begining of a line segment starts offscreen
             glBegin(GL_LINES);
-            glColor(move_line.Colour());
+            glColor(move_line.colour);
             started = true;
         }
 
+        // add nodes for this line segment
         glVertex2d(prev_vertex_x,   prev_vertex_y);
         glVertex2d(cur_vertex_x,    cur_vertex_y);
 
-        // and update previous vertex for next iteration
+        // update previous vertex position for next iteration
         prev_vertex_x = cur_vertex_x;
         prev_vertex_y = cur_vertex_y;
     }
 
+    // end line drawing
     if (started)
         glEnd();
 }
@@ -2839,12 +2891,28 @@ void MapWnd::Sanitize()
     m_selected_fleets.clear();
 
     m_starlane_endpoints.clear();
+
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
+        std::set<FleetButton*>& set = it->second;
+        for (std::set<FleetButton*>::iterator set_it = set.begin(); set_it != set.end(); ++set_it)
+            delete *set_it;
+        set.clear();
+    }
     m_stationary_fleet_buttons.clear();
+
+    for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_departing_fleet_buttons.begin(); it != m_departing_fleet_buttons.end(); ++it) {
+        std::set<FleetButton*>& set = it->second;
+        for (std::set<FleetButton*>::iterator set_it = set.begin(); set_it != set.end(); ++set_it)
+            delete *set_it;
+        set.clear();
+    }
     m_departing_fleet_buttons.clear();
+
+    for (std::set<FleetButton*>::iterator set_it = m_moving_fleet_buttons.begin(); set_it != m_moving_fleet_buttons.end(); ++set_it)
+        delete *set_it;
     m_moving_fleet_buttons.clear();
-    for(std::map<const Fleet*, FleetButton*>::iterator it = m_fleet_buttons.begin(); it != m_fleet_buttons.end(); ++it)
-        delete it->second;
-    m_fleet_buttons.clear();
+
+    m_fleet_buttons.clear();    // contains duplicate pointers of those in moving, departing and stationary set / maps, so don't need to delete again
 
     for (std::map<int, boost::signals::connection>::iterator it = m_fleet_state_change_signals.begin(); it != m_fleet_state_change_signals.end(); ++it)
         it->second.disconnect();

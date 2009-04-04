@@ -35,6 +35,15 @@ namespace GG {
     class Slider;
 }
 
+/* Start and end points in universe coordinates as seen in MapWnd.  Lanes are drawn to
+ * and from a circle surrounding system icons, note the centre of the system icon. The
+ * location of these start ane endpoints is used for rendering the starlane and for
+ * positioning fleet buttons that are moving along the starlane. */
+struct LaneEndpoints {
+    LaneEndpoints();
+    double X1, Y1, X2, Y2;
+};
+
 
 /** This class is a window that graphically displays everything in the universe */
 class MapWnd : public GG::Wnd
@@ -148,30 +157,16 @@ private:
     void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                          ///< re-estimates meter values of specified objects
     void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
 
-    /** contains all the information necessary to render a single fleet movement line on the main map */
+    /** contains information necessary to render a single fleet movement line on the main map */
     struct MovementLineData
     {
         MovementLineData();
-        MovementLineData(double x, double y, const std::list<MovePathNode>& path, GG::Clr colour = GG::CLR_WHITE);
-
-        GG::Clr Colour() const;                      ///< colour in which to draw line
-        const std::list<MovePathNode>& Path() const; ///< path to draw
-        std::pair<double, double> Start() const;     ///< universe x and y at which to originate line (start point isn't in the path)
-
-    private:
-        GG::Clr m_colour;
-        std::list<MovePathNode> m_path;
-        double m_x, m_y;                ///< universe x and y at which to originate line (start point isn't in the path)
+        MovementLineData(const std::list<MovePathNode>& path_, int previous_system_id_, GG::Clr colour_ = GG::CLR_WHITE);
+        int                     previous_system_id;
+        GG::Clr                 colour;
+        std::list<MovePathNode> path;
     };
 
-    /* Start and end points in universe coordinates as seen in MapWnd.  Lanes are drawn to
-     * and from a circle surrounding system icons, note the centre of the system icon. The
-     * location of these start ane endpoints is used for rendering the starlane and for
-     * positioning fleet buttons that are moving along the starlane. */
-    struct LaneEndpoints {
-        LaneEndpoints();
-        double X1, Y1, X2, Y2;
-    };
 
     class FleetETAMapIndicator;
     class MapScaleLine;
@@ -183,7 +178,10 @@ private:
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetAddedOrRemoved(Fleet& fleet);
+
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
+    std::pair<double, double>   MovingFleetMapPositionOnLane(const Fleet* fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
+
     void            DoSystemIconsLayout();                      //!< does layout of system icons
 
     void            RefreshFleetSignals();                      //!< disconnects and reconnects all fleet change signals

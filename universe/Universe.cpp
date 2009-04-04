@@ -391,10 +391,10 @@ Universe::EffectAccountingInfo::EffectAccountingInfo() :
 // class Universe
 /////////////////////////////////////////////
 // static(s)
-const bool Universe::ALL_OBJECTS_VISIBLE = false;
-double Universe::s_universe_width = 1000.0;
-bool Universe::s_inhibit_universe_object_signals = false;
-int Universe::s_encoding_empire = ALL_EMPIRES;
+const bool  Universe::ALL_OBJECTS_VISIBLE = false;
+double      Universe::s_universe_width = 1000.0;
+bool        Universe::s_inhibit_universe_object_signals = false;
+int         Universe::s_encoding_empire = ALL_EMPIRES;
 
 Universe::Universe() :
     m_graph_impl(new GraphImpl),
