@@ -191,14 +191,19 @@ FleetUIManager& FleetUIManager::GetFleetUIManager()
 
 void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd)
 {
-    if (fleet_wnd == m_active_fleet_wnd)
+    bool active_wnd_affected = false;
+    if (fleet_wnd == m_active_fleet_wnd) {
         m_active_fleet_wnd = 0;
+        active_wnd_affected = true;
+    }
     std::vector<FleetDetailWnd*> vec(m_fleet_and_detail_wnds[fleet_wnd].begin(), m_fleet_and_detail_wnds[fleet_wnd].end());
     for (std::size_t i = 0; i < vec.size(); ++i) {
         delete vec[i];
     }
     m_fleet_wnds.erase(fleet_wnd);
     m_fleet_and_detail_wnds.erase(fleet_wnd);
+    if (active_wnd_affected)
+        ActiveFleetWndChangedSignal();  // let anything that cares know the active fleetwnd just closed
 }
 
 void FleetUIManager::FleetDetailWndClosing(FleetWnd* fleet_wnd, FleetDetailWnd* fleet_detail_wnd)
