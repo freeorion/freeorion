@@ -554,7 +554,7 @@ MeterType ResourceToMeter(ResourceType type);
 ResourceType MeterToResource(MeterType type);
 
 
-static const int ALL_EMPIRES = -1;
+extern const int ALL_EMPIRES;
 
 
 /** degrees of visibility an Empire or UniverseObject can have for an UniverseObject.  determines how much information the empire
