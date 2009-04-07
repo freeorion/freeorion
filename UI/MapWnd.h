@@ -157,13 +157,18 @@ private:
     void            UpdateMeterEstimates(const std::vector<int>& objects_vec);                          ///< re-estimates meter values of specified objects
     void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
 
-    /** contains information necessary to render a single fleet movement line on the main map */
-    struct MovementLineData
-    {
+    /** contains information necessary to render a single fleet movement line on the main map. also
+      * contains cached infromation */
+    struct MovementLineData {
+        struct Vertex;  // cached pre-transformed line rendering and ETA marker placement information
         MovementLineData();
-        MovementLineData(const std::list<MovePathNode>& path_, GG::Clr colour_ = GG::CLR_WHITE);
-        GG::Clr                 colour;
-        std::list<MovePathNode> path;
+        MovementLineData(const std::list<MovePathNode>& path_,
+                         const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
+                         GG::Clr colour_ = GG::CLR_WHITE);
+
+        std::list<MovePathNode>             path;       // raw path data from which line rendering is determined
+        GG::Clr                             colour;     // colour of line
+        std::vector<Vertex>                 vertices;
     };
 
 
