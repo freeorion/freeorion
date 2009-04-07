@@ -338,7 +338,8 @@ CombatData::CombatData(System* system) :
 
     for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
         m_combat_universe[it->second] = GetUniverse().Object(it->second);
-        if (const Planet* planet = universe_object_cast<Planet*>(m_combat_universe[it->second])) {
+        if (const Planet* planet =
+            universe_object_cast<Planet*>(m_combat_universe[it->second])) {
             double orbit_radius = OrbitalRadius(it->first);
             if (planet->Type() == PT_ASTEROIDS) {
                 m_pathing_engine.AddObstacle(
@@ -346,10 +347,19 @@ CombatData::CombatData(System* system) :
             } else {
                 int game_turn = CurrentTurn();
                 double rads = planet->OrbitalPositionOnTurn(game_turn);
-                Vec3 position(orbit_radius * std::cos(rads), orbit_radius * std::sin(rads), 0);
+                Vec3 position(orbit_radius * std::cos(rads),
+                              orbit_radius * std::sin(rads),
+                              0);
                 m_pathing_engine.AddObstacle(
                     new SphereObstacle(PlanetRadius(planet->Size()), position));
             }
+        } else if (Ship* ship =
+                   universe_object_cast<Ship*>(m_combat_universe[it->second])) {
+            CombatShipPtr combat_ship(
+                new CombatShip(*ship->Owners().begin(), ship,
+                               OpenSteer::Vec3(), OpenSteer::Vec3(),
+                               m_pathing_engine));
+            m_pathing_engine.AddObject(combat_ship);
         }
     }
 }

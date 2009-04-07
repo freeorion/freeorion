@@ -778,7 +778,8 @@ ResolvingCombat::ResolvingCombat(my_context c) :
 
     context<WaitingForTurnEnd>().m_combat_system = 0;
 
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+    for (ServerNetworking::const_established_iterator it =
+             server.m_networking.established_begin();
          it != server.m_networking.established_end();
          ++it) {
         int player_id = (*it)->ID();
@@ -790,8 +791,7 @@ ResolvingCombat::ResolvingCombat(my_context c) :
                 ServerCombatStartMessage(
                     player_id,
                     empire_id,
-                    server.m_current_combat->m_system,
-                    server.m_current_combat->m_combat_universe));
+                    *server.m_current_combat));
         }
     }
 }

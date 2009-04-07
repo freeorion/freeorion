@@ -84,9 +84,17 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
         {
+            std::set<CombatObjectPtr> objects;
+            for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
+                 it != m_objects.end();
+                 ++it) {
+                // TODO: only copy the objects that are visible from m_objects into objects
+                objects.insert(*it);
+            }
+
             ar  & BOOST_SERIALIZATION_NVP(m_next_fighter_id)
                 & BOOST_SERIALIZATION_NVP(m_update_number)
-                & BOOST_SERIALIZATION_NVP(m_objects)
+                & BOOST_SERIALIZATION_NVP(objects)
                 & BOOST_SERIALIZATION_NVP(m_fighter_formations)
                 & BOOST_SERIALIZATION_NVP(m_attackees)
                 & BOOST_SERIALIZATION_NVP(m_proximity_database)
@@ -104,8 +112,7 @@ extern const unsigned int NONFIGHTER_FLAGS;
 inline unsigned int EmpireFlag(int empire_id)
 { return 1 << static_cast<unsigned int>(empire_id); }
 
-inline unsigned int NotEmpireFlag(int empire_id)
-{ return ~(1 << static_cast<unsigned int>(empire_id)); }
+unsigned int EnemyOfEmpireFlags(int empire_id);
 
 
 // implementations
@@ -115,8 +122,8 @@ CombatFighterFormationPtr
 PathingEngine::CreateFighterFormation(CombatShipPtr base, Iter first, Iter last)
 {
     assert(first != last);
-    assert(base->GetShip()->Owners().size() == 1u);
-    int empire_id = *base->GetShip()->Owners().begin();
+    assert(base->GetShip().Owners().size() == 1u);
+    int empire_id = *base->GetShip().Owners().begin();
 
     CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
     formation->SetLeader(

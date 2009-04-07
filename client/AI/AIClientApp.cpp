@@ -177,12 +177,15 @@ void AIClientApp::HandleMessage(const Message& msg)
     case Message::TURN_PROGRESS:
         break;
 
-    case Message::COMBAT_START:
-        ExtractMessageData(msg, m_system, m_combat_universe);
+    case Message::COMBAT_START: {
+        CombatData combat_data;
+        ExtractMessageData(msg, combat_data);
         // TODO: Do we need to do anything here, like decide on overall goals
         // for this combat, so we don't have to figure such things out each
         // turn?
+        m_AI->GenerateCombatSetupOrders(combat_data);
         break;
+    }
 
     case Message::COMBAT_TURN_UPDATE: {
         CombatData combat_data;
@@ -217,6 +220,3 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
     //Logger().debugStream() << "AIClientApp::HandleMessage done";
 }
-
-void AIClientApp::StartTurn()
-{ ClientApp::StartTurn(); }

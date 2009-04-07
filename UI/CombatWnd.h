@@ -2,6 +2,8 @@
 #ifndef _CombatWnd_h_
 #define _CombatWnd_h_
 
+#include "../combat/CombatEventListener.h"
+
 #include <OgreFrameListener.h>
 #include <OgreManualObject.h>
 #include <OgreMath.h>
@@ -9,7 +11,6 @@
 
 #include <GG/Wnd.h>
 
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/tuple/tuple.hpp>
 
 
@@ -27,11 +28,13 @@ namespace GG {
     class Texture;
 }
 
+class CombatData;
 class System;
 class FPSIndicator;
 class UniverseObject;
 
 class bt32BitAxisSweep3;
+class btBvhTriangleMeshShape;
 class btCollisionDispatcher;
 class btCollisionWorld;
 class btCollisionShape;
@@ -46,7 +49,8 @@ namespace Forests {
 
 class CombatWnd :
     public GG::Wnd,
-    public Ogre::FrameListener
+    public Ogre::FrameListener,
+    public CombatEventListener
 {
 public:
     CombatWnd (Ogre::SceneManager* scene_manager,
@@ -54,8 +58,7 @@ public:
                Ogre::Viewport* viewport);
     virtual ~CombatWnd();
 
-    void InitCombat(System* system,
-                    const std::map<int, UniverseObject*>& combat_universe);
+    void InitCombat(CombatData& combat_data);
     void HandlePlayerChatMessage(const std::string& msg);
 
     virtual void Render();
@@ -77,6 +80,21 @@ public:
     virtual void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+
+    virtual void ShipPlaced(const CombatShipPtr &ship);
+    virtual void ShipFired(const CombatShipPtr &ship,
+                           const CombatObjectPtr &target,
+                           const std::string& part_name);
+    virtual void ShipDestroyed(const CombatShipPtr &ship);
+    virtual void ShipEnteredStarlane(const CombatShipPtr &ship);
+    virtual void FighterLaunched(const CombatFighterPtr &fighter);
+    virtual void FighterFired(const CombatFighterPtr &fighter,
+                              const CombatObjectPtr &target);
+    virtual void FighterDestroyed(const CombatFighterPtr &fighter);
+    virtual void FighterDocked(const CombatFighterPtr &fighter);
+    virtual void MissileLaunched(const MissilePtr &missile);
+    virtual void MissileExploded(const MissilePtr &missile);
+    virtual void MissileRemoved(const MissilePtr &missile);
 
 private:
     struct SelectedObject
@@ -108,7 +126,8 @@ private:
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
     void DeselectAll();
-    void AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y);
+    void AddShip(const CombatShipPtr& combat_ship);
+    void RemoveShip(const CombatShipPtr& combat_ship);
 
     // Keyboard accelerator handlers, etc.  See MapWnd for implementation
     // notes.
@@ -137,8 +156,7 @@ private:
     Ogre::Animation* m_camera_animation;
     Ogre::AnimationState* m_camera_animation_state;
 
-    System* m_system;
-    std::map<int, UniverseObject*> m_combat_universe;
+    CombatData* m_combat_data;
 
     Ogre::Real m_distance_to_look_at_point;
     Ogre::Radian m_pitch;
@@ -158,12 +176,33 @@ private:
 
     // The scene nodes representing planets in the system and the materials
     // created to show them, indexed by orbit number.
-    std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > > m_planet_assets;
+    std::map<
+        int,
+        std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> >
+    > m_planet_assets;
+
     // The scene nodes representing starlane entrance points in the system.
     std::set<Ogre::SceneNode*> m_starlane_entrance_point_nodes;
+
     // The scene nodes representing ships in the system and their associated
     // collision meshes, indexed by ship object id.
-    std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> > m_ship_assets;
+    struct ShipData
+    {
+        ShipData();
+        ShipData(Ogre::SceneNode* node,
+                 Ogre::MaterialPtr material,
+                 btTriangleMesh* bt_mesh,
+                 btBvhTriangleMeshShape* bt_shape,
+                 btCollisionObject* bt_object);
+
+        Ogre::SceneNode* m_node;
+        Ogre::MaterialPtr m_material;
+        btTriangleMesh* m_bt_mesh;
+        btBvhTriangleMeshShape* m_bt_shape;
+        btCollisionObject* m_bt_object;
+    };
+    std::map<int, ShipData> m_ship_assets;
+
     std::vector<Ogre::TexturePtr> m_city_lights_textures;
 
     // The collision detection system
@@ -171,8 +210,8 @@ private:
     btCollisionDispatcher* m_collision_dispatcher;
     bt32BitAxisSweep3* m_collision_broadphase;
     btCollisionWorld* m_collision_world;
-    boost::ptr_vector<btCollisionShape> m_collision_shapes;
-    boost::ptr_vector<btCollisionObject> m_collision_objects;
+    std::set<btCollisionShape*> m_collision_shapes;
+    std::set<btCollisionObject*> m_collision_objects;
 
     Forests::PagedGeometry* m_paged_geometry;
     Forests::TreeLoader3D* m_paged_geometry_loader;

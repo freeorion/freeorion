@@ -46,6 +46,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void            StartTurn();         ///< encodes order sets and sends turn orders message
+    virtual void            SendCombatSetup();   ///< encodes and sends combat setup orders message
     virtual void            StartCombatTurn();   ///< encodes combat order sets and sends combat turn orders message
 
     Universe&               GetUniverse();       ///< returns client's local copy of Universe

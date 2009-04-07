@@ -84,6 +84,11 @@ void ClientApp::StartTurn()
     m_orders.Reset();
 }
 
+void ClientApp::SendCombatSetup()
+{
+    // TODO
+}
+
 void ClientApp::StartCombatTurn()
 {
     m_networking.SendMessage(CombatTurnOrdersMessage(m_player_id, m_combat_orders));

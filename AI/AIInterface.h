@@ -19,6 +19,7 @@ public:
     virtual ~AIBase();
 
     virtual void                GenerateOrders();                                           ///< Called when the server has sent a new turn update.  AI should review the new gamestate and send orders for this turn.
+    virtual void                GenerateCombatSetupOrders(const CombatData& combat_data);   ///< Called when the server has sent a new combat turn update.  AI should review the combat state and send setup orders for this combat.
     virtual void                GenerateCombatOrders(const CombatData& combat_data);        ///< Called when the server has sent a new combat turn update.  AI should review the new combat state and send orders for this combat turn.
     virtual void                HandleChatMessage(int sender_id, const std::string& msg);   ///< Called when another player sends a chat message to this player.  AI can respond or ignore.
     virtual void                StartNewGame();                                             ///< Called when a new game (not loaded) is started.  AI should clear its state and prepare to start a new game
@@ -91,7 +92,7 @@ namespace AIInterface
     void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
 
     void                DoneTurn();        ///< AI player is done submitting orders for this turn
-
+    void                CombatSetup();     ///< AI player is done submitting intial setup orders for this combat
     void                DoneCombatTurn();  ///< AI player is done submitting orders for this combat turn
     //@}
 

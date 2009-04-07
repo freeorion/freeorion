@@ -402,11 +402,13 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
     boost::statechart::result react(const CombatRoundUpdate& msg);
     boost::statechart::result react(const CombatEnd& msg);
 
-    std::auto_ptr<System> m_system;
-    std::map<int, UniverseObject*> m_combat_universe;
+    std::auto_ptr<CombatData> m_combat_data;
     std::auto_ptr<CombatWnd> m_combat_wnd;
 
     CLIENT_ACCESSOR
+
+private:
+    void FreeCombatData();
 };
 
 #undef CLIENT_ACCESSOR

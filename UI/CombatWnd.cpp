@@ -5,10 +5,14 @@
 #include "CollisionMeshConverter.h"
 #include "CUIControls.h"
 #include "InGameMenu.h"
+#include "../combat/OpenSteer/CombatFighter.h"
+#include "../combat/OpenSteer/CombatShip.h"
+#include "../combat/OpenSteer/Missile.h"
 #include "../combat/OpenSteer/PathingEngine.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
 
@@ -597,6 +601,29 @@ private:
 
 
 ////////////////////////////////////////////////////////////
+// CombatWnd::ShipData
+////////////////////////////////////////////////////////////
+CombatWnd::ShipData::ShipData() :
+    m_node(0),
+    m_material(),
+    m_bt_mesh(0),
+    m_bt_shape(0),
+    m_bt_object(0)
+{}
+
+CombatWnd::ShipData::ShipData(Ogre::SceneNode* node,
+                              Ogre::MaterialPtr material,
+                              btTriangleMesh* bt_mesh,
+                              btBvhTriangleMeshShape* bt_shape,
+                              btCollisionObject* bt_object) :
+    m_node(node),
+    m_material(material),
+    m_bt_mesh(bt_mesh),
+    m_bt_shape(bt_shape),
+    m_bt_object(bt_object)
+{}
+
+////////////////////////////////////////////////////////////
 // CombatWnd
 ////////////////////////////////////////////////////////////
 CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
@@ -830,8 +857,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
         g_pathing_engine.AddObstacle(o);
 #endif
 
-        System system(star_type, planets.size(), "Sample", 0.0, 0.0);
-        std::map<int, UniverseObject*> combat_universe;
+        CombatData* combat_data = new CombatData;
+        combat_data->m_system = new System(star_type, planets.size(), "Sample", 0.0, 0.0);
+        System& system = *combat_data->m_system;
+        std::map<int, UniverseObject*>& combat_universe = combat_data->m_combat_universe;
         for (std::size_t i = 0; i < planets.size(); ++i) {
             Planet* planet = planets[i];
             GetUniverse().InsertID(planet, planet_ids[i]);
@@ -861,9 +890,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 #endif
         }
 
-        InitCombat(&system, combat_universe);
-
-        AddShip("seed.mesh", 250.0, 250.0);
+        InitCombat(*combat_data);
     } else {
         GG::X width(50);
         CUIButton* done_button =
@@ -887,9 +914,11 @@ CombatWnd::~CombatWnd()
 
     m_scene_manager->clearScene();
 
-    for (std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> >::iterator it = m_ship_assets.begin();
+    for (std::map<int, ShipData>::iterator it = m_ship_assets.begin();
          it != m_ship_assets.end(); ++it) {
-        delete it->second.get<2>();
+        delete it->second.m_bt_mesh;
+        delete it->second.m_bt_shape;
+        delete it->second.m_bt_object;
     }
 
     for (std::size_t i = 0; i < m_city_lights_textures.size(); ++i) {
@@ -907,20 +936,20 @@ CombatWnd::~CombatWnd()
     RemoveAccelerators();
 }
 
-void CombatWnd::InitCombat(System* system,
-                           const std::map<int, UniverseObject*>& combat_universe)
+void CombatWnd::InitCombat(CombatData& combat_data)
 {
-    m_system = system;
-    m_combat_universe = combat_universe;
+    m_combat_data = &combat_data;
 
     SetAccelerators();
 
-    assert(StarTextures().find(m_system->Star()) != StarTextures().end());
-    const std::set<std::string>& star_textures = StarTextures().find(m_system->Star())->second;
+    assert(StarTextures().find(m_combat_data->m_system->Star()) != StarTextures().end());
+    const std::set<std::string>& star_textures =
+        StarTextures().find(m_combat_data->m_system->Star())->second;
 
     // pick and assign star textures
     {
-        std::string base_name = *boost::next(star_textures.begin(), m_system->ID() % star_textures.size());
+        std::string base_name =
+            *boost::next(star_textures.begin(), m_combat_data->m_system->ID() % star_textures.size());
         Ogre::MaterialPtr back_material =
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
         Ogre::Technique* technique = back_material->getTechnique(0);
@@ -948,9 +977,11 @@ void CombatWnd::InitCombat(System* system,
     CreateAsteroidEntities(asteroid_entities, m_scene_manager);
 
     // create planets
-    for (System::const_orbit_iterator it = m_system->begin(); it != m_system->end(); ++it) {
+    for (System::const_orbit_iterator it = m_combat_data->m_system->begin();
+         it != m_combat_data->m_system->end();
+         ++it) {
         const Planet* planet = 0;
-        planet = universe_object_cast<Planet*>(m_combat_universe[it->second]);
+        planet = universe_object_cast<Planet*>(m_combat_data->m_combat_universe[it->second]);
         if (planet) {
             std::string material_name = PlanetNodeMaterial(planet->Type());
             if (material_name != "asteroid") {
@@ -978,15 +1009,17 @@ void CombatWnd::InitCombat(System* system,
                     *boost::next(planet_textures.begin(), planet->ID() % planet_textures.size());
 
                 // set up a sphere in the collision detection system
-                m_collision_shapes.push_back(new btSphereShape(planet_radius));
-                m_collision_objects.push_back(new btCollisionObject);
+                btSphereShape* collision_shape = new btSphereShape(planet_radius);
+                btCollisionObject* collision_object = new btCollisionObject;
+                m_collision_shapes.insert(collision_shape);
+                m_collision_objects.insert(collision_object);
                 btMatrix3x3 identity;
                 identity.setIdentity();
-                m_collision_objects.back().getWorldTransform().setBasis(identity);
-                m_collision_objects.back().getWorldTransform().setOrigin(
+                collision_object->getWorldTransform().setBasis(identity);
+                collision_object->getWorldTransform().setOrigin(
                     ToCollision(position));
-                m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
-                m_collision_world->addCollisionObject(&m_collision_objects.back());
+                collision_object->setCollisionShape(collision_shape);
+                m_collision_world->addCollisionObject(collision_object);
 
                 if (material_name == "gas_giant") {
                     Ogre::Entity* entity =
@@ -997,7 +1030,7 @@ void CombatWnd::InitCombat(System* system,
                     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
                     node->attachObject(entity);
 
-                    m_collision_objects.back().setUserPointer(
+                    collision_object->setUserPointer(
                         static_cast<Ogre::MovableObject*>(entity));
 
                     entity = m_scene_manager->createEntity(
@@ -1037,7 +1070,7 @@ void CombatWnd::InitCombat(System* system,
                     entity->setCastShadows(true);
                     node->attachObject(entity);
 
-                    m_collision_objects.back().setUserPointer(
+                    collision_object->setUserPointer(
                         static_cast<Ogre::MovableObject*>(entity));
 
                     if (material_name == "planet") {
@@ -1122,8 +1155,8 @@ void CombatWnd::InitCombat(System* system,
     }
 
     // create starlane entrance points
-    for (System::const_lane_iterator it = m_system->begin_lanes();
-         it != m_system->begin_lanes();
+    for (System::const_lane_iterator it = m_combat_data->m_system->begin_lanes();
+         it != m_combat_data->m_system->begin_lanes();
          ++it) {
         // TODO
     }
@@ -1138,8 +1171,7 @@ void CombatWnd::Render()
          ++it) {
         it->second.first->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
     }
-    for (std::map<int, boost::tuple<Ogre::SceneNode*, Ogre::MaterialPtr, btTriangleMesh*> >::iterator it =
-             m_ship_assets.begin();
+    for (std::map<int, ShipData>::iterator it = m_ship_assets.begin();
          it != m_ship_assets.end();
          ++it) {
         it->second.get<0>()->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
@@ -1435,6 +1467,60 @@ void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
     }
 }
 
+void CombatWnd::ShipPlaced(const CombatShipPtr &ship)
+{ AddShip(ship); }
+
+void CombatWnd::ShipFired(const CombatShipPtr &ship,
+                          const CombatObjectPtr &target,
+                          const std::string& part_name)
+{
+    // TODO
+}
+
+void CombatWnd::ShipDestroyed(const CombatShipPtr &ship)
+{ RemoveShip(ship); }
+
+void CombatWnd::ShipEnteredStarlane(const CombatShipPtr &ship)
+{
+    // TODO
+}
+
+void CombatWnd::FighterLaunched(const CombatFighterPtr &fighter)
+{
+    // TODO
+}
+
+void CombatWnd::FighterFired(const CombatFighterPtr &fighter,
+                             const CombatObjectPtr &target)
+{
+    // TODO
+}
+
+void CombatWnd::FighterDestroyed(const CombatFighterPtr &fighter)
+{
+    // TODO
+}
+
+void CombatWnd::FighterDocked(const CombatFighterPtr &fighter)
+{
+    // TODO
+}
+
+void CombatWnd::MissileLaunched(const MissilePtr &missile)
+{
+    // TODO
+}
+
+void CombatWnd::MissileExploded(const MissilePtr &missile)
+{
+    // TODO
+}
+
+void CombatWnd::MissileRemoved(const MissilePtr &missile)
+{
+    // TODO
+}
+
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 {
     Ogre::RenderTarget::FrameStats stats =
@@ -1448,11 +1534,19 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     material->getTechnique(0)->getPass(4)->setDepthCheckEnabled(!ENABLE_GLOW);
 
     m_camera_animation_state->addTime(event.timeSinceLastFrame);
-    if (m_camera_animation_state->hasEnded())
+    if (m_camera_animation_state->hasEnded()) {
+        // TODO: verify that the move actually happened, by placing the camera
+        // at its final destination.  This is necessary, because sometimes
+        // low-enough frame rates mean that the move isn't completed, or
+        // doesn't happen at all.
         m_camera_animation->destroyAllTracks();
+    }
 
     if (m_paged_geometry)
         m_paged_geometry->update();
+
+    // TODO: For each combat entity, update its position and orientation based
+    // on the corresponding Combat* object's position and orientation.
 
     return !m_exit;
 }
@@ -1714,8 +1808,10 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 void CombatWnd::DeselectAll()
 { m_current_selections.clear(); }
 
-void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y)
+void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
 {
+    const Ship& ship = combat_ship->GetShip();
+    std::string mesh_name = ship.Design()->Model();
     Ogre::Entity* entity = m_scene_manager->createEntity("ship_" + mesh_name, mesh_name);
     entity->setCastShadows(true);
     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
@@ -1723,34 +1819,53 @@ void CombatWnd::AddShip(const std::string& mesh_name, Ogre::Real x, Ogre::Real y
     Ogre::SceneNode* node =
         m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
     node->attachObject(entity);
+    node->setUserAny(Ogre::Any(combat_ship));
 
     // TODO: This is only here because the Durgha model is upside down.  Remove
     // it when this is fixed.
     node->yaw(Ogre::Radian(Ogre::Math::PI));
 
-    node->setPosition(x, y, 0.0);
+    node->setPosition(ToOgre(combat_ship->position()));
+    node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),
+                                          ToOgre(combat_ship->forward()),
+                                          ToOgre(combat_ship->up())));
 
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;
     btBvhTriangleMeshShape* collision_shape = 0;
     boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
 
-    // TODO: use ship's ID
     Ogre::MaterialPtr material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
-    m_ship_assets[0] = boost::make_tuple(node, material, collision_mesh);
 
-    m_collision_shapes.push_back(collision_shape);
-    m_collision_objects.push_back(new btCollisionObject);
+    m_collision_shapes.insert(collision_shape);
+    btCollisionObject* collision_object = new btCollisionObject;
+    m_collision_objects.insert(collision_object);
     btMatrix3x3 identity;
     identity.setIdentity();
     // TODO: Remove z-flip scaling when models are right.
     btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
-    m_collision_objects.back().getWorldTransform().setBasis(scaled);
-    m_collision_objects.back().getWorldTransform().setOrigin(ToCollision(node->getPosition()));
-    m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
-    m_collision_world->addCollisionObject(&m_collision_objects.back());
-    m_collision_objects.back().setUserPointer(static_cast<Ogre::MovableObject*>(entity));
+    collision_object->getWorldTransform().setBasis(scaled);
+    collision_object->getWorldTransform().setOrigin(ToCollision(node->getPosition()));
+    collision_object->setCollisionShape(collision_shape);
+    m_collision_world->addCollisionObject(collision_object);
+    collision_object->setUserPointer(static_cast<Ogre::MovableObject*>(entity));
+
+    m_ship_assets[ship.ID()] =
+        ShipData(node, material, collision_mesh, collision_shape, collision_object);
+}
+
+void CombatWnd::RemoveShip(const CombatShipPtr& combat_ship)
+{
+    ShipData& ship_data = m_ship_assets[combat_ship->GetShip().ID()];
+    m_scene_manager->destroySceneNode(ship_data.m_node);
+    m_collision_world->getCollisionObjectArray().remove(ship_data.m_bt_object);
+    delete ship_data.m_bt_mesh;
+    delete ship_data.m_bt_shape;
+    delete ship_data.m_bt_object;
+    m_collision_shapes.erase(ship_data.m_bt_shape);
+    m_collision_objects.erase(ship_data.m_bt_object);
+    m_ship_assets.erase(combat_ship->GetShip().ID());
 }
 
 bool CombatWnd::OpenChatWindow()

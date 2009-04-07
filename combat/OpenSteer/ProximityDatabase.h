@@ -300,7 +300,21 @@ private:
     float m_dimensions;
     float m_cell_dimensions;
     std::size_t m_cells_per_side;
-    std::vector<std::map<T, StoredType> > m_grid_cells;
+
+    typedef std::map<T, StoredType> GridCell;
+    std::vector<GridCell> m_grid_cells;
+
+    struct SerializableCellOccupant
+    {
+        std::size_t m_cell_index;
+        std::pair<T, StoredType> m_value;
+        template <class Archive>
+        void serialize(Archive& ar, const unsigned int version)
+            {
+                ar  & BOOST_SERIALIZATION_NVP(m_cell_index)
+                    & BOOST_SERIALIZATION_NVP(m_value);
+            }
+    };
 
     friend class TokenType;
 
@@ -311,8 +325,31 @@ private:
             ar  & BOOST_SERIALIZATION_NVP(m_origin)
                 & BOOST_SERIALIZATION_NVP(m_dimensions)
                 & BOOST_SERIALIZATION_NVP(m_cell_dimensions)
-                & BOOST_SERIALIZATION_NVP(m_cells_per_side)
-                & BOOST_SERIALIZATION_NVP(m_grid_cells);
+                & BOOST_SERIALIZATION_NVP(m_cells_per_side);
+
+            std::vector<SerializableCellOccupant> cell_occupants;
+            if (Archive::is_saving::value) {
+                for (std::size_t i = 0; i < m_grid_cells.size(); ++i) {
+                    SerializableCellOccupant o;
+                    o.m_cell_index = i;
+                    for (typename GridCell::const_iterator it = m_grid_cells[i].begin();
+                         it != m_grid_cells[i].end();
+                         ++it) {
+                        o.m_value = *it;
+                        cell_occupants.push_back(o);
+                    }
+                }
+            }
+
+            ar & BOOST_SERIALIZATION_NVP(cell_occupants);
+
+            if (Archive::is_loading::value) {
+                m_grid_cells.resize(m_cells_per_side * m_cells_per_side * m_cells_per_side);
+                for (std::size_t i = 0; i < cell_occupants.size(); ++i) {
+                    m_grid_cells[cell_occupants[i].m_cell_index].insert(
+                        cell_occupants[i].m_value);
+                }
+            }
         }
 };
 

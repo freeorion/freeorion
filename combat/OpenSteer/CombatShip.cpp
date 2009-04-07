@@ -127,8 +127,8 @@ CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& positio
 CombatShip::~CombatShip()
 { delete m_proximity_token; }
 
-Ship* CombatShip::GetShip() const
-{ return m_ship; }
+Ship& CombatShip::GetShip() const
+{ return *m_ship; }
 
 const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
@@ -594,7 +594,7 @@ void CombatShip::UpdateMissionQueue()
         break;
     }
     case ShipMission::ENTER_STARLANE: {
-        System* system = GetShip()->GetSystem();
+        System* system = GetShip().GetSystem();
         assert(system);
         for (System::const_lane_iterator it = system->begin_lanes();
              it != system->end_lanes();
@@ -610,6 +610,8 @@ void CombatShip::UpdateMissionQueue()
                 m_enter_starlane_start_turn = m_turn;
                 break;
             }
+            assert(!"Illegal ENTER_STARLANE ShipMission was issued -- ship is not within "
+                   "minimum distance of any starlane entrance.");
         }
     }
     }
@@ -627,10 +629,9 @@ void CombatShip::FirePDDefensively()
         return;
 
     OpenSteer::AVGroup all;
-    // TODO: NotEmpireFlag() should become EnemyOfEmpireFlag()
     m_pathing_engine->GetProximityDB().FindInRadius(
         position(), MaxPDRange(), all,
-        FIGHTER_FLAGS | MISSILE_FLAG, NotEmpireFlag(m_empire_id));
+        FIGHTER_FLAGS | MISSILE_FLAG, EnemyOfEmpireFlags(m_empire_id));
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatObject* obj = boost::polymorphic_downcast<CombatObject*>(all[i]);
         double distance_squared = (obj->position() - position()).lengthSquared();
@@ -807,8 +808,8 @@ CombatShipPtr CombatShip::WeakestHostileShip()
 {
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
-    // TODO: Replace NotEmpireFlag with EnemyOfEmpireFlag later.
-    m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
+    m_pathing_engine->GetProximityDB().FindAll(
+        all, SHIP_FLAG, EnemyOfEmpireFlags(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);

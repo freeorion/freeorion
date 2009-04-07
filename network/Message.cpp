@@ -556,15 +556,13 @@ Message StartMPGameMessage(int player_id)
     return Message(Message::START_MP_GAME, player_id, -1, "");
 }
 
-Message ServerCombatStartMessage(int receiver, int empire_id, const System* system,
-                                 const std::map<int, UniverseObject*>& combat_universe)
+Message ServerCombatStartMessage(int receiver, int empire_id, const CombatData& combat_data)
 {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
         Universe::s_encoding_empire = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(system);
-        Serialize(oa, combat_universe);
+        oa << BOOST_SERIALIZATION_NVP(combat_data);
     }
     return Message(Message::COMBAT_START, -1, receiver, os.str());
 }

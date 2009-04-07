@@ -12,8 +12,6 @@ namespace log4cpp {class Category;}
 class AIClientApp : public ClientApp
 {
 public:
-    virtual void StartTurn();           ///< encodes order sets and sends turn orders message
-
    /** \name Structors */ //@{   
    AIClientApp(int argc, char* argv[]);
    ~AIClientApp();

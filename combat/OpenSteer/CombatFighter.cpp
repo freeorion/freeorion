@@ -769,7 +769,7 @@ OpenSteer::Vec3 CombatFighter::Steer()
     if (Stats().m_type == BOMBER) {
         m_pathing_engine->GetProximityDB().FindInRadius(
             position(), BOMBER_INTERCEPTOR_EVASION_RADIUS, interceptor_neighbors,
-            INTERCEPTOR_FLAG, NotEmpireFlag(m_empire_id));
+            INTERCEPTOR_FLAG, EnemyOfEmpireFlags(m_empire_id));
         OpenSteer::Vec3 direction;
         for (std::size_t i = 0; i < interceptor_neighbors.size(); ++i) {
             direction += steerForFlee(interceptor_neighbors[i]->position());
@@ -872,8 +872,8 @@ CombatShipPtr CombatFighter::WeakestHostileShip()
 {
     CombatShipPtr retval;
     OpenSteer::AVGroup all;
-    // TODO: NotEmpireFlag() should become EnemyOfEmpireFlag()
-    m_pathing_engine->GetProximityDB().FindAll(all, SHIP_FLAG, NotEmpireFlag(m_empire_id));
+    m_pathing_engine->GetProximityDB().FindAll(
+        all, SHIP_FLAG, EnemyOfEmpireFlags(m_empire_id));
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);

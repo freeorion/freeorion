@@ -46,7 +46,7 @@ public:
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
 
-    Ship* GetShip() const;
+    Ship& GetShip() const;
     const ShipMission& CurrentMission() const;
     virtual double HealthAndShield() const;
     virtual double Health() const;

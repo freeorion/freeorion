@@ -284,11 +284,10 @@ Message ServerLobbyExitMessage(int sender, int receiver);
 Message StartMPGameMessage(int player_id);
 
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
-Message ServerCombatStartMessage(int receiver, int empire_id, const System* system,
-                                 const std::map<int, UniverseObject*>& combat_universe);
+Message ServerCombatStartMessage(int receiver, int empire_id, const CombatData& combat_data);
 
 /** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
-Message ServerCombatUpdateMessage(int receiver, const CombatData& combat_data);
+Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
 
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
 Message ServerCombatEndMessage(int receiver);

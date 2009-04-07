@@ -16,6 +16,13 @@ const unsigned int MISSILE_FLAG = 1 << 3;
 const unsigned int FIGHTER_FLAGS = INTERCEPTOR_FLAG | BOMBER_FLAG;
 const unsigned int NONFIGHTER_FLAGS = ~(INTERCEPTOR_FLAG | BOMBER_FLAG);
 
+unsigned int EnemyOfEmpireFlags(int empire_id)
+{
+    // TODO: Use diplomatic status here, instead of just returning all empires
+    // that are not us.
+    return ~(1 << static_cast<unsigned int>(empire_id));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // PathingEngine
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,7 +58,7 @@ CombatFighterPtr PathingEngine::NearestHostileFighterInRange(const OpenSteer::Ve
     if (OpenSteer::AbstractVehicle* v =
         m_proximity_database->FindNearestInRadius(position, range,
                                                   BOMBER_FLAG | INTERCEPTOR_FLAG,
-                                                  NotEmpireFlag(empire_id))) {
+                                                  EnemyOfEmpireFlags(empire_id))) {
         retval = boost::polymorphic_downcast<CombatFighter*>(v)->shared_from_this();
     }
     return retval;
@@ -65,7 +72,7 @@ PathingEngine::NearestHostileNonFighterInRange(const OpenSteer::Vec3& position,
     if (OpenSteer::AbstractVehicle* v =
         m_proximity_database->FindNearestInRadius(position, range,
                                                   NONFIGHTER_FLAGS,
-                                                  NotEmpireFlag(empire_id))) {
+                                                  EnemyOfEmpireFlags(empire_id))) {
         // TODO: Handle non-ship objects (e.g. stations) as well.
         retval = boost::polymorphic_downcast<CombatShip*>(v)->shared_from_this();
     }
@@ -79,7 +86,7 @@ CombatFighterPtr PathingEngine::NearestHostileInterceptor(const OpenSteer::Vec3&
     if (OpenSteer::AbstractVehicle* v =
         m_proximity_database->FindNearest(position,
                                           INTERCEPTOR_FLAG,
-                                          NotEmpireFlag(empire_id))) {
+                                          EnemyOfEmpireFlags(empire_id))) {
         retval = boost::polymorphic_downcast<CombatFighter*>(v)->shared_from_this();
     }
     return retval;
@@ -92,7 +99,7 @@ CombatFighterPtr PathingEngine::NearestHostileBomber(const OpenSteer::Vec3& posi
     if (OpenSteer::AbstractVehicle* v =
         m_proximity_database->FindNearest(position,
                                           BOMBER_FLAG,
-                                          NotEmpireFlag(empire_id))) {
+                                          EnemyOfEmpireFlags(empire_id))) {
         retval = boost::polymorphic_downcast<CombatFighter*>(v)->shared_from_this();
     }
     return retval;
@@ -105,7 +112,7 @@ CombatShipPtr PathingEngine::NearestHostileShip(const OpenSteer::Vec3& position,
     if (OpenSteer::AbstractVehicle* v =
         m_proximity_database->FindNearest(position,
                                           SHIP_FLAG,
-                                          NotEmpireFlag(empire_id))) {
+                                          EnemyOfEmpireFlags(empire_id))) {
         retval = boost::polymorphic_downcast<CombatShip*>(v)->shared_from_this();
     }
     return retval;

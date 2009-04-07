@@ -3,6 +3,7 @@
 #include "../combat/OpenSteer/AsteroidBeltObstacle.h"
 #include "../combat/OpenSteer/CombatShip.h"
 #include "../combat/OpenSteer/CombatFighter.h"
+#include "../combat/OpenSteer/Missile.h"
 #include "../combat/OpenSteer/Obstacle.h"
 #include "../combat/OpenSteer/PathingEngine.h"
 #include "../Empire/Empire.h"
@@ -54,6 +55,7 @@ BOOST_CLASS_EXPORT(ShipDesignOrder)
 // exports for boost serialization of PathingEngine-related classes
 BOOST_CLASS_EXPORT(CombatShip)
 BOOST_CLASS_EXPORT(CombatFighter)
+BOOST_CLASS_EXPORT(Missile)
 BOOST_CLASS_EXPORT(OpenSteer::SphereObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::BoxObstacle)
 BOOST_CLASS_EXPORT(OpenSteer::PlaneObstacle)

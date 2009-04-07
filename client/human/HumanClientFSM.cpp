@@ -542,7 +542,7 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 ////////////////////////////////////////////////////////////
 ResolvingCombat::ResolvingCombat(my_context ctx) :
     Base(ctx),
-    m_system(0),
+    m_combat_data(new CombatData),
     m_combat_wnd(new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()))
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
@@ -556,29 +556,22 @@ ResolvingCombat::~ResolvingCombat()
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
     Client().m_ui->GetMapWnd()->Show();
     context<WaitingForTurnData>().m_turn_progress_wnd->ShowAll();
-    for (std::map<int, UniverseObject*>::iterator it = m_combat_universe.begin();
-         it != m_combat_universe.end();
-         ++it) {
-        delete it->second;
-    }
+    FreeCombatData();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
-    System* system = 0;
-    ExtractMessageData(msg.m_message, system, m_combat_universe);
-    m_system.reset(system);
-    m_combat_wnd->InitCombat(m_system.get(), m_combat_universe);
+    ExtractMessageData(msg.m_message, *m_combat_data);
+    m_combat_wnd->InitCombat(*m_combat_data);
     return discard_event();
 }
 
 boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
-    CombatData combat_data;
-    ExtractMessageData(msg.m_message, combat_data);
-    // TODO
+    FreeCombatData();
+    ExtractMessageData(msg.m_message, *m_combat_data);
     return discard_event();
 }
 
@@ -586,4 +579,15 @@ boost::statechart::result ResolvingCombat::react(const CombatEnd& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatEnd";
     return transit<WaitingForTurnDataIdle>();
+}
+
+void ResolvingCombat::FreeCombatData()
+{
+    delete m_combat_data->m_system;
+    for (std::map<int, UniverseObject*>::iterator it =
+             m_combat_data->m_combat_universe.begin();
+         it != m_combat_data->m_combat_universe.end();
+         ++it) {
+        delete it->second;
+    }
 }
