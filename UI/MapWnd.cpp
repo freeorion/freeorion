@@ -332,13 +332,11 @@ void MapWndPopup::Close()
 // MapWnd::MovementLineData
 ////////////////////////////////////////////////
 MapWnd::MovementLineData::MovementLineData() :
-    previous_system_id(UniverseObject::INVALID_OBJECT_ID),
-    colour(GG::CLR_ZERO), 
+    colour(GG::CLR_ZERO),
     path()
 {}
 
-MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_, int previous_system_id_, GG::Clr colour_/* = GG::CLR_WHITE*/) :
-    previous_system_id(previous_system_id_),
+MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_, GG::Clr colour_/* = GG::CLR_WHITE*/) :
     colour(colour_),
     path(path_)
 {}
@@ -1681,7 +1679,7 @@ void MapWnd::SetFleetMovementLine(const Fleet* fleet)
             line_colour = empire->Color();
 
     // create and store line
-    m_fleet_lines[fleet] = MovementLineData(fleet->MovePath(), fleet->PreviousSystemID(), line_colour);
+    m_fleet_lines[fleet] = MovementLineData(fleet->MovePath(), line_colour);
 }
 
 void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route)
@@ -1712,7 +1710,7 @@ void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<S
             line_colour = empire->Color();
 
     // create and store line
-    m_projected_fleet_lines[fleet] = MovementLineData(path, fleet->PreviousSystemID(), line_colour);
+    m_projected_fleet_lines[fleet] = MovementLineData(path, line_colour);
 }
 
 void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route)
@@ -2488,8 +2486,8 @@ void MapWnd::RenderFleetMovementLines()
 void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
 {
     const std::list<MovePathNode>& path = move_line.path;
-    if (path.empty() || path.size() == 1)   // note: if between two systems on a starlane, and next system is last on path, path will contain nodes: one for the
-        return; // no line to show
+    if (path.empty() || path.size() == 1)
+        return; // nothing to draw.  need at least two nodes at different locations to draw a line
 
     const Universe& universe = GetUniverse();
 
@@ -2498,64 +2496,91 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
     //    std::cout << it->object_id << " (" << it->x << ", " << it->y << "),  ";
     //std::cout << std::endl;
 
+    // draw lines connecting points of interest along path.  only draw a line if the previous and
+    // current positions of the ends of the line are known.
+    bool    gl_open =                   false;
+    const   MovePathNode& first_node =  *(path.begin());
+    double  prev_node_x =               first_node.x;
+    double  prev_node_y =               first_node.y;
+    int     prev_sys_id =               first_node.object_id;
+    int     next_sys_id =               UniverseObject::INVALID_OBJECT_ID;
 
-    // Get starlane along which current segment of movement line is travelling.  Use this to look
-    // up lane in m_starlane_endpoints.  Pass systems at end of lane, node position and starlane's endpoints
-    // to ScreenPosOnStarane to get apparent screen node position.
-    // Restart line strip when passing through a system.  need to transform the system's
-    // move path node's position twice: once for incoming starlane and once for outgoing starlane.
-
-
-    // set lane_start_obj to be the object at the start of the current lane the path is traversing.  
-    // This is move_line's previous_system_id.
-    const UniverseObject* lane_start_obj = universe.Object(move_line.previous_system_id);
-    if (!lane_start_obj && path.begin()->object_id == UniverseObject::INVALID_OBJECT_ID) {
-        Logger().errorStream() << "RenderMovementLine couldn't get an object at the start of the move path / lane";
-        return;
-    }
-    // lane_end_obj is the object at which the lane being traversed ends.  default this to be...
-
-    // TODO: Consider adding next_system_id and previous_system_id to MovePathNode and removing move_line.previous_system_id
-    // then: populate new MovePathNode fields while calculating a fleet's path.
-
-    // draw lines connecting first to second vertex, second to third, etc,
-    bool started = false;   // have any lines been drawn? (more specifically, has glBegin been called in the loop?)
-    const MovePathNode& first_node = *path.begin();
-    double prev_vertex_x = first_node.x, prev_vertex_y = first_node.y;
     for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
-        // if this vertex can be reached, add vertices for line from previous to this vertex
+        // stop rendering if end of path is indicated
         if (path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_NEVER || path_it->eta == Fleet::ETA_OUT_OF_RANGE)
-            break;  // don't render additional legs of path that aren't reachable
+            break;
 
-        // get next node position
-        double cur_vertex_x = path_it->x, cur_vertex_y = path_it->y;
+        const MovePathNode& node = *path_it;
 
-        // skip zero-length line segments since they seem to cause problems...
-        // this also skips to the second node after fetching the first node on the first pass, since
-        // the first node has the same position as prev_vertex_? before the loop starts
-        if (cur_vertex_x == prev_vertex_x && cur_vertex_y == prev_vertex_y)
-            continue;
 
-        // does glBegin need to be called for this line?
-        if (!started) {
-            // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes produces nasty artifacts 
-            // when the begining of a line segment starts offscreen
-            glBegin(GL_LINES);
-            glColor(move_line.colour);
-            started = true;
+        // 1) Get systems at ends of lane on which current node is located.
+
+        if (node.object_id == UniverseObject::INVALID_OBJECT_ID) {
+            // node is in open space.
+            // node should have valid prev_sys_id and node.lane_end_id to get info about starlane this node is on
+            prev_sys_id = node.lane_start_id;
+            next_sys_id = node.lane_end_id;
+
+        } else {
+            // node is at a system.
+            // node should / may not have a valid lane_end_id, but this system's id is the end of a lane approaching it
+            next_sys_id = node.object_id;
+            // if this is the first node of the path, prev_sys_id should be set to node.object_id from pre-loop initialization.
+            // if this node is later in the path, prev_sys_id should have been set in previous loop iteration
         }
 
-        // add nodes for this line segment
-        glVertex2d(prev_vertex_x,   prev_vertex_y);
-        glVertex2d(cur_vertex_x,    cur_vertex_y);
 
-        // update previous vertex position for next iteration
-        prev_vertex_x = cur_vertex_x;
-        prev_vertex_y = cur_vertex_y;
+        // skip invalid line segments
+        if (prev_sys_id == next_sys_id || next_sys_id == UniverseObject::INVALID_OBJECT_ID || prev_sys_id == UniverseObject::INVALID_OBJECT_ID)
+            continue;
+
+
+        // 2) Get on-screen positions of nodes, which depend on endpoints of lane
+
+        // get unordered pair with which to lookup lane endpoints
+        std::pair<int, int> lane_ids = UnorderedIntPair(prev_sys_id, next_sys_id);
+
+        // get lane end points
+        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = m_starlane_endpoints.find(lane_ids);
+        if (ends_it == m_starlane_endpoints.end()) {
+            std::cout << "couldn't get endpoints of lane for move line" << std::endl;
+            break;
+        }
+        const LaneEndpoints& lane_endpoints = ends_it->second;
+
+        // get on-screen positions of nodes shifted to fit on starlane
+        std::pair<double, double> start_xy =    ScreenPosOnStarane(prev_node_x, prev_node_y, prev_sys_id, next_sys_id, lane_endpoints);
+        std::pair<double, double> end_xy =      ScreenPosOnStarane(node.x,      node.y,      prev_sys_id, next_sys_id, lane_endpoints);
+
+
+
+        // 3) Draw lane line segment  TODO: Replace with placement of series of dots
+
+        // does glBegin need to be called for this line?
+        if (!gl_open) {
+            // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes
+            // produces nasty artifacts when the begining of a line segment starts offscreen
+            glBegin(GL_LINES);
+            glColor(move_line.colour);
+            gl_open = true;
+        }
+
+        // add gl vertices for this line segment
+        glVertex2d(start_xy.first,  start_xy.second);
+        glVertex2d(end_xy.first,    end_xy.second);
+
+
+
+        // 4) prep for next iteration
+        prev_node_x = node.x;
+        prev_node_y = node.y;
+        if (node.object_id != UniverseObject::INVALID_OBJECT_ID) {
+            prev_sys_id = node.object_id;                       // to be used in next iteration
+            next_sys_id = UniverseObject::INVALID_OBJECT_ID;    // to be set in next iteration
+        }
     }
 
-    // end line drawing
-    if (started)
+    if (gl_open)
         glEnd();
 }
 

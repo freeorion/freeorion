@@ -266,10 +266,6 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
             next_x = next_system->X();
             next_y = next_system->Y();
             dist_to_next_system = std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
-
-
-            // update previous system for future loop iterations
-            prev_system = cur_system;
         }
 
         //Logger().debugStream() << " ... dist to next system: " << dist_to_next_system;
@@ -334,8 +330,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
             dist_to_next_system -= dist_travelled_this_step;
 
             // if moved away any distance from a system, are no longer in that system
-            if (dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON)
+            if (cur_system && dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON) {
+                prev_system = cur_system;
                 cur_system = NULL;
+            }
         }
 
 

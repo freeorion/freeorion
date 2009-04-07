@@ -161,8 +161,7 @@ private:
     struct MovementLineData
     {
         MovementLineData();
-        MovementLineData(const std::list<MovePathNode>& path_, int previous_system_id_, GG::Clr colour_ = GG::CLR_WHITE);
-        int                     previous_system_id;
+        MovementLineData(const std::list<MovePathNode>& path_, GG::Clr colour_ = GG::CLR_WHITE);
         GG::Clr                 colour;
         std::list<MovePathNode> path;
     };
