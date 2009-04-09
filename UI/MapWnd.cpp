@@ -346,8 +346,8 @@ struct MapWnd::MovementLineData::Vertex {
     Vertex(double x_, double y_, int eta_) :
         x(x_), y(y_), eta(eta_)
     {}
-    double x, y;
-    int eta;
+    double x, y;    // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
+    int eta;        // turns taken to reach point by object travelling along move line
 };
 
 ////////////////////////////////////////////////
@@ -412,7 +412,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
             continue;
 
 
-        // 2) Get on-screen positions of nodes, which depend on endpoints of lane
+        // 2) Get apparent universe positions of nodes, which depend on endpoints of lane and actual universe position of nodes
 
         // get unordered pair with which to lookup lane endpoints
         std::pair<int, int> lane_ids = UnorderedIntPair(prev_sys_id, next_sys_id);
@@ -444,6 +444,22 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         }
     }
 }
+
+
+/////////////////////////////////////////
+// MapWnd::FleetButtonClickedFunctor
+/////////////////////////////////////////
+struct MapWnd::FleetButtonClickedFunctor {
+    FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd) :
+        m_fleet_btn(fleet_btn),
+        m_map_wnd(map_wnd)
+    {}
+    void operator()() {
+        m_map_wnd.FleetButtonClicked(m_fleet_btn);
+    }
+    FleetButton&    m_fleet_btn;
+    MapWnd&         m_map_wnd;
+};
 
 
 //////////////////////////////////
@@ -2570,10 +2586,14 @@ void MapWnd::RenderFleetMovementLines()
     const unsigned int PROJECTED_PATH_STIPPLE =
         (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
 
-    //// render projected move liens
+    // render projected move lines
     glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), PROJECTED_PATH_STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
+
+    // render project move line ETA indicators
+    for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
+        RenderMovementLineETAIndicators(it->second);
 }
 
 void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
@@ -2589,7 +2609,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
 
     // draw lines connecting points of interest along path.  only draw a line if the previous and
     // current positions of the ends of the line are known.
-    bool    gl_open =                   false;
+    bool gl_open = false;
 
     for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
         // does glBegin need to be called for this line?
@@ -2613,6 +2633,48 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
 
     if (gl_open)
         glEnd();
+}
+
+void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line)
+{
+    const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
+    if (vertices.empty())
+        return; // nothing to draw.  need at least two nodes at different locations to draw a line
+
+
+    const double MARKER_HALF_SIZE = 9;
+    const double MARKER_INNER_INSET = 2;
+    const int MARKER_PTS = ClientUI::Pts();
+    boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
+    const double TWO_PI = 2.0*3.1415926536;
+
+    for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
+        const MovementLineData::Vertex& vert = *verts_it;
+
+        glDisable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glLoadIdentity();
+
+        GG::Pt marker_centre = ScreenCoordsFromUniversePosition(vert.x, vert.y);
+
+        // draw white background disc
+        glColor(GG::CLR_WHITE);
+        GG::Pt ul = marker_centre - GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
+        GG::Pt lr = marker_centre + GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
+        CircleArc(ul, lr, 0.0, TWO_PI, true);
+
+        // draw empire-colour main disc
+        glColor(move_line.colour);
+        ul += GG::Pt(GG::X(MARKER_INNER_INSET), GG::Y(MARKER_INNER_INSET));
+        lr -= GG::Pt(GG::X(MARKER_INNER_INSET), GG::Y(MARKER_INNER_INSET));
+        CircleArc(ul, lr, 0.0, TWO_PI, true);
+
+        glEnable(GL_TEXTURE_2D);
+        glPopMatrix();
+
+        // render black ETA number
+        //glColor(GG::CLR_BLACK);
+    }
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
@@ -3875,15 +3937,5 @@ void MapWnd::ShowAllPopups()
     for (std::list<MapWndPopup*>::iterator it = m_popups.begin(); it != m_popups.end(); ++it) {
         (*it)->Show();
     }
-}
-
-MapWnd::FleetButtonClickedFunctor::FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd) :
-    m_fleet_btn(fleet_btn),
-    m_map_wnd(map_wnd)
-{}
-
-void MapWnd::FleetButtonClickedFunctor::operator()()
-{
-    m_map_wnd.FleetButtonClicked(m_fleet_btn);
 }
 

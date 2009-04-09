@@ -160,7 +160,7 @@ private:
     /** contains information necessary to render a single fleet movement line on the main map. also
       * contains cached infromation */
     struct MovementLineData {
-        struct Vertex;  // cached pre-transformed line rendering and ETA marker placement information
+        struct Vertex;                                  // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
         MovementLineData();
         MovementLineData(const std::list<MovePathNode>& path_,
                          const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
@@ -168,10 +168,10 @@ private:
 
         std::list<MovePathNode>             path;       // raw path data from which line rendering is determined
         GG::Clr                             colour;     // colour of line
-        std::vector<Vertex>                 vertices;
+        std::vector<Vertex>                 vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
     };
 
-
+    struct FleetButtonClickedFunctor;
     class FleetETAMapIndicator;
     class MapScaleLine;
 
@@ -203,7 +203,8 @@ private:
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
     void            RenderFleetMovementLines();                 //!< renders the dashed lines indicating where each fleet is going
-    void            RenderMovementLine(const MapWnd::MovementLineData& move_line);  //!< renders a single fleet movement line
+    void            RenderMovementLine(const MapWnd::MovementLineData& move_line);              //!< renders a single fleet movement line
+    void            RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line); //!< renders ETA indicators at end-of-turn positions for a single fleet movement line
 
     void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
 
@@ -337,22 +338,13 @@ private:
     int                         m_current_fleet;
     bool                        m_in_production_view_mode;
 
-    CUIToolBar                  *m_toolbar;
+    CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
-
     CUIButton                   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_menu;
-
     FPSIndicator*               m_FPS;
 
-    GG::Slider*                 m_zoom_slider;
-    MapScaleLine*               m_scale_line;
-
-    struct FleetButtonClickedFunctor {
-        FleetButtonClickedFunctor(FleetButton& fleet_btn, MapWnd& map_wnd);
-        void operator()();
-        FleetButton& m_fleet_btn;
-        MapWnd& m_map_wnd;
-    };
+    GG::Slider*                 m_zoom_slider;      //!< allows user to set zoom level
+    MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
 };
 
 
