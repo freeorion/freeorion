@@ -128,7 +128,9 @@ void ServerConnectWnd::Init()
     if (m_servers_lb->NumRows()) {
         m_host_or_join_radio_group->SetCheck(1);
         m_servers_lb->SelectRow(m_servers_lb->begin());
+        ServerSelected(m_servers_lb->Selections());
     }
+    HostOrJoinClicked(m_host_or_join_radio_group->CheckedButton());
 }
 
 void ServerConnectWnd::PopulateServerList()
@@ -161,8 +163,10 @@ void ServerConnectWnd::ServerSelected(const GG::ListBox::SelectionSet& selection
 
 void ServerConnectWnd::IPAddressEdited(const std::string& str)
 {
-    if (str != "")
+    if (str != "") {
         m_servers_lb->DeselectAll();
+        ServerSelected(m_servers_lb->Selections());
+    }
     EnableDisableControls();
 }
 

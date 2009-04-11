@@ -150,13 +150,13 @@ namespace {
 
 }
 
-MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
-                                         const CUIButton::ClickedSlotType& start_game_callback,
-                                         const CUIButton::ClickedSlotType& cancel_callback) : 
+MultiplayerLobbyWnd::MultiplayerLobbyWnd(
+    bool host,
+    const CUIButton::ClickedSignalType::slot_type& start_game_callback,
+    const CUIButton::ClickedSignalType::slot_type& cancel_callback) : 
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
            (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
            GG::ONTOP | GG::CLICKABLE),
-    m_handling_lobby_update(false),
     m_host(host),
     m_chat_box(0),
     m_chat_input_edit(0),
@@ -286,8 +286,6 @@ void MultiplayerLobbyWnd::ChatMessage(int player_id, const std::string& msg)
 
 void MultiplayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
 {
-    m_handling_lobby_update = true;
-
     m_new_load_game_buttons->SetCheck(!lobby_data.m_new_game);
     m_galaxy_setup_panel->SetFromSetupData(lobby_data);
 
@@ -301,8 +299,6 @@ void MultiplayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
     m_lobby_data = lobby_data;
 
     bool send_update_back = PopulatePlayerList();
-
-    m_handling_lobby_update = false;
 
     if (m_host && send_update_back)
         SendUpdate();
@@ -425,11 +421,9 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
 
 void MultiplayerLobbyWnd::SendUpdate()
 {
-    if (!m_handling_lobby_update) {
-        int player_id = HumanClientApp::GetApp()->PlayerID();
-        if (player_id != -1)
-            HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
-    }
+    int player_id = HumanClientApp::GetApp()->PlayerID();
+    if (player_id != -1)
+        HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
 }
 
 bool MultiplayerLobbyWnd::PlayerDataAcceptable() const

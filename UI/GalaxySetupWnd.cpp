@@ -173,6 +173,7 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data)
 {
     m_stars_spin->SetValue(setup_data.m_size);
     m_galaxy_shapes_list->Select(setup_data.m_shape);
+    ShapeChanged(m_galaxy_shapes_list->CurrentItem());
     m_galaxy_ages_list->Select(setup_data.m_age);
     m_starlane_freq_list->Select(setup_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
     m_planet_density_list->Select(setup_data.m_planet_density);
@@ -245,10 +246,12 @@ void GalaxySetupPanel::Init()
     // default settings
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
+    ShapeChanged(m_galaxy_shapes_list->CurrentItem());
     m_galaxy_ages_list->Select(GetOptionsDB().Get<Age>("GameSetup.galaxy-age"));
     m_starlane_freq_list->Select(GetOptionsDB().Get<StarlaneFrequency>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
     m_planet_density_list->Select(GetOptionsDB().Get<PlanetDensity>("GameSetup.planet-density"));
     m_specials_freq_list->Select(GetOptionsDB().Get<SpecialsFrequency>("GameSetup.specials-frequency"));
+    SettingsChangedSignal();
 }
 
 void GalaxySetupPanel::AttachSignalChildren()

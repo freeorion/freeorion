@@ -1313,6 +1313,7 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet)
     if (GetOptionsDB().Get<bool>("UI.fleet-autoselect") && !fleets.empty()) {
         GG::ListBox::iterator it = boost::next(m_fleets_lb->begin(), selected_fleet);
         m_fleets_lb->SelectRow(it);
+        FleetSelectionChanged(m_fleets_lb->Selections());
         m_current_fleet = it;
         m_fleet_detail_panel->SetFleet(FleetInRow(it));
         m_fleets_lb->BringRowIntoView(it);
@@ -1331,6 +1332,7 @@ void FleetWnd::SelectFleet(Fleet* fleet)
         if (row && row->m_fleet == fleet) {
             m_fleets_lb->DeselectAll();
             m_fleets_lb->SelectRow(it);
+            FleetSelectionChanged(m_fleets_lb->Selections());
             m_current_fleet = it;
             m_fleet_detail_panel->SetFleet(fleet);
             m_fleets_lb->BringRowIntoView(it);

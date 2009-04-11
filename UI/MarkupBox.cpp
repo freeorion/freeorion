@@ -526,10 +526,14 @@ void MarkupBox::Refresh() {
 void MarkupBox::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
     std::cout << "MarkupBox::MouseWheel move: " << move << std::endl;
     if (!Disabled() && m_vscroll) {
-        for (int i = 0; i < move; ++i)
+        for (int i = 0; i < move; ++i) {
             m_vscroll->ScrollLineDecr();
-        for (int i = 0; i < -move; ++i)
+            GG::SignalScroll(*m_vscroll, i == move -1);
+        }
+        for (int i = 0; i < -move; ++i) {
             m_vscroll->ScrollLineIncr();
+            GG::SignalScroll(*m_vscroll, i == -move -1);
+        }
     }
 }
 
@@ -547,22 +551,28 @@ void MarkupBox::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
     switch (key) {
     case GG::GGK_UP:
         m_vscroll->ScrollLineDecr();
+        GG::SignalScroll(*m_vscroll, true);
         break;
     case GG::GGK_DOWN:
         m_vscroll->ScrollLineIncr();
+        GG::SignalScroll(*m_vscroll, true);
         break;
     case GG::GGK_HOME:
         m_vscroll->ScrollTo(0);
+        GG::SignalScroll(*m_vscroll, true);
         break;
     case GG::GGK_END:
         bottom = Value(m_surface->Height() - Height()); // find top position so that bottom of surface is at bottom of this box
         m_vscroll->ScrollTo(std::max(0, bottom));       // but don't allow negative scroll positions, in case this height is larger than surface height
+        GG::SignalScroll(*m_vscroll, true);
         break;
     case GG::GGK_PAGEUP:
         m_vscroll->ScrollPageDecr();
+        GG::SignalScroll(*m_vscroll, true);
         break;
     case GG::GGK_PAGEDOWN:
         m_vscroll->ScrollPageIncr();
+        GG::SignalScroll(*m_vscroll, true);
         break;
     }
 }

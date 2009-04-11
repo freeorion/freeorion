@@ -1486,6 +1486,8 @@ void TechTreeWnd::LayoutPanel::Clear()
     m_hscroll->ScrollTo(0);
     m_vscroll->SizeScroll(0, 1, 1, 1);
     m_hscroll->SizeScroll(0, 1, 1, 1);
+    GG::SignalScroll(*m_vscroll, true);
+    GG::SignalScroll(*m_hscroll, true);
 
     // delete all panels
     for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it)
@@ -1594,7 +1596,9 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
         GG::Pt center_point = tech_panel->RelativeUpperLeft() + GG::Pt(tech_panel->Width() / 2, tech_panel->Height() / 2);
         GG::Pt client_size = ClientSize();
         m_hscroll->ScrollTo(Value(center_point.x - client_size.x / 2));
+        GG::SignalScroll(*m_hscroll, true);
         m_vscroll->ScrollTo(Value(center_point.y - client_size.y / 2));
+        GG::SignalScroll(*m_vscroll, true);
     } else {
         Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << (tech ? tech->Name() : "Null tech pointer") << " due to lack of such a tech panel";
     }
@@ -1734,7 +1738,9 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
     if (keep_position) {
         m_vscroll->ScrollTo(Value(final_position.y));
+        GG::SignalScroll(*m_vscroll, true);
         m_hscroll->ScrollTo(Value(final_position.x));
+        GG::SignalScroll(*m_hscroll, true);
     } else {
         // find a tech to centre view on
         for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
@@ -1834,7 +1840,9 @@ void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const Tech* tech)
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move)
 {
     m_vscroll->ScrollTo(Value(m_vscroll->PosnRange().first - move.y));
+    GG::SignalScroll(*m_vscroll, true);
     m_hscroll->ScrollTo(Value(m_hscroll->PosnRange().first - move.x));
+    GG::SignalScroll(*m_hscroll, true);
 }
 
 void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move)

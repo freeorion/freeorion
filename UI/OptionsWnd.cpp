@@ -621,6 +621,7 @@ void OptionsWnd::ResolutionOption()
     CUISpin<double>* max_fps_spin = DoubleOption("max-fps", UserString("OPTIONS_MAX_FPS"));
     GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
     limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
+    limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
     GG::Connect(drop_list->SelChangedSignal,
                 ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));

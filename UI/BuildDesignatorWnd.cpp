@@ -28,7 +28,11 @@ namespace {
         BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
             CUIListBox(x, y, w, h)
         {}
-        virtual void GainingFocus() {DeselectAll();}
+        virtual void GainingFocus()
+            {
+                DeselectAll();
+                SelChangedSignal(Selections());
+            }
     };
 
     struct ToggleBuildTypeFunctor
@@ -540,8 +544,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     }
 
     Logger().debugStream() << "Selecting Row";
-    if (row_to_select != m_buildable_items->end())
+    if (row_to_select != m_buildable_items->end()) {
         m_buildable_items->SelectRow(row_to_select);
+        BuildItemSelected(m_buildable_items->Selections());
+    }
     Logger().debugStream() << "Done";
 }
 

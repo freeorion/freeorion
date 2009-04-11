@@ -31,8 +31,8 @@ class MultiplayerLobbyWnd : public CUIWnd
 public:
     /** \name Structors */ //@{
     MultiplayerLobbyWnd(bool host,
-                        const CUIButton::ClickedSlotType& start_game_callback,
-                        const CUIButton::ClickedSlotType& cancel_callback);
+                        const CUIButton::ClickedSignalType::slot_type& start_game_callback,
+                        const CUIButton::ClickedSignalType::slot_type& cancel_callback);
     //@}
 
     /** \name Accessors */ //@{
@@ -61,7 +61,6 @@ private:
     bool CanStart() const;
 
     MultiplayerLobbyData       m_lobby_data; // a copy of the most recently received lobby update
-    bool                       m_handling_lobby_update;
 
     bool                       m_host;
 

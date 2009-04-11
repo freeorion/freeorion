@@ -1135,8 +1135,13 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_vscroll)
-        move < 0 ? m_vscroll->ScrollLineIncr() : m_vscroll->ScrollLineDecr();
+    if (m_vscroll) {
+        if (move < 0)
+            m_vscroll->ScrollLineIncr();
+        else
+            m_vscroll->ScrollLineDecr();
+        GG::SignalScroll(*m_vscroll, true);
+    }
 }
 
 void SidePanel::PlanetPanelContainer::Clear()
@@ -1480,6 +1485,7 @@ void SidePanel::SetSystemImpl()
         for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it) {
             if (select_row == *it) {
                 m_system_name->Select(it);
+                SystemSelectionChanged(m_system_name->CurrentItem());
                 break;
             }
         }
@@ -1573,6 +1579,7 @@ void SidePanel::PrevButtonClicked()
     if (selected == m_system_name->begin())
         selected = m_system_name->end();
     m_system_name->Select(--selected);
+    SystemSelectionChanged(m_system_name->CurrentItem());
 }
 
 void SidePanel::NextButtonClicked()
@@ -1582,6 +1589,7 @@ void SidePanel::NextButtonClicked()
     if (++selected == m_system_name->end())
         selected = m_system_name->begin();
     m_system_name->Select(selected);
+    SystemSelectionChanged(m_system_name->CurrentItem());
 }
 
 void SidePanel::PlanetSelected(int planet_id)

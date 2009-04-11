@@ -1074,7 +1074,6 @@ void ResourcePanel::Update()
     }
 
     // focus droplists
-    m_drop_changed_connections[m_primary_focus_drop].block();   // prevent cyclic signalling
     std::string text;
     switch (res->PrimaryFocus()) {
     case FOCUS_BALANCED:
@@ -1106,10 +1105,8 @@ void ResourcePanel::Update()
         text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
-    m_drop_changed_connections[m_primary_focus_drop].unblock();
     m_primary_focus_drop->SetBrowseText(text);
 
-    m_drop_changed_connections[m_secondary_focus_drop].block();
     switch (res->SecondaryFocus()) {
     case FOCUS_BALANCED:
         m_secondary_focus_drop->Select(0);
@@ -1140,7 +1137,6 @@ void ResourcePanel::Update()
         text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
         break;
     }
-    m_drop_changed_connections[m_secondary_focus_drop].unblock();
     m_secondary_focus_drop->SetBrowseText(text);
 }
 
