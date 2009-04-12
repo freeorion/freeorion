@@ -197,9 +197,18 @@ private:
     void            RenderGalaxyGas();                          //!< renders gassy substance to make shape of galaxy
     void            RenderSystems();                            //!< renders stars and halos
     void            RenderStarlanes();                          //!< renders the starlanes between the systems
-    void            RenderFleetMovementLines();                 //!< renders the dashed lines indicating where each fleet is going
-    void            RenderMovementLine(const MapWnd::MovementLineData& move_line);              //!< renders a single fleet movement line
-    void            RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line); //!< renders ETA indicators at end-of-turn positions for a single fleet movement line
+
+    /* renders the dashed lines indicating where each fleet is going */
+    void            RenderFleetMovementLines();
+
+    /* renders a single fleet movement line.  if \a clr is GG::CLR_ZERO, the lane
+     * is rendered with the .colour attribute of \a move_line */
+    void            RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
+
+    /* renders ETA indicators at end-of-turn positions for a single fleet movement
+     * line.  if \a clr is GG::CLR_ZERO, the indicators are filled with the .colour
+     * attribute of \a move_line */
+    void            RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
 
     void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
 

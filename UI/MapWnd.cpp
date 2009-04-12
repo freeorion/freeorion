@@ -2509,6 +2509,9 @@ void MapWnd::RenderStarlanes()
 
 void MapWnd::RenderFleetMovementLines()
 {
+    if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
+        return;
+
     glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
 
     // standard movement line stipple
@@ -2518,10 +2521,24 @@ void MapWnd::RenderFleetMovementLines()
     const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
     const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
 
-    // render standard movement lines
+    // render movement lines for all fleets
     glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
+
+    // re-render selected fleets' movement lines in white
+    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(*it);
+        if (line_it != m_fleet_lines.end())
+            RenderMovementLine(line_it->second, GG::CLR_WHITE);
+    }
+
+    // render move line ETA indicators for selected fleets
+    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(*it);
+        if (line_it != m_fleet_lines.end())
+            RenderMovementLineETAIndicators(line_it->second);
+    }
 
 
     // projected movement line stipple
@@ -2534,14 +2551,14 @@ void MapWnd::RenderFleetMovementLines()
     // render projected move lines
     glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), PROJECTED_PATH_STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
-        RenderMovementLine(it->second);
+        RenderMovementLine(it->second, GG::CLR_WHITE);
 
-    // render project move line ETA indicators
+    // render projected move line ETA indicators
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
-        RenderMovementLineETAIndicators(it->second);
+        RenderMovementLineETAIndicators(it->second, GG::CLR_WHITE);
 }
 
-void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
+void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::Clr clr)
 {
     const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
     if (vertices.empty())
@@ -2562,7 +2579,11 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
             // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes
             // produces nasty artifacts when the begining of a line segment starts offscreen
             glBegin(GL_LINES);
-            glColor(move_line.colour);
+            if (clr == GG::CLR_ZERO) {
+                glColor(move_line.colour);
+            } else {
+                glColor(clr);
+            }
             gl_open = true;
         }
 
@@ -2580,7 +2601,7 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line)
         glEnd();
 }
 
-void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line)
+void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr)
 {
     const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
     if (vertices.empty())
@@ -2588,7 +2609,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
     const double MARKER_HALF_SIZE = 11;
-    const double MARKER_INNER_INSET = 1;
+    const double MARKER_INNER_INSET = 2;
     const int MARKER_PTS = ClientUI::Pts();
     boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
     const double TWO_PI = 2.0*3.1415926536;
@@ -2605,14 +2626,21 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
         GG::Pt marker_centre = ScreenCoordsFromUniversePosition(vert.x, vert.y);
 
-        // draw white background disc
-        glColor(GG::CLR_WHITE);
+        // draw background disc
+        if (clr == GG::CLR_ZERO) {
+            glColor(GG::CLR_WHITE);
+        } else {
+            glColor(move_line.colour);
+        }
         GG::Pt ul = marker_centre - GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
         GG::Pt lr = marker_centre + GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
         CircleArc(ul, lr, 0.0, TWO_PI, true);
 
-        // draw empire-colour main disc
-        glColor(move_line.colour);
+        // draw (empire-colour?) main disc
+        if (clr == GG::CLR_ZERO)
+            glColor(move_line.colour);
+        else
+            glColor(clr);
         ul += GG::Pt(GG::X(MARKER_INNER_INSET), GG::Y(MARKER_INNER_INSET));
         lr -= GG::Pt(GG::X(MARKER_INNER_INSET), GG::Y(MARKER_INNER_INSET));
         CircleArc(ul, lr, 0.0, TWO_PI, true);

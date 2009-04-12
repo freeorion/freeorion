@@ -123,7 +123,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     double fuel =       Fuel();
     double max_fuel =   MaxFuel();
 
-    Logger().debugStream() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
+    //Logger().debugStream() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     std::set<int> fleet_supplied_systems;
@@ -167,13 +167,13 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     const System* prev_system = universe.Object<System>(this->PreviousSystemID());  // may be NULL if this fleet is not moving or ordered to move
     const System* next_system = *route_it;  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
-        Logger().errorStream() << "Fleet::MovePath couldn't get next system for this fleet " << this->Name();
+        //Logger().errorStream() << "Fleet::MovePath couldn't get next system for this fleet " << this->Name();
         return retval;
     }
 
-    Logger().debugStream() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)") <<
-                              "  prev system: " << (prev_system ? prev_system->Name() : "(none)") <<
-                              "  next system: " << (next_system ? next_system->Name() : "(none)");
+    //Logger().debugStream() << "initial cur system: " << (cur_system ? cur_system->Name() : "(none)") <<
+    //                          "  prev system: " << (prev_system ? prev_system->Name() : "(none)") <<
+    //                          "  next system: " << (next_system ? next_system->Name() : "(none)");
 
 
 
@@ -206,11 +206,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         // each loop iteration moves the current position to the next location of interest along the move
         // path, and then adds a node at that position.
 
-        Logger().debugStream() << " starting iteration";
-        if (cur_system)
-            Logger().debugStream() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
-        else
-            Logger().debugStream() << "     at (" << cur_x << ", " << cur_y << ")";
+        //Logger().debugStream() << " starting iteration";
+        //if (cur_system)
+        //    Logger().debugStream() << "     at system " << cur_system->Name() << " with id " << cur_system->ID();
+        //else
+        //    Logger().debugStream() << "     at (" << cur_x << ", " << cur_y << ")";
 
 
         // check if fuel limits movement or current system refuels passing fleet
@@ -219,16 +219,16 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
             if (fleet_supplied_systems.find(cur_system->ID()) != fleet_supplied_systems.end()) {
                 // current system has fuel supply.  replenish fleet's supply and don't restrict movement
                 fuel = max_fuel;
-                Logger().debugStream() << " ... at system with fuel supply.  replenishing and continuing movement";
+                //Logger().debugStream() << " ... at system with fuel supply.  replenishing and continuing movement";
 
             } else {
                 // current system has no fuel supply.  require fuel to proceed
                 if (fuel >= 1.0) {
-                    Logger().debugStream() << " ... at system without fuel supply.  consuming unit of fuel to proceed";
+                    //Logger().debugStream() << " ... at system without fuel supply.  consuming unit of fuel to proceed";
                     fuel -= 1.0;
 
                 } else {
-                    Logger().debugStream() << " ... at system without fuel supply.  have insufficient fuel to continue moving";
+                    //Logger().debugStream() << " ... at system without fuel supply.  have insufficient fuel to continue moving";
                     turns_taken = ETA_OUT_OF_RANGE;
                     break;
                 }
@@ -238,7 +238,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
         // find distnace to next system along path from current position
         double dist_to_next_system = std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
-        Logger().debugStream() << " ... dist to next system: " << dist_to_next_system;
+        //Logger().debugStream() << " ... dist to next system: " << dist_to_next_system;
 
 
         // move ship as far as it can go this turn, or to next system, whichever is closer, and deduct
@@ -246,7 +246,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         if (turn_dist_remaining >= FLEET_MOVEMENT_EPSILON) {
             double dist_travelled_this_step = std::min(turn_dist_remaining, dist_to_next_system);
 
-            Logger().debugStream() << " ... fleet moving " << dist_travelled_this_step << " this iteration.  dist to next system: " << dist_to_next_system << " and turn_dist_remaining: " << turn_dist_remaining;
+            //Logger().debugStream() << " ... fleet moving " << dist_travelled_this_step << " this iteration.  dist to next system: " << dist_to_next_system << " and turn_dist_remaining: " << turn_dist_remaining;
 
             double x_dist = next_x - cur_x;
             double y_dist = next_y - cur_y;
@@ -272,11 +272,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         // must wait until next turn for another chance to move
         bool end_turn_at_cur_position = false;
         if (turn_dist_remaining < FLEET_MOVEMENT_EPSILON) {
-            Logger().debugStream() << " ... fleet can't move further this turn.";
+            //Logger().debugStream() << " ... fleet can't move further this turn.";
             turn_dist_remaining = 0.0;      // to prevent any possible precision-related errors
             end_turn_at_cur_position = true;
         } else {
-            Logger().debugStream() << " ... fleet CAN move further this turn on next iteration.";
+            //Logger().debugStream() << " ... fleet CAN move further this turn on next iteration.";
         }
 
 
@@ -289,7 +289,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
             cur_x = cur_system->X();    // update positions to ensure no round-off-errors
             cur_y = cur_system->Y();
 
-            Logger().debugStream() << " ... arrived at system: " << cur_system->Name();
+            //Logger().debugStream() << " ... arrived at system: " << cur_system->Name();
 
 
             // attempt to get next system on route, to update next system.  if new current
@@ -322,7 +322,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         // if the turn ended at this position, increment the turns taken and reset the distance remaining
         // to be travelled during the current (now next) turn for the next loop iteration
         if (end_turn_at_cur_position) {
-            Logger().debugStream() << " ... end of simulated turn " << turns_taken;
+            //Logger().debugStream() << " ... end of simulated turn " << turns_taken;
             ++turns_taken;
             turn_dist_remaining = m_speed;
         }
@@ -677,7 +677,7 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev)
 
 void Fleet::MovementPhase()
 {
-    Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
+    //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
     std::list<MovePathNode> move_path = this->MovePath();
 
@@ -694,14 +694,14 @@ void Fleet::MovementPhase()
             empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
         fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
     }
-    Logger().debugStream() << "Fleet Supplied Systems:";
-    for (std::set<int>::const_iterator it = fleet_supplied_systems.begin(); it != fleet_supplied_systems.end(); ++it)
-        Logger().debugStream() << " ... " << *it << " is supplied";
+    //Logger().debugStream() << "Fleet Supplied Systems:";
+    //for (std::set<int>::const_iterator it = fleet_supplied_systems.begin(); it != fleet_supplied_systems.end(); ++it)
+    //    Logger().debugStream() << " ... " << *it << " is supplied";
 
 
     // resupply fleet if possible
     if (current_system) {
-        Logger().debugStream() << "Fleet current system: " << current_system->Name() << " id: " << current_system->ID();
+        //Logger().debugStream() << "Fleet current system: " << current_system->Name() << " id: " << current_system->ID();
         // resupply ships, if fleet is supplyable at this location
         if (fleet_supplied_systems.find(current_system->ID()) != fleet_supplied_systems.end()) {
             for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
@@ -747,7 +747,7 @@ void Fleet::MovementPhase()
 
         System* system = universe.Object<System>(it->object_id);
 
-        Logger().debugStream() << "... node " << (system ? system->Name() : "no system");
+        //Logger().debugStream() << "... node " << (system ? system->Name() : "no system");
 
         // is this system the last node reached this turn?  either it's an end of turn node,
         // or there are no more nodes after this one on path
@@ -768,7 +768,7 @@ void Fleet::MovementPhase()
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {
-                Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
+                //Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0;
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
                     Ship* ship = universe.Object<Ship>(*ship_it);
@@ -781,16 +781,16 @@ void Fleet::MovementPhase()
             if (node_is_next_stop) {                    // is system the last node reached this turn?
                 system->Insert(this);                       // fleet ends turn at this node.  insert fleet into system
                 current_system = system;
-                Logger().debugStream() << "... ... inserted fleet into system";
+                //Logger().debugStream() << "... ... inserted fleet into system";
                 break;
             } else {
                 // fleet will continue past this system this turn.
                 Logger().debugStream() << "... ... moved fleet to system (not inserted)";
                 if (!resupply_here) {
                     fuel_consumed += 1.0;
-                    Logger().debugStream() << "... ... consuming 1 unit of fuel to continue moving.  total fuel consumed now: " << fuel_consumed;
+                    //Logger().debugStream() << "... ... consuming 1 unit of fuel to continue moving.  total fuel consumed now: " << fuel_consumed;
                 } else {
-                    Logger().debugStream() << "... ... not consuming fuel to depart resupply system";
+                    //Logger().debugStream() << "... ... not consuming fuel to depart resupply system";
                 }
             }
 
@@ -798,7 +798,7 @@ void Fleet::MovementPhase()
             // node is not a system.
             if (node_is_next_stop) {                    // node is not a system, but is it the last node reached this turn?
                 MoveTo(it->x, it->y);                       // fleet ends turn at this node.  move fleet here
-                Logger().debugStream() << "... ... moved fleet to position";
+                //Logger().debugStream() << "... ... moved fleet to position";
                 break;
             }
         }
