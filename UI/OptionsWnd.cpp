@@ -88,6 +88,7 @@ namespace {
                     if (!dlg.Result().empty()) {
                         fs::path path = m_directory ? fs::complete(*dlg.Result().begin()) : RelativePath(m_path, fs::path(*dlg.Result().begin()));
                         *m_edit << path.native_file_string();
+                        m_edit->EditedSignal(m_edit->Text());
                     }
                 } catch (const FileDlg::BadInitialDirectory& e) {
                     ClientUI::MessageBox(e.what(), true);
