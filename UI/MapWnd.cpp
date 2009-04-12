@@ -343,11 +343,12 @@ LaneEndpoints::LaneEndpoints() :
 // MapWnd::MovementLineData::Vertex
 ////////////////////////////////////////////////
 struct MapWnd::MovementLineData::Vertex {
-    Vertex(double x_, double y_, int eta_) :
-        x(x_), y(y_), eta(eta_)
+    Vertex(double x_, double y_, int eta_, bool show_eta_) :
+        x(x_), y(y_), eta(eta_), show_eta(show_eta_)
     {}
-    double x, y;    // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
-    int eta;        // turns taken to reach point by object travelling along move line
+    double  x, y;       // apparent in-universe position of a point on move line.  not actual universe positions, but rather where the move line vertices are drawn
+    int     eta;        // turns taken to reach point by object travelling along move line
+    bool    show_eta;   // should an ETA indicator / number be shown over this vertex?
 };
 
 ////////////////////////////////////////////////
@@ -369,10 +370,10 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     if (path.empty() || path.size() == 1)
         return; // nothing to draw.  need at least two nodes at different locations to draw a line
 
-    //std::cout << "move_line path: ";
+    //Logger().debugStream() << "move_line path: ";
     //for (std::list<MovePathNode>::const_iterator it = path.begin(); it != path.end(); ++it)
-    //    std::cout << it->object_id << " (" << it->x << ", " << it->y << "),  ";
-    //std::cout << std::endl;
+    //    Logger().debugStream() << " ... " << it->object_id << " (" << it->x << ", " << it->y << ") eta: " << it->eta << " turn_end: " << it->turn_end;
+
 
     // draw lines connecting points of interest along path.  only draw a line if the previous and
     // current positions of the ends of the line are known.
@@ -380,6 +381,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     double  prev_node_x =               first_node.x;
     double  prev_node_y =               first_node.y;
     int     prev_sys_id =               first_node.object_id;
+    int     prev_eta =                  first_node.eta;
     int     next_sys_id =               UniverseObject::INVALID_OBJECT_ID;
 
     for (std::list<MovePathNode>::const_iterator path_it = path.begin(); path_it != path.end(); ++path_it) {
@@ -431,14 +433,15 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
 
         // 3) Add points for line segment to list of Vertices
-        vertices.push_back(Vertex(start_xy.first,   start_xy.second,    node.eta));
-        vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta));
+        vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false));
+        vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end));
 
 
         // 4) prep for next iteration
         prev_node_x = node.x;
         prev_node_y = node.y;
-        if (node.object_id != UniverseObject::INVALID_OBJECT_ID) {
+        prev_eta = node.eta;
+        if (node.object_id != UniverseObject::INVALID_OBJECT_ID) {  // only need to update previous and next sys ids if current node is at a system
             prev_sys_id = node.object_id;                       // to be used in next iteration
             next_sys_id = UniverseObject::INVALID_OBJECT_ID;    // to be set in next iteration
         }
@@ -460,49 +463,6 @@ struct MapWnd::FleetButtonClickedFunctor {
     FleetButton&    m_fleet_btn;
     MapWnd&         m_map_wnd;
 };
-
-
-//////////////////////////////////
-// MapWnd::FleetETAMapIndicator
-//////////////////////////////////
-class MapWnd::FleetETAMapIndicator : public GG::Wnd
-{
-public:
-    FleetETAMapIndicator(double x, double y, int eta);
-    virtual void    Render();
-private:
-    double              m_x, m_y;
-    GG::TextControl*    m_text;
-};
-
-MapWnd::FleetETAMapIndicator::FleetETAMapIndicator(double x, double y, int eta) :
-    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>()),
-    m_x(x),
-    m_y(y),
-    m_text(0)
-{
-    std::string eta_text;
-    if (eta == Fleet::ETA_UNKNOWN)
-        eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
-    else if (eta == Fleet::ETA_NEVER)
-        eta_text = UserString("FW_FLEET_ETA_NEVER");
-    else if (eta == Fleet::ETA_OUT_OF_RANGE)
-        eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
-    else
-        eta_text = boost::lexical_cast<std::string>(eta);
-
-    m_text = new GG::TextControl(GG::X0, GG::Y0, eta_text, ClientUI::GetFont(),
-                                 ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-    Resize(m_text->Size());
-    AttachChild(m_text);
-}
-
-void MapWnd::FleetETAMapIndicator::Render()
-{
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul, lr, GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
-}
 
 
 ///////////////////////////
@@ -533,9 +493,7 @@ MapWnd::MapWnd() :
     m_system_fleet_insert_remove_signals(),
     m_keyboard_accelerator_signals(),
     m_fleet_lines(),
-    m_fleet_eta_map_indicators(),
     m_projected_fleet_lines(),
-    m_projected_fleet_eta_map_indicators(),
     m_star_core_quad_vertices(),
     m_star_halo_quad_vertices(),
     m_galaxy_gas_quad_vertices(),
@@ -882,7 +840,6 @@ void MapWnd::InitTurn(int turn_number)
     UpdateMeterEstimates();
 
 
-    const std::set<int>& this_player_explored_systems = empire->ExploredSystems();
     const std::map<int, std::set<int> > this_player_known_starlanes = empire->KnownStarlanes();
 
 
@@ -893,7 +850,7 @@ void MapWnd::InitTurn(int turn_number)
         // use systems this client's player has explored for all empires, so that this client's player can
         // see where other empires can probably propegate supply, even if this client's empire / player
         // doesn't know what systems the other player has actually explored
-        cur_empire->UpdateSupplyUnobstructedSystems(this_player_explored_systems);  
+        cur_empire->UpdateSupplyUnobstructedSystems();
 
         cur_empire->UpdateSystemSupplyRanges();
 
@@ -1044,13 +1001,13 @@ void MapWnd::InitTurnRendering()
     DoSystemIconsLayout();
 
 
-    // create fleet buttons for moving fleets
-    RefreshFleetButtons();
-
-
     // create buffers for system icon and galaxy gas rendering, and starlane rendering
     InitSystemRenderingBuffers();
     InitStarlaneRenderingBuffers();
+
+
+    // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
+    RefreshFleetButtons();
 }
 
 void MapWnd::InitSystemRenderingBuffers()
@@ -1779,6 +1736,7 @@ void MapWnd::SetFleetMovementLine(const Fleet* fleet)
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed a null fleet pointer";
         return;
     }
+    std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
@@ -1838,25 +1796,6 @@ void MapWnd::RemoveProjectedFleetMovementLine(const Fleet* fleet)
 void MapWnd::ClearProjectedFleetMovementLines()
 {
     m_projected_fleet_lines.clear();
-    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator map_it = m_projected_fleet_eta_map_indicators.begin();
-         map_it != m_projected_fleet_eta_map_indicators.end(); ++map_it)
-    {
-        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = map_it->second.begin(); vec_it != map_it->second.end(); ++vec_it)
-            DeleteChild(*vec_it);
-    }
-    m_projected_fleet_eta_map_indicators.clear();
-}
-
-void MapWnd::SetFleetETAIndicators(const std::vector<const Fleet*>& fleets)
-{
-}
-
-void MapWnd::SetProjectedFleetETAIndicators()
-{
-}
-
-void MapWnd::ClearProjectFleetETAIndicators()
-{
 }
 
 bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
@@ -1946,6 +1885,7 @@ void MapWnd::DoFleetButtonsLayout()
     }
 
     // position moving fleet buttons
+    std::cout << "MapWnd::DoFleetButtonsLayout() positioning " << m_moving_fleet_buttons.size() << " moving fleet buttons" << std::endl;
     for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
         FleetButton* fb = *it;
 
@@ -1955,6 +1895,7 @@ void MapWnd::DoFleetButtonsLayout()
         // skip button if it has no fleets (somehow...?) or if the first fleet in the button is NULL
         if (fb->Fleets().empty() || !(fleet = *(fb->Fleets().begin()))) {
             Logger().errorStream() << "DoFleetButtonsLayout couldn't get first fleet for button";
+            std::cerr << "DoFleetButtonsLayout couldn't get first fleet for button" << std::endl;
             continue;
         }
 
@@ -1965,6 +1906,8 @@ void MapWnd::DoFleetButtonsLayout()
         // position button
         GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
                          button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
+
+        std::cout << "moved moving fleet button to: (" << Value(button_ul.x) << ", " << Value(button_ul.y);
 
         fb->MoveTo(button_ul);
     }
@@ -2056,7 +1999,6 @@ void MapWnd::RefreshFleetButtons()
 
     // for each universe location, map from empire id to fleets moving along starlanes: "moving fleets"
     std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > > moving_fleets;
-
     Universe::ConstObjectVec moving_fleet_objects = universe.FindObjects(MovingFleetVisitor());
     for (Universe::ConstObjectVec::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
         const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
@@ -2072,7 +2014,7 @@ void MapWnd::RefreshFleetButtons()
         }
 
         // get owner of fleet
-        int empire_id = -1;
+        int empire_id = ALL_EMPIRES;
         const std::set<int>& owners = fleet->Owners();
         if (owners.size() == 1)
             empire_id = *(owners.begin());
@@ -2173,6 +2115,7 @@ void MapWnd::RefreshFleetButtons()
     // moving fleets
     for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator moving_fleets_it = moving_fleets.begin(); moving_fleets_it != moving_fleets.end(); ++moving_fleets_it) {
         const std::map<int, std::vector<const Fleet*> >& empires_map = moving_fleets_it->second;
+        std::cout << "creating moving fleet buttons at location (" << moving_fleets_it->first.first << ", " << moving_fleets_it->first.second << ")" << std::endl;
 
         // create button for each empire's fleets
         for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
@@ -2180,6 +2123,8 @@ void MapWnd::RefreshFleetButtons()
             const std::vector<const Fleet*>& fleets = empire_it->second;
             if (!empire || fleets.empty())
                 continue;
+
+            std::cout << " ... creating moving fleet buttons for empire " << empire->Name() << std::endl;
 
             // buttons need fleet IDs
             std::vector<int> fleet_IDs;
@@ -2639,21 +2584,24 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 {
     const std::vector<MovementLineData::Vertex>& vertices = move_line.vertices;
     if (vertices.empty())
-        return; // nothing to draw.  need at least two nodes at different locations to draw a line
+        return; // nothing to draw.
 
 
-    const double MARKER_HALF_SIZE = 9;
-    const double MARKER_INNER_INSET = 2;
+    const double MARKER_HALF_SIZE = 11;
+    const double MARKER_INNER_INSET = 1;
     const int MARKER_PTS = ClientUI::Pts();
     boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
     const double TWO_PI = 2.0*3.1415926536;
+    GG::Flags<GG::TextFormat> flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
+    glPushMatrix();
+    glLoadIdentity();
     for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
         const MovementLineData::Vertex& vert = *verts_it;
+        if (!vert.show_eta)
+            continue;
 
         glDisable(GL_TEXTURE_2D);
-        glPushMatrix();
-        glLoadIdentity();
 
         GG::Pt marker_centre = ScreenCoordsFromUniversePosition(vert.x, vert.y);
 
@@ -2670,11 +2618,13 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         CircleArc(ul, lr, 0.0, TWO_PI, true);
 
         glEnable(GL_TEXTURE_2D);
-        glPopMatrix();
 
         // render black ETA number
-        //glColor(GG::CLR_BLACK);
+        glColor(GG::CLR_BLACK);
+        std::string text = boost::lexical_cast<std::string>(vert.eta);
+        font->RenderText(ul, lr, text, flags);
     }
+    glPopMatrix();
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
@@ -2940,21 +2890,9 @@ void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
         if (it1 != m_fleet_lines.end())
             m_fleet_lines.erase(it1);
 
-        std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it2 = m_fleet_eta_map_indicators.find(fleet);
-        if (it2 != m_fleet_eta_map_indicators.end()) {
-            // clear all ETA indicators
-            m_fleet_eta_map_indicators.erase(it2);
-        }
-
         std::map<const Fleet*, MovementLineData>::iterator it3 = m_projected_fleet_lines.find(fleet);
         if (it3 != m_projected_fleet_lines.end())
             m_projected_fleet_lines.erase(it3);
-
-        std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it4 = m_projected_fleet_eta_map_indicators.find(fleet);
-        if (it4 != m_projected_fleet_eta_map_indicators.end()) {
-            // clear all ETA indicators
-            m_projected_fleet_eta_map_indicators.erase(it4);
-        }
     }
 }
 
@@ -3050,23 +2988,7 @@ void MapWnd::Sanitize()
 
     m_fleet_lines.clear();
 
-    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it = m_fleet_eta_map_indicators.begin(); it != m_fleet_eta_map_indicators.end(); ++it) {
-        std::vector<FleetETAMapIndicator*>& vec = it->second;
-        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
-            delete *vec_it;
-        vec.clear();
-    }
-    m_fleet_eta_map_indicators.clear();
-
     m_projected_fleet_lines.clear();
-
-    for (std::map<const Fleet*, std::vector<FleetETAMapIndicator*> >::iterator it = m_projected_fleet_eta_map_indicators.begin(); it != m_projected_fleet_eta_map_indicators.end(); ++it) {
-        std::vector<FleetETAMapIndicator*>& vec = it->second;
-        for (std::vector<FleetETAMapIndicator*>::iterator vec_it = vec.begin(); vec_it != vec.end(); ++vec_it)
-            delete *vec_it;
-        vec.clear();
-    }
-    m_projected_fleet_eta_map_indicators.clear();
 }
 
 bool MapWnd::ReturnToMap()

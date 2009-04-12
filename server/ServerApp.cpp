@@ -495,7 +495,6 @@ namespace {
 
 void ServerApp::ProcessTurns()
 {
-    Empire*         empire;
     Universe&       universe = GetUniverse();
     EmpireManager&  empires = Empires();
 
@@ -507,7 +506,7 @@ void ServerApp::ProcessTurns()
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
         }
 
-        empire = empires.Lookup(it->first);
+        Empire* empire = empires.Lookup(it->first);
         empire->ClearSitRep();
         OrderSet* order_set = it->second;
 
@@ -548,7 +547,7 @@ void ServerApp::ProcessTurns()
         // only one empire?
         if (it->second.size()==1) {
             it->second[0]->ServerExecute();
-            empire = empires.Lookup( it->second[0]->EmpireID() );
+            Empire* empire = empires.Lookup( it->second[0]->EmpireID() );
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
             const System *system = universe.Object<System>(planet->SystemID());
@@ -585,7 +584,7 @@ void ServerApp::ProcessTurns()
             for (int i = 0; i < static_cast<int>(it->second.size()); i++)
                 if (winner == i) {
                     it->second[i]->ServerExecute();
-                    empire = empires.Lookup(it->second[i]->EmpireID());
+                    Empire* empire = empires.Lookup(it->second[i]->EmpireID());
                     empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
                 }
                 else
@@ -617,8 +616,7 @@ void ServerApp::ProcessTurns()
             if (eta == 1) {
                 std::set<int> owners_set = fleet->Owners();
                 for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
-                    empire = empires.Lookup(*owners_it);
-                    if (empire)
+                    if (Empire* empire = empires.Lookup(*owners_it))
                         empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
                     else
                         Logger().errorStream() << "ServerApp::ProcessTurns couldn't find empire with id " << *owners_it << " to send a fleet arrival sitrep to for fleet " << fleet->ID();
@@ -747,7 +745,7 @@ void ServerApp::ProcessTurns()
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
-        empire = it->second;
+        Empire* empire = it->second;
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
@@ -760,7 +758,7 @@ void ServerApp::ProcessTurns()
     // Consume distributed resources to planets and on queues, create new objects for completed production and
     // give techs to empires that have researched them
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        empire = empires.Lookup(it->first);
+        Empire* empire = empires.Lookup(it->first);
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();

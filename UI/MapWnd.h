@@ -127,10 +127,6 @@ public:
     void            RemoveProjectedFleetMovementLine(const Fleet* fleet);   //!< removes projected fleet movement line for specified fleet.
     void            ClearProjectedFleetMovementLines();                     //!< removes all projected fleet movement lines
 
-    void            SetFleetETAIndicators(const std::vector<const Fleet*>& fleets); //!< removes existing fleet move line ETA indicators, and adds indicators for the specified \a fleets move lines
-    void            SetProjectedFleetETAIndicators();                       //!< creates fleet move line ETA indicators for current projected fleet move lines
-    void            ClearProjectFleetETAIndicators();                       //!< removes all projected fleet ETA indactors
-
     void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
     void            Cleanup();                                      //!< cleans up the MapWnd at the end of a turn (ie, closes all windows and disables all keyboard accelerators)
@@ -172,7 +168,6 @@ private:
     };
 
     struct FleetButtonClickedFunctor;
-    class FleetETAMapIndicator;
     class MapScaleLine;
 
     void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
@@ -301,18 +296,13 @@ private:
     std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
     std::map<const Fleet*, FleetButton*>            m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    std::map<int, boost::signals::connection>       m_fleet_state_change_signals;
+    std::map<int, boost::signals::connection>               m_fleet_state_change_signals;
     std::map<int, std::vector<boost::signals::connection> > m_system_fleet_insert_remove_signals;
 
     std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
 
     std::map<const Fleet*, MovementLineData>        m_fleet_lines;                          //!< lines used for moving fleets in the main map
-    std::map<const Fleet*,
-             std::vector<FleetETAMapIndicator*> >   m_fleet_eta_map_indicators;             //!< indicators that appear adjacent to fleet move lines that indicate the eta for points on a move path
-
     std::map<const Fleet*, MovementLineData>        m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
-    std::map<const Fleet*,
-             std::vector<FleetETAMapIndicator*> >   m_projected_fleet_eta_map_indicators;   //!< indicators that appear adjacent to projected fleet move lines that indicate the eta for points on a move path
 
     /* OpenGL buffers objects containing vertices, texture coordinates, etc. */
     struct GLBuffer {

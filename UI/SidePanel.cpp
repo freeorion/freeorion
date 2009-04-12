@@ -978,7 +978,7 @@ void SidePanel::PlanetPanel::Render()
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
 
-    Logger().debugStream() << "Planetpanel top: " << GG::Value(ul.y);
+    //Logger().debugStream() << "Planetpanel top: " << GG::Value(ul.y);
 
     // background and border
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
