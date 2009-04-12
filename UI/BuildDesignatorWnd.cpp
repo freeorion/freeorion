@@ -407,9 +407,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
 void BuildDesignatorWnd::BuildSelector::PopulateList()
 {
-    if (!Visible()) return;
-
-    Logger().debugStream() << "PopulateList start";
+    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList start";
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) return;
 
