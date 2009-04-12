@@ -2617,8 +2617,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         return; // nothing to draw.
 
 
-    const double MARKER_HALF_SIZE = 11;
-    const double MARKER_INNER_INSET = 2;
+    const double MARKER_HALF_SIZE = 9;
     const int MARKER_PTS = ClientUI::Pts();
     boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
     const double TWO_PI = 2.0*3.1415926536;
@@ -2631,34 +2630,33 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         if (!vert.show_eta)
             continue;
 
-        glDisable(GL_TEXTURE_2D);
 
+        // draw background disc in empire colour, or passed-in colour
         GG::Pt marker_centre = ScreenCoordsFromUniversePosition(vert.x, vert.y);
 
-        // draw background disc
-        if (clr == GG::CLR_ZERO) {
-            glColor(GG::CLR_WHITE);
-        } else {
-            glColor(move_line.colour);
-        }
-        GG::Pt ul = marker_centre - GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
-        GG::Pt lr = marker_centre + GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
-        CircleArc(ul, lr, 0.0, TWO_PI, true);
-
-        // draw (empire-colour?) main disc
         if (clr == GG::CLR_ZERO)
             glColor(move_line.colour);
         else
             glColor(clr);
-        ul += GG::Pt(GG::X(MARKER_INNER_INSET), GG::Y(MARKER_INNER_INSET));
-        lr -= GG::Pt(GG::X(MARKER_INNER_INSET), GG::Y(MARKER_INNER_INSET));
-        CircleArc(ul, lr, 0.0, TWO_PI, true);
 
+        GG::Pt ul = marker_centre - GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
+        GG::Pt lr = marker_centre + GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
+
+        glDisable(GL_TEXTURE_2D);
+        CircleArc(ul, lr, 0.0, TWO_PI, true);
         glEnable(GL_TEXTURE_2D);
 
-        // render black ETA number
-        glColor(GG::CLR_BLACK);
+
+        // render ETA number in white with black shadows
         std::string text = boost::lexical_cast<std::string>(vert.eta);
+
+        glColor(GG::CLR_BLACK);
+        font->RenderText(ul + GG::Pt(-GG::X1,  GG::Y0), lr + GG::Pt(-GG::X1,  GG::Y0), text, flags);
+        font->RenderText(ul + GG::Pt( GG::X1,  GG::Y0), lr + GG::Pt( GG::X1,  GG::Y0), text, flags);
+        font->RenderText(ul + GG::Pt( GG::X0, -GG::Y1), lr + GG::Pt( GG::X0, -GG::Y1), text, flags);
+        font->RenderText(ul + GG::Pt( GG::X0,  GG::Y1), lr + GG::Pt( GG::X0,  GG::Y1), text, flags);
+
+        glColor(GG::CLR_WHITE);
         font->RenderText(ul, lr, text, flags);
     }
     glPopMatrix();
