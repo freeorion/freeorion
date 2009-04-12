@@ -388,6 +388,21 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // the universe is loaded.  That means we must do it here.
     m_universe.RebuildEmpireViewSystemGraphs();
 
+
+    // restore in-turn state data potentially lost during serialization..
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
+    for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        Empire* empire = it->second;
+
+        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
+        empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
+        empire->UpdateFleetSupply();                // determines which systems can access fleet supply, and starlane traversals used to do this
+        empire->UpdateResourceSupply();             // determines the separate groups of systems within which (but not between which) resources can be shared
+        empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
+        empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
+    }
+
+
     // compile map of PlayerInfo for each player, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
@@ -542,7 +557,7 @@ void ServerApp::ProcessTurns()
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
     for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it) {
-        Planet *planet = universe.Object<Planet>(it->first);
+        Planet *planet = m_universe.Object<Planet>(it->first);
 
         // only one empire?
         if (it->second.size()==1) {
@@ -550,13 +565,13 @@ void ServerApp::ProcessTurns()
             Empire* empire = empires.Lookup( it->second[0]->EmpireID() );
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
-            const System *system = universe.Object<System>(planet->SystemID());
+            const System *system = m_universe.Object<System>(planet->SystemID());
 
             std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
             std::set<int> set_empire_with_military;
             for (unsigned int i=0;i<vec_fleet.size();i++)
                 for (Fleet::const_iterator ship_it=vec_fleet[i]->begin();ship_it!=vec_fleet[i]->end();++ship_it)
-                    if (universe.Object<Ship>(*ship_it)->IsArmed()) {
+                    if (m_universe.Object<Ship>(*ship_it)->IsArmed()) {
                         set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
                         break;
                     }
@@ -599,9 +614,9 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
     }
 
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         // save for possible SitRep generation after moving...
-        const Fleet* fleet = universe.Object<Fleet>(it->first);
+        const Fleet* fleet = m_universe.Object<Fleet>(it->first);
         int eta = -1;
         if (fleet)
             eta = fleet->ETA().first;
@@ -633,7 +648,7 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
     }
 
-    std::vector<System*> sys_vec = universe.FindObjects<System>();
+    std::vector<System*> sys_vec = m_universe.FindObjects<System>();
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
         if (TEST_3D_COMBAT) {
@@ -739,7 +754,7 @@ void ServerApp::ProcessTurns()
 
 
     // execute all effects and update meters prior to production, research, etc.
-    universe.ApplyAllEffectsAndUpdateMeters();
+    m_universe.ApplyAllEffectsAndUpdateMeters();
 
 
 
@@ -769,14 +784,14 @@ void ServerApp::ProcessTurns()
     // re-execute all meter-related effects after production, so that new UniverseObjects created during production
     // will have effects applied to them this turn, allowing (for example) ships to have max fuel meters greater than
     // 0 on the turn they are created.
-    universe.ApplyMeterEffectsAndUpdateMeters();
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
 
 
 
     // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
-    universe.RebuildEmpireViewSystemGraphs();
+    m_universe.RebuildEmpireViewSystemGraphs();
     // Population growth or loss, health meter growth, resource current meter growth
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();                          // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
@@ -786,7 +801,7 @@ void ServerApp::ProcessTurns()
     // copy latest updated current meter values to initial current values, and initial current values
     // to previous values, so that clients will have this information based on values after all changes
     // that occured this turn.
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
             if (Meter* meter = it->second->GetMeter(i))
                 meter->BackPropegate();
@@ -794,7 +809,7 @@ void ServerApp::ProcessTurns()
 
 
     // create sitreps for starved planets
-    std::vector<Planet*> plt_vec = universe.FindObjects<Planet>();
+    std::vector<Planet*> plt_vec = m_universe.FindObjects<Planet>();
     for (std::vector<Planet*>::iterator it = plt_vec.begin(); it!=plt_vec.end(); ++it) {
         if ((*it)->Owners().size() > 0 && (*it)->GetMeter(METER_POPULATION)->Current() <= 0.0) {
             // add some information to sitrep
@@ -828,8 +843,8 @@ void ServerApp::ProcessTurns()
     // check for eliminated empires and players
     std::map<int, int> eliminations; // map from player id to empire id of eliminated players
     for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
-        empire = it->second;
-        if (!EmpireEliminated(empire, universe))
+        Empire* empire = it->second;
+        if (!EmpireEliminated(empire, m_universe))
             continue;
 
         int elim_empire_id = it->first;
@@ -842,9 +857,9 @@ void ServerApp::ProcessTurns()
     std::map<int, std::set<std::string> > new_victors; // map from player ID to set of victory reason strings
 
     // marked by Victory effect?
-    const std::multimap<int, std::string>& marked_for_victory = universe.GetMarkedForVictory();
+    const std::multimap<int, std::string>& marked_for_victory = m_universe.GetMarkedForVictory();
     for (std::multimap<int, std::string>::const_iterator it = marked_for_victory.begin(); it != marked_for_victory.end(); ++it) {
-        const UniverseObject* obj = universe.Object(it->first);
+        const UniverseObject* obj = m_universe.Object(it->first);
         if (!obj) continue; // perhaps it was destroyed?
         const std::set<int>& owners = obj->Owners();
         if (owners.size() == 1) {
@@ -893,7 +908,7 @@ void ServerApp::ProcessTurns()
                     // record victory
                     m_victors[victor_player_id].insert(reason_string);
 
-                    empire = GetPlayerEmpire(victor_player_id);
+                    Empire* empire = GetPlayerEmpire(victor_player_id);
                     if (!empire) {
                         Logger().errorStream() << "Trying to grant victory to a missing empire!";
                         continue;
@@ -923,7 +938,7 @@ void ServerApp::ProcessTurns()
         for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
             int elim_player_id = it->first;
             int elim_empire_id = it->second;
-            empire = empires.Lookup(elim_empire_id);
+            Empire* empire = empires.Lookup(elim_empire_id);
             if (!empire) {
                 Logger().errorStream() << "Trying to eliminate a missing empire!";
                 continue;
