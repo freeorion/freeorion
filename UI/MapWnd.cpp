@@ -81,6 +81,7 @@ namespace {
         db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,       Validator<bool>());
         db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           4.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("UI.fleet-supply-line-dot-spacing",  "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING",     20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
         db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
@@ -201,6 +202,11 @@ namespace {
 
         return std::make_pair(buttonX, buttonY);
     }
+
+    /* Updated each frame to shift rendered posistion of dots that are drawn to show
+     * fleet move lines. */
+    static double move_line_animation_shift = 0.0;    // in pixels
+    static boost::shared_ptr<GG::Texture> move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
 }
 
 
@@ -743,13 +749,13 @@ void MapWnd::Render()
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_LINE_STIPPLE);
     RenderStarlanes();
-    RenderFleetMovementLines();
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.0);
 
     RenderSystems();
+    RenderFleetMovementLines();
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -954,6 +960,9 @@ void MapWnd::InitTurnRendering()
     Logger().debugStream() << "MapWnd::InitTurnRendering";
     CheckGLVersion();
     Universe& universe = GetUniverse();
+
+    // (re)load fleet move line dot texture
+    move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
 
 
     // adjust size of map window for universe and application size
@@ -1736,7 +1745,7 @@ void MapWnd::SetFleetMovementLine(const Fleet* fleet)
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed a null fleet pointer";
         return;
     }
-    std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
+    //std::cout << "creating fleet movement line for fleet at (" << fleet->X() << ", " << fleet->Y() << ")" << std::endl;
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
@@ -1885,7 +1894,6 @@ void MapWnd::DoFleetButtonsLayout()
     }
 
     // position moving fleet buttons
-    std::cout << "MapWnd::DoFleetButtonsLayout() positioning " << m_moving_fleet_buttons.size() << " moving fleet buttons" << std::endl;
     for (std::set<FleetButton*>::iterator it = m_moving_fleet_buttons.begin(); it != m_moving_fleet_buttons.end(); ++it) {
         FleetButton* fb = *it;
 
@@ -1895,7 +1903,6 @@ void MapWnd::DoFleetButtonsLayout()
         // skip button if it has no fleets (somehow...?) or if the first fleet in the button is NULL
         if (fb->Fleets().empty() || !(fleet = *(fb->Fleets().begin()))) {
             Logger().errorStream() << "DoFleetButtonsLayout couldn't get first fleet for button";
-            std::cerr << "DoFleetButtonsLayout couldn't get first fleet for button" << std::endl;
             continue;
         }
 
@@ -1906,8 +1913,6 @@ void MapWnd::DoFleetButtonsLayout()
         // position button
         GG::Pt button_ul(button_pos.first  * ZoomFactor() - FLEET_BUTTON_SIZE.x / 2.0,
                          button_pos.second * ZoomFactor() - FLEET_BUTTON_SIZE.y / 2.0);
-
-        std::cout << "moved moving fleet button to: (" << Value(button_ul.x) << ", " << Value(button_ul.y);
 
         fb->MoveTo(button_ul);
     }
@@ -2115,7 +2120,7 @@ void MapWnd::RefreshFleetButtons()
     // moving fleets
     for (std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > >::iterator moving_fleets_it = moving_fleets.begin(); moving_fleets_it != moving_fleets.end(); ++moving_fleets_it) {
         const std::map<int, std::vector<const Fleet*> >& empires_map = moving_fleets_it->second;
-        std::cout << "creating moving fleet buttons at location (" << moving_fleets_it->first.first << ", " << moving_fleets_it->first.second << ")" << std::endl;
+        //std::cout << "creating moving fleet buttons at location (" << moving_fleets_it->first.first << ", " << moving_fleets_it->first.second << ")" << std::endl;
 
         // create button for each empire's fleets
         for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
@@ -2124,7 +2129,7 @@ void MapWnd::RefreshFleetButtons()
             if (!empire || fleets.empty())
                 continue;
 
-            std::cout << " ... creating moving fleet buttons for empire " << empire->Name() << std::endl;
+            //std::cout << " ... creating moving fleet buttons for empire " << empire->Name() << std::endl;
 
             // buttons need fleet IDs
             std::vector<int> fleet_IDs;
@@ -2512,17 +2517,13 @@ void MapWnd::RenderFleetMovementLines()
     if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
         return;
 
-    glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
+    // set common animation shift for move lines
+    const int       MOVE_LINE_DOT_SPACING = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
+    const double    RATE =                  0.02;   // TODO: Make this a user-editable option
+    move_line_animation_shift = static_cast<double>(static_cast<int>(static_cast<double>(GG::GUI::GetGUI()->Ticks()) * RATE) % MOVE_LINE_DOT_SPACING);
 
-    // standard movement line stipple
-    const GLushort PATTERN = 0xF0F0;
-    const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
-    const double RATE = 0.25;
-    const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
-    const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
 
     // render movement lines for all fleets
-    glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 
@@ -2540,16 +2541,7 @@ void MapWnd::RenderFleetMovementLines()
             RenderMovementLineETAIndicators(line_it->second);
     }
 
-
-    // projected movement line stipple
-    const double PROJECTED_PATH_RATE = 0.35;
-    const int PROJECTED_PATH_SHIFT =
-        static_cast<int>(GG::GUI::GetGUI()->Ticks() * PROJECTED_PATH_RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
-    const unsigned int PROJECTED_PATH_STIPPLE =
-        (PATTERN << PROJECTED_PATH_SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - PROJECTED_PATH_SHIFT));
-
     // render projected move lines
-    glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.starlane-thickness")), PROJECTED_PATH_STIPPLE);
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_projected_fleet_lines.begin(); it != m_projected_fleet_lines.end(); ++it)
         RenderMovementLine(it->second, GG::CLR_WHITE);
 
@@ -2568,37 +2560,54 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::C
         return;
     }
 
+    glPushMatrix();
+    glLoadIdentity();
 
-    // draw lines connecting points of interest along path.  only draw a line if the previous and
-    // current positions of the ends of the line are known.
-    bool gl_open = false;
+    if (clr == GG::CLR_ZERO) {
+        glColor(move_line.colour);
+    } else {
+        glColor(clr);
+    }
 
+    GG::Pt      texture_half_size = GG::Pt(GG::X(move_line_dot_texture->DefaultWidth() / 2),
+                                           GG::Y(move_line_dot_texture->DefaultHeight() / 2));
+    const int   MOVE_LINE_DOT_SPACING = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
+
+    double offset = move_line_animation_shift;  // step along line in by move_line_animation_shift to get position of first dot
+
+    // blit a series of coloured dots along move path
     for (std::vector<MovementLineData::Vertex>::const_iterator verts_it = vertices.begin(); verts_it != vertices.end(); ++verts_it) {
-        // does glBegin need to be called for this line?
-        if (!gl_open) {
-            // this is obviously less efficient than using GL_LINE_STRIP, but GL_LINE_STRIP sometimes
-            // produces nasty artifacts when the begining of a line segment starts offscreen
-            glBegin(GL_LINES);
-            if (clr == GG::CLR_ZERO) {
-                glColor(move_line.colour);
-            } else {
-                glColor(clr);
-            }
-            gl_open = true;
-        }
-
         // get next two vertices
         const MovementLineData::Vertex& vert1 = *verts_it;
         verts_it++;
         const MovementLineData::Vertex& vert2 = *verts_it;
 
-        // add gl vertices for this line segment
-        glVertex2d(vert1.x, vert1.y);
-        glVertex2d(vert2.x, vert2.y);
-    }
+        GG::Pt vert1Pt = ScreenCoordsFromUniversePosition(vert1.x, vert1.y) - texture_half_size;
+        GG::Pt vert2Pt = ScreenCoordsFromUniversePosition(vert2.x, vert2.y) - texture_half_size;
 
-    if (gl_open)
-        glEnd();
+        // get unit vector along line connecting vertices
+        double deltaX = Value(vert2Pt.x - vert1Pt.x), deltaY = Value(vert2Pt.y - vert1Pt.y);
+        double length = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+        if (length == 0.0) // safety check
+            length = 1.0;
+        double uVecX = deltaX / length, uVecY = deltaY / length;
+
+
+        // increment along line, rendering dots, until end of line segment is passed
+        while (offset < length) {
+            // find position of dot from initial vertex position, offset length and unit vectors
+            GG::Pt centre = GG::Pt(vert1Pt.x + GG::X(offset * uVecX), vert1Pt.y + GG::Y(offset * uVecY));
+
+            // blit texture (appropriately coloured) into place, shifted up and left so dot is centred on desired position
+            move_line_dot_texture->OrthoBlit(centre);
+
+            // move offset to that for next dot
+            offset += MOVE_LINE_DOT_SPACING;
+        }
+
+        offset -= length;   // so next segment's dots meld smoothly into this segment's
+    }
+    glPopMatrix();
 }
 
 void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr)

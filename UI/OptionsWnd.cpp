@@ -740,6 +740,7 @@ void OptionsWnd::Init()
     BoolOption("UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
     BoolOption("UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
     DoubleOption("UI.fleet-supply-line-width",          UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
+    IntOption("UI.fleet-supply-line-dot-spacing",       UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
     ColorOption("UI.unowned-starlane-colour",           UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
     EndSection();
     BeginSection(UserString("OPTIONS_GALAXY_MAP_GENERAL"));
