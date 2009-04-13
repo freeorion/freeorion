@@ -1,10 +1,12 @@
+Russian
+
 #This is the Russian String Table file for FreeOrion
-#Partially translated For FreeOrion v0.3.1-RC4 build 1804
+
 #################
 # Common        #
 #################
 
-#translated by pyrblch (pyrblch at gmail.com)
+#partly translated by pyrblch (pyrblch at gmail.com)
 
 APPNAME
 FreeOrion
@@ -169,6 +171,9 @@ FreeOrion Главное Меню
 
 INTRO_BTN_SINGLE_PLAYER
 Одиночная игра
+
+INTRO_BTN_QUICK_START
+Быстрый запуск
 
 INTRO_BTN_MULTI_PLAYER
 Сетевая игра
@@ -407,6 +412,12 @@ GAME_MENU_SAVE_FILES
 OPTIONS_TITLE
 Настройка
 
+OPTION_PAGE_VIDEO
+Видео
+
+OPTION_PAGE_AUDIO
+Аудио
+
 OPTIONS_AUTOSELECT_FLEET
 Автоматически выбирать первый флот
 
@@ -585,7 +596,7 @@ OPTIONS_PAGE_CONTROL
 Общие
 
 OPTIONS_PAGE_UI
-Внешний вид Интерфейса
+Интерфейс
 
 OPTIONS_PAGE_SOUND
 Звуки
@@ -770,10 +781,10 @@ TECH_DETAIL_DESCRIPTION_STR
 %1%
 
 TECH_DETAIL_EFFECTS_STR
-\n\n&lt;u&gt;Эффекты&lt;/u&gt;\n\n%1%
+\n\n<u>Эффекты</u>\n\n%1%
 
 TECH_DETAIL_UNLOCKS_SECTION_STR
-\n\n&lt;u&gt;Разблокировать&lt;/u&gt;\n\n
+\n\n<u>Разблокировать</u>\n\n
 
 TECH_DETAIL_UNLOCKED_ITEM_STR
 %1%: %2%\n
@@ -893,7 +904,7 @@ PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
 %1%
 
 PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-%1%\n\n&lt;u&gt;Эффекты&lt;/u&gt;\n\n%2%
+%1%\n\n<u>Эффекты</u>\n\n%2%
 
 PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
 %1%\n\nАтака: %2%\nЗащита: %3%\nСкорость: %4%
@@ -933,7 +944,7 @@ COMBAT_WINDOW_TITLE
 Боевое Окно
 
 COMBAT_BATTLE
-БИТВА&nbsp;: 
+БИТВА : 
 
 COMBAT_SYSTEM
 Система %1%
@@ -1657,7 +1668,7 @@ ECONOMICS_CATEGORY
 Экономика
 
 #############################
-# Tech Names &amp; Descriptions #
+# Tech Names & Descriptions #
 #############################
 
 LRN_PHYS_BRAIN
@@ -1790,7 +1801,7 @@ GRO_SYMBIOTIC_BIO
 Симбиозная Биология
 
 GRO_SYMBIOTIC_BIO_DESC
-С самых первых одомашненных животных или сельскохозяйственных растений, общество открыло преимущества симбиозных взаимосвязей с другими видами.  Позже, бактерии или природные паразиты часто использовались для медицинских целей.  Тем не менее, в этих ранних формах доминирующие виды (в идеале) в&nbsp;?полном управлении взаимосвязей с "выращиваемым" организмом, существующим только для обеспечения своего владельца?.  Истинный симбиоз появляется только тогда, когда оба организма существуют и процветают вместе, помогают друг-другу и зависят от преимуществ другого, а их взаимосвязь более эффективна, чем сумма этих видов по отдельности.
+С самых первых одомашненных животных или сельскохозяйственных растений, общество открыло преимущества симбиозных взаимосвязей с другими видами.  Позже, бактерии или природные паразиты часто использовались для медицинских целей.  Тем не менее, в этих ранних формах доминирующие виды (в идеале) в ?полном управлении взаимосвязей с "выращиваемым" организмом, существующим только для обеспечения своего владельца?.  Истинный симбиоз появляется только тогда, когда оба организма существуют и процветают вместе, помогают друг-другу и зависят от преимуществ другого, а их взаимосвязь более эффективна, чем сумма этих видов по отдельности.
 
 GRO_GENETIC_MED
 Генная Медицина
@@ -2111,7 +2122,7 @@ ECO_ECON_HEGEMONY_DESC
 An economy in optimal form represents a great variety of financial, cultural and other social mechanisms that may be employed to achieve the goals of those who are able to control them.  Through use of these tools, other less-developed economies may be completely controlled, either through overt domination or destruction, or more subtle and targetted manipulations.  By extention, an externally-controlled economy may be used to exert influence or control on all other aspects of a society.  Through these means, a power equal or greater than any martial force is realized.
 
 #########################################
-# Tech Application Names &amp; Descriptions #
+# Tech Application Names & Descriptions #
 #########################################
 
 CON_GRAVITY_WELLS
@@ -2295,7 +2306,7 @@ PRO_MINING_ENGINEERING_DESC
 Applying the concepts of Planetary Geology allows effective extraction of minerals from near the surface of planets.  By identifying the probably locations and ideal extraction methods, efficiency and total possible production are increased.  As well, proper planning and analysis increase mine safety and longevity.
 
 #################################
-# Building Names &amp; Descriptions #
+# Building Names & Descriptions #
 #################################
 
 BLD_GRAVITY_WELLS
@@ -2423,3 +2434,4 @@ Economic Sinkhole
 
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
+
