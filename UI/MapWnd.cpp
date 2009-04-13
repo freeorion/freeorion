@@ -205,8 +205,7 @@ namespace {
 
     /* Updated each frame to shift rendered posistion of dots that are drawn to show
      * fleet move lines. */
-    static double move_line_animation_shift = 0.0;    // in pixels
-    static boost::shared_ptr<GG::Texture> move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+    double move_line_animation_shift = 0.0;    // in pixels
 }
 
 
@@ -960,10 +959,6 @@ void MapWnd::InitTurnRendering()
     Logger().debugStream() << "MapWnd::InitTurnRendering";
     CheckGLVersion();
     Universe& universe = GetUniverse();
-
-    // (re)load fleet move line dot texture
-    move_line_dot_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
-
 
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
@@ -2569,6 +2564,8 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::C
         glColor(clr);
     }
 
+    boost::shared_ptr<GG::Texture> move_line_dot_texture =
+        ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
     GG::Pt      texture_half_size = GG::Pt(GG::X(move_line_dot_texture->DefaultWidth() / 2),
                                            GG::Y(move_line_dot_texture->DefaultHeight() / 2));
     const int   MOVE_LINE_DOT_SPACING = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
