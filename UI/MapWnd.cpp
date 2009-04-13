@@ -845,25 +845,25 @@ void MapWnd::InitTurn(int turn_number)
     UpdateMeterEstimates();
 
 
-    const std::map<int, std::set<int> > this_player_known_starlanes = empire->KnownStarlanes();
-
+    const std::map<int, std::set<int> > this_client_known_starlanes = empire->KnownStarlanes();
+    const std::set<int>                 this_client_explored_systems = empire->ExploredSystems();
 
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* cur_empire = it->second;
+        Empire* empire = it->second;
 
-        // use systems this client's player has explored for all empires, so that this client's player can
-        // see where other empires can probably propegate supply, even if this client's empire / player
+        // use systems this client's player's empire has explored for all empires, so that this client's
+        // player can see where other empires can probably propegate supply, even if this client's empire
         // doesn't know what systems the other player has actually explored
-        cur_empire->UpdateSupplyUnobstructedSystems();
+        empire->UpdateSupplyUnobstructedSystems(this_client_explored_systems);
 
-        cur_empire->UpdateSystemSupplyRanges();
+        empire->UpdateSystemSupplyRanges();
 
         // similarly, use this client's player's known starlanes to propegate all empires' supply
-        cur_empire->UpdateFleetSupply(this_player_known_starlanes);
-        cur_empire->UpdateResourceSupply(this_player_known_starlanes);
+        empire->UpdateFleetSupply(this_client_known_starlanes);
+        empire->UpdateResourceSupply(this_client_known_starlanes);
 
-        cur_empire->InitResourcePools();
+        empire->InitResourcePools();
     }
 
 
@@ -1230,11 +1230,12 @@ void MapWnd::InitSystemRenderingBuffers()
 void MapWnd::InitStarlaneRenderingBuffers()
 {
     // temp storage
-    std::vector<float> raw_starlane_vertices;
-    std::vector<unsigned char> raw_starlane_colors;
-    std::vector<float> raw_starlane_supply_vertices;
-    std::vector<unsigned char> raw_starlane_supply_colors;
-    std::set<std::pair<int, int> > rendered_half_starlanes; // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+    std::vector<float>              raw_starlane_vertices;
+    std::vector<unsigned char>      raw_starlane_colors;
+    std::vector<float>              raw_starlane_supply_vertices;
+    std::vector<unsigned char>      raw_starlane_supply_colors;
+    std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
     Universe& universe = GetUniverse();
@@ -1255,12 +1256,14 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
             const System* start_system = &system;
             const System* dest_system = universe.Object<System>(lane_it->first);
+            //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
 
 
             // check that this lane isn't already in map / being rendered.
             std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
 
             if (m_starlane_endpoints.find(lane) == m_starlane_endpoints.end()) {
+                //std::cout << "adding full length lane" << std::endl;
 
                 // get and store universe position endpoints for this starlane.  make sure to store in the same order
                 // as the system ids in the lane id pair
@@ -1285,13 +1288,15 @@ void MapWnd::InitStarlaneRenderingBuffers()
                     Empire* empire = empire_it->second;
                     const std::set<std::pair<int, int> >& resource_supply_lanes = empire->ResourceSupplyStarlaneTraversals();
 
+                    //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
+
                     std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
                     std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
 
                     // see if this lane exists in this empire's supply propegation lanes set.  either direction accepted.
                     if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
                         lane_colour = empire->Color();
-                        //Logger().debugStream() << "selected colour of empire " << empire->Name() << " for this full lane";
+                        //std::cout << "selected colour of empire " << empire->Name() << " for this full lane" << std::endl;
                         break;
                     }
                 }
@@ -1315,7 +1320,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
             // check that this lane isn't already going to be rendered.  skip it if it is.
             if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) == rendered_half_starlanes.end()) {
                 // NOTE: this will never find a preexisting half lane   NOTE LATER: I probably wrote that comment, but have no idea what it means...
-                //Logger().debugStream() << "half lane not found... considering possible half lanes to add";
+                //std::cout << "half lane not found... considering possible half lanes to add" << std::endl;
 
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
 
@@ -1346,7 +1351,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
                         raw_starlane_colors.push_back(lane_colour.b);
                         raw_starlane_colors.push_back(lane_colour.a);
 
-                        //Logger().debugStream() << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name();
+                        //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
 
                         break;
                     }
