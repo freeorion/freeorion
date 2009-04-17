@@ -21,11 +21,11 @@ Ship::Ship(int empire_id, int design_id) :
 
     AddOwner(empire_id);
 
-    InsertMeter(METER_FUEL, Meter());
-    InsertMeter(METER_SHIELD, Meter());
-    InsertMeter(METER_DETECTION, Meter());
-    InsertMeter(METER_STEALTH, Meter());
-    InsertMeter(METER_HEALTH, Meter());
+    InsertMeter(METER_FUEL,         Meter());
+    InsertMeter(METER_SHIELD,       Meter());
+    InsertMeter(METER_DETECTION,    Meter());
+    InsertMeter(METER_STEALTH,      Meter());
+    InsertMeter(METER_HEALTH,       Meter());
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {

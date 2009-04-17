@@ -131,7 +131,7 @@ SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name) {
 
     sitrep->SetType(SitRepEntry::EMPIRE_ELIMINATED);
 
-    XMLElement name_elem("name");
+    XMLElement name_elem(VarText::EMPIRE_ID_TAG);
     name_elem.SetAttribute("value", empire_name);
     sitrep->GetVariables().AppendChild(name_elem);
 

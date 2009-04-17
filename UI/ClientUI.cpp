@@ -334,7 +334,7 @@ namespace {
     }
 
     // an internal LUT of string IDs for each SitRep type
-    // It's in this module becaue SitReps know nothing about how they
+    // It's in this module because SitReps know nothing about how they
     // should be rendered - this is up to the client UI
     const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
     {
@@ -549,8 +549,8 @@ boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesyste
 {
     assert(0 <= n);
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
-    return prefixed_textures_and_dist.first.empty() ? 
-        boost::shared_ptr<GG::Texture>() : 
+    return prefixed_textures_and_dist.first.empty() ?
+        boost::shared_ptr<GG::Texture>() :
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 
@@ -785,12 +785,12 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
        Otherwise, have to use next higher power of 1000 to avoid having too many digits.
        Also may set adjusting factor to remove a digit below the units digit if using the next
        higher power of 1000, as highest digit may be less than this, in which case extra 0. at
-       start of number needs to be counted in digits */ 
+       start of number needs to be counted in digits */
     int unitPow10, digitCor = 0;
     if (LDDANLP1000 == 0)
         unitPow10 = LDNLP1000;
     else
-        unitPow10 = LDNHP1000;  
+        unitPow10 = LDNHP1000;
 
     if (integerize && unitPow10 < 0) unitPow10 = 0;
     if (pow10 < unitPow10) digitCor = -1;   // if value is less than the base unit, there will be a leading 0 using up one digit
@@ -801,7 +801,7 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     mag /= roundingFactor;
     mag = floor(mag);
     mag *= roundingFactor;
-    
+
     // scale number by unit power of 10
     mag /= pow(10.0, static_cast<double>(unitPow10));  // if mag = 45324 and unitPow = 3, get mag = 45.324
 
@@ -810,9 +810,9 @@ std::string DoubleToString(double val, int digits, bool integerize, bool showsig
     // fraction digits:
     int fractionDigits = 0;
     if (!integerize) fractionDigits = unitPow10 - LDPow10;
-    
+
     std::string format;
-    format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." + 
+    format += "%" + boost::lexical_cast<std::string>(totalDigits) + "." +
                     boost::lexical_cast<std::string>(fractionDigits) + "f";
     text += (boost::format(format) % mag).str();
 

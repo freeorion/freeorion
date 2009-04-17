@@ -49,6 +49,7 @@ public:
     static const std::string SHIP_ID_TAG;
     static const std::string FLEET_ID_TAG;
     static const std::string BUILDING_ID_TAG;
+    static const std::string EMPIRE_ID_TAG;
 
 protected:
     XMLElement  m_variables; ///< the data describing the sitrep. See class comments for description

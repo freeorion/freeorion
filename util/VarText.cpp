@@ -17,7 +17,7 @@ namespace {
     struct SubstituteAndAppend
     {
         SubstituteAndAppend(const XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
-        void operator()(const char* first, const char* last) const 
+        void operator()(const char* first, const char* last) const
         {
             std::string token(first, last);
 
@@ -69,6 +69,10 @@ namespace {
                 }
 
                 m_str += open_tag + UserString(building_name) + close_tag;
+            } else if (token == VarText::EMPIRE_ID_TAG) {
+                std::string empire_name = token_elem.Attribute("value");
+
+                m_str += empire_name;
             }
         }
 
@@ -80,7 +84,7 @@ namespace {
     struct StringAppend
     {
         StringAppend(std::string& str) : m_str(str) {}
-        void operator()(const char* first, const char* last) const 
+        void operator()(const char* first, const char* last) const
         {
             m_str += std::string(first, last);
         }
@@ -97,6 +101,7 @@ const std::string VarText::TECH_ID_TAG = "tech";
 const std::string VarText::SHIP_ID_TAG = "ship";
 const std::string VarText::FLEET_ID_TAG = "fleet";
 const std::string VarText::BUILDING_ID_TAG = "building";
+const std::string VarText::EMPIRE_ID_TAG = "empire";
 
 void VarText::GenerateVarText(const std::string& template_str)
 {

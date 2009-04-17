@@ -279,7 +279,7 @@ public:
 
     int                     NumSitRepEntries() const;                                       ///< number of entries in the SitRep.
 
-    const std::set<int>&                    FleetSupplyableSystemIDs() const;               ///< returns set of system ids where fleets can be supplied by this empire (as determined by object supply meters and rules of supply proegation and blockade)
+    const std::set<int>&                    FleetSupplyableSystemIDs() const;               ///< returns set of system ids where fleets can be supplied by this empire (as determined by object supply meters and rules of supply propagation and blockade)
     const std::set<std::pair<int, int> >&   FleetSupplyStarlaneTraversals() const;          ///< returns set of directed starlane traversals along which supply can flow.  results are pairs of system ids of start and end system of traversal
     const std::map<int, int>&               FleetSupplyRanges() const;                      ///< returns map from system id to number of starlane jumps away the system can deliver fleet supply
 
@@ -288,7 +288,7 @@ public:
     const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;  ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
     const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
 
-    const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propegate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
+    const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propagate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
 
     /** modifies passed parameter, which is a map from system id to the range, in starlane jumps that the
       * system can send supplies. */
@@ -302,7 +302,7 @@ public:
     TechItr                 TechEnd() const;                    ///< end iterator for techs
     BuildingTypeItr         AvailableBuildingTypeBegin() const; ///< starting iterator for building types this empire can produce
     BuildingTypeItr         AvailableBuildingTypeEnd() const;   ///< end iterator for building types
-    ShipDesignItr           ShipDesignBegin() const;            ///< starting iterator for ship designs this empire has on file.  individual designs may or may not be producable for this empire
+    ShipDesignItr           ShipDesignBegin() const;            ///< starting iterator for ship designs this empire has on file.  individual designs may or may not be producible for this empire
     ShipDesignItr           ShipDesignEnd() const;              ///< end iterator for ship designs
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
     SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
@@ -348,7 +348,7 @@ public:
     void                    RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
 
     /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
-      * as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
+      * as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build
       * queue of their current empire */
     void                    ConquerBuildsAtLocation(int location_id);
 
@@ -393,7 +393,7 @@ public:
       * production sites.  Which projects have been completed is determined by the results of
       * previously-called Update() on the production queue (which determines how much PP each project
       * receives, but does not actually spend them).  This function spends the PP, removes complete
-      * items from the queue and creates the results in the universe.  Also updates the empire's 
+      * items from the queue and creates the results in the universe.  Also updates the empire's
       * minerals stockpile to account for any excess not used or any shortfall that was made up by
       * taking from the stockpile. */
     void                    CheckProductionProgress();

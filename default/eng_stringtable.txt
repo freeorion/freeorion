@@ -1869,7 +1869,7 @@ SITREP_FLEET_ARRIVED_AT_DESTINATION
 %fleet% has arrived at the %system% system and awaits further orders.
 
 SITREP_EMPIRE_ELIMINATED
-The %name% empire has been eliminated.
+The %empire% empire has been eliminated.
 
 SITREP_VICTORY
 %1%
