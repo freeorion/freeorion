@@ -15,7 +15,7 @@ class PopCenter
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<UniverseObject* (), Default0Combiner> GetObjectSignalType; ///< emitted as a request for the UniverseObject to which this PopCenter is attached
+    typedef boost::signal<UniverseObject* (), Default0Combiner> GetObjectSignalType;    ///< emitted as a request for the UniverseObject to which this PopCenter is attached
     //@}
 
     /** \name Structors */ //@{

@@ -1,17 +1,19 @@
 #include "Planet.h"
 
-#include "../util/AppInterface.h"
 #include "Building.h"
-#include "../util/DataTable.h"
 #include "Fleet.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/OptionsDB.h"
-#include "../util/Random.h"
-#include "Predicates.h"
 #include "Ship.h"
 #include "System.h"
+#include "Predicates.h"
+#include "../util/AppInterface.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/DataTable.h"
+#include "../util/OptionsDB.h"
+#include "../util/Random.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+
+#include <GG/SignalsAndSlots.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -103,8 +105,8 @@ Planet::Planet() :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false)
 {
-    GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
-    GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
+    GG::Connect(ResourceCenter::GetObjectSignal,    &Planet::This, this);
+    GG::Connect(PopCenter::GetObjectSignal,         &Planet::This, this);
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
     // in functional form by deserialization.  Also assumes planet-specific meters don't need to be re-added.
 }
@@ -123,8 +125,8 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false)
 {
-    GG::Connect(ResourceCenter::GetObjectSignal, &Planet::This, this);
-    GG::Connect(PopCenter::GetObjectSignal, &Planet::This, this);
+    GG::Connect(ResourceCenter::GetObjectSignal,    &Planet::This, this);
+    GG::Connect(PopCenter::GetObjectSignal,         &Planet::This, this);
     PopCenter::Init(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type)));
     ResourceCenter::Init();
     Planet::Init();

@@ -6,8 +6,6 @@
 #include "Meter.h"
 #include "UniverseObject.h"
 
-#include <boost/signal.hpp>
-
 class Empire;
 
 /** The ResourceCenter class is an abstract base class for anything in the FreeOrion gamestate that generates
@@ -20,8 +18,8 @@ class ResourceCenter
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> ResourceCenterChangedSignalType; ///< emitted when the ResourceCenter is altered in any way
-    typedef boost::signal<UniverseObject* (), Default0Combiner> GetObjectSignalType; ///< emitted as a request for the UniverseObject to which this ResourceCenter is attached
+    typedef boost::signal<void ()>                                  ResourceCenterChangedSignalType;    ///< emitted when the ResourceCenter is altered in any way
+    typedef boost::signal<UniverseObject* (), Default0Combiner>     GetObjectSignalType;                ///< emitted as a request for the UniverseObject to which this ResourceCenter is attached
     //@}
 
     /** \name Structors */ //@{

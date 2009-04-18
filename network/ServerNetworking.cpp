@@ -4,7 +4,8 @@
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 
-#include <boost/bind.hpp>
+#include <GG/SignalsAndSlots.h>
+
 #include <boost/iterator/filter_iterator.hpp>
 
 
