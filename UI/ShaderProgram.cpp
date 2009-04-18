@@ -23,6 +23,8 @@
 #endif
 
 namespace {
+    GLenum error;
+
     void GetShaderLog(GLuint shader, std::string& log)
     {
         log.clear();
@@ -80,52 +82,41 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     glGetError();
 
     m_vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glCreateShader(GL_VERTEX_SHADER)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_VERTEX_SHADER)");
     m_fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glCreateShader(GL_FRAGMENT_SHADER)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_FRAGMENT_SHADER)");
 
     const char* strings[1] = { 0 };
     strings[0] = vertex_shader.c_str();
     glShaderSource(m_vertex_shader_id, 1, strings, 0);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glShaderSource(vertex_shader)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(vertex_shader)");
     strings[0] = fragment_shader.c_str();
     glShaderSource(m_fragment_shader_id, 1, strings, 0);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glShaderSource(fragment_shader)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(fragment_shader)");
 
     glCompileShader(m_vertex_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glCompileShader(m_vertex_shader_id)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCompileShader(m_vertex_shader_id)");
 
     glCompileShader(m_fragment_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glCompileShader(m_fragment_shader_id)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCompileShader(m_fragment_shader_id)");
 
     GetShaderLog(m_vertex_shader_id, m_vertex_shader_log);
     GetShaderLog(m_fragment_shader_id, m_fragment_shader_log);
 
     m_program_id = glCreateProgram();
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glCreateProgram()");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateProgram()");
 
     glAttachShader(m_program_id, m_vertex_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glAttachShader(m_vertex_shader_id)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glAttachShader(m_vertex_shader_id)");
 
     glAttachShader(m_program_id, m_fragment_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glAttachShader(m_fragment_shader_id)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glAttachShader(m_fragment_shader_id)");
 
     int status;
     glLinkProgram(m_program_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glLinkProgram()");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glLinkProgram()");
     glGetProgramiv(m_program_id, GL_LINK_STATUS, &status);
-    CHECK_ERROR("ShaderProgram::ShaderProgram",
-                "glGetProgramiv(GL_LINK_STATUS)");
+    CHECK_ERROR("ShaderProgram::ShaderProgram", "glGetProgramiv(GL_LINK_STATUS)");
     m_link_succeeded = status;
 
     GetProgramLog(m_program_id, m_program_log);
@@ -135,14 +126,11 @@ ShaderProgram::~ShaderProgram()
 {
     glGetError();
     glDeleteShader(m_vertex_shader_id);
-    CHECK_ERROR("ShaderProgram::~ShaderProgram",
-                "glDeleteShader(m_vertex_shader_id)");
+    CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_vertex_shader_id)");
     glDeleteShader(m_fragment_shader_id);
-    CHECK_ERROR("ShaderProgram::~ShaderProgram",
-                "glDeleteShader(m_fragment_shader_id)");
+    CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteShader(m_fragment_shader_id)");
     glDeleteProgram(m_program_id);
-    CHECK_ERROR("ShaderProgram::~ShaderProgram",
-                "glDeleteProgram()");
+    CHECK_ERROR("ShaderProgram::~ShaderProgram", "glDeleteProgram()");
 }
 
 GLuint ShaderProgram::ProgramID() const
