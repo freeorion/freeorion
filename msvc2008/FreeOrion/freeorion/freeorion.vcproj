@@ -652,6 +652,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\ShaderProgram.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\ShaderProgram.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Ui\SidePanel.cpp"
 				>
 			</File>
