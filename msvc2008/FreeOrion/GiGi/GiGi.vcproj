@@ -43,7 +43,7 @@
 				Optimization="3"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="../../../../include/;../../../GG/;&quot;../../../../Boost/include/boost-1_36&quot;;../../include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GIGI_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GIGI_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK;ADOBE_STD_SERIALIZATION;ADOBE_TEST_MICROSOFT_NO_DEPRECATE=0"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="false"
@@ -267,6 +267,10 @@
 				Name="src"
 				>
 				<File
+					RelativePath="..\..\..\GG\src\AdamGlue.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\src\AlignmentFlags.cpp"
 					>
 				</File>
@@ -407,6 +411,106 @@
 					</File>
 					<File
 						RelativePath="..\..\..\GG\src\dialogs\ThreeButtonDlg.cpp"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="adobe"
+					>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\adam.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\adam_evaluate.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\adam_parser.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\any_regular.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\basic_sheet.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\eve.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\eve_evaluate.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\eve_parser.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\expression_filter.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\expression_parser.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\iomanip.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\iomanip_asl_cel.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\istream.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\lex_shared.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\lex_stream.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\localization.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\memory.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\name.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\parser_shared.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\string.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\string_pool.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\token.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\typeinfo.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\..\GG\src\adobe\virtual_machine.cpp"
 						>
 					</File>
 				</Filter>

@@ -2,9 +2,8 @@
 #ifndef _CUIDrawUtil_h_
 #define _CUIDrawUtil_h_
 
-#ifndef _GG_Clr_h_
 #include <GG/Clr.h>
-#endif
+#include <GG/PtRect.h>
 
 /** adjusts the intensity of the color up or down by \a amount units per color channel; leaves alpha unchanged */
 void AdjustBrightness(GG::Clr& color, int amount);
