@@ -9,20 +9,16 @@
 #include <fstream>
 
 
-#ifdef NDEBUG
-#  define CHECK_ERROR(fn, e)
-#else
-#  define CHECK_ERROR(fn, e)                                            \
-    if ((error = glGetError()) != GL_NO_ERROR) {                        \
-        std::cerr << fn " () :"                                         \
-                  << " GL error on " e ": "                             \
-                  << "'" << gluErrorString(error) << "'"                \
-                  << std::endl;                                         \
-    }
-#endif
-
 namespace {
-    GLenum error;
+    void CHECK_ERROR(const char* fn, const char* e) {
+        GLenum error = glGetError();
+        if (error != GL_NO_ERROR) {
+            std::cerr << fn << " () :"
+                      << " GL error on " << e << ": "
+                      << "'" << gluErrorString(error) << "'"
+                      << std::endl;
+        }
+    }
 
     void GetShaderLog(GLuint shader, std::string& log) {
         log.clear();
@@ -56,10 +52,8 @@ std::string ReadFile(const std::string& filename)
     std::string retval;
     std::ifstream ifs(filename.c_str());
     int c;
-    while ((c = ifs.get()) != std::ifstream::traits_type::eof()) {
+    while ((c = ifs.get()) != std::ifstream::traits_type::eof())
         retval += c;
-    }
-    std::cout << "ReadFile: " << std::endl << retval << std::endl;
     return retval;
 }
 
