@@ -510,7 +510,6 @@ namespace {
 
 void ServerApp::ProcessTurns()
 {
-    Universe&       universe = GetUniverse();
     EmpireManager&  empires = Empires();
 
 

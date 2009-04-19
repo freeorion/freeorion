@@ -3,6 +3,9 @@
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
 
+#include <cstring>
+
+
 using namespace boost::spirit;
 using namespace phoenix;
 

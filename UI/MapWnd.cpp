@@ -1839,8 +1839,6 @@ void MapWnd::DoSystemIconsLayout()
 
 void MapWnd::DoFleetButtonsLayout()
 {
-    const Universe& universe = GetUniverse();
-
     const int SYSTEM_ICON_SIZE = SystemIconSize();
 
     // position departing fleet buttons
