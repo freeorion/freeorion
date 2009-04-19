@@ -13,8 +13,7 @@
 #  define CHECK_ERROR(fn, e)
 #else
 #  define CHECK_ERROR(fn, e)                                            \
-    if ((error = glGetError()) != GL_NO_ERROR)                          \
-    {                                                                   \
+    if ((error = glGetError()) != GL_NO_ERROR) {                        \
         std::cerr << fn " () :"                                         \
                   << " GL error on " e ": "                             \
                   << "'" << gluErrorString(error) << "'"                \
@@ -25,14 +24,12 @@
 namespace {
     GLenum error;
 
-    void GetShaderLog(GLuint shader, std::string& log)
-    {
+    void GetShaderLog(GLuint shader, std::string& log) {
         log.clear();
         int logSize;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
         CHECK_ERROR("GetShaderLog", "glGetShaderiv(GL_INFO_LOG_LENGTH)");
-        if (0 < logSize)
-        {
+        if (0 < logSize) {
             log.resize(logSize, '\0');
             int chars;
             glGetShaderInfoLog(shader, logSize, &chars, &log[0]);
@@ -40,14 +37,12 @@ namespace {
         }
     }
 
-    void GetProgramLog(GLuint program, std::string& log)
-    {
+    void GetProgramLog(GLuint program, std::string& log) {
         log.clear();
         int logSize;
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logSize);
         CHECK_ERROR("GetProgramLog", "glGetProgramiv(GL_INFO_LOG_LENGTH)");
-        if (0 < logSize)
-        {
+        if (0 < logSize) {
             log.resize(logSize, '\0');
             int chars;
             glGetProgramInfoLog(program, logSize, &chars, &log[0]);
@@ -64,6 +59,7 @@ std::string ReadFile(const std::string& filename)
     while ((c = ifs.get()) != std::ifstream::traits_type::eof()) {
         retval += c;
     }
+    std::cout << "ReadFile: " << std::endl << retval << std::endl;
     return retval;
 }
 
@@ -77,40 +73,46 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     m_vertex_shader_log(),
     m_fragment_shader_log()
 {
-    assert(!vertex_shader.empty() && !fragment_shader.empty());
-
     glGetError();
-
-    m_vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_VERTEX_SHADER)");
-    m_fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_FRAGMENT_SHADER)");
-
-    const char* strings[1] = { 0 };
-    strings[0] = vertex_shader.c_str();
-    glShaderSource(m_vertex_shader_id, 1, strings, 0);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(vertex_shader)");
-    strings[0] = fragment_shader.c_str();
-    glShaderSource(m_fragment_shader_id, 1, strings, 0);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(fragment_shader)");
-
-    glCompileShader(m_vertex_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCompileShader(m_vertex_shader_id)");
-
-    glCompileShader(m_fragment_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glCompileShader(m_fragment_shader_id)");
-
-    GetShaderLog(m_vertex_shader_id, m_vertex_shader_log);
-    GetShaderLog(m_fragment_shader_id, m_fragment_shader_log);
 
     m_program_id = glCreateProgram();
     CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateProgram()");
 
-    glAttachShader(m_program_id, m_vertex_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glAttachShader(m_vertex_shader_id)");
+    const char* strings[1] = { 0 };
 
-    glAttachShader(m_program_id, m_fragment_shader_id);
-    CHECK_ERROR("ShaderProgram::ShaderProgram", "glAttachShader(m_fragment_shader_id)");
+    if (!vertex_shader.empty()) {
+        m_vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_VERTEX_SHADER)");
+
+        strings[0] = vertex_shader.c_str();
+        glShaderSource(m_vertex_shader_id, 1, strings, 0);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(vertex_shader)");
+
+        glCompileShader(m_vertex_shader_id);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glCompileShader(m_vertex_shader_id)");
+
+        GetShaderLog(m_vertex_shader_id, m_vertex_shader_log);
+
+        glAttachShader(m_program_id, m_vertex_shader_id);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glAttachShader(m_vertex_shader_id)");
+    }
+
+    if (!fragment_shader.empty()) {
+        m_fragment_shader_id = glCreateShader(GL_FRAGMENT_SHADER);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_FRAGMENT_SHADER)");
+
+        strings[0] = fragment_shader.c_str();
+        glShaderSource(m_fragment_shader_id, 1, strings, 0);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(fragment_shader)");
+
+        glCompileShader(m_fragment_shader_id);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glCompileShader(m_fragment_shader_id)");
+
+        GetShaderLog(m_fragment_shader_id, m_fragment_shader_log);
+
+        glAttachShader(m_program_id, m_fragment_shader_id);
+        CHECK_ERROR("ShaderProgram::ShaderProgram", "glAttachShader(m_fragment_shader_id)");
+    }
 
     int status;
     glLinkProgram(m_program_id);
