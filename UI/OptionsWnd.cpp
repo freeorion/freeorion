@@ -723,6 +723,8 @@ void OptionsWnd::Init()
     BeginPage(UserString("OPTIONS_GALAXY_MAP"));
     BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
     IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    BoolOption("UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption("UI.system-fog-of-war-spacing",        UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
     BoolOption("UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
     DoubleOption("UI.system-circle-size",               UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));

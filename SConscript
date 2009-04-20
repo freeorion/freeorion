@@ -163,6 +163,7 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/SystemIcon.cpp',
         'UI/TechTreeWnd.cpp',
         'UI/TurnProgressWnd.cpp',
+        'UI/ShaderProgram.cpp',
         'UI/PagedGeometry/BatchedGeometry.cpp',
         'UI/PagedGeometry/BatchPage.cpp',
         'UI/PagedGeometry/GrassLoader.cpp',

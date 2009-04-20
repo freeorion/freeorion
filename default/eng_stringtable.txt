@@ -396,6 +396,12 @@ Sets UI scroll width.
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Sets size of system icons.
 
+OPTIONS_DB_UI_SYSTEM_FOG
+Toggles whether to render fog of war scanline shading over system icons.
+
+OPTIONS_DB_UI_SYSTEM_FOG_SPACING
+Sets spacing (in pixels) between fog of war scanlines.
+
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Toggles whether to draw circles around systems.
 
@@ -946,6 +952,12 @@ Optimized system rendering
 
 OPTIONS_UI_SYSTEM_ICON_SIZE
 System icon size
+
+OPTIONS_UI_SYSTEM_FOG
+System icon fog of war scanlines
+
+OPTIONS_UI_SYSTEM_FOG_SPACING
+Fog of war scanline spacing
 
 OPTIONS_UI_SYSTEM_CIRCLES
 System enclosing circles

@@ -29,6 +29,8 @@
 #include "../universe/UniverseObject.h"
 #include "TurnProgressWnd.h"
 #include "../Empire/Empire.h"
+#include "ShaderProgram.h"
+#include "../util/Directories.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
@@ -84,6 +86,8 @@ namespace {
         db.Add("UI.fleet-supply-line-dot-spacing",  "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING",     20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
+        db.Add("UI.system-fog-of-war",              "OPTIONS_DB_UI_SYSTEM_FOG",                     true,       Validator<bool>());
+        db.Add("UI.system-fog-of-war-spacing",      "OPTIONS_DB_UI_SYSTEM_FOG_SPACING",             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
         db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
         db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.0,        RangedStepValidator<double>(0.125, 1.0, 2.5));
         db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
@@ -957,7 +961,15 @@ void MapWnd::InitTurn(int turn_number)
 void MapWnd::InitTurnRendering()
 {
     Logger().debugStream() << "MapWnd::InitTurnRendering";
+
     CheckGLVersion();
+
+    if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+        m_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
+            ReadFile((GetGlobalDir() / "default" / "shaders" / "scanlines.frag").native_file_string())));
+    }
+
+
     Universe& universe = GetUniverse();
 
     // adjust size of map window for universe and application size
@@ -2423,8 +2435,17 @@ void MapWnd::RenderSystems()
         glPopMatrix();
     }
 
-    // circles around system icons
-    if (GetOptionsDB().Get<bool>("UI.system-circles")) {
+    // circles around system icons and fog over unexplored systems
+    bool circles = GetOptionsDB().Get<bool>("UI.system-circles");
+    bool fog_scanlines = false;
+    float fog_scanline_spacing = 4.0f;
+    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (empire && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+        fog_scanlines = true;
+        fog_scanline_spacing = GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing");
+    }
+
+    if (fog_scanlines || circles) {
         glPushMatrix();
         glLoadIdentity();
         const double TWO_PI = 2.0*3.14159;
@@ -2448,9 +2469,21 @@ void MapWnd::RenderSystems()
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            glBegin(GL_LINE_STRIP);
-            CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
-            glEnd();
+            if (circles) {
+                glBegin(GL_LINE_STRIP);
+                CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+                glEnd();
+            }
+
+            if (fog_scanlines) {
+                const System& system = icon->GetSystem();
+                if (!empire->HasExploredSystem(system.ID())) {
+                    m_scanline_shader->Use();
+                    m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+                    CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
+                    glUseProgram(0);
+                }
+            }
         }
 
         glEnable(GL_TEXTURE_2D);
