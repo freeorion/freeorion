@@ -143,6 +143,7 @@ Dar
 Deneb
 Denebola
 Dicke
+Diggity
 Diphda
 D'Korsh
 D'nebag
@@ -182,6 +183,7 @@ Frack
 Fraunhofer
 Frey
 Furud
+Gabriel
 Gacrux
 Galileo
 Galle
@@ -268,6 +270,7 @@ Kilja
 King
 Kirkwood
 Kitalpha
+Klazart
 Knuth
 Kochab
 Kornephoros
@@ -293,6 +296,7 @@ Mambo
 Mangaroa
 Mannaz
 Marfik
+Marinara
 Markab
 Marklar
 Matar
@@ -325,6 +329,7 @@ Mirfak
 Mirzam
 Miyamoto
 Mizar
+Moletrap
 Molyneux
 Montra
 Mothallah
@@ -391,6 +396,7 @@ Prior
 Procyon
 Prokets
 Propus
+Ptolemy
 Pulcherrima
 Puppis
 Ran
@@ -456,6 +462,7 @@ Sopota
 Sowilo
 Sparta
 Spica
+Statler
 Sterope
 Struve
 Styx
@@ -515,6 +522,7 @@ Venice
 Verrier
 Vindemiatrix
 Vista
+Waldorf
 Wasat
 Watt
 Wazn
