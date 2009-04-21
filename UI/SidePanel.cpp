@@ -692,29 +692,33 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
 {
     SetName(UserString("PLANET_PANEL"));
 
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    int planet_image_sz = PlanetDiameter();
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
 
-    GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2 + 3), GG::Y(MAX_PLANET_DIAMETER / 2 - planet_image_sz / 2));
-
-    if (planet.Type() == PT_ASTEROIDS)
-    {
+    if (planet.Type() == PT_ASTEROIDS) {
         std::vector<boost::shared_ptr<GG::Texture> > textures;
         GetAsteroidTextures(planet.ID(), textures);
-        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y, GG::X(planet_image_sz), GG::Y(planet_image_sz), true,textures[0]->DefaultWidth(),textures[0]->DefaultHeight(),0,textures, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        GG::X texture_width = textures[0]->DefaultWidth();
+        GG::Y texture_height = textures[0]->DefaultHeight();
+        GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - texture_width / 2 + 3), GG::Y0);
+
+        m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
+                                                  texture_width, texture_height, true,
+                                                  texture_width, texture_height, 0, textures,
+                                                  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         m_planet_graphic->SetFPS(GetAsteroidsFPS());
         m_planet_graphic->SetFrameIndex(RandSmallInt(0, textures.size() - 1));
         AttachChild(m_planet_graphic);
         m_planet_graphic->Play();
-    }
-    else if (planet.Type() < NUM_PLANET_TYPES)
-    {
+
+    } else if (planet.Type() < NUM_PLANET_TYPES) {
+        int planet_image_sz = PlanetDiameter();
+        GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - GG::X(planet_image_sz) / 2 + 3),
+                                GG::Y(MAX_PLANET_DIAMETER / 2 - GG::Y(planet_image_sz) / 2));
+
         const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
         std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
         int num_planets_of_type;
-        if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size()))
-        {
+        if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size())) {
             // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that only the lower 16 bits of the system and
             // planet ID's are significant
             unsigned int hash_value =
@@ -865,7 +869,12 @@ void SidePanel::PlanetPanel::DoLayout()
         y += m_buildings_panel->Height();
     }
 
-    Resize(GG::Pt(Width(), std::max(y, GG::Y(MAX_PLANET_DIAMETER))));
+    GG::Y min_height = GG::Y(MAX_PLANET_DIAMETER);
+    if (m_planet_graphic)
+        min_height = m_planet_graphic->Height();
+
+    Resize(GG::Pt(Width(), std::max(y, min_height)));
+
     ResizedSignal();
 }
 
