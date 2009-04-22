@@ -2,20 +2,21 @@
 
 #include "CUIWnd.h"
 #include "CUIControls.h"
+#include "SystemIcon.h"
+#include "Sound.h"
+#include "FleetWnd.h"
+#include "InfoPanels.h"
+#include "MapWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
-#include "SystemIcon.h"
-#include "Sound.h"
-#include "../util/Random.h"
-#include "FleetWnd.h"
-#include "InfoPanels.h"
-#include "MapWnd.h"
-#include "../util/XMLDoc.h"
-#include "../Empire/Empire.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
+#include "../universe/Building.h"
+#include "../util/Random.h"
+#include "../util/XMLDoc.h"
+#include "../Empire/Empire.h"
 #include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
@@ -736,8 +737,53 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
         }
     }
 
-    // create planet panel that auto-sizes itself to fit text
-    m_planet_name = new ShadowedTextControl(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), GG::Y0, planet.Name(), ClientUI::GetBoldFont(ClientUI::Pts()*4/3), ClientUI::TextColor());
+
+    // create planet name text
+
+    // apply formatting tags around planet name to indicate:
+    //    Italic for homeworlds
+    //    Bold for capitol(s)
+    //    Underline for shipyard(s), and
+    bool capitol = false, homeworld = false, has_shipyard = false;
+    // need to check all empires for homeworld or capitols
+    const Universe& universe = GetUniverse();
+    const EmpireManager& manager = Empires();
+    for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+        if (capitol && homeworld)
+            break;  // don't need to check any more empires if already have both possible true results
+        const Empire* empire = empire_it->second;
+        if (empire->HomeworldID() == planet.ID())
+            homeworld = true;
+        if (empire->CapitolID() == planet.ID())
+            capitol = true;
+    }
+    // check for shipyard
+    const std::set<int>& buildings = planet.Buildings();
+    for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+        const Building* building = universe.Object<Building>(*building_it);
+        if (!building)
+            continue;
+        // annoying hard-coded building name here... not sure how better to deal with it
+        if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
+            has_shipyard = true;
+            break;
+        }
+    }
+    // wrap with formatting tags
+    std::string wrapped_planet_name = planet.Name();
+    if (homeworld)
+        wrapped_planet_name = "<i>" + wrapped_planet_name + "</i>";
+    if (has_shipyard)
+        wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
+    boost::shared_ptr<GG::Font> font;
+    if (capitol)
+        font = ClientUI::GetBoldFont(ClientUI::Pts()*4/3);
+    else
+        font = ClientUI::GetFont(ClientUI::Pts()*4/3);
+
+    // create planet name control
+    m_planet_name = new ShadowedTextControl(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), GG::Y0, wrapped_planet_name,
+                                            font, ClientUI::TextColor());
     AttachChild(m_planet_name);
 
     std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
@@ -1472,10 +1518,7 @@ void SidePanel::SetSystemImpl()
                 delete row; // delete rows for systems that aren't known to this client, except the selected system
                 continue;
             } else {
-                std::string text = UserString("SP_SYSTEM_NAME");
-                if (sys->Name().empty())
-                    text = UserString("SP_UNKNOWN_SYSTEM"); // if showing an unexplored system (with no name) use "Unknown System" instead of displaying system name text
-                row->push_back(new OwnerColoredSystemName(sys, ClientUI::GetFont(SystemNameFontSize()), text));
+                row->push_back(new OwnerColoredSystemName(*sys, SystemNameFontSize()));
             }
 
             m_system_name->Insert(row);

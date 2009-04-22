@@ -142,7 +142,7 @@ const int CUIWnd::INNER_BORDER_ANGLE_OFFSET = 11;
 const int CUIWnd::RESIZE_HASHMARK1_OFFSET = 7;
 const int CUIWnd::RESIZE_HASHMARK2_OFFSET = 3;
 
-CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) : 
+CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags) :
     GG::Wnd(x, y, w, h, flags & ~GG::RESIZABLE),
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
@@ -234,7 +234,7 @@ void CUIWnd::Render()
 
                 glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
                 glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-                
+
                 glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
                 glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
             glEnd();

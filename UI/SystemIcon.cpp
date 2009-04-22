@@ -1,18 +1,20 @@
 #include "SystemIcon.h"
 
 #include "ClientUI.h"
-#include "../universe/Fleet.h"
 #include "FleetButton.h"
 #include "FleetWnd.h"
-#include "../client/human/HumanClientApp.h"
 #include "MapWnd.h"
 #include "Sound.h"
-#include "../util/MultiplayerCommon.h"
+#include "CUIControls.h"
+#include "../universe/Fleet.h"
 #include "../universe/Predicates.h"
 #include "../universe/System.h"
-#include "../Empire/Empire.h"
+#include "../universe/Planet.h"
+#include "../universe/Building.h"
+#include "../client/human/HumanClientApp.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "CUIControls.h"
+#include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -37,35 +39,102 @@ namespace {
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text/* = ""*/, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
+OwnerColoredSystemName::OwnerColoredSystemName(const System& system, int font_size, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, flags)
 {
     // TODO: Have this make a single call per color.  Set up texture coord and vertex buffers (quads) for the glyphs.  Consider extending GG::Font to do similar.
+    // get system name
+    std::string system_name = system.Name();
+    if (system_name.empty())
+        system_name = UserString("SP_UNKNOWN_SYSTEM");
 
-    std::string str = format_text == "" ? system->Name() : boost::io::str(FlexibleFormat(format_text) % system->Name());
+
+    // loop through planets in system, checking if any are a homeworld, capitol or have a shipyard
+    bool capitol = false, homeworld = false, has_shipyard = false;
+    const EmpireManager& manager = Empires();
+    const Universe& universe = GetUniverse();
+    std::vector<const Planet*> planets = system.FindObjects<Planet>();
+    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        if (capitol && homeworld && has_shipyard)
+            break;  // don't need to loop any more
+
+        const Planet* planet = *it;
+
+        // is planet a capitol?
+        if (!capitol) {
+            for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                if (empire_it->second->CapitolID() == planet->ID())
+                    capitol = true;
+            }
+        }
+
+        // is planet a homeworld?
+        if (!homeworld) {
+            for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                if (empire_it->second->HomeworldID() == planet->ID())
+                    homeworld = true;
+            }
+        }
+
+        // does planet contain a shipyard?
+        if (!has_shipyard) {
+            const std::set<int>& buildings = planet->Buildings();
+            for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                const Building* building = universe.Object<Building>(*building_it);
+                if (!building)
+                    continue;
+                // annoying hard-coded building name here... not sure how better to deal with it
+                if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
+                    has_shipyard = true;
+                    break;
+                }
+            }
+        }
+    }
+
+
+    // apply formatting tags around planet name to indicate:
+    //    Italic for homeworlds
+    //    Bold for capitol(s)
+    //    Underline for shipyard(s), and
+    // need to check all empires for homeworld or capitols
+
+    // wrap with formatting tags
+    std::string wrapped_system_name = system_name;
+    if (homeworld)
+        wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
+    if (has_shipyard)
+        wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
+    boost::shared_ptr<GG::Font> font;
+    if (capitol)
+        font = ClientUI::GetBoldFont(font_size);
+    else
+        font = ClientUI::GetFont(font_size);
+
+
     GG::X width(0);
-    const std::set<int>& owners = system->Owners();
+    const std::set<int>& owners = system.Owners();
     if (owners.size() <= 1) {
         GG::Clr text_color = ClientUI::SystemNameTextColor();
         if (!owners.empty())
             text_color = Empires().Lookup(*owners.begin())->Color();
-        GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, str, font, text_color);
+        GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, wrapped_system_name, font, text_color);
         m_subcontrols.push_back(text);
         AttachChild(m_subcontrols.back());
         width += m_subcontrols.back()->Width();
     } else {
         GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
         std::vector<GG::Font::LineData> lines;
-        GG::Pt extent = font->DetermineLines(str, format, GG::X(1000), lines);
+        GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
         unsigned int first_char_pos = 0;
         unsigned int last_char_pos = 0;
         GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
         int owner_idx = 1;
         for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-            while (last_char_pos < str.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
+            while (last_char_pos < wrapped_system_name.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
                 ++last_char_pos;
             }
-            m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, str.substr(first_char_pos, last_char_pos - first_char_pos), 
+            m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, wrapped_system_name.substr(first_char_pos, last_char_pos - first_char_pos), 
                                                         font, Empires().Lookup(*it)->Color()));
             AttachChild(m_subcontrols.back());
             first_char_pos = last_char_pos;
@@ -377,8 +446,7 @@ void SystemIcon::Refresh()
     // set up the name text controls
     if (!m_system.Name().empty()) {
         delete m_colored_name;
-        boost::shared_ptr<GG::Font> font = ClientUI::GetFont(ClientUI::Pts() + 3);
-        m_colored_name = new OwnerColoredSystemName(&m_system, font);
+        m_colored_name = new OwnerColoredSystemName(m_system, ClientUI::Pts() + 3);
         AttachChild(m_colored_name);
         m_showing_name = true;
         PositionSystemName();

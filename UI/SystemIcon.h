@@ -20,7 +20,7 @@ namespace GG {
 class OwnerColoredSystemName : public GG::Control
 {
 public:
-    OwnerColoredSystemName(const System* system, const boost::shared_ptr<GG::Font>& font, const std::string& format_text = "", GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+    OwnerColoredSystemName(const System& system, int font_size, GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
     virtual void Render();
 
 private:

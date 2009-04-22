@@ -1427,18 +1427,19 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // ShadowedTextControl
 //////////////////////////////////////////////////
-ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
+                                         const boost::shared_ptr<GG::Font>& font,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format,
                                          GG::Flags<GG::WndFlag> flags) :
     GG::TextControl(x, y, w, h, str, font, color, format, flags)
 {}
 
-ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+ShadowedTextControl::ShadowedTextControl(GG::X x, GG::Y y, const std::string& str,
+                                         const boost::shared_ptr<GG::Font>& font,
                                          GG::Clr color, GG::Flags<GG::TextFormat> format,
                                          GG::Flags<GG::WndFlag> flags) :
     GG::TextControl(x, y, str, font, color, format, flags)
 {}
-
 
 void ShadowedTextControl::Render()
 {
