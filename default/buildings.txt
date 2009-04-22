@@ -10,7 +10,10 @@ BuildingType
         EffectsGroup
             scope = Contains Source
             activation = Source
-            effects = SetMaxConstruction Target.MaxConstruction + 2
+            effects = [
+                SetMaxConstruction Target.MaxConstruction + 2
+                SetOwnerCapitol
+            ]
     graphic = ""
 
 BuildingType

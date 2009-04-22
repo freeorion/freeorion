@@ -240,12 +240,15 @@ namespace {
             [set_tech_availability.this_ = new_<Effect::SetTechAvailability>(set_tech_availability.name, new_<ValueRef::Variable<int> >(false, "Owner"), set_tech_availability.available, set_tech_availability.include_tech)];
 
         effect_p =
-            set_meter[effect_p.this_ = arg1]
+              set_meter[effect_p.this_ = arg1]
             | set_owner_stockpile[effect_p.this_ = arg1]
+            | set_owner_capitol[effect_p.this_ = arg1]
             | set_planet_type[effect_p.this_ = arg1]
             | set_planet_size[effect_p.this_ = arg1]
             | add_owner[effect_p.this_ = arg1]
             | remove_owner[effect_p.this_ = arg1]
+            | create_planet[effect_p.this_ = arg1]
+            | create_building[effect_p.this_ = arg1]
             | move_to[effect_p.this_ = arg1]
             | destroy[effect_p.this_ = arg1]
             | victory[effect_p.this_ = arg1]
