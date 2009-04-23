@@ -320,7 +320,7 @@ int System::Insert(int obj_id, int orbit)
 
 void System::Remove(UniverseObject* obj)
 {
-    Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
+    //Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
     //Logger().debugStream() << "..objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
     //    Logger().debugStream() << ".... " << GetUniverse().Object(it->second)->Name();

@@ -317,6 +317,7 @@ void ServerApp::LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
 void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density, SpecialsFrequency specials_freq,
                             const std::map<int, PlayerSetupData>& player_setup_data)
 {
+    Logger().debugStream() << "ServerApp::NewGameInit";
     m_turn_sequence.clear();
 
     m_victors.clear();
@@ -326,6 +327,8 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
     m_universe.CreateUniverse(size, shape, age, starlane_freq, planet_density, specials_freq,
                               m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
+
+    Logger().debugStream() << "Universe Created.  Adding empires to turn processing list";
 
     std::vector<PlayerConnectionPtr> shuffled_players;
     std::copy(m_networking.established_begin(), m_networking.established_end(), std::back_inserter(shuffled_players));
@@ -342,6 +345,8 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
                                           m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
                                           (*it)->Host());
     }
+
+    Logger().debugStream() << "Sending GameStartMessages to players";
 
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int player_id = (*it)->ID();

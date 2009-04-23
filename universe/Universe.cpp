@@ -2246,6 +2246,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
 
+    Logger().debugStream() << "Applying first turn effects and updating meters";
+
     // Apply effects for 1st turn
     ApplyAllEffectsAndUpdateMeters();
 
@@ -2330,7 +2332,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 
             Planet* planet = new Planet(planet_type, planet_size);
 
-            Logger().debugStream() << "Created new planet with population: " << planet->GetMeter(METER_POPULATION)->Current() << " or " << planet->GetMeter(METER_POPULATION)->InitialCurrent();
+            //Logger().debugStream() << "Created new planet with current population: " << planet->GetMeter(METER_POPULATION)->Current() << " and initial current population: " << planet->GetMeter(METER_POPULATION)->InitialCurrent();
 
             bool tidal_lock = false;
             if (planet_type != PT_ASTEROIDS && planet_type != PT_GASGIANT && !special_names.empty() && RandZeroToOne() < planetary_special_chance) {
@@ -3056,6 +3058,7 @@ void Universe::NamePlanets()
 void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
+    Logger().debugStream() << "Generating " << players << " empires";
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
     // load empire names

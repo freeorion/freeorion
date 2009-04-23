@@ -1232,7 +1232,8 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout()
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
 {
-    Logger().errorStream() << "SidePanel::PlanetPanelContainer::DoPanelsLaout passed positive top.  It is expected to be 0 or negative only.";
+    if (top > 0)
+        Logger().errorStream() << "SidePanel::PlanetPanelContainer::DoPanelsLaout passed positive top.  It is expected to be 0 or negative only.";
     m_planet_panels_top = top;
     GG::Y y = m_planet_panels_top;
     GG::X x = GG::X0;
