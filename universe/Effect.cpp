@@ -191,6 +191,7 @@ EffectsGroup::EffectsGroup(const Condition::ConditionBase* scope, const Conditio
     m_scope(scope),
     m_activation(activation),
     m_stacking_group(stacking_group),
+    m_explicit_description(""), // TODO: Get this from stringtable when available
     m_effects(effects)
 {}
 

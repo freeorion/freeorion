@@ -233,7 +233,7 @@ void EncyclopediaDetailPanel::Reset() {
     std::string specific_type = "";         // specific type of thing; thing's purpose.  eg. "Farming" or "Colonization".  May be left blank for things without specific types (eg. specials)
     std::string detailed_description = "";
     GG::Clr color = GG::CLR_ZERO;
-    
+
     using boost::io::str;
     if (m_part) {
         // Ship Parts
@@ -244,7 +244,7 @@ void EncyclopediaDetailPanel::Reset() {
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(m_part->Class()));
-        
+
         detailed_description = m_part->Description();
     } else if (m_hull) {
         // Ship Hulls
@@ -255,7 +255,7 @@ void EncyclopediaDetailPanel::Reset() {
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
         // hulls have no specific types
-        
+
         detailed_description = m_hull->Description();
     } else if (m_tech) {
         // Technologies
@@ -270,19 +270,31 @@ void EncyclopediaDetailPanel::Reset() {
             % UserString(m_tech->Category())
             % UserString(boost::lexical_cast<std::string>(m_tech->Type()))
             % UserString(m_tech->ShortDescription()));
-        
+
         detailed_description = UserString(m_tech->Description());
         if (!m_tech->Effects().empty()) {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_tech->Effects()));
         }
-        
+
         const std::vector<ItemSpec>& unlocked_items = m_tech->UnlockedItems();
         if (!unlocked_items.empty()) {
             detailed_description += UserString("ENC_TECH_DETAIL_UNLOCKS_SECTION_STR");
             for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
+                const ItemSpec& item = unlocked_items[i];
+                std::string link = "";
+                if (item.type == UIT_BUILDING)
+                    link = "<building " + item.name + ">" + UserString(item.name) + "</building>";
+                else
+                    link = UserString(item.name);
+                /* TODO: replace this building type linking with linking using generic encyclopedia entry links,
+                         so that clicking one of these links will show the item in the current encyclopedia
+                         window (if one is available) regardless of what screen (tech, design, production)
+                         is currently open. */
+
+                std::string tech_link = ("[tech " + unlocked_items[i].name + "]");
                 detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
-                    % UserString(unlocked_items[i].name));
+                    % link);
             }
         }
     } else if (m_building) {
@@ -293,7 +305,7 @@ void EncyclopediaDetailPanel::Reset() {
         cost = m_building->BuildCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_BUILDING_TYPE");
-        
+
         detailed_description = UserString(m_building->Description());
         if (!m_building->Effects().empty()) {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(m_building->Effects()));
