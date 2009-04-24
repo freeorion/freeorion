@@ -400,6 +400,7 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
 
 void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 {
+    std::cout << "ProductionWnd::QueueItemDeletedSlot" << std::endl;
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           std::distance(m_queue_lb->begin(), it))));
@@ -409,11 +410,12 @@ void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
 {
+    std::cout << "ProductionWnd::QueueItemClickedSlot" << std::endl;
     m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_lb->begin(), it));
 }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 {
-    // TODO: if there is progress on this item, ask for confirmation before actually deleting it
-    delete m_queue_lb->Erase(it);
+    std::cout << "ProductionWnd::QueueItemDoubleClickedSlot" << std::endl;
+    m_queue_lb->ErasedSignal(it);
 }
