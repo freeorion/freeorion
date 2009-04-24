@@ -16,6 +16,9 @@ std::string DumpIndent();
 
 extern int g_indent;
 
+namespace {
+    const bool CHEAP_AND_FAST_TECH_RESEARCH = false;
+}
 
 struct store_tech_impl
 {
@@ -168,8 +171,8 @@ std::string Tech::Dump() const
     }
     retval += "\n";
     retval += DumpIndent() + "category = \"" + m_category + "\"\n";
-    retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(m_research_cost) + "\n";
-    retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(m_research_turns) + "\n";
+    retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(ResearchCost()) + "\n";
+    retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(ResearchTurns()) + "\n";
     retval += DumpIndent() + "prerequisites = ";
     if (m_prerequisites.empty()) {
         retval += "[]\n";
@@ -231,12 +234,18 @@ const std::string& Tech::Category() const
 
 double Tech::ResearchCost() const
 {
-    return m_research_cost;
+    if (!CHEAP_AND_FAST_TECH_RESEARCH)
+        return m_research_cost;
+    else
+        return 1.0;
 }
 
 int Tech::ResearchTurns() const
 {
-    return m_research_turns;
+    if (!CHEAP_AND_FAST_TECH_RESEARCH)
+        return m_research_turns;
+    else
+        return 1;
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Tech::Effects() const
