@@ -456,7 +456,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // cost / turn, and minimum production turns
             const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_BUILDING, name);
-            std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
+            std::string cost_text = DoubleToString(cost_time.first, 3, false, false);
             row->push_back(cost_text, default_font, ClientUI::TextColor());
             std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
             row->push_back(time_text, default_font, ClientUI::TextColor());
@@ -511,7 +511,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // cost / turn, and minimum production turns
             const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, ship_design_id);
-            std::string cost_text = boost::lexical_cast<std::string>(cost_time.first);
+            std::string cost_text = DoubleToString(cost_time.first, 3, false, false);
             row->push_back(cost_text, default_font, ClientUI::TextColor());
             std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
             row->push_back(time_text, default_font, ClientUI::TextColor());
