@@ -167,6 +167,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\FontFwd.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\GUI.h"
 					>
 				</File>
@@ -184,6 +188,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\GG\GG\MultiEdit.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\GG\GG\MultiEditFwd.h"
 					>
 				</File>
 				<File
@@ -296,6 +304,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\GG\src\Cursor.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\GG\src\DefaultFont.h"
 					>
 				</File>
 				<File
