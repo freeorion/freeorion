@@ -2475,7 +2475,7 @@ void MapWnd::RenderSystems()
                 glEnd();
             }
 
-            if (fog_scanlines) {
+            if (fog_scanlines && m_scanline_shader) {
                 const System& system = icon->GetSystem();
                 if (!empire->HasExploredSystem(system.ID())) {
                     m_scanline_shader->Use();
