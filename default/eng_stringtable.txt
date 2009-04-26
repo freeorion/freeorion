@@ -181,7 +181,7 @@ OPTIONS_DB_UNOWNED_STARLANE_COLOUR
 Sets default colour to render starlanes.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
-Toggles whether to show fleet supply lines with empire-coloured indica.
+Toggles whether to show fleet supply lines with empire-coloured indicators.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
 Sets how wide to render fleet supply lines.

@@ -1,8 +1,13 @@
-Russian
+Polski
 
-#This is the Russian String Table file for FreeOrion 0.3.12
-#in codepage 1251
-#cjckem at gmail.com
+#This is the Polish String Table file for FreeOrion
+#Translated from 2678 SVN revision of eng_stringtable.txt
+
+#Translated by: Łukasz "Cyber Killer" Korpalski http://digital.dharkness.info
+#Drop a line to cyber_killer at jabster.pl (email or xmpp) if this file needs urgent updating or there are errors in the translation
+#Translated by: Wojciech "Feagorn" Moch (feagorn at gmail point com)
+
+#Translators note: this translation assumes that the player is not a complete idiot and can understand simple, game-related English acronyms eg: FPS.
 
 #################
 # Common        #
@@ -10,515 +15,527 @@ Russian
 
 #Anyone can use these for basic buttons
 
-
 APPNAME
 FreeOrion
 
 BROWSE_BTN
-Обзор...
+Przeglądaj...
 
 OK
 OK
 
 CANCEL
-Отмена
+Anuluj
 
 DONE
-Готово
+Gotowe
 
 CLOSE
-Закрыть
+Zamknij
 
 LOAD
-Загрузить
+Załaduj
 
 SAVE
-Сохранить
+Zapisz
 
 OPEN
-Открыть
+Otwórz
 
 OR
-или
+lub
 
 AND
-и
+i
 
 YES
-Да
+Tak
 
 NO
-Нет
+Nie
 
 EMPIRE
-Империя
+Imperium
 
 ALL
-Все
+Wszystko
 
 UNKNOWN_SYSTEM
-Неизвестная система
+Nieznany system
 
 RENAME
-Переименовать
+Zmień nazwę
 
 ENTER_NEW_NAME
-Введите новое имя
+Wprowadź nową nazwę
 
 UNKNOWN_VALUE_SYMBOL
 ?
 
 ERROR
-Ошибка
+BŁĄD
 
 CHAT_WHISPER
-Шептать
+szept
 
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
-Новый флот %1%
+Nowa flota %1%
 
 NEW_FLEET_NAME_NO_NUMBER
-Новый флот
+Nowa flota
 
 NOT_APPLICABLE
-N/A
+N.D.
 
 ##########################
 # Status Update Messages #
 ##########################
 
 NEW_GAME
-Создается вселенная ...
+Generowanie wszechświata i graczy SI ...
 
 LOADING
-Загрузка ...
+Ładowanie ...
 
 SERVER_WONT_START
-'''Сервер не может быть запущен.
+'''Nie można uruchomić serwera.
 
-Примечание для Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
+Notka dla Linuksa: Aktualnie oczekuje się, aby plik wykonywalny serwera był katalogu roboczym gry. Jeśli FreeOrion był uruchomiony z innego katalogu niż ten, gdzie jest główny plik binarny, możliwe że będzie trzeba wyjść z gry i uruchomić ją z tamtej lokacji.'''
 
 SERVER_TIMEOUT
-Сервер не отвечает.
+Serwer nie odpowiada.
 
 SERVER_LOST
-Связь с сервером потеряна.
+Utracono połączenie z serwerem.
 
 SERVER_GAME_END
-Сервер послал сообщение "Конец игры".  Пока.
+Serwer przesłał wiadomość o zakończeniu gry. Pa pa.
 
 PLAYER_DISCONNECTED
-Игрок %1% покинул сервер.
+Gracz %1% utracił połączenie z serwerem.
 
 PLAYER_DEFEATED
-Вы проиграли.
+Zostałeś pokonany.
 
 EMPIRE_DEFEATED
-Империя %1% более не существует.
+Imperium %1% już nie istnieje.
 
 UNKNOWN_EMPIRE
-Неизвестная империя
+Nieznane imperium
 
 LAST_OPPONENT_DEFEATED_VICTORY
-Ваш последний противник был побежден и теперь вы победитель!
+Twój ostatni przeciwnik został pokonany. Zwycięstwo!
 
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
 
 COMMAND_LINE_USAGE
-Используется: 
+Sposób użycia: 
 
 COMMAND_LINE_DEFAULT
-По умолчанию: 
+Domyślne: 
 
 OPTIONS_DB_HELP
-Показывает эту помощь.
+Wyświetl ten tekst pomocniczy.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
-Использовать все параметры настройки из любого существующего файла config.xml чтобы создать новый config.xml (текущий файл, если он существует будет переписан).
+Używa wszystkich ustawień z obecnego pliku config.xml o ile taki istnieje oraz tych podanych z linii komend do wygenerowania nowego pliku config.xml . Ta operacja nadpisze obecny plik config.xml , jeśli istnieje.
 
 OPTIONS_DB_MUSIC_OFF
-Отключить музыку в игре.
+Wyłącza muzykę w grze.
 
 OPTIONS_DB_BG_MUSIC
-Выбрать музыку на задний фон.
+Wybiera ścieżkę dźwiękową odtwarzaną w tle.
 
 OPTIONS_DB_FULLSCREEN
-Запускать игру в полноэкранном режиме.
+Uruchamia grę na pełnym ekranie.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Временной интервал в секундах, после которого окно чата сетевой игры исчезнет, если нет активности в чате.  Значение 0 - не закрывать окно чата.
+Po tym czasie, w sekundach, okno rozmowy w trybie wielu graczy zniknie jeśli nic nowego nie będzie napisane. Wartość 0 oznacza, że okno nigdy nie zniknie.
 
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-Количество сообщений хранимых в истории.
+Liczba wiadomości przechowywanych w oknie historii rozmowy.
 
 OPTIONS_DB_GALAXY_MAP_GAS
-Отображение газовых облаков формирующихся вокруг звездных систем.  Может замедлить рендеринг на старых компьютерах.
+Rysowanie substnacji gazowych wokół systemów planetarnych w celu nadania kształtu galktyce. W starszych systemach może spowolnić rysowanie.
 
 OPTIONS_DB_GALAXY_MAP_STARFIELDS
-Отображение звездного неба в звездных системах. Может замедлить рендеринг на старых компьютерах.
+Rysowanie pól gwiazd wokół systemów planetarnych. W starszych systemach może spowolnić rysowanie.
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
-Использовать оптимизацию OpenGL 1.5 рендеринга для звездных систем на галактической карте.  Может вызвать аварийное закрытие приложения на старых компьютерах.
+Do rysowania systemów planetarnych na pamie galaktyki używa funkcji OpenGL 1.5. Na starszych kartach graficznych może powodować kłopoty.
 
 OPTIONS_DB_STARLANE_THICKNESS
-Установить размер звездных путей в пикселах.
+Określa szerokość (w pikselach) rysowanych szlaków gwiezdnych.
 
 OPTIONS_DB_RESOURCE_STARLANE_COLOURING
-Окрасить космические пути цветами империй, если между империями существует обмен ресурсами
+Włącza i wyłącza oznaczanie szlaków gwiezdnych kolorem imperium, jeśli imperia mogą wymieniać się surowcami na tych trasach.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
-Показывать линиии флота поддержки цветом империи
+Włącza i wyłącza wyświetlanie linii zaopatrzenia floty za pomocą znaczników w kolorze imperium.
+
+#Toggles whether to show fleet supply lines with empire-coloured indica
+##incomplete string? guessed while translating
+###Should be: Toggles whether to show fleet supply lines with empire-coloured indicators.
+###-Geoff the Medio
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
-Ширина линий поддержки флота.
+Określa szerokość rysowanych linni zaopatrzenia floty.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
-Вынудить клиента не запускать сервер, в случае когда игра на localhost, одиночная игра, и т.п.
+Zakazuje klientowi uruchamiania serwera, nawet w przypadku gry na komputrze lokalnym w trybie pojedynczego gracza.
 
 OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
-Адрес для соединения в расширеном серверном режиме. Если используется, этот клиент становится управляющим игрой.
+Adres połączenia w trybie współpracy z serwerem zewnętrznym. Po wpisaniu tego adresu klient staje się menedżerem gry.
 
 OPTIONS_DB_UI_MAIN_MENU_X
-Позиция центра главного меню экрана, как часть полной ширины приложения.
+Pozycja centrum głównego menu na ekranie startowym, jako część całkowitej szerokości okna aplikacji.
 
 OPTIONS_DB_UI_MAIN_MENU_Y
-Позиция центра главного меню экрана, как часть полной высоты приложения.
+Pozycja centrum głównego menu na ekranie startowym, jako część całkowitej wysokości okna aplikacji.
 
 OPTIONS_DB_APP_WIDTH
-Установить горизонтальное разрешение.
+Ustawia poziomą rozdzielczość (szerokość) okna aplikacji.
 
 OPTIONS_DB_APP_HEIGHT
-Установить вертикальное разрешение.
+Ustawia pionową rozdzielczość (wysokość) okna aplikacji.
 
 OPTIONS_DB_COLOR_DEPTH
-Установить глубину цвета, в битах на пиксель.
+Ustawia głębię kolorów ekranu, w bitach na piksel.
 
 OPTIONS_DB_SHOW_FPS
-Включает отображение FPS (кадров в секунду).
+Przełącza wyświetlanie ilości klatek na sekundę (FPS).
 
 OPTIONS_DB_LIMIT_FPS
-Включает отображение ограничений FPS.  пределы устанавливаются опцией максимальный FPS.
+Włącza i wyłącza ograniczenie liczby klatek na sekundę. Wartość ograniczenia ustala jest w opcji "Max FPS".
 
 OPTIONS_DB_MAX_FPS
-Включает предел FPS.  Limiting is toggled with Limit FPS.
+Ustala ograniczenie liczby klatek na sekundę. Ograniczenie to włączaje jest w opcji "Limit FPS".
 
 OPTIONS_DB_UI_SOUND_ENABLED
-Включает звуки интерфейса.
+Włącza i wyłącza dźwięki w interejsie użytkownika.
 
 OPTIONS_DB_UI_SOUND_VOLUME
-Громкость (0 to 255) звуков интерфейса.
+Głośność (od 0 do 255) z jaką odtwarzane będą dźwięki w interfejsie użytkownika.
 
 OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER
-Звук на освобождение кнопки мыши.
+Dźwięk odtwarzany przy umieszczeniu wskaźnika myszy nad przyciskiem.
 
 OPTIONS_DB_UI_SOUND_BUTTON_CLICK
-Звук на нажатие кнопки мыши.
+Dźwięk odtwarzany przy kliknięciu przycisku.
 
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
-Звук на нажатие кнопки 'Конец хода'.
+Dźwięk odtwarzany przy kliknięciu przycisku obrotowego.
 
 OPTIONS_DB_UI_SOUND_LIST_SELECT
-Звук на выбор из списка.
+Dźwięk odtwarzany przy wybraniu elementu listy lub listy rozwijanej.
 
 OPTIONS_DB_UI_SOUND_ITEM_DROP
-Звук на сбрасывание пункта в списке.
+Dźwięk odtwarzany przy upuszczaniu elementu na pole listy.
 
 OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
-Звук на открытие ниспадающего списка.
+Dźwięk odtwarzany przy rozwijaniu listy rozwijanej.
 
 OPTIONS_DB_UI_SOUND_TEXT_TYPING
-Звук на печатание текста на клавиатуре.
+Dźwięk odtwarzany przy wpisywaniu tekstu przez użytkownika.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
-Звук на разворачивание окна.
+Dźwięk odtwarzany przy minimalizowaniu okna.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
-Звук на сворачивание окна.
+Dźwięk odtwarzany przy maksymalizowaniu okna.
 
 OPTIONS_DB_UI_SOUND_WINDOW_CLOSE
-Звук на закрытие окна.
+Dźwięk odtwarzany przy zamykaniu okna.
 
 OPTIONS_DB_UI_SOUND_ALERT
-Звук на ошибки.
+Dźwięk odtwarzany przy wystąpieniu błędu lub nieprawidłowej operacji.
 
 OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK
-Звук на нажатие кнопки 'Планета'.
+Dźwięk odtwarzany przy kliknięciu przycisku planety.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
-Звук на освобождение кнопки мыши над кнопкой 'Флот'.
+Dźwięk odtwarzany przy umieszczaniu wskaźnika myszy nad przyciskiem floty.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
-Звук на нажатие кнопки 'Флот'.
+Dźwięk odtwarzany przy kliknięciu przycisku floty.
 
 OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
-Звук на освобождение кнопки мыши над значком звездной системы.
+Dźwięk odtwarzany przy umieszczeniu wskaźnika myszy nad ikoną systemową.
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
-Звук на открытие боковой панели системы.
+Dźwięk odtwarzany przy otwieraniu systemowego panela bocznego.
 
 OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-Звук на нажатие кнопки сельского хозяйства.
+Dźwięk odtwarzany przy kliknięciu przycisku rolnictwa.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-Звук на нажатие кнопки промышленности.
+Dźwięk odtwarzany przy kliknięciu przycisku przemysłu.
 
 OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-Звук на нажатие кнопки исследований.
+Dźwięk odtwarzany przy kliknięciu przycisku nauki.
 
 OPTIONS_DB_UI_SOUND_MINING_FOCUS
-Звук на нажатие кнопки добычи ископаемых.
+Dźwięk odtwarzany przy kliknięciu przycisku wydobycia.
 
 OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-Звук на нажатие кнопки торговли.
+Dźwięk odtwarzany przy kliknięciu przycisku handlu.
 
 OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-Звук на нажатие кнопки балланс.
+Dźwięk odtwarzany przy kliknięciu przycisku zrównoważenia.
 
 OPTIONS_DB_UI_FONT
-Установить файл источник шрифтов интерфейса.
+Ustala plik czcionki.
 
 OPTIONS_DB_UI_FONT_BOLD
-Установить файл источник жирного шрифта интерфейса.
+Ustala plik pogrubionej czcionki.
 
 OPTIONS_DB_UI_FONT_ITALIC
-Установить файл источник курсивного шрифта интерфейса.
+Ustala plik pochylonej czcionki.
 
 OPTIONS_DB_UI_FONT_BOLD_ITALIC
-Установить файл источник жирного курсивного шрифта интерфейса.
+Ustala plik pogrubionej i pochylonej czcionki.
 
 OPTIONS_DB_UI_FONT_SIZE
-Установить размер шрифта интерфейса.
+Ustala wielkość czcionki.
 
 OPTIONS_DB_UI_TITLE_FONT
-Установить файл источник шрифтов для заголовков интерфейса.
+Ustala plik czcionki nagłówków.
 
 OPTIONS_DB_UI_TITLE_FONT_SIZE
-Установить размер шрифта заголовков интерфейса.
+Ustala wielkość czcionki nagłowków.
 
 OPTIONS_DB_UI_WND_COLOR
-Установить цвет окон интерфейса.
+Ustala kolor okien.
 
 OPTIONS_DB_UI_TEXT_COLOR
-Установить цвет текста интерфейса.
+Ustala kolor tekstu.
 
 OPTIONS_DB_UI_CTRL_COLOR
-Устновить цвет контроля интерфейса.
+Ustala kolor kontrolek.
 
 OPTIONS_DB_UI_CTRL_BORDER_COLOR
-Установить цвет рамки контроля интерфейса.
+Ustala kolor obramowania kontrolek.
 
 OPTIONS_DB_UI_BUTTON_COLOR
-Установить цвет кнопок интерфейса.
+Ustala kolor przycisków.
 
 OPTIONS_DB_UI_STATE_BUTTON_COLOR
-установить цвет кнопки структуры интерфейса.
+Ustala kolor przycisków stanu.
 
 OPTIONS_DB_UI_SCROLL_TAB_COLOR
-Установить цвет полосы прокрутки интерфейса.
+Ustala kolor kart przewijania.
 
 OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR
-Установить цвет ниспадающих списков интерфейса.
+Ustala kolor wnętrza list rozwijanych.
 
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
-Установить цвет курсора ниспадающих списков интерфейса.
+Ustala kolor strzałek w listach rozwijanych.
 
 OPTIONS_DB_UI_EDIT_HILITE
-Установить цвет выделения в элементах управления для редактирования.
+Ustala kolor wyróżnienia w kontrolkach edycyjnych.
 
 OPTIONS_DB_UI_EDIT_INTERIOR
-Установить цвет внутренней области в элементах управления для редактирования.
+Ustala kolor wnętrza kontrolek edycyjnych.
 
 OPTIONS_DB_UI_MULTIEDIT_INTERIOR
-Установить цвет внутренней области в многострочных элементах управления.
+Ustala kolor wnętrza wielowierszowych kontrolek edycyjnych.
 
 OPTIONS_DB_UI_STAT_INCREASE_COLOR
-Установить цвет increased stats интерфейса.
+Ustala kolor podniesionych statystyk.
 
 OPTIONS_DB_UI_STAT_DECREASE_COLOR
-Установить цвет decreased stats интерфейса.
+Ustala kolor zmniejszonych statystyk.
 
 OPTIONS_DB_UI_SIDEPANEL_COLOR
-Установить цвет боковой панели.
+Ustala kolor panelu bocznego.
 
 OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
-Установить цвет внешней границы интерфейса.
+Ustala kolor zewnętrznego obramowania.
 
 OPTIONS_DB_UI_WND_BORDER_COLOR
-Установить цвет границы интерфейса.
+Ustala kolor obramowania.
 
 OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
-Установить цвет внутренней границы интерфейса.
+Ustala kolor wewnętrznego obramowania.
 
 OPTIONS_DB_UI_KNOWN_TECH
-Установить цвет известных технологий в дереве технологий.
+Ustala kolor znanych technologii w drzewie technologii.
 
 OPTIONS_DB_UI_KNOWN_TECH_BORDER
-Установить цвет текста и границы известных технологий в дереве технологий.
+Ustala kolor tekstu i obramowania znanych technologii w drzewie technologii.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH
-Установить цвет технологий доступных для исследований.
+Ustala kolor dostępnych technologii w drzewie technologii.
 
 OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER
-Установить цвет текста и границы технологий доступных для исследований.
+Ustala kolor tekstu i obramowania dostępnych technologii w drzewie technologii.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH
-Установить цвет технологий недоступных для исследований.
+Ustala kolor niedostępnych technologii w drzewie technologii.
 
 OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER
-Установить цвет текста и границы технологий недоступных для исследований.
+Ustala kolor tekstu i obramowania niedostępnych technologii w drzewie technologii.
 
 OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND
-Установить цвет фона полосы прогресса в дереве технологий.
+Ustala kolor tła pasków postępu w drzewie technologii.
 
 OPTIONS_DB_UI_TECH_PROGRESS
-Установить цвет полосы прогресса в дереве технологий.
+Ustala kolor pasków postępu w drzewie technologii.
 
 OPTIONS_DB_UI_SCROLL_WIDTH
-Установить ширину полосы прокрутки в интрфейсе.
+Ustala szerokość przewijania interfejsu użytkownika.
 
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
-Установить размер системных значков.
+Ustala wielkość ikon systemów planetarnych.
 
 OPTIONS_DB_UI_FLEET_BUTTON_SIZE
-Установить размер кнопки флота (относительно системного значка).
+Ustala wielkość przycisków flot (względem wielkości ikon systemów planetarnych).
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-Установить размер индикатора выбранной системы (относительно системного значка).
+Ustala wielkość znacznika zaznaczenia systemu planetarnego (względem wielkości ikon systemów planetarnych).
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
-Установить задержку всплывающей подсказки, в мс.
+Ustala czas opóźnienia wyświetlania podpowiedzi interfejsu użytkownika, w ms.
 
 OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS
-Если отмечено то нажатие на флот откроет окно флота, при уже открытых аналогичных окнах, иначе открытое ранее окно флота будет закрыто.
+Jeśli prawdziwe, to klikanie na wielu przyciskach flot będzie otwierać wiele okien flot w tym samym czasie. W przeciwnym wypadku otwarcie nowego okna floty zamknie jakiekolwiek wcześniej otwarte okno floty.
 
 OPTIONS_DB_UI_FLEET_AUTOSELECT
-Автоматический выбор верхнего флота в открытом окне флота.  Использование этого возможно только при разрешении множественных окон флота.
+Autowybranie najwyższej floty, kiedy okno floty jest otwierane. Rozważ użycie tej flagi jeśli używasz UI.multiple-fleet-windows.
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
-Закрывать все окна (такие как окно флота, боковая панель системы) при нажатии правой кнопки мыши в любом месте карты.
+Zamknij otwarte okna, takie jak okna floty i boczny panel podglądu systemu, kiedy klikniesz prawym przyciskiem myszy na głownej mapie.
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
-Установить размер боковой панели системы.
+Ustala rozmiar panela bocznego systemu gwiezdnego.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
-Установить максимальный размер планеты показываемой в боковой панели.
+Ustala rozmiar największych renderowanych, obracających się planet w panelu bocznym.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
-Установить минимальный ращмер планеты показываемой в боковой панели.
+Ustala rozmiar najmniejszych renderowanych, obracających się planet w panelu bocznym.
 
 OPTIONS_DB_GAMESETUP_STARS
-Количество звезд в галактике.
+Ilość gwiazd w galaktyce do wygenerowania.
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
-Форма генерируемой галактики.
+Kształt galaktyki do wygenerowania.
 
 OPTIONS_DB_GAMESETUP_GALAXY_AGE
-Возраст галактики.
+Wiek galaktyki do wygenerowania.
 
 OPTIONS_DB_GAMESETUP_PLANET_DENSITY
-Количество планет в звездных системах.
+Ilość planet w każdym systemie w galaktyce do wygenerowania.
 
 OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY
-Встречаемость межзвездных путей.
-
+Ilość szlaków gwiezdnych w galaktyce do wygenerowania,
 
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
-Частота случайных событий в галактике.
+The frequency of specials appearing in the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
-Название вашей империи.
+The name used in the game for your empire.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
-Цвет вашей империи.
+The color used in the game for your empire.
 
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
-Количество игроков AI.
+The number of AI opponents you will play in the game.
 
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
-Горизонтальный интервал между технологиями на экране технологий.
+The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
 
 OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
-Вертикальный интервал между технологиями на экране технологий.
+The vertical spacing to be placed between techs in the tech screen, in multiples of the height of a single theory tech.
 
 OPTIONS_DB_SAVE_DIR
-Каталог для сохраненных игр.
+The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
 
 OPTIONS_DB_SETTINGS_DIR
-Каталог для главных файлов игры (настроек и файлов данных).
+Sets the root directory for the game resource files (settings and data files).
 
 OPTIONS_DB_LOG_LEVEL
-Уровень лог-сообщений 
+Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)
 
 OPTIONS_DB_STRINGTABLE_FILENAME
-Языковой файл вида ***_stringtable.txt, где *** язык (например RUS)
+Sets the language-specific string table filename.
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
-Включить автосохранения в одиночной игре.
+If true, autosaves will occur during single-player games.
 
 OPTIONS_DB_AUTOSAVE_MULTIPLAYER
-Включить автосохранения в сетевой игре.
+If true, autosaves will occur during multiplayer games.
 
 OPTIONS_DB_AUTOSAVE_TURNS
-Количество ходов между автосохранениями.
+Sets the number of turns that should elapse between autosaves.
 
 OPTIONS_DB_AUTOSAVE_SAVES
-Количество автосохранений.
+Sets the number of autosaved games that should be kept.
 
 OPTIONS_DB_MUSIC_VOLUME
-Громкость (0 до 255) музыки.
+The volume (0 to 255) at which music should be played.
 
 OPTIONS_DB_COMBAT_ENABLE_GLOW
-Эффекты огня в сражениях вкл/выкл.
+Toggles glow effects on and off.
+
+OPTIONS_DB_COMBAT_ENABLE_SKYBOX
+Toggles background skybox on and off.
+
+OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
+Toggles lens flares on and off.
 
 OPTIONS_DB_COMBAT_FILLED_SELECTION
-Использовать эффекты заполненности вместо схематических на выбранных объектах.
-
+Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
 #################
 # File Dialog   #
 #################
 
 FILE_DLG_FILES
-Файл(ы):
+Plik(i):
 
 FILE_DLG_FILE_TYPES
-Тип(ы):
+Typ(y):
 
 FILE_DLG_MALFORMED_FILENAME
-Неверное имя файла.
+Nieprawidłowa nazwa pliku.
 
 FILE_DLG_OVERWRITE_PROMPT
-'''%1% существует.
-Ok для перезаписи?'''
+'''%1% już istnieje.
+
+Nadpisać?'''
 
 FILE_DLG_INVALID_FILENAME
 '''"%1%"
-неверное имя файла.'''
+
+nie jest prawidłową nazwą pliku.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
 '''"%1%"
-является каталогом.'''
+
+jest katalogiem.'''
 
 FILE_DLG_FILE_DOES_NOT_EXIST
-'''File "%1%"
-не существует.'''
+'''Plik "%1%"
+
+nie istnieje.'''
 
 FILE_DLG_DEVICE_IS_NOT_READY
-Устройство не готово.
+Urządzenie nie jest gotowe.
 
 
-#################
-# Color Dialog  #
-#################
+#########################
+# Okno dialogowe Kolor  #
+#########################
 
 COLOR_DLG_NEW
-Новый
+Nowy
 
 COLOR_DLG_OLD
-Старый
+Stary
 
 COLOR_DLG_RED
 R:
@@ -542,724 +559,742 @@ COLOR_DLG_ALPHA
 A:
 
 
-#################
-# Intro Screen  #
-#################
+
+################
+# Intro Screen #
+################
 
 #Window title####
 
 INTRO_WINDOW_TITLE
-FreeOrion Главное меню
+FreeOrion - Menu główne
 
 
 #Button names####
 
 INTRO_BTN_SINGLE_PLAYER
-Одиночная игра
+Pojedynczy gracz
 
 INTRO_BTN_QUICK_START
-Быстрый запуск
+Szybki start
 
 INTRO_BTN_MULTI_PLAYER
-Игра по сети
+Wielu graczy
 
 INTRO_BTN_LOAD_GAME
-Загрузить
+Załaduj grę
 
 INTRO_BTN_OPTIONS
-Опции
+Opcje
 
 INTRO_BTN_ABOUT
-Об игре
+O FreeOrion
 
 INTRO_BTN_CREDITS
-Разработчики
+Twórcy
 
 INTRO_BTN_EXIT
-Выход
+Wyjście
 
 
-#Error Messages####
+#Komunikaty o błędach####
 
 ERR_CONNECT_TIMED_OUT
-Таймаут соединения с сервером.
+Przekroczono czas łączenia z serwerem.
 
 ERR_VERSION_MISMATCH
-Не могу подключиться к серверу, потому что данный клиент использует различные версии следующих настроек и/или исходных файлов: 
+Nie można połączyć się z serwerem, ponieważ klient używa innej wersji poniższych plików ustawień lub źródłowych:
 
+##########################
+# Ekran ustawień serwera #
+##########################
 
-########################
-# Server Setup Screen  #
-########################
-
-#Window title####
+#Nagłówek okna####
 
 SCONNECT_WINDOW_TITLE
-Соединение с сервером
+Połączenie z serwerem
 
-
-#Static labels####
+#Etykiety statystyk####
 
 LAN_GAME_LABEL
-Игра по сети:
+Gra w sieci LAN:
+
 INTERNET_GAME_LABEL
-Интернет игра:
+Gra w sieci Internet:
+
 PLAYER_NAME_LABEL
-Имя игрока
+Nazwa gracza
 
-
-#Button names####
+#Nazwy przycisków####
 
 HOST_GAME_BN
-Host a new game
+Utwórz nową grę
+
 JOIN_GAME_BN
-Join a game
+Dołącz do gry
+
 REFRESH_LIST_BN
-Refresh list
+Odśwież listę
 
 
 ########################
 # Multiplayer Lobby    #
 ########################
 
-#Window title####
+#Nagłówek okna####
 
 MPLOBBY_WINDOW_TITLE
-Установки сетевой игры
+Ustawienia trybu wielu graczy
 
-#Strings
+#Ciągi znaków
+
 MPLOBBY_HOST_ABORTED_GAME
-Ведущий игрок завершил эту игровую установку.
+Gracz tworzący grę przerwał proces jej konfiguracji.
 
-#Button names####
+#nazwy przycisków####
 
 NEW_GAME_BN
-Новая игра
+Nowa gra
 
 LOAD_GAME_BN
-Загрузить игру
+Ładuj grę
 
 START_GAME_BN
-Запуск игры
+Uruchom grę
 
 MULTIPLAYER_GAME_START_CONDITIONS
-Требуются уникальные названия империй и имена
+Wymagaj unikalnych nazw i kolorów imperiów
 
+#############################
+# Ekran ustawień galaktyki  #
+#############################
 
-########################
-# Galaxy Setup Screen  #
-########################
-
-#Window title####
+#Nagłówek okna####
 
 GSETUP_WINDOW_TITLE
-Установки галактики
+Ustawienia galaktyki
 
-#Strings
+#Ciągi znaków
+
 GSETUP_GRAPHICS_FILES
-Графические файлы
+Pliki graficzne
 
 GSETUP_EMPIRE_NAME
-Имя империи
+Nazwa imperium
 
 GSETUP_EMPIRE_COLOR
-Цвет империи
+Kolor imperium
 
 GSETUP_NUMBER_AIS
-Количество игроков AI
+Liczba graczy komputerowych
 
-#Drop-down list labels and choices####
+#Etykiety list rozwijanych i pól wyboru####
 
 GSETUP_STARS
-Звезды
+Liczba gwaizd
+
 GSETUP_SHAPE
-Форма галактики
+Kształt galaktyki
+
 GSETUP_AGE
-Возраст галактики
+Wiek galaktyki
+
 GSETUP_STARLANE_FREQ
-Межзвездных путей
+Częstość szkalów gwiezdnych
+
 GSETUP_PLANET_DENSITY
-Количество планет
+Gęstość występowania planet
+
 GSETUP_SPECIALS_FREQ
-Случайные события
+Częstość występowania wyjątków
 
 GSETUP_2ARM
-Спираль, 2-рукава
+Spiralna dwuramienna
+
 GSETUP_3ARM
-Спираль, 3-рукава
+Spiralna trójramienna
+
 GSETUP_4ARM
-Спираль, 4-рукава
+Spiralna czteroramienna
+
 GSETUP_CLUSTER
-Кластер
+Klaster
+
 GSETUP_ELLIPTICAL
-Эллиптичечкая
+Eliptyczna
+
 GSETUP_IRREGULAR
-Неправильной формы
+Nieregularna
+
 GSETUP_RING
-Кольцо
+Pierścieniowa
 
 GSETUP_NONE
-Нет
+Brak
 
 GSETUP_YOUNG
-Молодая
+Młoda
+
 GSETUP_MATURE
-Сформированная
+Dojrzała
+
 GSETUP_ANCIENT
-Древняя
+Prastara
 
 GSETUP_FEW
-Мало
+Niewiele
+
 GSETUP_SOME
-Несколько
+Trochę
+
 GSETUP_SEVERAL
-Немного
+Kilka
+
 GSETUP_MANY
-Много
+Wiele
+
 GSETUP_VERY_MANY
-Очень много
+Bardzo dużo
 
 GSETUP_LOW
-Низкая
+Niska
+
 GSETUP_MEDIUM
-Средняя
+Średnia
+
 GSETUP_HIGH
-Высокая
+Duża
 
 GSETUP_RARE
-Редко
+Rzadko
+
 GSETUP_UNCOMMON
-Нечасто
+Nieczęsto
+
 GSETUP_COMMON
-Часто
+Często
 
-
-#Error messages####
+#Komunikaty o błędach####
 
 GSETUP_ERR_NOEXIST
-Не существует.
+nie istnieje.
 
 
 ###########################
-# Empire Selection Screen #
+# Ekran wyboru imperium   #
 ###########################
 
-#Window Title####
+#Nagłówek okna####
 
 ESELECT_WINDOW_TITLE
-Выбор империи
+Wybrór imperium
 
-
-#Static text####
-
+#tekst statyczny####
 ESELECT_EMPIRE_NAME
-Название империи:
+Nazwa imperium:
 
 ###########################
-# About Dialog            #
+# Oknoa dialogowe O...    #
 ###########################
 
-#License button text####
-
+#Przycisk tekstu licencji####
 LICENSE
-Лицензия
+Licencja
 
 ABOUT_WINDOW_TITLE
-О проекте FreeOrion
+O FreeOrion
 
 CREDITS
-Разработчики
+Podziękowania
 
 VISION
-Технические особенности
+Wizja
 
 FREEORION_VISION
-FreeOrion, игра с открытым исходным кодом и основанная на Master of Orion - это пошаговая, масштабная космическая стратегия, строящаяся на классической модели '4X' с добавлением элементов развития наций, например как в Europa Universalis 2, а так же гибкий движок тактических боев. Так как проект модульный, принцип открытых исходных кодов позволяет значительно упростить доработку игровых элементов и движка с помощью сообществ, в то время как команда FreeOrion будет сосредоточена построением живущей, дышащей вселенной в "великой кампании".
+FreeOrion jest grą o otwartym kodzie źródłowym bazującą na grze Master of Orion. Jest to turowa grza strategiczna zbudowana w opariu o klasyczny model '4X' zawierająca elementy rozwoju narodów podobne do znanych z gry Europa Universalis 2 oraz złożny mechanizm walki taktycznej. Modułowy projekt 
+#FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model. 
 
 ###########################
 # Game Menu               #
 ###########################
 
 GAME_MENU_WINDOW_TITLE
-Меню
+Menu
 
 GAME_MENU_SAVE
-Сохранить
+Save Game
 
 GAME_MENU_LOAD
-Загрузить
+Load Game
 
 GAME_MENU_RESIGN
-Сдаться
+Resign
 
 GAME_MENU_SAVE_FILES
-Файлы сохраненных игр
+Save Game Files
 
 ###########################
 # Game Options            #
 ###########################
 
 OPTIONS_TITLE
-Настройка
+Options
 
 OPTIONS_AUTOSELECT_FLEET
-Автоматически выбирать первый флот
+Auto-select first fleet
 
 OPTIONS_MULTIPLE_FLEET_WNDS
-Несколько окон для флота
+Multiple fleet windows
 
 OPTIONS_QUICK_CLOSE_WNDS
-Быстрое закрытие окон
+Quick-close windows
 
 OPTIONS_MISC_UI
-Различные Настройки Интерфейса
+Miscellaneous UI Settings
 
 OPTIONS_SINGLEPLAYER
-Одиночная игра
+Single player
 
 OPTIONS_MULTIPLAYER
-Сетевая Игра
+Mulitplayer
 
 OPTIONS_AUTOSAVE_TO_KEEP
-Делать Автосохранения
+Autosaves to keep
 
 OPTIONS_AUTOSAVE_TURNS_BETWEEN
-Ходов между автосохранениями
+Turns between autosaves
 
 OPTIONS_LANGUAGE
-Языковой файл
+Language file
 
 OPTIONS_FONTS
-Шрифты
+Fonts
 
 OPTIONS_FONT_SIZES
-Размеры Шрифтов
+Fonts Sizes
 
 OPTIONS_FONT_TEXT
-Текст
+Text
 
 OPTIONS_FONT_TITLE
-Заголовки окон
+Window titles
 
 OPTIONS_TECH_SPACING
-Технический интервал
+Tech spacing
 
 OPTIONS_HORIZONTAL
-Горизонтальный
+Horizontal
 
 OPTIONS_VERTICAL
-Вертикальный
+Vertical
 
 OPTIONS_TOOLTIP_DELAY
-Задержка подсказок (мс)
+Tooltip delay (ms)
 
 OPTIONS_VIDEO_MODE
-Видеорежим  (для вступления в силу необходим перезапуск)
+Video Mode  (restart for changes to take effect)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Разрешение и глубина цвета (установить настроить, для выбора собственных параметров)
+Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Настроить
+Custom
 
 OPTIONS_VIDEO_SETTINGS
-Установки видео
+Video Settings
 
 OPTIONS_APP_WIDTH
-Ширина
+Width
 
 OPTIONS_APP_HEIGHT
-Высота
+Height
 
 OPTIONS_COLOR_DEPTH
-Глубина цвета
+Color bit-depth
 
 OPTIONS_FULLSCREEN
-Полноэкранный
+Fullscreen
 
 OPTIONS_SHOW_FPS
-Показать FPS
+Show FPS
 
 OPTIONS_LIMIT_FPS
-Ограничить FPS
+Limit FPS
 
 OPTIONS_MAX_FPS
-Максимум FPS
+Max FPS
 
 OPTIONS_CHAT
-Чат
+Chat
 
 OPTIONS_CHAT_HISTORY
-История сообщений чата
+Chat history
 
 OPTIONS_CHAT_HIDE
-Чат - задержка перед скрытием
+Chat-hide delay
 
 OPTIONS_GALAXY_MAP
-Галактическая карта
+Galaxy Map
 
 OPTIONS_GALAXY_MAP_GAS
-Галактические газовые облака
+Galaxy map gas rendering
 
 OPTIONS_GALAXY_MAP_STARFIELDS
-Галактические звездные поля
+Galaxy map starfields rendering
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
-Оптимизация систем
+Optimized system rendering
 
 OPTIONS_STARLANE_THICKNESS
-Толщина межзвездных путей
+Starlane thickness
 
 OPTIONS_RESOURCE_STARLANE_COLOURING
-Цвет ресурсных звездных путей
+Resource starlane colouring
 
 OPTIONS_FLEET_SUPPLY_LINES
-Линии флота поддержки
+Fleet supply lines
 
 OPTIONS_FLEET_SUPPLY_LINE_WIDTH
-Ширина линии флота поддержки
+Fleet supply line width
 
 OPTIONS_MUSIC
-Музыка
+Music
 
 OPTIONS_UI_SOUNDS
-Звуки интерфейса
+UI sounds
 
 OPTIONS_BACKGROUND_MUSIC
-Фоновая музыка
+Music
 
 OPTIONS_SOUNDS
-Звуки
+Sounds
 
 OPTIONS_SOUND_CLOSE
-Закрытие окна
+Close window
 
 OPTIONS_SOUND_MINIMIZE
-Сворачивание окна
+Minimize window
 
 OPTIONS_SOUND_MAXIMIZE
-Разворачивание окна
+Maximize window
 
 OPTIONS_SOUND_CLICK
-Нажатие кнопки
+Click
 
 OPTIONS_SOUND_ROLLOVER
-Отпускание кнопки
+Rollover
 
 OPTIONS_SOUND_FLEET_CLICK
-Щелчок по кнопке флота
+Fleet Button Click
 
 OPTIONS_SOUND_FLEET_ROLLOVER
-Отпускание кнопки флота
+Fleet Button Rollover
 
 OPTIONS_SOUND_SYSTEM_ROLLOVER
-Отпускание кнопки звездной системы
+System Icon Rollover
 
 OPTIONS_SOUND_WINDOW
-Звуки окна
+Window Sounds
 
 OPTIONS_SOUND_BUTTON
-Звуки кнопки
+Button Sounds
 
 OPTIONS_SOUND_FLEET
-Звуки кнопки флота
+Fleet Button Sounds
 
 OPTIONS_SOUND_ALERT
-Тревога
+Alert
 
 OPTIONS_SOUND_TYPING
-Набор текста
+Typing
 
 OPTIONS_SOUND_TURN
-Кнопка конец хода
+Turn button click
 
 OPTIONS_SOUND_SIDEPANEL
-Открытие боковой панели
+Side-panel open
 
 OPTIONS_SOUND_PLANET
-Щелчек на планету
+Planet click
 
 OPTIONS_SOUND_FOCUS
-Фокусировка
+Focus Sounds
 
 OPTIONS_SOUND_BALANCED
-Сбалансированый фокус
+Balanced focus
 
 OPTIONS_SOUND_FARMING
 Farming focus
 
 OPTIONS_SOUND_INDUSTRY
-Фокус на индустрии
+Industry focus
 
 OPTIONS_SOUND_MINING
-Фокус на шахтах
+Mining focus
 
 OPTIONS_SOUND_RESEARCH
-Фокус на исследованиях
+Research focus
 
 OPTIONS_SOUND_LIST
-Звук списка
+List sounds
 
 OPTIONS_SOUND_DROP
-Выбросить предмет
+Item drop
 
 OPTIONS_SOUND_PULLDOWN
-Открытие ниспадающего списка
+Drop-down list open
 
 OPTIONS_SOUND_SELECT
-Выбор из списка
+List select
 
 OPTIONS_GENERAL_COLORS
-Управление цветом
+General
 
 OPTIONS_CONTROL_COLORS
-Элементы управления интерфейсом
+UI Controls
 
 OPTIONS_FILL_COLOR
-Заполнение
+Fill
 
 OPTIONS_BORDER_COLOR
-Граница
+Border
 
 OPTIONS_TEXT_COLOR
-Текст
+Text
 
 OPTIONS_EDIT_COLORS
-Цвет при редактировании
+Edit Controls
 
 OPTIONS_HIGHLIGHT_COLOR
-Цвет выделения
+Selection highlighting
 
 OPTIONS_INTERIOR_COLOR
-Внутренняя область
+Interior
 
 OPTIONS_WINDOW_COLORS
-Окна
+Windows
 
 OPTIONS_INNER_BORDER_COLOR
-Внутренние границы
+Inner border
 
 OPTIONS_OUTER_BORDER_COLOR
-Внешние границы
+Outer border
 
 OPTIONS_PAGE_VIDEO
-Видео
+Video
 
 OPTIONS_PAGE_AUDIO
-Аудио
+Audio
 
 OPTIONS_PAGE_AUTOSAVE
-Автосохранение
+Autosave
 
 OPTIONS_PAGE_UI
-Интерфейс
+UI
 
 OPTIONS_PAGE_COLORS
-Цвета
+Colors
 
 OPTIONS_PAGE_COMBAT
-Бой
-
+Combat
 OPTIONS_PAGE_DIRECTORIES
-Каталоги
+Directories
 
 OPTIONS_TECH_COLORS
-Технологии
+Techs
 
 OPTIONS_TEXT_AND_BORDER_COLOR
-Текст и граница
+Text and Border
 
 OPTIONS_KNOWN_TECH_COLORS
-Известные технологии
+Known techs
 
 OPTIONS_RESEARCHABLE_TECH_COLORS
-Доступные к исследованию технологии
+Researchable techs
 
 OPTIONS_UNRESEARCHABLE_TECH_COLORS
-Недоступные к исследованию технологии
+Unresearchable techs
 
 OPTIONS_TECH_PROGRESS_COLORS
-Полоса прогресса исследования
+Research progress bars
 
 OPTIONS_PROGRESS_BAR_COLOR
-Полоса
+Bar
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
-Фон
+Background
 
 OPTIONS_COMBAT_ENABLE_GLOW
-Жар
+Glow
+
+OPTIONS_COMBAT_ENABLE_SKYBOX
+Skybox
+
+OPTIONS_COMBAT_ENABLE_LENS_FLARES
+Lens Flares
 
 OPTIONS_COMBAT_FILLED_SELECTION
-Заполнение выбора
-
+Filled selection
 OPTIONS_ANY_FILE
-Все файлы
+All files
 
 OPTIONS_FOLDER_SETTINGS
-Каталог установок
+Resource Files
 
 OPTIONS_FOLDER_SAVE
-Каталог сохранений
+Save files
 
 OPTIONS_LANGUAGE_FILE
-Языковые файлы
+Language files
 
 OPTIONS_VOLUME_AND_MUSIC
-Громкость и музыка
+Volume And Music
 
 OPTIONS_MUSIC_FILE
-Файлы музыки
+Music files
 
 OPTIONS_SOUND_FILE
-Файлы эффектов
+Sound files
 
 
 #################
-# Main Map      #
+# Główna mapa   #
 #################
 
 MAP_BTN_TURN_UPDATE
-Ход %1%
+Kolejka nr %1%
 
 MAP_INDICATOR_FPS
 %1% FPS
 
 MAP_BTN_MENU
-Меню
+Menu
 
 MAP_BTN_SITREP
-События
+SitRep???
 
 MAP_BTN_RESEARCH
-Исследования
+Badania naukowe
 
 MAP_BTN_PRODUCTION
-Производство
+Produkcja
 
 MAP_BTN_DESIGN
-Проектирование
+Projektowanie
 
 #################
-# SidePanel     #
+# Panel boczny  #
 #################
 
 SIDE_PANEL
-Боковая панель
+Panel boczny
 
 SP_SYSTEM_PRODUCTION
-Производство системы
+Produkcja w systemie
 
 RESOURCE_PRODUCTION_TOOLTIP
-%1%: %2% 
+System %1%: %2%
 
 RESOURCE_ALLOCATION_TOOLTIP
-%1%: %2% 
+System %1%: %2%
 
 FOOD_CONSUMPTION
-Потребление Еды
+Koncumpcja pożywienia
 
 MINERALS_CONSUMPTION
-Использование Минералов
+Koncumpcja minerałów
 
 INDUSTRY_CONSUMPTION
-Загруженность Промышленности
+Koncumpcja produkcji przemysłowej
 
 RESEARCH_CONSUMPTION
-Загруженность исследовательских центров
+Koncumpcja badań naukowych
 
 TRADE_CONSUMPTION
-Потребление
+Skuteczność handlu
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
-Межзвездный обмен
+Wymiana międzysystemowa
 
 IMPORT_EXPORT_TOOLTIP
-Импорт / Экспорт
+Import / Eksport
 
 RESOURCE_IMPORT
-Импортируется
+Importowanie
 
 RESOURCE_EXPORT
-Доступно для экспорта
-
-
-##Planet Panel#############
-
+Dostępne do eksportowania
+##Panel planety#############
 PLANET_PANEL
-Панель планеты
+Panel planety
 
 PL_ASTEROID_BELT
-Пояс астероидов
+Pas asteroidów
 
 PL_UNINHABITED
-Необитаемая
+Niezamieszkała
 
 PL_SIZE
-Размер
+Rozmiar
 
 PL_COLONIZE
-Колонизировать
+Kolonizuj
 
-
-##Population Panel#########
+##Panel populacji#########
 
 PP_POPULATION
-Население
+Populacja
 
 PP_HEALTH
-Здоровье
+Zdrowie
 
-
-## Resources Panel ##########
+## Panel zasobów ##########
 
 RP_PRIMARY_FOCUS_TOOLTIP
-Первичный приоритет: %1%
+Główny cel: %1%
 
 RP_SECONDARY_FOCUS_TOOLTIP
-Вторичный приоритет: %1%
+Poboczny cel: %1%
 
 RP_FOOD
-Производство Еды
+Produkcja żywności
 
 RP_MINERALS
-Производтво Минералов
+Produkcja minerałów
 
 RP_INDUSTRY
-Производительность
+Produkcja przemysłowa
 
 RP_RESEARCH
-Успешность Исследований
+Badania naukowe
 
 RP_TRADE
-Успешность Торговли
+Poziom wymiany handlowej
 
 RP_CONSTRUCTION
-Инфраструктура строения
+Infrastruktura konstrukcyjna
 
-
-## Military Panel ##########
+## Panel wojskowy ##########
 
 MP_SUPPLY
-Флот поддержки
+Zaopatrzenie floty
 
 MP_SHIELD
-Планетарный щит
+Osłona planetarna
 
 MP_DEFENSE
-Планетарная защита
+Obrona planetarna
 
 MP_DETECTION
-Обнаружение
+Wykrywanie
 
 MP_STEALTH
-Скрытый
+Maskowanie
 
-
-## Buildings Panel##########
+## Panel budynków##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
-'''%1% (Незавершен)
+'''%1% (niedokończone)
 
 %2%'''
 
@@ -1268,181 +1303,202 @@ BP_COMPLETE_BUILDING_TOOLTIP
 
 %2%'''
 
-
-## General Tooltips#########
+## ogólne wskazówki#########
 
 TT_CURRENT
-Текущий
+Aktualne
 
 TT_NEXT
-Следующий ход
+Następna kolejka
 
 TT_CHANGE
-Изменение
+Zmień
 
 TT_METER
-Измерить: %1% / %2%
+Licznik: %1% / %2%
 
 TT_BASIC_FOCUS_AND_UNIVERSE
-Выбранная область и вся вселенная
+Basic Focus and Universe
 
 TT_TECH
-%1% Технология <i>%2%</i>
+%1% Tech <i>%2%</i>
 
 TT_BUILDING
-%1% Строение <i>%2%</i>
+%1% Building <i>%2%</i>
 
 TT_SHIP_HULL
-Корабль <i>%1%</i> оболочка <i>%2%</i>
+Ship <i>%1%</i> Hull <i>%2%</i>
 
 TT_SHIP_PART
-Корабль <i>%1%</i> часть <i>%2%</i>
+Ship <i>%1%</i> Part <i>%2%</i>
 
 TT_SPECIAL
-Специальный <i>%1%</i>
+Special <i>%1%</i>
 
 TT_UNKNOWN
-Неизвестный
+Unknown
 
 TT_RESOURCE_PRODUCTION
-%1% производит %2%
+%1% produces %2%
 
 TT_RESOURCE_ALLOCATION
-%1% потребляет %2%
-
+%1% consumes %2%
 ## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
-Неизвестная система
+Unknown System
 
 SP_SYSTEM_NAME
 %1%
 
 SP_RENAME_PLANET
-Переименовать планету
+Rename Planet
 
 SP_ENTER_NEW_PLANET_NAME
-Введите новое имя планеты
+Enter new planet name
 
 SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-'''Все колониальные корабли в этой системе
-получили приказ покинуть систему.
+'''All colony ships in this system have been
+given orders to leave the system.
 
-Использовать один из отбывающих колониальных кораблей?'''
+Use one of the departing colony ships?'''
 
 #################
 # Fleet Window  #
 #################
 
 FW_FLEET_HOLDING_AT
-Оставаться в системе %1%
+Holding at %1% System
 
 FW_FLEET_MOVING_TO
-Двигаться %1%, ETA %2% (%3%)
+Moving to %1%, ETA %2% (%3%)
 
 FW_FLEET_ETA_NEVER
-Никогда
+Never
 
 FW_FLEET_ETA_UNKNOWN
-Неизвестно
+Unknown
 
 FW_FLEET_ETA_OUT_OF_RANGE
-Вне досягаемости
+Out of Range
 
 FW_SHIP_CLASS
-Класс корабля 
+Ship Class 
 
 FW_UNKNOWN_DESIGN_NAME
-Неизвестно
+Unknown
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
-Новый флот
+New Fleet
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
-%1% Флотов в системе %2%
+%1% Fleets At %2% System
 
 FW_EMPIRE_FLEETS
-%1% Флотов
+%1% Fleets
 
 FW_HOME_FLEET
-Домашний флот
+Home Fleet
 
 FW_BATTLE_FLEET
-Боевой флот
+Battle Fleet
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
-Чужой флот
+Foreign fleet
 
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
-Чужой корабль
+Foreign ship
 
 FW_NO_FLEET
-Нет флота
+No Fleet
 
 ###############
 # TechTreeWnd #
 ###############
 
 TECH_DISPLAY
-Экран
+Display
 
 TECH_NAVIGATION
-Навигация
+Navigation
 
 TECH_TOTAL_COST_STR
-%2% ходов @ %1% RP / ход
+%2% Turns @ %1% RP / Turn
 
 TECH_TURN_COST_STR
-%2% ходов @ %1% RP / ход
+%2% Turns @ %1% RP / Turn
 
 TECH_TURNS_LEFT_STR
-%1% ходов
+%1% Turns
 
 TECH_TURNS_LEFT_NEVER
-Никогда
+Never
 
+TECH_DETAIL_TYPE_STR
+%1% %2% - %3%
+
+TECH_DETAIL_DESCRIPTION_STR
+%1%
+
+TECH_DETAIL_EFFECTS_STR
+'''
+
+<u>Effects</u>
+
+%1%'''
+
+TECH_DETAIL_UNLOCKS_SECTION_STR
+'''
+
+<u>Unlocks</u>
+
+'''
+
+TECH_DETAIL_UNLOCKED_ITEM_STR
+'''%1%: %2%
+'''
 
 TECH_WND_TECH_COMPLETED
-ЗАВЕРШЕНО
+COMPLETED
 
 TECH_WND_TECH_QUEUED
-На очереди
+Queued
 
 TECH_WND_TECH_INCOMPLETE
-Незавершено
+Incomplete
 
 TECH_WND_TYPE_THEORIES
-Теории
+Theories
 
 TECH_WND_TYPE_APPLICATIONS
-Приложения
+Applications
 
 TECH_WND_TYPE_REFINEMENTS
-Усовершенствования
+Refinements
 
 TECH_WND_STATUS_COMPLETED
-Завершено
+Completed
 
 TECH_WND_STATUS_RESEARCHABLE
-Доступно
+Researchable
 
 TECH_WND_STATUS_UNRESEARCHABLE
-Недоступно
+Unresearchable
 
 TECH_WND_LIST_VIEW
-Просмотр списком
+List View
 
 TECH_WND_TREE_VIEW
-Прсмотр в виде дерева
+Tree View
 
 TECH_WND_REQUIRES
-Необходимы
+Requires
 
 TECH_WND_UNLOCKS
-Разблокирует
+Unlocks
 
 
 #######################
@@ -1450,19 +1506,19 @@ TECH_WND_UNLOCKS
 #######################
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Пунктов всего доступно
+Total Available Points
 
 PRODUCTION_INFO_WASTED_PS_LABEL
-Потерянные пункты
+Wasted Points
 
 PRODUCTION_INFO_PROJECTS_IN_PROGRESS_LABEL
-Проекты в процессе
+Projects in Progress
 
 PRODUCTION_INFO_PS_TO_UNDERFUNDED_PROJECTS_LABEL
-Не хватает
+Underfunded Project
 
 PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
-Проекты в очереди
+Projects in Queue
 
 
 ###############
@@ -1470,13 +1526,13 @@ PRODUCTION_INFO_PROJECTS_IN_QUEUE_LABEL
 ###############
 
 RESEARCH_WND_TITLE
-Исследования
+Research
 
 RESEARCH_INFO_PANEL_TITLE
-Исследования
+Research
 
 RESEARCH_INFO_RP
-ОИ
+RP
 
 
 ####################
@@ -1484,40 +1540,57 @@ RESEARCH_INFO_RP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Доступные Постройки
+Buildable Items
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
-Строения
+Buildings
 
 PRODUCTION_WND_CATEGORY_BT_SHIP
-Корабли
+Ships
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
-Доступно
+Available
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
-Недоступно
+Unavailable
 
 PRODUCTION_TOTAL_COST_STR
-%1% ОП / ход @ %2% ходов
+%1% PP / Turn @ %2% Turns
 
 PRODUCTION_TURN_COST_STR
-+%1% ОП
++%1% PP
 
 PRODUCTION_TURNS_LEFT_STR
-%1% Ходов осталось
+%1% Turns left
 
 PRODUCTION_TURNS_LEFT_NEVER
-Никогда
+Never
+
+PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
+%1%
+
+PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
+'''%1%
+
+<u>Effects</u>
+
+%2%'''
+
+PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
+'''%1%
+
+Attack: %2%
+Defense: %3%
+Speed: %4%'''
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
-Количество
+Quantity
 
 PRODUCTION_DETAIL_ADD_TO_QUEUE
-Добавить в очередь
+Add to Queue
 
 PRODUCTION_DETAIL_CENTER_ON_BUILD
-К строению
+Center on Build
 
 
 #################
@@ -1525,13 +1598,13 @@ PRODUCTION_DETAIL_CENTER_ON_BUILD
 #################
 
 PRODUCTION_WND_TITLE
-Производство
+Production
 
 PRODUCTION_INFO_PANEL_TITLE
-Производство
+Production
 
 PRODUCTION_INFO_PP
-ОП
+PP
 
 PRODUCTION_QUEUE_MULTIPLES
 %1%x 
@@ -1542,49 +1615,49 @@ PRODUCTION_QUEUE_MULTIPLES
 ###############
 
 DESIGN_ADD_TEST
-Добавить тестовый
+Add Test Design
 
 DESIGN_NAME_DEFAULT
-name
+Custom Ship Design
 
 DESIGN_DESCRIPTION_DEFAULT
-description
+Design Description
 
 DESIGN_NO_PART
-Отсутствует
+None
 
 DESIGN_WND_STARTS
-Начало пректирования
+Design Starts
 
 DESIGN_WND_HULLS
-Пустые корпуса
+Empty Hulls
 
 DESIGN_WND_FINISHED_DESIGNS
-Готовые проекты
+Finished Designs
 
 DESIGN_WND_SAVED_DESIGNS
-Сохраненные проекты
+Saved Designs
 
 DESIGN_WND_TEMPLATES
-Временные проекты
+Design Templates
 
 DESIGN_WND_PART_PALETTE_TITLE
-Части корабля
+Ship Parts
 
 DESIGN_WND_MAIN_PANEL_TITLE
-Детали Проекта
+Design Details
 
 DESIGN_WND_DESIGN_NAME
-Имя Проекта
+Design Name
 
 DESIGN_WND_DESIGN_DESCRIPTION
-Описание
+Description
 
 DESIGN_WND_CONFIRM
-Потвердить
+Confirm New Design
 
 DESIGN_WND_CLEAR
-Очистить
+Clear Parts
 
 
 ####################
@@ -1593,23 +1666,22 @@ DESIGN_WND_CLEAR
 
 # types of things that can be shown in encyclopedia
 ENC_SHIP_PART
-Часть корабля
+Ship Part
 
 ENC_SHIP_HULL
-Корпусы кораблей
+Ship Hull
 
 ENC_TECH
-Технологии
-
-ENC_SPECIAL
-Специальные
-
-ENC_BUILDING_TYPE
-Типы строений
+Technology
 
 ENC_SHIP_DESIGN
-Дизайн корабля
+Ship Design
 
+ENC_SPECIAL
+Special
+
+ENC_BUILDING_TYPE
+Building Type
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
 # %1% may be an empty string for most general types of things that can be shown.
@@ -1617,10 +1689,10 @@ ENC_DETAIL_TYPE_STR
 <i>%1% %2%</i>
 
 ENC_PP
-ОП
+PP
 
 ENC_RP
-ОИ
+RP
 
 # indication of cost to produce or research thing that is shown.  May be omitted if thing shown can't
 # be produced or research (eg. specials)
@@ -1628,37 +1700,18 @@ ENC_RP
 # %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
 ENC_COST_AND_TURNS_STR
-%3% ходов @ %1% %2% / ход
+%3% Turns @ %1% %2% / Turn
 
 # autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
 # provide an appropriate heading to appear before the autogenerated text.
 ENC_EFFECTS_STR
 '''
 
-<u>Эффекты</u>
+<u>Effects</u>
 
 %1%'''
 
-ENC_SHIP_DESIGN_DESCRIPTION_STR
-'''%1%
 
-Атака: %2%
-Защита: %3%
-Скорость: %4%'''
-
-ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-<u>Разблокировать</u>
-
-'''
-
-ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
-
-ENC_TECH_DETAIL_TYPE_STR
-%1% %2% - %3%
 
 ####################
 # Combat Messages  #
@@ -1731,7 +1784,7 @@ Downloading new game state ...
 #Window title####
 
 SITREP_PANEL_TITLE
-Отчет о событиях
+Situation Report
 
 
 ####################
@@ -2002,85 +2055,85 @@ defense
 # EmpireAffiliationTypes
 
 AFFIL_SELF
-Свой
+self
 AFFIL_ENEMY
-Враг
+enemy
 AFFIL_ALLY
-Союзник
+ally
 
 
 # UnlockableItemTypes
 
 UIT_BUILDING
-Постройка
+Building
 UIT_SHIP_PART
-Часть корабля
+Ship Part
 UIT_SHIP_HULL
-Корпус корабля
+Ship Hull
 
 
 # TechTypes
 
 TT_THEORY
-Теория
+Theory
 TT_APPLICATION
-Приложение
+Application
 TT_REFINEMENT
-Усовершенствование
+Refinement
 
 
 # BuildTypes
 
 BT_NOT_BUILDING
-Не строение
+no build
 BT_BUILDING
-Строение
+building
 BT_SHIP
-Корабль
+ship
 BT_ORBITAL
-Орбитальные
+orbital
 
 
 # StockpileTypes
 
 ST_FOOD
-Еда
+food
 ST_MINERAL
-Минералы
+mineral
 ST_TRADE
-Торговля
+trade
 
 
 # Ship Slot Types
 
 SL_EXTERNAL
-Внешний
+External
 SL_INTERNAL
-Внутренний
+Internal
 
 
 # Ship Part Classes
 
 PC_SHORT_RANGE
-Ближнее действие
+Short Range
 PC_MISSILES
-Ракеты
+Missiles
 PC_FIGHTERS
-Бойцы
+Fighters
 PC_POINT_DEFENSE
-Точечная защита
+Point Defense
 PC_SHIELD
-Защитные поля
+Shields
 PC_ARMOUR
-Броня
+Armour
 PC_DETECTION
-Обнаружение
+Detection
 PC_STEALTH
-Скрытность
+Stealth
 PC_FUEL
-Топливо
+Fuel
 PC_COLONY
-Колонизация
+Colonization
 
 
 ################################################
@@ -2090,159 +2143,160 @@ PC_COLONY
 # ValueRef
 
 DESC_VAR_PLANET
-Планета
+planet
 
 DESC_VAR_SYSTEM
-Система
+system
 
 DESC_VAR_SOURCE
-Источник
+source
 
 DESC_VAR_TARGET
-Цель
+target
 
 DESC_VAR_PLANETSIZE
-Размер планеты
+planet size
 
 DESC_VAR_PLANETTYPE
-Тип планеты
+planet type
 
 DESC_VAR_PLANETENVIRONMENT
-Среда планеты
+planet environment
 
 DESC_VAR_OBJECTTYPE
-тип объекта
+object type
 
 DESC_VAR_STARTYPE
-тип звезды
+star type
 
 DESC_VAR_PRIMARYFOCUS
-главный приоритет
+primary focus
 
 DESC_VAR_SECONDARYFOCUS
-вторичный приоритет
+secondary focus
 
 DESC_VAR_CURRENTFARMING
-текущее производство еды
+current farming
 
 DESC_VAR_MAXFARMING
-максимальное производство еды
+max farming
 
 DESC_VAR_CURRENTINDUSTRY
-текущие показатели промышленности
+current industry
 
 DESC_VAR_MAXINDUSTRY
-максимальные показатели промышленности
+max industry
 
 DESC_VAR_CURRENTRESEARCH
-текущий уровень исследований
+current research
 
 DESC_VAR_MAXRESEARCH
-максимальный уровень исследований
+max research
 
 DESC_VAR_CURRENTTRADE
-текущий уровень торговли
+current trade
 
 DESC_VAR_MAXTRADE
-максимальный уровень торговли
+max trade
 
 DESC_VAR_CURRENTMINING
-текущий уровень добычи
+current mining
 
 DESC_VAR_MAXMINING
-максимальный уровень добычи
+max mining
 
 DESC_VAR_CURRENTCONSTRUCTION
-текущая стройка
+current construction
 
 DESC_VAR_MAXCONSTRUCTION
-максимальный уровень стройки
+max construction
 
 DESC_VAR_CURRENTHEALTH
-текущий уровень здоровья
+current health
 
 DESC_VAR_MAXHEALTH
-максимальный уровень здоровья
+max health
 
 DESC_VAR_CURRENTPOPULATION
-текущее население
+current population
 
 DESC_VAR_MAXPOPULATION
-максимальное население
+max population
 
 DESC_VAR_CURRENTFUEL
-текущий уровень топлива
+current fuel
 
 DESC_VAR_MAXFUEL
-максимальный уровень топлива
+max fuel
 
 DESC_VAR_CURRENTSUPPLY
-текущий уровень поддержки
+current supply
 
 DESC_VAR_MAXSUPPLY
-максимальный уровень поддержки
+max supply
 
 DESC_VAR_CURRENTSTEALTH
-текущий уровень срытности
+current stealth
 
 DESC_VAR_MAXSTEALTH
-максимальный уровень скрытности
+max stealth
 
 DESC_VAR_CURRENTDETECTION
-текущий радиус обнаружения
+current detection
 
 DESC_VAR_MAXDETECTION
-максимальный радиус обнаружения
+max detection
 
 DESC_VAR_CURRENTSHIELD
-текущий уровень защитного поля
+current shield
 
 DESC_VAR_MAXSHIELD
-максимальный уровень защитного поля
+max shield
 
 DESC_VAR_CURRENTDEFENSE
-текущий уровень защиты
+current defense
 
 DESC_VAR_MAXDEFENSE
-максимальный уровень защиты
+max defense
 
 DESC_VAR_TRADESTOCKPILE
-торговый запас
+trade stockpile
 
 DESC_VAR_MINERALSTOCKPILE
-запас минералов
+mineral stockpile
 
 DESC_VAR_FOODSTOCKPILE
-запас еды
+food stockpile
+
 DESC_VAR_TRADEPRODUCTION
-Торговая продукция
+trade production
 
 DESC_VAR_FOODPRODUCTION
-продукция пищепроизводства
+food production
 
 DESC_VAR_MINERALPRODUCTION
-Минеральная продукция
+mineral production
 
 DESC_VAR_INDUSTRYPRODUCTION
-индустриальная продукция
+industry production
 
 DESC_VAR_RESEARCHPRODUCTION
-исследовательсякая продукция
+research production
 
 DESC_VAR_OWNER
-собственник
+owner
 
 DESC_VAR_ID
 ID
 
 DESC_VAR_AGE
-возраст в ходах
+age in turns
 
 DESC_VAR_CREATIONTURN
-ход создания
+turn of creation
 
 DESC_VAR_CURRENTTURN
-текущий ход
+the current turn
 
 # this one is intentially left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -2272,16 +2326,16 @@ DESC_VALUE_REF_MULTIPART_VARIABLE6
 # Effects
 
 DESC_EFFECTS_GROUP_SCOPE
-Объекты затронуты: Любые объекты%1%
+Objects affected: Any object%1%
 
 DESC_EFFECTS_GROUP_SELF_SCOPE
-Объекты затронуты: Только наземные объекты
+Objects affected: Source object only
 
 DESC_EFFECTS_GROUP_ACTIVATION
-Эффект является активным, если источник - объект%1%
+Effect is active if the source is an object%1%
 
 DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
-Эффект всегда активен
+Effect is always active
 
 DESC_EFFECTS_GROUP_SCOPE_DESC
 '''%1%
@@ -2300,23 +2354,23 @@ DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
 '''
 
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-'''Группы эффектов %1%:
+'''Effects group %1%:
 %2%
 '''
 
 # SetMeter
 
 DESC_SIMPLE_SET_METER_MAX
-Максимальный %1% %2%%3%
+Max %1% %2%%3%
 
 DESC_SIMPLE_SET_METER_CURRENT
-Текущий %1% %2%%3%
+Current %1% %2%%3%
 
 DESC_COMPLEX_SET_METER_MAX
-Установить максимальный %1% to %2%
+Set max %1% to %2%
 
 DESC_COMPLEX_SET_METER_CURRENT
-Установить текущий %1% на %2%
+Set current %1% to %2%
 
 
 # others
@@ -3456,7 +3510,7 @@ SHP_DEUTERIUM_TANK_DESC
 Unlocks Deuterium Tank ship part.
 
 SHP_MEDIUM_HULL
-Средние корпуса
+Medium Ship Hulls
 
 SHP_MEDIUM_HULL_DESC
 Medium Ship Hulls
@@ -3499,17 +3553,17 @@ PRO_INDUSTRY_CENTRE_III_DESC
 Additional experience and facilities improvements further extend the range and size of industrial output improvement.
 
 #################################
-# Building Names & Descriptions #
+# Nazwy i opisu budynków        #
 #################################
 
 BLD_OBSERVATORY
-Observatory
+Obserwatorium
 
 BLD_OBSERVATORY_DESC
-'''The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more reasily detected by friendly planets within range of the Observatory.
+'''Naturalne rozszerzenie teleskopów przemysłowych i informacyjnych, wyposażające je w wojskowe algorytmy umożliwiające wykrywanie obiektów na dużych odległościach. Planeta, na której wybudowano obserwatorium wysyła w kosmos potężne impulsy wykrywające. Z tego powodu ukrycie takiej planety staje się bardzo trudne. Z drugiej strony, impulsy te mogą zostać odbite przez wszystkie obiekty znajdujące się we względnej bliskości planety, co bardzo ułatwia wykrywanie takich obiektów z zaprzyjaźnionych planet znajdujących się w zasięgu obserwatorium.
 
-Gives +10 to Detection to all friendly planets within distance 200.
-Decreases Stealth on planet where built by 10.'''
+Dodaje +10 do współczynnika Wykrywanie na wszystkich zaprzyjaźnionych planetach znajdujących się w odległości nie większej niż 200.
+Na planecie, na której wybudowano obserwatorium współczynnik Ukrywanie zmniejsza się o 10.'''
 
 BLD_IMPERIAL_PALACE
 Imperial Palace
@@ -3713,107 +3767,112 @@ Economic Sinkhole
 BLD_ECON_SINKHOLE_DESC
 An Economic Sinkhole actively disrupts trade in its vicinity.  This effect does not distinguish between friend or foe, however, so care must be taken in its placement to maximize disruption of enemy trade, while assuring minimal impact on that of its builders.
 
-##############
-# Ship Parts #
-##############
+####################
+# Elementy okrętów #
+####################
 
 SR_LASER
 Laser
+
 SR_LASER_DESC
-Lower power and mass
+Niewielka masa, ale i moc
 
 SR_ION_CANNON
-Ion Cannon
+Działo jonowe
+
 SR_ION_CANNON_DESC
-Moderate power and mass
+Średnia masa i jednocześnie średnia moc
 
 LR_NUCLEAR_MISSILE
-Nuclear Missile
+Pocisk nuklearny
 
 LR_NUCLEAR_MISSILE_DESC
-Long range moderate power
+Pocisk dalekiego zasięgu i średniej mocy
 
 DT_ACTIVE_RADAR
-Active Radar
+Radar aktywny
 
 DT_ACTIVE_RADAR_DESC
-Moderate power detection with large stealth penalty to mounting ship.
+Średnia skuteczność wykrywania, niestety bardzo ułatwia też wykrycie okręty, na którym jest zamontowany.
 
 FU_DEUTERIUM_TANK
-Deuterium Tank
+Zbiornik deuterium
 
 FU_DEUTERIUM_TANK_DESC
-Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
+Nieznacznie zwiększa zasięg okrętu powiększając jego zasoby paliwa. Masywny i wrażliwy na ogień przeciwnika.
 
 FU_ANTIMATTER_TANK
-Antimatter Tank
+Zbiornik antymaterii
 
 FU_ANTIMATTER_TANK_DESC
-Moderate increase to shiprange by increasing fuel capacity.  Compact and low mass.
+Zwiększa zasięg okrętu powiększając jego zasoby paliwa. Zwarty, o niewielkiem masie.
 
 ST_EM_DAMPER
-Electromagnetic Damper
+Tłumik elektromagnetyczny
 
 ST_EM_DAMPER_DESC
-Improves stealth of ship on which it is mounted by damping electromagnetic emissions from ship systems.  Can only compensate for small amount of emissions, and will be overpowered by large-emission producing parts, if present.
+Zmniejsza wykrywalność okrętu, na którym został zamontowany, poprzez tłumienie emisji elektromagnetycznych generowanych przez systemy okrętu. Może skompensować tylko niewielką ilość takich emisji, dlatego elementy generujące wiele szumów nie będą przez niego skutecznie maskowane.
 
 AR_LEAD_PLATE
-Lead Armour Plating
+Ołowiany pancerz poszycia
+
 AR_LEAD_PLATE_DESC
-Weak defense with large mass
+Słaba ochrona przy dużej masie.
 
 SH_DEFENSE_GRID
-Defense Grid
+Siatka ochronna
+
 SH_DEFENSE_GRID_DESC
-Weak defense with no extra mass
+Słaba ochrona, ale nie dodaje masy.
 
 SH_DEFLECTOR
-Deflector Shield
+Osłony
+
 SH_DEFLECTOR_DESC
-Strong defense with small mass
+Mocna ochrona przy zachowaniu niewielkiej masy.
 
 CO_COLONY_POD
-Colony Pod
+Kapsuła kolonizacyjna
 
 CO_COLONY_POD_DESC
-Basic facilities for colonists to survive journey to a new planet.  Allows ship to colonize new worlds.
+Umożliwia osadnikom przetrwanie podróży do nowej planety. Umożliwia okrętom kolonizowanie nowych światów.
 
 CO_SUSPEND_ANIM_POD
-Cryonic Colony Pod
+Krioniczna kapsuła kolonizacyjna.
 
 CO_SUSPEND_ANIM_POD_DESC
-Colonists are kept in suspended animation during colonization journey, eliminating need to provide sustenance, and greatly increasing the number of colonists that can be carried on one ship.
+W trakcie podróży kolonizacyjnej osadnicy utrzymywani są w stanie obniżonego metabolizmu, dzięki czemu nie ma konieczności ich żywienia, a to z kolei zwiększa liczbę osadników przenoszonych przez jeden okręt.
 
-##############
-# Ship Hulls #
-##############
+###################
+# Kadłuby okrętów #
+###################
 
 SH_EMPTY
-Empty Hull
+Pusty kadłub
 
 SH_EMPTY_DESC
-Cheap and fast, but can't mount any parts.
+Szybki i tani kadłub, niestety nie pozwala na montowanie żadnych elementów.
 
 SH_SMALL
-Small Hull
+Mały kadłub
 
 SH_SMALL_DESC
-Few slots but high speed
+Pozwala na zamontowanie zaledwie kilka elementów, ale za to osiąga duże szybkości.
 
 SH_MEDIUM
-Medium Hull
+Średni kadłub
 
 SH_MEDIUM_DESC
-Moderate number of slots and moderate speed
+Umożliwia zamontowanie średniej liczby elementów, przy zachowaniu względnie wysokich prędkości.
 
 SH_LARGE
-Large Hull
+Duży kadłub
 
 SH_LARGE_DESC
-Many slots but slow speed
+Pozwala na zamontowanie sporej liczby elementów, niestety kosztem zmniejszenia osiąganych prędkości.
 
 SH_HUGE
-Huge Hull
+Wielki kadłub
 
 SH_HUGE_DESC
-Very many slots but very slow speed
+Oferuje bardzo dużo miejsc do montowania elementów, ale osiągane prędkości pozostawiają wiele do życzenia.
