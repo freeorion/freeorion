@@ -9,10 +9,12 @@ class Planet;
 class Ship;
 class System;
 
+#include <boost/mpl/assert.hpp>
 #include <boost/mpl/if.hpp>
 #include <boost/type_traits/add_const.hpp>
 #include <boost/type_traits/add_pointer.hpp>
 #include <boost/type_traits/is_const.hpp>
+#include <boost/type_traits/is_same.hpp>
 #include <boost/type_traits/remove_const.hpp>
 #include <boost/type_traits/remove_pointer.hpp>
 
@@ -128,6 +130,14 @@ T1 universe_object_cast(T2 ptr)
             >::type
         >::type
     >::type T1ConstFreeType;
+
+    // If you've failed this assertion, you're trying to cast some type T2 to
+    // [const] UniverseObject*.  If T2 is not derived from UniverseObject,
+    // this just doesn't make sense.  If T2 is derived from UniverseObject, no
+    // cast is necessary -- implicit conversion is already defined in the
+    // language.
+    BOOST_MPL_ASSERT((boost::mpl::not_<boost::is_same<T1ConstFreeType, UniverseObject*> >));
+
     typedef UniverseObjectSubclassVisitor<typename remove_pointer<T1ConstFreeType>::type> VisitorType;
 
     return static_cast<T1ConstFreeType>(ptr->Accept(VisitorType()));

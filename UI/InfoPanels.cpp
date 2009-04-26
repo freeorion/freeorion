@@ -1605,19 +1605,21 @@ void MultiIconValueIndicator::Render()
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     GG::Wnd *parent;
-    if((parent = Parent()))
+    if ((parent = Parent()))
         parent->MouseWheel(pt, move, mod_keys);
 }
 
 void MultiIconValueIndicator::Update()
 {
-    for (unsigned int i = 0; i < m_icons.size(); ++i) {
+    assert(m_icons.size() == m_meter_types.size());
+    for (std::size_t i = 0; i < m_icons.size(); ++i) {
+        assert(m_icons[i]);
         double sum = 0.0;
-        for (unsigned int j = 0; j < m_obj_vec.size(); ++j) {
-            const UniverseObject* obj = m_obj_vec.at(j);
-            sum += obj->ProjectedMeterPoints(m_meter_types.at(i));
+        for (std::size_t j = 0; j < m_obj_vec.size(); ++j) {
+            assert(m_obj_vec[j]);
+            sum += m_obj_vec[j]->ProjectedMeterPoints(m_meter_types[i]);
         }
-        m_icons.at(i)->SetValue(sum);
+        m_icons[i]->SetValue(sum);
     }
 }
 

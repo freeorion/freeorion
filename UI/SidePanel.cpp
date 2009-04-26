@@ -1562,20 +1562,14 @@ void SidePanel::SetSystemImpl()
         m_planet_panel_container->SetPlanets(plt_vec, s_system->Star());
 
 
-        // connect signals so changes to planets will update GUI
-        for (unsigned int i = 0; i < plt_vec.size(); i++) {
-            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal,             &MultiIconValueIndicator::Update,       m_system_resource_summary));
-            m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal,    SidePanel::ResourceCenterChangedSignal));
-        }
-
-
         // populate system resource summary
 
         // get planets owned by player's empire
         std::vector<const UniverseObject*> owned_planets;
-        for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it)
+        for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it) {
             if ((*it)->WhollyOwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                owned_planets.push_back(universe_object_cast<const UniverseObject*>(*it));
+                owned_planets.push_back(*it);
+        }
 
         // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
         std::vector<MeterType> meter_types;
@@ -1591,6 +1585,13 @@ void SidePanel::SetSystemImpl()
         m_system_resource_summary = new MultiIconValueIndicator(Width() - MAX_PLANET_DIAMETER - 8, owned_planets, meter_types);
         m_system_resource_summary->MoveTo(GG::Pt(GG::X(MAX_PLANET_DIAMETER + 4), 140 - m_system_resource_summary->Height()));
         AttachChild(m_system_resource_summary);
+
+
+        // connect signals so changes to planets will update GUI
+        for (unsigned int i = 0; i < plt_vec.size(); i++) {
+            m_system_connections.insert(GG::Connect(plt_vec[i]->StateChangedSignal,             &MultiIconValueIndicator::Update,       m_system_resource_summary));
+            m_system_connections.insert(GG::Connect(plt_vec[i]->ResourceCenterChangedSignal,    SidePanel::ResourceCenterChangedSignal));
+        }
 
 
         // add tooltips and show system resource summary if it not empty
