@@ -2278,8 +2278,7 @@ ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     m_graphic(0),
     m_name(0)
 {
-    const ShipDesign* design = GetShipDesign(m_design_id);
-    if (design) {
+    if (const ShipDesign* design = GetShipDesign(m_design_id)) {
         m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, h, ClientUI::HullTexture(design->Hull()), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         AttachChild(m_graphic);
         m_name = new GG::TextControl(GG::X0, GG::Y0, design->Name(), ClientUI::GetFont(), GG::CLR_WHITE);

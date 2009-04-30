@@ -58,25 +58,6 @@ namespace {
     const double TAB_BRIGHTENING_SCALE_FACTOR = 1.25;
 }
 
-#if 0
-// TODO: finish implementing these sounds, as recommended by the sound team (the ones commented out are done):
-//1) Button Click - includes clicks on regular buttons, check boxes, radio buttons
-//2) Button Rollover - includes moving the mouse over regular buttons only
-//3) Item Select - selecting/deselecting an item in a drop-down list or listbox
-//4) Item Drop - dropping a drag-and-drop item into a listbox
-//5) Alert - when a warning or error message box pops up
-//6) Minimize window
-//7) Maximize window
-//8) Close window
-//9) Turn Button Click (specialization of Button Click)
-//9) Fleet Rollover (specialization of Button Rollover)
-//10) Fleet Click (specialization of Button Click)
-//11) Planet Click (specialization of Button Click)
-//12) Text Typing
-13) Planet Background Music (music, instead of sound effect, for the planet detail view)
-14) Fleet-Type Sound (plays sound specific to the type of fleet in the fleet detail view)
-15) Turn Progressing
-#endif
 
 ///////////////////////////////////////
 // class CUIButton
@@ -958,13 +939,13 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
         m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
         m_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, w - Value(h), GG::Y(std::max(font_space, Value(h))), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
-        // need vertical space for text, but don't want icon to be larger than available horizintal space
+        // need vertical space for text, but don't want icon to be larger than available horizontal space
         int icon_height = std::min(Value(w), std::max(Value(h - font_space), 1));
         int icon_left = Value(w - icon_height)/2;
         m_icon = new GG::StaticGraphic(GG::X(icon_left), GG::Y0, GG::X(icon_height), GG::Y(icon_height), texture, GG::GRAPHIC_FITGRAPHIC);
         m_text = new GG::TextControl(GG::X0, GG::Y(icon_height), w, GG::Y(font_space), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
     }
-    
+
     AttachChild(m_icon);
     AttachChild(m_text);
     Refresh();

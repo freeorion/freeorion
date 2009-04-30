@@ -1,5 +1,4 @@
 // -*- C++ -*-
-//MapWnd.h
 #ifndef _MapWnd_h_
 #define _MapWnd_h_
 
@@ -357,8 +356,8 @@ class MapWndPopup : public CUIWnd
 public:
     MapWndPopup(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Flags<GG::WndFlag> flags);
     virtual ~MapWndPopup();
-    void CloseClicked();
-    void Close();
+    void    CloseClicked();
+    void    Close();
 };
 
 #endif // _MapWnd_h_

@@ -2450,6 +2450,7 @@ void MapWnd::RenderSystems()
         glLoadIdentity();
         const double TWO_PI = 2.0*3.14159;
         glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LINE_SMOOTH);
         glLineWidth(1.5);
         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
@@ -2486,6 +2487,7 @@ void MapWnd::RenderSystems()
             }
         }
 
+        glDisable(GL_LINE_SMOOTH);
         glEnable(GL_TEXTURE_2D);
         glPopMatrix();
     }

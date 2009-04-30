@@ -24,17 +24,16 @@
 
 
 namespace {
-    static const std::string PART_CONTROL_DROP_TYPE_STRING = "Part Control";
-    static const std::string EMPTY_STRING = "";
-    static const GG::Y BASES_LIST_BOX_ROW_HEIGHT(100);
+    const std::string    PART_CONTROL_DROP_TYPE_STRING = "Part Control";
+    const std::string    EMPTY_STRING = "";
+    const GG::Y          BASES_LIST_BOX_ROW_HEIGHT(100);
 }
 
 //////////////////////////////////////////////////
 // PartControl                                  //
 //////////////////////////////////////////////////
 /** UI representation of a ship part.  Displayed in the PartPalette, and can be dragged onto SlotControls to
-  * add parts to the design.
-  */
+  * add parts to the design. */
 class PartControl : public GG::Control {
 public:
     /** \name Structors */ //@{
@@ -98,8 +97,7 @@ void PartControl::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 //////////////////////////////////////////////////
 // PartsListBox                                 //
 //////////////////////////////////////////////////
-/** Arrangement of PartControls that can be dragged onto SlotControls
-  */
+/** Arrangement of PartControls that can be dragged onto SlotControls */
 class PartsListBox : public CUIListBox {
 public:
     class PartsListBoxRow : public CUIListBox::Row {
@@ -376,8 +374,8 @@ void PartsListBox::HideAvailability(bool available, bool refresh_list) {
 //////////////////////////////////////////////////
 // DesignWnd::PartPalette                       //
 //////////////////////////////////////////////////
-/** Contains graphical list of PartControl which can be dragged and dropped onto slots to assign parts to those slots
-  */
+/** Contains graphical list of PartControl which can be dragged and dropped onto slots
+  * to assign parts to those slots */
 class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
@@ -673,9 +671,8 @@ void DesignWnd::PartPalette::Reset() {
 //////////////////////////////////////////////////
 // BasesListBox                                  //
 //////////////////////////////////////////////////
-/** List of starting points for designs, such as empty hulls, existing designs kept by this empire or seen 
-  * elsewhere in the universe, design template scripts or saved (on disk) designs from previous games.
-  */
+/** List of starting points for designs, such as empty hulls, existing designs kept by this empire or seen
+  * elsewhere in the universe, design template scripts or saved (on disk) designs from previous games. */
 class BasesListBox : public CUIListBox {
 public:
     /** \name Structors */ //@{
@@ -701,13 +698,13 @@ public:
     //@}
 
     mutable boost::signal<void (int)>
-                                    DesignSelectedSignal;                   //!< an existing complete design that is known to this empire was selected (double-clicked)
+                                    DesignSelectedSignal;           //!< an existing complete design that is known to this empire was selected (double-clicked)
     mutable boost::signal<void (const std::string&, const std::vector<std::string>&)>
-                                    DesignComponentsSelectedSignal;         //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
+                                    DesignComponentsSelectedSignal; //!< a hull and a set of parts (which may be empty) was selected (double-clicked)
     mutable boost::signal<void (const ShipDesign*)>
-                                    DesignBrowsedSignal;                    //!< a completed design was browsed (clicked once)
+                                    DesignBrowsedSignal;            //!< a completed design was browsed (clicked once)
     mutable boost::signal<void (const HullType*)>
-                                    HullBrowsedSignal;                      //!< a hull was browsed (clicked once)
+                                    HullBrowsedSignal;              //!< a hull was browsed (clicked once)
 
 private:
     void                            PropagateDoubleClickSignal(GG::ListBox::iterator it);
@@ -850,9 +847,8 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
         const GG::Pt row_size = ListRowSize();
-        for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
+        for (GG::ListBox::iterator it = begin(); it != end(); ++it)
             (*it)->Resize(row_size);
-        }
     }
 }
 
@@ -1288,8 +1284,7 @@ void DesignWnd::BaseSelector::WndSelected(std::size_t index) {
 // SlotControl                                  //
 //////////////////////////////////////////////////
 /** UI representation and drop-target for slots of a design.  PartControl may be dropped into slots to add
-  * the corresponding parts to the ShipDesign, or the part may be set programmatically with SetPart().
-  */
+  * the corresponding parts to the ShipDesign, or the part may be set programmatically with SetPart(). */
 class SlotControl : public GG::Control {
 public:
     /** \name Structors */ //@{
@@ -1298,9 +1293,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual void DropsAcceptable(DropsAcceptableIter first,
-                                 DropsAcceptableIter last,
-                                 const GG::Pt& pt) const;
+    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
 
     ShipSlotType    SlotType() const;
     double          XPositionFraction() const;
@@ -1357,10 +1350,7 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     SetDragDropDataType("");
 }
 
-void SlotControl::DropsAcceptable(DropsAcceptableIter first,
-                                  DropsAcceptableIter last,
-                                  const GG::Pt& pt) const
-{
+void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
     bool acceptable_part_found = false;
     for (DropsAcceptableIter it = first; it != last; ++it) {
         if (!acceptable_part_found && it->first->DragDropDataType() == PART_CONTROL_DROP_TYPE_STRING) {
