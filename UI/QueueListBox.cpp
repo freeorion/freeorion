@@ -58,6 +58,7 @@ void QueueListBox::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::
 void QueueListBox::DragDropHere(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds,
                                 GG::Flags<GG::ModKey> mod_keys)
 {
+    CUIListBox::DragDropHere(pt, drag_drop_wnds, mod_keys);
     if (drag_drop_wnds.size() == 1 &&
         AllowedDropTypes().find(drag_drop_wnds.begin()->first->DragDropDataType()) !=
         AllowedDropTypes().end()) {

@@ -830,6 +830,8 @@ public:
 
     virtual void DragDropHere(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
     {
+        CUIListBox::DragDropHere(pt, drag_drop_wnds, mod_keys);
+
         iterator row = RowUnderPt(pt);
 
         if (m_selected_fleet != row)
