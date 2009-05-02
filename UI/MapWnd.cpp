@@ -2490,6 +2490,7 @@ void MapWnd::RenderSystems()
         glDisable(GL_LINE_SMOOTH);
         glEnable(GL_TEXTURE_2D);
         glPopMatrix();
+        glLineWidth(1.0);
     }
 }
 
