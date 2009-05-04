@@ -1466,13 +1466,22 @@ Unknown
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
-New Fleet
+<i>New Fleet</i>
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
 %1% Fleets At %2% System
 
 FW_EMPIRE_FLEETS
 %1% Fleets
+
+FW_NO_FLEET
+No Fleet
+
+FW_GENERIC_FLEETS_AT_SYSTEM
+Fleets At %1% System
+
+FW_GENERIC_FLEETS
+Fleets
 
 FW_HOME_FLEET
 Home Fleet
@@ -1488,8 +1497,6 @@ Foreign fleet
 FW_FOREIGN_SHIP
 Foreign ship
 
-FW_NO_FLEET
-No Fleet
 
 ###############
 # TechTreeWnd #
