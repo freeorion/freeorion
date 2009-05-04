@@ -368,13 +368,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void Render() {}
-    void SetValue(double value, int index = 0); ///< sets displayed \a value with \a index
-    //@}
+    virtual void    Render() {}
+    void            SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
+//@}
 
 private:
-    void Refresh();
-    GG::Clr ValueColor(int index) const;        ///< returns colour in which to draw value
+    void            Refresh();
+    GG::Clr         ValueColor(int index) const;        ///< returns colour in which to draw value
 
     int                 m_num_values;
 

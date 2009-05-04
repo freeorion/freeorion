@@ -382,6 +382,7 @@ namespace {
             if (old_size != Size())
                 DoLayout();
         }
+
     private:
         void            SetShipIcon() {
             delete m_ship_icon;
@@ -1014,6 +1015,7 @@ public:
     GG::Pt          ListRowSize() const {
         return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight());
     }
+
 private:
     Fleet*      m_fleet;
     const bool  m_read_only;
@@ -1527,7 +1529,7 @@ void FleetWnd::DoLayout()
     const GG::X RIGHT = TOTAL_WIDTH - GG::X(PAD);
 
     const GG::Y TOTAL_HEIGHT = ClientHeight();
-    const GG::Y AVAILABLE_HEIGHT = TOTAL_HEIGHT - 4*GG::Y(PAD); // top and bottom pads, and space between contents pads
+    const GG::Y AVAILABLE_HEIGHT = TOTAL_HEIGHT - 3*GG::Y(PAD); // top and bottom pads, and space between contents pads
 
     const GG::Y LISTBOX_TOP = GG::Y(PAD);
 
@@ -1537,18 +1539,29 @@ void FleetWnd::DoLayout()
 
     const GG::Y ROW_HEIGHT = m_fleets_lb->ListRowSize().y;
 
-    // subtract space for new fleet drop target, and divide remainder between list box and fleet data panel
-    const GG::Y DATA_PANEL_HEIGHT = (AVAILABLE_HEIGHT - ROW_HEIGHT) / 3 * 2;
-    const GG::Y LIST_BOX_HEIGHT = (AVAILABLE_HEIGHT - ROW_HEIGHT) / 3;
 
+    GG::Y       NEW_FLEET_DROP_TARGET_HEIGHT = ROW_HEIGHT + GG::Y(PAD); // space for row, and one more unit of pad space
+    if (!m_new_fleet_drop_target)
+        NEW_FLEET_DROP_TARGET_HEIGHT = GG::Y0;
+
+
+    // subtract space for new fleet drop target, and divide remainder between list box and fleet data panel
+    const GG::Y DATA_PANEL_HEIGHT = (AVAILABLE_HEIGHT - NEW_FLEET_DROP_TARGET_HEIGHT) / 3 * 2;
+    const GG::Y LIST_BOX_HEIGHT = (AVAILABLE_HEIGHT - NEW_FLEET_DROP_TARGET_HEIGHT) / 3;
+
+    // get other edges of list box and data panel
     const GG::Y LISTBOX_BOTTOM = LISTBOX_TOP + LIST_BOX_HEIGHT;
     const GG::Y DATA_PANEL_TOP = DATA_PANEL_BOTTOM - DATA_PANEL_HEIGHT;
-    const GG::Y DROP_TARGET_TOP = LISTBOX_BOTTOM + GG::Y(PAD);
-    const GG::Y DROP_TARGET_BOTTOM = DROP_TARGET_TOP + ROW_HEIGHT;
 
-    m_fleets_lb->SizeMove(              GG::Pt(LEFT, LISTBOX_TOP),      GG::Pt(RIGHT, LISTBOX_BOTTOM));
-    m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT, DROP_TARGET_TOP),  GG::Pt(RIGHT, DROP_TARGET_BOTTOM));
-    m_fleet_detail_panel->SizeMove(     GG::Pt(LEFT, DATA_PANEL_TOP),   GG::Pt(RIGHT, DATA_PANEL_BOTTOM));
+    // if present, use these to set position of drop target.  if not present, list box and data panel will use up the space
+    if (m_new_fleet_drop_target) {
+        const GG::Y DROP_TARGET_TOP = LISTBOX_BOTTOM + GG::Y(PAD);
+        const GG::Y DROP_TARGET_BOTTOM = DROP_TARGET_TOP + ROW_HEIGHT;
+        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT, DROP_TARGET_TOP),  GG::Pt(RIGHT, DROP_TARGET_BOTTOM));
+    }
+
+    m_fleets_lb->SizeMove(                  GG::Pt(LEFT, LISTBOX_TOP),      GG::Pt(RIGHT, LISTBOX_BOTTOM));
+    m_fleet_detail_panel->SizeMove(         GG::Pt(LEFT, DATA_PANEL_TOP),   GG::Pt(RIGHT, DATA_PANEL_BOTTOM));
 }
 
 void FleetWnd::AddFleet(Fleet* fleet)

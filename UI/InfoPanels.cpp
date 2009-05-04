@@ -293,8 +293,7 @@ void PopulationPanel::DoExpandCollapseLayout()
 
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -664,8 +663,7 @@ void ResourcePanel::DoExpandCollapseLayout()
 
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1119,8 +1117,7 @@ void MilitaryPanel::Render()
 
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1353,8 +1350,7 @@ void MultiIconValueIndicator::Render()
 
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if ((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1503,8 +1499,7 @@ void MultiMeterStatusBar::Render()
 
 void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1637,8 +1632,7 @@ void BuildingsPanel::Render()
 
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1913,8 +1907,7 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd *parent;
-    if((parent = Parent()))
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -1947,8 +1940,7 @@ void SpecialsPanel::Render()
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::Wnd* parent = Parent();
-    if (parent)
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
@@ -2046,8 +2038,7 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void ShipDesignPanel::Render() {}
 
 void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
-    GG::Wnd* parent = Parent();
-    if (parent)
+    if (GG::Wnd* parent = Parent())
         parent->MouseWheel(pt, move, mod_keys);
 }
 
