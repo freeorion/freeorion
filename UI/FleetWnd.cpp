@@ -1,19 +1,21 @@
 #include "FleetWnd.h"
-#include "../util/AppInterface.h"
-#include "ClientUI.h"
+
 #include "CUIControls.h"
-#include "../universe/Fleet.h"
-#include "../client/human/HumanClientApp.h"
+#include "SidePanel.h"
+#include "InfoPanels.h"
+#include "ClientUI.h"
+#include "Sound.h"
+#include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../universe/Fleet.h"
+#include "../client/human/HumanClientApp.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../network/Message.h"
-#include "SidePanel.h"
-#include "Sound.h"
 #include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
@@ -304,12 +306,29 @@ namespace {
             meters.push_back(METER_HEALTH);     meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
             meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
 
+
+            // tooltip info
+            int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+            const Universe::EffectAccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
+            const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = NULL;
+            Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
+            if (map_it != effect_accounting_map.end())
+                meter_map = &(map_it->second);
+
+
             for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
                 StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                        ClientUI::MeterIcon(*it), 0, 0, true, false,
-                                                        GG::Flags<GG::WndFlag>());
+                                                        ClientUI::MeterIcon(*it), 0, 0, true, false);
                 m_stat_icons.push_back(std::make_pair(*it, icon));
                 AttachChild(icon);
+
+                // create tooltip explaining effects on meter if such info is available
+                if (meter_map) {
+                    icon->SetBrowseModeTime(tooltip_delay);
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(*it, m_ship, *meter_map));
+                    icon->SetBrowseInfoWnd(browse_wnd);
+                }
             }
 
             m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
@@ -389,14 +408,13 @@ namespace {
                     m_design_name_text->SetText(design->Name());
             }
 
-            // set stat icon values and positions
+            // set stat icon values
             GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
             for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
                 it->second->SetValue(m_ship->MeterPoints(it->first));
-                GG::Pt icon_lr = icon_ul + GG::Pt(StatIconWidth(), StatIconHeight());
-                it->second->SizeMove(icon_ul, icon_lr);
-                icon_ul += GG::Pt(StatIconSpacingWidth(), GG::Y0);
             }
+
+            DoLayout();
         }
 
         void            DoLayout() {
@@ -416,7 +434,6 @@ namespace {
 
             if (m_design_name_text)
                 m_design_name_text->SizeMove(name_ul, name_lr);
-
 
             // set stat icon positions
             GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
@@ -494,6 +511,7 @@ public:
 private:
     void                Refresh();
     double              StatValue(MeterType meter_type) const;
+    std::string         StatTooltip(MeterType meter_type) const;
 
     void                DoLayout();
 
@@ -517,7 +535,7 @@ private:
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet,
                                int empire, int system_id, double x, double y) :
-    Control(GG::X0, GG::Y0, w, h, fleet ? GG::Flags<GG::WndFlag>() : GG::CLICKABLE),
+    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_fleet(fleet),
     m_empire(empire),
     m_system_id(system_id),
@@ -540,11 +558,14 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet,
         std::vector<MeterType> meters;
         meters.push_back(METER_FUEL);
 
+        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
         for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
             StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                    ClientUI::MeterIcon(*it), 0, 0, true, false,
-                                                    GG::Flags<GG::WndFlag>());
+                                                    ClientUI::MeterIcon(*it), 0, 0, true, false);
             m_stat_icons.push_back(std::make_pair(*it, icon));
+            icon->SetBrowseModeTime(tooltip_delay);
+            icon->SetBrowseText(StatTooltip(*it));
             AttachChild(icon);
         }
 
@@ -680,13 +701,21 @@ double FleetDataPanel::StatValue(MeterType meter_type) const
     if (m_fleet) {
         if (meter_type == METER_FUEL)
             return m_fleet->Fuel();
-        //else if (meter_type == METER_FUEL)
+        //else if (meter_type == METER_STEALTH)
             // find least of fleet's ships' stealth...
         else
             return 0.0;
     } else {
         return 0.0;
     }
+}
+
+std::string FleetDataPanel::StatTooltip(MeterType meter_type) const
+{
+    if (meter_type == METER_FUEL)
+        return UserString("FW_FLEET_FUEL_SUMMARY");
+    else
+        return "";
 }
 
 void FleetDataPanel::DoLayout()

@@ -3,6 +3,7 @@
 #define _InfoPanels_h_
 
 #include "../universe/Enums.h"
+#include "../universe/Universe.h"
 
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
@@ -431,6 +432,47 @@ private:
     static const GG::X  LABEL_WIDTH;
     static const GG::X  VALUE_WIDTH;
     static const int    EDGE_PAD;
+};
+
+/** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
+  * shows the current turn's current meter value and the predicted current meter value for next turn. */
+class MeterBrowseWnd : public GG::BrowseInfoWnd {
+public:
+    MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj,
+                   const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map);
+
+    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    virtual void    Render();
+
+private:
+    void            Initialize();
+
+    virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
+    void            UpdateSummary();
+    void            UpdateEffectLabelsAndValues(GG::Y& top);
+
+    MeterType               m_meter_type;
+    const UniverseObject*   m_obj;
+
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >&
+                            m_meter_map;
+
+    GG::TextControl*        m_summary_title;
+
+    GG::TextControl*        m_current_label;
+    GG::TextControl*        m_current_value;
+    GG::TextControl*        m_next_turn_label;
+    GG::TextControl*        m_next_turn_value;
+    GG::TextControl*        m_change_label;
+    GG::TextControl*        m_change_value;
+
+    GG::TextControl*        m_meter_title;
+
+    std::vector<std::pair<GG::TextControl*, GG::TextControl*> >
+                            m_effect_labels_and_values;
+
+    GG::Y                   m_row_height;
+    bool                    m_initialized;
 };
 
 #endif

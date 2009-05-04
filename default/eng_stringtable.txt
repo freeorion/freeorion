@@ -1356,10 +1356,10 @@ MP_SUPPLY
 Fleet Supply
 
 MP_SHIELD
-Planetary Shield
+Shield
 
 MP_DEFENSE
-Planetary Defense
+Defense
 
 MP_DETECTION
 Detection
@@ -1497,6 +1497,11 @@ Foreign fleet
 FW_FOREIGN_SHIP
 Foreign ship
 
+FW_FUEL
+Fuel
+
+FW_FLEET_FUEL_SUMMARY
+'''Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.'''
 
 ###############
 # TechTreeWnd #

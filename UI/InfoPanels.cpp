@@ -45,257 +45,9 @@ namespace {
         return ColourWrappedtext(DoubleToString(number, 3, false, true), clr);
     }
 
-
-    /** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
-      * shows the current turn's current meter value and the predicted current meter value for next turn. */
-    class MeterBrowseWnd : public GG::BrowseInfoWnd {
-    public:
-        MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map) :
-            GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
-            m_meter_type(meter_type),
-            m_obj(obj),
-            m_meter_map(meter_map),
-            m_summary_title(0),
-            m_current_label(0), m_current_value(0),
-            m_next_turn_label(0), m_next_turn_value(0),
-            m_change_label(0), m_change_value(0),
-            m_meter_title(0),
-            row_height(1),
-            initialized(false)
-        {}
-
-        virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
-            const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-            assert(mode <= browse_modes.size());
-            return true;
-        }
-
-        virtual void Render() {
-            GG::Pt ul = UpperLeft();
-            GG::Pt lr = LowerRight();
-            GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
-            GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
-            GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*row_height), GG::Pt(lr.x, ul.y + 5*row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
-        }
-
-    private:
-        void Initialize() {
-            row_height = GG::Y(ClientUI::Pts()*3/2);
-            const GG::X TOTAL_WIDTH = LABEL_WIDTH + VALUE_WIDTH;
-
-            const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-            const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
-
-            m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-            AttachChild(m_summary_title);
-
-            m_current_label = new GG::TextControl(GG::X0, row_height, LABEL_WIDTH, row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-            AttachChild(m_current_label);
-            m_current_value = new GG::TextControl(LABEL_WIDTH, row_height, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-            AttachChild(m_current_value);
-
-            m_next_turn_label = new GG::TextControl(GG::X0, row_height*2, LABEL_WIDTH, row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-            AttachChild(m_next_turn_label);
-            m_next_turn_value = new GG::TextControl(LABEL_WIDTH, row_height*2, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-            AttachChild(m_next_turn_value);
-
-            m_change_label = new GG::TextControl(GG::X0, row_height*3, LABEL_WIDTH, row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-            AttachChild(m_change_label);
-            m_change_value = new GG::TextControl(LABEL_WIDTH, row_height*3, VALUE_WIDTH, row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-            AttachChild(m_change_value);
-
-            m_meter_title = new GG::TextControl(GG::X0, row_height*4, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-            AttachChild(m_meter_title);
-
-            UpdateSummary();
-
-            GG::Y next_row_y = m_meter_title->LowerRight().y;
-            UpdateEffectLabelsAndValues(next_row_y);
-
-            Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, next_row_y));
-
-            initialized = true;
-        }
-
-        virtual void UpdateImpl(std::size_t mode, const Wnd* target) {
-            // because a MeterBrowseWnd's contents depends only on the meters of a single object, if that object doesn't
-            // change between showings of the meter browse wnd, it's not necessary to fully recreate the MeterBrowseWnd,
-            // and it can be just reshown.without being altered.  To refresh a MeterBrowseWnd, recreate it by assigning
-            // a new one as the moused-over object's BrowseWnd in this Wnd's place
-            if (!initialized)
-                Initialize();
-        }
-
-        // total resource production or amounts summary text
-        void UpdateSummary() {
-            const Meter* meter = m_obj->GetMeter(m_meter_type);
-            if (!meter) return;
-
-            double current = m_obj->MeterPoints(m_meter_type);
-            double next = m_obj->ProjectedMeterPoints(m_meter_type);
-            double change = next - current;
-            double meter_cur = meter->Current();
-            double meter_max = meter->Max();
-
-            m_current_value->SetText(DoubleToString(current, 3, false, false));
-            m_next_turn_value->SetText(DoubleToString(next, 3, false, false));
-            m_change_value->SetText(ColouredNumber(change));
-            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
-                                                  DoubleToString(meter_cur, 3, false, false) %
-                                                  DoubleToString(meter_max, 3, false, false)));
-
-            switch (m_meter_type) {
-            case METER_POPULATION:
-                m_summary_title->SetText(UserString("PP_POPULATION"));  break;
-            case METER_FARMING:
-                m_summary_title->SetText(UserString("RP_FOOD"));        break;
-            case METER_INDUSTRY:
-                m_summary_title->SetText(UserString("RP_INDUSTRY"));    break;
-            case METER_RESEARCH:
-                m_summary_title->SetText(UserString("RP_RESEARCH"));    break;
-            case METER_TRADE:
-               m_summary_title->SetText(UserString("RP_TRADE"));        break;
-            case METER_MINING:
-                m_summary_title->SetText(UserString("RP_MINERALS"));    break;
-            case METER_CONSTRUCTION:
-                m_summary_title->SetText(UserString("RP_CONSTRUCTION"));break;
-            case METER_HEALTH:
-                m_summary_title->SetText(UserString("PP_HEALTH"));      break;
-            case METER_SUPPLY:
-                m_summary_title->SetText(UserString("MP_SUPPLY"));      break;
-            case METER_SHIELD:
-                m_summary_title->SetText(UserString("MP_SHIELD"));      break;
-            case METER_DEFENSE:
-                m_summary_title->SetText(UserString("MP_DEFENSE"));     break;
-            case METER_DETECTION:
-                m_summary_title->SetText(UserString("MP_DETECTION"));   break;
-            case METER_STEALTH:
-                m_summary_title->SetText(UserString("MP_STEALTH"));     break;
-            default:
-                m_summary_title->SetText("");                           break;
-            }
-        }
-
-        // meter effect entries
-        void UpdateEffectLabelsAndValues(GG::Y& top) {
-            for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-                DeleteChild(m_effect_labels_and_values[i].first);
-                DeleteChild(m_effect_labels_and_values[i].second);
-            }
-            m_effect_labels_and_values.clear();
-
-            const Meter* meter = m_obj->GetMeter(m_meter_type);
-            if (!meter) return;
-
-            // determine if meter_map contains info about the meter that this MeterBrowseWnd is describing
-            std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = m_meter_map.find(m_meter_type);
-            if (meter_it == m_meter_map.end() || meter_it->second.empty())
-                return; // couldn't find appropriate meter type, or there were no entries for that meter.
-
-            const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
-
-            // add label-value pairs for each alteration recorded for this meter
-            const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
-            for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-                const UniverseObject* source = GetUniverse().Object(info_it->source_id);
-
-                int empire_id = -1;
-                const Empire* empire = 0;
-                const Building* building = 0;
-                const Planet* planet = 0;
-                const Ship* ship = 0;
-                std::string text = "", name = "";
-
-                switch (info_it->cause_type) {
-                case ECT_UNIVERSE_TABLE_ADJUSTMENT:
-                    text += UserString("TT_BASIC_FOCUS_AND_UNIVERSE");
-                    break;
-
-                case ECT_TECH:
-                    if (source->Owners().size() == 1) {
-                        empire_id = *(source->Owners().begin());
-                        empire = EmpireManager().Lookup(empire_id);
-                        if (empire)
-                            name = empire->Name();
-                    }
-                    text += boost::io::str(FlexibleFormat(UserString("TT_TECH")) % name % UserString(info_it->specific_cause));
-                    break;
-
-                case ECT_BUILDING:
-                    building = universe_object_cast<const Building*>(source);
-                    if (building) {
-                        planet = building->GetPlanet();
-                        if (planet) {
-                            name = planet->Name();
-                        }
-                    }
-                    text += boost::io::str(FlexibleFormat(UserString("TT_BUILDING")) % name % UserString(info_it->specific_cause));
-                    break;
-
-                case ECT_SPECIAL:
-                    text += boost::io::str(FlexibleFormat(UserString("TT_SPECIAL")) % UserString(info_it->specific_cause));
-                    break;
-
-                case ECT_SHIP_HULL:
-                    ship = universe_object_cast<const Ship*>(source);
-                    if (ship)
-                        name = ship->Name();
-                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_HULL")) % name % UserString(info_it->specific_cause));
-                    break;
-
-                case ECT_SHIP_PART:
-                    ship = universe_object_cast<const Ship*>(source);
-                    if (ship)
-                        name = ship->Name();
-                    text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % name % UserString(info_it->specific_cause));
-                    break;
-
-                case ECT_UNKNOWN_CAUSE:
-                default:
-                    text += UserString("TT_UNKNOWN");
-                }
-
-                GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-                AttachChild(label);
-
-                GG::TextControl* value = new GG::TextControl(LABEL_WIDTH, top, VALUE_WIDTH, row_height,
-                                                             ColouredNumber(info_it->meter_change),
-                                                             font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-                AttachChild(value);
-                m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
-
-                top += row_height;
-            }
-        }
-
-        MeterType               m_meter_type;
-        const UniverseObject*   m_obj;
-        const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >&    m_meter_map;
-
-        GG::TextControl*        m_summary_title;
-
-        GG::TextControl*        m_current_label;
-        GG::TextControl*        m_current_value;
-        GG::TextControl*        m_next_turn_label;
-        GG::TextControl*        m_next_turn_value;
-        GG::TextControl*        m_change_label;
-        GG::TextControl*        m_change_value;
-
-        GG::TextControl*        m_meter_title;
-
-        std::vector<std::pair<GG::TextControl*, GG::TextControl*> >                 m_effect_labels_and_values;
-
-        GG::Y                   row_height;
-
-        static const GG::X      LABEL_WIDTH;
-        static const GG::X      VALUE_WIDTH;
-        static const int        EDGE_PAD;
-
-        bool initialized;
-    };
-    const GG::X MeterBrowseWnd::LABEL_WIDTH(300);
-    const GG::X MeterBrowseWnd::VALUE_WIDTH(50);
-    const int MeterBrowseWnd::EDGE_PAD(3);
+    const GG::X     METER_BROWSE_LABEL_WIDTH(300);
+    const GG::X     METER_BROWSE_VALUE_WIDTH(50);
+    const int       METER_BROWSE_EDGE_PAD(3);
 
     /** Returns GG::Clr with which to display programatically coloured things (such as meter bars) for the
         indicated \a meter_type */
@@ -606,12 +358,9 @@ void PopulationPanel::Update()
         else
             owner = OS_SELF; // inhabited by this empire (and possibly other empires)
     }
- 
-    m_pop_stat->SetValue(pop->MeterPoints(METER_POPULATION));
-    m_health_stat->SetValue(pop->MeterPoints(METER_HEALTH));
 
 
-    // meter bar displays and production stats
+    // meter bar displays and stat icons
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
@@ -2407,21 +2156,27 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 
 
     production_label_top = top;
-    m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_production_label = new GG::TextControl(GG::X0, production_label_top, TOTAL_WIDTH - EDGE_PAD,
+                                             row_height, "", font_bold, ClientUI::TextColor(),
+                                             GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_production_label);
     top += row_height;
     UpdateProduction(top);
 
 
     allocation_label_top = top;
-    m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_allocation_label = new GG::TextControl(GG::X0, allocation_label_top, TOTAL_WIDTH - EDGE_PAD,
+                                             row_height, "", font_bold, ClientUI::TextColor(),
+                                             GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_allocation_label);
     top += row_height;
     UpdateAllocation(top);
 
 
     import_export_label_top = top;
-    m_import_export_label = new GG::TextControl(GG::X0, import_export_label_top, TOTAL_WIDTH - EDGE_PAD, row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_import_export_label = new GG::TextControl(GG::X0, import_export_label_top, TOTAL_WIDTH - EDGE_PAD,
+                                                row_height, "", font_bold, ClientUI::TextColor(),
+                                                GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_import_export_label);
     top += row_height;
     UpdateImportExport(top);
@@ -2756,3 +2511,225 @@ void SystemResourceSummaryBrowseWnd::Clear() {
     }
     m_import_export_labels_and_amounts.clear();
 }
+
+
+//////////////////////////////////////
+//         MeterBrowseWnd           //
+//////////////////////////////////////
+MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map) :
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
+    m_meter_type(meter_type),
+    m_obj(obj),
+    m_meter_map(meter_map),
+    m_summary_title(0),
+    m_current_label(0), m_current_value(0),
+    m_next_turn_label(0), m_next_turn_value(0),
+    m_change_label(0), m_change_value(0),
+    m_meter_title(0),
+    m_row_height(1),
+    m_initialized(false)
+{}
+
+bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
+    const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
+    assert(mode <= browse_modes.size());
+    return true;
+}
+
+void MeterBrowseWnd::Render() {
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
+    GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+    GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*m_row_height), GG::Pt(lr.x, ul.y + 5*m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
+}
+
+void MeterBrowseWnd::Initialize() {
+    m_row_height = GG::Y(ClientUI::Pts()*3/2);
+    const GG::X TOTAL_WIDTH = METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH;
+
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+    const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+
+    m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - METER_BROWSE_EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_summary_title);
+
+    m_current_label = new GG::TextControl(GG::X0, m_row_height, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_current_label);
+    m_current_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    AttachChild(m_current_value);
+
+    m_next_turn_label = new GG::TextControl(GG::X0, m_row_height*2, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_next_turn_label);
+    m_next_turn_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*2, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    AttachChild(m_next_turn_value);
+
+    m_change_label = new GG::TextControl(GG::X0, m_row_height*3, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_change_label);
+    m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*3, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    AttachChild(m_change_value);
+
+    m_meter_title = new GG::TextControl(GG::X0, m_row_height*4, TOTAL_WIDTH - METER_BROWSE_EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_meter_title);
+
+    UpdateSummary();
+
+    GG::Y next_row_y = m_meter_title->LowerRight().y;
+    UpdateEffectLabelsAndValues(next_row_y);
+
+    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, next_row_y));
+
+    m_initialized = true;
+}
+
+void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
+    // because a MeterBrowseWnd's contents depends only on the meters of a single object, if that object doesn't
+    // change between showings of the meter browse wnd, it's not necessary to fully recreate the MeterBrowseWnd,
+    // and it can be just reshown.without being altered.  To refresh a MeterBrowseWnd, recreate it by assigning
+    // a new one as the moused-over object's BrowseWnd in this Wnd's place
+    if (!m_initialized)
+        Initialize();
+}
+
+void MeterBrowseWnd::UpdateSummary() {
+    const Meter* meter = m_obj->GetMeter(m_meter_type);
+    if (!meter) return;
+
+    double current = m_obj->MeterPoints(m_meter_type);
+    double next = m_obj->ProjectedMeterPoints(m_meter_type);
+    double change = next - current;
+    double meter_cur = meter->Current();
+    double meter_max = meter->Max();
+
+    m_current_value->SetText(DoubleToString(current, 3, false, false));
+    m_next_turn_value->SetText(DoubleToString(next, 3, false, false));
+    m_change_value->SetText(ColouredNumber(change));
+    m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
+                                          DoubleToString(meter_cur, 3, false, false) %
+                                          DoubleToString(meter_max, 3, false, false)));
+
+    switch (m_meter_type) {
+    case METER_POPULATION:
+        m_summary_title->SetText(UserString("PP_POPULATION"));  break;
+    case METER_FARMING:
+        m_summary_title->SetText(UserString("RP_FOOD"));        break;
+    case METER_INDUSTRY:
+        m_summary_title->SetText(UserString("RP_INDUSTRY"));    break;
+    case METER_RESEARCH:
+        m_summary_title->SetText(UserString("RP_RESEARCH"));    break;
+    case METER_TRADE:
+       m_summary_title->SetText(UserString("RP_TRADE"));        break;
+    case METER_MINING:
+        m_summary_title->SetText(UserString("RP_MINERALS"));    break;
+    case METER_CONSTRUCTION:
+        m_summary_title->SetText(UserString("RP_CONSTRUCTION"));break;
+    case METER_HEALTH:
+        m_summary_title->SetText(UserString("PP_HEALTH"));      break;
+    case METER_FUEL:
+        m_summary_title->SetText(UserString("FW_FUEL"));        break;
+    case METER_SUPPLY:
+        m_summary_title->SetText(UserString("MP_SUPPLY"));      break;
+    case METER_SHIELD:
+        m_summary_title->SetText(UserString("MP_SHIELD"));      break;
+    case METER_DEFENSE:
+        m_summary_title->SetText(UserString("MP_DEFENSE"));     break;
+    case METER_DETECTION:
+        m_summary_title->SetText(UserString("MP_DETECTION"));   break;
+    case METER_STEALTH:
+        m_summary_title->SetText(UserString("MP_STEALTH"));     break;
+    default:
+        m_summary_title->SetText("");                           break;
+    }
+}
+
+void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
+    for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
+        DeleteChild(m_effect_labels_and_values[i].first);
+        DeleteChild(m_effect_labels_and_values[i].second);
+    }
+    m_effect_labels_and_values.clear();
+
+    const Meter* meter = m_obj->GetMeter(m_meter_type);
+    if (!meter) return;
+
+    // determine if meter_map contains info about the meter that this MeterBrowseWnd is describing
+    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = m_meter_map.find(m_meter_type);
+    if (meter_it == m_meter_map.end() || meter_it->second.empty())
+        return; // couldn't find appropriate meter type, or there were no entries for that meter.
+
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
+
+    // add label-value pairs for each alteration recorded for this meter
+    const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
+    for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
+        const UniverseObject* source = GetUniverse().Object(info_it->source_id);
+
+        int empire_id = -1;
+        const Empire* empire = 0;
+        const Building* building = 0;
+        const Planet* planet = 0;
+        const Ship* ship = 0;
+        std::string text = "", name = "";
+
+        switch (info_it->cause_type) {
+        case ECT_UNIVERSE_TABLE_ADJUSTMENT:
+            text += UserString("TT_BASIC_FOCUS_AND_UNIVERSE");
+            break;
+
+        case ECT_TECH:
+            if (source->Owners().size() == 1) {
+                empire_id = *(source->Owners().begin());
+                empire = EmpireManager().Lookup(empire_id);
+                if (empire)
+                    name = empire->Name();
+            }
+            text += boost::io::str(FlexibleFormat(UserString("TT_TECH")) % name % UserString(info_it->specific_cause));
+            break;
+
+        case ECT_BUILDING:
+            building = universe_object_cast<const Building*>(source);
+            if (building) {
+                planet = building->GetPlanet();
+                if (planet) {
+                    name = planet->Name();
+                }
+            }
+            text += boost::io::str(FlexibleFormat(UserString("TT_BUILDING")) % name % UserString(info_it->specific_cause));
+            break;
+
+        case ECT_SPECIAL:
+            text += boost::io::str(FlexibleFormat(UserString("TT_SPECIAL")) % UserString(info_it->specific_cause));
+            break;
+
+        case ECT_SHIP_HULL:
+            ship = universe_object_cast<const Ship*>(source);
+            if (ship)
+                name = ship->Name();
+            text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_HULL")) % name % UserString(info_it->specific_cause));
+            break;
+
+        case ECT_SHIP_PART:
+            ship = universe_object_cast<const Ship*>(source);
+            if (ship)
+                name = ship->Name();
+            text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % name % UserString(info_it->specific_cause));
+            break;
+
+        case ECT_UNKNOWN_CAUSE:
+        default:
+            text += UserString("TT_UNKNOWN");
+        }
+
+        GG::TextControl* label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, text, font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(label);
+
+        GG::TextControl* value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height,
+                                                     ColouredNumber(info_it->meter_change),
+                                                     font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(value);
+        m_effect_labels_and_values.push_back(std::pair<GG::TextControl*, GG::TextControl*>(label, value));
+
+        top += m_row_height;
+    }
+}
+
