@@ -536,7 +536,7 @@ private:
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet,
                                int empire, int system_id, double x, double y) :
-    Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+    Control(GG::X0, GG::Y0, w, h, fleet ? GG::Flags<GG::WndFlag>() : GG::CLICKABLE),
     m_fleet(fleet),
     m_empire(empire),
     m_system_id(system_id),

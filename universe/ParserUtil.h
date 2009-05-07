@@ -42,18 +42,18 @@ extern boost::spirit::rule<Scanner, NameClosure::context_t>     name_p;
 extern boost::spirit::rule<Scanner, NameClosure::context_t>     file_name_p;
 extern boost::spirit::rule<Scanner, ColourClosure::context_t>   colour_p;
 
-extern boost::spirit::symbols<PlanetSize> planet_size_p;
-extern boost::spirit::symbols<PlanetType> planet_type_p;
-extern boost::spirit::symbols<PlanetEnvironment> planet_environment_type_p;
-extern boost::spirit::symbols<UniverseObjectType> universe_object_type_p;
-extern boost::spirit::symbols<StarType> star_type_p;
-extern boost::spirit::symbols<FocusType> focus_type_p;
-extern boost::spirit::symbols<EmpireAffiliationType> affiliation_type_p;
-extern boost::spirit::symbols<UnlockableItemType> unlockable_item_type_p;
-extern boost::spirit::symbols<TechType> tech_type_p;
-extern boost::spirit::symbols<CombatFighterType> combat_fighter_type_p;
-extern boost::spirit::symbols<ShipPartClass> part_class_p;
-extern boost::spirit::symbols<ShipSlotType> slot_type_p;
+extern boost::spirit::symbols<PlanetSize>               planet_size_p;
+extern boost::spirit::symbols<PlanetType>               planet_type_p;
+extern boost::spirit::symbols<PlanetEnvironment>        planet_environment_type_p;
+extern boost::spirit::symbols<UniverseObjectType>       universe_object_type_p;
+extern boost::spirit::symbols<StarType>                 star_type_p;
+extern boost::spirit::symbols<FocusType>                focus_type_p;
+extern boost::spirit::symbols<EmpireAffiliationType>    affiliation_type_p;
+extern boost::spirit::symbols<UnlockableItemType>       unlockable_item_type_p;
+extern boost::spirit::symbols<TechType>                 tech_type_p;
+extern boost::spirit::symbols<CombatFighterType>        combat_fighter_type_p;
+extern boost::spirit::symbols<ShipPartClass>            part_class_p;
+extern boost::spirit::symbols<ShipSlotType>             slot_type_p;
 
 void ReportError(std::ostream& os, const char* input, const boost::spirit::parse_info<const char*>& result);
 

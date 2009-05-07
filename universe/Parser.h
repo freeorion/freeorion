@@ -6,7 +6,7 @@
 #define BOOST_SPIRIT_CLOSURE_LIMIT PHOENIX_LIMIT
 
 #include "Enums.h"
-#include "ShipDesign.h"     // because HullType::Slot are stored by vale in vector passed to HullType constructor
+#include "ShipDesign.h"     // because HullType::Slot are stored by value in vector passed to HullType constructor
 
 #include <boost/spirit.hpp>
 #include <boost/spirit/attribute.hpp>
@@ -32,9 +32,10 @@ namespace Effect {
 class Special;
 class BuildingType;
 class Tech;
+class ShipDesign;
 struct TechCategory;
 struct ItemSpec;
-
+struct FleetPlan;
 
 ////////////////////////////////////////////////////////////
 // Scanner                                                //
@@ -203,12 +204,34 @@ struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string,
     member12 graphic;
 };
 
+struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,
+                                                  std::string, std::vector<std::string>, std::string, std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 hull;
+    member5 parts;
+    member6 graphic;
+    member7 model;
+};
+
+struct FleetPlanClosure : boost::spirit::closure<FleetPlanClosure, FleetPlan*, std::string,
+                                                 std::vector<std::string> >
+{
+    member1 this_;
+    member2 name;
+    member3 ship_designs;
+};
+
 extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
-extern boost::spirit::rule<Scanner, SpecialClosure::context_t> special_p;
-extern boost::spirit::rule<Scanner, CategoryClosure::context_t> category_p;
-extern boost::spirit::rule<Scanner, TechClosure::context_t> tech_p;
-extern boost::spirit::rule<Scanner, PartStatsClosure::context_t> part_stats_p;
-extern boost::spirit::rule<Scanner, PartClosure::context_t> part_p;
-extern boost::spirit::rule<Scanner, HullClosure::context_t> hull_p;
+extern boost::spirit::rule<Scanner, SpecialClosure::context_t>      special_p;
+extern boost::spirit::rule<Scanner, CategoryClosure::context_t>     category_p;
+extern boost::spirit::rule<Scanner, TechClosure::context_t>         tech_p;
+extern boost::spirit::rule<Scanner, PartStatsClosure::context_t>    part_stats_p;
+extern boost::spirit::rule<Scanner, PartClosure::context_t>         part_p;
+extern boost::spirit::rule<Scanner, HullClosure::context_t>         hull_p;
+extern boost::spirit::rule<Scanner, ShipDesignClosure::context_t>   ship_design_p;
+extern boost::spirit::rule<Scanner, FleetPlanClosure::context_t>    fleet_plan_p;
 
 #endif // _Parser_h_

@@ -7,14 +7,14 @@
 using namespace boost::spirit;
 using namespace phoenix;
 
-IntValueRefRule int_expr_p;
-DoubleValueRefRule double_expr_p;
-PlanetSizeValueRefRule planetsize_expr_p;
-PlanetTypeValueRefRule planettype_expr_p;
-PlanetEnvironmentValueRefRule planetenvironment_expr_p;
-UniverseObjectTypeValueRefRule universeobjecttype_expr_p;
-StarTypeValueRefRule startype_expr_p;
-FocusTypeValueRefRule focustype_expr_p;
+IntValueRefRule                 int_expr_p;
+DoubleValueRefRule              double_expr_p;
+PlanetSizeValueRefRule          planetsize_expr_p;
+PlanetTypeValueRefRule          planettype_expr_p;
+PlanetEnvironmentValueRefRule   planetenvironment_expr_p;
+UniverseObjectTypeValueRefRule  universeobjecttype_expr_p;
+StarTypeValueRefRule            startype_expr_p;
+FocusTypeValueRefRule           focustype_expr_p;
 
 namespace {
     template <class T>

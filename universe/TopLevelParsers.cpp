@@ -20,6 +20,8 @@ rule<Scanner, CategoryClosure::context_t>       category_p;
 rule<Scanner, PartStatsClosure::context_t>      part_stats_p;
 rule<Scanner, PartClosure::context_t>           part_p;
 rule<Scanner, HullClosure::context_t>           hull_p;
+rule<Scanner, ShipDesignClosure::context_t>     ship_design_p;
+rule<Scanner, FleetPlanClosure::context_t>      fleet_plan_p;
 
 struct EffectsGroupClosure : boost::spirit::closure<EffectsGroupClosure, Effect::EffectsGroup*,
                                                     Condition::ConditionBase*, Condition::ConditionBase*,
@@ -37,7 +39,7 @@ struct EffectsGroupVecClosure : boost::spirit::closure<EffectsGroupVecClosure, s
     member1 this_;
 };
 
-struct TechItemSpecClosure : boost::spirit::closure<TechItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
+struct ItemSpecClosure : boost::spirit::closure<ItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
 {
     member1 this_;
     member2 type;
@@ -65,7 +67,7 @@ struct ShipSlotTypeVecClosure : boost::spirit::closure<ShipSlotTypeVecClosure, s
 namespace {
     rule<Scanner, EffectsGroupClosure::context_t>       effects_group_p;
     rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
-    rule<Scanner, TechItemSpecClosure::context_t>       tech_item_spec_p;
+    rule<Scanner, ItemSpecClosure::context_t>           item_spec_p;
     rule<Scanner, SlotClosure::context_t>               slot_p;
     rule<Scanner, SlotVecClosure::context_t>            slot_vec_p;
     rule<Scanner, ShipSlotTypeVecClosure::context_t>    ship_slot_type_vec_p;
@@ -110,6 +112,11 @@ namespace {
     ParamLabel detection_label("detection");
     ParamLabel capacity_label("capacity");
     ParamLabel fuel_label("fuel");
+    ParamLabel hull_label("hull");
+    ParamLabel parts_label("parts");
+    ParamLabel ships_label("ships");
+    ParamLabel model_label("model");
+
 
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
@@ -154,11 +161,11 @@ namespace {
             [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
                                              special_p.graphic)];
 
-        tech_item_spec_p =
+        item_spec_p =
             (str_p("item")
-             >> type_label >> unlockable_item_type_p[tech_item_spec_p.type = arg1]
-             >> name_label >> name_p[tech_item_spec_p.name = arg1])
-            [tech_item_spec_p.this_ = construct_<ItemSpec>(tech_item_spec_p.type, tech_item_spec_p.name)];
+             >> type_label >> unlockable_item_type_p[item_spec_p.type = arg1]
+             >> name_label >> name_p[item_spec_p.name = arg1])
+            [item_spec_p.this_ = construct_<ItemSpec>(item_spec_p.type, item_spec_p.name)];
 
         category_p =
             (str_p("category")
@@ -180,8 +187,8 @@ namespace {
              >> (name_p[insert_(tech_p.prerequisites, arg1)] |
                  ('[' >> *(name_p[insert_(tech_p.prerequisites, arg1)]) >> ']'))
              >> unlock_label
-             >> (tech_item_spec_p[push_back_(tech_p.unlocked_items, arg1)]
-                 | ('[' >> *(tech_item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']'))
+             >> (item_spec_p[push_back_(tech_p.unlocked_items, arg1)]
+                 | ('[' >> *(item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']'))
              >> !(effectsgroups_label >> effects_group_vec_p[tech_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[tech_p.graphic = arg1])
             [tech_p.this_ = new_<Tech>(tech_p.name, tech_p.description, tech_p.short_description, tech_p.category,
@@ -279,6 +286,32 @@ namespace {
                                            hull_p.starlane_speed, hull_p.fuel, hull_p.health,
                                            hull_p.cost, hull_p.build_time, hull_p.slots,
                                            hull_p.location, hull_p.graphic)];
+
+        ship_design_p =
+            (str_p("shipdesign")
+             >> name_label >> name_p[ship_design_p.name = arg1]
+             >> description_label >> name_p[ship_design_p.description = arg1]
+             >> hull_label >> name_p[ship_design_p.hull = arg1]
+             >> parts_label
+             >> (name_p[push_back_(ship_design_p.parts, arg1)] |
+                 ('[' >> *(name_p[push_back_(ship_design_p.parts, arg1)]) >> ']'))
+             >> graphic_label >> file_name_p[ship_design_p.graphic = arg1]
+             >> model_label >> file_name_p[ship_design_p.model = arg1])
+            [ship_design_p.this_ = new_<ShipDesign>(ship_design_p.name, ship_design_p.description,
+                                                    val(ALL_EMPIRES),   // created by empire id - to be reset later
+                                                    val(0),             // creation turn
+                                                    ship_design_p.hull, ship_design_p.parts,
+                                                    ship_design_p.graphic, ship_design_p.model)];
+
+         fleet_plan_p =
+             (str_p("fleet")
+              >> name_label >> name_p[fleet_plan_p.name = arg1]
+              >> ships_label
+              >> (name_p[push_back_(fleet_plan_p.ship_designs, arg1)] |
+                  ('[' >> *(name_p[push_back_(fleet_plan_p.ship_designs, arg1)]) >> ']'))
+             [fleet_plan_p.this_ =
+              new_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
+
 
         return true;
     }

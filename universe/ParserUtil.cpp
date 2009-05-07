@@ -48,51 +48,51 @@ namespace {
             [colour_p.this_ = construct_<GG::Clr>(colour_p.r, colour_p.g, colour_p.b, colour_p.a)];
 
         planet_size_p.add
-            ("tiny", SZ_TINY)
-            ("small", SZ_SMALL)
-            ("medium", SZ_MEDIUM)
-            ("large", SZ_LARGE)
-            ("huge", SZ_HUGE)
-            ("asteroids", SZ_ASTEROIDS)
-            ("gasgiant", SZ_GASGIANT);
+            ("tiny",        SZ_TINY)
+            ("small",       SZ_SMALL)
+            ("medium",      SZ_MEDIUM)
+            ("large",       SZ_LARGE)
+            ("huge",        SZ_HUGE)
+            ("asteroids",   SZ_ASTEROIDS)
+            ("gasgiant",    SZ_GASGIANT);
 
         planet_type_p.add
-            ("swamp", PT_SWAMP)
-            ("toxic", PT_TOXIC)
-            ("inferno", PT_INFERNO)
-            ("radiated", PT_RADIATED)
-            ("barren", PT_BARREN)
-            ("tundra", PT_TUNDRA)
-            ("desert", PT_DESERT)
-            ("terran", PT_TERRAN)
-            ("ocean", PT_OCEAN)
-            ("asteroids", PT_ASTEROIDS)
-            ("gasgiant", PT_GASGIANT);
+            ("swamp",       PT_SWAMP)
+            ("toxic",       PT_TOXIC)
+            ("inferno",     PT_INFERNO)
+            ("radiated",    PT_RADIATED)
+            ("barren",      PT_BARREN)
+            ("tundra",      PT_TUNDRA)
+            ("desert",      PT_DESERT)
+            ("terran",      PT_TERRAN)
+            ("ocean",       PT_OCEAN)
+            ("asteroids",   PT_ASTEROIDS)
+            ("gasgiant",    PT_GASGIANT);
 
         planet_environment_type_p.add
-            ("uninhabitable", PE_UNINHABITABLE)
-            ("hostile", PE_HOSTILE)
-            ("poor", PE_POOR)
-            ("adequate", PE_ADEQUATE)
-            ("good", PE_GOOD);
+            ("uninhabitable",       PE_UNINHABITABLE)
+            ("hostile",             PE_HOSTILE)
+            ("poor",                PE_POOR)
+            ("adequate",            PE_ADEQUATE)
+            ("good",                PE_GOOD);
 
         universe_object_type_p.add
-            ("building", OBJ_BUILDING)
-            ("ship", OBJ_SHIP)
-            ("fleet", OBJ_FLEET) 
-            ("planet", OBJ_PLANET)
-            ("populationcenter", OBJ_POP_CENTER)
-            ("productioncenter", OBJ_PROD_CENTER)
-            ("system", OBJ_SYSTEM);
+            ("building",            OBJ_BUILDING)
+            ("ship",                OBJ_SHIP)
+            ("fleet",               OBJ_FLEET) 
+            ("planet",              OBJ_PLANET)
+            ("populationcenter",    OBJ_POP_CENTER)
+            ("productioncenter",    OBJ_PROD_CENTER)
+            ("system",              OBJ_SYSTEM);
 
         star_type_p.add
-            ("blue", STAR_BLUE)
-            ("white", STAR_WHITE)
-            ("yellow", STAR_YELLOW)
-            ("orange", STAR_ORANGE)
-            ("red", STAR_RED)
-            ("neutron", STAR_NEUTRON)
-            ("blackhole", STAR_BLACK);
+            ("blue",        STAR_BLUE)
+            ("white",       STAR_WHITE)
+            ("yellow",      STAR_YELLOW)
+            ("orange",      STAR_ORANGE)
+            ("red",         STAR_RED)
+            ("neutron",     STAR_NEUTRON)
+            ("blackhole",   STAR_BLACK);
 
         focus_type_p.add
             ("unknown",     FOCUS_UNKNOWN)
@@ -123,16 +123,16 @@ namespace {
             ("bomber",      BOMBER);
 
         part_class_p.add
-            ("shortrange",      PC_SHORT_RANGE)
-            ("missiles",        PC_MISSILES)
-            ("fighters",        PC_FIGHTERS)
-            ("pointdefense",    PC_POINT_DEFENSE)
-            ("shield",          PC_SHIELD)
-            ("armour",          PC_ARMOUR)
-            ("detection",       PC_DETECTION)
-            ("stealth",         PC_STEALTH)
-            ("fuel",            PC_FUEL)
-            ("colony",          PC_COLONY);
+            ("shortrange",  PC_SHORT_RANGE)
+            ("missiles",    PC_MISSILES)
+            ("fighters",    PC_FIGHTERS)
+            ("pointdefense",PC_POINT_DEFENSE)
+            ("shield",      PC_SHIELD)
+            ("armour",      PC_ARMOUR)
+            ("detection",   PC_DETECTION)
+            ("stealth",     PC_STEALTH)
+            ("fuel",        PC_FUEL)
+            ("colony",      PC_COLONY);
 
         slot_type_p.add
             ("external",    SL_EXTERNAL)

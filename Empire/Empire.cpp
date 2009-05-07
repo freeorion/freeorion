@@ -206,6 +206,26 @@ namespace {
 
 
 ////////////////////////////////////////
+// FleetPlan                          //
+////////////////////////////////////////
+FleetPlan::FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+                     bool lookup_name_userstring) :
+    name(""),
+    ship_designs(ship_design_names)
+{
+    if (lookup_name_userstring)
+        name = UserString(name);
+    else
+        name = name;
+}
+
+FleetPlan::FleetPlan() :
+    name(""),
+    ship_designs()
+{}
+
+
+////////////////////////////////////////
 // ResearchQueue::Element             //
 ////////////////////////////////////////
 ResearchQueue::Element::Element() :

@@ -3902,6 +3902,12 @@ Active Radar
 DT_ACTIVE_RADAR_DESC
 Moderate power detection with large stealth penalty to mounting ship.
 
+DT_OPTICAL_SENSORS
+Optical Sensors
+
+DT_OPTICAL_SENSORS_DESC
+Basic detection capability
+
 FU_DEUTERIUM_TANK
 Deuterium Tank
 
