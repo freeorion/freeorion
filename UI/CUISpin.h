@@ -49,11 +49,8 @@ public:
 namespace detail {
     inline void PlayValueChangedSound::operator()(double) const
     {
-        std::string sound_dir = GetOptionsDB().Get<std::string>("settings-dir");
-        if (!sound_dir.empty() && sound_dir[sound_dir.size() - 1] != '/')
-            sound_dir += '/';
-        sound_dir += "data/sound/";
-        Sound::GetSound().PlaySound(sound_dir + GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+        std::string file_name = GetOptionsDB().Get<std::string>("UI.sound.button-click");
+        Sound::GetSound().PlaySound(ClientUI::SoundDir() / file_name, true);
     }
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
 }

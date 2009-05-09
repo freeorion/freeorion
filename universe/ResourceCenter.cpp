@@ -1,15 +1,16 @@
 #include "ResourceCenter.h"
 
 #include "../util/AppInterface.h"
-#include "../universe/Building.h"
+#include "../util/Directories.h"
 #include "../util/DataTable.h"
+#include "../util/OptionsDB.h"
+#include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
 #include "Fleet.h"
-#include "../util/MultiplayerCommon.h"
 #include "Planet.h"
-#include "../universe/ShipDesign.h"
+#include "ShipDesign.h"
 #include "System.h"
-#include "../util/OptionsDB.h"
+#include "Building.h"
 
 #include <boost/lexical_cast.hpp>
 
@@ -21,26 +22,16 @@ namespace {
     DataTableMap& ProductionDataTables()
     {
         static DataTableMap map;
-        if (map.empty()) {
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-
-            LoadDataTables(settings_dir + "production_tables.txt", map);
-        }
+        if (map.empty())
+            LoadDataTables((GetSettingsDir() / "production_tables.txt").file_string(), map);
         return map;
     }
 
     DataTableMap& PlanetDataTables()
     {
         static DataTableMap map;
-        if (map.empty()) {
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-
-            LoadDataTables(settings_dir + "planet_tables.txt", map);
-        }
+        if (map.empty())
+            LoadDataTables((GetSettingsDir() / "planet_tables.txt").file_string(), map);
         return map;
     }
 

@@ -47,8 +47,8 @@ const Tech* GetTech(const std::string& name);
 namespace fs = boost::filesystem;
 
 // static members
-fs::path ClientUI::ArtDir()                     { return GetSettingsDir() / "data" / "art"; }
-fs::path ClientUI::SoundDir()                   { return GetSettingsDir() / "data" / "sound"; }
+fs::path    ClientUI::ArtDir()                  { return GetSettingsDir() / "data" / "art"; }
+fs::path    ClientUI::SoundDir()                { return GetSettingsDir() / "data" / "sound"; }
 
 std::string ClientUI::Font()                    { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).file_string(); }
 std::string ClientUI::BoldFont()                { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).file_string(); }
@@ -313,11 +313,10 @@ namespace {
             const std::string CREDITS_STR = "Aö"; // Basic Latin and Latin-1 Supplement (character sets needed to display the credits page)
             std::set<GG::UnicodeCharset> credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
 
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-            std::ifstream ifs((settings_dir + GetOptionsDB().Get<std::string>("stringtable-filename")).c_str());
+            std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
             std::string stringtable_str;
+
+            boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
             while (ifs) {
                 std::string line;
                 std::getline(ifs, line);

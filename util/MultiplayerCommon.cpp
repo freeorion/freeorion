@@ -19,32 +19,28 @@
 #include <boost/system/system_error.hpp>
 #include <boost/thread/thread.hpp>
 #include <boost/thread/xtime.hpp>
-
-#include <fstream>
-#include <iostream>
+#include <boost/filesystem/fstream.hpp>
 
 
 namespace fs = boost::filesystem;
 
 namespace {
     // command-line options
-    void AddOptions(OptionsDB& db)
-    {
-        db.Add<std::string>("settings-dir", "OPTIONS_DB_SETTINGS_DIR", (GetGlobalDir() / "default").directory_string());
-        db.Add<std::string>("log-level", "OPTIONS_DB_LOG_LEVEL", "DEBUG");
-        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME", "eng_stringtable.txt");
+    void AddOptions(OptionsDB& db) {
+        db.Add<std::string>("settings-dir",         "OPTIONS_DB_SETTINGS_DIR",          (GetGlobalDir() / "default").directory_string());
+        db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
+        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  "eng_stringtable.txt");
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    std::string SettingsDir()
-    {
+    std::string SettingsDir() {
         std::string retval = GetOptionsDB().Get<std::string>("settings-dir");
         if (retval.empty() || retval[retval.size()-1] != '/')
             retval += '/';
         return retval;
     }
-    const StringTable& GetStringTable()
-    {
+
+    const StringTable& GetStringTable() {
         static std::auto_ptr<StringTable> string_table(
             new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename")));
         return *string_table;
@@ -71,12 +67,18 @@ const std::vector<GG::Clr>& EmpireColors()
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
         XMLDoc doc;
-        std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-        if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-            settings_dir += '/';
-        std::ifstream ifs((settings_dir + "empire_colors.xml").c_str());
-        doc.ReadDoc(ifs);
-        ifs.close();
+
+        std::string file_name = "empire_colors.xml";
+
+        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        if (ifs) {
+            doc.ReadDoc(ifs);
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return colors;
+        }
+
         for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
             colors.push_back(XMLToClr(doc.root_node.Child(i)));
         }

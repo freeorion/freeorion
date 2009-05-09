@@ -15,23 +15,12 @@
 
 
 namespace {
-    const std::string& SoundDir()
-    {
-        static std::string retval;
-        if (retval == "") {
-            retval = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!retval.empty() && retval[retval.size() - 1] != '/')
-                retval += '/';
-            retval += "data/sound/";
-        }
-        return retval;
-    }
     void PlayMinimizeSound()
-    { Sound::GetSound().PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
     void PlayMaximizeSound()
-    { Sound::GetSound().PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
     void PlayCloseSound()
-    { Sound::GetSound().PlaySound(SoundDir() + GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
+    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
 
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 }

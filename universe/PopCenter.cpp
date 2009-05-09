@@ -4,6 +4,7 @@
 #include "../util/DataTable.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 #include "Planet.h"
 
 #include <algorithm>
@@ -18,12 +19,8 @@ namespace {
     DataTableMap& PlanetDataTables()
     {
         static DataTableMap map;
-        if (map.empty()) {
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-            LoadDataTables(settings_dir + "planet_tables.txt", map);
-        }
+        if (map.empty())
+            LoadDataTables((GetSettingsDir() / "planet_tables.txt").file_string(), map);
         return map;
     }
 
