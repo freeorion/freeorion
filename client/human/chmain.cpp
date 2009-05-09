@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
         log_manager = new LogManager();
         log_manager->createLog((GetLocalDir() / "ogre.log").string(), true, false);
 
-        root = new Root("ogre_plugins.cfg");
+        root = new Root((GetGlobalDir() / "ogre_plugins.cfg").string());
 
         RenderSystemList* renderers_list = root->getAvailableRenderers();
         bool failed = true;

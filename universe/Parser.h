@@ -6,7 +6,8 @@
 #define BOOST_SPIRIT_CLOSURE_LIMIT PHOENIX_LIMIT
 
 #include "Enums.h"
-#include "ShipDesign.h"     // because HullType::Slot are stored by value in vector passed to HullType constructor
+#include "ShipDesign.h"
+#include "Tech.h"
 
 #include <boost/spirit.hpp>
 #include <boost/spirit/attribute.hpp>
@@ -34,7 +35,6 @@ class BuildingType;
 class Tech;
 class ShipDesign;
 struct TechCategory;
-struct ItemSpec;
 struct FleetPlan;
 
 ////////////////////////////////////////////////////////////
@@ -152,6 +152,13 @@ struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std
     member12 graphic;
 };
 
+struct ItemSpecClosure : boost::spirit::closure<ItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
+{
+    member1 this_;
+    member2 type;
+    member3 name;
+};
+
 struct PartStatsClosure : boost::spirit::closure<PartStatsClosure, PartTypeStats, double, double,
                                                  double, double, double, double, CombatFighterType,
                                                  double, double, double, int>
@@ -205,7 +212,8 @@ struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string,
 };
 
 struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,
-                                                  std::string, std::vector<std::string>, std::string, std::string>
+                                                  std::string, std::vector<std::string>,
+                                                  std::string, std::string, bool>
 {
     member1 this_;
     member2 name;
@@ -214,6 +222,7 @@ struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*
     member5 parts;
     member6 graphic;
     member7 model;
+    member8 name_desc_in_stringtable;
 };
 
 struct FleetPlanClosure : boost::spirit::closure<FleetPlanClosure, FleetPlan*, std::string,
@@ -228,6 +237,7 @@ extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_typ
 extern boost::spirit::rule<Scanner, SpecialClosure::context_t>      special_p;
 extern boost::spirit::rule<Scanner, CategoryClosure::context_t>     category_p;
 extern boost::spirit::rule<Scanner, TechClosure::context_t>         tech_p;
+extern boost::spirit::rule<Scanner, ItemSpecClosure::context_t>     item_spec_p;
 extern boost::spirit::rule<Scanner, PartStatsClosure::context_t>    part_stats_p;
 extern boost::spirit::rule<Scanner, PartClosure::context_t>         part_p;
 extern boost::spirit::rule<Scanner, HullClosure::context_t>         hull_p;

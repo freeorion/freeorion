@@ -79,18 +79,19 @@ private:
 };
 
 
-/** specifies a single item that may be unlocked by researching a tech.  The \a type field stores the type of item that
-    is being unlocked, such as a building or ship component, and the \a name field contains the name of the actual item
-    (e.g. (UIT_BUILDING, "Superfarm") or (UIT_SHIP_COMPONENT, "Death Ray")). */
+/** specifies a single item of game content that may be unlocked for an empire.  The \a type field
+  * stores the type of item that is being unlocked, such as a building or ship component, and the
+  * \a name field contains the name of the actual item (e.g. (UIT_BUILDING, "Superfarm") or
+  * (UIT_SHIP_PART, "Death Ray")). */
 struct ItemSpec
 {
-    ItemSpec(); ///< default ctor
+    ItemSpec();                 ///< default ctor
     ItemSpec(UnlockableItemType type_, const std::string& name_); ///< basic ctor
 
-    std::string Dump() const; ///< returns a data file format representation of this object
+    std::string Dump() const;   ///< returns a data file format representation of this object
 
-    UnlockableItemType type; ///< the kind of item this is
-    std::string        name; ///< the exact item this is
+    UnlockableItemType type;    ///< the kind of item this is
+    std::string        name;    ///< the exact item this is
 };
 
 

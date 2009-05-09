@@ -42,6 +42,8 @@ extern boost::spirit::rule<Scanner, NameClosure::context_t>     name_p;
 extern boost::spirit::rule<Scanner, NameClosure::context_t>     file_name_p;
 extern boost::spirit::rule<Scanner, ColourClosure::context_t>   colour_p;
 
+extern boost::spirit::symbols<bool>                     true_false_p;
+
 extern boost::spirit::symbols<PlanetSize>               planet_size_p;
 extern boost::spirit::symbols<PlanetType>               planet_type_p;
 extern boost::spirit::symbols<PlanetEnvironment>        planet_environment_type_p;

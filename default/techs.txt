@@ -1,12 +1,12 @@
 Category 
     name = "LEARNING_CATEGORY"
     graphic = "learning.png"
-    colour = (93, 155, 246, 255)
+    colour = (93, 155, 246)
 
 Category 
     name = "GROWTH_CATEGORY"
     graphic = "growth.png"
-    colour = (116, 225, 107, 255)
+    colour = (116, 225, 107)
 
 Category 
     name = "PRODUCTION_CATEGORY"

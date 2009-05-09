@@ -334,7 +334,7 @@ public:
     ShipDesign(); ///< default ctor
     ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
                int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-               const std::string& graphic, const std::string& model);
+               const std::string& graphic, const std::string& model, bool name_desc_in_stringtable = false);
     //@}
 
     /** \name Accessors */ //@{
@@ -389,6 +389,8 @@ public:
 
     const std::string&              Graphic() const;                        ///< returns filename of graphic for design
     const std::string&              Model() const;                          ///< returns filename of 3D model that represents ships of design
+
+    std::string                     Dump() const;                           ///< returns a data file format representation of this object
     //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id
@@ -420,6 +422,8 @@ private:
 
     std::string                 m_graphic;
     std::string                 m_3D_model;
+
+    bool                        m_name_desc_in_stringtable;
 
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
@@ -495,7 +499,8 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_hull)
         & BOOST_SERIALIZATION_NVP(m_parts)
         & BOOST_SERIALIZATION_NVP(m_graphic)
-        & BOOST_SERIALIZATION_NVP(m_3D_model);
+        & BOOST_SERIALIZATION_NVP(m_3D_model)
+        & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
     if (Archive::is_loading::value)
         BuildStatCaches();
 }

@@ -10,6 +10,10 @@
 
 #include <fstream>
 
+std::string DumpIndent();
+
+extern int g_indent;
+
 namespace {
     struct store_part_type_impl {
         template <class T1, class T2>
@@ -647,7 +651,7 @@ ShipDesign::ShipDesign() :
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
                        int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-                       const std::string& graphic, const std::string& model) :
+                       const std::string& graphic, const std::string& model, bool name_desc_in_stringtable) :
     m_id(UniverseObject::INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
@@ -670,7 +674,8 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_min_weapon_range(DBL_MAX),
     m_max_weapon_range(0.0),
     m_min_non_PD_weapon_range(DBL_MAX),
-    m_max_non_PD_weapon_range(0.0)
+    m_max_non_PD_weapon_range(0.0),
+    m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
     if (!ValidDesign(m_hull, m_parts))
         Logger().errorStream() << "constructing an invalid ShipDesign!";
@@ -683,7 +688,18 @@ int ShipDesign::ID() const {
 
 const std::string& ShipDesign::Name() const
 {
-    return m_name;
+    if (m_name_desc_in_stringtable)
+        return UserString(m_name);
+    else
+        return m_name;
+}
+
+const std::string& ShipDesign::Description() const
+{
+    if (m_name_desc_in_stringtable)
+        return UserString(m_description);
+    else
+        return m_description;
 }
 
 int ShipDesign::DesignedByEmpire() const
@@ -703,11 +719,6 @@ void ShipDesign::Rename(const std::string& name)
 
 const std::string& ShipDesign::Graphic() const {
     return m_graphic;
-}
-
-const std::string& ShipDesign::Description() const
-{
-    return m_description;
 }
 
 int ShipDesign::DesignedOnTurn() const {
@@ -1005,3 +1016,64 @@ void ShipDesign::BuildStatCaches()
 
     m_build_cost /= m_build_turns;
 }
+
+std::string ShipDesign::Dump() const
+{
+    std::string retval = DumpIndent() + "ShipDesign\n";
+    ++g_indent;
+    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    //retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    //retval += DumpIndent() + "shortdescription = \"" + m_short_description + "\"\n";
+    //retval += DumpIndent() + "category = \"" + m_category + "\"\n";
+    //retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(ResearchCost()) + "\n";
+    //retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(ResearchTurns()) + "\n";
+    //retval += DumpIndent() + "prerequisites = ";
+    //if (m_prerequisites.empty()) {
+    //    retval += "[]\n";
+    //} else if (m_prerequisites.size() == 1) {
+    //    retval += "\"" + *m_prerequisites.begin() + "\"\n";
+    //} else {
+    //    retval += "[\n";
+    //    ++g_indent;
+    //    for (std::set<std::string>::const_iterator it = m_prerequisites.begin(); it != m_prerequisites.end(); ++it) {
+    //        retval += DumpIndent() + "\"" + *it + "\"\n";
+    //    }
+    //    --g_indent;
+    //    retval += DumpIndent() + "]\n";
+    //}
+    //retval += DumpIndent() + "unlock = ";
+    //if (m_unlocked_items.empty()) {
+    //    retval += "[]\n";
+    //} else if (m_unlocked_items.size() == 1) {
+    //    retval += m_unlocked_items[0].Dump();
+    //} else {
+    //    retval += "[\n";
+    //    ++g_indent;
+    //    for (unsigned int i = 0; i < m_unlocked_items.size(); ++i) {
+    //        retval += DumpIndent() + m_unlocked_items[i].Dump();
+    //    }
+    //    --g_indent;
+    //    retval += DumpIndent() + "]\n";
+    //}
+    //if (!m_effects.empty()) {
+    //    if (m_effects.size() == 1) {
+    //        retval += DumpIndent() + "effectsgroups =\n";
+    //        ++g_indent;
+    //        retval += m_effects[0]->Dump();
+    //        --g_indent;
+    //    } else {
+    //        retval += DumpIndent() + "effectsgroups = [\n";
+    //        ++g_indent;
+    //        for (unsigned int i = 0; i < m_effects.size(); ++i) {
+    //            retval += m_effects[i]->Dump();
+    //        }
+    //        --g_indent;
+    //        retval += DumpIndent() + "]\n";
+    //    }
+    //}
+    //retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    //--g_indent;
+    //return retval;
+    return ""; 
+}
+

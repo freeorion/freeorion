@@ -18,7 +18,7 @@
       <PERSON name="Mike Dotterer"        nick="maelstrom512"     task="Programming"/>
       <PERSON name="qk-gen"               nick=""                 task="Programming"/>
       <PERSON name="Adrian Schweizer"     nick="LaplaceOperator"  task="Programming"/>
-      <PERSON name="Karl Chen"	          nick="quarl"            task="Programming"/>
+      <PERSON name="Karl Chen"            nick="quarl"            task="Programming"/>
       <PERSON name="Eliot Eshelman"       nick="igrok"            task="Programming"/>
       <PERSON name="stride"               nick=""                 task="Programming"/>
       <PERSON name="Ondrej Riha"          nick="OndrejR"          task="Programming"/>
@@ -74,6 +74,8 @@
       <PERSON name="Markus Sinner"        nick="kroddn"             task="German Translation, Programming"/>
       <PERSON name="Fran Valenzuela"      nick="Synyestro"          task="Spanish Translation"/>
       <PERSON name="Guillaume"            nick="nyquist"            task="French Translation"/>
+      <PERSON name="Wojciech Moch"        nick="Feagorn"            task="Polish Translation"/>
+      <PERSON name="Łukasz Korpalski"     nick="Cyber Killer"       task="Polish Translation"/>
       </GROUP>
   </CREDITS>
 </XMLDoc>

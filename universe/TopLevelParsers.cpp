@@ -2,7 +2,6 @@
 
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
-#include "Tech.h"       // for Tech, ItemSpec and TechCategory;
 #include "Effect.h"     // for Effect::EffectsGroup
 #include "Building.h"   // for Building
 #include "Special.h"    // for Special
@@ -16,6 +15,7 @@ using namespace phoenix;
 rule<Scanner, BuildingTypeClosure::context_t>   building_type_p;
 rule<Scanner, SpecialClosure::context_t>        special_p;
 rule<Scanner, TechClosure::context_t>           tech_p;
+rule<Scanner, ItemSpecClosure::context_t>       item_spec_p;
 rule<Scanner, CategoryClosure::context_t>       category_p;
 rule<Scanner, PartStatsClosure::context_t>      part_stats_p;
 rule<Scanner, PartClosure::context_t>           part_p;
@@ -39,13 +39,6 @@ struct EffectsGroupVecClosure : boost::spirit::closure<EffectsGroupVecClosure, s
     member1 this_;
 };
 
-struct ItemSpecClosure : boost::spirit::closure<ItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
-{
-    member1 this_;
-    member2 type;
-    member3 name;
-};
-
 struct SlotClosure : boost::spirit::closure<SlotClosure, HullType::Slot, ShipSlotType, double, double>
 {
     member1 this_;
@@ -67,7 +60,6 @@ struct ShipSlotTypeVecClosure : boost::spirit::closure<ShipSlotTypeVecClosure, s
 namespace {
     rule<Scanner, EffectsGroupClosure::context_t>       effects_group_p;
     rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
-    rule<Scanner, ItemSpecClosure::context_t>           item_spec_p;
     rule<Scanner, SlotClosure::context_t>               slot_p;
     rule<Scanner, SlotVecClosure::context_t>            slot_vec_p;
     rule<Scanner, ShipSlotTypeVecClosure::context_t>    ship_slot_type_vec_p;
@@ -116,6 +108,7 @@ namespace {
     ParamLabel parts_label("parts");
     ParamLabel ships_label("ships");
     ParamLabel model_label("model");
+    ParamLabel string_lookup_label("lookup_strings");
 
 
     Effect::EffectsGroup* const NULL_EFF = 0;
@@ -291,6 +284,7 @@ namespace {
             (str_p("shipdesign")
              >> name_label >> name_p[ship_design_p.name = arg1]
              >> description_label >> name_p[ship_design_p.description = arg1]
+             >> string_lookup_label >> true_false_p[ship_design_p.name_desc_in_stringtable = arg1]
              >> hull_label >> name_p[ship_design_p.hull = arg1]
              >> parts_label
              >> (name_p[push_back_(ship_design_p.parts, arg1)] |
@@ -301,7 +295,9 @@ namespace {
                                                     val(ALL_EMPIRES),   // created by empire id - to be reset later
                                                     val(0),             // creation turn
                                                     ship_design_p.hull, ship_design_p.parts,
-                                                    ship_design_p.graphic, ship_design_p.model)];
+                                                    ship_design_p.graphic, ship_design_p.model,
+                                                    ship_design_p.name_desc_in_stringtable
+                                                   )];
 
          fleet_plan_p =
              (str_p("fleet")
