@@ -16,23 +16,20 @@
 using boost::lexical_cast;
 
 namespace {
-    DataTableMap& PlanetDataTables()
-    {
+    DataTableMap& PlanetDataTables() {
         static DataTableMap map;
         if (map.empty())
             LoadDataTables((GetSettingsDir() / "planet_tables.txt").file_string(), map);
         return map;
     }
 
-    double MaxPopModFromObject(const UniverseObject* object)
-    {
+    double MaxPopModFromObject(const UniverseObject* object) {
         if (const Planet* planet = universe_object_cast<const Planet*>(object))
             return PlanetDataTables()["PlanetMaxPop"][planet->Size()][planet->Environment()];
         return 0.0;
     }
 
-    double MaxHealthModFromObject(const UniverseObject* object)
-    {
+    double MaxHealthModFromObject(const UniverseObject* object) {
         if (const Planet* planet = universe_object_cast<const Planet*>(object))
             return PlanetDataTables()["PlanetEnvHealthMod"][0][planet->Environment()];
         return 0.0;
@@ -41,17 +38,14 @@ namespace {
 
 PopCenter::PopCenter(int race) :
     m_race(race), m_allocated_food(0.0)
-{
-}
+{}
 
 PopCenter::PopCenter() :
     m_race(-1), m_allocated_food(0.0)
-{
-}
-   
+{}
+
 PopCenter::~PopCenter()
-{
-}
+{}
 
 void PopCenter::Init(double max_pop_mod, double max_health_mod)
 {

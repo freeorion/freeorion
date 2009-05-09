@@ -653,7 +653,8 @@ ShipDesign::ShipDesign() :
     m_min_weapon_range(DBL_MAX),
     m_max_weapon_range(0.0),
     m_min_non_PD_weapon_range(DBL_MAX),
-    m_max_non_PD_weapon_range(0.0)
+    m_max_non_PD_weapon_range(0.0),
+    m_name_desc_in_stringtable(false)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
@@ -1028,59 +1029,27 @@ std::string ShipDesign::Dump() const
 {
     std::string retval = DumpIndent() + "ShipDesign\n";
     ++g_indent;
-    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
-    //retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    //retval += DumpIndent() + "shortdescription = \"" + m_short_description + "\"\n";
-    //retval += DumpIndent() + "category = \"" + m_category + "\"\n";
-    //retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(ResearchCost()) + "\n";
-    //retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(ResearchTurns()) + "\n";
-    //retval += DumpIndent() + "prerequisites = ";
-    //if (m_prerequisites.empty()) {
-    //    retval += "[]\n";
-    //} else if (m_prerequisites.size() == 1) {
-    //    retval += "\"" + *m_prerequisites.begin() + "\"\n";
-    //} else {
-    //    retval += "[\n";
-    //    ++g_indent;
-    //    for (std::set<std::string>::const_iterator it = m_prerequisites.begin(); it != m_prerequisites.end(); ++it) {
-    //        retval += DumpIndent() + "\"" + *it + "\"\n";
-    //    }
-    //    --g_indent;
-    //    retval += DumpIndent() + "]\n";
-    //}
-    //retval += DumpIndent() + "unlock = ";
-    //if (m_unlocked_items.empty()) {
-    //    retval += "[]\n";
-    //} else if (m_unlocked_items.size() == 1) {
-    //    retval += m_unlocked_items[0].Dump();
-    //} else {
-    //    retval += "[\n";
-    //    ++g_indent;
-    //    for (unsigned int i = 0; i < m_unlocked_items.size(); ++i) {
-    //        retval += DumpIndent() + m_unlocked_items[i].Dump();
-    //    }
-    //    --g_indent;
-    //    retval += DumpIndent() + "]\n";
-    //}
-    //if (!m_effects.empty()) {
-    //    if (m_effects.size() == 1) {
-    //        retval += DumpIndent() + "effectsgroups =\n";
-    //        ++g_indent;
-    //        retval += m_effects[0]->Dump();
-    //        --g_indent;
-    //    } else {
-    //        retval += DumpIndent() + "effectsgroups = [\n";
-    //        ++g_indent;
-    //        for (unsigned int i = 0; i < m_effects.size(); ++i) {
-    //            retval += m_effects[i]->Dump();
-    //        }
-    //        --g_indent;
-    //        retval += DumpIndent() + "]\n";
-    //    }
-    //}
-    //retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
-    //--g_indent;
-    //return retval;
+    retval += DumpIndent() + "name = \"" + Name() + "\"\n";
+    retval += DumpIndent() + "description = \"" + Description() + "\"\n";
+    retval += DumpIndent() + "lookup_strings = " + (m_name_desc_in_stringtable ? "true" : "false") + "\n";
+    retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
+    retval += DumpIndent() + "parts = ";
+    if (m_parts.empty()) {
+        retval += "[]\n";
+    } else if (m_parts.size() == 1) {
+        retval += "\"" + *m_parts.begin() + "\"\n";
+    } else {
+        retval += "[\n";
+        ++g_indent;
+        for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+            retval += DumpIndent() + "\"" + *it + "\"\n";
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
+    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    retval += DumpIndent() + "model = \"" + m_3D_model + "\"\n";
+    --g_indent;
     return retval; 
 }
 

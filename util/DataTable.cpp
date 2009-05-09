@@ -16,40 +16,34 @@ typedef rule<Scanner> Rule;
 typedef std::vector<std::vector<int> > DataTable;
 typedef std::map<std::string, DataTable> DataTableMap;
 
-namespace
-{
+namespace {
     bool g_echo = false;
 
-    struct InitIndex
-    {
+    struct InitIndex {
         InitIndex(int& i) : m_i(i) {}
         void operator()() const {m_i = 0;}
         int& m_i;
     };
 
-    struct IndexLessThanN
-    {
+    struct IndexLessThanN {
         IndexLessThanN(int& i, const int& n) : m_i(i), m_n(n) {}
         bool operator()() const {return m_i < m_n;}
         int& m_i;
         const int& m_n;
     };
 
-    struct IncrIndex
-    {
+    struct IncrIndex {
         IncrIndex(int& i) : m_i(i) {}
         void operator()() const {++m_i;}
         int& m_i;
     };
 
-    struct InitializeTable
-    {
+    struct InitializeTable {
         InitializeTable(DataTableMap& tables, const int& rows, const int& cols) :
             m_tables(tables), m_rows(rows), m_cols(cols)
             {}
         template <class Iter>
-        void operator()(Iter first, Iter last) const
-        {
+        void operator()(Iter first, Iter last) const {
             std::string table_name(first, last);
             m_tables[table_name].resize(m_rows, std::vector<int>(m_cols, 0));
         }
@@ -58,13 +52,11 @@ namespace
         const int& m_cols;
     };
 
-    struct AssignToTable
-    {
+    struct AssignToTable {
         AssignToTable(DataTableMap& tables, const std::string& table_name, const int& i, const int& j) :
             m_tables(tables), m_table_name(table_name), m_i(i), m_j(j)
             {}
-        void operator()(int n) const
-        {
+        void operator()(int n) const {
             m_tables[m_table_name][m_i][m_j] = n;
         }
         DataTableMap& m_tables;
@@ -73,16 +65,14 @@ namespace
         const int& m_j;
     };
 
-    void Echo (file_iterator<> first, file_iterator<> last)
-    {
+    void Echo (file_iterator<> first, file_iterator<> last) {
         if (g_echo)
             std::cout << std::string(first, last);
     }
 
 }
 #include <iostream>
-void LoadDataTables(const std::string& filename, DataTableMap& tables, bool echo/* = false*/)
-{
+void LoadDataTables(const std::string& filename, DataTableMap& tables, bool echo/* = false*/) {
     if (echo)
         g_echo = true;
     //std::cerr << "loading " << filename << std::endl;

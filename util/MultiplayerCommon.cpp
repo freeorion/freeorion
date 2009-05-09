@@ -33,16 +33,9 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    std::string SettingsDir() {
-        std::string retval = GetOptionsDB().Get<std::string>("settings-dir");
-        if (retval.empty() || retval[retval.size()-1] != '/')
-            retval += '/';
-        return retval;
-    }
-
     const StringTable& GetStringTable() {
         static std::auto_ptr<StringTable> string_table(
-            new StringTable(SettingsDir() + GetOptionsDB().Get<std::string>("stringtable-filename")));
+            new StringTable((GetSettingsDir() / GetOptionsDB().Get<std::string>("stringtable-filename")).file_string()));
         return *string_table;
     }
 

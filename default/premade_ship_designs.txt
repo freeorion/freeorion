@@ -4,7 +4,7 @@ ShipDesign
     lookup_strings = true
     hull = "SH_SMALL"
     parts = "DT_OPTICAL_SENSORS"
-    icon = "misc/scout1.png"
+    graphic = "misc/scout1.png"
     model = ""
 
 ShipDesign
@@ -13,7 +13,7 @@ ShipDesign
     lookup_strings = true
     hull = "SH_MEDIUM"
     parts = "CO_COLONY_POD"
-    icon = "misc/colony1.png"
+    graphic = "misc/colony1.png"
     model = ""
 
 ShipDesign
@@ -26,7 +26,7 @@ ShipDesign
         "SR_LASER"
         "SH_DEFENSE_GRID"
     ]
-    icon = "misc/mark1.png"
+    graphic = "misc/mark1.png"
     model = ""
 
 ShipDesign
@@ -39,7 +39,7 @@ ShipDesign
         "SR_ION_CANNON"
         "SH_DEFENSE_GRID"
     ]
-    icon = "misc/mark2.png"
+    graphic = "misc/mark2.png"
     model = ""
 
 ShipDesign
@@ -53,7 +53,7 @@ ShipDesign
         "SR_ION_CANNON"
         "SH_DEFLECTOR"
     ]
-    icon = "misc/mark3.png"
+    graphic = "misc/mark3.png"
     model = ""
 
 ShipDesign
@@ -69,5 +69,5 @@ ShipDesign
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
-    icon = "misc/mark4.png"
+    graphic = "misc/mark4.png"
     model = ""
