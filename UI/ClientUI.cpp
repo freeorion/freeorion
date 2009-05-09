@@ -50,9 +50,9 @@ namespace fs = boost::filesystem;
 fs::path ClientUI::ArtDir()                     { return GetSettingsDir() / "data" / "art"; }
 fs::path ClientUI::SoundDir()                   { return GetSettingsDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                    { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).native_file_string(); }
-std::string ClientUI::BoldFont()                { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).native_file_string(); }
-std::string ClientUI::TitleFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).native_file_string(); }
+std::string ClientUI::Font()                    { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).file_string(); }
+std::string ClientUI::BoldFont()                { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).file_string(); }
+std::string ClientUI::TitleFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).file_string(); }
 
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
@@ -591,9 +591,9 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
 {
     boost::shared_ptr<GG::Texture> retval;
     try {
-        retval = HumanClientApp::GetApp()->GetTexture(path.native_file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture(path.file_string(), mipmap);
     } catch(...) {
-        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").native_file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").file_string(), mipmap);
     }
 #ifdef FREEORION_MACOSX
     if (!mipmap)
@@ -615,7 +615,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
 {
     namespace fs = boost::filesystem;
     assert(fs::is_directory(dir));
-    const std::string KEY = dir.native_directory_string() + "/" + prefix;
+    const std::string KEY = dir.directory_string() + "/" + prefix;
     PrefixedTextures::iterator prefixed_textures_it = m_prefixed_textures.find(KEY);
     if (prefixed_textures_it == m_prefixed_textures.end()) {
         prefixed_textures_it = m_prefixed_textures.insert(std::make_pair(KEY, TexturesAndDist())).first;

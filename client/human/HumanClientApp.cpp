@@ -114,7 +114,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").native_file_string());
+    const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").file_string());
 
     // a platform-independent way to erase the old log We cannot use
     // boost::filesystem::ofstream here, as stupid b::f won't allow us
@@ -199,7 +199,7 @@ void HumanClientApp::StartServer()
 #ifdef FREEORION_WIN32
     const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
 #else
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").native_file_string();
+    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").file_string();
 #endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
     args.push_back("--settings-dir");
@@ -590,7 +590,7 @@ void HumanClientApp::Autosave(bool new_game)
             fs::remove(save_dir / *rit);
         }
 
-        SaveGame((save_dir / save_filename).native_file_string());
+        SaveGame((save_dir / save_filename).file_string());
     }
 }
 

@@ -2,13 +2,14 @@
 
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "../universe/ParserUtil.h"
-#include "../util/OptionsDB.h"
+#include "ParserUtil.h"
 #include "Condition.h"
 
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 
 std::string DumpIndent();
 
@@ -270,15 +271,18 @@ PartTypeManager::PartTypeManager() {
         throw std::runtime_error("Attempted to create more than one PartTypeManager.");
     s_instance = this;
 
-    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-        settings_dir += '/';
-    std::string filename = settings_dir + "ship_parts.txt";
-    std::ifstream ifs(filename.c_str());
-    
+    std::string file_name = "ship_parts.txt";
     std::string input;
-    std::getline(ifs, input, '\0');
-    ifs.close();
+
+    boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+    if (ifs) {
+        std::getline(ifs, input, '\0');
+        ifs.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << file_name;
+        return;
+    }
+
     using namespace boost::spirit;
     using namespace phoenix;
     parse_info<const char*> result =
@@ -574,15 +578,18 @@ HullTypeManager::HullTypeManager() {
         throw std::runtime_error("Attempted to create more than one HullTypeManager.");
     s_instance = this;
 
-    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-        settings_dir += '/';
-    std::string filename = settings_dir + "ship_hulls.txt";
-    std::ifstream ifs(filename.c_str());
-
+    std::string file_name = "ship_hulls.txt";
     std::string input;
-    std::getline(ifs, input, '\0');
-    ifs.close();
+
+    boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+    if (ifs) {
+        std::getline(ifs, input, '\0');
+        ifs.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << file_name;
+        return;
+    }
+
     using namespace boost::spirit;
     using namespace phoenix;
     parse_info<const char*> result =
@@ -1074,6 +1081,6 @@ std::string ShipDesign::Dump() const
     //retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     //--g_indent;
     //return retval;
-    return ""; 
+    return retval; 
 }
 

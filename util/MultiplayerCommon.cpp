@@ -30,7 +30,7 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add<std::string>("settings-dir", "OPTIONS_DB_SETTINGS_DIR", (GetGlobalDir() / "default").native_directory_string());
+        db.Add<std::string>("settings-dir", "OPTIONS_DB_SETTINGS_DIR", (GetGlobalDir() / "default").directory_string());
         db.Add<std::string>("log-level", "OPTIONS_DB_LOG_LEVEL", "DEBUG");
         db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME", "eng_stringtable.txt");
     }

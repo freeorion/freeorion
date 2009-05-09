@@ -95,7 +95,7 @@ ServerApp::ServerApp() :
 
     s_app = this;
 
-    const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").native_file_string());
+    const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").file_string());
 
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
@@ -142,7 +142,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
 #ifdef FREEORION_WIN32
     const std::string AI_CLIENT_EXE = "freeorionca.exe";
 #else
-    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").native_file_string();
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").file_string();
 #endif
     for (std::vector<PlayerSetupData>::const_iterator it = AIs.begin(); it != AIs.end(); ++it, ++i) {
         // TODO: add other command line args to AI client invocation as needed

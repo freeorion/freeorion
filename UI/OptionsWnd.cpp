@@ -81,13 +81,13 @@ namespace {
         void operator()()
             {
                 try {
-                    FileDlg dlg(m_path.native_directory_string(), m_edit->Text(), false, false, m_filters);
+                    FileDlg dlg(m_path.directory_string(), m_edit->Text(), false, false, m_filters);
                     if (m_directory)
                         dlg.SelectDirectories(true);
                     dlg.Run();
                     if (!dlg.Result().empty()) {
                         fs::path path = m_directory ? fs::complete(*dlg.Result().begin()) : RelativePath(m_path, fs::path(*dlg.Result().begin()));
-                        *m_edit << path.native_file_string();
+                        *m_edit << path.file_string();
                         m_edit->EditedSignal(m_edit->Text());
                     }
                 } catch (const FileDlg::BadInitialDirectory& e) {

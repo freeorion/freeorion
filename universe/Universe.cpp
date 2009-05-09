@@ -18,6 +18,8 @@
 #include "Effect.h"
 #include "Predicates.h"
 #include "Special.h"
+#include "Parser.h"
+#include "ParserUtil.h"
 
 #ifdef FREEORION_BUILD_SERVER
 #include "../server/ServerApp.h"
@@ -40,13 +42,8 @@ namespace {
     DataTableMap& UniverseDataTables()
     {
         static DataTableMap map;
-        if (map.empty()) {
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-
-            LoadDataTables(settings_dir + "universe_tables.txt", map);
-        }
+        if (map.empty())
+            LoadDataTables((GetSettingsDir() / "universe_tables.txt").file_string(), map);
         return map;
     }
 
@@ -1484,8 +1481,8 @@ int Universe::GenerateDesignID()
 //////////////////////////////////////////
 //  Server-Only Galaxy Setup Functions  //
 //////////////////////////////////////////
-namespace {
 #ifdef FREEORION_BUILD_SERVER
+namespace {
     const double        MIN_SYSTEM_SEPARATION       = 35.0;                         // in universe units [0.0, s_universe_width]
     const double        MIN_HOME_SYSTEM_SEPARATION  = 200.0;                        // in universe units [0.0, s_universe_width]
     const double        AVG_UNIVERSE_WIDTH          = 1000.0 / std::sqrt(150.0);    // so a 150 star universe is 1000 units across
@@ -1494,33 +1491,25 @@ namespace {
     const int           MAX_SYSTEM_ORBITS           = 9;                            // maximum slots where planets can be
     SmallIntDistType    g_hundred_dist              = SmallIntDist(1, 100);         // a linear distribution [1, 100] used in most universe generation
     const int           MAX_ATTEMPTS_PLACE_SYSTEM   = 100;
-#endif
 
-    double CalcNewPosNearestNeighbour(const std::pair<double, double> &position,const std::vector<std::pair<double, double> > &positions)
-    {
-#ifdef FREEORION_BUILD_SERVER
-        if(positions.size() ==0 )
+    double CalcNewPosNearestNeighbour(const std::pair<double, double>& position,const std::vector<std::pair<double, double> >& positions) {
+        if (positions.size() == 0)
             return 0.0;
 
         unsigned int j;
         double lowest_dist=  (positions[0].first  - position.first ) * (positions[0].first  - position.first ) 
             + (positions[0].second - position.second) * (positions[0].second - position.second),distance=0.0;
 
-        for (j=1; j < positions.size(); ++j){
+        for (j = 1; j < positions.size(); ++j) {
             distance =  (positions[j].first  - position.first ) * (positions[j].first  - position.first ) 
                 + (positions[j].second - position.second) * (positions[j].second - position.second);
             if(lowest_dist>distance)
                 lowest_dist = distance;
         }
         return lowest_dist;
-#else
-        throw std::runtime_error("Non-server called CalcNewPosNearestNeighbour; only server should call this while creating the universe");
-#endif
     }
 
-    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int arms, unsigned int stars, double width, double height)
-    {
-#ifdef FREEORION_BUILD_SERVER
+    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int arms, unsigned int stars, double width, double height) {
         double arm_offset     = RandDouble(0.0,2.0*PI);
         double arm_angle      = 2.0*PI / arms;
         double arm_spread     = 0.3 * PI / arms;
@@ -1571,14 +1560,9 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
-#else
-        throw std::runtime_error("Non-server called SpiralGalaxyCalcPositions; only server should call this while creating the universe");
-#endif
     }
 
-    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int stars, double width, double height)
-    {
-#ifdef FREEORION_BUILD_SERVER
+    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> >& positions, unsigned int stars, double width, double height) {
         const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
         const double rotation = RandDouble(0.0, PI),
                      rotation_sin = std::sin(rotation),
@@ -1631,14 +1615,9 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
-#else
-        throw std::runtime_error("Non-server called EllipticalGalaxyCalcPositions; only server should call this while creating the universe");
-#endif
     }
 
-    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> > &positions, unsigned int clusters, unsigned int stars, double width, double height)
-    {
-#ifdef FREEORION_BUILD_SERVER
+    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> >& positions, unsigned int clusters, unsigned int stars, double width, double height) {
         assert(clusters);
         assert(stars);
 
@@ -1652,39 +1631,34 @@ namespace {
         DoubleDistType    random_zero_to_one = DoubleDist  (0.0,  1.0);
         DoubleDistType    random_angle  = DoubleDist  (0.0,2.0*PI);
 
-        for (i=0,attempts=0;i<clusters && static_cast<int>(attempts)<MAX_ATTEMPTS_PLACE_SYSTEM;i++,attempts++)
-        {
+        for (i = 0, attempts = 0; i < clusters && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; i++ , attempts++) {
             // prevent cluster position near borders (and on border)
-            double x=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
-                y=((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
+            double x = ((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters,
+                y = ((random_zero_to_one()*2.0-1.0) /(clusters+1.0))*clusters;
 
 
             // ensure all clusters have a min separation to each other (search isn't opimized, not worth the effort)
-            for (j=0;j<clusters_position.size();j++)
+            for (j = 0; j < clusters_position.size(); j++) {
                 if ((clusters_position[j].first.first - x)*(clusters_position[j].first.first - x)+ (clusters_position[j].first.second - y)*(clusters_position[j].first.second - y)
                     < (2.0/clusters))
                     break;
-            if (j<clusters_position.size())
-            {
+            }
+            if (j < clusters_position.size()) {
                 i--;
                 continue;
             }
 
-            attempts=0;
+            attempts = 0;
             double rotation = RandDouble(0.0,PI);
             clusters_position.push_back(std::pair<std::pair<double,double>,std::pair<double,double> >(std::pair<double,double>(x,y),std::pair<double,double>(sin(rotation),cos(rotation))));
         }
 
-        for (i=0,attempts=0; i < stars && attempts<100; i++,attempts++ )
-        {
+        for (i = 0, attempts = 0; i < stars && attempts<100; i++, attempts++) {
             double x,y;
-            if (random_zero_to_one()<system_noise)
-            {
+            if (random_zero_to_one()<system_noise) {
                 x = random_zero_to_one() * 2.0 - 1.0;
                 y = random_zero_to_one() * 2.0 - 1.0;
-            }
-            else
-            {
+            } else {
                 short  cluster = i%clusters_position.size();
                 double radius  = random_zero_to_one();
                 double angle   = random_angle();
@@ -1720,14 +1694,9 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
-#else
-        throw std::runtime_error("Non-server called ClusterGalaxyCalcPositions; only server should call this while creating the universe");
-#endif
     }
 
-    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
-    {
-#ifdef FREEORION_BUILD_SERVER
+    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int stars, double width, double height) {
         double RING_WIDTH = width / 4.0;
         double RING_RADIUS = (width - RING_WIDTH) / 2.0;
 
@@ -1759,15 +1728,11 @@ namespace {
             // Note that attempts is reset for every star.
             attempts = 0;
         }
-#else
-        throw std::runtime_error("Non-server called RingGalaxyCalcPositions; only server should call this while creating the universe");
-#endif
     }
 
-    void IrregularGalaxyPositions(std::vector<std::pair<double, double> > &positions, unsigned int stars, double width, double height)
-    {
+    void IrregularGalaxyPositions(std::vector<std::pair<double, double> >& positions, unsigned int stars, double width, double height) {
         Logger().debugStream() << "IrregularGalaxyPositions";
-#ifdef FREEORION_BUILD_SERVER
+
         unsigned int positions_placed = 0;
         for (unsigned int i = 0, attempts = 0; i < stars && static_cast<int>(attempts) < MAX_ATTEMPTS_PLACE_SYSTEM; ++i, ++attempts) {
 
@@ -1801,16 +1766,12 @@ namespace {
             attempts = 0;
         }
         Logger().debugStream() << "... placed " << positions_placed << " systems";
-#else
-        throw std::runtime_error("Non-server called Universe::IrregularGalaxyPositions; only server should call this while creating the universe");
-#endif
     }
 
 
-    System* GenerateSystem(Universe &universe, Age age, double x, double y)
-    {
+    System* GenerateSystem(Universe &universe, Age age, double x, double y) {
         Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
-#ifdef FREEORION_BUILD_SERVER
+
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
 
@@ -1843,30 +1804,21 @@ namespace {
                                      star_name + " into the object map failed.");
         }
         return system;
-#else
-        throw std::runtime_error("Non-server called GenerateSystem; only server should call this while creating the universe");
-#endif
     }
 
-    void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> > &positions, 
+    void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> >& positions, 
                            Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
         Logger().debugStream() << "GenerateStarField";
-#ifdef FREEORION_BUILD_SERVER
         // generate star field
         for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
             System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
             adjacency_grid[static_cast<int>(system->X() / adjacency_box_size)]
                 [static_cast<int>(system->Y() / adjacency_box_size)].insert(system);
         }
-#else
-        throw std::runtime_error("Non-server called GenerateStarField; only server should call this while creating the universe");
-#endif
     }
 
-    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors)
-    {
-#ifdef FREEORION_BUILD_SERVER
+    void GetNeighbors(double x, double y, const Universe::AdjacencyGrid& adjacency_grid, std::set<System*>& neighbors) {
         const double ADJACENCY_BOX_SIZE = Universe::UniverseWidth() / ADJACENCY_BOXES;
         std::pair<unsigned int, unsigned int> grid_box(static_cast<unsigned int>(x / ADJACENCY_BOX_SIZE),
                                                        static_cast<unsigned int>(y / ADJACENCY_BOX_SIZE));
@@ -1907,80 +1859,61 @@ namespace {
                 neighbors.insert(grid_square.begin(), grid_square.end());
             }
         }
-#else
-        throw std::runtime_error("Non-server called GetNeighbors; only server should call this while creating the universe");
-#endif
     }
 }
 
-#ifdef FREEORION_BUILD_SERVER
 namespace Delauney {
-    // simple 2D point.  would have used array of systems, but System class has limits on the range of 
-    // position values that would interfere with the triangulation algorithm (need a single large covering
-    // triangle that overlaps all actual points being triangulated)
+    /** simple 2D point.  would have used array of systems, but System
+      * class has limits on the range of positions that would interfere
+      * with the triangulation algorithm (need a single large covering
+      * triangle that overlaps all actual points being triangulated) */
     class DTPoint {
     public:
-        double x;
-        double y;
-
-        DTPoint(double xp, double yp);
-        DTPoint();
-    };
-    DTPoint::DTPoint() {
-        x = 0;
-        y = 0;
-    };
-    DTPoint::DTPoint(double xp, double yp) {
-        x = xp;
-        y = yp;
+        DTPoint() :
+            x(0.0),
+            y(0.0)
+        {}
+        DTPoint(double x_, double y_) :
+            x(x_),
+            y(y_)
+        {}
+        double  x;
+        double  y;
     };
 
-    // simple class for an integer that has an associated "sorting value", so the integer can be stored in
-    // a list sorted by something other than the value of the integer
+    /* simple class for an integer that has an associated "sorting value",
+     * so the integer can be stored in a list sorted by something other than
+     * the value of the integer */
     class SortValInt {
     public:
-        int num;
-        double sortVal;
-        SortValInt(int n, double s);
+        SortValInt(int num_, double sort_val_) :
+            num(num_),
+            sortVal(sort_val_)
+        {}
+        int     num;
+        double  sortVal;
     };
 
-    SortValInt::SortValInt(int n, double s) {
-        num = n;
-        sortVal = s;
-    };
 
-    // list of three interger array indices, and some additional info about the triangle that the corresponding
-    // points make up, such as the circumcentre and radius, and a function to find if another point is in the
-    // circumcircle
+    /** list of three interger array indices, and some additional info about
+      * the triangle that the corresponding points make up, such as the
+      * circumcentre and radius, and a function to find if another point is in
+      * the circumcircle */
     class DTTriangle {
-    private:
-        std::vector<int> verts;  // indices of vertices of triangle
-        Delauney::DTPoint centre;  // location of circumcentre of triangle
-        double radius2;  // radius of circumcircle squared
-
     public:
-        // determines whether a specified point is within the circumcircle of the triangle
-        bool PointInCircumCircle(Delauney::DTPoint &p);
-
-        const std::vector<int>& getVerts(); // getter
-
-        DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points);
         DTTriangle();
+        DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points);
+
+        bool                    PointInCircumCircle(Delauney::DTPoint &p);  ///< determines whether a specified point is within the circumcircle of the triangle
+        const std::vector<int>& Verts() {return verts;}
+
+    private:
+        std::vector<int>    verts;      ///< indices of vertices of triangle
+        Delauney::DTPoint   centre;     ///< location of circumcentre of triangle
+        double              radius2;    ///< radius of circumcircle squared
     };
 
-    // determines whether a specified point is within the circumcircle of the triangle
-    bool DTTriangle::PointInCircumCircle(Delauney::DTPoint &p) {
-        double vectX, vectY;
-
-        vectX = p.x - centre.x;
-        vectY = p.y - centre.y;
-
-        if (vectX*vectX + vectY*vectY < radius2)
-            return true;
-        return false;
-    };
-
-    DTTriangle::DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint> &points) {
+    DTTriangle::DTTriangle(int vert1, int vert2, int vert3, std::vector<Delauney::DTPoint>& points) {
         double a, Sx, Sy, b;
         double x1, x2, x3, y1, y2, y3;
 
@@ -2027,24 +1960,27 @@ namespace Delauney {
         radius2 = (Sx*Sx + Sy*Sy)/(a*a) + b/a;
     };
 
+    DTTriangle::DTTriangle() :
+        verts(3, 0),
+        centre(0.0, 0.0),
+        radius2(0.0)
+    {};
 
-    DTTriangle::DTTriangle() {
-        verts = std::vector<int>(3, 0);
-        centre.x = 0;
-        centre.y = 0;
-        radius2 = 0;
+    bool DTTriangle::PointInCircumCircle(Delauney::DTPoint &p) {
+        double vectX, vectY;
+
+        vectX = p.x - centre.x;
+        vectY = p.y - centre.y;
+
+        if (vectX*vectX + vectY*vectY < radius2)
+            return true;
+        return false;
     };
 
-    const std::vector<int>& DTTriangle::getVerts() {
-        return verts;
-    };
 
 
-    // runs a Delauney Triangulation routine on a set of 2D points extracted from an array of systems
-    // returns the list of triangles produced
-    std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems);
-
-    // does Delauney Triangulation to generate starlanes
+    /** runs a Delauney Triangulation routine on a set of 2D points extracted
+      * from an array of systems returns the list of triangles produced */
     std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<System*> &systems) {
 
         int n, c, theSize, num, num2; // loop counters, storage for retreived size of a vector, temp storage
@@ -2101,7 +2037,7 @@ namespace Delauney {
                     // based on angle of direction to current point n being inserted.  don't add if doing
                     // so would duplicate an index already in the list
                     for (c = 0; c < 3; c++) {
-                        num = (tri.getVerts())[c];  // store "current point"
+                        num = (tri.Verts())[c];  // store "current point"
 
                         // get sorting value to order points clockwise circumferentially around point n
                         // vector from point n to current point
@@ -2124,9 +2060,9 @@ namespace Delauney {
                             pointNumList.push_back(Delauney::SortValInt(num, mag));
                         } else {
                             while (itCur2 != itEnd2) {
-                                if ((*itCur2).num == num) 
+                                if (itCur2->num == num) 
                                     break;
-                                if ((*itCur2).sortVal > mag) {
+                                if (itCur2->sortVal > mag) {
                                     pointNumList.insert(itCur2, Delauney::SortValInt(num, mag));
                                     break;
                                 }
@@ -2156,11 +2092,11 @@ namespace Delauney {
             // add triangle for last and first points and n
             triList->push_front(Delauney::DTTriangle(n, (pointNumList.front()).num, (pointNumList.back()).num, points));
 
-            num = (*itCur2).num;
+            num = itCur2->num;
             ++itCur2;
             while (itCur2 != itEnd2) {
                 num2 = num;
-                num = (*itCur2).num;
+                num = itCur2->num;
 
                 triList->push_front(Delauney::DTTriangle(n, num2, num, points));
 
@@ -2170,7 +2106,17 @@ namespace Delauney {
         } // end for
         return triList;
     } // end function
-} // end namespace
+}
+
+namespace {
+
+    /** externally defined ship classes to give to new empires */
+    std::vector<const ShipDesign*>    new_empire_ship_designs;
+
+    /** externally defined combinations of externally defined ship classes, or
+      * fleet plans, to give to new empires */
+    std::vector<FleetPlan>      new_empire_fleets;
+};
 #endif
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
                               SpecialsFrequency specials_freq, int players, int ai_players,
@@ -2383,7 +2329,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
     std::vector<System*> sys_vec = FindObjects<System>();
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
-    std::list<Delauney::DTTriangle> *triList = Delauney::DelauneyTriangulate(sys_vec);
+    std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
     if (NULL == triList) return;
 
     if (triList->empty())
@@ -2412,7 +2358,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
     while (!triList->empty()) {
         tri = triList->front();
 
-        triVerts = tri.getVerts();
+        triVerts = tri.Verts();
         s1 = triVerts[0];
         s2 = triVerts[1];
         s3 = triVerts[2];

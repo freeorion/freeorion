@@ -20,7 +20,7 @@ namespace {
         ServerSaveGameData server_data;
         Universe universe;
 
-        LoadGame((GetLocalDir() / "save" / save_game_filename).native_file_string().c_str(),
+        LoadGame((GetLocalDir() / "save" / save_game_filename).file_string().c_str(),
                  server_data, player_save_game_data, universe);
 
         for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
@@ -363,7 +363,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
                 return transit<PlayingGame>();
             }
         } else {
-            LoadGame((GetLocalDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).native_file_string(),
+            LoadGame((GetLocalDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).file_string(),
                      *m_server_save_game_data, m_player_save_game_data, GetUniverse());
             int expected_players = m_player_save_game_data.size();
             int needed_AI_clients = expected_players - server.m_networking.NumPlayers();

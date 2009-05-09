@@ -42,7 +42,7 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     // read command line args
     SetPlayerName(argv[1]);
 
-    const std::string AICLIENT_LOG_FILENAME((GetLocalDir() / (PlayerName() + ".log")).native_file_string());
+    const std::string AICLIENT_LOG_FILENAME((GetLocalDir() / (PlayerName() + ".log")).file_string());
 
     // a platform-independent way to erase the old log
     std::ofstream temp(AICLIENT_LOG_FILENAME.c_str());

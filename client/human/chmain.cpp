@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
         // into the application bundle this may happen if a previous installed version of FreeOrion was residing in a
         // different directory.
         if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("settings-dir"))))
-            GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").native_directory_string());
+            GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").directory_string());
 #endif
         
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {

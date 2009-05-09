@@ -5,12 +5,11 @@
 #include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../util/AppInterface.h"   // for Logger()
+#include "../util/AppInterface.h"
+#include "../util/Directories.h"
 
 #include <boost/lexical_cast.hpp>
-
-#include <sstream>
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 
 std::string DumpIndent();
 
@@ -114,16 +113,10 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
-Tech::Tech(const std::string& name,
-           const std::string& description,
-           const std::string& short_description,
-           const std::string& category,
-           TechType type,
-           double research_cost,
-           int research_turns,
+Tech::Tech(const std::string& name, const std::string& description, const std::string& short_description,
+           const std::string& category, TechType type, double research_cost, int research_turns,
            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-           const std::set<std::string>& prerequisites,
-           const std::vector<ItemSpec>& unlocked_items,
+           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
            const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -424,17 +417,23 @@ TechManager::TechManager()
 
     s_instance = this;
 
-    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-        settings_dir += '/';
-    std::string filename = settings_dir + "techs.txt";
-    std::ifstream ifs(filename.c_str());
-    std::set<std::string> categories_seen_in_techs;
+    std::string file_name = "techs.txt";
     std::string input;
-    std::getline(ifs, input, '\0');
-    ifs.close();
+
+    boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+    if (ifs) {
+        std::getline(ifs, input, '\0');
+        ifs.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << file_name;
+        return;
+    }
+
     using namespace boost::spirit;
     using namespace phoenix;
+
+    std::set<std::string> categories_seen_in_techs;
+
     parse_info<const char*> result =
         parse(input.c_str(),
               as_lower_d[*(

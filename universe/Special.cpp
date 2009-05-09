@@ -3,8 +3,9 @@
 #include "../universe/ParserUtil.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 
-#include <fstream>
+#include <boost/filesystem/fstream.hpp>
 
 std::string DumpIndent();
 
@@ -35,11 +36,8 @@ namespace {
     public:
         SpecialManager()
         {
-            std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-            if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-                settings_dir += '/';
-            ProcessSpecialsFile(settings_dir + "specials.txt", false);
-            ProcessSpecialsFile(settings_dir + "planet_specials.txt", true);
+            ProcessSpecialsFile("specials.txt",         false);
+            ProcessSpecialsFile("planet_specials.txt",  true);
         }
 
         ~SpecialManager()
@@ -61,14 +59,22 @@ namespace {
         }
 
     private:
-        void ProcessSpecialsFile(const std::string& filename, bool planet_specials)
+        void ProcessSpecialsFile(const std::string& file_name, bool planet_specials)
         {
-            std::ifstream ifs(filename.c_str());
             std::string input;
-            std::getline(ifs, input, '\0');
-            ifs.close();
+
+            boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+            if (ifs) {
+                std::getline(ifs, input, '\0');
+                ifs.close();
+            } else {
+                Logger().errorStream() << "Unable to open data file " << file_name;
+                return;
+            }
+
             using namespace boost::spirit;
             using namespace phoenix;
+
             parse_info<const char*> result =
                 parse(input.c_str(),
                       as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]]

@@ -2,20 +2,20 @@
 
 #include "Effect.h"
 #include "Condition.h"
-#include "../universe/Parser.h"
-#include "../universe/ParserUtil.h"
-#include "../util/MultiplayerCommon.h"
-#include "../util/OptionsDB.h"
 #include "Planet.h"
 #include "Predicates.h"
+#include "Universe.h"
+#include "Enums.h"
+#include "Parser.h"
+#include "ParserUtil.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "Universe.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
-#include "Enums.h"
+#include "../util/Directories.h"
 
-#include <fstream>
-#include <iostream>
+#include <boost/filesystem/fstream.hpp>
 
 std::string DumpIndent();
 
@@ -263,14 +263,18 @@ BuildingTypeManager::BuildingTypeManager()
 
     s_instance = this;
 
-    std::string settings_dir = GetOptionsDB().Get<std::string>("settings-dir");
-    if (!settings_dir.empty() && settings_dir[settings_dir.size() - 1] != '/')
-        settings_dir += '/';
-    std::string filename = settings_dir + "buildings.txt";
-    std::ifstream ifs(filename.c_str());
+    std::string file_name = "buildings.txt";
     std::string input;
-    std::getline(ifs, input, '\0');
-    ifs.close();
+
+    boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+    if (ifs) {
+        std::getline(ifs, input, '\0');
+        ifs.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << file_name;
+        return;
+    }
+
     using namespace boost::spirit;
     using namespace phoenix;
     parse_info<const char*> result =
