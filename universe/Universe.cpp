@@ -2108,6 +2108,7 @@ namespace Delauney {
     } // end function
 }
 
+
 namespace {
     struct store_ship_design_impl
     {
@@ -2116,11 +2117,11 @@ namespace {
         template <class T>
         void operator()(std::map<std::string, ShipDesign*>& ship_designs, const T& ship_design) const
         {
-            if (ship_designs.find(ship_design->Name()) != ship_designs.end()) {
-                std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + ship_design->Name();
+            if (ship_designs.find(ship_design->Name(false)) != ship_designs.end()) {
+                std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + ship_design->Name(false);
                 throw std::runtime_error(error_str.c_str());
             }
-            ship_designs[ship_design->Name()] = ship_design;
+            ship_designs[ship_design->Name(false)] = ship_design;
         }
     };
 
@@ -2131,29 +2132,18 @@ namespace {
         typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
 
         /** \name Accessors */ //@{
-        /** returns new copy of ShipDesign with name \a name.  caller gains
-          * ownership of returned pointer.  returned ShipDesign can be 
-          * inserted into an empire using Empire::AddShipDesign(ShipDesign*)
-          * which also inserts it into the Universe, which takes ownership. */
-        ShipDesign* CopyShipDesign(const std::string& name, int designing_empire_id = ALL_EMPIRES) const;
-
         /** returns iterator pointing to first ship design. */
         iterator    begin() const                           { return m_ship_designs.begin(); }
 
         /** returns iterator pointing one past last ship design. */
         iterator    end() const                             { return m_ship_designs.end(); }
 
-        /** returns iterator pointing to ship design with indicated \a name or
-          * returns end() if no ship design exists with that name. */
-        iterator    find(const std::string& name) const     { return m_ship_designs.find(name); }
-
-        /** returns true iff a ship design with the indicated \a name exists. */
-        bool        contains(const std::string& name) const { return find(name) != end(); };
         //@}
 
         /** Adds designs in this manager to the specified \a empire using that
-          * Empire's AddShipDesign(ShipDesign*) function. */
-        void        AddShipDesignsToEmpire(Empire* empire) const;
+          * Empire's AddShipDesign(ShipDesign*) function.  Returns a map from
+          * ship design name to design id in universe. */
+        std::map<std::string, int>  AddShipDesignsToEmpire(Empire* empire) const;
 
         /** returns the instance of this singleton class; you should use the
           * free function GetPredefinedShipDesignManager() instead */
@@ -2205,13 +2195,13 @@ namespace {
         if (!result.full)
             ReportError(input.c_str(), result);
 
-//#ifdef OUTPUT_DESIGNS_LIST
+#ifdef OUTPUT_DESIGNS_LIST
         Logger().debugStream() << "Predefined Ship Designs:";
         for (iterator it = begin(); it != end(); ++it) {
             const ShipDesign* d = it->second;
             Logger().debugStream() << " ... " << d->Name();
         }
-//#endif
+#endif
     }
 
     PredefinedShipDesignManager::~PredefinedShipDesignManager() {
@@ -2219,30 +2209,18 @@ namespace {
             delete it->second;
     }
 
-    ShipDesign* PredefinedShipDesignManager::CopyShipDesign(const std::string& name, int designing_empire_id) const {
-        ShipDesign* retval = NULL;
-        if (m_ship_designs.empty())
-            return retval;
+    std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire) const {
+        std::map<std::string, int> retval;
 
-        std::map<std::string, ShipDesign*>::const_iterator it = m_ship_designs.find(name);
-        if (it == m_ship_designs.end())
-            return retval;
-
-        ShipDesign* d = it->second;
-
-        retval = new ShipDesign(d->Name(), d->Description(), designing_empire_id,
-                                d->DesignedOnTurn(), d->Hull(), d->Parts(),
-                                d->Graphic(), d->Model(), false);
-
-        return retval;
-    }
-
-    void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire) const {
         if (!empire)
-            return;
+            return retval;
 
         for (iterator it = begin(); it != end(); ++it) {
             ShipDesign* d = it->second;
+
+            if (it->first != d->Name(false)) {
+                Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
+            }
 
             ShipDesign* copy = new ShipDesign(d->Name(), d->Description(), empire->EmpireID(),
                                               d->DesignedOnTurn(), d->Hull(), d->Parts(),
@@ -2253,6 +2231,8 @@ namespace {
             if (design_id == UniverseObject::INVALID_OBJECT_ID) {
                 delete copy;
                 Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
+            } else {
+                retval[it->first] = design_id;
             }
         }
     }
@@ -2338,13 +2318,13 @@ namespace {
         if (!result.full)
             ReportError(input.c_str(), result);
 
-//#ifdef OUTPUT_PLANS_LIST
+#ifdef OUTPUT_PLANS_LIST
         Logger().debugStream() << "Starting Fleet Plans:";
         for (iterator it = begin(); it != end(); ++it) {
             const FleetPlan& p = *it;
             Logger().debugStream() << " ... " << p.Name();
         }
-//#endif
+#endif
     }
 
     /** returns the singleton fleet plan manager */
@@ -2432,13 +2412,13 @@ namespace {
         if (!result.full)
             ReportError(input.c_str(), result);
 
-//#ifdef OUTPUT_ITEM_SPECS_LIST
+#ifdef OUTPUT_ITEM_SPECS_LIST
         Logger().debugStream() << "Starting Unlocked Item Specs:";
         for (iterator it = begin(); it != end(); ++it) {
             const ItemSpec& item = *it;
             Logger().debugStream() << " ... " << boost::lexical_cast<std::string>(item.type) << " : " << item.name;
         }
-//#endif
+#endif
     }
 
     void ItemSpecManager::AddItemsToEmpire(Empire* empire) const {
@@ -3287,13 +3267,13 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         int planet_id, home_orbit; std::string planet_name;
 
         // we can only select a planet if there are planets in this system.
-        if (system->Orbits()>0 && !system->FindObjects<Planet>().empty()) {
+        if (system->Orbits() >0 && !system->FindObjects<Planet>().empty()) {
             std::vector<int> vec_orbits;
-            for(int i=0;i<system->Orbits();i++)
-                if(system->FindObjectIDsInOrbit<Planet>(i).size()>0)
+            for (int i = 0; i < system->Orbits(); i++)
+                if (system->FindObjectIDsInOrbit<Planet>(i).size() > 0)
                     vec_orbits.push_back(i);
 
-            int planet_index = vec_orbits.size()>1?RandSmallInt(0, vec_orbits.size() - 1):0;
+            int planet_index = vec_orbits.size() > 1   ?   RandSmallInt(0, vec_orbits.size() - 1)   :   0;
             planet_name = system->Name() + " " + RomanNumber(planet_index + 1);
             home_orbit = vec_orbits[planet_index];
             Delete(system->FindObjectIDsInOrbit<Planet>(home_orbit).back());
@@ -3398,15 +3378,16 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
             }
         }
 
-        Logger().debugStream() << "creating empire: " << empire_name;
+        Logger().debugStream() << "creating empire named: " << empire_name;
 
         int home_planet_id = homeworlds[i];
 
         // create new Empire object through empire manager
         Empire* empire = Empires().CreateEmpire((*it)->ID(), empire_name, (*it)->PlayerName(), color, home_planet_id);
+        int empire_id = empire->EmpireID();
+
 
         // set ownership of home planet
-        int empire_id = empire->EmpireID();
         Planet* home_planet = Object<Planet>(homeworlds[i]);
         Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID()
                                << ") to be home system for Empire " << empire_id;
@@ -3415,111 +3396,70 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         System* home_system = home_planet->GetSystem();
         home_system->AddOwner(empire_id);
 
-        // give homeworld's a shipyard so players can build ships immediately
+
+        // give homeworlds a shipyard so players can build ships immediately
         Building* shipyard = new Building(empire_id, "BLD_SHIPYARD_BASE", UniverseObject::INVALID_OBJECT_ID);
         int shipyard_id = Insert(shipyard);
         home_planet->AddBuilding(shipyard_id);
 
 
-        // create population and industry on home planet
+        // add homeworld special and set double balanced default focus
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
         home_planet->SetPrimaryFocus(FOCUS_BALANCED);
         home_planet->SetSecondaryFocus(FOCUS_BALANCED);
 
-        // grant empire access to some initial buildings, ship parts and hulls
-        empire->AddBuildingType("BLD_IMPERIAL_PALACE");
 
-        empire->AddPartType("SR_LASER");
-        empire->AddPartType("SH_DEFENSE_GRID");
-        empire->AddPartType("CO_COLONY_POD");
+        // give new empire items and ship designs it should start with
+        starting_unlocked_items.AddItemsToEmpire(empire);
 
-        empire->AddHullType("SH_SMALL");
-
-        std::vector<std::string> parts;
-        ShipDesign* design = 0;
-
-        // create the empire's initial ship designs
-        parts.resize(GetHullType("SH_SMALL")->NumSlots(), "");
-        design = new ShipDesign("Scout", "Small and cheap unarmed vessel designed for recon and exploration.",
-                                            empire_id, 0, "SH_SMALL", parts, "misc/scout1.png", "model");
-        int scout_design_id = empire->AddShipDesign(design);
-
-        parts.clear();
-        parts.resize(GetHullType("SH_MEDIUM")->NumSlots(), "");
-        parts[4] = "CO_COLONY_POD";
-        design = new ShipDesign("Colony Ship", "Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.",
-                                empire_id, 0, "SH_MEDIUM", parts, "misc/colony1.png", "model");
-        int colony_ship_design_id = empire->AddShipDesign(design);
-
-        parts.clear();
-        parts.resize(GetHullType("SH_SMALL")->NumSlots(), "");
-        parts[0] = "SR_LASER";
-        parts[1] = "SH_DEFENSE_GRID";
-        design = new ShipDesign("Mark I", "Affordable armed patrol frigate.",
-                                empire_id, 0, "SH_SMALL", parts, "misc/mark1.png", "model");
-        int mark_I_design_id = empire->AddShipDesign(design);
-
-        parts.resize(GetHullType("SH_SMALL")->NumSlots(), "");
-        parts[0] = "SR_ION_CANNON";
-        parts[1] = "SH_DEFENSE_GRID";
-        design = new ShipDesign("Mark II", "Cruiser with strong defensive and offensive capabilities.",
-                                empire_id, 0, "SH_SMALL", parts, "misc/mark2.png", "model");
-        int temp = empire->AddShipDesign(design);
-
-        parts.resize(GetHullType("SH_MEDIUM")->NumSlots(), "");
-        parts[0] = "SR_ION_CANNON";
-        parts[1] = "SH_DEFENSE_GRID";
-        parts[2] = "SR_ION_CANNON";
-        parts[3] = "SH_DEFLECTOR";
-        design = new ShipDesign("Mark III", "Advanced cruiser with heavy weaponry and armor to do the dirty work.",
-                                empire_id, 0, "SH_MEDIUM", parts, "misc/mark3.png", "model");
-        temp = empire->AddShipDesign(design);
-
-        parts.resize(GetHullType("SH_LARGE")->NumSlots(), "");
-        parts[0] = "SR_ION_CANNON";
-        parts[1] = "SH_DEFENSE_GRID";
-        parts[2] = "SR_ION_CANNON";
-        parts[3] = "SH_DEFLECTOR";
-        parts[4] = "SR_ION_CANNON";
-        parts[5] = "SH_DEFLECTOR";
-        design = new ShipDesign("Mark IV", "Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.",
-                                empire_id, 0, "SH_LARGE", parts, "misc/mark4.png", "model");
-        temp = empire->AddShipDesign(design);
+        std::map<std::string, int> design_ids = predefined_ship_designs.AddShipDesignsToEmpire(empire);
 
 
-        // create the empire's starting fleet
-        Fleet* home_fleet = new Fleet(UserString("FW_HOME_FLEET"), home_system->X(), home_system->Y(), empire_id);
-        Insert(home_fleet);
-        home_system->Insert(home_fleet);
+        // create new empire's starting fleets
+        for (FleetPlanManager::iterator it = starting_fleet_plans.begin(); it != starting_fleet_plans.end(); ++it) {
 
-        Ship* ship = 0;
-        int ship_id = -1;
+            // create fleet itself
+            const std::string& fleet_name = it->Name();
+            Fleet* fleet = new Fleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
+            if (!fleet) {
+                Logger().errorStream() << "unable to create new fleet!";
+                break;
+            }
+            Insert(fleet);
+            home_system->Insert(fleet);
 
-        // scouts for The Silent One to explore with
-        for (int n = 0; n < 2; ++n) {
-            ship = new Ship(empire_id, scout_design_id);
-            ship->Rename(empire->NewShipName());
-            ship_id = Insert(ship);
-            home_fleet->AddShip(ship_id);
+
+            // create ships and add to fleet
+            const std::vector<std::string>& ship_design_names = it->ShipDesigns();
+            for (std::vector<std::string>::const_iterator ship_it = ship_design_names.begin(); ship_it != ship_design_names.end(); ++ship_it) {
+                // get universe id of design by looking up name in this empire's map from name to design id
+                const std::string& design_name = *ship_it;
+                std::map<std::string, int>::const_iterator design_it = design_ids.find(design_name);
+                if (design_it != design_ids.end()) {
+                    // get actual design from universe
+                    int design_id = design_it->second;
+                    const ShipDesign* design = GetShipDesign(design_id);
+                    if (!design) {
+                        Logger().errorStream() << "unable to get ShipDesign with id " << design_id << " and name " << design_name;
+                        continue;
+                    }
+
+                    // create new ship
+                    Ship* ship = new Ship(empire_id, design_id);
+                    if (!ship) {
+                        Logger().errorStream() << "unable to create new ship!";
+                        break;
+                    }
+                    ship->Rename(empire->NewShipName());
+                    int ship_id = Insert(ship);
+
+                    // add ship to fleet
+                    fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
+                } else {    // design_it == design_ids.end()
+                    Logger().errorStream() << "couldn't find design name " << design_name << " in map from design names to ids of designs added to empire";
+                }
+            }
         }
-
-        // colony ships for The Silent One to test colonization
-        for (int n = 0; n < 1; ++n) {
-            ship = new Ship(empire_id, colony_ship_design_id);
-            ship->Rename(empire->NewShipName());
-            ship_id = Insert(ship);
-            home_fleet->AddShip(ship_id);
-        }
-
-        // create a battle fleet
-        Fleet* battle_fleet = new Fleet(UserString("FW_BATTLE_FLEET"), home_system->X(), home_system->Y(), empire_id);
-        Insert(battle_fleet);
-        home_system->Insert(battle_fleet);
-
-        ship = new Ship(empire_id, mark_I_design_id);
-        ship->Rename(empire->NewShipName());
-        ship_id = Insert(ship);
-        battle_fleet->AddShip(ship_id);
     }
 #else
     throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");

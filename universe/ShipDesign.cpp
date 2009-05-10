@@ -702,9 +702,9 @@ int ShipDesign::ID() const {
     return m_id;
 }
 
-const std::string& ShipDesign::Name() const
+const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const
 {
-    if (m_name_desc_in_stringtable)
+    if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_name);
     else
         return m_name;
