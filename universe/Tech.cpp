@@ -16,7 +16,7 @@ std::string DumpIndent();
 extern int g_indent;
 
 namespace {
-    const bool CHEAP_AND_FAST_TECH_RESEARCH = true;    // makes all techs cost 1 RP and take 1 turn to research
+    const bool CHEAP_AND_FAST_TECH_RESEARCH = false;    // makes all techs cost 1 RP and take 1 turn to research
 }
 
 struct store_tech_impl

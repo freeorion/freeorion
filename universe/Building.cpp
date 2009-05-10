@@ -22,7 +22,7 @@ std::string DumpIndent();
 extern int g_indent;
 
 namespace {
-    const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = true;    // makes all buildings cost 1 PP and take 1 turn to build
+    const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = false;    // makes all buildings cost 1 PP and take 1 turn to build
 }
 
 namespace {
