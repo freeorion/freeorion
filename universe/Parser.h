@@ -8,6 +8,7 @@
 #include "Enums.h"
 #include "ShipDesign.h"
 #include "Tech.h"
+#include "../Empire/Empire.h"
 
 #include <boost/spirit.hpp>
 #include <boost/spirit/attribute.hpp>
@@ -225,7 +226,7 @@ struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*
     member8 name_desc_in_stringtable;
 };
 
-struct FleetPlanClosure : boost::spirit::closure<FleetPlanClosure, FleetPlan*, std::string,
+struct FleetPlanClosure : boost::spirit::closure<FleetPlanClosure, FleetPlan, std::string,
                                                  std::vector<std::string> >
 {
     member1 this_;

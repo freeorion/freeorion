@@ -21,13 +21,18 @@ class Empire;
   * ShipDesign names refer to designs listed in premade_ship_designs.txt.
   * Useful for saving or specifying prearranged combinations of prearranged
   * ShipDesigns to automatically put together, such as during universe creation.*/
-struct FleetPlan
+class FleetPlan
 {
+public:
     FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
               bool lookup_name_userstring = false);
     FleetPlan();
-    std::string                 name;
-    std::vector<std::string>    ship_designs;
+    const std::string&              Name() const;
+    const std::vector<std::string>& ShipDesigns() const;
+private:
+    std::string                 m_name;
+    std::vector<std::string>    m_ship_designs;
+    bool                        m_name_in_stringtable;
 };
 
 

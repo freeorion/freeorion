@@ -131,6 +131,16 @@ SD_MARK4_DESC
 Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.
 
 
+##############################
+# Predefined Starting Fleets #
+##############################
+
+FN_HOME_FLEET
+Home Fleet
+
+FN_BATTLE_FLEET
+Battle Fleet
+
 ##########################
 # Status Update Messages #
 ##########################

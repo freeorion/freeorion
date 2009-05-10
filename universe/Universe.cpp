@@ -2126,7 +2126,6 @@ namespace {
 
     const phoenix::function<store_ship_design_impl> store_ship_design_;
 
-
     class PredefinedShipDesignManager {
     public:
         typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
@@ -2264,6 +2263,97 @@ namespace {
         return PredefinedShipDesignManager::GetPredefinedShipDesignManager();
     }
 };
+
+namespace {
+    struct store_fleet_plan_impl
+    {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::vector<FleetPlan>& fleet_plans, const T& fleet_plan) const
+        {
+            fleet_plans.push_back(fleet_plan);
+        }
+    };
+
+    const phoenix::function<store_fleet_plan_impl> store_fleet_plan_;
+
+    class FleetPlanManager {
+    public:
+        typedef std::vector<FleetPlan>::const_iterator iterator;
+
+        /** \name Accessors */ //@{
+        /** returns iterator pointing to first plan. */
+        iterator    begin() const                           { return m_plans.begin(); }
+
+        /** returns iterator pointing one past last plan. */
+        iterator    end() const                             { return m_plans.end(); }
+        //@}
+
+        /** returns the instance of this singleton class; you should use the
+          * free function GetFleetPlanManager() instead */
+        static const FleetPlanManager& GetFleetPlanManager();
+
+    private:
+        FleetPlanManager();
+
+        std::vector<FleetPlan>      m_plans;
+
+        static FleetPlanManager*    s_instance;
+    };
+    // static(s)
+    FleetPlanManager* FleetPlanManager::s_instance = 0;
+
+    const FleetPlanManager& FleetPlanManager::GetFleetPlanManager() {
+        static FleetPlanManager manager;
+        return manager;
+    }
+
+    FleetPlanManager::FleetPlanManager() {
+        if (s_instance)
+            throw std::runtime_error("Attempted to create more than one FleetPlanManager.");
+
+        s_instance = this;
+
+        Logger().debugStream() << "Initializing FleetPlanManager";
+
+        std::string file_name = "starting_fleets.txt";
+        std::string input;
+
+        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        if (ifs) {
+            std::getline(ifs, input, '\0');
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return;
+        }
+
+        using namespace boost::spirit;
+        using namespace phoenix;
+        parse_info<const char*> result =
+            parse(input.c_str(),
+                  as_lower_d[*fleet_plan_p[store_fleet_plan_(var(m_plans), arg1)]]
+                  >> end_p,
+                  skip_p);
+        if (!result.full)
+            ReportError(input.c_str(), result);
+
+//#ifdef OUTPUT_PLANS_LIST
+        Logger().debugStream() << "Starting Fleet Plans:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const FleetPlan& p = *it;
+            Logger().debugStream() << " ... " << p.Name();
+        }
+//#endif
+    }
+
+    /** returns the singleton fleet plan manager */
+    const FleetPlanManager& GetFleetPlanManager() {
+        return FleetPlanManager::GetFleetPlanManager();
+    }
+};
+
 #endif  // FREEORION_BUILD_SERVER  (although the following functions should also only be used on the server)
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
                               SpecialsFrequency specials_freq, int players, int ai_players,
@@ -3163,7 +3253,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
     std::vector<GG::Clr> colors = EmpireColors();
 
-    const PredefinedShipDesignManager& predefined_ship_designs = GetPredefinedShipDesignManager();
+    const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
+    const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
 
     for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
         std::string empire_name = "";

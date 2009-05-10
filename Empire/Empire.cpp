@@ -210,19 +210,27 @@ namespace {
 ////////////////////////////////////////
 FleetPlan::FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                      bool lookup_name_userstring) :
-    name(""),
-    ship_designs(ship_design_names)
-{
-    if (lookup_name_userstring)
-        name = UserString(name);
-    else
-        name = name;
-}
+    m_name(fleet_name),
+    m_ship_designs(ship_design_names),
+    m_name_in_stringtable(lookup_name_userstring)
+{}
 
 FleetPlan::FleetPlan() :
-    name(""),
-    ship_designs()
+    m_name(""),
+    m_ship_designs(),
+    m_name_in_stringtable(false)
 {}
+
+const std::string& FleetPlan::Name() const {
+    if (m_name_in_stringtable)
+        return UserString(m_name);
+    else
+        return m_name;
+}
+
+const std::vector<std::string>& FleetPlan::ShipDesigns() const {
+    return m_ship_designs;
+}
 
 
 ////////////////////////////////////////

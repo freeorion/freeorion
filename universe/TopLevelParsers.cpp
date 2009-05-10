@@ -5,7 +5,6 @@
 #include "Effect.h"     // for Effect::EffectsGroup
 #include "Building.h"   // for Building
 #include "Special.h"    // for Special
-#include "../Empire/Empire.h"
 #include "Condition.h"
 #include "ShipDesign.h"
 
@@ -305,7 +304,7 @@ namespace {
               >> (name_p[push_back_(fleet_plan_p.ship_designs, arg1)] |
                   ('[' >> *(name_p[push_back_(fleet_plan_p.ship_designs, arg1)]) >> ']'))
              [fleet_plan_p.this_ =
-              new_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
+              construct_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
 
 
         return true;
