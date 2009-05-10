@@ -119,7 +119,8 @@ namespace {
         unlockable_item_type_p.add
             ("building",    UIT_BUILDING)
             ("shippart",    UIT_SHIP_PART)
-            ("shiphull",    UIT_SHIP_HULL);
+            ("shiphull",    UIT_SHIP_HULL)
+            ("tech",        UIT_TECH);
 
         tech_type_p.add
             ("theory",      TT_THEORY)

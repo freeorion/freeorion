@@ -1981,6 +1981,9 @@ void Empire::UnlockItem(const ItemSpec& item)
     case UIT_SHIP_HULL:
         AddHullType(item.name);
         break;
+    case UIT_TECH:
+        AddTech(item.name);
+        break;
     default:
         Logger().errorStream() << "Empire::UnlockItem : passed ItemSpec with unrecognized UnlockableItemType";
     }
@@ -2109,6 +2112,9 @@ void Empire::LockItem(const ItemSpec& item)
         break;
     case UIT_SHIP_HULL:
         RemoveHullType(item.name);
+        break;
+    case UIT_TECH:
+        RemoveTech(item.name);
         break;
     default:
         Logger().errorStream() << "Empire::LockItem : passed ItemSpec with unrecognized UnlockableItemType";

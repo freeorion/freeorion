@@ -2151,9 +2151,8 @@ namespace {
         bool        contains(const std::string& name) const { return find(name) != end(); };
         //@}
 
-        /** Adds designs in this manager between specified \a begin_it and
-          * \a end_it iterators to the specified \a empire using that Empire's
-          * AddShipDesign(ShipDesign*) function. */
+        /** Adds designs in this manager to the specified \a empire using that
+          * Empire's AddShipDesign(ShipDesign*) function. */
         void        AddShipDesignsToEmpire(Empire* empire) const;
 
         /** returns the instance of this singleton class; you should use the
@@ -2351,6 +2350,107 @@ namespace {
     /** returns the singleton fleet plan manager */
     const FleetPlanManager& GetFleetPlanManager() {
         return FleetPlanManager::GetFleetPlanManager();
+    }
+};
+
+namespace {
+    struct store_item_spec_impl
+    {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::vector<ItemSpec>& item_specs, const T& item_spec) const
+        {
+            item_specs.push_back(item_spec);
+        }
+    };
+
+    const phoenix::function<store_item_spec_impl> store_item_spec_;
+
+    class ItemSpecManager {
+    public:
+        typedef std::vector<ItemSpec>::const_iterator iterator;
+
+        /** \name Accessors */ //@{
+        /** returns iterator pointing to first item spec. */
+        iterator    begin() const                           { return m_items.begin(); }
+
+        /** returns iterator pointing one past last plan. */
+        iterator    end() const                             { return m_items.end(); }
+        //@}
+
+        /** Adds unlocked items in this manager to the specified \a empire
+          * using that Empire's UnlockItem function. */
+        void        AddItemsToEmpire(Empire* empire) const;
+
+        /** returns the instance of this singleton class; you should use the
+          * free function GetFleetPlanManager() instead */
+        static const ItemSpecManager& GetItemSpecManager();
+
+    private:
+        ItemSpecManager();
+
+        std::vector<ItemSpec>   m_items;
+
+        static ItemSpecManager* s_instance;
+    };
+    // static(s)
+    ItemSpecManager* ItemSpecManager::s_instance = 0;
+
+    const ItemSpecManager& ItemSpecManager::GetItemSpecManager() {
+        static ItemSpecManager manager;
+        return manager;
+    }
+
+    ItemSpecManager::ItemSpecManager() {
+        if (s_instance)
+            throw std::runtime_error("Attempted to create more than one ItemSpecManager.");
+
+        s_instance = this;
+
+        Logger().debugStream() << "Initializing ItemSpecManager";
+
+        std::string file_name = "preunlocked_items.txt";
+        std::string input;
+
+        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        if (ifs) {
+            std::getline(ifs, input, '\0');
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return;
+        }
+
+        using namespace boost::spirit;
+        using namespace phoenix;
+        parse_info<const char*> result =
+            parse(input.c_str(),
+                  as_lower_d[*item_spec_p[store_item_spec_(var(m_items), arg1)]]
+                  >> end_p,
+                  skip_p);
+        if (!result.full)
+            ReportError(input.c_str(), result);
+
+//#ifdef OUTPUT_ITEM_SPECS_LIST
+        Logger().debugStream() << "Starting Unlocked Item Specs:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const ItemSpec& item = *it;
+            Logger().debugStream() << " ... " << boost::lexical_cast<std::string>(item.type) << " : " << item.name;
+        }
+//#endif
+    }
+
+    void ItemSpecManager::AddItemsToEmpire(Empire* empire) const {
+        if (!empire)
+            return;
+        for (iterator it = begin(); it != end(); ++it)
+            empire->UnlockItem(*it);
+    }
+
+    /** returns the singleton item spec manager */
+    const ItemSpecManager& GetItemSpecManager() {
+        return ItemSpecManager::GetItemSpecManager();
     }
 };
 
@@ -3255,6 +3355,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
+    const ItemSpecManager&              starting_unlocked_items =   GetItemSpecManager();
 
     for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
         std::string empire_name = "";

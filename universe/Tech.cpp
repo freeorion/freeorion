@@ -287,7 +287,8 @@ std::string ItemSpec::Dump() const
     case UIT_BUILDING:  retval += "Building"; break;
     case UIT_SHIP_PART: retval += "ShipPart"; break;
     case UIT_SHIP_HULL: retval += "ShipHull"; break;
-    default:            retval += "?"; break;
+    case UIT_TECH:      retval += "Tech"    ; break;
+    default:            retval += "?"       ; break;
     }
     retval += " name = \"" + name + "\"\n";
     return retval;
