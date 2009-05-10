@@ -301,33 +301,37 @@ template <class Archive>
 void System::serialize(Archive& ar, const unsigned int version)
 {
     Visibility vis;
-    int orbits;
+    int orbits = 0;
     ObjectMultimap objects;
     StarlaneMap starlanes_wormholes;
+
     if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
-        if (Universe::ALL_OBJECTS_VISIBLE ||
-            vis == VIS_FULL_VISIBILITY) {
+
+        if (Universe::ALL_OBJECTS_VISIBLE || vis == VIS_FULL_VISIBILITY) {
             orbits = m_orbits;
             objects = m_objects;
             starlanes_wormholes = m_starlanes_wormholes;
+
         } else if (vis == VIS_PARTIAL_VISIBILITY) {
             orbits = m_orbits;
             objects = PartiallyVisibleObjects(Universe::s_encoding_empire);
             starlanes_wormholes = VisibleStarlanes(Universe::s_encoding_empire);
+
+        } else if (vis == VIS_BASIC_VISIBILITY) {
+            starlanes_wormholes = VisibleStarlanes(Universe::s_encoding_empire);
+
+        } else {
         }
     }
+
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(vis)
-        & BOOST_SERIALIZATION_NVP(m_star);
-    if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == VIS_PARTIAL_VISIBILITY || vis == VIS_FULL_VISIBILITY) {
-        ar  & BOOST_SERIALIZATION_NVP(orbits)
-            & BOOST_SERIALIZATION_NVP(objects)
-            & BOOST_SERIALIZATION_NVP(starlanes_wormholes);
-    } else {
-        orbits = 0;
-    }
+        & BOOST_SERIALIZATION_NVP(m_star)
+        & BOOST_SERIALIZATION_NVP(orbits)
+        & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(starlanes_wormholes);
+
     if (Archive::is_loading::value) {
         m_orbits = orbits;
         m_objects = objects;

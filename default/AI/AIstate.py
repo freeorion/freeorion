@@ -16,7 +16,6 @@ class AIstate(object):
 
     # - def getLostFleets (save fleets last turn, look if still there)
     #  => from AI interface SITREP?
-    # - - def cleanMissions
 
     # common variables
     # def colonisablePlanets (should be set at start of turn)

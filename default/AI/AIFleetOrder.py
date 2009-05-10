@@ -90,14 +90,6 @@ class AIFleetOrder(object):
                 if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
                     if self.__checkValidityShipInFleet(self.getTargetAITarget(), self.getSourceAITarget()):
                         return True
-            # wait for refuel
-            elif AIFleetOrderType.ORDER_WAIT_FOR_REFUEL == self.getAIFleetOrderType():
-                # with fleet
-                if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
-                    sourceAITargetTypeValid = True
-                # refuel in system
-                if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType():
-                    targetAITargetTypeValid = True
                 
             if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
                 return True
@@ -168,13 +160,6 @@ class AIFleetOrder(object):
     
                 fo.issueNewFleetOrder(str(shipID), shipID)
                 self.__setExecutionCompleted()
-            # wait for refuel
-            elif AIFleetOrderType.ORDER_WAIT_FOR_REFUEL == self.getAIFleetOrderType():
-                systemID = self.getTargetAITarget().getTargetID()
-                # TODO: refactor
-                # set move order to the same system where fleet is refueling
-                fo.issueFleetMoveOrder(fleetID, systemID)
-        
     
     def __str__(self):
         "returns describing string"

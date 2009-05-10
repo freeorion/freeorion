@@ -2470,7 +2470,8 @@ void MapWnd::RenderSystems()
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            if (circles) {
+            // render circles around systems that have at least one starlane, if circles are enabled.
+            if (circles && icon->GetSystem().Starlanes() > 0) {
                 glBegin(GL_LINE_STRIP);
                 CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
                 glEnd();

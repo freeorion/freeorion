@@ -214,7 +214,7 @@ namespace {
         return retval;
     }
 
-    void RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse, const GG::Clr& spec, double shine, 
+    void RenderSphere(double r, const GG::Clr& ambient, const GG::Clr& diffuse, const GG::Clr& spec, double shine,
                       boost::shared_ptr<GG::Texture> texture)
     {
         static GLUquadric* quad = gluNewQuadric();
@@ -432,9 +432,9 @@ private:
     Planet* GetPlanet();    ///< returns the planet with ID m_planet_id
     const Planet* GetPlanet() const;
 
-    int                     m_planet_id;                ///< id for the planet with is representet by this planet panel
+    int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
-    GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating un uncolonized planets
+    GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
@@ -588,7 +588,7 @@ namespace {
         if (-1 == (index=child_path.find_first_of('.')))
             return node.ContainsChild(child_path)?node.Child(child_path):XMLElement();
         else
-            return node.ContainsChild(child_path.substr(0,index)) ? 
+            return node.ContainsChild(child_path.substr(0,index)) ?
                 GetXMLChild(node.Child(child_path.substr(0, index)), child_path.substr(index + 1, child_path.length() - index - 1))
               : XMLElement();
     }
@@ -825,7 +825,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     AttachChild(m_button_colonize);
 
 
-    if (planet.Type() == PT_ASTEROIDS) 
+    if (planet.Type() == PT_ASTEROIDS)
         MoveChildDown(m_planet_graphic);
 
     const Planet* plt = GetUniverse().Object<const Planet>(m_planet_id);
@@ -998,7 +998,7 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
     Planet *planet = GetPlanet();
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false)));
-} 
+}
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -1018,7 +1018,7 @@ SidePanel::PlanetPanel::HilitingType SidePanel::PlanetPanel:: Hiliting() const
     return m_hiliting;
 }
 
-void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) 
+void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (InPlanet(pt))
     {
@@ -1130,7 +1130,7 @@ void SidePanel::PlanetPanel::ClickColonize()
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     const Planet *planet = GetPlanet();
-  
+
     if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
 
@@ -1139,10 +1139,10 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
-    if (popup.Run()) 
+    if (popup.Run())
         switch (popup.MenuID())
         {
-        case 1: 
+        case 1:
         { // rename planet
             std::string plt_name = planet->Name();
             CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);

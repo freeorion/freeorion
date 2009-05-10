@@ -218,15 +218,17 @@ System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjec
 
 Visibility System::GetVisibility(int empire_id) const
 {
-    // if system is at least partially owned by this empire it is fully visible, if it has been explored it is partially visible, 
-    // and otherwise it will be partially visible
-    Empire* empire = 0;
+    // if system is at least partially owned by this empire it is fully visible.
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return VIS_FULL_VISIBILITY;
-    else if ((empire = Empires().Lookup(empire_id)) && empire->HasExploredSystem(ID()))
+
+    // if system has been explored, it is partially visible
+    Empire* empire = empire = Empires().Lookup(empire_id);
+    if (empire && empire->HasExploredSystem(ID()))
         return VIS_PARTIAL_VISIBILITY;
-    else
-        return VIS_NO_VISIBITY;
+
+    // otherwise, basic visibility
+    return VIS_BASIC_VISIBILITY;
 }
 
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
@@ -515,8 +517,13 @@ System::lane_iterator System::end_lanes()
 System::StarlaneMap System::VisibleStarlanes(int empire_id) const
 {
     const Empire* empire = Empires().Lookup(empire_id);
+
+    // if indicated empire has explored this system, all starlanes are visible.
     if (empire->HasExploredSystem(ID()))
         return m_starlanes_wormholes;
+
+    // otherwise, only starlanes from this system to other systems that have 
+    // been explored are visible.
     StarlaneMap retval;
     for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
         if (empire->HasExploredSystem(it->first))

@@ -16,6 +16,10 @@ std::string DumpIndent();
 extern int g_indent;
 
 namespace {
+    const bool CHEAP_AND_FAST_SHIP_PRODUCTION = true;    // makes all ships cost 1 PP and take 1 turn to build
+}
+
+namespace {
     struct store_part_type_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
@@ -742,11 +746,17 @@ int ShipDesign::DesignedOnTurn() const {
 }
 
 double ShipDesign::Cost() const {
-    return m_build_cost;
+    if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
+        return m_build_cost;
+    else
+        return 1.0;
 }
 
 int ShipDesign::BuildTime() const {
-    return m_build_turns;
+    if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
+        return m_build_turns;
+    else
+        return 1;
 }
 
 double ShipDesign::StarlaneSpeed() const {

@@ -26,7 +26,7 @@ const int Fleet::ETA_UNKNOWN = (1 << 30);
 const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
 const int Fleet::ETA_NEVER = (1 << 30) - 2;
 
-Fleet::Fleet() : 
+Fleet::Fleet() :
     UniverseObject(),
     m_moving_to(INVALID_OBJECT_ID),
     m_speed(0.0),
@@ -117,7 +117,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         return retval;                                      // nowhere to go => empty path
     if (this->Speed() < FLEET_MOVEMENT_EPSILON) {
         retval.push_back(MovePathNode(this->X(), this->Y(), true, ETA_NEVER, this->SystemID(), UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID));
-        return retval;                                      // can't move => path is just this system with explanitory ETA
+        return retval;                                      // can't move => path is just this system with explanatory ETA
     }
 
     double fuel =       Fuel();
@@ -145,7 +145,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
                           UniverseObject::INVALID_OBJECT_ID,
                           UniverseObject::INVALID_OBJECT_ID);
         retval.push_back(node);
-        return retval;      // can't move => path is just this system with explanitory ETA
+        return retval;      // can't move => path is just this system with explanatory ETA
     }
 
 
@@ -195,9 +195,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
     // simulate fleet movement given known speed, starting position, fuel limit and systems on route
     // need to populate retval with MovePathNodes that indicate the correct position, whether this
-    // fleet will end a turn at the node, the turns it will take to reach the node, and (when appliable)
+    // fleet will end a turn at the node, the turns it will take to reach the node, and (when applicable)
     // the current (if at a system), previous and next system IDs at which the fleet will be.  the
-    // previou and next system ids are needed to know what starlane a given node is located on, if any.
+    // previous and next system ids are needed to know what starlane a given node is located on, if any.
     // nodes at systems don't need previous system ids to be valid, but should have next system ids
     // valid so that when rendering starlanes using the returned move path, lines departing a system
     // can be drawn on the correct side of the system icon
@@ -236,7 +236,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
         }
 
 
-        // find distnace to next system along path from current position
+        // find distance to next system along path from current position
         double dist_to_next_system = std::sqrt((next_x - cur_x)*(next_x - cur_x) + (next_y - cur_y)*(next_y - cur_y));
         //Logger().debugStream() << " ... dist to next system: " << dist_to_next_system;
 
@@ -306,7 +306,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
 
         if (end_turn_at_cur_position && (turns_taken + 1 >= TOO_LONG)) {
-            // exit loop before placing current node to simplfy post-loop processing: now all cases require a post-loop node to be added
+            // exit loop before placing current node to simplify post-loop processing: now all cases require a post-loop node to be added
             ++turns_taken;
             break;
         }
@@ -436,7 +436,7 @@ bool Fleet::CanChangeDirectionEnRoute() const
 
 bool Fleet::HasArmedShips() const
 {
-    for (Fleet::const_iterator it = begin(); it != end(); it++) {   
+    for (Fleet::const_iterator it = begin(); it != end(); it++) {
         if (GetUniverse().Object<Ship>(*it)->IsArmed())
             return true;
     }
@@ -445,7 +445,7 @@ bool Fleet::HasArmedShips() const
 
 bool Fleet::HasColonyShips() const
 {
-    for (Fleet::const_iterator it = begin(); it != end(); it++) {   
+    for (Fleet::const_iterator it = begin(); it != end(); it++) {
         if (GetUniverse().Object<Ship>(*it)->CanColonize())
             return true;
     }
@@ -495,7 +495,7 @@ void Fleet::SetRoute(const std::list<System*>& route)
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
 
     if (UnknownRoute())
-        throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unkown route.");
+        throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unknown route.");
 
     if (m_prev_system != SystemID() && m_prev_system == route.front()->ID() && !CanChangeDirectionEnRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");

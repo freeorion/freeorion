@@ -132,13 +132,13 @@ def assessShipRole(shipID):
 
     universe = fo.getUniverse()
     ship = universe.getShip(shipID)
-
-    if ship.design.name == "Scout": return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
-    if ship.design.name == "Colony Ship": return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
-    if ship.design.name == "Mark I": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
-    if ship.design.name == "Mark II": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
-    if ship.design.name == "Mark III": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
-    if ship.design.name == "Mark IV": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+    
+    if ship.design.name(True) == "Scout": return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
+    if ship.design.name(True) == "Colony Ship": return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+    if ship.design.name(True) == "Mark I": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+    if ship.design.name(True) == "Mark II": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+    if ship.design.name(True) == "Mark III": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+    if ship.design.name(True) == "Mark IV": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
 
     return AIShipRoleType.SHIP_ROLE_INVALID
 
@@ -180,6 +180,13 @@ def issueAIFleetOrdersForAIFleetMissions():
         
 def printSystems(systemIDs):
     universe = fo.getUniverse()
-    for systemID in systemIDs:
-        system = universe.getSystem(systemID)
-        print "    name:" + system.name + " id:" + str(systemID)
+    empire = fo.getEmpire()
+    fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+    for systemID in systemIDs:        
+        # determine if system is in supplied
+        suppliedSystem = ""
+        if systemID in fleetSupplyableSystemIDs:
+            suppliedSystem = " supplied"
+        
+        system = universe.getSystem(systemID)    
+        print "    name:" + system.name + " id:" + str(systemID) + suppliedSystem

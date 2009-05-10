@@ -18,7 +18,7 @@ class AIFleetMission(object):
         self.__aiFleetMissionTypes = {}
         for aiFleetMissionType in EnumsAI.getAIFleetMissionTypes():
             self.__aiFleetMissionTypes[aiFleetMissionType] = []
-    
+            
     def getFleetID(self):
         "getter"
         
@@ -200,8 +200,6 @@ class AIFleetMission(object):
             for aiTarget in allAITargets:
                 if not self.isValidFleetMissionAITarget(aiFleetMissionType, aiTarget):
                     self.removeAITarget(aiFleetMissionType, aiTarget)
-                    
-        self.__colonisingShipIDs = []
             
     def issueAIFleetOrders(self):
         "issues AIFleetOrders which can be issued in system and moves to next one if is possible"
@@ -248,7 +246,7 @@ class AIFleetMission(object):
                         self.appendAIFleetOrder(aiFleetOrder)
             
         for aiFleetOrder in aiFleetOrdersToVisitSystems:
-            self.appendAIFleetOrder(aiFleetOrder)                
+            self.appendAIFleetOrder(aiFleetOrder)
         
 def getFleetIDsFromAIFleetMissions(aiFleetMissions):
     result = []

@@ -5,7 +5,7 @@
 #include <boost/python.hpp>
 
 namespace {
-    // Research queue tests whether it contains a Tech but Python needs a __contains__ function that takes a 
+    // Research queue tests whether it contains a Tech but Python needs a __contains__ function that takes a
     // *Queue::Element.  This helper functions take an Element and returns the associated Tech.
     const Tech*         TechFromResearchQueueElement(const ResearchQueue::Element& element) {
         return element.tech;
@@ -62,7 +62,7 @@ namespace FreeOrionPython {
      * return_internal_reference<>                      when returning an object or data that is a member of the object
      *                                                  on which the function is called (and shares its lifetime)
      *
-     * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a 
+     * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a
      *                                                  member function where the returned object's lifetime is not
      *                                                  fixed to the lifetime of the object on which the function is
      *                                                  called
@@ -105,7 +105,8 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
-            .add_property("fleetSupplyableSystems", make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
+            .add_property("fleetSupplyableSystemIDs", make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
+            .add_property("supplyUnobstructedSystems", make_function(&Empire::SupplyUnobstructedSystems,return_internal_reference<>()))
         ;
 
 

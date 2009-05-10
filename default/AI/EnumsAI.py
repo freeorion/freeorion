@@ -72,15 +72,14 @@ def getAIFleetMissionTypes():
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
     ORDER_MOVE = 0
-    ORDER_WAIT_FOR_REFUEL = 1
-    ORDER_SPLIT_FLEET = 2
-    ORDER_MERGE_FLEET = 3
-    ORDER_COLONISE = 4
-    ORDER_ATACK = 5
-    ORDER_DEFEND = 6
+    ORDER_SPLIT_FLEET = 1
+    ORDER_MERGE_FLEET = 2
+    ORDER_COLONISE = 3
+    ORDER_ATACK = 4
+    ORDER_DEFEND = 5
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 6)
+    return __getInterval(0, 5)
 
 
 class AIShipRoleType(object):

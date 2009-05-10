@@ -2,7 +2,7 @@ from EnumsAI import AITargetType
 import freeOrionAIInterface as fo
 
 class AITarget(object):
-    "stores information about AI target"
+    "stores information about AI target - its id and type"
 
     def __init__(self, aiTargetType, targetID):
         "constructor"
@@ -107,6 +107,8 @@ class AITarget(object):
     def getRequiredSystemAITargets(self):
         "returns all system AITargets required to visit in this object"
         
+        # TODO: add parameter turn
+        
         result = []
         if AITargetType.TARGET_SYSTEM == self.getAITargetType():
             result.append(self)
@@ -115,6 +117,19 @@ class AITarget(object):
             universe = fo.getUniverse()
             planet = universe.getPlanet(self.getTargetID())
             aiTarget = AITarget(AITargetType.TARGET_SYSTEM, planet.systemID)
+            
+            result.append(aiTarget)
+            
+        elif AITargetType.TARGET_FLEET == self.getAITargetType():
+            # Fleet systemID is where is fleet going.
+            # If fleet is going nowhere, then it is location of fleet
+            universe = fo.getUniverse()
+            fleet = universe.getFleet(self.getTargetID())
+            systemID = fleet.nextSystemID
+            if (systemID == -1):
+                systemID = fleet.systemID
+            aiTarget = AITarget(AITargetType.TARGET_SYSTEM, systemID)
+            
             result.append(aiTarget)
         
         return result

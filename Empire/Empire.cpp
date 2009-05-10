@@ -44,11 +44,11 @@ namespace {
             const Tech* tech = it->tech;
             const std::string name = tech->Name();
             std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(name);
-            if (status_it == research_status.end()) 
+            if (status_it == research_status.end())
                 throw std::runtime_error("SetTechQueueElementSpending couldn't find tech!");
             bool researchable = false;
             if (status_it->second == TS_RESEARCHABLE) researchable = true;
-                        
+
             if (researchable) {
                 std::map<std::string, double>::const_iterator progress_it = research_progress.find(name);
                 double progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
@@ -74,7 +74,7 @@ namespace {
     }
 
     // sets the .allocated_pp value for each Element in the passed ProductionQueue \a queue.  Elements are allocated PP based on their
-    // need, the limits they can be given per turn, and the amount available at their production location (which is itself limited by 
+    // need, the limits they can be given per turn, and the amount available at their production location (which is itself limited by
     // the resource supply system groups that are able to exchange resources with the build location and the amount of minerals and
     // industry produced in the group).  Elements will not receive funding if they cannot be built by \a empire this turn, or can't be
     // built at their build location.
@@ -903,7 +903,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_id(ID),
     m_name(name),
     m_player_name(player_name),
-    m_color(color), 
+    m_color(color),
     m_homeworld_id(homeworld_id),
     m_capitol_id(homeworld_id),
     m_resource_pools(),
@@ -1041,7 +1041,7 @@ bool Empire::ShipDesignAvailable(int ship_design_id) const
     const ShipDesign* design = GetShipDesign(ship_design_id);
     if (!design) return false;
 
-    // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech 
+    // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech
     // requirements might prevent it from being built.
     const std::vector<std::string>& parts = design->Parts();
     for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
@@ -1198,7 +1198,7 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
     else if (item.build_type == BT_SHIP)
         return BuildableItem(item.build_type, item.design_id, location);
     else
-        throw std::invalid_argument("Empire::BuildableItem was passed a ProductionItem with an invalid BuildType"); 
+        throw std::invalid_argument("Empire::BuildableItem was passed a ProductionItem with an invalid BuildType");
     return false;
 }
 int Empire::NumSitRepEntries() const
@@ -1328,7 +1328,7 @@ void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes)
     for (std::map<int, int>::const_iterator it = propegating_fleet_supply_ranges.begin(); it != propegating_fleet_supply_ranges.end(); ++it)
         propegating_systems_list.push_back(it->first);
 
-    // iterate through list of accessable systems, processing each in order it was added (like breadth first search) until no
+    // iterate through list of accessible systems, processing each in order it was added (like breadth first search) until no
     // systems are left able to further propregate
     std::list<int>::iterator sys_list_it = propegating_systems_list.begin();
     std::list<int>::iterator sys_list_end = propegating_systems_list.end();
@@ -1337,7 +1337,7 @@ void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes)
         int cur_sys_range = propegating_fleet_supply_ranges[cur_sys_id];    // range away from this system that supplies can be transported
 
         if (cur_sys_range <= 0) {
-            // can't propegate supply out a system that 
+            // can't propegate supply out a system that
             ++sys_list_it;
             continue;
         }
@@ -1393,7 +1393,7 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     //std::cout << "Empire::UpdateResourceSupply for empire " << this->Name() << std::endl;
 
     // need to get a set of sets of systems that can exchange resources.  some sets may be just one system,
-    // in which resources can be exchanged between UniverseObjects producing or consuming them, but which 
+    // in which resources can be exchanged between UniverseObjects producing or consuming them, but which
     // can't exchange with any other systems.
 
     m_resource_supply_groups.clear();
@@ -1412,8 +1412,8 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
 
 
     // loop through systems, getting set of systems that can be supplied by each.  (may be an empty set for
-    // some systems that cannot supply within themselves, or may contain only source systesm, or could contain
-    // multiple other systsms)
+    // some systems that cannot supply within themselves, or may contain only source systems, or could contain
+    // multiple other systems)
     //std::cout << " ... m_supply_unobstructed_systems.size(): " << m_supply_unobstructed_systems.size() << std::endl;
     for (std::set<int>::const_iterator source_sys_it = m_supply_unobstructed_systems.begin(); source_sys_it != m_supply_unobstructed_systems.end(); ++source_sys_it) {
         int source_sys_id = *source_sys_it;
@@ -1900,7 +1900,7 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
 
     Logger().debugStream() << "Empire::ConquerBuildsAtLocationFromEmpire: conquering items located at " << location_id << " to empire " << m_id;
     /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
-        as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build 
+        as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build
         queue of their current empire */
 
     for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
@@ -2038,7 +2038,7 @@ std::string Empire::NewShipName()
 void Empire::AddShipDesign(int ship_design_id)
 {
     /* Check if design id is valid.  that is, check that it corresponds to an existing shipdesign in the
-       universe.  On clients, this means that this empire knows about this ship design.  On the server, 
+       universe.  On clients, this means that this empire knows about this ship design.  On the server,
        all existing ship designs will be valid, so this just adds this design's id to those that this empire
        will remember */
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
@@ -2670,7 +2670,7 @@ void Empire::UpdateFoodDistribution()
 
 
     // after changing food distribution, population growth predictions may need to be redone
-    // by calling UpdatePopulationGrowth()  
+    // by calling UpdatePopulationGrowth()
 
     m_resource_pools[RE_FOOD]->ChangedSignal();
 }

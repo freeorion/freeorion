@@ -30,7 +30,18 @@ namespace {
             retval.push_back((*it)->ID());
         return retval;
     }
+
     boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
+
+    std::vector<int>        ShortestPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
+        std::pair<std::list<System*>, int> path = universe->ShortestPath(start_sys, end_sys, empire_id);
+        std::vector<int> retval;
+        for (std::list<System*>::const_iterator it = path.first.begin(); it != path.first.end(); ++it)
+            retval.push_back((*it)->ID());
+        return retval;
+    }
+
+    boost::function<std::vector<int>(const Universe*, int, int, int)> ShortestPathFunc =          &ShortestPath;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
@@ -78,7 +89,7 @@ namespace FreeOrionPython {
      * return_internal_reference<>                      when returning an object or data that is a member of the object
      *                                                  on which the function is called (and shares its lifetime)
      *
-     * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a 
+     * return_value_policy<reference_existing_object>   when returning an object from a non-member function, or a
      *                                                  member function where the returned object's lifetime is not
      *                                                  fixed to the lifetime of the object on which the function is
      *                                                  called
@@ -110,6 +121,12 @@ namespace FreeOrionPython {
 
             .def("leastJumpsPath",              make_function(
                                                     LeastJumpsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
+                                                ))
+
+            .def("shortestPath",                make_function(
+                                                    ShortestPathFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
                                                 ))
@@ -160,7 +177,7 @@ namespace FreeOrionPython {
         ///////////////////
         class_<Fleet, bases<UniverseObject>, noncopyable>("fleet", no_init)
             .add_property("fuel",                       &Fleet::Fuel)
-            .add_property("maxFuel",                    &Fleet::MaxFuel)    
+            .add_property("maxFuel",                    &Fleet::MaxFuel)
             .add_property("finalDestinationID",         &Fleet::FinalDestinationID)
             .add_property("previousSystemID",           &Fleet::PreviousSystemID)
             .add_property("nextSystemID",               &Fleet::NextSystemID)
@@ -170,7 +187,7 @@ namespace FreeOrionPython {
             .add_property("hasColonyShips",             &Fleet::HasColonyShips)
             .add_property("numShips",                   &Fleet::NumShips)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
-            
+
         ;
 
         //////////////////
@@ -191,7 +208,7 @@ namespace FreeOrionPython {
         //////////////////
         class_<ShipDesign, noncopyable>("shipDesign", no_init)
             .add_property("id",                 make_function(&ShipDesign::ID,                  return_value_policy<return_by_value>()))
-            .add_property("name",               make_function(&ShipDesign::Name,                return_value_policy<copy_const_reference>()))
+            .def("name",                        make_function(&ShipDesign::Name,                return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&ShipDesign::Description,         return_value_policy<copy_const_reference>()))
             .add_property("designedByEmpireID", make_function(&ShipDesign::DesignedByEmpire,    return_value_policy<return_by_value>()))
             .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,      return_value_policy<return_by_value>()))

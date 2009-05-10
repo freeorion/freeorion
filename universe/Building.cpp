@@ -22,6 +22,10 @@ std::string DumpIndent();
 extern int g_indent;
 
 namespace {
+    const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = true;    // makes all buildings cost 1 PP and take 1 turn to build
+}
+
+namespace {
     struct store_building_type_impl
     {
         template <class T1, class T2>
@@ -188,12 +192,18 @@ std::string BuildingType::Dump() const
 
 double BuildingType::BuildCost() const
 {
-    return m_build_cost;
+    if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
+        return m_build_cost;
+    else
+        return 1.0;
 }
 
 int BuildingType::BuildTime() const
 {
-    return m_build_time;
+    if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
+        return m_build_time;
+    else
+        return 1.0;
 }
 
 double BuildingType::MaintenanceCost() const
