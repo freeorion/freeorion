@@ -748,7 +748,7 @@ void ShipDesignOrder::ExecuteImpl() const
         std::vector<Ship*> ship_vec = GetUniverse().FindObjects<Ship>();
         bool known = false;
         for (std::vector<Ship*>::const_iterator it = ship_vec.begin(); it != ship_vec.end(); ++it) {
-            if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != VIS_NO_VISIBITY) {
+            if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != VIS_NO_VISIBILITY) {
                 if ((*it)->DesignID() == m_design_id) {
                     known = true;
                     break;

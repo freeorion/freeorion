@@ -1259,7 +1259,7 @@ bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const Unive
 {
     bool retval = false;
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target)) != VIS_NO_VISIBITY)
+        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target)) != VIS_NO_VISIBILITY)
             return true;
     }
     return retval;

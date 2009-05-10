@@ -218,7 +218,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
             int obj_id = *it;
             const UniverseObject* obj = universe.Object(obj_id);
-            if (obj->GetVisibility(Universe::s_encoding_empire) != VIS_NO_VISIBITY)
+            if (obj->GetVisibility(Universe::s_encoding_empire) != VIS_NO_VISIBILITY)
                 buildings.insert(obj_id);
         }
     }

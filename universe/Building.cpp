@@ -91,7 +91,7 @@ Visibility Building::GetVisibility(int empire_id) const {
     if (planet)
         return planet->GetVisibility(empire_id);
     else
-        return VIS_NO_VISIBITY;
+        return VIS_NO_VISIBILITY;
 }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const

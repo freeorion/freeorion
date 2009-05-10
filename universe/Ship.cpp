@@ -64,13 +64,13 @@ Fleet* Ship::GetFleet() const {
 }
 
 Visibility Ship::GetVisibility(int empire_id) const {
-    Visibility vis = VIS_NO_VISIBITY;
+    Visibility vis = VIS_NO_VISIBILITY;
 
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         vis = VIS_FULL_VISIBILITY;
 
     // Ship is visible if its fleet is visible
-    Visibility retval = FleetID() == INVALID_OBJECT_ID ? VIS_NO_VISIBITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
+    Visibility retval = FleetID() == INVALID_OBJECT_ID ? VIS_NO_VISIBILITY : (GetFleet() ? GetFleet()->GetVisibility(empire_id) : vis);
     return retval;
 }
 

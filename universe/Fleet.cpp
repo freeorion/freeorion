@@ -64,20 +64,20 @@ Visibility Fleet::GetVisibility(int empire_id) const
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {
         return VIS_FULL_VISIBILITY;
     } else {
-        // A fleet is visible to another player, iff
-        // the previous system on the route or the next system on the route
-        // is visible to the player.
+        // A fleet is visible to another player, if
+        // the fleet is in a system with partial or full visibility, or
+        // the previous system on the route or the next system on the route is visible to the player.
         System * system;
         if ((system = GetUniverse().Object<System>(SystemID())) &&
-            system->GetVisibility(empire_id) != VIS_NO_VISIBITY)
+            system->GetVisibility(empire_id) > VIS_BASIC_VISIBILITY)
             return VIS_PARTIAL_VISIBILITY;
         if ((system = GetUniverse().Object<System>(NextSystemID())) &&
-            system->GetVisibility(empire_id) != VIS_NO_VISIBITY)
+            system->GetVisibility(empire_id) > VIS_BASIC_VISIBILITY)
             return VIS_PARTIAL_VISIBILITY;
         if ((system = GetUniverse().Object<System>(PreviousSystemID())) &&
-            system->GetVisibility(empire_id) != VIS_NO_VISIBITY)
+            system->GetVisibility(empire_id) > VIS_BASIC_VISIBILITY)
             return VIS_PARTIAL_VISIBILITY;
-        return VIS_NO_VISIBITY;
+        return VIS_NO_VISIBILITY;
     }
 }
 

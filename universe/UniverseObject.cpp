@@ -183,7 +183,7 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
 
 Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? VIS_FULL_VISIBILITY : VIS_NO_VISIBITY;
+    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? VIS_FULL_VISIBILITY : VIS_NO_VISIBILITY;
 }
 
 const std::string& UniverseObject::PublicName(int empire_id) const

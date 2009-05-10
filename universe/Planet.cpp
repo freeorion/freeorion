@@ -210,7 +210,7 @@ Visibility Planet::GetVisibility(int empire_id) const
     if (system)
         return system->GetVisibility(empire_id);
     else
-        return VIS_NO_VISIBITY;
+        return VIS_NO_VISIBILITY;
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
