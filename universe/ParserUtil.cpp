@@ -2,6 +2,7 @@
 
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
+#include "../util/AppInterface.h"
 
 #include <cstring>
 
@@ -150,7 +151,7 @@ namespace {
     bool dummy = Init();
 }
 
-void ReportError(std::ostream& os, const char* input, const parse_info<const char*>& result)
+void ReportError(const char* input, const parse_info<const char*>& result)
 {
     int line = 1;
     const char* line_first = result.stop;
@@ -167,8 +168,12 @@ void ReportError(std::ostream& os, const char* input, const parse_info<const cha
     while (line_last < input + input_length && *line_last != '\n') {
         ++line_last;
     }
-    os << "error at or after the indicated point on line " << line << ":\n"
-       << std::string(line_first, line_last) << "\n"
-       << std::string(result.stop - line_first, ' ') << "^\n"
-       << std::endl;
+    std::cerr              << "error at or after the indicated point on line " << line << ":" << std::endl;
+    std::cerr              << std::string(line_first, line_last) << "" << std::endl;
+    std::cerr              << std::string(result.stop - line_first, ' ') << "^" << std::endl << std::endl;
+
+    Logger().errorStream() << "error at or after the indicated point on line " << line << ":";
+    Logger().errorStream() << std::string(line_first, line_last) << "";
+    Logger().errorStream() << std::string(result.stop - line_first, ' ') << "^";
+    Logger().errorStream() << " ";
 }

@@ -443,7 +443,7 @@ TechManager::TechManager()
               >> end_p,
               skip_p);
     if (!result.full)
-        ReportError(std::cerr, input.c_str(), result);
+        ReportError(input.c_str(), result);
 
     std::set<std::string> empty_defined_categories;
     for (std::map<std::string, TechCategory*>::iterator map_it = m_categories.begin(); map_it != m_categories.end(); ++map_it) {

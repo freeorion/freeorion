@@ -12,7 +12,13 @@ ShipDesign
     description = "SD_COLONY_SHIP_DESC"
     lookup_strings = true
     hull = "SH_MEDIUM"
-    parts = "CO_COLONY_POD"
+    parts = [
+        ""
+        ""
+        ""
+        ""
+        "CO_COLONY_POD"
+    ]
     graphic = "misc/colony1.png"
     model = ""
 
@@ -57,10 +63,10 @@ ShipDesign
     model = ""
 
 ShipDesign
-    name = "SD_LARGE"
+    name = "SD_MARK4"
     description = "SD_MARK4_DESC"
     lookup_strings = true
-    hull = "SH_SMALL"
+    hull = "SH_LARGE"
     parts = [
         "DT_OPTICAL_SENSORS"
         "SR_ION_CANNON"

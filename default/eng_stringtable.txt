@@ -89,6 +89,48 @@ INTERCEPTOR
 Interceptor
 
 
+###########################
+# Predefined Ship Designs #
+###########################
+# in premade_ship_designs.txt
+
+SD_SCOUT
+Scout
+
+SD_SCOUT_DESC
+Small and cheap unarmed vessel designed for recon and exploration.
+
+SD_COLONY_SHIP
+Colony Ship
+
+SD_COLONY_SHIP_DESC
+Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.
+
+SD_MARK1
+Mark I
+
+SD_MARK1_DESC
+Affordable armed patrol frigate.
+
+SD_MARK2
+Mark II
+
+SD_MARK2_DESC
+Cruiser with strong defensive and offensive capabilities.
+
+SD_MARK3
+Mark III
+
+SD_MARK3_DESC
+Advanced cruiser with heavy weaponry and armor to do the dirty work.
+        
+SD_MARK4
+Mark IV
+
+SD_MARK4_DESC
+Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.
+
+
 ##########################
 # Status Update Messages #
 ##########################

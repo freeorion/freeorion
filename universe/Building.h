@@ -114,7 +114,8 @@ public:
     typedef std::map<std::string, BuildingType*>::const_iterator iterator;
 
     /** \name Accessors */ //@{
-    /** returns the building type with the name \a name; you should use the free function GetBuildingType() instead */
+    /** returns the building type with the name \a name; you should use the
+      * free function GetBuildingType() instead, mainly to save some typing. */
     const BuildingType* GetBuildingType(const std::string& name) const;
 
     /** iterator to the first building type */

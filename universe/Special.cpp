@@ -81,7 +81,7 @@ namespace {
                       >> end_p,
                       skip_p);
             if (!result.full)
-                ReportError(std::cerr, input.c_str(), result);
+                ReportError(input.c_str(), result);
         }
         std::map<std::string, Special*> m_specials;
         std::set<std::string> m_planet_special_names;

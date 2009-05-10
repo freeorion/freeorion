@@ -16,10 +16,11 @@ class BuildingType;
 class ShipDesign;
 class Empire;
 
-/** A human readable name for, and set of human non-readable names of predefined
-  * ShipDesigns in premade_ship_designs.txt to put together to make a fleet.
-  * Useful for saving or specifying prearranged combinations of prearranged ShipDesigns
-  * to automatically put together, such as during universe creation. */
+/** A combination of names of ShipDesign that can be put together to make a
+  * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
+  * ShipDesign names refer to designs listed in premade_ship_designs.txt.
+  * Useful for saving or specifying prearranged combinations of prearranged
+  * ShipDesigns to automatically put together, such as during universe creation.*/
 struct FleetPlan
 {
     FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,

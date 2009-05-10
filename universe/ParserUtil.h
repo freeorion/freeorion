@@ -57,6 +57,6 @@ extern boost::spirit::symbols<CombatFighterType>        combat_fighter_type_p;
 extern boost::spirit::symbols<ShipPartClass>            part_class_p;
 extern boost::spirit::symbols<ShipSlotType>             slot_type_p;
 
-void ReportError(std::ostream& os, const char* input, const boost::spirit::parse_info<const char*>& result);
+void ReportError(const char* input, const boost::spirit::parse_info<const char*>& result);
 
 #endif // _ParserUtil_h_

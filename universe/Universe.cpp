@@ -2109,15 +2109,162 @@ namespace Delauney {
 }
 
 namespace {
+    struct store_ship_design_impl
+    {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::map<std::string, ShipDesign*>& ship_designs, const T& ship_design) const
+        {
+            if (ship_designs.find(ship_design->Name()) != ship_designs.end()) {
+                std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + ship_design->Name();
+                throw std::runtime_error(error_str.c_str());
+            }
+            ship_designs[ship_design->Name()] = ship_design;
+        }
+    };
 
-    /** externally defined ship classes to give to new empires */
-    std::vector<const ShipDesign*>    new_empire_ship_designs;
+    const phoenix::function<store_ship_design_impl> store_ship_design_;
 
-    /** externally defined combinations of externally defined ship classes, or
-      * fleet plans, to give to new empires */
-    std::vector<FleetPlan>      new_empire_fleets;
+
+    class PredefinedShipDesignManager {
+    public:
+        typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
+
+        /** \name Accessors */ //@{
+        /** returns new copy of ShipDesign with name \a name.  caller gains
+          * ownership of returned pointer.  returned ShipDesign can be 
+          * inserted into an empire using Empire::AddShipDesign(ShipDesign*)
+          * which also inserts it into the Universe, which takes ownership. */
+        ShipDesign* CopyShipDesign(const std::string& name, int designing_empire_id = ALL_EMPIRES) const;
+
+        /** returns iterator pointing to first ship design. */
+        iterator    begin() const                           { return m_ship_designs.begin(); }
+
+        /** returns iterator pointing one past last ship design. */
+        iterator    end() const                             { return m_ship_designs.end(); }
+
+        /** returns iterator pointing to ship design with indicated \a name or
+          * returns end() if no ship design exists with that name. */
+        iterator    find(const std::string& name) const     { return m_ship_designs.find(name); }
+
+        /** returns true iff a ship design with the indicated \a name exists. */
+        bool        contains(const std::string& name) const { return find(name) != end(); };
+        //@}
+
+        /** Adds designs in this manager between specified \a begin_it and
+          * \a end_it iterators to the specified \a empire using that Empire's
+          * AddShipDesign(ShipDesign*) function. */
+        void        AddShipDesignsToEmpire(Empire* empire) const;
+
+        /** returns the instance of this singleton class; you should use the
+          * free function GetPredefinedShipDesignManager() instead */
+        static const PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+
+    private:
+        PredefinedShipDesignManager();
+        ~PredefinedShipDesignManager();
+
+        std::map<std::string, ShipDesign*>    m_ship_designs;
+
+        static PredefinedShipDesignManager*   s_instance;
+    };
+    // static(s)
+    PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = 0;
+
+    const PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesignManager() {
+        static PredefinedShipDesignManager manager;
+        return manager;
+    }
+
+    PredefinedShipDesignManager::PredefinedShipDesignManager() {
+        if (s_instance)
+            throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
+
+        s_instance = this;
+
+        Logger().debugStream() << "Initializing PredefinedShipDesignManager";
+
+        std::string file_name = "premade_ship_designs.txt";
+        std::string input;
+
+        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        if (ifs) {
+            std::getline(ifs, input, '\0');
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return;
+        }
+
+        using namespace boost::spirit;
+        using namespace phoenix;
+        parse_info<const char*> result =
+            parse(input.c_str(),
+                  as_lower_d[*ship_design_p[store_ship_design_(var(m_ship_designs), arg1)]]
+                  >> end_p,
+                  skip_p);
+        if (!result.full)
+            ReportError(input.c_str(), result);
+
+//#ifdef OUTPUT_DESIGNS_LIST
+        Logger().debugStream() << "Predefined Ship Designs:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const ShipDesign* d = it->second;
+            Logger().debugStream() << " ... " << d->Name();
+        }
+//#endif
+    }
+
+    PredefinedShipDesignManager::~PredefinedShipDesignManager() {
+        for (std::map<std::string, ShipDesign*>::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
+            delete it->second;
+    }
+
+    ShipDesign* PredefinedShipDesignManager::CopyShipDesign(const std::string& name, int designing_empire_id) const {
+        ShipDesign* retval = NULL;
+        if (m_ship_designs.empty())
+            return retval;
+
+        std::map<std::string, ShipDesign*>::const_iterator it = m_ship_designs.find(name);
+        if (it == m_ship_designs.end())
+            return retval;
+
+        ShipDesign* d = it->second;
+
+        retval = new ShipDesign(d->Name(), d->Description(), designing_empire_id,
+                                d->DesignedOnTurn(), d->Hull(), d->Parts(),
+                                d->Graphic(), d->Model(), false);
+
+        return retval;
+    }
+
+    void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire) const {
+        if (!empire)
+            return;
+
+        for (iterator it = begin(); it != end(); ++it) {
+            ShipDesign* d = it->second;
+
+            ShipDesign* copy = new ShipDesign(d->Name(), d->Description(), empire->EmpireID(),
+                                              d->DesignedOnTurn(), d->Hull(), d->Parts(),
+                                              d->Graphic(), d->Model(), false);
+
+            int design_id = empire->AddShipDesign(copy);
+
+            if (design_id == UniverseObject::INVALID_OBJECT_ID) {
+                delete copy;
+                Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
+            }
+        }
+    }
+
+    /** returns the singleton building type manager */
+    const PredefinedShipDesignManager& GetPredefinedShipDesignManager() {
+        return PredefinedShipDesignManager::GetPredefinedShipDesignManager();
+    }
 };
-#endif
+#endif  // FREEORION_BUILD_SERVER  (although the following functions should also only be used on the server)
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
                               SpecialsFrequency specials_freq, int players, int ai_players,
                               const std::map<int, PlayerSetupData>& player_setup_data)
@@ -3016,6 +3163,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
     std::vector<GG::Clr> colors = EmpireColors();
 
+    const PredefinedShipDesignManager& predefined_ship_designs = GetPredefinedShipDesignManager();
+
     for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
         std::string empire_name = "";
 
@@ -3056,6 +3205,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
                 empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
             }
         }
+
+        Logger().debugStream() << "creating empire: " << empire_name;
 
         int home_planet_id = homeworlds[i];
 

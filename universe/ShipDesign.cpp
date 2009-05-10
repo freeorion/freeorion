@@ -291,7 +291,7 @@ PartTypeManager::PartTypeManager() {
               >> end_p,
               skip_p);
     if (!result.full)
-        ReportError(std::cerr, input.c_str(), result);
+        ReportError(input.c_str(), result);
 }
 
 PartTypeManager::~PartTypeManager()
@@ -598,7 +598,7 @@ HullTypeManager::HullTypeManager() {
               >> end_p,
               skip_p);
     if (!result.full)
-        ReportError(std::cerr, input.c_str(), result);
+        ReportError(input.c_str(), result);
 }
 
 HullTypeManager::~HullTypeManager()
@@ -685,8 +685,16 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_max_non_PD_weapon_range(0.0),
     m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
-    if (!ValidDesign(m_hull, m_parts))
+    // expand parts list to have empty values if fewer parts are given than hull has slots
+    if (const HullType* hull = GetHullType(m_hull)) {
+        if (m_parts.size() < hull->NumSlots())
+            m_parts.resize(hull->NumSlots(), "");
+    }
+
+    if (!ValidDesign(m_hull, m_parts)) {
         Logger().errorStream() << "constructing an invalid ShipDesign!";
+        Logger().errorStream() << Dump();
+    }
     BuildStatCaches();
 }
 
@@ -913,12 +921,16 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
     // ensure hull type exists and has exactly enough slots for passed parts
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
-    if (!hull_type)
+    if (!hull_type) {
+        Logger().debugStream() << "ShipDesign::ValidDesign: hull not found: " << hull;
         return false;
+    }
 
     unsigned int size = parts.size();
-    if (size != hull_type->NumSlots())
+    if (size > hull_type->NumSlots()) {
+        Logger().debugStream() << "ShipDesign::ValidDesign: given " << size << " parts for hull with " << hull_type->NumSlots() << " slots";
         return false;
+    }
 
     const std::vector<HullType::Slot>& slots = hull_type->Slots();
 
@@ -930,13 +942,17 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
             continue;   // if part slot is empty, ignore - doesn't invalidate design
 
         const PartType* part = part_manager.GetPartType(part_name);
-        if (!part)
+        if (!part) {
+            Logger().debugStream() << "ShipDesign::ValidDesign: part not found: " << part_name;
             return false;
+        }
 
         // verify part can mount in indicated slot
         ShipSlotType slot_type = slots[i].type;
-        if (!(part->CanMountInSlotType(slot_type)))
+        if (!(part->CanMountInSlotType(slot_type))) {
+            Logger().debugStream() << "ShipDesign::ValidDesign: part " << part_name << " can't be mounted in " << boost::lexical_cast<std::string>(slot_type) << " slot";
             return false;
+        }
     }
 
     return true;
@@ -1029,8 +1045,8 @@ std::string ShipDesign::Dump() const
 {
     std::string retval = DumpIndent() + "ShipDesign\n";
     ++g_indent;
-    retval += DumpIndent() + "name = \"" + Name() + "\"\n";
-    retval += DumpIndent() + "description = \"" + Description() + "\"\n";
+    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
     retval += DumpIndent() + "lookup_strings = " + (m_name_desc_in_stringtable ? "true" : "false") + "\n";
     retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
     retval += DumpIndent() + "parts = ";

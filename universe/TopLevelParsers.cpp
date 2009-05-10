@@ -296,8 +296,7 @@ namespace {
                                                     val(0),             // creation turn
                                                     ship_design_p.hull, ship_design_p.parts,
                                                     ship_design_p.graphic, ship_design_p.model,
-                                                    ship_design_p.name_desc_in_stringtable
-                                                   )];
+                                                    ship_design_p.name_desc_in_stringtable)];
 
          fleet_plan_p =
              (str_p("fleet")
