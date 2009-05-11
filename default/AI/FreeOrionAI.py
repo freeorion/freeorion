@@ -22,7 +22,6 @@ def initFreeOrionAI():
 def startNewGame():
     print "New game started"
 
-    empireID = fo.empireID()
     universe = fo.getUniverse()
 
     # initialize AIstate
@@ -33,26 +32,36 @@ def startNewGame():
     # split all fleets
     for fleetID in universe.fleetIDs: FleetUtilsAI.splitFleet(fleetID)
 
-    # assign roles to ships
-    shipIDs = []
+    identifyShipDesigns()
+    identifyFleetsRoles()
+    
 
+def identifyShipDesigns():
+    "identify ship designs"
+    
+    shipIDs = []
+    
+    universe = fo.getUniverse()
+    
     for fleetID in universe.fleetIDs:
         fleet = universe.getFleet(fleetID)
 
-        if not fleet.whollyOwnedBy(empireID): continue
         for ID in fleet.shipIDs: shipIDs = shipIDs + [ID]
 
     for shipID in shipIDs:
         ship = universe.getShip(shipID)
-        foAIstate.addShipRole(ship.design.id, FleetUtilsAI.assessShipRole(shipID))
-        # print str(ship.design.id) + ": " + FleetUtilsAI.assessShipRole(shipID)
-
+        shipRole = FleetUtilsAI.assessShipRole(shipID)
+        foAIstate.addShipRole(ship.design.id, shipRole)
+        # print str(ship.design.id) + ": " + str(shipRole)
+        
+def identifyFleetsRoles():
+    "identify fleet roles"
+    
     # assign roles to fleets
+    universe = fo.getUniverse()
     for fleetID in universe.fleetIDs:
-        if not fleet.whollyOwnedBy(empireID): continue
         foAIstate.addFleetRole(fleetID, FleetUtilsAI.assessFleetRole(fleetID))
         # print str(fleetID) + ": " + FleetUtilsAIAIAI.assessFleetRole(fleetID)
-
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):
@@ -92,6 +101,8 @@ def generateOrders():
     print "TURN: " + str(fo.currentTurn())
 
     # turn cleanup
+    identifyShipDesigns()
+    identifyFleetsRoles()
     foAIstate.clean(ExplorationAI.getHomeSystemID(), FleetUtilsAI.getEmpireFleetIDs())
     # ...missions
     # ...demands/priorities

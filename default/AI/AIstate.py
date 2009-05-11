@@ -176,7 +176,7 @@ class AIstate(object):
         if not EnumsAI.checkValidity(missionType): return
 
         if fleetID in self.__fleetRoleByID:
-            print "Fleet ID " + str(fleetID) + " already exists."
+            #print "Fleet ID " + str(fleetID) + " already exists."
             return
 
         self.__fleetRoleByID[fleetID] = missionType

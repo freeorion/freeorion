@@ -108,10 +108,12 @@ def assessFleetRole(fleetID):
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
         role = foAI.foAIstate.getShipRole(ship.design.id)
-
-        shipRoles[role] = shipRoles[role] +1
+        
+        if role != AIShipRoleType.SHIP_ROLE_INVALID:
+            shipRoles[role] = shipRoles[role] +1
 
     # determine most common shipRole
+    favouriteRole = AIShipRoleType.SHIP_ROLE_INVALID
     for shipRole in shipRoles:
         if shipRoles[shipRole] == max(shipRoles.values()):
             favouriteRole = shipRole
