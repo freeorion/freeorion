@@ -28,8 +28,6 @@ using std::vector;
 #  include <iostream>
 #endif
 
-// TEMPORARY!
-const int INITIAL_COLONY_POP = 1;
 
 /////////////////////////////////////////////////////
 // Order
@@ -363,13 +361,45 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
 void FleetColonizeOrder::ServerExecute() const
 {
     Universe& universe = GetUniverse();
+
+    // get colonist capacity of ship: sum of capacities of parts
+    double colonist_capacity = 0.0;
+    const Ship* ship = universe.Object<Ship>(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship with id " << m_ship;
+        return;
+    }
+    const ShipDesign* design = ship->Design();
+    if (!design) {
+        Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship's design!";
+        return;
+    }
+    const std::vector<std::string>& parts = design->Parts();
+    for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+        const std::string& part_name = *it;
+        const PartType* part_type = GetPartType(part_name);
+        if (!part_type) {
+            Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship part type: " << part_name;
+            continue;
+        }
+        if (part_type->Class() == PC_COLONY) {
+            colonist_capacity += boost::get<double>(part_type->Stats());
+        }
+    }
+
     universe.Delete(m_ship);
+
+    if (colonist_capacity <= 0.0) {
+        Logger().debugStream() << "colonize order executed by ship with zero colonist capacity!";
+        return;
+    }
+
     Planet* planet = universe.Object<Planet>(m_planet);
 
     planet->SetPrimaryFocus(FOCUS_FARMING);
     planet->SetSecondaryFocus(FOCUS_FARMING);
 
-    planet->GetMeter(METER_POPULATION)->SetCurrent(INITIAL_COLONY_POP);
+    planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
     planet->GetMeter(METER_POPULATION)->BackPropegate();
     planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
     planet->GetMeter(METER_FARMING)->BackPropegate();
