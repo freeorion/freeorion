@@ -145,7 +145,7 @@ Part
     name = "CO_SUSPEND_ANIM_POD"
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
-    capacity = 5
+    capacity = 2
     buildcost = 80
     buildtime = 12
     mountableSlotTypes = Internal

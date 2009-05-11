@@ -1052,7 +1052,6 @@ private:
 
     GG::TextControl*            m_destination_text;
     ShipsListBox*               m_ships_lb;
-    GG::TextControl*            m_ship_status_text;
 };
 
 
@@ -1061,8 +1060,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, Fleet* fleet, bool read_onl
     m_fleet(0),
     m_read_only(read_only),
     m_destination_text(0),
-    m_ships_lb(0),
-    m_ship_status_text(0)
+    m_ships_lb(0)
 {
     SetName("FleetDetailPanel");
     EnableChildClipping(true);
@@ -1073,11 +1071,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, Fleet* fleet, bool read_onl
 
     m_ships_lb = new ShipsListBox(0, read_only);
     AttachChild(m_ships_lb);
-
-    m_ship_status_text = new GG::TextControl(GG::X0, GG::Y0, w, LabelHeight(), "", ClientUI::GetFont(),
-                                             ClientUI::TextColor(), GG::FORMAT_LEFT);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
-    AttachChild(m_ship_status_text);
 
     if (fleet)
         SetFleet(fleet);
@@ -1111,7 +1105,6 @@ void FleetDetailPanel::SetFleet(Fleet* fleet)
         m_fleet_connection.disconnect();
 
     *m_destination_text << "";
-    *m_ship_status_text << "";
 
     m_ships_lb->SetFleet(fleet);
 
@@ -1152,11 +1145,6 @@ void FleetDetailPanel::DoLayout()
     m_destination_text->SizeMove(ul, lr);
     top += (LabelHeight() + GG::Y(PAD));
 
-    lr = GG::Pt(RIGHT, bottom);
-    ul = GG::Pt(LEFT, bottom - LabelHeight());
-    m_ship_status_text->SizeMove(ul, lr);
-    bottom -= (LabelHeight() + GG::Y(PAD));
-
     ul = GG::Pt(LEFT, top);
     lr = GG::Pt(RIGHT, bottom);
     m_ships_lb->SizeMove(ul, lr);
@@ -1177,12 +1165,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
 }
 
 void FleetDetailPanel::ShipBrowsed(GG::ListBox::iterator it)
-{
-    if (it != m_ships_lb->end())
-        *m_ship_status_text << ShipStatusText(GetShipIDOfListRow(it));
-    else
-        *m_ship_status_text << "";
-}
+{}
 
 void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 {
