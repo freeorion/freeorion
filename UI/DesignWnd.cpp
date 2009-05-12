@@ -321,7 +321,7 @@ void PartsListBox::Populate() {
             if (cur_row)
                 Insert(cur_row);
             cur_col = 0;
-            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PART_CONTROL_HEIGHT);
+            cur_row = new PartsListBoxRow(TOTAL_WIDTH, SLOT_CONTROL_HEIGHT + GG::Y(PAD));
         }
         ++cur_col;
 
@@ -1940,9 +1940,9 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::X most_panels_left = base_selector_width;
     GG::X most_panels_width = ClientWidth() - most_panels_left;
     GG::Y detail_top = GG::Y0;
-    GG::Y detail_height(200);
+    GG::Y detail_height(180);
     GG::Y main_top = detail_top + detail_height;
-    GG::Y part_palette_height(140);
+    GG::Y part_palette_height(160);
     GG::Y part_palette_top = ClientHeight() - part_palette_height;
     GG::Y main_height = part_palette_top - main_top;
 
