@@ -19,7 +19,7 @@ class MarkupBox : public GG::Control
 public:
     /** \name Structors */ ///@{
     /** Ctor. */
-    MarkupBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE);
+    MarkupBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
 
     MarkupBox();                ///< default ctor
 

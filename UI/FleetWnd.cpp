@@ -77,7 +77,7 @@ private:
     /** \name Structors */ //@{
     /** Basic ctor. */
     FleetDetailWnd(Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags =
-                   GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
+                   GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
     //@}
 
     void                    DoLayout();
@@ -132,7 +132,7 @@ std::size_t FleetUIManager::OpenDetailWnds(FleetWnd* fleet_wnd) const {
 }
 
 FleetWnd* FleetUIManager::NewFleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
-                                      GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
+                                      GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
 {
     if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows"))
         CloseAll();
@@ -145,7 +145,7 @@ FleetWnd* FleetUIManager::NewFleetWnd(std::vector<Fleet*> fleets, int selected_f
 }
 
 FleetDetailWnd* FleetUIManager::NewFleetDetailWnd(FleetWnd* fleet_wnd, Fleet* fleet, bool read_only,
-                                                  GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE*/)
+                                                  GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE*/)
 {
     assert(fleet_wnd);
     assert(m_fleet_wnds.find(fleet_wnd) != m_fleet_wnds.end());
@@ -536,7 +536,7 @@ private:
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet,
                                int empire, int system_id, double x, double y) :
-    Control(GG::X0, GG::Y0, w, h, fleet ? GG::Flags<GG::WndFlag>() : GG::CLICKABLE),
+    Control(GG::X0, GG::Y0, w, h, fleet ? GG::Flags<GG::WndFlag>() : GG::INTERACTIVE),
     m_fleet(fleet),
     m_empire(empire),
     m_system_id(system_id),
@@ -1270,7 +1270,7 @@ std::string FleetDetailPanel::ShipStatusText(int ship_id) const
 GG::Pt FleetDetailWnd::s_last_position =    GG::Pt(GG::X(300), GG::Y0);
 GG::Pt FleetDetailWnd::s_last_size =        GG::Pt(GG::X(300), GG::Y(200));
 
-FleetDetailWnd::FleetDetailWnd(Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags/* = CLICKABLE | DRAGABLE | RESIZABLE | ONTOP | CLOSABLE*/) : 
+FleetDetailWnd::FleetDetailWnd(Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | RESIZABLE | ONTOP | CLOSABLE*/) : 
     CUIWnd("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags),
     m_fleet_panel(0)
 {
@@ -1346,7 +1346,7 @@ GG::Pt FleetWnd::s_last_position =  GG::Pt(GG::X0, GG::Y0);
 GG::Pt FleetWnd::s_last_size =      GG::Pt(GG::X(300), GG::Y(400));
 
 FleetWnd::FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
-                   GG::Flags<GG::WndFlag> flags/* = CLICKABLE | DRAGABLE | ONTOP | CLOSABLE*/) : 
+                   GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | DRAGABLE | ONTOP | CLOSABLE*/) : 
     MapWndPopup("", s_last_position.x, s_last_position.y, s_last_size.x, s_last_size.y, flags | GG::RESIZABLE),
     m_empire_id(ALL_EMPIRES),
     m_system_id(UniverseObject::INVALID_OBJECT_ID),

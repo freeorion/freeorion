@@ -165,7 +165,7 @@ namespace {
 std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
 const int PopulationPanel::EDGE_PAD = 3;
 PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
     m_popcenter_id(obj.ID()),
     m_pop_stat(0), m_health_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
@@ -177,7 +177,7 @@ PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an UniverseObject that is not a PopCenter");
 
-    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -292,10 +292,7 @@ void PopulationPanel::DoExpandCollapseLayout()
 }
 
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void PopulationPanel::Render() 
 {
@@ -417,7 +414,7 @@ std::map<int, bool> ResourcePanel::s_expanded_map;
 const int ResourcePanel::EDGE_PAD = 3;
 
 ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_rescenter_id(obj.ID()),
     m_farming_stat(0),
     m_mining_stat(0),
@@ -439,7 +436,7 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     EnableChildClipping(true);
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -662,10 +659,7 @@ void ResourcePanel::DoExpandCollapseLayout()
 }
 
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void ResourcePanel::Render()
 {
@@ -978,7 +972,7 @@ std::map<int, bool> MilitaryPanel::s_expanded_map;
 const int MilitaryPanel::EDGE_PAD = 3;
 
 MilitaryPanel::MilitaryPanel(GG::X w, const Planet &plt) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
     m_planet_id(plt.ID()),
     m_fleet_supply_stat(0),
     m_shield_stat(0),
@@ -992,7 +986,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, const Planet &plt) :
     SetName("MilitaryPanel");
 
     // expand / collapse button at top right    
-    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::CLICKABLE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -1116,10 +1110,7 @@ void MilitaryPanel::Render()
 }
 
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void MilitaryPanel::Update()
 {
@@ -1280,7 +1271,7 @@ const GG::X MultiIconValueIndicator::ICON_WIDTH(24);
 const GG::Y MultiIconValueIndicator::ICON_HEIGHT(24);
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
     m_obj_vec()
@@ -1304,7 +1295,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const UniverseObject& 
 }
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
     m_obj_vec(obj_vec)
@@ -1326,7 +1317,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<cons
 }
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(),
     m_obj_vec()
@@ -1349,10 +1340,7 @@ void MultiIconValueIndicator::Render()
 }
 
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void MultiIconValueIndicator::Update()
 {
@@ -1390,7 +1378,7 @@ const int MultiMeterStatusBar::BAR_PAD = 1;
 const GG::Y MultiMeterStatusBar::BAR_HEIGHT(10);
 
 MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(meter_types),
     m_initial_maxes(),
@@ -1498,10 +1486,7 @@ void MultiMeterStatusBar::Render()
 }
 
 void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void MultiMeterStatusBar::Update()
 {
@@ -1539,7 +1524,7 @@ void MultiMeterStatusBar::Update()
 std::map<int, bool> BuildingsPanel::s_expanded_map = std::map<int, bool>();
 
 BuildingsPanel::BuildingsPanel(GG::X w, int columns, const Planet &plt) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_planet_id(plt.ID()),
     m_columns(columns),
     m_building_indicators(),
@@ -1631,10 +1616,7 @@ void BuildingsPanel::Render()
 }
 
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void BuildingsPanel::Update()
 {
@@ -1815,7 +1797,7 @@ const Planet* BuildingsPanel::GetPlanet() const
 //       BuildingIndicator         //
 /////////////////////////////////////
 BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_type(type),
     m_graphic(0),
     m_progress_bar(0)
@@ -1831,7 +1813,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type) :
 
 BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turns,
                                      int turns_completed, double partial_turn) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_type(type),
     m_graphic(0),
     m_progress_bar(0)
@@ -1905,18 +1887,16 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     if (m_progress_bar)
         m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);
 }
+
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 /////////////////////////////////////
 //         SpecialsPanel           //
 /////////////////////////////////////
 const int SpecialsPanel::EDGE_PAD = 2;
 SpecialsPanel::SpecialsPanel(GG::X w, const UniverseObject &obj) : 
-    Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
     m_object_id(obj.ID()),
     m_icons()
 {
@@ -1939,10 +1919,7 @@ void SpecialsPanel::Render()
 {}
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void SpecialsPanel::Update()
 {
@@ -1962,7 +1939,7 @@ void SpecialsPanel::Update()
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
         GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::SpecialTexture(special->Name()),
-                                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
+                                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
         graphic->SetBrowseModeTime(tooltip_time);
         graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()),
                                                                                              UserString(special->Name()),
@@ -2037,10 +2014,8 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ShipDesignPanel::Render() {}
 
-void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {
-    if (GG::Wnd* parent = Parent())
-        parent->MouseWheel(pt, move, mod_keys);
-}
+void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 void ShipDesignPanel::Update() {
 }
@@ -2061,7 +2036,7 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
     GG::BrowseInfoWnd(GG::X0, GG::Y0, TEXT_WIDTH + ICON_WIDTH, GG::Y1),
     ROW_HEIGHT(ClientUI::Pts()*3/2)
 {
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::CLICKABLE);
+    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
     AttachChild(m_icon);
 
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
@@ -2723,4 +2698,3 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         top += m_row_height;
     }
 }
-

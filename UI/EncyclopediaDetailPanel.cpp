@@ -17,7 +17,7 @@ namespace {
 }
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
-    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_tech(0),
     m_part(0),
     m_hull(0),

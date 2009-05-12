@@ -17,7 +17,7 @@ namespace {
 
 
 SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) : 
-    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
+    CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
 {
     Sound::TempUISoundDisabler sound_disabler;
     m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y,

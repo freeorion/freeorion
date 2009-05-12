@@ -70,12 +70,12 @@ class LinkText : public GG::TextControl, public TextLinker
 {
 public:
     /** \name Structors */ //@{
-    LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE); ///< ctor taking a font directly
+    LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered,
         and no larger.  \see DynamicText::DynamicText() */
-    LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE);
+    LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
     //@}
 
     /** \name Accessors */ //@{

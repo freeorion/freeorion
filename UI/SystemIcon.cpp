@@ -151,7 +151,7 @@ void OwnerColoredSystemName::Render()
 // SystemIcon
 ////////////////////////////////////////////////
 SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id) :
-    GG::Control(x, y, w, GG::Y(Value(w)), GG::CLICKABLE),
+    GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_system(*GetUniverse().Object<const System>(id)),
     m_disc_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.Star()], id)),
     m_halo_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[m_system.Star()], id)),

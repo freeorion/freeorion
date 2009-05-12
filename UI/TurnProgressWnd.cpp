@@ -14,10 +14,10 @@
 ////////////////////////////////////////////////
 TurnProgressWnd::TurnProgressWnd() : 
     GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
-            GG::ONTOP | GG::CLICKABLE),
+            GG::ONTOP | GG::INTERACTIVE),
     m_splash(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
                                    ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
-                                   GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE)),
+                                   GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE)),
     m_logo(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
                                  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE))

@@ -31,7 +31,7 @@ namespace {
 // LinkText
 ///////////////////////////////////////
 LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
+                   GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     GG::TextControl(x, y, w, GG::Y1, str, font, color, format, flags),
     TextLinker()
 {
@@ -40,7 +40,7 @@ LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boos
 }
 
 LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
+                   GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     GG::TextControl(x, y, str, font, color, GG::FORMAT_NONE, flags),
     TextLinker()
 {

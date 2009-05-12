@@ -677,7 +677,7 @@ namespace {
 }
 
 SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star_type) :
-    Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_planet_id(planet.ID()),
     m_planet_name(0),
     m_env_size(0),
@@ -819,7 +819,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), GG::Y0, GG::X(ClientUI::Pts()*8),
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1,
-                                      ClientUI::TextColor(), GG::CLICKABLE);
+                                      ClientUI::TextColor(), GG::INTERACTIVE);
 
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
     AttachChild(m_button_colonize);
@@ -1001,11 +1001,7 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 }
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    GG::Wnd *parent;
-    if ((parent=Parent()))
-        parent->MouseWheel(pt,move,mod_keys);
-}
+{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
@@ -1163,7 +1159,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 // SidePanel::PlanetPanelContainer
 ////////////////////////////////////////////////
 SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    Wnd(x, y, w, h, GG::CLICKABLE),
+    Wnd(x, y, w, h, GG::INTERACTIVE),
     m_planet_panels(),
     m_planet_panels_top(GG::Y0),
     m_planet_id(UniverseObject::INVALID_OBJECT_ID),
@@ -1337,7 +1333,7 @@ std::set<SidePanel*> SidePanel::s_side_panels;
 const int            SidePanel::EDGE_PAD = 3;
 
 SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
-    Wnd(x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h, GG::CLICKABLE),
+    Wnd(x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h, GG::INTERACTIVE),
     m_system_name(0),
     m_button_prev(0),
     m_button_next(0),

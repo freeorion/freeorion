@@ -21,7 +21,7 @@
 
 About::About():
     CUIWnd(UserString("ABOUT_WINDOW_TITLE"), GG::X(80), GG::Y(130), GG::X(600), GG::Y(500),
-           GG::CLICKABLE | GG::DRAGABLE | GG::MODAL),
+           GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
     m_end_with_done(false)
 {
     m_done_btn = new CUIButton(GG::X(400), GG::Y(440), GG::X(75), UserString("DONE"));
@@ -31,7 +31,7 @@ About::About():
                               GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
                               ClientUI::GetFont(),
                               ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
-                              ClientUI::MultieditIntColor(), GG::CLICKABLE);
+                              ClientUI::MultieditIntColor(), GG::INTERACTIVE);
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), 2, 6, 5);
     layout->SetMinimumRowHeight(1, m_license->Height() + 5);
     layout->SetRowStretch(0, 1);

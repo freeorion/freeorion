@@ -56,7 +56,7 @@ private:
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
-    GG::Wnd(x, y, w, h,GG::CLICKABLE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
+    GG::Wnd(x, y, w, h,GG::INTERACTIVE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
     m_start_time(GG::GUI::GetGUI()->Ticks()),
     m_bRender(true),
     m_bFadeIn(true)
@@ -139,11 +139,11 @@ IntroScreen::IntroScreen() :
     CUIWnd(UserString("INTRO_WINDOW_TITLE"), 
            static_cast<GG::X>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
            static_cast<GG::Y>(GG::GUI::GetGUI()->AppHeight() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
-           MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::CLICKABLE),
+           MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE),
     m_credits_wnd(0),
     m_splash(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
                                    ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
-                                   GG::GRAPHIC_FITGRAPHIC, GG::CLICKABLE)),
+                                   GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE)),
     m_logo(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
                                  ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
                                  GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE)),

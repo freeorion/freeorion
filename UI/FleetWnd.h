@@ -44,10 +44,10 @@ public:
     //! \name Mutators //@{
     FleetWnd*       NewFleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
                                 GG::Flags<GG::WndFlag> flags =
-                                GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+                                GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
     FleetDetailWnd* NewFleetDetailWnd(FleetWnd* fleet_wnd, Fleet* fleet, bool read_only,
                                       GG::Flags<GG::WndFlag> flags =
-                                      GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
+                                      GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
 
     void            CullEmptyWnds();
     void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
@@ -113,8 +113,8 @@ protected:
 
 private:
     /** Basic ctor. */
-    FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
-    FleetWnd(GG::X w, GG::Y h, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::CLICKABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+    FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+    FleetWnd(GG::X w, GG::Y h, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
     void            Init(const std::vector<Fleet*>& fleets, int selected_fleet, bool read_only);
     void            FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);

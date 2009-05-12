@@ -406,7 +406,7 @@ const int TechTreeWnd::TechTreeControls::BUTTON_SEPARATION = 3;
 const int TechTreeWnd::TechTreeControls::UPPER_LEFT_PAD = 2;
 
 TechTreeWnd::TechTreeControls::TechTreeControls(GG::X x, GG::Y y, GG::X w) :
-    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, GG::Y(10), GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP)
+    CUIWnd(UserString("TECH_DISPLAY"), x, y, w, GG::Y(10), GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP)
 {
     // create a button for each tech category...
     const std::vector<std::string>& cats = GetTechManager().CategoryNames();
@@ -708,7 +708,7 @@ const GG::X TechTreeWnd::TechNavigator::LB_MARGIN_X(5);
 const GG::Y TechTreeWnd::TechNavigator::LB_MARGIN_Y(5);
 
 TechTreeWnd::TechNavigator::TechNavigator(GG::X w, GG::Y h) :
-    CUIWnd(UserString("TECH_NAVIGATION"), GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd(UserString("TECH_NAVIGATION"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_current_tech(0)
 {
     m_lb = new CUIListBox(LB_MARGIN_X, LB_MARGIN_Y, GG::X(100), GG::Y(100));    // resized later when TechNavigator is SizeMoved
@@ -986,7 +986,7 @@ private:
     class LayoutSurface : public GG::Wnd
     {
     public:
-        LayoutSurface() : Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::CLICKABLE | GG::DRAGABLE) {}
+        LayoutSurface() : Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE | GG::DRAGABLE) {}
         virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {DraggedSignal(move);}
         virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {ZoomedSignal(move);}
         mutable boost::signal<void (int)> ZoomedSignal;
@@ -1070,7 +1070,7 @@ private:
 };
 
 TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, double scale/* = 1.0*/) :
-    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_tech(tech),
     m_scale(scale),
     m_progress(0.0),
@@ -1277,7 +1277,7 @@ GG::Rect TechTreeWnd::LayoutPanel::TechPanel::ProgressPanelRect(const GG::Pt& ul
 //////////////////////////////////////////////////
 const double TechTreeWnd::LayoutPanel::ZOOM_STEP_SIZE = 1.25;
 TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_scale(1.0),
     m_categories_shown(),
     m_tech_types_shown(),
@@ -1304,10 +1304,10 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), GG::Y(ZBOFFSET), ZBSIZE, "+", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
+    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), GG::Y(ZBOFFSET), ZBSIZE, "+", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
 
     m_zoom_out_button = new CUIButton(m_zoom_in_button->UpperLeft().x - LEFT, 
-                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
+                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
 
     AttachChild(m_layout_surface);
     AttachChild(m_vscroll);
@@ -2214,7 +2214,7 @@ void TechTreeWnd::TechListBox::PropagateDoubleClickSignal(GG::ListBox::iterator 
 const GG::Y TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT(200);
 
 TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_enc_detail_panel(0),
     m_tech_navigator(0),
     m_layout_panel(0),

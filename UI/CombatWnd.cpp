@@ -629,7 +629,7 @@ CombatWnd::ShipData::ShipData(Ogre::SceneNode* node,
 CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
                      Ogre::Camera* camera,
                      Ogre::Viewport* viewport) :
-    Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::CLICKABLE),
+    Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::INTERACTIVE),
     m_scene_manager(scene_manager),
     m_camera(camera),
     m_camera_node(m_scene_manager->getRootSceneNode()->createChildSceneNode()),

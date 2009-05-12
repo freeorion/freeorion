@@ -481,7 +481,7 @@ MapWnd::MapWnd() :
     GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
             static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
             static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppHeight() * 1.5),
-            GG::CLICKABLE | GG::DRAGABLE),
+            GG::INTERACTIVE | GG::DRAGABLE),
     m_backgrounds(),
     m_bg_scroll_rate(),
     m_selected_system(UniverseObject::INVALID_OBJECT_ID),

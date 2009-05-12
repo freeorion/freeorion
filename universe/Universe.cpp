@@ -2235,6 +2235,8 @@ namespace {
                 retval[it->first] = design_id;
             }
         }
+
+        return retval;
     }
 
     /** returns the singleton building type manager */

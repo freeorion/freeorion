@@ -134,7 +134,7 @@ const GG::Y BuildDesignatorWnd::BuildSelector::TEXT_MARGIN_Y(3);
 
 BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"), GG::X1, GG::Y1, w - 1, h - 1,
-           GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
+           GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
@@ -598,7 +598,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
-    Wnd(GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::ONTOP),
+    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_build_location(UniverseObject::INVALID_OBJECT_ID)
 {
     const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));

@@ -68,7 +68,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
     // number of stars
-    GG::TextControl* label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    GG::TextControl* label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
     AttachChild(label);
@@ -76,7 +76,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_stars_spin->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_stars_spin->Height()) / 2));
 
     // galaxy shape
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SHAPE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
     AttachChild(label);
@@ -86,7 +86,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_AGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
     AttachChild(label);
@@ -96,7 +96,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_STARLANE_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
     AttachChild(label);
@@ -106,7 +106,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLANET_DENSITY"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
     AttachChild(label);
@@ -115,7 +115,7 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_planet_density_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_planet_density_list->Height()) / 2));
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
-    label = new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    label = new GG::TextControl(CONTROL_MARGIN, ++row* PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIALS_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
     AttachChild(label);
@@ -293,7 +293,7 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 GalaxySetupWnd::GalaxySetupWnd() : 
     CUIWnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
            (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
-           GG::CLICKABLE | GG::MODAL),
+           GG::INTERACTIVE | GG::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),
     m_empire_name_label(0),
@@ -317,7 +317,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     // empire name
     ypos = m_galaxy_setup_panel->LowerRight().y;
-    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
     m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
@@ -326,7 +326,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     // empire color
     ypos += PANEL_CONTROL_SPACING;
-    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
     m_empire_color_selector = new EmpireColorSelector(GG::Y(ClientUI::Pts() + 4));
@@ -335,7 +335,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     // number of AIs
     ypos += PANEL_CONTROL_SPACING;
-    m_number_ais_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::CLICKABLE);
+    m_number_ais_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_NUMBER_AIS"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
     m_number_ais_spin = new CUISpin<int>(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, GG::X(75), GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);

@@ -223,7 +223,7 @@ Visibility System::GetVisibility(int empire_id) const
         return VIS_FULL_VISIBILITY;
 
     // if system has been explored, it is partially visible
-    Empire* empire = empire = Empires().Lookup(empire_id);
+    Empire* empire = Empires().Lookup(empire_id);
     if (empire && empire->HasExploredSystem(ID()))
         return VIS_PARTIAL_VISIBILITY;
 

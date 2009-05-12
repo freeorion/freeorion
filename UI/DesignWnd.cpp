@@ -92,7 +92,7 @@ private:
 };
 
 PartControl::PartControl(const PartType* part) :
-    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
     m_icon(NULL),
     m_background(NULL),
     m_part(part)
@@ -465,7 +465,7 @@ private:
 };
 
 DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), GG::X0, GG::Y0, w, h, GG::ONTOP | GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd(UserString("DESIGN_WND_PART_PALETTE_TITLE"), GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_parts_list(0)
 {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
@@ -1196,7 +1196,7 @@ private:
 };
 
 DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
+    CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
     m_empire_id(-1),
     m_tabs(0),
     m_hulls_list(0),
@@ -1213,7 +1213,7 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     GG::Connect(button->ClickedSignal, 
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false));
 
-    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::CLICKABLE);
+    m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::INTERACTIVE);
     GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
     AttachChild(m_tabs);
 
@@ -1388,7 +1388,7 @@ private:
 };
 
 SlotControl::SlotControl() :
-    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
     m_highlighted(false),
     m_slot_type(INVALID_SHIP_SLOT_TYPE),
     m_x_position_fraction(0.4),
@@ -1400,7 +1400,7 @@ SlotControl::SlotControl() :
 }
 
 SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
-    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
     m_highlighted(false),
     m_slot_type(slot_type),
     m_x_position_fraction(x),
@@ -1620,7 +1620,7 @@ private:
 DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_func_ptr = &DesignWnd::MainPanel::SetPart;
 
 DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
-    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), GG::X0, GG::Y0, w, h, GG::CLICKABLE | GG::DRAGABLE | GG::RESIZABLE),
+    CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_hull(0),
     m_background_image(0),
     m_slots(),
@@ -1637,30 +1637,30 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 
     m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), font, 
                                               ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
-                                              GG::CLICKABLE | GG::ONTOP);
+                                              GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_name_label);
 
     m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::CLICKABLE | GG::ONTOP);
+                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_name);
 
     m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font, 
                                                      ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
-                                                     GG::CLICKABLE | GG::ONTOP);
+                                                     GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_description_label);
 
     m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::CLICKABLE | GG::ONTOP);
+                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_description);
 
     m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::ButtonColor(),
-                                     ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
+                                     ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->ClickedSignal, DesignConfirmedSignal);
     m_confirm_button->Disable(true);
 
     m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::ButtonColor(),
-                                   ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::CLICKABLE | GG::ONTOP);
+                                   ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->ClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
 
@@ -1927,7 +1927,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 // DesignWnd                                    //
 //////////////////////////////////////////////////
 DesignWnd::DesignWnd(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::CLICKABLE),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP | GG::INTERACTIVE),
     m_detail_panel(0),
     m_base_selector(0),
     m_part_palette(0),

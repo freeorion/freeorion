@@ -95,7 +95,7 @@ namespace {
 CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                      GG::Clr color/* = ClientUI::ButtonColor()*/,
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
-                     GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+                     GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     Button(x, y, w, FontOrDefaultFont(font)->Lineskip() + 6, str, FontOrDefaultFont(font), color, text_color, flags),
     m_border_color(border),
     m_border_thick(thick)
@@ -197,7 +197,7 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category)
 CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                              GG::Clr color/* = ClientUI::ButtonColor()*/, 
                              GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
-                             GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) : 
+                             GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     CUIButton(x, y, w, str, FontOrDefaultFont(font), color, border, thick, text_color, flags)
 {
     GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
@@ -207,7 +207,7 @@ CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, 
 ///////////////////////////////////////
 // class CUIArrowButton
 ///////////////////////////////////////
-CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation, GG::Clr color, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientation orientation, GG::Clr color, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)
@@ -279,7 +279,7 @@ void CUIArrowButton::RenderUnpressed()
 CUIStateButton::CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
                                GG::Clr color/* = ClientUI::StateButtonColor()*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/,
-                               GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+                               GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     StateButton(x, y, w, h, str, FontOrDefaultFont(font), format, color, text_color, interior, style, flags),
     m_border_color(border),
     m_mouse_here(false)
@@ -578,7 +578,7 @@ void CUIScroll::ScrollTab::MouseLeave()
 ///////////////////////////////////////
 CUIScroll::CUIScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
-                     GG::Flags<GG::WndFlag> flags/* = CLICKABLE | REPEAT_BUTTON_DOWN*/) :
+                     GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) :
     Scroll(x, y, w, h, orientation, color, interior, flags),
     m_border_color(border)
 {}
@@ -607,7 +607,7 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 // class CUIListBox
 ///////////////////////////////////////
 CUIListBox::CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
-                       GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
+                       GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     ListBox(x, y, w, h, color, interior, flags)
 {
     RecreateScrolls();
@@ -635,7 +635,7 @@ namespace {
 }
 
 CUIDropDownList::CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color/* = ClientUI::CtrlBorderColor()*/,
-                                 GG::Clr interior/* = ClientUI::DropDownListIntColor()*/, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
+                                 GG::Clr interior/* = ClientUI::DropDownListIntColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     DropDownList(x, y, w, h, drop_ht, color),
     m_render_drop_arrow(true),
     m_mouse_here(false)
@@ -712,7 +712,7 @@ void CUIDropDownList::EnableDropArrow()
 CUIEdit::CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                  GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
                  GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::EditIntColor()*/, 
-                 GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
+                 GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     Edit(x, y, w, str, FontOrDefaultFont(font), color, text_color, interior, flags)
 {
     GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
@@ -741,7 +741,7 @@ void CUIEdit::Render()
 CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/, 
                            const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                            GG::Clr color/* = ClientUI::CtrlBorderColor()*/, GG::Clr text_color/* = ClientUI::TextColor()*/, 
-                           GG::Clr interior/* = ClientUI::MultieditIntColor()*/, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) : 
+                           GG::Clr interior/* = ClientUI::MultieditIntColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     MultiEdit(x, y, w, h, str, FontOrDefaultFont(font), color, style, text_color, interior, flags)
 {
     RecreateScrolls();
@@ -864,7 +864,7 @@ void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)
 ///////////////////////////////////////
 // class CUISlider
 ///////////////////////////////////////
-CUISlider::CUISlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation, GG::Flags<GG::WndFlag> flags/* = CLICKABLE*/) :
+CUISlider::CUISlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) :
     Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CtrlColor(), orientation == GG::VERTICAL ? Value(w) : Value(h), 5, flags)
 {}
 
@@ -926,7 +926,7 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
 ///////////////////////////////////////
 StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool integerize, bool showsign,
-                             GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     GG::Control(x, y, w, h, flags),
     m_num_values(1),
     m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
@@ -954,7 +954,7 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
 StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
                              bool integerize0, bool integerize1, bool showsign0, bool showsign1,
-                             GG::Flags<GG::WndFlag> flags/* = GG::CLICKABLE*/) :
+                             GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     GG::Control(x, y, w, h, flags),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
@@ -1032,7 +1032,7 @@ GG::Clr StatisticIcon::ValueColor(int index) const
 // class CUIToolBar
 ///////////////////////////////////////
 CUIToolBar::CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    GG::Control(x, y, w, h, GG::ONTOP | GG::CLICKABLE)
+    GG::Control(x, y, w, h, GG::ONTOP | GG::INTERACTIVE)
 {}
 
 bool CUIToolBar::InWindow(const GG::Pt& pt) const

@@ -32,7 +32,7 @@ namespace {
 ServerConnectWnd::ServerConnectWnd() : 
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"),
            (GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2, (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2,
-           WINDOW_WIDTH, WINDOW_HEIGHT, GG::CLICKABLE | GG::MODAL),
+           WINDOW_WIDTH, WINDOW_HEIGHT, GG::INTERACTIVE | GG::MODAL),
     m_host_or_join_radio_group(0),
     m_LAN_game_label(0),
     m_servers_lb(0),

@@ -644,6 +644,7 @@ ShipDesign::ShipDesign() :
     m_parts(),
     m_graphic(""),
     m_3D_model(""),
+    m_name_desc_in_stringtable(false),
     m_is_armed(false),
     m_can_colonize(false),
     m_build_cost(0.0),
@@ -657,8 +658,7 @@ ShipDesign::ShipDesign() :
     m_min_weapon_range(DBL_MAX),
     m_max_weapon_range(0.0),
     m_min_non_PD_weapon_range(DBL_MAX),
-    m_max_non_PD_weapon_range(0.0),
-    m_name_desc_in_stringtable(false)
+    m_max_non_PD_weapon_range(0.0)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
@@ -673,6 +673,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_parts(parts),
     m_graphic(graphic),
     m_3D_model(model),
+    m_name_desc_in_stringtable(name_desc_in_stringtable),
     m_is_armed(false),
     m_can_colonize(false),
     m_build_cost(0.0),
@@ -686,8 +687,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_min_weapon_range(DBL_MAX),
     m_max_weapon_range(0.0),
     m_min_non_PD_weapon_range(DBL_MAX),
-    m_max_non_PD_weapon_range(0.0),
-    m_name_desc_in_stringtable(name_desc_in_stringtable)
+    m_max_non_PD_weapon_range(0.0)
 {
     // expand parts list to have empty values if fewer parts are given than hull has slots
     if (const HullType* hull = GetHullType(m_hull)) {
