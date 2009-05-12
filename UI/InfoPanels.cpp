@@ -292,7 +292,7 @@ void PopulationPanel::DoExpandCollapseLayout()
 }
 
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void PopulationPanel::Render() 
 {
@@ -659,7 +659,7 @@ void ResourcePanel::DoExpandCollapseLayout()
 }
 
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void ResourcePanel::Render()
 {
@@ -1110,7 +1110,7 @@ void MilitaryPanel::Render()
 }
 
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void MilitaryPanel::Update()
 {
@@ -1340,7 +1340,7 @@ void MultiIconValueIndicator::Render()
 }
 
 void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void MultiIconValueIndicator::Update()
 {
@@ -1486,7 +1486,7 @@ void MultiMeterStatusBar::Render()
 }
 
 void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void MultiMeterStatusBar::Update()
 {
@@ -1616,7 +1616,7 @@ void BuildingsPanel::Render()
 }
 
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void BuildingsPanel::Update()
 {
@@ -1889,7 +1889,7 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 /////////////////////////////////////
 //         SpecialsPanel           //
@@ -1919,7 +1919,7 @@ void SpecialsPanel::Render()
 {}
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void SpecialsPanel::Update()
 {
@@ -2015,7 +2015,7 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void ShipDesignPanel::Render() {}
 
 void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 void ShipDesignPanel::Update() {
 }

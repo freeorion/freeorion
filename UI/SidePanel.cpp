@@ -1001,7 +1001,7 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 }
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(GG::WndEvent(GG::WndEvent::MouseWheel, pt, move, mod_keys)); }
+{ ForwardEventToParent(); }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
