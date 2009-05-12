@@ -31,6 +31,7 @@ namespace {
     const GG::Y         PART_CONTROL_HEIGHT(64);
     const GG::X         SLOT_CONTROL_WIDTH(72);
     const GG::Y         SLOT_CONTROL_HEIGHT(72);
+    const int           PAD(3);
 
     /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
     boost::shared_ptr<GG::Texture>  SlotBackgroundTexture(ShipSlotType slot_type) {
@@ -42,6 +43,8 @@ namespace {
             return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
 
+    /** Returns background texture with which to render a PartControl, depending on the
+      * types of slot that the indicated \a part can be put into. */
     boost::shared_ptr<GG::Texture>  PartBackgroundTexture(const PartType* part) {
         if (part) {
             bool ex = part->CanMountInSlotType(SL_EXTERNAL);
@@ -265,7 +268,7 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (Visible() && old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
-        const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / SLOT_CONTROL_WIDTH));
+        const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
@@ -274,7 +277,7 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void PartsListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / SLOT_CONTROL_WIDTH));
+    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
@@ -1510,16 +1513,8 @@ void SlotControl::DragDropLeave() {
         m_part_control->Hide();
 }
 
-void SlotControl::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    // TODO: Render differently depending on ShipSlotType
-
-    if (m_highlighted)
-        GG::FlatRectangle(ul, lr, ClientUI::WndColor(), GG::CLR_WHITE, 2);
-    else
-        GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
-}
+void SlotControl::Render()
+{}
 
 void SlotControl::Highlight(bool actually) {
     m_highlighted = actually;
