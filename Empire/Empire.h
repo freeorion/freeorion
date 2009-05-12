@@ -476,6 +476,8 @@ public:
     void                    UpdatePopulationGrowth();
     //@}
 
+    mutable boost::signal<void ()>  ShipDesignsChangedSignal;
+
 private:
     int                             m_id;                       ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name

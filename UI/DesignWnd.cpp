@@ -24,9 +24,38 @@
 
 
 namespace {
-    const std::string    PART_CONTROL_DROP_TYPE_STRING = "Part Control";
-    const std::string    EMPTY_STRING = "";
-    const GG::Y          BASES_LIST_BOX_ROW_HEIGHT(100);
+    const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
+    const std::string   EMPTY_STRING = "";
+    const GG::Y         BASES_LIST_BOX_ROW_HEIGHT(100);
+    const GG::X         PART_CONTROL_WIDTH(64);
+    const GG::Y         PART_CONTROL_HEIGHT(64);
+    const GG::X         SLOT_CONTROL_WIDTH(72);
+    const GG::Y         SLOT_CONTROL_HEIGHT(72);
+
+    /** Returns texture with which to render a SlotControl, depending on \a slot_type. */
+    boost::shared_ptr<GG::Texture>  SlotBackgroundTexture(ShipSlotType slot_type) {
+        if (slot_type == SL_EXTERNAL)
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "external_slot.png", true);
+        else if (slot_type == SL_INTERNAL)
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "internal_slot.png", true);
+        else
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
+    }
+
+    boost::shared_ptr<GG::Texture>  PartBackgroundTexture(const PartType* part) {
+        if (part) {
+            bool ex = part->CanMountInSlotType(SL_EXTERNAL);
+            bool in = part->CanMountInSlotType(SL_INTERNAL);
+
+            if (ex && in)
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "independent_part.png", true);
+            else if (ex)
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "external_part.png", true);
+            else if (in)
+                return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ship_parts" / "internal_part.png", true);
+        }
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
+    }
 }
 
 //////////////////////////////////////////////////
@@ -53,34 +82,50 @@ public:
 
     mutable boost::signal<void (const PartType*)> ClickedSignal;
     mutable boost::signal<void (const PartType*)> DoubleClickedSignal;
-
-    static const GG::X WIDTH;
-    static const GG::Y HEIGHT;
 private:
     GG::StaticGraphic*  m_icon;
+    GG::StaticGraphic*  m_background;
     const PartType*     m_part;
 };
-const GG::X PartControl::WIDTH(64);
-const GG::Y PartControl::HEIGHT(64);
 
 PartControl::PartControl(const PartType* part) :
-    GG::Control(GG::X0, GG::Y0, WIDTH, HEIGHT, GG::CLICKABLE),
-    m_icon(0),
+    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::CLICKABLE),
+    m_icon(NULL),
+    m_background(NULL),
     m_part(part)
 {
-    //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, WIDTH, HEIGHT, ClientUI::PartTexture(m_part->Name()), GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    m_icon->Show();
-    AttachChild(m_icon);
-
-    SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
-
     if (m_part) {
+        m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
+                                             PartBackgroundTexture(m_part),
+                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_background->Show();
+        AttachChild(m_background);
+
+
+        // position of part image centred within part control.  control is size of a slot, but the
+        // part image is smaller
+        GG::X part_left = (Width() - PART_CONTROL_WIDTH) / 2;
+        GG::Y part_top = (Height() - PART_CONTROL_HEIGHT) / 2;
+
+        //Logger().debugStream() << "PartControl::PartControl this: " << this << " part: " << part << " named: " << (part ? part->Name() : "no part");
+        m_icon = new GG::StaticGraphic(part_left, part_top, PART_CONTROL_WIDTH, PART_CONTROL_HEIGHT,
+                                       ClientUI::PartTexture(m_part->Name()),
+                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_icon->Show();
+        AttachChild(m_icon);
+
+
+        SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
+
+
         Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),
-                                                                                    UserString(m_part->Name()),
-                                                                                    m_part->Description())));
+        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),
+                                  UserString(m_part->Name()),
+                                  m_part->Description())
+                                 )
+                        );
     }
 }
 
@@ -220,7 +265,7 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (Visible() && old_size != GG::Wnd::Size()) {
         // determine how many columns can fit in the box now...
         const GG::X TOTAL_WIDTH = Size().x - ClientUI::ScrollWidth();
-        const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / PartControl::WIDTH));
+        const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / SLOT_CONTROL_WIDTH));
 
         if (NUM_COLUMNS != m_previous_num_columns)
             Populate();
@@ -229,7 +274,7 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void PartsListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
-    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / PartControl::WIDTH));
+    const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / SLOT_CONTROL_WIDTH));
 
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);
@@ -273,7 +318,7 @@ void PartsListBox::Populate() {
             if (cur_row)
                 Insert(cur_row);
             cur_col = 0;
-            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PartControl::HEIGHT);
+            cur_row = new PartsListBoxRow(TOTAL_WIDTH, PART_CONTROL_HEIGHT);
         }
         ++cur_col;
 
@@ -722,6 +767,8 @@ private:
     std::set<int>                   m_designs_in_list;
     std::set<std::string>           m_hulls_in_list;
 
+    boost::signals::connection      m_empire_designs_changed_signal;
+
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(GG::X w, GG::Y h);
@@ -829,7 +876,7 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
 
 BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     CUIListBox(x, y, w, h),
-    m_empire_id_shown(-1),  // all empires
+    m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown(std::make_pair(false, false)),
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false)
@@ -854,23 +901,31 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
     m_empire_id_shown = empire_id;
+
+    // disconnect old signal
+    m_empire_designs_changed_signal.disconnect();
+
+    // connect signal to update this list if the empire's designs change
+    if (const Empire* empire = Empires().Lookup(m_empire_id_shown))
+        m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &BasesListBox::Populate,    this);
+
     if (refresh_list)
         Populate();
 }
 
 void BasesListBox::Populate() {
-    // abort of not visible to see results
-    if (!Visible())
-        return;
+    //// abort of not visible to see results
+    //if (!Empty() && !Visible())
+    //    return;
 
-    // populate list as appropriate for types of bases shown
+    // if empty, clear... I think this is done to ensure layout is done properly?
     if (Empty())
         Clear();
+
+    // populate list as appropriate for types of bases shown
     if (m_showing_empty_hulls)
         PopulateWithEmptyHulls();
 
-    if (Empty())
-        Clear();
     if (m_showing_completed_designs)
         PopulateWithCompletedDesigns();
 }
@@ -882,9 +937,9 @@ GG::Pt BasesListBox::ListRowSize() {
 void BasesListBox::PopulateWithEmptyHulls() {
     const bool showing_available = m_availabilities_shown.first;
     const bool showing_unavailable = m_availabilities_shown.second;
-    //Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
+    Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
     const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
-    //Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
+    Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
 
     //Logger().debugStream() << "... hulls in list: ";
     //for (std::set<std::string>::const_iterator it = m_hulls_in_list.begin(); it != m_hulls_in_list.end(); ++it)
@@ -1322,32 +1377,40 @@ public:
 private:
     void            EmitNullSlotContentsAlteredSignal();            // emits SlotContentsAlteredSignal with PartType* = 0.  needed because boost::signal is noncopyable, so boost::bind can't be used to bind the parameter 0 to SlotContentsAlteredSignal::operator()
 
-    bool            m_highlighted;
-    ShipSlotType    m_slot_type;
-    double          m_x_position_fraction, m_y_position_fraction;   // position on hull image where slot should be shown, as a fraction of that image's size
-    PartControl*    m_part_control;
+    bool                m_highlighted;
+    ShipSlotType        m_slot_type;
+    double              m_x_position_fraction, m_y_position_fraction;   // position on hull image where slot should be shown, as a fraction of that image's size
+    PartControl*        m_part_control;
+    GG::StaticGraphic*  m_background;
 };
 
 SlotControl::SlotControl() :
-    GG::Control(GG::X0, GG::Y0, PartControl::WIDTH, PartControl::HEIGHT, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::CLICKABLE),
     m_highlighted(false),
     m_slot_type(INVALID_SHIP_SLOT_TYPE),
     m_x_position_fraction(0.4),
     m_y_position_fraction(0.4),
-    m_part_control(0)
+    m_part_control(NULL),
+    m_background(NULL)
 {
     SetDragDropDataType("");
 }
 
 SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
-    GG::Control(GG::X0, GG::Y0, PartControl::WIDTH, PartControl::HEIGHT, GG::CLICKABLE),
+    GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::CLICKABLE),
     m_highlighted(false),
     m_slot_type(slot_type),
     m_x_position_fraction(x),
     m_y_position_fraction(y),
-    m_part_control(0)
+    m_part_control(0),
+    m_background(NULL)
 {
     SetDragDropDataType("");
+    m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
+                                         SlotBackgroundTexture(m_slot_type),
+                                         GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_background->Show();
+    AttachChild(m_background);
 }
 
 void SlotControl::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
@@ -1467,17 +1530,23 @@ void SlotControl::SetPart(const std::string& part_name) {
 }
 
 void SlotControl::SetPart(const PartType* part_type) {
+    // remove existing part control, if any
     if (m_part_control) {
         delete m_part_control;
-        m_part_control = 0;
+        m_part_control = NULL;
     }
+
+    // create new part control for passed in part_type
     if (part_type) {
         m_part_control = new PartControl(part_type);
         AttachChild(m_part_control);
-        GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);                  // single click shows encyclopedia data
 
+        // single click shows encyclopedia data
+        GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);
+
+        // double click clears slot
         GG::Connect(m_part_control->DoubleClickedSignal,
-                    boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));    // double click clears slot
+                    boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));
     }
 }
 
@@ -1905,8 +1974,6 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     GG::Connect(m_base_selector->DesignBrowsedSignal,           &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     GG::Connect(m_base_selector->HullBrowsedSignal,             &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     m_base_selector->MoveTo(GG::Pt());
-
-    GG::Connect(this->EmpireDesignsChangedSignal,               &BaseSelector::Reset,               m_base_selector);
 }
 
 void DesignWnd::Reset() {

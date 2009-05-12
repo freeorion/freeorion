@@ -2069,25 +2069,29 @@ int Empire::AddShipDesign(ShipDesign* ship_design)
     int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
 
     if (new_design_id == UniverseObject::INVALID_OBJECT_ID) {
-        Logger().errorStream() << "Unable to get new design id";
+        Logger().errorStream() << "Empire::AddShipDesign Unable to get new design id";
         return new_design_id;
     }
 
     bool success = universe.InsertShipDesignID(ship_design, new_design_id);
 
     if (!success) {
-        Logger().errorStream() << "Unable to add new design to universe";
+        Logger().errorStream() << "Empire::AddShipDesign Unable to add new design to universe";
         return UniverseObject::INVALID_OBJECT_ID;
     }
 
     m_ship_designs.insert(new_design_id);
+
+    ShipDesignsChangedSignal();
 
     return new_design_id;
 }
 
 void Empire::RemoveShipDesign(int ship_design_id)
 {
-        m_ship_designs.erase(ship_design_id);
+    m_ship_designs.erase(ship_design_id);
+
+    ShipDesignsChangedSignal();
 }
 
 void Empire::AddSitRepEntry(SitRepEntry* entry)
