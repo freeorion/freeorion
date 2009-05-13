@@ -175,6 +175,8 @@ def generateAIFleetOrdersForAIFleetMissions():
 def issueAIFleetOrdersForAIFleetMissions():
     "issues fleet orders"
     
+    print ""
+    print "issuing fleet orders:"
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:
         aiFleetMission.issueAIFleetOrders()

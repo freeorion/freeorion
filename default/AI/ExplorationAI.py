@@ -3,6 +3,7 @@ import FreeOrionAI as foAI
 import FleetUtilsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 import AITarget
+import MoveUtilsAI
 
 def assignScoutsToExploreSystems():
     # TODO: use Graph Theory to explore closest systems
@@ -24,9 +25,10 @@ def assignScoutsToExploreSystems():
             if foAI.foAIstate.hasAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, aiTarget):
                 continue
             
-            # add exploration mission to fleet with target unexplored system
-            aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, aiTarget)
-            break
+            # add exploration mission to fleet with target unexplored system and this system is in range
+            if len(MoveUtilsAI.canTravelToSystemAndReturnToResupply(fleetID, aiFleetMission.getLocationAITarget(), aiTarget, fo.empireID())) > 0:
+                aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_EXPLORATION, aiTarget)
+                break
         
 def getHomeSystemID():
     "returns the systemID of the home world"

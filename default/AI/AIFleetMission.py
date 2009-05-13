@@ -111,7 +111,9 @@ class AIFleetMission(object):
          
         result = ""
         for aiFleetMissionType in self.getAIFleetMissionTypes():
-            targetsString = "fleet:" + str(self.getFleetID()) + "[" + str(aiFleetMissionType) + "]:" 
+            universe = fo.getUniverse()
+            fleet = universe.getFleet(self.getFleetID())
+            targetsString = "fleet name:" + fleet.name + " id:"+ str(self.getFleetID()) + "[" + str(aiFleetMissionType) + "]:" 
             targets = self.getAITargets(aiFleetMissionType)
             for target in targets:
                 targetsString = targetsString + str(target) 
@@ -247,6 +249,19 @@ class AIFleetMission(object):
             
         for aiFleetOrder in aiFleetOrdersToVisitSystems:
             self.appendAIFleetOrder(aiFleetOrder)
+            
+    def getLocationAITarget(self):
+        "system AITarget where fleet is or will be"
+        # TODO add parameter turn
+        
+        universe = fo.getUniverse()
+        fleet = universe.getFleet(self.getFleetID())
+        systemID = fleet.systemID
+        if systemID >=0:
+            return AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
+        else:
+            return AITarget.AITarget(AITargetType.TARGET_SYSTEM, fleet.nextSystemID)
+        
         
 def getFleetIDsFromAIFleetMissions(aiFleetMissions):
     result = []
