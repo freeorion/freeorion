@@ -12,8 +12,6 @@ minimalColoniseValue = 4  # minimal value for a planet to be colonised, now a si
 class AIstate(object):
     "stores AI game state"
 
-    # def endTurn
-
     # - def getLostFleets (save fleets last turn, look if still there)
     #  => from AI interface SITREP?
 
@@ -58,6 +56,12 @@ class AIstate(object):
         self.__cleanFleetRoles()
         
         self.__cleanAIFleetMissions(fleetIDs)
+        
+    def afterTurnCleanup(self):
+        "removes not required information to save from AI state after AI complete its turn"
+        
+        # some ships in fleet can be destroyed between turns and then fleet may have have different roles
+        self.__fleetRoleByID = {}
     
     def __hasAIFleetMission(self, fleetID):
         "returns True if fleetID has AIFleetMission"
@@ -189,7 +193,7 @@ class AIstate(object):
             del self.__fleetRoleByID[fleetID]
             return
 
-        print "Fleet ID " + str(fleetID) + " not found."
+        #print "Fleet ID " + str(fleetID) + " not found."
 
     def __cleanFleetRoles(self):
         "removes fleetRoles if a fleet has been lost"

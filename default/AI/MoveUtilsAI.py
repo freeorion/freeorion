@@ -3,18 +3,17 @@ from EnumsAI import AITargetType, AIFleetOrderType
 import AITarget
 import AIFleetOrder
 
-def getAIFleetOrdersFromSystemAITargets(fleetID, aiTargets):
+def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
     result = []
     # TODO: use Graph Theory to construct move orders
     # TODO: add priority
-    fleetAITarget = AITarget.AITarget(AITargetType.TARGET_FLEET, fleetID)
     empireID = fo.empireID()
     # determine system where fleet will be or where is if is going nowhere
     lastSystemAITarget = fleetAITarget.getRequiredSystemAITargets()[0]
     # for every system which fleet wanted to visit, determine systems to visit and create move orders 
     for aiTarget in aiTargets:
         # determine systems required to visit(with possible return to supplied system)
-        systemAITargets = canTravelToSystemAndReturnToResupply(fleetID, lastSystemAITarget, aiTarget, empireID)
+        systemAITargets = canTravelToSystemAndReturnToResupply(fleetAITarget.getTargetID(), lastSystemAITarget, aiTarget, empireID)
         if len(systemAITargets) > 0:
             # for every system required to visit create move order
             for systemAITarget in systemAITargets:
@@ -24,7 +23,7 @@ def getAIFleetOrdersFromSystemAITargets(fleetID, aiTargets):
                 aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_MOVE, fleetAITarget, systemAITarget)
                 result.append(aiFleetOrder)
         else:
-            print "fleetID: " + str(fleetID) + " can't travel to target:" + str(aiTarget)
+            print "fleetID: " + str(fleetAITarget.getTargetID()) + " can't travel to target:" + str(aiTarget)
         
     return result
 
@@ -90,17 +89,20 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
             if fromSystemID in fleetSupplyableSystemIDs:
                 # from supplied system fleet can travel without fuel consumption and also in this system refuels
                 fuel = maxFuel
-                # too long paths tends to be out of range although it is valid path. It is caused by leastJumpsPath
-                if not systemID == toSystemAITarget.getTargetID():
-                    resultSystemAITargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
             else:
                 fuel = fuel - 1
+                
+            # leastJumpPath can differ from shortestPath
+            # TODO: use Graph Theory to optimize
+            if (not systemID == toSystemAITarget.getTargetID()) and (systemID in fleetSupplyableSystemIDs):
+                resultSystemAITargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
                 
             if fuel < 0:
                 result = False
                 
         fromSystemID = systemID 
-        # if there is path to wanted system, then also if there is path back to supplyable system
+    
+    # if there is path to wanted system, then also if there is path back to supplyable system
     if result == True:
         # jump from A to B means leastJumpsPath=[A,B], but minJumps=1
         minJumps = len(universe.leastJumpsPath(toSystemAITarget.getTargetID(), supplySystemID, empireID)) - 1
@@ -115,3 +117,16 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
         resultSystemAITargets = []
     
     return resultSystemAITargets
+
+def getResupplyAIFleetOrder(fleetAITarget, currentSystemAITarget):
+    "returns resupply AIFleetOrder to nearest supplied system"
+    
+    # find nearest supplied system
+    empireID = fo.empireID()
+    suppliedSystemID = getNearestSuppliedSystem(currentSystemAITarget.getTargetID(), empireID)
+    suppliedSystemAITarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, suppliedSystemID)
+    
+    # create resupply AIFleetOrder
+    aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_RESUPPLY, fleetAITarget, suppliedSystemAITarget)
+    
+    return aiFleetOrder

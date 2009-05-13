@@ -79,6 +79,17 @@ class AIFleetOrder(object):
                 # move to system
                 if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType():
                     targetAITargetTypeValid = True
+            # resupply
+            elif AIFleetOrderType.ORDER_RESUPPLY == self.getAIFleetOrderType():
+                # with fleet
+                if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    sourceAITargetTypeValid = True
+                # move to system
+                if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType():
+                    empire = fo.getEmpire()
+                    fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+                    if (self.getTargetAITarget().getTargetID() in fleetSupplyableSystemIDs):
+                        targetAITargetTypeValid = True
             # split fleet
             elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.getAIFleetOrderType():
                 # with fleet
@@ -147,8 +158,8 @@ class AIFleetOrder(object):
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
     
                 fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())                
-            # move
-            elif AIFleetOrderType.ORDER_MOVE == self.getAIFleetOrderType():
+            # move or resupply
+            elif (AIFleetOrderType.ORDER_MOVE == self.getAIFleetOrderType()) or (AIFleetOrderType.ORDER_RESUPPLY == self.getAIFleetOrderType()):
                 fleetID = self.getSourceAITarget().getTargetID()
                 systemID = self.getTargetAITarget().getTargetID()
                 

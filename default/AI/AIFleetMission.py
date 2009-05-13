@@ -210,7 +210,7 @@ class AIFleetMission(object):
         ordersInSystemCompleted = True
         for aiFleetOrder in self.getAIFleetOrders():
             if aiFleetOrder.canIssueOrder():
-                print "issuing AIFleetOrders: " + str(aiFleetOrder)
+                print "    " + str(aiFleetOrder)
                 if aiFleetOrder.getAIFleetOrderType() == AIFleetOrderType.ORDER_MOVE and ordersInSystemCompleted:
                     aiFleetOrder.issueOrder()
                 elif aiFleetOrder.getAIFleetOrderType() != AIFleetOrderType.ORDER_MOVE:
@@ -229,7 +229,7 @@ class AIFleetMission(object):
         self.clearAIFleetOrders()
         # for some targets fleet has to visit systems and therefore fleet visit them
         systemAITargets = self.__getRequiredToVisitSystemAITargets()
-        aiFleetOrdersToVisitSystems = MoveUtilsAI.getAIFleetOrdersFromSystemAITargets(self.getFleetID(), systemAITargets)
+        aiFleetOrdersToVisitSystems = MoveUtilsAI.getAIFleetOrdersFromSystemAITargets(self.getFleetAITarget(), systemAITargets)
         
         # if fleet is in some system = fleet.systemID >=0, then also generate system AIFleetOrders
         universe = fo.getUniverse()
@@ -240,16 +240,30 @@ class AIFleetMission(object):
             systemAITarget = AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
             # if mission aiTarget has required system where fleet is, then generate aiFleetOrder from this aiTarget 
             aiMissionTypes = self.getAIFleetMissionTypes()
+            # for all targets in all mission types get required systems to visit 
             for aiFleetMissionType in aiMissionTypes:
                 aiTargets = self.getAITargets(aiFleetMissionType)
                 for aiTarget in aiTargets:
                     if systemAITarget in aiTarget.getRequiredSystemAITargets():
+                        # from target required to visit get fleet orders to accomplish target
                         aiFleetOrder = self.__getAIFleetOrderFromAITarget(aiFleetMissionType, aiTarget)
                         self.appendAIFleetOrder(aiFleetOrder)
             
         for aiFleetOrder in aiFleetOrdersToVisitSystems:
             self.appendAIFleetOrder(aiFleetOrder)
             
+        # if fleet don't have any mission, then resupply if is current location not in supplyable system
+        empire = fo.getEmpire()
+        fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
+        if (not self.hasAnyAIFleetMissionTypes()) and not(self.getLocationAITarget().getTargetID() in fleetSupplyableSystemIDs):
+            resupplyAIFleetOrder = MoveUtilsAI.getResupplyAIFleetOrder(self.getFleetAITarget(), self.getLocationAITarget())
+            self.appendAIFleetOrder(resupplyAIFleetOrder)
+    
+    def getFleetAITarget(self):
+        "return fleets AITarget"
+        
+        return AITarget.AITarget(AITargetType.TARGET_FLEET, self.getFleetID())
+    
     def getLocationAITarget(self):
         "system AITarget where fleet is or will be"
         # TODO add parameter turn

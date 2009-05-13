@@ -55,9 +55,9 @@ def getAIExplorableSystemTypes():
 
 
 class AIFleetMissionType(object):
-    FLEET_MISSION_INVALID = -1    
+    FLEET_MISSION_INVALID = -1
     FLEET_MISSION_EXPLORATION = 0
-    FLEET_MISSION_COLONISATION = 1
+    FLEET_MISSION_COLONISATION = 1    
     FLEET_MISSION_SPLIT_FLEET = 2
     FLEET_MISSION_MERGE_FLEET = 3
     FLEET_MISSION_HIT_AND_RUN = 4
@@ -72,14 +72,15 @@ def getAIFleetMissionTypes():
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
     ORDER_MOVE = 0
-    ORDER_SPLIT_FLEET = 1
-    ORDER_MERGE_FLEET = 2
-    ORDER_COLONISE = 3
-    ORDER_ATACK = 4
-    ORDER_DEFEND = 5
+    ORDER_RESUPPLY = 1
+    ORDER_SPLIT_FLEET = 2
+    ORDER_MERGE_FLEET = 3
+    ORDER_COLONISE = 4
+    ORDER_ATACK = 5
+    ORDER_DEFEND = 6
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 5)
+    return __getInterval(0, 6)
 
 
 class AIShipRoleType(object):
@@ -108,3 +109,26 @@ class AITargetType(object):
     
 def getAITargetTypes():
     return __getInterval(0, 7)
+
+
+class AIProductionDemandType(object):
+    PRODUCTION_DEMAND_INVALID = -1
+    PRODUCTION_DEMAND_SHIP = 0
+    PRODUCTION_DEMAND_BUILDING = 1
+    
+def getAIProductionDemandTypes():
+    return __getInterval(0, 1)
+
+
+class AIProductionRequirementType(object):
+    PRODUCTION_REQUIREMENT_INVALID = -1
+    PRODUCTION_REQUIREMENT_MINERALS_POINTS = 0
+    PRODUCTION_REQUIREMENT_FOOD_POINTS = 1
+    PRODUCTION_REQUIREMENT_RESEARCH_POINTS = 2
+    PRODUCTION_REQUIREMENT_TRADE_POINTS = 3
+    PRODUCTION_REQUIREMENT_PRODUCTION_POINTS = 4
+    PRODUCTION_REQUIREMENT_MINIMUM_TURNS = 5
+    PRODUCTION_REQUIREMENT_MINIMUM_SHIPYARDS = 6
+    
+def getAIProductionRequirementTypes():
+    return __getInterval(0, 6)

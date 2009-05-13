@@ -6,6 +6,7 @@ import ExplorationAI
 import ColonisationAI
 # import TacticsAI
 import PriorityAI
+import ResearchAI
 # import ProductionAI
 
 # AIstate
@@ -22,19 +23,25 @@ def initFreeOrionAI():
 def startNewGame():
     print "New game started"
 
-    universe = fo.getUniverse()
-
     # initialize AIstate
     global foAIstate
     foAIstate = AIstate.AIstate()
     print "Initialized foAIstate class"
 
-    # split all fleets
-    for fleetID in universe.fleetIDs: FleetUtilsAI.splitFleet(fleetID)
+    splitFleet()
 
     identifyShipDesigns()
     identifyFleetsRoles()
     
+def splitFleet():
+    "split all fleets"
+    
+    # TODO: only after analyzing situation in map can fleet can be split
+    universe = fo.getUniverse()
+    for fleetID in universe.fleetIDs:
+        FleetUtilsAI.splitFleet(fleetID)
+        # old fleet may have different role after split, later will be again identified
+        foAIstate.removeFleetRole(fleetID)
 
 def identifyShipDesigns():
     "identify ship designs"
@@ -98,9 +105,11 @@ def handleChatMessage(senderID, messageText):
 def generateOrders():
 
     print ""
-    print "TURN: " + str(fo.currentTurn())
+    empire = fo.getEmpire()
+    print empire.name + " TURN: " + str(fo.currentTurn())
 
     # turn cleanup
+    splitFleet()
     identifyShipDesigns()
     identifyFleetsRoles()
     foAIstate.clean(ExplorationAI.getHomeSystemID(), FleetUtilsAI.getEmpireFleetIDs())
@@ -116,5 +125,8 @@ def generateOrders():
     # TacticsAI.generateTacticOrders()
     FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
     FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
+    
+    ResearchAI.generateResearchOrders()
 
+    foAIstate.afterTurnCleanup()
     fo.doneTurn()
