@@ -536,6 +536,9 @@ FreeOrion Hauptmenü
 INTRO_BTN_SINGLE_PLAYER
 Einzelspieler
 
+INTRO_BTN_QUICK_START
+Schnellstart
+
 INTRO_BTN_MULTI_PLAYER
 Multiplayer
 
@@ -903,6 +906,15 @@ Galaxy Map
 OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
 
+OPTIONS_GALAXY_MAP_STARFIELDS
+Galaxy map starfields rendering
+
+OPTIONS_GALAXY_MAP_SCALE_LINE
+Galaxy distance scale line
+
+OPTIONS_STARLANES
+Starlanes
+
 OPTIONS_MUSIC
 Musik
 
@@ -1100,8 +1112,11 @@ Runde %1%
 MAP_INDICATOR_FPS
 %1% FPS
 
+MAP_SCALE_INDICATOR
+%1% uu
+
 MAP_BTN_MENU
-Menü
+Men�
 
 MAP_BTN_SITREP
 SitRep
@@ -1639,7 +1654,19 @@ Attack: %2%
 Defense: %3%
 Speed: %4%'''
 
+ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
+'''
 
+<u>Schaltet frei</u>
+
+'''
+
+ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
+'''%1%: %2%
+'''
+
+ENC_TECH_DETAIL_TYPE_STR
+%1% %2% - %3%
 
 ####################
 # Combat Messages  #
