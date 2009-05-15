@@ -2,45 +2,46 @@ import freeOrionAIInterface as fo
 
 def generateResearchOrders():
     "generate research orders"
-    
+
     print "Research:"
-    
+
     empire = fo.getEmpire()
     totalRP = empire.resourceProduction(fo.resourceType.research)
-    print "total Research Points: " + str(totalRP)
-    print "spent Research Points: " + str(spentRP())
-    
+
+
     # get all researchable techs not already queued for research
     possibleResearchProjects = getPossibleProjects()
     empire = fo.getEmpire()
     researchQueue = empire.researchQueue
     for element in researchQueue:
         possibleResearchProjects.remove(element.tech.name)
-        
+
     print "projects already in research queue: "
     for element in researchQueue:
         print "    " + element.tech.name 
 
-    print "possible new research projects:"
-    cheapestProject = None
-    INFINITY = 9999
-    cheapestCost = INFINITY
-    for project in possibleResearchProjects:
-        tech = fo.getTech(project)
-        print "    " + tech.name + " ["+ tech.category + "] cost:"+ str(tech.researchCost)
-        
-        if (cheapestCost > tech.researchCost):
-            cheapestCost = tech.researchCost
-            cheapestProject = project
-            
+
+    # store projects mapped to their costs, so they can be sorted by that cost
+    print "possible projects"
+    projectsDict = dict()
+    for name in possibleResearchProjects:
+        projectsDict[name] = fo.getTech(name).researchCost
+
+
+    # iterate through techs in order of cost
+    print "enqueuing techs.  already spent RP: " + str(spentRP()) + "  total RP: " + str(totalRP)
+    for name, cost in sorted(projectsDict.items(), key=lambda(k,v):(v,k)):
+        # abort if no RP left
+        if spentRP() >= totalRP:
+            break
+
+        # add tech to queue
+        fo.issueEnqueueTechOrder(name, -1)
+        print "    enqueued tech " + name + "  :  cost: " + str(cost) + "RP"
+
     print ""
-    if INFINITY > cheapestCost and spentRP() < totalRP:
-        tech = fo.getTech(cheapestProject)
-        print "adding new research project: " + tech.name + " to queue"
-        fo.issueEnqueueTechOrder(cheapestProject,-1)
-    
-    print ""
-    
+
+
 def getPossibleProjects():
     "get possible projects"
     
@@ -56,8 +57,6 @@ def getPossibleProjects():
 def spentRP():
     "calculate RPs spent this turn so far"
     
-    queue=fo.getEmpire().researchQueue
-    total = 0
-    for element in queue:
-        total = total + element.allocation
-    return total
+    queue = fo.getEmpire().researchQueue
+    return queue.totalSpent
+

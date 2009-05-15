@@ -1606,16 +1606,16 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     for (std::map<int, std::set<int> >::const_iterator map_it = component_sets_map.begin(); map_it != component_sets_map.end(); ++map_it) {
         m_resource_supply_groups.insert(map_it->second);
 
-        // DEBUG!
-        Logger().debugStream() << "Set: ";
-        for (std::set<int>::const_iterator set_it = map_it->second.begin(); set_it != map_it->second.end(); ++set_it) {
-            const UniverseObject* obj = GetUniverse().Object(*set_it);
-            if (!obj) {
-                Logger().debugStream() << " ... missing object!";
-                continue;
-            }
-            Logger().debugStream() << " ... " << obj->Name();
-        }
+        //// DEBUG!
+        //Logger().debugStream() << "Set: ";
+        //for (std::set<int>::const_iterator set_it = map_it->second.begin(); set_it != map_it->second.end(); ++set_it) {
+        //    const UniverseObject* obj = GetUniverse().Object(*set_it);
+        //    if (!obj) {
+        //        Logger().debugStream() << " ... missing object!";
+        //        continue;
+        //    }
+        //    Logger().debugStream() << " ... " << obj->Name();
+        //}
     }
 }
 
@@ -2612,7 +2612,7 @@ void Empire::UpdateFoodDistribution()
         // available, previous turns or iterations' allocations won't be left
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end(); ++pop_it) {
             (*pop_it)->SetAllocatedFood(0.0);
-            Logger().debugStream() << "allocating 0.0 food to " << pop_center_objects[*pop_it]->Name() << " to initialize";
+            //Logger().debugStream() << "allocating 0.0 food to " << pop_center_objects[*pop_it]->Name() << " to initialize";
         }
 
 
