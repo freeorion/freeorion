@@ -1042,11 +1042,8 @@ public:
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {ZoomedSignal(move);}
 
     void Update();
-
-    mutable boost::signal<void (int)> ZoomedSignal;
 
     void Select(bool select);
 
@@ -1696,7 +1693,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         GG::Connect(m_techs[tech]->TechBrowsedSignal,       &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
         GG::Connect(m_techs[tech]->TechClickedSignal,       &TechTreeWnd::LayoutPanel::TechClickedSlot,         this);
         GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
-        GG::Connect(m_techs[tech]->ZoomedSignal,            &TechTreeWnd::LayoutPanel::TreeZoomedSlot,          this);
 
         for (Agedge_t* edge = agfstout(graph, node); edge; edge = agnxtout(graph, edge)) {
             const Tech* from = tech;

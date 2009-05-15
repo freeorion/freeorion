@@ -2063,7 +2063,10 @@ Tech
     researchcost = 80
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
-    unlock = Item type = ShipHull name = "SH_MEDIUM"
+    unlock = [
+        Item type = ShipHull name = "SH_MEDIUM"
+        Item type = Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+    ]
     graphic = ""
 
 Tech

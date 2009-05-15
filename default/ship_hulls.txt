@@ -51,6 +51,7 @@ Hull
     ]
     location = And [
         OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
     graphic = ""
@@ -75,6 +76,7 @@ Hull
     ]
     location = And [
         OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
     graphic = ""
@@ -102,6 +104,7 @@ Hull
     ]
     location = And [
         OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
     graphic = ""

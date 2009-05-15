@@ -3699,6 +3699,12 @@ Shipyard
 BLD_SHIPYARD_BASE_DESC
 Orbital production facility for assembly of interstellar military-grade spacecraft.  Allows production of ships in the system where it is located.  Can be upgraded by producing additional buildings in the same system.
 
+BLD_SHIPYARD_ORBITAL_DRYDOCK
+Orbital Drydock
+
+BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
+Expanded orbital shipyard facilities that permit production of larger hulled ship designs than a basic shipyard.
+
 BLD_BIOTERROR_PROJECTOR
 Bioterror Projection Base
 

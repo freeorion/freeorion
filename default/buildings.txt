@@ -46,11 +46,18 @@ BuildingType
     buildtime = 1
     maintenancecost = 1
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups =
-        EffectsGroup
-            scope = Contains Source
-            activation = Source
-            effects = SetMaxConstruction Target.MaxConstruction + 2
+    graphic = ""
+
+BuildingType
+    name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+    description = "BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC"
+    buildcost = 1
+    buildtime = 1
+    maintenancecost = 1
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
     graphic = ""
 
 BuildingType

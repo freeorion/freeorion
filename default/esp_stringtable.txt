@@ -1,7 +1,10 @@
 Español
 
 #Esto es el archivo de lenguaje en español para FreeOrion. Se ha traducido una muy pequeña parte del texto, el resto permanece en ingles, se sigue trabajando en el.
-#Ultima modificacion: 21-05-2008. Traduccion IvanS, Synyestro.
+#Notas a la traduccion: Actualmente no se incluyen las tildes.
+#Traductores y fechas de las ultimas modificaciones:
+#IvanS: hasta 20-05-2008
+#Synyestro: 21-05-2008 > 27-09-2008
 
 #################
 # Common        #
@@ -49,13 +52,15 @@ NO
 No
 
 NEW_GAME
-Generando universo e IA's ...
+Creando universo y vida inteligente...
 
 LOADING
 Cargando ...
 
 SERVER_WONT_START
-El servidor no puede ser iniciado.\n\nNota para Linux: El servidor se debe ejecutar en el directorio de trabajo. Si FreeOrion se esta ejecutando desde algun lugar que no sea el directorio en el que se encuentran los principales ficheros binarios de FreeOrion, lo mas probable es que tenga que salir y reinicializar desde ese directorio.
+'''El servidor no puede ser iniciado.
+
+Nota para Linux: El servidor se debe ejecutar en el directorio de trabajo. Si FreeOrion se esta ejecutando desde algun lugar que no sea el directorio en el que se encuentran los principales ficheros binarios de FreeOrion, lo mas probable es que tenga que salir y reinicializar desde ese directorio.
 
 SERVER_TIMEOUT
 El servidor no responde.
@@ -96,6 +101,9 @@ Introduzca el nuevo nombre
 UNKNOWN_VALUE_SYMBOL
 ?
 
+ERROR
+ERROR
+
 DEFENSE_BASE
 Estacion de defensa
 
@@ -103,7 +111,7 @@ DEFENSE_BASE_DESCRIPTION
 Una plataforma orbital armada que tiene como funcion la defensa del planeta en la que se encuentra.\n\nAtaque: 1\nDefensa: 3
 
 CHAT_WHISPER
-whisper
+Susurro
 
 
 ######################################
@@ -111,133 +119,139 @@ whisper
 ######################################
 
 COMMAND_LINE_USAGE
-Usage: 
+Uso:
 
 COMMAND_LINE_DEFAULT
-Default: 
+Por defecto:
 
 OPTIONS_DB_HELP
-Print this help message.
+Imprimir este mensaje de ayuda.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
-Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
+Añade todas las configuraciones existentes en un archivo config.xml junto con las que se incluyan en la línea de comandos para generar un nuevo archivo config.xml. Esto sobreescribira el archivo config.xml actual, si es que existe.
 
 OPTIONS_DB_MUSIC_OFF
-Disables music in the game.
+Deshabilita la musica en el juego.
 
 OPTIONS_DB_BG_MUSIC
-Sets the background track to play.
+Establece la musica de fondo para jugar.
 
 OPTIONS_DB_FULLSCREEN
-Start the game in fullscreen.
+Inicie el juego en pantalla completa.
 
 OPTIONS_DB_UI_CHAT_HIDE_INTERVAL
-Time interval, in seconds, after which the multiplayer chat window will disappear if nothing is added to it.  A value of 0 indicates that the window should never disappear.
+Intervalo de tiempo, en segundos, tras lo cual la ventana de chat multijugador se ocultara si no se usa. Un valor de 0 indica que la ventana no se ocultara nunca.
 
 OPTIONS_DB_UI_CHAT_EDIT_HISTORY
-The number of outgoing messages to keep in the chat edit box history.
+Numero de mensajes salientes para mantener en el historico del chat
+
+OPTIONS_DB_GALAXY_MAP_GAS
+Sustancia gaseosa renderizada alrededor de los sistemas planetarios para dar forma a la galaxia. Puede afectar al rendimiento en sistemas antiguos.
+
+OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
+Usar renderizacion optimizada OPENGL 1.5 para los sistemas en el mapa de la galaxia. Puede producir caidas en tarjetas graficas antiguas.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
-Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
+Forzar al cliente a no comenzar como servidor, incluso cuando se hospeda un juego en local, jugando como unico jugador, etc.
 
 OPTIONS_DB_UI_MAIN_MENU_X
-Position of the center of the intro screen main menu, as a portion of the application's total width.
+Posicion del centro del menu principal de la pantalla de intro, como una proporcion de la anchura total de la aplicacion.
 
 OPTIONS_DB_UI_MAIN_MENU_Y
-Position of the center of the intro screen main menu, as a portion of the application's total height.
+Posicion del centro del menu principal de la pantalla de intro, como una proporcion de la altura total de la aplicacion.
 
 OPTIONS_DB_APP_WIDTH
-Sets horizontal app resolution.
-
+Fija la resolucion app horizontal.
+	
 OPTIONS_DB_APP_HEIGHT
-Sets vertical app resolution.
+Fija la resolucion app vertical.
 
 OPTIONS_DB_COLOR_DEPTH
-Sets screen color depth, in bits per pixel.
+Fija la profundidad de colro de la pantalla, en bits por pixel.
 
 OPTIONS_DB_SHOW_FPS
-Toggles FPS display on or off.
+Cambia entre mostrar FPS encendido y apagado.
 
 OPTIONS_DB_LIMIT_FPS
-Toggles FPS limiting on or off.  Limit is set with with max-fps option.
+Cambia entre limitacion de FPS encendido y apagado. El limite de fija con la opcion de FPS Maximos.
 
 OPTIONS_DB_MAX_FPS
-Toggles FPS limit, if enabled.  Limiting is toggled with limit-fps.
+Fija el limite de FPS, si se activo esta opcion.  La limitacion se activa/desactiva com Limite FPS.
 
 OPTIONS_DB_UI_SOUND_ENABLED
-Toggles UI sound effects on or off.
+Cambia entre efectos de sonido de la IU encendidos o apagados.
 
 OPTIONS_DB_UI_SOUND_VOLUME
-The volume (0 to 255) at which UI sound effects should be played.
+El volumen (0 a 255) al que sonaran los sonidos de la IU.
 
 OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER
-The sound file played when the mouse moves over a button.
+Archivo de sonido ejecutado cuando el raton se mueve sobre un boton.
 
 OPTIONS_DB_UI_SOUND_BUTTON_CLICK
-The sound file played when a button is clicked.
+Archivo de sonido ejecutado cuando se pulsa un boton.
 
 OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK
-The sound file played when the turn button is clicked.
+Archivo de sonido ejecutado cuando se pulsa el boton de fin de turno.
 
 OPTIONS_DB_UI_SOUND_LIST_SELECT
-The sound file played when a listbox or drop-down list item is selected.
+Archivo de sonido ejecutado cuando se selecciona una lista desplegable.
 
 OPTIONS_DB_UI_SOUND_ITEM_DROP
-The sound file played when an item is dropped into a listbox.
+Archivo de sonido ejecutado cuando se deposita un objeto en una lista.
 
 OPTIONS_DB_UI_SOUND_LIST_PULLDOWN
-The sound file played when the list is opened in a drop-down list.
+Archivo de sonido ejecutado cuando se abre unalista desplegable.
 
 OPTIONS_DB_UI_SOUND_TEXT_TYPING
-The sound file played when the user types text.
+Archivo de sonido ejecutado cuando el usuario teclea texto.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE
-The sound file played when a window is maximized.
+Archivo de sonido ejecutado cuando se maximiza una ventana.
 
 OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE
-The sound file played when a window is minimized.
+Archivo de sonido ejecutado cuando se mainimiza una ventana.
 
 OPTIONS_DB_UI_SOUND_WINDOW_CLOSE
-The sound file played when a window is closed.
+Archivo de sonido ejecutado cuando se cierra una ventana.
 
 OPTIONS_DB_UI_SOUND_ALERT
-The sound file played when an error or illegal action occurs.
+Archivo de sonido ejecutado cuando se ejecuta una accion ilegal o se produce un error.
 
 OPTIONS_DB_UI_SOUND_PLANET_BUTTON_CLICK
-The sound file played when a planet button is clicked.
+Archivo de sonido ejecutado cuando se pulsa un boton de planeta.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER
-The sound file played when mouse moves over a fleet button.
+Archivo de sonido ejecutado cuando el raton se coloca sobre un boton de flota.
 
 OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK
-The sound file played when a fleet button is clicked.
+Archivo de sonido ejecutado cuando se pulsa un boton de flota.
 
 OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER
-The sound file played when mouse moves over a system icon.
+Archivo de sonido ejecutado cuando el raton se coloca sobre un icono de sistema.
 
 OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN
-The sound file played when the system side-panel is opened.
+Archivo de sonido ejecutado cuando se abre el panel lateral de sistema.
 
 OPTIONS_DB_UI_SOUND_FARMING_FOCUS
-The sound file played when a farming focus button is clicked.
+Archivo de sonido ejecutado cuando el raton se pulsa un boton de foco agrario.
 
 OPTIONS_DB_UI_SOUND_INDUSTRY_FOCUS
-The sound file played when an industry focus button is clicked.
+Archivo de sonido ejecutado cuando el raton se pulsa un boton de foco industrial.
 
 OPTIONS_DB_UI_SOUND_RESEARCH_FOCUS
-The sound file played when a research focus button is clicked.
+Archivo de sonido ejecutado cuando el raton se pulsa un boton de foco de investigacion.
 
 OPTIONS_DB_UI_SOUND_MINING_FOCUS
-The sound file played when a mining focus button is clicked.
+Archivo de sonido ejecutado cuando el raton se pulsa un boton de foco de mineria.
 
 OPTIONS_DB_UI_SOUND_TRADE_FOCUS
-The sound file played when a trade focus button is clicked.
+Archivo de sonido ejecutado cuando el raton se pulsa un boton de foco de comercio.
 
 OPTIONS_DB_UI_SOUND_BALANCED_FOCUS
-The sound file played when a balanced focus button is clicked.
+Archivo de sonido ejecutado cuando el raton se pulsa un boton de foco equilibrado.
 
 OPTIONS_DB_UI_FONT
-Sets UI font resource file.
+Fija el fichero de fuentes de la IU.
 
 OPTIONS_DB_UI_FONT_BOLD
 Sets UI bold font resource file.
@@ -407,6 +421,15 @@ The number of starlanes in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 The frequency of specials appearing in the galaxy to be generated.
 
+OPTIONS_DB_GAMESETUP_EMPIRE_NAME
+The name used in the game for your empire.
+
+OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
+The color used in the game for your empire.
+
+OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
+The number of AI opponents you will play in the game.
+
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
 
@@ -478,7 +501,7 @@ COLOR_DLG_NEW
 Nuevo
 
 COLOR_DLG_OLD
-Viejo
+Anterior
 
 COLOR_DLG_RED
 R:
@@ -570,7 +593,7 @@ Nombre del jugador
 HOST_GAME_BN
 Crear una partida
 JOIN_GAME_BN
-Unirse a una partida existente
+Unirse a una partida
 REFRESH_LIST_BN
 Actualizar lista
 
@@ -622,6 +645,8 @@ Nombre del imperio
 GSETUP_EMPIRE_COLOR
 Color del imperio
 
+GSETUP_NUMBER_AIS
+Number of AI Players
 
 #Drop-down list labels and choices####
 
@@ -672,7 +697,7 @@ Bastantes
 GSETUP_MANY
 Muchas
 GSETUP_VERY_MANY
-Muchisimas
+Abundantes
 
 GSETUP_LOW
 Baja
@@ -806,19 +831,19 @@ OPTIONS_VERTICAL
 Vertical
 
 OPTIONS_TOOLTIP_DELAY
-Demora de los tooltip (ms)
+Demora de los mensajes contextuales (ms)
 
 OPTIONS_VIDEO_MODE
-Video Mode  (restart for changes to take effect)
+Resolucion de pantalla (reinicializar para que los cambios tengan efecto)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Enables fullscreen mode, sets screen resolution, and sets bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
+Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Custom Windowed
+Personalizado
 
 OPTIONS_VIDEO_SETTINGS
-Video Settings
+Configuracion de video
 
 OPTIONS_APP_WIDTH
 Width
@@ -827,16 +852,16 @@ OPTIONS_APP_HEIGHT
 Height
 
 OPTIONS_COLOR_DEPTH
-Profundidad del color
+Color bit-depth
 
 OPTIONS_FULLSCREEN
-Fullscreen
+Pantalla completa
 
 OPTIONS_SHOW_FPS
-Show FPS
+Mostrar FPS
 
 OPTIONS_LIMIT_FPS
-Limit FPS
+Limite FPS
 
 OPTIONS_MAX_FPS
 Max FPS
@@ -845,10 +870,19 @@ OPTIONS_CHAT
 Chat
 
 OPTIONS_CHAT_HISTORY
-Historia Chat 
+Historial Chat 
 
 OPTIONS_CHAT_HIDE
-Demora en esconder chat
+Demora en ocultar Chat
+
+OPTIONS_GALAXY_MAP
+Galaxy Map
+
+OPTIONS_GALAXY_MAP_GAS
+Galaxy map gas rendering
+
+OPTIONS_OPTIMIZED_SYSTEM_RENDERING
+Optimized system rendering
 
 OPTIONS_MUSIC
 Musica
@@ -908,37 +942,37 @@ OPTIONS_SOUND_SIDEPANEL
 Abrir panel lateral
 
 OPTIONS_SOUND_PLANET
-Click en planete
+Click en planeta
 
 OPTIONS_SOUND_FOCUS
-Sonido foco
+Foco en Sonidos
 
 OPTIONS_SOUND_BALANCED
-Foco en economia
+Foco en Economia
 
 OPTIONS_SOUND_FARMING
-Foco agricultura
+Foco en Agricultura
 
 OPTIONS_SOUND_INDUSTRY
-Foco industria
+Foco en Industria
 
 OPTIONS_SOUND_MINING
-Foco mineria
+Foco en Mineria
 
 OPTIONS_SOUND_RESEARCH
-Foco investigacion
+Foco en Investigacion
 
 OPTIONS_SOUND_LIST
 Lista de sonidos
 
 OPTIONS_SOUND_DROP
-Soltar item
+Soltar Item
 
 OPTIONS_SOUND_PULLDOWN
 Abrir lista desplegable
 
 OPTIONS_SOUND_SELECT
-Seleccionar
+Seleccionar de la lista
 
 OPTIONS_GENERAL_COLORS
 General
@@ -1042,7 +1076,7 @@ Archivos de sonido
 #################
 
 MAP_BTN_TURN_UPDATE
-Turno
+Turn %1%
 
 MAP_INDICATOR_FPS
 %1% FPS
@@ -1122,6 +1156,23 @@ Trade Level
 RP_CONSTRUCTION
 Construction Infrastructure
 
+## Military Panel ##########
+
+MP_SUPPLY
+Fleet Supply
+
+MP_SHIELD
+Planetary Shield
+
+MP_DEFENSE
+Planetary Defense
+
+MP_DETECTION
+Detection
+
+MP_STEALTH
+Stealth
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
@@ -1153,6 +1204,12 @@ TT_TECH
 TT_BUILDING
 %1% Building <i>%2%</i>
 
+TT_SHIP_HULL
+Ship <i>%1%</i> Hull <i>%2%</i>
+
+TT_SHIP_PART
+Ship <i>%1%</i> Part <i>%2%</i>
+
 TT_SPECIAL
 Special <i>%1%</i>
 
@@ -1180,11 +1237,11 @@ Todos los colonizadores en este sistema\nhan recibido ordenes de abandonarlo\n\n
 # Fleet Window  #
 #################
 
-FW_FLEET_AT
-En sistema %1%
+FW_FLEET_HOLDING_AT
+Holding at %1% System
 
 FW_FLEET_MOVING_TO
-En ruta a %1%, ETA %2%
+Moving to %1%, ETA %2% (%3%)
 
 FW_FLEET_ETA_NEVER
 Never
@@ -1192,22 +1249,28 @@ Never
 FW_FLEET_ETA_UNKNOWN
 Unknown
 
+FW_FLEET_ETA_OUT_OF_RANGE
+Out of Range
+
 FW_SHIP_CLASS
-Tipo de nave
+Ship Class 
 
 FW_UNKNOWN_DESIGN_NAME
-Desconocido
+Unknown
 
 # used to name new fleets when they are created
 FW_NEW_FLEET_NAME
-Nueva flota
+New fleet
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
-Nueva flota
+New Fleet
+
+FW_EMPIRE_FLEETS_AT_SYSTEM
+%1% Fleets At %2% System
 
 FW_EMPIRE_FLEETS
-%1% Flotas
+%1% Fleets
 
 FW_HOME_FLEET
 Home Fleet
@@ -1217,11 +1280,14 @@ Battle Fleet
 
 # the name that is used for fleets the player does not control
 FW_FOREIGN_FLEET
-Flota extranjera
+Foreign fleet
 
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
 Foreign ship
+
+FW_NO_FLEET
+No Fleet
 
 ###############
 # TechTreeWnd #
@@ -1234,40 +1300,40 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / %2% Turnos
+%1% RP / Turn @ %2% Turns
 
 TECH_TURN_COST_STR
-%1% RP / %2% Turnos
+%1% RP / Turn @ %2% Turns
 
 TECH_TURNS_LEFT_STR
-Faltan %1% turnos
+%1% Turns
 
 TECH_TURNS_LEFT_NEVER
-Nunca
+Never
 
 TECH_DETAIL_TYPE_STR
-%1% %2%
+%1% %2% - %3%
 
 TECH_DETAIL_DESCRIPTION_STR
 %1%
 
 TECH_DETAIL_EFFECTS_STR
-\n\n<u>Efectos</u>\n\n%1%
+\n\n<u>Effects</u>\n\n%1%
 
 TECH_DETAIL_UNLOCKS_SECTION_STR
-\n\n<u>Desbloquea</u>\n\n
+\n\n<u>Unlocks</u>\n\n
 
 TECH_DETAIL_UNLOCKED_ITEM_STR
 %1%: %2%\n
 
 TECH_WND_TECH_COMPLETED
-COMPLETADO
+COMPLETED
 
 TECH_WND_TECH_QUEUED
-En Cola
+Queued
 
 TECH_WND_TECH_INCOMPLETE
-Incompleto
+Incomplete
 
 TECH_WND_TYPE_THEORIES
 Theories
@@ -1287,11 +1353,17 @@ Researchable
 TECH_WND_STATUS_UNRESEARCHABLE
 Unresearchable
 
+TECH_WND_LIST_VIEW
+List View
+
+TECH_WND_TREE_VIEW
+Tree View
+
 TECH_WND_REQUIRES
-Requiere
+Requires
 
 TECH_WND_UNLOCKS
-Desbloquea
+Unlocks
 
 
 #######################
@@ -1342,7 +1414,7 @@ PRODUCTION_WND_CATEGORY_BT_SHIP
 Naves
 
 PRODUCTION_WND_CATEGORY_BT_ORBITAL
-Orbital
+Orbitals
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
 Available
@@ -1366,10 +1438,10 @@ PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
 %1%
 
 PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-%1%\n\n<u>Efectos</u>\n\n%2%
+%1%\n\n<u>Effects</u>\n\n%2%
 
 PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-%1%\n\nAtaque: %2%\nDefensa: %3%\nVelocidad: %4%
+%1%\n\nAttack: %2%\nDefense: %3%\nSpeed: %4%
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Cantidad
@@ -1802,14 +1874,14 @@ Gigante de gas
 
 PE_UNINHABITABLE
 inhabitable
-PE_TERRIBLE
-terrible
+PE_HOSTILE
+hostil
+PE_POOR
+pobre
 PE_ADEQUATE
 adecuado
-PE_SUPERB
-superb
-PE_OPTIMAL
-optimo
+PE_GOOD
+bueno
 
 
 # FocusTypes
@@ -1865,7 +1937,7 @@ defense
 # EmpireAffiliationTypes
 
 AFFIL_SELF
-nuestro
+self
 AFFIL_ENEMY
 enemigo
 AFFIL_ALLY
@@ -3030,6 +3102,12 @@ Stellar Tomography
 LRN_STELLAR_TOMOGRAPHY_DESC
 A network of specialized satellites can use tomographic methods to reconstruct the activities occurs deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.\n\nProvides + 4 to research per 10 population on primary research focused worlds in systems with black holes.\nProvides +3 to planets in systems with neutron stars.\nProvides +2 to planets in systems with white or blue stars.\nProvides +1 to planets in systems with red, orange or yellow stars.
 
+LRN_OBSERVATORY_I
+Observatory
+
+LRN_OBSERVATORY_I_DESC
+The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
+
 LRN_AUTOLAB_I
 Basic Autolabs
 
@@ -3168,6 +3246,12 @@ Neutronium Extraction
 PRO_NEUTRONIUM_EXTRACTION_DESC
 The core of a neutron star consists of degenerate neutron matter, compressed by gravity to a density far greater than the heaviest normal matter.  This exotic material has numerous applications once extracted from the star, allowing production of otherwise impossible structures and ship parts.
 
+SHP_BASE_SHIPYARD
+Basic Shipyard
+
+SHP_BASE_SHIPYARD_DESC
+Rudimentary orbital ship production facility allows new interstellar space ships to be produced in the system where it is built.
+
 SHP_LIGHTHOUSE
 Interstellar Lighthouses
 
@@ -3263,10 +3347,19 @@ Additional experience and facilities improvements further extend the range and s
 # Building Names & Descriptions #
 #################################
 
-BLD_IMERIAL_PALACE
+BLD_OBSERVATORY
+Observatory
+
+BLD_OBSERVATORY_DESC
+'''The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.  The planet on which the Observatory is built emits high-power detection beams into deep space.  These pulses interfere with any attempts to make the planet itself stealthy, but the signals may reflect off objects in the galactic vicinity, allowing those objects to be more reasily detected by friendly planets within range of the Observatory.
+
+Gives +10 to Detection to all friendly planets within distance 200.
+Decreases Stealth on planet where built by 10.'''
+
+BLD_IMPERIAL_PALACE
 Imperial Palace
 
-BLD_IMERIAL_PALACE_DESC
+BLD_IMPERIAL_PALACE_DESC
 Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +5 to max construction.
 
 BLD_SHIPYARD_BASE
