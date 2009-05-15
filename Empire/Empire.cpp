@@ -83,19 +83,19 @@ namespace {
                                      const std::vector<double>& production_status, ProductionQueue::QueueType& queue,
                                      std::map<std::set<int>, double>& allocated_pp, int& projects_in_progress)
     {
-        Logger().debugStream() << "========SetProdQueueElementSpending========";
+        //Logger().debugStream() << "========SetProdQueueElementSpending========";
         // TODO: When combat and blockading are updated to allow an armed ship to be in a system containing an enemy planet without
         // actually attacking that planet, it will be possible to blockade a system from exchanging resources with itself.  This will
         // mean that planets won't be listed in any resource sharing group, and thus won't be allocated the industry and minerals that
         // they produce locally when such a blockade occurs.  The mineral and industry distribution code probably needs to be updated
         // to allow a ResourceCenter to use its own production in cases where its system is not part of any resource-sharing group.
 
-        Logger().debugStream() << "production status: ";
-        for (std::vector<double>::const_iterator it = production_status.begin(); it != production_status.end(); ++it)
-            Logger().debugStream() << " ... " << *it;
-        Logger().debugStream() << "queue: ";
-        for (ProductionQueue::QueueType::const_iterator it = queue.begin(); it != queue.end(); ++it)
-            Logger().debugStream() << " ... name: " << it->item.name << "id: " << it->item.design_id << " allocated: " << it->allocated_pp << " locationid: " << it->location << " ordered: " << it->ordered;
+        //Logger().debugStream() << "production status: ";
+        //for (std::vector<double>::const_iterator it = production_status.begin(); it != production_status.end(); ++it)
+        //    Logger().debugStream() << " ... " << *it;
+        //Logger().debugStream() << "queue: ";
+        //for (ProductionQueue::QueueType::const_iterator it = queue.begin(); it != queue.end(); ++it)
+        //    Logger().debugStream() << " ... name: " << it->item.name << "id: " << it->item.design_id << " allocated: " << it->allocated_pp << " locationid: " << it->location << " ordered: " << it->ordered;
 
         assert(production_status.size() == queue.size());
         assert(production_status.size() == queue_element_resource_sharing_system_groups.size());
@@ -103,7 +103,7 @@ namespace {
         projects_in_progress = 0;
         allocated_pp.clear();
 
-        Logger().debugStream() << "queue size: " << queue.size();
+        //Logger().debugStream() << "queue size: " << queue.size();
 
         int i = 0;
         for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
@@ -134,7 +134,7 @@ namespace {
                 queue_element.allocated_pp = 0.0;
                 continue;
             }
-            Logger().debugStream() << "group has " << group_pp_available << " PP available";
+            //Logger().debugStream() << "group has " << group_pp_available << " PP available";
 
 
             ProductionQueue::ProductionItem& item = queue_element.item;
@@ -156,7 +156,7 @@ namespace {
             double item_cost;
             int build_turns;
             boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(item);
-            Logger().debugStream() << "item " << item.name << " costs " << item_cost << " for " << build_turns << " turns";
+            //Logger().debugStream() << "item " << item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
 
             // determine additional PP needed to complete build queue element: total cost - progress
@@ -172,8 +172,8 @@ namespace {
             // resource sharing group
             double allocation = std::max(std::min(std::min(additional_pp_to_complete_element, item_cost), group_pp_available), 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
 
-            Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost " << element_total_cost << " and needs " << additional_pp_to_complete_element << " more to be completed";
-            Logger().debugStream() << "... allocating " << allocation;
+            //Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost " << element_total_cost << " and needs " << additional_pp_to_complete_element << " more to be completed";
+            //Logger().debugStream() << "... allocating " << allocation;
 
             // allocate pp
             queue_element.allocated_pp = allocation;
@@ -182,7 +182,7 @@ namespace {
             allocated_pp[group] += allocation;  // assuming the double indexed by group will be default initialized to 0.0 if that entry doesn't already exist in the map
             group_pp_available -= allocation;
 
-            Logger().debugStream() << "... leaving " << group_pp_available << " PP available to group";
+            //Logger().debugStream() << "... leaving " << group_pp_available << " PP available to group";
 
 
             // check if this will complete the element
@@ -2498,7 +2498,7 @@ void Empire::UpdateResearchQueue()
 
 void Empire::UpdateProductionQueue()
 {
-    Logger().debugStream() << "========= Production Update for empire: " << EmpireID() << " ========";
+    //Logger().debugStream() << "========= Production Update for empire: " << EmpireID() << " ========";
 
     m_resource_pools[RE_MINERALS]->Update();
     m_resource_pools[RE_INDUSTRY]->Update();
@@ -2533,7 +2533,7 @@ void Empire::UpdateFoodDistribution()
     // locally when such a blockade occurs.  The food distribution code probably needs to be updated to allow a ResourceCenter
     // that is also a PopCenter to use its own food production in cases where its system is not part of any resource-sharing group.
 
-    Logger().debugStream() << "======= Food distribution for empire: " << EmpireID() << " =======";
+    //Logger().debugStream() << "======= Food distribution for empire: " << EmpireID() << " =======";
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
@@ -2591,7 +2591,7 @@ void Empire::UpdateFoodDistribution()
         }
 
 
-        Logger().debugStream() << "Objects and production in group:";
+        //Logger().debugStream() << "Objects and production in group:";
         // get food produced at each PopCenter in group's systems
         std::map<PopCenter*, double> food_production;
         for (std::vector<PopCenter*>::const_iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end(); ++pop_it) {
@@ -2603,11 +2603,11 @@ void Empire::UpdateFoodDistribution()
             else    // if not a ResourceCenter, produces no food
                 food_production[*pop_it] = 0.0;
 
-            Logger().debugStream() << "...... " << obj->Name() << " produces " << food_production[*pop_it] << " food";
+            //Logger().debugStream() << "...... " << obj->Name() << " produces " << food_production[*pop_it] << " food";
         }
 
 
-        Logger().debugStream() << " !!  Zeroth Pass Food Distribution";
+        //Logger().debugStream() << " !!  Zeroth Pass Food Distribution";
         // clear food allocations to all PopCenters to start, so that if no further allocations occur due to insufficient food being
         // available, previous turns or iterations' allocations won't be left
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end(); ++pop_it) {
@@ -2617,10 +2617,10 @@ void Empire::UpdateFoodDistribution()
 
 
         double food_available = groups_it->second;
-        Logger().debugStream() << "group has " << food_available << " food available for allocation";
+        //Logger().debugStream() << "group has " << food_available << " food available for allocation";
 
 
-        Logger().debugStream() << " !!  First Pass Food Distribution";
+        //Logger().debugStream() << " !!  First Pass Food Distribution";
 
         // first pass: give food to PopCenters that produce food, limited by their food need and their food production
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
@@ -2632,13 +2632,13 @@ void Empire::UpdateFoodDistribution()
             // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
             double allocation = std::min(std::min(need, prod), food_available);
 
-            Logger().debugStream() << "allocating " << allocation << " food to " << pop_center_objects[pc]->Name() << " limited by need and by production";
+            //Logger().debugStream() << "allocating " << allocation << " food to " << pop_center_objects[pc]->Name() << " limited by need and by production";
 
             pc->SetAllocatedFood(allocation);
             food_available -= allocation;
         }
 
-        Logger().debugStream() << " !!  Second Pass Food Distribution";
+        //Logger().debugStream() << " !!  Second Pass Food Distribution";
 
         // second pass: give as much food as needed to PopCenters to maintain current population
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
@@ -2649,13 +2649,13 @@ void Empire::UpdateFoodDistribution()
             double addition = std::min(std::max(need - has, 0.0), food_available);
             double new_allocation = has + addition;
 
-            Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " limited by need (to maintain population)";
+            //Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " limited by need (to maintain population)";
 
             pc->SetAllocatedFood(new_allocation);
             food_available -= addition;
         }
 
-        Logger().debugStream() << " !!  Third Pass Food Distribution";
+        //Logger().debugStream() << " !!  Third Pass Food Distribution";
 
         // third pass: give as much food as needed to PopCenters to allow max possible growth
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
@@ -2665,7 +2665,7 @@ void Empire::UpdateFoodDistribution()
             double addition = std::min(std::max(pc->FuturePopGrowthMax(), 0.0), food_available);
             double new_allocation = has + addition;
 
-            Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " to allow max possible growth";
+            //Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " to allow max possible growth";
 
             pc->SetAllocatedFood(new_allocation);
             food_available -= addition;

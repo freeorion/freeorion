@@ -28,7 +28,7 @@ int ResourcePool::StockpileSystemID() const {
 }
 
 double ResourcePool::Stockpile() const {
-    Logger().debugStream() << "ResourcePool::Stockpile returning " << m_stockpile;
+    //Logger().debugStream() << "ResourcePool::Stockpile returning " << m_stockpile;
     return m_stockpile;
 }
 
@@ -36,7 +36,7 @@ double ResourcePool::Production() const {
     double retval = 0.0;
     for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it)
         retval += it->second;
-    Logger().debugStream() << "ResourcePool::Production returning " << retval;
+    //Logger().debugStream() << "ResourcePool::Production returning " << retval;
     return retval;
 }
 
@@ -91,7 +91,7 @@ double ResourcePool::TotalAvailable() const {
     double retval = m_stockpile;
     for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it)
         retval += it->second;
-    Logger().debugStream() << "ResourcePool::Available returning " << retval;
+    //Logger().debugStream() << "ResourcePool::Available returning " << retval;
     return retval;
 }
 
@@ -189,7 +189,7 @@ void ResourcePool::SetStockpile(double d) {
 }
 
 void ResourcePool::Update() {
-    Logger().debugStream() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
+    //Logger().debugStream() << "ResourcePool::Update for type " << boost::lexical_cast<std::string>(m_type);
     // sum production from all ResourceCenters in each group, for resource point type appropriate for this pool
     MeterType meter_type = ResourceToMeter(m_type);
 
