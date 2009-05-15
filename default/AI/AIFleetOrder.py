@@ -101,6 +101,13 @@ class AIFleetOrder(object):
                 if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
                     if self.__checkValidityShipInFleet(self.getTargetAITarget(), self.getSourceAITarget()):
                         return True
+            elif AIFleetOrderType.ORDER_ATACK == self.getAIFleetOrderType():
+                # with fleet
+                if AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    sourceAITargetTypeValid = True
+                # move to system
+                if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType() or AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():
+                    targetAITargetTypeValid = True
                 
             if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
                 return True
@@ -171,6 +178,11 @@ class AIFleetOrder(object):
     
                 fo.issueNewFleetOrder(str(shipID), shipID)
                 self.__setExecutionCompleted()
+            elif (AIFleetOrderType.ORDER_ATACK == self.getAIFleetOrderType()):
+                fleetID = self.getSourceAITarget().getTargetID()
+                systemID = self.getTargetAITarget().getRequiredSystemAITargets()[0].getTargetID()
+                
+                fo.issueFleetMoveOrder(fleetID, systemID)
     
     def __str__(self):
         "returns describing string"

@@ -20,7 +20,7 @@ namespace {
 
     // Concatenate functions to create one that takes two parameters.  The first parameter is a ResearchQueue*, which
     // is passed directly to ResearchQueue::InQueue as the this pointer.  The second parameter is a
-    // ResearchQueue::Element which is passed into TechFromResearchQueueElement, which reeturns a Tech*, which is
+    // ResearchQueue::Element which is passed into TechFromResearchQueueElement, which returns a Tech*, which is
     // passed into ResearchQueue::InQueue as the second parameter.
     boost::function<bool(const ResearchQueue*, const ResearchQueue::Element&)> InQueueFromResearchQueueElementFunc =
         boost::bind(&ResearchQueue::InQueue, _1, boost::bind(TechFromResearchQueueElement, _2));

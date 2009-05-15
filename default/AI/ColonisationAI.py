@@ -4,6 +4,7 @@ import AIstate
 import FleetUtilsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 import AITarget
+import PlanetUtilAI
 
 # globals
 colonisablePlanetIDs = []  # TODO: move into AIstate
@@ -15,7 +16,7 @@ def assignColonyFleetsToColonise():
 
     # get planets
     systemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
-    planetIDs = getPlanetsInSystemsIDs(systemIDs)
+    planetIDs = PlanetUtilAI.getPlanetsInSystemsIDs(systemIDs)
 
     removeAlreadyOwnedPlanetIDs(planetIDs)
 
@@ -36,22 +37,6 @@ def assignColonyFleetsToColonise():
 
     # assign fleet targets to colonisable planets
     sendColonyShips(colonyFleetIDs, sortedPlanets)
-
-def getPlanetsInSystemsIDs(systemIDs):
-    "creates a list with all planets known to the empire"
-
-    universe = fo.getUniverse()
-
-    planetIDs = []
-    
-    for systemID in systemIDs:
-
-        system = universe.getSystem(systemID)
-        if (system == None): continue
-
-        planetIDs.extend(system.planetIDs)
-
-    return planetIDs
 
 def removeAlreadyOwnedPlanetIDs(planetIDs):
     "removes planets that already are being colonised or owned"

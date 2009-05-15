@@ -7,7 +7,7 @@ import ColonisationAI
 # import TacticsAI
 import PriorityAI
 import ResearchAI
-# import ProductionAI
+import ProductionAI
 
 # AIstate
 foAIstate = None
@@ -127,6 +127,7 @@ def generateOrders():
     FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
     
     ResearchAI.generateResearchOrders()
+    ProductionAI.generateProductionOrders()
 
     foAIstate.afterTurnCleanup()
     fo.doneTurn()

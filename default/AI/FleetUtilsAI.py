@@ -135,12 +135,12 @@ def assessShipRole(shipID):
     universe = fo.getUniverse()
     ship = universe.getShip(shipID)
     
-    if ship.design.name(True) == "Scout": return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
-    if ship.design.name(True) == "Colony Ship": return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
-    if ship.design.name(True) == "Mark I": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
-    if ship.design.name(True) == "Mark II": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
-    if ship.design.name(True) == "Mark III": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
-    if ship.design.name(True) == "Mark IV": return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+    if ship.canColonize:
+        return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+    elif ship.isArmed:
+        return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+    else:
+        return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
 
     return AIShipRoleType.SHIP_ROLE_INVALID
 

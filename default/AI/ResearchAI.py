@@ -6,9 +6,9 @@ def generateResearchOrders():
     print "Research:"
     
     empire = fo.getEmpire()
-    availableRP = empire.resourceProduction(fo.resourceType.research)
-    print "total Research Points: " + str(availableRP)
-    print "spent Research Points: " + str(totalSpentRP())
+    totalRP = empire.resourceProduction(fo.resourceType.research)
+    print "total Research Points: " + str(totalRP)
+    print "spent Research Points: " + str(spentRP())
     
     # get all researchable techs not already queued for research
     possibleResearchProjects = getPossibleProjects()
@@ -34,7 +34,7 @@ def generateResearchOrders():
             cheapestProject = project
             
     print ""
-    if INFINITY > cheapestCost and totalSpentRP() < availableRP:
+    if INFINITY > cheapestCost and spentRP() < totalRP:
         tech = fo.getTech(cheapestProject)
         print "adding new research project: " + tech.name + " to queue"
         fo.issueEnqueueTechOrder(cheapestProject,-1)
@@ -53,7 +53,7 @@ def getPossibleProjects():
             
     return possibleProjects
 
-def totalSpentRP():
+def spentRP():
     "calculate RPs spent this turn so far"
     
     queue=fo.getEmpire().researchQueue
