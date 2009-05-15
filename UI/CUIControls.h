@@ -350,9 +350,9 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row
 };
 
 /** Encapsulates an icon and text that goes with it in a single control.  For example, "[food icon] +1" or
-    "[population icon] 66 (+5)", where [... icon] is an icon image, not text.
-    The icon may have one or two numerical values.  If one, just that number is displayed.  If two, the first
-    number is displayed followed by the second in brackets "()" */
+  * "[population icon] 66 (+5)", where [... icon] is an icon image, not text.
+  * The icon may have one or two numerical values.  If one, just that number is displayed.  If two, the first
+  * number is displayed followed by the second in brackets "()" */
 class StatisticIcon : public GG::Control
 {
 public:
@@ -370,7 +370,7 @@ public:
     /** \name Mutators */ //@{
     virtual void    Render() {}
     void            SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
-//@}
+    //@}
 
 private:
     void            Refresh();

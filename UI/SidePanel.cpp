@@ -409,7 +409,6 @@ public:
     virtual void Render();
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
     void Refresh();                 ///< updates panels, shows / hides colonize button, redoes layout of infopanels
     void Hilite(HilitingType ht);
@@ -1000,9 +999,6 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false)));
 }
 
-void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
@@ -1016,11 +1012,8 @@ SidePanel::PlanetPanel::HilitingType SidePanel::PlanetPanel:: Hiliting() const
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (InPlanet(pt))
-    {
-        Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"), true);
-        PlanetImageLClickedSignal(m_planet_id);
-    }
+    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"), true);
+    PlanetImageLClickedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::Render()

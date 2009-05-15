@@ -1315,12 +1315,12 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     AttachChild(m_zoom_in_button);
     AttachChild(m_zoom_out_button);
 
-    GG::Connect(m_layout_surface->DraggedSignal, &TechTreeWnd::LayoutPanel::TreeDraggedSlot, this);
-    GG::Connect(m_layout_surface->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this);
-    GG::Connect(m_vscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
-    GG::Connect(m_hscroll->ScrolledSignal, &TechTreeWnd::LayoutPanel::ScrolledSlot, this);
-    GG::Connect(m_zoom_in_button->ClickedSignal, &TechTreeWnd::LayoutPanel::TreeZoomInClicked, this);
-    GG::Connect(m_zoom_out_button->ClickedSignal, &TechTreeWnd::LayoutPanel::TreeZoomOutClicked, this);
+    GG::Connect(m_layout_surface->DraggedSignal,    &TechTreeWnd::LayoutPanel::TreeDraggedSlot,     this);
+    GG::Connect(m_layout_surface->ZoomedSignal,     &TechTreeWnd::LayoutPanel::TreeZoomedSlot,      this);
+    GG::Connect(m_vscroll->ScrolledSignal,          &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
+    GG::Connect(m_hscroll->ScrolledSignal,          &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
+    GG::Connect(m_zoom_in_button->ClickedSignal,    &TechTreeWnd::LayoutPanel::TreeZoomInClicked,   this);
+    GG::Connect(m_zoom_out_button->ClickedSignal,   &TechTreeWnd::LayoutPanel::TreeZoomOutClicked,  this);
 
 
     // show all categories...
@@ -1693,10 +1693,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         m_techs[tech]->MoveTo(GG::Pt(static_cast<GG::X>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN_X),
                                      static_cast<GG::Y>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN_Y)));
         m_layout_surface->AttachChild(m_techs[tech]);
-        GG::Connect(m_techs[tech]->TechBrowsedSignal, &TechTreeWnd::LayoutPanel::TechBrowsedSlot, this);
-        GG::Connect(m_techs[tech]->TechClickedSignal, &TechTreeWnd::LayoutPanel::TechClickedSlot, this);
-        GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this);
-        GG::Connect(m_techs[tech]->ZoomedSignal, &TechTreeWnd::LayoutPanel::TreeZoomedSlot, this);
+        GG::Connect(m_techs[tech]->TechBrowsedSignal,       &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
+        GG::Connect(m_techs[tech]->TechClickedSignal,       &TechTreeWnd::LayoutPanel::TechClickedSlot,         this);
+        GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
+        GG::Connect(m_techs[tech]->ZoomedSignal,            &TechTreeWnd::LayoutPanel::TreeZoomedSlot,          this);
 
         for (Agedge_t* edge = agfstout(graph, node); edge; edge = agnxtout(graph, edge)) {
             const Tech* from = tech;

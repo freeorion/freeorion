@@ -138,7 +138,7 @@ namespace {
              >> buildtime_label >> int_p[building_type_p.build_time = arg1]
              >> maintenancecost_label >> real_p[building_type_p.maintenance_cost = arg1]
              >> location_label >> condition_p[building_type_p.location = arg1]
-             >> effectsgroups_label >> effects_group_vec_p[building_type_p.effects_groups = arg1]
+             >> !(effectsgroups_label >> effects_group_vec_p[building_type_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[building_type_p.graphic = arg1])
             [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description, building_type_p.build_cost,
                                                         building_type_p.build_time, building_type_p.maintenance_cost, building_type_p.location,

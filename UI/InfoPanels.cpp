@@ -291,9 +291,6 @@ void PopulationPanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
-void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 void PopulationPanel::Render() 
 {
     // Draw outline and background...
@@ -657,9 +654,6 @@ void ResourcePanel::DoExpandCollapseLayout()
 
     ExpandCollapseSignal();
 }
-
-void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
 
 void ResourcePanel::Render()
 {
@@ -1109,9 +1103,6 @@ void MilitaryPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 void MilitaryPanel::Update()
 {
     const Planet* plt = GetPlanet();
@@ -1339,9 +1330,6 @@ void MultiIconValueIndicator::Render()
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
-void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 void MultiIconValueIndicator::Update()
 {
     assert(m_icons.size() == m_meter_types.size());
@@ -1485,9 +1473,6 @@ void MultiMeterStatusBar::Render()
     }
 }
 
-void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 void MultiMeterStatusBar::Update()
 {
     std::vector<const Meter*> meters;
@@ -1614,9 +1599,6 @@ void BuildingsPanel::Render()
 
     glEnable(GL_TEXTURE_2D);
 }
-
-void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
 
 void BuildingsPanel::Update()
 {
@@ -1888,9 +1870,6 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);
 }
 
-void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
-
 /////////////////////////////////////
 //         SpecialsPanel           //
 /////////////////////////////////////
@@ -1917,9 +1896,6 @@ bool SpecialsPanel::InWindow(const GG::Pt& pt) const
 
 void SpecialsPanel::Render()
 {}
-
-void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
 
 void SpecialsPanel::Update()
 {
@@ -2013,9 +1989,6 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ShipDesignPanel::Render() {}
-
-void ShipDesignPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{ ForwardEventToParent(); }
 
 void ShipDesignPanel::Update() {
 }
