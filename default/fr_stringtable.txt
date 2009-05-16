@@ -1,4 +1,4 @@
-Francais
+Français
 
 #This is a (preliminary) French String Table file for FreeOrion
 
@@ -47,6 +47,47 @@ Oui
 NO
 Non
 
+EMPIRE
+Empire
+
+EMPIRE_DEFEATED
+L'empire %1% n'est plus.
+
+ALL
+Tout
+
+UNKNOWN_SYSTEM
+Système inconnu
+
+RENAME
+Renommer
+
+ENTER_NEW_NAME
+Entrez un nouveau nom
+
+UNKNOWN_VALUE_SYMBOL
+?
+
+ERROR
+ERREUR
+
+NOT_APPLICABLE
+N/A
+
+CHAT_WHISPER
+murmurer
+
+# used to generate names for new fleets when they are created
+NEW_FLEET_NAME
+Nouvelle Flotte %1%
+
+NEW_FLEET_NAME_NO_NUMBER
+Nouvelle Flotte
+
+##########################
+# Status Update Messages #
+##########################
+
 NEW_GAME
 Génération de l'univers et des IAs...
 
@@ -73,51 +114,24 @@ Le joueur %1% n'est plus connecté au serveur.
 PLAYER_DEFEATED
 Vous êtes vaincu.
 
-PLAYER_VICTORIOUS
-Vous êtes victorieux.
-
-EMPIRE
-Empire
-
 EMPIRE_DEFEATED
-L'empire %1% n'est plus.
+L'Empire %1% n'existe plus.
 
-ALL
-Tout
+UNKNOWN_EMPIRE
+Empire Inconnu
 
-UNKNOWN_SYSTEM
-Système inconnu
+LAST_OPPONENT_DEFEATED_VICTORY
+Votre dernier adversaire est vaincu! Vous êtes victorieux!
 
-RENAME
-Renommer
-
-ENTER_NEW_NAME
-Entrez un nouveau nom
-
-UNKNOWN_VALUE_SYMBOL
-?
-
-ERROR
-ERREUR
-
+#a supprimer
 DEFENSE_BASE
 Base défensive
-
+#a supprimer
 DEFENSE_BASE_DESCRIPTION
 '''Une plateforme orbitale participant à la défense de la planète ou elle est située.
 
 Attaque: 1
 Défense: 3'''
-
-CHAT_WHISPER
-murmurer
-
-# used to generate names for new fleets when they are created
-NEW_FLEET_NAME
-Nouvelle Flotte %1%
-
-NEW_FLEET_NAME_NO_NUMBER
-Nouvelle Flotte
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -156,8 +170,26 @@ Rendu grisé autour des systèmes pour donner une forme à la galaxie. Peut êtr
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Utilisation de OpenGL 1,5 optimisé pour le rendu de la carte galactique. Peut ne pas fonctionner sur les anciennes cartes graphiques.***
 
+OPTIONS_DB_STARLANE_THICKNESS
+Sets how wide to render starlanes in pixels.**
+
+OPTIONS_DB_RESOURCE_STARLANE_COLOURING
+Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.**
+
+OPTIONS_DB_UNOWNED_STARLANE_COLOUR
+Sets default colour to render starlanes.**
+
+OPTIONS_DB_FLEET_SUPPLY_LINES
+Toggles whether to show fleet supply lines with empire-coloured indica.**
+
+OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
+Sets how wide to render fleet supply lines.**
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force le client à ne pas lancer un serveur, même dans les cas de l'hébergement local d'un jeu, d'un jeu solo, etc.
+
+OPTIONS_DB_EXTERNAL_SERVER_ADDRESS
+Address to connect to in external server mode. If used, this client becomes the manager of the game.
 
 OPTIONS_DB_UI_MAIN_MENU_X
 Position du centre du menu principal de l'écran d'introduction, en portion de la largeur totale du programme.
@@ -360,6 +392,27 @@ Sets UI scroll width.***
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Règle la taille des icônes de systèmes.
 
+OPTIONS_DB_UI_SYSTEM_CIRCLES
+Toggles whether to draw circles around systems.
+
+OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
+Sets size of circles around systems on map, relative to system icon size.
+
+OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
+Sets colour of unowned system names on galaxy map.
+
+OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which small fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which tiny fleet icons are shown.  At smaller zooms, no fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
+Sets size of system icon below which the special fixed-size tiny icons will be shown.
+
 OPTIONS_DB_UI_FLEET_BUTTON_SIZE
 Règle la taille (relative aux icônes de systèmes) des boutons de flotte.
 
@@ -377,6 +430,15 @@ Auto-select the top fleet when a fleet window is opened.  Consider using this fl
 
 OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Fermer les fenêtres ouverte comme les fenêtres de flotte et le panneau latéral de système quand vous faites un clic droit sur la carte principale.
+
+OPTIONS_DB_UI_SIDEPANEL_WIDTH
+Sets size of system sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
+Sets size of largest-rendered rotating planets on sidepanel.
+
+OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER
+Sets size of smallest-rendered rotating planets on sidepanel.
 
 OPTIONS_DB_GAMESETUP_STARS
 Le nombre d'étoiles à générer dans la galaxie.
@@ -438,6 +500,17 @@ Règle le nombre maximum de sauvegardes automatiques qui devraient être gardée
 OPTIONS_DB_MUSIC_VOLUME
 Règle le volume de la musique (de 0 à 255).
 
+OPTIONS_DB_COMBAT_ENABLE_GLOW
+Toggles glow effects on and off.
+
+OPTIONS_DB_COMBAT_ENABLE_SKYBOX
+Toggles background skybox on and off.
+
+OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
+Toggles lens flares on and off.
+
+OPTIONS_DB_COMBAT_FILLED_SELECTION
+Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
 #################
 # File Dialog   #
@@ -519,6 +592,9 @@ Menu Principal
 INTRO_BTN_SINGLE_PLAYER
 Partie solo
 
+INTRO_BTN_QUICK_START
+Quick Start
+
 INTRO_BTN_MULTI_PLAYER
 Partie multijoueur
 
@@ -561,10 +637,8 @@ Connection au serveur
 
 LAN_GAME_LABEL
 Partie LAN chez:
-
 INTERNET_GAME_LABEL
 Partie Internet chez:
-
 PLAYER_NAME_LABEL
 Nom du joueur
 
@@ -573,10 +647,8 @@ Nom du joueur
 
 HOST_GAME_BN
 Héberger partie
-
 JOIN_GAME_BN
 Rejoindre partie
-
 REFRESH_LIST_BN
 Rafraîchir
 
@@ -598,10 +670,8 @@ Le joueur hôte a mis fin à ce jeu.
 
 NEW_GAME_BN
 Nouvelle partie
-
 LOAD_GAME_BN
 Charger partie
-
 START_GAME_BN
 Lancer partie
 
@@ -634,40 +704,29 @@ Nombre d'IAs
 
 GSETUP_STARS
 Etoiles
-
 GSETUP_SHAPE
 Forme de la galaxie
-
 GSETUP_AGE
 Age de la galaxie
-
 GSETUP_STARLANE_FREQ
 Starlane Frequency***
-
 GSETUP_PLANET_DENSITY
 Densité planètes  
-
 GSETUP_SPECIALS_FREQ
 Fréq. évé. spéciaux***
 
 GSETUP_2ARM
 Spirale à 2 bras
-
 GSETUP_3ARM
 Spirale à 3 bras
-
 GSETUP_4ARM
 Spirale à 4 bras
-
 GSETUP_CLUSTER
 Grappe
-
 GSETUP_ELLIPTICAL
 Elliptique
-
 GSETUP_IRREGULAR
 Irrégulière
-
 GSETUP_RING
 Anneau
 
@@ -676,43 +735,33 @@ Aucun
 
 GSETUP_YOUNG
 Jeune
-
 GSETUP_MATURE
 Mûre
-
 GSETUP_ANCIENT
 Ancienne
 
 GSETUP_FEW
 Peu
-
 GSETUP_SOME
 Quelques
-
 GSETUP_SEVERAL
 Plusieurs
-
 GSETUP_MANY
 Beaucoup
-
 GSETUP_VERY_MANY
 Enormément
 
 GSETUP_LOW
 Faible
-
 GSETUP_MEDIUM
 Moyen
-
 GSETUP_HIGH
 Grand
 
 GSETUP_RARE
 Rares
-
 GSETUP_UNCOMMON
 Pas communs
-
 GSETUP_COMMON
 Communs
 
@@ -881,11 +930,71 @@ Délai avant dissimulation du chat
 OPTIONS_GALAXY_MAP
 Carte Galactique
 
-OPTIONS_GALAXY_MAP_GAS
-Rendu gazeux de la Carte galactique***
+OPTIONS_SYSTEM_ICONS
+System Icons
 
 OPTIONS_OPTIMIZED_SYSTEM_RENDERING
 Système de rendu optimisé
+
+OPTIONS_UI_SYSTEM_ICON_SIZE
+System icon size
+
+OPTIONS_UI_SYSTEM_CIRCLES
+System enclosing circles
+
+OPTIONS_UI_SYSTEM_CIRCLE_SIZE
+System circle relative size
+
+OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
+System selection indicator relative size
+
+OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
+Tiny system icon size threshold
+
+OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
+Unowned systen name colour
+
+OPTIONS_FLEET_ICONS
+Fleet Icons
+
+OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
+Tiny fleet icon minimum zoom
+
+OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
+Small fleet icon minimum zoom
+
+OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
+Medium fleet icon minimum zoom
+
+OPTIONS_GALAXY_MAP_GENERAL
+General
+
+OPTIONS_GALAXY_MAP_GAS
+Galaxy map gas rendering
+
+OPTIONS_GALAXY_MAP_STARFIELDS
+Galaxy map starfields rendering
+
+OPTIONS_GALAXY_MAP_SCALE_LINE
+Galaxy distance scale line
+
+OPTIONS_STARLANES
+Starlanes
+
+OPTIONS_STARLANE_THICKNESS
+Starlane thickness
+
+OPTIONS_RESOURCE_STARLANE_COLOURING
+Resource starlane colouring
+
+OPTIONS_FLEET_SUPPLY_LINES
+Fleet supply lines
+
+OPTIONS_FLEET_SUPPLY_LINE_WIDTH
+Fleet supply line width
+
+OPTIONS_UNOWNED_STARLANE_COLOUR
+Default starlane colour
 
 OPTIONS_MUSIC
 Musique
@@ -921,7 +1030,7 @@ OPTIONS_SOUND_FLEET_ROLLOVER
 Fleet Button Rollover***
 
 OPTIONS_SOUND_SYSTEM_ROLLOVER
-System Icon Rollover
+System Icon Rollover***
 
 OPTIONS_SOUND_WINDOW
 Sons des fenêtres
@@ -1025,6 +1134,9 @@ IHM
 OPTIONS_PAGE_COLORS
 Couleurs
 
+OPTIONS_PAGE_COMBAT
+Combat
+
 OPTIONS_PAGE_DIRECTORIES
 Dossiers
 
@@ -1051,6 +1163,18 @@ Barre
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Fond
+
+OPTIONS_COMBAT_ENABLE_GLOW
+Glow***
+
+OPTIONS_COMBAT_ENABLE_SKYBOX
+Skybox***
+
+OPTIONS_COMBAT_ENABLE_LENS_FLARES
+Lens Flares***
+
+OPTIONS_COMBAT_FILLED_SELECTION
+Filled selection***
 
 OPTIONS_ANY_FILE
 Tous les fichiers
@@ -1084,6 +1208,9 @@ Tour %1%
 MAP_INDICATOR_FPS
 FPS: %1%
 
+MAP_SCALE_INDICATOR
+%1% uu
+
 MAP_BTN_MENU
 Menu
 
@@ -1109,7 +1236,41 @@ Panneau latéral
 SP_SYSTEM_PRODUCTION
 Production du système
 
+RESOURCE_PRODUCTION_TOOLTIP
+System %1%: %2%
+
+RESOURCE_ALLOCATION_TOOLTIP
+System %1%: %2%
+
+FOOD_CONSUMPTION
+Food Consumption***
+
+MINERALS_CONSUMPTION
+Minerals Consumption***
+
+INDUSTRY_CONSUMPTION
+Industrial Consumption***
+
+RESEARCH_CONSUMPTION
+Research Consumption***
+
+TRADE_CONSUMPTION
+Trade Consumption***
+
+INTERSYSTEM_EXCHANGE_TOOLTIP
+Inter-System Exchange***
+
+IMPORT_EXPORT_TOOLTIP
+Import / Export
+
+RESOURCE_IMPORT
+Importing***
+
+RESOURCE_EXPORT
+Available for Export***
+
 ##Planet Panel#############
+
 PLANET_PANEL
 Panneau planétaire
 
@@ -1142,13 +1303,16 @@ RP_SECONDARY_FOCUS_TOOLTIP
 Objectif Secondaire: %1%
 
 RP_FOOD
-Production Agricole\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
+Production Agricole
+#\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
 
 RP_MINERALS
-Exploitation minière\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
+Exploitation minière
+#\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
 
 RP_INDUSTRY
-Production Industrielle\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
+Production Industrielle
+#\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%
 
 RP_RESEARCH
 Niveau de Recherche
@@ -1157,12 +1321,13 @@ RP_TRADE
 Niveau de commerce
 
 RP_CONSTRUCTION
-Construction Infrastructure\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%\nMaximum: %4%
+Construction Infrastructure
+#\nActuelle: %1%\nProchain Tour: %2% (estimate)\nChange: %3%\nMaximum: %4%
 
 ## Military Panel ##########
 
 MP_SUPPLY
-Flotte de support
+Support de flotte
 
 MP_SHIELD
 Bouclier planétaire
@@ -1203,7 +1368,7 @@ TT_METER
 Compteur: %1% / %2%
 
 TT_BASIC_FOCUS_AND_UNIVERSE
-Dossier  de baseet de l'Univers***
+Dossier  de base et de l'Univers***
 
 TT_TECH
 %1% Tech <i>%2%</i>
@@ -1222,6 +1387,12 @@ Spécial <i>%1%</i>
 
 TT_UNKNOWN
 Inconnu
+
+TT_RESOURCE_PRODUCTION
+%1% produces %2% ***
+
+TT_RESOURCE_ALLOCATION
+%1% consumes %2% ***
 
 ## Misc. Sidepanel##########
 
@@ -1299,7 +1470,7 @@ Pas de flotte
 ###############
 
 TECH_DISPLAY
-Display
+Display**
 
 TECH_NAVIGATION
 Navigation
@@ -1316,29 +1487,6 @@ TECH_TURNS_LEFT_STR
 TECH_TURNS_LEFT_NEVER
 Jamais
 
-TECH_DETAIL_TYPE_STR
-%1% %2% - %3%
-
-TECH_DETAIL_DESCRIPTION_STR
-%1%
-
-TECH_DETAIL_EFFECTS_STR
-'''
-
-<u>Effets</u>
-
-%1%'''
-
-TECH_DETAIL_UNLOCKS_SECTION_STR
-'''
-
-<u>Débloqué</u>
-
-'''
-
-TECH_DETAIL_UNLOCKED_ITEM_STR
-'''%1%: %2%
-'''
 
 TECH_WND_TECH_COMPLETED
 ACQUIS
@@ -1427,6 +1575,7 @@ Bâtiments
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Vaisseaux
 
+#a supprimer?
 PRODUCTION_WND_CATEGORY_BT_ORBITAL
 Orbitales
 
@@ -1443,27 +1592,11 @@ PRODUCTION_TURN_COST_STR
 +%1% PP
 
 PRODUCTION_TURNS_LEFT_STR
-%1% Tours restant
+%1% Tours restants
 
 PRODUCTION_TURNS_LEFT_NEVER
 Jamais
 
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
-%1%
-
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-'''%1%
-
-<u>Effets</u>
-
-%2%'''
-
-PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-'''%1%
-
-Attaque: %2%
-Défense: %3%
-Vitesse: %4%'''
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Quantité
@@ -1541,48 +1674,6 @@ Confirmer le Design
 DESIGN_WND_CLEAR
 Effacer les éléments
 
-# Ship Slot Types
-
-SL_EXTERNAL
-Externe
-
-SL_INTERNAL
-Interne
-
-
-# Ship Part Classes
-
-PC_SHORT_RANGE
-Courte portée
-
-PC_MISSILES
-Missiles
-
-PC_FIGHTERS
-Chasseurs
-
-PC_POINT_DEFENSE
-Prox. Défense
-
-PC_SHIELD
-Bouclier
-
-PC_ARMOUR
-Blindage
-
-PC_DETECTION
-Détection
-
-PC_STEALTH
-Furtivité
-
-PC_FUEL
-Carburant
-
-PC_COLONY
-Colonisation
-
-
 ####################
 #   Encyclopedia   #
 ####################
@@ -1596,15 +1687,15 @@ Coque de vaisseau
 
 ENC_TECH
 Technologie
-
-ENC_SHIP_DESIGN
-Design de vaisseau
  
 ENC_SPECIAL
 Spécial
 
-ENC_BUILDING
-Batiment
+ENC_BUILDING_TYPE
+Type de construction**
+
+ENC_SHIP_DESIGN
+Design de vaisseau
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
@@ -1634,6 +1725,27 @@ END_EFFECTS_STR
 <u>Effets</u>
 
 %1%'''
+
+ENC_SHIP_DESIGN_DESCRIPTION_STR
+'''%1%
+
+Attack: %2%
+Defense: %3%
+Speed: %4%'''
+
+ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
+'''
+
+<u>Unlocks</u>
+
+'''
+
+ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
+'''%1%: %2%
+'''
+
+ENC_TECH_DETAIL_TYPE_STR
+%1% %2% - %3%
 
 
 
@@ -1707,7 +1819,7 @@ Téléchargment des données du jeu ...
 #Window title####
 
 SITREP_PANEL_TITLE
-Rapport de la situation
+Rapport de situation
 
 
 ####################
@@ -1743,6 +1855,24 @@ SITREP_PLANET_COLONIZED
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 La flotte %fleet% est arrivée au système %system% et attend vos ordres.
+
+SITREP_EMPIRE_ELIMINATED
+L'empire %name% a été éliminé.
+
+SITREP_VICTORY
+%1%
+
+####################
+# Victory / Defeat #
+####################
+
+TECH_VICTORY
+L'empire %1% a réussi une victoire téchnologique.
+
+
+ALL_ENEMIES_ELIMINATED_VICTORY
+L'empire %1% a réussi une victoire seul restant**.
+
 
 
 ####################
@@ -1817,22 +1947,16 @@ L'orbite de cette planète est très excentré, c'est-à-dire qu'il y a une gran
 
 OBJ_BUILDING
 bâtiment
-
 OBJ_SHIP
 vaisseau
-
 OBJ_FLEET
 flotte
-
 OBJ_PLANET
 planète
-
 OBJ_POP_CENTER
 centre de population
-
 OBJ_PROD_CENTER
 centre de production
-
 OBJ_SYSTEM
 système
 
@@ -1841,22 +1965,16 @@ système
 
 STAR_BLUE
 bleue
-
 STAR_WHITE
 blanche
-
 STAR_YELLOW
 jaune
-
 STAR_ORANGE
 orange
-
 STAR_RED
 rouge
-
 STAR_NEUTRON
 neutrons
-
 STAR_BLACK
 trou noir
 
@@ -1865,37 +1983,27 @@ trou noir
 
 PT_SWAMP
 marécageuse
-
 PT_TOXIC
 toxique
-
 PT_INFERNO
 infernale
-
 PT_RADIATED
 irradiée
-
 PT_BARREN
 lunaire
-
 PT_TUNDRA
 toundra
-
 PT_DESERT
 désertique
-
 PT_TERRAN
 terrienne
-
 PT_OCEAN
 océanique
-
+#a supprimer gaia
 PT_GAIA
 gaia
-
 PT_ASTEROIDS
-astéroides
-
+astéroide
 PT_GASGIANT
 géante gazeuse
 
@@ -1904,25 +2012,18 @@ géante gazeuse
 
 SZ_NOWORLD
 Rien à voir ici, circulez.
-
 SZ_TINY
 minuscule
-
 SZ_SMALL
 petite
-
 SZ_MEDIUM
 moyenne
-
 SZ_LARGE
 grande
-
 SZ_HUGE
 énorme
-
 SZ_ASTEROIDS
 astéroïdes
-
 SZ_GASGIANT
 géante gazeuse
 
@@ -1930,37 +2031,31 @@ géante gazeuse
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-uninhabitable
+inhabitable
 PE_HOSTILE
 hostile
 PE_POOR
-poor
+pauvre
 PE_ADEQUATE
-adequate
+adéquate
 PE_GOOD
-good
+Bonne
 
 
 # FocusTypes
 
 FOCUS_UNKNOWN
 inconnu
-
 FOCUS_BALANCED
 équilibré
-
 FOCUS_FARMING
 agriculture
-
 FOCUS_INDUSTRY
 industrie
-
 FOCUS_MINING
 expl. minière
-
 FOCUS_RESEARCH
 recherche
-
 FOCUS_TRADE
 commerce
 
@@ -1968,43 +2063,30 @@ commerce
 
 METER_POPULATION
 population
-
 METER_FARMING
 argriculture
-
 METER_INDUSTRY
 industrie
-
 METER_RESEARCH
 recherche
-
 METER_TRADE
 commerce
-
 METER_MINING
 expl. minière
-
 METER_CONSTRUCTION
 construction
-
 METER_HEALTH
 santé
-
 METER_FUEL
 carburant
-
 METER_SUPPLY
 provision
-
 METER_STEALTH
 furtivité
-
 METER_DETECTION
 détection
-
 METER_SHIELD
 bouclier
-
 METER_DEFENSE
 défense
 
@@ -2013,10 +2095,8 @@ défense
 
 AFFIL_SELF
 self***
-
 AFFIL_ENEMY
 ennemi
-
 AFFIL_ALLY
 allié
 
@@ -2025,10 +2105,8 @@ allié
 
 UIT_BUILDING
 Bâtiment
-
 UIT_SHIP_PART
 Elément de vaisseau
-
 UIT_SHIP_HULL
 Coque de vaisseau
 
@@ -2036,10 +2114,8 @@ Coque de vaisseau
 
 TT_THEORY
 Théorie
-
 TT_APPLICATION
 Application
-
 TT_REFINEMENT
 Raffinement
 
@@ -2048,13 +2124,10 @@ Raffinement
 
 BT_NOT_BUILDING
 pas de construction
-
 BT_BUILDING
 construction
-
 BT_SHIP
 vaisseau
-
 BT_ORBITAL
 orbitale
 
@@ -2063,13 +2136,40 @@ orbitale
 
 ST_FOOD
 nourriture
-
 ST_MINERAL
 minéraux
-
 ST_TRADE
 commerce
 
+# Ship Slot Types
+
+SL_EXTERNAL
+Externe
+SL_INTERNAL
+Interne
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Courte portée
+PC_MISSILES
+Missiles
+PC_FIGHTERS
+Chasseurs
+PC_POINT_DEFENSE
+Prox. Défense
+PC_SHIELD
+Bouclier
+PC_ARMOUR
+Blindage
+PC_DETECTION
+Détection
+PC_STEALTH
+Furtivité
+PC_FUEL
+Carburant
+PC_COLONY
+Colonisation
 
 
 ################################################
@@ -2338,6 +2438,12 @@ Enlèves la capacité spéciale %1% à l'objet
 DESC_SET_STAR_TYPE
 Change le type d'étoile pour %1%
 
+DESC_MOVE_TO
+Moves the object to the location of an object%1%***
+
+DESC_VICTORY
+Causes the object's owner to win the game***
+
 
 # SetTechAvailability
 
@@ -2353,6 +2459,13 @@ Rends %1% accessible à l'empire %2%
 DESC_SET_TECH_UNAVAIL
 Rends %1% inaccessible à l'empire %2%
 
+# Object Creation
+
+DESC_CREATE_PLANET
+Creates a new planet of type %1% and size %2%***
+
+DESC_CREATE_BUILDING
+Creates a new %1% building***
 
 # Conditions
 
@@ -2389,6 +2502,18 @@ DESC_SELF
 
 DESC_SELF_NOT
  qui n'est pas l'objet source
+
+DESC_HOMEWORLD
+ that is a homeworld***
+
+DESC_HOMEWORLD_NOT
+ that is not a homeworld***
+
+DESC_CAPITOL
+ that is an empire's capitol planet***
+
+DESC_CAPITOL_NOT
+ that is not an empire's capitol planet***
 
 DESC_TYPE
  qui est un %1%
@@ -2546,19 +2671,14 @@ DESC_NUMBER_NOT
 
 LEARNING_CATEGORY
 Connaissance
-
 PRODUCTION_CATEGORY
 Production
-
 CONSTRUCTION_CATEGORY
 Construction
-
 GROWTH_CATEGORY
 Croissance
-
 ECONOMICS_CATEGORY
 Économie
-
 SHIPS_CATEGORY
 Vaisseaux
 
@@ -3016,7 +3136,7 @@ SHP_NAVIGATION_DESC
 #########################################
 
 DOES_NOTHING_SHORT_DESC
-Useless: Does Nothing
+Inutile : ne fais rien
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Débloque un élément de vaisseau
@@ -3031,7 +3151,7 @@ RESEARCH_SHORT_DESC
 Augmente la recherche
 
 FARMING_SHORT_DESC
-Augmente l'agricultur
+Augmente l'agriculture
 
 MINING_SHORT_DESC
 Augmente l'exploitation minère
@@ -3052,7 +3172,7 @@ FLEET_RANGE_DESC
 Augmente le support de flotte
 
 CON_TERRAFORM
-Terraforming
+Terraformation
 
 CON_TERRAFORM_DESC
 Changing the environmental type of a planet is a massive undertaking, the challenge of this process is to a large degree logistical.  The precise method depends greatly on the type of planet to be changed and the desired result.  However in all cases much of the surface of the entire planet and it's atmosphere needs to be converted to other types of molecules, vented into space or buried under the crust.  The process takes years.
@@ -3061,7 +3181,7 @@ CON_TERRAFORM_SHORT_DESC
 Allows terraforming to improve planets
 
 CON_RAPID_TERRAFORM
-Rapid Terraforming
+Terraformation Rapide
 
 CON_RAPID_TERRAFORM_DESC
 Advances in orbital deployment now enable any terrestrial planet in an inhabited system to be terraformed to any environmental preference. Nanites can accomplish the transformation in half the time of conventional methods.
@@ -3070,43 +3190,43 @@ CON_RAPID_TERRAFORM_SHORT_DESC
 Allows rapid and remote terraforming to improve planets
 
 CON_GRAVITY_WELLS
-Controlled gravity wells
+Puits de Gravité Contrôlés
 
 CON_GRAVITY_WELLS_DESC
 By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
 
 CON_MEGALITH
-Megalith Construction
+Construction de Mégalithe
 
 CON_MEGALITH_DESC
 Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
 
 CON_ORBITAL_FACT
-Orbital Factories
+Industries Orbitales
 
 CON_ORBITAL_FACT_DESC
 Since all colonies begin in space and raw materials are largely imported from off-world, the common Exodus practice of complete planet-fall for new colony ships is wasteful. The manufacturing work so badly needed for upstart colonies can be done more cheaply in orbit. Equipping new colonies with pre-built orbital factory kits helps them make use of the natural resource of low orbit.
 
 CON_PLANET_RING
-Planetary Ring
+Anneau Planétaire
 
 CON_PLANET_RING_DESC
 Space elevators are now a relatively modest task. It now becomes possible to undertake their natural extension. By placing several elevators in a ring around a world like spokes in a wheel, and then connecting them together by enormous chains of satellites and space stations, a planetary ring can be created.
 
 CON_SPACE_ELEVATOR
-Space Elevator
+Ascenseur Spatial
 
 CON_SPACE_ELEVATOR_DESC
 Nano-construction enables production of tensile cables strong enough to reach beyond geostationary orbit.  Shuttles magnetically lifted up the cable are superior to the expensive, inefficient, and highly dangerous rocket launches to escape velocity.
 
 CON_SUBTER_CONST
-Subterranean Construction
+Construction Souterraine  
 
 CON_SUBTER_CONST_DESC
 When space is at a premium, the holy grail of construction is the ability to build down as easily as up. Modern techniques finally make this possible.
 
 CON_ORBITAL_INFRA
-Orbital Infrastructure
+Infrastructure Orbitale***
 
 CON_ORBITAL_INFRA_DESC
 A well-developed general support infrastructure located in orbit permits great flexibility and rapid development of resource production capacity.
@@ -3118,7 +3238,7 @@ ECO_COLONIAL_ECO_DESC
 With advanced economic planning now a reality, the economy for an entire developing world can be blueprinted with the precision of a physical building.  Upstart markets tap their raw potential for growth, without risk of being mired in traditionally immature "wild frontier" mentalities.
 
 ECO_COMM_UNION
-Commercial Union of the Colonies
+Union Commerciales des Colonies
 
 ECO_COMM_UNION_DESC
 The combination of applications as diverse as economic spectroscopy, bio-mimetics, digital psychology and advanced game theory produce a shift in the paradigm of economic thinking. The means to organize economic markets orders of magnitude above any previously envisioned becomes possible.
@@ -3130,19 +3250,19 @@ ECO_DEEP_GREEN_DESC
 The quantum fractal nature of the equations of economic spectroscopy make all but the relatively superficial analyses impractical for most markets. However a massive computer designed from the ground up to handle the unusual algorithms, could supply an entire empire with economic foresight and stability.
 
 ECO_ECO_ETHER
-Economic Etherealization
+Economie Dématérialisé***
 
 ECO_ECO_ETHER_DESC
 In the Exodus age of vast possibilities, the economic systems of most worlds have been slow to abandon the archaic paper and pencil, trading floor mentality. The final step in economic modernization is to dispense with out-dated, corporeal economic systems once and for all and transcend to a purer plane of digital information and virtual presence. This transition will boost the markets of all worlds, especially those largest.
 
 ECO_PARADISE
-Paradise Planet
+Planète Paradisiaque
 
 ECO_PARADISE_DESC
 The Paradise Planet is the ultimate tourist resort, a world whose entire economic structure has been converted to tourism and pleasure seeking. The benefits of such a planet would extend to the citizenry of distant worlds.
 
 ECO_SINKHOLE
-Economic Sinkholes
+Economic Sinkholes***
 
 ECO_SINKHOLE_DESC
 When economic activity is viewed as a flowing fluid, the capability to affect its flow becomes apparent.  By creating a localized sinkhole in surface over which trade flows, trade centres well removed from the sinkhole itself are strongly affected.  Such trade current disruption propegates out in all directions however, and is difficult or impossible to target selectively.
@@ -3162,7 +3282,7 @@ GRO_BIOTERROR_DESC
 A research centre created to safely develop the most dangerous of biological weaponry while keeping prying eyes out. Biological weaponry takes effect too slowly to be of much use in a direct military conflict but as a weapon of terror it is unsurpassed, a slowly growing contamination will spread panic before it, images of a desperate people quarantined by their own government sows despair beyond the affected area, however care must be taken when developing such organisms to ensure they are not accidental released furthermore utter secrecy is required at the risk of damaging relations with other empires and our own people.
 
 GRO_HABITATION_DOMES
-Habitation Domes
+Dômes d'habitation 
 
 GRO_HABITATION_DOMES_DESC
 '''While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habibation Domes provide a faster and cheaper, though more limited, alternative for increasing the population capacity of inhospitable worlds, allowing moderate levels of infrastructure and resource capacity to be developed.
@@ -3182,7 +3302,7 @@ GRO_GENOME_BANK_DESC
 The unknown variables in genomic calculations for any given species remain severe for all but the simplest genetic repairs, not to mention the changes that a genetic modification can potentially have on a larger multi-species biosphere. To truly realize the benefits of genetic medicine, it is necessary to collect a massive genome database for all the species from all known worlds.
 
 GRO_LIVING_PLANET
-The Living Planet
+La Planète vivante
 
 GRO_LIVING_PLANET_DESC
 Theoretically, it is possible to completely predict the ecology of a single planet by mapping out its entire web of biological interdependence, both sentient and non-sentient, in fractal algorithms. In practice however, this could only be realized by constructing a vast planet-spanning network running a computer program dedicated to regulating the planet's entire biosphere. This computer would become, in effect, the brain of a new type of life--A single planetary organism, with intelligent citizens as part of its fabric, subject to the greater will.
@@ -3194,13 +3314,13 @@ GRO_ORBITAL_GARDENS_DESC
 A marvel of engineering and design, the Orbital Gardens feature samples of flora gathered from throughout the known galaxy, each cultivated within the wide range of artificial environments re-created within this small artificial moon.
 
 GRO_URBAN_FARM
-Urban Farming
+Agriculture Urbaine
 
 GRO_URBAN_FARM_DESC
 On industrialized worlds, where arable land is rare to non-existent, the capability to produce food in hydroponic or aeroponic environments tightly packed into multi-storey buildings becomes critical to maintain food output.
 
 LRN_STELLAR_TOMOGRAPHY
-Stellar Tomography
+Tomographie Stellaire
 
 LRN_STELLAR_TOMOGRAPHY_DESC
 '''A network of specialized satellites can use tomographic methods to reconstruct the activities occurs deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.
@@ -3211,25 +3331,25 @@ Provides +2 to planets in systems with white or blue stars.
 Provides +1 to planets in systems with red, orange or yellow stars.'''
 
 LRN_OBSERVATORY_I
-Observatory
+Observatoire
 
 LRN_OBSERVATORY_I_DESC
 The natural extention of industrial- and information-age telescopes, with military-inspired algorithms permits enhanced long-range detection.
 
 LRN_AUTOLAB_I
-Basic Autolabs
+Autolabs Basique
 
 LRN_AUTOLAB_I_DESC
 Automated laboratories can produce significant research output without direct supervision, however it remains necessary to provide guidance to such labs regarding what avenues or research to persue, and extract the resulting information from them.  A specailzed control centre is required to facilitate these exchanges.  Consequently, while individual worlds develop their own autolabs without additional cost, the control centre requires signifiant up-front production effort to build.  This makes autolabs more attractive to empires with excess production capacity, but lacking in research output, and less useful for empires already producing significant reserach, but lacking in industrial or minreals capacity.  Additionally, autolabs produce larger quantities of waste products than standard laboratories, negatively impacting health on worlds on which they are used.
 
 LRN_THEOREM_PROVER
-Automatic Theorem Prover
+Validateur de Théorème Automatique
 
 LRN_THEOREM_PROVER_DESC
 Abstract mathematical discoveries frequently have practical, if unforseen, applications in future research.  Increasingly complex formal systems require correspondingly increased time to manipulate in order to prove such discoveries, limiting progress.  Elegant algorithmic methods to automate Theorm Proving can overcome this problem, however doing so requires significant research effort itself, limiting the method's usefulness to empires which have chosen to focus on research in the long-term.
 
 LRN_COLLECTIVE_NET
-Collective Thought Network
+Réseau de Pensées Collectives
 
 LRN_COLLECTIVE_NET_DESC
 By transferring the mind into cyberspace, thousands of minds can act as one, solving problems and making breakthroughs that no single mind could.
@@ -3241,7 +3361,7 @@ LRN_DISTRIB_THOUGHT_DESC
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.
 
 LRN_ENCLAVE_VOID
-Enclave of the Void
+Enclave du Vide
 
 LRN_ENCLAVE_VOID_DESC
 Study of the Void Mind could be accelerated by genetically engineering the populace of an entire world to be attuned to the Void. This new priestly class could transform the entire social structure of their world to better understand and channel the wisdom of the Void Mind to the entire empire.
@@ -3451,7 +3571,7 @@ PRO_ASTEROID_MINE_II
 Mines astéroïde avancées 
 
 PRO_ASTEROID_MINE_II_DESC
-Expérience avec la mise en uvre initiale des techniques d'exploitation minière d'astéroïde permet des méthodes plus raffiné d'être mise au point. Le même champ d'astéroïdes et la même population produisent plus de minéraux dans toutes les planètes du système qui se concentrent principalement sur l'exploitation minière.
+Expérience avec la mise en œuvre initiale des techniques d'exploitation minière d'astéroïde permet des méthodes plus raffiné d'être mise au point. Le même champ d'astéroïdes et la même population produisent plus de minéraux dans toutes les planètes du système qui se concentrent principalement sur l'exploitation minière.
 
 PRO_INDUSTRY_CENTRE_II
 Grand centre industriel
@@ -3770,28 +3890,28 @@ SH_EMPTY
 Coque vide
 
 SH_EMPTY_DESC
-Pas cher et rapide, mais on ne peut rien y mettre.
+Pas cher et rapide, mais on ne peut rien y mettre. 
 
 SH_SMALL
 Petite coque
 
 SH_SMALL_DESC
-Peut de place mais très rapide
+Peut de place mais très rapide. 
 
 SH_MEDIUM
 Coque Moyenne
 
 SH_MEDIUM_DESC
-Un équilibre entre l'espace disponible et la vitesse
+Un équilibre entre l'espace disponible et la vitesse. 
 
 SH_LARGE
 Grande coque
 
 SH_LARGE_DESC
-Beaucoup de place mais lent
+Beaucoup de place mais lent. 
 
 SH_HUGE
 Enorme coque
 
 SH_HUGE_DESC
-Enormement de place mais très très lent
+Enormement de place mais très très lent. 
