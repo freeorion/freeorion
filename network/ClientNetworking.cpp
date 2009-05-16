@@ -188,7 +188,20 @@ bool ClientNetworking::ConnectToServer(
 
 bool ClientNetworking::ConnectToLocalHostServer(
     boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
-{ return ConnectToServer("127.0.0.1", timeout); }
+{
+    bool retval = false;
+#if FREEORION_WIN32
+    try {
+#endif
+        retval = ConnectToServer("127.0.0.1", timeout);
+#if FREEORION_WIN32
+    } catch (const boost::system::system_error& e) {
+        if (e.code().value() != WSAEADDRNOTAVAIL)
+            throw;
+    }
+#endif
+    return retval;
+}
 
 void ClientNetworking::DisconnectFromServer()
 {
