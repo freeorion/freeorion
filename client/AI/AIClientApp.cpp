@@ -86,7 +86,7 @@ void AIClientApp::Run()
     m_AI = new PythonAI();
 
     // connect
-    const int MAX_TRIES = 5;
+    const int MAX_TRIES = 10;
     int tries = 0;
     bool connected = false;
     while (tries < MAX_TRIES && !connected) {
