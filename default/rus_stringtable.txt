@@ -1665,37 +1665,37 @@ ENC_TECH_DETAIL_TYPE_STR
 ####################
 
 COMBAT_WINDOW_TITLE
-Combat Window
+Окно битвы
 
 COMBAT_BATTLE
-BATTLE : 
+Битва : 
 
 COMBAT_SYSTEM
 The %1% System
 
 COMBAT_MILITARY_SHIPS
-Military Ships
+Военные корабли
 
 COMBAT_CIVILIAN_SHIPS
-Civilian Ships
+Гражданские корабли
 
 COMBAT_PLANETS
-Planets
+Планеты
 
 COMBAT_REMAINING
- Remaining
+ Оставшиеся
 
 COMBAT_RETREATED
- Retreated
+ Отступившие
 
 COMBAT_DESTROYED
- Destroyed
+ Уничтоженные
 
 COMBAT_DEFENSELESS
- Defenseless
+ Беззащитные
 
 COMBAT_LOST
- Lost!
+ Потерянные!
 
 
 ####################
@@ -1703,25 +1703,25 @@ COMBAT_LOST
 ####################
 
 TURN_PROGRESS_WND
-Turn Progress
+Результат хода
 
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Fleet movement ...
+Продвижение флота...
 
 TURN_PROGRESS_PHASE_COMBAT
-Resolving combat ...
+Прошедшие битвы...
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Production and growth ..
+Продукция и рост..
 
 TURN_PROGRESS_PHASE_WAITING
-Waiting for players to end turn ...
+Ожидаем игроков для окончания хода...
 
 TURN_PROGRESS_PHASE_ORDERS
-Executing Orders ...
+Выполнение приказов...
 
 TURN_PROGRESS_PHASE_DOWNLOADING
-Downloading new game state ...
+Загрузка данных новой игры...
 
 
 ########################
@@ -1739,37 +1739,37 @@ SITREP_PANEL_TITLE
 ####################
 
 SITREP_BASE_BUILT
-%planet% has completed a defense base.
+Планета %planet% завершила строительство военной базы.
 
 SITREP_SHIP_BUILT
-The %ship%, a new ship, has been produced in the %system% system.
+Новый корабль %ship% был построен в систем %system%.
 
 SITREP_BUILDING_BUILT
-%building% has been produced on %planet%.
+Новый комплекс %building% был построен на планете %planet%.
 
 SITREP_TECH_RESEARCHED
-%tech% has been researched.
+Технология %tech% была исследована.
 
 SITREP_COMBAT_SYSTEM_WON
-A combat has taken place in %system%. We were victorious!
+Бой в системе %system%. Мы победили!
 
 SITREP_COMBAT_SYSTEM_LOST
-A combat has taken place in %system%. We were defeated!
+Бой в системе %system%. Мы разбиты!
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-A combat has taken place in %system%. The encounter was inconclusive.
+Бой в системе %system%. Ничья.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-The entire population of %planet% has starved to death. The planet is lost!
+Вся популяция планеты %planet% погибла голодной смертью. Планета потеряна!
 
 SITREP_PLANET_COLONIZED
-%planet% has been colonized in the %system% system.
+Колонизация планеты %planet% в системе %system%.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-%fleet% has arrived at the %system% system and awaits further orders.
+Флот %fleet% прибыл в систему %system% и ожидает дальнейших распоряжений.
 
 SITREP_EMPIRE_ELIMINATED
-The %name% empire has been eliminated.
+Империя %name% была уничтожена.
 
 SITREP_VICTORY
 %1%
