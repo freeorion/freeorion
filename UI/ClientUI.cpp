@@ -310,7 +310,9 @@ namespace {
     {
         static std::vector<GG::UnicodeCharset> retval;
         if (retval.empty()) {
-            const std::string CREDITS_STR = "Aö"; // Basic Latin and Latin-1 Supplement (character sets needed to display the credits page)
+            // Basic Latin, Latin-1 Supplement, and Latin Extended-A
+            // (character sets needed to display the credits page)
+            const std::string CREDITS_STR = "AöŁ";
             std::set<GG::UnicodeCharset> credits_charsets = GG::UnicodeCharsetsToRender(CREDITS_STR);
 
             std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
