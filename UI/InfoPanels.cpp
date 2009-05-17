@@ -460,7 +460,7 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     m_primary_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, icon_width*4, icon_height*3/2, icon_height*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
         graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width*3/2, icon_height*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
+        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_primary_focus_drop->Insert(row);
     }
@@ -470,7 +470,7 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
                                                  icon_width*4, icon_height*3/2, icon_height*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
         graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width*3/2, icon_height*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "focus_drop");
+        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_secondary_focus_drop->Insert(row);
     }
