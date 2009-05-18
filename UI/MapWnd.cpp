@@ -954,8 +954,8 @@ void MapWnd::InitTurn(int turn_number)
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
         it->second->UpdateResourcePools();
 
-    m_research_wnd->Update();
-    m_production_wnd->Update();
+    m_research_wnd->InitTurn();
+    m_production_wnd->InitTurn();
 }
 
 void MapWnd::InitTurnRendering()

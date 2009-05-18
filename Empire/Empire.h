@@ -61,6 +61,10 @@ struct ResearchQueue
     /** The const ResearchQueue iterator type.  Dereference yields an Element. */
     typedef QueueType::const_iterator const_iterator;
 
+    /** \name Signal Types */ //@{
+    typedef boost::signal<void ()> ResearchQueueChangedSignalType;    ///< emitted when something is added to, removed from or altered on the queue
+    //@}
+
     /** \name Structors */ //@{
     ResearchQueue(); ///< Basic ctor.
     //@}
@@ -100,6 +104,8 @@ struct ResearchQueue
 
     /** Returns an iterator to the underfunded research project, or end() if none exists. */
     iterator UnderfundedProject();
+
+    mutable ResearchQueueChangedSignalType ResearchQueueChangedSignal;
     //@}
 
 private:

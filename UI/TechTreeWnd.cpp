@@ -1210,7 +1210,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
         if (empire->TechResearched(m_tech->Name())) {
             known_tech = true;
         } else {
-            ResearchQueue queue = empire->GetResearchQueue();
+            const ResearchQueue& queue = empire->GetResearchQueue();
             if (queue.InQueue(m_tech))
                 queued_tech = true;
             double rps_spent = empire->ResearchStatus(m_tech->Name());

@@ -20,6 +20,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void InitTurn();
     void Reset();
     void Update();
     void CenterOnTech(const std::string& tech_name);
@@ -30,6 +31,7 @@ public:
     //@}
 
 private:
+    void ResearchQueueChangedSlot();
     void UpdateQueue();
     void UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propegates to the mapwnd to update indicator)
     void AddTechToQueueSlot(const Tech* tech);

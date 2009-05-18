@@ -394,6 +394,8 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             m_queue[i].turns_left = -1;
         }
     }
+
+    ResearchQueueChangedSignal();
 }
 
 void ResearchQueue::push_back(const Tech* tech)

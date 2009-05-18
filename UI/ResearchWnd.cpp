@@ -207,6 +207,17 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     EnableChildClipping(true);
 }
 
+void ResearchWnd::InitTurn()
+{
+    // empire is recreated each turn based on turn update from server, so
+    // connections of signals emitted from the empire must be remade each turn
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    GG::Connect(empire->GetResearchQueue().ResearchQueueChangedSignal,
+                &ResearchWnd::ResearchQueueChangedSlot, this);
+    Update();
+}
+
 void ResearchWnd::Reset()
 {
     m_tech_tree_wnd->Reset();
@@ -233,8 +244,6 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
         OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                         boost::polymorphic_downcast<QueueRow*>(row)->tech->Name(),
                                         position)));
-    UpdateQueue();
-    UpdateInfoPanel();
 }
 
 void ResearchWnd::Sanitize()
@@ -266,6 +275,12 @@ void ResearchWnd::Render()
     // reset this to whatever it was initially
     glPolygonMode(GL_BACK, initial_modes[1]);
     glEnable(GL_TEXTURE_2D);
+}
+
+void ResearchWnd::ResearchQueueChangedSlot()
+{
+    UpdateQueue();
+    UpdateInfoPanel();
 }
 
 void ResearchWnd::UpdateQueue()
@@ -309,8 +324,6 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     const ResearchQueue& queue = empire->GetResearchQueue();
     if (!queue.InQueue(tech)) {
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
-        UpdateQueue();
-        UpdateInfoPanel();
         m_tech_tree_wnd->Update();
     }
 }
@@ -327,8 +340,6 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& te
             orders.IssueOrder(OrderPtr(new ResearchQueueOrder(id, tech->Name(), -1)));
     }
 
-    UpdateQueue();
-    UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 
@@ -337,8 +348,6 @@ void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                         boost::polymorphic_downcast<QueueRow*>(*it)->tech->Name())));
-    UpdateQueue();
-    UpdateInfoPanel();
     m_tech_tree_wnd->Update();
 }
 

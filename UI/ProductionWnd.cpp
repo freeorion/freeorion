@@ -298,6 +298,17 @@ void ProductionWnd::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
+void ProductionWnd::InitTurn()
+{
+    // empire is recreated each turn based on turn update from server, so
+    // connections of signals emitted from the empire must be remade each turn
+    EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
+                &ProductionWnd::ProductionQueueChangedSlot, this);
+    Update();
+}
+
 void ProductionWnd::Reset()
 {
     UpdateInfoPanel();
@@ -332,13 +343,17 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
                                           position)));
-    UpdateQueue();
-    UpdateInfoPanel();
 }
 
 void ProductionWnd::Sanitize()
 {
     m_build_designator_wnd->Clear();
+}
+
+void ProductionWnd::ProductionQueueChangedSlot()
+{
+    UpdateInfoPanel();
+    UpdateQueue();
 }
 
 void ProductionWnd::UpdateQueue()
@@ -378,24 +393,18 @@ void ProductionWnd::UpdateInfoPanel()
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, name, number, location)));
-    UpdateQueue();
-    UpdateInfoPanel();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
 void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), build_type, design_id, number, location)));
-    UpdateQueue();
-    UpdateInfoPanel();
     m_build_designator_wnd->CenterOnBuild(m_queue_lb->NumRows() - 1);
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
 {
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true)));
-    UpdateQueue();
-    UpdateInfoPanel();
 }
 
 void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
@@ -404,8 +413,6 @@ void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                           std::distance(m_queue_lb->begin(), it))));
-    UpdateQueue();
-    UpdateInfoPanel();
 }
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)

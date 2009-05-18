@@ -567,6 +567,10 @@ void ChangeFocusOrder::ExecuteImpl() const
         throw std::runtime_error("Empire attempted to issue change planet focus to another's planet.");
 
     m_primary ? planet->SetPrimaryFocus(m_focus) : planet->SetSecondaryFocus(m_focus);
+
+    Empire* empire = Empires().Lookup(EmpireID());
+    empire->UpdateResearchQueue();
+    empire->UpdateProductionQueue();
 }
 
 ////////////////////////////////////////////////
