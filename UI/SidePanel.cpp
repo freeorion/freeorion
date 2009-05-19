@@ -412,6 +412,7 @@ public:
 
     void Refresh();                 ///< updates panels, shows / hides colonize button, redoes layout of infopanels
     void Hilite(HilitingType ht);
+    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
     mutable LeftClickedSignalType PlanetImageLClickedSignal; ///< returns the left clicked signal object for this Planet panel
@@ -1015,6 +1016,9 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.planet-button-click"), true);
     PlanetImageLClickedSignal(m_planet_id);
 }
+
+void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
 
 void SidePanel::PlanetPanel::Render()
 {
