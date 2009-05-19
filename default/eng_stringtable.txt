@@ -700,8 +700,10 @@ Connect to Server
 
 LAN_GAME_LABEL
 Lan game at:
+
 INTERNET_GAME_LABEL
 Internet game at:
+
 PLAYER_NAME_LABEL
 Player name
 
@@ -710,8 +712,10 @@ Player name
 
 HOST_GAME_BN
 Host a new game
+
 JOIN_GAME_BN
 Join a game
+
 REFRESH_LIST_BN
 Refresh list
 

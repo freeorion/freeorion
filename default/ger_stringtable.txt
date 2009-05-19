@@ -48,38 +48,8 @@ Ja
 NO
 Nein
 
-NEW_GAME
-Erzeuge Universum und KIs...
-
-LOADING
-Lade...
-
-SERVER_WONT_START
-The server could not be started.\n\nNote for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.
-
-SERVER_TIMEOUT
-Der Server antwortet nicht.
-
-SERVER_LOST
-Die Verbindung zum Server wurde getrennt.
-
-SERVER_GAME_END
-Der Server hat das Spiel beendet.
-
-PLAYER_DISCONNECTED
-Spieler %1% ist nicht länger mit dem Server verbunden.
-
-PLAYER_DEFEATED
-Sie wurden besiegt.
-
-PLAYER_VICTORIOUS
-Sie haben gewonnen.
-
 EMPIRE
 Imperium
-
-EMPIRE_DEFEATED
-Imperium %1% wurde ausgelöscht.
 
 ALL
 Alle
@@ -109,6 +79,106 @@ Neue Flotte %1%
 NEW_FLEET_NAME_NO_NUMBER
 Neue Flotte
 
+NOT_APPLICABLE
+N.v.
+
+BOMBER
+Bomber
+
+INTERCEPTOR
+Abfangjäger
+
+
+###########################
+# Predefined Ship Designs #
+###########################
+# in premade_ship_designs.txt
+
+SD_SCOUT
+Scout
+
+SD_SCOUT_DESC
+Small and cheap unarmed vessel designed for recon and exploration.
+
+SD_COLONY_SHIP
+Colony Ship
+
+SD_COLONY_SHIP_DESC
+Huge unarmed vessel capable of delivering millions of citizens safely to new colony sites.
+
+SD_MARK1
+Mark I
+
+SD_MARK1_DESC
+Affordable armed patrol frigate.
+
+SD_MARK2
+Mark II
+
+SD_MARK2_DESC
+Cruiser with strong defensive and offensive capabilities.
+
+SD_MARK3
+Mark III
+
+SD_MARK3_DESC
+Advanced cruiser with heavy weaponry and armor to do the dirty work.
+        
+SD_MARK4
+Mark IV
+
+SD_MARK4_DESC
+Massive state-of-art warship armed and protected with the latest technolgy. Priced accordingly.
+
+
+##############################
+# Predefined Starting Fleets #
+##############################
+
+FN_HOME_FLEET
+Home Fleet
+
+FN_BATTLE_FLEET
+Battle Fleet
+
+##########################
+# Status Update Messages #
+##########################
+
+NEW_GAME
+Erzeuge Universum und KIs...
+
+LOADING
+Lade...
+
+SERVER_WONT_START
+'''The server could not be started.
+
+Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
+
+SERVER_TIMEOUT
+Der Server antwortet nicht.
+
+SERVER_LOST
+Die Verbindung zum Server wurde getrennt.
+
+SERVER_GAME_END
+Der Server hat das Spiel beendet.
+
+PLAYER_DISCONNECTED
+Spieler %1% ist nicht länger mit dem Server verbunden.
+
+PLAYER_DEFEATED
+Sie wurden besiegt.
+
+EMPIRE_DEFEATED
+Das Imperium %1% existiert nicht mehr.
+
+UNKNOWN_EMPIRE
+Unbekanntes Imperium
+
+LAST_OPPONENT_DEFEATED_VICTORY
+Your last opponent has been defeated and you are victorious!
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -143,6 +213,33 @@ The number of outgoing messages to keep in the chat edit box history.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape.  May slow rendering on older systems.
+
+OPTIONS_DB_GALAXY_MAP_STARFIELDS
+Render starfields around systems. May slow rendering on older systems.
+
+OPTIONS_DB_GALAXY_MAP_SCALE_LINE
+Show scale line for universe distance on galaxy map.
+
+OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
+Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
+
+OPTIONS_DB_STARLANE_THICKNESS
+Sets how wide to render starlanes in pixels.
+
+OPTIONS_DB_RESOURCE_STARLANE_COLOURING
+Toggles whether to colour starlanes with empire colours if empires can exchange resources along each starlane.
+
+OPTIONS_DB_UNOWNED_STARLANE_COLOUR
+Sets default colour to render starlanes.
+
+OPTIONS_DB_FLEET_SUPPLY_LINES
+Toggles whether to show fleet supply lines with empire-coloured indicators.
+
+OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
+Sets how wide to render fleet supply lines.
+
+OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
+Sets how far apart to renders dots for fleet supply lines.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
@@ -351,41 +448,38 @@ Sets UI scroll width.
 OPTIONS_DB_UI_SYSTEM_ICON_SIZE
 Sets size of system icons.
 
-OPTIONS_DB_UI_FLEET_BUTTON_SIZE
-Sets size of fleet buttons (relative to system icon).
+OPTIONS_DB_UI_SYSTEM_FOG
+Toggles whether to render fog of war scanline shading over system icons.
+
+OPTIONS_DB_UI_SYSTEM_FOG_SPACING
+Sets spacing (in pixels) between fog of war scanlines.
+
+OPTIONS_DB_UI_SYSTEM_CIRCLES
+Toggles whether to draw circles around systems.
+
+OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
+Sets size of circles around systems on map, relative to system icon size.
+
+OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
+Sets colour of unowned system names on galaxy map.
+
+OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which small fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
+Sets minimum zoom level at which tiny fleet icons are shown.  At smaller zooms, no fleet icons are shown on the galaxy map.
+
+OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
+Sets size of fleet selection indicator (relative to fleet icon).
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator (relative to system icon).
 
-OPTIONS_DB_UI_TECH_CATEGORY_1
-Sets color of the first category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_2
-Sets color of the second category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_3
-Sets color of the third category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_4
-Sets color of the fourth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_5
-Sets color of the fifth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_6
-Sets color of the sixth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_7
-Sets color of the seventh category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_8
-Sets color of the eighth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_9
-Sets color of the ninth category of techs defined in techs.xml.
-
-OPTIONS_DB_UI_TECH_CATEGORY_10
-Sets color of the tenth category of techs defined in techs.xml.
+OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
+Sets size of system icon below which the special fixed-size tiny icons will be shown.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip popup delay, in ms.
@@ -426,6 +520,15 @@ The number of starlanes in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 The frequency of specials appearing in the galaxy to be generated.
 
+OPTIONS_DB_GAMESETUP_EMPIRE_NAME
+The name used in the game for your empire.
+
+OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
+The color used in the game for your empire.
+
+OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
+The number of AI opponents you will play in the game.
+
 OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING
 The horizontal spacing to be placed between techs in the tech screen, in multiples of the width of a single theory tech.
 
@@ -459,6 +562,18 @@ Sets the number of autosaved games that should be kept.
 OPTIONS_DB_MUSIC_VOLUME
 The volume (0 to 255) at which music should be played.
 
+OPTIONS_DB_COMBAT_ENABLE_GLOW
+Toggles glow effects on and off.
+
+OPTIONS_DB_COMBAT_ENABLE_SKYBOX
+Toggles background skybox on and off.
+
+OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE
+Toggles lens flares on and off.
+
+OPTIONS_DB_COMBAT_FILLED_SELECTION
+Uses a filled-in effect, as opposed to an outline effect, on selected objects.
+
 
 #################
 # File Dialog   #
@@ -474,16 +589,20 @@ FILE_DLG_MALFORMED_FILENAME
 Ungültiger Dateiname.
 
 FILE_DLG_OVERWRITE_PROMPT
-"%1%" gibt es bereits.\nÜberschreiben?
+'''%1% gibt es bereits.
+Überschreiben?'''
 
 FILE_DLG_INVALID_FILENAME
-"%1%"\nist ein ungültiger Dateiname.
+'''"%1%"
+ist ein ungültiger Dateiname.'''
 
 FILE_DLG_FILENAME_IS_A_DIRECTORY
-"%1%"\nist ein Verzeichnis.
+'''"%1%"
+ist ein Verzeichnis.'''
 
 FILE_DLG_FILE_DOES_NOT_EXIST
-Datei "%1%"\n existiert nicht.
+'''Datei "%1%"
+existiert nicht.'''
 
 FILE_DLG_DEVICE_IS_NOT_READY
 Gerät ist nicht bereit.
@@ -651,45 +770,33 @@ Farbe des Imperiums
 GSETUP_NUMBER_AIS
 Anzahl an KI Spielern
 
-
 #Drop-down list labels and choices####
 
 GSETUP_STARS
 Sterne
-
 GSETUP_SHAPE
 Galaxieform
-
 GSETUP_AGE
 Galaxiealter
-
 GSETUP_STARLANE_FREQ
 Sternstrassen
-
 GSETUP_PLANET_DENSITY
 Planetendichte
-
 GSETUP_SPECIALS_FREQ
 Specials
 
 GSETUP_2ARM
 Spirale, 2-armig
-
 GSETUP_3ARM
 Spirale, 3-armig
-
 GSETUP_4ARM
 Spirale, 4-armig
-
 GSETUP_CLUSTER
 Haufen
-
 GSETUP_ELLIPTICAL
 Ellipse
-
 GSETUP_IRREGULAR
 Chaos
-
 GSETUP_RING
 Ring
 
@@ -698,43 +805,33 @@ Keine
 
 GSETUP_YOUNG
 Jung
-
 GSETUP_MATURE
 Alt
-
 GSETUP_ANCIENT
 Uralt
 
 GSETUP_FEW
 Ein paar
-
 GSETUP_SOME
 Wenige
-
 GSETUP_SEVERAL
 Einige
-
 GSETUP_MANY
 Viele
-
 GSETUP_VERY_MANY
 Sehr viele
 
 GSETUP_LOW
 Niedrig
-
 GSETUP_MEDIUM
 Mittel
-
 GSETUP_HIGH
 Hoch
 
 GSETUP_RARE
 Kaum
-
 GSETUP_UNCOMMON
 Selten
-
 GSETUP_COMMON
 Gelegentlich
 
@@ -761,7 +858,7 @@ ESELECT_EMPIRE_NAME
 Name des Imperiums:
 
 ###########################
-# About Dialog		      #
+# About Dialog            #
 ###########################
 
 #License button text####
@@ -859,10 +956,10 @@ OPTIONS_TOOLTIP_DELAY
 Tooltip Wartezeit (ms)
 
 OPTIONS_VIDEO_MODE
-Video Mode
- 
+Video Mode  (bei Änderung Neustart nötig)
+
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Enables fullscreen mode, sets screen resolution, and sets bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
+Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
 
 OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
 Custom
@@ -903,6 +1000,54 @@ Chat Versteckdauer
 OPTIONS_GALAXY_MAP
 Galaxy Map
 
+OPTIONS_SYSTEM_ICONS
+System Icons
+
+OPTIONS_OPTIMIZED_SYSTEM_RENDERING
+Optimized system rendering
+
+OPTIONS_UI_SYSTEM_ICON_SIZE
+System icon size
+
+OPTIONS_UI_SYSTEM_FOG
+System icon fog of war scanlines
+
+OPTIONS_UI_SYSTEM_FOG_SPACING
+Fog of war scanline spacing
+
+OPTIONS_UI_SYSTEM_CIRCLES
+System enclosing circles
+
+OPTIONS_UI_SYSTEM_CIRCLE_SIZE
+System circle relative size
+
+OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
+System selection indicator relative size
+
+OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
+Tiny system icon size threshold
+
+OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR
+Unowned systen name colour
+
+OPTIONS_FLEET_ICONS
+Fleet Icons
+
+OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM
+Tiny fleet icon minimum zoom
+
+OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
+Small fleet icon minimum zoom
+
+OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
+Medium fleet icon minimum zoom
+
+OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE
+Fleet selection indicator relative size
+
+OPTIONS_GALAXY_MAP_GENERAL
+General
+
 OPTIONS_GALAXY_MAP_GAS
 Galaxy map gas rendering
 
@@ -914,6 +1059,24 @@ Galaxy distance scale line
 
 OPTIONS_STARLANES
 Starlanes
+
+OPTIONS_STARLANE_THICKNESS
+Starlane thickness
+
+OPTIONS_RESOURCE_STARLANE_COLOURING
+Resource starlane colouring
+
+OPTIONS_FLEET_SUPPLY_LINES
+Fleet supply lines
+
+OPTIONS_FLEET_SUPPLY_LINE_WIDTH
+Fleet supply line width
+
+OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
+Fleet supply line dot spacing
+
+OPTIONS_UNOWNED_STARLANE_COLOUR
+Default starlane colour
 
 OPTIONS_MUSIC
 Musik
@@ -1021,7 +1184,7 @@ OPTIONS_TEXT_COLOR
 Text
 
 OPTIONS_EDIT_COLORS
-Edit Kontrollen
+Edit Controls
 
 OPTIONS_HIGHLIGHT_COLOR
 Selection highlighting
@@ -1033,10 +1196,10 @@ OPTIONS_WINDOW_COLORS
 Fensterfarben
 
 OPTIONS_INNER_BORDER_COLOR
-Innere Grenze
+Innere Kante
 
 OPTIONS_OUTER_BORDER_COLOR
-Äußere Grenze
+Äußere Kante
 
 OPTIONS_PAGE_VIDEO
 Allgemein
@@ -1052,6 +1215,9 @@ UI Aussehen
 
 OPTIONS_PAGE_COLORS
 Farben
+
+OPTIONS_PAGE_COMBAT
+Combat
 
 OPTIONS_PAGE_DIRECTORIES
 Directories
@@ -1079,6 +1245,18 @@ Bar
 
 OPTIONS_PROGRESS_BACKGROUND_COLOR
 Hintergrund
+
+OPTIONS_COMBAT_ENABLE_GLOW
+Glow
+
+OPTIONS_COMBAT_ENABLE_SKYBOX
+Skybox
+
+OPTIONS_COMBAT_ENABLE_LENS_FLARES
+Lens Flares
+
+OPTIONS_COMBAT_FILLED_SELECTION
+Filled selection
 
 OPTIONS_ANY_FILE
 Alle Dateien
@@ -1138,9 +1316,44 @@ SIDE_PANEL
 Seitenfenster
 
 SP_SYSTEM_PRODUCTION
-Systemproduktion
+System-Produktion
+
+RESOURCE_PRODUCTION_TOOLTIP
+System %1%: %2%
+
+RESOURCE_ALLOCATION_TOOLTIP
+System %1%: %2%
+
+FOOD_CONSUMPTION
+Food Consumption
+
+MINERALS_CONSUMPTION
+Minerals Consumption
+
+INDUSTRY_CONSUMPTION
+Industrial Consumption
+
+RESEARCH_CONSUMPTION
+Research Consumption
+
+TRADE_CONSUMPTION
+Trade Consumption
+
+INTERSYSTEM_EXCHANGE_TOOLTIP
+Inter-System Exchange
+
+IMPORT_EXPORT_TOOLTIP
+Import / Export
+
+RESOURCE_IMPORT
+Importing
+
+RESOURCE_EXPORT
+Available for Export
+
 
 ##Planet Panel#############
+
 PLANET_PANEL
 Planetenfenster
 
@@ -1156,6 +1369,7 @@ Größe
 PL_COLONIZE
 Besiedeln
 
+
 ##Population Panel#########
 
 PP_POPULATION
@@ -1164,13 +1378,14 @@ Bevölkerung
 PP_HEALTH
 Health
 
+
 ##Resources Panel##########
 
 RP_PRIMARY_FOCUS_TOOLTIP
-Primary Fokus: %1%
+Primär Fokus: %1%
 
 RP_SECONDARY_FOCUS_TOOLTIP
-Secondary Fokus: %1%
+Secondär Fokus: %1%
 
 RP_FOOD
 Produktion Nahrung
@@ -1188,7 +1403,8 @@ RP_TRADE
 Handelsvolumen
 
 RP_CONSTRUCTION
-Konstruktion Infrastruktur
+Konstruktions-Infrastruktur
+
 
 ## Military Panel ##########
 
@@ -1196,10 +1412,10 @@ MP_SUPPLY
 Flotten Supply
 
 MP_SHIELD
-Planetarer Schild
+Schild
 
 MP_DEFENSE
-Planetare Verteid.
+Verteid.
 
 MP_DETECTION
 Erkennung
@@ -1207,13 +1423,19 @@ Erkennung
 MP_STEALTH
 Tarnung
 
+
 ## Buildings Panel##########
 
 BP_INCOMPLETE_BUILDING_TOOLTIP
-%1% (Incomplete)\n\n%2%
+'''%1% (Unfertig)
+
+%2%'''
 
 BP_COMPLETE_BUILDING_TOOLTIP
-%1%\n\n%2%
+'''%1%
+
+%2%'''
+
 
 ## General Tooltips#########
 
@@ -1221,7 +1443,7 @@ TT_CURRENT
 Derzeit
 
 TT_NEXT
-Nächste Runde
+Nächste Rnd
 
 TT_CHANGE
 Änderung
@@ -1250,13 +1472,16 @@ Spezial <i>%1%</i>
 TT_UNKNOWN
 Unbekannt
 
+TT_RESOURCE_PRODUCTION
+%1% produziert %2%
+
+TT_RESOURCE_ALLOCATION
+%1% konsumiert %2%
+
 ## Misc. Sidepanel##########
 
 SP_UNKNOWN_SYSTEM
 Unbekanntes System
-
-SP_SYSTEM_NAME
-%1%
 
 SP_RENAME_PLANET
 Planet umbenennen
@@ -1268,7 +1493,7 @@ SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
 '''Alle Kolonieschiffe in diesem System haben
 den Befehl erhalten, das System zu verlassen.
 
-Soll eines dieser Schiffe verwendet werden?'''
+Soll eines dieser Kolonieschiffe verwendet werden?'''
 
 #################
 # Fleet Window  #
@@ -1295,22 +1520,27 @@ Schiffsklasse
 FW_UNKNOWN_DESIGN_NAME
 Unbekannt
 
-# used to name new fleets when they are created
-FW_NEW_FLEET_NAME
-Neue Flotte 
-
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
-Neue Flotte
+<i>Neue Flotte</i>
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
-%1% Floote in System %2%
+%1% Flotte in System %2%
 
 FW_EMPIRE_FLEETS
 %1% Flotten
 
+FW_NO_FLEET
+Keine Flotte
+
+FW_GENERIC_FLEETS_AT_SYSTEM
+Flotte in %1% System
+
+FW_GENERIC_FLEETS
+Flotten
+
 FW_HOME_FLEET
-Heim-Flotte
+Heimat-Flotte
 
 FW_BATTLE_FLEET
 Schlacht-Flotte
@@ -1323,6 +1553,12 @@ Fremde Flotte
 FW_FOREIGN_SHIP
 Fremdes Raumschiff
 
+FW_FUEL
+Treibstoff
+
+FW_FLEET_FUEL_SUMMARY
+'''Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.'''
+
 ###############
 # TechTreeWnd #
 ###############
@@ -1334,31 +1570,17 @@ TECH_NAVIGATION
 Navigation
 
 TECH_TOTAL_COST_STR
-%1% RP / %2% Rnd
+%1%RP * %2% Rnd
 
 TECH_TURN_COST_STR
-%1% RP / %2% Rnd
+%1%RP * %2% Rnd
 
 TECH_TURNS_LEFT_STR
-noch %1% Runden
+in %1%Rnd
 
 TECH_TURNS_LEFT_NEVER
 Nie
 
-TECH_DETAIL_TYPE_STR
-%1% %2%
-
-TECH_DETAIL_DESCRIPTION_STR
-%1%
-
-TECH_DETAIL_EFFECTS_STR
-\n\n<u>Effekte</u>\n\n%1%
-
-TECH_DETAIL_UNLOCKS_SECTION_STR
-\n\n<u>Ermöglicht</u>\n\n
-
-TECH_DETAIL_UNLOCKED_ITEM_STR
-%1%: %2%\n
 
 TECH_WND_TECH_COMPLETED
 FERTIG
@@ -1439,7 +1661,7 @@ RP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Zu errichtende Objekte:
+Mögliche Objekte:
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
 Gebäude
@@ -1447,17 +1669,14 @@ Gebäude
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Schiffe
 
-PRODUCTION_WND_CATEGORY_BT_ORBITAL
-Orbital
-
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
 Verfügbar
 
 PRODUCTION_WND_AVAILABILITY_UNAVAILABLE
-Nicht verfügbar
+Nicht verfüg.
 
 PRODUCTION_TOTAL_COST_STR
-%1% PP / Runde @ %2% Runden
+%1% PP / Rd @ %2% Runden
 
 PRODUCTION_TURN_COST_STR
 %1% PP
@@ -1467,15 +1686,6 @@ noch %1% Rnd
 
 PRODUCTION_TURNS_LEFT_NEVER
 Nie
-
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR
-%1%
-
-PRODUCTION_DETAIL_BUILDING_DESCRIPTION_STR_WITH_EFFECTS
-%1%\n\n<u>Effekte</u>\n\n%2%
-
-PRODUCTION_DETAIL_SHIP_DESCRIPTION_STR
-%1%\n\nAngriff: %2%\nVerteidigung: %3%\nGeschwindigkeit: %4%
 
 PRODUCTION_DETAIL_NUMBER_TO_BUILD
 Anzahl
@@ -1553,47 +1763,6 @@ Bestätige neues Design
 DESIGN_WND_CLEAR
 Lösche Teile
 
-# Ship Slot Types
-
-SL_EXTERNAL
-Extern
-
-SL_INTERNAL
-Intern
-
-
-# Ship Part Classes
-
-PC_SHORT_RANGE
-Kurzstrecke
-
-PC_MISSILES
-Raketen
-
-PC_FIGHTERS
-Jäger
-
-PC_POINT_DEFENSE
-Punktverteid.
-
-PC_SHIELD
-Schilde
-
-PC_ARMOUR
-Panzer
-
-PC_DETECTION
-Erkennung
-
-PC_STEALTH
-Tarnung
-
-PC_FUEL
-Treibstoff
-
-PC_COLONY
-Kolonisierung
-
 
 ####################
 #   Encyclopedia   #
@@ -1609,14 +1778,14 @@ Schiffsrumpf
 ENC_TECH
 Technologie
 
-ENC_SHIP_DESIGN
-Schiffsdesign
-
 ENC_SPECIAL
-Spezial
+Special
 
 ENC_BUILDING_TYPE
-Typ Gebäude
+Building Type
+
+ENC_SHIP_DESIGN
+Schiffsdesign
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
@@ -1631,28 +1800,28 @@ ENC_RP
 RP
 
 # indication of cost to produce or research thing that is shown.  May be omitted if thing shown can't
-# be produced or research (eg. specials)
+# be produced or research (e.g. specials)
 # %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
 # %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
 ENC_COST_AND_TURNS_STR
-%3% Turns @ %1% %2% / Turn
+%3% Runden @ %1% %2% / Rnd
 
 # autogenerated effects description.  %1% will be the autogenerated effects text.  This string should
 # provide an appropriate heading to appear before the autogenerated text.
 ENC_EFFECTS_STR
 '''
 
-<u>Effects</u>
+<u>Effekte</u>
 
 %1%'''
 
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
-Attack: %2%
-Defense: %3%
-Speed: %4%'''
+Angriff: %2%
+Verteid.: %3%
+Geschw.: %4%'''
 
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
@@ -1750,34 +1919,47 @@ SITREP_BASE_BUILT
 %planet% hat eine Verteidigungsbasis fertiggestellt.
 
 SITREP_SHIP_BUILT
-Im %system% System fertiggestellt: %ship%.
+Im System %system% fertiggestellt: Neues Schiff %ship%.
 
 SITREP_BUILDING_BUILT
-Auf %planet% fertiggestellt: %building%.
+Auf %planet% fertiggestellt: Gebäude %building%.
 
 SITREP_TECH_RESEARCHED
 %tech% wurde erforscht.
 
 SITREP_COMBAT_SYSTEM_WON
-Ein Kampf hat sich im %system% System zugetragen. Wir haben gesiegt!
+Ein Kampf hat sich im System %system% zugetragen. Wir haben gesiegt!
 
 SITREP_COMBAT_SYSTEM_LOST
-Ein Kampf hat sich im %system% System zugetragen. Wir wurden geschlagen.
+Ein Kampf hat sich im System %system% zugetragen. Wir wurden geschlagen.
 
 SITREP_COMBAT_SYSTEM_NO_VICTOR
-Ein Kampf hat sich im %system% System zugetragen. Der Kampf verlief ergebnislos.
+Ein Kampf hat sich im System %system% zugetragen. Der Kampf verlief ergebnislos.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
 Die ganze Bevölkerung von %planet% ist verhungert. Der Planet ist verloren!
 
 SITREP_PLANET_COLONIZED
-Der Planet %planet% im %system% - System wurde besiedelt.
+Der Planet %planet% im System %system% wurde besiedelt.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-Die Flotte %fleet% ist im %system% - System angekommen und erwartet weitere Befehle.
+Die Flotte %fleet% ist im System %system% angekommen und erwartet weitere Befehle.
 
 SITREP_EMPIRE_ELIMINATED
-Das Imperium %name% wurde ausgeloescht.
+Das Imperium %empire% wurde ausgeloescht.
+
+SITREP_VICTORY
+%1%
+
+####################
+# Victory / Defeat #
+####################
+
+TECH_VICTORY
+The %1% empire has achieved a technological victory.
+
+ALL_ENEMIES_ELIMINATED_VICTORY
+The %1% empire has achieved a sole-survivor victory.
 
 
 ####################
@@ -1852,22 +2034,16 @@ Der Orbit dieses Planeten ist sehr exzentrisch; der Unterschied zwischen seiner 
 
 OBJ_BUILDING
 Gebäude
-
 OBJ_SHIP
 Schiff
-
 OBJ_FLEET
 Flotte
-
 OBJ_PLANET
 Planet
-
 OBJ_POP_CENTER
 Bevölkerungszentrum
-
 OBJ_PROD_CENTER
 Produktionszentrum
-
 OBJ_SYSTEM
 System
 
@@ -1876,22 +2052,16 @@ System
 
 STAR_BLUE
 blau
-
 STAR_WHITE
 weiß
-
 STAR_YELLOW
 gelb
-
 STAR_ORANGE
 orange
-
 STAR_RED
 rot
-
 STAR_NEUTRON
 Neutronenstern
-
 STAR_BLACK
 schwarzes Loch
 
@@ -1900,34 +2070,24 @@ schwarzes Loch
 
 PT_SWAMP
 sumpfig
-
 PT_TOXIC
 toxisch
-
 PT_INFERNO
 vulkanisch
-
 PT_RADIATED
 verstrahlt
-
 PT_BARREN
 unfruchtbar
-
 PT_TUNDRA
 arktisch
-
 PT_DESERT
 Wüste
-
 PT_TERRAN
 erdähnlich
-
 PT_OCEAN
 ozeanisch
-
 PT_ASTEROIDS
 Asteroiden
-
 PT_GASGIANT
 Gasriese
 
@@ -1936,25 +2096,18 @@ Gasriese
 
 SZ_NOWORLD
 Es gibt nichts zu sehen; weitergehen.
-
 SZ_TINY
 winzig
-
 SZ_SMALL
 klein
-
 SZ_MEDIUM
 mittel
-
 SZ_LARGE
 groß
-
 SZ_HUGE
 gewaltig
-
 SZ_ASTEROIDS
 Asteroiden
-
 SZ_GASGIANT
 Gasriese
 
@@ -1963,16 +2116,12 @@ Gasriese
 
 PE_UNINHABITABLE
 unbewohnbar
-
 PE_HOSTILE
 schrecklich
-
 PE_POOR
 armseelig
-
 PE_ADEQUATE
 angemessen
-
 PE_GOOD
 gut
 
@@ -1981,22 +2130,16 @@ gut
 
 FOCUS_UNKNOWN
 unbekannt
-
 FOCUS_BALANCED
 ausgeglichen
-
 FOCUS_FARMING
 Landwirtschaft
-
 FOCUS_INDUSTRY
 Industrie
-
 FOCUS_MINING
 Bergbau
-
 FOCUS_RESEARCH
 Forschung
-
 FOCUS_TRADE
 Handel
   
@@ -2005,43 +2148,30 @@ Handel
 
 METER_POPULATION
 Bevölkerung
-
 METER_FARMING
 Landwirtschaft
-
 METER_INDUSTRY
 Industrie
-
 METER_RESEARCH
 Forschung
-
 METER_TRADE
 Handel
-
 METER_MINING
 Bergbau
-
 METER_CONSTRUCTION
 Konstruktion
-
 METER_HEALTH
 Gesundheit
-
 METER_FUEL
 Treibstoff
-
 METER_SUPPLY
 Supply
-
 METER_STEALTH
 Tarnung
-
 METER_DETECTION
 Erkennung
-
 METER_SHIELD
 Schilde
-
 METER_DEFENSE
 Verteid.
 
@@ -2050,10 +2180,8 @@ Verteid.
 
 AFFIL_SELF
 Eigenes
-
 AFFIL_ENEMY
 Gegner
-
 AFFIL_ALLY
 Verbündeter
 
@@ -2062,21 +2190,18 @@ Verbündeter
 
 UIT_BUILDING
 Gebäude
-
 UIT_SHIP_PART
 Schiffteil
-
 UIT_SHIP_HULL
 Schiffsrumpf
+
 
 # TechTypes
 
 TT_THEORY
 Theorie
-
 TT_APPLICATION
 Anwendung
-
 TT_REFINEMENT
 Spezifikation
 
@@ -2085,13 +2210,10 @@ Spezifikation
 
 BT_NOT_BUILDING
 nichts
-
 BT_BUILDING
 Gebäude
-
 BT_SHIP
 Schiff
-
 BT_ORBITAL
 Orbital
 
@@ -2100,13 +2222,42 @@ Orbital
 
 ST_FOOD
 Nahrung
-
 ST_MINERAL
 Mineralien
-
 ST_TRADE
 Handel
 
+
+# Ship Slot Types
+
+SL_EXTERNAL
+Extern
+SL_INTERNAL
+Intern
+
+
+# Ship Part Classes
+
+PC_SHORT_RANGE
+Short Range
+PC_MISSILES
+Missiles
+PC_FIGHTERS
+Fighters
+PC_POINT_DEFENSE
+Point Defense
+PC_SHIELD
+Shields
+PC_ARMOUR
+Armour
+PC_DETECTION
+Detection
+PC_STEALTH
+Stealth
+PC_FUEL
+Fuel
+PC_COLONY
+Colonization
 
 
 ################################################
@@ -2311,19 +2462,25 @@ DESC_EFFECTS_GROUP_ALWAYS_ACTIVE
 Effect is always active
 
 DESC_EFFECTS_GROUP_SCOPE_DESC
-%1%\n
+'''%1%
+'''
 
 DESC_EFFECTS_GROUP_ACTIVATION_DESC
-%1%\n
+'''%1%
+'''
 
 DESC_EFFECTS_GROUP_EFFECT_DESC
-%1%\n
+'''%1%
+'''
 
 DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC
-%1%\n
+'''%1%
+'''
 
 DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
-Effects group %1%:\n%2%\n
+'''Effects group %1%:
+%2%
+'''
 
 # SetMeter
 
@@ -2344,6 +2501,9 @@ Set current %1% to %2%
 
 DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the object's owner to %2%
+
+DESC_SET_EMPIRE_CAPITOL
+Makes the object the object's owner's capitol planet
 
 DESC_SET_PLANET_TYPE
 Changes the planet's type to %1%
@@ -2369,6 +2529,11 @@ Removes %1% special from object
 DESC_SET_STAR_TYPE
 Changes the star's type to %1%
 
+DESC_MOVE_TO
+Moves the object to the location of an object%1%
+
+DESC_VICTORY
+Causes the object's owner to win the game
 
 # SetTechAvailability
 
@@ -2383,6 +2548,15 @@ Makes %1% available to empire %2%
 
 DESC_SET_TECH_UNAVAIL
 Makes %1% unavailable to empire %2%
+
+
+# Object Creation
+
+DESC_CREATE_PLANET
+Creates a new planet of type %1% and size %2%
+
+DESC_CREATE_BUILDING
+Creates a new %1% building
 
 
 # Conditions
@@ -2414,12 +2588,23 @@ DESC_EMPIRE_AFFILIATION_EXCLUSIVE
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
  that does not belong only to an %1% of %2% empire
 
-# this one is intentionally left empty
 DESC_SELF
  that is the source object
 
 DESC_SELF_NOT
  that is not the source object
+
+DESC_HOMEWORLD
+ that is a homeworld
+
+DESC_HOMEWORLD_NOT
+ that is not a homeworld
+
+DESC_CAPITOL
+ that is an empire's capitol planet
+
+DESC_CAPITOL_NOT
+ that is not an empire's capitol planet
 
 DESC_TYPE
  that is a %1%
@@ -3032,7 +3217,9 @@ SHP_NAVIGATION
 Interstellar Navigation
 
 SHP_NAVIGATION_DESC
-Starlanes form a relatively restrictive network of possible pathes, but interstellar travel is complicated and risky without proper navigation techniques.\n\nIn future, this tech might do something related to starlanes or ship speed or range...
+'''Starlanes form a relatively restrictive network of possible paths, but interstellar travel is complicated and risky without proper navigation techniques.
+
+In future, this tech might do something related to starlanes or ship speed or range...'''
 
 
 #########################################
@@ -3175,7 +3362,9 @@ GRO_SELF_ROTATING_CROPS
 Self-Rotating Crops
 
 GRO_SELF_ROTATING_CROPS_DESC
-High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvinating, plants every few growing seasons.\n\n+ 5 to max farming per 10 population on primary farming focused worlds.
+'''High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to less productive, but soil rejuvenating, plants every few growing seasons.
+
++ 5 to max farming per 10 population on primary farming focused worlds.'''
 
 GRO_BIOTERROR
 Bioterroranlage
@@ -3187,7 +3376,9 @@ GRO_HABITATION_DOMES
 Habitatkuppeln
 
 GRO_HABITATION_DOMES_DESC
-Terraforming kann Planeten wohnlicher machen, doch der Vorgang ist kostspielig und zeitaufwändig.  Habitatkuppeln sind zwar eine begrenzte, aber auch schnelle und günstige Alternative, um die Bevölkerungskapazität unwohnlicher Planeten zu erhöhen. Mit ihrer Hilfe kann eine gewisse Infrastruktur und Ressourcenkapazität aufgebaut werden.\n\nErhöht das Bevölkerungsmaximum auf +2 auf Planeten mit Furchtbarer Umwelt mit einem aktueller Konstruktionswert von mindestens 20.
+'''Terraforming kann Planeten wohnlicher machen, doch der Vorgang ist kostspielig und zeitaufwändig.  Habitatkuppeln sind zwar eine begrenzte, aber auch schnelle und günstige Alternative, um die Bevölkerungskapazität unwohnlicher Planeten zu erhöhen. Mit ihrer Hilfe kann eine gewisse Infrastruktur und Ressourcenkapazität aufgebaut werden.
+
+Erhöht das Bevölkerungsmaximum auf +2 auf Planeten mit Furchtbarer Umwelt mit einem aktueller Konstruktionswert von mindestens 20.'''
 
 GRO_CADUCEAN
 Das Kaduzäerinstitut
@@ -3223,7 +3414,12 @@ LRN_STELLAR_TOMOGRAPHY
 Stellartomographie
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im inneren eines Sterns rekonstruieren.  Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.\n\nErhöht die Forschung um +4 auf Forschung pro 10 Bevölkerung auf Planeten mit Primärfokus Forschung in Systemen mit schwarzem Loch.\nIn Systemen mit Neutronenstern beträgt der Bonus +3.\nBei Systemen mit blauen oder weißem Stern beträgt der Bonus +2.\nIn Systemen mit rotem, orangenem oder gelbem Stern beträgt der Bonus +1.
+'''Ein Netzwerk spezialisierter Satelliten kann mit tomographischen Methoden die Vorgänge im inneren eines Sterns rekonstruieren.  Diese schwer herzustellenden Bedingungen, besonders die in exotischen Sterntypen, sind für diverse Forschungsprojekte ideal.
+
+Erhöht die Forschung um +4 auf Forschung pro 10 Bevölkerung auf Planeten mit Primärfokus Forschung in Systemen mit schwarzem Loch.
+In Systemen mit Neutronenstern beträgt der Bonus +3.
+Bei Systemen mit blauen oder weißem Stern beträgt der Bonus +2.
+In Systemen mit rotem, orangenem oder gelbem Stern beträgt der Bonus +1.'''
 
 LRN_OBSERVATORY_I
 Observatorium
@@ -3295,7 +3491,11 @@ PRO_ENVIRO_MINING_I
 Umweltbewusster Bergbau
 
 PRO_ENVIRO_MINING_I_DESC
-Viele Bergbautechniken können auf stark bevölkerten Planeten wegen des Schadens, den sie der Umwelt zufügen, nicht eingesetzt werden.  Durch die Beachtung der planetaren Ökologie und Begrenzung des Bergbaus können Schäden an der Umwelt vermieden werden.  Es werden zwar weniger Rohstoffe pro Bevölkerung als bei extremeren Methoden hergestellt, aber die zusätzliche Bevölkerung kann dies bis zu einem gewissen Maße ausgleichen. Diese Begrenzungstechniken sind nur auf Planeten mit hoher Bevölkerungszahl geeignet: hervorragend oder optimal je nach Rasse.\n\nErhöht die Rohstoffproduktion um +2 pro 10 Bevölkerung auf Planeten mit Primärfokus Bergbau.\nErhöht die Rohstoffproduktion um +1 pro 10 Bevölkerung auf Planeten mit Primärfokus Ausgeglichen und Sekundärfokus Bergbau.\nSind Primär- und Sekundärfokus Bergbau, erhöht sich die Rohstoffproduktion um +3 pro 10 Bevölkerung.
+'''Viele Bergbautechniken können auf stark bevölkerten Planeten wegen des Schadens, den sie der Umwelt zufügen, nicht eingesetzt werden.  Durch die Beachtung der planetaren Ökologie und Begrenzung des Bergbaus können Schäden an der Umwelt vermieden werden.  Es werden zwar weniger Rohstoffe pro Bevölkerung als bei extremeren Methoden hergestellt, aber die zusätzliche Bevölkerung kann dies bis zu einem gewissen Maße ausgleichen. Diese Begrenzungstechniken sind nur auf Planeten mit hoher Bevölkerungszahl geeignet: hervorragend oder optimal je nach Rasse.
+
+Erhöht die Rohstoffproduktion um +2 pro 10 Bevölkerung auf Planeten mit Primärfokus Bergbau.
+Erhöht die Rohstoffproduktion um +1 pro 10 Bevölkerung auf Planeten mit Primärfokus Ausgeglichen und Sekundärfokus Bergbau.
+Sind Primär- und Sekundärfokus Bergbau, erhöht sich die Rohstoffproduktion um +3 pro 10 Bevölkerung.'''
 
 PRO_ASTEROID_MINE
 Asteroidenbergbau
@@ -3349,13 +3549,23 @@ PRO_MINING_ENGINEERING
 Bergbauplanungswesen
 
 PRO_MINING_ENGINEERING_DESC
-Die Anwendung von Konzepten der planetaren Geologie erlaubt die effiziente Extraktion von oberflächennahen Mineralien des Planeten. Durch die Identifikation wahrscheinlicher Orte und geeigneter Extraktionsmethoden kann die Effizienz und die insgesamt mögliche Produktion erhöht werden. Des weiteren verbessert vorrausschauende Planung und Analyse die Sicherheit und Dauerhaftigkeit der Bergwerke.
+'''Die Anwendung von Konzepten der planetaren Geologie erlaubt die effiziente Extraktion von oberflächennahen Mineralien des Planeten. Durch die Identifikation wahrscheinlicher Orte und geeigneter Extraktionsmethoden kann die Effizienz und die insgesamt mögliche Produktion erhöht werden. Des weiteren verbessert vorrausschauende Planung und Analyse die Sicherheit und Dauerhaftigkeit der Bergwerke.
+
+Bonuses depend on planet type:
+Barren and Inferno receive +4 per 10 population of planet at mining focused worlds.
+Desert, Radiated and Toxic receive +2.
+Tundra and Terran receive +1.
+Ocean and Swap receive no bonus.
+
+Large research cost and time and lack of building-production requirement to receive effect make technology attractive for research-focused empires, but less useful for production-focused.  Bonuses are largest on low-population planet types, making overall benefit small until future advances can increase the populations of these planet types.'''
 
 PRO_INDUSTRY_CENTRE_I
 Lokale Industriezentren
 
 PRO_INDUSTRY_CENTRE_I_DESC
-Industrielle Prozesse zwischen Planeten und Sternensystemen können in großen, zentralisierten Komplexen koordiniert werden.\n\nDie Baukosten, die Bauzeit eines Gebäudes und auch sein zukünftiges Wachstumspotential setzen eine sorgfältige Planung voraus. [!!!] Um grosse Gewinnspannen zu ermöglichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses Gebäude ist damit für Produktions-orientierte Strategien geeignet, nicht aber auf Forschung ausgerichtete Imperien.
+'''Industrielle Prozesse zwischen Planeten und Sternensystemen können in großen, zentralisierten Komplexen koordiniert werden.
+
+Die Baukosten, die Bauzeit eines Gebäudes und auch sein zukünftiges Wachstumspotential setzen eine sorgfältige Planung voraus. [!!!] Um grosse Gewinnspannen zu ermöglichen, sind entsprechende Vorinvestitionen unvermeidlich, sowohl was die Baustoffe, als auch die Bauzeit betrifft. Dagegen sind die wissenschaftlichen Vorraussetzungen minimal; dieses Gebäude ist damit für Produktions-orientierte Strategien geeignet, nicht aber auf Forschung ausgerichtete Imperien.'''
 
 PRO_ENERGY_CONV
 Energy Conversion
@@ -3379,7 +3589,7 @@ SHP_LIGHTHOUSE
 Interstellar Lighthouses
 
 SHP_LIGHTHOUSE_DESC
-Useful for ships travelling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significant safer.
+Useful for ships traveling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significantly safer.
 
 SHP_FLEET_LOGISTICS
 Fleet Logistics
@@ -3427,19 +3637,19 @@ SHP_MEDIUM_HULL
 Mittl. Schiffsrumpf
 
 SHP_MEDIUM_HULL_DESC
-Mittlerer Schiffsrumpf BlaBla
+Mittlerer Schiffsrump
 
 SHP_LARGE_HULL
 Großer Schiffsrumpf
 
 SHP_LARGE_HULL_DESC
-Großer Schiffsrumpf BlaBla
+Großer Schiffsrumpf
 
 SHP_HUGE_HULL
 Rießiger Schiffsrumpf
 
 SHP_HUGE_HULL_DESC
-Rießiger Schiffsrumpf BlaBla
+Rießiger Schiffsrumpf
 
 ########################################
 # Tech Refinement Names & Descriptions #
@@ -3455,13 +3665,13 @@ PRO_ASTEROID_MINE_II_DESC
 Langjährige Erfahrung im Asteroidenbergbau ermöglicht die Verfeinerung der Bergbautechniken.  Auf allen Planeten des Systems mit Primärfokus Bergbau werden zusätzliche Rohstoffe extrahiert.
 
 PRO_INDUSTRY_CENTRE_II
-Erweitertes lokales Industriezentrum
+Erweitertes Industriezentrum
 
 PRO_INDUSTRY_CENTRE_II_DESC
 Ein zentralisieres Management verstreuter Industrieprozesse verbessert die Reichweite und die Größe der industriellen Produktion.
 
 PRO_INDUSTRY_CENTRE_III
-Hochentwickeltes lokales Industriezentrum
+Hochentwickeltes Industriezentrum
 
 PRO_INDUSTRY_CENTRE_III_DESC
 Neue Erfahrungen und die Weiterentwicklung der Produktionsanlagen ermöglichen eine zusätzliche Verbesserung der industriellen Produktion.
@@ -3483,20 +3693,31 @@ BLD_IMPERIAL_PALACE
 Imperialer Palast
 
 BLD_IMPERIAL_PALACE_DESC
-Represents imperial power and prestige and functions as a centre of control for the empire's holdings.\n\nPlanet on which palace is built receive +2 to max construction.
+'''Represents imperial power and prestige and functions as a centre of control for the empire's holdings.
 
+Planet on which palace is built receive +2 to max construction.'''
 
 BLD_SHIPYARD_BASE
-Shipyard
+Werft
 
 BLD_SHIPYARD_BASE_DESC
 Orbital production facility for assembly of interstellar military-grade spacecraft.  Allows production of ships in the system where it is located.  Can be upgraded by producing additional buildings in the same system.
+
+BLD_SHIPYARD_ORBITAL_DRYDOCK
+Orbital-Tockendock
+
+BLD_SHIPYARD_ORBITAL_DRYDOCK_DESC
+Expanded orbital shipyard facilities that permit production of larger hulled ship designs than a basic shipyard.
 
 BLD_BIOTERROR_PROJECTOR
 Bioterror Angriffsbasis
 
 BLD_BIOTERROR_PROJECTOR_DESC
-Wird durch Bioterrorfabriken verfügbar.  Vermindert die Gesundheit nahe gelegener Planeten durch geringgradige biologische Kriegsführung.\n\nPlaneten, die zwei Sternstrassen entfernt liegen, erhalten einen Malus von -4 auf maximale Gesundheit.\nPlaneten, die zum Imperium gehören, das die Angriffsbasis besitzt, erhalten einen Bonus von +1 auf maximale Gesundheit.\nBesitzt das Imperium kein Bioterror Forschungszentrum, entfällt die Funktion der Angriffsbasis.
+'''Projects negative health effects of minor biological warfare to nearby planets.
+
+Planets within 2 starlane jumps owned by other empires receive -4 to max health.
+Planets within 2 starlane jumps owned exclusively by the empire that builds the projector receive -1 to max health.
+Requires empire operating it to own at least one Bioterror Research Centre; otherwise produces no negative health effects on other empires' planets.'''
 
 BLD_BIOTERROR_LAB
 Bioterror Forschungszentrum
@@ -3535,7 +3756,7 @@ BLD_HEAVY_MINE_PROCESSOR_DESC
 Wird durch Bergbauverarbeitungsstation verfügbar.\n\nErzeugt +5 Bergau auf Planeten mit Fokus auf Bergbau (nicht kumulativ) innerhalb eines Radius von 100 um die Station. Der Planet muss vom Typ unfruchtbar, verstrahlt, toxisch oder vulkanisch sein.  Der Planet, auf dem die Station errichtet wird, erhält +2 auf Bergbau und -5 auf Landwirtschaft (beide nicht kumulativ).
 
 BLD_INDUSTRY_CENTRE
-Lokales Industriezentrum
+Industriezentrum
 
 BLD_INDUSTRY_CENTRE_DESC
 '''Wird durch lokale Industriezentren verfügbar.\n\nErzeugt anfänglich +5 Industrie für Planeten mit Fokus auf Industrie (nicht kumulativ), die innerhalb eines Radius von 100 des Zentrums liegen.\n\nDie Erweiterung "erweitertes lokales Industriezentrum" erhöht den Bonus auf +6 und erhöht den Radius auf 200.\n\nDie Erweiterung "hochentwickeltes lokales Industriezentrum" erhöht den Bonus auf +7 und den Radius auf 300.
@@ -3676,19 +3897,58 @@ BLD_ECON_SINKHOLE
 BLD_ECON_SINKHOLE_DESC
 Ein ökonomischer Abfluss stört aktiv den Handel in seiner Umgebung. Der Effekt betrifft sowohl Freund als auch Feind, daher muss es sorgfältig platziert werden, so dass es hauptsächlich den Handel des Gegners stört, den eigenen dagegen möglichst wenig beeinträchtigt.
 
+###################################
+# Hull/Part Description Templates #
+###################################
+
+HULL_DESC
+'''Starlane Speed: %1%
+Fuel Capacity: %2%
+Combat Speed: %3%
+Health: %4%'''
+
+PART_DESC_CAPACITY
+Capacity: %1%
+
+PART_DESC_STRENGTH
+Strength: %1%
+
+PART_DESC_DIRECT_FIRE_STATS
+'''Damage: %1%
+Rate of Fire: %2% shots/turn
+Range: %3%'''
+
+PART_DESC_LR_STATS
+'''Damage: %1%
+Rate of Fire: %2% missiles/turn
+Range: %3%
+Missile Speed: %4%
+Missile Health: %5%
+Missile Stealth: %6%
+Capacity: %7% missiles'''
+
+PART_DESC_FIGHTER_STATS
+'''Fighter Type: %1%
+Fighter Anti-Fighter Damage: %2%
+Fighter Anti-Ship Damage: %3%
+Fighter Launch Rate: %4% fighters/turn
+Fighter Speed: %6%
+Fighter Health: %7%
+Fighter Stealth: %8%
+Fighter Detection: %9%
+Capacity: %10% fighters'''
+
 ##############
 # Ship Parts #
 ##############
 
 SR_LASER
 Laser
-
 SR_LASER_DESC
 Wenig Durchschlagskraft und Masse
 
 SR_ION_CANNON
 Ionenkanone
-
 SR_ION_CANNON_DESC
 Akzeptable Durchschlagskraft und Masse
 
@@ -3703,6 +3963,12 @@ Aktiver Radar
 
 DT_ACTIVE_RADAR_DESC
 Moderate power detection with large stealth penalty to mounting ship.
+
+DT_OPTICAL_SENSORS
+Optical Sensors
+
+DT_OPTICAL_SENSORS_DESC
+Basic detection capability
 
 FU_DEUTERIUM_TANK
 Deuterium-Tank
@@ -3724,19 +3990,16 @@ Improves stealth of ship on which it is mounted by damping electromagnetic emiss
 
 AR_LEAD_PLATE
 Panzer aus Blei
-
 AR_LEAD_PLATE_DESC
 Schwache Verteidung mit hohem Zusatzgewicht
 
 SH_DEFENSE_GRID
 Defense Grid
-
 SH_DEFENSE_GRID_DESC
 Schwache Verteidung ohne Zusatzgewicht
 
 SH_DEFLECTOR
 Deflektor-Schild
-
 SH_DEFLECTOR_DESC
 Starke Verteidung mit hohem Zusatzgewicht
 
@@ -3769,27 +4032,19 @@ SH_SMALL_DESC
 Wenige Slots aber hohe Geschwindigkeit
 
 SH_MEDIUM
-Medium Hull
+Mittlerer Rumpf
 
 SH_MEDIUM_DESC
 Einige Slots und normale Geschwindigkeit
 
 SH_LARGE
-Large Hull
+Großer Rumpf
 
 SH_LARGE_DESC
 Viele Slots aber niedrige Geschwindigkeit
 
 SH_HUGE
-Huge Hull
+Rießiger Rumpf
 
 SH_HUGE_DESC
 Sehr viele Slots aber sehr niedrige Geschwindigkeit
-
-
-# Alte Werte
-DEFENSE_BASE
-Verteidigungsbasis
-
-DEFENSE_BASE_DESCRIPTION
-Eine orbitale Verteidigungsbasis, die bei der Verteidigung des Planeten hilft, in dessen Orbit sie sich befindet.\n\nAngriff: 1\nVerteidigung: 3
