@@ -236,6 +236,9 @@ PopulationPanel::~PopulationPanel()
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
 
+void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void PopulationPanel::ExpandCollapseButtonPressed()
 {
     ExpandCollapse(!s_expanded_map[m_popcenter_id]);
@@ -713,6 +716,9 @@ void ResourcePanel::Render()
 
 }
 
+void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void ResourcePanel::Update()
 {
     const ResourceCenter* res = GetResourceCenter();
@@ -1103,6 +1109,9 @@ void MilitaryPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
+void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void MilitaryPanel::Update()
 {
     const Planet* plt = GetPlanet();
@@ -1330,6 +1339,9 @@ void MultiIconValueIndicator::Render()
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
+void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void MultiIconValueIndicator::Update()
 {
     assert(m_icons.size() == m_meter_types.size());
@@ -1473,6 +1485,9 @@ void MultiMeterStatusBar::Render()
     }
 }
 
+void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void MultiMeterStatusBar::Update()
 {
     std::vector<const Meter*> meters;
@@ -1600,8 +1615,13 @@ void BuildingsPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
+void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void BuildingsPanel::Update()
 {
+    //std::cout << "BuildingsPanel::Update" << std::endl;
+
     // remove old indicators
     for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
         DetachChild(*it);
@@ -1636,7 +1656,7 @@ void BuildingsPanel::Update()
         const Empire* empire = Empires().Lookup(*own_it);
         if (!empire) continue;  // shouldn't be a problem... maybe put check for it later
         const ProductionQueue& queue = empire->GetProductionQueue();
-        
+
         int queue_index = 0;
         for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it, ++queue_index) {
             const ProductionQueue::Element elem = *queue_it;
@@ -1647,11 +1667,11 @@ void BuildingsPanel::Update()
             if (location != plt->ID()) continue;    // don't show buildings located elsewhere
 
             const BuildingType* building_type = GetBuildingType(elem.item.name);
-            
+
             double turn_cost;
             int turns;
             boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(type, elem.item.name);
-            
+
             double progress = empire->ProductionStatus(queue_index);
             if (progress == -1.0) progress = 0.0;
 
@@ -1666,6 +1686,7 @@ void BuildingsPanel::Update()
 
 void BuildingsPanel::Refresh()
 {
+    //std::cout << "BuildingsPanel::Refresh" << std::endl;
     Update();
     DoExpandCollapseLayout();
 }
@@ -1679,7 +1700,7 @@ void BuildingsPanel::DoExpandCollapseLayout()
 {
     int row = 0;
     int column = 0;
-    const GG::X w = Width();      // horizontal space in which to place indicators
+    const GG::X w = Width();    // horizontal space in which to place indicators
     const int padding = 5;      // space around and between adjacent indicators
     const GG::X effective_width = w - padding * (m_columns + 1);  // padding on either side and between
     const int indicator_size = static_cast<int>(Value(effective_width * 1.0 / m_columns));
@@ -1692,7 +1713,7 @@ void BuildingsPanel::DoExpandCollapseLayout()
         int n = 0;
         for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
             BuildingIndicator* ind = *it;
-            
+
             GG::X x = icon_width * n;
 
             if (x < (w - m_expand_button->Width() - icon_width)) {
@@ -1713,9 +1734,9 @@ void BuildingsPanel::DoExpandCollapseLayout()
             GG::X x(padding * (column + 1) + indicator_size * column);
             GG::Y y(padding * (row + 1) + indicator_size * row);
             ind->MoveTo(GG::Pt(x, y));
-            
+
             ind->Resize(GG::Pt(GG::X(indicator_size), GG::Y(indicator_size)));
-            
+
             AttachChild(ind);
             ind->Show();
 
@@ -1744,14 +1765,11 @@ void BuildingsPanel::DoExpandCollapseLayout()
     Resize(GG::Pt(Width(), height));
 
     // update appearance of expand/collapse button
-    if (s_expanded_map[m_planet_id])
-    {
+    if (s_expanded_map[m_planet_id]) {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    }
-    else
-    {
+    } else {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -1870,6 +1888,10 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         m_progress_bar->SizeMove(GG::Pt(GG::X0, bar_top), child_lr);
 }
 
+void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+
 /////////////////////////////////////
 //         SpecialsPanel           //
 /////////////////////////////////////
@@ -1897,8 +1919,12 @@ bool SpecialsPanel::InWindow(const GG::Pt& pt) const
 void SpecialsPanel::Render()
 {}
 
+void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void SpecialsPanel::Update()
 {
+    //std::cout << "SpecialsPanel::Update" << std::endl;
     for (std::vector<GG::StaticGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it)
         DeleteChild(*it);
     m_icons.clear();

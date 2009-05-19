@@ -47,6 +47,7 @@ public:
     void                ExpandCollapse(bool expanded);  ///< expands or collapses panel to show details or just summary info
 
     virtual void        Render();
+    virtual void        MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void                Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                Refresh();                      ///< updates, redoes layout, resizes indicator
@@ -93,6 +94,7 @@ public:
     void                    ExpandCollapse(bool expanded); ///< expands or collapses panel to show details or just summary info
 
     virtual void            Render();
+    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void                    Update();  ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                    Refresh(); ///< updates, redoes layout, resizes indicator
@@ -150,6 +152,7 @@ public:
     void                    ExpandCollapse(bool expanded);  ///< expands or collapses panel to show details or just summary info
 
     virtual void            Render();
+    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void                    Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                    Refresh();                      ///< updates, redoes layout, resizes indicator
@@ -197,6 +200,7 @@ public:
     void            ExpandCollapse(bool expanded);          ///< expands or collapses panel to show details or just summary info
 
     virtual void    Render();
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void            Refresh();                              ///< recreates indicators, redoes layout, resizes
 
@@ -232,6 +236,7 @@ public:
     virtual void    Render();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
 private:
     const BuildingType&     m_type;
@@ -254,6 +259,7 @@ public:
 
     /** \name Mutators */ //@{
     virtual void            Render();
+    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void                    Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
     //@}
@@ -311,6 +317,7 @@ public:
     bool            Empty();
 
     virtual void    Render();
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void            Update();
 
@@ -335,9 +342,10 @@ class MultiMeterStatusBar : public GG::Wnd {
 public:
     MultiMeterStatusBar(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
 
-    virtual void Render();
+    virtual void    Render();
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
-    void Update();
+    void            Update();
 
 private:
     boost::shared_ptr<GG::Texture> m_bar_shading_texture;
@@ -367,15 +375,15 @@ public:
     virtual void Render();
 
 private:
-    GG::StaticGraphic* m_icon;
-    GG::TextControl* m_title_text;
-    GG::TextControl* m_main_text;
+    GG::StaticGraphic*  m_icon;
+    GG::TextControl*    m_title_text;
+    GG::TextControl*    m_main_text;
 
-    static const GG::X TEXT_WIDTH;
-    static const GG::X TEXT_PAD;
-    static const GG::X ICON_WIDTH;
-    static const GG::Y ICON_HEIGHT;
-    const GG::Y ROW_HEIGHT;
+    static const GG::X  TEXT_WIDTH;
+    static const GG::X  TEXT_PAD;
+    static const GG::X  ICON_WIDTH;
+    static const GG::Y  ICON_HEIGHT;
+    const GG::Y         ROW_HEIGHT;
 };
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing
