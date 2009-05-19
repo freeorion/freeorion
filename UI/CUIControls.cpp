@@ -998,6 +998,15 @@ void StatisticIcon::SetValue(double value, int index)
     Refresh();
 }
 
+void StatisticIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
+void StatisticIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{ ForwardEventToParent(); }
+
 void StatisticIcon::Refresh()
 {
     std::string text = "";

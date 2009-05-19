@@ -369,6 +369,11 @@ public:
 
     /** \name Mutators */ //@{
     virtual void    Render() {}
+
+    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+
     void            SetValue(double value, int index = 0);  ///< sets displayed \a value with \a index
     //@}
 
