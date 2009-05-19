@@ -106,7 +106,7 @@ def generateOrders():
 
     print ""
     empire = fo.getEmpire()
-    print empire.name + " TURN: " + str(fo.currentTurn())
+    print "EMPIRE: " + empire.name + " TURN: " + str(fo.currentTurn())
 
     # turn cleanup
     splitFleet()

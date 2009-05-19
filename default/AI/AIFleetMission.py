@@ -257,7 +257,8 @@ class AIFleetMission(object):
         fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
         if (not self.hasAnyAIFleetMissionTypes()) and not(self.getLocationAITarget().getTargetID() in fleetSupplyableSystemIDs):
             resupplyAIFleetOrder = MoveUtilsAI.getResupplyAIFleetOrder(self.getFleetAITarget(), self.getLocationAITarget())
-            self.appendAIFleetOrder(resupplyAIFleetOrder)
+            if resupplyAIFleetOrder.isValid():
+                self.appendAIFleetOrder(resupplyAIFleetOrder)
     
     def getFleetAITarget(self):
         "return fleets AITarget"

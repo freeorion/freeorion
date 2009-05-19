@@ -1,3 +1,4 @@
+import EnumsAI
 from EnumsAI import AITargetType
 import freeOrionAIInterface as fo
 
@@ -68,7 +69,7 @@ class AITarget(object):
     def isValid(self):
         "returns if this object is valid"
         
-        if self.getTargetID() == None or self.getAITargetType() == None:
+        if self.getTargetID() == None or self.getAITargetType() == None or EnumsAI.checkValidity(self.getTargetID()) == False:
             return False
         
         universe = fo.getUniverse()

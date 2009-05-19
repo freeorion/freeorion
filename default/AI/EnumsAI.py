@@ -1,6 +1,7 @@
 def checkValidity(value):
+    "checks if value is valid"
+    
     if (value == None or value < 0):
-        print "value: " + str(value) + " is not valid"
         return False
     return True
 
@@ -132,3 +133,27 @@ class AIProductionRequirementType(object):
     
 def getAIProductionRequirementTypes():
     return __getInterval(0, 6)
+
+
+class AIResearchRequirementType(object):
+    RESEARCH_REQUIREMENT_INVALID = -1
+    RESEARCH_REQUIREMENT_THEORY = 0
+    RESEARCH_REQUIREMENT_REFIMENT = 1
+    RESEARCH_REQUIREMENT_APPLICATION = 2
+    RESEARCH_REQUIREMENT_RESEARCH_POINTS = 3
+
+def getAIResearchRequirementTypes():
+    return __getInterval(0,3)
+
+
+class AIWarTacticsMissionType(object):
+    WAR_TACTICS_MISSION_INVALID = -1
+    WAR_TACTICS_DEFEND_SYSTEM = 0
+    WAR_TACTICS_DEFEND_SHIP = 1
+    WAR_TACTICS_DEFEND_FLEET = 2
+    WAR_TACTICS_MISSION_GET_PLANET = 3
+    WAR_TACTICS_MISSION_GET_SYSTEM = 4
+    
+def getAIWarTacticsMissionType():
+    return __getInterval(0, 4)
+    
