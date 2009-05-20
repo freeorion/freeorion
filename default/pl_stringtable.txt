@@ -1,7 +1,6 @@
 Polski
 
 #This is the Polish String Table file for FreeOrion
-#Translated from 2678 SVN revision of eng_stringtable.txt
 
 #Translated by: Łukasz "Cyber Killer" Korpalski http://digital.dharkness.info
 #Drop a line to cyber_killer at jabster.pl (email or xmpp) if this file needs urgent updating or there are errors in the translation
@@ -89,10 +88,10 @@ NOT_APPLICABLE
 N.D.
 
 BOMBER
-Bomber
+Bombowiec
 
 INTERCEPTOR
-Interceptor
+Myśliwiec przechwytujący
 
 
 ##########################
@@ -172,7 +171,7 @@ OPTIONS_DB_GALAXY_MAP_STARFIELDS
 Rysowanie pól gwiazd wokół systemów planetarnych. W starszych systemach może spowolnić rysowanie.
 
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
-Show scale line for universe distance on galaxy map.
+Pokaż linię skali dla odległości wszechświata na mapie galaktyki.
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Do rysowania systemów planetarnych na pamie galaktyki używa funkcji OpenGL 1.5. Na starszych kartach graficznych może powodować kłopoty.
@@ -184,21 +183,16 @@ OPTIONS_DB_RESOURCE_STARLANE_COLOURING
 Włącza i wyłącza oznaczanie szlaków gwiezdnych kolorem imperium, jeśli imperia mogą wymieniać się surowcami na tych trasach.
 
 OPTIONS_DB_UNOWNED_STARLANE_COLOUR
-Sets default colour to render starlanes.
+Ustawia domyślny kolor dla renderowania szlaków gwiezdnych.
 
 OPTIONS_DB_FLEET_SUPPLY_LINES
 Włącza i wyłącza wyświetlanie linii zaopatrzenia floty za pomocą znaczników w kolorze imperium.
-
-#Toggles whether to show fleet supply lines with empire-coloured indica
-##incomplete string? guessed while translating
-###Should be: Toggles whether to show fleet supply lines with empire-coloured indicators.
-###-Geoff the Medio
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
 Określa szerokość rysowanych linni zaopatrzenia floty.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
-Sets how far apart to renders dots for fleet supply lines.
+Ustawia w jakiej odległości od siebie renderować punkty dla linii dostaw floty.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Zakazuje klientowi uruchamiania serwera, nawet w przypadku gry na komputrze lokalnym w trybie pojedynczego gracza.
@@ -453,7 +447,7 @@ OPTIONS_DB_UI_WINDOW_QUICKCLOSE
 Zamknij otwarte okna, takie jak okna floty i boczny panel podglądu systemu, kiedy klikniesz prawym przyciskiem myszy na głownej mapie.
 
 OPTIONS_DB_UI_SIDEPANEL_WIDTH
-Ustala rozmiar panela bocznego systemu gwiezdnego.
+Ustala rozmiar panelu bocznego systemu gwiezdnego.
 
 OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER
 Ustala rozmiar największych renderowanych, obracających się planet w panelu bocznym.
@@ -4013,4 +4007,3 @@ Wielki kadłub
 
 SH_HUGE_DESC
 Oferuje bardzo dużo miejsc do montowania elementów, ale osiągane prędkości pozostawiają wiele do życzenia.
-

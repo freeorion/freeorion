@@ -1722,6 +1722,7 @@ TURN_PROGRESS_PHASE_ORDERS
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Загрузка данных новой игры...
+Downloading new game state ...
 
 
 ########################
@@ -1779,10 +1780,10 @@ SITREP_VICTORY
 ####################
 
 TECH_VICTORY
-The %1% empire has achived a technological victory.
+Империя %1% одержала технологическую победу.
 
 ALL_ENEMIES_ELIMINATED_VICTORY
-The %1% empire has achived a sole-survivor victory.
+Победила империя %1%, единственная из оставшихся в живых.
 
 
 ####################
@@ -1790,31 +1791,33 @@ The %1% empire has achived a sole-survivor victory.
 ####################
 
 HOMEWORLD_SPECIAL
-Homeworld
+Родной мир
 
 HOMEWORLD_SPECIAL_DESCRIPTION
 This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
+Эта планета родина вашей расы, Вы знаете как получить бонусы фактически ко всем планетарным характеристикам.
 
 ANCIENT_RUINS_SPECIAL
-Ancient Ruins
+Древние руины
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
 This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, giving a bonus to research.
+На этой планете находятся руины одной продвинутой расы, дающие бонус к исследованиям.
 
 MINERALS_SPECIAL
-Mineral Rich
+Богата минералами
 
 MINERALS_SPECIAL_DESCRIPTION
-This planet has a rich natural deposit of minerals, boosting mining and trade.
+Эта планета богата залежами минералов, что повышает горную промышленность и торговлю.
 
 TUNNELS_SPECIAL
-Natural Tunnels
+Естественные туннели
 
 TUNNELS_SPECIAL_DESCRIPTION
-This planet has a network of naturally formed tunnels, enabling a much larger portion of the planet to be easily colonised.
+На этой планете имеется сеть естественных туннелей, что позволяет колонизировать гораздо большую ее часть.
 
 TECHTONIC_INSTABILITY_SPECIAL
-Techtonically Unstable
+Тектонически нестабильная
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
 This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
