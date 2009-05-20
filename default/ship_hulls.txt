@@ -5,8 +5,8 @@ Hull
     starlaneSpeed = 120
     fuel = 3
     health = 30
-    buildCost = 1
-    buildTime = 1
+    buildCost = 5
+    buildTime = 2
     location = And [
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"

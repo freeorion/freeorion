@@ -55,7 +55,7 @@ void TurnProgressWnd::UpdateTurnProgress(const std::string& phase_str, int empir
         m_empire_text->SetColor(text_color);
     } else {
         *m_empire_text << "";
-    }  
+    }
 }
 
 void TurnProgressWnd::HideAll()

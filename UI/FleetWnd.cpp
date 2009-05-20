@@ -273,7 +273,7 @@ namespace {
     // ShipDataPanel
     ////////////////////////////////////////////////
     /** Represents a single ship.  This class is used as the sole Control in
-        each ShipRow. */
+      * each ShipRow. */
     class ShipDataPanel : public GG::Control {
     public:
         ShipDataPanel(GG::X w, GG::Y h, const Ship* ship) :
@@ -311,7 +311,7 @@ namespace {
             int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
             const Universe::EffectAccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
-            const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = NULL;
+            const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
             Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
             if (map_it != effect_accounting_map.end())
                 meter_map = &(map_it->second);
@@ -341,20 +341,22 @@ namespace {
         }
 
         virtual void    Render() {
-            const GG::Clr& unselected_color = GG::CLR_GRAY;
-            const GG::Clr& selected_color = GG::CLR_WHITE;
-
-            GG::Clr color_to_use = m_selected ? selected_color : unselected_color;
-
-            if (Disabled())
-                color_to_use = DisabledColor(color_to_use);
-
+            // main background position and colour
+            const GG::Clr& background_colour = ClientUI::WndColor();
             GG::Pt ul = UpperLeft(), lr = LowerRight();
+
+            // title background colour and position
+            const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
+            const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+            GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
+            if (Disabled())
+                border_colour = DisabledColor(border_colour);
             GG::Pt text_ul = ul + GG::Pt(GG::X(ICON_SIZE),   GG::Y0);
             GG::Pt text_lr = ul + GG::Pt(Width(),            LabelHeight());
 
-            GG::FlatRectangle(ul,       lr,         GG::CLR_ZERO, color_to_use, 1);
-            GG::FlatRectangle(text_ul,  text_lr,    color_to_use, GG::CLR_ZERO, 0);
+            // render
+            GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, 1);  // background and border
+            GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO, 0);   // title background box
         }
 
         void            Select(bool b) {
@@ -386,7 +388,7 @@ namespace {
     private:
         void            SetShipIcon() {
             delete m_ship_icon;
-            m_ship_icon = NULL;
+            m_ship_icon = 0;
             const int ICON_OFFSET = Value((Size().y - ICON_SIZE) / 2);
             boost::shared_ptr<GG::Texture> icon;
             const ShipDesign* design = m_ship->Design();
@@ -488,8 +490,8 @@ namespace {
 // FleetDataPanel
 ////////////////////////////////////////////////
 /** Represents a single fleet.  This class is used as the drop-target in
-    FleetWnd (if the ctor parameter \a fleet is zero), and also as the sole
-    Control in each FleetRow (if the ctor parameter \a fleet is nonzero). */
+  * FleetWnd (if the ctor parameter \a fleet is zero), and also as the sole
+  * Control in each FleetRow (if the ctor parameter \a fleet is nonzero). */
 class FleetDataPanel : public GG::Control {
 public:
     FleetDataPanel(GG::X w, GG::Y h, const Fleet* fleet, int empire = ALL_EMPIRES,
@@ -583,20 +585,22 @@ bool FleetDataPanel::Selected() const
 
 void FleetDataPanel::Render()
 {
-    const GG::Clr& unselected_color = GG::CLR_GRAY;
-    const GG::Clr& selected_color = GG::CLR_WHITE;
-
-    GG::Clr color_to_use = m_selected ? selected_color : unselected_color;
-
-    if (Disabled())
-        color_to_use = DisabledColor(color_to_use);
-
+    // main background position and colour
+    const GG::Clr& background_colour = ClientUI::WndColor();
     GG::Pt ul = UpperLeft(), lr = LowerRight();
+
+    // title background colour and position
+    const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
+    const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
+    GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
+    if (Disabled())
+        border_colour = DisabledColor(border_colour);
     GG::Pt text_ul = ul + GG::Pt(GG::X(ICON_SIZE),   GG::Y0);
     GG::Pt text_lr = ul + GG::Pt(Width(),            LabelHeight());
 
-    GG::FlatRectangle(ul,       lr,         GG::CLR_ZERO, color_to_use, 1);
-    GG::FlatRectangle(text_ul,  text_lr,    color_to_use, GG::CLR_ZERO, 0);
+    // render
+    GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, 1);  // background and border
+    GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO, 0);   // title background box
 }
 
 void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
@@ -778,7 +782,7 @@ namespace {
 // FleetsListBox
 ////////////////////////////////////////////////
 /** A CUIListBox subclass used to list all the fleets, and handle drag-and-drop
-    operations on them, in FleetWnd. */
+  * operations on them, in FleetWnd. */
 class FleetsListBox : public CUIListBox {
 public:
     FleetsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, bool read_only) :
@@ -938,7 +942,7 @@ private:
 // ShipsListBox
 ////////////////////////////////////////////////
 /** A CUIListBox subclass used to list all the ships, and handle drag-and-drop
-    operations on them, in FleetDetailPanel. */
+  * operations on them, in FleetDetailPanel. */
 class ShipsListBox : public CUIListBox {
 public:
     ShipsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, Fleet* fleet, bool read_only) :
@@ -1026,7 +1030,7 @@ private:
 // FleetDetailPanel
 ////////////////////////////////////////////////
 /** Used in FleetDetailWnd's and in the lower half of FleetWnd's to show the
-    ships in a fleet, and some basic info about the fleet. */
+  * ships in a fleet, and some basic info about the fleet. */
 class FleetDetailPanel : public GG::Wnd {
 public:
     FleetDetailPanel(GG::X w, GG::Y h, Fleet* fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>()); ///< ctor
@@ -1419,6 +1423,11 @@ void FleetWnd::Init(const std::vector<Fleet*>& fleets, int selected_fleet, bool 
         if (fleets[0]->Owners().size() == 1) {
             m_empire_id = *fleets[0]->Owners().begin();
         }
+
+        // store ids of fleets
+        for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            m_fleet_ids.insert((*it)->ID());
+        }
     }
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -1562,6 +1571,7 @@ void FleetWnd::SelectFleet(Fleet* fleet)
 {
     if (!fleet) {
         m_fleets_lb->DeselectAll();
+        FleetSelectionChanged(m_fleets_lb->Selections());
         return;
     }
 
@@ -1723,12 +1733,12 @@ void FleetWnd::FleetDeleted(GG::ListBox::iterator it)
 Fleet* FleetWnd::FleetInRow(GG::ListBox::iterator it) const
 {
     if (it == m_fleets_lb->end())
-        return NULL;
+        return 0;
 
     if (FleetRow* fleet_row = dynamic_cast<FleetRow*>(*it))
         return fleet_row->m_fleet;
     else
-        return NULL;
+        return 0;
 }
 
 std::string FleetWnd::TitleText() const

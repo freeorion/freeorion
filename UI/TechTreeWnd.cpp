@@ -1301,10 +1301,10 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), GG::Y(ZBOFFSET), ZBSIZE, "+", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
+    m_zoom_in_button = new CUIButton(w - ZBSIZE - ZBOFFSET - ClientUI::ScrollWidth(), GG::Y(ZBOFFSET), ZBSIZE, "+", font, ClientUI::WndColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
 
     m_zoom_out_button = new CUIButton(m_zoom_in_button->UpperLeft().x - LEFT, 
-                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-", font, ClientUI::ButtonColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
+                                      m_zoom_in_button->LowerRight().y + ZBOFFSET - TOP, ZBSIZE, "-", font, ClientUI::WndColor(), ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
 
     AttachChild(m_layout_surface);
     AttachChild(m_vscroll);

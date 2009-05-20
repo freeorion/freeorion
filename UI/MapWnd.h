@@ -109,20 +109,23 @@ public:
     void            CenterOnObject(const UniverseObject* obj);      //!< centers the map on object \a id
     void            ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
     void            ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
-    void            SelectSystem(int systemID);                     //!< catches emitted signals from the system icons, and allows programmatic selection of planets
+    void            SelectSystem(int systemID);                     //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
     void            ReselectLastSystem();                           //!< re-selects the most recently selected system, if a valid one exists
-    void            SelectFleet(int fleetID);                       //!< allows programmatic selection of fleets
-    void            SelectFleet(Fleet* fleet);                      //!< allows programmatic selection of fleets
+    void            SelectPlanet(int planetID);                     //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
+    void            SelectFleet(int fleetID);                       //!< programatically selects fleets by ID
+    void            SelectFleet(Fleet* fleet);                      //!< programatically selects fleets
     void            ReselectLastFleet();                            //!< re-selects the most recent selected fleet, if a valid one exists
 
-    void            SetFleetMovementLine(const FleetButton* fleet_button);          //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
-    void            SetFleetMovementLine(const Fleet* fleet);                       //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
+    void            SetFleetMovementLine(const FleetButton* fleet_button);      //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
+    void            SetFleetMovementLine(const Fleet* fleet);                   //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
-    /* creates specially-coloured projected fleet movement line for specified fleet following the specified
-       route.  Move line originates from the fleet's button location. */
+    /* creates specially-coloured projected fleet movement line for specified
+     * fleet following the specified route.  Move line originates from the
+     * fleet's button location. */
     void            SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route);
-    /* creates specially-coloured projected fleet movement lines for specified fleets following the specified
-       route.  Move lines originates from the fleets' button locations. */
+    /* creates specially-coloured projected fleet movement lines for specified
+     * fleets following the specified route.  Move lines originates from the
+     * fleets' button locations. */
     void            SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route);
     void            RemoveProjectedFleetMovementLine(const Fleet* fleet);   //!< removes projected fleet movement line for specified fleet.
     void            ClearProjectedFleetMovementLines();                     //!< removes all projected fleet movement lines
@@ -287,7 +290,7 @@ private:
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     int                         m_selected_system;
-    std::set<Fleet*>            m_selected_fleets;
+    std::set<int>               m_selected_fleets;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
@@ -337,7 +340,7 @@ private:
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
     int                         m_current_owned_system;
     int                         m_current_fleet;
-    bool                        m_in_production_view_mode;
+    bool                        m_in_production_view_mode, m_sidepanel_open_before_showing_production;
 
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;

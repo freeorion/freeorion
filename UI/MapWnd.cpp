@@ -66,15 +66,13 @@ namespace {
         return std::pow(ZOOM_STEP_SIZE, steps_in);
     }
 
-    struct BoolToVoidAdapter
-    {
+    struct BoolToVoidAdapter {
         BoolToVoidAdapter(const boost::function<bool ()>& fn) : m_fn(fn) {}
         void operator()() { m_fn(); }
         boost::function<bool ()> m_fn;
     };
 
-    void AddOptions(OptionsDB& db)
-    {
+    void    AddOptions(OptionsDB& db) {
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,       Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          "OPTIONS_DB_GALAXY_MAP_SCALE_LINE",             true,       Validator<bool>());
@@ -101,8 +99,7 @@ namespace {
 
 
 #ifndef FREEORION_RELEASE
-    bool RequestRegressionTestDump()
-    {
+    bool RequestRegressionTestDump() {
         ClientNetworking& networking = HumanClientApp::GetApp()->Networking();
         Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, "EffectsRegressionTest");
         networking.SendMessage(msg);
@@ -223,7 +220,7 @@ public:
         GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
         m_scale_factor(1.0),
         m_line_right_x(GG::X1),
-        m_label(NULL),
+        m_label(0),
         m_enabled(false)
     {
         m_label = new ShadowedTextControl(GG::X0, GG::Y0, GG::X1, h, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER);
@@ -487,12 +484,12 @@ MapWnd::MapWnd() :
     m_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_selected_fleets(),
     m_zoom_steps_in(0.0),
-    m_side_panel(NULL),
+    m_side_panel(0),
     m_system_icons(),
-    m_sitrep_panel(NULL),
-    m_research_wnd(NULL),
-    m_production_wnd(NULL),
-    m_design_wnd(NULL),
+    m_sitrep_panel(0),
+    m_research_wnd(0),
+    m_production_wnd(0),
+    m_design_wnd(0),
     m_starlane_endpoints(),
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
@@ -513,27 +510,28 @@ MapWnd::MapWnd() :
     m_starlane_fleet_supply_colors(),
     m_drag_offset(-GG::X1, -GG::Y1),
     m_dragged(false),
-    m_turn_update(NULL),
+    m_turn_update(0),
     m_popups(),
     m_menu_showing(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_in_production_view_mode(false),
-    m_toolbar(NULL),
-    m_food(NULL),
-    m_mineral(NULL),
-    m_trade(NULL),
-    m_population(NULL),
-    m_research(NULL),
-    m_industry(NULL),
-    m_btn_siterep(NULL),
-    m_btn_research(NULL),
-    m_btn_production(NULL),
-    m_btn_design(NULL),
-    m_btn_menu(NULL),
-    m_FPS(NULL),
-    m_zoom_slider(NULL),
-    m_scale_line(NULL)
+    m_sidepanel_open_before_showing_production(false),
+    m_toolbar(0),
+    m_food(0),
+    m_mineral(0),
+    m_trade(0),
+    m_population(0),
+    m_research(0),
+    m_industry(0),
+    m_btn_siterep(0),
+    m_btn_research(0),
+    m_btn_production(0),
+    m_btn_design(0),
+    m_btn_menu(0),
+    m_FPS(0),
+    m_zoom_slider(0),
+    m_scale_line(0)
 {
     SetName("MapWnd");
 
@@ -544,33 +542,54 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
+
     // system-view side panel
     const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
     const GG::X APP_WIDTH(GG::GUI::GetGUI()->AppWidth());
     const GG::Y APP_HEIGHT(GG::GUI::GetGUI()->AppHeight());
 
     m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT);
-    GG::Connect(m_side_panel->SystemSelectedSignal,         &MapWnd::SelectSystem, this);                                               // sidepanel requests system selection change -> select it
-    GG::Connect(m_side_panel->ResourceCenterChangedSignal,  &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);   // something in sidepanel changed resource pool(s), so need to recalculate and update meteres and resource pools and refresh their indicators
 
+    GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
+    GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);
+
+    // not strictly necessary, as in principle whenever any ResourceCenter
+    // changes, all meter estimates and resource pools should / could be
+    // updated.  however, this is a convenience to limit the updates to
+    // what is actually being shown in the sidepanel right now, which is
+    // useful since most ResourceCenter changes will be due to focus
+    // changes on the sidepanel, and most differences in meter estimates
+    // and resource pools due to this will be in the same system
+    GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
+
+
+    // situation report window
     m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, (APP_HEIGHT-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
 
+
+    // research window
     m_research_wnd = new ResearchWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
+
+    // production window
     m_production_wnd = new ProductionWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
-    GG::Connect(m_production_wnd->SystemSelectedSignal, &MapWnd::SelectSystem, this); // productionwnd requests system selection change -> select it
+    GG::Connect(m_production_wnd->SystemSelectedSignal,     &MapWnd::SelectSystem, this);
+    GG::Connect(m_production_wnd->PlanetSelectedSignal,     &MapWnd::SelectPlanet, this);
 
+
+    // design window
     m_design_wnd = new DesignWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
+
 
     // turn button
     m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), END_TURN_BTN_WIDTH, "");
@@ -580,9 +599,11 @@ MapWnd::MapWnd() :
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X BUTTON_TOTAL_MARGIN(8);
 
+
     // FPS indicator
     m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
     m_toolbar->AttachChild(m_FPS);
+
 
     // Zoom scale line
     m_scale_line = new MapScaleLine(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
@@ -590,6 +611,7 @@ MapWnd::MapWnd() :
     m_toolbar->AttachChild(m_scale_line);
     GG::Connect(this->ZoomedSignal, &MapScaleLine::Update, m_scale_line);
     m_scale_line->Update(ZoomFactor());
+
 
     // Zoom slider
     //const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
@@ -600,6 +622,7 @@ MapWnd::MapWnd() :
     ////m_zoom_slider->SizeSlider(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX);
     //m_toolbar->AttachChild(m_zoom_slider);
     //GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
+
 
     // Subscreen / Menu buttons
     GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
@@ -626,6 +649,7 @@ MapWnd::MapWnd() :
     m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
+
 
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
@@ -662,6 +686,7 @@ MapWnd::MapWnd() :
 
     m_menu_showing = false;
 
+
     //clear background images
     m_backgrounds.clear();
     m_bg_scroll_rate.clear();
@@ -671,9 +696,12 @@ MapWnd::MapWnd() :
     GG::Wnd::SetDefaultBrowseInfoWnd(browser_wnd);
 #endif
 
-    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,                                    &MapWnd::HandleEmpireElimination,   this);
-    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndChangedSignal,                &MapWnd::SelectedFleetsChanged,     this);
-    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedFleetsChangedSignal,  &MapWnd::SelectedFleetsChanged,     this);
+    Connect(ClientApp::GetApp()->EmpireEliminatedSignal,
+            &MapWnd::HandleEmpireElimination,   this);
+    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndChangedSignal,
+            &MapWnd::SelectedFleetsChanged,     this);
+    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedFleetsChangedSignal,
+            &MapWnd::SelectedFleetsChanged,     this);
 }
 
 MapWnd::~MapWnd()
@@ -832,6 +860,18 @@ void MapWnd::InitTurn(int turn_number)
     Universe& universe = GetUniverse();
     const Universe& const_universe = universe;
 
+
+    //// DEBUG
+    //std::cout << "MapWnd::InitTurn() m_selected_fleets: " << std::endl;
+    //for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    //    const UniverseObject* obj = const_universe.Object(*it);
+    //    if (obj)
+    //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
+    //    else
+    //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
+    //}
+
+
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
     Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
@@ -942,20 +982,24 @@ void MapWnd::InitTurn(int turn_number)
     GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
     GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
     GG::Connect(empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
-    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Refresh);
+    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
 
 
     m_toolbar->Show();
     m_FPS->Show();
-    m_side_panel->Hide();   // prevents sidepanel from appearing if previous turn was ended without sidepanel open.  also ensures sidepanel UI updates properly, which it did not otherwise for unknown reasons.
-    DetachChild(m_side_panel);
-    SelectSystem(m_side_panel->SystemID());
 
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
         it->second->UpdateResourcePools();
 
-    m_research_wnd->InitTurn();
-    m_production_wnd->InitTurn();
+    m_research_wnd->Refresh();
+    SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
+    m_production_wnd->Refresh();
+
+    if (turn_number == 1) {
+        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
+            if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
+                SelectSystem(obj->SystemID());
+    }
 }
 
 void MapWnd::InitTurnRendering()
@@ -1028,6 +1072,7 @@ void MapWnd::InitTurnRendering()
 
 void MapWnd::InitSystemRenderingBuffers()
 {
+    Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
     // temp storage
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
@@ -1241,6 +1286,8 @@ void MapWnd::InitSystemRenderingBuffers()
 
 void MapWnd::InitStarlaneRenderingBuffers()
 {
+    Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
+
     // temp storage
     std::vector<float>              raw_starlane_vertices;
     std::vector<unsigned char>      raw_starlane_colors;
@@ -1579,58 +1626,104 @@ void MapWnd::CenterOnObject(const UniverseObject* obj)
 
 void MapWnd::ReselectLastSystem()
 {
+    std::cout << "MapWnd::ReselectLastSystem() m_selected_system: " << m_selected_system << std::endl;
     SelectSystem(m_selected_system);
 }
 
 void MapWnd::SelectSystem(int system_id)
 {
+    std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
+
     // consistency check
-    if (m_selected_system != m_side_panel->SystemID())
+    if (m_selected_system != SidePanel::SystemID())
         Logger().errorStream() << "MapWnd already selected system inconsistent with MapWnd's SidePanel's (selected) system id)";
 
-    // remove selection indicator from previously selected system
-    if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
-        m_system_icons[m_selected_system]->SetSelected(false);
 
-    // place indicator on newly selected system
-    if (system_id != UniverseObject::INVALID_OBJECT_ID)
-        m_system_icons[system_id]->SetSelected(true);
+    if (m_selected_system != system_id) {
+        // remove selection indicator from previously selected system
+        if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
+            m_system_icons[m_selected_system]->SetSelected(false);
 
-    m_selected_system = system_id;   // bookkeeping
+        // update internal selected system record
+        m_selected_system = system_id;
 
-    // show selected system in sidepanel(s)
-    if (m_in_production_view_mode) {
-        if (system_id != m_side_panel->SystemID()) {
-            // only set selected system if newly selected system is different from before, otherwise planet rotation phase resets
-            m_side_panel->SetSystem(system_id);
-            m_production_wnd->SelectSystem(system_id);
-        }
-        m_side_panel->Hide();   // only show ProductionWnd's sidepanel when ProductionWnd is open
-        DetachChild(m_side_panel);
-    } else {
-        if (!m_side_panel->Visible() || system_id != m_side_panel->SystemID()) {
-            m_side_panel->SetSystem(system_id);
+        // place indicator on newly selected system
+        if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
+            m_system_icons[m_selected_system]->SetSelected(true);
 
-            // if selected an invalid system, hide sidepanel
-            if (system_id == UniverseObject::INVALID_OBJECT_ID) {
-                m_side_panel->Hide();
-                DetachChild(m_side_panel);
-            } else {
-                AttachChild(m_side_panel);
-                MoveChildUp(m_side_panel);
-                MoveChildUp(m_sitrep_panel);
-                m_side_panel->Show();
-            }
-        }
+        // set selected system on sidepanel and production screen, as appropriate
+        if (m_in_production_view_mode)
+            m_production_wnd->SelectSystem(system_id);  // calls SidePanel::SetSystem
+        else
+            SidePanel::SetSystem(system_id);
     }
+
+
+    if (m_in_production_view_mode) {
+        // don't need to do anything to ensure this->m_side_panel is visible,
+        // since it should be hidden if in production view mode.  if that's
+        // not actually the case, uncomment the following lines...
+        //m_side_panel->Hide();
+        //DetachChild(m_side_panel);
+        return;
+    }
+
+
+    // even if selected system hasn't changed, it may be nessary to show or
+    // hide this mapwnd's sidepanel, in case it was hidden at some point and
+    // should be visible, or is visible and should be hidden.
+    if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+        // no selected system.  hide sidepanel.
+        m_side_panel->Hide();
+        DetachChild(m_side_panel);
+
+    } else {
+        // selected a valid system, show sidepanel
+        AttachChild(m_side_panel);
+        MoveChildUp(m_side_panel);
+        MoveChildUp(m_sitrep_panel);
+        m_side_panel->Show();
+    }
+
+    std::cout << "MapWnd::SelectSystem() end m_selected_system: " << m_selected_system << std::endl;
 }
 
 void MapWnd::ReselectLastFleet()
 {
-    if (m_selected_fleets.empty())
-        SelectFleet(static_cast<Fleet*>(0));
-    else
-        SelectFleet(*(m_selected_fleets.begin()));
+    // DEBUG
+    std::cout << "MapWnd::ReselectLastFleet m_selected_fleets: " << std::endl;
+    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        const UniverseObject* obj = GetUniverse().Object(*it);
+        if (obj)
+            std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
+        else
+            std::cout << "    [missing object] (" << *it << ")" << std::endl;
+    }
+
+
+    // search through stored selected fleets' ids and remove ids of missing fleets
+    std::set<int> missing_fleets;
+    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        const Fleet* fleet = GetUniverse().Object<Fleet>(*it);
+        if (!fleet)
+            missing_fleets.insert(*it);
+    }
+    for (std::set<int>::const_iterator it = missing_fleets.begin(); it != missing_fleets.end(); ++it)
+        m_selected_fleets.erase(*it);
+
+
+    // select a not-missing fleet, if any
+    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        SelectFleet(*it);
+        break;              // abort after first fleet selected... don't need to do more
+    }
+}
+
+
+void MapWnd::SelectPlanet(int planetID)
+{
+    std::cout << "MapWnd::SelectPlanet(" << planetID << ")" << std::endl;
+    m_production_wnd->SelectPlanet(planetID);   // calls SidePanel::SelectPlanet()
 }
 
 void MapWnd::SelectFleet(int fleet_id)
@@ -1640,18 +1733,38 @@ void MapWnd::SelectFleet(int fleet_id)
 
 void MapWnd::SelectFleet(Fleet* fleet)
 {
-    // can't select no fleet... even if one or more FleetWnd are open... wouldn't know which to alter
-    if (!fleet)
+    FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
+
+    if (!fleet) {
+        std::cout << "MapWnd::SelectFleet selecting no fleet: deselecting all selected fleets." << std::endl;
+
+        // first deselect any selected fleets in non-active fleet wnd.  this should
+        // not emit any signals about the active fleet wnd's fleets changing
+        FleetWnd* active_fleet_wnd = manager.ActiveFleetWnd();
+
+        for (FleetUIManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+            FleetWnd* wnd = *it;
+            if (wnd != active_fleet_wnd)
+                wnd->SelectFleet(0);
+        }
+
+
+        // and finally deselect active fleet wnd fleets.  this might emit a signal
+        // which will update this->m_selected_Fleets
+        if (active_fleet_wnd)
+            active_fleet_wnd->SelectFleet(0);
+
         return;
+    }
 
     //std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
 
     // if indicated fleet is already the only selected fleet in the active FleetWnd, don't need to do anything
-    if (m_selected_fleets.size() == 1 && m_selected_fleets.find(fleet) != m_selected_fleets.end())
+    if (m_selected_fleets.size() == 1 && m_selected_fleets.find(fleet->ID()) != m_selected_fleets.end())
         return;
 
     // find if there is a FleetWnd for this fleet already open.
-    FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet);
+    FleetWnd* fleet_wnd = manager.WndForFleet(fleet);
 
     // if there isn't a FleetWnd for this fleen open, need to open one
     if (!fleet_wnd) {
@@ -1710,7 +1823,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
 
 
         // create new FleetWnd
-        fleet_wnd = FleetUIManager::GetFleetUIManager().NewFleetWnd(wnd_fleets, 0, read_only);
+        fleet_wnd = manager.NewFleetWnd(wnd_fleets, 0, read_only);
 
         // opening a new FleetWnd, so play sound
         FleetButton::PlayFleetButtonOpenSound();
@@ -1734,7 +1847,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
 
 
     // make sure selected fleet's FleetWnd is active
-    FleetUIManager::GetFleetUIManager().SetActiveFleetWnd(fleet_wnd);
+    manager.SetActiveFleetWnd(fleet_wnd);
 
 
     // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.  
@@ -1908,9 +2021,9 @@ void MapWnd::DoFleetButtonsLayout()
         FleetButton* fb = *it;
 
         const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-        const Fleet* fleet = NULL;
+        const Fleet* fleet = 0;
 
-        // skip button if it has no fleets (somehow...?) or if the first fleet in the button is NULL
+        // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
         if (fb->Fleets().empty() || !(fleet = *(fb->Fleets().begin()))) {
             Logger().errorStream() << "DoFleetButtonsLayout couldn't get first fleet for button";
             continue;
@@ -2562,16 +2675,18 @@ void MapWnd::RenderFleetMovementLines()
     for (std::map<const Fleet*, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 
+    const Universe& universe = GetUniverse();
+
     // re-render selected fleets' movement lines in white
-    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
-        std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(*it);
+    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(universe.Object<Fleet>(*it));
         if (line_it != m_fleet_lines.end())
             RenderMovementLine(line_it->second, GG::CLR_WHITE);
     }
 
     // render move line ETA indicators for selected fleets
-    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
-        std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(*it);
+    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(universe.Object<Fleet>(*it));
         if (line_it != m_fleet_lines.end())
             RenderMovementLineETAIndicators(line_it->second);
     }
@@ -2834,7 +2949,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
     // is a single selected fleet in the window, and if so, what fleet that is
     FleetWnd* wnd_for_button = FleetUIManager::GetFleetUIManager().WndForFleet(first_fleet);
-    Fleet* already_selected_fleet = NULL;
+    Fleet* already_selected_fleet = 0;
     if (wnd_for_button) {
         //std::cout << "FleetButtonClicked found open fleetwnd for fleet" << std::endl;
         // there is already FleetWnd for this button open.
@@ -2842,7 +2957,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
         // check which fleet(s) is/are selected in the button's FleetWnd
         std::set<Fleet*> selected_fleets = wnd_for_button->SelectedFleets();
 
-        // record selected fleet if just one fleet is selected.  otherwise, keep default NULL
+        // record selected fleet if just one fleet is selected.  otherwise, keep default 0
         // to indicate that no one fleet is selected
         if (selected_fleets.size() == 1)
             already_selected_fleet = *(selected_fleets.begin());
@@ -2852,7 +2967,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 
 
     // pick fleet to select from fleets represented by the clicked FleetButton.
-    Fleet* fleet_to_select = NULL;
+    Fleet* fleet_to_select = 0;
 
 
     if (!already_selected_fleet || btn_fleets.size() == 1) {
@@ -2902,13 +3017,16 @@ void MapWnd::SelectedFleetsChanged()
     std::set<Fleet*> selected_fleets;
     if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
         selected_fleets = fleet_wnd->SelectedFleets();
+    std::set<int> selected_fleet_ids;
+    for (std::set<Fleet*>::const_iterator it = selected_fleets.begin(); it != selected_fleets.end(); ++it)
+        selected_fleet_ids.insert((*it)->ID());
 
     // if old and new sets of selected fleets are the same, don't need to change anything
-    if (selected_fleets == m_selected_fleets)
+    if (selected_fleet_ids == m_selected_fleets)
         return;
 
     // set new selected fleets
-    m_selected_fleets = selected_fleets;
+    m_selected_fleets = selected_fleet_ids;
 
     // update fleetbutton selection indicators
     RefreshFleetButtonSelectionIndicators();
@@ -2917,6 +3035,8 @@ void MapWnd::SelectedFleetsChanged()
 void MapWnd::RefreshFleetButtonSelectionIndicators()
 {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
+
+    const Universe& universe = GetUniverse();
 
     // clear old selection indicators
     for (std::map<const System*, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {
@@ -2936,19 +3056,13 @@ void MapWnd::RefreshFleetButtonSelectionIndicators()
     }
 
 
-    // TODO: remove old move lines / ETA indicators
-
-
     // add new selection indicators
-    for (std::set<Fleet*>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
-        const Fleet* fleet = *it;
+    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+        const Fleet* fleet = universe.Object<Fleet>(*it);
         std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
         if (button_it != m_fleet_buttons.end())
             button_it->second->SetSelected(true);
     }
-
-
-    // TODO: add new move lines / ETA indicators
 }
 
 void MapWnd::HandleEmpireElimination(int empire_id)
@@ -2997,6 +3111,7 @@ void MapWnd::Cleanup()
 
 void MapWnd::Sanitize()
 {
+    std::cout << "MapWnd::Sanitize()" << std::endl;
     Cleanup();
 
     const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
@@ -3092,6 +3207,7 @@ bool MapWnd::OpenChatWindow()
 
 bool MapWnd::EndTurn()
 {
+    Logger().debugStream() << "MapWnd::EndTurn";
     Cleanup();
     HumanClientApp::GetApp()->StartTurn();
     return true;
@@ -3172,6 +3288,7 @@ void MapWnd::ShowProduction()
     HideSitRep();
     HideResearch();
     HideDesign();
+    m_sidepanel_open_before_showing_production = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing the production screen
     m_side_panel->Hide();
     DetachChild(m_side_panel);
 
@@ -3184,11 +3301,17 @@ void MapWnd::ShowProduction()
     // indicate selection on button
     m_btn_production->MarkSelectedGray();
 
-    // if no system is currently shown in sidepanel, default to this empire's home system (ie. where the capitol is)
-    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+    // if no system is currently shown in sidepanel, default to this empire's
+    // home system (ie. where the capitol is)
+    if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
             if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
-                m_production_wnd->SelectSystem(obj->SystemID());
+                SelectSystem(obj->SystemID());
+    } else {
+        // if a system is already shown, make sure a planet gets selected by
+        // default when the production screen opens up
+        m_production_wnd->SelectDefaultPlanet();
+    }
 }
 
 void MapWnd::HideProduction()
@@ -3197,13 +3320,15 @@ void MapWnd::HideProduction()
     m_in_production_view_mode = false;
     m_btn_production->MarkNotSelected();
     ShowAllPopups();
-    //if (!m_side_panel->Visible())
-    //        m_side_panel->SetSystem(m_side_panel->SystemID());
+    if (m_sidepanel_open_before_showing_production)
+        SelectSystem(SidePanel::SystemID());                // shows sidepanel
+    else
+        SelectSystem(UniverseObject::INVALID_OBJECT_ID);    // hides sidepanel (redundant since it was hidden while in production mode) and removes map system selection indicator that was showing while in produciton mode
 }
 
 bool MapWnd::ToggleProduction()
 {
-    if (m_production_wnd->Visible())
+    if (m_in_production_view_mode)
         HideProduction();
     else
         ShowProduction();
@@ -3498,7 +3623,7 @@ void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_o
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools()
 {
-    UpdateMetersAndResourcePools(m_side_panel->SystemID(), true);
+    UpdateMetersAndResourcePools(SidePanel::SystemID(), true);
 }
 
 void MapWnd::UpdateMeterEstimates()
@@ -3587,6 +3712,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
 void MapWnd::UpdateEmpireResourcePools()
 {
+    std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
        update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which
@@ -3594,7 +3720,7 @@ void MapWnd::UpdateEmpireResourcePools()
     empire->UpdateResourcePools();
 
     // Update indicators on sidepanel, which are not directly connected to from the ResourcePool ChangedSignal
-    m_side_panel->Refresh();
+    SidePanel::Update();
 }
 
 bool MapWnd::ZoomToHomeSystem()

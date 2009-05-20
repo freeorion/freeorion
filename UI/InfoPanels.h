@@ -390,7 +390,7 @@ private:
   * over the system resource production summary. */
 class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int empire_id = ALL_EMPIRES);
+    SystemResourceSummaryBrowseWnd(ResourceType resource_type, int system_id, int empire_id = ALL_EMPIRES);
 
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
 
@@ -406,7 +406,7 @@ private:
     void            UpdateImportExport(GG::Y& top); // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
 
     ResourceType        m_resource_type;
-    const System*       m_system;
+    int                 m_system_id;
     int                 m_empire_id;
 
     double              m_production;               // set by UpdateProduction - used to store production in system so that import / export / unused can be more easily calculated

@@ -22,8 +22,7 @@
 #include <boost/format.hpp>
 
 namespace {
-    class BuildableItemsListBox : public CUIListBox
-    {
+    class BuildableItemsListBox : public CUIListBox {
     public:
         BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
             CUIListBox(x, y, w, h)
@@ -35,23 +34,20 @@ namespace {
             }
     };
 
-    struct ToggleBuildTypeFunctor
-    {
+    struct ToggleBuildTypeFunctor {
         ToggleBuildTypeFunctor(BuildDesignatorWnd* designator_wnd, BuildType type) : m_designator_wnd(designator_wnd), m_build_type(type) {}
         void operator()() {m_designator_wnd->ToggleType(m_build_type);}
         BuildDesignatorWnd* const m_designator_wnd;
         const BuildType m_build_type;
     };
 
-    struct ToggleAllBuildTypesFunctor
-    {
+    struct ToggleAllBuildTypesFunctor {
         ToggleAllBuildTypesFunctor(BuildDesignatorWnd* designator_wnd) : m_designator_wnd(designator_wnd) {}
         void operator()() {m_designator_wnd->ToggleAllTypes();}
         BuildDesignatorWnd* const m_designator_wnd;
     };
 
-    struct ToggleAvailabilityFunctor
-    {
+    struct ToggleAvailabilityFunctor {
         ToggleAvailabilityFunctor(BuildDesignatorWnd* designator_wnd, bool available) : m_designator_wnd(designator_wnd), m_available(available) {}
         void operator()() {m_designator_wnd->ToggleAvailabilitly(m_available);}
         BuildDesignatorWnd* const m_designator_wnd;
@@ -65,27 +61,43 @@ namespace {
 class BuildDesignatorWnd::BuildSelector : public CUIWnd
 {
 public:
+    /** \name Structors */ //@{
     BuildSelector(GG::X w, GG::Y h);
+    //@}
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    /** \name Accessors */ //@{
+    /** returns set of BulldType shown in this selector */
+    const std::set<BuildType>&   GetBuildTypesShown() const;
 
-    const std::set<BuildType>&      GetBuildTypesShown() const;
-    const std::pair<bool, bool>&    GetAvailabilitiesShown() const; // .first -> available items; .second -> unavailable items
+    /** .first -> available items; .second -> unavailable items */
+    const std::pair<bool, bool>& GetAvailabilitiesShown() const;
+    //@}
 
-    void MinimizeClicked();
+    /** \name Mutators */ //@{
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MinimizeClicked();
 
-    void SetBuildLocation(int location_id);
+    /** Sets build location for this selector, which may be used to filter
+      * items in the list or enable / disable them at some point in the
+      * future. */
+    void            SetBuildLocation(int location_id, bool refresh_list = true);
 
-    void Reset();
+    /** Clear and refill list of buildable items, according to current
+      * filter settings. */
+    void            Refresh();
 
-    void ShowType(BuildType type, bool refresh_list = true);
-    void ShowAllTypes(bool refresh_list = true);
-    void HideType(BuildType type, bool refresh_list = true);
-    void HideAllTypes(bool refresh_list = true);
+    /** Show or hide indicated types of buildable items */
+    void    ShowType(BuildType type, bool refresh_list = true);
+    void    ShowAllTypes(bool refresh_list = true);
+    void    HideType(BuildType type, bool refresh_list = true);
+    void    HideAllTypes(bool refresh_list = true);
 
-    void ShowAvailability(bool available, bool refresh_list = true);
-    void HideAvailability(bool available, bool refresh_list = true);
+    /** Show or hide indicated availabilities of buildable items.  Available
+      * items are those which have been unlocked for this selector's emipre. */
+    void    ShowAvailability(bool available, bool refresh_list = true);
+    void    HideAvailability(bool available, bool refresh_list = true);
+    //@}
 
     mutable boost::signal<void (const BuildingType*)>                   DisplayBuildingTypeSignal;
     mutable boost::signal<void (BuildType, const std::string&, int)>    RequestNamedBuildItemSignal;
@@ -102,22 +114,27 @@ private:
     static const GG::X TEXT_MARGIN_X;
     static const GG::Y TEXT_MARGIN_Y;
 
-    void DoLayout();
+    std::vector<GG::X>  ColWidths();
+    void                DoLayout();
 
-    bool BuildableItemVisible(BuildType build_type, const std::string& name);
-    bool BuildableItemVisible(BuildType build_type, int design_id);
+    bool    BuildableItemVisible(BuildType build_type, const std::string& name);
+    bool    BuildableItemVisible(BuildType build_type, int design_id);
 
-    void PopulateList();
-    std::vector<GG::X> ColWidths();
+    /** Clear and refill list of buildable items, according to current
+      * filter settings. */
+    void    PopulateList();
 
-    void BuildItemSelected(const GG::ListBox::SelectionSet& selections);
-    void BuildItemDoubleClicked(GG::ListBox::iterator it);
+    /** respond to the user single-click to select item on the queue */
+    void    BuildItemSelected(const GG::ListBox::SelectionSet& selections);
+
+    /** respond to the user double-clicking an item on the queue */
+    void    BuildItemDoubleClicked(GG::ListBox::iterator it);
 
     std::map<BuildType, CUIButton*>         m_build_type_buttons;
     std::vector<CUIButton*>                 m_availability_buttons;
 
     std::set<BuildType>                     m_build_types_shown;
-    std::pair<bool, bool>                   m_availabilities_shown; // .first -> available items; .second -> unavailable items
+    std::pair<bool, bool>                   m_availabilities_shown; //!< .first -> available items; .second -> unavailable items
 
     BuildableItemsListBox*                  m_buildable_items;
     RowToBuildTypeMap                       m_build_types;
@@ -294,13 +311,18 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
     }
 }
 
-void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id)
+void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list)
 {
-    m_build_location = location_id;
-    PopulateList();
+    std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
+    int old_location = m_build_location;
+    if (m_build_location != location_id) {
+        m_build_location = location_id;
+        if (refresh_list)
+            Refresh();
+    }
 }
 
-void BuildDesignatorWnd::BuildSelector::Reset()
+void BuildDesignatorWnd::BuildSelector::Refresh()
 {
     PopulateList();
 }
@@ -309,7 +331,8 @@ void BuildDesignatorWnd::BuildSelector::ShowType(BuildType type, bool refresh_li
 {
     if (m_build_types_shown.find(type) == m_build_types_shown.end()) {
         m_build_types_shown.insert(type);
-        if (refresh_list) PopulateList();
+        if (refresh_list)
+            Refresh();
     }
 }
 
@@ -318,7 +341,8 @@ void BuildDesignatorWnd::BuildSelector::HideType(BuildType type, bool refresh_li
     std::set<BuildType>::iterator it = m_build_types_shown.find(type);
     if (it != m_build_types_shown.end()) {
         m_build_types_shown.erase(it);
-        if (refresh_list) PopulateList();
+        if (refresh_list)
+            Refresh();
     }
 }
 
@@ -326,13 +350,15 @@ void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list)
 {
     m_build_types_shown.insert(BT_BUILDING);
     m_build_types_shown.insert(BT_SHIP);
-    if (refresh_list) PopulateList();
+    if (refresh_list)
+            Refresh();
 }
 
 void BuildDesignatorWnd::BuildSelector::HideAllTypes(bool refresh_list)
 {
     m_build_types_shown.clear();
-    if (refresh_list) PopulateList();
+    if (refresh_list)
+            Refresh();
 }
 
 void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool refresh_list)
@@ -340,12 +366,14 @@ void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool re
     if (available) {
         if (!m_availabilities_shown.first) {
             m_availabilities_shown.first = true;
-            if (refresh_list) PopulateList();
+            if (refresh_list)
+                Refresh();
         }
     } else {
         if (!m_availabilities_shown.second) {
             m_availabilities_shown.second = true;
-            if (refresh_list) PopulateList();
+            if (refresh_list)
+                Refresh();
         }
     }
 }
@@ -355,12 +383,14 @@ void BuildDesignatorWnd::BuildSelector::HideAvailability(bool available, bool re
     if (available) {
         if (m_availabilities_shown.first) {
             m_availabilities_shown.first = false;
-            if (refresh_list) PopulateList();
+            if (refresh_list)
+                Refresh();
         }
     } else {
         if (m_availabilities_shown.second) {
             m_availabilities_shown.second = false;
-            if (refresh_list) PopulateList();
+            if (refresh_list)
+                Refresh();
         }
     }
 }
@@ -409,7 +439,10 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 {
     Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList start";
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire) return;
+    if (!empire) {
+        // TODO: show all items?  clear list?  not sure what's best to do in this case
+        return;
+    }
 
     // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
     std::string selected_row;
@@ -585,6 +618,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::Sel
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it)
 {
+    std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
     if ((*it)->Disabled())
         return;
     BuildType build_type = m_build_types[it];
@@ -598,18 +632,18 @@ void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iter
 // BuildDesignatorWnd
 //////////////////////////////////////////////////
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
-    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_build_location(UniverseObject::INVALID_OBJECT_ID)
+    Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {
-    const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    const GG::X CHILD_WIDTHS = w - SIDEPANEL_WIDTH;
-    const GG::Y DETAIL_PANEL_HEIGHT = TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
+    const GG::X SIDEPANEL_WIDTH =       GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
+    const int   MAX_PLANET_DIAMETER =   GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    const GG::X CHILD_WIDTHS =          w - SIDEPANEL_WIDTH;
+    const GG::Y DETAIL_PANEL_HEIGHT =   TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
 
     m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, GG::GUI::GetGUI()->AppHeight());
+    m_side_panel->EnableSelection();
     m_side_panel->Hide();
 
     m_map_view_hole = GG::Rect(GG::X0, GG::Y0, CHILD_WIDTHS + MAX_PLANET_DIAMETER, h);
@@ -618,19 +652,19 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));
 
 
-    GG::Connect(m_build_selector->DisplayBuildingTypeSignal, &EncyclopediaDetailPanel::SetItem, m_enc_detail_panel);
-    GG::Connect(m_build_selector->DisplayShipDesignSignal, &EncyclopediaDetailPanel::SetItem, m_enc_detail_panel);
-    GG::Connect(m_build_selector->RequestNamedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
-    GG::Connect(m_build_selector->RequestIDedBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
+    GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    &EncyclopediaDetailPanel::SetItem, m_enc_detail_panel);
+    GG::Connect(m_build_selector->DisplayShipDesignSignal,      &EncyclopediaDetailPanel::SetItem, m_enc_detail_panel);
+    GG::Connect(m_build_selector->RequestNamedBuildItemSignal,  &BuildDesignatorWnd::BuildItemRequested, this);
+    GG::Connect(m_build_selector->RequestIDedBuildItemSignal,   &BuildDesignatorWnd::BuildItemRequested, this);
 
-    GG::Connect(m_side_panel->PlanetSelectedSignal, &BuildDesignatorWnd::SelectPlanet, this);
+    GG::Connect(m_side_panel->PlanetSelectedSignal, PlanetSelectedSignal);
     GG::Connect(m_side_panel->SystemSelectedSignal, SystemSelectedSignal);
 
 
     // connect build type button clicks to update display
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->ClickedSignal, ToggleBuildTypeFunctor(this, BT_BUILDING));
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->ClickedSignal, ToggleBuildTypeFunctor(this, BT_SHIP));
-    GG::Connect(m_build_selector->m_build_type_buttons[NUM_BUILD_TYPES]->ClickedSignal, ToggleAllBuildTypesFunctor(this));    // last button should be "All" button
+    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->ClickedSignal,     ToggleBuildTypeFunctor(this, BT_BUILDING));
+    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->ClickedSignal,         ToggleBuildTypeFunctor(this, BT_SHIP));
+    GG::Connect(m_build_selector->m_build_type_buttons[NUM_BUILD_TYPES]->ClickedSignal, ToggleAllBuildTypesFunctor( this));    // last button should be "All" button
 
     // connect availability button clicks to update display
     GG::Connect(m_build_selector->m_availability_buttons.at(0)->ClickedSignal, ToggleAvailabilityFunctor(this, true));    // available items
@@ -643,9 +677,7 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     MoveChildUp(m_enc_detail_panel);
     MoveChildUp(m_build_selector);
 
-    ShowAllTypes(false);            // show all types without populating the list
-    HideAvailability(false, false); // hide unavailable items without populating the list
-    ShowAvailability(true, false);  // show available items without populating the list
+    Clear();
 }
 
 const std::set<BuildType>& BuildDesignatorWnd::GetBuildTypesShown() const
@@ -688,13 +720,11 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         UniverseObject* build_location = GetUniverse().Object(queue[queue_idx].location);
         assert(build_location);
-        // this code assumes that the build site is a planet
-        int system = build_location->SystemID();
+
+        // centre map on system of build location
+        int system_id = build_location->SystemID();
         MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
-        map->CenterOnObject(system);
-        if (m_side_panel->SystemID() != system)
-            SystemSelectedSignal(system);
-        m_side_panel->SelectPlanet(queue[queue_idx].location);
+        map->CenterOnObject(system_id);
     }
 }
 
@@ -716,49 +746,58 @@ void BuildDesignatorWnd::SetBuild(int queue_idx)
     } else {
             m_enc_detail_panel->UnsetAll();
     }
-    m_enc_detail_panel->Reset();
+    m_enc_detail_panel->Refresh();
 }
 
-void BuildDesignatorWnd::SelectSystem(int system)
+void BuildDesignatorWnd::SelectSystem(int system_id)
 {
-    if (system != UniverseObject::INVALID_OBJECT_ID) {
-        if (system != m_side_panel->SystemID()) {
-            m_build_location = UniverseObject::INVALID_OBJECT_ID;
-        }
-        m_side_panel->SetSystem(system);
-        SelectDefaultPlanet(system);
+    std::cout << "BuildDesignatorWnd::SelectSystem(" << system_id << ")" << std::endl;
+
+    if (system_id == SidePanel::SystemID()) {
+        // don't need to do anything.  already showing the requested system.
+        return;
+    }
+
+    if (system_id != UniverseObject::INVALID_OBJECT_ID) {
+        // set sidepanel's system and autoselect a suitable planet
+        SidePanel::SetSystem(system_id);
+        SelectDefaultPlanet();
     }
 }
 
-void BuildDesignatorWnd::SelectPlanet(int planet)
+void BuildDesignatorWnd::SelectPlanet(int planet_id)
 {
-    m_build_location = planet;
-    m_build_selector->SetBuildLocation(planet);
-    if (planet != UniverseObject::INVALID_OBJECT_ID)
-        m_system_default_planets[m_side_panel->SystemID()] = planet;
+    std::cout << "BuildDesignatorWnd::SelectPlanet(" << planet_id << ")" << std::endl;
+    SidePanel::SelectPlanet(planet_id);
+    if (planet_id != UniverseObject::INVALID_OBJECT_ID)
+        m_system_default_planets[SidePanel::SystemID()] = planet_id;
+    m_build_selector->SetBuildLocation(this->BuildLocation());
+}
+
+void BuildDesignatorWnd::Update()
+{
+    std::cout << "BuildDesignatorWnd::Update()" << std::endl;
+    SidePanel::Update();
+    m_build_selector->Refresh();
+    m_enc_detail_panel->Refresh();
 }
 
 void BuildDesignatorWnd::Reset()
 {
-    // default to the home system when nothing is selected in the main map's SidePanel
-    if (m_side_panel->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
-        int home_system_id = GetUniverse().Object<Planet>(Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID())->SystemID();
-        SystemSelectedSignal(home_system_id);
-    }
-    SelectDefaultPlanet(m_side_panel->SystemID());
-    m_build_selector->Reset();
-    m_enc_detail_panel->Reset();
-    m_side_panel->Refresh();
+    std::cout << "BuildDesignatorWnd::Reset()" << std::endl;
+    SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+    ShowAllTypes(false);            // show all types without populating the list
+    HideAvailability(false, false); // hide unavailable items without populating the list
+    ShowAvailability(true, false);  // show available items without populating the list
+    m_build_selector->Refresh();    // repopulate the list
+    m_enc_detail_panel->UnsetAll();
 }
 
 void BuildDesignatorWnd::Clear()
 {
-    m_enc_detail_panel->UnsetAll();
-    m_enc_detail_panel->Reset();
-    m_build_selector->Reset();
-    SystemSelectedSignal(UniverseObject::INVALID_OBJECT_ID);
-    m_side_panel->Hide();
-    m_build_location = UniverseObject::INVALID_OBJECT_ID;
+    std::cout << "BuildDesignatorWnd::Clear()" << std::endl;
+    SidePanel::SetSystem(UniverseObject::INVALID_OBJECT_ID);
+    Reset();
     m_system_default_planets.clear();
 }
 
@@ -854,18 +893,25 @@ void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
     }
 }
 
+int BuildDesignatorWnd::BuildLocation() const
+{
+    return m_side_panel->SelectedPlanetID();
+}
+
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
 {
+    std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->BuildableItem(build_type, item, m_build_location))
-        AddNamedBuildToQueueSignal(build_type, item, num_to_build, m_build_location);
+    if (empire && empire->BuildableItem(build_type, item, BuildLocation()))
+        AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
 }
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id, int num_to_build)
 {
+    std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->BuildableItem(build_type, design_id, m_build_location))
-        AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, m_build_location);
+    if (empire && empire->BuildableItem(build_type, design_id, BuildLocation()))
+        AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation());
 }
 
 void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
@@ -873,36 +919,66 @@ void BuildDesignatorWnd::BuildQuantityChanged(int queue_idx, int quantity)
     BuildQuantityChangedSignal(queue_idx, quantity);
 }
 
-void BuildDesignatorWnd::SelectDefaultPlanet(int system)
+void BuildDesignatorWnd::SelectDefaultPlanet()
 {
-    m_side_panel->SetValidSelectionPredicate(boost::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(HumanClientApp::GetApp()->EmpireID())));
-    std::map<int, int>::iterator it = m_system_default_planets.find(system);
+    int system_id = SidePanel::SystemID();
+    if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+        this->SelectPlanet(UniverseObject::INVALID_OBJECT_ID);
+        return;
+    }
+
+
+    // select recorded default planet for this system, if there is one recorded
+    // unless that planet can't be selected or doesn't exist in this system
+    std::map<int, int>::iterator it = m_system_default_planets.find(system_id);
     if (it != m_system_default_planets.end()) {
-        // if a planet has previously been selected in this system, re-select it
-        m_side_panel->SelectPlanet(it->second);
-    } else {
-        // find a planet to select from those owned by this client's player
-        const System* sys = GetUniverse().Object<System>(system);
-        if (!sys) {
-            Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system;
+        int planet_id = it->second;
+        if (m_side_panel->PlanetSelectable(planet_id)) {
+            SidePanel::SelectPlanet(it->second);
             return;
         }
+    }
 
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        System::ConstObjectVec owned_planets = sys->FindObjects(OwnedVisitor<Planet>(empire_id));
+    // couldn't reselect stored default, so need to find a reasonable other
+    // planet to select.  attempt to find one owned by this client's player
 
-        if (!owned_planets.empty()) {
-            // pick planet with max population of those owned by this player in this system
-            int planet_id = owned_planets[0]->ID();
-            double max_pop = owned_planets[0]->GetMeter(METER_POPULATION)->Current();
-            for (unsigned int i = 1; i < owned_planets.size(); ++i) {
-                double pop = owned_planets[0]->GetMeter(METER_POPULATION)->Current();
-                if (max_pop < pop) {
-                    max_pop = pop;
-                    planet_id = owned_planets[0]->ID();
-                }
-            }
-            m_side_panel->SelectPlanet(planet_id);
+    const System* sys = GetUniverse().Object<System>(system_id);
+    if (!sys) {
+        Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
+        return;
+    }
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    std::vector<const Planet*> planets = sys->FindObjects<Planet>();
+
+    if (planets.empty()) {
+        this->SelectPlanet(UniverseObject::INVALID_OBJECT_ID);
+        return;
+    }
+
+
+    bool found_planet = false;                              // was a suitable planet found?
+    int best_planet_id = UniverseObject::INVALID_OBJECT_ID; // id of selected planet
+    double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
+
+    for (std::vector<const Planet*>::iterator it = planets.begin(); it != planets.end(); ++it) {
+        const Planet* planet = *it;
+        if (!planet)
+            continue;
+        int planet_id = planet->ID();
+        if (!m_side_panel->PlanetSelectable(planet_id))
+            continue;
+
+        double planet_pop = planet->MeterPoints(METER_POPULATION);
+        if (planet_pop > best_planet_pop) {
+            // found new planet to pick
+            found_planet = true;
+            best_planet_pop = planet_pop;
+            best_planet_id = planet_id;
         }
     }
+
+    // select top pop planet
+    if (found_planet)
+        this->SelectPlanet(best_planet_id);
 }

@@ -41,9 +41,9 @@ public:
     void            SetItem(const BuildingType* building);
     void            SetItem(const ShipDesign* design);
     void            SetItem(const Special* special);
+    void            UnsetAll();
 
-    void Reset();
-    void UnsetAll();
+    void            Refresh();
     //@}
 
 private:

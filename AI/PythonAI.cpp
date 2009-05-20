@@ -206,9 +206,11 @@ PythonAI::PythonAI() {
         return;
     }
 
+
+
     try {
         // tell Python the path in which to locate AI script file
-        std::string AI_path = (GetGlobalDir() / "default" / "AI").directory_string();
+        std::string AI_path = (GetSettingsDir() / "AI").directory_string();
         std::string path_command = "sys.path.append('" + AI_path + "')";
         object ignored = exec(path_command.c_str(), s_main_namespace, s_main_namespace);
 

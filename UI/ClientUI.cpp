@@ -69,19 +69,11 @@ GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<Stre
 GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr(); }
 GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr(); }
 
-GG::Clr     ClientUI::ButtonColor()             { return GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr(); }
-
-GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<StreamableColor>("UI.state-button-color").ToClr(); }
-
-GG::Clr     ClientUI::ScrollTabColor()          { return GetOptionsDB().Get<StreamableColor>("UI.scroll-tab-color").ToClr(); }
 int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("UI.scroll-width"); }
 
-GG::Clr     ClientUI::DropDownListIntColor()    { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-interior-color").ToClr(); }
 GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-arrow-color").ToClr(); }
 
 GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<StreamableColor>("UI.edit-hilite").ToClr(); }
-GG::Clr     ClientUI::EditIntColor()            { return GetOptionsDB().Get<StreamableColor>("UI.edit-interior").ToClr(); }
-GG::Clr     ClientUI::MultieditIntColor()       { return GetOptionsDB().Get<StreamableColor>("UI.multiedit-interior").ToClr(); }
 
 GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
 GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
@@ -95,8 +87,6 @@ double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
 double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
 
-// SidePanel
-GG::Clr     ClientUI::SidePanelColor()         { return GetOptionsDB().Get<StreamableColor>("UI.sidepanel-color").ToClr(); }
 
 // content texture getters
 boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
@@ -396,24 +386,23 @@ namespace {
         db.Add("UI.title-font-size",                            "OPTIONS_DB_UI_TITLE_FONT_SIZE",                12,                     RangedValidator<int>(4, 40));
 
         // colors
-        db.Add("UI.wnd-color",                      "OPTIONS_DB_UI_WND_COLOR",                      StreamableColor(GG::Clr(0, 0, 0, 210)),         Validator<StreamableColor>());
-        db.Add("UI.text-color",                     "OPTIONS_DB_UI_TEXT_COLOR",                     StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
-        db.Add("UI.ctrl-color",                     "OPTIONS_DB_UI_CTRL_COLOR",                     StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
-        db.Add("UI.ctrl-border-color",              "OPTIONS_DB_UI_CTRL_BORDER_COLOR",              StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
-        db.Add("UI.button-color",                   "OPTIONS_DB_UI_BUTTON_COLOR",                   StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
-        db.Add("UI.state-button-color",             "OPTIONS_DB_UI_STATE_BUTTON_COLOR",             StreamableColor(GG::Clr(0, 127, 0, 255)),       Validator<StreamableColor>());
-        db.Add("UI.scroll-tab-color",               "OPTIONS_DB_UI_SCROLL_TAB_COLOR",               StreamableColor(GG::Clr(60, 60, 60, 255)),      Validator<StreamableColor>());
-        db.Add("UI.dropdownlist-interior-color",    "OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR",    StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
-        db.Add("UI.dropdownlist-arrow-color",       "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR",       StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());
-        db.Add("UI.edit-hilite",                    "OPTIONS_DB_UI_EDIT_HILITE",                    StreamableColor(GG::Clr(43, 81, 102, 255)),     Validator<StreamableColor>());
-        db.Add("UI.edit-interior",                  "OPTIONS_DB_UI_EDIT_INTERIOR",                  StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
-        db.Add("UI.multiedit-interior",             "OPTIONS_DB_UI_MULTIEDIT_INTERIOR",             StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
-        db.Add("UI.stat-increase-color",            "OPTIONS_DB_UI_STAT_INCREASE_COLOR",            StreamableColor(GG::Clr(0, 255, 0, 255)),       Validator<StreamableColor>());
-        db.Add("UI.stat-decrease-color",            "OPTIONS_DB_UI_STAT_DECREASE_COLOR",            StreamableColor(GG::Clr(255, 0, 0, 255)),       Validator<StreamableColor>());
-        db.Add("UI.sidepanel-color",                "OPTIONS_DB_UI_SIDEPANEL_COLOR",                StreamableColor(GG::Clr(0, 0, 0, 220)),         Validator<StreamableColor>());
+        db.Add("UI.wnd-color",                      "OPTIONS_DB_UI_WND_COLOR",                      StreamableColor(GG::Clr(0, 0, 0, 220)),         Validator<StreamableColor>());
         db.Add("UI.wnd-outer-border-color",         "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR",         StreamableColor(GG::Clr(64, 64, 64, 255)),      Validator<StreamableColor>());
         db.Add("UI.wnd-border-color",               "OPTIONS_DB_UI_WND_BORDER_COLOR",               StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
         db.Add("UI.wnd-inner-border-color",         "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR",         StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+
+        db.Add("UI.ctrl-color",                     "OPTIONS_DB_UI_CTRL_COLOR",                     StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
+        db.Add("UI.ctrl-border-color",              "OPTIONS_DB_UI_CTRL_BORDER_COLOR",              StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
+
+        db.Add("UI.dropdownlist-arrow-color",       "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR",       StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());
+
+        db.Add("UI.edit-hilite",                    "OPTIONS_DB_UI_EDIT_HILITE",                    StreamableColor(GG::Clr(43, 81, 102, 255)),     Validator<StreamableColor>());
+
+        db.Add("UI.stat-increase-color",            "OPTIONS_DB_UI_STAT_INCREASE_COLOR",            StreamableColor(GG::Clr(0, 255, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.stat-decrease-color",            "OPTIONS_DB_UI_STAT_DECREASE_COLOR",            StreamableColor(GG::Clr(255, 0, 0, 255)),       Validator<StreamableColor>());
+
+        db.Add("UI.text-color",                     "OPTIONS_DB_UI_TEXT_COLOR",                     StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+
         db.Add("UI.known-tech",                     "OPTIONS_DB_UI_KNOWN_TECH",                     StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
         db.Add("UI.known-tech-border",              "OPTIONS_DB_UI_KNOWN_TECH_BORDER",              StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
         db.Add("UI.researchable-tech",              "OPTIONS_DB_UI_RESEARCHABLE_TECH",              StreamableColor(GG::Clr(48, 48, 48, 255)),      Validator<StreamableColor>());

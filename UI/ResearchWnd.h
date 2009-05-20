@@ -17,10 +17,11 @@ class ResearchWnd : public GG::Wnd
 public:
     /** \name Structors */ //@{
     ResearchWnd(GG::X w, GG::Y h);
+    ~ResearchWnd();
     //@}
 
     /** \name Mutators */ //@{
-    void InitTurn();
+    void Refresh();
     void Reset();
     void Update();
     void CenterOnTech(const std::string& tech_name);
@@ -43,6 +44,8 @@ private:
     ProductionInfoPanel* m_research_info_panel;
     QueueListBox*        m_queue_lb;
     TechTreeWnd*         m_tech_tree_wnd;
+
+    boost::signals::connection  m_empire_connection;
 };
 
 #endif // _ResearchWnd_h_

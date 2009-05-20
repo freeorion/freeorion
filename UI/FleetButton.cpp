@@ -201,11 +201,11 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
 
     // select icon(s) for fleet(s), and get a fleet for use later
-    const Fleet* first_fleet = NULL;
+    const Fleet* first_fleet = 0;
     if (m_fleets.size() != 1) {
         first_fleet = *(m_fleets.begin());
 
-        m_head_icon = FleetHeadIcon(NULL, size_type);
+        m_head_icon = FleetHeadIcon(0, size_type);
         int num_ships = 0;
         for (std::vector<Fleet*>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it)
             num_ships += (*it)->NumShips();

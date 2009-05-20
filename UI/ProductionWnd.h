@@ -20,44 +20,58 @@ public:
     ~ProductionWnd();
     //@}
 
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (int)> SystemSelectedSignalType; ///< emitted when something in the productionwnd wants to change the selected system
-    //@}
-
     /** \name Mutators */ //@{
-    bool InWindow(const GG::Pt& pt) const;
-    bool InClient(const GG::Pt& pt) const;
+    virtual bool    InWindow(const GG::Pt& pt) const;
+    virtual bool    InClient(const GG::Pt& pt) const;
 
-    void Render();
+    void            Render();
 
-    void InitTurn();
-    void Reset();
-    void Update();
-    void CenterOnBuild(int queue_idx);
-    void SelectSystem(int system);
-    void SelectPlanet(int planet);
-    void QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
-    void Sanitize();
+    void            Refresh();
+    void            Reset();
+    void            Update();
+
+    /** Centres map wnd on location of item on queue with index \a queue_idx
+      * and displays info about that item in encyclopedia window. */
+    void            CenterOnBuild(int queue_idx);
+
+    /** Programatically sets this Wnd's selected system.
+      * Does not emit a SystemSelectedSignal. */
+    void            SelectSystem(int system_id);
+
+    /** Programatically sets this Wnd's selected planet.
+      * Does not emit a PlanetSelectedSignal. */
+    void            SelectPlanet(int planet_id);
+
+    /** Attempts to find a planet to select, and if successful, selects that
+      * planet */
+    void            SelectDefaultPlanet();
+
+    void            Sanitize();
     //@}
 
-    mutable SystemSelectedSignalType SystemSelectedSignal;
+    mutable boost::signal<void (int)> SystemSelectedSignal; ///< emitted when the user changes the selected system in the production screen
+    mutable boost::signal<void (int)> PlanetSelectedSignal; ///< emitted when the user changes the selected planet in the production screen
 
 private:
-    void ProductionQueueChangedSlot();
-    void UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
-    void UpdateInfoPanel(); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
-    void AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
-    void AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location);
-    void ChangeBuildQuantitySlot(int queue_idx, int quantity);
-    void QueueItemDeletedSlot(GG::ListBox::iterator it);
-    void QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
-    void QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
+    void    ProductionQueueChangedSlot();
+    void    UpdateQueue();     ///< Clears and repopulates queue list with listitems corresponding to contents of empire's production queue
+    void    UpdateInfoPanel(); ///< Updates production summary at top left of production screen, and signals that the empire's minerals resource pool has changed (propegates to the mapwnd to update indicator)
+
+    void    AddBuildToQueueSlot(BuildType build_type, const std::string& name, int number, int location);
+    void    AddBuildToQueueSlot(BuildType build_type, int design_id, int number, int location);
+
+    void    ChangeBuildQuantitySlot(int queue_idx, int quantity);
+
+    void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
+    void    QueueItemDeletedSlot(GG::ListBox::iterator it);
+    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
     ProductionInfoPanel* m_production_info_panel;
     QueueListBox*        m_queue_lb;
     BuildDesignatorWnd*  m_build_designator_wnd;
 
-    std::set<boost::signals::connection> m_misc_connections;
+    boost::signals::connection  m_empire_connection;
 };
 
 #endif // _ProductionWnd_h_

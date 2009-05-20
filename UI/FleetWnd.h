@@ -52,6 +52,7 @@ public:
     void            CullEmptyWnds();
     void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
     bool            CloseAll();
+    void            RefreshAll();
     //@}
 
     mutable boost::signal<void ()> ActiveFleetWndChangedSignal;                 //!< emitted when the selected FleetWnd changes
@@ -96,6 +97,7 @@ public:
     void                    AddFleet(Fleet* fleet);     ///< adds a new fleet to a currently-open FletWnd
     void                    SelectFleet(Fleet* fleet);  ///< selects the indicated fleet, bringing it into the fleet detail window
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void                    Refresh();                  ///< regenerates contents
     //@}
 
     static const GG::Pt&    LastPosition();         ///< returns the last position of the last FleetWnd that was closed
@@ -130,6 +132,7 @@ private:
 
     mutable boost::signal<void (FleetWnd*)> ClosingSignal;
 
+    std::set<int>           m_fleet_ids;
     int                     m_empire_id;
     int                     m_system_id;
     const bool              m_read_only;

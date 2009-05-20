@@ -14,50 +14,40 @@
 namespace {
     const int BUFFER_SIZE = 409600; // The size of the buffer we read music data into.
 
-    void InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers)
-    {
+    void InitOpenAL(int num_sources, ALuint *sources, ALuint *music_buffers) {
         ALCcontext *m_context;
         ALCdevice *m_device;
         ALenum error_code;
 
-        m_device = alcOpenDevice(NULL); /* currently only select the default output device - usually a NULL-terminated
-                                         * string desctribing a device can be passed here (of type ALchar*)
-                                         */
-        if (m_device == NULL) {
+        m_device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
+                                         * string desctribing a device can be passed here (of type ALchar*) */
+        if (m_device == 0) {
             Logger().errorStream() << "Unable to initialise OpenAL device: " << alGetString(alGetError()) << "\n";
         } else {
-            m_context = alcCreateContext(m_device,NULL); // instead of NULL we can pass a ALCint* pointing to a set of
+            m_context = alcCreateContext(m_device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
                                                          // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
 
-            if ((m_context != NULL) && (alcMakeContextCurrent(m_context) == AL_TRUE))
-            {
-                alutInitWithoutContext(NULL,NULL); // we need to init alut or we won't be able to read .wav files
+            if ((m_context != 0) && (alcMakeContextCurrent(m_context) == AL_TRUE)) {
+                alutInitWithoutContext(0, 0); // we need to init alut or we won't be able to read .wav files
                 alListenerf(AL_GAIN,1.0);
                 alGetError(); // clear possible previous errors (just to be certain)
                 alGenSources(num_sources, sources);
                 error_code = alGetError();
-                if(error_code != AL_NO_ERROR)
-                {
+                if(error_code != AL_NO_ERROR) {
                     Logger().errorStream() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-                    alcMakeContextCurrent(NULL);
+                    alcMakeContextCurrent(0);
                     alcDestroyContext(m_context);
-                }
-                else
-                {
+                } else {
                     alGetError();
                     alGenBuffers(2, music_buffers);
                     error_code = alGetError();
-                    if(error_code != AL_NO_ERROR)
-                    {
+                    if (error_code != AL_NO_ERROR) {
                         Logger().errorStream() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
                         alDeleteBuffers(2, music_buffers);
-                        alcMakeContextCurrent(NULL);
+                        alcMakeContextCurrent(0);
                         alcDestroyContext(m_context);
-                    }
-                    else
-                    {
-                        for (int i = 0; i < num_sources; ++i)
-                        {
+                    } else {
+                        for (int i = 0; i < num_sources; ++i) {
                             alSourcei(sources[i], AL_SOURCE_RELATIVE, AL_TRUE);
                         }
                         Logger().debugStream() << "OpenAL initialized. Version "
@@ -70,15 +60,14 @@ namespace {
                                                << alGetString(AL_EXTENSIONS) << "\n";
                     }
                 }
-            }
-            else
+            } else {
                 Logger().errorStream() << "Unable to create OpenAL context : " << alGetString(alGetError()) << "\n";
+            }
         }
     }
 
 #ifdef FREEORION_WIN32
-    int _fseek64_wrap(FILE *f,ogg_int64_t off,int whence)
-    {
+    int _fseek64_wrap(FILE *f, ogg_int64_t off, int whence) {
         if (!f)
             return -1;
         return fseek(f,off,whence);
@@ -125,7 +114,7 @@ void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {
     ALenum m_openal_error;
     std::string filename = path.file_string();
-    FILE *m_f = NULL;
+    FILE *m_f = 0;
     vorbis_info *m_ogg_info;
     m_music_loops = 0;
 
@@ -143,17 +132,17 @@ void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
     };
 #endif
 
-    if (alcGetCurrentContext() != NULL)
+    if (alcGetCurrentContext() != 0)
     {
         if (m_music_name.size() > 0)
             StopMusic();
        
-        if ((m_f = fopen(filename.c_str(), "rb")) != NULL) // make sure we CAN open it
+        if ((m_f = fopen(filename.c_str(), "rb")) != 0) // make sure we CAN open it
         {
 #ifdef FREEORION_WIN32
-            if (!(ov_test_callbacks(m_f, &m_ogg_file, NULL, 0, callbacks))) // check if it's a proper ogg
+            if (!(ov_test_callbacks(m_f, &m_ogg_file, 0, 0, callbacks))) // check if it's a proper ogg
 #else
-            if (!(ov_test(m_f, &m_ogg_file, NULL, 0))) // check if it's a proper ogg
+            if (!(ov_test(m_f, &m_ogg_file, 0, 0))) // check if it's a proper ogg
 #endif
             {
                 ov_test_open(&m_ogg_file); // it is, now fully open the file
@@ -194,7 +183,7 @@ void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 
 void Sound::StopMusic()
 {
-    if (alcGetCurrentContext() != NULL)
+    if (alcGetCurrentContext() != 0)
     {
         alSourceStop(m_sources[0]);
         if (m_music_name.size() > 0)
@@ -218,7 +207,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     int m_found_buffer = 1;
     int m_found_source = 0;
 
-    if (alcGetCurrentContext() != NULL)
+    if (alcGetCurrentContext() != 0)
     {
         /* First check if the sound data of the file we want to play is already buffered somewhere */
         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
@@ -299,7 +288,7 @@ void Sound::SetMusicVolume(int vol)
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("music-volume", vol);
-    if (alcGetCurrentContext() != NULL)
+    if (alcGetCurrentContext() != 0)
     {
         alSourcef(m_sources[0],AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
@@ -316,7 +305,7 @@ void Sound::SetUISoundsVolume(int vol)
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("UI.sound.volume", vol);
-    if (alcGetCurrentContext() != NULL)
+    if (alcGetCurrentContext() != 0)
     {
         for (int it = 1; it < NUM_SOURCES; ++it)
             alSourcef(m_sources[it],AL_GAIN, ((ALfloat) vol)/255.0);
@@ -332,7 +321,7 @@ void Sound::DoFrame()
     ALint    state;
     int      num_buffers_processed;
    
-    if ((alcGetCurrentContext() != NULL) && (m_music_name.size() > 0))
+    if ((alcGetCurrentContext() != 0) && (m_music_name.size() > 0))
     {
         alGetSourcei(m_sources[0],AL_BUFFERS_PROCESSED,&num_buffers_processed);
         while (num_buffers_processed > 0)
@@ -361,7 +350,7 @@ int Sound::RefillBuffer(ALuint *bufferName)
     char array[BUFFER_SIZE];
     bytes = 0;
    
-    if (alcGetCurrentContext() != NULL)
+    if (alcGetCurrentContext() != 0)
     {
         /* First, let's fill up the buffer. We need the loop, as ov_read treats (BUFFER_SIZE - bytes) to read as a suggestion only */
         do

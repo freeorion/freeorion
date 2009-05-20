@@ -30,16 +30,21 @@ namespace {
 
     void Options(OptionsDB& db)
     {
-        db.AddFlag("force-external-server",  "OPTIONS_DB_FORCE_EXTERNAL_SERVER", false);
-        db.Add<std::string>("external-server-address",  "OPTIONS_DB_EXTERNAL_SERVER_ADDRESS", "localhost");
-        db.Add("UI.main-menu.x", "OPTIONS_DB_UI_MAIN_MENU_X", 0.75, RangedStepValidator<double>(0.01, 0.0, 1.0));
-        db.Add("UI.main-menu.y", "OPTIONS_DB_UI_MAIN_MENU_Y", 0.47, RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.AddFlag("force-external-server",             "OPTIONS_DB_FORCE_EXTERNAL_SERVER",     false);
+        db.Add<std::string>("external-server-address",  "OPTIONS_DB_EXTERNAL_SERVER_ADDRESS",   "localhost");
+        db.Add("UI.main-menu.x",                        "OPTIONS_DB_UI_MAIN_MENU_X",            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.Add("UI.main-menu.y",                        "OPTIONS_DB_UI_MAIN_MENU_Y",            0.47,   RangedStepValidator<double>(0.01, 0.0, 1.0));
     }
 
     bool foo_bool = RegisterOptions(&Options);
 
 }
 
+/////////////////////////////////
+// CreditsWnd
+/////////////////////////////////
+
+/** Displays scrolling credits. */
 class CreditsWnd : public GG::Wnd
 {
 public:
@@ -94,47 +99,45 @@ void CreditsWnd::Render()
     GG::BeginScissorClipping(GG::Pt(ul.x+m_cx, ul.y+m_cy), GG::Pt(ul.x+m_cx+m_cw, ul.y+m_cy+m_ch));
 
     std::string credit;
-    for(int i = 0; i<m_credits.NumChildren();i++) {
-        if(0==m_credits.Child(i).Tag().compare("GROUP"))
-        {
+    for (int i = 0; i < m_credits.NumChildren();i++) {
+        if (!m_credits.Child(i).Tag().compare("GROUP")) {
             XMLElement group = m_credits.Child(i);
-            for(int j = 0; j<group.NumChildren();j++) {
-                if(0==group.Child(j).Tag().compare("PERSON"))
-                {
+            for (int j = 0; j<group.NumChildren();j++) {
+                if (!group.Child(j).Tag().compare("PERSON")) {
                     XMLElement person = group.Child(j);
                     credit = "";
-                    if(person.ContainsAttribute("name"))
-                        credit+=person.Attribute("name");
-                    if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
-                    {
-                        credit+=" <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
-                        credit+=person.Attribute("nick");
-                        credit+=")</rgba>";
+                    if (person.ContainsAttribute("name"))
+                        credit += person.Attribute("name");
+                    if (person.ContainsAttribute("nick") && person.Attribute("nick").length() > 0) {
+                        credit += " <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) + ">(";
+                        credit += person.Attribute("nick");
+                        credit += ")</rgba>";
                     }
-                    if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
-                    {
-                        credit+=" - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
-                        credit+=person.Attribute("task");
-                        credit+="</rgba>";
+                    if (person.ContainsAttribute("task") && person.Attribute("task").length() > 0) {
+                        credit += " - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) + ">";
+                        credit += person.Attribute("task");
+                        credit += "</rgba>";
                     }
                     font->RenderText(GG::Pt(ul.x+m_cx,ul.y+m_cy+offset),
                                      GG::Pt(ul.x+m_cx+m_cw,ul.y+m_cy+m_ch),
                                      credit, format, 0);
-                    offset+=font->TextExtent(credit, format).y+2;
+                    offset += font->TextExtent(credit, format).y+2;
                 }
             }
-            offset+=font->Lineskip()+2;
+            offset += font->Lineskip() + 2;
         }
     }
     GG::EndScissorClipping();
-    if(offset<0)
-    {
+    if (offset < 0) {
         m_co = 0;
-        m_start_time = GG::GUI::GetGUI()->Ticks()+m_ch*40;
+        m_start_time = GG::GUI::GetGUI()->Ticks() + m_ch*40;
     }
 }
-//****************************************************************************************************
 
+
+/////////////////////////////////
+// IntroScreen
+/////////////////////////////////
 IntroScreen::IntroScreen() :
     CUIWnd(UserString("INTRO_WINDOW_TITLE"), 
            static_cast<GG::X>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
@@ -154,18 +157,18 @@ IntroScreen::IntroScreen() :
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);
 
-    m_version->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() - m_version->Size().x,
+    m_version->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() -  m_version->Size().x,
                              GG::GUI::GetGUI()->AppHeight() - m_version->Size().y));
 
     //create buttons
-    m_single_player = new CUIButton(GG::X(15), GG::Y(12), GG::X(160), UserString("INTRO_BTN_SINGLE_PLAYER"));
-    m_quick_start = new CUIButton(GG::X(15), GG::Y(52), GG::X(160), UserString("INTRO_BTN_QUICK_START"));
-    m_multi_player = new CUIButton(GG::X(15), GG::Y(92), GG::X(160), UserString("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game = new CUIButton(GG::X(15), GG::Y(132), GG::X(160), UserString("INTRO_BTN_LOAD_GAME"));
-    m_options = new CUIButton(GG::X(15), GG::Y(172), GG::X(160), UserString("INTRO_BTN_OPTIONS"));
-    m_about = new CUIButton(GG::X(15), GG::Y(212), GG::X(160), UserString("INTRO_BTN_ABOUT"));
-    m_credits = new CUIButton(GG::X(15), GG::Y(252), GG::X(160), UserString("INTRO_BTN_CREDITS"));
-    m_exit_game = new CUIButton(GG::X(15), GG::Y(322), GG::X(160), UserString("INTRO_BTN_EXIT"));
+    m_single_player =   new CUIButton(GG::X(15), GG::Y(12),  GG::X(160), UserString("INTRO_BTN_SINGLE_PLAYER"));
+    m_quick_start =     new CUIButton(GG::X(15), GG::Y(52),  GG::X(160), UserString("INTRO_BTN_QUICK_START"));
+    m_multi_player =    new CUIButton(GG::X(15), GG::Y(92),  GG::X(160), UserString("INTRO_BTN_MULTI_PLAYER"));
+    m_load_game =       new CUIButton(GG::X(15), GG::Y(132), GG::X(160), UserString("INTRO_BTN_LOAD_GAME"));
+    m_options =         new CUIButton(GG::X(15), GG::Y(172), GG::X(160), UserString("INTRO_BTN_OPTIONS"));
+    m_about =           new CUIButton(GG::X(15), GG::Y(212), GG::X(160), UserString("INTRO_BTN_ABOUT"));
+    m_credits =         new CUIButton(GG::X(15), GG::Y(252), GG::X(160), UserString("INTRO_BTN_CREDITS"));
+    m_exit_game =       new CUIButton(GG::X(15), GG::Y(322), GG::X(160), UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
     AttachChild(m_single_player);
@@ -178,14 +181,14 @@ IntroScreen::IntroScreen() :
     AttachChild(m_exit_game);
 
     //connect signals and slots
-    GG::Connect(m_single_player->ClickedSignal, &IntroScreen::OnSinglePlayer, this);
-    GG::Connect(m_quick_start->ClickedSignal, &IntroScreen::OnQuickStart, this);
-    GG::Connect(m_multi_player->ClickedSignal, &IntroScreen::OnMultiPlayer, this);
-    GG::Connect(m_load_game->ClickedSignal, &IntroScreen::OnLoadGame, this);
-    GG::Connect(m_options->ClickedSignal, &IntroScreen::OnOptions, this);
-    GG::Connect(m_about->ClickedSignal, &IntroScreen::OnAbout, this);
-    GG::Connect(m_credits->ClickedSignal, &IntroScreen::OnCredits, this);
-    GG::Connect(m_exit_game->ClickedSignal, &IntroScreen::OnExitGame, this);
+    GG::Connect(m_single_player->ClickedSignal, &IntroScreen::OnSinglePlayer,   this);
+    GG::Connect(m_quick_start->ClickedSignal,   &IntroScreen::OnQuickStart,     this);
+    GG::Connect(m_multi_player->ClickedSignal,  &IntroScreen::OnMultiPlayer,    this);
+    GG::Connect(m_load_game->ClickedSignal,     &IntroScreen::OnLoadGame,       this);
+    GG::Connect(m_options->ClickedSignal,       &IntroScreen::OnOptions,        this);
+    GG::Connect(m_about->ClickedSignal,         &IntroScreen::OnAbout,          this);
+    GG::Connect(m_credits->ClickedSignal,       &IntroScreen::OnCredits,        this);
+    GG::Connect(m_exit_game->ClickedSignal,     &IntroScreen::OnExitGame,       this);
 }
 
 IntroScreen::~IntroScreen()
@@ -218,7 +221,7 @@ void IntroScreen::OnMultiPlayer()
 }
 
 void IntroScreen::OnLoadGame()
-{  
+{
     delete m_credits_wnd;
     m_credits_wnd = 0;
     HumanClientApp::GetApp()->LoadSinglePlayerGame();
@@ -263,11 +266,9 @@ void IntroScreen::OnCredits()
     GG::Y nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768;
     GG::Y nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 
-    m_credits_wnd = new CreditsWnd(GG::X0,nUpperLine,
-                                   GG::GUI::GetGUI()->AppWidth(),
-                                   nLowerLine-nUpperLine,
-                                   credits,
-                                   60,0,600,Value(nLowerLine-nUpperLine),Value((nLowerLine-nUpperLine))/2);
+    m_credits_wnd = new CreditsWnd(GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
+                                   credits, 60, 0, 600,
+                                   Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
     GG::GUI::GetGUI()->Register(m_credits_wnd);
 }
@@ -280,7 +281,7 @@ void IntroScreen::OnExitGame()
     GG::GUI::GetGUI()->Exit(0);
 }
 
-void IntroScreen::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+void IntroScreen::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE)
         OnExitGame();

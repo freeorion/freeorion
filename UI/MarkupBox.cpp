@@ -584,7 +584,7 @@ void MarkupBox::Clear() {
 
 void MarkupBox::AdjustScrolls() {
     if (!m_surface) {
-        delete m_vscroll;   m_vscroll = NULL;
+        delete m_vscroll;   m_vscroll = 0;
         return;
     }
 
@@ -595,7 +595,7 @@ void MarkupBox::AdjustScrolls() {
     if (m_vscroll) {
         if (surface_height <= this_height) {
             // there is a scrollbar, but it's not needed.  Remove it.
-            delete m_vscroll;   m_vscroll = NULL;
+            delete m_vscroll;   m_vscroll = 0;
 
             // resize surface to account for extra horizontal space due to lack of scrollbars
             m_surface->SizeMove(UpperLeft(), LowerRight());

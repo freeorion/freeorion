@@ -123,19 +123,11 @@ public:
     static GG::Clr      CtrlColor();            //!< color of UI controls
     static GG::Clr      CtrlBorderColor();
 
-    static GG::Clr      ButtonColor();
-
-    static GG::Clr      StateButtonColor();
-
-    static GG::Clr      ScrollTabColor();
     static int          ScrollWidth();
 
-    static GG::Clr      DropDownListIntColor();
     static GG::Clr      DropDownListArrowColor();
 
     static GG::Clr      EditHiliteColor();
-    static GG::Clr      EditIntColor();
-    static GG::Clr      MultieditIntColor();
 
     static GG::Clr      StatIncrColor();                        //!< used to color increasing stats text (eg "+2")
     static GG::Clr      StatDecrColor();                        //!< used to color decreasing stats text (eg "-3")
@@ -148,9 +140,6 @@ public:
     static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
     static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to show small fleet icons
     static double       MediumFleetButtonZoomThreshold();       //!< the minimum zoom level of the map at which to show medium fleet icons
-
-    // SidePanel
-    static GG::Clr      SidePanelColor();
 
     // Content Texture Getters
     static boost::shared_ptr<GG::Texture>   ShipIcon(int design_id);
@@ -180,9 +169,14 @@ public:
     //!@}
 
 private:
-    typedef std::pair<std::vector<boost::shared_ptr<GG::Texture> >, boost::shared_ptr<SmallIntDistType> > TexturesAndDist;
-    typedef std::map<std::string, TexturesAndDist> PrefixedTextures;
-    TexturesAndDist PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap);
+    typedef std::pair<std::vector<boost::shared_ptr<GG::Texture> >,
+                      boost::shared_ptr<SmallIntDistType> >         TexturesAndDist;
+
+    typedef std::map<std::string, TexturesAndDist>                  PrefixedTextures;
+
+    TexturesAndDist     PrefixedTexturesAndDist(const boost::filesystem::path& dir,
+                                                const std::string& prefix,
+                                                bool mipmap);
 
     MapWnd*           m_map_wnd;           //!< the galaxy map
 
@@ -191,10 +185,11 @@ private:
     static ClientUI*  s_the_UI;            //!< pointer to the one and only ClientUI object
 };
 
-/** This exists as a way of allowing UI colors to be specified on the command line with one option and "(r,g,b,a)", instead of one option per color
-    channel.  GG::Clr is not streamable using the normal means, due to what appears to be a bug in MSVC 7.1. */
-struct StreamableColor
-{
+/** This exists as a way of allowing UI colors to be specified on the command
+  * line with one option and "(r,g,b,a)", instead of one option per color
+  * channel.  GG::Clr is not streamable using the normal means, due to what
+  * appears to be a bug in MSVC 7.1. */
+struct StreamableColor {
     StreamableColor();
     StreamableColor(const GG::Clr& clr);
     GG::Clr ToClr() const;
@@ -207,7 +202,14 @@ extern const double SMALL_UI_DISPLAY_VALUE;
 extern const double LARGE_UI_DISPLAY_VALUE;
 extern const double UNKNOWN_UI_DISPLAY_VALUE;
 
-int EffectiveSign(double val, bool integerize);     ///< returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for positive values and -1 for negative values if their absolute value is larger than SMALL VALUE, and returns 0 for zero values or values with absolute value less than SMALL_UI_DISPLAY_VALUE
-std::string DoubleToString(double val, int digits, bool integerize, bool showsign); ///< converts double to string with \a digits significant figures.  Represents large or small numbers with SI prefixes.
+/** Returns sign of value, accounting for SMALL_UI_DISPLAY_VALUE: +1 for
+  * positive values and -1 for negative values if their absolute value is
+  * larger than SMALL VALUE, and returns 0 for zero values or values with
+  * absolute value less than SMALL_UI_DISPLAY_VALUE */
+int EffectiveSign(double val, bool integerize);
+
+/** Converts double to string with \a digits significant figures.  Represents
+  * large or small numbers with SI prefixes. */
+std::string DoubleToString(double val, int digits, bool integerize, bool showsign);
 
 #endif // _ClientUI_h_

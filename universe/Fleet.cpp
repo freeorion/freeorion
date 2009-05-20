@@ -163,8 +163,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
 
 
     // get current, previous and next systems of fleet
-    const System* cur_system = this->GetSystem();                                   // may be NULL
-    const System* prev_system = universe.Object<System>(this->PreviousSystemID());  // may be NULL if this fleet is not moving or ordered to move
+    const System* cur_system = this->GetSystem();                                   // may be 0
+    const System* prev_system = universe.Object<System>(this->PreviousSystemID());  // may be 0 if this fleet is not moving or ordered to move
     const System* next_system = *route_it;  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         //Logger().errorStream() << "Fleet::MovePath couldn't get next system for this fleet " << this->Name();
@@ -263,7 +263,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
             // if moved away any distance from a system, are no longer in that system
             if (cur_system && dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON) {
                 prev_system = cur_system;
-                cur_system = NULL;
+                cur_system = 0;
             }
         }
 
@@ -579,11 +579,11 @@ void Fleet::AddShips(const std::vector<int>& ships)
 void Fleet::AddShip(int ship_id)
 {
     if (this->Contains(ship_id)) {
-        Logger().debugStream() << "Fleet::AddShip this fleet " << this->Name() << " already contained ship " << ship_id;
+        Logger().debugStream() << "Fleet::AddShip this fleet '" << this->Name() << "' already contained ship '" << ship_id << "'";
         return;
     }
 
-    Logger().debugStream() << "Fleet " << this->Name() << " adding ship: " << ship_id;
+    Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
     if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
         if (System* system = GetSystem()) {
             system->Insert(s);

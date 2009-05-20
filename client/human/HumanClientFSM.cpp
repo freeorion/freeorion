@@ -500,7 +500,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().m_ui->ShowMap();
     Client().m_ui->InitTurn(Client().CurrentTurn());
     Client().m_ui->GetMapWnd()->ReselectLastSystem();
-    Client().m_ui->GetMapWnd()->ReselectLastFleet();
+    //Client().m_ui->GetMapWnd()->ReselectLastFleet();  // TODO: Fix this and/or replace with FleetUIManager state saving and restoring or FleetWnd auto-updating over turn endings
 }
 
 PlayingTurn::~PlayingTurn()

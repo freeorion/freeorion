@@ -93,8 +93,8 @@ private:
 
 PartControl::PartControl(const PartType* part) :
     GG::Control(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT, GG::INTERACTIVE),
-    m_icon(NULL),
-    m_background(NULL),
+    m_icon(0),
+    m_background(0),
     m_part(part)
 {
     if (m_part) {
@@ -496,7 +496,7 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
     CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     m_availability_buttons.first = button;
     AttachChild(button);
-    GG::Connect(button->ClickedSignal, 
+    GG::Connect(button->ClickedSignal,
                 boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
     button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
     m_availability_buttons.second = button;
@@ -1169,10 +1169,10 @@ public:
     /** \name Mutators */ //@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Reset();
-    void            ToggleAvailability(bool available);
-    void            SetEmpireShown(int empire_id);
-    void            ShowAvailability(bool available);
-    void            HideAvailability(bool available);
+    void            ToggleAvailability(bool available, bool refresh_list);
+    void            SetEmpireShown(int empire_id, bool refresh_list);
+    void            ShowAvailability(bool available, bool refresh_list);
+    void            HideAvailability(bool available, bool refresh_list);
     //@}
 
     mutable boost::signal<void (int)>
@@ -1205,13 +1205,13 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     CUIButton* button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"));
     m_availability_buttons.first = button;
     AttachChild(button);
-    GG::Connect(button->ClickedSignal, 
-                boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true));
+    GG::Connect(button->ClickedSignal,
+                boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
     button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
     m_availability_buttons.second = button;
     AttachChild(button);
-    GG::Connect(button->ClickedSignal, 
-                boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false));
+    GG::Connect(button->ClickedSignal,
+                boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor(), GG::TAB_BAR_DETACHED, GG::INTERACTIVE);
     GG::Connect(m_tabs->WndChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
@@ -1241,8 +1241,8 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
                                        ClientUI::TextColor()),
                    UserString("DESIGN_WND_TEMPLATES"));
 
-    ShowAvailability(true);
     DoLayout();
+    ShowAvailability(true, true);   // default to showing available and hiding unavailable bases.  populate lists.
 }
 
 void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1254,59 +1254,58 @@ void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void DesignWnd::BaseSelector::Reset() {
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
-    SetEmpireShown(empire_id);
+    SetEmpireShown(empire_id, false);
 
     if (!m_tabs)
         return;
-    GG::Wnd* wnd = m_tabs->CurrentWnd();
-    if (wnd) {
-        BasesListBox* base_box = dynamic_cast<BasesListBox*>(wnd);
-        if (base_box)
+
+    if (GG::Wnd* wnd = m_tabs->CurrentWnd()) {
+        if (BasesListBox* base_box = dynamic_cast<BasesListBox*>(wnd))
             base_box->Populate();
     }
 }
 
-void DesignWnd::BaseSelector::SetEmpireShown(int empire_id) {
+void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
     if (m_hulls_list)
-        m_hulls_list->SetEmpireShown(empire_id, true);
+        m_hulls_list->SetEmpireShown(empire_id, refresh_list);
     if (m_designs_list)
-        m_designs_list->SetEmpireShown(empire_id, true);
+        m_designs_list->SetEmpireShown(empire_id, refresh_list);
 }
 
-void DesignWnd::BaseSelector::ShowAvailability(bool available) {
+void DesignWnd::BaseSelector::ShowAvailability(bool available, bool refresh_list) {
     if (m_hulls_list)
-        m_hulls_list->ShowAvailability(available, true);
+        m_hulls_list->ShowAvailability(available, refresh_list);
     if (m_designs_list)
-        m_designs_list->ShowAvailability(available, true);
+        m_designs_list->ShowAvailability(available, refresh_list);
     if (available)
         m_availability_buttons.first->MarkSelectedGray();
     else
         m_availability_buttons.second->MarkSelectedGray();
 }
 
-void DesignWnd::BaseSelector::HideAvailability(bool available) {
+void DesignWnd::BaseSelector::HideAvailability(bool available, bool refresh_list) {
     if (m_hulls_list)
-        m_hulls_list->HideAvailability(available, true);
+        m_hulls_list->HideAvailability(available, refresh_list);
     if (m_designs_list)
-        m_designs_list->HideAvailability(available, true);
+        m_designs_list->HideAvailability(available, refresh_list);
     if (available)
         m_availability_buttons.first->MarkNotSelected();
     else
         m_availability_buttons.second->MarkNotSelected();
 }
 
-void DesignWnd::BaseSelector::ToggleAvailability(bool available) {
+void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_list) {
     const std::pair<bool, bool>& avail_shown = m_hulls_list->GetAvailabilitiesShown();
     if (available) {
         if (avail_shown.first)
-            HideAvailability(true);
+            HideAvailability(true, refresh_list);
         else
-            ShowAvailability(true);
+            ShowAvailability(true, refresh_list);
     } else {
         if (avail_shown.second)
-            HideAvailability(false);
+            HideAvailability(false, refresh_list);
         else
-            ShowAvailability(false);
+            ShowAvailability(false, refresh_list);
     }
 }
 
@@ -1393,8 +1392,8 @@ SlotControl::SlotControl() :
     m_slot_type(INVALID_SHIP_SLOT_TYPE),
     m_x_position_fraction(0.4),
     m_y_position_fraction(0.4),
-    m_part_control(NULL),
-    m_background(NULL)
+    m_part_control(0),
+    m_background(0)
 {
     SetDragDropDataType("");
 }
@@ -1406,7 +1405,7 @@ SlotControl::SlotControl(double x, double y, ShipSlotType slot_type) :
     m_x_position_fraction(x),
     m_y_position_fraction(y),
     m_part_control(0),
-    m_background(NULL)
+    m_background(0)
 {
     SetDragDropDataType("");
     m_background = new GG::StaticGraphic(GG::X0, GG::Y0, SLOT_CONTROL_WIDTH, SLOT_CONTROL_HEIGHT,
@@ -1528,7 +1527,7 @@ void SlotControl::SetPart(const PartType* part_type) {
     // remove existing part control, if any
     if (m_part_control) {
         delete m_part_control;
-        m_part_control = NULL;
+        m_part_control = 0;
     }
 
     // create new part control for passed in part_type
@@ -1641,7 +1640,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     AttachChild(m_design_name_label);
 
     m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::INTERACTIVE | GG::ONTOP);
+                                ClientUI::TextColor(), ClientUI::WndColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_name);
 
     m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font, 
@@ -1650,16 +1649,16 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     AttachChild(m_design_description_label);
 
     m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::EditIntColor(), GG::INTERACTIVE | GG::ONTOP);
+                                ClientUI::TextColor(), ClientUI::WndColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_description);
 
-    m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::ButtonColor(),
+    m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::WndColor(),
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->ClickedSignal, DesignConfirmedSignal);
     m_confirm_button->Disable(true);
 
-    m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::ButtonColor(),
+    m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::WndColor(),
                                    ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->ClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
@@ -1706,6 +1705,7 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
 }
+
 
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(0);

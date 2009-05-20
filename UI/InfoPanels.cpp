@@ -2074,10 +2074,10 @@ const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(240);
 const GG::X SystemResourceSummaryBrowseWnd::VALUE_WIDTH(60);
 const int SystemResourceSummaryBrowseWnd::EDGE_PAD(3);
 
-SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, const System* system, int empire_id) :
+SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, int system_id, int empire_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
     m_resource_type(resource_type),
-    m_system(system),
+    m_system_id(system_id),
     m_empire_id(empire_id),
     m_production_label(0), m_allocation_label(0), m_import_export_label(0),
     row_height(1), production_label_top(0), allocation_label_top(0), import_export_label_top(0)
@@ -2159,7 +2159,8 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    if (!m_system || m_resource_type == INVALID_RESOURCE_TYPE)
+    const System* system = GetUniverse().Object<System>(m_system_id);
+    if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
 
@@ -2169,7 +2170,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
     // add label-value pair for each resource-producing object in system to indicate amount of resource produced
-    std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
+    std::vector<UniverseObject*> obj_vec = system->FindObjects();
     for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it) {
         const UniverseObject* obj = *it;
 
@@ -2256,7 +2257,8 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    if (!m_system || m_resource_type == INVALID_RESOURCE_TYPE)
+    const System* system = GetUniverse().Object<System>(m_system_id);
+    if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
 
@@ -2266,7 +2268,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
 
     // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
-    std::vector<UniverseObject*> obj_vec = m_system->FindObjects();
+    std::vector<UniverseObject*> obj_vec = system->FindObjects();
     //// DEBUG
     //Logger().debugStream() << "System::FindObjects for system " << m_system->Name();
     //for (std::vector<UniverseObject*>::const_iterator it = obj_vec.begin(); it != obj_vec.end(); ++it)

@@ -31,7 +31,7 @@ class CUIButton : public GG::Button
 public:
     /** \name Structors */ //@{
     CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-              GG::Clr color = ClientUI::ButtonColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
+              GG::Clr color = ClientUI::WndColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
               GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
@@ -71,7 +71,7 @@ class CUITurnButton : public CUIButton
 public:
     /** \name Structors */ //@{
     CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
-                  GG::Clr color = ClientUI::ButtonColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
+                  GG::Clr color = ClientUI::WndColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
                   GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 };
@@ -116,7 +116,7 @@ class CUIStateButton : public GG::StateButton
 public:
     /** \name Structors */ //@{
     CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style = GG::SBSTYLE_3D_CHECKBOX,
-                   GG::Clr color = ClientUI::StateButtonColor(), const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
+                   GG::Clr color = ClientUI::CtrlColor(), const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                    GG::Clr text_color = ClientUI::TextColor(), GG::Clr interior = GG::CLR_ZERO,
                    GG::Clr border = ClientUI::CtrlBorderColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< ctor
     //@}
@@ -239,7 +239,7 @@ class CUIDropDownList : public GG::DropDownList
 public:
     /** \name Structors */ //@{
     CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color = ClientUI::CtrlBorderColor(), 
-                    GG::Clr interior = ClientUI::DropDownListIntColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+                    GG::Clr interior = ClientUI::WndColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -265,7 +265,7 @@ public:
     /** \name Structors */ //@{
     CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
             GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
-            GG::Clr interior = ClientUI::EditIntColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+            GG::Clr interior = ClientUI::WndColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -282,7 +282,7 @@ public:
     CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
                  const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                  GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
-                 GG::Clr interior = ClientUI::MultieditIntColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+                 GG::Clr interior = ClientUI::WndColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 
     /** \name Mutators */ //@{
@@ -298,7 +298,7 @@ public:
     CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP,
                          const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(),
                          GG::Clr color = ClientUI::CtrlBorderColor(), GG::Clr text_color = ClientUI::TextColor(), 
-                         GG::Clr interior = ClientUI::MultieditIntColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+                         GG::Clr interior = ClientUI::WndColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
     /** \name Accessors */ //@{
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const;

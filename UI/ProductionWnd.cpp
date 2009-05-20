@@ -210,8 +210,10 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 {
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+
     m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
+
     GG::Pt buid_designator_wnd_size = ClientSize() - GG::Pt(m_production_info_panel->Width(), GG::Y(6));
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
     m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), GG::Y0));
@@ -234,11 +236,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
 ProductionWnd::~ProductionWnd()
 {
-    // disconnect all signals
-    while (!m_misc_connections.empty()) {
-        m_misc_connections.begin()->disconnect();
-        m_misc_connections.erase(m_misc_connections.begin());
-    }
+    m_empire_connection.disconnect();
 }
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
@@ -298,19 +296,22 @@ void ProductionWnd::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void ProductionWnd::InitTurn()
+void ProductionWnd::Refresh()
 {
-    // empire is recreated each turn based on turn update from server, so
-    // connections of signals emitted from the empire must be remade each turn
+    // useful at start of turn or when loading empire from save.
+    // since empire object is recreated based on turn update from server, 
+    // connections of signals emitted from the empire must be remade
+    m_empire_connection.disconnect();
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
-                &ProductionWnd::ProductionQueueChangedSlot, this);
+    if (Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID()))
+        m_empire_connection = GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
+                                          &ProductionWnd::ProductionQueueChangedSlot, this);
     Update();
 }
 
 void ProductionWnd::Reset()
 {
+    std::cout << "ProductionWnd::Reset()" << std::endl;
     UpdateInfoPanel();
     UpdateQueue();
     m_queue_lb->BringRowIntoView(m_queue_lb->begin());
@@ -319,7 +320,13 @@ void ProductionWnd::Reset()
 
 void ProductionWnd::Update()
 {
-    Reset();
+    std::cout << "ProductionWnd::Update() this: " << this << std::endl;
+    UpdateInfoPanel();
+    UpdateQueue();
+
+    std::cout << "ProductionWnd::Update m_build_designator_wnd: " << m_build_designator_wnd << std::endl;
+
+    m_build_designator_wnd->Update();
 }
 
 void ProductionWnd::CenterOnBuild(int queue_idx)
@@ -327,14 +334,20 @@ void ProductionWnd::CenterOnBuild(int queue_idx)
     m_build_designator_wnd->CenterOnBuild(queue_idx);
 }
 
-void ProductionWnd::SelectPlanet(int planet)
+void ProductionWnd::SelectPlanet(int planet_id)
 {
-    m_build_designator_wnd->SelectPlanet(planet);
+    std::cout << "ProductionWnd::SelectPlanet(" << planet_id << ")" << std::endl;
+    m_build_designator_wnd->SelectPlanet(planet_id);
 }
 
-void ProductionWnd::SelectSystem(int system)
+void ProductionWnd::SelectDefaultPlanet()
 {
-    m_build_designator_wnd->SelectSystem(system);
+    m_build_designator_wnd->SelectDefaultPlanet();
+}
+
+void ProductionWnd::SelectSystem(int system_id)
+{
+    m_build_designator_wnd->SelectSystem(system_id);
 }
 
 void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)

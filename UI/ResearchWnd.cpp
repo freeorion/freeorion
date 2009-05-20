@@ -26,8 +26,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
-    struct QueueRow : GG::ListBox::Row
-    {
+    struct QueueRow : GG::ListBox::Row {
         QueueRow(GG::X w, const Tech* tech_, bool in_progress, int turns_left);
         const Tech* const tech;
     };
@@ -35,8 +34,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel
     //////////////////////////////////////////////////
-    class QueueTechPanel : public GG::Control
-    {
+    class QueueTechPanel : public GG::Control {
     public:
         QueueTechPanel(GG::X w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn);
         virtual void Render();
@@ -207,14 +205,21 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     EnableChildClipping(true);
 }
 
-void ResearchWnd::InitTurn()
+ResearchWnd::~ResearchWnd()
 {
-    // empire is recreated each turn based on turn update from server, so
-    // connections of signals emitted from the empire must be remade each turn
+    m_empire_connection.disconnect();
+}
+
+void ResearchWnd::Refresh()
+{
+    // useful at start of turn or when loading empire from save.
+    // since empire object is recreated based on turn update from server, 
+    // connections of signals emitted from the empire must be remade
+    m_empire_connection.disconnect();
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    GG::Connect(empire->GetResearchQueue().ResearchQueueChangedSignal,
-                &ResearchWnd::ResearchQueueChangedSlot, this);
+    if (Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID()))
+        m_empire_connection = GG::Connect(empire->GetResearchQueue().ResearchQueueChangedSignal,
+                                          &ResearchWnd::ResearchQueueChangedSlot, this);
     Update();
 }
 

@@ -93,7 +93,7 @@ namespace {
 }
 
 CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                     GG::Clr color/* = ClientUI::ButtonColor()*/,
+                     GG::Clr color/* = ClientUI::WndColor()*/,
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                      GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     Button(x, y, w, FontOrDefaultFont(font)->Lineskip() + 6, str, FontOrDefaultFont(font), color, text_color, flags),
@@ -166,16 +166,14 @@ void CUIButton::RenderUnpressed()
 
 void CUIButton::MarkNotSelected()
 {
-    SetColor(ClientUI::ButtonColor());
+    SetColor(ClientUI::WndColor());
     SetBorderColor(ClientUI::CtrlBorderColor());
     SetBorderThick(1);
 }
 
 void CUIButton::MarkSelectedGray()
 {
-    GG::Clr colour = ClientUI::CtrlBorderColor();
-    AdjustBrightness(colour, 120);
-    colour = ClientUI::CtrlColor();
+    GG::Clr colour = ClientUI::CtrlColor();
     AdjustBrightness(colour, 50);
     SetColor(colour);
     SetBorderThick(2);
@@ -195,7 +193,7 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category)
 // class CUITurnButton
 ///////////////////////////////////////
 CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                             GG::Clr color/* = ClientUI::ButtonColor()*/, 
+                             GG::Clr color/* = ClientUI::WndColor()*/, 
                              GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                              GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     CUIButton(x, y, w, str, FontOrDefaultFont(font), color, border, thick, text_color, flags)
@@ -277,7 +275,7 @@ void CUIArrowButton::RenderUnpressed()
 // class CUIStateButton
 ///////////////////////////////////////
 CUIStateButton::CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::TextFormat> format, GG::StateButtonStyle style/* = GG::SBSTYLE_3D_CHECKBOX*/,
-                               GG::Clr color/* = ClientUI::StateButtonColor()*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+                               GG::Clr color/* = ClientUI::WndColor()*/, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                                GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/,
                                GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     StateButton(x, y, w, h, str, FontOrDefaultFont(font), format, color, text_color, interior, style, flags),
@@ -635,7 +633,7 @@ namespace {
 }
 
 CUIDropDownList::CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color/* = ClientUI::CtrlBorderColor()*/,
-                                 GG::Clr interior/* = ClientUI::DropDownListIntColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
+                                 GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     DropDownList(x, y, w, h, drop_ht, color),
     m_render_drop_arrow(true),
     m_mouse_here(false)
@@ -711,7 +709,7 @@ void CUIDropDownList::EnableDropArrow()
 ///////////////////////////////////////
 CUIEdit::CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                  GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
-                 GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::EditIntColor()*/, 
+                 GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::WndColor()*/, 
                  GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     Edit(x, y, w, str, FontOrDefaultFont(font), color, text_color, interior, flags)
 {
@@ -741,7 +739,7 @@ void CUIEdit::Render()
 CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/, 
                            const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
                            GG::Clr color/* = ClientUI::CtrlBorderColor()*/, GG::Clr text_color/* = ClientUI::TextColor()*/, 
-                           GG::Clr interior/* = ClientUI::MultieditIntColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
+                           GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     MultiEdit(x, y, w, h, str, FontOrDefaultFont(font), color, style, text_color, interior, flags)
 {
     RecreateScrolls();

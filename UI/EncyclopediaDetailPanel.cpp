@@ -161,7 +161,7 @@ void EncyclopediaDetailPanel::Render() {
         glColor(ClientUI::WndInnerBorderColor());
         glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
         glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
-        
+
         glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
         glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
     glEnd();
@@ -205,7 +205,7 @@ bool EncyclopediaDetailPanel::NothingSet() {
     return (!m_tech && !m_part &&  !m_hull && !m_building && !m_design && !m_special);
 }
 
-void EncyclopediaDetailPanel::Reset() {
+void EncyclopediaDetailPanel::Refresh() {
     if (m_icon) {
         DeleteChild(m_icon);
         m_icon = 0;
@@ -381,35 +381,35 @@ void EncyclopediaDetailPanel::UnsetAll() {
 void EncyclopediaDetailPanel::SetItem(const Tech* tech) {
     UnsetAll();
     m_tech = tech;
-    Reset();
+    Refresh();
 }
 
 void EncyclopediaDetailPanel::SetItem(const PartType* part) {
     UnsetAll();
     m_part = part;
-    Reset();
+    Refresh();
 }
 
 void EncyclopediaDetailPanel::SetItem(const HullType* hull) {
     UnsetAll();
     m_hull = hull;
-    Reset();
+    Refresh();
 }
 
 void EncyclopediaDetailPanel::SetItem(const BuildingType* building) {
     UnsetAll();
     m_building = building;
-    Reset();
+    Refresh();
 }
 
 void EncyclopediaDetailPanel::SetItem(const ShipDesign* design) {
     UnsetAll();
     m_design = design;
-    Reset();
+    Refresh();
 }
 
 void EncyclopediaDetailPanel::SetItem(const Special* special) {
     UnsetAll();
     m_special = special;
-    Reset();
+    Refresh();
 }
