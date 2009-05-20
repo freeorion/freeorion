@@ -376,38 +376,17 @@ Sets UI control color.
 OPTIONS_DB_UI_CTRL_BORDER_COLOR
 Sets UI control border color.
 
-OPTIONS_DB_UI_BUTTON_COLOR
-Sets UI button color.
-
-OPTIONS_DB_UI_STATE_BUTTON_COLOR
-Sets UI state button color.
-
-OPTIONS_DB_UI_SCROLL_TAB_COLOR
-Sets UI scroll tab color.
-
-OPTIONS_DB_UI_DROPDOWNLIST_INTERIOR_COLOR
-Sets UI drop-down-list interior color.
-
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
 Sets UI drop-down-list arrow color.
 
 OPTIONS_DB_UI_EDIT_HILITE
 Sets color of hilighting in UI edit controls.
 
-OPTIONS_DB_UI_EDIT_INTERIOR
-Sets UI edit controls' interior color.
-
-OPTIONS_DB_UI_MULTIEDIT_INTERIOR
-Sets UI multi-line edit controls' interior color.
-
 OPTIONS_DB_UI_STAT_INCREASE_COLOR
 Sets the color of increased stats in the UI.
 
 OPTIONS_DB_UI_STAT_DECREASE_COLOR
 Sets the color of decreased stats in the UI.
-
-OPTIONS_DB_UI_SIDEPANEL_COLOR
-Sets the color of the side-panel.
 
 OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
 Sets UI outer border color.
