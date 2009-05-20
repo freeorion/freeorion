@@ -2649,7 +2649,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
-    if (NULL == triList) return;
+    if (0 == triList) return;
 
     if (triList->empty())
         throw std::runtime_error("Got blank list of triangles from Triangulation.");
@@ -3399,10 +3399,14 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         home_system->AddOwner(empire_id);
 
 
-        // give homeworlds a shipyard so players can build ships immediately
-        Building* shipyard = new Building(empire_id, "BLD_SHIPYARD_BASE", UniverseObject::INVALID_OBJECT_ID);
-        int shipyard_id = Insert(shipyard);
-        home_planet->AddBuilding(shipyard_id);
+        // give homeworlds a shipyard and drydock so players can build scouts, colony ships and basic attack ships immediately
+        Building* building = new Building(empire_id, "BLD_SHIPYARD_BASE", UniverseObject::INVALID_OBJECT_ID);
+        int building_id = Insert(building);
+        home_planet->AddBuilding(building_id);
+
+        building = new Building(empire_id, "BLD_SHIPYARD_ORBITAL_DRYDOCK", UniverseObject::INVALID_OBJECT_ID);
+        building_id = Insert(building);
+        home_planet->AddBuilding(building_id);
 
 
         // add homeworld special and set double balanced default focus
