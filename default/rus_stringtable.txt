@@ -1,9 +1,11 @@
 Russian
 
 #This is the Russian String Table file for FreeOrion 0.3.12
-#in codepage 1251
 #cjckem at gmail.com
-
+#Этот языковой файл для FreeOrion 0.3.12
+#кодовая страница 1251
+#Переводит cjckem at gmail.com
+#
 #################
 # Common        #
 #################
@@ -1794,14 +1796,12 @@ HOMEWORLD_SPECIAL
 Родной мир
 
 HOMEWORLD_SPECIAL_DESCRIPTION
-This planet is the birthplace of your race; you know how to get the most out of it, gaining bonuses to virtually all planetary stats.
 Эта планета родина вашей расы, Вы знаете как получить бонусы фактически ко всем планетарным характеристикам.
 
 ANCIENT_RUINS_SPECIAL
 Древние руины
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, giving a bonus to research.
 На этой планете находятся руины одной продвинутой расы, дающие бонус к исследованиям.
 
 MINERALS_SPECIAL
@@ -1820,16 +1820,16 @@ TECHTONIC_INSTABILITY_SPECIAL
 Тектонически нестабильная
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-This planet is techtonically unstable.  Frequent earthquakes, tsunamis, volcanic eruptions or unpredictable support below foundations make construction and general infrastructure development difficult.
+Эта планета тектонически нестабильна. Частые землетрясения, цунами, вулканические извержения и непредсказуемые возхдействия поддержка на фундамент делают конструирование и разработку инфраструктуры трудными.
 
 SOLID_CORE_SPECIAL
-Solid Core
+Твердое ядро
 
 SOLID_CORE_SPECIAL_DESC
-This planet's core has solidifed, and it has a very weak magnetic field.  The star's solar wind reaches the surface relatively unfiltered, damaging health and limiting food production.
+У ядра этой планеты твердое ядро, и у неё очень слабое магнитное поле. Звездный ветер достигает поверхности относительно нефильрованым, что пагубно влияет на здоровье населения и ограничивает производство еды. 
 
 HIGH_AXIAL_TILT_SPECIAL
-High Axial Tilt
+Сильный наклон оси
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
 This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
@@ -2607,214 +2607,214 @@ THEORY_SHORT_DESC
 Theoretical Prerequisite
 
 LRN_PHYS_BRAIN
-The Physical Brain
+Физика мозга
 
 LRN_PHYS_BRAIN_DESC
-The stuctures and their functions in the brain are determined.  The electrochemical and quantum nature of thought and memory are exposed.  With understanding, alteration and augmentation of brain functions becomes possible, and new ideas are spawned at the frontiers of thought, its expression, and its replacement.
+Все структуры и их функции в мозге изучены. Электрохимическая и квантовая природа мысли и памяти раскрыта. С пониманием становится возможным изменять и расширять функциональность мозга, и новые идеи порождаются на границах мышления, их формулировки и их замена.
 
 LRN_ALGO_ELEGANCE
-Algorithmic Elegance
+Изящество алгоритмов
 
 LRN_ALGO_ELEGANCE_DESC
-With greater and greater difficulty of data analysis problems, traditional measures of algorithm performance become less useful due to the limitations of irreducible complexity.  At this stage, other measures of algorithm form and function become significant; aesthetically and metaphorically, the elegance of the solution must be optimized.
+Все с более и более сложными становятся проблемы анализа данных; традиционные методы исполнения алгоритмов становятся менее полезными из-за ограничений непреодолимой сложности. На этом этапе важными становятся другие виды форм алгоритмов и функций; эстетически и метафорически, элегантность решения должна быть оптимизирована.
 
 LRN_TRANSLING_THT
-Translinguistics
+Сверхлингвистическое Мышление
 
 LRN_TRANSLING_THT_DESC
-Lesser minds struggle with, or accept the confines of the language they have learned. Adequate minds reach and feel constrained by the concepts they are given ways to express. Truely great minds break free of the bounds of language, forming and analyzing thoughts that verge on the transcendental. But merely great minds are left isolated and futile, for without language to express thoughts, how can they share their insights?
+Слабые умы борются с пределами языка, который они изучили, или пытаются принять их. Продвинутые умы достигли их, и чувствуют себя скованными концепциями, которыми создают пути для выражения своих мыслей. По-настоящему великие умы ломают границы языка, формируют и анализируют мысли, которые граничат с трансцендентностью. Однако исключительно великие умы оставили изолированное и бесполезное, что бы выражать мысли без языка. И как же они смогут поделиться своим пониманием?
 
 LRN_PSIONICS
-Psionics
+Псионика
 
 LRN_PSIONICS_DESC
-Though deep introspection or artificial enhancement, the brain may  develop abilites to directly interact with the universe around it, bypassing the limitations of a physical body.  Powers such as telepathy, empathy, clairvoyance, prescience, psychokinesis and psychoenergetics replace or surpass mundane biological or technological alternatives.  Applications of these powers, including mind control, personality alteration and possesion have profound implications for the relationship between talented and untalted beings.
+При помощи глубокого самоанализа или искусственного улучшения, мозг может развить способности прямого взаимодействия с окружающей вселенной минуя ограничения физического тела. Такие способности, как телепатия, эмпатия, ясновидение, предвидение, психокинез и психоэнергетика заменяют или вытесняют мирские биологические и технологические альтернативы. Применение этих способностей, включающих управление разумом, изменение и подчинение личности, имеет глубокий смысл во взаимоотношениях между талантливыми и бесталанными созданиями.
 
 LRN_ARTIF_MINDS
-Artificial Minds
+Искусственные Разумы
 
 LRN_ARTIF_MINDS_DESC
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+Пока традиционные компьютеры обладают почти безмерным интеллектом и вычислительными способностями, у них отсутствуют очень важные качества самоанализа, сознания или ощущения. С разработкой истино-искусственных разумов, эти качества могут быть синтезированы, модифицированы и изменены. Эти исследования открывают новые пути разработок познавательных наук и неизвестных мета-парадигм.
 
 LRN_XENOARCH
-Xenoarchaeology
+Ксеноархеология
 
 LRN_XENOARCH_DESC
-The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and decyphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+Ныне существующие империи, расы и отдельные цивилизации - не первые или единственные живущие существа в этой галактике. Останки, руины или слухи о предках могут быть найдены на пустынных планетах и безжизненных астероидах, а так же дрейфовать в открытом космосе. Поиск и дешифрация этих тайн содержит большой потенциал к раскрытию секретов, новым урокам, или даже показать признаки древних знаний.
 
 LRN_GRAVITONICS
-Gravitonics
+Гравитоника
 
 LRN_GRAVITONICS_DESC
-Analagous to the "colour charge" of quantum chromodynamics, there are several types of graviton.  With the common attractive-force graviton, the colloqiual "anti-graviton", "right-graviton" and "left-graviton" may be combined to bend and flex the surface of spacetime arbitrarily.  This manipulation is percieved as control of the force of gravity, permitting structures, craft and investigations previously impossible, even theoretically.
+Аналогично "цветному заряду" в квантовой хромодинамике, есть несколько типов гравитонов.  С общей силой притяжения гравитон, в общей лексике "анти-гравитон", "правый-гравитон" и "левый-гравитон" при объединение могут произвольно изгибать и скручивать пространственно-временную поверхность. Эта манипуляция, воспринимаемая как управление силой гравитации, открывает доступ к конструкциям, производству и исследованиям, в прошлом невозможных даже теоретически.
 
 LRN_EVERYTHING
-Theory of Everything
+Теория Всего
 
 LRN_EVERYTHING_DESC
-Early, naive theories describe subsets of the four fundamental forces of nature: electromagnetism, the strong and weak nuclear forces, and gravity.  A complete framework expressing all forces as special cases of a single interaction represents a holy grail of science.  This theory describes the earliest moments of the universe, the most distorted depths of a singularity, the tightest windings of hidden dimensions and the final fate of the cosmos.  Yet still, there may "exist" layers of existence beyond what can be observed and described by science...
+Раннее, наивные теории описывали подмножества четырех фундаментальных сил природы: электромагнетизм, сильные и слабые ядерные силы, и гравитацию. Полный каркас, описывающий все силы как специальные случаи единственного взаимодействия, представляет святую чашу Грааля науки.  Эта теория описывает самые ранние моменты вселенной, наиболее искаженные глубины сингулярности, плотные завихрения скрытых измерений и конечная судьба космоса.  Однако все еще могут "существовать" слои существования, которые могут быть исследованы и описаны наукой...
 
 LRN_FORCE_FIELD
-Force-Field Harmonics
+Гармоники Силовых Полей
 
 LRN_FORCE_FIELD_DESC
-Like Fourier analysis of sound, electromagnetism, strong and weak forces may be expressed as harmonic quantum standing-wave superpositions of force-carrier particles.  By selectively amplifying these harmonics, forces may be arbitrarily controlled to shield, attack, contain or support.
+Подобно анализу Фурье звука, сильные и слабые электромагнитные силы могут быть описаны как гармоники квантовой суперпозиции вертикальных волн силопереносящих частиц.  Будучи избранно усиленными, сила этих гармоник может быть произвольно направлена на щит, атаку, накопление или хранение.
 
 LRN_MIND_VOID
-Mind of the Void
+Разум Пустоты
 
 LRN_MIND_VOID_DESC
-We are not alone in the cosmos... but why should the search be so limited?  Many cultures have myths, legends or fervent belief in a higher consciousness.  Whether a loving or malevolent God, or a detatched observer, it is clear that something, perhaps the universe itself on some level, is alive, aware, watching.
+Мы не одиноки в космосе... но почему поиск настолько ограничен? У многих культур есть мифы, легенды или страстная вера в высший разум.  Любящий ли Бог или недоброжелательный, или просто наблюдатель, совершенно ясно, что что-то, возможно сама вселенная на особом уровне, живет, думает, наблюдает.
 
 LRN_TIME_MECH
-Temporal Mechanics
+Механика Времени
 
 LRN_TIME_MECH_DESC
-What are "now", "future" and "past"?  The twin paradox of special relativity, or the theoretical "wormhole" in its place, suggest early forms of "time travel".  Direct manipulation of spacetime and temporal flux permit these effects to be harnessed and magnified.  Temporal incursions cannot perceptibly alter the past of the universe that we perceive.  They can, however, compress ages or extend moments to arbitrary durations, to uses limited only by the material supplies provided, and our own patience...
+Что есть "сейчас", "будущее" и "прошлое"?  Двойственный парадокс специальной ТО, или теоретические "червоточины" в жизни, предлагают ранние формы "путешествия во времени".  Направленное манипулирование временным пространством и течением времени позволяет "запрягать" и усиливать эти явления.  ВременнЫе вторжения не могут ощутимо изменить прошлое вселенной, которую мы ощущаем.  Однако, они могут сжимать года или растягивать моменты на произвольную длительность, ограниченные в использовании только материальными поставками или нашим терпением...
 
 LRN_NDIM_SUBSPACE
-N-Dimensional Subspace
+N-мерное Подпространство
 
 LRN_NDIM_SUBSPACE_DESC
-Early superstring theorists spoke of 10, 11 or 26 dimensional universes, with all but the 4 macrodimensions "curled up" so tightly as to be unseen.  These and other dimensions may now be uncurled and opened, and the very surface of space itself stretched and pierced by shifting matter to or from levels of existance previously hidden below the surface of our limited perception, or creating layers or bubbles where none existed before.
+Раннее теоретики суперструн говорили о 10-, 11- или 26-мерной вселенной, "скрученных" в 4 макроизмерения настолько, что их не заметно.  Теперь эти и другие измерения могут быть "раскрученны" и открыты, и сама поверхность пространства вытягивается и прокалывается непостоянной материей на- или из уровней существования, ранее скрытых за поверхностью нашего ограниченного восприятия, или создавая слои и пузыри там, где ничто не существовало прежде.
 
 LRN_UNIF_CONC
-Unified Consciousness
+Объединенное Сознание
 
 LRN_UNIF_CONC_DESC
-Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truely joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
+Телепатическая коммуникация между индивидами или разумными машинными интерфейсами, позволяет только самые основные, тривиальные и поверхностные обмены мыслью и идеями. Понастоящему объединенные разумы функционируют как единое сознание, с суммированными способностями и знаниями его составных частей, и действующее как новый уникальный объект. У такого разума есть большой потенциал, но также и существенный риск, в котором объединенный разум, возможно, не позволит собственное разрушение, необходимое для восстановления исходных частей, из которых он был создан. В другом случае, один из разумов может доминировать над другим, управляя или разрушая его, вместо того, чтобы формировать равное, гармоничное объединение.
 
 LRN_TRANSCEND
-Singularity of Transcendence
+Сингулярность Трансцендентности
 
 LRN_TRANSCEND_DESC
-What is godhood?  Is a god concerned with whether it is moral and benevolent or evil and tyrannical?  Does a god treat mortals with care and love, hatred and suffering or detached indifference?  Does a god even remain aware of the infintitely miniscule affairs of the physical universe, or is true godhood of a form beyond description, of which inability to comprehend by mortals applies equally in the other direction?
+Что есть пристанище бога?  Он заинтересован в моральности и великодушии или же во зле и тирании?  Преподносит ли бог смертным заботу и любовь, ненависть и страдание или невозмутимое равнодушие?  Осведомлен ли бог о бесконечно малых заботах физической вселенной, или же истинная божественность формы за пределами описания, а невозможность понимания смертными распространяется по всем направлениям?
 
 GRO_PLANET_ECOL
-Planetary Ecology
+Планетарная Экология
 
 GRO_PLANET_ECOL_DESC
-Agriculture and medical science can drastically increase survivability, causing population growth to become hyperexponential, for a time.  Eventually, new limits to growth arise in the carrying capacity of a planet, and the interconnected web of life that supports it.  Understanding natural ecology and its interaction to stresses permits the system to be sustained, and its benefits reaped for generations to come.
+Агрономия и научная медицина могут резко повысить живучесть, вызывающую гиперэкспоненциальный рост населения с течением времени.  В конечном счете приближаются новые пределы вместимости планеты, а так же ее поддерживающей взаимосвязанной сети жизни.  Понимание природной экологии и ее взаимодействие с нагрузкой позволяет системе быть устойчивой, а ее плоды будут пожинаться будущими поколениями.
 
 GRO_GENETIC_ENG
-Genetic Engineering
+Генная Инженерия
 
 GRO_GENETIC_ENG_DESC
-The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existant or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
+Палитра генетики настолько же разнообразна, как и формы жизни, из которых она заимствуется.  Гены могут быть удалены, скопированы и заменены в геномы для создания трансгенных организмов с набором особенностей, невозможных в природе.  Также, гены могут быть изменены перед заменой, записывая измененные базовые коды напрямую, что позволяет создавать полностью новые гены.  Несмотря на это, методы ограничены небольшими модификациями существующих генов, доступных для анализа.
 
 GRO_MEDICAL_PATH
-Medical Pathology
+Медицинские Патологии
 
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires thorough understanding of their causes.  
+Лечение болезней и травм требует основательного понимания их причин.
 
 GRO_INDUSTY_FARM
-Industrial Farming
+Индустриальное Фермерство
 
 GRO_INDUSTY_FARM_DESC
-Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced socieites, however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies.  Hydroponics, automation, fertilization, pest control and altered illumination growth cycles become necessary.  Successful use of these tools requires understanding of their function, interactions, costs and low-level mechanims.
+Традиционные, простые фермерские методы достаточны для малых, вполне само-достаточных поселений без существенных ограничений на доступном пространстве или времени. Тем не менее, с гораздо большей специализацией более продвинутых сообществ, несколько фермеров должны кормить множество рабочих на довольно больших расстояниях, включающие даже межзвездную доставку продовольствия для молодых колоний. Гидропоника, автоматизация, удобрение, контроль паразитов и изменение освещенности циклов роста становится важным. Успешное использование этих инструментов требует понимание их функционирования, взаимодействия, цены и низко-уровневых механизмов.
 
 GRO_ENV_ENCAPSUL
-Environmenal Encapsulation
+Инкапсуляция Природной Среды
 
 GRO_ENV_ENCAPSUL_DESC
-Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
+Закрытые и надежно защищенные пакеты с определенной природной средой очень важны для космических путешествий, колонизации враждебных планет и сохранения многообразия видов в природе на тяжело-индустриализованных мирах.  Поддержание среды в желаемом состоянии - не тривиальная задача, как это может показаться, однако во множестве случаев не существует внешних источников чистых и безупречных материлов или организмов.  Точнее, требуется создать самостоятельную и жизнеспособную среду, а чаще и целую экологию, способную перерабатывать и повторно использовать собственные отходы для поставки всего, что необходимо этой среде.
 
 GRO_SYMBIOTIC_BIO
-Symbotic Biology
+Симбиозная Биология
 
 GRO_SYMBIOTIC_BIO_DESC
-From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
+С самых первых одомашненных животных или сельскохозяйственных растений, общество открыло преимущества симбиозных взаимосвязей с другими видами.  Позже, бактерии или природные паразиты часто использовались для медицинских целей.  Тем не менее, в этих ранних формах доминирующие виды (в идеале) в ?полном управлении взаимосвязей с "выращиваемым" организмом, существующим только для обеспечения своего владельца?.  Истинный симбиоз появляется только тогда, когда оба организма существуют и процветают вместе, помогают друг-другу и зависят от преимуществ другого, а их взаимосвязь более эффективна, чем сумма этих видов по отдельности.
 
 GRO_GENETIC_MED
-Genetic Medicine
+Генная Медицина
 
 GRO_GENETIC_MED_DESC
-Traditional Genetic Engineering alters genetic codes and then implements or raises the modified organism.  Similar techniques may be applied to already matured individuals.  The goals of these treatments may be cosmetic or enhancing modifications, or corrective, preventative or time-critical medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.
+Традиционная Генная Инженерия изменяет генетические коды и потом применяет, либо выращивает модифицированные организмы.  Похожая техника может быть применена к уже взрослым личностям.  Целью такого лечения может быть косметическая или улучшающая модификация, корректировка, профилактический или срочный медицинский уход.  Снижение задержки между изменением и результатом с поколений до месяцев, дней или часов дает соответствующее расширение границ и силы возможных изменений.
 
 GRO_LIFECYCLE_MAN
-Lifecycle Manipulation
+Манипуляция с Жизненным Циклом
 
 GRO_LIFECYCLE_MAN_DESC
-Most complex organisms have progress through physiological stages during a lifetime, whether distinctly separated by metamorphises, or blurred by continuous slow aging.  In many cases, one or more of these stages are, at least at a given time, more useful and desirable than others.  By delicate control of hormonal or mental mechanisms, it becomes possible to drastically speed or slow each stage, permitting fully developed and functional individuals to be produced in a fraction of the natural timeframe, and for those individuals to remain functional indefinitely, becoming effectively immortal.
+Большинство сложных организмов прогрессируют через физиологические этапы в течение всей жизни, которые либо четко разделены трансформацией, либо "смазаны" непрерывным медленным старением.  Во множестве случаев, один или более из этих стадий, как минимум в определенное время, более полезны и предпочтительны, чем другие.  С помощью точного управления гормональными или умственными механизмами, становится возможным радикально ускорять или замедлять каждую стадию, позволяя создавать полностью развитых и функционирующих особей в отрезке природного интервала времени, что дает особи возможность функционировать бесконечно, становясь эффективно бессмертными.
 
 GRO_XENO_GENETICS
-Xenological Genetics
+Ксено-Генетика
 
 GRO_XENO_GENETICS_DESC
-Early genetics is limited by the available samples of naturally occuring organims on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revalations may be reached, spurring new developments in more familiar genetic systems.
+Ранняя генетика ограничивалась лишь доступными образцами организмов природного происхождения, на которых строились их модификации.  Так же эти модификации ограничены пределами их физических механизмов хранения, замены и формулировки генетического кода развитых особей.  С помощью изучения эквивалентных систем в полностью отличных экосистемах и организмах, огромное понимание или открытия могут быть достигнуты, подталкивающие к новым открытиям в более привычной генетической системе.
 
 GRO_NANOTECH_MED
-Nanotech Medicine
+Нанотехнологичная Медицина
 
 GRO_NANOTECH_MED_DESC
-While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corretive measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surguries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
+Пока генетическая замена может исправить или отменить эффект травматических или нежелательных мутаций, скорректировать биохимический дисбаланс, излечивать сильные физические травмы и негенетические врожденные дефекты, требующие физио-корректирующих мер.  Нанотехнологии могут быть использовать для выполнения этих задач, но с двумя важными преимуществами: коррекция может быть выполнена без инвазивной хирургии и связанной с ней вторичными повреждениями и рисками, а так же значительно снизить время лечения за счет инструментов, которые всегда на месте и готовы к работе.
 
 GRO_ORBIT_FARMING
-Orbital Farming
+Орбитальное Сельское Хозяйство
 
 GRO_ORBIT_FARMING_DESC
-The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface, and surface farming must also compete with other land uses.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.  Food production may be increased dramatically.
+Первичный энергетический источник для производства продовольствия в большинстве сообществ это солнечная радиация.  Привязанные к планете, фермы имеют очень ограниченный доступ к этой энергии, обязанные сравнительно небольшим пространственным углам на поверхности планеты, а само поверхностное фермерство конкурирует с другими видами использования земель.  Перенося производство пищи на орбитальные установки получаем непрерывно доступ к солнечной энергии и устраняем нежелательную спектральную фильтрацию планетной атмосферой.  Производства продовольствия может заметно повысится.
 
 GRO_INDUSRY_CLONE
-Industrial Cloning
+Индустриальное Клонирование
 
 GRO_INDUSRY_CLONE_DESC
-Primitive manual nuclear transfer cloning techniques are little more than novelties for large organisms.  By applying techniques similar to industrial mass production or biochemical process engineering, it becomes possible to generate dozens, or millions, of full-grown copies of a single genetic blueprint.  Populations may be made to order, tailored to meet the specific needs of society.
+Техника клонирования с помощью примитивного, ручного переноса ядра немного больше, чем просто новинка для больших организмов.  Путем использования техник, похожих на промышленное производство или инженерию биохимических процессов, становится возможным создавать множество, или миллионы, развитых копий одиночного генетического образца.  Целые населения могу быть созданы на заказ для соответствующих нужд общества.
 
 GRO_XENO_HYBRIDS
-Xenological Hybridization
+Ксено-Скрещивание
 
 GRO_XENO_HYBRIDS_DESC
-Regardless of how well understood, or how adeptly improved, a biological system is limited by its inheirent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies, however, the disparate systems may be fused, forming an entirely new hybrid biology, with potential abilities and traits greater than those of any of its parts.
+Несмотря на то, насколько хорошо понимается или как хорошо улучшается, биологическая система ограничена собственной природой.  Структуры и основы физиологии могут быть изменены настолько, насколько пролегают границы биологии отдельно взятой планеты.  С пониманием других биологий, тем не менее, несравнимые системы могут сливаться, формируя полностью новую гибридную биологию с потенциальными возможностями и способностями, превосходящими каждую из составных частей.
 
 GRO_NANO_CYBERNET
-Nanotech Cybernetics
+Нанотехнологичная Кибернетика
 
 GRO_NANO_CYBERNET_DESC
-After applying nanotechnology to internally correct defects or injuries, the next step is to augment or replace natural biochemical systems with superior artificial replacements.  Rather than merely regrowing lost limbs or repairing damaged organs, augments are able to quickly grow new ones to suit their needs at any time.  Antiquated biological systems, from muscle tissue and tendons, down to organelles or enzymes may also be replaced, affording greatly increased strength, endurance and flexibility.
+После применения нанотехнологий к прямым коррекциям дефектов или травм, следующий шаг - расширить или заменить природные биохимические системы более лучшими искусственными заменителями.  Вместо того, что бы просто наращивать потерянные конечности или восстанавливать поврежденные органы, заменители могут быстро вырастить новые, удовлетворяя потребности в них в любое время.  Устаревшие биологические системы, от мышечных тканей и сухожилий до ферментов могут быть так же заменены, предоставляя значительно возросшую силу, выносливость и гибкость.
 
 GRO_ENERGY_META
-Pure-Energy Metabolism
+Метаболизм Чистой Энергии
 
 GRO_ENERGY_META_DESC
-The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
+Конечная стадия физического совершенства - это уход за границы физических пределов.  Без тела, особи и сообщества могут перемещаться, расти и существовать свободно, не отягощенные ненужными физическими ограничениями и неэффективными метаболическими процессами, которые тратят энергию на поддержку гомеостаза.
 
 PRO_MICROGRAV_MAN
-Microgravity Manufacturing
+Микрогравитационное Производство
 
 PRO_MICROGRAV_MAN_DESC
-The microgravity of low planetary orbit offers great potential for  novel manufaturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
+Микрогравитация низкой планетарной орбиты предоставляет огромный потенциал для новейших производственных зданий, оборудования и техники, невозможной на поверхности планеты.  Твердые тела могут храниться с минимальным обеспечением.  Жидкости и газы текут свободно, сформированные только поверхностным натяжением до момента использования.  Заводское оборудование может быть оптимально расставлено в трех измерениях.  Эти условия, при правильной эксплуатации, дают серьезный прирост эффективности и продуктивности.
 
 PRO_PLANET_GEOL
-Planetary Geology
+Планетарная Геология
 
 PRO_PLANET_GEOL_DESC
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation processes such as plate techtonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes, their effects, causes and signs is essential for large scale efficient mining operations.
+Добыча полезных минералов, происходящая во всей массы планеты в сложных химических и термодинамических состояниях, включая осадки водной поверхности, разрушает дифференциацию ядра и средне-земельные преобразования.  Процессы пост-добычи, такие как: тектоника плато, вулканизм и глубинные конвекционные потоки, одинаково важны для определения конечного местоположения и формы этих извлекаемых ресурсов.  Понимание этих процессов, их влияние, причины и признаки, очень важно для больше-масштабных эффективных операций по добыче ресурсов.
 
 PRO_ROBOTIC_PROD
-Robotic Production
+Роботизированное Производство
 
 PRO_ROBOTIC_PROD_DESC
-Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
+Несмотря на высокий уровень исходного дизайна и сборки завода, все еще требуется активный наблюдатель, устранение которого из производства удалит множество узких мест в процессе.  Роботы работают непрерывно, без постоянного требования больших экономических компенсацией.  Роботы имеют гораздо бОльшую переносимость в опасных заводских средах, и не требуют дополнительного места для проживания.  Роботы выполняют присвоенные им задачи безупречно, или как минимум так же хорошо, насколько они обучены.
 
 PRO_FUSION_GEN
-Fusion Generation
+Ядерный Синтез
 
 PRO_FUSION_GEN_DESC
-Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
+Взрывные, или неконтролируемые термоядерные реакции сравнительно просты для вызова в масштабах, начиная с маленьких тактических боеголовок до супергигантских звездных печей.  Контролируемая, стабильная и практическая генерация энергия из реакций - это нечто более сложное.  Эти процессы остаются очень привлекательными соответствующими, почти безграничными, запасами топлива и потенциалом для без-эмиссионых операций.
 
 PRO_NANOTECH_PROD
-Nanotech Production
+Продукция нанотехнологий
 
 PRO_NANOTECH_PROD_DESC
-Traditional production techniques are fundamentally limited by the size and form of the tools it employs.  As a product takes form, its outer layers may prevent direct access and manipulation of the inner structure, requiring inconvenient and inefficient adjustment to the order of assembly.  Further, the components of a larger product must be carefully formed and assembled to exacting specifications to ensure they will function as intended when combined.  By using nanotechnology to form a complete product in one step, directly from the stock materials, these limitations can be bypassed, dramatically improving efficiency and production speed.
+Традиционные методы производства существенно ограничены размером и формой инструментов, которые используются. В процессе формирования продукта, его внешние детали могут препятствовать прямому доступу и манипуляциям с внутренней структурой, требуя неудобного и неэффективного регулирования процесса сборки. Компоненты должны быть тщательно собраны согласно требовательниям в спецификациях, чтобы гарантировать, что они будут работать как положено, когда изделие будет готово. При использовании нанотехнологий можно изготовить продукт за один шаг, непосредственно из материалов для производства, снимая ограничения на процессы сборки, резко увеличивая скорость производства и эффективность.
 
 PRO_ORBITAL_GEN
-Orbital Generation
+Орбитальные генераторы
 
 PRO_ORBITAL_GEN_DESC
-Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.
+Низкая орбита планетарных спутников предоставляет некоторые выгоды при производстве энергии. На спутниках нет атмосферы, задерживающей излучение от ближайшей звезды, низкая гравитация спутников планеты позволяет собрать энергитические комплексы превосходящие поверхностные станции, это является огромным преимуществом. Получающаяся энергия может использоваться на орбите или может быть излучена к планете, чтобы поддержать промыщленность на её поверхности. Также, на орбите становятся доступными новые механизмы преобразования энергии, включая использование планетарного магнитного поля, орбитальный обмен импульса, и фрикционное нагревание о планетарную атмосферу, которые очень выгодны для специализированных областей
 
 PRO_SENTIENT_AUTOMATION
 Sentient Automation
@@ -3323,22 +3323,22 @@ Increases minreals production by +1 per 10 population on primary balanced and se
 Multiple focus balances are cumulative: primary and secondary mining focus provides +3 to mineral production per 10 population.'''
 
 PRO_ASTEROID_MINE
-Asteroid Mining
+Астероидные Рудники
 
 PRO_ASTEROID_MINE_DESC
-Mineral resource extraction from subplanetoid-sized bodies involves challenges, and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.  The initial implementation of asteroid mining techniques yields moderate gains to mineral production in systems with suitable asteroid belts to exploit.  Increased mining output occurs on all planets in system, allowing planets with environments normally difficult to mine, which often also allow larger populations, to produce large amounts of minerals per unit of population.  Normally large mining output per unit population is limited to low-population capacity worlds, limiting actual mineral output.
+Извлечение минеральных ресурсов из тел суб-планетных размеров приводит к проблеме, и дает возможность обособиться от полностью развившихся планет.  Нехватка достаточной массы для само-сжижения и дифференциации ядра предоставляет астероидами более легкий доступ к некоторым тяжелым элементам, а незначительная гравитация позволяет сделать извлечение ресурсов более эффективным.  При этом ограниченные размеры каждого астероида требуют полностью передвижных, самодостаточных добывающих заводов.  Так же, должны быть преодолены проблемы с микрогравитационной средой, требующей пересмотра множества традиционных методов.
 
 PRO_ORBITAL_MINE
-Orbital Mining
+Орбитальное добыча ископаемых
 
 PRO_ORBITAL_MINE_DESC
-On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minearals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
+На твердых, пригодных для жилья планетах традиционная горная промышленность, разрабатывающая поверхность, эффективна, ну или относительно эффективна. Для газовых гигантов и некоторых планет, на которых невозможно поддерживать жизнь значительного населения, способность извлекать материалы с помощью космических комплексов намного более практична. Первый плюс этого метода - преодоление планетарной силу тяжести. Орбитальная добыча дает доступ к обширным источникам полезных ископаемых, которые ранее были недоступны, специализированные ресурсы на непригодных для жилья планетах впервые становятся доступными.
 
 PRO_CORE_MINE
-Deep Core Mining
+Рудники глубокой добычи
 
 PRO_CORE_MINE_DESC
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that only appear on upper crust layers due to vulcanism.  The lower atmospheric layers and core materials of gascious planet contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+Огоромные давление и температура в мантиях планет и ядрах создают много кристаллических и минеральных формирований, которые в верхних планетарных слоях появляются только благодаря вулканической активности. Более глубокие слои планеты содержат еще больше экзотические материалов, в больших концентрациях. Доступ к этим областям является чрезвычайно трудным и опасным, но результаты на порядок превосходят традиционную горную промышленность.
 
 PRO_ART_BLACK_HOLE
 Artificial Black Hole
