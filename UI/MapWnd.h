@@ -236,6 +236,9 @@ private:
     void            ShowSitRep();
     void            HideSitRep();
 
+    void            HideSidePanel();
+    void            RestoreSidePanel();
+
     bool            ToggleResearch();
     void            ShowResearch();
     void            HideResearch();
@@ -340,7 +343,9 @@ private:
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
     int                         m_current_owned_system;
     int                         m_current_fleet;
-    bool                        m_in_production_view_mode, m_sidepanel_open_before_showing_production;
+    bool                        m_in_production_view_mode;
+
+    bool                        m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.
 
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;

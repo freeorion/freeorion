@@ -1158,7 +1158,7 @@ void SidePanel::PlanetPanelContainer::Clear()
 
 void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type)
 {
-    std::cout << "SidePanel::PlanetPanelContainer::SetPlanets( size: " << plt_vec.size() << " )" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::SetPlanets( size: " << plt_vec.size() << " )" << std::endl;
 
     // remove old panels
     Clear();
@@ -1238,7 +1238,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
 
 void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id)
 {
-    std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << planet_id << ")" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::SelectPlanet(" << planet_id << ")" << std::endl;
     if (planet_id != m_selected_planet_id && m_candidate_ids.find(planet_id) != m_candidate_ids.end()) {
         m_selected_planet_id = planet_id;
         bool planet_id_match_found = false;
@@ -1250,7 +1250,7 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id)
             if (panel->PlanetID() == m_selected_planet_id) {
                 panel->Select(true);
                 planet_id_match_found = true;
-                std::cout << " ... selecting planet with id " << panel->PlanetID() << std::endl;
+                //std::cout << " ... selecting planet with id " << panel->PlanetID() << std::endl;
             } else {
                 panel->Select(false);
             }
@@ -1259,20 +1259,20 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id)
         // if a panel was marked, signal this fact
         if (!planet_id_match_found) {
             m_selected_planet_id = UniverseObject::INVALID_OBJECT_ID;
-            std::cout << " ... no planet with requested ID found" << std::endl;
+            //std::cout << " ... no planet with requested ID found" << std::endl;
         }
     }
 }
 
 void SidePanel::PlanetPanelContainer::SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor>& visitor)
 {
-    std::cout << "SidePanel::PlanetPanelContainer::SetValidSelectionPredicate" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::SetValidSelectionPredicate" << std::endl;
     m_valid_selection_predicate = visitor;
 }
 
 void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
 {
-    std::cout << "SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates" << std::endl;
     m_candidate_ids.clear();
     std::set<PlanetPanel*>   disabled_panels;
 
@@ -1288,7 +1288,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
 
             if (planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
-                std::cout << " ... planet " << planet->ID() << " is a selection candidate" << std::endl;
+                //std::cout << " ... planet " << planet->ID() << " is a selection candidate" << std::endl;
             } else {
                 disabled_panels.insert(panel);
             }
@@ -1300,7 +1300,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
         PlanetPanel*    panel =     *it;
         if (disabled_panels.find(panel) != disabled_panels.end()) {
             panel->Disable(true);
-            std::cout << " ... DISABLING PlanetPanel for planet " << panel->PlanetID() << std::endl;
+            //std::cout << " ... DISABLING PlanetPanel for planet " << panel->PlanetID() << std::endl;
         } else {
             panel->Disable(false);
         }
@@ -1556,7 +1556,7 @@ void SidePanel::RefreshImpl()
 
 
     // update planet panel container contents (applying just-set selection predicate)
-    std::cout << " ... setting planet panel container planets" << std::endl;
+    //std::cout << " ... setting planet panel container planets" << std::endl;
     std::vector<const Planet*> plt_vec = system->FindObjects<Planet>();
     m_planet_panel_container->SetPlanets(plt_vec, system->Star());
 
@@ -1600,7 +1600,6 @@ void SidePanel::RefreshImpl()
     }
 
 
-    std::cout << " END of SidePanel::RefreshImpl" << std::endl;
 }
 
 void SidePanel::DoLayout()

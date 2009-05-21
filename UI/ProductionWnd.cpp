@@ -320,11 +320,9 @@ void ProductionWnd::Reset()
 
 void ProductionWnd::Update()
 {
-    std::cout << "ProductionWnd::Update() this: " << this << std::endl;
+    //std::cout << "ProductionWnd::Update()" << this << std::endl;
     UpdateInfoPanel();
     UpdateQueue();
-
-    std::cout << "ProductionWnd::Update m_build_designator_wnd: " << m_build_designator_wnd << std::endl;
 
     m_build_designator_wnd->Update();
 }

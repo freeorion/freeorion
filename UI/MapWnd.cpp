@@ -516,7 +516,7 @@ MapWnd::MapWnd() :
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
     m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_in_production_view_mode(false),
-    m_sidepanel_open_before_showing_production(false),
+    m_sidepanel_open_before_showing_other(false),
     m_toolbar(0),
     m_food(0),
     m_mineral(0),
@@ -1626,8 +1626,9 @@ void MapWnd::CenterOnObject(const UniverseObject* obj)
 
 void MapWnd::ReselectLastSystem()
 {
-    std::cout << "MapWnd::ReselectLastSystem() m_selected_system: " << m_selected_system << std::endl;
-    SelectSystem(m_selected_system);
+    if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
+        SelectSystem(m_selected_system);
+    SelectSystem(SidePanel::SystemID());    // perhaps this might be set to something else?
 }
 
 void MapWnd::SelectSystem(int system_id)
@@ -1690,15 +1691,15 @@ void MapWnd::SelectSystem(int system_id)
 
 void MapWnd::ReselectLastFleet()
 {
-    // DEBUG
-    std::cout << "MapWnd::ReselectLastFleet m_selected_fleets: " << std::endl;
-    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
-        const UniverseObject* obj = GetUniverse().Object(*it);
-        if (obj)
-            std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
-        else
-            std::cout << "    [missing object] (" << *it << ")" << std::endl;
-    }
+    //// DEBUG
+    //std::cout << "MapWnd::ReselectLastFleet m_selected_fleets: " << std::endl;
+    //for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    //    const UniverseObject* obj = GetUniverse().Object(*it);
+    //    if (obj)
+    //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
+    //    else
+    //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
+    //}
 
 
     // search through stored selected fleets' ids and remove ids of missing fleets
@@ -3247,6 +3248,19 @@ bool MapWnd::ToggleSitRep()
     return true;
 }
 
+void MapWnd::HideSidePanel()
+{
+    m_sidepanel_open_before_showing_other = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing a full screen wnd
+    m_side_panel->Hide();
+    DetachChild(m_side_panel);
+}
+
+void MapWnd::RestoreSidePanel()
+{
+    if (m_sidepanel_open_before_showing_other)
+        ReselectLastSystem();
+}
+
 void MapWnd::ShowResearch()
 {
     ClearProjectedFleetMovementLines();
@@ -3255,6 +3269,7 @@ void MapWnd::ShowResearch()
     HideSitRep();
     HideProduction();
     HideDesign();
+    HideSidePanel();
 
     // show the research window
     m_research_wnd->Show();
@@ -3269,6 +3284,7 @@ void MapWnd::HideResearch()
     m_research_wnd->Hide();
     m_btn_research->MarkNotSelected();
     ShowAllPopups();
+    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleResearch()
@@ -3288,9 +3304,7 @@ void MapWnd::ShowProduction()
     HideSitRep();
     HideResearch();
     HideDesign();
-    m_sidepanel_open_before_showing_production = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing the production screen
-    m_side_panel->Hide();
-    DetachChild(m_side_panel);
+    HideSidePanel();
 
     // show the production window
     m_production_wnd->Show();
@@ -3320,10 +3334,7 @@ void MapWnd::HideProduction()
     m_in_production_view_mode = false;
     m_btn_production->MarkNotSelected();
     ShowAllPopups();
-    if (m_sidepanel_open_before_showing_production)
-        SelectSystem(SidePanel::SystemID());                // shows sidepanel
-    else
-        SelectSystem(UniverseObject::INVALID_OBJECT_ID);    // hides sidepanel (redundant since it was hidden while in production mode) and removes map system selection indicator that was showing while in produciton mode
+    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleProduction()
@@ -3343,6 +3354,7 @@ void MapWnd::ShowDesign()
     HideSitRep();
     HideResearch();
     HideProduction();
+    HideSidePanel();
 
     // show the design window
     m_design_wnd->Show();
@@ -3360,6 +3372,7 @@ void MapWnd::HideDesign()
     m_design_wnd->Hide();
     m_btn_design->MarkNotSelected();
     EnableAlphaNumAccels();
+    RestoreSidePanel();
 }
 
 bool MapWnd::ToggleDesign()
