@@ -481,7 +481,6 @@ MapWnd::MapWnd() :
             GG::INTERACTIVE | GG::DRAGABLE),
     m_backgrounds(),
     m_bg_scroll_rate(),
-    m_selected_system(UniverseObject::INVALID_OBJECT_ID),
     m_selected_fleets(),
     m_zoom_steps_in(0.0),
     m_side_panel(0),
@@ -1046,6 +1045,8 @@ void MapWnd::InitTurnRendering()
         SystemIcon* icon = new SystemIcon(this, GG::X0, GG::Y0, GG::X(10), start_system->ID());
         m_system_icons[start_system->ID()] = icon;
         icon->InstallEventFilter(this);
+        if (SidePanel::SystemID() == systems[i]->ID())
+            icon->SetSelected(true);
         AttachChild(icon);
 
         // connect UI response signals.  TODO: Make these configurable in GUI?
@@ -1626,46 +1627,35 @@ void MapWnd::CenterOnObject(const UniverseObject* obj)
 
 void MapWnd::ReselectLastSystem()
 {
-    if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
-        SelectSystem(m_selected_system);
-    SelectSystem(SidePanel::SystemID());    // perhaps this might be set to something else?
+    if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID)
+        SelectSystem(SidePanel::SystemID());
 }
 
 void MapWnd::SelectSystem(int system_id)
 {
     std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
 
-    // consistency check
-    if (m_selected_system != SidePanel::SystemID())
-        Logger().errorStream() << "MapWnd already selected system inconsistent with MapWnd's SidePanel's (selected) system id)";
 
-
-    if (m_selected_system != system_id) {
-        // remove selection indicator from previously selected system
-        if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
-            m_system_icons[m_selected_system]->SetSelected(false);
-
-        // update internal selected system record
-        m_selected_system = system_id;
-
-        // place indicator on newly selected system
-        if (m_selected_system != UniverseObject::INVALID_OBJECT_ID)
-            m_system_icons[m_selected_system]->SetSelected(true);
+    if (SidePanel::SystemID() != system_id) {
+        // remove map selection indicator from previously selected system
+        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID)
+            m_system_icons[SidePanel::SystemID()]->SetSelected(false);
 
         // set selected system on sidepanel and production screen, as appropriate
         if (m_in_production_view_mode)
             m_production_wnd->SelectSystem(system_id);  // calls SidePanel::SetSystem
         else
             SidePanel::SetSystem(system_id);
+
+        // place map selection indicator on newly selected system
+        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID)
+            m_system_icons[SidePanel::SystemID()]->SetSelected(true);
     }
 
 
     if (m_in_production_view_mode) {
         // don't need to do anything to ensure this->m_side_panel is visible,
-        // since it should be hidden if in production view mode.  if that's
-        // not actually the case, uncomment the following lines...
-        //m_side_panel->Hide();
-        //DetachChild(m_side_panel);
+        // since it should be hidden if in production view mode.
         return;
     }
 
@@ -1673,7 +1663,8 @@ void MapWnd::SelectSystem(int system_id)
     // even if selected system hasn't changed, it may be nessary to show or
     // hide this mapwnd's sidepanel, in case it was hidden at some point and
     // should be visible, or is visible and should be hidden.
-    if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+
+    if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         // no selected system.  hide sidepanel.
         m_side_panel->Hide();
         DetachChild(m_side_panel);
@@ -1685,8 +1676,6 @@ void MapWnd::SelectSystem(int system_id)
         MoveChildUp(m_sitrep_panel);
         m_side_panel->Show();
     }
-
-    std::cout << "MapWnd::SelectSystem() end m_selected_system: " << m_selected_system << std::endl;
 }
 
 void MapWnd::ReselectLastFleet()
@@ -3131,7 +3120,6 @@ void MapWnd::Sanitize()
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();
 
-    m_selected_system = UniverseObject::INVALID_OBJECT_ID;
     m_selected_fleets.clear();
 
     m_starlane_endpoints.clear();

@@ -292,7 +292,6 @@ private:
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
-    int                         m_selected_system;
     std::set<int>               m_selected_fleets;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
