@@ -1633,8 +1633,7 @@ void MapWnd::ReselectLastSystem()
 
 void MapWnd::SelectSystem(int system_id)
 {
-    std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-
+    //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
 
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
@@ -1712,7 +1711,7 @@ void MapWnd::ReselectLastFleet()
 
 void MapWnd::SelectPlanet(int planetID)
 {
-    std::cout << "MapWnd::SelectPlanet(" << planetID << ")" << std::endl;
+    //std::cout << "MapWnd::SelectPlanet(" << planetID << ")" << std::endl;
     m_production_wnd->SelectPlanet(planetID);   // calls SidePanel::SelectPlanet()
 }
 
@@ -1726,7 +1725,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
-        std::cout << "MapWnd::SelectFleet selecting no fleet: deselecting all selected fleets." << std::endl;
+        //std::cout << "MapWnd::SelectFleet selecting no fleet: deselecting all selected fleets." << std::endl;
 
         // first deselect any selected fleets in non-active fleet wnd.  this should
         // not emit any signals about the active fleet wnd's fleets changing
@@ -3101,7 +3100,7 @@ void MapWnd::Cleanup()
 
 void MapWnd::Sanitize()
 {
-    std::cout << "MapWnd::Sanitize()" << std::endl;
+    //std::cout << "MapWnd::Sanitize()" << std::endl;
     Cleanup();
 
     const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
@@ -3713,7 +3712,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
 void MapWnd::UpdateEmpireResourcePools()
 {
-    std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
+    //std::cout << "MapWnd::UpdateEmpireResourcePools" << std::endl;
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup( HumanClientApp::GetApp()->EmpireID() );
     /* Recalculate stockpile, available, production, predicted change of resources.  When resourcepools
        update, they emit ChangeSignal, which is connected to MapWnd::RefreshFoodResourceIndicator, which

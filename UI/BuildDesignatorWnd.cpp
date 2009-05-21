@@ -313,7 +313,7 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
 
 void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list)
 {
-    std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
+    //std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
     int old_location = m_build_location;
     if (m_build_location != location_id) {
         m_build_location = location_id;
@@ -618,7 +618,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::Sel
 
 void BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked(GG::ListBox::iterator it)
 {
-    std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
+    //std::cout << "BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked" << std::endl;
     if ((*it)->Disabled())
         return;
     BuildType build_type = m_build_types[it];
@@ -751,7 +751,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx)
 
 void BuildDesignatorWnd::SelectSystem(int system_id)
 {
-    std::cout << "BuildDesignatorWnd::SelectSystem(" << system_id << ")" << std::endl;
+    //std::cout << "BuildDesignatorWnd::SelectSystem(" << system_id << ")" << std::endl;
 
     if (system_id == SidePanel::SystemID()) {
         // don't need to do anything.  already showing the requested system.
@@ -767,7 +767,7 @@ void BuildDesignatorWnd::SelectSystem(int system_id)
 
 void BuildDesignatorWnd::SelectPlanet(int planet_id)
 {
-    std::cout << "BuildDesignatorWnd::SelectPlanet(" << planet_id << ")" << std::endl;
+    //std::cout << "BuildDesignatorWnd::SelectPlanet(" << planet_id << ")" << std::endl;
     SidePanel::SelectPlanet(planet_id);
     if (planet_id != UniverseObject::INVALID_OBJECT_ID)
         m_system_default_planets[SidePanel::SystemID()] = planet_id;
@@ -776,7 +776,7 @@ void BuildDesignatorWnd::SelectPlanet(int planet_id)
 
 void BuildDesignatorWnd::Update()
 {
-    std::cout << "BuildDesignatorWnd::Update()" << std::endl;
+    //std::cout << "BuildDesignatorWnd::Update()" << std::endl;
     SidePanel::Update();
     m_build_selector->Refresh();
     m_enc_detail_panel->Refresh();
@@ -784,7 +784,7 @@ void BuildDesignatorWnd::Update()
 
 void BuildDesignatorWnd::Reset()
 {
-    std::cout << "BuildDesignatorWnd::Reset()" << std::endl;
+    //std::cout << "BuildDesignatorWnd::Reset()" << std::endl;
     SelectSystem(UniverseObject::INVALID_OBJECT_ID);
     ShowAllTypes(false);            // show all types without populating the list
     HideAvailability(false, false); // hide unavailable items without populating the list
@@ -795,7 +795,7 @@ void BuildDesignatorWnd::Reset()
 
 void BuildDesignatorWnd::Clear()
 {
-    std::cout << "BuildDesignatorWnd::Clear()" << std::endl;
+    //std::cout << "BuildDesignatorWnd::Clear()" << std::endl;
     SidePanel::SetSystem(UniverseObject::INVALID_OBJECT_ID);
     Reset();
     m_system_default_planets.clear();
@@ -900,7 +900,7 @@ int BuildDesignatorWnd::BuildLocation() const
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
 {
-    std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
+    //std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->BuildableItem(build_type, item, BuildLocation()))
         AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
@@ -908,7 +908,7 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::str
 
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id, int num_to_build)
 {
-    std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
+    //std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->BuildableItem(build_type, design_id, BuildLocation()))
         AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation());

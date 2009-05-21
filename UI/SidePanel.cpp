@@ -965,7 +965,7 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    std::cout << "SidePanel::PlanetPanel::LClick m_planet_id: " << m_planet_id << std::endl;
+    //std::cout << "SidePanel::PlanetPanel::LClick m_planet_id: " << m_planet_id << std::endl;
     if (!Disabled())
         LClickedSignal(m_planet_id);
 }
@@ -1320,7 +1320,7 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
 {
-    std::cout << "SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels" << std::endl;
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
         (*it)->Refresh();
 }
@@ -1426,14 +1426,14 @@ void SidePanel::Render()
 
 void SidePanel::Update()
 {
-    std::cout << "SidePanel::Update" << std::endl;
+    //std::cout << "SidePanel::Update" << std::endl;
     for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
         (*it)->UpdateImpl();
 }
 
 void SidePanel::UpdateImpl()
 {
-    std::cout << "SidePanel::UpdateImpl" << std::endl;
+    //std::cout << "SidePanel::UpdateImpl" << std::endl;
     if (m_system_resource_summary)
         m_system_resource_summary->Update();
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
@@ -1442,7 +1442,7 @@ void SidePanel::UpdateImpl()
 
 void SidePanel::Refresh()
 {
-    std::cout << "SidePanel::Refresh" << std::endl;
+    //std::cout << "SidePanel::Refresh" << std::endl;
 
     // disconnect any existing system and fleet signals
     for (std::set<boost::signals::connection>::iterator it = s_system_connections.begin(); it != s_system_connections.end(); ++it)
@@ -1481,7 +1481,7 @@ void SidePanel::Refresh()
 
 void SidePanel::RefreshImpl()
 {
-    std::cout << "SidePanel::RefreshImpl" << std::endl;
+    //std::cout << "SidePanel::RefreshImpl" << std::endl;
     Sound::TempUISoundDisabler sound_disabler;
 
     m_planet_panel_container->Clear();
@@ -1673,14 +1673,14 @@ void SidePanel::NextButtonClicked()
 
 void SidePanel::PlanetSelected(int planet_id)
 {
-    std::cout << "SidePanel::PlanetSelected(" << planet_id << ")" << std::endl;
+    //std::cout << "SidePanel::PlanetSelected(" << planet_id << ")" << std::endl;
     if (SelectedPlanetID() != planet_id)
         PlanetSelectedSignal(planet_id);
 }
 
 void SidePanel::FleetInserted(Fleet& fleet)
 {
-    std::cout << "SidePanel::FleetInserted" << std::endl;
+    //std::cout << "SidePanel::FleetInserted" << std::endl;
     s_fleet_state_change_signals[fleet.ID()].disconnect();  // in case already present
     s_fleet_state_change_signals[fleet.ID()] = GG::Connect(fleet.StateChangedSignal, &SidePanel::FleetStateChanged);
     SidePanel::Update();
@@ -1688,7 +1688,7 @@ void SidePanel::FleetInserted(Fleet& fleet)
 
 void SidePanel::FleetRemoved(Fleet& fleet)
 {
-    std::cout << "SidePanel::FleetRemoved" << std::endl;
+    //std::cout << "SidePanel::FleetRemoved" << std::endl;
     std::map<int, boost::signals::connection>::iterator it = s_fleet_state_change_signals.find(fleet.ID());
     if (it != s_fleet_state_change_signals.end()) {
         it->second.disconnect();
@@ -1699,7 +1699,7 @@ void SidePanel::FleetRemoved(Fleet& fleet)
 
 void SidePanel::FleetStateChanged()
 {
-    std::cout << "SidePanel::FleetStateChanged" << std::endl;
+    //std::cout << "SidePanel::FleetStateChanged" << std::endl;
     SidePanel::Update();
 }
 
@@ -1732,7 +1732,7 @@ void SidePanel::SelectPlanet(int planet_id)
 
 void SidePanel::SelectPlanetImpl(int planet_id)
 {
-    std::cout << "SidePanel::SelectPlanetImpl(" << planet_id << ")" << std::endl;
+    //std::cout << "SidePanel::SelectPlanetImpl(" << planet_id << ")" << std::endl;
     m_planet_panel_container->SelectPlanet(planet_id);
 }
 
@@ -1752,6 +1752,6 @@ void SidePanel::SetSystem(int system_id)
 
 void SidePanel::EnableSelection(bool enable)
 {
-    std::cout << "EnableSelection(" << enable << ")" << std::endl;
+    //std::cout << "SidePanel::EnableSelection(" << enable << ")" << std::endl;
     m_selection_enabled = enable;
 }
