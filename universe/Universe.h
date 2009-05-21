@@ -77,8 +77,13 @@ public:
         Effect::EffectsGroup::TargetSet                 target_set;
         EffectCause                                     effect_cause;
     };
-    /** Map from (effects group and source object) to target set of for that effects group with that source object. */
-    typedef std::map<SourcedEffectsGroup, EffectTargetAndCause> EffectsTargetsCausesMap;
+    /** Map from (effects group and source object) to target set of for
+      * that effects group with that source object.  A multiset is used
+      * so that a single source object can have multiple instances of the
+      * same effectsgroup.  This is useful when a Ship has multiple copies
+      * of the same effects group due to having multiple copies of the same
+      * ship part in its design. */
+    typedef std::multimap<SourcedEffectsGroup, EffectTargetAndCause> EffectsTargetsCausesMap;
 
     /** Accounting information about what the causes are and changes produced by effects groups acting on meters of objects. */
     struct EffectAccountingInfo : public EffectCause {

@@ -996,11 +996,21 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
-        SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);     // combine effects group and source object id into sourced effects group
-        EffectCause effect_cause(effect_cause_type, specific_cause_name);               // combine cause type and specific cause into effect cause
-        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);// get set of target objects for this effects group from potential targets specified
-        EffectTargetAndCause target_and_cause(target_set, effect_cause);                // combine target set and effect cause
-        targets_causes_map[sourced_effects_group] = target_and_cause;                   // store effect cause and targets info in map, indexed by sourced effects group
+
+        // combine effects group and source object id into a sourced effects group
+        SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);
+
+        // combine cause type and specific cause into effect cause
+        EffectCause effect_cause(effect_cause_type, specific_cause_name);
+
+        // get set of target objects for this effects group from potential targets specified
+        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);
+
+        // combine target set and effect cause
+        EffectTargetAndCause target_and_cause(target_set, effect_cause);
+
+        // store effect cause and targets info in map, indexed by sourced effects group
+        targets_causes_map.insert(std::make_pair(sourced_effects_group, target_and_cause));
     }
 }
 
