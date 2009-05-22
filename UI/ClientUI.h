@@ -114,13 +114,12 @@ public:
     static GG::Clr      TextColor();            //!< color of UI text
 
     // generic UI windows
-    static GG::Clr      WndColor();             //!< color of a UI window
-    static GG::Clr      WndBorderColor();       //!< color of window borders
+    static GG::Clr      WndColor();             //!< background color of a UI window
     static GG::Clr      WndOuterBorderColor();  //!< color of the outermost border
     static GG::Clr      WndInnerBorderColor();  //!< color of the innermost border
 
     // controls
-    static GG::Clr      CtrlColor();            //!< color of UI controls
+    static GG::Clr      CtrlColor();            //!< background color of UI controls
     static GG::Clr      CtrlBorderColor();
 
     static int          ScrollWidth();
@@ -131,6 +130,8 @@ public:
 
     static GG::Clr      StatIncrColor();                        //!< used to color increasing stats text (eg "+2")
     static GG::Clr      StatDecrColor();                        //!< used to color decreasing stats text (eg "-3")
+
+    static GG::Clr      StateButtonColor();                     //!< colour of selected state button markers
 
     static int          SystemIconSize();                       //!< the width/height of a System/Icon at zoom = 1.0
     static GG::Clr      SystemNameTextColor();                  //!< the colour of system names that aren't owned by any player (as far as this client knows)

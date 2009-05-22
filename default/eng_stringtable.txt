@@ -365,16 +365,19 @@ OPTIONS_DB_UI_TITLE_FONT_SIZE
 Sets UI title font size.
 
 OPTIONS_DB_UI_WND_COLOR
-Sets UI window color.
+Sets UI window background color.
 
 OPTIONS_DB_UI_TEXT_COLOR
 Sets UI text color.
 
 OPTIONS_DB_UI_CTRL_COLOR
-Sets UI control color.
+Sets UI control background color.
 
 OPTIONS_DB_UI_CTRL_BORDER_COLOR
 Sets UI control border color.
+
+OPTIONS_DB_UI_STATE_BUTTON_COLOR
+Sets UI state button selected color.
 
 OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR
 Sets UI drop-down-list arrow color.
@@ -383,19 +386,16 @@ OPTIONS_DB_UI_EDIT_HILITE
 Sets color of hilighting in UI edit controls.
 
 OPTIONS_DB_UI_STAT_INCREASE_COLOR
-Sets the color of increased stats in the UI.
+Sets the color of increasing statistics
 
 OPTIONS_DB_UI_STAT_DECREASE_COLOR
-Sets the color of decreased stats in the UI.
+Sets the color of decreasing statistics
 
 OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR
-Sets UI outer border color.
-
-OPTIONS_DB_UI_WND_BORDER_COLOR
-Sets UI border color.
+Sets UI window outer border color.
 
 OPTIONS_DB_UI_WND_INNER_BORDER_COLOR
-Sets UI inner border color.
+Sets UI window inner border color.
 
 OPTIONS_DB_UI_KNOWN_TECH
 Sets color of known techs in the tech tree.
@@ -1162,11 +1162,20 @@ Border
 OPTIONS_TEXT_COLOR
 Text
 
-OPTIONS_EDIT_COLORS
-Edit Controls
-
 OPTIONS_HIGHLIGHT_COLOR
 Selection highlighting
+
+OPTIONS_DROPLIST_ARROW_COLOR
+Droplist arrow
+
+OPTIONS_STATE_BUTTON_COLOR
+Toggle button selected
+
+OPTIONS_STAT_INCREASE_COLOR
+Statistic increasing
+
+OPTIONS_STAT_DECREASE_COLOR
+Statistic decreasing
 
 OPTIONS_INTERIOR_COLOR
 Interior

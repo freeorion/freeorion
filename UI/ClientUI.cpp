@@ -61,7 +61,6 @@ GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<Stre
 
 // windows
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr(); }
-GG::Clr     ClientUI::WndBorderColor()          { return GetOptionsDB().Get<StreamableColor>("UI.wnd-border-color").ToClr(); }
 GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<StreamableColor>("UI.wnd-outer-border-color").ToClr(); }
 GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<StreamableColor>("UI.wnd-inner-border-color").ToClr(); }
 
@@ -77,6 +76,8 @@ GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<Stre
 
 GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
 GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
+
+GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<StreamableColor>("UI.state-button-color").ToClr(); }
 
 double      ClientUI::SystemCircleSize()        { return GetOptionsDB().Get<double>("UI.system-circle-size"); }
 int         ClientUI::SystemIconSize()          { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
@@ -345,12 +346,12 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("app-width",             "OPTIONS_DB_APP_WIDTH",     1024,       RangedValidator<int>(800, 2560));
-        db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",    768,        RangedValidator<int>(600, 1600));
-        db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",   32,         RangedStepValidator<int>(8, 16, 32));
-        db.Add("show-fps",              "OPTIONS_DB_SHOW_FPS",      false);
-        db.Add("limit-fps",             "OPTIONS_DB_LIMIT_FPS",     true);
-        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",       60.0,       RangedStepValidator<double>(1.0, 10.0, 200.0));
+        db.Add("app-width",         "OPTIONS_DB_APP_WIDTH",     1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height",        "OPTIONS_DB_APP_HEIGHT",    768,    RangedValidator<int>(600, 1600));
+        db.Add('c', "color-depth",  "OPTIONS_DB_COLOR_DEPTH",   32,     RangedStepValidator<int>(8, 16, 32));
+        db.Add("show-fps",          "OPTIONS_DB_SHOW_FPS",      false);
+        db.Add("limit-fps",         "OPTIONS_DB_LIMIT_FPS",     true);
+        db.Add("max-fps",           "OPTIONS_DB_MAX_FPS",       60.0,   RangedStepValidator<double>(1.0, 10.0, 200.0));
 
         // sound
         db.Add("UI.sound.enabled",                              "OPTIONS_DB_UI_SOUND_ENABLED",                  true,                   Validator<bool>());
@@ -379,47 +380,48 @@ namespace {
         db.Add<std::string>("UI.sound.balanced-focus",          "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS",           "balanced_select.wav");
 
         // fonts
-        db.Add<std::string>("UI.font",                          "OPTIONS_DB_UI_FONT",                           "DejaVuSans.ttf");
-        db.Add<std::string>("UI.font-bold",                     "OPTIONS_DB_UI_FONT_BOLD",                      "DejaVuSans-Bold.ttf");
-        db.Add("UI.font-size",                                  "OPTIONS_DB_UI_FONT_SIZE",                      12,                     RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font",                    "OPTIONS_DB_UI_TITLE_FONT",                     "DejaVuSans.ttf");
-        db.Add("UI.title-font-size",                            "OPTIONS_DB_UI_TITLE_FONT_SIZE",                12,                     RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.font",          "OPTIONS_DB_UI_FONT",                       "DejaVuSans.ttf");
+        db.Add<std::string>("UI.font-bold",     "OPTIONS_DB_UI_FONT_BOLD",                  "DejaVuSans-Bold.ttf");
+        db.Add("UI.font-size",                  "OPTIONS_DB_UI_FONT_SIZE",                  12,                     RangedValidator<int>(4, 40));
+        db.Add<std::string>("UI.title-font",    "OPTIONS_DB_UI_TITLE_FONT",                 "DejaVuSans.ttf");
+        db.Add("UI.title-font-size",            "OPTIONS_DB_UI_TITLE_FONT_SIZE",            12,                     RangedValidator<int>(4, 40));
 
         // colors
-        db.Add("UI.wnd-color",                      "OPTIONS_DB_UI_WND_COLOR",                      StreamableColor(GG::Clr(0, 0, 0, 220)),         Validator<StreamableColor>());
-        db.Add("UI.wnd-outer-border-color",         "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR",         StreamableColor(GG::Clr(64, 64, 64, 255)),      Validator<StreamableColor>());
-        db.Add("UI.wnd-border-color",               "OPTIONS_DB_UI_WND_BORDER_COLOR",               StreamableColor(GG::Clr(0, 0, 0, 255)),         Validator<StreamableColor>());
-        db.Add("UI.wnd-inner-border-color",         "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR",         StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+        db.Add("UI.wnd-color",                  "OPTIONS_DB_UI_WND_COLOR",                  StreamableColor(GG::Clr(0, 0, 0, 220)),         Validator<StreamableColor>());
+        db.Add("UI.wnd-outer-border-color",     "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR",     StreamableColor(GG::Clr(64, 64, 64, 255)),      Validator<StreamableColor>());
+        db.Add("UI.wnd-inner-border-color",     "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR",     StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
 
-        db.Add("UI.ctrl-color",                     "OPTIONS_DB_UI_CTRL_COLOR",                     StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
-        db.Add("UI.ctrl-border-color",              "OPTIONS_DB_UI_CTRL_BORDER_COLOR",              StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
+        db.Add("UI.ctrl-color",                 "OPTIONS_DB_UI_CTRL_COLOR",                 StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
+        db.Add("UI.ctrl-border-color",          "OPTIONS_DB_UI_CTRL_BORDER_COLOR",          StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
 
-        db.Add("UI.dropdownlist-arrow-color",       "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR",       StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());
+        db.Add("UI.dropdownlist-arrow-color",   "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR",   StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());
 
-        db.Add("UI.edit-hilite",                    "OPTIONS_DB_UI_EDIT_HILITE",                    StreamableColor(GG::Clr(43, 81, 102, 255)),     Validator<StreamableColor>());
+        db.Add("UI.edit-hilite",                "OPTIONS_DB_UI_EDIT_HILITE",                StreamableColor(GG::Clr(43, 81, 102, 255)),     Validator<StreamableColor>());
 
-        db.Add("UI.stat-increase-color",            "OPTIONS_DB_UI_STAT_INCREASE_COLOR",            StreamableColor(GG::Clr(0, 255, 0, 255)),       Validator<StreamableColor>());
-        db.Add("UI.stat-decrease-color",            "OPTIONS_DB_UI_STAT_DECREASE_COLOR",            StreamableColor(GG::Clr(255, 0, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.stat-increase-color",        "OPTIONS_DB_UI_STAT_INCREASE_COLOR",        StreamableColor(GG::Clr(0, 255, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.stat-decrease-color",        "OPTIONS_DB_UI_STAT_DECREASE_COLOR",        StreamableColor(GG::Clr(255, 0, 0, 255)),       Validator<StreamableColor>());
 
-        db.Add("UI.text-color",                     "OPTIONS_DB_UI_TEXT_COLOR",                     StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+        db.Add("UI.state-button-color",         "OPTIONS_DB_UI_STATE_BUTTON_COLOR",         StreamableColor(GG::Clr(0, 127, 0, 255)),       Validator<StreamableColor>());
 
-        db.Add("UI.known-tech",                     "OPTIONS_DB_UI_KNOWN_TECH",                     StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
-        db.Add("UI.known-tech-border",              "OPTIONS_DB_UI_KNOWN_TECH_BORDER",              StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
-        db.Add("UI.researchable-tech",              "OPTIONS_DB_UI_RESEARCHABLE_TECH",              StreamableColor(GG::Clr(48, 48, 48, 255)),      Validator<StreamableColor>());
-        db.Add("UI.researchable-tech-border",       "OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER",       StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech",            "OPTIONS_DB_UI_UNRESEARCHABLE_TECH",            StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech-border",     "OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER",     StreamableColor(GG::Clr(86, 86, 86, 255)),      Validator<StreamableColor>());
-        db.Add("UI.tech-progress-background",       "OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND",       StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
-        db.Add("UI.tech-progress",                  "OPTIONS_DB_UI_TECH_PROGRESS",                  StreamableColor(GG::Clr(40, 40, 40, 255)),      Validator<StreamableColor>());
+        db.Add("UI.text-color",                 "OPTIONS_DB_UI_TEXT_COLOR",                 StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+
+        db.Add("UI.known-tech",                 "OPTIONS_DB_UI_KNOWN_TECH",                 StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
+        db.Add("UI.known-tech-border",          "OPTIONS_DB_UI_KNOWN_TECH_BORDER",          StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
+        db.Add("UI.researchable-tech",          "OPTIONS_DB_UI_RESEARCHABLE_TECH",          StreamableColor(GG::Clr(48, 48, 48, 255)),      Validator<StreamableColor>());
+        db.Add("UI.researchable-tech-border",   "OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER",   StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech",        "OPTIONS_DB_UI_UNRESEARCHABLE_TECH",        StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
+        db.Add("UI.unresearchable-tech-border", "OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER", StreamableColor(GG::Clr(86, 86, 86, 255)),      Validator<StreamableColor>());
+        db.Add("UI.tech-progress-background",   "OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND",   StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
+        db.Add("UI.tech-progress",              "OPTIONS_DB_UI_TECH_PROGRESS",              StreamableColor(GG::Clr(40, 40, 40, 255)),      Validator<StreamableColor>());
 
         // misc
-        db.Add("UI.scroll-width",                   "OPTIONS_DB_UI_SCROLL_WIDTH",                   14,         RangedValidator<int>(8, 30));
+        db.Add("UI.scroll-width",               "OPTIONS_DB_UI_SCROLL_WIDTH",               14,         RangedValidator<int>(8, 30));
 
         // UI behavior
-        db.Add("UI.tooltip-delay",                  "OPTIONS_DB_UI_TOOLTIP_DELAY",                  100,        RangedValidator<int>(0, 3000));
-        db.Add("UI.multiple-fleet-windows",         "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",         false);
-        db.Add("UI.fleet-autoselect",               "OPTIONS_DB_UI_FLEET_AUTOSELECT",               true);
-        db.Add("UI.window-quickclose",              "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",              true);
+        db.Add("UI.tooltip-delay",              "OPTIONS_DB_UI_TOOLTIP_DELAY",              100,        RangedValidator<int>(0, 3000));
+        db.Add("UI.multiple-fleet-windows",     "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",     false);
+        db.Add("UI.fleet-autoselect",           "OPTIONS_DB_UI_FLEET_AUTOSELECT",           true);
+        db.Add("UI.window-quickclose",          "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",          true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -564,7 +566,8 @@ ClientUI* ClientUI::GetClientUI()
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
-    GG::ThreeButtonDlg dlg(GG::X(320),GG::Y(200),message,GetFont(Pts()+2),WndColor(), WndBorderColor(), CtrlColor(), TextColor(), 1,
+    GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), message,GetFont(Pts()+2),
+                           WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound)
         Sound::GetSound().PlaySound(SoundDir() / "alert.wav", true);

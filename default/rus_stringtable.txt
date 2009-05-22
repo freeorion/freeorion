@@ -985,19 +985,19 @@ OPTIONS_SOUND_FOCUS
 Фокусировка
 
 OPTIONS_SOUND_BALANCED
-Сбалансированый фокус
+Сбалансированый приоритет
 
 OPTIONS_SOUND_FARMING
-Farming focus
+Сосредоточиться на фермерстве
 
 OPTIONS_SOUND_INDUSTRY
-Фокус на индустрии
+Сосредоточиться на индустрии
 
 OPTIONS_SOUND_MINING
-Фокус на шахтах
+Соссредоточиться на добыче
 
 OPTIONS_SOUND_RESEARCH
-Фокус на исследованиях
+Сосредоточиться на исследованиях
 
 OPTIONS_SOUND_LIST
 Звук списка
@@ -1850,7 +1850,7 @@ ECCENTRIC_ORBIT_SPECIAL
 Эксцентриситет орбиты
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-Орбита этой планеты имеет сильно вытянутую форму из-за чего очень велико расстояние между самым ближним и самым дальним положением планеты от солнца. Общая облучаемость планеты значительно отличается в течении года. Такая разница в условиях затрудняет развитие инфраструктуры, но дает преимущество в исследованиях.
+Орбита этой планеты имеет сильно вытянутую форму, из-за чего очень велико расстояние между самым ближним и самым дальним положением планеты от солнца. Общая облучаемость планеты значительно отличается в течении года. Такая разница в условиях затрудняет развитие инфраструктуры, но дает преимущество в исследованиях.
 
 #######################
 # Enumeration  values #
@@ -1877,129 +1877,129 @@ system
 # StarTypes
 
 STAR_BLUE
-blue
+голубая
 STAR_WHITE
-white
+белая
 STAR_YELLOW
-yellow
+желтая
 STAR_ORANGE
-orange
+оранжевая
 STAR_RED
-red
+красная
 STAR_NEUTRON
-neutron
+нейтронная
 STAR_BLACK
-black hole
+черная дыра
 
 
 # PlanetTypes
 
 PT_SWAMP
-swamp
+болотистая
 PT_TOXIC
-toxic
+токсичная
 PT_INFERNO
-inferno
+ад
 PT_RADIATED
-radiated
+радиационная
 PT_BARREN
-barren
+бесплодная
 PT_TUNDRA
-tundra
+тундра
 PT_DESERT
-desert
+пустыня
 PT_TERRAN
-terran
+земная
 PT_OCEAN
-ocean
+океан
 PT_ASTEROIDS
-asteroids
+астероиды
 PT_GASGIANT
-gas giant
+газовый гигант
 
 
 # Planet Sizes
 
 SZ_NOWORLD
-Nothing to see here; move along.
+Здесь не на что смотреть; пройти мимо
 SZ_TINY
-tiny
+крошечная
 SZ_SMALL
-small
+маленькая
 SZ_MEDIUM
-medium
+средняя
 SZ_LARGE
-large
+большая
 SZ_HUGE
-huge
+огромная
 SZ_ASTEROIDS
-asteroids
+астероиды
 SZ_GASGIANT
-gas giant
+газовый гигант
 
 
 # PlanetEnvironments
 
 PE_UNINHABITABLE
-uninhabitable
+непригодня для заселения
 PE_HOSTILE
-hostile
+враждебна
 PE_POOR
-poor
+плохая
 PE_ADEQUATE
-adequate
+адекватная
 PE_GOOD
-good
+хорошая
 
 
 # FocusTypes
 
 FOCUS_UNKNOWN
-unknown
+неизвестно
 FOCUS_BALANCED
-balanced
+сбалансировано
 FOCUS_FARMING
-farming
+фермерство
 FOCUS_INDUSTRY
-industry
+индустрия
 FOCUS_MINING
-mining
+добыча
 FOCUS_RESEARCH
-research
+исследования
 FOCUS_TRADE
-trade
+торговля
   
 
 # MeterTypes
 
 METER_POPULATION
-population
+население
 METER_FARMING
-farming
+фермы
 METER_INDUSTRY
-industry
+идустрия
 METER_RESEARCH
-research
+исследования
 METER_TRADE
-trade
+торговля
 METER_MINING
-mining
+добыча
 METER_CONSTRUCTION
-construction
+строительство
 METER_HEALTH
-health
+здоровье
 METER_FUEL
-fuel
+топливо
 METER_SUPPLY
-supply
+поддержка
 METER_STEALTH
-stealth
+скрытность
 METER_DETECTION
-detection
+обнаружение
 METER_SHIELD
-shield
+поле
 METER_DEFENSE
-defense
+защита
 
 
 # EmpireAffiliationTypes
@@ -2325,25 +2325,25 @@ DESC_COMPLEX_SET_METER_CURRENT
 # others
 
 DESC_SET_EMPIRE_STOCKPILE
-Sets the stockpile of %1% of the object's owner to %2%
+Устанавить запас %1% владельца объекта к %2%
 
 DESC_SET_EMPIRE_CAPITOL
-Makes the object the object's owner's capitol planet
+Сделать объект столичной планетой владельца объекта
 
 DESC_SET_PLANET_TYPE
-Changes the planet's type to %1%
+Изменить тип планеты на %1%
 
 DESC_SET_PLANET_SIZE
-Changes the planet's size to %1%
+Изменить тип планеты на %1%
 
 DESC_ADD_OWNER
-Adds ownership by empire %1% to object
+Добавить право собственности империи %1% на объект
 
 DESC_REMOVE_OWNER
-Removes ownership by empire %1% from object
+Отменить право собственности империи %1% на объект
 
 DESC_DESTROY
-Destroys object
+Уничтожить объект
 
 DESC_ADD_SPECIAL
 Attaches %1% special to object

@@ -123,6 +123,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\Button.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\Clr.h"
 					>
 				</File>
@@ -253,10 +257,6 @@
 				<Filter
 					Name="dialogs"
 					>
-					<File
-						RelativePath="..\..\..\GG\GG\Button.h"
-						>
-					</File>
 					<File
 						RelativePath="..\..\..\GG\GG\dialogs\ColorDlg.h"
 						>
