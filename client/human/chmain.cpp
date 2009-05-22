@@ -5,6 +5,8 @@
 #include "../../util/XMLDoc.h"
 #include "../../util/MultiplayerCommon.h"
 
+#include <GG/Ogre/Plugins/OISInput.h>
+
 #include <OgreCamera.h>
 #include <OgreLogManager.h>
 #include <OgreRenderSystem.h>
@@ -94,6 +96,7 @@ int main(int argc, char* argv[])
 
     Ogre::LogManager* log_manager = 0;
     Ogre::Root* root = 0;
+    OISInput* ois_input_plugin = 0;
 
     try {
         using namespace Ogre;
@@ -141,7 +144,12 @@ int main(int argc, char* argv[])
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
 
         HumanClientApp app(root, window, scene_manager, camera, viewport);
+#ifdef OGRE_STATIC_LIB
+        ois_input_plugin = new OISInput;
+        root->installPlugin(ois_input_plugin);
+#else
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
+#endif
         app();
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
@@ -163,7 +171,12 @@ int main(int argc, char* argv[])
     }
 
     if (root) {
+#ifdef OGRE_STATIC_LIB
+        root->uninstallPlugin(ois_input_plugin);
+        delete ois_input_plugin;
+#else
         root->unloadPlugin(OGRE_INPUT_PLUGIN_NAME);
+#endif
         delete root;
     }
 

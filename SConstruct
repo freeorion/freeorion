@@ -29,7 +29,7 @@ options.Add(BoolOption('release', 'Build for public release (random numbers are 
 options.Add(BoolOption('debug', 'Generate debug code', 0))
 options.Add(BoolOption('multithreaded', 'Generate multithreaded code', 1))
 if str(Platform()) == 'win32':
-    options.Add(BoolOption('dynamic', 'Generate a dynamic-link code', 1))
+    options.Add(BoolOption('dynamic', 'Generate dynamic-link code', 1))
 if WhereIs('ccache'):
     options.Add(BoolOption('use_ccache', 'Use ccache to build GG', 0))
 if WhereIs('distcc'):
@@ -232,6 +232,8 @@ if not env.GetOption('clean'):
         if pkg_config:
             if conf.CheckPkg('GiGiOgre', gigi_version):
                 env.ParseConfig('pkg-config --cflags --libs GiGiOgre')
+                if 'OGRE_STATIC_LIB' in env['CPPDEFINES']:
+                    env.AppendUnique(LIBS = 'GiGiOgrePlugin_OIS')
                 found_gg_pkg_config = True
 
         freeorion_boost_libs = [
