@@ -94,7 +94,7 @@ Part
     buildtime = 1
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/generic_part.png"
+    graphic = "icons/ship_parts/optical_sensors.png"
 
 Part
     name = "FU_DEUTERIUM_TANK"
