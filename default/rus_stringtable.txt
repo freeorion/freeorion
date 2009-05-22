@@ -1820,37 +1820,37 @@ TECHTONIC_INSTABILITY_SPECIAL
 Тектонически нестабильная
 
 TECHTONIC_INSTABILITY_SPECIAL_DESC
-Эта планета тектонически нестабильна. Частые землетрясения, цунами, вулканические извержения и непредсказуемые возхдействия поддержка на фундамент делают конструирование и разработку инфраструктуры трудными.
+Эта планета тектонически нестабильна. Частые землетрясения, цунами, вулканические извержения и непредсказуемые воздействия на фундамент делают конструирование и разработку инфраструктуры трудными.
 
 SOLID_CORE_SPECIAL
 Твердое ядро
 
 SOLID_CORE_SPECIAL_DESC
-У ядра этой планеты твердое ядро, и у неё очень слабое магнитное поле. Звездный ветер достигает поверхности относительно нефильрованым, что пагубно влияет на здоровье населения и ограничивает производство еды. 
+У ядра этой планеты твердое ядро, и очень слабое магнитное поле. Звездный ветер достигает поверхности относительно нефильтрованным, что пагубно влияет на здоровье населения и ограничивает производство пищи. 
 
 HIGH_AXIAL_TILT_SPECIAL
 Сильный наклон оси
 
 HIGH_AXIAL_TILT_SPECIAL_DESC
-This planet's rotational axis is highly tilted relative to its orbital plane.  Seasonal weather variations are particularly extreme and infrastructure development is significantly impeded.
+Ось вращения этой планеты сильно наклонена относительно ее орбиты. Сезонные погодные изменения практически экстремальны и развитие инфраструктуры чрезвычайно затруднено.
 
 SLOW_ROTATION_SPECIAL
-Very Slow Rotation
+Очень медленное вращение
 
 SLOW_ROTATION_SPECIAL_DESC
-This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth, food production and population capacity are reduced.
+У этой планеты очень медленное вращение вокруг своей оси, что делает очень долгими дни и ночи. Рост инфраструктуры, производство пищевых продуктов и размер населения уменьшены.
 
 TIDAL_LOCK_SPECIAL
-Tidally Locked Rotation
+Обращение лицом к звезде
 
 TIDAL_LOCK_SPECIAL_DESC
-This planet is tidally locked with the star it orbits.  Its day and year are the same duration, and one half of the planet is perpetually day, the other perpetually night.  Infrastructure growth is hampered, though once established, industrial capacity benefits from the locally stable surface conditions.
+Эта планета всегда обращена одной и той же стороной к звезде, вокруг которой она вращается. Ее день и год имеют одинаковую продолжительность. На одной стороне планеты вечный день, на другой ночь. Рочт инфраструктуры затруднен. Хотя однажды построенная, она будет извлекать выгоду из стабильного положения местной поверхности.
 
 ECCENTRIC_ORBIT_SPECIAL
-Eccentric Orbit
+Эксцентриситет орбиты
 
 ECCENTRIC_ORBIT_SPECIAL_DESC
-This planet's orbit is very eccentric.  It has a large distance between its closest and farthest approaches to its star.  Total insolation varies significantly throughout the year.  The varied conditions inhibit infrastructure development, but provide a beneficial platform for research.
+Орбита этой планеты имеет сильно вытянутую форму из-за чего очень велико расстояние между самым ближним и самым дальним положением планеты от солнца. Общая облучаемость планеты значительно отличается в течении года. Такая разница в условиях затрудняет развитие инфраструктуры, но дает преимущество в исследованиях.
 
 #######################
 # Enumeration  values #

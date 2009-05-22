@@ -23,6 +23,8 @@
       <PERSON name="stride"               nick=""                 task="Programming"/>
       <PERSON name="Ondrej Riha"          nick="OndrejR"          task="Programming"/>
       <PERSON name="Francesco Marass"     nick="francys"          task="Programming"/>
+      <PERSON name="Martin Wuttke"        nick="The Silent One"   task="Programming, German Translation, Graphics"/>
+      <PERSON name="Markus Sinner"        nick="kroddn"           task="Programming, German Translation"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"      nick="Aquitaine"        task="Game Design"/>
@@ -41,11 +43,11 @@
       <PERSON name="Benjamin Confino"     nick="Tortanick"        task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
+      <PERSON name="Mathias Köhler"           nick="pd"             task="Graphics Assistant Lead"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"         task="Graphics"/>
       <PERSON name="Ka"                       nick=""               task="Graphics"/>
       <PERSON name="Alex Kaludis"             nick="That Guy"       task="Graphics"/>
       <PERSON name="Chris Montgomery"         nick=""               task="Graphics"/>
-      <PERSON name="Mathias Köhler"           nick="pd"             task="Graphics Assistant Lead"/>
       <PERSON name="Anton Ruonala"            nick="Miu"            task="Graphics"/>
       <PERSON name="Tim Gilmour"              nick="burndaddy"      task="Graphics"/>
       <PERSON name="Zanzibar"                 nick=""               task="Graphics"/>
@@ -67,16 +69,15 @@
       <PERSON name="_Robbob_"               nick=""                 task="Audio"/>
     </GROUP>
     <GROUP name ="TRANSLATION">
-      <PERSON name="Martin Wuttke"        nick="The Silent One"     task="German Translation, Graphics, Programming"/>
       <PERSON name="Ivan Sanchez"         nick="Ivan s c"           task="Spanish Translation"/>
       <PERSON name="Myckel Habets"        nick="Myckel"             task="Dutch Translation"/>
       <PERSON name="Martin Roth"          nick="Captain Rage"       task="Swedish Translation"/>
-      <PERSON name="Markus Sinner"        nick="kroddn"             task="German Translation, Programming"/>
       <PERSON name="Fran Valenzuela"      nick="Synyestro"          task="Spanish Translation"/>
       <PERSON name="Guillaume"            nick="nyquist"            task="French Translation"/>
       <PERSON name="Wojciech Moch"        nick="Feagorn"            task="Polish Translation"/>
       <PERSON name="Łukasz Korpalski"     nick="Cyber Killer"       task="Polish Translation"/>
       <PERSON name="Mikko Maununen"       nick="MikkoM"             task="Finnish Translation"/>
+      <PERSON name="Vladimir Safronenkov" nick="pohlman"            task="Russian Translation"/>
       </GROUP>
   </CREDITS>
 </XMLDoc>

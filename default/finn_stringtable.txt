@@ -681,7 +681,7 @@ Poistu
 #Error Messages####
 
 ERR_CONNECT_TIMED_OUT
-Timed out while attempting to connect to server
+Aikakatkaisu yritettäessä yhdistää palvelimeen.
 
 ERR_VERSION_MISMATCH
 Ei voida yhdistää palvelimeen, koska pelaaja käyttää eri versioita seuraavista asetuksista ja/tai lähdetiedostoista: 
@@ -875,7 +875,7 @@ VISION
 Johtoajatus
 
 FREEORION_VISION
-FreeOrion, an open-source game based on Master of Orion, is a turn-based game of epic space strategy that builds on the classic '4X' model by incorporating the nation-building elements of games such as Europa Universalis 2 and a versatile tactical combat engine. While its modular, open-source design allows for a significant degree of customization of the game engine and the story elements by the community, the FreeOrion team is dedicated to the construction of a living, breathing universe in a 'grand campaign' model. 
+FreeOrion, avoimen lähdekoodin peli, joka perustuu Master Of Orioneihin, on vuoropohjainen, eeppinen avaruusstrategiapeli.  FreeOrion rakentuu klassiselle 4X pohjalle, hyödyntäen kansakunnan rakentamiselementtejä sellaisista peleistä kuten esimerkiksi Europa Universalis 2, ja sisältäen monipuolisen taktisen taistelumoottorin. Samalla kun pelin modulaarinen, avoimeen lähdekoodiin perustuva suunnittelu mahdollistaa pelimoottorin ja tarinan suurimuotoisen muokkaamisen, on FreeOrionin kehittäjäryhmän tavoitteena luoda elävä ja hengittävä universumi, ”suuren kampanjan” muodossa. 
 
 ###########################
 # Game Menu               #
@@ -1072,7 +1072,7 @@ OPTIONS_FLEET_SUPPLY_LINE_WIDTH
 Laivastojen täydennyslinjojen leveys 
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
-Fleet supply line dot spacing
+Laivastojen täydennyslinjojen pisteiden välit.
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Tähtilinjojen oletusväri
@@ -1186,10 +1186,10 @@ OPTIONS_EDIT_COLORS
 Muuta kontrolleja
 
 OPTIONS_HIGHLIGHT_COLOR
-Selection highlighting
+Valinnan korostaminen
 
 OPTIONS_INTERIOR_COLOR
-Interior
+Sisäpuoli
 
 OPTIONS_WINDOW_COLORS
 Ikkunat
@@ -3590,10 +3590,10 @@ SHP_LIGHTHOUSE_DESC
 Useful for ships traveling into and out of a system by starlanes, Interstellar "Lighthouses" indicate the location of a starlane entrance in a system, and also make the lane safely navigable in either direction.  Use of the lane is made significantly safer.
 
 SHP_FLEET_LOGISTICS
-Fleet Logistics
+Laivaston logistiikka
 
 SHP_FLEET_LOGISTICS_DESC
-Gives planets ability to resupply fleets in systems several starlane jumps away.
+Antaa planeetoille kyvyn täydentää laivastoja useiden tähtilinjahyppyjen päässä sijaitsevissa tähtijärjestelmissä.
 
 SHP_SUSPENDED_ANIMATION
 Suspended Animation
@@ -3602,16 +3602,16 @@ SHP_SUSPENDED_ANIMATION_DESC
 Through chemical manipulation and cryonics, life processes may be halted without terminating them permanently.  Beings in this state are preserved indefinitely, consume no resources and require very little storage - not living - space.  With this technique, the capacity of colony ships can be greatly increased.
 
 SHP_ION_CANNON
-Ion Cannon
+Ionikanuuna
 
 SHP_ION_CANNON_DESC
-Unlocks Ion Cannon ship part.
+Avaa Ionikanuunan, aluksen osan.
 
 SHP_NUCLEAR_MISSILE
-Nuclear Missile
+Ydinohjus
 
 SHP_NUCLEAR_MISSILE_DESC
-Unlocks Nuclear Missile ship part.
+Avaa ydinohjuksen, aluksen osa.
 
 SHP_DEFLECTOR
 Deflector Shield
@@ -3620,16 +3620,16 @@ SHP_DEFLECTOR_DESC
 Unlocks Deflector Shield ship part.
 
 SHP_RADAR
-Active Radar
+Aktiivitutka
 
 SHP_RADAR_DESC
-Unlocks Active Radar ship part.
+Avaa aktiivitutkan, aluksen osa.
 
 SHP_DEUTERIUM_TANK
-Deuterium Tank
+Deuteriumtankki
 
 SHP_DEUTERIUM_TANK_DESC
-Unlocks Deuterium Tank ship part.
+Avaa Deuteriumtankin, aluksen osa.
 
 SHP_MEDIUM_HULL
 Keskikokoiset alusten rungot
@@ -3946,7 +3946,7 @@ SR_LASER_DESC
 Alhainen vahinkotaso ja massa
 
 SR_ION_CANNON
-Ioni Kanuuna
+Ionikanuuna
 SR_ION_CANNON_DESC
 Keskinkertainen vahinkotaso ja massa
 
@@ -3969,13 +3969,13 @@ DT_OPTICAL_SENSORS_DESC
 Perushavainnointikyky
 
 FU_DEUTERIUM_TANK
-Deuterium Tankki
+Deuteriumtankki
 
 FU_DEUTERIUM_TANK_DESC
 Small increase to ship range by increasing fuel capacity.  Bulky and vulnerable to weapons fire.
 
 FU_ANTIMATTER_TANK
-Antimateria Tankki
+Antimateriatankki
 
 FU_ANTIMATTER_TANK_DESC
 Moderate increase to ship range by increasing fuel capacity.  Compact and low mass.
