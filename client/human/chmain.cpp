@@ -59,10 +59,15 @@ int main(int argc, char* argv[])
 #endif
             );
         XMLDoc doc;
-        boost::filesystem::ifstream ifs(GetConfigPath());
-        doc.ReadDoc(ifs);
-        ifs.close();
-        GetOptionsDB().SetFromXML(doc);
+
+        {
+            boost::filesystem::ifstream ifs(GetConfigPath());
+            if (ifs) {
+                doc.ReadDoc(ifs);
+                GetOptionsDB().SetFromXML(doc);
+            }
+        }
+
         GetOptionsDB().SetFromCommandLine(argc, argv);
         bool early_exit = false;
         if (GetOptionsDB().Get<bool>("help")) {
@@ -76,12 +81,17 @@ int main(int argc, char* argv[])
         if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("settings-dir"))))
             GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").directory_string());
 #endif
-        
+
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             GetOptionsDB().Remove("generate-config-xml");
+
             boost::filesystem::ofstream ofs(GetConfigPath());
-            GetOptionsDB().GetXML().WriteDoc(ofs);
-            ofs.close();
+            if (ofs) {
+                GetOptionsDB().GetXML().WriteDoc(ofs);
+            } else {
+                std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+                std::cerr << GetConfigPath().file_string() << std::endl;
+            }
         }
         if (early_exit)
             return 0;

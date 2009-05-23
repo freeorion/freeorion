@@ -199,6 +199,9 @@ Print this help message.
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
 
+UNABLE_TO_WRITE_CONFIG_XML
+Unable to write config.xml file
+
 OPTIONS_DB_MUSIC_OFF
 Disables music in the game.
 
