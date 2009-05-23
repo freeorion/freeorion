@@ -63,14 +63,18 @@ public:
 
     //! \name Mutators //!@{
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
     virtual void    Render();
     void            ManualRender(double halo_scale_factor);     //!< Draw disc and halo textures
+
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+
     void            SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 
     void            Refresh();                      //!< Resets system name text and calls RefreshFleetButtons().  Should be called after an icon is attached to the map

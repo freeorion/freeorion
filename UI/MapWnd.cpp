@@ -2306,6 +2306,15 @@ int MapWnd::SystemIconSize() const
     return static_cast<int>(ClientUI::SystemIconSize() * ZoomFactor());
 }
 
+int MapWnd::SystemNamePts() const
+{
+    const int       SYSTEM_NAME_MINIMUM_PTS = 6;    // limit to absolute minimum point size
+    const double    MAX_NAME_ZOOM_FACTOR = 1.5;     // limit to relative max above standard UI font size
+    const double    NAME_ZOOM_FACTOR = std::min(MAX_NAME_ZOOM_FACTOR, ZoomFactor());
+    const int       ZOOMED_PTS = static_cast<int>(ClientUI::Pts() * NAME_ZOOM_FACTOR);
+    return std::max(ZOOMED_PTS, SYSTEM_NAME_MINIMUM_PTS);
+}
+
 double MapWnd::SystemHaloScaleFactor() const
 {
     return 1.0 + log10(ZoomFactor());

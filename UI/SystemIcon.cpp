@@ -171,8 +171,6 @@ void SystemIcon::Init() {
     // state change signals for system itself and fleets in it
     Connect(m_system.StateChangedSignal,    &SystemIcon::Refresh,       this);
 
-    SetName(m_system.Name());
-
     // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
 
@@ -197,6 +195,7 @@ SystemIcon::~SystemIcon()
     delete m_selection_indicator;
     delete m_mouseover_indicator;
     delete m_tiny_graphic;
+    delete m_colored_name;
 }
 
 const System& SystemIcon::GetSystem() const
@@ -346,7 +345,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     if (m_mouseover_indicator)
         m_mouseover_indicator->SizeMove(ind_ul, ind_lr);
 
-    PositionSystemName();
+    Refresh();
 }
 
 void SystemIcon::Render()
@@ -403,8 +402,10 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         AttachChild(m_mouseover_indicator);
         MoveChildUp(m_mouseover_indicator);
     }
-    if (m_colored_name)
-        m_colored_name->Show();
+
+    // show system name if not by default
+    if (!m_showing_name)
+        AttachChild(m_colored_name);
 
     PlaySystemIconRolloverSound();
 
@@ -417,10 +418,17 @@ void SystemIcon::MouseLeave()
     if (m_mouseover_indicator) {
         DetachChild(m_mouseover_indicator);
     }
-    if (!m_showing_name && m_colored_name)
-        m_colored_name->Hide();
+
+    // hide name if not showing by default
+    if (!m_showing_name)
+        DetachChild(m_colored_name);
 
     MouseLeavingSignal(m_system.ID());
+}
+
+void SystemIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+{
+    ForwardEventToParent();
 }
 
 void SystemIcon::SetSelected(bool selected)
@@ -441,30 +449,42 @@ void SystemIcon::SetSelected(bool selected)
 
 void SystemIcon::Refresh()
 {
-    SetName(m_system.Name());
+    SetName(m_system.Name());   // sets GG::Control name.  doesn't affect displayed system name
 
-    // set up the name text controls
+    // remove existing system name control
+    delete m_colored_name;  m_colored_name = 0;
+
+    // create new system name control
     if (!m_system.Name().empty()) {
-        delete m_colored_name;
-        m_colored_name = new OwnerColoredSystemName(m_system, ClientUI::Pts() + 3);
-        AttachChild(m_colored_name);
-        m_showing_name = true;
+        // get font size
+        int name_pts = ClientUI::Pts();
+        if (const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd()) {
+            name_pts = map_wnd->SystemNamePts();
+        }
+
+        // create and position
+        m_colored_name = new OwnerColoredSystemName(m_system, name_pts);
         PositionSystemName();
+
+        // attach if appropriate, to display
+        if (m_showing_name)
+            AttachChild(m_colored_name);
     }
 }
 
 void SystemIcon::ShowName()
 {
-    if (m_colored_name)
-        m_colored_name->Show();
     m_showing_name = true;
+    if (!m_colored_name)
+        Refresh();
+    else
+        AttachChild(m_colored_name);
 }
 
 void SystemIcon::HideName()
 {
-    if (m_colored_name)
-        m_colored_name->Hide();
     m_showing_name = false;
+    DetachChild(m_colored_name);
 }
 
 void SystemIcon::PositionSystemName()

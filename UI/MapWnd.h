@@ -72,16 +72,29 @@ public:
 
     double                      ZoomFactor() const;
     int                         SystemIconSize() const;
+    int                         SystemNamePts() const;
     double                      SystemHaloScaleFactor() const;
-    FleetButton::SizeType       FleetButtonSizeType() const;                    //!< returns what size type (tiny, small, large) fleet buttons on this map are shown at
+
+    /** returns what size type (tiny, small, large) fleet buttons on this map
+      * are shown at */
+    FleetButton::SizeType       FleetButtonSizeType() const;
 
     SidePanel*                  GetSidePanel() const;
-    void                        GetSaveGameUIData(SaveGameUIData& data) const;   //!< populates the relevant UI state that should be restored after a save-and-load cycle
-    bool                        InProductionViewMode() const;                    //!< returns true iff this MapWnd is visible and usable for interaction, but the allowed interactions are restricted to those appropriate to the production screen
 
-    /* returns the position on the screen that corresponds to the specified universe X and Y coordinates. */
+    /** populates the relevant UI state that should be restored after a
+      * save-and-load cycle */
+    void                        GetSaveGameUIData(SaveGameUIData& data) const;
+
+    /** returns true iff this MapWnd is visible and usable for interaction, but
+      * the allowed interactions are restricted to those appropriate to the
+      * production screen */
+    bool                        InProductionViewMode() const;
+
+    /** returns the position on the screen that corresponds to the specified
+      * universe X and Y coordinates. */
     GG::Pt                      ScreenCoordsFromUniversePosition(double universe_x, double universe_y) const;
-    /* returns the universe position (X and Y in pair) that corresponds to the specified screen coordinates. */
+    /** returns the universe position (X and Y in pair) that corresponds to
+      * the specified screen coordinates. */
     std::pair<double, double>   UniversePositionFromScreenCoords(GG::Pt screen_coords) const;
     //!@}
 
