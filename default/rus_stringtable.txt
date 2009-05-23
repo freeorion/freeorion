@@ -1742,7 +1742,6 @@ TURN_PROGRESS_PHASE_ORDERS
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Загрузка данных новой игры...
-Downloading new game state ...
 
 
 ########################
@@ -2906,13 +2905,13 @@ PRO_ORBITAL_GEN_DESC
 Низкая орбита планетарных спутников предоставляет некоторые выгоды при производстве энергии. На спутниках нет атмосферы, задерживающей излучение от ближайшей звезды, низкая гравитация спутников планеты позволяет собрать энергитические комплексы превосходящие поверхностные станции, это является огромным преимуществом. Получающаяся энергия может использоваться на орбите или может быть излучена к планете, чтобы поддержать промыщленность на её поверхности. Также, на орбите становятся доступными новые механизмы преобразования энергии, включая использование планетарного магнитного поля, орбитальный обмен импульса, и фрикционное нагревание о планетарную атмосферу, которые очень выгодны для специализированных областей
 
 PRO_SENTIENT_AUTOMATION
-Sentient Automation
+Разумная автоматика
 
 PRO_SENTIENT_AUTOMATION_DESC
-As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
+Поскольку оборудование становится все более и более автоматизированным, оно приобретает способность к полному собственному копированию и обслуживанию без внешней поддержки, кроме обеспечения необходимым сырьем и материалами, для производства конечного продукта. Когда оборудование управляется искусственным разумом, вся система может учиться, планировать, реагировать, и адаптироваться автономно, и может делать это без громоздкой, неэффективной, традиционной схемой с наймом и предоставлением жилья рабочим.
 
 PRO_FRC_FLD_ASSMB
-Force-Field Assembly
+Монтаж силовыми полями
 
 PRO_FRC_FLD_ASSMB_DESC
 Whether effected through artificial means, or psychokinesis, or a combination thereof, remote manipulation represents a revolutionary improvement in assembly techniques.  At nanoscopic scales, fully controlled chemical reactions and custom assembled molecules become almost trivial.  At larger scales, up to and including manipulation of celestial bodies, locally reactionless and non-contact force impartion permit previously impossible non-destructive testing, and are particularly suited to manipulation within an enclosed or covered region, without compromising isolation seals, nor removing masses of previously obstructing matter.

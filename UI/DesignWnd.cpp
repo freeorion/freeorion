@@ -1197,7 +1197,7 @@ private:
 
 DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     CUIWnd(UserString("DESIGN_WND_STARTS"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::ONTOP | GG::DRAGABLE),
-    m_empire_id(-1),
+    m_empire_id(ALL_EMPIRES),
     m_tabs(0),
     m_hulls_list(0),
     m_designs_list(0)
@@ -1222,6 +1222,7 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_hulls_list->ShowEmptyHulls(false);
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     GG::Connect(m_hulls_list->HullBrowsedSignal,                DesignWnd::BaseSelector::HullBrowsedSignal);
+    m_tabs->SetCurrentWnd(0);
 
     m_designs_list = new BasesListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
@@ -1229,20 +1230,20 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
     GG::Connect(m_designs_list->DesignBrowsedSignal,            DesignWnd::BaseSelector::DesignBrowsedSignal);
 
-    //m_saved_designs_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
-    m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
-                                       ClientUI::GetFont(),
-                                       ClientUI::TextColor()),
-                   UserString("DESIGN_WND_SAVED_DESIGNS"));
+    ////m_saved_designs_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
+    //m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
+    //                                   ClientUI::GetFont(),
+    //                                   ClientUI::TextColor()),
+    //               UserString("DESIGN_WND_SAVED_DESIGNS"));
 
-    //m_templates_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
-    m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
-                                       ClientUI::GetFont(),
-                                       ClientUI::TextColor()),
-                   UserString("DESIGN_WND_TEMPLATES"));
+    ////m_templates_list = new CUIListBox(GG::X0, GG::Y0, GG::X(10), GG::X(10));
+    //m_tabs->AddWnd(new GG::TextControl(GG::X0, GG::Y0, GG::X(30), GG::Y(20), UserString("DESIGN_NO_PART"),
+    //                                   ClientUI::GetFont(),
+    //                                   ClientUI::TextColor()),
+    //               UserString("DESIGN_WND_TEMPLATES"));
 
     DoLayout();
-    ShowAvailability(true, true);   // default to showing available and hiding unavailable bases.  populate lists.
+    ShowAvailability(true, false);   // default to showing available unavailable bases.
 }
 
 void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2025,9 +2026,8 @@ void DesignWnd::AddDesign() {
 
     const std::string& description = m_main_panel->DesignDescription();
 
-    const HullType* hull = GetHullType(hull_name);
     std::string graphic = "hulls_design/generic_hull.png";
-    if (hull)
+    if (const HullType* hull = GetHullType(hull_name))
         graphic = hull->Graphic();
 
     // create design from stuff chosen in UI
