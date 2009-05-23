@@ -30,10 +30,12 @@
 #include <iostream>
 
 
-#ifdef FREEORION_WIN32
-#  define OGRE_INPUT_PLUGIN_NAME "GiGiOgrePlugin_OIS.dll"
-#else
-#  define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
+#ifndef OGRE_STATIC_LIB
+#  ifdef FREEORION_WIN32
+#    define OGRE_INPUT_PLUGIN_NAME "GiGiOgrePlugin_OIS.dll"
+#  else
+#    define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
+#  endif
 #endif
 
 int main(int argc, char* argv[])
@@ -42,14 +44,14 @@ int main(int argc, char* argv[])
 
     // read and process command-line arguments, if any
     try {
-        GetOptionsDB().AddFlag('h', "help", "OPTIONS_DB_HELP");
-        GetOptionsDB().AddFlag('g', "generate-config-xml", "OPTIONS_DB_GENERATE_CONFIG_XML");
-        GetOptionsDB().AddFlag('m', "music-off", "OPTIONS_DB_MUSIC_OFF");
-        GetOptionsDB().Add<std::string>("bg-music", "OPTIONS_DB_BG_MUSIC", "artificial_intelligence_v3.ogg");
+        GetOptionsDB().AddFlag('h', "help",                 "OPTIONS_DB_HELP");
+        GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML");
+        GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF");
+        GetOptionsDB().Add<std::string>("bg-music",         "OPTIONS_DB_BG_MUSIC",      "artificial_intelligence_v3.ogg");
 
         // The false/true parameter below controls whether this option is stored in the XML config file.  On Win32 it is
         // not, because the installed version of FO is run with the command-line flag added in as appropriate.
-        GetOptionsDB().AddFlag('f', "fullscreen", "OPTIONS_DB_FULLSCREEN",
+        GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",
 #ifdef FREEORION_WIN32
                                false
 #else
@@ -100,15 +102,15 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    Ogre::LogManager* log_manager = 0;
-    Ogre::Root* root = 0;
+    Ogre::LogManager*       log_manager = 0;
+    Ogre::Root*             root = 0;
 
 #ifdef OGRE_STATIC_LIB
-    OISInput* ois_input_plugin = 0;
-    Ogre::CgPlugin* cg_plugin = 0;
-    Ogre::OctreePlugin* octree_plugin = 0;
+    OISInput*               ois_input_plugin = 0;
+    Ogre::CgPlugin*         cg_plugin = 0;
+    Ogre::OctreePlugin*     octree_plugin = 0;
     Ogre::ParticleFXPlugin* particle_fx_plugin = 0;
-    Ogre::GLPlugin* gl_plugin = 0;
+    Ogre::GLPlugin*         gl_plugin = 0;
 #endif
 
     try {

@@ -78,7 +78,8 @@ std::map<char, std::string> OptionsDB::Option::short_names;
 OptionsDB::Option::Option()
 {}
 
-OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_, const std::string& default_value_, const std::string& description_, 
+OptionsDB::Option::Option(char short_name_, const std::string& name_, const boost::any& value_,
+                          const boost::any& default_value_, const std::string& description_,
                           const ValidatorBase* validator_, bool storable_) :
     name(name_),
     short_name(short_name_),
@@ -93,7 +94,7 @@ OptionsDB::Option::Option(char short_name_, const std::string& name_, const boos
         short_names[short_name_] = name;
 }
 
-void OptionsDB::Option::FromString(const std::string& str)
+void OptionsDB::Option::SetFromString(const std::string& str)
 {
     if (validator) { // non-flag
         value = validator->Validate(str);
@@ -102,12 +103,21 @@ void OptionsDB::Option::FromString(const std::string& str)
     }
 }
 
-std::string OptionsDB::Option::ToString() const
+std::string OptionsDB::Option::ValueToString() const
 {
     if (validator) { // non-flag
         return validator->String(value);
     } else { // flag
         return boost::lexical_cast<std::string>(boost::any_cast<bool>(value));
+    }
+}
+
+std::string OptionsDB::Option::DefaultValueToString() const
+{
+    if (validator) { // non-flag
+        return validator->String(default_value);
+    } else { // flag
+        return boost::lexical_cast<std::string>(boost::any_cast<bool>(default_value));
     }
 }
 
@@ -139,19 +149,28 @@ void OptionsDB::Validate(const std::string& name, const std::string& value) cons
     }
 }
 
+std::string OptionsDB::GetValueString(const std::string& option_name) const
+{
+    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    if (it == m_options.end())
+        throw std::runtime_error(("OptionsDB::GetValueString(): No option called \"" + option_name + "\" could be found.").c_str());
+    return it->second.ValueToString();
+}
+
+std::string OptionsDB::GetDefaultValueString(const std::string& option_name) const
+{
+    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
+    if (it == m_options.end())
+        throw std::runtime_error(("OptionsDB::GetDefaultValueString(): No option called \"" + option_name + "\" could be found.").c_str());
+    return it->second.DefaultValueToString();
+}
+
 const std::string& OptionsDB::GetDescription(const std::string& option_name) const
 {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
     if (it == m_options.end())
         throw std::runtime_error(("OptionsDB::GetDescription(): No option called \"" + option_name + "\" could be found.").c_str());
     return it->second.description;
-}
-const std::string& OptionsDB::GetDefaultValue(const std::string& option_name) const
-{
-    std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
-    if (it == m_options.end())
-        throw std::runtime_error(("OptionsDB::GetDefaultValue(): No option called \"" + option_name + "\" could be found.").c_str());
-    return it->second.default_value;
 }
 
 boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const
@@ -204,7 +223,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         }
         if (it->second.validator) {
             std::stringstream stream;
-            stream << UserString("COMMAND_LINE_DEFAULT") << it->second.default_value;
+            stream << UserString("COMMAND_LINE_DEFAULT") << it->second.DefaultValueToString();
             if (80 < curr_column + stream.str().size() + 3) {
                 os << "\n" << std::string(description_column, ' ') << stream.str() << "\n";
             } else {
@@ -257,7 +276,7 @@ XMLDoc OptionsDB::GetXML() const
 
         XMLElement temp(name);
         if (it->second.validator) { // non-flag
-            temp.SetText(it->second.ToString());
+            temp.SetText(it->second.ValueToString());
         } else { // flag
             if (!boost::any_cast<bool>(it->second.value))
                 continue;
@@ -320,7 +339,7 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
                         throw std::runtime_error("the option \"" + option.name + 
                                                  "\" was followed by the parameter \"" + value_str + 
                                                  "\", which appears to be an option flag, not a parameter value, because it begins with a \"-\" character.");
-                    option.FromString(value_str);
+                    option.SetFromString(value_str);
                 } catch (const std::exception& e) {
                     throw std::runtime_error("OptionsDB::SetFromCommandLine() : the following exception was caught when attemptimg to set option \"" + option.name + "\": " + e.what() + "\n\n");
                 }
@@ -354,7 +373,7 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
                         if (j < single_char_options.size() - 1)
                             throw std::runtime_error(std::string("Option \"-") + single_char_options[j] + "\" was given with no parameter.");
                         else
-                            option.FromString(argv[++i]);
+                            option.SetFromString(argv[++i]);
                     } else { // flag
                         option.value = true;
                     }
@@ -395,7 +414,7 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
         }
 
         try {
-            option.FromString(option_value);
+            option.SetFromString(option_value);
         } catch (const std::exception& e) {
             Logger().errorStream() << "OptionsDB::SetFromXMLRecursive() : while processing config.xml the following exception was caught when attemptimg to set option \"" << option_name << "\": " << e.what();
             return;

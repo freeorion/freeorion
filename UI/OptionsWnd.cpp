@@ -488,7 +488,9 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
-    ColorSelector* color_selector = new ColorSelector(GG::X0, GG::Y0, GG::X1, GG::Y(ClientUI::Pts() + 4), GetOptionsDB().Get<StreamableColor>(option_name).ToClr());
+    ColorSelector* color_selector = new ColorSelector(GG::X0, GG::Y0, GG::X1, GG::Y(ClientUI::Pts() + 4),
+                                                      GetOptionsDB().Get<StreamableColor>(option_name).ToClr(),
+                                                      GetOptionsDB().GetDefault<StreamableColor>(option_name).ToClr());
     color_selector->SetMaxSize(GG::Pt(color_selector->MaxSize().x, color_selector->Size().y));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2);
     layout->Add(text_control, 0, 0);

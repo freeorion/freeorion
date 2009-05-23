@@ -1099,8 +1099,9 @@ void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it)
 ///////////////////////////////////////
 // class ColorSelector
 ///////////////////////////////////////
-ColorSelector::ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color) :
-    Control(x, y, w, h)
+ColorSelector::ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color) :
+    Control(x, y, w, h),
+    m_default_color(default_color)
 {
     SetColor(color);
 }
@@ -1132,6 +1133,25 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         GG::Clr clr = dlg.Result();
         SetColor(clr);
         ColorChangedSignal(clr);
+    }
+}
+
+void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    GG::MenuItem menu_contents;
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RESET"), 1, false, false));
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents,
+                        ClientUI::TextColor(), ClientUI::WndOuterBorderColor(), m_default_color);
+
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 1: // reset colour option to default value
+            SetColor(m_default_color);
+            ColorChangedSignal(m_default_color);
+        default:
+            break;
+        }
     }
 }
 

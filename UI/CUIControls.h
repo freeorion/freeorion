@@ -445,15 +445,19 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color);
+    ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color);
     //@}
 
     /** \name Mutators */ //@{
     virtual void Render();
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
     mutable ColorChangedSignalType ColorChangedSignal;
+
+private:
+    GG::Clr m_default_color;
 };
 
 /** A GG file dialog in the FreeOrion style. */
