@@ -27,11 +27,10 @@ namespace {
         BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
             CUIListBox(x, y, w, h)
         {}
-        virtual void GainingFocus()
-            {
-                DeselectAll();
-                SelChangedSignal(Selections());
-            }
+        virtual void GainingFocus() {
+            DeselectAll();
+            SelChangedSignal(Selections());
+        }
     };
 
     struct ToggleBuildTypeFunctor {

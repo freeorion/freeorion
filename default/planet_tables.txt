@@ -21,7 +21,7 @@ GasGiant                                0               0           0           
 
 <1x5>
 PlanetEnvHealthMod                      Uninhabitable   Hostile     Poor        Adequate    Good
-Health                                  0               10          15          20          25
+Health                                  0               10          15          25          30
 
 <1x5>
 PlanetEnvFarmingMod                     Uninhabitable   Hostile     Poor        Adequate    Good
