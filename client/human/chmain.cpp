@@ -1,11 +1,17 @@
+#ifdef OGRE_STATIC_LIB
+#include "OgrePlugins/OgreCgPlugin.h"
+#include "OgrePlugins/OgreOctreePlugin.h"
+#include "OgrePlugins/OgreParticleFXPlugin.h"
+#include "OgrePlugins/OgreGLPlugin.h"
+#include <GG/Ogre/Plugins/OISInput.h>
+#endif
+
 #include "HumanClientApp.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
 #include "../../util/XMLDoc.h"
 #include "../../util/MultiplayerCommon.h"
-
-#include <GG/Ogre/Plugins/OISInput.h>
 
 #include <OgreCamera.h>
 #include <OgreLogManager.h>
@@ -97,6 +103,10 @@ int main(int argc, char* argv[])
     Ogre::LogManager* log_manager = 0;
     Ogre::Root* root = 0;
     OISInput* ois_input_plugin = 0;
+    Ogre::CgPlugin* cg_plugin = 0;
+    Ogre::OctreePlugin* octree_plugin = 0;
+    Ogre::ParticleFXPlugin* particle_fx_plugin = 0;
+    Ogre::GLPlugin* gl_plugin = 0;
 
     try {
         using namespace Ogre;
@@ -146,7 +156,15 @@ int main(int argc, char* argv[])
         HumanClientApp app(root, window, scene_manager, camera, viewport);
 #ifdef OGRE_STATIC_LIB
         ois_input_plugin = new OISInput;
+        cg_plugin = new Ogre::CgPlugin;
+        octree_plugin = new Ogre::OctreePlugin;
+        particle_fx_plugin = new Ogre::ParticleFXPlugin;
+        gl_plugin = new Ogre::GLPlugin;
         root->installPlugin(ois_input_plugin);
+        root->installPlugin(cg_plugin);
+        root->installPlugin(octree_plugin);
+        root->installPlugin(particle_fx_plugin);
+        root->installPlugin(gl_plugin);
 #else
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif
@@ -173,7 +191,15 @@ int main(int argc, char* argv[])
     if (root) {
 #ifdef OGRE_STATIC_LIB
         root->uninstallPlugin(ois_input_plugin);
+        root->uninstallPlugin(cg_plugin);
+        root->uninstallPlugin(octree_plugin);
+        root->uninstallPlugin(particle_fx_plugin);
+        root->uninstallPlugin(gl_plugin);
         delete ois_input_plugin;
+        delete cg_plugin;
+        delete octree_plugin;
+        delete particle_fx_plugin;
+        delete gl_plugin;
 #else
         root->unloadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif

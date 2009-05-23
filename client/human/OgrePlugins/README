@@ -1,0 +1,15 @@
+These files were copied here straight out of the Ogre source tree.  These
+headers are needed for producing a statically-linked Linux build.  They must
+be manually kept in sync with the version of Ogre used to compile FreeOrion.
+
+The files (recursively) copied from the Ogre source tree were:
+
+ogre/PlugIns/CgProgramManager/include/*.h
+ogre/PlugIns/OctreeSceneManager/include/*.h
+ogre/PlugIns/ParticleFX/include/*.h
+ogre/RenderSystems/GL/include/*.h
+ogre/RenderSystems/GL/src/GLSL/include/*.h
+
+except for the conflicting OpenGL headers supplied by Ogre were removed:
+
+ogre/RenderSystems/GL/include/*gl*.h

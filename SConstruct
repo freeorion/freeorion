@@ -229,11 +229,12 @@ if not env.GetOption('clean'):
         pkg_config = conf.CheckPkgConfig('0.15.0')
 
         found_gg_pkg_config = False
+        building_static = False
         if pkg_config:
             if conf.CheckPkg('GiGiOgre', gigi_version):
                 env.ParseConfig('pkg-config --cflags --libs GiGiOgre')
                 if 'OGRE_STATIC_LIB' in env['CPPDEFINES']:
-                    env.AppendUnique(LIBS = 'GiGiOgrePlugin_OIS')
+                    building_static = True
                 found_gg_pkg_config = True
 
         freeorion_boost_libs = [
@@ -457,6 +458,22 @@ if not env.GetOption('clean'):
         # zlib
         if str(Platform()) == 'win32':
             AppendPackagePaths('zlib', env)
+
+        if building_static:
+            env.AppendUnique(CPPPATH = './client/human/OgrePlugins')
+            ogre_lib_path = '/usr/local/lib/OGRE/'
+            env.AppendUnique(LIBS = [
+                'GiGiOgrePlugin_OIS'
+                ])
+            env.AppendUnique(LINKFLAGS = [
+                ogre_lib_path + 'RenderSystem_GL.a',
+                ogre_lib_path + 'Plugin_CgProgramManager.a',
+                ogre_lib_path + 'Plugin_OctreeSceneManager.a',
+                ogre_lib_path + 'Plugin_ParticleFX.a'
+                ])
+            f = open('ogre_plugins.cfg', 'w')
+            f.write('')
+            f.close()
 
         # finish config and save results for later
         conf.CheckConfigSuccess(True)
