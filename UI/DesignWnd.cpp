@@ -2038,7 +2038,5 @@ void DesignWnd::AddDesign() {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ShipDesignOrder(empire_id, new_design_id, design)));
 
-    EmpireDesignsChangedSignal();
-
     Logger().debugStream() << "Added new design: " << design.Name();
 }

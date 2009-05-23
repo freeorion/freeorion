@@ -2051,6 +2051,7 @@ void Empire::AddShipDesign(int ship_design_id)
         // design in not valid
         throw std::invalid_argument("Empire::AddShipDesign(int ship_design_id) was passed a design id that this empire doesn't know about, or that doesn't exist");
     }
+    ShipDesignsChangedSignal();
 }
 
 int Empire::AddShipDesign(ShipDesign* ship_design)
