@@ -604,8 +604,10 @@ SCONNECT_WINDOW_TITLE
 
 LAN_GAME_LABEL
 Игра по сети:
+
 INTERNET_GAME_LABEL
 Интернет игра:
+
 PLAYER_NAME_LABEL
 Имя игрока
 
@@ -674,29 +676,40 @@ GSETUP_NUMBER_AIS
 
 GSETUP_STARS
 Звезды
+
 GSETUP_SHAPE
 Форма галактики
+
 GSETUP_AGE
 Возраст галактики
+
 GSETUP_STARLANE_FREQ
 Межзвездных путей
+
 GSETUP_PLANET_DENSITY
 Количество планет
+
 GSETUP_SPECIALS_FREQ
 Случайные события
 
 GSETUP_2ARM
 Спираль, 2-рукава
+
 GSETUP_3ARM
 Спираль, 3-рукава
+
 GSETUP_4ARM
 Спираль, 4-рукава
+
 GSETUP_CLUSTER
 Кластер
+
 GSETUP_ELLIPTICAL
 Эллиптичечкая
+
 GSETUP_IRREGULAR
 Неправильной формы
+
 GSETUP_RING
 Кольцо
 
@@ -723,15 +736,19 @@ GSETUP_VERY_MANY
 
 GSETUP_LOW
 Низкая
+
 GSETUP_MEDIUM
 Средняя
+
 GSETUP_HIGH
 Высокая
 
 GSETUP_RARE
 Редко
+
 GSETUP_UNCOMMON
 Нечасто
+
 GSETUP_COMMON
 Часто
 
@@ -1629,6 +1646,7 @@ ENC_RP
 # %1% will be the max cost per turn (a number, the max amount that can be spent per turn on this thing)
 # %2% will be one of ENC_PP or END_RP, depending on what the thing shown costs to build / research
 # %3% will be the minimum number of turns it takes to produce or research the thing shown
+
 ENC_COST_AND_TURNS_STR
 %3% ходов @ %1% %2% / ход
 
@@ -1859,35 +1877,47 @@ ECCENTRIC_ORBIT_SPECIAL_DESC
 # UniverseObjectTypes
 
 OBJ_BUILDING
-building
+строение
+
 OBJ_SHIP
-ship
+корабль
+
 OBJ_FLEET
-fleet
+флот
+
 OBJ_PLANET
-planet
+планета
+
 OBJ_POP_CENTER
-population center
+центр населения
+
 OBJ_PROD_CENTER
-production center
+продуктовый центр
+
 OBJ_SYSTEM
-system
+система
 
 
 # StarTypes
 
 STAR_BLUE
 голубая
+
 STAR_WHITE
 белая
+
 STAR_YELLOW
 желтая
+
 STAR_ORANGE
 оранжевая
+
 STAR_RED
 красная
+
 STAR_NEUTRON
 нейтронная
+
 STAR_BLACK
 черная дыра
 
@@ -1896,24 +1926,34 @@ STAR_BLACK
 
 PT_SWAMP
 болотистая
+
 PT_TOXIC
 токсичная
+
 PT_INFERNO
 ад
+
 PT_RADIATED
 радиационная
+
 PT_BARREN
 бесплодная
+
 PT_TUNDRA
 тундра
+
 PT_DESERT
 пустыня
+
 PT_TERRAN
 земная
+
 PT_OCEAN
 океан
+
 PT_ASTEROIDS
 астероиды
+
 PT_GASGIANT
 газовый гигант
 
@@ -1922,32 +1962,42 @@ PT_GASGIANT
 
 SZ_NOWORLD
 Здесь не на что смотреть; пройти мимо
+
 SZ_TINY
 крошечная
+
 SZ_SMALL
 маленькая
+
 SZ_MEDIUM
 средняя
+
 SZ_LARGE
 большая
+
 SZ_HUGE
 огромная
+
 SZ_ASTEROIDS
 астероиды
+
 SZ_GASGIANT
 газовый гигант
-
 
 # PlanetEnvironments
 
 PE_UNINHABITABLE
 непригодня для заселения
+
 PE_HOSTILE
 враждебна
+
 PE_POOR
 плохая
+
 PE_ADEQUATE
 адекватная
+
 PE_GOOD
 хорошая
 
@@ -1956,16 +2006,22 @@ PE_GOOD
 
 FOCUS_UNKNOWN
 неизвестно
+
 FOCUS_BALANCED
 сбалансировано
+
 FOCUS_FARMING
 фермерство
+
 FOCUS_INDUSTRY
 индустрия
+
 FOCUS_MINING
 добыча
+
 FOCUS_RESEARCH
 исследования
+
 FOCUS_TRADE
 торговля
   
@@ -1974,30 +2030,43 @@ FOCUS_TRADE
 
 METER_POPULATION
 население
+
 METER_FARMING
 фермы
+
 METER_INDUSTRY
 идустрия
+
 METER_RESEARCH
 исследования
+
 METER_TRADE
 торговля
+
 METER_MINING
 добыча
+
 METER_CONSTRUCTION
 строительство
+
 METER_HEALTH
 здоровье
+
 METER_FUEL
 топливо
+
 METER_SUPPLY
 поддержка
+
 METER_STEALTH
 скрытность
+
 METER_DETECTION
 обнаружение
+
 METER_SHIELD
 поле
+
 METER_DEFENSE
 защита
 
@@ -2006,8 +2075,10 @@ METER_DEFENSE
 
 AFFIL_SELF
 Свой
+
 AFFIL_ENEMY
 Враг
+
 AFFIL_ALLY
 Союзник
 
@@ -2016,8 +2087,10 @@ AFFIL_ALLY
 
 UIT_BUILDING
 Постройка
+
 UIT_SHIP_PART
 Часть корабля
+
 UIT_SHIP_HULL
 Корпус корабля
 
@@ -2026,8 +2099,10 @@ UIT_SHIP_HULL
 
 TT_THEORY
 Теория
+
 TT_APPLICATION
 Приложение
+
 TT_REFINEMENT
 Усовершенствование
 
@@ -2036,10 +2111,13 @@ TT_REFINEMENT
 
 BT_NOT_BUILDING
 Не строение
+
 BT_BUILDING
 Строение
+
 BT_SHIP
 Корабль
+
 BT_ORBITAL
 Орбитальные
 
@@ -2048,8 +2126,10 @@ BT_ORBITAL
 
 ST_FOOD
 Еда
+
 ST_MINERAL
 Минералы
+
 ST_TRADE
 Торговля
 
@@ -2058,6 +2138,7 @@ ST_TRADE
 
 SL_EXTERNAL
 Внешний
+
 SL_INTERNAL
 Внутренний
 
@@ -2066,22 +2147,31 @@ SL_INTERNAL
 
 PC_SHORT_RANGE
 Ближнее действие
+
 PC_MISSILES
 Ракеты
+
 PC_FIGHTERS
 Бойцы
+
 PC_POINT_DEFENSE
 Точечная защита
+
 PC_SHIELD
 Защитные поля
+
 PC_ARMOUR
 Броня
+
 PC_DETECTION
 Обнаружение
+
 PC_STEALTH
 Скрытность
+
 PC_FUEL
 Топливо
+
 PC_COLONY
 Колонизация
 
@@ -2346,201 +2436,200 @@ DESC_DESTROY
 Уничтожить объект
 
 DESC_ADD_SPECIAL
-Attaches %1% special to object
+Добавить %1% особенность к объекту
 
 DESC_REMOVE_SPECIAL
-Removes %1% special from object
+Убрать %1% особенность с объекта
 
 DESC_SET_STAR_TYPE
-Changes the star's type to %1%
+Изменить тип звезды на %1%
 
 DESC_MOVE_TO
-Moves the object to the location of an object%1%
+Переместить объект к местоположению объекта %1%
 
 DESC_VICTORY
-Causes the object's owner to win the game
+Вызывает победу в игре владельца объекта
 
 # SetTechAvailability
 
 DESC_TECH_AND_ITEMS_AFFECTED
-%1% and all the items it unlocks
+%1% и все его элементы разблокированы
 
 DESC_ITEMS_ONLY_AFFECTED
-the items unlocked by the %1% tech
+элементы разблокированы %1% технологией
 
 DESC_SET_TECH_AVAIL
-Makes %1% available to empire %2%
+Делает %1% доступным иперии %2%
 
 DESC_SET_TECH_UNAVAIL
-Makes %1% unavailable to empire %2%
+Делает %1% недоступным империи %2%
 
 
 # Object Creation
 
 DESC_CREATE_PLANET
-Creates a new planet of type %1% and size %2%
+Создать новую планету типа %1% и размера %2%
 
 DESC_CREATE_BUILDING
-Creates a new %1% building
-
+Создать %1% строение
 
 # Conditions
 
 DESC_ALL
- in the universe
+ во вселенной
 
 DESC_EMPIRE_AFFILIATION_SELF
- that belongs to %1% empire
+ это принадлежит империи %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
- that does not belong to %1% empire
+ это не принадлежит империи %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- that belongs only to %1% empire
+ это принадлежит только империи %1%
 
 DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- that does not belong only to %1% empire
+ это не принадлежит только империи %1%
 
 DESC_EMPIRE_AFFILIATION
- that belongs to an %1% of %2% empire
+ это принадлежит %1% из %2% империй
 
 DESC_EMPIRE_AFFILIATION_NOT
- that does not belong to an %1% of %2% empire
+ это не принадлежит %1% из %2% империй
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- that belongs only to an %1% of %2% empire
+ это принадлжеит только %1% из %2% империй
 
 DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- that does not belong only to an %1% of %2% empire
+ это не принадлжеит только %1% из %2% империй
 
 DESC_SELF
- that is the source object
+ это исходный объект
 
 DESC_SELF_NOT
- that is not the source object
+ это не исходный объект
 
 DESC_HOMEWORLD
- that is a homeworld
+ это родной мир
 
 DESC_HOMEWORLD_NOT
- that is not a homeworld
+ это не родной мир
 
 DESC_CAPITOL
- that is an empire's capitol planet
+ это столичная планета империи
 
 DESC_CAPITOL_NOT
- that is not an empire's capitol planet
+ это не столичная планета империи
 
 DESC_TYPE
- that is a %1%
+ это %1%
 
 DESC_TYPE_NOT
- that is not a %1%
+ это не %1%
 
 DESC_BUILDING
- that contains a %1% building
+ это содержит %1% строения
 
 DESC_BUILDING_NOT
- that does't contain a %1% building
+ это не содержит %1% строения
 
 DESC_SPECIAL
- that has a %1% special
+ у этого есть %1% особенности
 
 DESC_SPECIAL_NOT
- that doesn't have a %1% special
+ у этого нет %1% особенностей
 
 DESC_CONTAINS
- that contains an object%1%
+ это содержит объект%1%
 
 DESC_CONTAINS_NOT
- that doesn't contain an object%1%
+ это не содержит объект%1%
 
 DESC_PLANET_TYPE
- that is a %1% planet
+ это %1% планета
 
 DESC_PLANET_TYPE_NOT
- that is not a %1% planet
+ это не %1% планета
 
 DESC_PLANET_SIZE
- that is a %1% planet
+ это %1% планета
 
 DESC_PLANET_SIZE_NOT
- that is not a %1% planet
+ это не %1% планета
 
 DESC_PLANET_ENVIRONMENT
- that is a %1% planet
+ это %1% планета
 
 DESC_PLANET_ENVIRONMENT_NOT
- that is not a %1% planet
+ это не %1% планета
 
 DESC_FOCUS_TYPE_PRIMARY
- that has primary focus %1%
+ у этого есть главный приоритет %1%
 
 DESC_FOCUS_TYPE_PRIMARY_NOT
- that doesn't have primary focus %1%
+ у этого нет главного приоритета %1%
 
 DESC_FOCUS_TYPE_SECONDARY
- that has secondary focus %1%
+ у этого есть вторичный приоритет %1%
 
 DESC_FOCUS_TYPE_SECONDARY_NOT
- that doesn't have secondary focus %1%
+ у этого нет вторичного приоритета %1%
 
 DESC_STAR_TYPE
- that is a system with a %1% star
+ это система из %1% звезд
 
 DESC_STAR_TYPE_NOT
- that is not a system with a %1% star
+ это не система %1% звезд
 
 DESC_CHANCE_PERCENTAGE
- on a %1%%% chance
+ шанс составляет %1%%% 
 
 DESC_CHANCE_PERCENTAGE_NOT
- on a (100 - %1%)%% chance
+ шанс составляет (100 - %1%)%%
 
 DESC_CHANCE
- with a probability of %1%
+ с вероятностью %1%
 
 DESC_CHANCE_NOT
- with a probability of 1 - %1%
+ с вероятностью 1 - %1%
 
 DESC_METER_VALUE_MAX
- that has a max %1% between %2% and %3%
+ у этого есть макимальное %1% между %2% и %3%
 
 DESC_METER_VALUE_MAX_NOT
- that doesn't have a max %1% between %2% and %3%
+ у этого нет макимального %1% между %2% и %3%
 
 DESC_METER_VALUE_CURRENT
- that has a current %1% between %2% and %3%
+ у этого есть текущее %1% между %2% и %3%
 
 DESC_METER_VALUE_CURRENT_NOT
- that doesn't have a current %1% between %2% and %3%
+ у этого нет текущего %1% между %2% и %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE
- that belongs to an empire with a %1% stockpile between %2% and %3%
+ это принадлежит империи с %1% запас между %2% и %3%
 
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
- that doesn't belong to an empire with a %1% stockpile between %2% and %3%
+ это не принадлежит империи с %1% запса между %2% и %3%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE
- that is visible to the %1% empire
+ это видимо для империи %1%
 
 DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
- that is not visible to the %1% empire
+ это скрыто от империи %1% 
 
 DESC_VISIBLE_TO_EMPIRES
- that is visible to one of the %1% empires
+ это видимо для одной из %1% империй
 
 DESC_VISIBLE_TO_EMPIRES_NOT
- that is not visible to one of the %1% empires
+ это невидимо для одной из %1% империй
 
 DESC_WITHIN_DISTANCE
- that is within %1% of any object%2%
+ это в пределах %1% любых объектов%2%
 
 DESC_WITHIN_DISTANCE_NOT
- that is not within %1% of any object%2%
+ это не в пределах %1% любых объектов%2%
 
 DESC_WITHIN_STARLANE_JUMPS
- that is within %1% starlane jumps of any object%2%
+ это в пределах %1% starlane jumps of any object%2%
 
 DESC_WITHIN_STARLANE_JUMPS_NOT
  that is not within %1% starlane jumps of any object%2%

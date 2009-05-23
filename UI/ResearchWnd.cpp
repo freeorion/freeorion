@@ -178,7 +178,7 @@ namespace {
 // ResearchWnd                                  //
 //////////////////////////////////////////////////
 ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_research_info_panel(0),
     m_queue_lb(0),
     m_tech_tree_wnd(0)

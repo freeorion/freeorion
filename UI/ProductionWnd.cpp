@@ -203,7 +203,7 @@ namespace {
 // ProductionWnd                                //
 //////////////////////////////////////////////////
 ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
-    GG::Wnd(GG::X0, GG::Y0, w, h, GG::ONTOP),
+    GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
     m_build_designator_wnd(0)
