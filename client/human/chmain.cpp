@@ -102,11 +102,14 @@ int main(int argc, char* argv[])
 
     Ogre::LogManager* log_manager = 0;
     Ogre::Root* root = 0;
+
+#ifdef OGRE_STATIC_LIB
     OISInput* ois_input_plugin = 0;
     Ogre::CgPlugin* cg_plugin = 0;
     Ogre::OctreePlugin* octree_plugin = 0;
     Ogre::ParticleFXPlugin* particle_fx_plugin = 0;
     Ogre::GLPlugin* gl_plugin = 0;
+#endif
 
     try {
         using namespace Ogre;
