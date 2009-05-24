@@ -50,6 +50,7 @@
 				EnableEnhancedInstructionSet="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
+				DisableSpecificWarnings="4396"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

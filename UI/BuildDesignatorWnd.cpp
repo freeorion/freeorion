@@ -22,6 +22,9 @@
 #include <boost/format.hpp>
 
 namespace {
+    //////////////////////////////////
+    // BuildableItemsListBox
+    //////////////////////////////////
     class BuildableItemsListBox : public CUIListBox {
     public:
         BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
@@ -32,6 +35,7 @@ namespace {
             SelChangedSignal(Selections());
         }
     };
+
 
     struct ToggleBuildTypeFunctor {
         ToggleBuildTypeFunctor(BuildDesignatorWnd* designator_wnd, BuildType type) : m_designator_wnd(designator_wnd), m_build_type(type) {}
@@ -80,11 +84,11 @@ public:
     /** Sets build location for this selector, which may be used to filter
       * items in the list or enable / disable them at some point in the
       * future. */
-    void            SetBuildLocation(int location_id, bool refresh_list = true);
+    void    SetBuildLocation(int location_id, bool refresh_list = true);
 
     /** Clear and refill list of buildable items, according to current
       * filter settings. */
-    void            Refresh();
+    void    Refresh();
 
     /** Show or hide indicated types of buildable items */
     void    ShowType(BuildType type, bool refresh_list = true);
@@ -323,6 +327,7 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool r
 
 void BuildDesignatorWnd::BuildSelector::Refresh()
 {
+    //std::cout << "BuildDesignatorWnd::BuildSelector::Refresh()" << std::endl;
     PopulateList();
 }
 
@@ -350,14 +355,14 @@ void BuildDesignatorWnd::BuildSelector::ShowAllTypes(bool refresh_list)
     m_build_types_shown.insert(BT_BUILDING);
     m_build_types_shown.insert(BT_SHIP);
     if (refresh_list)
-            Refresh();
+        Refresh();
 }
 
 void BuildDesignatorWnd::BuildSelector::HideAllTypes(bool refresh_list)
 {
     m_build_types_shown.clear();
     if (refresh_list)
-            Refresh();
+        Refresh();
 }
 
 void BuildDesignatorWnd::BuildSelector::ShowAvailability(bool available, bool refresh_list)
@@ -436,7 +441,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
 void BuildDesignatorWnd::BuildSelector::PopulateList()
 {
-    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList start";
+    //std::cout << "BuildDesignatorWnd::BuildSelector::PopulateList start" << std::endl;
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire) {
         // TODO: show all items?  clear list?  not sure what's best to do in this case

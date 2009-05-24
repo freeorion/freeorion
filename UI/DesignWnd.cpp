@@ -1207,6 +1207,7 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     AttachChild(button);
     GG::Connect(button->ClickedSignal,
                 boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
+
     button = new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
     m_availability_buttons.second = button;
     AttachChild(button);
@@ -1222,7 +1223,6 @@ DesignWnd::BaseSelector::BaseSelector(GG::X w, GG::Y h) :
     m_hulls_list->ShowEmptyHulls(false);
     GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     GG::Connect(m_hulls_list->HullBrowsedSignal,                DesignWnd::BaseSelector::HullBrowsedSignal);
-    m_tabs->SetCurrentWnd(0);
 
     m_designs_list = new BasesListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));

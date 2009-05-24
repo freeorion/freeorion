@@ -25,6 +25,7 @@
       <PERSON name="Francesco Marass"         nick="francys"          task="Programming"/>
       <PERSON name="Martin Wuttke"            nick="The Silent One"   task="Programming, German Translation, Graphics"/>
       <PERSON name="Markus Sinner"            nick="kroddn"           task="Programming, German Translation"/>
+      <PERSON name="Jon Siwek"                nick=".Id"              task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>
