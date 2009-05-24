@@ -33,6 +33,9 @@
 #ifndef OGRE_STATIC_LIB
 #  ifdef FREEORION_WIN32
 #    define OGRE_INPUT_PLUGIN_NAME "GiGiOgrePlugin_OIS.dll"
+#  elif defined(FREEORION_MACOSX)
+     // avoid installing the input plugin as a dynamic object
+#    include "../../GG/src/Ogre/Plugins/OISInput.h"
 #  else
 #    define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
 #  endif
@@ -75,9 +78,10 @@ int main(int argc, char* argv[])
             early_exit = true;
         }
 #ifdef FREEORION_MACOSX
-        // Handle the case where the settings-dir does not exist anymore gracefully by resetting it to the standard path
-        // into the application bundle this may happen if a previous installed version of FreeOrion was residing in a
-        // different directory.
+        // Handle the case where the settings-dir does not exist anymore
+        // gracefully by resetting it to the standard path into the
+        // application bundle this may happen if a previous installed version
+        // of FreeOrion was residing in a different directory.
         if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("settings-dir"))))
             GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").directory_string());
 #endif
@@ -114,8 +118,9 @@ int main(int argc, char* argv[])
 
     Ogre::LogManager*       log_manager = 0;
     Ogre::Root*             root = 0;
-
-#ifdef OGRE_STATIC_LIB
+#ifdef FREEORION_MACOSX
+    OISInput*               ois_input_plugin = 0;
+#elif defined(OGRE_STATIC_LIB)
     OISInput*               ois_input_plugin = 0;
     Ogre::CgPlugin*         cg_plugin = 0;
     Ogre::OctreePlugin*     octree_plugin = 0;
@@ -169,7 +174,10 @@ int main(int argc, char* argv[])
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
 
         HumanClientApp app(root, window, scene_manager, camera, viewport);
-#ifdef OGRE_STATIC_LIB
+#ifdef FREEORION_MACOSX
+        ois_input_plugin = new OISInput;
+        root->installPlugin(ois_input_plugin);
+#elif defined(OGRE_STATIC_LIB)
         ois_input_plugin = new OISInput;
         cg_plugin = new Ogre::CgPlugin;
         octree_plugin = new Ogre::OctreePlugin;
@@ -204,7 +212,10 @@ int main(int argc, char* argv[])
     }
 
     if (root) {
-#ifdef OGRE_STATIC_LIB
+#ifdef FREEORION_MACOSX
+        root->uninstallPlugin(ois_input_plugin);
+        delete ois_input_plugin;
+#elif defined(OGRE_STATIC_LIB)
         root->uninstallPlugin(ois_input_plugin);
         root->uninstallPlugin(cg_plugin);
         root->uninstallPlugin(octree_plugin);

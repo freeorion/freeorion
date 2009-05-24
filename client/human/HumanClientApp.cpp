@@ -626,7 +626,13 @@ void HumanClientApp::Exit(int code)
     if (code)
         exit(code);
     else
+#ifdef FREEORION_MACOSX
+        // FIXME - terminate is called during the stack unwind if CleanQuit is thrown,
+        //  so use exit() for now (this appears to be OS X specific)
+        exit(code);
+#else
         throw CleanQuit();
+#endif
 }
 
 HumanClientApp* HumanClientApp::GetApp()

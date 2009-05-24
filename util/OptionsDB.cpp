@@ -348,7 +348,11 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
             }
 
             option_changed = true;
-        } else if (current_token.find('-') == 0) {
+        } else if (current_token.find('-') == 0
+#ifdef FREEORION_MACOSX
+                && current_token.find("-psn") != 0 // Mac OS X passes a process serial number to all applications using Carbon or Cocoa, it should be ignored here
+#endif
+            ) {
             std::string single_char_options = current_token.substr(1);
 
             if (single_char_options.size() == 0) {

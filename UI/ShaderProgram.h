@@ -61,7 +61,7 @@ public:
     // program.  \a element_size indicates the number of
     // ints in each element of the array, and must be 1, 2, 3, or 4
     // (corresponding to GLSL types int, ivec2, ivec3, and ivec4).
-    void                BindInts(const std::string& name, std::size_t element_size, const std::vector<int> &ints);
+    void                BindInts(const std::string& name, std::size_t element_size, const std::vector<GLint> &ints);
 
     bool                AllValuesBound();
 

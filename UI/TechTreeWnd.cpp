@@ -24,6 +24,20 @@
 
 #include <boost/timer.hpp>
 
+#ifdef FREEORION_MACOSX
+// allows graphviz plugin to be linked statically, avoiding need to distribute
+//  or have users install graphviz in a system location
+#include <gvplugin.h>
+
+extern gvplugin_library_t *gvplugin_dot_layout_LTX_library;
+
+const lt_symlist_t lt_preloaded_symbols[] __attribute__((used)) = {
+{ "gvplugin_dot_layout_LTX_library", 
+(void*)(&gvplugin_dot_layout_LTX_library) },
+{ 0, 0 }
+};
+#endif
+
 #ifndef M_PI
 #define M_PI      3.14159265358979323846
 #endif
