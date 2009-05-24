@@ -40,28 +40,29 @@
 #  endif
 #endif
 
+// The STORE_FULLSCREEN_FLAG parameter below controls whether the fullscreen
+// option is stored in the XML config file.  On Win32 it is not, because the
+// installed version of FO is run with the command-line flag added in as
+// appropriate.
+#ifdef FREEORION_WIN32
+const bool  STORE_FULLSCREEN_FLAG = false;
+#else
+const bool  STORE_FULLSCREEN_FLAG = true;
+#endif
+
 int main(int argc, char* argv[])
 {
     InitDirs();
 
     // read and process command-line arguments, if any
     try {
-        GetOptionsDB().AddFlag('h', "help",                 "OPTIONS_DB_HELP");
-        GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML");
-        GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF");
+        GetOptionsDB().AddFlag('h', "help",                 "OPTIONS_DB_HELP",                  false);
+        GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML",   false);
+        GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF",             true);
         GetOptionsDB().Add<std::string>("bg-music",         "OPTIONS_DB_BG_MUSIC",      "artificial_intelligence_v3.ogg");
+        GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
 
-        // The false/true parameter below controls whether this option is stored in the XML config file.  On Win32 it is
-        // not, because the installed version of FO is run with the command-line flag added in as appropriate.
-        GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",
-#ifdef FREEORION_WIN32
-                               false
-#else
-                               true
-#endif
-            );
         XMLDoc doc;
-
         {
             boost::filesystem::ifstream ifs(GetConfigPath());
             if (ifs) {
@@ -71,11 +72,13 @@ int main(int argc, char* argv[])
         }
 
         GetOptionsDB().SetFromCommandLine(argc, argv);
+
         bool early_exit = false;
         if (GetOptionsDB().Get<bool>("help")) {
             GetOptionsDB().GetUsage(std::cerr);
             early_exit = true;
         }
+
 #ifdef FREEORION_MACOSX
         // Handle the case where the settings-dir does not exist anymore
         // gracefully by resetting it to the standard path into the
@@ -86,8 +89,6 @@ int main(int argc, char* argv[])
 #endif
 
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
-            GetOptionsDB().Remove("generate-config-xml");
-
             boost::filesystem::ofstream ofs(GetConfigPath());
             if (ofs) {
                 GetOptionsDB().GetXML().WriteDoc(ofs);
@@ -96,8 +97,10 @@ int main(int argc, char* argv[])
                 std::cerr << GetConfigPath().file_string() << std::endl;
             }
         }
+
         if (early_exit)
             return 0;
+
     } catch (const std::invalid_argument& e) {
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
         Sleep(3000);
@@ -190,7 +193,9 @@ int main(int argc, char* argv[])
 #else
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif
+
         app();
+
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
     } catch (const std::invalid_argument& e) {

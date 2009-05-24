@@ -2914,13 +2914,13 @@ PRO_FRC_FLD_ASSMB
 Монтаж силовыми полями
 
 PRO_FRC_FLD_ASSMB_DESC
-Whether effected through artificial means, or psychokinesis, or a combination thereof, remote manipulation represents a revolutionary improvement in assembly techniques.  At nanoscopic scales, fully controlled chemical reactions and custom assembled molecules become almost trivial.  At larger scales, up to and including manipulation of celestial bodies, locally reactionless and non-contact force impartion permit previously impossible non-destructive testing, and are particularly suited to manipulation within an enclosed or covered region, without compromising isolation seals, nor removing masses of previously obstructing matter.
+Неважно, произведенная ли через искусственные средства, или психокинез, или их комбинацию, безконтактная манипуляция представляет революционное усовершенствование методов сборки. На наноразмерах, полностью контролируемые химические реакции и сборка произвольных молекул становится почти тривиальными задачами. В увеличеных масштабах, вплоть до манипуляций астрономическими телами, а так же в местном масштабе, уменьшение взаимодействия и использование бесконтактной силы позволяют делать ранее немыслимое неразрушающее тестирование.Особенно подходят для манипуляций в пределах корпуса объекта или других изолированных областях, не ставя под угрозу изоляционный слой, и отбрасывая необходимость удалять массы преграждающего объект вещества.
 
 PRO_INTSTEL_COPRO
-Interstellar Co-Production
+Межзвездное совместное производство
 
 PRO_INTSTEL_COPRO_DESC
-Traditional means of production are limited by the necessity of self-sufficiency due to transportation and other logistical problems.  Later planetary regional cooperation permits some degree of specialization and co-operation, with each facility producing only a few parts or subsystems, and the whole system benefitting from concentrated expertize and economy of scale.  Expanding this concept several orders of magnitude, it may adapted to a galactic scale, with individual planets or entire systems functioning in the role of the single specialized facility.  The logistical difficulties inherent in this paradigm are also similar to those of the earlier iteration, and are scaled up to the same degree as the potential benefits.
+Традиционные средства производства продукции ограничены потребностью самостоятельности производства из-за транспортировки и других логистических проблем. Более позднее планетарное региональное сотрудничество разрешает некоторую степень специализации и сотрудничества, с использованием производственного оборудования нескольких частей системы, благодаря чему целая система извлекает выгоду из централизованной экспертизы и экономии за счет роста производства. Раcширяя это понятие на несколько порядков, система может адаптироваться к галактическому масштабу, с отдельными планетами или целыми звездными системами, функционирующими в качестве единого специализированного средства производства. Логистические трудности, как часть такой системы, не отличаются от тех, что были ранее, и возрастают лишь до той степени, которая предполагает потенциальнаю пользу.
 
 PRO_NDIM_ASSMB
 N-Dimensional Assembly

@@ -96,8 +96,8 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::RenderWindow* window,
                                Ogre::SceneManager* scene_manager,
                                Ogre::Camera* camera,
-                               Ogre::Viewport* viewport) : 
-    ClientApp(), 
+                               Ogre::Viewport* viewport) :
+    ClientApp(),
     OgreGUI(window, (GetGlobalDir() / "OISInput.cfg").string()),
     m_fsm(0),
     m_single_player_game(true),
