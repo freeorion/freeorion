@@ -4,6 +4,8 @@
 #include "OgrePlugins/OgreParticleFXPlugin.h"
 #include "OgrePlugins/OgreGLPlugin.h"
 #include <GG/Ogre/Plugins/OISInput.h>
+#elif defined(FREEORION_MACOSX)
+#include <GG/Ogre/Plugins/OISInput.h>
 #endif
 
 #include "HumanClientApp.h"
@@ -33,9 +35,6 @@
 #ifndef OGRE_STATIC_LIB
 #  ifdef FREEORION_WIN32
 #    define OGRE_INPUT_PLUGIN_NAME "GiGiOgrePlugin_OIS.dll"
-#  elif defined(FREEORION_MACOSX)
-     // avoid installing the input plugin as a dynamic object
-#    include "../../GG/src/Ogre/Plugins/OISInput.h"
 #  else
 #    define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
 #  endif

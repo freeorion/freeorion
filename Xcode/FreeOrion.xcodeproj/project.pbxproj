@@ -133,7 +133,6 @@
 		34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5CA60F4E18680002B5DB /* libOIS.a */; };
 		34CA5EC80F4F4E2B0002B5DB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */; };
 		34CA5ECA0F4F4E9D0002B5DB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AD8A180AA609980089CE8D /* Carbon.framework */; };
-		34CA5F040F4F5FD50002B5DB /* aglGetProcAddress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34CA5F030F4F5F850002B5DB /* aglGetProcAddress.cpp */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
 		471024090CEF3AAC00A7DF2B /* _vsnprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 471023910CEF3AAC00A7DF2B /* _vsnprintf.c */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
@@ -534,6 +533,115 @@
 		34972C430F4A002F0015C864 /* libLinearMath.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.dylib; path = dep/local/lib/libLinearMath.dylib; sourceTree = "<group>"; };
 		34A1E2DA0F75CB540019466D /* libltdl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libltdl.dylib; path = dep/lib/libltdl.dylib; sourceTree = "<group>"; };
 		34A1E2DD0F75CB540019466D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = dep/lib/libz.dylib; sourceTree = "<group>"; };
+		34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUIInputPlugin.h; sourceTree = "<group>"; };
+		34A97FE60FC978C600620707 /* OISInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OISInput.h; sourceTree = "<group>"; };
+		34A97FEA0FC97AE500620707 /* OgreGLXContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLXContext.h; sourceTree = "<group>"; };
+		34A97FEB0FC97AE500620707 /* OgreGLXGLSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLXGLSupport.h; sourceTree = "<group>"; };
+		34A97FEC0FC97AE500620707 /* OgreGLXRenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLXRenderTexture.h; sourceTree = "<group>"; };
+		34A97FED0FC97AE500620707 /* OgreGLXUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLXUtils.h; sourceTree = "<group>"; };
+		34A97FEE0FC97AE500620707 /* OgreGLXWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLXWindow.h; sourceTree = "<group>"; };
+		34A97FF00FC97AE500620707 /* OgreGTKGLSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGTKGLSupport.h; sourceTree = "<group>"; };
+		34A97FF10FC97AE500620707 /* OgreGTKWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGTKWindow.h; sourceTree = "<group>"; };
+		34A97FF20FC97AE500620707 /* OgreAreaEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreAreaEmitter.h; sourceTree = "<group>"; };
+		34A97FF30FC97AE500620707 /* OgreBoxEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreBoxEmitter.h; sourceTree = "<group>"; };
+		34A97FF40FC97AE500620707 /* OgreBoxEmitterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreBoxEmitterFactory.h; sourceTree = "<group>"; };
+		34A97FF50FC97AE500620707 /* OgreCgPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreCgPlugin.h; sourceTree = "<group>"; };
+		34A97FF60FC97AE500620707 /* OgreCgPrerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreCgPrerequisites.h; sourceTree = "<group>"; };
+		34A97FF70FC97AE500620707 /* OgreCgProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreCgProgram.h; sourceTree = "<group>"; };
+		34A97FF80FC97AE500620707 /* OgreCgProgramFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreCgProgramFactory.h; sourceTree = "<group>"; };
+		34A97FF90FC97AE500620707 /* OgreColourFaderAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourFaderAffector.h; sourceTree = "<group>"; };
+		34A97FFA0FC97AE500620707 /* OgreColourFaderAffector2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourFaderAffector2.h; sourceTree = "<group>"; };
+		34A97FFB0FC97AE500620707 /* OgreColourFaderAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourFaderAffectorFactory.h; sourceTree = "<group>"; };
+		34A97FFC0FC97AE500620707 /* OgreColourFaderAffectorFactory2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourFaderAffectorFactory2.h; sourceTree = "<group>"; };
+		34A97FFD0FC97AE500620707 /* OgreColourImageAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourImageAffector.h; sourceTree = "<group>"; };
+		34A97FFE0FC97AE500620707 /* OgreColourImageAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourImageAffectorFactory.h; sourceTree = "<group>"; };
+		34A97FFF0FC97AE500620707 /* OgreColourInterpolatorAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourInterpolatorAffector.h; sourceTree = "<group>"; };
+		34A980000FC97AE500620707 /* OgreColourInterpolatorAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreColourInterpolatorAffectorFactory.h; sourceTree = "<group>"; };
+		34A980010FC97AE500620707 /* OgreCylinderEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreCylinderEmitter.h; sourceTree = "<group>"; };
+		34A980020FC97AE500620707 /* OgreCylinderEmitterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreCylinderEmitterFactory.h; sourceTree = "<group>"; };
+		34A980030FC97AE500620707 /* OgreDeflectorPlaneAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreDeflectorPlaneAffector.h; sourceTree = "<group>"; };
+		34A980040FC97AE500620707 /* OgreDeflectorPlaneAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreDeflectorPlaneAffectorFactory.h; sourceTree = "<group>"; };
+		34A980050FC97AE500620707 /* OgreDirectionRandomiserAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreDirectionRandomiserAffector.h; sourceTree = "<group>"; };
+		34A980060FC97AE500620707 /* OgreDirectionRandomiserAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreDirectionRandomiserAffectorFactory.h; sourceTree = "<group>"; };
+		34A980070FC97AE500620707 /* OgreEllipsoidEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreEllipsoidEmitter.h; sourceTree = "<group>"; };
+		34A980080FC97AE500620707 /* OgreEllipsoidEmitterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreEllipsoidEmitterFactory.h; sourceTree = "<group>"; };
+		34A980090FC97AE500620707 /* OgreGLATIFSInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLATIFSInit.h; sourceTree = "<group>"; };
+		34A9800A0FC97AE500620707 /* OgreGLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLContext.h; sourceTree = "<group>"; };
+		34A9800B0FC97AE500620707 /* OgreGLDefaultHardwareBufferManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLDefaultHardwareBufferManager.h; sourceTree = "<group>"; };
+		34A9800C0FC97AE500620707 /* OgreGLFBOMultiRenderTarget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLFBOMultiRenderTarget.h; sourceTree = "<group>"; };
+		34A9800D0FC97AE500620707 /* OgreGLFBORenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLFBORenderTexture.h; sourceTree = "<group>"; };
+		34A9800E0FC97AE500620707 /* OgreGLFrameBufferObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLFrameBufferObject.h; sourceTree = "<group>"; };
+		34A9800F0FC97AE500620707 /* OgreGLGpuNvparseProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLGpuNvparseProgram.h; sourceTree = "<group>"; };
+		34A980100FC97AE500620707 /* OgreGLGpuProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLGpuProgram.h; sourceTree = "<group>"; };
+		34A980110FC97AE500620707 /* OgreGLGpuProgramManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLGpuProgramManager.h; sourceTree = "<group>"; };
+		34A980120FC97AE500620707 /* OgreGLHardwareBufferManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLHardwareBufferManager.h; sourceTree = "<group>"; };
+		34A980130FC97AE500620707 /* OgreGLHardwareIndexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLHardwareIndexBuffer.h; sourceTree = "<group>"; };
+		34A980140FC97AE500620707 /* OgreGLHardwareOcclusionQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLHardwareOcclusionQuery.h; sourceTree = "<group>"; };
+		34A980150FC97AE500620707 /* OgreGLHardwarePixelBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLHardwarePixelBuffer.h; sourceTree = "<group>"; };
+		34A980160FC97AE500620707 /* OgreGLHardwareVertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLHardwareVertexBuffer.h; sourceTree = "<group>"; };
+		34A980170FC97AE500620707 /* OgreGLPBRenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLPBRenderTexture.h; sourceTree = "<group>"; };
+		34A980180FC97AE500620707 /* OgreGLPBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLPBuffer.h; sourceTree = "<group>"; };
+		34A980190FC97AE500620707 /* OgreGLPixelFormat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLPixelFormat.h; sourceTree = "<group>"; };
+		34A9801A0FC97AE500620707 /* OgreGLPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLPlugin.h; sourceTree = "<group>"; };
+		34A9801B0FC97AE500620707 /* OgreGLPrerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLPrerequisites.h; sourceTree = "<group>"; };
+		34A9801C0FC97AE500620707 /* OgreGLRenderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLRenderSystem.h; sourceTree = "<group>"; };
+		34A9801D0FC97AE500620707 /* OgreGLRenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLRenderTexture.h; sourceTree = "<group>"; };
+		34A9801E0FC97AE500620707 /* OgreGLRenderToVertexBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLRenderToVertexBuffer.h; sourceTree = "<group>"; };
+		34A9801F0FC97AE500620707 /* OgreGLSLExtSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLExtSupport.h; sourceTree = "<group>"; };
+		34A980200FC97AE500620707 /* OgreGLSLGpuProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLGpuProgram.h; sourceTree = "<group>"; };
+		34A980210FC97AE500620707 /* OgreGLSLLinkProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLLinkProgram.h; sourceTree = "<group>"; };
+		34A980220FC97AE500620707 /* OgreGLSLLinkProgramManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLLinkProgramManager.h; sourceTree = "<group>"; };
+		34A980230FC97AE500620707 /* OgreGLSLPreprocessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLPreprocessor.h; sourceTree = "<group>"; };
+		34A980240FC97AE500620707 /* OgreGLSLProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLProgram.h; sourceTree = "<group>"; };
+		34A980250FC97AE500620707 /* OgreGLSLProgramFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSLProgramFactory.h; sourceTree = "<group>"; };
+		34A980260FC97AE500620707 /* OgreGLSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLSupport.h; sourceTree = "<group>"; };
+		34A980270FC97AE500620707 /* OgreGLTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLTexture.h; sourceTree = "<group>"; };
+		34A980280FC97AE500620707 /* OgreGLTextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLTextureManager.h; sourceTree = "<group>"; };
+		34A980290FC97AE500620707 /* OgreHeightmapTerrainPageSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreHeightmapTerrainPageSource.h; sourceTree = "<group>"; };
+		34A9802A0FC97AE500620707 /* OgreHollowEllipsoidEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreHollowEllipsoidEmitter.h; sourceTree = "<group>"; };
+		34A9802B0FC97AE500620707 /* OgreHollowEllipsoidEmitterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreHollowEllipsoidEmitterFactory.h; sourceTree = "<group>"; };
+		34A9802C0FC97AE500620707 /* OgreLinearForceAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreLinearForceAffector.h; sourceTree = "<group>"; };
+		34A9802D0FC97AE500620707 /* OgreLinearForceAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreLinearForceAffectorFactory.h; sourceTree = "<group>"; };
+		34A9802E0FC97AE500620707 /* OgreOctree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOctree.h; sourceTree = "<group>"; };
+		34A9802F0FC97AE500620707 /* OgreOctreeCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOctreeCamera.h; sourceTree = "<group>"; };
+		34A980300FC97AE500620707 /* OgreOctreeNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOctreeNode.h; sourceTree = "<group>"; };
+		34A980310FC97AE500620707 /* OgreOctreePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOctreePlugin.h; sourceTree = "<group>"; };
+		34A980320FC97AE500620707 /* OgreOctreeSceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOctreeSceneManager.h; sourceTree = "<group>"; };
+		34A980330FC97AE500620707 /* OgreOctreeSceneQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOctreeSceneQuery.h; sourceTree = "<group>"; };
+		34A980340FC97AE500620707 /* OgreParticleFXPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreParticleFXPlugin.h; sourceTree = "<group>"; };
+		34A980350FC97AE500620707 /* OgreParticleFXPrerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreParticleFXPrerequisites.h; sourceTree = "<group>"; };
+		34A980360FC97AE500620707 /* OgrePointEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgrePointEmitter.h; sourceTree = "<group>"; };
+		34A980370FC97AE500620707 /* OgrePointEmitterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgrePointEmitterFactory.h; sourceTree = "<group>"; };
+		34A980380FC97AE500620707 /* OgreRingEmitter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreRingEmitter.h; sourceTree = "<group>"; };
+		34A980390FC97AE500620707 /* OgreRingEmitterFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreRingEmitterFactory.h; sourceTree = "<group>"; };
+		34A9803A0FC97AE500620707 /* OgreRotationAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreRotationAffector.h; sourceTree = "<group>"; };
+		34A9803B0FC97AE500620707 /* OgreRotationAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreRotationAffectorFactory.h; sourceTree = "<group>"; };
+		34A9803C0FC97AE500620707 /* OgreScaleAffector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreScaleAffector.h; sourceTree = "<group>"; };
+		34A9803D0FC97AE500620707 /* OgreScaleAffectorFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreScaleAffectorFactory.h; sourceTree = "<group>"; };
+		34A9803E0FC97AE500620707 /* OgreSDLGLSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreSDLGLSupport.h; sourceTree = "<group>"; };
+		34A9803F0FC97AE500620707 /* OgreSDLPrerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreSDLPrerequisites.h; sourceTree = "<group>"; };
+		34A980400FC97AE500620707 /* OgreSDLWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreSDLWindow.h; sourceTree = "<group>"; };
+		34A980410FC97AE500620707 /* OgreTerrainPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreTerrainPage.h; sourceTree = "<group>"; };
+		34A980420FC97AE500620707 /* OgreTerrainPageSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreTerrainPageSource.h; sourceTree = "<group>"; };
+		34A980430FC97AE500620707 /* OgreTerrainPrerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreTerrainPrerequisites.h; sourceTree = "<group>"; };
+		34A980440FC97AE500620707 /* OgreTerrainRenderable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreTerrainRenderable.h; sourceTree = "<group>"; };
+		34A980450FC97AE500620707 /* OgreTerrainSceneManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreTerrainSceneManager.h; sourceTree = "<group>"; };
+		34A980460FC97AE500620707 /* OgreTerrainVertexProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreTerrainVertexProgram.h; sourceTree = "<group>"; };
+		34A980470FC97AE500620707 /* OgreWin32Context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreWin32Context.h; sourceTree = "<group>"; };
+		34A980480FC97AE500620707 /* OgreWin32GLSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreWin32GLSupport.h; sourceTree = "<group>"; };
+		34A980490FC97AE500620707 /* OgreWin32Prerequisites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreWin32Prerequisites.h; sourceTree = "<group>"; };
+		34A9804A0FC97AE500620707 /* OgreWin32RenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreWin32RenderTexture.h; sourceTree = "<group>"; };
+		34A9804B0FC97AE500620707 /* OgreWin32Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreWin32Window.h; sourceTree = "<group>"; };
+		34A9804D0FC97AE500620707 /* OgreOSXCarbonContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXCarbonContext.h; sourceTree = "<group>"; };
+		34A9804E0FC97AE500620707 /* OgreOSXCarbonWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXCarbonWindow.h; sourceTree = "<group>"; };
+		34A9804F0FC97AE500620707 /* OgreOSXCGLContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXCGLContext.h; sourceTree = "<group>"; };
+		34A980500FC97AE500620707 /* OgreOSXCocoaContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXCocoaContext.h; sourceTree = "<group>"; };
+		34A980510FC97AE500620707 /* OgreOSXCocoaWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXCocoaWindow.h; sourceTree = "<group>"; };
+		34A980520FC97AE500620707 /* OgreOSXContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXContext.h; sourceTree = "<group>"; };
+		34A980530FC97AE500620707 /* OgreOSXGLSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXGLSupport.h; sourceTree = "<group>"; };
+		34A980540FC97AE500620707 /* OgreOSXRenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXRenderTexture.h; sourceTree = "<group>"; };
+		34A980550FC97AE500620707 /* OgreOSXWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXWindow.h; sourceTree = "<group>"; };
+		34A980560FC97AE500620707 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		34B9EBC10F5E1EEB005BF6A4 /* AbstractVehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractVehicle.h; path = OpenSteer/AbstractVehicle.h; sourceTree = "<group>"; };
 		34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CombatFighter.cpp; path = OpenSteer/CombatFighter.cpp; sourceTree = "<group>"; };
 		34B9EBC30F5E1EEB005BF6A4 /* CombatFighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CombatFighter.h; path = OpenSteer/CombatFighter.h; sourceTree = "<group>"; };
@@ -954,8 +1062,6 @@
 		34CA5AF70F4DDF690002B5DB /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = dep/local/lib/libpng.dylib; sourceTree = "<group>"; };
 		34CA5CA60F4E18680002B5DB /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOIS.a; sourceTree = "<group>"; };
 		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		34CA5F020F4F5F560002B5DB /* aglGetProcAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aglGetProcAddress.h; sourceTree = "<group>"; };
-		34CA5F030F4F5F850002B5DB /* aglGetProcAddress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = aglGetProcAddress.cpp; sourceTree = "<group>"; };
 		471023390CEF3AAB00A7DF2B /* build_config.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_config.py; sourceTree = "<group>"; };
 		4710233A0CEF3AAB00A7DF2B /* build_support.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_support.py; sourceTree = "<group>"; };
 		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
@@ -1062,10 +1168,8 @@
 		471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiEdit.cpp; sourceTree = "<group>"; };
 		471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreGUI.cpp; sourceTree = "<group>"; };
 		471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreGUIInputPlugin.cpp; sourceTree = "<group>"; };
-		471023AD0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUIInputPlugin.h; sourceTree = "<group>"; };
 		471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OISInput.cfg; sourceTree = "<group>"; };
 		471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISInput.cpp; sourceTree = "<group>"; };
-		471023B00CEF3AAC00A7DF2B /* OISInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OISInput.h; sourceTree = "<group>"; };
 		471023B10CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		471023B20CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		471023B30CEF3AAC00A7DF2B /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
@@ -1554,6 +1658,161 @@
 				34A1E2DD0F75CB540019466D /* libz.dylib */,
 			);
 			name = usrlib;
+			sourceTree = "<group>";
+		};
+		34A97FE40FC978C600620707 /* Plugins */ = {
+			isa = PBXGroup;
+			children = (
+				34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */,
+				34A97FE60FC978C600620707 /* OISInput.h */,
+			);
+			path = Plugins;
+			sourceTree = "<group>";
+		};
+		34A97FE70FC97AE500620707 /* OgrePlugins */ = {
+			isa = PBXGroup;
+			children = (
+				34A97FE80FC97AE500620707 /* GL */,
+				34A97FE90FC97AE500620707 /* GLX */,
+				34A97FEF0FC97AE500620707 /* gtk */,
+				34A97FF20FC97AE500620707 /* OgreAreaEmitter.h */,
+				34A97FF30FC97AE500620707 /* OgreBoxEmitter.h */,
+				34A97FF40FC97AE500620707 /* OgreBoxEmitterFactory.h */,
+				34A97FF50FC97AE500620707 /* OgreCgPlugin.h */,
+				34A97FF60FC97AE500620707 /* OgreCgPrerequisites.h */,
+				34A97FF70FC97AE500620707 /* OgreCgProgram.h */,
+				34A97FF80FC97AE500620707 /* OgreCgProgramFactory.h */,
+				34A97FF90FC97AE500620707 /* OgreColourFaderAffector.h */,
+				34A97FFA0FC97AE500620707 /* OgreColourFaderAffector2.h */,
+				34A97FFB0FC97AE500620707 /* OgreColourFaderAffectorFactory.h */,
+				34A97FFC0FC97AE500620707 /* OgreColourFaderAffectorFactory2.h */,
+				34A97FFD0FC97AE500620707 /* OgreColourImageAffector.h */,
+				34A97FFE0FC97AE500620707 /* OgreColourImageAffectorFactory.h */,
+				34A97FFF0FC97AE500620707 /* OgreColourInterpolatorAffector.h */,
+				34A980000FC97AE500620707 /* OgreColourInterpolatorAffectorFactory.h */,
+				34A980010FC97AE500620707 /* OgreCylinderEmitter.h */,
+				34A980020FC97AE500620707 /* OgreCylinderEmitterFactory.h */,
+				34A980030FC97AE500620707 /* OgreDeflectorPlaneAffector.h */,
+				34A980040FC97AE500620707 /* OgreDeflectorPlaneAffectorFactory.h */,
+				34A980050FC97AE500620707 /* OgreDirectionRandomiserAffector.h */,
+				34A980060FC97AE500620707 /* OgreDirectionRandomiserAffectorFactory.h */,
+				34A980070FC97AE500620707 /* OgreEllipsoidEmitter.h */,
+				34A980080FC97AE500620707 /* OgreEllipsoidEmitterFactory.h */,
+				34A980090FC97AE500620707 /* OgreGLATIFSInit.h */,
+				34A9800A0FC97AE500620707 /* OgreGLContext.h */,
+				34A9800B0FC97AE500620707 /* OgreGLDefaultHardwareBufferManager.h */,
+				34A9800C0FC97AE500620707 /* OgreGLFBOMultiRenderTarget.h */,
+				34A9800D0FC97AE500620707 /* OgreGLFBORenderTexture.h */,
+				34A9800E0FC97AE500620707 /* OgreGLFrameBufferObject.h */,
+				34A9800F0FC97AE500620707 /* OgreGLGpuNvparseProgram.h */,
+				34A980100FC97AE500620707 /* OgreGLGpuProgram.h */,
+				34A980110FC97AE500620707 /* OgreGLGpuProgramManager.h */,
+				34A980120FC97AE500620707 /* OgreGLHardwareBufferManager.h */,
+				34A980130FC97AE500620707 /* OgreGLHardwareIndexBuffer.h */,
+				34A980140FC97AE500620707 /* OgreGLHardwareOcclusionQuery.h */,
+				34A980150FC97AE500620707 /* OgreGLHardwarePixelBuffer.h */,
+				34A980160FC97AE500620707 /* OgreGLHardwareVertexBuffer.h */,
+				34A980170FC97AE500620707 /* OgreGLPBRenderTexture.h */,
+				34A980180FC97AE500620707 /* OgreGLPBuffer.h */,
+				34A980190FC97AE500620707 /* OgreGLPixelFormat.h */,
+				34A9801A0FC97AE500620707 /* OgreGLPlugin.h */,
+				34A9801B0FC97AE500620707 /* OgreGLPrerequisites.h */,
+				34A9801C0FC97AE500620707 /* OgreGLRenderSystem.h */,
+				34A9801D0FC97AE500620707 /* OgreGLRenderTexture.h */,
+				34A9801E0FC97AE500620707 /* OgreGLRenderToVertexBuffer.h */,
+				34A9801F0FC97AE500620707 /* OgreGLSLExtSupport.h */,
+				34A980200FC97AE500620707 /* OgreGLSLGpuProgram.h */,
+				34A980210FC97AE500620707 /* OgreGLSLLinkProgram.h */,
+				34A980220FC97AE500620707 /* OgreGLSLLinkProgramManager.h */,
+				34A980230FC97AE500620707 /* OgreGLSLPreprocessor.h */,
+				34A980240FC97AE500620707 /* OgreGLSLProgram.h */,
+				34A980250FC97AE500620707 /* OgreGLSLProgramFactory.h */,
+				34A980260FC97AE500620707 /* OgreGLSupport.h */,
+				34A980270FC97AE500620707 /* OgreGLTexture.h */,
+				34A980280FC97AE500620707 /* OgreGLTextureManager.h */,
+				34A980290FC97AE500620707 /* OgreHeightmapTerrainPageSource.h */,
+				34A9802A0FC97AE500620707 /* OgreHollowEllipsoidEmitter.h */,
+				34A9802B0FC97AE500620707 /* OgreHollowEllipsoidEmitterFactory.h */,
+				34A9802C0FC97AE500620707 /* OgreLinearForceAffector.h */,
+				34A9802D0FC97AE500620707 /* OgreLinearForceAffectorFactory.h */,
+				34A9802E0FC97AE500620707 /* OgreOctree.h */,
+				34A9802F0FC97AE500620707 /* OgreOctreeCamera.h */,
+				34A980300FC97AE500620707 /* OgreOctreeNode.h */,
+				34A980310FC97AE500620707 /* OgreOctreePlugin.h */,
+				34A980320FC97AE500620707 /* OgreOctreeSceneManager.h */,
+				34A980330FC97AE500620707 /* OgreOctreeSceneQuery.h */,
+				34A980340FC97AE500620707 /* OgreParticleFXPlugin.h */,
+				34A980350FC97AE500620707 /* OgreParticleFXPrerequisites.h */,
+				34A980360FC97AE500620707 /* OgrePointEmitter.h */,
+				34A980370FC97AE500620707 /* OgrePointEmitterFactory.h */,
+				34A980380FC97AE500620707 /* OgreRingEmitter.h */,
+				34A980390FC97AE500620707 /* OgreRingEmitterFactory.h */,
+				34A9803A0FC97AE500620707 /* OgreRotationAffector.h */,
+				34A9803B0FC97AE500620707 /* OgreRotationAffectorFactory.h */,
+				34A9803C0FC97AE500620707 /* OgreScaleAffector.h */,
+				34A9803D0FC97AE500620707 /* OgreScaleAffectorFactory.h */,
+				34A9803E0FC97AE500620707 /* OgreSDLGLSupport.h */,
+				34A9803F0FC97AE500620707 /* OgreSDLPrerequisites.h */,
+				34A980400FC97AE500620707 /* OgreSDLWindow.h */,
+				34A980410FC97AE500620707 /* OgreTerrainPage.h */,
+				34A980420FC97AE500620707 /* OgreTerrainPageSource.h */,
+				34A980430FC97AE500620707 /* OgreTerrainPrerequisites.h */,
+				34A980440FC97AE500620707 /* OgreTerrainRenderable.h */,
+				34A980450FC97AE500620707 /* OgreTerrainSceneManager.h */,
+				34A980460FC97AE500620707 /* OgreTerrainVertexProgram.h */,
+				34A980470FC97AE500620707 /* OgreWin32Context.h */,
+				34A980480FC97AE500620707 /* OgreWin32GLSupport.h */,
+				34A980490FC97AE500620707 /* OgreWin32Prerequisites.h */,
+				34A9804A0FC97AE500620707 /* OgreWin32RenderTexture.h */,
+				34A9804B0FC97AE500620707 /* OgreWin32Window.h */,
+				34A9804C0FC97AE500620707 /* OSX */,
+				34A980560FC97AE500620707 /* README */,
+			);
+			path = OgrePlugins;
+			sourceTree = "<group>";
+		};
+		34A97FE80FC97AE500620707 /* GL */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = GL;
+			sourceTree = "<group>";
+		};
+		34A97FE90FC97AE500620707 /* GLX */ = {
+			isa = PBXGroup;
+			children = (
+				34A97FEA0FC97AE500620707 /* OgreGLXContext.h */,
+				34A97FEB0FC97AE500620707 /* OgreGLXGLSupport.h */,
+				34A97FEC0FC97AE500620707 /* OgreGLXRenderTexture.h */,
+				34A97FED0FC97AE500620707 /* OgreGLXUtils.h */,
+				34A97FEE0FC97AE500620707 /* OgreGLXWindow.h */,
+			);
+			path = GLX;
+			sourceTree = "<group>";
+		};
+		34A97FEF0FC97AE500620707 /* gtk */ = {
+			isa = PBXGroup;
+			children = (
+				34A97FF00FC97AE500620707 /* OgreGTKGLSupport.h */,
+				34A97FF10FC97AE500620707 /* OgreGTKWindow.h */,
+			);
+			path = gtk;
+			sourceTree = "<group>";
+		};
+		34A9804C0FC97AE500620707 /* OSX */ = {
+			isa = PBXGroup;
+			children = (
+				34A9804D0FC97AE500620707 /* OgreOSXCarbonContext.h */,
+				34A9804E0FC97AE500620707 /* OgreOSXCarbonWindow.h */,
+				34A9804F0FC97AE500620707 /* OgreOSXCGLContext.h */,
+				34A980500FC97AE500620707 /* OgreOSXCocoaContext.h */,
+				34A980510FC97AE500620707 /* OgreOSXCocoaWindow.h */,
+				34A980520FC97AE500620707 /* OgreOSXContext.h */,
+				34A980530FC97AE500620707 /* OgreOSXGLSupport.h */,
+				34A980540FC97AE500620707 /* OgreOSXRenderTexture.h */,
+				34A980550FC97AE500620707 /* OgreOSXWindow.h */,
+			);
+			path = OSX;
 			sourceTree = "<group>";
 		};
 		34B9EBEF0F5E208F005BF6A4 /* Resources */ = {
@@ -2219,6 +2478,7 @@
 		4710235A0CEF3AAB00A7DF2B /* Ogre */ = {
 			isa = PBXGroup;
 			children = (
+				34A97FE40FC978C600620707 /* Plugins */,
 				4710235B0CEF3AAB00A7DF2B /* OgreGUI.h */,
 			);
 			path = Ogre;
@@ -2324,8 +2584,6 @@
 				471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */,
 				471023AB0CEF3AAC00A7DF2B /* Plugins */,
 				471023B20CEF3AAC00A7DF2B /* SConscript */,
-				34CA5F020F4F5F560002B5DB /* aglGetProcAddress.h */,
-				34CA5F030F4F5F850002B5DB /* aglGetProcAddress.cpp */,
 			);
 			path = Ogre;
 			sourceTree = "<group>";
@@ -2334,10 +2592,8 @@
 			isa = PBXGroup;
 			children = (
 				471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */,
-				471023AD0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.h */,
 				471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */,
 				471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */,
-				471023B00CEF3AAC00A7DF2B /* OISInput.h */,
 				471023B10CEF3AAC00A7DF2B /* SConscript */,
 			);
 			path = Plugins;
@@ -2439,6 +2695,7 @@
 		471D5C610A98A3F900DA9C21 /* human */ = {
 			isa = PBXGroup;
 			children = (
+				34A97FE70FC97AE500620707 /* OgrePlugins */,
 				47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */,
 				47102F880CEF55E700A7DF2B /* HumanClientFSM.h */,
 				471D5C620A98A3F900DA9C21 /* chmain.cpp */,
@@ -3102,7 +3359,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34CA5F040F4F5FD50002B5DB /* aglGetProcAddress.cpp in Sources */,
 				34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */,
 				471024090CEF3AAC00A7DF2B /* _vsnprintf.c in Sources */,
 				34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */,
@@ -3400,7 +3656,6 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					OGRE_GUI_GLX,
-					OGRE_CONFIG_LITTLE_ENDIAN,
 					FREEORION_MACOSX,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -3465,7 +3720,7 @@
 			};
 			name = Debug;
 		};
-		3402E2600F5A317400DF6FE7 /* ReleaseFO */ = {
+		3402E2600F5A317400DF6FE7 /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -3482,9 +3737,9 @@
 				PREBINDING = NO;
 				PRODUCT_NAME = FreeOrion;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9700F58D8B30083041E /* ReleaseFO */ = {
+		3484E9700F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
@@ -3493,7 +3748,6 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					OGRE_GUI_GLX,
-					OGRE_CONFIG_LITTLE_ENDIAN,
 					FREEORION_MACOSX,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -3534,9 +3788,9 @@
 				SDKROOT = macosx10.4;
 				ZERO_LINK = NO;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9710F58D8B30083041E /* ReleaseFO */ = {
+		3484E9710F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3555,9 +3809,9 @@
 				USER_HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/OpenAL/alut";
 				ZERO_LINK = YES;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9720F58D8B30083041E /* ReleaseFO */ = {
+		3484E9720F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3578,9 +3832,9 @@
 				PRODUCT_NAME = GG;
 				ZERO_LINK = YES;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9730F58D8B30083041E /* ReleaseFO */ = {
+		3484E9730F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3597,9 +3851,9 @@
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9740F58D8B30083041E /* ReleaseFO */ = {
+		3484E9740F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3616,9 +3870,9 @@
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9750F58D8B30083041E /* ReleaseFO */ = {
+		3484E9750F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3653,9 +3907,9 @@
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9760F58D8B30083041E /* ReleaseFO */ = {
+		3484E9760F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3680,9 +3934,9 @@
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
-		3484E9770F58D8B30083041E /* ReleaseFO */ = {
+		3484E9770F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -3709,7 +3963,7 @@
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
 			};
-			name = ReleaseFO;
+			name = ReleaseUniversal;
 		};
 		47103BE40CF04DC700A7DF2B /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -3856,7 +4110,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB923208733DC60010E9CD /* Debug */,
-				3484E9750F58D8B30083041E /* ReleaseFO */,
+				3484E9750F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3865,7 +4119,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1DEB923608733DC60010E9CD /* Debug */,
-				3484E9700F58D8B30083041E /* ReleaseFO */,
+				3484E9700F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3874,7 +4128,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3402E25F0F5A317400DF6FE7 /* Debug */,
-				3402E2600F5A317400DF6FE7 /* ReleaseFO */,
+				3402E2600F5A317400DF6FE7 /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3883,7 +4137,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				47103BE40CF04DC700A7DF2B /* Debug */,
-				3484E9730F58D8B30083041E /* ReleaseFO */,
+				3484E9730F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3892,7 +4146,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				471D5A3B0A988D8600DA9C21 /* Debug */,
-				3484E9720F58D8B30083041E /* ReleaseFO */,
+				3484E9720F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3901,7 +4155,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				471D5D6C0A98A48500DA9C21 /* Debug */,
-				3484E9760F58D8B30083041E /* ReleaseFO */,
+				3484E9760F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3910,7 +4164,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				471FEFD50A9A629800C36AA3 /* Debug */,
-				3484E9770F58D8B30083041E /* ReleaseFO */,
+				3484E9770F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3919,7 +4173,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				478417AF0CF0592E00BE4710 /* Debug */,
-				3484E9740F58D8B30083041E /* ReleaseFO */,
+				3484E9740F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -3928,7 +4182,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				47B615C50CF099DC00318761 /* Debug */,
-				3484E9710F58D8B30083041E /* ReleaseFO */,
+				3484E9710F58D8B30083041E /* ReleaseUniversal */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
