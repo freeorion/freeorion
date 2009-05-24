@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "0.3.12"
+!define PRODUCT_VERSION "0.3.13"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\freeorionca.exe"
@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\FreeOrion-0.3.12-Setup.exe"
+OutFile "..\..\FreeOrion-0.3.13-Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -63,13 +63,14 @@ Section "MainSection" SEC01
   File "..\OgreMain.dll"
   File "..\OpenAL32.dll"
   File "..\Plugin_OctreeSceneManager.dll"
+  File "..\Plugin_CgProgramManager.dll"
   File "..\Plugin_ParticleFX.dll"
   File "..\RenderSystem_GL.dll"
   File "..\alut.dll"
+  File "..\cg.dll"
   File "..\boost_date_time-vc90-mt-1_36.dll"
   File "..\boost_filesystem-vc90-mt-1_36.dll"
   File "..\boost_iostreams-vc90-mt-1_36.dll"
-  File "..\boost_python-vc80-mt-1_36.dll"
   File "..\boost_python-vc90-mt-1_36.dll"
   File "..\boost_regex-vc90-mt-1_36.dll"
   File "..\boost_serialization-vc90-mt-1_36.dll"

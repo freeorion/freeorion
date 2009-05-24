@@ -193,7 +193,7 @@ def CheckBoost(context, required_version, lib_tuples, conf, check_libs):
     return True
 
 def BoostLibWin32Name(name, env):
-    # For now, assume VC80 is used
+    # For now, assume VC90 is used
     toolset_tag = '-vc90'
     if env['multithreaded']:
         if env['dynamic']:
