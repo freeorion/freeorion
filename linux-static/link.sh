@@ -76,14 +76,16 @@ $GV/lib/pathplan/.libs/libpathplan_C.a \
 -lasound -lopenal -lfreetype -lz -lalut -lopenal -lvorbisfile -lvorbis \
 -logg -lnsl -lvga -lx86 \
 -lartsc -laudio -lcaca -lcucul -lmng -llcms \
+ /usr/local/lib/OGRE/Plugin_CgProgramManager.a  /usr/local/lib/OGRE/Plugin_ParticleFX.a  /usr/local/lib/OGRE/Plugin_OctreeSceneManager.a /usr/local/lib/OGRE/RenderSystem_GL.a \
+-lXrandr -lXrender -lOIS \
 -lboost_system${BOOST_SUFFIX} -lboost_thread${BOOST_SUFFIX} -lboost_signals${BOOST_SUFFIX} -lboost_filesystem${BOOST_SUFFIX} -lboost_serialization${BOOST_SUFFIX} -lboost_iostreams${BOOST_SUFFIX} \
 -lesd -lICE -lexpat -ljpeg -lutil -lpng12 \
 -lXt -lSM -lXaw7 -lXaw3d -lXmu -lXpm -lzzip -lXext -lX11 \
 -lxcb-xlib -lxcb \
 -lslang -lXau  \
--laa -lncurses -lgpm \
+-laa -lncurses -lgpm  \
 -lstdc++ -lm  \
--Wl,-dy -lGL -lGLU -lGiGi -lGiGiOgre -lOgreMain -lfreeimage -lOIS \
+-Wl,-dy -lGL -lGLU -lGiGi -lGiGiOgre -lOgreMain -lGiGiOgrePlugin_OIS -lfreeimage \
 -Wl,--end-group \
 ;
 then
