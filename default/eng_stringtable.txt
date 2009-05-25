@@ -559,6 +559,9 @@ Toggles lens flares on and off.
 OPTIONS_DB_COMBAT_FILLED_SELECTION
 Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
+OPTIONS_DB_QUICKSTART
+Starts a new quickstart game, bypassing the main menu.
+
 
 #################
 # File Dialog   #
@@ -3007,7 +3010,7 @@ PRO_NDIM_ASSMB
 N-Dimensional Assembly
 
 PRO_NDIM_ASSMB_DESC
-The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
+The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
 
 PRO_SINGULAR_GEN
 Singularity Generation

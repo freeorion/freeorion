@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
         GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF",             true);
         GetOptionsDB().Add<std::string>("bg-music",         "OPTIONS_DB_BG_MUSIC",      "artificial_intelligence_v3.ogg");
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
+        GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
 
         XMLDoc doc;
         {
@@ -194,6 +195,12 @@ int main(int argc, char* argv[])
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif
 
+        if (GetOptionsDB().Get<bool>("quickstart")) {
+            // immediaely start the server, establish network connections.  acceptable to call before app().
+            app.NewSinglePlayerGame(true);
+        }
+
+        // run rendering loop
         app();
 
     } catch (const HumanClientApp::CleanQuit&) {
@@ -213,6 +220,9 @@ int main(int argc, char* argv[])
     } catch (const std::exception& e) {
         Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
+    } catch (...) {
+        Logger().errorStream() << "main() caught unknown exception.";
+        std::cerr << "main() caught unknown exception." << std::endl;
     }
 
     if (root) {

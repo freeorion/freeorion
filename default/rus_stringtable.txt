@@ -2923,25 +2923,25 @@ PRO_INTSTEL_COPRO_DESC
 Традиционные средства производства продукции ограничены потребностью самостоятельности производства из-за транспортировки и других логистических проблем. Более позднее планетарное региональное сотрудничество разрешает некоторую степень специализации и сотрудничества, с использованием производственного оборудования нескольких частей системы, благодаря чему целая система извлекает выгоду из централизованной экспертизы и экономии за счет роста производства. Раcширяя это понятие на несколько порядков, система может адаптироваться к галактическому масштабу, с отдельными планетами или целыми звездными системами, функционирующими в качестве единого специализированного средства производства. Логистические трудности, как часть такой системы, не отличаются от тех, что были ранее, и возрастают лишь до той степени, которая предполагает потенциальнаю пользу.
 
 PRO_NDIM_ASSMB
-N-Dimensional Assembly
+N-мерная сборка
 
 PRO_NDIM_ASSMB_DESC
-The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be colocated, and volumes cannot be simultaneously enclosed and open if their existance is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
+Геометрия физического пространства всегда была главным препятствием для сборки объектов в пределах этого пространства. Объекты не могут быть расположены так, что их объемы могут быть одновременно помещены в корпус и доступны, если их существование ограничено простыми тремя измерениями. Перемещаясь вне этого ограничения, части объектов могут свернуть c пути в карманных измерениях, и непрерывные линии могут проходить другие материалы, идя "вне оси" и оставаясь при этом непрерывными. Подобные механизмы также используются, чтобы собрать более низко-мерные объекты в конфигурациях, которые были бы невозможны без использования более многомерных путей сборки. 
 
 PRO_SINGULAR_GEN
-Singularity Generation
+Энергия сингулярности
 
 PRO_SINGULAR_GEN_DESC
-As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation do to annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than that with the accretion disk method, but can produce even greater output as well.
+Вещество притянутое к гравитационной сингулярности интенсивной кривизной прстранства-времени, или полем тяготения, формирует линзу, приобретая при этом огромную плотность и сильно нагреваясь. Высокоэнергитическое радиациионное излучение испускаемое линзой, может быть захвачено и использовано для выработки энергии. Сам горизонт события сингулярности также излучает радиацию, к чему приводит аннигиляции пар частицы и античастицы, которые формируются в его близости. Этот метод выработки энергии является значительно более хрупким и неустойчивым, чем метод линзирования, но так же может давать больше энергии.
 
 PRO_MATENG_REPLIC
-Replication
+Репродукция
 
 PRO_MATENG_REPLIC_DESC
-Previous iterations of assembly techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of smaller parts, be they prefabricated subsections, or individual atoms.  By converting pure energy directly into the desired material object, eliminating the need for precursor parts or supplied materials, the ultimate level of flexible and efficient assembly is achieved.
+Предыдущие варианты методов сборки были, по существу, способами избежать особенно раздражающих задач с манипуляцией веществом. Ни один из этих методов существенно не изменил основные принципы сборки, который заключается в монтаже больших объекты из меньших частей, быть то готовые секции, или отдельные атомы. Преобразовывание чистой энергии непосредственно в желаемый материальный объект избавляет от необходимости предварительно делать детали объекта или снабжать производство различными материалами. Достигнут окончательный уровень гибкой и эффективной сборки.
 
 PRO_ZERO_GEN
-Zero-Point Generation
+Энергия нулевых точек
 
 PRO_ZERO_GEN_DESC
 Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency.  By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available.  The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
