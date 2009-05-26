@@ -33,9 +33,9 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const StringTable& GetStringTable() {
-        static std::auto_ptr<StringTable> string_table(
-            new StringTable((GetSettingsDir() / GetOptionsDB().Get<std::string>("stringtable-filename")).file_string()));
+    const _StringTable& GetStringTable() {
+        static std::auto_ptr<_StringTable> string_table(
+            new _StringTable((GetSettingsDir() / GetOptionsDB().Get<std::string>("stringtable-filename")).file_string()));
         return *string_table;
     }
 

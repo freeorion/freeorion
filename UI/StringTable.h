@@ -9,6 +9,10 @@
 #include <map>
 #include <fstream>
 
+// HACK! StringTable is renamed to _StringTable because freeimage defines
+// a class StringTable too. If both are named identically, static linking
+// won't be possible.
+
 //! This is an implementation of a String Table for internationalization purposes.
 //! The table is built from a file of the following format:<br>
 //! name_of_language<br>
@@ -44,17 +48,17 @@
 //! <br>
 //! TESTFOUR<br>
 //! test four<br>
-class StringTable
+class _StringTable
 {
 public:
 
     //! \names Structors
     //!@{
-    StringTable();  //!< default construction, uses S_DEFAULT_FILENAME
+    _StringTable();  //!< default construction, uses S_DEFAULT_FILENAME
     
-    //! @param filename A file containing the data for this StringTable
-    StringTable(const std::string& filename);   //!< construct a StringTable from the given filename
-    ~StringTable();                             //!< default destructor
+    //! @param filename A file containing the data for this _StringTable
+    _StringTable(const std::string& filename);   //!< construct a _StringTable from the given filename
+    ~_StringTable();                             //!< default destructor
     //!@}
 
 public:
@@ -66,8 +70,8 @@ public:
     
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
-    inline const std::string& String(std::string index) const { return operator[] (index); }    //!< Interface to operator() \see StringTable::operator[]
-    inline const std::string& Language() const {return m_language;} //!< Returns the language of this StringTable
+    inline const std::string& String(std::string index) const { return operator[] (index); }    //!< Interface to operator() \see _StringTable::operator[]
+    inline const std::string& Language() const {return m_language;} //!< Returns the language of this _StringTable
     inline const std::string& Filename() const {return m_filename;} //!< accessor to the filename
     //!@}
 
@@ -86,7 +90,7 @@ private:
 
     //! \name Data Members
     //!@{
-    std::string m_filename;    //!< the name of the file this StringTable was constructed with
+    std::string m_filename;    //!< the name of the file this _StringTable was constructed with
     std::string m_language;    //!< A string containing the name of the language used
     std::map<std::string, std::string> m_strings;  //!< The strings in the table
     //!@}

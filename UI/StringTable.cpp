@@ -10,29 +10,29 @@
 
 
 // static(s)
-const std::string StringTable::S_DEFAULT_FILENAME = "eng_stringtable.txt";
-const std::string StringTable::S_ERROR_STRING = "ERROR: ";
+const std::string _StringTable::S_DEFAULT_FILENAME = "eng_stringtable.txt";
+const std::string _StringTable::S_ERROR_STRING = "ERROR: ";
 
 // StringTable
-StringTable::StringTable():
+_StringTable::_StringTable():
     m_filename(S_DEFAULT_FILENAME)
 { Load(); }
 
-StringTable::StringTable(const std::string& filename):
+_StringTable::_StringTable(const std::string& filename):
     m_filename(filename)
 { Load(); }
 
-StringTable::~StringTable()
+_StringTable::~_StringTable()
 {}
 
-const std::string& StringTable::operator[] (std::string index) const
+const std::string& _StringTable::operator[] (std::string index) const
 {
     static std::string error_retval;
     std::map<std::string, std::string>::const_iterator it = m_strings.find(index);
     return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
 }
 
-void StringTable::Load()
+void _StringTable::Load()
 {
     std::ifstream ifs(m_filename.c_str());
     std::string file_contents;
@@ -42,7 +42,7 @@ void StringTable::Load()
             file_contents += c;
         }
     } else {
-        Logger().errorStream() << "Could not open or read StringTable file \"" << m_filename << "\"";
+        Logger().errorStream() << "Could not open or read _StringTable file \"" << m_filename << "\"";
         return;
     }
 
@@ -138,6 +138,6 @@ void StringTable::Load()
             }
         }
     } else {
-        Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed";
+        Logger().errorStream() << "_StringTable file \"" << m_filename << "\" is malformed";
     }
 }
