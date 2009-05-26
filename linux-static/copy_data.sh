@@ -11,7 +11,7 @@ rsync --recursive --verbose --delete \
     --exclude ".svn" \
     --exclude "*~" \
     --exclude "*.pyc" \
-    default License.DejaVu License.Vera  \
+    default \
     $TARGET_BIN
 
 

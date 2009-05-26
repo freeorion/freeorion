@@ -5,7 +5,6 @@
          binarypath="/usr/local/bin"
          promptbinaries="yes" 
          express="no"
-         once="yes"
          splash="logo.png"
          nopromptoverwrite="yes">
   <readme>
@@ -39,11 +38,7 @@
       RELEASE-NOTES-V03.txt
       COPYING
       README
-      application/ogre_plugins.cfg
       application/OISInput.cfg
-      application/Plugin_*.so
-      application/RenderSystem_GL.so
-      application/License.*
       application/default
       application/python2.5
       application/lib

@@ -140,7 +140,13 @@ int main(int argc, char* argv[])
         root = new Root((GetGlobalDir() / "ogre_plugins.cfg").string());
 
 #if defined(OGRE_STATIC_LIB)
+        cg_plugin = new Ogre::CgPlugin;
+        octree_plugin = new Ogre::OctreePlugin;
+        particle_fx_plugin = new Ogre::ParticleFXPlugin;
         gl_plugin = new Ogre::GLPlugin;
+        root->installPlugin(cg_plugin);
+        root->installPlugin(octree_plugin);
+        root->installPlugin(particle_fx_plugin);
         root->installPlugin(gl_plugin);
 #endif
 
@@ -187,13 +193,7 @@ int main(int argc, char* argv[])
         root->installPlugin(ois_input_plugin);
 #elif defined(OGRE_STATIC_LIB)
         ois_input_plugin = new OISInput;
-        cg_plugin = new Ogre::CgPlugin;
-        octree_plugin = new Ogre::OctreePlugin;
-        particle_fx_plugin = new Ogre::ParticleFXPlugin;
         root->installPlugin(ois_input_plugin);
-        root->installPlugin(cg_plugin);
-        root->installPlugin(octree_plugin);
-        root->installPlugin(particle_fx_plugin);
 #else
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif
