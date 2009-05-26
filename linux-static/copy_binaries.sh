@@ -14,7 +14,7 @@ done
 
 # Copy so files if FO was linked dynamically
 FREEORION_DYNAMIC=0
-if [ "$FREEORION_DYNAMIC" == 1 ]; then
+if [ "$FREEORION_DYNAMIC" = 1 ]; then
     # Copy libs
     cp -aLv /usr/local/lib/libOgreMain-1.6.2.so     $TARGET_LIB
     

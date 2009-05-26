@@ -7,11 +7,11 @@ cd ..
 
 # Create a tar.gz file
 
-if [ -z GZIP ]; then
+if [ -z $USE_GZIP ]; then
     USE_GZIP=1
 fi
 
-if [ "$USE_GZIP" == 1 ]; then
+if [ "$USE_GZIP" = 1 ]; then
     GZIP_EXT=.gz
     TAR_GZIP_PARAM="--gzip"
 else
@@ -27,11 +27,18 @@ if [ -e $SVNREV ]; then
     echo "Konnte SVN-Version nicht bestimmen"
 fi
 
+if grep ubuntu904i386 /etc/debian_chroot ; then
+    FO_PREFIX=freeorion_ubuntu
+else
+    FO_PREFIX=freeorion
+fi
+
+
 OUTDIR=/tmp/
 if [ ! -e $SVNREV ]; then
-    FILENAME=freeorion_rev${SVNREV}_i386_static.tar$GZIP_EXT
+    FILENAME=${FO_PREFIX}_rev${SVNREV}_i386_static.tar$GZIP_EXT
 else
-    FILENAME=freeorion_i386_static.tar$GZIP_EXT
+    FILENAME=${FO_PREFIX}_i386_static.tar$GZIP_EXT
 fi
 OUT=${OUTDIR}/${FILENAME}
 
@@ -55,7 +62,7 @@ OUT=${OUTDIR}/${FILENAME}
 (
     if [ ! -e $SVNREV ]; then
         cd "`dirname $OUT`"
-        ln -sf $FILENAME freeorion_i386_static.tar$GZIP_EXT
+        ln -sf $FILENAME ${FO_PREFIX}_i386_static.tar$GZIP_EXT
 
         # Nightly builds
 	NIGHTLY=/home/wwwroot/freeorion.psitronic.de/download/nightly
@@ -66,3 +73,4 @@ OUT=${OUTDIR}/${FILENAME}
     fi
 
 )
+

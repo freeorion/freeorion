@@ -1,9 +1,9 @@
 #!/bin/sh
 cd `dirname $0`
-
-pwd
 . ./mdist.config.sh
 
+
+cd ..
 
 # FreeorionD and FreeorionCA need to be named without -static
 for F in freeorion freeoriond freeorionca; do

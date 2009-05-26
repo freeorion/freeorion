@@ -1,6 +1,6 @@
 #!/bin/sh
 cd `dirname $0`
-. mdist.config.sh
+. ./mdist.config.sh
 
 # Change back into the FreeOrion root directory
 cd ..
