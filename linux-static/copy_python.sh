@@ -2,6 +2,9 @@
 cd `dirname $0`
 . mdist.config.sh
 
+# Change back into the FreeOrion root directory
+cd ..
+
 PY_ROOT=$TARGET_ROOT/application/python2.5
 mkdir -p ${PY_ROOT}/lib-dynload/
 

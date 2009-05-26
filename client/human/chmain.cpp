@@ -139,6 +139,11 @@ int main(int argc, char* argv[])
 
         root = new Root((GetGlobalDir() / "ogre_plugins.cfg").string());
 
+#if defined(OGRE_STATIC_LIB)
+        gl_plugin = new Ogre::GLPlugin;
+        root->installPlugin(gl_plugin);
+#endif
+
         RenderSystemList* renderers_list = root->getAvailableRenderers();
         bool failed = true;
         RenderSystem* selected_render_system = 0;
@@ -185,12 +190,10 @@ int main(int argc, char* argv[])
         cg_plugin = new Ogre::CgPlugin;
         octree_plugin = new Ogre::OctreePlugin;
         particle_fx_plugin = new Ogre::ParticleFXPlugin;
-        gl_plugin = new Ogre::GLPlugin;
         root->installPlugin(ois_input_plugin);
         root->installPlugin(cg_plugin);
         root->installPlugin(octree_plugin);
         root->installPlugin(particle_fx_plugin);
-        root->installPlugin(gl_plugin);
 #else
         root->loadPlugin(OGRE_INPUT_PLUGIN_NAME);
 #endif

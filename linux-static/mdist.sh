@@ -1,7 +1,15 @@
 #!/bin/sh
-. mdist.config.sh
+cd `dirname "$0"`
+. ./mdist.config.sh
 
-USE_GZIP=1
+# Change back into the FreeOrion root directory
+cd ..
+
+# Create a tar.gz file
+
+if [ -z GZIP ]; then
+    USE_GZIP=1
+fi
 
 if [ "$USE_GZIP" == 1 ]; then
     GZIP_EXT=.gz

@@ -1,7 +1,9 @@
 #!/bin/sh
 cd `dirname $0`
-. mdist.config.sh
+. ./mdist.config.sh
 
+# Change back into the FreeOrion root directory
+cd ..
 
 # Sync Data and Fonts
 # --delete will result in cleaning everything unwanted at target

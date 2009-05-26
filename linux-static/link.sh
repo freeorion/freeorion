@@ -39,7 +39,7 @@ else
 fi
 
 
-if [ $FO == 1 ] && [ 1 == 1 ]; then
+if [ $FO = 1 ] && [ 1 = 1 ]; then
 echo Linking freeorion-static
 
 #UI/FocusSelector-human.o 
@@ -85,7 +85,8 @@ $GV/lib/pathplan/.libs/libpathplan_C.a \
 -lslang -lXau  \
 -laa -lncurses -lgpm  \
 -lstdc++ -lm  \
--Wl,-dy -lGL -lGLU -lGiGi -lGiGiOgre -lOgreMain -lGiGiOgrePlugin_OIS -lfreeimage \
+-lGiGi -lGiGiOgre -lOgreMain -lGiGiOgrePlugin_OIS -lfreeimage \
+-Wl,-dy -lCgGL -lCg -lGL -lGLU \
 -Wl,--end-group \
 ;
 then
@@ -100,7 +101,7 @@ fi #[ $FO == 1 ]
 
 
 
-if [ $FOD == 1 ] &&[ 1 == 1 ]; then
+if [ $FOD = 1 ] && [ 1 = 1 ]; then
 echo linking freeoriond-static
 
 if ! \
@@ -130,7 +131,7 @@ fi
 
 
 
-if [ $FOCA == 1 ] && [ 1 == 1 ]; then
+if [ $FOCA = 1 ] && [ 1 = 1 ]; then
     echo Linking freeorionca-static
 
 if ! \
@@ -154,7 +155,7 @@ fi
 fi
 
 
-if [ $FOPYCA == 1 ] ; then
+if [ $FOPYCA = 1 ] ; then
 echo Linking freeorionca-pythonstatic
 
 if ! \

@@ -1,6 +1,9 @@
 #!/bin/sh
 cd `dirname $0`
-. mdist.config.sh
+. ./mdist.config.sh
+
+# Change back into the FreeOrion root directory
+cd ..
 
 # Copy Installer
 rsync --recursive --verbose \
