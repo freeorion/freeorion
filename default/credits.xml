@@ -26,6 +26,7 @@
       <PERSON name="Martin Wuttke"            nick="The Silent One"   task="Programming, German Translation, Graphics"/>
       <PERSON name="Markus Sinner"            nick="kroddn"           task="Programming, German Translation"/>
       <PERSON name="Jon Siwek"                nick=".Id"              task="Programming"/>
+      <PERSON name="Bernard Helyer"           nick="bhelyer"          task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>
@@ -79,7 +80,7 @@
       <PERSON name="Łukasz Korpalski"         nick="Cyber Killer"     task="Polish Translation"/>
       <PERSON name="Mikko Maununen"           nick="MikkoM"           task="Finnish Translation"/>
       <PERSON name="Vladimir Safronenkov"     nick="pohlman"          task="Russian Translation"/>
-      <PERSON name="Alexandr"                 nick="Cjckem"           task="Russian Translation"/>
+      <PERSON name="Alexandr Kopitkov"        nick="Cjckem"           task="Russian Translation"/>
       </GROUP>
   </CREDITS>
 </XMLDoc>

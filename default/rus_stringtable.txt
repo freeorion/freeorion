@@ -2944,73 +2944,73 @@ PRO_ZERO_GEN
 Энергия нулевых точек
 
 PRO_ZERO_GEN_DESC
-Any power generation mechanism that involves a material fuel supply is limited by the relativistic mass-energy relationship: no more energy can be produced than equivalent mass consumed, even with perfect efficiency.  By tapping the inherent energy of the vacuum, or zero-point energy, an effectively infinite source is made available.  The rate, or power, of this extraction is also theoretically unbounded, with limits only in the available means to collect and use the output.
+Любой механизм выработки энергии, который включает материальную подачу топлива, ограничен релятивистской зависимостью массы - энергии: не может быть получено энергии больше, чем эквивалентно затраченно массы, даже при совершенной эффективности процесса. Выявление энергии нулевых колебаний вакуума, или, так называемой, энергии нулевой точки, фактически делает доступным бесконечный источник энергии. Уровень и мощность такого источника также теоретически неограниченна, пределами являются только способы, которыми аккумулируется и используется энергия.
 
 CON_ORBITAL_CON
-Orbital Construction
+Орбитальное конструирование
 
 CON_ORBITAL_CON_DESC
-On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfraces, the practical use of these spaces will be initial primarily by those who are used to, and adapated for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
+На планете всегда есть неизменная ссылка на направление: "вверх", микрогравитация же изотропна (направления ничем качественно не отличаются). У этой единственного отличия есть множество последствий для типов конструкций, которые могут быть построены, и для их форм, которые оптимально используют пространство, материалы и энергию в каждой среде. Внутренняя конфигурация пространств на орбите должна быть заново продумана. Хоть это и приводит к попытке полной переделки парадигмы конструирования, полностью независимой от типов, используемых на поверхностях планеты, практическое применение этих пространств будет начато прежде всего теми, кто привык и приспособлен к поверхности планеты. Поэтому более эффективным может быть не полный разрыв с уже наработанными типами конструкций, а постепенный переход.
 
 CON_ARCH_PSYCH
-Architectural Psychology
+Архитектурная психология
 
 CON_ARCH_PSYCH_DESC
-The form of a structure or inhabited space is not merely guided by the physical limitations of the materials from which it is constructed.  Psychological effects on the inhabitants within, or observers outside can have a far greater influence on the success of a design than the strength of a wall or sturdiness of a foundation.
+Формы конструкций или жилых помещений руководствуется не только простыми физическими ограничениями материалов, из которых они построены. Психологическое воздействие, оказываемое на жителей внутри, или наблюдателей снаружи, могут иметь намного большую значимость для успешности дизайна чем прочность стен или крепость фундамента.
 
 CON_INFRA_ECOL
-Infrastructure Ecology
+Экология инфраструктуры
 
 CON_INFRA_ECOL_DESC
-The basic infrastructure of an established planetary colony may seem to be created entirely by the colonizers, and to function only according to their designs.  In reality, however, the ecology of the planet on which it is built is the foundation and support mechanism for the added infrastructure, and often forms an integral part of its function.  Understanding the interaction between natural and artificial components, and the limits of the resources an ecological system can provide are essential to the development of an optimal and sustainable infrastructure for any colony.
+Может показаться, что основная инфраструктура, развернутая в планетарной колонии, полностью создана поселенцами, и функционирует согласно только их правилам. Однако в действительности, экология планеты, на которой построена колония, является фундаментом и механизмом поддержки для возведенной инфраструктуры и часто формирует неотъемлемую часть ее функций. Понимание взаимодействия между естественными и искусственными компонентами, пределов запасов, которые может обеспечить экосистема, необходимо для развития оптимальной и жизнеспособной инфраструктуры любой колонии.
 
 CON_ORGANIC_STRC
-Organic Structures
+Органические строения
 
 CON_ORGANIC_STRC_DESC
-Buildings formed of inanitmate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
+Здания, сформированные из неодушевленных минералов функциональны и иногда изящны, собранные из мертвого органического материала часто просты и недороги. Однако живые органические строения могут вырастать и обретать их конечную форму без дополнительного труда, к тому же обладают способностью к некоторой степени восстановления, если строение было повреждено. Такие здания могут естественным образом регулировать свою внутреннюю среду, или потенциально способны во время роста приспособиться к различной или изменяющейся окружающей среде по мере необходимости.
 
 CON_METRO_INFRA
-Metroplex Infrastructure
+Инфраструктура Метроплекса
 
 CON_METRO_INFRA_DESC
-When the entire surface of a world is covered, continued development must occur above and below pre-existing construction.   Care must be taken to ensure the stability of the undercut or overshadowed structures are not damaged, and transportation and supply routes must be rethought to support vastly increased population densities.  Furthermore, novel stylistic and functional issues must be considered, to ensure that the newer levels, and the combined whole, are worth inhabiting.
+Когда вся поверхность планеты застроена, дальнейшее развитие должно продолжаться выше и ниже существующих сооружений. Данный процесс должен выполняться с осторожностью, чтобы гарантировать стабильность надстроенных зданий, и невредимость нижних структур при подземных работах. Должны быть заново продуманы маршруты движения и поддерживающей инфраструктуры, способные поддерживать значительно увеличившуюся плотность заселения. Кроме того, нужно рассматривать новые стилистические и функциональные аспекты, чтобы гарантировать, что новые уровни будут гармонировать со старыми в общем виде.
 
 CON_TRANS_STRC
-Transforming Structures
+Трансформирующиеся строения
 
 CON_TRANS_STRC_DESC
-A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebulding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
+Функция заслонки двойственна, по желанию они могут быть и твердой стеной и открытым окном. Помещение может быть заново обставлено в рамках доступного пространства таким образом, чтобы полностью удовлетворять новым целям его использования. Это понятие может быть расширено на фактическую форму и конструкцию всего строения или города, механического или органического. Избавление от необходимости разрушать и перестраивать предоставляет большую гибкость и эффективность инфраструктуры. Отдельные здания могут также использоваться для разных целей одновременно, ранее для этого потребовались бы более громоздкие и сложные дизайны.
 
 CON_ARCH_MONOFILS
-Architectural Monofilaments
+Архитектурные моноволокна
 
 CON_ARCH_MONOFILS_DESC
-Essentially unbreakable and merely a few atoms in diamater, single-crystal filaments have many uses in improving traditional structure designs in durability and economy of construction.  The capacity to suspend or stress other materials in previously impossible configurations also permits a wholly new designs.  Low weight and high strength filaments are of particular use in large-scale orbital or surface to orbit spanning structures, where variations in gravity across lengths were previously very prohibative.
+Попросту небьющиеся и всего несколько атомов в диаметре, у монокристаллических нитей найдется множество применений в улучшении характеристик традиционных сооружений, таких как долговечность построек и их экономичность. Способность повысить стрессоустойчивость других материалов дает возможность их использования в ранее невозможных конфигурациях, а так же позволяет создавать совершенно новые проекты. Низкий вес и высокая прочность нитей позволяет их использование в орбитальных конструкциях, и даже для привязки орбитальных строений к поверхности, там, где изменения в силе тяготения от расстояния до поверхности ранее препятствовали использованию орбитальных конструкций.
 
 CON_SELFGRAV_STRC
-Self-Gravitating Structures
+Строения с собственной гравитацией
 
 CON_SELFGRAV_STRC_DESC
-As orbital construction grows ever larger in scale, eventually the mass of a single installation is sufficient to appreciably self-gravitate.  Where previously the microgravity environment was fundamental, designs must be rethought again, just as they were when originally moving surface activity into orbit.  Rather than expanding endlessly in efficient regular patterns, the natural curved shapes of planetary bodies begins to emerge in artificial bodies as well.  Advantages over surface construction are retained, however, as the artifical mass is designed and built with its purpose in mind.
+Поскольку орбитальное сооружение когда-нибудь становится настолько большим по своим масштабам, что в конечном счете масса отдельной составного элемента достаточна, для появления заметно выраженной собственной гравитации. Там где ранее микрогравитационная среда играла фундаментальную роль, проекты должны быть переосмыслены, так же, как это было изначально, когда жизнедеятельность с поверхности перемещалась на орбиту. Вместо того, чтобы расширяться бесконечно в рациональную правильную структуру, естественные изогнутые формы планетарных тел начинают также проявляться в искусственных спутниках. Однако преимущества и целесообразность орбитальных конструкций перед наземными сохраняются,  поскольку искусственные объекты разработаны и построены в соответствии со своим предназначением.
 
 CON_ASYMP_MATS
-Asymptotic Materials
+Асимптотические материалы
 
 CON_ASYMP_MATS_DESC
-Once certain thresholds of performance are passed, measuring the physical properties of materials for relative comparison becomes impractical in any terms other than orders of magnitude or logarithmic scales.  Much like superconductivity in electronics, the tensile strength, toughness, density, elasticity, refractory index and other mechanical properties of materials may be controlled with effectively no limits.  With all previously significant limitations removed, structure designs are further unhindered, and may extend or change by similar order of magnitude scales.
+Как только определенные пороги эксплуатационных характеристик пройдены, измерение физических свойств материалов для относительного сравнения становится непрактичным в любых терминах, кроме порядков величин или логарифмических масштабов. Это тоже что и сверхпроводимость в электронике: пределом прочности, стойкостью, плотностью, эластичностью, жаропрочным индексом и другими прочностными свойствами материалов можно эффективно управлять без каких либо ограничений. Все ранее существовавшие ограничения исчезли, в проектировании строений  более нет препятствий, они могут расширяться или измениться в той же степени как и свойства материалов.
 
 CON_STRC_INT_FLDS
-Structural Integrity Fields
+Структурно-интегрируемые поля
 
 CON_STRC_INT_FLDS_DESC
-Advanced materials and architecture can greatly extend the practical size of rigid structures.  Eventually however, the stresses placed on load-bearing matter approach the magnitude of the strong nuclear force which holds atomic nuclei together, at which point alternative sources of support become essential.  Projected energy support fields may serve this purose, and replacing or augmenting fixed supports in this manner allows a drastic reduction in the necessary structural materials mass and volume.  As well, such methods may allow dynamic adjustment of reinforcement in response to rapidly changing stress patterns, whereas fixed supports must remain in place even when not being actively used.
+Передовые материалы и архитектура могут значительно расширить практический размер твердых структур. В конечном счете однако, давление, приложенное на несущий нагрузку материал, приближается к величине сильного атомного взаимодействия, которое скрепляет атомное ядро, в этом случае становятся актуальными альтернативные источники  поддержки. Этой цели могут служить поддерживающие энергетические поля, возмещение или усиление ими твердых опорных структур позволяют сильно сократить  массу и объем задействованных конструкционных материалов. Такой метод позволяет динамично реагировать на изменение нагрузки, тогда как фиксированные поддержки должны остаться на месте, даже когда активно не используются.
 
 CON_CONTGRAV_ARCH
-Controlled Gravity Architecture
+Контролируемая Гравитация в Архитектуре
 
 CON_CONTGRAV_ARCH_DESC
-By fully controlling the orientation and strength of gravitational forces acting upon and existant within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down.  The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections.  Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas.  Such versatility permits great new functional designs for social, manufacturing or other uses.
+Полностью управляя ориентацией и силой гравитационных полей, существующих вне и внутри строений, проекты могут одновременно демонстрировать свободу невесомости и пользу наличия опциональных "верха" и "низа". Само строение  и окружающая его среда, могут образовывать любую форму в пространстве, простираясь на большие расстояния, делая петли вокруг себя, и создавая произвольные взаимосвязи. Одновременно, окружению, в определенных пределах, можно придать полезные свойства, которые могут меняться или полностью отличаться от смежных областей. Такая эксплуатационная гибкость предлагает новые функциональные возможности для социальных, производственных или других целей.
 
 CON_GAL_INFRA
 Galactic Infrastructure

@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;../../../GG/;../../include;../../../../include/OGRE;../../../../include/OGRE/OIS"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GIGI_OGRE_PLUGIN_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GiGiOgrePlugin_OIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
 				IgnoreStandardIncludePath="false"
 				StringPooling="false"
 				MinimalRebuild="true"
@@ -125,15 +125,27 @@
 							>
 						</File>
 						<File
-							RelativePath="..\..\..\GG\src\Ogre\Plugins\OgreGUIInputPlugin.h"
-							>
-						</File>
-						<File
 							RelativePath="..\..\..\GG\src\Ogre\Plugins\OISInput.cpp"
 							>
 						</File>
+					</Filter>
+				</Filter>
+			</Filter>
+			<Filter
+				Name="GG"
+				>
+				<Filter
+					Name="Ogre"
+					>
+					<Filter
+						Name="Plugins"
+						>
 						<File
-							RelativePath="..\..\..\GG\src\Ogre\Plugins\OISInput.h"
+							RelativePath="..\..\..\GG\GG\Ogre\Plugins\OgreGUIInputPlugin.h"
+							>
+						</File>
+						<File
+							RelativePath="..\..\..\GG\GG\Ogre\Plugins\OISInput.h"
 							>
 						</File>
 					</Filter>

@@ -43,7 +43,7 @@
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
 				AdditionalIncludeDirectories="../../../../include/;../../../GG/;../../../../include/OGRE;&quot;../../../../Boost/include/boost-1_36&quot;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GIGI_OGRE_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GiGiOgre_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="false"
@@ -105,7 +105,7 @@
 	</References>
 	<Files>
 		<Filter
-			Name="GiGi"
+			Name="GG"
 			>
 			<Filter
 				Name="src"
@@ -120,7 +120,7 @@
 				</Filter>
 			</Filter>
 			<Filter
-				Name="GiGi"
+				Name="GG"
 				>
 				<Filter
 					Name="Ogre"

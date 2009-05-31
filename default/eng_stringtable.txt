@@ -1710,6 +1710,13 @@ PP
 PRODUCTION_QUEUE_MULTIPLES
 %1%x 
 
+PRODUCTION_QUEUE_EMPTY
+'''Empire production queue is empty.
+
+Enqueue production projects by selecting a planet on the sidepanel, then double-clicking items in the list.
+
+Note that ships can only be built on planets with a shipyard.'''
+
 
 ###############
 #  DesignWnd  #

@@ -405,16 +405,18 @@ OPTIONS_DB_UI_FLEET_BUTTON_SIZE
 Ustala wielkość przycisków flot (względem wielkości ikon systemów planetarnych).
 
 OPTIONS_DB_UI_SYSTEM_FOG_SPACING
-Sets spacing (in pixels) between fog of war scanlines.
+Ustala odstęp (w pikselach) pomiędzy liniami mgły wojny.
+#orig: Sets spacing (in pixels) between fog of war scanlines.
+#Może ktoś da lepsze tłumaczenie.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLES
-Toggles whether to draw circles around systems.
+Przełącza czy rysować okręgi na około systemów.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
-Sets size of circles around systems on map, relative to system icon size.
+Ustala rozmiar okręgów na około systemów na mapie, relatywnie do wielkości ikony systemu.
 
 OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
-Sets colour of unowned system names on galaxy map.
+Ustala kolor nazw nieznanych systemów na mapie galaktyki.
 
 OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
 Sets minimum zoom level at which medium fleet icons are shown on the galaxy map.
