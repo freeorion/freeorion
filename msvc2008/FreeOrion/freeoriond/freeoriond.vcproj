@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				AdditionalIncludeDirectories="../../../log4cpp/;../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;../../../GG/;../../include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;GIGI_EXPORTS;FREEORION_BUILD_SERVER;FREEORION_WIN32;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;GiGi_EXPORTS;FREEORION_BUILD_SERVER;FREEORION_WIN32;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
