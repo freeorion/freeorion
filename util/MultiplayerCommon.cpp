@@ -91,7 +91,7 @@ XMLElement ClrToXML(const GG::Clr& clr)
 
 GG::Clr XMLToClr(const XMLElement& clr)
 {
-    GG::Clr retval = GG::CLR_BLACK;
+    GG::Clr retval = GG::Clr(0, 0, 0, 255);
     if (clr.ContainsAttribute("hex")) {
         // get colour components as a single string representing three pairs of hex digits
         // from 00 to FF and an optional fourth hex digit pair for alpha
@@ -251,7 +251,7 @@ SaveGameEmpireData::SaveGameEmpireData():
 PlayerSetupData::PlayerSetupData() :
     m_player_id(-1),
     m_empire_name("Humans"),
-    m_empire_color(GG::CLR_GRAY),
+    m_empire_color(GG::Clr(127, 127, 127, 255)),
     m_save_game_empire_id(-1)
 {}
 

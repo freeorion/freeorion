@@ -300,7 +300,7 @@ std::string ItemSpec::Dump() const
 TechCategory::TechCategory() :
     name(""),
     graphic(""),
-    colour(GG::CLR_WHITE)
+    colour(GG::Clr(255, 255, 255, 255))
 {}
 
 TechCategory::TechCategory(const std::string& name_, const std::string& graphic_, const GG::Clr& colour_) :
