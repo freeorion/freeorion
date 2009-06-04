@@ -2,6 +2,6 @@
 
 const std::string& FreeOrionVersionString()
 {
-    static const std::string retval = "@FREEORION_VERSION@ [Rev @svn_revision_number@]";
+    static const std::string retval = "v@FREEORION_VERSION@ [Rev @svn_revision_number@]";
     return retval;
 }

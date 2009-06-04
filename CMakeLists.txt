@@ -6,8 +6,8 @@ set(CMAKE_VERBOSE_MAKEFILE true)
 ########################################
 # Configuration                        #
 ########################################
-set(FREEORION_VERSION v0.3.13)
-set(FREEORION_RELEASE 0)
+set(FREEORION_VERSION 0.3.13)
+set(FREEORION_RELEASE false)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 include(Config)
@@ -15,6 +15,9 @@ include(Util)
 
 set(MINIMUM_BOOST_VERSION 1.36.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem serialization signals system thread)
+
+set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
+    "Specifies alternate namespace used for boost::signals (only needed if you changed it using the BOOST_SIGNALS_NAMESPACE define when you built boost).")
 
 option(BUILD_DEBUG "Controls generation of debug code; OFF implies release code." OFF)
 
@@ -30,11 +33,13 @@ set(BUILD_SINGLE_THREADED OFF)
 
 if (WIN32)
     add_definitions(-DFREEORION_WIN32)
+    if (MSVC)
+        add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
+                        /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
+    endif ()
 elseif (APPLE)
     add_definitions(-DFREEORION_MACOSX)
-elseif (CYGWIN)
-    message(FATAL_ERROR "Sorry, Cygwin is not a supported platform for FreeOrion.")
-elseif (UNIX)
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(-DFREEORION_LINUX -DENABLE_BINRELOC -Wall -Wno-parentheses -Wno-deprecated)
 else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
@@ -51,6 +56,13 @@ if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 else ()
     message(FATAL_ERROR "Boost libraries not found.")
+endif ()
+
+if (NOT BOOST_SIGNALS_NAMESPACE STREQUAL "signals")
+    add_definitions(
+        -DBOOST_SIGNALS_NAMESPACE=${BOOST_SIGNALS_NAMESPACE}
+        -Dsignals=${BOOST_SIGNALS_NAMESPACE}
+    )
 endif ()
 
 find_package(ZLIB)
@@ -83,7 +95,15 @@ configure_file(
 ########################################
 # Build common code library            #
 ########################################
+# TODO: Figure out why this kills the cmake configuration step for CMake 2.6.4
+# Linux on Suse 11.1, and how it might be fixed/contained.
+#project(freeorion_lib)
+
 include_directories(${CMAKE_SOURCE_DIR} log4cpp)
+
+if (FREEORION_RELEASE)
+    add_definitions(-DFREEORION_RELEASE)
+endif ()
 
 set(common_sources
     combat/Combat.cpp
@@ -169,8 +189,6 @@ else ()
     list(APPEND common_sources log4cpp/src/PThreads.cpp)
 endif ()
 
-project(freeorion_lib)
-
 add_library(freeorion_lib STATIC ${common_sources})
 
 set_target_properties(
@@ -191,4 +209,4 @@ target_link_libraries(freeorion_lib ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
 ########################################
 add_subdirectory(server)
 add_subdirectory(client/AI)
-#add_subdirectory(client/human)
+add_subdirectory(client/human)
