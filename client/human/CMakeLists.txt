@@ -107,7 +107,81 @@ endif ()
 #plugin
 #twopigen
 
-set(sources
+set(THIS_EXE_SOURCES
+    ../../combat/Combat.cpp
+    ../../combat/CombatOrder.cpp
+    ../../combat/OpenSteer/AsteroidBeltObstacle.cpp
+    ../../combat/OpenSteer/CombatFighter.cpp
+    ../../combat/OpenSteer/CombatObject.cpp
+    ../../combat/OpenSteer/CombatShip.cpp
+    ../../combat/OpenSteer/Missile.cpp
+    ../../combat/OpenSteer/Obstacle.cpp
+    ../../combat/OpenSteer/PathingEngine.cpp
+    ../../combat/OpenSteer/SimpleVehicle.cpp
+    ../../combat/OpenSteer/Vec3.cpp
+    ../../combat/OpenSteer/Vec3Utilities.cpp
+    ../../Empire/Empire.cpp
+    ../../Empire/EmpireManager.cpp
+    ../../Empire/ResourcePool.cpp
+    ../../network/Message.cpp
+    ../../network/MessageQueue.cpp
+    ../../network/Networking.cpp
+    ../../UI/StringTable.cpp
+    ../../universe/Building.cpp
+    ../../universe/Condition.cpp
+    ../../universe/ConditionParser1.cpp
+    ../../universe/ConditionParser2.cpp
+    ../../universe/ConditionParser.cpp
+    ../../universe/Effect.cpp
+    ../../universe/EffectParser.cpp
+    ../../universe/Enums.cpp
+    ../../universe/Fleet.cpp
+    ../../universe/Meter.cpp
+    ../../universe/ParserUtil.cpp
+    ../../universe/Planet.cpp
+    ../../universe/PopCenter.cpp
+    ../../universe/Predicates.cpp
+    ../../universe/ResourceCenter.cpp
+    ../../universe/Ship.cpp
+    ../../universe/ShipDesign.cpp
+    ../../universe/Special.cpp
+    ../../universe/System.cpp
+    ../../universe/Tech.cpp
+    ../../universe/TopLevelParsers.cpp
+    ../../universe/UniverseObject.cpp
+    ../../universe/ValueRef.cpp
+    ../../universe/ValueRefParser.cpp
+    ../../util/DataTable.cpp
+    ../../util/GZStream.cpp
+    ../../util/MultiplayerCommon.cpp
+    ../../util/OptionsDB.cpp
+    ../../util/Order.cpp
+    ../../util/OrderSet.cpp
+    ../../util/Process.cpp
+    ../../util/Random.cpp
+    ../../util/Serialize.cpp
+    ../../util/SitRepEntry.cpp
+    ../../util/VarText.cpp
+    ../../util/binreloc.c
+    ../../util/Directories.cpp
+    ../../util/XMLDoc.cpp
+    ../../log4cpp/src/Appender.cpp
+    ../../log4cpp/src/AppenderSkeleton.cpp
+    ../../log4cpp/src/BasicLayout.cpp
+    ../../log4cpp/src/Category.cpp
+    ../../log4cpp/src/CategoryStream.cpp
+    ../../log4cpp/src/Configurator.cpp
+    ../../log4cpp/src/FactoryParams.cpp
+    ../../log4cpp/src/FileAppender.cpp
+    ../../log4cpp/src/HierarchyMaintainer.cpp
+    ../../log4cpp/src/LayoutAppender.cpp
+    ../../log4cpp/src/Localtime.cpp
+    ../../log4cpp/src/LoggingEvent.cpp
+    ../../log4cpp/src/NDC.cpp
+    ../../log4cpp/src/PatternLayout.cpp
+    ../../log4cpp/src/Priority.cpp
+    ../../log4cpp/src/StringUtil.cpp
+    ../../log4cpp/src/TimeStamp.cpp
     ../../client/ClientApp.cpp
     ../../client/ClientFSMEvents.cpp
     ../../client/human/HumanClientFSM.cpp
@@ -160,23 +234,20 @@ set(sources
     ../../UI/PagedGeometry/WindBatchPage.cpp
     ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
+
+    ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
+
+if (WIN32)
+    list(APPEND THIS_EXE_SOURCES ../../log4cpp/src/MSThreads.cpp)
+else ()
+    list(APPEND THIS_EXE_SOURCES ../../log4cpp/src/PThreads.cpp)
+endif ()
 
 add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
 
-add_executable(freeorion ${sources})
-
-set_target_properties(
-    freeorion
-    PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-    CLEAN_DIRECT_OUTPUT 1
-    LABELS "${PROJECT_NAME}"
-)
-
-target_link_libraries(
-    freeorion
-    freeorion_lib
+set(THIS_EXE_LINK_LIBS
+#    freeorion_lib
     ${Boost_LIBRARIES}
     ${GIGI_GIGI_LIBRARY}
     ${GIGI_GIGIOGRE_LIBRARY}
@@ -186,10 +257,9 @@ target_link_libraries(
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${BULLET_LIBRARIES}
-    ${GRAPHVIZ_LIBRARIES}
+    ${GRAPHVIZ_CDT_LIBRARY}
+    ${GRAPHVIZ_GRAPH_LIBRARY}
+    ${GRAPHVIZ_GVC_LIBRARY}
 )
 
-#g++ -o freeorion -pthread combat/Combat.o combat/CombatOrder.o combat/OpenSteer/AsteroidBeltObstacle.o combat/OpenSteer/CombatFighter.o combat/OpenSteer/CombatObject.o combat/OpenSteer/CombatShip.o combat/OpenSteer/Missile.o combat/OpenSteer/Obstacle.o combat/OpenSteer/PathingEngine.o combat/OpenSteer/SimpleVehicle.o combat/OpenSteer/Vec3.o combat/OpenSteer/Vec3Utilities.o Empire/Empire.o Empire/EmpireManager.o Empire/ResourcePool.o network/Message.o network/MessageQueue.o network/Networking.o UI/StringTable.o universe/Building.o universe/Condition.o universe/ConditionParser1.o universe/ConditionParser2.o universe/ConditionParser.o universe/Effect.o universe/EffectParser.o universe/Enums.o universe/Fleet.o universe/Meter.o universe/ParserUtil.o universe/Planet.o universe/PopCenter.o universe/Predicates.o universe/ResourceCenter.o universe/Ship.o universe/ShipDesign.o universe/Special.o universe/System.o universe/Tech.o universe/TopLevelParsers.o universe/UniverseObject.o universe/ValueRef.o universe/ValueRefParser.o util/DataTable.o util/GZStream.o util/MultiplayerCommon.o util/OptionsDB.o util/Order.o util/OrderSet.o util/Process.o util/Random.o util/Serialize.o util/SitRepEntry.o util/VarText.o util/Version.o util/binreloc.o util/Directories.o util/XMLDoc.o log4cpp/src/Appender.o log4cpp/src/AppenderSkeleton.o log4cpp/src/BasicLayout.o log4cpp/src/Category.o log4cpp/src/CategoryStream.o log4cpp/src/Configurator.o log4cpp/src/FactoryParams.o log4cpp/src/FileAppender.o log4cpp/src/HierarchyMaintainer.o log4cpp/src/LayoutAppender.o log4cpp/src/Localtime.o log4cpp/src/LoggingEvent.o log4cpp/src/NDC.o log4cpp/src/PatternLayout.o log4cpp/src/Priority.o log4cpp/src/StringUtil.o log4cpp/src/TimeStamp.o log4cpp/src/PThreads.o client/ClientApp-human.o client/ClientFSMEvents-human.o client/human/HumanClientFSM-human.o client/human/HumanClientApp-human.o client/human/chmain-human.o network/ClientNetworking-human.o UI/About-human.o UI/BuildDesignatorWnd-human.o UI/ChatWnd-human.o UI/ClientUI-human.o UI/CUIControls-human.o UI/CUIDrawUtil-human.o UI/CUIStyle-human.o UI/CUIWnd-human.o UI/EncyclopediaDetailPanel-human.o UI/FleetButton-human.o UI/FleetWnd-human.o UI/GalaxySetupWnd-human.o UI/InGameMenu-human.o UI/InfoPanels-human.o UI/IntroScreen-human.o UI/LinkText-human.o UI/CollisionMeshConverter-human.o UI/CombatWnd-human.o UI/MapWnd-human.o UI/MultiplayerLobbyWnd-human.o UI/OptionsWnd-human.o UI/DesignWnd-human.o UI/ProductionWnd-human.o UI/QueueListBox-human.o UI/ResearchWnd-human.o UI/ServerConnectWnd-human.o UI/SidePanel-human.o UI/SitRepPanel-human.o UI/Sound-human.o UI/SystemIcon-human.o UI/TechTreeWnd-human.o UI/TurnProgressWnd-human.o UI/ShaderProgram-human.o UI/PagedGeometry/BatchedGeometry-human.o UI/PagedGeometry/BatchPage-human.o UI/PagedGeometry/GrassLoader-human.o UI/PagedGeometry/ImpostorPage-human.o UI/PagedGeometry/PagedGeometry-human.o UI/PagedGeometry/PropertyMaps-human.o UI/PagedGeometry/StaticBillboardSet-human.o UI/PagedGeometry/TreeLoader2D-human.o UI/PagedGeometry/TreeLoader3D-human.o UI/PagedGeometry/WindBatchedGeometry-human.o UI/PagedGeometry/WindBatchPage-human.o universe/Universe-human.o util/AppInterface-human.o -L/usr/lib -L/usr/local/lib -lGiGiOgre -lbulletdynamics -lbulletcollision -lbulletmath -lalut -lopenal -lvorbisfile -lgvc -lgraph -lcdt -lOgreMain -lGiGi -lboost_serialization
-# -lboost_signals -lboost_system -lboost_filesystem -lboost_thread
-# -lboost_python -lboost_iostreams -lpython2.6
-# -lGL -lGLU -lfreetype -lz -ljpeg -lpng -ltiff
+executable_all_variants(freeorion)

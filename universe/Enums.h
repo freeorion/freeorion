@@ -4,6 +4,9 @@
 
 #include <GG/Enum.h>
 
+#include <iostream>
+
+
 /* the various major subclasses of UniverseObject */
 enum UniverseObjectType {
     INVALID_UNIVERSE_OBJECT_TYPE,
