@@ -79,7 +79,15 @@ double PopCenter::FuturePopGrowthMax() const
     } else if (cur_health == 20.0) {
         return 0.0;
     } else { // cur_health < 20.0
-        return std::max(-cur_pop, -cur_pop*(  exp( (cur_health-20)*(cur_health-20) / (400/log(2.0)) ) - 1  ));
+        // once squared, the fraction of population lost each turn.  About 1%
+        // at 18 health, 25% at 10 health, 49% at 6 health, and 90% at 1
+        // health.  this gives a slight loss just below 20 health (the break-
+        // even point) but and doesn't get critically bad until health drops
+        // below 15 or so for extended periods, or below 12 for shorter
+        // periods.  In any case, the loss is exponential decay, with a rate
+        // depending on the distance below full health.
+        double root_fraction = ((20.0 - cur_health) / 20.0);
+        return std::max(-cur_pop, -cur_pop*(root_fraction*root_fraction));
     }
 }
 
