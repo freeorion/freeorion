@@ -43,8 +43,6 @@
 		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server & AI */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
 		3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 3402F0FE0F5A36A400DF6FE7 /* Cg.framework */; };
 		340D14AB0F6483700026044A /* libpython2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 340D14AA0F6483700026044A /* libpython2.5.a */; };
-		341395CA0F549BE0008FF42C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
-		341395CB0F549BE0008FF42C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
 		343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */; };
 		343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */; };
 		343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */; };
@@ -72,6 +70,19 @@
 		34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34972C430F4A002F0015C864 /* libLinearMath.dylib */; };
 		34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
 		34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */; };
+		34ACA00E0FFED9A100500F40 /* OISInput.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */; };
+		34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA37F0FFFAB4900500F40 /* AppKit.framework */; };
+		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
+		34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3810FFFAB4900500F40 /* Foundation.framework */; };
+		34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 346BCA5F0FF6E6A200582E3D /* Cocoa.framework */; };
+		34ACA40D0FFFABE600500F40 /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
+		34ACA4150FFFAF0600500F40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
+		34ACA4160FFFAF0C00500F40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
+		34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AD8A180AA609980089CE8D /* Carbon.framework */; };
+		34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */; };
+		34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4BE0FFFD2DB00500F40 /* chmain.mm */; };
+		34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 34ACA4C00FFFD2DB00500F40 /* OgreController.mm */; };
+		34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C620A98A3F900DA9C21 /* chmain.cpp */; };
 		34B9F92C0F634A03005BF6A4 /* CombatFighter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */; };
 		34B9F92D0F634A03005BF6A4 /* CombatShip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBC40F5E1EEB005BF6A4 /* CombatShip.cpp */; };
 		34B9F92E0F634A03005BF6A4 /* Obstacle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBC90F5E1EEB005BF6A4 /* Obstacle.cpp */; };
@@ -131,10 +142,8 @@
 		34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */; };
 		34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */; };
 		34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5CA60F4E18680002B5DB /* libOIS.a */; };
-		34CA5EC80F4F4E2B0002B5DB /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */; };
-		34CA5ECA0F4F4E9D0002B5DB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AD8A180AA609980089CE8D /* Carbon.framework */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
-		471024090CEF3AAC00A7DF2B /* _vsnprintf.c in Sources */ = {isa = PBXBuildFile; fileRef = 471023910CEF3AAC00A7DF2B /* _vsnprintf.c */; };
+		471024090CEF3AAC00A7DF2B /* OgreController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 471023910CEF3AAC00A7DF2B /* OgreController.mm */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
 		4710240C0CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */; };
@@ -256,7 +265,6 @@
 		471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CDE0A98A3F900DA9C21 /* SystemIcon.cpp */; };
 		471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE00A98A3F900DA9C21 /* TechTreeWnd.cpp */; };
 		471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CE20A98A3F900DA9C21 /* TurnProgressWnd.cpp */; };
-		471D64E90A98B2E200DA9C21 /* chmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C620A98A3F900DA9C21 /* chmain.cpp */; };
 		471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650C0A98B4C100DA9C21 /* OpenAL.framework */; };
 		471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650D0A98B4C100DA9C21 /* OpenGL.framework */; };
 		471D65150A98B4E100DA9C21 /* libSDLmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65140A98B4E100DA9C21 /* libSDLmain.a */; };
@@ -500,6 +508,7 @@
 		343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PythonUniverseWrapper.cpp; sourceTree = "<group>"; };
 		343EC6790F3F61D000782AD3 /* PythonWrappers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PythonWrappers.h; sourceTree = "<group>"; };
 		34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgvc_builtins.dylib; path = dep/local/lib/libgvc_builtins.dylib; sourceTree = "<group>"; };
+		346BCA5F0FF6E6A200582E3D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		346D87E60FC5F52A0095593E /* CombatEventListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatEventListener.h; sourceTree = "<group>"; };
 		346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsteroidBeltObstacle.cpp; sourceTree = "<group>"; };
 		346D87E80FC5F5B00095593E /* AsteroidBeltObstacle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsteroidBeltObstacle.h; sourceTree = "<group>"; };
@@ -642,6 +651,13 @@
 		34A980540FC97AE500620707 /* OgreOSXRenderTexture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXRenderTexture.h; sourceTree = "<group>"; };
 		34A980550FC97AE500620707 /* OgreOSXWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreOSXWindow.h; sourceTree = "<group>"; };
 		34A980560FC97AE500620707 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		34ACA37F0FFFAB4900500F40 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		34ACA3800FFFAB4900500F40 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		34ACA3810FFFAB4900500F40 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
+		34ACA4BE0FFFD2DB00500F40 /* chmain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chmain.mm; sourceTree = "<group>"; };
+		34ACA4C00FFFD2DB00500F40 /* OgreController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreController.mm; sourceTree = "<group>"; };
+		34ACA4C50FFFD50100500F40 /* chmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chmain.h; sourceTree = "<group>"; };
 		34B9EBC10F5E1EEB005BF6A4 /* AbstractVehicle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AbstractVehicle.h; path = OpenSteer/AbstractVehicle.h; sourceTree = "<group>"; };
 		34B9EBC20F5E1EEB005BF6A4 /* CombatFighter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CombatFighter.cpp; path = OpenSteer/CombatFighter.cpp; sourceTree = "<group>"; };
 		34B9EBC30F5E1EEB005BF6A4 /* CombatFighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CombatFighter.h; path = OpenSteer/CombatFighter.h; sourceTree = "<group>"; };
@@ -1143,7 +1159,7 @@
 		4710238D0CEF3AAC00A7DF2B /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		4710238E0CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		4710238F0CEF3AAC00A7DF2B /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
-		471023910CEF3AAC00A7DF2B /* _vsnprintf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = _vsnprintf.c; sourceTree = "<group>"; };
+		471023910CEF3AAC00A7DF2B /* OgreController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreController.mm; sourceTree = "<group>"; };
 		471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlignmentFlags.cpp; sourceTree = "<group>"; };
 		471023930CEF3AAC00A7DF2B /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
 		471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrowseInfoWnd.cpp; sourceTree = "<group>"; };
@@ -1408,7 +1424,7 @@
 		471D65570A98B84500DA9C21 /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = dep/local/lib/libjpeg.dylib; sourceTree = "<group>"; };
 		471D65810A98BA7200DA9C21 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = dep/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		471FEFD70A9A629800C36AA3 /* freeorionca */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeorionca; sourceTree = BUILT_PRODUCTS_DIR; };
-		471FF2560A9A7E6400C36AA3 /* FreeOrion-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "FreeOrion-Info.plist"; sourceTree = "<group>"; };
+		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4746ADA50A9BBC32003D2DFC /* libgraph.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgraph.dylib; path = dep/local/lib/libgraph.dylib; sourceTree = "<group>"; };
 		4746ADA60A9BBC32003D2DFC /* libgvc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgvc.dylib; path = dep/local/lib/libgvc.dylib; sourceTree = "<group>"; };
 		4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpathplan.dylib; path = dep/local/lib/libpathplan.dylib; sourceTree = "<group>"; };
@@ -1443,6 +1459,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34ACA4150FFFAF0600500F40 /* CoreFoundation.framework in Frameworks */,
 				34B9F9C30F64568B005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
 				34B9F9C40F64568B005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */,
 				34B9F9C50F64568B005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */,
@@ -1452,7 +1469,6 @@
 				478417730CF0589200BE4710 /* libCommon.a in Frameworks */,
 				471032D00CEF6DEC00A7DF2B /* libGG.a in Frameworks */,
 				47FAB7490A98DE2F00F0AF3F /* liblog4cpp.a in Frameworks */,
-				341395CB0F549BE0008FF42C /* CoreFoundation.framework in Frameworks */,
 				34B9FA5E0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1461,6 +1477,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34ACA4160FFFAF0C00500F40 /* CoreFoundation.framework in Frameworks */,
 				34B9F9C90F645693005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
 				34B9F9CA0F645693005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */,
 				34B9F9CB0F645693005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */,
@@ -1471,7 +1488,6 @@
 				4784177A0CF058F000BE4710 /* libCommon.a in Frameworks */,
 				471FEFD00A9A629800C36AA3 /* libGG.a in Frameworks */,
 				471FEFD20A9A629800C36AA3 /* liblog4cpp.a in Frameworks */,
-				341395CA0F549BE0008FF42C /* CoreFoundation.framework in Frameworks */,
 				34B9FA5D0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
 				340D14AB0F6483700026044A /* libpython2.5.a in Frameworks */,
 			);
@@ -1481,14 +1497,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */,
+				34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */,
 				34B9F9BD0F645684005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
 				34B9F9BE0F645684005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */,
 				34B9F9BF0F645684005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */,
 				34B9F9C00F645684005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */,
 				34B9F9C10F645684005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */,
 				34B9F9C20F645684005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */,
-				34CA5ECA0F4F4E9D0002B5DB /* Carbon.framework in Frameworks */,
-				34CA5EC80F4F4E2B0002B5DB /* IOKit.framework in Frameworks */,
 				34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */,
 				34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */,
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
@@ -1516,6 +1532,10 @@
 				47B60E670CF0819300318761 /* libjpeg.dylib in Frameworks */,
 				34CA5AF80F4DDF690002B5DB /* libpng.dylib in Frameworks */,
 				34B9FA5F0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
+				34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */,
+				34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */,
+				34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */,
+				34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1529,7 +1549,7 @@
 				47960BAF0A9CBF2900D0C556 /* Dependencies */,
 				08FB7795FE84155DC02AAC07 /* Source */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
-				471FF2560A9A7E6400C36AA3 /* FreeOrion-Info.plist */,
+				471FF2560A9A7E6400C36AA3 /* Info.plist */,
 			);
 			name = FreeOrion;
 			sourceTree = "<group>";
@@ -1821,6 +1841,7 @@
 				3484E98E0F59A04D0083041E /* ogre_plugins.cfg */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				479036420B04CA23001FEF7B /* default */,
+				34ACA40C0FFFABE600500F40 /* main.xib */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -2524,7 +2545,7 @@
 				34BAB1AF0FC5CFE500EF792E /* GIL */,
 				34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */,
 				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
-				471023910CEF3AAC00A7DF2B /* _vsnprintf.c */,
+				471023910CEF3AAC00A7DF2B /* OgreController.mm */,
 				471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */,
 				471023930CEF3AAC00A7DF2B /* Base.cpp */,
 				471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */,
@@ -2695,6 +2716,8 @@
 		471D5C610A98A3F900DA9C21 /* human */ = {
 			isa = PBXGroup;
 			children = (
+				34ACA4BE0FFFD2DB00500F40 /* chmain.mm */,
+				34ACA4C00FFFD2DB00500F40 /* OgreController.mm */,
 				34A97FE70FC97AE500620707 /* OgrePlugins */,
 				47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */,
 				47102F880CEF55E700A7DF2B /* HumanClientFSM.h */,
@@ -2702,6 +2725,7 @@
 				471D5C630A98A3F900DA9C21 /* HumanClient.ico */,
 				471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */,
 				471D5C650A98A3F900DA9C21 /* HumanClientApp.h */,
+				34ACA4C50FFFD50100500F40 /* chmain.h */,
 			);
 			path = human;
 			sourceTree = "<group>";
@@ -3048,6 +3072,9 @@
 		47960BB00A9CBF4400D0C556 /* Dynamic Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				34ACA37F0FFFAB4900500F40 /* AppKit.framework */,
+				34ACA3800FFFAB4900500F40 /* CoreData.framework */,
+				34ACA3810FFFAB4900500F40 /* Foundation.framework */,
 				34A1E2D80F75CA010019466D /* usrlib */,
 				3402F0FE0F5A36A400DF6FE7 /* Cg.framework */,
 				341395C90F549BE0008FF42C /* CoreFoundation.framework */,
@@ -3055,6 +3082,7 @@
 				471D650D0A98B4C100DA9C21 /* OpenGL.framework */,
 				471D650C0A98B4C100DA9C21 /* OpenAL.framework */,
 				47AD8A180AA609980089CE8D /* Carbon.framework */,
+				346BCA5F0FF6E6A200582E3D /* Cocoa.framework */,
 				4710323F0CEF6A8B00A7DF2B /* Vorbis.framework */,
 				471032380CEF6A7600A7DF2B /* Ogg.framework */,
 				471D65810A98BA7200DA9C21 /* SDL.framework */,
@@ -3282,9 +3310,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34ACA00E0FFED9A100500F40 /* OISInput.cfg in Resources */,
+				3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
 				3402E2690F5A31B700DF6FE7 /* default in Resources */,
-				3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Resources */,
+				34ACA40D0FFFABE600500F40 /* main.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3360,7 +3390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */,
-				471024090CEF3AAC00A7DF2B /* _vsnprintf.c in Sources */,
+				471024090CEF3AAC00A7DF2B /* OgreController.mm in Sources */,
 				34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */,
 				34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */,
 				4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */,
@@ -3490,6 +3520,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
 				471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */,
 				471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */,
@@ -3519,7 +3550,6 @@
 				471D5E2D0A98AA1700DA9C21 /* SystemIcon.cpp in Sources */,
 				471D5E2E0A98AA1A00DA9C21 /* TechTreeWnd.cpp in Sources */,
 				471D5E2F0A98AA1D00DA9C21 /* TurnProgressWnd.cpp in Sources */,
-				471D64E90A98B2E200DA9C21 /* chmain.cpp in Sources */,
 				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
 				4710311F0CEF60AA00A7DF2B /* InfoPanels.cpp in Sources */,
 				471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */,
@@ -3542,6 +3572,8 @@
 				3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */,
 				3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */,
 				346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */,
+				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
+				34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3709,7 +3741,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = "FreeOrion-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -3728,7 +3760,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
-				INFOPLIST_FILE = "FreeOrion-Info.plist";
+				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				OTHER_LDFLAGS = (
 					"-framework",

@@ -31,6 +31,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "chmain.h"
+
 
 #ifndef OGRE_STATIC_LIB
 #  ifdef FREEORION_WIN32
@@ -39,6 +41,7 @@
 #    define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
 #  endif
 #endif
+
 
 // The STORE_FULLSCREEN_FLAG parameter below controls whether the fullscreen
 // option is stored in the XML config file.  On Win32 it is not, because the
@@ -50,7 +53,24 @@ const bool  STORE_FULLSCREEN_FLAG = false;
 const bool  STORE_FULLSCREEN_FLAG = true;
 #endif
 
+
+#ifndef FREEORION_MACOSX
 int main(int argc, char* argv[])
+{
+    if (mainConfigOptionsSetup(argc, argv) != 0) {
+        std::cerr << "main() failed config." << std::endl;
+        return 1;
+    }
+    if (mainSetupAndRunOgre() != 0) {
+        std::cerr << "main() failed to setup or run ogre." << std::endl;
+        return 1;
+    }
+    return 0;
+}
+#endif // ifndef FREEORION_MACOSX
+
+
+int mainConfigOptionsSetup(int argc, char* argv[])
 {
     InitDirs();
 
@@ -130,10 +150,12 @@ int main(int argc, char* argv[])
         std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }
+    return 0;
+}
 
 
-    // Set up OGRE rendering machinery
-
+int mainSetupAndRunOgre()
+{
     Ogre::LogManager*       log_manager = 0;
     Ogre::Root*             root = 0;
 #ifdef FREEORION_MACOSX

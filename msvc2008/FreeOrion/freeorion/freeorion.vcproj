@@ -139,6 +139,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\client\human\chmain.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\client\human\HumanClientApp.cpp"
 					>
 				</File>
