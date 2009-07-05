@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
 
     // read and process command-line arguments, if any
     try {
+        // add entries in options DB that have no other obvious place
         GetOptionsDB().AddFlag('h', "help",                 "OPTIONS_DB_HELP",                  false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML",   false);
         GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF",             true);
@@ -63,6 +64,8 @@ int main(int argc, char* argv[])
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
 
+
+        // read config.xml and set options entries from it, if present
         XMLDoc doc;
         {
             boost::filesystem::ifstream ifs(GetConfigPath());
@@ -72,9 +75,15 @@ int main(int argc, char* argv[])
             }
         }
 
+
+        // override previously-saved and default options with command line parameters and flags
         GetOptionsDB().SetFromCommandLine(argc, argv);
 
+
         bool early_exit = false;
+
+
+        // did the player request help output?
         if (GetOptionsDB().Get<bool>("help")) {
             GetOptionsDB().GetUsage(std::cerr);
             early_exit = true;
@@ -89,6 +98,7 @@ int main(int argc, char* argv[])
             GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").directory_string());
 #endif
 
+        // did the playe request generation of config.xml, saving the default (or current) options to disk?
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             boost::filesystem::ofstream ofs(GetConfigPath());
             if (ofs) {
@@ -99,6 +109,8 @@ int main(int argc, char* argv[])
             }
         }
 
+
+        // quit without actually starting game if certain option flags were specified
         if (early_exit)
             return 0;
 
@@ -118,6 +130,9 @@ int main(int argc, char* argv[])
         std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }
+
+
+    // Set up OGRE rendering machinery
 
     Ogre::LogManager*       log_manager = 0;
     Ogre::Root*             root = 0;
@@ -178,10 +193,8 @@ int main(int argc, char* argv[])
         SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
 
         Camera* camera = scene_manager->createCamera("Camera");
-        // Position it at 500 in Z direction
-        camera->setPosition(Vector3(0, 0, 500));
-        // Look back along -Z
-        camera->lookAt(Vector3(0, 0, -300));
+        camera->setPosition(Vector3(0, 0, 500));    // Position it at 500 in Z direction
+        camera->lookAt(Vector3(0, 0, -300));        // Look back along -Z
         camera->setNearClipDistance(5);
 
         Viewport* viewport = window->addViewport(camera);
@@ -199,8 +212,10 @@ int main(int argc, char* argv[])
 #endif
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
-            // immediaely start the server, establish network connections.  acceptable to call before app().
-            app.NewSinglePlayerGame(true);
+            // immediaely start the server, establish network connections, and go into a single player
+            // game, using default universe options (a standard quickstart, without requiring the user
+            // to click the quickstart button).
+            app.NewSinglePlayerGame(true);  // acceptable to call before app()
         }
 
         // run rendering loop
