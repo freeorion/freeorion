@@ -770,7 +770,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_MONUMENT_EXODUS_EFFECT"
             effects =
-                SetCurrentHealth value = Target.MaxHealth + 10
+                SetMaxHealth value = Target.MaxHealth + 10
     graphic = "icons/building/monument_to_exodus.png"
 
 BuildingType
