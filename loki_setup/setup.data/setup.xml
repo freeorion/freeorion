@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <install product="freeorion" 
-         desc="FreeOrion - A free Master of Orion clone" 
+         desc="FreeOrion - A turn-based space empire strategy game" 
          version="0.3.13" 
          binarypath="/usr/local/bin"
          promptbinaries="yes" 
