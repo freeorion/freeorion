@@ -143,7 +143,6 @@
 		34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */; };
 		34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5CA60F4E18680002B5DB /* libOIS.a */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
-		471024090CEF3AAC00A7DF2B /* OgreController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 471023910CEF3AAC00A7DF2B /* OgreController.mm */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
 		4710240C0CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */; };
@@ -3390,7 +3389,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */,
-				471024090CEF3AAC00A7DF2B /* OgreController.mm in Sources */,
 				34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */,
 				34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */,
 				4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */,
