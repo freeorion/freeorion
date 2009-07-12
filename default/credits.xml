@@ -45,7 +45,9 @@
       <PERSON name="Benjamin Confino"         nick="Tortanick"        task="Game Design"/>
     </GROUP>
     <GROUP name ="GRAPHICS">
-      <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics Assistant Lead"/>
+      <PERSON name="Mathias Köhler"           nick="pd"               task="Graphics Lead"/>
+      <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Graphics, Game Design"/>
+      <PERSON name="Josh Combs"               nick="Josh"             task="Graphics"/>
       <PERSON name="Anton Ruonala"            nick="Miu"              task="Graphics"/>
       <PERSON name="Jonathan Hill"            nick="Obiwan"           task="Graphics"/>
       <PERSON name="Ka"                       nick=""                 task="Graphics"/>
@@ -57,13 +59,12 @@
       <PERSON name="Tomi Hartikka"            nick="Mystiqq"          task="Graphics"/>
       <PERSON name="Brendan Mauro"            nick="BreadMan"         task="Graphics"/>
       <PERSON name="Karel Kalvoda"            nick="Solid Liquid"     task="Graphics"/>
-      <PERSON name="J. W. Bjerk"              nick="eleazar"          task="Graphics, Game Design"/>
-      <PERSON name="Josh Combs"               nick="Josh"             task="Graphics"/>
       <PERSON name="Thomas Meschede"          nick="ssalamass"        task="Graphics"/>
       <PERSON name="Michael T. Young"         nick="shrinkshooter"    task="Graphics"/>
       <PERSON name="Porter Peterson Nielsen"  nick="Redcap"           task="Graphics"/>
     </GROUP>
     <GROUP name ="AUDIO">
+      <PERSON name="Scott R. Looney"          nick="metaphysician"    task="Audio"/>
       <PERSON name="Kenneth Welch"            nick="LithiumMongoose"  task="Audio"/>
       <PERSON name="Shannon Roberts"          nick="Guiguibaah"       task="Audio"/>
       <PERSON name="Mejoff"                   nick=""                 task="Audio"/>
