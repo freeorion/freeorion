@@ -2581,13 +2581,6 @@ void MapWnd::RenderSystems()
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            // render circles around systems that have at least one starlane, if circles are enabled.
-            if (circles && icon->GetSystem().Starlanes() > 0) {
-                glBegin(GL_LINE_STRIP);
-                CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
-                glEnd();
-            }
-
             if (fog_scanlines && m_scanline_shader) {
                 const System& system = icon->GetSystem();
                 if (!empire->HasExploredSystem(system.ID())) {
@@ -2596,6 +2589,13 @@ void MapWnd::RenderSystems()
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
                     glUseProgram(0);
                 }
+            }
+
+            // render circles around systems that have at least one starlane, if circles are enabled.
+            if (circles && icon->GetSystem().Starlanes() > 0) {
+                glBegin(GL_LINE_STRIP);
+                CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+                glEnd();
             }
         }
 
