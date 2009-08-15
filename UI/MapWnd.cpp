@@ -2746,10 +2746,23 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::C
         // increment along line, rendering dots, until end of line segment is passed
         while (offset < length) {
             // find position of dot from initial vertex position, offset length and unit vectors
-            GG::Pt centre = GG::Pt(vert1Pt.x + GG::X(offset * uVecX), vert1Pt.y + GG::Y(offset * uVecY));
+            std::pair<double, double> ul(Value(vert1Pt.x) + offset * uVecX,
+                                         Value(vert1Pt.y) + offset * uVecY);
 
-            // blit texture (appropriately coloured) into place, shifted up and left so dot is centred on desired position
-            move_line_dot_texture->OrthoBlit(centre);
+            // blit texture (appropriately coloured) into place
+            glBindTexture(GL_TEXTURE_2D, move_line_dot_texture->OpenGLId());
+            const GLfloat* tex_coords = move_line_dot_texture->DefaultTexCoords();
+            glBegin(GL_TRIANGLE_STRIP);
+            glTexCoord2f(tex_coords[0], tex_coords[1]);
+            glVertex2f(ul.first, ul.second);
+            glTexCoord2f(tex_coords[2], tex_coords[1]);
+            glVertex2f(ul.first + Value(move_line_dot_texture->DefaultWidth()), ul.second);
+            glTexCoord2f(tex_coords[0], tex_coords[3]);
+            glVertex2f(ul.first, ul.second + Value(move_line_dot_texture->DefaultHeight()));
+            glTexCoord2f(tex_coords[2], tex_coords[3]);
+            glVertex2f(ul.first + Value(move_line_dot_texture->DefaultWidth()),
+                       ul.second + Value(move_line_dot_texture->DefaultHeight()));
+            glEnd();
 
             // move offset to that for next dot
             offset += MOVE_LINE_DOT_SPACING;
