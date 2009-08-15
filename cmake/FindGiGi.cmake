@@ -10,7 +10,7 @@
 
 find_package(PkgConfig)
 if (PKG_CONFIG_FOUND)
-    pkg_check_modules(GIGI GiGi GiGiSDL GiGiOgre)
+    pkg_check_modules(GIGI GiGi)
     if (GIGI_FOUND)
         set(GIGI_INCLUDE_DIR ${GIGI_INCLUDE_DIRS})
     endif ()
@@ -42,14 +42,15 @@ find_library(
 )
 
 if (GIGI_INCLUDE_DIR AND
-    GIGI_GIGI_LIBRARY AND
-    GIGI_GIGISDL_LIBRARY AND
-    GIGI_GIGIOGRE_LIBRARY)
+    GIGI_GIGI_LIBRARY)
     set(GIGI_FOUND true)
-    set(GIGI_LIBRARIES
-        ${GIGI_GIGI_LIBRARY}
-        ${GIGI_GIGISDL_LIBRARY}
-        ${GIGI_GIGIOGRE_LIBRARY})
+    set(GIGI_LIBRARIES ${GIGI_GIGI_LIBRARY})
+    if (GIGI_GIGISDL_LIBRARY)
+        set(GIGI_LIBRARIES ${GIGI_LIBRARIES} ${GIGI_GIGISDL_LIBRARY})
+    endif ()
+    if (GIGI_GIGIOGRE_LIBRARY)
+        set(GIGI_LIBRARIES ${GIGI_LIBRARIES} ${GIGI_GIGIOGRE_LIBRARY})
+    endif ()
 else ()
     set(GIGI_FOUND false)
 endif ()
