@@ -1426,12 +1426,12 @@ void MapWnd::InitStarlaneRenderingBuffers()
         Empire* empire = it->second;
         const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
-            const System* start_sys = universe.Object<System>(lane_it->first);
-            const System* end_sys = universe.Object<System>(lane_it->second);
-            raw_starlane_supply_vertices.push_back(start_sys->X());
-            raw_starlane_supply_vertices.push_back(start_sys->Y());
-            raw_starlane_supply_vertices.push_back(end_sys->X());
-            raw_starlane_supply_vertices.push_back(end_sys->Y());
+            std::pair<int, int> lane = UnorderedIntPair(lane_it->first, lane_it->second);
+            assert(m_starlane_endpoints[lane].X1 != UniverseObject::INVALID_POSITION);
+            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X1);
+            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y1);
+            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X2);
+            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y2);
             raw_starlane_supply_colors.push_back(empire->Color().r);
             raw_starlane_supply_colors.push_back(empire->Color().g);
             raw_starlane_supply_colors.push_back(empire->Color().b);
