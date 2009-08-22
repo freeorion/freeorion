@@ -1918,10 +1918,6 @@ void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
     node->attachObject(entity);
     node->setUserAny(Ogre::Any(combat_ship));
 
-    // TODO: This is only here because the Durgha model is upside down.  Remove
-    // it when this is fixed.
-    node->yaw(Ogre::Radian(Ogre::Math::PI));
-
     node->setPosition(ToOgre(combat_ship->position()));
     node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),
                                           ToOgre(combat_ship->forward()),
@@ -1937,9 +1933,12 @@ void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
     m_collision_objects.insert(collision_object);
     btMatrix3x3 identity;
     identity.setIdentity();
-    // TODO: Remove z-flip scaling when models are right.
+#if 0
+    // TODO: Remove this when it's removal can be verified as correct
+    // (i.e. after placement of ships is implemented).
     btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
     collision_object->getWorldTransform().setBasis(scaled);
+#endif
     collision_object->getWorldTransform().setOrigin(ToCollision(node->getPosition()));
     collision_object->setCollisionShape(collision_shape);
     m_collision_world->addCollisionObject(collision_object);

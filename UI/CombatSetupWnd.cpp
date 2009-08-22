@@ -348,10 +348,6 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
                 entity->setMaterialName("ship_being_placed");
             }
             m_placeable_ship_node->attachObject(entity);
-
-            // TODO: This is only here because the Durgha model is upside
-            // down.  Remove it when this is fixed.
-            m_placeable_ship_node->yaw(Ogre::Radian(Ogre::Math::PI));
         }
     }
 }
