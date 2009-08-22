@@ -102,10 +102,10 @@ CombatShip::CombatShip() :
     ,m_last_mission(ShipMission::NONE)
 {}
 
-CombatShip::CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
+CombatShip::CombatShip(Ship* ship, const OpenSteer::Vec3& position,
                        const OpenSteer::Vec3& direction, PathingEngine& pathing_engine) :
     m_proximity_token(0),
-    m_empire_id(empire_id),
+    m_empire_id(*ship->Owners().begin()),
     m_ship(ship),
     m_mission_queue(),
     m_mission_weight(0.0),

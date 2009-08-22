@@ -29,6 +29,7 @@ namespace GG {
 }
 
 class CombatData;
+class CombatSetupWnd; // TODO: Remove this; it is only here for prototyping.
 class System;
 class FPSIndicator;
 class UniverseObject;
@@ -78,6 +79,9 @@ public:
     virtual void RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseEnter(const GG::Pt& pt,GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void MouseLeave();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
@@ -109,6 +113,8 @@ private:
     };
 
     class StencilOpQueueListener;
+
+    std::pair<bool, Ogre::Vector3> IntersectMouseWithEcliptic(const GG::Pt& pt) const;
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
@@ -202,6 +208,7 @@ private:
         btCollisionObject* m_bt_object;
     };
     std::map<int, ShipData> m_ship_assets;
+    std::map<std::string, Ogre::MaterialPtr> m_ship_materials;
 
     std::vector<Ogre::TexturePtr> m_city_lights_textures;
 
@@ -224,6 +231,8 @@ private:
     StencilOpQueueListener* m_stencil_op_frame_listener;
 
     FPSIndicator* m_fps_text;
+
+    CombatSetupWnd* m_combat_setup_wnd;
 
     bool m_menu_showing;
     std::set<boost::signals::connection> m_keyboard_accelerator_signals;

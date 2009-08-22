@@ -42,7 +42,7 @@ public:
     typedef std::vector<DirectWeapon> SRVec;
     typedef std::list<DirectWeapon> PDList;
 
-    CombatShip(int empire_id, Ship* ship, const OpenSteer::Vec3& position,
+    CombatShip(Ship* ship, const OpenSteer::Vec3& position,
                const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
     ~CombatShip();
 
@@ -99,7 +99,7 @@ private:
 
     std::list<ShipMission> m_mission_queue;
     float m_mission_weight;
-    OpenSteer::Vec3 m_mission_destination; // Only the X and Y values should be nonzero.
+    OpenSteer::Vec3 m_mission_destination;
     CombatObjectWeakPtr m_mission_subtarget;
 
     unsigned int m_last_queue_update_turn;

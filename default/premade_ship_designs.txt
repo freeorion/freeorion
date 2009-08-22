@@ -5,7 +5,7 @@ ShipDesign
     hull = "SH_SMALL"
     parts = "DT_OPTICAL_SENSORS"
     graphic = "misc/scout1.png"
-    model = ""
+    model = "guardian"
 
 ShipDesign
     name = "SD_COLONY_SHIP"
@@ -20,7 +20,7 @@ ShipDesign
         "CO_COLONY_POD"
     ]
     graphic = "misc/colony1.png"
-    model = ""
+    model = "seed"
 
 ShipDesign
     name = "SD_MARK1"
@@ -33,7 +33,7 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark1.png"
-    model = ""
+    model = "guardian"
 
 ShipDesign
     name = "SD_MARK2"
@@ -46,7 +46,7 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark2.png"
-    model = ""
+    model = "guardian"
 
 ShipDesign
     name = "SD_MARK3"
@@ -60,7 +60,7 @@ ShipDesign
         "SH_DEFLECTOR"
     ]
     graphic = "misc/mark3.png"
-    model = ""
+    model = "guardian"
 
 ShipDesign
     name = "SD_MARK4"
@@ -76,4 +76,4 @@ ShipDesign
         "SH_DEFLECTOR"
     ]
     graphic = "misc/mark4.png"
-    model = ""
+    model = "guardian"

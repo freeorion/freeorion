@@ -192,6 +192,7 @@ set(THIS_EXE_SOURCES
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
     ../../UI/ClientUI.cpp
+    ../../UI/CombatSetupWnd.cpp
     ../../UI/CUIControls.cpp
     ../../UI/CUIDrawUtil.cpp
     ../../UI/CUIStyle.cpp

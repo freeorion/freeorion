@@ -431,7 +431,7 @@ boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 {
     // HACK! I get some long and inscrutable error message if
     // WaitingForTurnData doesn't have a CombatStart handler, even though
-    // WaitingForTurnDataImpl sctually handles this message.
+    // WaitingForTurnDataImpl actually handles this message.
     assert(!"Function WaitingForTurnData.CombatStart should never be called!");
     return discard_event();
 }
@@ -584,8 +584,7 @@ boost::statechart::result ResolvingCombat::react(const CombatEnd& msg)
 void ResolvingCombat::FreeCombatData()
 {
     delete m_combat_data->m_system;
-    for (std::map<int, UniverseObject*>::iterator it =
-             m_combat_data->m_combat_universe.begin();
+    for (std::map<int, UniverseObject*>::iterator it = m_combat_data->m_combat_universe.begin();
          it != m_combat_data->m_combat_universe.end();
          ++it) {
         delete it->second;

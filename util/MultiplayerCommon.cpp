@@ -351,9 +351,7 @@ CombatData::CombatData(System* system) :
         } else if (Ship* ship =
                    universe_object_cast<Ship*>(m_combat_universe[it->second])) {
             CombatShipPtr combat_ship(
-                new CombatShip(*ship->Owners().begin(), ship,
-                               OpenSteer::Vec3(), OpenSteer::Vec3(),
-                               m_pathing_engine));
+                new CombatShip(ship, OpenSteer::Vec3(), OpenSteer::Vec3(), m_pathing_engine));
             m_pathing_engine.AddObject(combat_ship);
         }
     }

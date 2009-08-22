@@ -3,6 +3,7 @@
 #include "ChatWnd.h"
 #include "ClientUI.h"
 #include "CollisionMeshConverter.h"
+#include "CombatSetupWnd.h"
 #include "CUIControls.h"
 #include "InGameMenu.h"
 #include "../combat/OpenSteer/CombatFighter.h"
@@ -22,6 +23,9 @@
 #include "../combat/OpenSteer/AsteroidBeltObstacle.h"
 #include "../combat/OpenSteer/Obstacle.h"
 #include "../combat/OpenSteer/SimpleVehicle.h"
+
+// TODO: Remove this.  It is only here for prototyping.
+#include "../universe/Fleet.h"
 
 #include "PagedGeometry/BatchPage.h"
 #include "PagedGeometry/ImpostorPage.h"
@@ -432,6 +436,16 @@ namespace {
                                      SystemRadius(), SystemRadius()));
             paged_geometry->setPageLoader(paged_geometry_loader);
         }
+    }
+
+    bool isVisible(const Ogre::SceneNode& node)
+    {
+        bool retval = true;
+        Ogre::SceneNode::ConstObjectIterator iterator = node.getAttachedObjectIterator();
+        while (retval && iterator.hasMoreElements()) {
+            retval &= iterator.getNext()->isVisible();
+        }
+        return retval;
     }
 
     void AddOptions(OptionsDB& db)
@@ -1160,6 +1174,21 @@ void CombatWnd::InitCombat(CombatData& combat_data)
          ++it) {
         // TODO
     }
+
+    // TODO: For prototyping only!
+    std::vector<Fleet*> fleets;
+    for (std::map<int, UniverseObject*>::iterator it =
+             m_combat_data->m_combat_universe.begin();
+         it != m_combat_data->m_combat_universe.end();
+         ++it) {
+        if (Fleet* fleet = universe_object_cast<Fleet*>(it->second)) {
+            if (fleet->Owners().size() == 1u &&
+                *fleet->Owners().begin() == HumanClientApp::GetApp()->PlayerID())
+                fleets.push_back(fleet);
+        }
+    }
+    m_combat_setup_wnd = new CombatSetupWnd(fleets, m_scene_manager);
+    AttachChild(m_combat_setup_wnd);
 }
 
 void CombatWnd::Render()
@@ -1353,7 +1382,19 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         SelectObjectsInVolume(mod_keys & GG::MOD_KEY_CTRL);
         EndSelectionDrag();
     } else if (!m_mouse_dragged) {
-        if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
+        Ogre::SceneNode* placement_node = 0;
+        if (m_combat_setup_wnd &&
+            (placement_node = m_combat_setup_wnd->PlaceableShipNode()) &&
+            isVisible(*placement_node)) {
+#if 0
+            CombatShipPtr combat_ship(new CombatShip(m_combat_setup_wnd->PlaceableShip(),
+                                                     ToOgre(placement_node->getPosition()),
+                                                     ToOgre(placement_node->direction()),
+                                                     m_pathing_engine));
+            ShipPlaced(combat_ship);
+#endif
+            m_combat_setup_wnd->EndShipPlacement();
+        } else if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
             Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
             assert(clicked_scene_node);
             std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
@@ -1380,16 +1421,9 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             assert(clicked_scene_node);
             LookAt(clicked_scene_node);
         } else {
-            Ogre::Ray ray = m_camera->getCameraToViewportRay(Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
-                                                             Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()));
-            std::pair<bool, Ogre::Real> intersection =
-                Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
-            const Ogre::Real MAX_DISTANCE_SQ = SystemRadius() * SystemRadius();
-            if (intersection.first) {
-                Ogre::Vector3 intersection_point = ray.getPoint(intersection.second);
-                if (intersection_point.squaredLength() < MAX_DISTANCE_SQ)
-                    LookAt(intersection_point);
-            }
+            std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
+            if (intersection.first)
+                LookAt(intersection.second);
         }
     }
 }
@@ -1439,10 +1473,36 @@ void CombatWnd::RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
+    if (m_combat_setup_wnd)
+        m_combat_setup_wnd->EndShipPlacement();
 }
 
 void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
+}
+
+void CombatWnd::MouseEnter(const GG::Pt& pt,GG::Flags<GG::ModKey> mod_keys)
+{ MouseHere(pt, mod_keys); }
+
+void CombatWnd::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    Ogre::SceneNode* node = 0;
+    if (m_combat_setup_wnd && (node = m_combat_setup_wnd->PlaceableShipNode())) {
+        std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
+        if (intersection.first) {
+            node->setVisible(true);
+            node->setPosition(intersection.second);
+        } else {
+            node->setVisible(false);
+        }
+    }
+}
+
+void CombatWnd::MouseLeave()
+{
+    Ogre::SceneNode* placement_node = 0;
+    if (m_combat_setup_wnd && (placement_node = m_combat_setup_wnd->PlaceableShipNode()))
+        placement_node->setVisible(false);
 }
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1519,6 +1579,24 @@ void CombatWnd::MissileExploded(const MissilePtr &missile)
 void CombatWnd::MissileRemoved(const MissilePtr &missile)
 {
     // TODO
+}
+
+std::pair<bool, Ogre::Vector3> CombatWnd::IntersectMouseWithEcliptic(const GG::Pt& pt) const
+{
+    std::pair<bool, Ogre::Vector3> retval(false, Ogre::Vector3());
+    Ogre::Ray ray = m_camera->getCameraToViewportRay(Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
+                                                     Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()));
+    std::pair<bool, Ogre::Real> intersection =
+        Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
+    const Ogre::Real MAX_DISTANCE_SQ = SystemRadius() * SystemRadius();
+    if (intersection.first) {
+        Ogre::Vector3 intersection_point = ray.getPoint(intersection.second);
+        if (intersection_point.squaredLength() < MAX_DISTANCE_SQ) {
+            retval.first = true;
+            retval.second = intersection_point;
+        }
+    }
+    return retval;
 }
 
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
@@ -1811,13 +1889,32 @@ void CombatWnd::DeselectAll()
 void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
 {
     const Ship& ship = combat_ship->GetShip();
-    std::string mesh_name = ship.Design()->Model();
-    Ogre::Entity* entity = m_scene_manager->createEntity("ship_" + mesh_name, mesh_name);
+    std::string mesh_name = ship.Design()->Model() + ".mesh";
+    std::string ship_id_str = "ship_" + boost::lexical_cast<std::string>(ship.ID()) + "_";
+
+    Ogre::MaterialPtr ship_material =
+        Ogre::MaterialManager::getSingleton().getByName("ship");
+    std::string modified_material_name = "ship material " + ship.Design()->Model();
+    Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
+    if (!modified_material.get()) {
+        modified_material = ship_material->clone(modified_material_name);
+        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+            setTextureName(ship.Design()->Model() + "_Color.png");
+        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+            setTextureName(ship.Design()->Model() + "_Glow.png");
+        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
+            setTextureName(ship.Design()->Model() + "_Normal.png");
+        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
+            setTextureName(ship.Design()->Model() + "_Specular.png");
+    }
+
+    Ogre::Entity* entity = m_scene_manager->createEntity(ship_id_str + mesh_name, mesh_name);
     entity->setCastShadows(true);
     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-    entity->setMaterialName("ship");
+    entity->setMaterialName(modified_material_name);
+
     Ogre::SceneNode* node =
-        m_scene_manager->getRootSceneNode()->createChildSceneNode("ship_" + mesh_name + "_node");
+        m_scene_manager->getRootSceneNode()->createChildSceneNode(ship_id_str + mesh_name + "_node");
     node->attachObject(entity);
     node->setUserAny(Ogre::Any(combat_ship));
 
@@ -1835,9 +1932,6 @@ void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
     btBvhTriangleMeshShape* collision_shape = 0;
     boost::tie(collision_mesh, collision_shape) = collision_mesh_converter.CollisionShape();
 
-    Ogre::MaterialPtr material =
-        Ogre::MaterialManager::getSingleton().getByName("ship");
-
     m_collision_shapes.insert(collision_shape);
     btCollisionObject* collision_object = new btCollisionObject;
     m_collision_objects.insert(collision_object);
@@ -1852,7 +1946,7 @@ void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
     collision_object->setUserPointer(static_cast<Ogre::MovableObject*>(entity));
 
     m_ship_assets[ship.ID()] =
-        ShipData(node, material, collision_mesh, collision_shape, collision_object);
+        ShipData(node, modified_material, collision_mesh, collision_shape, collision_object);
 }
 
 void CombatWnd::RemoveShip(const CombatShipPtr& combat_ship)
