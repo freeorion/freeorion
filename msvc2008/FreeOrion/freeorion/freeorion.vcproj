@@ -468,6 +468,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\CombatSetupWnd.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\CombatSetupWnd.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Ui\CombatWnd.cpp"
 				>
 			</File>
