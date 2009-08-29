@@ -186,6 +186,7 @@ namespace FreeOrionPython {
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
             .add_property("hasColonyShips",             &Fleet::HasColonyShips)
             .add_property("numShips",                   &Fleet::NumShips)
+            .add_property("empty",                      &Fleet::Empty)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
 
         ;
