@@ -35,7 +35,7 @@ namespace GG {
 class PopulationPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    PopulationPanel(GG::X w, const UniverseObject &obj);  ///< basic ctor
+    PopulationPanel(GG::X w, int object_id);            ///< basic ctor
     ~PopulationPanel();
     //@}
 
@@ -60,8 +60,7 @@ private:
 
     void                DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    PopCenter*          GetPopCenter();                 ///< returns the planet with ID m_planet_id
-    const PopCenter*    GetPopCenter() const;
+    const PopCenter*    GetPopCenter() const;           ///< returns the PopCenter object with id m_popcenter_id
 
     int                         m_popcenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -74,45 +73,40 @@ private:
     GG::Button*                 m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool>  s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
-
-    static const int            EDGE_PAD;               ///< distance between edges of panel and placement of child controls
 };
 
 /** Shows resource meters with meter-bars */
 class ResourcePanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    ResourcePanel(GG::X w, const UniverseObject &obj);
+    ResourcePanel(GG::X w, int object_id);
     ~ResourcePanel();
     //@}
 
     /** \name Accessors */ //@{
-    int                     ResourceCenterID() const {return m_rescenter_id;}
+    int             ResourceCenterID() const {return m_rescenter_id;}
     //@}
 
     /** \name Mutators */ //@{
-    void                    ExpandCollapse(bool expanded); ///< expands or collapses panel to show details or just summary info
+    void            ExpandCollapse(bool expanded); ///< expands or collapses panel to show details or just summary info
 
-    virtual void            Render();
-    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    Render();
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
-    void                    Update();  ///< updates indicators with values of associated object.  Does not do layout and resizing.
-    void                    Refresh(); ///< updates, redoes layout, resizes indicator
+    void            Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
+    void            Refresh();                      ///< updates, redoes layout, resizes indicator
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    mutable boost::signal<void ()>          ExpandCollapseSignal;
     mutable boost::signal<void (FocusType)> PrimaryFocusChangedSignal;
     mutable boost::signal<void (FocusType)> SecondaryFocusChangedSignal;
     //@}
 
 private:
-    void                    ExpandCollapseButtonPressed();      ///< toggles panel expanded or collapsed
-    void                    DoExpandCollapseLayout();           ///< resizes panel and positions widgets according to present collapsed / expanded status
+    void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
+    void            DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    void                    PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);     ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
-    void                    SecondaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);   ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
-
-    ResourceCenter*         GetResourceCenter();        ///< returns the planet with ID m_planet_id
-    const ResourceCenter*   GetResourceCenter() const;
+    void            PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);     ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
+    void            SecondaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);   ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -127,20 +121,19 @@ private:
 
     CUIDropDownList*            m_primary_focus_drop;   ///< displays and allows selection of primary focus
     CUIDropDownList*            m_secondary_focus_drop; ///< displays and allows selection of secondary focus
-    std::map<CUIDropDownList*, boost::signals::connection>  m_drop_changed_connections; ///< signals connecting selection changed signals from drop lists to responses.  blocked when programmatically changing focus selection, to avoid recursive signal emission
+    std::map<CUIDropDownList*, boost::signals::connection>
+        m_drop_changed_connections;                     ///< signals connecting selection changed signals from drop lists to responses.  blocked when programmatically changing focus selection, to avoid recursive signal emission
 
-    GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*                 m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
-
-    static const int            EDGE_PAD;           ///< distance between edges of panel and placement of child controls
+    static std::map<int, bool>  s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
 /** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
 class MilitaryPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    MilitaryPanel(GG::X w, const Planet &plt);
+    MilitaryPanel(GG::X w, int planet_id);
     ~MilitaryPanel();
     //@}
 
@@ -164,9 +157,6 @@ private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
     void                    DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    Planet*                 GetPlanet();                    ///< returns the planet with ID m_planet_id
-    const ResourceCenter*   GetPlanet() const;
-
     int                         m_planet_id;            ///< object id for the UniverseObject that this panel display info about
 
     StatisticIcon*              m_fleet_supply_stat;    ///< icon and number of food production
@@ -181,14 +171,12 @@ private:
     GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
-
-    static const int            EDGE_PAD;           ///< distance between edges of panel and placement of child controls
 };
 
 class BuildingsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    BuildingsPanel(GG::X w, int columns, const Planet &plt);  ///< basic ctor
+    BuildingsPanel(GG::X w, int columns, int planet_id);  ///< basic ctor
     ~BuildingsPanel();
     //@}
 
@@ -213,14 +201,9 @@ private:
 
     void            Update();                               ///< recreates building indicators for building on or being built at this planet
 
-    Planet*         GetPlanet();                            ///< returns the planet with ID m_planet_id
-    const Planet*   GetPlanet() const;
-
     int                             m_planet_id;            ///< object id for the Planet whose buildings this panel displays
     int                             m_columns;              ///< number of columns in which to display building indicators
-
     std::vector<BuildingIndicator*> m_building_indicators;
-
     GG::Button*                     m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
     static std::map<int, bool>      s_expanded_map;         ///< map indexed by planet ID indicating whether the BuildingsPanel for each object is expanded (true) or collapsed (false)
@@ -239,8 +222,6 @@ public:
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
 private:
-    const BuildingType&     m_type;
-
     GG::StaticGraphic*      m_graphic;
     MultiTurnProgressBar*   m_progress_bar;
 };
@@ -249,7 +230,7 @@ private:
 class SpecialsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    SpecialsPanel(GG::X w, const UniverseObject &obj);   ///< basic ctor
+    SpecialsPanel(GG::X w, int object_id);   ///< basic ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -265,14 +246,8 @@ public:
     //@}
 
 private:
-    UniverseObject*         GetObject();        ///< returns the object with ID m_object_id
-    const UniverseObject*   GetObject() const;
-
     int                             m_object_id;        ///< id for the Object whose specials this panel displays
-
     std::vector<GG::StaticGraphic*> m_icons;
-
-    static const int                EDGE_PAD;
 };
 
 /** Represents a ShipDesign */
@@ -290,18 +265,15 @@ public:
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void            Render();
 
-    void                    Update();           ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
+    void                    Update();
     //@}
 
 private:
-    const ShipDesign*       GetDesign();        ///< returns the ShipDesign with ID m_design_id
-    int                     m_design_id;        ///< id for the Object whose specials this panel displays
+    int                     m_design_id;        ///< id for the ShipDesign this panel displays
 
 protected:
     GG::StaticGraphic*      m_graphic;
     GG::TextControl*        m_name;
-
-    static const int EDGE_PAD;
 };
 
 /** Display icon and number for various meter-related quantities associated with objects.  Typical use
@@ -310,8 +282,8 @@ protected:
     Given a set of MeterType, the indicator will present the appropriate values for each. */
 class MultiIconValueIndicator : public GG::Wnd {
 public:
-    MultiIconValueIndicator(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
-    MultiIconValueIndicator(GG::X w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(GG::X w, int object_id, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<MeterType>& meter_types);
     MultiIconValueIndicator(GG::X w); ///< initializes with no icons shown
 
     bool            Empty();
@@ -325,22 +297,17 @@ public:
     void            ClearToolTip(MeterType meter_type);
 
 private:
-    std::vector<StatisticIcon*>         m_icons;
+    std::vector<StatisticIcon*> m_icons;
 
-    std::vector<MeterType>              m_meter_types;
-    std::vector<const UniverseObject*>  m_obj_vec;
-
-    static const int                    EDGE_PAD;
-    static const int                    ICON_SPACING;
-    static const GG::X                  ICON_WIDTH;
-    static const GG::Y                  ICON_HEIGHT;
+    std::vector<MeterType>      m_meter_types;
+    std::vector<int>            m_object_ids;
 };
 
 /** Graphically represets the current max and projected changes to values of multiple Meters, using a
     horizontal indicator for each meter. */
 class MultiMeterStatusBar : public GG::Wnd {
 public:
-    MultiMeterStatusBar(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types);
+    MultiMeterStatusBar(GG::X w, int object_id, const std::vector<MeterType>& meter_types);
 
     virtual void    Render();
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
@@ -348,22 +315,17 @@ public:
     void            Update();
 
 private:
-    boost::shared_ptr<GG::Texture> m_bar_shading_texture;
+    boost::shared_ptr<GG::Texture>  m_bar_shading_texture;
 
-    std::vector<MeterType> m_meter_types;
-    std::vector<double> m_initial_maxes;
-    std::vector<double> m_initial_currents;
-    std::vector<double> m_projected_maxes;
-    std::vector<double> m_projected_currents;
+    std::vector<MeterType>  m_meter_types;
+    std::vector<double>     m_initial_maxes;
+    std::vector<double>     m_initial_currents;
+    std::vector<double>     m_projected_maxes;
+    std::vector<double>     m_projected_currents;
 
-    const UniverseObject& m_obj;
+    int                     m_object_id;
 
-    static const int EDGE_PAD;
-    static const int BAR_PAD;
-
-    static const GG::Y BAR_HEIGHT;
-
-    std::vector<GG::Clr> m_bar_colours;
+    std::vector<GG::Clr>    m_bar_colours;
 };
 
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
@@ -378,12 +340,6 @@ private:
     GG::StaticGraphic*  m_icon;
     GG::TextControl*    m_title_text;
     GG::TextControl*    m_main_text;
-
-    static const GG::X  TEXT_WIDTH;
-    static const GG::X  TEXT_PAD;
-    static const GG::X  ICON_WIDTH;
-    static const GG::Y  ICON_HEIGHT;
-    const GG::Y         ROW_HEIGHT;
 };
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing
@@ -425,18 +381,13 @@ private:
     GG::Y               production_label_top;
     GG::Y               allocation_label_top;
     GG::Y               import_export_label_top;
-
-    static const GG::X  LABEL_WIDTH;
-    static const GG::X  VALUE_WIDTH;
-    static const int    EDGE_PAD;
 };
 
 /** Gives details about what effects contribute to a meter's maximum value (Effect Accounting) and
   * shows the current turn's current meter value and the predicted current meter value for next turn. */
 class MeterBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj,
-                   const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map);
+    MeterBrowseWnd(MeterType meter_type, int object_id);
 
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void    Render();
@@ -449,10 +400,7 @@ private:
     void            UpdateEffectLabelsAndValues(GG::Y& top);
 
     MeterType               m_meter_type;
-    const UniverseObject*   m_obj;
-
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >&
-                            m_meter_map;
+    int                     m_object_id;
 
     GG::TextControl*        m_summary_title;
 

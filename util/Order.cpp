@@ -316,7 +316,7 @@ void FleetTransferOrder::ExecuteImpl() const
     // iterate down the ship vector and add each one to the fleet
     // after first verifying that it is a valid ship id
     vector<int>::const_iterator itr = m_add_ships.begin();
-    while(itr != m_add_ships.end())
+    while (itr != m_add_ships.end())
     {
         // find the ship, verify that ID is valid
         int curr = (*itr);
@@ -531,7 +531,7 @@ void DeleteFleetOrder::ExecuteImpl() const
 
     // this needs to be a no-op, instead of an exception case, because of its interaction with cancelled colonize orders
     // that cause a fleet to be deleted, then silently reconsistuted
-    if (fleet->NumShips())
+    if (!fleet->Empty())
         return;
 
     GetUniverse().Delete(FleetID());

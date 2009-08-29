@@ -756,25 +756,25 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     // create info panels and attach signals
     GG::X panel_width = w - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
 
-    m_population_panel = new PopulationPanel(panel_width, planet);
+    m_population_panel = new PopulationPanel(panel_width, planet.ID());
     AttachChild(m_population_panel);
     GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_resource_panel = new ResourcePanel(panel_width, planet);
+    m_resource_panel = new ResourcePanel(panel_width, planet.ID());
     AttachChild(m_resource_panel);
     GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
     GG::Connect(m_resource_panel->PrimaryFocusChangedSignal,    &SidePanel::PlanetPanel::SetPrimaryFocus, this);
     GG::Connect(m_resource_panel->SecondaryFocusChangedSignal,  &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
-    m_military_panel = new MilitaryPanel(panel_width, planet);
+    m_military_panel = new MilitaryPanel(panel_width, planet.ID());
     AttachChild(m_military_panel);
     GG::Connect(m_military_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_buildings_panel = new BuildingsPanel(panel_width, 4, planet);
+    m_buildings_panel = new BuildingsPanel(panel_width, 4, planet.ID());
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_specials_panel = new SpecialsPanel(panel_width, planet);
+    m_specials_panel = new SpecialsPanel(panel_width, planet.ID());
     AttachChild(m_specials_panel);
 
     m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
@@ -1055,12 +1055,16 @@ bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 
 void SidePanel::PlanetPanel::ClickColonize()
 {
+    // order or cancel colonization, depending on whether it has previosuly
+    // been ordered
+
     const Planet *planet = GetPlanet();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::map<int, int> pending_colonization_orders = HumanClientApp::GetApp()->PendingColonizationOrders();
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
-    if (it == pending_colonization_orders.end()) // colonize
-    {
+
+    // colonize
+    if (it == pending_colonization_orders.end()) {
         Ship* ship = FindColonyShip(planet->SystemID());
         if (!ship) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize ship not found!";
@@ -1079,30 +1083,13 @@ void SidePanel::PlanetPanel::ClickColonize()
         }
 
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID())));
-    }
-    else // cancel colonization
-    {
+
+    } else {
+         // cancel colonization
         boost::shared_ptr<FleetColonizeOrder> col_order =
             boost::dynamic_pointer_cast<FleetColonizeOrder>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
-        int ship_id = col_order ? col_order->ShipID() : UniverseObject::INVALID_OBJECT_ID;
 
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
-
-        // if the ship now buils a fleet of its own, make sure that fleet appears
-        // at a possibly opened FleetWnd
-        Ship* ship = GetUniverse().Object<Ship>(ship_id);
-        Fleet* fleet = ship ? GetUniverse().Object<Fleet>(ship->FleetID()) : 0;
-        if (fleet) {
-            for (FleetUIManager::iterator it = FleetUIManager::GetFleetUIManager().begin(); it != FleetUIManager::GetFleetUIManager().end(); ++it) {
-                FleetWnd* fleet_wnd = *it;
-                if (fleet->SystemID() == fleet_wnd->SystemID()
-                    && !fleet_wnd->ContainsFleet(fleet->ID()))
-                {
-                    fleet_wnd->AddFleet(GetUniverse().Object<Fleet>(fleet->ID()));
-                    break;
-                }
-            }
-        }
     }
 }
 
@@ -1564,10 +1551,12 @@ void SidePanel::RefreshImpl()
     // populate system resource summary
 
     // get planets owned by player's empire
-    std::vector<const UniverseObject*> owned_planets;
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    std::vector<int> owned_planets;
     for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it) {
-        if ((*it)->WhollyOwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            owned_planets.push_back(*it);
+        const Planet* planet = *it;
+        if (planet->WhollyOwnedBy(empire_id))
+            owned_planets.push_back(planet->ID());
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.

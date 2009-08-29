@@ -68,6 +68,7 @@ public:
     bool                                HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
     bool                                HasColonyShips() const;             ///< Returns true if there is at least one colony ship in the fleet.
     int                                 NumShips() const;                   ///< Returns number of ships in fleet.
+    bool                                Empty() const;                      ///< Returns true if fleet contains no ships, false otherwise.
     virtual bool                        Contains(int object_id) const;      ///< Returns true iff this Fleet contains a ship with ID \a id.
     virtual std::vector<UniverseObject*>FindObjects() const;                ///< returns objects contained within this fleet
     virtual std::vector<int>            FindObjectIDs() const;              ///< returns ids of objects contained within this fleet

@@ -1147,14 +1147,10 @@ void Universe::RebuildEmpireViewSystemGraphs()
 
 void Universe::Destroy(int id)
 {
-    s_inhibit_universe_object_signals = true;
-
-    UniverseObject* obj;
-    iterator it = m_objects.find(id);
-
     // remove object from any containing UniverseObject
+    iterator it = m_objects.find(id);
     if (it != m_objects.end()) {
-        obj = it->second;
+        UniverseObject* obj = it->second;
         //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
         // get and record set of empires that can presently see this object
@@ -1168,16 +1164,11 @@ void Universe::Destroy(int id)
         }
         m_destroyed_object_knowers[id] = knowing_empires;
 
-        // remove object from any containing objects
-        if (System* sys = obj->GetSystem())
-            sys->Remove(id);
-        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-            if (Fleet* fleet = ship->GetFleet())
-                fleet->RemoveShip(ship->ID());
-        } else if (Building* building = universe_object_cast<Building*>(obj)) {
-            if (Planet* planet = building->GetPlanet())
-                planet->RemoveBuilding(building->ID());
-        }
+
+        // move object to invalid position, thereby removing it from anything that contained it
+        // and propegating associated signals
+        obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+
 
         // remove from existing objects set and insert into destroyed objects set
         m_objects.erase(id);
@@ -1186,52 +1177,49 @@ void Universe::Destroy(int id)
     } else {
         Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << id;
     }
-
-    s_inhibit_universe_object_signals = false;
 }
 
 bool Universe::Delete(int id)
 {
-    s_inhibit_universe_object_signals = true;
-
-    // find object amongst existing objects
-    UniverseObject* obj;
+    // find object amongst existing objects and delete directly, without storing any info
+    // about the previous object (as is done for destroying an object)
     iterator it = m_objects.find(id);
     if (it != m_objects.end()) {
-        obj = it->second;
+        UniverseObject* obj = it->second;
 
-        // remove object from any containing UniverseObject
-        if (System* sys = obj->GetSystem())
-            sys->Remove(id);
-        if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-            if (Fleet* fleet = ship->GetFleet())
-                fleet->RemoveShip(ship->ID());
-        } else if (Building* building = universe_object_cast<Building*>(obj)) {
-            if (Planet* planet = building->GetPlanet())
-                planet->RemoveBuilding(building->ID());
-        }
+        // move object to invalid position, thereby removing it from anything that contained it
+        // and propegating associated signals
+        obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
 
+        // remove from existing objects set
         m_objects.erase(id);
+
         UniverseObjectDeleteSignal(obj);
+
         delete obj;
-        s_inhibit_universe_object_signals = false;
+
         return true;
     }
+
 
     // find object amongst destroyed objects
     it = m_destroyed_objects.find(id);
     if (it != m_destroyed_objects.end()) {
-        obj = it->second;
+        // remove from destroyed objects set
         m_destroyed_objects.erase(id);
-        UniverseObjectDeleteSignal(obj);
+
+        // remove from knowledge of destroyed objects
+        m_destroyed_object_knowers.erase(id);
+
+        UniverseObject* obj = it->second;
+
         delete obj;
-        s_inhibit_universe_object_signals = false;
+
         return true;
     }
 
-    Logger().debugStream() << "Tried to delete a nonexistant objects with id: " << id;
+    Logger().errorStream() << "Tried to delete a nonexistant object with id: " << id;
 
-    s_inhibit_universe_object_signals = false;
     return false;
 }
 

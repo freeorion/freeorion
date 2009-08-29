@@ -1474,6 +1474,8 @@ void TechTreeWnd::LayoutPanel::Render()
     glEnable(GL_TEXTURE_2D);
     EndClipping();
 
+    glLineWidth(1.0);
+
     GG::GUI::RenderWindow(m_vscroll);
     GG::GUI::RenderWindow(m_hscroll);
 }

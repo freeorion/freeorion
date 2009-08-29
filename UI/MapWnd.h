@@ -305,7 +305,7 @@ private:
     std::vector<boost::shared_ptr<GG::Texture> >    m_backgrounds;      //!< starfield backgrounds
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
-    std::set<int>               m_selected_fleets;
+    std::set<int>               m_selected_fleet_ids;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map
@@ -354,7 +354,7 @@ private:
     std::list<MapWndPopup*>     m_popups;           //!< list of currently active popup windows
     bool                        m_menu_showing;     //!< set during ShowMenu() to prevent reentrency
     int                         m_current_owned_system;
-    int                         m_current_fleet;
+    int                         m_current_fleet_id;
     bool                        m_in_production_view_mode;
 
     bool                        m_sidepanel_open_before_showing_other;  //!< was the sidepanel open before switching to production, research or design screens?  If so, it should be restored when leaving them.

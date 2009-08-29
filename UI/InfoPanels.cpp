@@ -9,13 +9,13 @@
 #include "../universe/Ship.h"
 #include "../universe/Special.h"
 #include "../Empire/Empire.h"
-#include "ClientUI.h"
-#include "CUIControls.h"
-#include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+#include "ClientUI.h"
+#include "CUIControls.h"
+#include "Sound.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
@@ -34,8 +34,8 @@ namespace {
         return GG::RgbaTag(colour) + text + "</rgba>";
     }
 
-    /** Returns text representation of number wrapped in GG RGBA tags for colour depending on whether number
-        is positive, negative or 0.0 */
+    /** Returns text representation of number wrapped in GG RGBA tags for
+      * colour depending on whether number is positive, negative or 0.0 */
     std::string ColouredNumber(double number) {
         GG::Clr clr = ClientUI::TextColor();
         if (number > 0.0)
@@ -45,12 +45,8 @@ namespace {
         return ColourWrappedtext(DoubleToString(number, 3, false, true), clr);
     }
 
-    const GG::X     METER_BROWSE_LABEL_WIDTH(300);
-    const GG::X     METER_BROWSE_VALUE_WIDTH(50);
-    const int       METER_BROWSE_EDGE_PAD(3);
-
-    /** Returns GG::Clr with which to display programatically coloured things (such as meter bars) for the
-        indicated \a meter_type */
+    /** Returns GG::Clr with which to display programatically coloured things
+      * (such as meter bars) for the indicated \a meter_type */
     GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
         case METER_FARMING:
@@ -76,9 +72,9 @@ namespace {
         }
     }
 
-
-    /** Returns how much of specified \a resource_type is being consumed by the empire with id \a empire_id
-      * at the location of the specified object \a obj. */
+    /** Returns how much of specified \a resource_type is being consumed by the
+      * empire with id \a empire_id at the location of the specified
+      * object \a obj. */
     double ObjectResourceConsumption(const UniverseObject* obj, ResourceType resource_type, int empire_id = ALL_EMPIRES) {
         if (!obj) {
             Logger().errorStream() << "ObjectResourceConsumption passed a null object";
@@ -157,27 +153,49 @@ namespace {
         }
         return 0.0;
     }
+
+    /** Returns height of rows of text in InfoTextBrowseWnd. */
+    int IconTextBrowseWndRowHeight() {
+        return ClientUI::Pts()*3/2;
+    }
+
+    const GG::X     METER_BROWSE_LABEL_WIDTH(300);
+    const GG::X     METER_BROWSE_VALUE_WIDTH(50);
+    const int       EDGE_PAD(3);
+    const int       MULTI_INDICATOR_ICON_SPACING(12);
+    const GG::X     MULTI_INDICATOR_ICON_WIDTH(24);
+    const GG::Y     MULTI_INDICATOR_ICON_HEIGHT(24);
+    const int       BAR_PAD(1);
+    const GG::Y     BAR_HEIGHT(10);
+    const GG::X     LABEL_WIDTH(240);
+    const GG::X     VALUE_WIDTH(60);
+    const GG::X     ICON_BROWSE_TEXT_WIDTH(400);
+    const GG::X     ICON_BROWSE_ICON_WIDTH(64);
+    const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
+    const GG::X     SPECIAL_ICON_WIDTH(24);
+    const GG::Y     SPECIAL_ICON_HEIGHT(24);
 }
 
 /////////////////////////////////////
 //        PopulationPanel          //
 /////////////////////////////////////
 std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
-const int PopulationPanel::EDGE_PAD = 3;
-PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
+PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
-    m_popcenter_id(obj.ID()),
+    m_popcenter_id(object_id),
     m_pop_stat(0), m_health_stat(0),
     m_multi_icon_value_indicator(0), m_multi_meter_status_bar(0),
     m_expand_button(0)
 {
     SetName("PopulationPanel");
 
-    const PopCenter* pop = dynamic_cast<const PopCenter*>(&obj);
+    const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
+    const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
     if (!pop)
-        throw std::invalid_argument("Attempted to construct a PopulationPanel with an UniverseObject that is not a PopCenter");
+        throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
-    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
+    m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(),
+                                     GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);
     AttachChild(m_expand_button);
     m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -208,11 +226,11 @@ PopulationPanel::PopulationPanel(GG::X w, const UniverseObject &obj) :
     // attach and show meter bars and large resource indicators
     GG::Y top = UpperLeft().y;
 
-    m_multi_icon_value_indicator = new MultiIconValueIndicator(Width() - 2*EDGE_PAD, obj, meters);
+    m_multi_icon_value_indicator = new MultiIconValueIndicator(Width() - 2*EDGE_PAD, m_popcenter_id, meters);
     m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), EDGE_PAD - top));
     m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
 
-    m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, obj, meters);
+    m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, m_popcenter_id, meters);
     m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
     m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
 
@@ -339,9 +357,14 @@ void PopulationPanel::Render()
 
 void PopulationPanel::Update()
 {
-    const PopCenter* pop = GetPopCenter();
-    const Universe& universe = GetUniverse();
-    const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
+    const PopCenter*        pop = GetPopCenter();
+    const Universe&         universe = GetUniverse();
+    const UniverseObject*   obj = GetUniverse().Object(m_popcenter_id);
+
+    if (!pop || !obj) {
+        Logger().errorStream() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
+        return;
+    }
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
@@ -365,21 +388,13 @@ void PopulationPanel::Update()
 
 
     // tooltips
-    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_popcenter_id);
-    if (map_it != effect_accounting_map.end())
-        meter_map = &(map_it->second);
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(METER_POPULATION, m_popcenter_id));
+    m_pop_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
 
-    if (meter_map) {
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(METER_POPULATION, obj, *meter_map));
-        m_pop_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
-
-        browse_wnd.reset(new MeterBrowseWnd(METER_HEALTH, obj, *meter_map));
-        m_health_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
-    }
+    browse_wnd.reset(new MeterBrowseWnd(METER_HEALTH, m_popcenter_id));
+    m_health_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
 }
 
 void PopulationPanel::Refresh()
@@ -397,25 +412,15 @@ const PopCenter* PopulationPanel::GetPopCenter() const
     return pop;
 }
 
-PopCenter* PopulationPanel::GetPopCenter()
-{
-    UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
-    if (!obj) throw std::runtime_error("PopulationPanel tried to get an object with an invalid m_popcenter_id");
-    PopCenter* pop = dynamic_cast<PopCenter*>(obj);
-    if (!pop) throw std::runtime_error("PopulationPanel failed casting an object pointer to a PopCenter pointer");
-    return pop;
-}
-
 
 /////////////////////////////////////
 //         ResourcePanel           //
 /////////////////////////////////////
 std::map<int, bool> ResourcePanel::s_expanded_map;
-const int ResourcePanel::EDGE_PAD = 3;
 
-ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
+ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
-    m_rescenter_id(obj.ID()),
+    m_rescenter_id(object_id),
     m_farming_stat(0),
     m_mining_stat(0),
     m_industry_stat(0),
@@ -429,7 +434,10 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
 {
     SetName("ResourcePanel");
 
-    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(&obj);
+    const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
+    if (!obj)
+        throw std::invalid_argument("Attempted to construct a ResourcePanel with an object_id that is not an UniverseObject");
+    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
@@ -520,8 +528,8 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     meters.push_back(METER_FARMING);    meters.push_back(METER_MINING); meters.push_back(METER_INDUSTRY);
     meters.push_back(METER_RESEARCH);   meters.push_back(METER_TRADE);  meters.push_back(METER_CONSTRUCTION);
 
-    m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, obj, meters);
-    m_multi_icon_value_indicator = new MultiIconValueIndicator(Width() - 2*EDGE_PAD, obj, meters);
+    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
+    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_rescenter_id);
@@ -531,8 +539,7 @@ ResourcePanel::ResourcePanel(GG::X w, const UniverseObject &obj) :
     Refresh();
 }
 
-ResourcePanel::~ResourcePanel()
-{
+ResourcePanel::~ResourcePanel() {
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
@@ -554,72 +561,68 @@ ResourcePanel::~ResourcePanel()
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
 
-void ResourcePanel::ExpandCollapseButtonPressed()
-{
+void ResourcePanel::ExpandCollapseButtonPressed() {
     ExpandCollapse(!s_expanded_map[m_rescenter_id]);
 }
 
-void ResourcePanel::ExpandCollapse(bool expanded)
-{
+void ResourcePanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
     s_expanded_map[m_rescenter_id] = expanded;
 
     DoExpandCollapseLayout();
 }
 
-void ResourcePanel::DoExpandCollapseLayout()
-{
+void ResourcePanel::DoExpandCollapseLayout() {
     GG::X icon_width(ClientUI::Pts()*4/3);
     GG::Y icon_height(ClientUI::Pts()*4/3);
 
+
+    // initially detach everything (most things?).  Some will be reattached later.
+    DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
+    DetachChild(m_research_stat);   DetachChild(m_trade_stat);
+
+    DetachChild(m_secondary_focus_drop);
+    DetachChild(m_primary_focus_drop);
+
+    DetachChild(m_multi_meter_status_bar);
+    DetachChild(m_multi_icon_value_indicator);
+
+
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        DetachChild(m_secondary_focus_drop);
-        DetachChild(m_primary_focus_drop);
-
-        // detach / hide meter bars and large resource indicators
-        DetachChild(m_multi_meter_status_bar);
-        DetachChild(m_multi_icon_value_indicator);
-
-
-        // determine which two resource icons to display while collapsed: the two with the highest production
-        const ResourceCenter* res = GetResourceCenter();
-
-        // sort by insereting into multimap keyed by production amount, then taking the first two icons therein
-        std::multimap<double, StatisticIcon*> res_prod_icon_map;
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_FARMING),    m_farming_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_MINING),     m_mining_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_INDUSTRY),   m_industry_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_RESEARCH),   m_research_stat));
-        res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_TRADE),      m_trade_stat));
-
-        // initially detach all...
-        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.begin(); it != res_prod_icon_map.end(); ++it)
-            DetachChild(it->second);
-
-        // position and reattach icons to be shown
-        int n = 0;
-        for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
-            GG::X x = icon_width*n*7/2;
-
-            if (x > Width() - m_expand_button->Width() - icon_width*5/2) break;  // ensure icon doesn't extend past right edge of panel
-
-            std::multimap<double, StatisticIcon*>::iterator it2 = --it;
-
-            StatisticIcon* icon = it2->second;
-            AttachChild(icon);
-            icon->MoveTo(GG::Pt(x, GG::Y0));
-            icon->Show();
-
-            n++;
-        }
-
         Resize(GG::Pt(Width(), icon_height));
-    } else {
-        // detach statistic icons
-        DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
-        DetachChild(m_research_stat);   DetachChild(m_trade_stat);
 
+        const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
+        const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
+
+        if (res) {
+            // determine which two resource icons to display while collapsed: the two with the highest production.
+            // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
+            std::multimap<double, StatisticIcon*> res_prod_icon_map;
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_FARMING),    m_farming_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_MINING),     m_mining_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_INDUSTRY),   m_industry_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_RESEARCH),   m_research_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_TRADE),      m_trade_stat));
+
+            // position and reattach icons to be shown
+            int n = 0;
+            for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
+                GG::X x = icon_width*n*7/2;
+
+                if (x > Width() - m_expand_button->Width() - icon_width*5/2) break;  // ensure icon doesn't extend past right edge of panel
+
+                std::multimap<double, StatisticIcon*>::iterator it2 = --it;
+
+                StatisticIcon* icon = it2->second;
+                AttachChild(icon);
+                icon->MoveTo(GG::Pt(x, GG::Y0));
+                icon->Show();
+
+                n++;
+            }
+        }
+    } else {
         // attach / show focus selector drops
         m_secondary_focus_drop->Show();
         AttachChild(m_secondary_focus_drop);
@@ -642,14 +645,11 @@ void ResourcePanel::DoExpandCollapseLayout()
     }
 
     // update appearance of expand/collapse button
-    if (s_expanded_map[m_rescenter_id])
-    {
+    if (s_expanded_map[m_rescenter_id]) {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
-    }
-    else
-    {
+    } else {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -721,16 +721,44 @@ void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey>
 
 void ResourcePanel::Update()
 {
-    const ResourceCenter* res = GetResourceCenter();
+    // remove any old browse wnds
+    m_farming_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_FARMING);
+
+    m_mining_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_MINING);
+
+    m_industry_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_INDUSTRY);
+
+    m_research_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_RESEARCH);
+
+    m_trade_stat->ClearBrowseInfoWnd();
+    m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
+
+    m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
+
+
     const Universe& universe = GetUniverse();
     const UniverseObject* obj = universe.Object(m_rescenter_id);
+    if (!obj) {
+        Logger().errorStream() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
+        return;
+    }
+    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
+    if (!res) {
+        Logger().errorStream() << "BuildingPanel::Update couldn't convert object with id " << m_rescenter_id << " to a ResourceCenter";
+        return;
+    }
+
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
     // determine ownership
     const std::set<int> owners = obj->Owners();
 
-    if(owners.empty()) {
+    if (owners.empty()) {
         owner = OS_NONE;  // uninhabited
     } else {
         if(!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -761,58 +789,31 @@ void ResourcePanel::Update()
     m_trade_stat->SetValue(res->ProjectedMeterPoints(METER_TRADE));
 
 
-    // tooltips
-    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_rescenter_id);
-    if (map_it != effect_accounting_map.end())
-        meter_map = &(map_it->second);
+    // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
+    // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
+    // browse wnd on these indicators
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, m_rescenter_id));
+    m_farming_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
 
-    if (meter_map) {
-        // create an attach browse info wnds for each meter type on the icon+number stats used when collapsed and
-        // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
-        // browse wnd on these indicators
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, obj, *meter_map));
-        m_farming_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, m_rescenter_id));
+    m_mining_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_MINING, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, obj, *meter_map));
-        m_mining_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_MINING, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, m_rescenter_id));
+    m_industry_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_INDUSTRY, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, obj, *meter_map));
-        m_industry_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_INDUSTRY, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, m_rescenter_id));
+    m_research_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_RESEARCH, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, obj, *meter_map));
-        m_research_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_RESEARCH, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, m_rescenter_id));
+    m_trade_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_TRADE, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, obj, *meter_map));
-        m_trade_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_TRADE, browse_wnd);
-
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, obj, *meter_map));
-        m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
-    } else {
-        // remove any old browse wnds
-        m_farming_stat->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(METER_FARMING);
-
-        m_mining_stat->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(METER_MINING);
-
-        m_industry_stat->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(METER_INDUSTRY);
-
-        m_research_stat->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(METER_RESEARCH);
-
-        m_trade_stat->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(METER_TRADE);
-
-        m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
-    }
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, m_rescenter_id));
+    m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
     // focus droplists
     std::string text;
@@ -886,23 +887,6 @@ void ResourcePanel::Refresh()
     Update();
     DoExpandCollapseLayout();
 }
-const ResourceCenter* ResourcePanel::GetResourceCenter() const
-{
-    const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
-    if (!obj) throw std::runtime_error("ResourcePanel tried to get an object with an invalid m_rescenter_id");
-    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
-    if (!res) throw std::runtime_error("ResourcePanel failed casting an object pointer to a ResourceCenter pointer");
-    return res;
-}
-
-ResourceCenter* ResourcePanel::GetResourceCenter()
-{
-    UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
-    if (!obj) throw std::runtime_error("ResourcePanel tried to get an object with an invalid m_rescenter_id");
-    ResourceCenter* res = dynamic_cast<ResourceCenter*>(obj);
-    if (!res) throw std::runtime_error("ResourcePanel failed casting an object pointer to a ResourceCenter pointer");
-    return res;
-}
 
 void ResourcePanel::PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected)
 {
@@ -969,11 +953,10 @@ void ResourcePanel::SecondaryFocusDropListSelectionChanged(GG::DropDownList::ite
 //         MilitaryPanel           //
 /////////////////////////////////////
 std::map<int, bool> MilitaryPanel::s_expanded_map;
-const int MilitaryPanel::EDGE_PAD = 3;
 
-MilitaryPanel::MilitaryPanel(GG::X w, const Planet &plt) :
+MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*9), GG::INTERACTIVE),
-    m_planet_id(plt.ID()),
+    m_planet_id(planet_id),
     m_fleet_supply_stat(0),
     m_shield_stat(0),
     m_defense_stat(0),
@@ -1031,8 +1014,8 @@ MilitaryPanel::MilitaryPanel(GG::X w, const Planet &plt) :
     meters.push_back(METER_SUPPLY);     meters.push_back(METER_SHIELD);     meters.push_back(METER_DEFENSE);
     meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
 
-    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       plt,    meters);
-    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   plt,    meters);
+    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_planet_id, meters);
+    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_planet_id, meters);
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_planet_id);
@@ -1114,49 +1097,43 @@ void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey>
 
 void MilitaryPanel::Update()
 {
-    const Planet* plt = GetPlanet();
-    const Universe& universe = GetUniverse();
-    const UniverseObject* obj = static_cast<const UniverseObject*>(plt);
+    const UniverseObject* obj = GetUniverse().Object(m_planet_id);
+    if (!obj) {
+        Logger().errorStream() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
+        return;
+    }
 
-
-    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_planet_id);
-    if (map_it != effect_accounting_map.end())
-        meter_map = &(map_it->second);
 
     // meter bar displays and production stats
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_fleet_supply_stat->SetValue(plt->ProjectedMeterPoints(METER_SUPPLY));
-    m_shield_stat->SetValue(plt->ProjectedMeterPoints(METER_SHIELD));
-    m_defense_stat->SetValue(plt->ProjectedMeterPoints(METER_DEFENSE));
-    m_detection_stat->SetValue(plt->ProjectedMeterPoints(METER_DETECTION));
-    m_stealth_stat->SetValue(plt->ProjectedMeterPoints(METER_STEALTH));
+    m_fleet_supply_stat->SetValue(obj->ProjectedMeterPoints(METER_SUPPLY));
+    m_shield_stat->SetValue(obj->ProjectedMeterPoints(METER_SHIELD));
+    m_defense_stat->SetValue(obj->ProjectedMeterPoints(METER_DEFENSE));
+    m_detection_stat->SetValue(obj->ProjectedMeterPoints(METER_DETECTION));
+    m_stealth_stat->SetValue(obj->ProjectedMeterPoints(METER_STEALTH));
 
     // tooltips
-    if (meter_map) {
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SUPPLY, obj, *meter_map));
-        m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SUPPLY, m_planet_id));
+    m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SHIELD, obj, *meter_map));
-        m_shield_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_SHIELD, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SHIELD, m_planet_id));
+    m_shield_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_SHIELD, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DEFENSE, obj, *meter_map));
-        m_defense_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_DEFENSE, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DEFENSE, m_planet_id));
+    m_defense_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_DEFENSE, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DETECTION, obj, *meter_map));
-        m_detection_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_DETECTION, browse_wnd);
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DETECTION, m_planet_id));
+    m_detection_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_DETECTION, browse_wnd);
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_STEALTH, obj, *meter_map));
-        m_stealth_stat->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(METER_STEALTH, browse_wnd);
-    }
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_STEALTH, m_planet_id));
+    m_stealth_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_STEALTH, browse_wnd);
 }
 
 void MilitaryPanel::Refresh()
@@ -1247,72 +1224,54 @@ void MilitaryPanel::DoExpandCollapseLayout()
 
     ExpandCollapseSignal();}
 
-Planet* MilitaryPanel::GetPlanet()
-{
-    Planet* plt = GetUniverse().Object<Planet>(m_planet_id);
-    if (!plt) throw std::runtime_error("MilitaryPanel tried to get a planet with an invalid m_planet_id");
-    return plt;
-}
-
-const ResourceCenter* MilitaryPanel::GetPlanet() const
-{
-    const Planet* plt = GetUniverse().Object<Planet>(m_planet_id);
-    if (!plt) throw std::runtime_error("MilitaryPanel tried to get a planet with an invalid m_planet_id");
-    return plt;
-}
 
 
 /////////////////////////////////////
 //    MultiIconValueIndicator      //
 /////////////////////////////////////
-const int MultiIconValueIndicator::EDGE_PAD = 6;
-const int MultiIconValueIndicator::ICON_SPACING = 12;
-const GG::X MultiIconValueIndicator::ICON_WIDTH(24);
-const GG::Y MultiIconValueIndicator::ICON_HEIGHT(24);
-
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const std::vector<MeterType>& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
-    m_obj_vec()
+    m_object_ids()
 {
-    m_obj_vec.push_back(&obj);
+    m_object_ids.push_back(object_id);
 
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
-        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), ICON_WIDTH, ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
                                             0.0, 3, false, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        x += ICON_WIDTH + ICON_SPACING;
+        x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + ICON_HEIGHT + ClientUI::Pts()*3/2));
+        Resize(GG::Pt(w, EDGE_PAD + MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2));
     Update();
 }
 
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<const UniverseObject*>& obj_vec, const std::vector<MeterType>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<MeterType>& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
-    m_obj_vec(obj_vec)
+    m_object_ids(object_ids)
 {
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
-        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), ICON_WIDTH, ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
                                             0.0, 3, false, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        x += ICON_WIDTH + ICON_SPACING;
+        x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
     }
     if (!m_icons.empty())
-        Resize(GG::Pt(w, EDGE_PAD + ICON_HEIGHT + ClientUI::Pts()*3/2));
+        Resize(GG::Pt(w, EDGE_PAD + MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2));
     Update();
 }
 
@@ -1320,14 +1279,14 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(),
-    m_obj_vec()
+    m_object_ids()
 {
     SetName("MultiIconValueIndicator");
 }
 
 bool MultiIconValueIndicator::Empty()
 {
-    return m_obj_vec.empty();
+    return m_object_ids.empty();
 }
 
 void MultiIconValueIndicator::Render()
@@ -1348,9 +1307,13 @@ void MultiIconValueIndicator::Update()
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
         double sum = 0.0;
-        for (std::size_t j = 0; j < m_obj_vec.size(); ++j) {
-            assert(m_obj_vec[j]);
-            sum += m_obj_vec[j]->ProjectedMeterPoints(m_meter_types[i]);
+        for (std::size_t j = 0; j < m_object_ids.size(); ++j) {
+            const UniverseObject* obj = GetUniverse().Object(m_object_ids[j]);
+            if (!obj) {
+                Logger().errorStream() << "MultiIconValueIndicator::Update coudln't get object with id " << m_object_ids[j];
+                continue;
+            }
+            sum += obj->ProjectedMeterPoints(m_meter_types[i]);
         }
         m_icons[i]->SetValue(sum);
     }
@@ -1373,11 +1336,7 @@ void MultiIconValueIndicator::ClearToolTip(MeterType meter_type)
 /////////////////////////////////////
 //       MultiMeterStatusBar       //
 /////////////////////////////////////
-const int MultiMeterStatusBar::EDGE_PAD = 2;
-const int MultiMeterStatusBar::BAR_PAD = 1;
-const GG::Y MultiMeterStatusBar::BAR_HEIGHT(10);
-
-MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, const UniverseObject& obj, const std::vector<MeterType>& meter_types) :
+MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<MeterType>& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(meter_types),
@@ -1385,7 +1344,7 @@ MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, const UniverseObject& obj, con
     m_initial_currents(),
     m_projected_maxes(),
     m_projected_currents(),
-    m_obj(obj),
+    m_object_id(object_id),
     m_bar_colours()
 {
     SetName("MultiMeterStatusBar");
@@ -1490,10 +1449,21 @@ void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::M
 
 void MultiMeterStatusBar::Update()
 {
+    m_initial_maxes.clear();
+    m_initial_currents.clear();
+    m_projected_maxes.clear();
+    m_projected_currents.clear();
+
+    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    if (!obj) {
+        Logger().errorStream() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
+        return;
+    }
+
     std::vector<const Meter*> meters;
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        const Meter* meter = m_obj.GetMeter(*it);
-        if (!meter) 
+        const Meter* meter = obj->GetMeter(*it);
+        if (!meter)
             throw std::runtime_error("MultiMeterStatusBar::Update() tried to get a meter from and object that didn't have a meter of the specified type");
         meters.push_back(meter);
     }
@@ -1501,16 +1471,12 @@ void MultiMeterStatusBar::Update()
 
     const GG::Y HEIGHT = NUM_BARS*BAR_HEIGHT + (NUM_BARS - 1)*BAR_PAD + 2*EDGE_PAD;
 
-    m_initial_maxes.clear();
-    m_initial_currents.clear();
-    m_projected_maxes.clear();
-    m_projected_currents.clear();
     for (int i = 0; i < NUM_BARS; ++i) {
         const Meter* meter = meters[i];
         m_initial_maxes.push_back(meter->InitialMax());
         m_initial_currents.push_back(meter->InitialCurrent());
         m_projected_maxes.push_back(meter->Max());
-        m_projected_currents.push_back(m_obj.ProjectedCurrentMeter(m_meter_types[i]));
+        m_projected_currents.push_back(obj->ProjectedCurrentMeter(m_meter_types[i]));
         m_bar_colours.push_back(MeterColor(m_meter_types[i]));
     }
 
@@ -1523,9 +1489,9 @@ void MultiMeterStatusBar::Update()
 /////////////////////////////////////
 std::map<int, bool> BuildingsPanel::s_expanded_map = std::map<int, bool>();
 
-BuildingsPanel::BuildingsPanel(GG::X w, int columns, const Planet &plt) :
+BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_planet_id(plt.ID()),
+    m_planet_id(planet_id),
     m_columns(columns),
     m_building_indicators(),
     m_expand_button(0)
@@ -1543,12 +1509,14 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, const Planet &plt) :
     GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
     // get owners, connect their production queue changed signals to update this panel
-    const std::set<int>& owners = plt.Owners();
-    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-        const Empire* empire = Empires().Lookup(*it);
-        if (!empire) continue;  // shouldn't be a problem... maybe put check for it later
-        const ProductionQueue& queue = empire->GetProductionQueue();
-        GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
+    if (const UniverseObject* planet = GetUniverse().Object(m_planet_id)) {
+        const std::set<int>& owners = planet->Owners();
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+            if (const Empire* empire = Empires().Lookup(*it)) {
+                const ProductionQueue& queue = empire->GetProductionQueue();
+                GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
+            }
+        }
     }
 
     Refresh();
@@ -1631,6 +1599,10 @@ void BuildingsPanel::Update()
 
     const Universe& universe = GetUniverse();
     const Planet* plt = universe.Object<Planet>(m_planet_id);
+    if (!plt) {
+        Logger().errorStream() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
+        return;
+    }
     const std::set<int>& buildings = plt->Buildings();
 
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
@@ -1779,26 +1751,13 @@ void BuildingsPanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
-Planet* BuildingsPanel::GetPlanet()
-{
-    Planet* plt = GetUniverse().Object<Planet>(m_planet_id);
-    if (!plt) throw std::runtime_error("BuildingsPanel tried to get a planet with an invalid m_planet_id");
-    return plt;
-}
 
-const Planet* BuildingsPanel::GetPlanet() const
-{
-    const Planet* plt = GetUniverse().Object<Planet>(m_planet_id);
-    if (!plt) throw std::runtime_error("BuildingsPanel tried to get a planet with an invalid m_planet_id");
-    return plt;
-}
 
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
 BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_type(type),
     m_graphic(0),
     m_progress_bar(0)
 {
@@ -1814,7 +1773,6 @@ BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type) :
 BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turns,
                                      int turns_completed, double partial_turn) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_type(type),
     m_graphic(0),
     m_progress_bar(0)
 {
@@ -1895,10 +1853,9 @@ void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::Mod
 /////////////////////////////////////
 //         SpecialsPanel           //
 /////////////////////////////////////
-const int SpecialsPanel::EDGE_PAD = 2;
-SpecialsPanel::SpecialsPanel(GG::X w, const UniverseObject &obj) : 
+SpecialsPanel::SpecialsPanel(GG::X w, int object_id) : 
     Wnd(GG::X0, GG::Y0, w, GG::Y(32), GG::INTERACTIVE),
-    m_object_id(obj.ID()),
+    m_object_id(object_id),
     m_icons()
 {
     SetName("SpecialsPanel");
@@ -1929,23 +1886,29 @@ void SpecialsPanel::Update()
         DeleteChild(*it);
     m_icons.clear();
 
-    const UniverseObject* obj = GetObject();
+
+    // get specials to display
+    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    if (!obj) {
+        Logger().errorStream() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
+        return;
+    }
     const std::set<std::string>& specials = obj->Specials();
 
-    const GG::X icon_width(24);
-    const GG::Y icon_height(24);
 
     int tooltip_time = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
 
     // get specials and use them to create specials icons
     for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
         const Special* special = GetSpecial(*it);
-        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::SpecialTexture(special->Name()),
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT, ClientUI::SpecialTexture(special->Name()),
                                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
         graphic->SetBrowseModeTime(tooltip_time);
-        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()),
-                                                                                             UserString(special->Name()),
-                                                                                             UserString(special->Description()))));
+        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+            new IconTextBrowseWnd(ClientUI::SpecialTexture(special->Name()),
+                                  UserString(special->Name()),
+                                  UserString(special->Description()))));
         m_icons.push_back(graphic);
     }
 
@@ -1958,40 +1921,26 @@ void SpecialsPanel::Update()
         icon->MoveTo(GG::Pt(x, y));
         AttachChild(icon);
 
-        x += icon_width + EDGE_PAD;
+        x += SPECIAL_ICON_WIDTH + EDGE_PAD;
 
-        if (x + icon_width + EDGE_PAD > AVAILABLE_WIDTH) {
+        if (x + SPECIAL_ICON_WIDTH + EDGE_PAD > AVAILABLE_WIDTH) {
             x = GG::X(EDGE_PAD);
-            y += icon_height + EDGE_PAD;
+            y += SPECIAL_ICON_HEIGHT + EDGE_PAD;
         }
     }
 
     if (m_icons.empty()) {
         Resize(GG::Pt(Width(), GG::Y0));
     } else {
-        Resize(GG::Pt(Width(), y + icon_height + EDGE_PAD*2));
+        Resize(GG::Pt(Width(), y + SPECIAL_ICON_HEIGHT + EDGE_PAD*2));
     }
 }
 
-UniverseObject* SpecialsPanel::GetObject()
-{
-    UniverseObject* obj = GetUniverse().Object(m_object_id);
-    if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
-    return obj;
-}
 
-const UniverseObject* SpecialsPanel::GetObject() const
-{
-    const UniverseObject* obj = GetUniverse().Object(m_object_id);
-    if (!obj) throw std::runtime_error("SpecialsPanel tried to get a planet with an invalid m_object_id");
-    return obj;
-}
 
 /////////////////////////////////////
 //        ShipDesignPanel          //
 /////////////////////////////////////
-const int ShipDesignPanel::EDGE_PAD = 2;
-
 ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_design_id(design_id),
@@ -2019,39 +1968,31 @@ void ShipDesignPanel::Render() {}
 void ShipDesignPanel::Update() {
 }
 
-const ShipDesign* ShipDesignPanel::GetDesign() {
-    return GetShipDesign(m_design_id);
-}
 
 /////////////////////////////////////
 //       IconTextBrowseWnd         //
 /////////////////////////////////////
-const GG::X IconTextBrowseWnd::TEXT_WIDTH(400);
-const GG::X IconTextBrowseWnd::TEXT_PAD(3);
-const GG::X IconTextBrowseWnd::ICON_WIDTH(64);
-const GG::Y IconTextBrowseWnd::ICON_HEIGHT(64);
-
 IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text, const std::string& main_text) :
-    GG::BrowseInfoWnd(GG::X0, GG::Y0, TEXT_WIDTH + ICON_WIDTH, GG::Y1),
-    ROW_HEIGHT(ClientUI::Pts()*3/2)
+    GG::BrowseInfoWnd(GG::X0, GG::Y0, ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, GG::Y1)
 {
-    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_WIDTH, ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
+    m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, ICON_BROWSE_ICON_WIDTH, ICON_BROWSE_ICON_HEIGHT, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
     AttachChild(m_icon);
 
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
+    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
 
-    m_title_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, GG::Y0, TEXT_WIDTH, ROW_HEIGHT, title_text,
+    m_title_text = new GG::TextControl(m_icon->Width() + GG::X(EDGE_PAD), GG::Y0, ICON_BROWSE_TEXT_WIDTH, ROW_HEIGHT, title_text,
                                        font_bold, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_title_text);
 
-    m_main_text = new GG::TextControl(m_icon->Width() + TEXT_PAD, ROW_HEIGHT, TEXT_WIDTH, ICON_HEIGHT, main_text,
+    m_main_text = new GG::TextControl(m_icon->Width() + GG::X(EDGE_PAD), ROW_HEIGHT, ICON_BROWSE_TEXT_WIDTH, ICON_BROWSE_ICON_HEIGHT, main_text,
                                       font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_TOP | GG::FORMAT_WORDBREAK);
     AttachChild(m_main_text);
 
     m_main_text->SetMinSize(true);
     m_main_text->Resize(m_main_text->MinSize());
-    Resize(GG::Pt(TEXT_WIDTH + ICON_WIDTH, std::max(m_icon->Height(), ROW_HEIGHT + m_main_text->Height())));
+    Resize(GG::Pt(ICON_BROWSE_TEXT_WIDTH + ICON_BROWSE_ICON_WIDTH, std::max(m_icon->Height(), ROW_HEIGHT + m_main_text->Height())));
 }
 
 bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
@@ -2061,19 +2002,16 @@ bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const
 }
 
 void IconTextBrowseWnd::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
+    GG::Pt      ul = UpperLeft();
+    GG::Pt      lr = LowerRight();
+    const GG::Y ROW_HEIGHT(IconTextBrowseWndRowHeight());
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
-    GG::FlatRectangle(GG::Pt(ul.x + ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
+    GG::FlatRectangle(GG::Pt(ul.x + ICON_BROWSE_ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
 }
 
 //////////////////////////////////////
 //  SystemResourceSummaryBrowseWnd  //
 //////////////////////////////////////
-const GG::X SystemResourceSummaryBrowseWnd::LABEL_WIDTH(240);
-const GG::X SystemResourceSummaryBrowseWnd::VALUE_WIDTH(60);
-const int SystemResourceSummaryBrowseWnd::EDGE_PAD(3);
-
 SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType resource_type, int system_id, int empire_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, LABEL_WIDTH + VALUE_WIDTH, GG::Y1),
     m_resource_type(resource_type),
@@ -2483,11 +2421,10 @@ void SystemResourceSummaryBrowseWnd::Clear() {
 //////////////////////////////////////
 //         MeterBrowseWnd           //
 //////////////////////////////////////
-MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map) :
+MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, int object_id) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
     m_meter_type(meter_type),
-    m_obj(obj),
-    m_meter_map(meter_map),
+    m_object_id(object_id),
     m_summary_title(0),
     m_current_label(0), m_current_value(0),
     m_next_turn_label(0), m_next_turn_value(0),
@@ -2495,7 +2432,8 @@ MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, const UniverseObject* obj, 
     m_meter_title(0),
     m_row_height(1),
     m_initialized(false)
-{}
+{
+}
 
 bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
     const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
@@ -2518,7 +2456,7 @@ void MeterBrowseWnd::Initialize() {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
-    m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - METER_BROWSE_EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_summary_title);
 
     m_current_label = new GG::TextControl(GG::X0, m_row_height, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
@@ -2536,7 +2474,7 @@ void MeterBrowseWnd::Initialize() {
     m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*3, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     AttachChild(m_change_value);
 
-    m_meter_title = new GG::TextControl(GG::X0, m_row_height*4, TOTAL_WIDTH - METER_BROWSE_EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_meter_title = new GG::TextControl(GG::X0, m_row_height*4, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_meter_title);
 
     UpdateSummary();
@@ -2559,11 +2497,15 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    const Meter* meter = m_obj->GetMeter(m_meter_type);
-    if (!meter) return;
+    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    if (!obj)
+        return;
+    const Meter* meter = obj->GetMeter(m_meter_type);
+    if (!meter)
+        return;
 
-    double current = m_obj->MeterPoints(m_meter_type);
-    double next = m_obj->ProjectedMeterPoints(m_meter_type);
+    double current = obj->MeterPoints(m_meter_type);
+    double next = obj->ProjectedMeterPoints(m_meter_type);
     double change = next - current;
     double meter_cur = meter->Current();
     double meter_max = meter->Max();
@@ -2610,32 +2552,50 @@ void MeterBrowseWnd::UpdateSummary() {
 }
 
 void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
+    // clear existing labels
     for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
         DeleteChild(m_effect_labels_and_values[i].first);
         DeleteChild(m_effect_labels_and_values[i].second);
     }
     m_effect_labels_and_values.clear();
 
-    const Meter* meter = m_obj->GetMeter(m_meter_type);
-    if (!meter) return;
 
-    // determine if meter_map contains info about the meter that this MeterBrowseWnd is describing
-    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = m_meter_map.find(m_meter_type);
-    if (meter_it == m_meter_map.end() || meter_it->second.empty())
+    // get object and meter, aborting if not valid
+    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    if (!obj) {
+        Logger().errorStream() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
+        return;
+    }
+
+
+    // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
+    const Universe& universe = GetUniverse();
+    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_object_id);
+    if (map_it == effect_accounting_map.end())
+        return;
+    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map = map_it->second;
+
+
+    // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
+    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = meter_map.find(m_meter_type);
+    if (meter_it == meter_map.end() || meter_it->second.empty())
         return; // couldn't find appropriate meter type, or there were no entries for that meter.
+    const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
+
 
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
+
     // add label-value pairs for each alteration recorded for this meter
-    const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
     for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
         const UniverseObject* source = GetUniverse().Object(info_it->source_id);
 
-        int empire_id = -1;
-        const Empire* empire = 0;
+        int             empire_id = ALL_EMPIRES;
+        const Empire*   empire = 0;
         const Building* building = 0;
-        const Planet* planet = 0;
-        const Ship* ship = 0;
+        const Planet*   planet = 0;
+        const Ship*     ship = 0;
         std::string text = "", name = "";
 
         switch (info_it->cause_type) {
@@ -2699,3 +2659,4 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         top += m_row_height;
     }
 }
+

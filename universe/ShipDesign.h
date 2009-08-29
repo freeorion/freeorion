@@ -148,8 +148,8 @@ public:
 
     bool                 CanMountInSlotType(ShipSlotType slot_type) const;   ///< returns true if this part can be placed in a slot of the indicated type
 
-    double               Cost() const;           ///< returns cost of part
-    int                  BuildTime() const;      ///< returns additional turns to build design that this part adds
+    double               Cost() const;           ///< returns total cost of part
+    int                  BuildTime() const;      ///< returns turns taken to build this part
 
     const std::string&   Graphic() const;        ///< returns graphic that represents part in UI
 
@@ -216,14 +216,14 @@ private:
 /** returns the singleton part type manager */
 const PartTypeManager& GetPartTypeManager();
 
-/** Returns the ship PartType specification object with name \a name.  If no such PartType exists,
-    0 is returned instead. */
+/** Returns the ship PartType specification object with name \a name.  If no
+  * such PartType exists, 0 is returned instead. */
 const PartType* GetPartType(const std::string& name);
 
 
-/** Specification for the hull, or base, on which ship designs are created by adding parts.  The hull 
-    determines some final design characteristics directly, and also determine how many parts can be
-    added to the design. */
+/** Specification for the hull, or base, on which ship designs are created by
+  * adding parts.  The hull determines some final design characteristics
+  * directly, and also determine how many parts can be added to the design. */
 class HullType {
 public:
     struct Slot {
@@ -252,7 +252,7 @@ public:
 
     double              Health() const;         ///< returns health of hull
 
-    double              Cost() const;           ///< returns cost of hull
+    double              Cost() const;           ///< returns total cost of hull
     int                 BuildTime() const;      ///< returns base build time for this hull, before parts are added
 
     unsigned int        NumSlots() const;                       ///< returns total number of of slots in hull
@@ -324,7 +324,7 @@ private:
 const HullTypeManager& GetHullTypeManager();
 
 /** Returns the ship HullType specification object with name \a name.  If no such HullType exists,
-    0 is returned instead. */
+  * 0 is returned instead. */
 const HullType* GetHullType(const std::string& name);
 
 

@@ -256,6 +256,8 @@ public:
             glVertex(lr.x, lr.y);
         glEnd();
         glEnable(GL_TEXTURE_2D);
+
+        glLineWidth(1.0);
     }
     void Update(double zoom_factor) {
         zoom_factor = std::min(std::max(zoom_factor, ZOOM_MIN), ZOOM_MAX);  // sanity range limits to prevent divide by zero
@@ -481,7 +483,7 @@ MapWnd::MapWnd() :
             GG::INTERACTIVE | GG::DRAGABLE),
     m_backgrounds(),
     m_bg_scroll_rate(),
-    m_selected_fleets(),
+    m_selected_fleet_ids(),
     m_zoom_steps_in(0.0),
     m_side_panel(0),
     m_system_icons(),
@@ -513,7 +515,7 @@ MapWnd::MapWnd() :
     m_popups(),
     m_menu_showing(false),
     m_current_owned_system(UniverseObject::INVALID_OBJECT_ID),
-    m_current_fleet(UniverseObject::INVALID_OBJECT_ID),
+    m_current_fleet_id(UniverseObject::INVALID_OBJECT_ID),
     m_in_production_view_mode(false),
     m_sidepanel_open_before_showing_other(false),
     m_toolbar(0),
@@ -761,6 +763,11 @@ void MapWnd::Render()
     // all.
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
 
+    // save CPU / GPU activity by skipping rendering when it's not needed
+    if (m_design_wnd->Visible())
+        return; // as of this writing, the design screen has a fully opaque background
+
+
     RenderStarfields();
 
     GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
@@ -861,8 +868,8 @@ void MapWnd::InitTurn(int turn_number)
 
 
     //// DEBUG
-    //std::cout << "MapWnd::InitTurn() m_selected_fleets: " << std::endl;
-    //for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    //std::cout << "MapWnd::InitTurn() m_selected_fleet_ids: " << std::endl;
+    //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
     //    const UniverseObject* obj = const_universe.Object(*it);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
@@ -1680,8 +1687,8 @@ void MapWnd::SelectSystem(int system_id)
 void MapWnd::ReselectLastFleet()
 {
     //// DEBUG
-    //std::cout << "MapWnd::ReselectLastFleet m_selected_fleets: " << std::endl;
-    //for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    //std::cout << "MapWnd::ReselectLastFleet m_selected_fleet_ids: " << std::endl;
+    //for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
     //    const UniverseObject* obj = GetUniverse().Object(*it);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << *it << ")" << std::endl;
@@ -1692,17 +1699,17 @@ void MapWnd::ReselectLastFleet()
 
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
-    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         const Fleet* fleet = GetUniverse().Object<Fleet>(*it);
         if (!fleet)
             missing_fleets.insert(*it);
     }
     for (std::set<int>::const_iterator it = missing_fleets.begin(); it != missing_fleets.end(); ++it)
-        m_selected_fleets.erase(*it);
+        m_selected_fleet_ids.erase(*it);
 
 
     // select a not-missing fleet, if any
-    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         SelectFleet(*it);
         break;              // abort after first fleet selected... don't need to do more
     }
@@ -1737,7 +1744,6 @@ void MapWnd::SelectFleet(Fleet* fleet)
                 wnd->SelectFleet(0);
         }
 
-
         // and finally deselect active fleet wnd fleets.  this might emit a signal
         // which will update this->m_selected_Fleets
         if (active_fleet_wnd)
@@ -1748,9 +1754,11 @@ void MapWnd::SelectFleet(Fleet* fleet)
 
     //std::cout << "MapWnd::SelectFleet " << fleet->ID() << std::endl;
 
+
     // if indicated fleet is already the only selected fleet in the active FleetWnd, don't need to do anything
-    if (m_selected_fleets.size() == 1 && m_selected_fleets.find(fleet->ID()) != m_selected_fleets.end())
+    if (m_selected_fleet_ids.size() == 1 && m_selected_fleet_ids.find(fleet->ID()) != m_selected_fleet_ids.end())
         return;
+
 
     // find if there is a FleetWnd for this fleet already open.
     FleetWnd* fleet_wnd = manager.WndForFleet(fleet);
@@ -1758,47 +1766,36 @@ void MapWnd::SelectFleet(Fleet* fleet)
     // if there isn't a FleetWnd for this fleen open, need to open one
     if (!fleet_wnd) {
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
-
-        // determine whether this fleet's FleetWnd can be manipulated by this player: can't manipulate
-        // other empires' FleetWnds, and can't give orders to own fleets while they're en-route.
-        System* system = fleet->GetSystem();
         const std::set<int>& owners = fleet->Owners();
-        bool read_only = false;
-        if (!system || owners.empty() || owners.find(HumanClientApp::GetApp()->EmpireID()) == owners.end())
-            read_only = true;
+        System* system = fleet->GetSystem();
+        int this_client_player_id = HumanClientApp::GetApp()->EmpireID();
 
 
-        // need to know what fleets to put in the Wnd.  All fleets at the location of the fleet being
-        // selected should be in the FleetWnd.  This is either all fleets at the same System, or all
-        // fleets at the same universe location
-        std::vector<Fleet*> wnd_fleets;
+        // create fleetwnd to show fleet to be selected (actual selection occurs below.
         if (system) {
-            // Can't just get the fleets represented by a single FleetButton (as is done for
-            // moving fleets) because a single FleetButton at a system represents only
-            // departing or only stationary fleets, while the FleetWnd should contain both.
 
-            // get all fleets in system.
-            std::vector<Fleet*> all_system_fleets = system->FindObjects<Fleet>();
+            // determine whether this fleet's FleetWnd should be able to be manipulated by this
+            // this client's player.  players can only manipulate fleetwnds that contain their
+            // own fleets, so this client's player should only manipulate this fleet's fleetwnd
+            // if (one of) the fleet's owner(s) is this client's player.
+            //
+            // additionally, players can't give orders to fleets if they're away from a system
+            // so even if the fleet is onwed by this client's player, if it's moving, the fleetwnd
+            // is not manipulable.
+            bool read_only = true;
+            if (owners.find(this_client_player_id) != owners.end())
+                read_only = false;
 
-            // determine which empire's fleets to populate new FleetWnd with
-            int owner = ALL_EMPIRES;
-            if (owners.size() == 1) {
-                owner = *owners.begin();
+            // get system in which fleet is located and (if possible) empire that owns it exclusively
+            int system_id = system->ID();
 
-                // transfer appropriately owned fleets
-                for (std::vector<Fleet*>::const_iterator it = all_system_fleets.begin(); it != all_system_fleets.end(); ++it) {
-                    Fleet* wnd_fleet = *it;
-                    if (wnd_fleet->OwnedBy(owner))
-                        wnd_fleets.push_back(wnd_fleet);
-                }
-            } else {
-                // couldn't get a single empire whose fleets to show, so show all fleets
-                wnd_fleets = all_system_fleets;
-            }
+            int fleet_owner_empire_id = ALL_EMPIRES;
+            const std::set<int>& owners = fleet->Owners();
+            if (owners.size() == 1)
+                fleet_owner_empire_id = *(owners.begin());
 
-            // could also find the set of FleetButton for this system, and find the button (or buttons?)
-            // in the set that contains a fleet owned by selected fleet's empire, but the above seemed
-            // abit simpler
+            // create new fleetwnd in which to show selected fleet
+            fleet_wnd = manager.NewFleetWnd(system_id, fleet_owner_empire_id, read_only);
 
         } else {
             // get all (moving) fleets represented by fleet button for this fleet
@@ -1807,14 +1804,17 @@ void MapWnd::SelectFleet(Fleet* fleet)
                 Logger().errorStream() << "Couldn't find a FleetButton for fleet in MapWnd::SelectFleet";
                 return;
             }
-            wnd_fleets = it->second->Fleets();
+            const std::vector<Fleet*>& wnd_fleets = it->second->Fleets();
+            std::vector<int> wnd_fleet_ids;
+            for (std::vector<Fleet*>::const_iterator fleet_it = wnd_fleets.begin(); fleet_it != wnd_fleets.end(); ++fleet_it)
+                wnd_fleet_ids.push_back((*fleet_it)->ID());
+
+            // create new fleetwnd in which to show selected fleet
+            fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids, true);
         }
 
 
-        // create new FleetWnd
-        fleet_wnd = manager.NewFleetWnd(wnd_fleets, 0, read_only);
-
-        // opening a new FleetWnd, so play sound
+        // opened a new FleetWnd, so play sound
         FleetButton::PlayFleetButtonOpenSound();
 
 
@@ -1840,9 +1840,9 @@ void MapWnd::SelectFleet(Fleet* fleet)
 
 
     // select fleet in FleetWnd.  this deselects all other fleets in the FleetWnd.  
-    // this->m_selected_fleets will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
+    // this->m_selected_fleet_ids will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged
-    fleet_wnd->SelectFleet(fleet);
+    fleet_wnd->SelectFleet(fleet->ID());
 }
 
 void MapWnd::SetFleetMovementLine(const FleetButton* fleet_button)
@@ -2635,6 +2635,8 @@ void MapWnd::RenderStarlanes()
 
         if (coloured)
             glDisableClientState(GL_COLOR_ARRAY);
+
+        glLineWidth(1.0);
     }
 
     if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
@@ -2653,6 +2655,7 @@ void MapWnd::RenderStarlanes()
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
         glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.m_size);
         glDisableClientState(GL_COLOR_ARRAY);
+        glLineWidth(1.0);
     }
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -2676,14 +2679,14 @@ void MapWnd::RenderFleetMovementLines()
     const Universe& universe = GetUniverse();
 
     // re-render selected fleets' movement lines in white
-    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(universe.Object<Fleet>(*it));
         if (line_it != m_fleet_lines.end())
             RenderMovementLine(line_it->second, GG::CLR_WHITE);
     }
 
     // render move line ETA indicators for selected fleets
-    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         std::map<const Fleet*, MovementLineData>::const_iterator line_it = m_fleet_lines.find(universe.Object<Fleet>(*it));
         if (line_it != m_fleet_lines.end())
             RenderMovementLineETAIndicators(line_it->second);
@@ -2899,11 +2902,16 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::set<Fleet*> fleets = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleets();
+    std::set<int> fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
 
     // apply to all this-player-owned fleets in currently-active FleetWnd
-    for (std::set<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        Fleet* fleet = *it;
+    for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
+        Fleet* fleet = GetUniverse().Object<Fleet>(*it);
+        if (!fleet) {
+            Logger().errorStream() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
+            continue;
+        }
+
         // only give orders / plot prospective move paths of fleets owned by player
         if (!(fleet->OwnedBy(empire_id)) || !(fleet->NumShips()))
             continue;
@@ -2966,12 +2974,12 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
         // there is already FleetWnd for this button open.
 
         // check which fleet(s) is/are selected in the button's FleetWnd
-        std::set<Fleet*> selected_fleets = wnd_for_button->SelectedFleets();
+        std::set<int> selected_fleet_ids = wnd_for_button->SelectedFleetIDs();
 
         // record selected fleet if just one fleet is selected.  otherwise, keep default 0
         // to indicate that no one fleet is selected
-        if (selected_fleets.size() == 1)
-            already_selected_fleet = *(selected_fleets.begin());
+        if (selected_fleet_ids.size() == 1)
+            already_selected_fleet = GetUniverse().Object<Fleet>(*(selected_fleet_ids.begin()));
     } else {
         //std::cout << "FleetButtonClicked did not find open fleetwnd for fleet" << std::endl;
     }
@@ -3025,19 +3033,16 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 void MapWnd::SelectedFleetsChanged()
 {
     // get selected fleets
-    std::set<Fleet*> selected_fleets;
-    if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
-        selected_fleets = fleet_wnd->SelectedFleets();
     std::set<int> selected_fleet_ids;
-    for (std::set<Fleet*>::const_iterator it = selected_fleets.begin(); it != selected_fleets.end(); ++it)
-        selected_fleet_ids.insert((*it)->ID());
+    if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
+        selected_fleet_ids = fleet_wnd->SelectedFleetIDs();
 
     // if old and new sets of selected fleets are the same, don't need to change anything
-    if (selected_fleet_ids == m_selected_fleets)
+    if (selected_fleet_ids == m_selected_fleet_ids)
         return;
 
     // set new selected fleets
-    m_selected_fleets = selected_fleet_ids;
+    m_selected_fleet_ids = selected_fleet_ids;
 
     // update fleetbutton selection indicators
     RefreshFleetButtonSelectionIndicators();
@@ -3068,7 +3073,7 @@ void MapWnd::RefreshFleetButtonSelectionIndicators()
 
 
     // add new selection indicators
-    for (std::set<int>::const_iterator it = m_selected_fleets.begin(); it != m_selected_fleets.end(); ++it) {
+    for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         const Fleet* fleet = universe.Object<Fleet>(*it);
         std::map<const Fleet*, FleetButton*>::iterator button_it = m_fleet_buttons.find(fleet);
         if (button_it != m_fleet_buttons.end())
@@ -3141,7 +3146,7 @@ void MapWnd::Sanitize()
     m_production_wnd->Sanitize();
     m_design_wnd->Sanitize();
 
-    m_selected_fleets.clear();
+    m_selected_fleet_ids.clear();
 
     m_starlane_endpoints.clear();
 
@@ -3802,16 +3807,16 @@ bool MapWnd::ZoomToNextOwnedSystem()
 bool MapWnd::ZoomToPrevIdleFleet()
 {
     Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
-    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
     } else {
-        m_current_fleet = it == vec.begin() ? vec.back() : *--it;
+        m_current_fleet_id = it == vec.begin() ? vec.back() : *--it;
     }
 
-    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnObject(m_current_fleet);
-        SelectFleet(m_current_fleet);
+    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnObject(m_current_fleet_id);
+        SelectFleet(m_current_fleet_id);
     }
 
     return true;
@@ -3820,18 +3825,18 @@ bool MapWnd::ZoomToPrevIdleFleet()
 bool MapWnd::ZoomToNextIdleFleet()
 {
     Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(StationaryFleetVisitor(HumanClientApp::GetApp()->EmpireID()));
-    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
     } else {
         Universe::ObjectIDVec::iterator next_it = it;
         ++next_it;
-        m_current_fleet = next_it == vec.end() ? vec.front() : *next_it;
+        m_current_fleet_id = next_it == vec.end() ? vec.front() : *next_it;
     }
 
-    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnObject(m_current_fleet);
-        SelectFleet(m_current_fleet);
+    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnObject(m_current_fleet_id);
+        SelectFleet(m_current_fleet_id);
     }
 
     return true;
@@ -3840,16 +3845,16 @@ bool MapWnd::ZoomToNextIdleFleet()
 bool MapWnd::ZoomToPrevFleet()
 {
     Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
-    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
+        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.back();
     } else {
-        m_current_fleet = it == vec.begin() ? vec.back() : *--it;
+        m_current_fleet_id = it == vec.begin() ? vec.back() : *--it;
     }
 
-    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnObject(m_current_fleet);
-        SelectFleet(m_current_fleet);
+    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnObject(m_current_fleet_id);
+        SelectFleet(m_current_fleet_id);
     }
 
     return true;
@@ -3858,18 +3863,21 @@ bool MapWnd::ZoomToPrevFleet()
 bool MapWnd::ZoomToNextFleet()
 {
     Universe::ObjectIDVec vec = GetUniverse().FindObjectIDs(OwnedVisitor<Fleet>(HumanClientApp::GetApp()->EmpireID()));
-    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet);
+    Universe::ObjectIDVec::iterator it = std::find(vec.begin(), vec.end(), m_current_fleet_id);
     if (it == vec.end()) {
-        m_current_fleet = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
+        m_current_fleet_id = vec.empty() ? UniverseObject::INVALID_OBJECT_ID : vec.front();
     } else {
         Universe::ObjectIDVec::iterator next_it = it;
         ++next_it;
-        m_current_fleet = next_it == vec.end() ? vec.front() : *next_it;
+        if (next_it == vec.end())
+            m_current_fleet_id = vec.front();
+        else
+            m_current_fleet_id = *next_it;
     }
 
-    if (m_current_fleet != UniverseObject::INVALID_OBJECT_ID) {
-        CenterOnObject(m_current_fleet);
-        SelectFleet(m_current_fleet);
+    if (m_current_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+        CenterOnObject(m_current_fleet_id);
+        SelectFleet(m_current_fleet_id);
     }
 
     return true;

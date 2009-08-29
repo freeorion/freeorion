@@ -105,50 +105,56 @@ public:
 
     /** \name Structors */ //@{
     Universe();                                     ///< default ctor
-    const Universe& operator=(Universe& rhs);       ///< assignment operator (move semantics)
+    const   Universe& operator=(Universe& rhs);     ///< assignment operator (move semantics)
     virtual ~Universe();                            ///< dtor
     //@}
 
     /** \name Accessors */ //@{
-    const UniverseObject*                       Object(int id) const;   ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
-    UniverseObject*                             Object(int id);         ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
-    template <class T> const T*                 Object(int id) const;   ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
-    template <class T> T*                       Object(int id);         ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
+    const UniverseObject*   Object(int id) const;   ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
+    UniverseObject*         Object(int id);         ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
+
+    template <class T>
+    const T*                Object(int id) const;   ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
+    template <class T>
+    T*                      Object(int id);         ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
 
     /** Returns all the objects that match \a visitor */
-    ConstObjectVec                              FindObjects(const UniverseObjectVisitor& visitor) const;
+    ConstObjectVec          FindObjects(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
-    ObjectVec                                   FindObjects(const UniverseObjectVisitor& visitor);
+    ObjectVec               FindObjects(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
-    template <class T> std::vector<const T*>    FindObjects() const;
+    template <class T>
+    std::vector<const T*>   FindObjects() const;
 
     /** Returns all the objects of type T */
-    template <class T> std::vector<T*>          FindObjects();
+    template <class T>
+    std::vector<T*>         FindObjects();
 
     /** Returns the IDs of all the objects that match \a visitor */
-    ObjectIDVec                                 FindObjectIDs(const UniverseObjectVisitor& visitor) const;
+    ObjectIDVec             FindObjectIDs(const UniverseObjectVisitor& visitor) const;
 
     /** Returns the IDs of all the objects of type T */
-    template <class T> ObjectIDVec              FindObjectIDs() const;
+    template <class T>
+    ObjectIDVec             FindObjectIDs() const;
 
-    iterator                                    begin();
-    iterator                                    end();
-    const_iterator                              begin() const;                                                  ///< returns the begin const_iterator for the objects in the universe
-    const_iterator                              end() const;                                                    ///< returns the end const_iterator for the objects in the universe
-
-
-    const UniverseObject*                       DestroyedObject(int id) const;                                  ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
-    const_iterator                              beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
-    const_iterator                              endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
+    iterator                begin();
+    iterator                end();
+    const_iterator          begin() const;                                                  ///< returns the begin const_iterator for the objects in the universe
+    const_iterator          end() const;                                                    ///< returns the end const_iterator for the objects in the universe
 
 
-    const ShipDesign*                           GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
-    ship_design_iterator                        beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
-    ship_design_iterator                        endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
+    const UniverseObject*   DestroyedObject(int id) const;                                  ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
+    const_iterator          beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
+    const_iterator          endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
 
-    double                                      LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+
+    const ShipDesign*       GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
+    ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
+    ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
+
+    double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the shortest path from \a system1 to \a system2, and the
@@ -159,8 +165,9 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range. */
-    std::pair<std::list<System*>, double>       ShortestPath(int system1_id, int system2_id,
-                                                             int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<System*>, double>
+                            ShortestPath(int system1_id, int system2_id,
+                                         int empire_id = ALL_EMPIRES) const;
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
@@ -169,16 +176,17 @@ public:
       * visiblity for empire \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
-    std::pair<std::list<System*>, int>          LeastJumpsPath(int system1_id, int system2_id,
-                                                               int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<System*>, int>
+                            LeastJumpsPath(int system1_id, int system2_id,
+                                           int empire_id = ALL_EMPIRES) const;
 
     /** returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
       * the visiblity for empire \a empire_id, or without regard to visibility
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
-    bool                                        SystemsConnected(int system1_id, int system2_id,
-                                                                 int empire_id = ALL_EMPIRES) const;
+    bool                    SystemsConnected(int system1_id, int system2_id,
+                                             int empire_id = ALL_EMPIRES) const;
 
     /** Returns true iff \a system is reachable from another system (i.e. it
       * has at least one known starlane to it).   This does not guarantee that
@@ -189,8 +197,8 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the system ID is
       * out of range. */
-    bool                                        SystemReachable(int system_id,
-                                                                int empire_id = ALL_EMPIRES) const;
+    bool                    SystemReachable(int system_id,
+                                            int empire_id = ALL_EMPIRES) const;
 
     /** Returns the systems that are one starlane hop away from system
       * \a system.  The returned systems are indexed by distance from
@@ -199,17 +207,17 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the  system
       * ID is out of range. */
-    std::map<double, System*>                   ImmediateNeighbors(int system_id,
-                                                                   int empire_id = ALL_EMPIRES) const;
+    std::map<double, System*>   ImmediateNeighbors(int system_id,
+                                                   int empire_id = ALL_EMPIRES) const;
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const EffectAccountingMap&                  GetEffectAccountingMap() const {return m_effect_accounting_map;}
+    const EffectAccountingMap&  GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
     /** Returns set of objects that have been marked by the Victory effect
       * to grant their owners victory. */
-    const std::multimap<int, std::string>&      GetMarkedForVictory() const {return m_marked_for_victory;}
+    const std::multimap<int, std::string>&  GetMarkedForVictory() const {return m_marked_for_victory;}
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
@@ -219,7 +227,7 @@ public:
       * assigned to the object, or -1 on failure.
       * \note Universe gains ownership of \a obj once it is inserted; the
       * caller should \a never delete \a obj after passing it to Insert(). */
-    int                 Insert(UniverseObject* obj);
+    int             Insert(UniverseObject* obj);
 
     /** Inserts object \a obj of given ID into the universe; returns true
       * on proper insert, or false on failure.
@@ -228,44 +236,44 @@ public:
       * passing it to InsertID().
       * Useful mostly for times when ID needs to be consistant on client
       * and server */
-    bool                InsertID(UniverseObject* obj, int id);
+    bool            InsertID(UniverseObject* obj, int id);
 
     /** Inserts \a ship_design into the universe; returns the ship design ID
       * assigned to it, or -1 on failure.
       * \note Unvierse gains ownership of \a ship_design once inserted. */
-    int                 InsertShipDesign(ShipDesign* ship_design);
+    int             InsertShipDesign(ShipDesign* ship_design);
 
     /** Inserts \a ship_design into the universe with given \a id;  returns
       * true on success, or false on failure.
       * \note Unvierse gains ownership of \a ship_design once inserted. */
-    bool                InsertShipDesignID(ShipDesign* ship_design, int id);
+    bool            InsertShipDesignID(ShipDesign* ship_design, int id);
 
     /** Generates systems and planets, assigns homeworlds and populates them
       * with people, industry and bases, and places starting fleets.  Uses
       * predefined galaxy shapes. */
-    void                CreateUniverse(int size, Shape shape, Age age,
-                                       StarlaneFrequency starlane_freq, PlanetDensity planet_density,
-                                       SpecialsFrequency specials_freq, int players, int ai_players,
-                                       const std::map<int, PlayerSetupData>& player_setup_data);
+    void            CreateUniverse(int size, Shape shape, Age age,
+                                   StarlaneFrequency starlane_freq, PlanetDensity planet_density,
+                                   SpecialsFrequency specials_freq, int players, int ai_players,
+                                   const std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Determines all effectsgroups' target sets, resets meters and applies
       * universe table adjustments.  Then executes all effects on all objects
       * (meter effects and non-meter effects, including destroying objects).
       * Then clamps meter values so max is within acceptable range, and current
       * is within range limited by max. */
-    void                ApplyAllEffectsAndUpdateMeters();
+    void            ApplyAllEffectsAndUpdateMeters();
 
     /** Determines all effectsgroups' target sets, resets meters and applies
       * universe table adjustments.  then executes only SetMeter effects on all
       * objects.  then clamps meter values so max is within acceptable range,
       * and current is within range limited by max. */
-    void                ApplyMeterEffectsAndUpdateMeters();
+    void            ApplyMeterEffectsAndUpdateMeters();
 
 
     /** For all objects and meters, determines discrepancies between actual meter
       * maxes and what the known universe should produce, and and stores in
       * m_effect_discrepancy_map. */
-    void                InitMeterEstimatesAndDiscrepancies();
+    void            InitMeterEstimatesAndDiscrepancies();
 
     /** Based on (known subset of, if in a client) universe and any orders
       * given so far this turn, updates estimated meter maxes for next turn
@@ -273,66 +281,66 @@ public:
       * \a meter_type is INVALID_METER_TYPE, all meter types are updated, but
       * if \a meter_type is a valid meter type, just that type of meter is
       * updated. */
-    void                UpdateMeterEstimates(const std::vector<int>& objects_vec,
-                                             MeterType meter_type = INVALID_METER_TYPE);
+    void            UpdateMeterEstimates(const std::vector<int>& objects_vec,
+                                         MeterType meter_type = INVALID_METER_TYPE);
 
     /** Updates indicated object's indicated meter, and if applicable, the
       * indicated meters of objects contained within the indicated object
       * If \a object_id is UniverseObject::INVALID_OBJECT_ID, then all
       * objects' meters are updated.  If \a meter_type is INVALID_METER_TYPE,
       * then all meter types are updated. */
-    void                UpdateMeterEstimates(int object_id,
-                                             MeterType meter_type = INVALID_METER_TYPE,
-                                             bool update_contained_objects = false);
+    void            UpdateMeterEstimates(int object_id,
+                                         MeterType meter_type = INVALID_METER_TYPE,
+                                         bool update_contained_objects = false);
 
     /** Updates all meters for all (known) objects */
-    void                UpdateMeterEstimates();
+    void            UpdateMeterEstimates();
 
     /** Reconstructs the per-empire system graph views needed to calculate
       * routes based on visibility. */
-    void                RebuildEmpireViewSystemGraphs();
+    void            RebuildEmpireViewSystemGraphs();
 
     /** Removes the object with ID number \a id from the universe's map of
       * existing objects and places it into the map of destroyed objects.
       * removes the object from any containing UniverseObjects, though leaves
       * the object's own records of what contained it intact, so that
       * this information may be retained for later reference */
-    void                Destroy(int id);
+    void            Destroy(int id);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existance) */
-    void                EffectDestroy(int id);
+    void            EffectDestroy(int id);
 
     /** Permanently deletes object with ID number \a id.  no information about
       * this object is retained in the Universe.  Can be performed on objects
       * wether or not the have been destroyed.  Returns true if such an object
       * was found, false otherwise. */
-    bool                Delete(int id);
+    bool            Delete(int id);
 
     /** Cleans up internal storage of now-invalidated empire ID. */
-    void                HandleEmpireElimination(int empire_id);
+    void            HandleEmpireElimination(int empire_id);
 
     /** Used by the Victory effect to mark an object to give it owner victory. */
-    void                EffectVictory(int object_id, const std::string& reason_string);
+    void            EffectVictory(int object_id, const std::string& reason_string);
 
     /** Sets whether to inhibit UniverseObjectSignals.  Inhibits if \a inhibit
       * is true, and (re)enables UniverseObjectSignals if \a inhibit is false. */
-    static void         InhibitUniverseObjectSignals(bool inhibit = true);
+    static void     InhibitUniverseObjectSignals(bool inhibit = true);
     //@}
 
     /** Returns the size of the galaxy map.  Does not measure absolute
       * distances; the ratio between map coordinates and actual distance varies
       * depending on universe size. */
-    static double       UniverseWidth();
+    static double   UniverseWidth();
 
     /** Generates an object ID for a future object. Usually used by the server
       * to service new ID requests. */
-    int                 GenerateObjectID();
+    int             GenerateObjectID();
 
     /** Generates adesign ID for a new (ship) design. Usually used by the
       * server to service new ID requests. */
-    int                 GenerateDesignID();
+    int             GenerateDesignID();
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 

@@ -230,7 +230,7 @@ void UniverseObject::MoveTo(double x, double y)
 {
     //Logger().debugStream() << "UniverseObject::MoveTo(double x, double y)";
     if (x < 0.0 || Universe::UniverseWidth() < x || y < 0.0 || Universe::UniverseWidth() < y)
-        throw std::invalid_argument("UniverseObject::MoveTo : Attempted to place object \"" + m_name + "\" off the map area.");
+        Logger().debugStream() << "UniverseObject::MoveTo : Placing object \"" + m_name + "\" off the map area.";
 
     m_x = x;
     m_y = y;

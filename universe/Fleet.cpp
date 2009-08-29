@@ -456,6 +456,11 @@ int Fleet::NumShips() const
     return m_ships.size();
 }
 
+bool Fleet::Empty() const
+{
+    return m_ships.empty();
+}
+
 bool Fleet::Contains(int object_id) const
 {
     return m_ships.find(object_id) != m_ships.end();
@@ -602,6 +607,7 @@ void Fleet::AddShip(int ship_id)
 
 std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
 {
+    //std::cout << "Fleet::RemoveShips" << std::endl;
     std::vector<int> retval;
     for (unsigned int i = 0; i < ships.size(); ++i) {
         bool found = m_ships.find(ships[i]) != m_ships.end();
@@ -634,6 +640,7 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
 
 bool Fleet::RemoveShip(int ship)
 {
+    //std::cout << "Fleet::RemoveShip" << std::endl;
     bool retval = false;
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {

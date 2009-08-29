@@ -42,12 +42,16 @@ public:
     //@}
 
     //! \name Mutators //@{
-    FleetWnd*       NewFleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only,
-                                GG::Flags<GG::WndFlag> flags =
-                                GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
-    FleetDetailWnd* NewFleetDetailWnd(FleetWnd* fleet_wnd, Fleet* fleet, bool read_only,
-                                      GG::Flags<GG::WndFlag> flags =
-                                      GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
+    FleetWnd*       NewFleetWnd(const std::vector<int>& fleet_ids, bool read_only,
+                                int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+                                GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+
+    FleetWnd*       NewFleetWnd(int system_id, int empire_id, bool read_only,
+                                int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+                                GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+
+    FleetDetailWnd* NewFleetDetailWnd(FleetWnd* fleet_wnd, int fleet_id, bool read_only,
+                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
 
     void            CullEmptyWnds();
     void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
@@ -87,21 +91,21 @@ public:
     //@}
 
     //! \name Accessors //@{
-    int                     SystemID() const;
-    bool                    ContainsFleet(int fleet_id) const;
-    std::set<Fleet*>        Fleets() const;
-    std::set<Fleet*>        SelectedFleets() const;
+    int                     SystemID() const;                   ///< returns ID of system whose fleets are shown in this FleetWnd, which may be UniverseObject::INVALID_OBJECT_ID if this FleetWnd isn't set to show fleets of a system
+    int                     EmpireID() const;                   ///< returns ID of empire whose fleets are shown in this FleetWnd, which may be ALL_EMPIRES if this FleetWnd isn't set to show fleets of a particular empire
+    bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
+    const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
+    std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     //@}
 
     //! \name Mutators //@{
-    void                    AddFleet(Fleet* fleet);     ///< adds a new fleet to a currently-open FletWnd
-    void                    SelectFleet(Fleet* fleet);  ///< selects the indicated fleet, bringing it into the fleet detail window
+    void                    SelectFleet(int fleet_id);          ///< selects the indicated fleet, bringing it into the fleet detail window
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void                    Refresh();                  ///< regenerates contents
+    void                    Refresh();                          ///< regenerates contents
     //@}
 
-    static const GG::Pt&    LastPosition();         ///< returns the last position of the last FleetWnd that was closed
-    static const GG::Pt&    LastSize();             ///< returns the last size ... ''
+    static const GG::Pt&    LastPosition();                     ///< returns the last position of the last FleetWnd that was closed
+    static const GG::Pt&    LastSize();                         ///< returns the last size ... ''
 
     mutable boost::signal<void ()>          SelectedFleetsChangedSignal;
     mutable boost::signal<void (FleetWnd*)> ClickedSignal;
@@ -114,32 +118,43 @@ protected:
     //@}
 
 private:
-    /** Basic ctor. */
-    FleetWnd(std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
-    FleetWnd(GG::X w, GG::Y h, std::vector<Fleet*> fleets, int selected_fleet, bool read_only, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+    /** \name Structors */ //@{
+    FleetWnd(const std::vector<int>& fleet_ids, bool read_only,
+             int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
-    void            Init(const std::vector<Fleet*>& fleets, int selected_fleet, bool read_only);
+    FleetWnd(int system_id, int empire_id, bool read_only,
+             int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
+             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
+    //@}
+
+    void            Init(int selected_fleet_id);
+
+    void            AddFleet(int fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
+    void            RemoveFleet(int fleet_id);  ///< removes fleet row and updates internal bookkeeping
+
     void            FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     void            FleetLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
     void            FleetDoubleClicked(GG::ListBox::iterator it);
-    void            FleetDeleted(GG::ListBox::iterator it);
-    Fleet*          FleetInRow(GG::ListBox::iterator it) const;
+
+    int             FleetInRow(GG::ListBox::iterator it) const;
     std::string     TitleText() const;
-    void            CreateNewFleetFromDrops(Ship* first_ship, const std::vector<int>& ship_ids);
+    void            CreateNewFleetFromDrops(const std::vector<int>& ship_ids);
+
     void            UniverseObjectDeleted(const UniverseObject *obj);
-    void            SystemChangedSlot();
+
+    void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
+    void            SystemFleetInsertedSlot(Fleet& fleet);  ///< responds to FleetInsertedSignal emitted by the system ...
+    void            SystemFleetRemovedSlot(Fleet& fleet);   ///< responds to FleetRemovedSignal ...
 
     mutable boost::signal<void (FleetWnd*)> ClosingSignal;
 
-    std::set<int>           m_fleet_ids;
-    int                     m_empire_id;
-    int                     m_system_id;
-    const bool              m_read_only;
-    bool                    m_moving_fleets;
-    GG::ListBox::iterator   m_current_fleet;
+    std::set<int>           m_fleet_ids;        ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
+    int                     m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
+    int                     m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be UniverseObject::INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
-    std::set<boost::signals::connection>    m_misc_connections;
+    bool                    m_read_only;
 
     FleetsListBox*          m_fleets_lb;
     FleetDataPanel*         m_new_fleet_drop_target;

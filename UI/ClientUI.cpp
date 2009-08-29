@@ -528,7 +528,7 @@ void ClientUI::ZoomToFleet(Fleet* fleet)
     m_map_wnd->CenterOnObject(fleet->ID());
     m_map_wnd->SelectFleet(fleet->ID());
     if (FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
-        fleet_wnd->SelectFleet(fleet);
+        fleet_wnd->SelectFleet(fleet->ID());
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)

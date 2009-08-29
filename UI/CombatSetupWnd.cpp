@@ -95,11 +95,9 @@ namespace {
                     AttachChild(icon);
 
                     // create tooltip explaining effects on meter if such info is available
-                    if (meter_map) {
-                        icon->SetBrowseModeTime(tooltip_delay);
-                        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(*it, m_ship, *meter_map));
-                        icon->SetBrowseInfoWnd(browse_wnd);
-                    }
+                    icon->SetBrowseModeTime(tooltip_delay);
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(*it, m_ship->ID()));
+                    icon->SetBrowseInfoWnd(browse_wnd);
                 }
 
                 m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);

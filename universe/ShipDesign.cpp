@@ -976,20 +976,18 @@ void ShipDesign::BuildStatCaches()
 {
     const HullType* hull = GetHullType(m_hull);
     assert(hull);
-    m_build_turns += hull->BuildTime();
-    m_build_cost += hull->Cost() * hull->BuildTime();
+    m_build_turns = hull->BuildTime();
+    m_build_cost = hull->Cost() * hull->BuildTime();
 
-    for (std::vector<std::string>::const_iterator it = m_parts.begin();
-         it != m_parts.end();
-         ++it) {
+    for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         if (it->empty())
             continue;
 
         const PartType* part = GetPartType(*it);
         assert(part);
 
-        m_build_turns += part->BuildTime();
-        m_build_cost += part->Cost() * part->BuildTime();
+        m_build_turns = std::max(m_build_turns, part->BuildTime()); // assume hull and parts are built in parallel
+        m_build_cost += part->Cost();                               // add up costs of all parts
 
         switch (part->Class()) {
         case PC_SHORT_RANGE: {
