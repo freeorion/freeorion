@@ -27,7 +27,7 @@ namespace fs = boost::filesystem;
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<std::string>("resource-dir",    "OPTIONS_DB_RESOURCE_DIR",           (GetRootDataDir() / "default").directory_string());
+        db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          (GetRootDataDir() / "default").directory_string());
         db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
         db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  "eng_stringtable.txt");
     }

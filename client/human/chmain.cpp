@@ -57,10 +57,19 @@ const bool  STORE_FULLSCREEN_FLAG = true;
 #ifndef FREEORION_MACOSX
 int main(int argc, char* argv[])
 {
+    // set options from command line or config.xml, or generate config.xml
     if (mainConfigOptionsSetup(argc, argv) != 0) {
         std::cerr << "main() failed config." << std::endl;
         return 1;
     }
+
+    // did the player request help output?
+    if (GetOptionsDB().Get<bool>("help")) {
+        GetOptionsDB().GetUsage(std::cerr);
+        return 0;   // quit without actually starting game
+    }
+
+    // set up rendering and run game
     if (mainSetupAndRunOgre() != 0) {
         std::cerr << "main() failed to setup or run ogre." << std::endl;
         return 1;
@@ -100,15 +109,6 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         GetOptionsDB().SetFromCommandLine(argc, argv);
 
 
-        bool early_exit = false;
-
-
-        // did the player request help output?
-        if (GetOptionsDB().Get<bool>("help")) {
-            GetOptionsDB().GetUsage(std::cerr);
-            early_exit = true;
-        }
-
 #ifdef FREEORION_MACOSX
         // Handle the case where the resource-dir does not exist anymore
         // gracefully by resetting it to the standard path into the
@@ -128,11 +128,6 @@ int mainConfigOptionsSetup(int argc, char* argv[])
                 std::cerr << GetConfigPath().file_string() << std::endl;
             }
         }
-
-
-        // quit without actually starting game if certain option flags were specified
-        if (early_exit)
-            return 0;
 
     } catch (const std::invalid_argument& e) {
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
