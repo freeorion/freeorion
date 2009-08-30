@@ -555,7 +555,7 @@ void ImpostorTexture::renderTextures(bool force)
 	for (i = 0; i < sizeof(key); ++i)
 		key[i] = (key[i] % 26) + 'A';
 
-	ResourceGroupManager::getSingleton().addResourceLocation(GetLocalDir().string(), "FileSystem", "BinFolder");
+	ResourceGroupManager::getSingleton().addResourceLocation(GetUserDir().string(), "FileSystem", "BinFolder");
 	String fileNamePNG = "Impostor." + String(key, sizeof(key)) + '.' + StringConverter::toString(textureSize) + ".png";
 	String fileNameDDS = "Impostor." + String(key, sizeof(key)) + '.' + StringConverter::toString(textureSize) + ".dds";
 
@@ -603,7 +603,7 @@ void ImpostorTexture::renderTextures(bool force)
 		
 #ifdef IMPOSTOR_FILE_SAVE
 		//Save RTT to file
-		renderTarget->writeContentsToFile((GetLocalDir() / fileNamePNG).string());
+		renderTarget->writeContentsToFile((GetUserDir() / fileNamePNG).string());
 
 		//Load the render into the appropriate texture view
 		texture = TextureManager::getSingleton().load(fileNamePNG, "BinFolder", TEX_TYPE_2D, MIP_UNLIMITED);

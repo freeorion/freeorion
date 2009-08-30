@@ -12,6 +12,7 @@ namespace fs = boost::filesystem;
 
 namespace {
     bool g_initialized = false;
+    fs::path bin_dir = fs::initial_path();
 }
 
 #if defined(FREEORION_MACOSX)
@@ -26,13 +27,15 @@ namespace {
    bindir:  FreeOrion.app/Contents/Executables
    configpath: ~/Library/FreeOrion/config.xml */
 namespace {
-    fs::path   s_local_dir;
-    fs::path   s_global_dir;
+    fs::path   s_user_dir;
+    fs::path   s_root_data_dir;
     fs::path   s_bin_dir;
     fs::path   s_config_path;
 }
 
-void InitDirs()
+void InitBinDir(const std::string& argv0);
+
+void InitDirs(const std::string& argv0)
 {
     if (g_initialized)
         return;
@@ -90,12 +93,12 @@ void InitDirs()
         app_path /= "FreeOrion.app/Contents";
     }
 
-    s_global_dir    =   app_path / "Resources";
-    s_local_dir     =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
+    s_root_data_dir =   app_path / "Resources";
+    s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
-    s_config_path   =   s_local_dir / "config.xml";
+    s_config_path   =   s_user_dir / "config.xml";
 
-    fs::path p = s_local_dir;
+    fs::path p = s_user_dir;
     if (!exists(p))
         fs::create_directories(p);
 
@@ -106,18 +109,18 @@ void InitDirs()
     g_initialized = true;
 }
 
-const fs::path GetLocalDir()
+const fs::path GetUserDir()
 {
     if (!g_initialized)
         InitDirs();
-    return s_local_dir;
+    return s_user_dir;
 }
 
-const fs::path GetGlobalDir()
+const fs::path GetRootDataDir()
 {
     if (!g_initialized)
         InitDirs();
-    return s_global_dir;
+    return s_root_data_dir;
 }
 
 const fs::path GetBinDir()
@@ -130,20 +133,25 @@ const fs::path GetBinDir()
 #elif defined(FREEORION_LINUX)
 #include "binreloc.h"
 
-void InitDirs()
-{
+void InitBinDir(const std::string& argv0);
+
+void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
     if (fs::path::default_name_check_writable())
         fs::path::default_name_check(fs::native);
 
-    // store working dir (current working dir)
+    /* store working dir.  some implimentations get the value of initial_path
+     * from the value of current_path the first time initial_path is called,
+     * so it is necessary to call initial_path as soon as possible after
+     * starting the program, so that current_path doesn't have a chance to
+     * change before initial_path is initialized. */
     fs::initial_path();
 
     br_init(0);
 
-    fs::path p = GetLocalDir();
+    fs::path p = GetUserDir();
     if (!exists(p)) {
         fs::create_directories(p);
     }
@@ -153,20 +161,20 @@ void InitDirs()
         fs::create_directories(p);
     }
 
+    InitBinDir(argv0);
+
     g_initialized = true;
 }
 
-const fs::path GetLocalDir()
-{
+const fs::path GetUserDir() {
     if (fs::path::default_name_check_writable())
         fs::path::default_name_check(fs::native);
     static fs::path p = fs::path(getenv("HOME")) / ".freeorion";
     return p;
 }
 
-const fs::path GetGlobalDir()
-{
-    if (!g_initialized) InitDirs();
+const fs::path GetRootDataDir() {
+    if (!g_initialized) InitDirs("");
     char* dir_name = br_find_data_dir("/usr/local/share");
     fs::path p(dir_name);
     std::free(dir_name);
@@ -179,75 +187,97 @@ const fs::path GetGlobalDir()
     }
 }
 
-const fs::path GetBinDir()
-{
-    if (!g_initialized) InitDirs();
-    char* dir_name = br_find_bin_dir("/usr/local/bin");
-    fs::path p(dir_name);
-    std::free(dir_name);
-    // if the path does not exist, we fall back to the working directory
-    if (!exists(p)) {
-        return fs::initial_path();
-    } else {
-        return p;
+const fs::path GetBinDir() {
+    if (!g_initialized) InitDirs("");
+    return bin_dir;
+}
+
+void InitBinDir(const std::string& argv0) {
+    bool problem = false;
+    try {
+        fs::path binary_file = fs::system_complete(fs::path(argv0));
+        bin_dir = binary_file.branch_path();
+    } catch (fs::filesystem_error err) {
+        problem = true;
+    }
+
+    if (problem || !exists(bin_dir) {
+        // failed trying to parse the call path, so try hard-coded standard location...
+        char* dir_name = br_find_bin_dir("/usr/local/bin");
+        fs::path p(dir_name);
+        std::free(dir_name);
+
+        // if the path does not exist, fall back to the working directory
+        if (!exists(p)) {
+            bin_dir = fs::initial_path();
+        } else {
+            bin_dir = p;
+        }
     }
 }
 
 #elif defined(FREEORION_WIN32)
 
-void InitDirs()
-{
+void InitBinDir(const std::string& argv0);
+
+void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
     fs::path::default_name_check(fs::native);
 
-    fs::path local_dir = GetLocalDir();
+    fs::path local_dir = GetUserDir();
     if (!exists(local_dir))
         fs::create_directories(local_dir);
 
-    fs::path p = GetLocalDir() / "save";
+    fs::path p = GetUserDir() / "save";
     if (!exists(p))
         fs::create_directories(p);
+
+    InitBinDir(argv0);
 
     g_initialized = true;
 }
 
-const fs::path GetLocalDir()
-{
+const fs::path GetUserDir() {
     if (fs::path::default_name_check_writable())
         fs::path::default_name_check(fs::native);
     static fs::path p = fs::path(std::string(getenv("APPDATA"))) / "FreeOrion";
     return p;
 }
 
-const fs::path GetGlobalDir()
-{
+const fs::path GetRootDataDir() {
     return fs::initial_path();
 }
 
-const fs::path GetBinDir()
-{
-    return fs::initial_path();
+const fs::path GetBinDir() {
+    if (!g_initialized) InitDirs("");
+    return bin_dir;
+}
+
+void InitBinDir(const std::string& argv0) {
+    try {
+        fs::path binary_file = fs::system_complete(fs::path(argv0));
+        bin_dir = binary_file.branch_path();
+    } catch (fs::filesystem_error err) {
+        bin_dir = fs::initial_path();
+    }
 }
 
 #else
 #  error Neither FREEORION_LINUX nor FREEORION_WIN32 set
 #endif
 
-const boost::filesystem::path GetSettingsDir()
-{
-    return fs::path(GetOptionsDB().Get<std::string>("settings-dir"));
+const boost::filesystem::path GetResourceDir() {
+    return fs::path(GetOptionsDB().Get<std::string>("resource-dir"));
 }
 
-const fs::path GetConfigPath()
-{
-    static const fs::path p = GetLocalDir() / "config.xml";
+const fs::path GetConfigPath() {
+    static const fs::path p = GetUserDir() / "config.xml";
     return p;
 }
 
-boost::filesystem::path RelativePath (const boost::filesystem::path& from, const boost::filesystem::path& to)
-{
+boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to) {
     boost::filesystem::path retval;
     boost::filesystem::path from_abs = boost::filesystem::complete(from);
     boost::filesystem::path to_abs = boost::filesystem::complete(to);

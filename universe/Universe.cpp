@@ -43,7 +43,7 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty())
-            LoadDataTables((GetSettingsDir() / "universe_tables.txt").file_string(), map);
+            LoadDataTables((GetResourceDir() / "universe_tables.txt").file_string(), map);
         return map;
     }
 
@@ -66,7 +66,7 @@ namespace {
 
     void LoadSystemNames(std::list<std::string>& names)
     {
-        boost::filesystem::ifstream ifs(GetSettingsDir() / "starnames.txt");
+        boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
@@ -78,7 +78,7 @@ namespace {
 
     void LoadEmpireNames(std::list<std::string>& names)
     {
-        boost::filesystem::ifstream ifs(GetSettingsDir() / "empire_names.txt");
+        boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
@@ -2174,7 +2174,7 @@ namespace {
         std::string file_name = "premade_ship_designs.txt";
         std::string input;
 
-        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
         if (ifs) {
             std::getline(ifs, input, '\0');
             ifs.close();
@@ -2299,7 +2299,7 @@ namespace {
         std::string file_name = "starting_fleets.txt";
         std::string input;
 
-        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
         if (ifs) {
             std::getline(ifs, input, '\0');
             ifs.close();
@@ -2393,7 +2393,7 @@ namespace {
         std::string file_name = "preunlocked_items.txt";
         std::string input;
 
-        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
         if (ifs) {
             std::getline(ifs, input, '\0');
             ifs.close();

@@ -104,7 +104,7 @@ namespace {
     bool ValidStringtableFile(const std::string& file)
     {
         return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
-            fs::exists(GetSettingsDir() / file) && !fs::is_directory(GetSettingsDir() / file);
+            fs::exists(GetResourceDir() / file) && !fs::is_directory(GetResourceDir() / file);
     }
 
     bool ValidMusicFile(const std::string& file)
@@ -517,7 +517,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     drop_list->SetStyle(GG::LIST_NOSORT);
     std::set<std::string> filenames;
     fs::directory_iterator end_it;
-    for (fs::directory_iterator it(GetSettingsDir()); it != end_it; ++it) {
+    for (fs::directory_iterator it(GetResourceDir()); it != end_it; ++it) {
         try {
             if (fs::exists(*it)) {
                 std::string filename = it->filename();
@@ -700,7 +700,7 @@ void OptionsWnd::Init()
     BoolOption("UI.fleet-autoselect",           UserString("OPTIONS_AUTOSELECT_FLEET"));
     BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
-    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"), GetSettingsDir(), std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
+    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"), GetResourceDir(), std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
     IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONTS"));
@@ -813,8 +813,8 @@ void OptionsWnd::Init()
 
     // Directories tab
     BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption("settings-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetGlobalDir());
-    DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetGlobalDir());
+    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());
+    DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetRootDataDir());
     EndPage();
 
     // Connect the done and cancel button

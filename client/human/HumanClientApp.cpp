@@ -98,7 +98,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::Camera* camera,
                                Ogre::Viewport* viewport) :
     ClientApp(),
-    OgreGUI(window, (GetGlobalDir() / "OISInput.cfg").string()),
+    OgreGUI(window, (GetRootDataDir() / "OISInput.cfg").string()),
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
@@ -114,7 +114,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    const std::string LOG_FILENAME((GetLocalDir() / "freeorion.log").file_string());
+    const std::string LOG_FILENAME((GetUserDir() / "freeorion.log").file_string());
 
     // a platform-independent way to erase the old log We cannot use
     // boost::filesystem::ofstream here, as stupid b::f won't allow us
@@ -197,13 +197,13 @@ std::map<int, int> HumanClientApp::PendingColonizationOrders() const
 void HumanClientApp::StartServer()
 {
 #ifdef FREEORION_WIN32
-    const std::string SERVER_CLIENT_EXE = "freeoriond.exe";
+    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").file_string();
 #else
     const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").file_string();
 #endif
     std::vector<std::string> args(1, SERVER_CLIENT_EXE);
-    args.push_back("--settings-dir");
-    args.push_back("\"" + GetOptionsDB().Get<std::string>("settings-dir") + "\"");
+    args.push_back("--resource-dir");
+    args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
     args.push_back("--log-level");
     args.push_back(GetOptionsDB().Get<std::string>("log-level"));
     m_server_process = Process(SERVER_CLIENT_EXE, args);

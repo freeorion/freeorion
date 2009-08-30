@@ -36,9 +36,9 @@
 
 #ifndef OGRE_STATIC_LIB
 #  ifdef FREEORION_WIN32
-#    define OGRE_INPUT_PLUGIN_NAME "GiGiOgrePlugin_OIS.dll"
+const std::string OGRE_INPUT_PLUGIN_NAME("GiGiOgrePlugin_OIS.dll");
 #  else
-#    define OGRE_INPUT_PLUGIN_NAME "libGiGiOgrePlugin_OIS.so"
+const std::string OGRE_INPUT_PLUGIN_NAME("libGiGiOgrePlugin_OIS.so");
 #  endif
 #endif
 
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 
 int mainConfigOptionsSetup(int argc, char* argv[])
 {
-    InitDirs();
+    InitDirs(argv[0]);
 
     // read and process command-line arguments, if any
     try {
@@ -110,12 +110,12 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         }
 
 #ifdef FREEORION_MACOSX
-        // Handle the case where the settings-dir does not exist anymore
+        // Handle the case where the resource-dir does not exist anymore
         // gracefully by resetting it to the standard path into the
-        // application bundle this may happen if a previous installed version
-        // of FreeOrion was residing in a different directory.
-        if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("settings-dir"))))
-            GetOptionsDB().Set<std::string>("settings-dir", (GetGlobalDir() / "default").directory_string());
+        // application bundle.  This may happen if a previous installed
+        // version of FreeOrion was residing in a different directory.
+        if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("resource-dir"))))
+            GetOptionsDB().Set<std::string>("resource-dir", (GetRootDataDir() / "default").directory_string());
 #endif
 
         // did the playe request generation of config.xml, saving the default (or current) options to disk?
@@ -150,6 +150,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }
+
     return 0;
 }
 
@@ -172,9 +173,9 @@ int mainSetupAndRunOgre()
         using namespace Ogre;
 
         log_manager = new LogManager();
-        log_manager->createLog((GetLocalDir() / "ogre.log").string(), true, false);
+        log_manager->createLog((GetUserDir() / "ogre.log").string(), true, false);
 
-        root = new Root((GetGlobalDir() / "ogre_plugins.cfg").string());
+        root = new Root((GetRootDataDir() / "ogre_plugins.cfg").string());
 
 #if defined(OGRE_STATIC_LIB)
         cg_plugin = new Ogre::CgPlugin;

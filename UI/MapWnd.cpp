@@ -1016,7 +1016,7 @@ void MapWnd::InitTurnRendering()
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         m_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
-            ReadFile((GetGlobalDir() / "default" / "shaders" / "scanlines.frag").file_string())));
+            ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
     }
 
 

@@ -6,7 +6,8 @@
 
 int main(int argc, char* argv[])
 {
-    InitDirs();
+    InitDirs(argv[0]);
+
     try {
         GetOptionsDB().SetFromCommandLine(argc, argv);
         AIClientApp g_app(argc, argv);
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
         stream.close();
         return 1;
     }
+
     return 0;
 }
 

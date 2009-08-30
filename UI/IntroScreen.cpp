@@ -33,7 +33,7 @@ namespace {
         db.AddFlag("force-external-server",             "OPTIONS_DB_FORCE_EXTERNAL_SERVER",     false);
         db.Add<std::string>("external-server-address",  "OPTIONS_DB_EXTERNAL_SERVER_ADDRESS",   "localhost");
         db.Add("UI.main-menu.x",                        "OPTIONS_DB_UI_MAIN_MENU_X",            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
-        db.Add("UI.main-menu.y",                        "OPTIONS_DB_UI_MAIN_MENU_Y",            0.47,   RangedStepValidator<double>(0.01, 0.0, 1.0));
+        db.Add("UI.main-menu.y",                        "OPTIONS_DB_UI_MAIN_MENU_Y",            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
     }
 
     bool foo_bool = RegisterOptions(&Options);
@@ -252,7 +252,7 @@ void IntroScreen::OnCredits()
 
 
     XMLDoc doc;
-    boost::filesystem::ifstream ifs(GetSettingsDir() / "credits.xml");
+    boost::filesystem::ifstream ifs(GetResourceDir() / "credits.xml");
     doc.ReadDoc(ifs);
     ifs.close();
 

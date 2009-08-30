@@ -20,7 +20,7 @@
 namespace {
     void Options(OptionsDB& db)
     {
-        db.Add<std::string>('S', "save-dir", "OPTIONS_DB_SAVE_DIR", (GetLocalDir() / "save").directory_string());
+        db.Add<std::string>('S', "save-dir", "OPTIONS_DB_SAVE_DIR", (GetUserDir() / "save").directory_string());
     }
     bool foo_bool = RegisterOptions(&Options);
 

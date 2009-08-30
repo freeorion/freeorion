@@ -19,7 +19,7 @@ namespace {
     DataTableMap& PlanetDataTables() {
         static DataTableMap map;
         if (map.empty())
-            LoadDataTables((GetSettingsDir() / "planet_tables.txt").file_string(), map);
+            LoadDataTables((GetResourceDir() / "planet_tables.txt").file_string(), map);
         return map;
     }
 

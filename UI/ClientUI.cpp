@@ -47,12 +47,12 @@ const Tech* GetTech(const std::string& name);
 namespace fs = boost::filesystem;
 
 // static members
-fs::path    ClientUI::ArtDir()                  { return GetSettingsDir() / "data" / "art"; }
-fs::path    ClientUI::SoundDir()                { return GetSettingsDir() / "data" / "sound"; }
+fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "data" / "art"; }
+fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                    { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font")).file_string(); }
-std::string ClientUI::BoldFont()                { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).file_string(); }
-std::string ClientUI::TitleFont()               { return (GetSettingsDir() / GetOptionsDB().Get<std::string>("UI.title-font")).file_string(); }
+std::string ClientUI::Font()                    { return (GetResourceDir() / GetOptionsDB().Get<std::string>("UI.font")).file_string(); }
+std::string ClientUI::BoldFont()                { return (GetResourceDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).file_string(); }
+std::string ClientUI::TitleFont()               { return (GetResourceDir() / GetOptionsDB().Get<std::string>("UI.title-font")).file_string(); }
 
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
@@ -309,7 +309,7 @@ namespace {
             std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
             std::string stringtable_str;
 
-            boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+            boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
             while (ifs) {
                 std::string line;
                 std::getline(ifs, line);

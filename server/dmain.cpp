@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[])
 {
-    InitDirs();
+    InitDirs(argv[0]);
 
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");

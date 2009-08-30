@@ -523,8 +523,8 @@ The vertical spacing to be placed between techs in the tech screen, in multiples
 OPTIONS_DB_SAVE_DIR
 The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
 
-OPTIONS_DB_SETTINGS_DIR
-Sets the root directory for the game resource files (settings and data files).
+OPTIONS_DB_RESOURCE_DIR
+Sets the root directory for the game resource files (game content and data files).
 
 OPTIONS_DB_LOG_LEVEL
 Sets the level at or above which log messages will be output (levels in order of decreasing verbosity: DEBUG, INFO, NOTICE, WARN, ERROR, CRIT, ALERT, FATAL, EMERG)

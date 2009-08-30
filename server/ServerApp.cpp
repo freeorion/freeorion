@@ -95,7 +95,7 @@ ServerApp::ServerApp() :
 
     s_app = this;
 
-    const std::string SERVER_LOG_FILENAME((GetLocalDir() / "freeoriond.log").file_string());
+    const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").file_string());
 
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
@@ -140,7 +140,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
     int i = 0;
 
 #ifdef FREEORION_WIN32
-    const std::string AI_CLIENT_EXE = "freeorionca.exe";
+    const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca.exe").file_string();
 #else
     const std::string AI_CLIENT_EXE = (GetBinDir() / "freeorionca").file_string();
 #endif
@@ -151,8 +151,8 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
         std::vector<std::string> args;
         args.push_back(AI_CLIENT_EXE);
         args.push_back(player_name);
-        args.push_back("--settings-dir");
-        args.push_back("\"" + GetOptionsDB().Get<std::string>("settings-dir") + "\"");
+        args.push_back("--resource-dir");
+        args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
         args.push_back("--log-level");
         args.push_back(GetOptionsDB().Get<std::string>("log-level"));
         Logger().debugStream() << "starting " << AI_CLIENT_EXE;

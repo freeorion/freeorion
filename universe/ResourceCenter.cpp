@@ -23,7 +23,7 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty())
-            LoadDataTables((GetSettingsDir() / "production_tables.txt").file_string(), map);
+            LoadDataTables((GetResourceDir() / "production_tables.txt").file_string(), map);
         return map;
     }
 
@@ -31,7 +31,7 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty())
-            LoadDataTables((GetSettingsDir() / "planet_tables.txt").file_string(), map);
+            LoadDataTables((GetResourceDir() / "planet_tables.txt").file_string(), map);
         return map;
     }
 

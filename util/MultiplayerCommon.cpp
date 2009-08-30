@@ -27,7 +27,7 @@ namespace fs = boost::filesystem;
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<std::string>("settings-dir",         "OPTIONS_DB_SETTINGS_DIR",          (GetGlobalDir() / "default").directory_string());
+        db.Add<std::string>("resource-dir",    "OPTIONS_DB_RESOURCE_DIR",           (GetRootDataDir() / "default").directory_string());
         db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
         db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  "eng_stringtable.txt");
     }
@@ -35,7 +35,7 @@ namespace {
 
     const StringTable_& GetStringTable() {
         static std::auto_ptr<StringTable_> string_table(
-            new StringTable_((GetSettingsDir() / GetOptionsDB().Get<std::string>("stringtable-filename")).file_string()));
+            new StringTable_((GetResourceDir() / GetOptionsDB().Get<std::string>("stringtable-filename")).file_string()));
         return *string_table;
     }
 
@@ -63,7 +63,7 @@ const std::vector<GG::Clr>& EmpireColors()
 
         std::string file_name = "empire_colors.xml";
 
-        boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
         if (ifs) {
             doc.ReadDoc(ifs);
             ifs.close();
@@ -275,7 +275,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
 {
     if (build_save_game_list) {
         // build a list of save files
-        fs::path save_dir(GetLocalDir() / "save");
+        fs::path save_dir(GetUserDir() / "save");
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
             try {

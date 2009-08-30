@@ -63,7 +63,7 @@ namespace {
         {
             std::string input;
 
-            boost::filesystem::ifstream ifs(GetSettingsDir() / file_name);
+            boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
             if (ifs) {
                 std::getline(ifs, input, '\0');
                 ifs.close();
