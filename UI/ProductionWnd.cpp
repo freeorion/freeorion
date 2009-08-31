@@ -45,16 +45,17 @@ namespace {
     private:
         void Draw(GG::Clr clr, bool fill);
 
-        const ProductionQueue::Element m_build;
-        GG::TextControl*               m_name_text;
-        GG::TextControl*               m_PPs_and_turns_text;
-        GG::TextControl*               m_turns_remaining_until_next_complete_text;
-        GG::StaticGraphic*             m_icon;
-        MultiTurnProgressBar*          m_progress_bar;
-        bool                           m_in_progress;
-        int                            m_total_turns;
-        int                            m_turns_completed;
-        double                         m_partially_complete_turn;
+        const ProductionQueue::Element  m_build;
+        GG::TextControl*                m_name_text;
+        GG::TextControl*                m_location_text;
+        GG::TextControl*                m_PPs_and_turns_text;
+        GG::TextControl*                m_turns_remaining_until_next_complete_text;
+        GG::StaticGraphic*              m_icon;
+        MultiTurnProgressBar*           m_progress_bar;
+        bool                            m_in_progress;
+        int                             m_total_turns;
+        int                             m_turns_completed;
+        double                          m_partially_complete_turn;
     };
 
     //////////////////////////////////////////////////
@@ -85,6 +86,12 @@ namespace {
     QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_build(build),
+        m_name_text(0),
+        m_location_text(0),
+        m_PPs_and_turns_text(0),
+        m_turns_remaining_until_next_complete_text(0),
+        m_icon(0),
+        m_progress_bar(0),
         m_in_progress(build.allocated_pp),
         m_total_turns(turns),
         m_turns_completed(turns_completed),
@@ -130,6 +137,12 @@ namespace {
             name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
 
 
+        // get location indicator text
+        std::string location_text;
+        if (const UniverseObject* location = GetUniverse().Object(build.location))
+            location_text = str(format(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
+
+
         // create and arrange widgets to display info
         GG::Y top(MARGIN);
         GG::X left(MARGIN);
@@ -143,6 +156,8 @@ namespace {
 
         m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), name_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
+
+        m_location_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), location_text, font, clr, GG::FORMAT_TOP | GG::FORMAT_RIGHT);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
@@ -168,6 +183,7 @@ namespace {
 
         if (m_icon) AttachChild(m_icon);
         AttachChild(m_name_text);
+        AttachChild(m_location_text);
         AttachChild(m_PPs_and_turns_text);
         AttachChild(m_turns_remaining_until_next_complete_text);
         AttachChild(m_progress_bar);

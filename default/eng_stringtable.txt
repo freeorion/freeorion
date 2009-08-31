@@ -1719,6 +1719,9 @@ Enqueue production projects by selecting a planet on the sidepanel, then double-
 
 Note that ships can only be built on planets with a shipyard.'''
 
+PRODUCTION_QUEUE_ITEM_LOCATION
+At %1%
+
 
 ###############
 #  DesignWnd  #
