@@ -2352,14 +2352,16 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
                 // show surplus
                 label_text = UserString("RESOURCE_EXPORT");
                 amount_text = DoubleToString(difference, 3, false, false);
-                break;
             } else if (difference < 0.0) {
                 // show amount being imported
                 label_text = UserString("RESOURCE_IMPORT");
                 amount_text = DoubleToString(std::abs(difference), 3, false, false);
-                break;
+            } else {
+                // show self-sufficiency
+                label_text = UserString("RESOURCE_SELF_SUFFICIENT");
+                amount_text = "";
             }
-            // else fall back to do nothing case
+            break;
         case RE_RESEARCH:
         default:
             // show nothing

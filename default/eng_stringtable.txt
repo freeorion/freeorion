@@ -1348,6 +1348,8 @@ Importing
 RESOURCE_EXPORT
 Available for Export
 
+RESOURCE_SELF_SUFFICIENT
+No Import or Export
 
 ##Planet Panel#############
 
