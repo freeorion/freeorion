@@ -201,7 +201,7 @@ void InitBinDir(const std::string& argv0) {
         problem = true;
     }
 
-    if (problem || !exists(bin_dir) {
+    if (problem || !exists(bin_dir)) {
         // failed trying to parse the call path, so try hard-coded standard location...
         char* dir_name = br_find_bin_dir("/usr/local/bin");
         fs::path p(dir_name);
