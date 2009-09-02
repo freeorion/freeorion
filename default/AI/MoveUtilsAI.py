@@ -24,12 +24,12 @@ def getAIFleetOrdersFromSystemAITargets(fleetAITarget, aiTargets):
                 result.append(aiFleetOrder)
         else:
             print "fleetID: " + str(fleetAITarget.getTargetID()) + " can't travel to target:" + str(aiTarget)
-        
+
     return result
 
 def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAITarget, empireID):
     "check if fleet can travel from starting system to wanted system"
-    
+
     systemAITargets = []
     if not fromSystemAITarget.getTargetID() == toSystemAITarget.getTargetID:
         # get supplyable systems
@@ -40,27 +40,27 @@ def canTravelToSystemAndReturnToResupply(fleetID, fromSystemAITarget, toSystemAI
         fleet = universe.getFleet(fleetID)
         maxFuel = int(fleet.maxFuel)
         fuel = int(fleet.fuel)
-        
+
         # try to find path without going resupply first
         supplySystemAITarget = getNearestSuppliedSystem(toSystemAITarget.getTargetID(), empireID)
         systemAITargets = __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, fuel, supplySystemAITarget)
         # resupply in system first is required to find path
-        if not(fromSystemAITarget.getTargetID() in fleetSupplyableSystemIDs) and len(systemAITargets)==0:
+        if not(fromSystemAITarget.getTargetID() in fleetSupplyableSystemIDs) and len(systemAITargets) == 0:
             # add supply system to visit
             fromSystemAITarget = getNearestSuppliedSystem(fromSystemAITarget.getTargetID(), empireID)
             systemAITargets.append(fromSystemAITarget)
             # find path from supplied system to wanted system
             systemAITargets = __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, systemAITargets, fleetSupplyableSystemIDs, maxFuel, maxFuel, supplySystemAITarget)
-        
+
     return systemAITargets
 
 def getNearestSuppliedSystem(startSystemID, empireID):
     "returns systemAITarget of nearest supplied system from starting system startSystemID"
-    
+
     empire = fo.getEmpire()
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     universe = fo.getUniverse()
-    
+
     if startSystemID in fleetSupplyableSystemIDs:
         return AITarget.AITarget(AITargetType.TARGET_SYSTEM, startSystemID)
     else:
@@ -71,7 +71,7 @@ def getNearestSuppliedSystem(startSystemID, empireID):
             if len(leastJumpsPath) < minJumps:
                 minJumps = len(leastJumpsPath)
                 supplySystemID = systemID
-        
+
         return AITarget.AITarget(AITargetType.TARGET_SYSTEM, supplySystemID)
 
 def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAITarget, empireID, resultSystemAITargets, fleetSupplyableSystemIDs, maxFuel, fuel, supplySystemAITarget):
@@ -90,19 +90,19 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
                     fuel = maxFuel
                 else:
                     fuel = fuel - 1
-                    
+
                 # leastJumpPath can differ from shortestPath
                 # TODO: use Graph Theory to optimize
                 if (not systemID == toSystemAITarget.getTargetID()) and (systemID in fleetSupplyableSystemIDs):
                     resultSystemAITargets.append(AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID))
-                    
+
                 if fuel < 0:
                     result = False
-                    
+
             fromSystemID = systemID
     else:
-        result = False 
-    
+        result = False
+
     # if there is path to wanted system, then also if there is path back to supplyable system
     if result == True:
         # jump from A to B means leastJumpsPath=[A,B], but minJumps=1
@@ -113,20 +113,20 @@ def __findPathWithFuelToSystemWithPossibleReturn(fromSystemAITarget, toSystemAIT
             result = False
         else:
             resultSystemAITargets.append(toSystemAITarget)
-    
+
     if result == False:
         resultSystemAITargets = []
-    
+
     return resultSystemAITargets
 
 def getResupplyAIFleetOrder(fleetAITarget, currentSystemAITarget):
     "returns resupply AIFleetOrder to nearest supplied system"
-    
+
     # find nearest supplied system
     empireID = fo.empireID()
     suppliedSystemAITarget = getNearestSuppliedSystem(currentSystemAITarget.getTargetID(), empireID)
-    
+
     # create resupply AIFleetOrder
     aiFleetOrder = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_RESUPPLY, fleetAITarget, suppliedSystemAITarget)
-    
+
     return aiFleetOrder

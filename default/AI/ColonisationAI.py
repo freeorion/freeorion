@@ -4,7 +4,7 @@ import AIstate
 import FleetUtilsAI
 from EnumsAI import AIFleetMissionType, AIExplorableSystemType, AITargetType
 import AITarget
-import PlanetUtilAI
+import PlanetUtilsAI
 
 # globals
 colonisablePlanetIDs = []  # TODO: move into AIstate
@@ -16,7 +16,7 @@ def assignColonyFleetsToColonise():
 
     # get planets
     systemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
-    planetIDs = PlanetUtilAI.getPlanetsInSystemsIDs(systemIDs)
+    planetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(systemIDs)
 
     removeAlreadyOwnedPlanetIDs(planetIDs)
 
@@ -24,13 +24,13 @@ def assignColonyFleetsToColonise():
     removeLowValuePlanets(evaluatedPlanets)
 
     sortedPlanets = evaluatedPlanets.items()
-    sortedPlanets.sort(lambda x,y: cmp(x[1],y[1]), reverse=True)
+    sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
 
     print "Colonisable planets:"
     for evaluationPair in sortedPlanets:
         print "    ID|Score: " + str(evaluationPair)
     print ""
-    
+
     # export planets for other AI modules
     global colonisablePlanetIDs
     colonisablePlanetIDs = sortedPlanets   # !!! move into AIstate?
@@ -124,9 +124,9 @@ def sendColonyShips(colonyFleetIDs, evaluatedPlanets):
 
         fleetID = colonyFleetIDs[i]
         planetID = planetID_value_pair[0]
-        
+
         aiTarget = AITarget.AITarget(AITargetType.TARGET_PLANET, planetID)
         aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
-        aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_COLONISATION, aiTarget)        
+        aiFleetMission.addAITarget(AIFleetMissionType.FLEET_MISSION_COLONISATION, aiTarget)
 
         i = i + 1

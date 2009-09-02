@@ -32,10 +32,10 @@ def startNewGame():
 
     identifyShipDesigns()
     identifyFleetsRoles()
-    
+
 def splitFleet():
     "split all fleets"
-    
+
     # TODO: only after analyzing situation in map can fleet can be split
     universe = fo.getUniverse()
     for fleetID in universe.fleetIDs:
@@ -45,11 +45,11 @@ def splitFleet():
 
 def identifyShipDesigns():
     "identify ship designs"
-    
+
     shipIDs = []
-    
+
     universe = fo.getUniverse()
-    
+
     for fleetID in universe.fleetIDs:
         fleet = universe.getFleet(fleetID)
 
@@ -60,10 +60,10 @@ def identifyShipDesigns():
         shipRole = FleetUtilsAI.assessShipRole(shipID)
         foAIstate.addShipRole(ship.design.id, shipRole)
         # print str(ship.design.id) + ": " + str(shipRole)
-        
+
 def identifyFleetsRoles():
     "identify fleet roles"
-    
+
     # assign roles to fleets
     universe = fo.getUniverse()
     for fleetID in universe.fleetIDs:
@@ -118,14 +118,14 @@ def generateOrders():
 
     # call AI modules
     PriorityAI.calculatePriorities()
-    
+
     ExplorationAI.assignScoutsToExploreSystems()
     ColonisationAI.assignColonyFleetsToColonise()
     # ProductionAI.generateProductionOrders()
     # TacticsAI.generateTacticOrders()
     FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
     FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
-    
+
     ResearchAI.generateResearchOrders()
     ProductionAI.generateProductionOrders()
 

@@ -18,7 +18,7 @@ def generateResearchOrders():
 
     print "projects already in research queue: "
     for element in researchQueue:
-        print "    " + element.tech.name 
+        print "    " + element.tech.name
 
 
     # store projects mapped to their costs, so they can be sorted by that cost
@@ -30,7 +30,7 @@ def generateResearchOrders():
 
     # iterate through techs in order of cost
     print "enqueuing techs.  already spent RP: " + str(spentRP()) + "  total RP: " + str(totalRP)
-    for name, cost in sorted(projectsDict.items(), key=lambda(k,v):(v,k)):
+    for name, cost in sorted(projectsDict.items(), key=lambda(k, v):(v, k)):
         # abort if no RP left
         if spentRP() >= totalRP:
             break
@@ -44,19 +44,19 @@ def generateResearchOrders():
 
 def getPossibleProjects():
     "get possible projects"
-    
+
     possibleProjects = []
     technames = fo.techs()
     empire = fo.getEmpire()
     for techname in technames:
         if empire.getTechStatus(techname) == fo.techStatus.researchable:
             possibleProjects.append(techname)
-            
+
     return possibleProjects
 
 def spentRP():
     "calculate RPs spent this turn so far"
-    
+
     queue = fo.getEmpire().researchQueue
     return queue.totalSpent
 

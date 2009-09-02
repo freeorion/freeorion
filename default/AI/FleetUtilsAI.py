@@ -88,7 +88,7 @@ def extractFleetIDsWithoutMissionTypes(fleetIDs):
 
     for fleetID in fleetIDs:
         aiFleetMission = foAI.foAIstate.getAIFleetMission(fleetID)
-        if not aiFleetMission.hasAnyAIFleetMissionTypes():
+        if not aiFleetMission.hasAnyAIMissionTypes():
             fleetIDsWithoutMission.append(fleetID)
 
     return fleetIDsWithoutMission
@@ -108,9 +108,9 @@ def assessFleetRole(fleetID):
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
         role = foAI.foAIstate.getShipRole(ship.design.id)
-        
+
         if role != AIShipRoleType.SHIP_ROLE_INVALID:
-            shipRoles[role] = shipRoles[role] +1
+            shipRoles[role] = shipRoles[role] + 1
 
     # determine most common shipRole
     favouriteRole = AIShipRoleType.SHIP_ROLE_INVALID
@@ -134,7 +134,7 @@ def assessShipRole(shipID):
 
     universe = fo.getUniverse()
     ship = universe.getShip(shipID)
-    
+
     if ship.canColonize:
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
     elif ship.isArmed:
@@ -146,7 +146,7 @@ def assessShipRole(shipID):
 
 def generateAIFleetOrdersForAIFleetMissions():
     "generates fleet orders from targets"
-                
+
     print "Exploration fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
     print "Colonisation fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
     print "Attack fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
@@ -155,42 +155,42 @@ def generateAIFleetOrdersForAIFleetMissions():
     print "Explored systems:"
     printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
     print "Unexplored systems:"
-    printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))     
+    printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     print ""
-    
+
     print "Exploration fleet targets: fleetID[AIFleetMissionType]:{AITargetType:targetID}"
     explorationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_EXPLORATION])
     for explorationAIFleetMission in explorationAIFleetMissions:
         print "    " + str(explorationAIFleetMission)
-        
+
     print "Colonisation fleet targets: fleetID[AIFleetMissionType]:{AITargetType:targetID}"
     colonisationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_COLONISATION])
     for colonisationAIFleetMission in colonisationAIFleetMissions:
         print "    " + str(colonisationAIFleetMission)
-    
+
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:
         aiFleetMission.generateAIFleetOrders()
 
 def issueAIFleetOrdersForAIFleetMissions():
     "issues fleet orders"
-    
+
     print ""
     print "issuing fleet orders:"
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:
         aiFleetMission.issueAIFleetOrders()
     print ""
-        
+
 def printSystems(systemIDs):
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
-    for systemID in systemIDs:        
+    for systemID in systemIDs:
         # determine if system is in supplied
         suppliedSystem = ""
         if systemID in fleetSupplyableSystemIDs:
             suppliedSystem = " supplied"
-        
-        system = universe.getSystem(systemID)    
+
+        system = universe.getSystem(systemID)
         print "    name:" + system.name + " id:" + str(systemID) + suppliedSystem

@@ -12,22 +12,18 @@ minimalColoniseValue = 4  # minimal value for a planet to be colonised, now a si
 class AIstate(object):
     "stores AI game state"
 
-    # - def getLostFleets (save fleets last turn, look if still there)
-    #  => from AI interface SITREP?
-
-    # common variables
     # def colonisablePlanets (should be set at start of turn)
     # getColonisablePlanets (deepcopy!)
 
     def __init__(self):
         "constructor"
-        
+
         self.__missionsByType = {}
         for missionType in EnumsAI.getAIFleetMissionTypes():
             self.__missionsByType[missionType] = {}
-            
+
         self.__aiMissionsByFleetID = {}
-        
+
         self.__shipRoleByDesignID = {}
         self.__fleetRoleByID = {}
         self.__priorityByType = {}
@@ -38,7 +34,7 @@ class AIstate(object):
 
     def __del__(self):
         "destructor"
-        
+
         del self.__missionsByType
         del self.__shipRoleByDesignID
         del self.__fleetRoleByID
@@ -48,90 +44,90 @@ class AIstate(object):
 
     def clean(self, startSystemID, fleetIDs):
         "turn AIstate cleanup"
-        
+
         # cleanup explorable systems
         self.__cleanExplorableSystems(startSystemID)
         # TODO: cleanup colonisable planets
         # cleanup fleet roles
         self.__cleanFleetRoles()
-        
+
         self.__cleanAIFleetMissions(fleetIDs)
-        
+
     def afterTurnCleanup(self):
         "removes not required information to save from AI state after AI complete its turn"
-        
+
         # some ships in fleet can be destroyed between turns and then fleet may have have different roles
         self.__fleetRoleByID = {}
-    
+
     def __hasAIFleetMission(self, fleetID):
         "returns True if fleetID has AIFleetMission"
-        
+
         return self.__aiMissionsByFleetID.__contains__(fleetID)
-    
+
     def getAIFleetMission(self, fleetID):
         "returns AIFleetMission with fleetID"
-        
+
         if self.__hasAIFleetMission(fleetID):
             return self.__aiMissionsByFleetID[fleetID]
         return None
-    
-    def getAllAIFleetMissions(self):        
+
+    def getAllAIFleetMissions(self):
         "returns all AIFleetMissions"
-        
+
         return self.__aiMissionsByFleetID.values()
-    
+
     def getAIFleetMissionsWithAnyMissionTypes(self, fleetMissionTypes):
         "returns all AIFleetMissions which contains any of fleetMissionTypes"
-        
+
         result = []
-        
+
         aiFleetMissions = self.getAllAIFleetMissions()
         for aiFleetMission in aiFleetMissions:
-            if aiFleetMission.hasAnyOfAIFleetMissionTypes(fleetMissionTypes):
+            if aiFleetMission.hasAnyOfAIMissionTypes(fleetMissionTypes):
                 result.append(aiFleetMission)
         return result
-    
+
     def __addAIFleetMission(self, fleetID):
         "add new AIFleetMission with fleetID if it already not exists"
-        
+
         if self.getAIFleetMission(fleetID) == None:
             aiFleetMission = AIFleetMission.AIFleetMission(fleetID)
             self.__aiMissionsByFleetID[fleetID] = aiFleetMission
-            
+
     def __removeAIFleetMission(self, fleetID):
         "remove invalid AIFleetMission with fleetID if it exists"
-        
+
         aiFleetMission = self.getAIFleetMission(fleetID)
         if aiFleetMission != None:
             self.__aiMissionsByFleetID[fleetID] = None
             del aiFleetMission
             del self.__aiMissionsByFleetID[fleetID]
-    
+
     def __cleanAIFleetMissions(self, fleetIDs):
         "cleanup of AIFleetMissions"
-        
+
         for fleetID in fleetIDs:
             if self.getAIFleetMission(fleetID) == None:
                 self.__addAIFleetMission(fleetID)
-        
+
         aiFleetMissions = self.getAllAIFleetMissions()
         deletedFleetIDs = []
         for aiFleetMission in aiFleetMissions:
-            if not(aiFleetMission.getFleetID() in fleetIDs):
-                deletedFleetIDs.append(aiFleetMission.getFleetID())
+            if not(aiFleetMission.getAITargetID() in fleetIDs):
+                deletedFleetIDs.append(aiFleetMission.getAITargetID())
         for deletedFleetID in deletedFleetIDs:
             self.__removeAIFleetMission(deletedFleetID)
-            
+
         aiFleetMissions = self.getAllAIFleetMissions()
         for aiFleetMission in aiFleetMissions:
             aiFleetMission.cleanInvalidAITargets()
-    
+
     def hasAITarget(self, aiFleetMissionType, aiTarget):
         aiFleetMissions = self.getAIFleetMissionsWithAnyMissionTypes([aiFleetMissionType])
         for mission in aiFleetMissions:
             if mission.hasTarget(aiFleetMissionType, aiTarget):
                 return True
-        return False    
+        return False
 
     def getShipRole(self, shipDesignID):
         "returns ship role by name"
@@ -212,7 +208,7 @@ class AIstate(object):
 
     def getExplorableSystem(self, systemID):
         "determines system type from ID and returns it"
-        
+
         for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
             systems = self.getExplorableSystems(explorableSystemsType)
             if systemID in systems:
@@ -221,9 +217,9 @@ class AIstate(object):
         # print "SystemID " + str(systemID) + " not found."
         return AIExplorableSystemType.EXPLORABLE_SYSTEM_INVALID
 
-    def addExplorableSystem(self, explorableSystemsType,  systemID):
+    def addExplorableSystem(self, explorableSystemsType, systemID):
         "add explorable system ID with type"
-        
+
         if not (explorableSystemsType in EnumsAI.getAIExplorableSystemTypes()):
             return
 
@@ -232,18 +228,18 @@ class AIstate(object):
             return
         systems[systemID] = systemID
 
-    def removeExplorableSystem(self,  explorableSystemsType,  systemID):
+    def removeExplorableSystem(self, explorableSystemsType, systemID):
         "removes explorable system ID with type"
-        
+
         systems = self.__explorableSystemByType[explorableSystemsType]
         if len(systems) == 0:
             return
         if systemID in systems:
             del systems[systemID]
 
-    def __cleanExplorableSystems(self,  startSystemID):
+    def __cleanExplorableSystems(self, startSystemID):
         "cleanup of all explorable systems"
-        
+
         universe = fo.getUniverse()
         objectIDs = universe.allObjectIDs
         empireID = fo.empireID()
@@ -253,23 +249,23 @@ class AIstate(object):
             system = universe.getSystem(objectID)
             if (system == None): continue
             if (empire.hasExploredSystem(objectID)):
-                self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED,  objectID)
-                self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED,  objectID)
+                self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED, objectID)
+                self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, objectID)
                 continue
             if (not universe.systemsConnected(objectID, startSystemID, empireID)):
                 for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
-                    self.removeExplorableSystem(explorableSystemsType,  objectID)
+                    self.removeExplorableSystem(explorableSystemsType, objectID)
                 continue
             explorableSystemsType = self.getExplorableSystem(objectID)
             if (explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_TARGET):
                 continue
-            self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED,  objectID)
+            self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, objectID)
 
     def getExplorableSystems(self, explorableSystemsType):
         "get all explorable systems determined by type "
-        
+
         return copy.deepcopy(self.__explorableSystemByType[explorableSystemsType])
-    
+
     def setPriority(self, priorityType, value):
         "sets a priority of the specified type"
 
@@ -290,7 +286,7 @@ class AIstate(object):
 
     def printPriorities(self):
         "prints all priorities"
-        
+
         print "all priorities:"
         for priority in self.__priorityByType:
             print "    " + str(priority) + ": " + str(self.__priorityByType[priority])

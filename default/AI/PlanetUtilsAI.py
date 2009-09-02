@@ -6,7 +6,7 @@ def getPlanetsInSystemsIDs(systemIDs):
     universe = fo.getUniverse()
 
     planetIDs = []
-    
+
     for systemID in systemIDs:
 
         system = universe.getSystem(systemID)
@@ -17,14 +17,14 @@ def getPlanetsInSystemsIDs(systemIDs):
     return planetIDs
 
 def getOwnedPlanetsByEmpire(planetIDs, empireID):
-    "return list of planets ownned by empireID"
-    
+    "return list of planets owned by empireID"
+
     result = []
-    
+
     universe = fo.getUniverse()
     for planetID in planetIDs:
         planet = universe.getPlanet(planetID)
         if (not planet.unowned) and planet.ownedBy(empireID):
             result.append(planetID)
-    
+
     return result

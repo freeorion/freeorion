@@ -12,28 +12,28 @@ class AIFleetOrder(object):
         self.__targetAITarget = targetAITarget
         self.__executed = False
         self.__executionCompleted = False
-        
+
     def getAIFleetOrderType(self):
         return self.__aiFleetOrderType
-    
+
     def getSourceAITarget(self):
         return self.__sourceAITarget
-    
+
     def getTargetAITarget(self):
         return self.__targetAITarget
-    
+
     def isExecuted(self):
-        return self.__executed    
-    
+        return self.__executed
+
     def __setExecuted(self):
         self.__executed = True
-        
+
     def isExecutionCompleted(self):
         return self.__executionCompleted
-    
+
     def __setExecutionCompleted(self):
         self.__executionCompleted = True
-        
+
     def __checkValidityShipInFleet(self, shipAITarget, fleetAITarget):
         shipID = shipAITarget.getTargetID()
         fleetID = fleetAITarget.getTargetID()
@@ -43,17 +43,17 @@ class AIFleetOrder(object):
         if (shipID in fleet.shipIDs):
             return True
         return False
-    
+
     def isValid(self):
         "check if FleetOrder could be somehow in future issued = is valid"
-        
+
         if (self.isExecuted() and self.isExecutionCompleted()):
             return False
         if self.getSourceAITarget().isValid() and self.getTargetAITarget().isValid():
             sourceAITargetTypeValid = False
             targetAITargetTypeValid = False
             universe = fo.getUniverse()
-            
+
             # colonise
             if AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 # with ship
@@ -62,7 +62,7 @@ class AIFleetOrder(object):
                     if ship.canColonize:
                         sourceAITargetTypeValid = True
                 # with fleet
-                elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():                    
+                elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                     fleet = universe.getFleet(self.getSourceAITarget().getTargetID())
                     if fleet.hasColonyShips:
                         sourceAITargetTypeValid = True
@@ -108,20 +108,20 @@ class AIFleetOrder(object):
                 # move to system
                 if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType() or AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():
                     targetAITargetTypeValid = True
-                
+
             if sourceAITargetTypeValid == True and targetAITargetTypeValid == True:
                 return True
-                    
+
         return False
-    
+
     def canIssueOrder(self):
         "if FleetOrder can be issued now"
-        
+
         if self.isExecuted():
             return False
         if not self.isValid():
             return False
-        
+
         universe = fo.getUniverse()
         # colonise
         if AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
@@ -135,7 +135,7 @@ class AIFleetOrder(object):
                 fleetID = self.getSourceAITarget().getTargetID()
                 shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
 
-            ship = universe.getShip(shipID)                                    
+            ship = universe.getShip(shipID)
             fleet = universe.getFleet(fleetID)
             planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
             if (ship != None) and (fleet.systemID == planet.systemID) and ship.canColonize:
@@ -146,15 +146,15 @@ class AIFleetOrder(object):
             fleet = universe.getFleet(self.getSourceAITarget().getTargetID())
             if len(fleet.shipIDs) <= 1:
                 return False
-            
+
         return True
-        
+
     def issueOrder(self):
         if not self.canIssueOrder():
             print "can't issue " + self
         else:
             self.__setExecuted()
-        
+
             # colonise
             if AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 shipID = None
@@ -163,40 +163,40 @@ class AIFleetOrder(object):
                 elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
                     fleetID = self.getSourceAITarget().getTargetID()
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION)
-    
-                fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())                
+
+                fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
             # move or resupply
             elif (AIFleetOrderType.ORDER_MOVE == self.getAIFleetOrderType()) or (AIFleetOrderType.ORDER_RESUPPLY == self.getAIFleetOrderType()):
                 fleetID = self.getSourceAITarget().getTargetID()
                 systemID = self.getTargetAITarget().getTargetID()
-                
+
                 fo.issueFleetMoveOrder(fleetID, systemID)
             # split fleet
             elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.getAIFleetOrderType():
                 fleetID = self.getSourceAITarget().getTargetID()
                 shipID = self.getTargetAITarget().getTargetID()
-    
+
                 fo.issueNewFleetOrder(str(shipID), shipID)
                 self.__setExecutionCompleted()
             elif (AIFleetOrderType.ORDER_ATACK == self.getAIFleetOrderType()):
                 fleetID = self.getSourceAITarget().getTargetID()
                 systemID = self.getTargetAITarget().getRequiredSystemAITargets()[0].getTargetID()
-                
+
                 fo.issueFleetMoveOrder(fleetID, systemID)
-    
+
     def __str__(self):
         "returns describing string"
-        
+
         return "fleet order[" + str(self.getAIFleetOrderType()) + "] source:" + str(self.getSourceAITarget()) + " target:" + str(self.getTargetAITarget())
-    
+
     def __cmp__(self, other):
         "compares AIFleetOrders"
-        
+
         if other == None:
             return False
         if self.getAIFleetOrderType() < other.getAIFleetOrderType():
-            return -1
-        elif self.getAIFleetOrderType() == other.getAIFleetOrderType():            
+            return - 1
+        elif self.getAIFleetOrderType() == other.getAIFleetOrderType():
             result = self.getSourceAITarget().__cmp__(other.getSourceAITarget())
             if result == 0:
                 result = self.getTargetAITarget().__cmp__(other.getTargetAITarget())
@@ -204,19 +204,19 @@ class AIFleetOrder(object):
             else:
                 return result
         return 1
-    
+
     def __eq__(self, other):
         "returns equal to other object"
-        
+
         if other == None:
             return False
         if isinstance(other, AIFleetOrder):
             return self.__cmp__(other) == 0
         return NotImplemented
-    
+
     def __ne__(self, other):
         "returns not equal to other object"
-        
+
         result = self.__eq__(other)
         if result is NotImplemented:
             return result

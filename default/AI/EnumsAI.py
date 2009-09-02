@@ -1,13 +1,13 @@
 def checkValidity(value):
     "checks if value is valid"
-    
+
     if (value == None or value < 0):
         return False
     return True
 
 def __getInterval(low, high):
     "returns integer numbers from interval <low, high>"
-    
+
     result = []
     # <low, high)
     for i in range(low, high):
@@ -34,7 +34,7 @@ class AIPriorityType(object):
     PRIORITY_RESEARCH_CONSTRUCTION = 12
     PRIORITY_RESEARCH_ECONOMICS = 13
     PRIORITY_RESEARCH_SHIPS = 14
-    
+
 def getAIPriorityResourceTypes():
     return __getInterval(0, 4)
 def getAIPriorityProductionTypes():
@@ -44,13 +44,13 @@ def getAIPriorityResearchTypes():
 def getAIPriorityTypes():
     return __getInterval(0, 14)
 
-    
+
 class AIExplorableSystemType(object):
     EXPLORABLE_SYSTEM_INVALID = -1
     EXPLORABLE_SYSTEM_UNEXPLORED = 0
     EXPLORABLE_SYSTEM_TARGET = 1
-    EXPLORABLE_SYSTEM_EXPLORED = 2    
-    
+    EXPLORABLE_SYSTEM_EXPLORED = 2
+
 def getAIExplorableSystemTypes():
     return __getInterval(0, 2)
 
@@ -58,14 +58,14 @@ def getAIExplorableSystemTypes():
 class AIFleetMissionType(object):
     FLEET_MISSION_INVALID = -1
     FLEET_MISSION_EXPLORATION = 0
-    FLEET_MISSION_COLONISATION = 1    
+    FLEET_MISSION_COLONISATION = 1
     FLEET_MISSION_SPLIT_FLEET = 2
     FLEET_MISSION_MERGE_FLEET = 3
     FLEET_MISSION_HIT_AND_RUN = 4
     FLEET_MISSION_ATTACK = 5
     FLEET_MISSION_DEFEND = 6
     FLEET_MISSION_LAST_STAND = 7
-        
+
 def getAIFleetMissionTypes():
     return __getInterval(0, 7)
 
@@ -92,7 +92,7 @@ class AIShipRoleType(object):
     SHIP_ROLE_MILITARY_POINTDEFENSE = 3
     SHIP_ROLE_CIVILIAN_EXPLORATION = 4
     SHIP_ROLE_CIVILIAN_COLONISATION = 5
-    
+
 def getAIShipRolesTypes():
     return __getInterval(0, 5)
 
@@ -107,7 +107,7 @@ class AITargetType(object):
     TARGET_FLEET = 5
     TARGET_EMPIRE = 6
     TARGET_ALL_OTHER_EMPIRES = 7
-    
+
 def getAITargetTypes():
     return __getInterval(0, 7)
 
@@ -116,7 +116,7 @@ class AIProductionDemandType(object):
     PRODUCTION_DEMAND_INVALID = -1
     PRODUCTION_DEMAND_SHIP = 0
     PRODUCTION_DEMAND_BUILDING = 1
-    
+
 def getAIProductionDemandTypes():
     return __getInterval(0, 1)
 
@@ -130,7 +130,7 @@ class AIProductionRequirementType(object):
     PRODUCTION_REQUIREMENT_PRODUCTION_POINTS = 4
     PRODUCTION_REQUIREMENT_MINIMUM_TURNS = 5
     PRODUCTION_REQUIREMENT_MINIMUM_SHIPYARDS = 6
-    
+
 def getAIProductionRequirementTypes():
     return __getInterval(0, 6)
 
@@ -143,17 +143,27 @@ class AIResearchRequirementType(object):
     RESEARCH_REQUIREMENT_RESEARCH_POINTS = 3
 
 def getAIResearchRequirementTypes():
-    return __getInterval(0,3)
+    return __getInterval(0, 3)
 
 
-class AIWarTacticsMissionType(object):
-    WAR_TACTICS_MISSION_INVALID = -1
-    WAR_TACTICS_DEFEND_SYSTEM = 0
-    WAR_TACTICS_DEFEND_SHIP = 1
-    WAR_TACTICS_DEFEND_FLEET = 2
-    WAR_TACTICS_MISSION_GET_PLANET = 3
-    WAR_TACTICS_MISSION_GET_SYSTEM = 4
-    
-def getAIWarTacticsMissionType():
+class AIMissionType(object):
+    MISSION_INVALID = -1
+    FLEET_MISSION = 0
+    EMPIRE_WAR_MISSION = 1
+    ALLIANCE_WAR_MISSION = 2
+    DIPLOMATIC_MISSION = 3
+
+def getAIMissionTypes():
+    return __getInterval(0, 3)
+
+
+class AIEmpireWarMissionType(object):
+    EMPIRE_WAR_MISSION_INVALID = -1
+    EMPIRE_WAR_MISSION_DEFEND_SYSTEM = 0
+    EMPIRE_WAR_MISSION_DEFEND_SHIP = 1
+    EMPIRE_WAR_MISSION_DEFEND_FLEET = 2
+    EMPIRE_WAR_MISSION_GET_PLANET = 3
+    EMPIRE_WAR_MISSION_GET_SYSTEM = 4
+
+def getAIEmpireWarMissionTypes():
     return __getInterval(0, 4)
-    
