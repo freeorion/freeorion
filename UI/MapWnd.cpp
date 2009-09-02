@@ -82,6 +82,7 @@ namespace {
         db.Add("UI.fleet-supply-lines",             "OPTIONS_DB_FLEET_SUPPLY_LINES",                true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        "OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH",           3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.fleet-supply-line-dot-spacing",  "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING",     20,         RangedStepValidator<int>(1, 3, 40));
+        db.Add("UI.fleet-supply-line-dot-rate",     "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE",        0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
 
         db.Add("UI.system-fog-of-war",              "OPTIONS_DB_UI_SYSTEM_FOG",                     true,       Validator<bool>());
@@ -2668,7 +2669,7 @@ void MapWnd::RenderFleetMovementLines()
 
     // set common animation shift for move lines
     const int       MOVE_LINE_DOT_SPACING = GetOptionsDB().Get<int>("UI.fleet-supply-line-dot-spacing");
-    const double    RATE =                  0.02;   // TODO: Make this a user-editable option
+    const double    RATE                  = GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate");
     move_line_animation_shift = static_cast<double>(static_cast<int>(static_cast<double>(GG::GUI::GetGUI()->Ticks()) * RATE) % MOVE_LINE_DOT_SPACING);
 
 

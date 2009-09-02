@@ -245,7 +245,10 @@ OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH
 Sets how wide to render fleet supply lines.
 
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING
-Sets how far apart to renders dots for fleet supply lines.
+Sets how far apart to render dots for fleet supply lines.
+
+OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
+Sets how fast to render dots for fleet supply lines.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
@@ -1062,6 +1065,9 @@ Fleet supply line width
 
 OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING
 Fleet supply line dot spacing
+
+OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE
+Fleet supply line dot rate
 
 OPTIONS_UNOWNED_STARLANE_COLOUR
 Default starlane colour
