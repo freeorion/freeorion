@@ -70,6 +70,54 @@ namespace {
     boost::shared_ptr<GG::Texture> SpeedIcon() {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "speed.png", true);
     }
+
+    std::string FleetDestinationText(int fleet_id) {
+        std::string retval = "";
+        const Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id);
+        if (!fleet)
+            return retval;
+
+        const System* dest = fleet->FinalDestination();
+        const System* current = fleet->GetSystem();
+        if (dest && dest != current) {
+            std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
+
+            // name of final destination
+            std::string dest_name = dest->Name();
+            if (dest_name.empty())
+                dest_name = UserString("UNKNOWN_SYSTEM");
+
+            // next system on path
+            std::string next_eta_text;
+            if (eta.second == Fleet::ETA_UNKNOWN)
+                next_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
+            else if (eta.second == Fleet::ETA_NEVER)
+                next_eta_text = UserString("FW_FLEET_ETA_NEVER");
+            else if (eta.second == Fleet::ETA_OUT_OF_RANGE)
+                next_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+            else
+                next_eta_text = boost::lexical_cast<std::string>(eta.second);
+
+            // final destination
+            std::string final_eta_text;
+            if (eta.first == Fleet::ETA_UNKNOWN)
+                final_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
+            else if (eta.first == Fleet::ETA_NEVER)
+                final_eta_text = UserString("FW_FLEET_ETA_NEVER");
+            else if (eta.first == Fleet::ETA_OUT_OF_RANGE)
+                final_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
+            else
+                final_eta_text = boost::lexical_cast<std::string>(eta.first);
+
+
+            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) %
+                                                dest_name % final_eta_text % next_eta_text);
+
+        } else if (current) {
+            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % current->Name());
+        }
+        return retval;
+    }
 }
 
 
@@ -677,6 +725,7 @@ private:
 
     GG::Control*        m_fleet_icon;
     GG::TextControl*    m_fleet_name_text;
+    GG::TextControl*    m_fleet_destination_text;
 
     std::vector<std::pair<std::string, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
 
@@ -694,6 +743,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
     m_y(y),
     m_fleet_icon(0),
     m_fleet_name_text(0),
+    m_fleet_destination_text(0),
     m_stat_icons(),
     m_selected(false)
 {
@@ -706,6 +756,10 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
                                             GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_name_text);
 
+    m_fleet_destination_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
+                                                   fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
+                                                   GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    AttachChild(m_fleet_destination_text);
 
     if (fleet) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
@@ -838,13 +892,14 @@ void FleetDataPanel::Select(bool b)
 
         GG::Clr text_color_to_use = m_selected ? selected_text_color : unselected_text_color;
 
-        if (GetUniverse().Object(m_fleet_id)) // use different colors for the "new fleet" panel
-            text_color_to_use = GG::CLR_BLACK;
-
         if (Disabled())
             text_color_to_use = DisabledColor(text_color_to_use);
 
-        m_fleet_name_text->SetTextColor(text_color_to_use);
+        if (m_fleet_name_text)
+            m_fleet_name_text->SetTextColor(text_color_to_use);
+
+        if (m_fleet_destination_text)
+            m_fleet_destination_text->SetTextColor(text_color_to_use);
     }
 }
 
@@ -863,8 +918,9 @@ void FleetDataPanel::Refresh()
     m_fleet_icon = 0;
 
     if (const Fleet* fleet = GetUniverse().Object<Fleet>(m_fleet_id)) {
-        // set fleet name
+        // set fleet name and destination text
         m_fleet_name_text->SetText(fleet->Name());
+        m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
         boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
@@ -881,6 +937,7 @@ void FleetDataPanel::Refresh()
         }
     } else {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
+        m_fleet_destination_text->Clear();
     }
 
     DoLayout();
@@ -921,6 +978,7 @@ void FleetDataPanel::DoLayout()
     GG::Pt name_ul = GG::Pt(GG::X(ICON_SIZE + PAD), GG::Y0);
     GG::Pt name_lr = GG::Pt(Width() - GG::X(PAD),   LabelHeight());
     m_fleet_name_text->SizeMove(name_ul, name_lr);
+    m_fleet_destination_text->SizeMove(name_ul, name_lr);
 
     // set stat icon positions
     GG::Pt icon_ul(GG::X(ICON_SIZE + PAD), LabelHeight());
@@ -1442,14 +1500,11 @@ private:
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            ShipBrowsed(GG::ListBox::iterator it);
     void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
-    std::string     DestinationText() const;
-    std::string     ShipStatusText(int ship_id) const;
 
     int                         m_fleet_id;
     const bool                  m_read_only;
     boost::signals::connection  m_fleet_connection;
 
-    GG::TextControl*            m_destination_text;
     ShipsListBox*               m_ships_lb;
 };
 
@@ -1458,15 +1513,10 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool read_onl
     GG::Wnd(GG::X0, GG::Y0, w, h, flags),
     m_fleet_id(UniverseObject::INVALID_OBJECT_ID),
     m_read_only(read_only),
-    m_destination_text(0),
     m_ships_lb(0)
 {
     SetName("FleetDetailPanel");
     EnableChildClipping(true);
-
-    m_destination_text = new GG::TextControl(GG::X0, GG::Y0, w, LabelHeight(), "", ClientUI::GetFont(),
-                                             ClientUI::TextColor(), GG::FORMAT_LEFT);
-    AttachChild(m_destination_text);
 
     m_ships_lb = new ShipsListBox(0, read_only);
     AttachChild(m_ships_lb);
@@ -1505,14 +1555,11 @@ void FleetDetailPanel::SetFleet(int fleet_id)
     if (m_fleet_id != old_fleet_id || m_fleet_id == UniverseObject::INVALID_OBJECT_ID)
         m_fleet_connection.disconnect();
 
-    *m_destination_text << "";
-
     m_ships_lb->SetFleet(fleet_id);
 
     if (const Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id)) {
         if (fleet && !fleet->Empty()) {
             // update desintation text and change signal connection
-            *m_destination_text << DestinationText();
             if (old_fleet_id != fleet_id)
                 m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this);
         } else {
@@ -1553,8 +1600,6 @@ void FleetDetailPanel::DoLayout()
 
     GG::Pt ul = GG::Pt(LEFT, top);
     GG::Pt lr = GG::Pt(RIGHT, top + LabelHeight());
-    m_destination_text->SizeMove(ul, lr);
-    top += (LabelHeight() + GG::Y(PAD));
 
     ul = GG::Pt(LEFT, top);
     lr = GG::Pt(RIGHT, bottom);
@@ -1625,61 +1670,6 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     }
 }
 
-std::string FleetDetailPanel::DestinationText() const
-{
-    std::string retval = "";
-    const Fleet* fleet = GetUniverse().Object<Fleet>(m_fleet_id);
-    if (!fleet)
-        return retval;
-
-    System* dest = fleet->FinalDestination();
-    System* current = fleet->GetSystem();
-    if (dest && dest != current) {
-        std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
-
-        // name of final destination
-        std::string dest_name = dest->Name();
-        if (dest_name.empty())
-            dest_name = UserString("UNKNOWN_SYSTEM");
-
-        // next system on path
-        std::string next_eta_text;
-        if (eta.second == Fleet::ETA_UNKNOWN)
-            next_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
-        else if (eta.second == Fleet::ETA_NEVER)
-            next_eta_text = UserString("FW_FLEET_ETA_NEVER");
-        else if (eta.second == Fleet::ETA_OUT_OF_RANGE)
-            next_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
-        else
-            next_eta_text = boost::lexical_cast<std::string>(eta.second);
-
-        // final destination
-        std::string final_eta_text;
-        if (eta.first == Fleet::ETA_UNKNOWN)
-            final_eta_text = UserString("FW_FLEET_ETA_UNKNOWN");
-        else if (eta.first == Fleet::ETA_NEVER)
-            final_eta_text = UserString("FW_FLEET_ETA_NEVER");
-        else if (eta.first == Fleet::ETA_OUT_OF_RANGE)
-            final_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
-        else
-            final_eta_text = boost::lexical_cast<std::string>(eta.first);
-
-
-        retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) %
-                                            dest_name % final_eta_text % next_eta_text);
-
-    } else if (current) {
-        retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % current->Name());
-    }
-    return retval;
-}
-
-std::string FleetDetailPanel::ShipStatusText(int ship_id) const
-{
-    Ship* ship = GetUniverse().Object<Ship>(ship_id);
-    const ShipDesign* design = ship->Design();
-    return UserString("FW_SHIP_CLASS") + " \"" + (design ? design->Name() : UserString("FW_UNKNOWN_DESIGN_NAME")) + "\"";
-}
 
 
 ////////////////////////////////////////////////
