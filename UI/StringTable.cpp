@@ -63,8 +63,21 @@ void StringTable_::Load()
     const sregex KEYEXPANSION =
         "[[" >> *space >> (s1 = IDENTIFIER) >> *space >> "]]";
 
+    // parse input text stream
     smatch matches;
-    if (regex_search(file_contents, matches, FILE_)) {
+    bool sequence_exists = false;
+    try {
+        // has caused crashes with "Regex stack space exhausted" exception
+        sequence_exists = regex_search(file_contents, matches, FILE_);
+    } catch(std::exception& e) {
+        Logger().errorStream() << "Exception caught regex parsing Stringtable: " << e.what();
+        std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;
+        return;
+    }
+
+
+    if (sequence_exists) {
+        // store pairs of string names and user-readable text, in map
         smatch::nested_results_type::const_iterator it = matches.nested_results().begin();
         smatch::nested_results_type::const_iterator end = matches.nested_results().end();
         std::size_t match_index = 0;
