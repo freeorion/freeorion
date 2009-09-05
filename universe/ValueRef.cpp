@@ -133,7 +133,7 @@ namespace ValueRef {
         case OBJ_PROD_CENTER: return "ProductionCenter";
         case OBJ_SYSTEM: return "System";
         default: return "?";
-        }                     
+        }
     }
 
     template <>
@@ -148,7 +148,7 @@ namespace ValueRef {
         case STAR_NEUTRON: return "Neutron";
         case STAR_BLACK: return "BlackHole";
         default: return "?";
-        }                     
+        }
     }
 
     template <>
@@ -163,7 +163,7 @@ namespace ValueRef {
         case FOCUS_RESEARCH: return "Research";
         case FOCUS_TRADE: return "Trade";
         default: return "?";
-        }                     
+        }
     }
 
     template <>
