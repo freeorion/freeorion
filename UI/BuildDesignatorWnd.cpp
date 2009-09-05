@@ -938,7 +938,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     if (it != m_system_default_planets.end()) {
         int planet_id = it->second;
         if (m_side_panel->PlanetSelectable(planet_id)) {
-            SidePanel::SelectPlanet(it->second);
+            this->SelectPlanet(it->second);
             return;
         }
     }
