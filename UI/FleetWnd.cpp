@@ -1581,7 +1581,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
 std::string FleetDetailPanel::DestinationText() const
 {
-    std::string retval = "ERROR";
+    std::string retval = "";
     const Fleet* fleet = GetUniverse().Object<Fleet>(m_fleet_id);
     if (!fleet)
         return retval;

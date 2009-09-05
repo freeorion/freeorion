@@ -154,9 +154,10 @@ namespace {
         }
     }
 
-    /* returns fractional distance along line segment between two points that a third point between them is.
-     * assumes the "mid" point is between the "start" and "end" points, in which case the returned fraction is
-     * between 0.0 and 1.0 */
+    /* returns fractional distance along line segment between two points that a
+     * third point between them is.assumes the "mid" point is between the
+     * "start" and "end" points, in which case the returned fraction is between
+     * 0.0 and 1.0 */
     double FractionalDistanceBetweenPoints(double startX, double startY, double midX, double midY, double endX, double endY) {
         // get magnitudes of vectors
         double full_deltaX = endX - startX, full_deltaY = endY - startY;
@@ -168,12 +169,15 @@ namespace {
         return mid_length / full_length;
     }
 
-    /* Returns apparent map X and Y position of an object at universe position \a X and \a Y for an object
-     * that is located on a starlane between systems with ids \a lane_start_sys_id and \a lane_end_sys_id 
-     * The apparent position of an object depends on its actual position, the actual positions of the systems
-     * at the ends of the lane, and the apparent positions of the ends of the lanes.  The apparent position of
-     * objects on the lane is compressed into the space between the apparent ends of the lane, but is proportional
-     * to the distance of the actual position along the lane. */
+    /* Returns apparent map X and Y position of an object at universe position
+     * \a X and \a Y for an object that is located on a starlane between
+     * systems with ids \a lane_start_sys_id and \a lane_end_sys_id
+     * The apparent position of an object depends on its actual position, the
+     * actual positions of the systems at the ends of the lane, and the
+     * apparent positions of the ends of the lanes.  The apparent position of
+     * objects on the lane is compressed into the space between the apparent
+     * ends of the lane, but is proportional to the distance of the actual
+     * position along the lane. */
     std::pair<double, double> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
         std::pair<int, int> lane = UnorderedIntPair(lane_start_sys_id, lane_end_sys_id);
 
@@ -205,8 +209,8 @@ namespace {
         return std::make_pair(buttonX, buttonY);
     }
 
-    /* Updated each frame to shift rendered posistion of dots that are drawn to show
-     * fleet move lines. */
+    /* Updated each frame to shift rendered posistion of dots that are drawn to
+     * show fleet move lines. */
     double move_line_animation_shift = 0.0;    // in pixels
 }
 
@@ -1002,6 +1006,8 @@ void MapWnd::InitTurn(int turn_number)
     SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
     m_production_wnd->Refresh();
 
+
+    // start first turn with player's system selected
     if (turn_number == 1) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
             if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
@@ -2193,6 +2199,7 @@ void MapWnd::RefreshFleetButtons()
                 m_fleet_buttons[*fleet_it] = fb;
 
             AttachChild(fb);
+            MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }
@@ -2225,6 +2232,7 @@ void MapWnd::RefreshFleetButtons()
                 m_fleet_buttons[*fleet_it] = fb;
 
             AttachChild(fb);
+            MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }
@@ -2259,6 +2267,7 @@ void MapWnd::RefreshFleetButtons()
                 m_fleet_buttons[*fleet_it] = fb;
 
             AttachChild(fb);
+            MoveChildDown(fb);  // so fleet buttons won't show over sidepanel or sitrep window
             GG::Connect(fb->ClickedSignal, FleetButtonClickedFunctor(*fb, *this));
         }
     }

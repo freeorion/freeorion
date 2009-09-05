@@ -1768,7 +1768,7 @@ namespace {
 
 
     System* GenerateSystem(Universe &universe, Age age, double x, double y) {
-        Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
+        //Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
 
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
