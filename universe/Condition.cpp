@@ -1494,17 +1494,34 @@ Condition::And::~And()
 
 void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    // if search domain is non targets, evalucate first operand condition on non targets, to assemble an
-    // initial targets set.  if search domain is targets, evaluate first (and all other) operand condition
-    // on existing targets set
-    m_operands[0]->Eval(source, targets, non_targets, search_domain);
+    if (search_domain == NON_TARGETS) {
+        ObjectSet partly_checked_non_targets;
 
-    // regardless of whether search domain is TARGET or NON_TARGETS, evaluate remaining operand conditions
-    // on targets set, removing any targets that don't meet additional conditions, and stopping early if all
-    // targets are removed
-    for (unsigned int i = 1; i < m_operands.size(); ++i) {
-        if (targets.empty()) break;
-        m_operands[i]->Eval(source, targets, non_targets, TARGETS);
+        // move items in non_targets set that pass first operand condition into
+        // partly_checked_non_targets set
+        m_operands[0]->Eval(source, partly_checked_non_targets, non_targets, NON_TARGETS);
+
+        // move items that don't pass one of the other conditions back to non_targets
+        for (unsigned int i = 1; i < m_operands.size(); ++i) {
+            if (partly_checked_non_targets.empty()) break;
+            m_operands[i]->Eval(source, partly_checked_non_targets, non_targets, TARGETS);
+        }
+
+        // merge items that passed all operand conditions into targets
+        targets.insert(partly_checked_non_targets.begin(), partly_checked_non_targets.end());
+        partly_checked_non_targets.clear();
+
+        // items already in targets set are not checked/ and remain in targets set even if
+        // they don't match one of the operand conditions
+
+    } else {
+        // check all operand conditions on all objects in the targets set, moving those
+        // that don't pass a condition to the non-targets set
+
+        for (unsigned int i = 0; i < m_operands.size(); ++i) {
+            if (targets.empty()) break;
+            m_operands[i]->Eval(source, targets, non_targets, TARGETS);
+        }
     }
 }
 
@@ -1556,8 +1573,9 @@ Condition::Or::~Or()
 void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     if (search_domain == NON_TARGETS) {
-        // if search domain is non targets, evalucate with search domain non_targets on each operand condition, using
-        // the remaining non_targets from the previous operand condition as the non_targets for the next operand condition
+        // check each item in the non-targets set against each of the operand conditions
+        // if a non-target item matches an operand condition, move the item to the
+        // targets set.
 
         for (unsigned int i = 0; i < m_operands.size(); ++i) {
             if (non_targets.empty()) break;
@@ -1565,20 +1583,24 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
         }
 
     } else {
-        // if search domain is targets, create a temporary empty new_targets set, and use the targets set as the
-        // effective non_targets set while evaluating each condition on the effective non_targets set.  this way,
-        // if a target set object matches any conditions, it will be added to the new_targets set.  after evaluating
-        // all conditions on the effective non_targets set, add the remaining objects to the real non_targets set,
-        // and set the real targets set equal to the new_targets set
+        ObjectSet partly_checked_targets;
 
-        ObjectSet new_targets;  // new empty targets set
-        ObjectSet& temp_non_targets = targets;
-        for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            if (temp_non_targets.empty()) break;
-            m_operands[i]->Eval(source, new_targets, temp_non_targets, NON_TARGETS);
+        // move items in targets set the fail the first operand condition into 
+        // partly_checked_targets set
+        m_operands[0]->Eval(source, targets, partly_checked_targets, TARGETS);
+
+        // move items that pass any of the other conditions back into targets
+        for (unsigned int i = 1; i < m_operands.size(); ++i) {
+            if (partly_checked_targets.empty()) break;
+            m_operands[i]->Eval(source, targets, partly_checked_targets, NON_TARGETS);
         }
-        non_targets.insert(temp_non_targets.begin(), temp_non_targets.end()); // move targets set object that didn't match any conditions to non_targets set
-        targets = new_targets;  // set targets set equal to set of objects that matched at least one condition
+
+        // merge items that failed all operand conditions into non_targets
+        non_targets.insert(partly_checked_targets.begin(), partly_checked_targets.end());
+        partly_checked_targets.clear();
+
+        // items already in non_targets set are not checked and remain in
+        // non_targets set even if they pass one or more of the conditions
     }
 }
 
@@ -1627,7 +1649,15 @@ Condition::Not::~Not()
 
 void Condition::Not::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    m_operand->Eval(source, non_targets, targets, search_domain == TARGETS ? NON_TARGETS : TARGETS);
+    if (search_domain == NON_TARGETS) {
+        // search non_targets set for items that don't meet the operand
+        // condition, and move those to the targets set
+        m_operand->Eval(source, non_targets, targets, TARGETS); // swapping order of targets and non_targets set parameters and TARGETS / NON_TARGETS search domain effects NOT on requested search domain
+    } else {
+        // search targets set for items that meet the operand condition
+        // condition, and move those to the non_targets set
+        m_operand->Eval(source, non_targets, targets, NON_TARGETS);
+    }
 }
 
 std::string Condition::Not::Description(bool negated/* = false*/) const
