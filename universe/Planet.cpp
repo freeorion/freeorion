@@ -205,12 +205,14 @@ std::vector<int> Planet::FindObjectIDs() const
 
 Visibility Planet::GetVisibility(int empire_id) const
 {
-    // use the containing system's visibility
-    const System* system = GetSystem();
-    if (system)
-        return system->GetVisibility(empire_id);
-    else
-        return VIS_NO_VISIBILITY;
+    // if empire_id knows more than basic visiblity of a system, it can
+    // see into the system and can see its planets.
+    if (const System* system = GetSystem()) {
+        Visibility system_vis = system->GetVisibility(empire_id);
+        if (system_vis > VIS_BASIC_VISIBILITY)
+            return system_vis;
+    }
+    return VIS_NO_VISIBILITY;
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const

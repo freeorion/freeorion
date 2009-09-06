@@ -931,7 +931,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
         }
     }
 
-    // 2) EffectsGroups from Specials
+    // 2) EffectsGroups from Techs
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
@@ -986,15 +986,19 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
                                                     const std::string& specific_cause_name,
                                                     const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
-    Effect::EffectsGroup::TargetSet potential_target_set;
+    // transfer target objects from input vector to a set
+    Effect::EffectsGroup::TargetSet all_potential_targets;
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
-        potential_target_set.insert(Object(*it));
-
-    Effect::EffectsGroup::TargetSet target_set;
+        all_potential_targets.insert(Object(*it));
 
     // process all effects groups in set provided
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
+        // create non_targets and targets sets for current effects group
+        Effect::EffectsGroup::TargetSet target_set;                                     // initially empty
+        Effect::EffectsGroup::TargetSet potential_target_set = all_potential_targets;   // copy again each iteration, so previous iterations don't affect starting potential targets of next iteration
+
+        // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
 
         // combine effects group and source object id into a sourced effects group
@@ -1004,7 +1008,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         EffectCause effect_cause(effect_cause_type, specific_cause_name);
 
         // get set of target objects for this effects group from potential targets specified
-        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);
+        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
 
         // combine target set and effect cause
         EffectTargetAndCause target_and_cause(target_set, effect_cause);

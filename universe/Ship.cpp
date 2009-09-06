@@ -6,6 +6,12 @@
 #include "Predicates.h"
 #include "ShipDesign.h"
 
+namespace {
+    void GrowFuelMeter(Meter* fuel_meter) {
+        assert(fuel_meter);
+        fuel_meter->AdjustCurrent(0.1);
+    }
+}
 
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
@@ -174,4 +180,5 @@ void Ship::MovementPhase() {
 }
 
 void Ship::PopGrowthProductionResearchPhase() {
+    GrowFuelMeter(GetMeter(METER_FUEL));
 }
