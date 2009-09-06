@@ -58,7 +58,7 @@ namespace {
         assert(resource_meter);
         double initial_current =    resource_meter->InitialCurrent();
 
-        double delta = updated_current_construction / (10.0 + initial_current);
+        double delta = 1.0;
 
         resource_meter->AdjustCurrent(delta);
     }
@@ -69,7 +69,7 @@ namespace {
         double initial_current =    construction_meter->InitialCurrent();
         double initial_max =        construction_meter->InitialMax();
 
-        double delta = (initial_current + 1) * ((initial_max - initial_current) / (initial_max + 1)) * (updated_current_population * 10.0) * 0.01;
+        double delta = 1.0;
 
         construction_meter->AdjustCurrent(delta);
     }
@@ -106,13 +106,14 @@ double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
     case METER_RESEARCH:
     case METER_TRADE:
         GrowConstructionMeter(&construction, GetPopMeter()->Current());
+        construction.Clamp();
         GrowResourceMeter(&meter, construction.Current());
         meter.Clamp();
         return meter.Current();
         break;
     case METER_CONSTRUCTION:
         GrowConstructionMeter(&construction, GetPopMeter()->Current());
-        meter.Clamp();
+        construction.Clamp();
         return construction.Current();
         break;
     default:
