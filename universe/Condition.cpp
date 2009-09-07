@@ -376,12 +376,28 @@ std::string Condition::EmpireAffiliation::Dump() const
 
 bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    int empire_id = m_empire_id->Eval(source, target);
+
     switch (m_affiliation) {
     case AFFIL_SELF:
-        return m_exclusive ? target->WhollyOwnedBy(m_empire_id->Eval(source, target)) : target->OwnedBy(m_empire_id->Eval(source, target));
-            break;
+        if (m_exclusive) {
+            // target object owned only by specified empire
+            return target->WhollyOwnedBy(empire_id);
+        } else {
+            // target object owned by specified empire, and possibly others
+            return target->OwnedBy(empire_id);
+        }
+        break;
     case AFFIL_ENEMY:
-        // TODO
+        if (m_exclusive) {
+            // target has an owner, but isn't owned by specified empire
+            return (!target->Owners().empty() && !target->OwnedBy(empire_id));
+        } else {
+            // at least one of target's owners is not specified empire, but specified empire may also own target
+            return (target->Owners().size() > 1 ||
+                    (!target->Owners().empty() && !target->OwnedBy(empire_id))
+                   );
+        }
         break;
     case AFFIL_ALLY:
         // TODO
