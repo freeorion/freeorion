@@ -454,8 +454,8 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
         return;
 
     double value = m_value->Eval(source, target);
-    Empire* empire = Empires().Lookup(*source->Owners().begin());
-    empire->SetResourceStockpile(m_stockpile, value);
+    if (Empire* empire = Empires().Lookup(*source->Owners().begin()))
+        empire->SetResourceStockpile(m_stockpile, value);
 }
 
 std::string SetEmpireStockpile::Description() const
@@ -1024,8 +1024,10 @@ SetTechAvailability::~SetTechAvailability()
 void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     Empire* empire = Empires().Lookup(m_empire_id->Eval(source, target));
+    if (!empire) return;
+
     const Tech* tech = GetTech(m_tech_name);
-    assert(empire && tech);
+    if (!tech) return;
 
     const std::vector<ItemSpec>& items = tech->UnlockedItems();
     for (unsigned int i = 0; i < items.size(); ++i) {
