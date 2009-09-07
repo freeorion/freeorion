@@ -233,13 +233,13 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     UniverseObject* loc = universe.Object(location_id);
     if (!loc) return false;
 
-    Empire * empire = Empires().Lookup(empire_id);
+    Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().debugStream() << "BuildingType::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
-    UniverseObject * source = universe.Object(empire->CapitolID());
+    UniverseObject* source = universe.Object(empire->CapitolID());
     if (!source) return false;
 
     locations.insert(loc);

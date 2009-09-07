@@ -31,6 +31,20 @@ namespace {
         }
         return retval;
     }
+
+    std::string GetTypeName(const UniverseObject* obj) {
+        if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
+            return "Fleet";
+        if (const Ship* fleet = universe_object_cast<const Ship*>(obj))
+            return "Ship";
+        if (const Planet* fleet = universe_object_cast<const Planet*>(obj))
+            return "Planet";
+        if (const System* fleet = universe_object_cast<const System*>(obj))
+            return "System";
+        if (const Building* fleet = universe_object_cast<const Building*>(obj))
+            return "Building";
+        return "UniverseObject";
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -111,8 +125,7 @@ std::string Condition::Number::Dump() const
     return retval;
 }
 
-void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                               SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     // get set of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -121,7 +134,7 @@ void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, O
     for (Universe::const_iterator uit = universe.begin(); uit != universe.end(); ++uit) {
         condition_non_targets.insert(uit->second);
     }
-    m_condition->Eval(source, condition_targets, condition_non_targets);
+    m_condition->Eval(source, condition_targets, condition_non_targets, NON_TARGETS);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     int matched = condition_targets.size();
@@ -129,11 +142,15 @@ void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, O
     int high = m_high->Eval(source, source);
     bool in_range = (low <= matched && matched < high);
 
+    // transfer objects to or from target set, according to whether number of matches was within
+    // the requested range.
     if (search_domain == TARGETS && !in_range) {
         non_targets.insert(targets.begin(), targets.end());
+        targets.clear();
     }
     if (search_domain == NON_TARGETS && in_range) {
         targets.insert(non_targets.begin(), non_targets.end());
+        non_targets.clear();
     }
 }
 
@@ -180,6 +197,43 @@ bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* 
 ///////////////////////////////////////////////////////////
 // NumberOf                                              //
 ///////////////////////////////////////////////////////////
+namespace {
+    /** Random number genrator function to use with random_shuffle */
+    int CustomRandInt(int max_plus_one) {
+        return RandSmallInt(0, max_plus_one - 1);
+    }
+    int (*CRI)(int) = CustomRandInt;
+
+
+    /** Transfers the indicated \a number of objects from from_set to to_set */
+    void TransferObjects(unsigned int number, Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
+        // ensure number of objects to be moved is within reasonable range
+        number = std::min<unsigned int>(number, from_set.size());
+        if (number == 0)
+            return;
+
+        // create list of bool flags to indicate whether each item in from_set
+        // with corresponding place in iteration order should be transfered
+        std::vector<bool> transfer_flags(from_set.size(), false);   // initialized to all false
+
+        // set first  number  flags to true
+        std::fill_n(transfer_flags.begin(), number, true);
+
+        // shuffle flags to randomize which flags are set
+        std::random_shuffle(transfer_flags.begin(), transfer_flags.end(), CRI);
+
+        // transfer objects that have been flagged
+        int i = 0;
+        for (Condition::ObjectSet::iterator it = from_set.begin() ; it != from_set.end(); ++i) {
+            Condition::ObjectSet::iterator temp = it++;
+            if (transfer_flags[i]) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+    }
+}
+
 Condition::NumberOf::NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition) :
     m_number(number),
     m_condition(condition)
@@ -215,44 +269,35 @@ std::string Condition::NumberOf::Dump() const
 void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
                                SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    // get set of all UniverseObjects that satisfy m_condition
-    ObjectSet condition_targets;
-    ObjectSet condition_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator uit = universe.begin(); uit != universe.end(); ++uit) {
-        condition_non_targets.insert(uit->second);
-    }
-    m_condition->Eval(source, condition_targets, condition_non_targets);
-
-    // find the desired number of objects in condition_targets
     int number = m_number->Eval(source, source);
-    std::vector<bool> inclusion_list(condition_targets.size());
-    std::vector<int> selection_list(condition_targets.size());
-    for (unsigned int i = 0; i < selection_list.size(); ++i) {
-        selection_list[i] = i;
-    }
-    for (int i = 0; i < std::min(number, static_cast<int>(condition_targets.size())); ++i) {
-        int temp = RandSmallInt(0, selection_list.size() - 1);
-        int selection = selection_list[temp];
-        inclusion_list[selection] = true;
-        selection_list.erase(selection_list.begin() + temp);
-    }
 
-    int i = 0;
-    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it, ++i) {
-        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
-        if (search_domain == TARGETS ? !inclusion_list[i] : inclusion_list[i]) {
-            to_set.insert(*it);
-            from_set.erase(*it);
-        }
-    }
+    if (search_domain == NON_TARGETS) {
+        // find items in non_targets set that match the test condition
+        ObjectSet matched_non_targets;
+        m_condition->Eval(source, matched_non_targets, non_targets, NON_TARGETS);
 
-    if (search_domain == TARGETS) {
-        for (ObjectSet::const_iterator it = condition_non_targets.begin(); it != condition_non_targets.end(); ++it) {
-            non_targets.insert(*it);
-            targets.erase(*it);
-        }
+        // transfer the indicated number of matched_non_targets to targets
+        TransferObjects(number, matched_non_targets, targets);
+
+        // move remainder of matched_non_targets back to non_targets
+        non_targets.insert(matched_non_targets.begin(), matched_non_targets.end());
+        matched_non_targets.clear();
+
+    } else {
+        // find items in targets set that don't match test condition, and move
+        // directly to non_targets
+        m_condition->Eval(source, targets, non_targets, TARGETS);
+
+        // move all matched targets to matched_targets set
+        ObjectSet matched_targets = targets;
+        targets.clear();
+
+        // transfer desired number of matched_targets back to targets set
+        TransferObjects(number, matched_targets, targets);
+
+        // move remainder to non_targets set
+        non_targets.insert(matched_targets.begin(), matched_targets.end());
+        matched_targets.clear();
     }
 }
 
@@ -265,9 +310,12 @@ Condition::All::All()
 void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     if (search_domain == NON_TARGETS) {
+        // move all objects from non_targets to targets
         targets.insert(non_targets.begin(), non_targets.end());
         non_targets.clear();
     }
+    // if search_comain is TARGETS, do nothing: all objects in target set
+    // match this condition, so should remain in target set
 }
 
 std::string Condition::All::Description(bool negated/* = false*/) const
@@ -1286,24 +1334,72 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
     const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
         condition_non_targets.insert(it->second);
-    }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    // determine which objects in the Universe are within the specified distance from the objects in condition_targets
-    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
-        ObjectSet::iterator it2 = from_set.begin();
-        ObjectSet::iterator end_it2 = from_set.end();
-        for ( ; it2 != end_it2; ) {
-            ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !Match(*it, *temp) : Match(*it, *temp)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+
+    //std::cout << "WithinDistance::Eval: objects meeting operand condition: " << m_condition->Dump() << std::endl;
+    //for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it)
+    //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+    //std::cout << std::endl;
+
+
+    if (search_domain == NON_TARGETS) {
+        // to be transferred to targets, object initially in non_targets
+        // needs to be within required distance of at least one
+        // condition_target
+
+        // check each non_target
+        for (ObjectSet::iterator non_targets_it = non_targets.begin() ; non_targets_it != non_targets.end();) {
+
+            // get current object while incrementing main iterator
+            ObjectSet::iterator current_non_target_it = non_targets_it++;
+            UniverseObject* non_target_obj = *current_non_target_it;
+
+            // see if current object is within required distance of any condition target
+            for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
+                if (Match(non_target_obj, *condition_targets_it)) {
+                    // current object is within required distance of current condition target.
+                    // transfer current object to targets set
+                    targets.insert(non_target_obj);
+                    non_targets.erase(current_non_target_it);
+                    break;
+                }
             }
         }
+
+    } else {
+        // to be transferred to non_targets, object initially in targets needs
+        // to be not within required distance of all/any condition targets
+
+        // transfer targets into temp storage
+        ObjectSet initial_targets = targets;
+        targets.clear();
+
+        // check initial targets
+        for (ObjectSet::iterator initial_targets_it = initial_targets.begin() ; initial_targets_it != initial_targets.end();) {
+
+            // get current object while incrementing main iterator
+            ObjectSet::iterator current_initial_target_it = initial_targets_it++;
+            UniverseObject* initial_target_obj = *current_initial_target_it;
+
+            // see if current object is within required distance of any condition target
+            for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
+                if (Match(initial_target_obj, *condition_targets_it)) {
+                    // current object is within required distance of current condition target.
+                    // transfer current object to back to targets set
+                    targets.insert(initial_target_obj);
+                    initial_targets.erase(current_initial_target_it);
+                    break;
+                }
+            }
+        }
+
+        // move any initial_targets that weren't in range of any condition
+        // target into non_targets
+        non_targets.insert(initial_targets.begin(), initial_targets.end());
+        initial_targets.clear();
     }
 }
 
@@ -1494,6 +1590,16 @@ Condition::And::~And()
 
 void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
+        //std::cout << "And::Eval: input targets:" << std::endl;
+        //for (ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
+        //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+        //std::cout << std::endl;
+
+        //std::cout << "And::Eval: input non_targets:" << std::endl;
+        //for (ObjectSet::const_iterator it = non_targets.begin(); it != non_targets.end(); ++it)
+        //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+        //std::cout << std::endl;
+
     if (search_domain == NON_TARGETS) {
         ObjectSet partly_checked_non_targets;
 
@@ -1501,17 +1607,27 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
         // partly_checked_non_targets set
         m_operands[0]->Eval(source, partly_checked_non_targets, non_targets, NON_TARGETS);
 
+        //std::cout << "And::Eval: non_target input objects meeting first condition: " << m_operands[0]->Dump() << std::endl;
+        //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
+        //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+        //std::cout << std::endl;
+
         // move items that don't pass one of the other conditions back to non_targets
         for (unsigned int i = 1; i < m_operands.size(); ++i) {
             if (partly_checked_non_targets.empty()) break;
             m_operands[i]->Eval(source, partly_checked_non_targets, non_targets, TARGETS);
+
+            //std::cout << "And::Eval: non_target input objects also meeting " << i + 1 <<"th condition: " << m_operands[i]->Dump() << std::endl;
+            //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
+            //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+            //std::cout << std::endl;
         }
 
         // merge items that passed all operand conditions into targets
         targets.insert(partly_checked_non_targets.begin(), partly_checked_non_targets.end());
         partly_checked_non_targets.clear();
 
-        // items already in targets set are not checked/ and remain in targets set even if
+        // items already in targets set are not checked, and remain in targets set even if
         // they don't match one of the operand conditions
 
     } else {
@@ -1522,6 +1638,9 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
             if (targets.empty()) break;
             m_operands[i]->Eval(source, targets, non_targets, TARGETS);
         }
+
+        // items already in non_targets set are not checked, and remain in non_targets set
+        // even if they pass all operand conditions
     }
 }
 
@@ -1582,6 +1701,9 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
             m_operands[i]->Eval(source, targets, non_targets, NON_TARGETS);
         }
 
+        // items already in targets set are not checked and remain in the
+        // targets set even if they fail all the operand conditions
+
     } else {
         ObjectSet partly_checked_targets;
 
@@ -1600,7 +1722,8 @@ void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, Objec
         partly_checked_targets.clear();
 
         // items already in non_targets set are not checked and remain in
-        // non_targets set even if they pass one or more of the conditions
+        // non_targets set even if they pass one or more of the operand 
+        // conditions
     }
 }
 
