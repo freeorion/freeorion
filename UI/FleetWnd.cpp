@@ -34,16 +34,23 @@ namespace {
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
     const std::string   SPEED_STAT_STRING = "Speed Stat";
-    const std::string&  MeterStatString(MeterType meter_type) {
-        return GG::GetEnumMap<MeterType>().FromEnum(meter_type);
+    const std::string   MeterStatString(MeterType meter_type) {
+        std::string retval = GG::GetEnumMap<MeterType>().FromEnum(meter_type);
+        //std::cout << "MeterStatString for meter type " << boost::lexical_cast<std::string>(meter_type) << " returning: " << retval << std::endl;
+        return retval;
     }
 
     MeterType           MeterTypeFromStatString(const std::string& stat_name) {
+        //std::cout << "MeterTypeFromStatString passed stat_name " << stat_name << std::endl;
         for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1)) {
-            const std::string& meter_name_string = GG::GetEnumMap<MeterType>().FromEnum(meter_type);
-            if (meter_name_string == stat_name)
+            std::string meter_name_string = MeterStatString(meter_type);
+            //std::cout << " ... comparing to meter name string " << meter_name_string << " which was derived from meter type " << boost::lexical_cast<std::string>(meter_type) << std::endl;
+            if (meter_name_string == stat_name) {
+                //std::cout << " ... ... match! returning " << boost::lexical_cast<std::string>(meter_type) << std::endl;
                 return meter_type;
+            }
         }
+        //std::cout << " ... didn't find match.  returning INVALID_METER_TYPE" << std::endl;
         return INVALID_METER_TYPE;
     }
 
@@ -591,6 +598,7 @@ namespace {
             // update stat icon values.  browse wnds should refresh themselves every time they're shown, so don't need to be reset here
             GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
             for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
+                //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
                 it->second->SetValue(StatValue(it->first));
             }
 
@@ -605,8 +613,11 @@ namespace {
                     return ship->Speed();
                 } else {
                     MeterType meter_type = MeterTypeFromStatString(stat_name);
-                    if (ship->GetMeter(meter_type))
+                    //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
+                    if (ship->GetMeter(meter_type)) {
+                        //std::cout << " ... ship has meter! returning meter points value " << ship->MeterPoints(meter_type) << std::endl;
                         return ship->MeterPoints(meter_type);
+                    }
                 }
             }
             return 0.0;
