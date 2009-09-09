@@ -149,6 +149,7 @@ namespace {
             | "currentshield"
             | "maxdefense"
             | "currentdefense"
+            | "tradestockpile"
             | "mineralstockpile"
             | "foodstockpile"
             | "tradeproduction"
