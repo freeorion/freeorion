@@ -797,7 +797,7 @@ void ServerApp::ProcessTurns()
     // Population growth or loss, health meter growth, resource current meter growth
     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();                          // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
+        it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
 

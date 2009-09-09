@@ -59,7 +59,6 @@ namespace {
         double initial_current =    resource_meter->InitialCurrent();
 
         double delta = 1.0;
-
         resource_meter->AdjustCurrent(delta);
     }
 
@@ -70,7 +69,6 @@ namespace {
         double initial_max =        construction_meter->InitialMax();
 
         double delta = 1.0;
-
         construction_meter->AdjustCurrent(delta);
     }
 }

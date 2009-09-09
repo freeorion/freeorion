@@ -44,6 +44,8 @@ public:
 
     virtual void            MovementPhase();
     virtual void            PopGrowthProductionResearchPhase();
+
+    void                    Reset();                            ///< resets any building state, and removes owners
     //@}
 
 private:
@@ -74,22 +76,23 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&          Name() const;               ///< returns the unique name for this type of building
-    const std::string&          Description() const;        ///< returns a text description of this type of building
-    std::string                 Dump() const;               ///< returns a data file format representation of this object
-    double                      BuildCost() const;          ///< returns the number of production points required to build this building
-    int                         BuildTime() const;          ///< returns the number of turns required to build this building
-    double                      MaintenanceCost() const;    ///< returns the number of monetary points required per turn to operate this building
-    const Condition::ConditionBase* Location() const;       ///< returns the condition that determines the locations where this building can be produced
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const; ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
-    const std::string&          Graphic() const;            ///< returns the name of the grapic file for this building type
+    const std::string&              Name() const;                   ///< returns the unique name for this type of building
+    const std::string&              Description() const;            ///< returns a text description of this type of building
+    std::string                     Dump() const;                   ///< returns a data file format representation of this object
+    double                          BuildCost() const;              ///< returns the number of production points required to build this building
+    int                             BuildTime() const;              ///< returns the number of turns required to build this building
+    double                          MaintenanceCost() const;        ///< returns the number of monetary points required per turn to operate this building
+    const Condition::ConditionBase* Location() const;               ///< returns the condition that determines the locations where this building can be produced
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
+                                    Effects() const;                ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
+    const std::string&              Graphic() const;                ///< returns the name of the grapic file for this building type
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from empire with ID \a from_empire_id
         the planet (or other UniverseObject) with id \a location_id on which this type of Building is located (if 
         \a as_production_item is false) or which is the location of a Production Queue BuildItem for a building
         of this type (otherwise) */
-    CaptureResult GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const;
+    CaptureResult                   GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const;
     //@}
 
 private:

@@ -36,6 +36,8 @@ namespace {
     }
 }
 
+const double PopCenter::MINIMUM_POP_CENTER_POPULATION = 0.051;  // rounds up to 0.1 when showing only two digits
+
 PopCenter::PopCenter(int race) :
     m_race(race), m_allocated_food(0.0)
 {}
@@ -65,7 +67,20 @@ double PopCenter::FuturePopGrowth() const
     double cur = GetMeter(METER_POPULATION)->Current();
     //Logger().debugStream() << "PopCenter::FuturePopGrowth  growth max: " << FuturePopGrowthMax() << "  allocated food: " << AllocatedFood();
 
-    return std::max(-cur, std::min(FuturePopGrowthMax(), std::min(AllocatedFood(), max) - cur));
+    // growth limited by max possible growth from health and current population
+    // based formula, by allocated food, and by max possible population for
+    // this PopCenter.
+    // population decline limited by current population: can't have negative
+    // population.
+    double raw_growth = std::max(-cur, std::min(FuturePopGrowthMax(), std::min(AllocatedFood(), max) - cur));
+
+    // if population will fall below minimum threshold, ensure this function
+    // returns actual decrease (although difference would be less than
+    // MINIMUM_POP_CENTER_POPULATION in any case
+    if (cur - raw_growth < MINIMUM_POP_CENTER_POPULATION)
+        return -cur;
+
+    return raw_growth;
 }
 
 double PopCenter::FuturePopGrowthMax() const
@@ -164,21 +179,22 @@ void PopCenter::PopGrowthProductionResearchPhase()
 {
     UniverseObject* object = GetObjectSignal();
     assert(object);
+
     Meter* pop = GetMeter(METER_POPULATION);
     Meter* health = GetMeter(METER_HEALTH);
 
-    double pop_adjustment =         FuturePopGrowth();
+    double pop_growth = FuturePopGrowth();
+    double cur = pop->Current();
+    double new_pop = cur + pop_growth;
+    if (new_pop >= MINIMUM_POP_CENTER_POPULATION) {
+        pop->SetCurrent(new_pop);
 
-    pop->AdjustCurrent(pop_adjustment);
-
-    double health_initial_current = health->InitialCurrent();
-    double health_initial_max =     health->InitialMax();
-
-
-    if (health_initial_current < health_initial_max) {
-        double health_adjustment = (((health_initial_max + 1.0) - health_initial_current) / (health_initial_max + 1.0));
-        health->AdjustCurrent(health_adjustment);
-        Logger().debugStream() << "PopCenter::PopGrowthProductionResearchPhase adjusted current health to: " << health->Current();
+        double health_delta = 1.0;
+        health->AdjustCurrent(health_delta);
+    } else {
+        // if population falls below threshold, fall completely to zero.
+        pop->SetCurrent(0.0);
+        health->SetCurrent(0.0);
     }
 }
 

@@ -294,44 +294,34 @@ void FleetTransferOrder::ExecuteImpl() const
 
     // sanity check
     if (!source_fleet || !target_fleet)
-    {
         throw std::runtime_error("Illegal fleet id specified in fleet merge order.");
-    }
 
     // verify that empire is not trying to take ships from somebody else's fleet
     if ( !source_fleet->OwnedBy(EmpireID()) )
-    {
         throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
-    }
 
     // verify that empire cannot merge ships into somebody else's fleet.
     // this is just an additional security measure.  IT could be removed to
     // allow 'donations' of ships to other players, provided the server
     // verifies IDs of the Empires issuing the orders.
     if ( !target_fleet->OwnedBy(EmpireID()) )
-    {
         throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
-    }
+
 
     // iterate down the ship vector and add each one to the fleet
     // after first verifying that it is a valid ship id
     vector<int>::const_iterator itr = m_add_ships.begin();
-    while (itr != m_add_ships.end())
-    {
+    while (itr != m_add_ships.end()) {
         // find the ship, verify that ID is valid
         int curr = (*itr);
         Ship* a_ship = universe.Object<Ship>(curr);
         if (!a_ship)
-        {
             throw std::runtime_error("Illegal ship id specified in fleet merge order.");
-        }
 
         // figure out what fleet this ship is coming from -- verify its the one we
         // said it comes from
-        if (a_ship->FleetID() != SourceFleet() )
-        {
+        if (a_ship->FleetID() != SourceFleet())
             throw std::runtime_error("Ship in merge order is not in specified source fleet.");
-        }
 
         // send the ship to its new fleet
         //a_ship->SetFleetID(DestinationFleet());  // redundant: AddShip resets the Fleet ID of ships it adds
@@ -387,7 +377,7 @@ void FleetColonizeOrder::ServerExecute() const
         }
     }
 
-    universe.Delete(m_ship);
+    universe.Destroy(m_ship);
 
     if (colonist_capacity <= 0.0) {
         Logger().debugStream() << "colonize order executed by ship with zero colonist capacity!";
@@ -403,15 +393,15 @@ void FleetColonizeOrder::ServerExecute() const
     planet->GetMeter(METER_POPULATION)->BackPropegate();
     planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
     planet->GetMeter(METER_FARMING)->BackPropegate();
-    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);   // will later be clamped to max health
     planet->GetMeter(METER_HEALTH)->BackPropegate();
 
     planet->AddOwner(EmpireID());
 
-    Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
-    for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-        if (const Meter* meter = planet->GetMeter(meter_type))
-            Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->InitialCurrent() << "/" << meter->InitialMax();
+    //Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
+    //for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
+    //    if (const Meter* meter = planet->GetMeter(meter_type))
+    //        Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->InitialCurrent() << "/" << meter->InitialMax();
 }
 
 void FleetColonizeOrder::ExecuteImpl() const

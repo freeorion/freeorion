@@ -121,6 +121,14 @@ void Building::MovementPhase()
 void Building::PopGrowthProductionResearchPhase()
 {}
 
+void Building::Reset()
+{
+    ClearOwners();
+}
+
+/////////////////////////////////////////////////
+// BuildingType                                //
+/////////////////////////////////////////////////
 BuildingType::BuildingType() :
     m_name(""),
     m_description(""),

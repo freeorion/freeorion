@@ -49,6 +49,8 @@ public:
     void                    Reset(double max_pop_mod, double max_health_mod);   ///< Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.
     //@}
 
+    static const double MINIMUM_POP_CENTER_POPULATION;                          ///< below this population, planet is considered unpopulated and reset to uncolonized state
+
 protected:
     mutable GetObjectSignalType GetObjectSignal;                                ///< the UniverseObject-retreiving signal object for this PopCenter
 

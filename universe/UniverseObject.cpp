@@ -262,6 +262,12 @@ void UniverseObject::RemoveOwner(int id)
     StateChangedSignal();
 }
 
+void UniverseObject::ClearOwners()
+{
+    for (std::set<int>::iterator it = m_owners.begin(); it != m_owners.end(); ++it)
+        RemoveOwner(*it);
+}
+
 void UniverseObject::SetSystem(int sys)
 {
     //Logger().debugStream() << "UniverseObject::SetSystem(int sys)";

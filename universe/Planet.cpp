@@ -417,17 +417,19 @@ void Planet::AddOwner(int id)
 
 void Planet::RemoveOwner(int id)
 {
-    System *system = GetSystem();
+    System* system = GetSystem();
+
+    // check if Empire(id) is owner of at least one other planet in same system
     std::vector<Planet*> planets = system->FindObjects<Planet>();
+    int empire_owned_planets_in_this_planet_system = 0;
+    for (std::vector<Planet*>::const_iterator plt_it = planets.begin(); plt_it != planets.end(); ++plt_it)
+        if ((*plt_it)->OwnedBy(id))
+            ++empire_owned_planets_in_this_planet_system;
 
-    // check if Empire(id) is owner of at least one other planet
-    std::vector<Planet*>::const_iterator plt_it;
-    int count_planets = 0;
-    for(plt_it = planets.begin(); plt_it != planets.end(); ++plt_it)
-        if((*plt_it)->Owners().find(id) != (*plt_it)->Owners().end())
-            count_planets++;
-
-    if(count_planets == 1)
+    // if this is the only planet owned by this planet's current owner, removing
+    // that owner means the empire owns no planets in this system, so loses
+    // any ownership of the system as well
+    if (empire_owned_planets_in_this_planet_system < 2)
         system->UniverseObject::RemoveOwner(id);
 
     UniverseObject::RemoveOwner(id);
@@ -435,13 +437,28 @@ void Planet::RemoveOwner(int id)
 
 void Planet::Reset()
 {
-    std::set<int> owners = Owners();
-    for (std::set<int>::iterator it = owners.begin(); it != owners.end(); ++it) {
-        RemoveOwner(*it);
-    }
+    // remove owners
+    ClearOwners();
+
+    // reset popcenter meters
     PopCenter::Reset(MaxPopMod(Size(), Environment(Type())), MaxHealthMod(Environment(Type())));
+
+    // reset resourcecenter meters
     ResourceCenter::Reset();
-    m_buildings.clear();
+
+    // reset planet meters
+    GetMeter(METER_SUPPLY)->ResetMax();
+    GetMeter(METER_SHIELD)->ResetMax();
+    GetMeter(METER_DEFENSE)->ResetMax();
+    GetMeter(METER_DETECTION)->ResetMax();
+    GetMeter(METER_STEALTH)->ResetMax();
+
+    // reset buildings
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
+        if (Building* building = GetUniverse().Object<Building>(*it))
+            building->Reset();
+
+    // reset other state
     m_available_trade = 0.0;
     m_just_conquered = false;
     m_is_about_to_be_colonized = false;
@@ -556,12 +573,17 @@ void Planet::PopGrowthProductionResearchPhase()
 
     PopCenter::PopGrowthProductionResearchPhase();
 
-    double current_construction = GetMeter(METER_CONSTRUCTION)->Current();  // want current construction, that has been updated from initial current construction
-    GrowMeter(GetMeter(METER_SUPPLY),       current_construction);
-    GrowMeter(GetMeter(METER_SHIELD),       current_construction);
-    GrowMeter(GetMeter(METER_DEFENSE),      current_construction);
-    GrowMeter(GetMeter(METER_DETECTION),    current_construction);
-    GrowMeter(GetMeter(METER_STEALTH),      current_construction);
+    // check for starvation
+    if (GetPopMeter()->Current() < PopCenter::MINIMUM_POP_CENTER_POPULATION) {
+        Reset();
+    } else {
+        double current_construction = GetMeter(METER_CONSTRUCTION)->Current();  // want current construction, that has been updated from initial current construction
+        GrowMeter(GetMeter(METER_SUPPLY),       current_construction);
+        GrowMeter(GetMeter(METER_SHIELD),       current_construction);
+        GrowMeter(GetMeter(METER_DEFENSE),      current_construction);
+        GrowMeter(GetMeter(METER_DETECTION),    current_construction);
+        GrowMeter(GetMeter(METER_STEALTH),      current_construction);
+    }
 
     StateChangedSignal();
 }
