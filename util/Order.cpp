@@ -4,8 +4,9 @@
 #include "../universe/Fleet.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OrderSet.h"
-#include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../universe/Building.h"
+#include "../universe/Planet.h"
 #include "../universe/Ship.h"
 #include "../universe/System.h"
 #include "../universe/UniverseObject.h"
@@ -397,6 +398,16 @@ void FleetColonizeOrder::ServerExecute() const
     planet->GetMeter(METER_HEALTH)->BackPropegate();
 
     planet->AddOwner(EmpireID());
+
+    const std::set<int>& planet_buildings = planet->Buildings();
+    for (std::set<int>::const_iterator it = planet_buildings.begin(); it != planet_buildings.end(); ++it) {
+        if (Building* building = universe.Object<Building>(*it)) {
+            building->ClearOwners();
+            building->AddOwner(EmpireID()); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
+        } else {
+            Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find building with id: " << *it;
+        }
+    }
 
     //Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
     //for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
