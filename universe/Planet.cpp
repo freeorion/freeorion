@@ -65,15 +65,6 @@ namespace {
         }
         return 1.0;
     }
-
-    /* Removes all owners from UniverseObject \a obj */
-    void RemoveOwners(UniverseObject* obj) {
-        if (!obj) return;
-        // RemoveOwner will change owners, invalidating iterators over owners, so iterate over temp set
-        std::set<int> temp_owner = obj->Owners();
-        for(std::set<int>::const_iterator own_it = temp_owner.begin(); own_it != temp_owner.end(); ++own_it)
-            obj->RemoveOwner(*own_it);
-    }
 }
 
 
@@ -479,22 +470,16 @@ void Planet::Conquer(int conquerer)
     for (std::vector<UniverseObject*>::iterator it = contained_objects.begin(); it != contained_objects.end(); ++it) {
         UniverseObject* obj = *it;
 
-        // get current owner of object
-        int owner = ALL_EMPIRES;
-        const std::set<int>& owners = obj->Owners();
-        if (!owners.empty())
-            owner = *(owners.begin());
-
         // Buildings:
         if (Building* building = universe_object_cast<Building*>(obj)) {
             const BuildingType* type = building->GetBuildingType();
 
             // determine what to do with building of this type...
-            const CaptureResult cap_result = type->GetCaptureResult(owner, conquerer, this->ID(), false);
+            const CaptureResult cap_result = type->GetCaptureResult(obj->Owners(), conquerer, this->ID(), false);
 
             if (cap_result == CR_CAPTURE) {
                 // remove existing owners and replace with conquerer
-                RemoveOwners(obj);
+                obj->ClearOwners();
                 obj->AddOwner(conquerer);
             } else if (cap_result == CR_DESTROY) {
                 // destroy object
@@ -512,8 +497,9 @@ void Planet::Conquer(int conquerer)
         // TODO: deal with any other UniverseObject subclasses...?
     }
 
-    RemoveOwners(this);
-    AddOwner(conquerer);
+    // remove existing owners of planet itself and replace with conquerer
+    this->ClearOwners();
+    this->AddOwner(conquerer);
 }
 
 void Planet::SetIsAboutToBeColonized(bool b)

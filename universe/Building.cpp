@@ -257,8 +257,9 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     return !(locations.empty());
 }
 
-CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id, int location_id, bool as_production_item) const {
-    //Empire*         from_empire =   Empires().Lookup(from_empire_id);
+CaptureResult BuildingType::GetCaptureResult(const std::set<int>& from_empire_ids, int to_empire_id,
+                                             int location_id, bool as_production_item) const
+{
     Empire*         to_empire =     Empires().Lookup(to_empire_id);
     UniverseObject* location =      GetUniverse().Object(location_id);
 
