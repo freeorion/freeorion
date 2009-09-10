@@ -250,10 +250,14 @@ Meter* UniverseObject::GetMeter(MeterType type)
 
 void UniverseObject::AddOwner(int id)
 {
-    m_owners.insert(id); 
-    /* TODO: if adding an owner to an object gives an the added owner an observer in, or ownership of
-     * a previoiusly unexplored system, then need to call empire->AddExploredSystem(system_id); */
-    StateChangedSignal();
+    if (id != ALL_EMPIRES) {
+        m_owners.insert(id);
+        StateChangedSignal();
+    }
+    /* TODO: if adding an owner to an object gives an the added owner an
+     * observer in, or ownership of a previoiusly unexplored system, then need
+     * to call empire->AddExploredSystem(system_id); */
+
 }
 
 void UniverseObject::RemoveOwner(int id)

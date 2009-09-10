@@ -244,11 +244,12 @@ namespace {
              >> buildtime_label >> int_p[part_p.build_time = arg1]
              >> mountableslottypes_label >> ship_slot_type_vec_p[part_p.mountable_slot_types = arg1]
              >> location_label >> condition_p[part_p.location = arg1]
+             >> !(effectsgroups_label >> effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[part_p.graphic = arg1])
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
                                            part_p.stats, part_p.cost, part_p.build_time,
                                            part_p.mountable_slot_types, part_p.location,
-                                           part_p.graphic)];
+                                           part_p.effects_groups, part_p.graphic)];
 
         slot_p =
             (str_p("slot")

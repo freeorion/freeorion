@@ -180,7 +180,9 @@ struct PartStatsClosure : boost::spirit::closure<PartStatsClosure, PartTypeStats
 
 struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
                                             PartTypeStats, double, int, std::vector<ShipSlotType>,
-                                            Condition::ConditionBase*, std::string>
+                                            Condition::ConditionBase*,
+                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                            std::string>
 {
     member1 this_;
     member2 name;
@@ -191,7 +193,8 @@ struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string,
     member7 build_time;
     member8 mountable_slot_types;
     member9 location;
-    member10 graphic;
+    member10 effects_groups;
+    member11 graphic;
 };
 
 struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double,

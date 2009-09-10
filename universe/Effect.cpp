@@ -682,6 +682,7 @@ void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target)
     }
 
     Planet* planet = new Planet(type, size);
+    assert(planet);
     int new_planet_id = GetNewObjectID();
     GetUniverse().InsertID(planet, new_planet_id);
 
@@ -714,6 +715,28 @@ CreateBuilding::CreateBuilding(const std::string& building_type) :
 
 void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* target) const
 {
+    Planet* location = universe_object_cast<Planet*>(target);
+    if (!location) {
+        Logger().errorStream() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
+        return;
+    }
+
+    const BuildingType* building_type = GetBuildingType(m_type);
+    if (!building_type) {
+        Logger().errorStream() << "CreateBuilding::Execute couldn't get building type";
+        return;
+    }
+
+    Building* building = new Building(ALL_EMPIRES, m_type, location->ID());
+    assert(building);
+    int new_building_id = GetNewObjectID();
+    GetUniverse().InsertID(building, new_building_id);
+
+    location->AddBuilding(new_building_id);
+
+    const std::set<int>& owners = location->Owners();
+    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
+        building->AddOwner(*it);
 }
 
 std::string CreateBuilding::Description() const

@@ -92,55 +92,55 @@ namespace {
                 scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr, true))));
     }
 
-    struct DescriptionVisitor :
-        public boost::static_visitor<>
+    struct DescriptionVisitor : public boost::static_visitor<>
     {
         DescriptionVisitor(ShipPartClass part_class, std::string& description) :
             m_class(part_class),
             m_description(description)
-            {}
+        {}
         void operator()(const double& d) const
-            {
-                std::string desc_string =
-                    m_class == PC_FUEL || m_class == PC_COLONY ?
-                    "PART_DESC_CAPACITY" : "PART_DESC_STRENGTH";
-                m_description +=
-                    str(FlexibleFormat(UserString(desc_string)) % d);
-            }
+        {
+            std::string desc_string =
+                m_class == PC_FUEL || m_class == PC_COLONY ?
+                "PART_DESC_CAPACITY" : "PART_DESC_STRENGTH";
+            m_description +=
+                str(FlexibleFormat(UserString(desc_string)) % d);
+        }
         void operator()(const DirectFireStats& stats) const
-            {
-                m_description +=
-                    str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
-                        % stats.m_damage
-                        % stats.m_ROF
-                        % stats.m_range);
-            }
+        {
+            m_description +=
+                str(FlexibleFormat(UserString("PART_DESC_DIRECT_FIRE_STATS"))
+                    % stats.m_damage
+                    % stats.m_ROF
+                    % stats.m_range);
+        }
         void operator()(const LRStats& stats) const
-            {
-                m_description +=
-                    str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
-                        % stats.m_damage
-                        % stats.m_ROF
-                        % stats.m_range
-                        % stats.m_speed
-                        % stats.m_health
-                        % stats.m_stealth
-                        % stats.m_capacity);
-            }
+        {
+            m_description +=
+                str(FlexibleFormat(UserString("PART_DESC_LR_STATS"))
+                    % stats.m_damage
+                    % stats.m_ROF
+                    % stats.m_range
+                    % stats.m_speed
+                    % stats.m_health
+                    % stats.m_stealth
+                    % stats.m_capacity);
+        }
         void operator()(const FighterStats& stats) const
-            {
-                m_description +=
-                    str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
-                        % UserString(stats.m_type == BOMBER ? "BOMBER" : "INTERCEPTOR")
-                        % stats.m_anti_fighter_damage
-                        % stats.m_anti_ship_damage
-                        % stats.m_launch_rate
-                        % stats.m_speed
-                        % stats.m_stealth
-                        % stats.m_health
-                        % stats.m_detection
-                        % stats.m_capacity);
-            }
+        {
+            m_description +=
+                str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
+                    % UserString(stats.m_type == BOMBER ? "BOMBER" : "INTERCEPTOR")
+                    % stats.m_anti_fighter_damage
+                    % stats.m_anti_ship_damage
+                    % stats.m_launch_rate
+                    % stats.m_speed
+                    % stats.m_stealth
+                    % stats.m_health
+                    % stats.m_detection
+                    % stats.m_capacity);
+        }
+
         const ShipPartClass m_class;
         std::string& m_description;
     };
@@ -344,6 +344,7 @@ PartType::PartType(
     ShipPartClass part_class, const PartTypeStats& stats, double cost, int build_time,
     std::vector<ShipSlotType> mountable_slot_types,
     const Condition::ConditionBase* location,
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
     const std::string& graphic) :
     m_name(name),
     m_description(description),
@@ -401,6 +402,9 @@ PartType::PartType(
         m_effects.push_back(IncreaseMax(METER_STEALTH, "MaxStealth", boost::get<double>(m_stats)));
     else if (m_class == PC_FUEL)
         m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", boost::get<double>(m_stats)));
+
+    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
+        m_effects.push_back(*it);
 }
 
 PartType::~PartType()
@@ -410,9 +414,14 @@ const std::string& PartType::Name() const {
     return m_name;
 }
 
-std::string PartType::Description() const
+const std::string& PartType::Description() const
 {
-    std::string retval = UserString(m_description) + "\n\n";
+    return m_description;
+}
+
+std::string PartType::StatDescription() const
+{
+    std::string retval;
     boost::apply_visitor(DescriptionVisitor(m_class, retval), m_stats);
     return retval;
 }
@@ -506,10 +515,14 @@ const std::string& HullType::Name() const {
     return m_name;
 }
 
-std::string HullType::Description() const
+const std::string& HullType::Description() const
 {
-    std::string retval = UserString(m_description) + "\n\n";
-    retval +=
+    return m_description;
+}
+
+std::string HullType::StatDescription() const
+{
+    std::string retval = 
         str(FlexibleFormat(UserString("HULL_DESC"))
             % m_starlane_speed
             % m_fuel
