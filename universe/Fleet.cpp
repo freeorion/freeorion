@@ -696,10 +696,16 @@ void Fleet::MovementPhase()
     std::set<int> fleet_supplied_systems;
     const std::set<int>& owners = Owners();
     for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-        std::set<int> empire_fleet_supplied_systems;
-        if (const Empire* empire = Empires().Lookup(*it))
-            empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
-        fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
+        if (const Empire* empire = Empires().Lookup(*it)) {
+            // add systems that receive fleet supply
+            const std::set<int>& empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
+            fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
+
+            // also add any system that is connected to a planet for resource sharing purposes
+            const std::set<std::set<int> >& empire_resource_supply_groups = empire->ResourceSupplyGroups();
+            for (std::set<std::set<int> >::const_iterator set_set_it = empire_resource_supply_groups.begin(); set_set_it != empire_resource_supply_groups.end(); ++set_set_it)
+                fleet_supplied_systems.insert(set_set_it->begin(), set_set_it->end());
+        }
     }
     //Logger().debugStream() << "Fleet Supplied Systems:";
     //for (std::set<int>::const_iterator it = fleet_supplied_systems.begin(); it != fleet_supplied_systems.end(); ++it)

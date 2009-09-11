@@ -128,6 +128,7 @@ void Ship::Resupply()
     Meter* meter = GetMeter(METER_FUEL);
     assert(meter);
     meter->SetCurrent(meter->Max());
+
     for (ConsumablesMap::iterator it = m_fighters.begin();
          it != m_fighters.end();
          ++it) {
@@ -135,6 +136,7 @@ void Ship::Resupply()
             it->second.first *
             boost::get<FighterStats>(GetPartType(it->first)->Stats()).m_capacity;
     }
+
     for (ConsumablesMap::iterator it = m_missiles.begin();
          it != m_missiles.end();
          ++it) {
