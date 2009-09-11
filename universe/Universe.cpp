@@ -1169,9 +1169,9 @@ void Universe::Destroy(int id)
         m_destroyed_object_knowers[id] = knowing_empires;
 
 
-        // move object to invalid position, thereby removing it from anything that contained it
-        // and propegating associated signals
-        obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        // move object to its own position, thereby removing it from anything
+        // that contained it and propegating associated signals
+        obj->MoveTo(obj->X(), obj->Y());
 
 
         // remove from existing objects set and insert into destroyed objects set
@@ -1415,19 +1415,17 @@ void Universe::DestroyImpl(int id)
     if (Ship* ship = universe_object_cast<Ship*>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         Fleet* fleet = ship->GetFleet();
-        Delete(id);
-        if (fleet && fleet->NumShips() == 0)
-            Delete(fleet->ID());
+        Destroy(id);
+        if (fleet && fleet->Empty())
+            Destroy(fleet->ID());
     } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
-        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it) {
-            Delete(*it);
-        }
-        Delete(id);
+        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it)
+            Destroy(*it);
+        Destroy(id);
     } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
-        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it) {
-            Delete (*it);
-        }
-        Delete(id);
+        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it)
+            Destroy(*it);
+        Destroy(id);
     } else if (universe_object_cast<System*>(obj)) {
         // unsupported: do nothing
     } else {

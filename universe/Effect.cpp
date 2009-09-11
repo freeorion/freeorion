@@ -239,28 +239,33 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 {
     UniverseObject* source = GetUniverse().Object(source_id);
-    assert(source);
+    if (!source) {
+        Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
+        return;
+    }
 
     // execute effects on targets
     for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
-        for (unsigned int i = 0; i < m_effects.size(); ++i) {
+        for (unsigned int i = 0; i < m_effects.size(); ++i)
             m_effects[i]->Execute(source, *it);
-        }
     }
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_index) const
 {
     UniverseObject* source = GetUniverse().Object(source_id);
-    assert(source);
+    if (!source) {
+        // TODO: Don't necessarily need to abort at this stage... some effects can function without a source object.
+        Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
+        return;
+    }
 
     assert(0 <= effect_index && effect_index < static_cast<int>(m_effects.size()));
 
     // execute effect on targets
-    for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+    for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
         m_effects[effect_index]->Execute(source, *it);
-    }
 }
 
 const std::string& EffectsGroup::StackingGroup() const
