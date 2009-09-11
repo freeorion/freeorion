@@ -923,12 +923,12 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
 // class StatisticIcon
 ///////////////////////////////////////
 StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
-                             double value, int digits, bool integerize, bool showsign,
+                             double value, int digits, bool showsign,
                              GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     GG::Control(x, y, w, h, flags),
     m_num_values(1),
     m_values(std::vector<double>(1, value)), m_digits(std::vector<int>(1, digits)),
-    m_integerize(std::vector<bool>(1, integerize)), m_show_signs(std::vector<bool>(1, showsign)),
+    m_show_signs(std::vector<bool>(1, showsign)),
     m_icon(0), m_text(0)
 {
     int font_space = ClientUI::Pts()*3/2;
@@ -951,12 +951,12 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
 
 StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
-                             bool integerize0, bool integerize1, bool showsign0, bool showsign1,
+                             bool showsign0, bool showsign1,
                              GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     GG::Control(x, y, w, h, flags),
     m_num_values(2),
     m_values(std::vector<double>(2, 0.0)), m_digits(std::vector<int>(2, 2)),
-    m_integerize(std::vector<bool>(2, false)), m_show_signs(std::vector<bool>(2, false)),
+    m_show_signs(std::vector<bool>(2, false)),
     m_icon(0), m_text(0)
 {
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
@@ -972,8 +972,6 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     m_values[1] = value1;
     m_digits[0] = digits0;
     m_digits[1] = digits1;
-    m_integerize[0] = integerize0;
-    m_integerize[1] = integerize1;
     m_show_signs[0] = showsign0;
     m_show_signs[1] = showsign1;
     AttachChild(m_icon);
@@ -989,7 +987,6 @@ void StatisticIcon::SetValue(double value, int index)
         m_num_values = index + 1;
         m_values.resize(m_num_values, 0.0);        
         m_show_signs.resize(m_num_values, m_show_signs[0]);
-        m_integerize.resize(m_num_values, m_integerize[0]);
         m_digits.resize(m_num_values, m_digits[0]);
     }
     m_values[index] = value;
@@ -1011,13 +1008,12 @@ void StatisticIcon::Refresh()
 
     // first value: always present
     std::string clr_tag = GG::RgbaTag(ValueColor(0));
-    text += clr_tag + DoubleToString(m_values[0], m_digits[0], m_integerize[0], m_show_signs[0]) + "</rgba>";
-    
+    text += clr_tag + DoubleToString(m_values[0], m_digits[0], m_show_signs[0]) + "</rgba>";
+
     // second value: may or may not be present
-    if (m_num_values > 1)
-    {
+    if (m_num_values > 1) {
         clr_tag = GG::RgbaTag(ValueColor(1));
-        text += " (" + clr_tag + DoubleToString(m_values[1], m_digits[1], m_integerize[1], m_show_signs[1]) + "</rgba>)";
+        text += " (" + clr_tag + DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) + "</rgba>)";
     }
 
     m_text->SetText(text);
@@ -1025,7 +1021,7 @@ void StatisticIcon::Refresh()
 
 GG::Clr StatisticIcon::ValueColor(int index) const
 {
-    int effectiveSign = EffectiveSign(m_values.at(index), m_integerize.at(index));
+    int effectiveSign = EffectiveSign(m_values.at(index));
 
     if (index == 0) return ClientUI::TextColor();
 

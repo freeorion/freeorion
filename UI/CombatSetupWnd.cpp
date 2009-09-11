@@ -90,7 +90,7 @@ namespace {
 
                 for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
                     StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                            ClientUI::MeterIcon(*it), 0, 0, true, false);
+                                                            ClientUI::MeterIcon(*it), 0, 0, false);
                     m_stat_icons.push_back(std::make_pair(*it, icon));
                     AttachChild(icon);
 

@@ -462,7 +462,7 @@ namespace {
 
                 for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
                     StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                            ClientUI::MeterIcon(*it), 0, 0, true, false);
+                                                            ClientUI::MeterIcon(*it), 0, 0, false);
                     m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
                     AttachChild(icon);
 
@@ -475,7 +475,7 @@ namespace {
 
                 // speed stat icon tooltip
                 StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                        SpeedIcon(), 0, 0, true, false);
+                                                        SpeedIcon(), 0, 0, false);
                 m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
                 AttachChild(icon);
 
@@ -777,7 +777,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
 
         // stat icon for fleet fuel
         StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                ClientUI::MeterIcon(METER_FUEL), 0, 0, true, false);
+                                                ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(MeterStatString(METER_FUEL), icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(MeterStatString(METER_FUEL)));
@@ -785,7 +785,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
 
         // stat icon for fleet speed
         icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                 SpeedIcon(), 0, 0, true, false);
+                                 SpeedIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
         icon->SetBrowseModeTime(tooltip_delay);
         icon->SetBrowseText(StatTooltip(SPEED_STAT_STRING));

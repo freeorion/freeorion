@@ -42,7 +42,7 @@ namespace {
             clr = ClientUI::StatIncrColor();
         else if (number < 0.0)
             clr = ClientUI::StatDecrColor();
-        return ColourWrappedtext(DoubleToString(number, 3, false, true), clr);
+        return ColourWrappedtext(DoubleToString(number, 3, true), clr);
     }
 
     /** Returns GG::Clr with which to display programatically coloured things
@@ -206,11 +206,11 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     GG::Y icon_height(ClientUI::Pts()*4/3);
 
     m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_POPULATION),
-                                   0, 3, false, false);
+                                   0, 3, false);
     AttachChild(m_pop_stat);
 
     m_health_stat = new StatisticIcon(w/2, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_HEALTH),
-                                      0, 3, false, false);
+                                      0, 3, false);
     AttachChild(m_health_stat);
 
 
@@ -496,23 +496,23 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_FARMING),
-                                       0, 3, false, false);
+                                       0, 3, false);
     AttachChild(m_farming_stat);
 
     m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_MINING),
-                                      0, 3, false, false);
+                                      0, 3, false);
     AttachChild(m_mining_stat);
 
     m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_INDUSTRY),
-                                        0, 3, false, false);
+                                        0, 3, false);
     AttachChild(m_industry_stat);
 
     m_research_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_RESEARCH),
-                                        0, 3, false, false);
+                                        0, 3, false);
     AttachChild(m_research_stat);
 
     m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_TRADE),
-                                     0, 3, false, false);
+                                     0, 3, false);
     AttachChild(m_trade_stat);
 
 
@@ -981,23 +981,23 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 
     // small meter indicators - for use when panel is collapsed
     m_fleet_supply_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_SUPPLY),
-                                            0, 3, false, false);
+                                            0, 3, false);
     AttachChild(m_fleet_supply_stat);
 
     m_shield_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_SHIELD),
-                                      0, 3, false, false);
+                                      0, 3, false);
     AttachChild(m_shield_stat);
 
     m_defense_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_DEFENSE),
-                                       0, 3, false, false);
+                                       0, 3, false);
     AttachChild(m_defense_stat);
 
     m_detection_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_DETECTION),
-                                         0, 3, false, false);
+                                         0, 3, false);
     AttachChild(m_detection_stat);
 
     m_stealth_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_STEALTH),
-                                       0, 3, false, false);
+                                       0, 3, false);
     AttachChild(m_stealth_stat);
 
 
@@ -1243,7 +1243,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const s
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
         m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
-                                            0.0, 3, false, false));
+                                            0.0, 3, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
@@ -1265,7 +1265,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
         m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
-                                            0.0, 3, false, false));
+                                            0.0, 3, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
@@ -2124,7 +2124,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
         double production = rc->ProjectedMeterPoints(ResourceToMeter(m_resource_type));
         m_production += production;
 
-        std::string amount_text = DoubleToString(production, 3, false, false);
+        std::string amount_text = DoubleToString(production, 3, false);
 
 
         GG::TextControl* label = new GG::TextControl(GG::X0, top, LABEL_WIDTH, row_height,
@@ -2181,7 +2181,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 
     m_production_label->SetText(boost::io::str(FlexibleFormat(UserString("RESOURCE_PRODUCTION_TOOLTIP")) %
                                                               resource_text %
-                                                              DoubleToString(m_production, 3, false, false)));
+                                                              DoubleToString(m_production, 3, false)));
 
     // height of label already added to top outside this function
 }
@@ -2238,7 +2238,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
         m_allocation += allocation;
 
-        std::string amount_text = DoubleToString(allocation, 3, false, false);
+        std::string amount_text = DoubleToString(allocation, 3, false);
 
         // TODO: for food only, colour allocation text depending on need of PopCenter:
         // - if allocation < need to avoid starvation: colour stat decr colour (red)
@@ -2305,7 +2305,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
         resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
     }
 
-    std::string system_allocation_text = DoubleToString(m_allocation, 3, false, false);
+    std::string system_allocation_text = DoubleToString(m_allocation, 3, false);
 
     // for research only, local allocation makes no sense
     if (m_resource_type == RE_RESEARCH && m_allocation == 0.0)
@@ -2351,11 +2351,11 @@ void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
             if (difference > 0.0) {
                 // show surplus
                 label_text = UserString("RESOURCE_EXPORT");
-                amount_text = DoubleToString(difference, 3, false, false);
+                amount_text = DoubleToString(difference, 3, false);
             } else if (difference < 0.0) {
                 // show amount being imported
                 label_text = UserString("RESOURCE_IMPORT");
-                amount_text = DoubleToString(std::abs(difference), 3, false, false);
+                amount_text = DoubleToString(std::abs(difference), 3, false);
             } else {
                 // show self-sufficiency
                 label_text = UserString("RESOURCE_SELF_SUFFICIENT");
@@ -2512,12 +2512,12 @@ void MeterBrowseWnd::UpdateSummary() {
     double meter_cur = meter->Current();
     double meter_max = meter->Max();
 
-    m_current_value->SetText(DoubleToString(current, 3, false, false));
-    m_next_turn_value->SetText(DoubleToString(next, 3, false, false));
+    m_current_value->SetText(DoubleToString(current, 3, false));
+    m_next_turn_value->SetText(DoubleToString(next, 3, false));
     m_change_value->SetText(ColouredNumber(change));
     m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
-                                          DoubleToString(meter_cur, 3, false, false) %
-                                          DoubleToString(meter_max, 3, false, false)));
+                                          DoubleToString(meter_cur, 3, false) %
+                                          DoubleToString(meter_max, 3, false)));
 
     switch (m_meter_type) {
     case METER_POPULATION:

@@ -207,10 +207,10 @@ extern const double UNKNOWN_UI_DISPLAY_VALUE;
   * positive values and -1 for negative values if their absolute value is
   * larger than SMALL VALUE, and returns 0 for zero values or values with
   * absolute value less than SMALL_UI_DISPLAY_VALUE */
-int EffectiveSign(double val, bool integerize);
+int EffectiveSign(double val);
 
-/** Converts double to string with \a digits significant figures.  Represents
-  * large or small numbers with SI prefixes. */
-std::string DoubleToString(double val, int digits, bool integerize, bool showsign);
+/** Converts double to string with \a digits digits.  Represents large numbers
+  * with SI prefixes. */
+std::string DoubleToString(double val, int digits, bool always_show_sign);
 
 #endif // _ClientUI_h_

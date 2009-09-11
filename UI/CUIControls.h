@@ -358,12 +358,12 @@ class StatisticIcon : public GG::Control
 public:
     /** \name Structors */ //@{
     StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
-                  double value, int digits, bool integerize, bool showsign,
+                  double value, int digits, bool showsign,
                   GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< initializes with one value
 
     StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
-                  bool integerize0, bool integerize1, bool showsign0, bool showsign1,
+                  bool showsign0, bool showsign1,
                   GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);  ///< initializes with two values
     //@}
 
@@ -385,7 +385,6 @@ private:
 
     std::vector<double> m_values;
     std::vector<int>    m_digits;
-    std::vector<bool>   m_integerize;
     std::vector<bool>   m_show_signs;
 
     GG::StaticGraphic*  m_icon;

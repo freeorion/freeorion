@@ -25,12 +25,13 @@
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
-#include "../network/Message.h"
-#include "../client/human/HumanClientApp.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Building.h"   // TEMP: For GetTypeName
 #include "../Empire/Empire.h"
+#include "../network/Message.h"
+#include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
@@ -131,7 +132,7 @@ namespace {
         iss >> version_number;
         version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
 
-        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
 
         if (version_number < 2.0)
             Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion requires OpenGL version 2.0 or greater, so you may have problems on this system.";
@@ -212,6 +213,21 @@ namespace {
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
     double move_line_animation_shift = 0.0;    // in pixels
+
+    /* temp */
+    std::string GetTypeName(const UniverseObject* obj) {
+        if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
+            return "Fleet";
+        if (const Ship* fleet = universe_object_cast<const Ship*>(obj))
+            return "Ship";
+        if (const Planet* fleet = universe_object_cast<const Planet*>(obj))
+            return "Planet";
+        if (const System* fleet = universe_object_cast<const System*>(obj))
+            return "System";
+        if (const Building* fleet = universe_object_cast<const Building*>(obj))
+            return "Building";
+        return "UniverseObject";
+    }
 }
 
 
@@ -662,32 +678,32 @@ MapWnd::MapWnd() :
     const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
     m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
-                                     0,0,3,3,true,true,false,true);
+                                     0,0,3,3,false,true);
     m_toolbar->AttachChild(m_population);
 
     m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
-                                   0,3,true,false);
+                                   0,3,false);
     m_toolbar->AttachChild(m_industry);
 
     m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
-                                   0,3,true,false);
+                                   0,3,false);
     m_toolbar->AttachChild(m_research);
 
     m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
-                                0,0,3,3,true,true,false,true);
+                                0,0,3,3,false,true);
     m_toolbar->AttachChild(m_trade);
 
     m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                   ClientUI::MeterIcon(METER_MINING),
-                                  0,0,3,3,true,true,false,true);
+                                  0,0,3,3,false,true);
     m_toolbar->AttachChild(m_mineral);
 
     m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
                                ClientUI::MeterIcon(METER_FARMING),
-                               0,0,3,3,true,true,false,true);
+                               0,0,3,3,false,true);
     m_toolbar->AttachChild(m_food);
 
     m_menu_showing = false;
@@ -881,6 +897,25 @@ void MapWnd::InitTurn(int turn_number)
     //    else
     //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
     //}
+    //// DEBUG
+    //std::cout << "UniverseObjects: " << std::endl;
+    //for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    //    const UniverseObject* obj = it->second;
+    //    std::cout << GetTypeName(obj) << "  " << obj->Name();
+
+    //    if (const System* system = obj->GetSystem())
+    //        std::cout << "  at: " << system->Name();
+
+    //    const std::set<int>& owners = obj->Owners();
+    //    if (!owners.empty()) {
+    //        std::cout << "  owners:";
+    //        for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
+    //            std::cout << " " << *own_it;
+    //    }
+
+    //    std::cout << std::endl;
+    //}
+    //std::cout << std::endl;
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
