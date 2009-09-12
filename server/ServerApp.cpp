@@ -328,6 +328,20 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
                               m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
 
+
+    // Determine initial supply distribution and exchanging and resource pools for empires
+    EmpireManager& empires = Empires();
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        Empire* empire = it->second;
+
+        empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
+        empire->UpdateSystemSupplyRanges();         // sets range systems can propegate fleet and resourse supply (separately)
+        empire->UpdateFleetSupply();                // determines which systems can access fleet supply, and starlane traversals used to do this
+        empire->UpdateResourceSupply();             // determines the separate groups of systems within which (but not between which) resources can be shared
+        empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
+        empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
+    }
+
     Logger().debugStream() << "Universe Created.  Adding empires to turn processing list";
 
     std::vector<PlayerConnectionPtr> shuffled_players;
@@ -516,7 +530,7 @@ namespace {
 
 void ServerApp::ProcessTurns()
 {
-    EmpireManager&  empires = Empires();
+    EmpireManager& empires = Empires();
 
 
     // Now all orders, then process turns
