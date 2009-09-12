@@ -34,6 +34,8 @@ namespace Condition {
     struct PlanetEnvironment;
     struct FocusType;
     struct StarType;
+    struct DesignHasHull;
+    struct DesignHasPart;
     struct Chance;
     struct MeterValue;
     struct EmpireStockpileValue;
@@ -68,8 +70,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects if the number of objects that match Condition \a condition is is >= \a low and < \a high.
-    Matched objects may or may not themselves match the condition. */
+/** Matches all objects if the number of objects that match Condition
+  * \a condition is is >= \a low and < \a high.  Matched objects may
+  * or may not themselves match the condition. */
 struct Condition::Number : Condition::ConditionBase
 {
     Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition);
@@ -138,8 +141,9 @@ struct Condition::All : Condition::ConditionBase
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are owned (if \a exclusive == false) or only owned (if \a exclusive == true) by an empire that has
-    affilitation type \a affilitation with Empire \a empire_id. */
+/** Matches all objects that are owned (if \a exclusive == false) or only owned
+  * (if \a exclusive == true) by an empire that has affilitation type
+  * \a affilitation with Empire \a empire_id. */
 struct Condition::EmpireAffiliation : Condition::ConditionBase
 {
     EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation, bool exclusive);
@@ -235,8 +239,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that have an attached Special of the sort specified by \a name.  Passing "All" for
-    \a name will match all objects with attached Specials. */
+/** Matches all objects that have an attached Special of the sort specified by
+  * \a name.  Passing "All" for \a name will match all objects with attached
+  * Specials. */
 struct Condition::HasSpecial : Condition::ConditionBase
 {
     HasSpecial(const std::string& name);
@@ -252,8 +257,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that contain an object that matches Condition \a condition.  Container objects are Systems,
-    Planets (which contain Buildings), and Fleets (which contain Ships). */
+/** Matches all objects that contain an object that matches Condition
+  * \a condition.  Container objects are Systems, Planets (which contain
+  * Buildings), and Fleets (which contain Ships). */
 struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
@@ -269,8 +275,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are contained by an object that matches Condition \a condition.  Container objects
-    are Systems, Planets (which contain Buildings), and Fleets (which contain Ships). */
+/** Matches all objects that are contained by an object that matches Condition
+  * \a condition.  Container objects are Systems, Planets (which contain
+  * Buildings), and Fleets (which contain Ships). */
 struct Condition::ContainedBy : Condition::ConditionBase
 {
     ContainedBy(const ConditionBase* condition);
@@ -286,8 +293,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all Planet objects that have one of the PlanetTypes in \a types.  Note that all
-    Building objects which are on matching planets are also matched. */
+/** Matches all Planet objects that have one of the PlanetTypes in \a types.
+  * Note that all Building objects which are on matching planets are also
+  * matched. */
 struct Condition::PlanetType : Condition::ConditionBase
 {
     PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types);
@@ -304,8 +312,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all Planet objects that have one of the PlanetSizes in \a sizes.  Note that all
-    Building objects which are on matching planets are also matched. */
+/** Matches all Planet objects that have one of the PlanetSizes in \a sizes.
+  * Note that all Building objects which are on matching planets are also
+  * matched. */
 struct Condition::PlanetSize : Condition::ConditionBase
 {
     PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
@@ -370,6 +379,42 @@ struct Condition::StarType : Condition::ConditionBase
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
     std::vector<const ValueRef::ValueRefBase< ::StarType>*> m_types;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all ships whose ShipDesign has the hull specified by \a name. */
+struct Condition::DesignHasHull : Condition::ConditionBase
+{
+    DesignHasHull(const std::string& name);
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+    std::string     m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
+  * part specified by \a name. */
+struct Condition::DesignHasPart : Condition::ConditionBase
+{
+    DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const std::string& name);
+    virtual ~DesignHasPart();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+    std::string                         m_name;
+    const ValueRef::ValueRefBase<int>*  m_low;
+    const ValueRef::ValueRefBase<int>*  m_high;
 
     friend class boost::serialization::access;
     template <class Archive>

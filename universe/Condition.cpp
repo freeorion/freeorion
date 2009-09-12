@@ -1084,6 +1084,84 @@ bool Condition::StarType::Match(const UniverseObject* source, const UniverseObje
 }
 
 ///////////////////////////////////////////////////////////
+// DesignHasHull                                              //
+///////////////////////////////////////////////////////////
+Condition::DesignHasHull::DesignHasHull(const std::string& name) :
+    m_name(name)
+{}
+
+std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_DESIGN_HAS_HULL";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str)) % UserString(m_name));
+}
+
+std::string Condition::DesignHasHull::Dump() const
+{
+    return DumpIndent() + "DesignHasHull name = \"" + m_name + "\"\n";
+}
+
+bool Condition::DesignHasHull::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    if (const Ship* ship = universe_object_cast<const Ship*>(target))
+        if (const ShipDesign* design = ship->Design())
+            return (design->Hull() == m_name);
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// DesignHasPart                                              //
+///////////////////////////////////////////////////////////
+Condition::DesignHasPart::DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const std::string& name) :
+    m_low(low),
+    m_high(high),
+    m_name(name)
+{
+}
+
+Condition::DesignHasPart::~DesignHasPart()
+{
+    delete m_low;
+    delete m_high;
+}
+
+std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const
+{
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string description_str = "DESC_DESIGN_HAS_PART";
+    if (negated)
+        description_str += "_NOT";
+    return str(format(UserString(description_str))
+               % low_str
+               % high_str
+               % m_name);
+}
+
+std::string Condition::DesignHasPart::Dump() const{
+    return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " name = " + m_name;
+}
+
+bool Condition::DesignHasPart::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    if (const Ship* ship = universe_object_cast<const Ship*>(target)) {
+        if (const ShipDesign* design = ship->Design()) {
+            const std::vector<std::string>& parts = design->Parts();
+            int count = 0;
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
+                if (*it == m_name)
+                    ++count;
+            int low = m_low->Eval(source, target);      // number matched can depend on some property of target object!
+            int high = m_high->Eval(source, target);
+            return (low <= count && count < high);
+        }
+    }
+    return false;
+}
+
+///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
 Condition::Chance::Chance(const ValueRef::ValueRefBase<double>* chance) :
