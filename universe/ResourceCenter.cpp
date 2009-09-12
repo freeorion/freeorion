@@ -53,21 +53,16 @@ namespace {
         return retval;
     }
 
-    void GrowResourceMeter(Meter* resource_meter, double updated_current_construction)
+    void GrowResourceMeter(Meter* resource_meter)
     {
         assert(resource_meter);
-        double initial_current =    resource_meter->InitialCurrent();
-
         double delta = 1.0;
         resource_meter->AdjustCurrent(delta);
     }
 
-    void GrowConstructionMeter(Meter* construction_meter, double updated_current_population)
+    void GrowConstructionMeter(Meter* construction_meter)
     {
         assert(construction_meter);
-        double initial_current =    construction_meter->InitialCurrent();
-        double initial_max =        construction_meter->InitialMax();
-
         double delta = 1.0;
         construction_meter->AdjustCurrent(delta);
     }
@@ -103,14 +98,14 @@ double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
     case METER_INDUSTRY:
     case METER_RESEARCH:
     case METER_TRADE:
-        GrowConstructionMeter(&construction, GetPopMeter()->Current());
+        GrowConstructionMeter(&construction);
         construction.Clamp();
-        GrowResourceMeter(&meter, construction.Current());
+        GrowResourceMeter(&meter);
         meter.Clamp();
         return meter.Current();
         break;
     case METER_CONSTRUCTION:
-        GrowConstructionMeter(&construction, GetPopMeter()->Current());
+        GrowConstructionMeter(&construction);
         construction.Clamp();
         return construction.Current();
         break;
@@ -226,13 +221,13 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void ResourceCenter::PopGrowthProductionResearchPhase()
 {
-    GrowConstructionMeter(GetMeter(METER_CONSTRUCTION), GetPopMeter()->Current());
+    GrowConstructionMeter(GetMeter(METER_CONSTRUCTION));
     double new_current_construction = GetMeter(METER_CONSTRUCTION)->Current();
-    GrowResourceMeter(GetMeter(METER_FARMING),  new_current_construction);
-    GrowResourceMeter(GetMeter(METER_INDUSTRY), new_current_construction);
-    GrowResourceMeter(GetMeter(METER_MINING),   new_current_construction);
-    GrowResourceMeter(GetMeter(METER_RESEARCH), new_current_construction);
-    GrowResourceMeter(GetMeter(METER_TRADE),    new_current_construction);
+    GrowResourceMeter(GetMeter(METER_FARMING));
+    GrowResourceMeter(GetMeter(METER_INDUSTRY));
+    GrowResourceMeter(GetMeter(METER_MINING));
+    GrowResourceMeter(GetMeter(METER_RESEARCH));
+    GrowResourceMeter(GetMeter(METER_TRADE));
 }
 
 void ResourceCenter::Reset()

@@ -502,8 +502,9 @@ bool ServerApp::AllOrdersReceived()
 }
 
 namespace {
-    /** returns true if \a empire has been eliminated by the applicable definition of elimination.  As of this writing,
-        elimination means having no ships and no fleets. */
+    /** returns true if \a empire has been eliminated by the applicable
+      * definition of elimination.  As of this writing, elimination means
+      * having no ships and no fleets. */
     bool EmpireEliminated(const Empire* empire, const Universe& universe) {
         if (!empire)
             return false;

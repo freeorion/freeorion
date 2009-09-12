@@ -957,6 +957,15 @@ void MapWnd::InitTurn(int turn_number)
     }
 
 
+    //// re-update meter estimates of ships after resource pools and fleet supply
+    //// have been updated, so that resupply can be taken into account when 
+    //// predicting meter values on ships
+    //std::vector<int> ship_ids = universe.FindObjectIDs<Ship>();
+    //UpdateMeterEstimates(ship_ids);
+    // (Apparently not needed?)
+
+
+
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
@@ -3718,8 +3727,9 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
         return;
     }
 
-    // collect objects to update meter for.  this may be a single object, a group of related objects, or all objects
-    // in the (known) universe.  also clear effect accounting for meters that are to be updated.
+    // collect objects to update meters of.  this may be a single object, a
+    // group of related objects, or all objects in the (known) universe.
+    // also clear effect accounting for meters that are to be updated.
     std::set<int> objects_set;
     std::list<int> objects_list;
     objects_list.push_back(object_id);
@@ -3750,12 +3760,14 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 }
 
 void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
-    // add this player ownership to all planets in the objects_vec that aren't currently colonized.
-    // this way, any effects the player knows about that would act on those planets if the player colonized them
-    // include those planets in their scope.  This lets effects from techs the player knows alter the max
-    // population of planet that is displayed to the player, even if those effects have a condition that causes
-    // them to only act on planets the player owns (so as to not improve enemy planets if a player reseraches a
-    // tech that should only benefit him/herself)
+    // add this player ownership to all planets in the objects_vec that aren't
+    // currently colonized.  this way, any effects the player knows about that
+    // would act on those planets if the player colonized them include those
+    // planets in their scope.  This lets effects from techs the player knows
+    // alter the max population of planet that is displayed to the player, even
+    // if those effects have a condition that causes them to only act on
+    // planets the player owns (so as to not improve enemy planets if a player
+    // reseraches a tech that should only benefit him/herself)
 
     int player_id = HumanClientApp::GetApp()->PlayerID();
 

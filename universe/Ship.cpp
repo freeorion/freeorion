@@ -1,15 +1,30 @@
 #include "Ship.h"
 
 #include "../util/AppInterface.h"
-#include "Fleet.h"
 #include "../util/MultiplayerCommon.h"
+#include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
+#include "../Empire/Empire.h"
+#include "../Empire/EmpireManager.h"
 
 namespace {
     void GrowFuelMeter(Meter* fuel_meter) {
         assert(fuel_meter);
-        fuel_meter->AdjustCurrent(0.1);
+        fuel_meter->AdjustCurrent(0.1001);
+    }
+
+    /** returns true iff one of the empires with the indiated ids can provide
+      * fleet supply directly or has resource connections to the system with
+      * the id \a system_id 
+      * in short: decides whether a fleet gets resupplied at the indicated
+      *           system*/
+    bool FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(int system_id, const std::set<int>& owner_ids) {
+        for (std::set<int>::const_iterator it = owner_ids.begin(); it != owner_ids.end(); ++it)
+            if (const Empire* empire = Empires().Lookup(*it))
+                if (empire->FleetOrResourceSupplyableAtSystem(system_id))
+                    return true;
+        return false;
     }
 }
 
@@ -114,7 +129,29 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 }
 
 double Ship::ProjectedCurrentMeter(MeterType type) const {
-    return UniverseObject::ProjectedCurrentMeter(type);
+    const Meter* original_meter = GetMeter(type);
+    assert(original_meter);
+    Meter meter = Meter(*original_meter);
+    const Fleet* fleet = this->GetFleet();
+    assert(fleet);
+
+    switch (type) {
+    case METER_FUEL:
+        if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(fleet->SystemID(), fleet->Owners())) {
+            // fleets at systems where they can be supplied are fully resupplied
+            meter.SetCurrent(meter.Max());
+        } else if (fleet->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
+                   fleet->FinalDestinationID() == fleet->SystemID())
+        {
+            // fleets that are stationary regenerate fuel slowly
+            GrowFuelMeter(&meter);
+        }
+        meter.Clamp();
+        return meter.Current();
+        break;
+    default:
+        return UniverseObject::ProjectedCurrentMeter(type);
+    }
 }
 
 void Ship::SetFleetID(int fleet_id)
@@ -182,5 +219,12 @@ void Ship::MovementPhase() {
 }
 
 void Ship::PopGrowthProductionResearchPhase() {
-    GrowFuelMeter(GetMeter(METER_FUEL));
+    // fuel regeneration if stationary
+    if (Fleet* fleet = this->GetFleet()) {
+        if (fleet->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
+            fleet->FinalDestinationID() == fleet->SystemID())
+        {
+            GrowFuelMeter(GetMeter(METER_FUEL));
+        }
+    }
 }

@@ -1661,6 +1661,24 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
     return m_supply_unobstructed_systems;
 }
 
+bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const
+{
+    if (system_id == UniverseObject::INVALID_OBJECT_ID)
+        return false;
+
+    // check fleet supplyable systems
+    if (m_fleet_supplyable_system_ids.find(system_id) != m_fleet_supplyable_system_ids.end())
+        return true;
+
+    // check all resource supply groups
+    for (std::set<std::set<int> >::const_iterator groups_it = m_resource_supply_groups.begin(); groups_it != m_resource_supply_groups.end(); ++groups_it)
+        if (groups_it->find(system_id) != groups_it->end())
+            return true;
+
+    // couldn't find any reason to supply specified system.  default to false
+    return false;
+}
+
 Empire::TechItr Empire::TechBegin() const
 {
     return m_techs.begin();

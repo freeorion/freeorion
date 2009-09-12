@@ -19,6 +19,18 @@ namespace {
         return !GetUniverse().SystemReachable(system->ID(), empire_id);
     }
 
+    /** returns true iff one of the empires with the indiated ids can provide
+      * fleet supply directly or has resource connections to the system with
+      * the id \a system_id 
+      * in short: decides whether a fleet gets resupplied at the indicated
+      *           system*/
+    bool FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(int system_id, const std::set<int>& owner_ids) {
+        for (std::set<int>::const_iterator it = owner_ids.begin(); it != owner_ids.end(); ++it)
+            if (const Empire* empire = Empires().Lookup(*it))
+                if (empire->FleetOrResourceSupplyableAtSystem(system_id))
+                    return true;
+        return false;
+    }
 }
 
 // static(s)
@@ -685,46 +697,19 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev)
 void Fleet::MovementPhase()
 {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
-
-    std::list<MovePathNode> move_path = this->MovePath();
-
-    System* current_system = GetSystem();
     Universe& universe = GetUniverse();
 
-
-    // get systems at which this fleet can be resupplied
-    std::set<int> fleet_supplied_systems;
-    const std::set<int>& owners = Owners();
-    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-        if (const Empire* empire = Empires().Lookup(*it)) {
-            // add systems that receive fleet supply
-            const std::set<int>& empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
-            fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
-
-            // also add any system that is connected to a planet for resource sharing purposes
-            const std::set<std::set<int> >& empire_resource_supply_groups = empire->ResourceSupplyGroups();
-            for (std::set<std::set<int> >::const_iterator set_set_it = empire_resource_supply_groups.begin(); set_set_it != empire_resource_supply_groups.end(); ++set_set_it)
-                fleet_supplied_systems.insert(set_set_it->begin(), set_set_it->end());
-        }
-    }
-    //Logger().debugStream() << "Fleet Supplied Systems:";
-    //for (std::set<int>::const_iterator it = fleet_supplied_systems.begin(); it != fleet_supplied_systems.end(); ++it)
-    //    Logger().debugStream() << " ... " << *it << " is supplied";
-
-
-    // resupply fleet if possible
-    if (current_system) {
-        //Logger().debugStream() << "Fleet current system: " << current_system->Name() << " id: " << current_system->ID();
-        // resupply ships, if fleet is supplyable at this location
-        if (fleet_supplied_systems.find(current_system->ID()) != fleet_supplied_systems.end()) {
-            for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
-                Ship* ship = universe.Object<Ship>(*ship_it);
-                assert(ship);
-                ship->Resupply();
-            }
+    // find if any of owners of fleet can resupply ships at the location of this fleet
+    if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(this->SystemID(), this->Owners())) {
+        // resupply all ships
+        for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
+            Ship* ship = universe.Object<Ship>(*ship_it);
+            assert(ship);
+            ship->Resupply();
         }
     }
 
+    std::list<MovePathNode> move_path = this->MovePath();
 
     if (move_path.empty() || move_path.size() == 1) {
         //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path is empty or has only one entry.  doing nothing";
@@ -735,6 +720,8 @@ void Fleet::MovementPhase()
     //for (std::list<MovePathNode>::const_iterator it = move_path.begin(); it != move_path.end(); ++it)
     //    Logger().debugStream() << "... (" << it->x << ", " << it->y << ") at object id: " << it->object_id << " eta: " << it->eta << (it->turn_end ? " (end of turn)" : " (during turn)");
 
+    System* current_system = GetSystem();
+    const std::set<int>& owners = this->Owners();
 
 
     std::list<MovePathNode>::const_iterator it = move_path.begin();
@@ -777,7 +764,7 @@ void Fleet::MovementPhase()
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
 
-            bool resupply_here = (fleet_supplied_systems.find(system->ID()) != fleet_supplied_systems.end());
+            bool resupply_here = FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(system->ID(), this->Owners());
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {

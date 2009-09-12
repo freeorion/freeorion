@@ -455,7 +455,7 @@ namespace {
                 int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
 
-                // meter stat icon tooltips
+                // meter stat icons
                 std::vector<MeterType> meters;
                 meters.push_back(METER_HEALTH);     meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
                 meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
@@ -465,30 +465,23 @@ namespace {
                                                             ClientUI::MeterIcon(*it), 0, 0, false);
                     m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
                     AttachChild(icon);
-
-                    // create tooltip explaining effects on meter if such info is available
                     icon->SetBrowseModeTime(tooltip_delay);
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(*it, m_ship_id));
-                    icon->SetBrowseInfoWnd(browse_wnd);
                 }
 
 
-                // speed stat icon tooltip
+                // speed stat icon
                 StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
                                                         SpeedIcon(), 0, 0, false);
                 m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
                 AttachChild(icon);
-
-                // create tooltip explaining effects on meter if such info is available
                 icon->SetBrowseModeTime(tooltip_delay);
-                const std::string speed_stat_title = UserString("SHIP_SPEED_STAT_TITLE");
-                const std::string speed_stat_main = UserString("SHIP_SPEED_STAT_MAIN");
-                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(SpeedIcon(), speed_stat_title, speed_stat_main));
-                icon->SetBrowseInfoWnd(browse_wnd);
 
 
                 // bookkeeping
                 m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+                if (Fleet* fleet = ship->GetFleet())
+                    m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
                 Refresh();
             }
@@ -497,6 +490,7 @@ namespace {
         ~ShipDataPanel() {
             delete m_ship_icon;
             m_ship_connection.disconnect();
+            m_fleet_connection.disconnect();
         }
 
         virtual void    Render() {
@@ -595,19 +589,30 @@ namespace {
             }
 
 
-            // update stat icon values.  browse wnds should refresh themselves every time they're shown, so don't need to be reset here
+            // update stat icon values and browse wnds
             GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
             for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
                 //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
                 it->second->SetValue(StatValue(it->first));
+
+                it->second->ClearBrowseInfoWnd();
+                if (it->first == SPEED_STAT_STRING) {
+                    const std::string speed_stat_title = UserString("SHIP_SPEED_STAT_TITLE");
+                    const std::string speed_stat_main = UserString("SHIP_SPEED_STAT_MAIN");
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(SpeedIcon(), speed_stat_title, speed_stat_main));
+                    it->second->SetBrowseInfoWnd(browse_wnd);
+                } else {
+                    MeterType meter_type = MeterTypeFromStatString(it->first);
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(meter_type, m_ship_id));
+                    it->second->SetBrowseInfoWnd(browse_wnd);
+                }
             }
 
 
             DoLayout();
         }
 
-        double StatValue(const std::string& stat_name) const
-        {
+        double StatValue(const std::string& stat_name) const {
             if (const Ship* ship = GetUniverse().Object<Ship>(m_ship_id)) {
                 if (stat_name == SPEED_STAT_STRING) {
                     return ship->Speed();
@@ -659,6 +664,7 @@ namespace {
 
         bool                        m_selected;
         boost::signals::connection  m_ship_connection;
+        boost::signals::connection  m_fleet_connection;
     };
 
 

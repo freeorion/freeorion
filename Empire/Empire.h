@@ -311,8 +311,10 @@ public:
 
     const std::set<std::set<int> >&         ResourceSupplyGroups() const;                   ///< returns set of sets of systems that can share food, industry and minerals (systems in separate groups are blockaded or otherwise separated)
     const std::set<std::pair<int, int> >&   ResourceSupplyStarlaneTraversals() const;       ///< returns set of directed starlane traversals along which system resource exchange (food, industry, minerals) can flow.  results are pairs of system ids of start and end of traversal
-    const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;  ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
+    const std::set<std::pair<int, int> >&   ResourceSupplyOstructedStarlaneTraversals() const;      ///< returns set of directed starlane traversals along which system resources could flow for this empire, but which can't due to some obstruction in the destination system
     const std::map<int, int>&               ResourceSupplyRanges() const;                   ///< returns map from system id to number of starlane jumps away the system can exchange resources
+
+    bool                                    FleetOrResourceSupplyableAtSystem(int system_id) const; ///< returns true if system with id \a system_id is fleet supplyable or in one of the resource supply groups of this empire.
 
     const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propagate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
 
