@@ -924,7 +924,10 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
         const std::set<std::string>& specials = it->second->Specials();
         for (std::set<std::string>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
             const Special* special = GetSpecial(*special_it);
-            assert(special);
+            if (!special) {
+                Logger().errorStream() << "GetEffectsAndTargets couldn't get Special " << *special_it;
+                continue;
+            }
 
             StoreTargetsAndCausesOfEffectsGroups(special->Effects(), source_object_id, ECT_SPECIAL, special->Name(),
                                                  target_objects, targets_causes_map);
@@ -936,7 +939,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
         const Empire* empire = it->second;
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
-            assert(tech);
+            if (!tech) continue;
 
             StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitolID(), ECT_TECH, tech->Name(),
                                                  target_objects, targets_causes_map);
@@ -947,8 +950,15 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     std::vector<Building*> buildings = FindObjects<Building>();
     for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         const Building* building = *building_it;
+        if (!building) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Building";
+            continue;
+        }
         const BuildingType* building_type = building->GetBuildingType();
-        assert(building_type);
+        if (!building_type) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get BuildingType " << building->BuildingTypeName();
+            continue;
+        }
 
         StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
                                              target_objects, targets_causes_map);
@@ -958,11 +968,20 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     std::vector<Ship*> ships = FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
-        assert(ship);
+        if (!ship) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Ship";
+            continue;
+        }
         const ShipDesign* ship_design = ship->Design();
-        assert(ship_design);
+        if (!ship_design) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get ShipDesign";
+            continue;
+        }
         const HullType* hull_type = ship_design->GetHull();
-        assert(hull_type);
+        if (!hull_type) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get HullType";
+            continue;
+        }
 
         StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
                                              target_objects, targets_causes_map);
@@ -973,8 +992,10 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
             if (part.empty())
                 continue;
             const PartType* part_type = GetPartType(*part_it);
-            assert(part_type);
-
+            if (!part_type) {
+                Logger().errorStream() << "GetEffectsAndTargets couldn't get PartType";
+                continue;
+            }
             StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
                                                  target_objects, targets_causes_map);
         }
