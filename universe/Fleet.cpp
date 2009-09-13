@@ -31,6 +31,11 @@ namespace {
                     return true;
         return false;
     }
+
+    void GrowFuelMeter(Meter* fuel_meter) {
+        assert(fuel_meter);
+        fuel_meter->AdjustCurrent(0.1001);
+    }
 }
 
 // static(s)
@@ -728,13 +733,25 @@ void Fleet::MovementPhase()
     std::list<MovePathNode>::const_iterator next_it = it;   next_it++;
     // is the ship stuck in a system for a whole turn?
     if (current_system) {
-        // in a system
-        if (next_it == move_path.end()) {
-            // there is no system after the current one in the path... so won't be moving
-            return;
-        }
-        if (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id) {
-            // the current and next nodes have the same system id, that is an actual system.  thus won't be moving this turn.
+        // in a system.  if there is no system after the current one in the
+        // path, or the current and next nodes have the same system id, that
+        // is an actual system, then won't be moving this turn.
+        if ((next_it == move_path.end()) ||
+            (it->object_id != INVALID_OBJECT_ID && it->object_id == next_it->object_id)
+           )
+        {
+            // fuel regeneration for ships in stationary fleet
+            if (this->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
+                this->FinalDestinationID() == this->SystemID())
+            {
+                for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
+                    Ship* ship = universe.Object<Ship>(*ship_it);
+                    if (!ship) continue;
+                    Meter* fuel_meter = ship->GetMeter(METER_FUEL);
+                    if (!fuel_meter) continue;
+                    GrowFuelMeter(fuel_meter);
+                }
+            }
             return;
         }
     }

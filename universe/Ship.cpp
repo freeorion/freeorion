@@ -219,12 +219,4 @@ void Ship::MovementPhase() {
 }
 
 void Ship::PopGrowthProductionResearchPhase() {
-    // fuel regeneration if stationary
-    if (Fleet* fleet = this->GetFleet()) {
-        if (fleet->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
-            fleet->FinalDestinationID() == fleet->SystemID())
-        {
-            GrowFuelMeter(GetMeter(METER_FUEL));
-        }
-    }
 }
