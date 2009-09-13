@@ -412,9 +412,9 @@ struct Condition::DesignHasPart : Condition::ConditionBase
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    std::string                         m_name;
     const ValueRef::ValueRefBase<int>*  m_low;
     const ValueRef::ValueRefBase<int>*  m_high;
+    std::string                         m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -751,6 +751,22 @@ void Condition::StarType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_types);
+}
+
+template <class Archive>
+void Condition::DesignHasHull::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::DesignHasPart::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>

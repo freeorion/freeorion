@@ -86,6 +86,14 @@ namespace {
             member2 types;
         };
 
+        struct DesignHasPartClosure : boost::spirit::closure<DesignHasPartClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, std::string>
+        {
+            member1 this_;
+            member2 high;
+            member3 low;
+            member4 name;
+        };
+
         struct RandomClosure : boost::spirit::closure<RandomClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
@@ -114,6 +122,7 @@ namespace {
         typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
         typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
         typedef rule<Scanner, StarTypeClosure::context_t>               StarTypeRule;
+        typedef rule<Scanner, DesignHasPartClosure::context_t>          DesignHasPartRule;
         typedef rule<Scanner, RandomClosure::context_t>                 RandomRule;
         typedef rule<Scanner, StockpileClosure::context_t>              StockpileRule;
         typedef rule<Scanner, VisibleToEmpireClosure::context_t>        VisibleToEmpireRule;
@@ -128,6 +137,8 @@ namespace {
         ConditionParamRule      contains;
         ConditionParamRule      contained_by;
         StarTypeRule            star_type;
+        NameParamRule           design_has_hull;
+        DesignHasPartRule       design_has_part;
         RandomRule              random;
         StockpileRule           owner_stockpile;
         VisibleToEmpireRule     visible_to_empire;
@@ -193,6 +204,18 @@ namespace {
                  | ('[' >> +(startype_expr_p[push_back_(star_type.types, arg1)]) >> ']')))
             [star_type.this_ = new_<Condition::StarType>(star_type.types)];
 
+        design_has_hull =
+            (str_p("designhashull")
+             >> name_label >> name_p[design_has_hull.name = arg1])
+            [design_has_hull.this_ = new_<Condition::DesignHasHull>(design_has_hull.name)];
+
+        design_has_part =
+            (str_p("designhaspart")
+             >> low_label >> int_expr_p[design_has_part.low = arg1]
+             >> high_label >> int_expr_p[design_has_part.high = arg1]
+             >> name_label >> name_p[design_has_part.name = arg1])
+            [design_has_part.this_ = new_<Condition::DesignHasPart>(design_has_part.low, design_has_part.high, design_has_part.name)];
+
         random =
             (str_p("random")
              >> probability_label
@@ -225,6 +248,8 @@ namespace {
             | contains[condition2_p.this_ = arg1]
             | contained_by[condition2_p.this_ = arg1]
             | star_type[condition2_p.this_ = arg1]
+            | design_has_hull[condition2_p.this_ = arg1]
+            | design_has_part[condition2_p.this_ = arg1]
             | random[condition2_p.this_ = arg1]
             | owner_stockpile[condition2_p.this_ = arg1]
             | visible_to_empire[condition2_p.this_ = arg1];
