@@ -1331,12 +1331,14 @@ void MapWnd::InitSystemRenderingBuffers()
 
 
     // fill buffers with star textures
-    glGenBuffers(1, &m_star_texture_coords.m_name);
-    glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-    glBufferData(GL_ARRAY_BUFFER,
-                 raw_star_texture_coords.size() * sizeof(float),
-                 &raw_star_texture_coords[0],
-                 GL_STATIC_DRAW);
+    if (!raw_star_texture_coords.empty()) {
+        glGenBuffers(1, &m_star_texture_coords.m_name);
+        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
+        glBufferData(GL_ARRAY_BUFFER,
+                     raw_star_texture_coords.size() * sizeof(float),
+                     &raw_star_texture_coords[0],
+                     GL_STATIC_DRAW);
+    }
     m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
 
     // cleanup
