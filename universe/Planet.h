@@ -113,8 +113,6 @@ public:
 
     bool                                IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
-    virtual Visibility                  GetVisibility(int empire_id) const;             ///< returns the visibility status of this universe object relative to the input empire.
-
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual double                      ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn

@@ -28,7 +28,6 @@ public:
     int                        FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
     Fleet*                     GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
 
-    virtual Visibility         GetVisibility(int empire_id) const;
     virtual const std::string& PublicName(int empire_id) const;
 
     bool                       IsArmed() const;

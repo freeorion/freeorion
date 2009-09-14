@@ -482,6 +482,10 @@ private:
 
     void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);
 
+    void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire);
+    void    GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire);
+    void    GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire);
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -499,44 +503,11 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ObjectMap objects;
     ObjectMap destroyed_objects;
     ObjectKnowledgeMap destroyed_object_knowers;
+
     if (Archive::is_saving::value) {
-        // existing objects
-        for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-            if (Universe::ALL_OBJECTS_VISIBLE || s_encoding_empire == ALL_EMPIRES ||
-                it->second->GetVisibility(s_encoding_empire) != VIS_NO_VISIBILITY ||
-                universe_object_cast<System*>(it->second))
-            {
-                objects.insert(*it);
-            }
-        }
-
-        // destroyed objects
-        if (Universe::ALL_OBJECTS_VISIBLE || s_encoding_empire == ALL_EMPIRES) {
-            // serialize all destroyed objects
-            destroyed_objects = m_destroyed_objects;
-        } else {
-            // only serialize objects known about by s_encoding_emprie
-            for (ObjectMap::const_iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
-                ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
-                if (know_it == m_destroyed_object_knowers.end())
-                    continue;   // no empires know about this destroyed object
-                const std::set<int>& knowers = know_it->second;
-                if (knowers.find(s_encoding_empire) != knowers.end()) {
-                    //Logger().debugStream() << "empire " << s_encoding_empire << " knows about destroyed object object " << know_it->first;
-                    destroyed_objects.insert(*it);
-                }
-            }
-        }
-
-        // who knows about destroyed objects?  this data is only serialized when all encoding is for
-        // all empires.  this way it is saved as part of a saved game, but isn't sent out to players.
-        // we don't want to tell all players what destroyed objects other players know about, or worry
-        // about who knows who knows what objects were destroyed, so instead, no players get any info
-        // about who knows what was destroyed.  (players can tell whether they know something was
-        // destroyed by checking whether they got the object in the Universe's destroyed objects, so
-        // that info doesn't need to be sent with turn updates...)
-        if (s_encoding_empire == ALL_EMPIRES)
-            destroyed_object_knowers = m_destroyed_object_knowers;
+        GetObjectsToSerialize(          objects,                    s_encoding_empire);
+        GetDestroyedObjectsToSerialize( destroyed_objects,          s_encoding_empire);
+        GetDestroyedObjectKnowers(      destroyed_object_knowers,   s_encoding_empire);
     }
 
     // ship designs

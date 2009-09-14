@@ -79,27 +79,6 @@ const std::set<int>& Fleet::ShipIDs() const
     return m_ships;
 }
 
-Visibility Fleet::GetVisibility(int empire_id) const
-{
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {
-        return VIS_FULL_VISIBILITY;
-    } else {
-        // Fleet visibility is the most-visible of ships in fleet
-        Visibility retval = VIS_NO_VISIBILITY;
-
-        // check all ships to find highest visibility
-        for (const_iterator it = begin(); it != end(); ++it) {
-            if (const Ship* ship = GetUniverse().Object<Ship>(*it)) {
-                Visibility ship_vis = ship->GetVisibility(empire_id);
-                if (ship_vis > retval)
-                    retval = ship_vis;
-            }
-        }
-
-        return retval;
-    }
-}
-
 const std::string& Fleet::PublicName(int empire_id) const
 {
     // Disclose real fleet name only to fleet owners. Rationale: a player might become suspicious if the incoming

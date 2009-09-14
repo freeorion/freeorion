@@ -88,7 +88,7 @@ public:
     bool                    OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire is an owner of this object
     bool                    WhollyOwnedBy(int empire) const;    ///< returns true iff the empire with id \a empire is the only owner of this object
 
-    virtual Visibility      GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+    Visibility              GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual const std::string&
                             PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
@@ -198,26 +198,30 @@ template <class Archive>
 void UniverseObject::serialize(Archive& ar, const unsigned int version)
 {
     Visibility vis;
+
     if (Archive::is_saving::value)
         vis = GetVisibility(Universe::s_encoding_empire);
+
     ar  & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_system_id)
         & BOOST_SERIALIZATION_NVP(m_meters);
-    if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == VIS_PARTIAL_VISIBILITY || vis == VIS_FULL_VISIBILITY) {
+
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
         std::string name;
         if (Archive::is_saving::value) {
             // We don't disclose the real object name for some types of objects, since it would look funny if e.g. the
             // user saw an incoming enemy cleet called "Decoy".
             name = PublicName(Universe::s_encoding_empire);
         }
+
         ar  & BOOST_SERIALIZATION_NVP(name)
             & BOOST_SERIALIZATION_NVP(m_owners)
             & BOOST_SERIALIZATION_NVP(m_specials)
             & BOOST_SERIALIZATION_NVP(m_created_on_turn);
+
         if (Archive::is_loading::value)
             m_name = name;
     }

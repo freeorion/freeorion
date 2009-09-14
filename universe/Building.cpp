@@ -88,14 +88,6 @@ Planet* Building::GetPlanet() const
     return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
 }
 
-Visibility Building::GetVisibility(int empire_id) const {
-    const Planet* planet = GetPlanet();
-    if (planet)
-        return planet->GetVisibility(empire_id);
-    else
-        return VIS_NO_VISIBILITY;
-}
-
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<Building* const>(this));

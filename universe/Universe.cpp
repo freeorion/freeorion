@@ -505,6 +505,9 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
 
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id)
 {
+    if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
+        return VIS_FULL_VISIBILITY;
+
     ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
     ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
     if (vis_map_it != vis_map.end())
@@ -1177,7 +1180,7 @@ void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
 namespace {
     /** Sets visibilities for indicated \a empires of object with \a object_id
       * in the passed-in \a empire_vis_map to \a vis */
-    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap empire_vis_map, const std::set<int>& empires, int object_id, Visibility vis) {
+    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map, const std::set<int>& empires, int object_id, Visibility vis) {
         for (std::set<int>::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
             int empire_id = *empire_it;
 
@@ -1684,6 +1687,48 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
             designs_to_serialize[*it] = m_ship_designs[*it];
         }
     }
+}
+
+void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire)
+{
+    objects.clear();
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        if (GetObjectVisibilityByEmpire(it->first, encoding_empire) > VIS_NO_VISIBILITY)
+            objects.insert(*it);
+}
+
+void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire)
+{
+    if (Universe::ALL_OBJECTS_VISIBLE || encoding_empire == ALL_EMPIRES) {
+        // serialize all destroyed objects
+        destroyed_objects = m_destroyed_objects;
+
+    } else {
+        // only serialize objects known about by encoding_empire
+        for (ObjectMap::const_iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
+            ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
+            if (know_it == m_destroyed_object_knowers.end())
+                continue;   // no empires know about this destroyed object
+            const std::set<int>& knowers = know_it->second;
+            if (knowers.find(encoding_empire) != knowers.end()) {
+                //Logger().debugStream() << "empire " << s_encoding_empire << " knows about destroyed object object " << know_it->first;
+                destroyed_objects.insert(*it);
+            }
+        }
+    }
+}
+
+void Universe::GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire)
+{
+    // who knows about destroyed objects?  this data is only serialized when all encoding is for
+    // all empires.  this way it is saved as part of a saved game, but isn't sent out to players.
+    // we don't want to tell all players what destroyed objects other players know about, or worry
+    // about who knows who knows what objects were destroyed, so instead, no players get any info
+    // about who knows what was destroyed.  (players can tell whether they know something was
+    // destroyed by checking whether they got the object in the Universe's destroyed objects, so
+    // that info doesn't need to be sent with turn updates...)
+    if (encoding_empire == ALL_EMPIRES)
+        destroyed_object_knowers = m_destroyed_object_knowers;
 }
 
 //////////////////////////////////////////

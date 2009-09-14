@@ -111,8 +111,6 @@ public:
     const_lane_iterator     begin_lanes() const;            ///< begin iterator for all starlanes and wormholes terminating in this system
     const_lane_iterator     end_lanes() const;              ///< end iterator for all starlanes and wormholes terminating in this system
 
-    virtual Visibility      GetVisibility(int empire_id) const;     ///< returns the visibility status of this universe object relative to the input empire.
-
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
     mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal; ///< fleet is inserted into system

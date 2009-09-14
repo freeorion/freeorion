@@ -43,7 +43,6 @@ public:
 
     const std::set<int>&                ShipIDs() const;                    ///< returns set of IDs of ships in fleet.
 
-    virtual Visibility                  GetVisibility(int empire_id) const;
     virtual const std::string&          PublicName(int empire_id) const;
 
     /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 

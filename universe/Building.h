@@ -33,8 +33,6 @@ public:
     int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
     Planet*                 GetPlanet() const;                  ///< returns a pointer to the planet this building is on
 
-    virtual Visibility      GetVisibility(int empire_id) const; ///< returns the visibility status of this building relative to the input empire.
-
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 

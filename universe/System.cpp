@@ -220,21 +220,6 @@ System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjec
     return retval;
 }
 
-Visibility System::GetVisibility(int empire_id) const
-{
-    // if system is at least partially owned by this empire it is fully visible.
-    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
-        return VIS_FULL_VISIBILITY;
-
-    // if system has been explored, it is partially visible
-    Empire* empire = Empires().Lookup(empire_id);
-    if (empire && empire->HasExploredSystem(ID()))
-        return VIS_PARTIAL_VISIBILITY;
-
-    // otherwise, basic visibility
-    return VIS_BASIC_VISIBILITY;
-}
-
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<System* const>(this));
