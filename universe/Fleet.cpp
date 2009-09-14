@@ -59,7 +59,10 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_travel_distance(0.0)
-{ AddOwner(owner); }
+{
+    UniverseObject::Init();
+    AddOwner(owner);
+}
 
 Fleet::const_iterator Fleet::begin() const
 {
@@ -81,20 +84,19 @@ Visibility Fleet::GetVisibility(int empire_id) const
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id)) {
         return VIS_FULL_VISIBILITY;
     } else {
-        // A fleet is visible to another player, if
-        // the fleet is in a system with partial or full visibility, or
-        // the previous system on the route or the next system on the route is visible to the player.
-        System * system;
-        if ((system = GetUniverse().Object<System>(SystemID())) &&
-            system->GetVisibility(empire_id) > VIS_BASIC_VISIBILITY)
-            return VIS_PARTIAL_VISIBILITY;
-        if ((system = GetUniverse().Object<System>(NextSystemID())) &&
-            system->GetVisibility(empire_id) > VIS_BASIC_VISIBILITY)
-            return VIS_PARTIAL_VISIBILITY;
-        if ((system = GetUniverse().Object<System>(PreviousSystemID())) &&
-            system->GetVisibility(empire_id) > VIS_BASIC_VISIBILITY)
-            return VIS_PARTIAL_VISIBILITY;
-        return VIS_NO_VISIBILITY;
+        // Fleet visibility is the most-visible of ships in fleet
+        Visibility retval = VIS_NO_VISIBILITY;
+
+        // check all ships to find highest visibility
+        for (const_iterator it = begin(); it != end(); ++it) {
+            if (const Ship* ship = GetUniverse().Object<Ship>(*it)) {
+                Visibility ship_vis = ship->GetVisibility(empire_id);
+                if (ship_vis > retval)
+                    retval = ship_vis;
+            }
+        }
+
+        return retval;
     }
 }
 

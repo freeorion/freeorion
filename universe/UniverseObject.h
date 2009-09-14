@@ -162,6 +162,7 @@ public:
 
 protected:
     void                    InsertMeter(MeterType meter_type, const Meter& meter);  ///< inserts \a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
+    void                    Init();                     ///< adds stealth meter
 
 private:
     int                         m_id;

@@ -1,12 +1,12 @@
 #include "UniverseObject.h"
 
 #include "../util/AppInterface.h"
-#include "Meter.h"
 #include "../util/MultiplayerCommon.h"
-#include "Predicates.h"
+#include "Meter.h"
 #include "System.h"
 #include "Special.h"
 #include "Universe.h"
+#include "Predicates.h"
 
 #include <boost/lexical_cast.hpp>
 using boost::lexical_cast;
@@ -49,6 +49,11 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
 
 UniverseObject::~UniverseObject()
 {}
+
+void UniverseObject::Init()
+{
+    InsertMeter(METER_STEALTH, Meter());
+}
 
 int UniverseObject::ID() const
 {
@@ -141,7 +146,11 @@ double UniverseObject::ProjectedCurrentMeter(MeterType type) const
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
         throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
-    return it->second.Current();    // default to no growth
+
+    if (type == METER_STEALTH)
+        return it->second.Max();
+    else
+        return it->second.Current();    // default to no growth
 }
 
 double UniverseObject::MeterPoints(MeterType type) const
@@ -179,7 +188,10 @@ bool UniverseObject::WhollyOwnedBy(int empire) const
 
 Visibility UniverseObject::GetVisibility(int empire_id) const
 {
-    return (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || m_owners.find(empire_id) != m_owners.end()) ? VIS_FULL_VISIBILITY : VIS_NO_VISIBILITY;
+    if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || this->OwnedBy(empire_id))
+        return VIS_FULL_VISIBILITY;
+
+    return VIS_NO_VISIBILITY;
 }
 
 const std::string& UniverseObject::PublicName(int empire_id) const

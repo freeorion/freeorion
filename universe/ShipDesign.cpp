@@ -131,8 +131,8 @@ namespace {
             m_description +=
                 str(FlexibleFormat(UserString("PART_DESC_FIGHTER_STATS"))
                     % UserString(stats.m_type == BOMBER ? "BOMBER" : "INTERCEPTOR")
-                    % stats.m_anti_fighter_damage
                     % stats.m_anti_ship_damage
+                    % stats.m_anti_fighter_damage
                     % stats.m_launch_rate
                     % stats.m_speed
                     % stats.m_stealth
@@ -196,8 +196,8 @@ LRStats::LRStats(double damage,
 
 FighterStats::FighterStats() :
     m_type(),
-    m_anti_fighter_damage(),
     m_anti_ship_damage(),
+    m_anti_fighter_damage(),
     m_launch_rate(),
     m_fighter_weapon_range(),
     m_speed(),
@@ -208,8 +208,8 @@ FighterStats::FighterStats() :
 {}
 
 FighterStats::FighterStats(CombatFighterType type,
-                           double anti_fighter_damage,
                            double anti_ship_damage,
+                           double anti_fighter_damage,
                            double launch_rate,
                            double fighter_weapon_range,
                            double speed,
@@ -218,8 +218,8 @@ FighterStats::FighterStats(CombatFighterType type,
                            double detection,
                            int capacity) :
     m_type(type),
-    m_anti_fighter_damage(anti_fighter_damage),
     m_anti_ship_damage(anti_ship_damage),
+    m_anti_fighter_damage(anti_fighter_damage),
     m_launch_rate(launch_rate),
     m_fighter_weapon_range(fighter_weapon_range),
     m_speed(speed),
@@ -229,14 +229,13 @@ FighterStats::FighterStats(CombatFighterType type,
     m_capacity(capacity)
 {
     if (type == INTERCEPTOR && m_anti_fighter_damage < m_anti_ship_damage)
-        throw std::runtime_error("Attempted to create an INTERCEPTOR FighterStats with "
-                                 "weaker anti-fighter stat than anti-ship stat.");
+        Logger().debugStream() << "Creating an INTERCEPTOR FighterStats with weaker anti-fighter stat than anti-ship stat.";
     if (type == BOMBER && m_anti_ship_damage < m_anti_fighter_damage)
-        throw std::runtime_error("Attempted to create a BOMBER FighterStats with weaker "
-                                 "anti-ship stat than anti-fighter stat.");
-    if (m_capacity < 0)
-        throw std::runtime_error("Attempted to create a FighterStats with a "
-                                 "nonpositive capacity.");
+        Logger().debugStream() << "Creating a BOMBER FighterStats with weaker anti-ship stat than anti-fighter stat.";
+    if (m_capacity < 0) {
+        m_capacity = 0;
+        Logger().debugStream() << "Creating a FighterStats with a nonpositive capacity.";
+    }
 }
 
 

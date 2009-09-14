@@ -1464,7 +1464,7 @@ void MultiMeterStatusBar::Update()
     for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         const Meter* meter = obj->GetMeter(*it);
         if (!meter)
-            throw std::runtime_error("MultiMeterStatusBar::Update() tried to get a meter from and object that didn't have a meter of the specified type");
+            throw std::runtime_error("MultiMeterStatusBar::Update() tried to get a meter from and object that didn't have a meter of the specified type (" + boost::lexical_cast<std::string>(*it) + ")");
         meters.push_back(meter);
     }
     const int NUM_BARS = meters.size();

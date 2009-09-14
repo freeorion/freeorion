@@ -115,6 +115,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
 {
     GG::Connect(ResourceCenter::GetObjectSignal,    &Planet::This, this);
     GG::Connect(PopCenter::GetObjectSignal,         &Planet::This, this);
+    UniverseObject::Init();
     PopCenter::Init(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type)));
     ResourceCenter::Init();
     Planet::Init();
@@ -133,7 +134,6 @@ void Planet::Init() {
     InsertMeter(METER_SHIELD, Meter());
     InsertMeter(METER_DEFENSE, Meter());
     InsertMeter(METER_DETECTION, Meter());
-    InsertMeter(METER_STEALTH, Meter());
 }
 
 PlanetEnvironment Planet::Environment() const
@@ -233,7 +233,6 @@ double Planet::ProjectedCurrentMeter(MeterType type) const
     case METER_SHIELD:
     case METER_DEFENSE:
     case METER_DETECTION:
-    case METER_STEALTH:
         original_meter = GetMeter(type);
         assert(original_meter);
         meter = Meter(*original_meter);
@@ -266,7 +265,6 @@ double Planet::MeterPoints(MeterType type) const
     case METER_SHIELD:
     case METER_DEFENSE:
     case METER_DETECTION:
-    case METER_STEALTH:
         return GetMeter(type)->InitialCurrent();
         break;
     default:
@@ -294,7 +292,6 @@ double Planet::ProjectedMeterPoints(MeterType type) const
     case METER_SHIELD:
     case METER_DEFENSE:
     case METER_DETECTION:
-    case METER_STEALTH:
         return ProjectedCurrentMeter(type);
     default:
         return UniverseObject::ProjectedMeterPoints(type);
@@ -442,7 +439,6 @@ void Planet::Reset()
     GetMeter(METER_SHIELD)->ResetMax();
     GetMeter(METER_DEFENSE)->ResetMax();
     GetMeter(METER_DETECTION)->ResetMax();
-    GetMeter(METER_STEALTH)->ResetMax();
 
     // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
@@ -547,6 +543,11 @@ void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
     ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
     PopCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
+
+    // give planets base stealth slightly above, so that they can't be seen from a distance without high detection ability
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
+        if (Meter* stealth = GetMeter(METER_STEALTH))
+            stealth->AdjustMax(0.001);
 }
 
 void Planet::PopGrowthProductionResearchPhase()
@@ -568,7 +569,6 @@ void Planet::PopGrowthProductionResearchPhase()
         GrowMeter(GetMeter(METER_SHIELD),       current_construction);
         GrowMeter(GetMeter(METER_DEFENSE),      current_construction);
         GrowMeter(GetMeter(METER_DETECTION),    current_construction);
-        GrowMeter(GetMeter(METER_STEALTH),      current_construction);
     }
 
     StateChangedSignal();

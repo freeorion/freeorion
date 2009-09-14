@@ -64,6 +64,8 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
         Rename(UserString(type->Name()));
     else
         Rename(UserString("ENC_BUILDING"));
+
+    UniverseObject::Init();
 }
 
 const BuildingType* Building::GetBuildingType() const
@@ -117,6 +119,14 @@ void Building::MoveTo(double x, double y)
 
 void Building::MovementPhase()
 {}
+
+void Building::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type/* = INVALID_METER_TYPE*/)
+{
+    // give buildings base stealth slightly above 0, so that they can't be seen from a distance without high detection ability
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
+        if (Meter* stealth = GetMeter(METER_STEALTH))
+            stealth->AdjustMax(0.001);
+}
 
 void Building::PopGrowthProductionResearchPhase()
 {}

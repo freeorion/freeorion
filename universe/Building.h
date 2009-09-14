@@ -43,6 +43,7 @@ public:
     virtual void            MoveTo(double x, double y);
 
     virtual void            MovementPhase();
+    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
     virtual void            PopGrowthProductionResearchPhase();
 
     void                    Reset();                            ///< resets any building state, and removes owners

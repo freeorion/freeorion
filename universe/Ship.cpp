@@ -42,10 +42,11 @@ Ship::Ship(int empire_id, int design_id) :
 
     AddOwner(empire_id);
 
+    UniverseObject::Init();
+
     InsertMeter(METER_FUEL,         Meter());
     InsertMeter(METER_SHIELD,       Meter());
     InsertMeter(METER_DETECTION,    Meter());
-    InsertMeter(METER_STEALTH,      Meter());
     InsertMeter(METER_HEALTH,       Meter());
 
     const std::vector<std::string>& part_names = Design()->Parts();

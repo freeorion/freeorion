@@ -83,8 +83,8 @@ struct FighterStats
 {
     FighterStats();
     FighterStats(CombatFighterType type,
-                 double anti_fighter_damage,
                  double anti_ship_damage,
+                 double anti_fighter_damage,
                  double launch_rate,
                  double fighter_weapon_range,
                  double speed,
@@ -94,8 +94,8 @@ struct FighterStats
                  int capacity);
 
     CombatFighterType m_type;
-    double m_anti_fighter_damage;
     double m_anti_ship_damage;
+    double m_anti_fighter_damage;
     double m_launch_rate;
     double m_fighter_weapon_range;
     double m_speed;
@@ -108,8 +108,8 @@ struct FighterStats
     void serialize(Archive& ar, const unsigned int)
         {
             ar  & BOOST_SERIALIZATION_NVP(m_type)
-                & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
                 & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
+                & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
                 & BOOST_SERIALIZATION_NVP(m_launch_rate)
                 & BOOST_SERIALIZATION_NVP(m_fighter_weapon_range)
                 & BOOST_SERIALIZATION_NVP(m_speed)

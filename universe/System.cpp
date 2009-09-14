@@ -32,6 +32,8 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
         throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
     if (m_orbits < 0)
         throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
+
+    UniverseObject::Init();
 }
 
 System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes, 
@@ -46,6 +48,8 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     if (m_orbits < 0)
         throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with fewer than 0 orbits.");
     SetSystem(ID());
+
+    UniverseObject::Init();
 }
 
 System::~System()

@@ -37,13 +37,12 @@ class System;
 class Universe
 {
 private:
-    typedef std::map<int, UniverseObject*>  ObjectMap;          ///< container type used to hold the objects in the universe; keyed by ID number
-    typedef std::map<int, std::set<int> >   ObjectKnowledgeMap; ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
-    typedef std::map<int, ShipDesign*>      ShipDesignMap;      ///< container type used to hold ShipDesigns created by players, keyed by design id number
+    typedef std::map<int, UniverseObject*>      ObjectMap;              ///< container type used to hold the objects in the universe; keyed by ID number
+    typedef std::map<int, std::set<int> >       ObjectKnowledgeMap;     ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
+    typedef std::map<int, ShipDesign*>          ShipDesignMap;          ///< container type used to hold ShipDesigns created by players, keyed by design id number
 
 public:
-    /** Set to true to make everything visible for everyone. Useful for debugging. */
-    static const bool ALL_OBJECTS_VISIBLE;
+    static const bool ALL_OBJECTS_VISIBLE;                              ///< Set to true to make everything visible for everyone. Useful for debugging.
 
     typedef ObjectMap::const_iterator           const_iterator;         ///< a const_iterator for sequences over the objects in the universe
     typedef ObjectMap::iterator                 iterator;               ///< an iterator for sequences over the objects in the universe
@@ -53,6 +52,9 @@ public:
     typedef std::vector<const UniverseObject*>  ConstObjectVec;         ///< the return type of FindObjects()
     typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of the non-const FindObjects()
     typedef std::vector<int>                    ObjectIDVec;            ///< the return type of FindObjectIDs()
+
+    typedef std::map<int, Visibility>           ObjectVisibilityMap;    ///< map from object id to Visibility level for a particular empire
+    typedef std::map<int, ObjectVisibilityMap>  EmpireObjectVisibilityMap;  ///< map from empire id to ObjectVisibilityMap for that empire
 
 
     /** Combination of an EffectsGroup and the id of a source object. */
@@ -94,7 +96,8 @@ public:
         double                                          meter_change;           ///< net change on meter due to this effect, as best known by client's empire
         double                                          running_meter_total;    ///< meter total as of this effect.
     };
-    /** Effect accounting information for all meters of all objects that are acted on by effects. */
+    /** Effect accounting information for all meters of all objects that are
+      * acted on by effects. */
     typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;
 
 
@@ -153,6 +156,9 @@ public:
     const ShipDesign*       GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
     ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
+
+
+    Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id);      ///< returns the Visibility level of empire with id \a empire_id of UniverseObject with id \a object_id as determined by calling UpdateEmpireObjectVisibilities
 
     double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
@@ -296,6 +302,10 @@ public:
     /** Updates all meters for all (known) objects */
     void            UpdateMeterEstimates();
 
+    /** Determines which empires can see which objects at what visibility
+      * level, based on  */
+    void            UpdateEmpireObjectVisibilities();
+
     /** Reconstructs the per-empire system graph views needed to calculate
       * routes based on visibility. */
     void            RebuildEmpireViewSystemGraphs();
@@ -405,21 +415,42 @@ private:
     void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type = INVALID_METER_TYPE);
 
 
-    void    PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);        ///< Will generate planets for all systems that have empty object maps (ie those that aren't homeworld systems)
-    void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid); ///< creates starlanes and adds them systems already generated
-    bool    ConnectedWithin(int system1, int system2, int maxLaneJumps,
-                            std::vector<std::set<int> >& laneSetArray);                     ///< used by GenerateStarlanes.  Determines if two systems are connected by maxLaneJumps or less edges on graph
-    void    CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray,
-                                       std::vector<System*> &systems);                      ///< Removes lanes from passed graph that are angularly too close to eachother
-    void    CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray,
-                             std::vector<System*> &systems);                                ///< Removes lanes from passed graph that are too long
-    void    GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray,
-                              std::vector<std::set<int> >& laneSetArray);                   ///< grows trees to connect stars...  takes an array of sets of potential starlanes for each star, and puts the starlanes of the tree into another set
-    void    InitializeSystemGraph();                                                        ///< resizes the system graph to the appropriate size and populates m_system_distances 
-    void    GenerateHomeworlds(int players, std::vector<int>& homeworlds);                  ///< Picks systems to host homeworlds, generates planets for them, stores the ID's of the homeworld planets into the homeworld vector
-    void    NamePlanets();                                                                  ///< Names the planets in each system, based on the system's name
+    /** Generates planets for all systems that have empty object maps (ie those
+      * that aren't homeworld systems).*/
+    void    PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);
 
-    /** Will create empire objects, assign them homeworlds, setup the homeworld population, industry, and starting fleets */
+    /** Creates starlanes and adds them systems already generated. */
+    void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid);
+
+    /** Used by GenerateStarlanes.  Determines if two systems are connected by
+      * maxLaneJumps or less edges on graph. */
+    bool    ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray);
+
+    /** Removes lanes from passed graph that are angularly too close to
+      * eachother. */
+    void    CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems);
+
+    /** Removes lanes from passed graph that are too long. */
+    void    CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems);
+
+    /** Grows trees to connect stars...  takes an array of sets of potential
+      * starlanes for each star, and puts the starlanes of the tree into
+      * another set. */
+    void    GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray);
+
+    /** Resizes the system graph to the appropriate size and populates
+      * m_system_distances. */
+    void    InitializeSystemGraph();
+
+    /** Picks systems to host homeworlds, generates planets for them, stores
+      * the ID's of the homeworld planets into the homeworld vector. */
+    void    GenerateHomeworlds(int players, std::vector<int>& homeworlds);
+
+    /** Names the planets in each system, based on the system's name. */
+    void    NamePlanets();
+
+    /** Will create empire objects, assign them homeworlds, setup the homeworld
+      * population, industry, and starting fleets. */
     void    GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data);
 
     void    DestroyImpl(int id);
@@ -428,6 +459,8 @@ private:
 
     ObjectMap                   m_destroyed_objects;            ///< objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
     ObjectKnowledgeMap          m_destroyed_object_knowers;     ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
+
+    EmpireObjectVisibilityMap   m_empire_object_visibility;     ///< map from empire id to (map from object id to visibility of that object for that empire)
 
     ShipDesignMap               m_ship_designs;                 ///< ship designs in the universe
 
