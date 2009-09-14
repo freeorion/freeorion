@@ -570,6 +570,7 @@ void ServerApp::ProcessTurns()
         }
     }
 
+
     // colonization apply be the following rules
     // 1 - if there is only own empire which tries to colonize a planet, is allowed to do so
     // 2 - if there are more than one empire then
@@ -628,6 +629,7 @@ void ServerApp::ProcessTurns()
         planet->ResetIsAboutToBeColonized();
     }
 
+
     // process movement phase
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
@@ -658,6 +660,11 @@ void ServerApp::ProcessTurns()
             }
         }
     }
+
+
+    // post-movement visibility update
+    m_universe.UpdateEmpireObjectVisibilities();
+
 
     // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it =
@@ -762,15 +769,16 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // notify players that production and growth is being processed
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::EMPIRE_PRODUCTION, -1));
-    }
+    // post-combat visibility update
+    m_universe.UpdateEmpireObjectVisibilities();
 
 
     // process production and growth phase
 
-
+    // notify players that production and growth is being processed
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::EMPIRE_PRODUCTION, -1));
+    }
 
     // execute all effects and update meters prior to production, research, etc.
     m_universe.ApplyAllEffectsAndUpdateMeters();
@@ -789,6 +797,7 @@ void ServerApp::ProcessTurns()
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
+
     // Consume distributed resources to planets and on queues, create new objects for completed production and
     // give techs to empires that have researched them
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -800,26 +809,38 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // re-execute all meter-related effects after production, so that new UniverseObjects created during production
-    // will have effects applied to them this turn, allowing (for example) ships to have max fuel meters greater than
-    // 0 on the turn they are created.
+    // re-execute all meter-related effects after production, so that new
+    // UniverseObjects created during production will have effects applied to
+    // them this turn, allowing (for example) ships to have max fuel meters
+    // greater than 0 on the turn they are created.
     m_universe.ApplyMeterEffectsAndUpdateMeters();
 
 
+    // post-production and meter-effects visibility update
+    m_universe.UpdateEmpireObjectVisibilities();
 
-    // regenerate empire system visibility, which is needed for some UniverseObject subclasses' PopGrowthProductionResearchPhase()
+
+    // regenerate empire system graphs based on latest visibility information.
+    // this is needed for some UniverseObject subclasses'
+    // PopGrowthProductionResearchPhase()
     m_universe.RebuildEmpireViewSystemGraphs();
-    // Population growth or loss, health meter growth, resource current meter growth
+
+
+    // Population growth or loss, health meter growth, resource current meter
+    // growth
     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
 
+    // post-growth visibility update
+    m_universe.UpdateEmpireObjectVisibilities();
 
-    // copy latest updated current meter values to initial current values, and initial current values
-    // to previous values, so that clients will have this information based on values after all changes
-    // that occured this turn.
+
+    // copy latest updated current meter values to initial current values, and
+    // initial current values to previous values, so that clients will have
+    // this information based on values after all changes that occured this turn
     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
             if (Meter* meter = it->second->GetMeter(i))

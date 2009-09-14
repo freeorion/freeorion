@@ -1186,8 +1186,12 @@ namespace {
             Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
 
             // if object not already present, store default value (which may be replaced)
-            if (vis_map_it == vis_map.end())
+            if (vis_map_it == vis_map.end()) {
                 vis_map[object_id] = VIS_NO_VISIBILITY;
+
+                // get iterator pointing at newly-created entry
+                vis_map_it = vis_map.find(object_id);
+            }
 
             // increase stored value if new visibility is higher than last recorded
             if (vis > vis_map_it->second)
@@ -2753,6 +2757,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
             }
         }
     }
+
+    UpdateEmpireObjectVisibilities();
 
 #else
         throw std::runtime_error("Non-server called Universe::CreateUniverse; only server should call this while creating the universe");
