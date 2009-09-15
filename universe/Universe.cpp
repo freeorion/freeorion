@@ -1292,16 +1292,13 @@ void Universe::UpdateEmpireObjectVisibilities()
             // stealth is subtracted from the detector's range, and the result
             // is compared to the distance between them. If the distance is
             // less than 10*(detector_detection - target_stealth), then the
-            // target is seen by the detector with basic visibility.  Larger
-            // differences grant progressively higher visibility ratings.
+            // target is seen by the detector with partial visibility.
             double detect_range = 10.0*(detection - stealth);
 
             if (dist <= detect_range)
-                target_visibility_to_detector = VIS_BASIC_VISIBILITY;
-            if (dist <= (detect_range - 200))
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
-            if (dist <= (detect_range - 400))
-                target_visibility_to_detector = VIS_FULL_VISIBILITY;
+
+            // Note that owning an object grants FULL visibility
 
 
             int target_id = target->ID();
@@ -2838,7 +2835,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
             int idx = 0;
             int max_roll = 0;
             for (unsigned int i = 0; i < NUM_PLANET_SIZES; ++i) {
-                int roll = g_hundred_dist() + star_color_mod_to_planet_size_dist[system->Star()][i] + slot_mod_to_planet_size_dist[orbit][i]
+                int roll = g_hundred_dist() + star_color_mod_to_planet_size_dist[system->GetStarType()][i] + slot_mod_to_planet_size_dist[orbit][i]
                     + density_mod_to_planet_size_dist[density][i];
                 if (max_roll < roll) {
                     max_roll = roll;
@@ -2858,7 +2855,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
                 // make another series of modified rolls for planet type
                 for (unsigned int i = 0; i < NUM_PLANET_TYPES; ++i) {
                     int roll = g_hundred_dist() + planet_size_mod_to_planet_type_dist[planet_size][i] + slot_mod_to_planet_type_dist[orbit][i] + 
-                        star_color_mod_to_planet_type_dist[system->Star()][i];
+                        star_color_mod_to_planet_type_dist[system->GetStarType()][i];
                     if (max_roll < roll) {
                         max_roll = roll;
                         idx = i;

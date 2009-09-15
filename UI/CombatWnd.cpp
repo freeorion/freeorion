@@ -956,9 +956,9 @@ void CombatWnd::InitCombat(CombatData& combat_data)
 
     SetAccelerators();
 
-    assert(StarTextures().find(m_combat_data->m_system->Star()) != StarTextures().end());
+    assert(StarTextures().find(m_combat_data->m_system->GetStarType()) != StarTextures().end());
     const std::set<std::string>& star_textures =
-        StarTextures().find(m_combat_data->m_system->Star())->second;
+        StarTextures().find(m_combat_data->m_system->GetStarType())->second;
 
     // pick and assign star textures
     {

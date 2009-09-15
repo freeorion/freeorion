@@ -945,3 +945,14 @@ std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_f
     return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % boost::lexical_cast<std::string>(new_fleet_id));
 }
 
+Fleet::ShipIDSet Fleet::VisibleContainedObjects(int empire_id) const
+{
+    ShipIDSet retval;
+    Universe& universe = GetUniverse();
+    for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+        int object_id = *it;
+        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
+            retval.insert(object_id);
+    }
+    return retval;
+}

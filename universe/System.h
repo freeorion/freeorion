@@ -60,7 +60,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    StarType                Star() const;                   ///< returns the type of star for this system
+    StarType                GetStarType() const;            ///< returns the type of star for this system
     int                     Orbits() const;                 ///< returns the number of orbits in this system
 
     int                     Starlanes() const;              ///< returns the number of starlanes from this system to other systems
@@ -178,7 +178,7 @@ public:
     //@}
 
 private:
-    ObjectMultimap          PartiallyVisibleObjects(int empire_id) const;   ///< returns the subset of m_objects that is visible when this System's visibility is only VIS_PARTIAL_VISIBILITY
+    ObjectMultimap          VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_objects that is visible to empire with id \a empire_id
     void                    UpdateOwnership();
 
     StarType        m_star;
@@ -305,22 +305,11 @@ void System::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
-
-        if (Universe::ALL_OBJECTS_VISIBLE || vis == VIS_FULL_VISIBILITY) {
+        if (vis == VIS_FULL_VISIBILITY)
             orbits = m_orbits;
-            objects = m_objects;
-            starlanes_wormholes = m_starlanes_wormholes;
 
-        } else if (vis == VIS_PARTIAL_VISIBILITY) {
-            orbits = m_orbits;
-            objects = PartiallyVisibleObjects(Universe::s_encoding_empire);
-            starlanes_wormholes = VisibleStarlanes(Universe::s_encoding_empire);
-
-        } else if (vis == VIS_BASIC_VISIBILITY) {
-            starlanes_wormholes = VisibleStarlanes(Universe::s_encoding_empire);
-
-        } else {
-        }
+        objects =               VisibleContainedObjects(Universe::s_encoding_empire);
+        starlanes_wormholes =   VisibleStarlanes(       Universe::s_encoding_empire);
     }
 
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)

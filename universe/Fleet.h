@@ -25,10 +25,8 @@ struct MovePathNode {
 /** encapsulates data for a FreeOrion fleet.  Fleets are basically a group of ships that travel together. */
 class Fleet : public UniverseObject
 {
-private:
-    typedef std::set<int>               ShipIDSet;
-
 public:
+    typedef std::set<int>               ShipIDSet;
     typedef ShipIDSet::iterator         iterator;               ///< an iterator to the ships in the fleet
     typedef ShipIDSet::const_iterator   const_iterator;   ///< a const iterator to the ships in the fleet
 
@@ -112,6 +110,8 @@ private:
     void                    RecalculateFleetSpeed();                        ///< recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
     void                    ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
 
+    ShipIDSet               VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_ships that is visible to empire with id \a empire_id
+
     ShipIDSet                   m_ships;
     int                         m_moving_to;
 
@@ -141,16 +141,20 @@ BOOST_CLASS_VERSION(Fleet, 1)
 template <class Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility vis;
-    int moving_to;
-    std::list<System*> travel_route;
-    double travel_distance;
+    Visibility          vis;
+    int                 moving_to;
+    std::list<System*>  travel_route;
+    double              travel_distance;
+    ShipIDSet           ships;
+
     if (Archive::is_saving::value)
         vis = GetVisibility(Universe::s_encoding_empire);
+
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(vis);
+
     if (Archive::is_saving::value) {
-        moving_to = (Universe::ALL_OBJECTS_VISIBLE || vis == VIS_FULL_VISIBILITY) ? m_moving_to : m_next_system;
+        moving_to = (vis == VIS_FULL_VISIBILITY) ? m_moving_to : m_next_system;
         if (1 <= version) {
             ShortenRouteToEndAtSystem(travel_route, moving_to);
             travel_distance = m_travel_distance;
@@ -160,25 +164,32 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
                 travel_distance -= GetUniverse().ShortestPath(travel_route.back()->ID(), m_travel_route.back()->ID()).second;
             }
         }
+
+        ships = VisibleContainedObjects(Universe::s_encoding_empire);
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_ships)
+
+    ar  & BOOST_SERIALIZATION_NVP(ships)
         & BOOST_SERIALIZATION_NVP(moving_to)
         & BOOST_SERIALIZATION_NVP(m_prev_system)
         & BOOST_SERIALIZATION_NVP(m_next_system);
+
     if (1 <= version) {
         ar  & BOOST_SERIALIZATION_NVP(m_speed)
             & BOOST_SERIALIZATION_NVP(travel_route)
             & BOOST_SERIALIZATION_NVP(travel_distance);
     }
+
     if (Archive::is_loading::value) {
         m_moving_to = moving_to;
         if (1 <= version) {
             std::swap(m_travel_route, travel_route);
             m_travel_distance = travel_distance;
         }
+
+        m_ships = ships;
     }
-    if (Universe::ALL_OBJECTS_VISIBLE ||
-        vis == VIS_FULL_VISIBILITY)
+
+    if (vis == VIS_FULL_VISIBILITY)
         ar  & BOOST_SERIALIZATION_NVP(m_speed);
 }
 

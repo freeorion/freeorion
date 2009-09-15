@@ -387,7 +387,6 @@ public:
 private:
     void                    DoLayout();
 
-    int                     PlanetDiameter() const;
     bool                    InPlanet(const GG::Pt& pt) const;   ///< returns true if pt is within the planet image
 
     void                    SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
@@ -435,7 +434,7 @@ public:
 
     /** \name Mutators */ //@{
     void                Clear();
-    void                SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type);
+    void                SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
     void                SelectPlanet(int planet_id);        //!< programatically selects a planet with id \a planet_id
     void                SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
 
@@ -675,7 +674,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
             m_planet_graphic->Play();
 
         } else if (planet.Type() < NUM_PLANET_TYPES) {
-            int planet_image_sz = PlanetDiameter();
+            int planet_image_sz = PlanetDiameter(planet.Size());
             GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - GG::X(planet_image_sz) / 2 + 3),
                                     GG::Y(MAX_PLANET_DIAMETER / 2 - GG::Y(planet_image_sz) / 2));
 
@@ -683,8 +682,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
             std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
             int num_planets_of_type;
             if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size())) {
-                // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that only the lower 16 bits of the system and
-                // planet ID's are significant
+                // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that
+                // only the lower 16 bits of the system and planet ID's are significant
                 unsigned int hash_value =
                     (static_cast<unsigned int>(planet.SystemID()) & 0xFFFF) + (static_cast<unsigned int>(planet.ID()) & 0xFFFF);
                 hash_value += ~(hash_value << 15);
@@ -756,7 +755,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
 
     m_population_panel = new PopulationPanel(panel_width, planet.ID());
     AttachChild(m_population_panel);
-    GG::Connect(m_population_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::DoLayout, this);
 
     m_resource_panel = new ResourcePanel(panel_width, planet.ID());
     AttachChild(m_resource_panel);
@@ -766,11 +765,11 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
 
     m_military_panel = new MilitaryPanel(panel_width, planet.ID());
     AttachChild(m_military_panel);
-    GG::Connect(m_military_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_military_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
 
     m_buildings_panel = new BuildingsPanel(panel_width, 4, planet.ID());
     AttachChild(m_buildings_panel);
-    GG::Connect(m_buildings_panel->ExpandCollapseSignal, &SidePanel::PlanetPanel::DoLayout, this);
+    GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::DoLayout, this);
 
     m_specials_panel = new SpecialsPanel(panel_width, planet.ID());
     AttachChild(m_specials_panel);
@@ -790,14 +789,13 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     if (m_planet_graphic)
         MoveChildDown(m_planet_graphic);
 
-    const Planet* plt = GetUniverse().Object<const Planet>(m_planet_id);
 
     // connecting system's StateChangedSignal to this->Refresh() should be redundant, as
     // the sidepanel's Refresh will be called when that signal is emitted, which will refresh
     // all the PlanetPanel in the SidePanel
     //if (System* system = plt->GetSystem())
     //    GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
-    GG::Connect(plt->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+    GG::Connect(planet.StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
@@ -814,16 +812,12 @@ SidePanel::PlanetPanel::~PlanetPanel()
 
 Planet* SidePanel::PlanetPanel::GetPlanet()
 {
-    Planet *planet = GetUniverse().Object<Planet>(m_planet_id);
-    if (!planet) throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
-    return planet;
+    return GetUniverse().Object<Planet>(m_planet_id);
 }
 
 const Planet* SidePanel::PlanetPanel::GetPlanet() const
 {
-    const Planet *planet = GetUniverse().Object<const Planet>(m_planet_id);
-    if (!planet) throw std::runtime_error("SidePanel::PlanetPanel::GetPlanet: planet not found!");
-    return planet;
+    return GetUniverse().Object<const Planet>(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::DoLayout()
@@ -839,32 +833,32 @@ void SidePanel::PlanetPanel::DoLayout()
     m_specials_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_specials_panel->Height())); // assumed to always be this Wnd's child
     y += m_specials_panel->Height() + EDGE_PAD;
 
-    if (m_env_size->Parent() == this) {
+    if (m_env_size && m_env_size->Parent() == this) {
         m_env_size->MoveTo(GG::Pt(left, y));
         y += m_env_size->Height() + EDGE_PAD;
     }
 
-    if (m_button_colonize->Parent() == this) {
+    if (m_button_colonize && m_button_colonize->Parent() == this) {
         m_button_colonize->MoveTo(GG::Pt(left, y));
         y += m_button_colonize->Height() + EDGE_PAD;
     }
 
-    if (m_population_panel->Parent() == this) {
+    if (m_population_panel && m_population_panel->Parent() == this) {
         m_population_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_population_panel->Height()));
         y += m_population_panel->Height() + EDGE_PAD;
     }
 
-    if (m_resource_panel->Parent() == this) {
+    if (m_resource_panel && m_resource_panel->Parent() == this) {
         m_resource_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_resource_panel->Height()));
         y += m_resource_panel->Height() + EDGE_PAD;
     }
 
-    if (m_military_panel->Parent() == this) {
+    if (m_military_panel && m_military_panel->Parent() == this) {
         m_military_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_military_panel->Height()));
         y += m_military_panel->Height() + EDGE_PAD;
     }
 
-    if (m_buildings_panel->Parent() == this) {
+    if (m_buildings_panel && m_buildings_panel->Parent() == this) {
         m_buildings_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_buildings_panel->Height()));
         y += m_buildings_panel->Height() + EDGE_PAD;
     }
@@ -882,6 +876,17 @@ void SidePanel::PlanetPanel::Refresh()
 {
     //std::cout << "SidePanel::PlanetPanel::Refresh" << std::endl;
     const Planet *planet = GetPlanet();
+    if (!planet) {
+        Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
+        // clear / hide everything...
+        DetachChild(m_env_size);
+        DetachChild(m_population_panel);
+        DetachChild(m_resource_panel);
+        DetachChild(m_military_panel);
+        DetachChild(m_button_colonize);
+        DoLayout();
+        return;
+    }
 
     // determine the ownership status of planet with respect to this client's player's empire
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
@@ -945,14 +950,14 @@ void SidePanel::PlanetPanel::Refresh()
 
 void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
 {
-    Planet *planet = GetPlanet();
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,true)));
+    if (Planet* planet = GetPlanet())
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus, true)));
 }
 
 void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 {
-    Planet *planet = GetPlanet();
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(),planet->ID(),focus,false)));
+    if (Planet* planet = GetPlanet())
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus, false)));
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
@@ -972,7 +977,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 {
     const Planet *planet = GetPlanet();
 
-    if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+    if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
 
 
@@ -1037,18 +1042,19 @@ void SidePanel::PlanetPanel::Select(bool selected)
     }
 }
 
-int SidePanel::PlanetPanel::PlanetDiameter() const
-{
-    return ::PlanetDiameter(GetPlanet()->Size());
-}
-
 bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
 {
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     GG::Pt center = UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER / 2), GG::Y(MAX_PLANET_DIAMETER / 2));
     GG::Pt diff = pt - center;
-    int r_squared = PlanetDiameter() * PlanetDiameter() / 4;
-    return Value(diff.x * diff.x) + Value(diff.y * diff.y) <= r_squared;
+
+    int r;
+    if (const Planet* planet = GetPlanet())
+        r = PlanetDiameter(planet->Size()) / 2;
+    else
+        r = MAX_PLANET_DIAMETER / 2;
+
+    return Value(diff.x * diff.x) + Value(diff.y * diff.y) <= r * r;
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
@@ -1056,8 +1062,12 @@ void SidePanel::PlanetPanel::ClickColonize()
     // order or cancel colonization, depending on whether it has previosuly
     // been ordered
 
-    const Planet *planet = GetPlanet();
+    const Planet* planet = GetPlanet();
+    if (!planet)
+        return;
+
     int empire_id = HumanClientApp::GetApp()->EmpireID();
+
     std::map<int, int> pending_colonization_orders = HumanClientApp::GetApp()->PendingColonizationOrders();
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
 
@@ -1141,16 +1151,20 @@ void SidePanel::PlanetPanelContainer::Clear()
     AttachChild(m_vscroll);
 }
 
-void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<const Planet*> &plt_vec, StarType star_type)
+void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_ids, StarType star_type)
 {
-    //std::cout << "SidePanel::PlanetPanelContainer::SetPlanets( size: " << plt_vec.size() << " )" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::SetPlanets( size: " << planet_ids.size() << " )" << std::endl;
 
     // remove old panels
     Clear();
 
     // create new panels and connect their signals
-    for (unsigned int i = 0; i < plt_vec.size(); ++i) {
-        const Planet* planet = plt_vec[i];
+    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
+        const Planet* planet = GetUniverse().Object<Planet>(*it);
+        if (!planet) {
+            Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't get planet with id " << *it;
+            continue;
+        }
         //std::cout << " ... adding panel for planet " << planet->Name() << std::endl;
         PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), *planet, star_type);
         AttachChild(planet_panel);
@@ -1515,7 +1529,7 @@ void SidePanel::RefreshImpl()
     // (re)create top right star graphic
     boost::shared_ptr<GG::Texture> graphic =
         ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars_sidepanel",
-                                                  ClientUI::StarTypeFilePrefixes()[system->Star()],
+                                                  ClientUI::StarTypeFilePrefixes()[system->GetStarType()],
                                                   system->ID());
     std::vector<boost::shared_ptr<GG::Texture> > textures;
     textures.push_back(graphic);
@@ -1542,8 +1556,8 @@ void SidePanel::RefreshImpl()
 
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
-    std::vector<const Planet*> plt_vec = system->FindObjects<Planet>();
-    m_planet_panel_container->SetPlanets(plt_vec, system->Star());
+    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
+    m_planet_panel_container->SetPlanets(planet_ids, system->GetStarType());
 
 
     // populate system resource summary
@@ -1551,10 +1565,10 @@ void SidePanel::RefreshImpl()
     // get planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
-    for (std::vector<const Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it) {
-        const Planet* planet = *it;
-        if (planet->WhollyOwnedBy(empire_id))
-            owned_planets.push_back(planet->ID());
+    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
+        const Planet* planet = GetUniverse().Object<Planet>(*it);
+        if (planet && planet->WhollyOwnedBy(empire_id))
+            owned_planets.push_back(*it);
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.

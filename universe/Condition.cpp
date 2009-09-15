@@ -1076,7 +1076,7 @@ bool Condition::StarType::Match(const UniverseObject* source, const UniverseObje
     const System* system = target->GetSystem();
     if (system || (system = universe_object_cast<const System*>(target))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
-            if (m_types[i]->Eval(source, target) == system->Star())
+            if (m_types[i]->Eval(source, target) == system->GetStarType())
                 return true;
         }
     }

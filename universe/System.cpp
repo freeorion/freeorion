@@ -55,7 +55,7 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
 System::~System()
 {}
 
-StarType System::Star() const
+StarType System::GetStarType() const
 {
     return m_star;
 }
@@ -505,11 +505,21 @@ System::lane_iterator System::end_lanes()
 
 System::StarlaneMap System::VisibleStarlanes(int empire_id) const
 {
+    if (empire_id == ALL_EMPIRES)
+        return m_starlanes_wormholes;
+
     const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().debugStream() << "System::VisibleStarlanes unable to get empire with id " << empire_id;
+        StarlaneMap retval;
+        return retval;
+    }
+
 
     // if indicated empire has explored this system, all starlanes are visible.
     if (empire->HasExploredSystem(ID()))
         return m_starlanes_wormholes;
+
 
     // otherwise, only starlanes from this system to other systems that have 
     // been explored are visible.
@@ -521,12 +531,13 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
     return retval;
 }
 
-System::ObjectMultimap System::PartiallyVisibleObjects(int empire_id) const
+System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const
 {
     ObjectMultimap retval;
-    const Universe& universe = GetUniverse();
+    Universe& universe = GetUniverse();
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (universe.Object(it->second)->GetVisibility(empire_id) >= VIS_PARTIAL_VISIBILITY)
+        int object_id = it->second;
+        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
             retval.insert(*it);
     }
     return retval;

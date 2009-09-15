@@ -170,6 +170,9 @@ private:
 
     virtual const Meter*                GetPopMeter() const {return GetMeter(METER_POPULATION);}
 
+    std::set<int>                       VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
+
+
     PlanetType      m_type;
     PlanetSize      m_size;
     Year            m_orbital_period;
@@ -211,14 +214,7 @@ void Planet::serialize(Archive& ar, const unsigned int version)
     std::set<int> buildings;
     if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
-
-        const Universe& universe = GetUniverse();
-        for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-            int obj_id = *it;
-            const UniverseObject* obj = universe.Object(obj_id);
-            if (obj->GetVisibility(Universe::s_encoding_empire) != VIS_NO_VISIBILITY)
-                buildings.insert(obj_id);
-        }
+        buildings = VisibleContainedObjects(Universe::s_encoding_empire);
     }
 
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
@@ -233,10 +229,12 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_axial_tilt)
         & BOOST_SERIALIZATION_NVP(m_just_conquered)
         & BOOST_SERIALIZATION_NVP(buildings);
-    if (Universe::ALL_OBJECTS_VISIBLE || vis == VIS_FULL_VISIBILITY) {
+
+    if (vis == VIS_FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(m_available_trade)
             & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized);
     }
+
     if (Archive::is_loading::value)
         m_buildings = buildings;
 }

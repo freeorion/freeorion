@@ -581,6 +581,17 @@ PlanetEnvironment Planet::Environment(PlanetType type)
     }
 }
 
+std::set<int> Planet::VisibleContainedObjects(int empire_id) const
+{
+    std::set<int> retval;
+    Universe& universe = GetUniverse();
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
+        int object_id = *it;
+        if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)
+            retval.insert(object_id);
+    }
+    return retval;
+}
 
 // free functions
 

@@ -188,7 +188,6 @@ namespace FreeOrionPython {
             .add_property("numShips",                   &Fleet::NumShips)
             .add_property("empty",                      &Fleet::Empty)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
-
         ;
 
         //////////////////
@@ -298,7 +297,7 @@ namespace FreeOrionPython {
         //    System    //
         //////////////////
         class_<System, bases<UniverseObject>, noncopyable>("system", no_init)
-            .add_property("starType",           &System::Star)
+            .add_property("starType",           &System::GetStarType)
             .add_property("numOrbits",          &System::Orbits)
             .add_property("numStarlanes",       &System::Starlanes)
             .add_property("numWormholes",       &System::Wormholes)

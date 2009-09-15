@@ -260,7 +260,7 @@ namespace ValueRef {
         if (m_property_name.back() == "StarType") {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const System* s = universe_object_cast<const System*>(object))
-                retval = s->Star();
+                retval = s->GetStarType();
         } else {
             throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type StarType.");
         }
