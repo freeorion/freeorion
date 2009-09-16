@@ -508,24 +508,17 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
     if (empire_id == ALL_EMPIRES)
         return m_starlanes_wormholes;
 
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire) {
-        Logger().debugStream() << "System::VisibleStarlanes unable to get empire with id " << empire_id;
-        StarlaneMap retval;
-        return retval;
-    }
+    Universe& universe = GetUniverse();
 
+    // starlanes are visible if both systems have basic visibility or greater,
+    // and one or both systems has partial visibility or greater
 
-    // if indicated empire has explored this system, all starlanes are visible.
-    if (empire->HasExploredSystem(ID()))
-        return m_starlanes_wormholes;
-
-
-    // otherwise, only starlanes from this system to other systems that have 
-    // been explored are visible.
     StarlaneMap retval;
     for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
-        if (empire->HasExploredSystem(it->first))
+        Visibility vis1 = universe.GetObjectVisibilityByEmpire(it->first, empire_id);
+        Visibility vis2 = universe.GetObjectVisibilityByEmpire(it->second, empire_id);
+
+        if ((vis1 >= VIS_PARTIAL_VISIBILITY && vis2 >= VIS_BASIC_VISIBILITY) || (vis2 >= VIS_PARTIAL_VISIBILITY && vis1 >= VIS_BASIC_VISIBILITY))
             retval.insert(*it);
     }
     return retval;

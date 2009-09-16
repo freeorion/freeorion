@@ -1272,9 +1272,9 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
             Visibility target_visibility_to_detector = VIS_NO_VISIBILITY;
-            // zero-stealth objects are always at least basic-level visible
-            if (stealth <= 0)
-                target_visibility_to_detector = VIS_BASIC_VISIBILITY;
+            //// zero-stealth objects are always at least basic-level visible
+            //if (stealth <= 0)
+            //    target_visibility_to_detector = VIS_BASIC_VISIBILITY;
 
 
             // compare stealth, detection ability and distance between
@@ -1284,8 +1284,8 @@ void Universe::UpdateEmpireObjectVisibilities()
             double xt = target->X();
             double yt = target->Y();
 
-            // distance
-            double dist = std::sqrt((xt-xd)*(xt-xd) + (yt-yd)*(yt-yd));
+            // distance squared
+            double dist2 = (xt-xd)*(xt-xd) + (yt-yd)*(yt-yd);
 
 
             // To determine if a detector can detect a target, the target's
@@ -1295,7 +1295,7 @@ void Universe::UpdateEmpireObjectVisibilities()
             // target is seen by the detector with partial visibility.
             double detect_range = 10.0*(detection - stealth);
 
-            if (dist <= detect_range)
+            if (dist2 <= detect_range * detect_range)
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
 
             // Note that owning an object grants FULL visibility
@@ -1594,27 +1594,30 @@ void Universe::InitializeSystemGraph()
             int lane_dest_id = it->first;
 
             // get m_graph_impl->m_system_graph index for this system
-            int lane_dest_graph_index = system_id_graph_index_reverse_lookup_map[lane_dest_id];
+            std::map<int, int>::iterator reverse_lookup_map_it = system_id_graph_index_reverse_lookup_map.find(lane_dest_id);
+            if (reverse_lookup_map_it == system_id_graph_index_reverse_lookup_map.end())
+                continue;   // couldn't find destination system id in reverse lookup map; don't add to graph
+            int lane_dest_graph_index = reverse_lookup_map_it->second;
 
             std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_graph_impl->m_system_graph);
-            
+
             if (it->second) {                               // if this is a wormhole
                 edge_weight_map[add_edge_result.first] = 0.0;
             } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
                 UniverseObject* system2 = Object(it->first);
                 double x_dist = system2->X() - system1->X();
                 double y_dist = system2->Y() - system1->Y();
-                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist * x_dist + y_dist * y_dist);
+                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
             }
         }
 
         // define the straight-line system distances for this system
         m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
-            UniverseObject* system2 = Object(j);
+            UniverseObject* system2 = systems[j];
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
-            m_system_distances[i].push_back(std::sqrt(x_dist * x_dist + y_dist * y_dist));
+            m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
         }
         m_system_distances[i].push_back(0.0);
     }

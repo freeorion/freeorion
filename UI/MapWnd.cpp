@@ -934,25 +934,28 @@ void MapWnd::InitTurn(int turn_number)
     //    else
     //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
     //}
-    //// DEBUG
-    //std::cout << "UniverseObjects: " << std::endl;
-    //for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-    //    const UniverseObject* obj = it->second;
-    //    std::cout << GetTypeName(obj) << "  " << obj->Name();
+    // DEBUG
+    std::cout << "UniverseObjects: " << std::endl;
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        const UniverseObject* obj = it->second;
+        std::cout << GetTypeName(obj) << "  " << obj->Name();
 
-    //    if (const System* system = obj->GetSystem())
-    //        std::cout << "  at: " << system->Name();
+        if (const System* system = obj->GetSystem())
+            std::cout << "  at: " << system->Name();
 
-    //    const std::set<int>& owners = obj->Owners();
-    //    if (!owners.empty()) {
-    //        std::cout << "  owners:";
-    //        for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
-    //            std::cout << " " << *own_it;
-    //    }
+        const std::set<int>& owners = obj->Owners();
+        if (!owners.empty()) {
+            std::cout << "  owners:";
+            for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
+                std::cout << " " << *own_it;
+        }
 
-    //    std::cout << std::endl;
-    //}
-    //std::cout << std::endl;
+        Visibility vis = universe.GetObjectVisibilityByEmpire(it->first, HumanClientApp::GetApp()->EmpireID());
+        std::cout << " vis: " << boost::lexical_cast<std::string>(vis);
+
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
@@ -2643,8 +2646,9 @@ void MapWnd::RenderSystems()
     bool circles = GetOptionsDB().Get<bool>("UI.system-circles");
     bool fog_scanlines = false;
     float fog_scanline_spacing = 4.0f;
-    const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
+    Universe& universe = GetUniverse();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         fog_scanlines = true;
         fog_scanline_spacing = GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing");
     }
@@ -2676,7 +2680,7 @@ void MapWnd::RenderSystems()
 
             if (fog_scanlines && m_scanline_shader) {
                 const System& system = icon->GetSystem();
-                if (!empire->HasExploredSystem(system.ID())) {
+                if (universe.GetObjectVisibilityByEmpire(system.ID(), empire_id) <= VIS_BASIC_VISIBILITY) {
                     m_scanline_shader->Use();
                     m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);

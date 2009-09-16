@@ -1465,7 +1465,10 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
 
             // attempt to propegate to unobstructed adjacent systems
             std::map<int, std::set<int> >::const_iterator system_it = starlanes.find(cur_sys_id);
-            if (system_it == starlanes.end()) continue; // no starlanes out of this system
+            if (system_it == starlanes.end()) {
+                ++sys_list_it;
+                continue; // no starlanes out of this system
+            }
 
             const std::set<int>& starlane_ends = system_it->second;
             for (std::set<int>::const_iterator lane_it = starlane_ends.begin(); lane_it != starlane_ends.end(); ++lane_it) {
