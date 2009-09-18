@@ -337,7 +337,7 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
 
     SimpleVehicle::reset();
     SimpleVehicle::setMaxForce(3.0);
-    SimpleVehicle::setMaxSpeed(m_ship->Design()->Speed());
+    SimpleVehicle::setMaxSpeed(m_ship->Design()->BattleSpeed());
 
     // TODO: setMass()
 

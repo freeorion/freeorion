@@ -325,7 +325,7 @@ void EncyclopediaDetailPanel::Refresh() {
             % m_design->Description()
             % m_design->Attack()
             % m_design->Defense()
-            % m_design->Speed());
+            % m_design->StarlaneSpeed());
     } else if (m_special) {
         // Specials
         name = UserString(m_special->Name());

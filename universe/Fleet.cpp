@@ -34,7 +34,7 @@ namespace {
 
     void GrowFuelMeter(Meter* fuel_meter) {
         assert(fuel_meter);
-        fuel_meter->AdjustCurrent(0.1001);
+        fuel_meter->AdjustCurrent(0.1001);  // TODO: make this configurable.  slightly larger than 0.1 ensures rounding will go up, not down, which is preferable for gameplay and UI purposes
     }
 }
 

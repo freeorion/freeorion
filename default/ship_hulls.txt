@@ -1,9 +1,10 @@
 Hull
     name = "SH_EMPTY"
-    description = "SH_EMPTY_DESC"
+    description = "SH_STAND_EMPTY_DESC"
     speed = 120
     starlaneSpeed = 120
     fuel = 3
+    stealth = 15
     health = 30
     buildCost = 5
     buildTime = 2
@@ -14,11 +15,39 @@ Hull
     graphic = ""
 
 Hull
+    name = "SH_EMPTY_FARMER"
+    description = "SH_STAND_EMPTY_DESC_FARMER"
+    speed = 40
+    starlaneSpeed = 40
+    fuel = 3
+    stealth = 1
+    health = 30
+    buildCost = 5
+    buildTime = 2
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Planet
+                Contains Source
+                OwnedBy TheEmpire Source.Owner
+                PrimaryFocus Farming
+            ]
+            activation = Source
+            stackinggroup = "SH_EMPTY_FARMER_STACK_FARMING"
+            effects = SetMaxFarming Target.MaxFarming + 5
+    graphic = ""
+
+Hull
     name = "SH_SMALL"
     description = "SH_SMALL_DESC"
     speed = 80
     starlaneSpeed = 80
     fuel = 3
+    stealth = 10
     health = 40
     buildCost = 10
     buildTime = 4
@@ -34,11 +63,29 @@ Hull
     graphic = ""
 
 Hull
+    name = "SH_INT_SMALL"
+    description = "SH_INT_SMALL_DESC"
+    speed = 80
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = 10
+    health = 40
+    buildCost = 10
+    buildTime = 4
+    slots = Slot type = Internal position = (0.40, 0.40)
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    graphic = ""
+
+Hull
     name = "SH_MEDIUM"
     description = "SH_MEDIUM_DESC"
     speed = 50
     starlaneSpeed = 50
     fuel = 5
+    stealth = 5
     health = 50
     buildCost = 20
     buildTime = 5
@@ -57,11 +104,86 @@ Hull
     graphic = ""
 
 Hull
+    name = "SH_COMB_MEDIUM"
+    description = "SH_COMB_MEDIUM_DESC"
+    speed = 50
+    starlaneSpeed = 50
+    fuel = 5
+    stealth = 5
+    health = 50
+    buildCost = 20
+    buildTime = 5
+    slots = [
+        Slot type = External position = (0.10, 0.40)
+        Slot type = External position = (0.25, 0.40)
+        Slot type = External position = (0.40, 0.40)
+        Slot type = External position = (0.55, 0.40)
+        Slot type = External position = (0.70, 0.40)
+        Slot type = External position = (0.85, 0.40)
+    ]
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_INT_MEDIUM"
+    description = "SH_INT_MEDIUM_DESC"
+    speed = 50
+    starlaneSpeed = 50
+    fuel = 5
+    stealth = 5
+    health = 50
+    buildCost = 20
+    buildTime = 5
+    slots = [
+        Slot type = Internal position = (0.20, 0.40)
+        Slot type = Internal position = (0.40, 0.40)
+        Slot type = Internal position = (0.60, 0.40)
+        Slot type = Internal position = (0.80, 0.40)
+    ]
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_BULK_MEDIUM"
+    description = "SH_BULK_MEDIUM_DESC"
+    speed = 30
+    starlaneSpeed = 30
+    fuel = 3
+    stealth = 5
+    health = 60
+    buildCost = 25
+    buildTime = 6
+    slots = [
+        Slot type = External position = (0.15, 0.15)
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.45, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.75, 0.15)
+        Slot type = Internal position = (0.30, 0.75)
+        Slot type = Internal position = (0.50, 0.75)
+    ]
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    graphic = ""
+
+Hull
     name = "SH_LARGE"
     description = "SH_LARGE_DESC"
     speed = 40
     starlaneSpeed = 40
     fuel = 3
+    stealth = 0
     health = 65
     buildCost = 30
     buildTime = 6
@@ -87,6 +209,7 @@ Hull
     speed = 30
     starlaneSpeed = 30
     fuel = 1
+    stealth = -10
     health = 80
     buildCost = 50
     buildTime = 8

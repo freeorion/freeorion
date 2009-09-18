@@ -172,8 +172,8 @@ struct PartStatsClosure : boost::spirit::closure<PartStatsClosure, PartTypeStats
     member6 stealth;
     member7 health;
     member8 fighter_type;
-    member9 anti_fighter_damage;
-    member10 anti_ship_damage;
+    member9 anti_ship_damage;
+    member10 anti_fighter_damage;
     member11 detection;
     member12 capacity;
 };
@@ -197,22 +197,33 @@ struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string,
     member11 graphic;
 };
 
-struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string, double, double,
-                                            double, double, double, int, std::vector<HullType::Slot>,
-                                            Condition::ConditionBase*, std::string>
+struct HullStatsClosure : boost::spirit::closure<HullStatsClosure, HullTypeStats, double,
+                                                 double, double, double, double>
+{
+    member1 this_;
+    member2 battle_speed;
+    member3 starlane_speed;
+    member4 fuel;
+    member5 stealth;
+    member6 health;
+};
+
+struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string,
+                                            HullTypeStats, double, int, std::vector<HullType::Slot>,
+                                            Condition::ConditionBase*,
+                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                            std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
-    member4 speed;
-    member5 starlane_speed;
-    member6 fuel;
-    member7 health;
-    member8 cost;
-    member9 build_time;
-    member10 slots;
-    member11 location;
-    member12 graphic;
+    member4 stats;
+    member5 cost;
+    member6 build_time;
+    member7 slots;
+    member8 location;
+    member9 effects_groups;
+    member10 graphic;
 };
 
 struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,

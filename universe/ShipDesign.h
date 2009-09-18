@@ -37,12 +37,11 @@ struct DirectFireStats
     static const double PD_SELF_DEFENSE_FACTOR;
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(m_damage)
-                & BOOST_SERIALIZATION_NVP(m_ROF)
-                & BOOST_SERIALIZATION_NVP(m_range);
-        }
+    void serialize(Archive& ar, const unsigned int) {
+        ar  & BOOST_SERIALIZATION_NVP(m_damage)
+            & BOOST_SERIALIZATION_NVP(m_ROF)
+            & BOOST_SERIALIZATION_NVP(m_range);
+    }
 };
 
 /** Part stats for the PC_MISSILES part type. */
@@ -66,16 +65,15 @@ struct LRStats
     int m_capacity;
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(m_damage)
-                & BOOST_SERIALIZATION_NVP(m_ROF)
-                & BOOST_SERIALIZATION_NVP(m_range)
-                & BOOST_SERIALIZATION_NVP(m_speed)
-                & BOOST_SERIALIZATION_NVP(m_stealth)
-                & BOOST_SERIALIZATION_NVP(m_health)
-                & BOOST_SERIALIZATION_NVP(m_capacity);
-        }
+    void serialize(Archive& ar, const unsigned int) {
+        ar  & BOOST_SERIALIZATION_NVP(m_damage)
+            & BOOST_SERIALIZATION_NVP(m_ROF)
+            & BOOST_SERIALIZATION_NVP(m_range)
+            & BOOST_SERIALIZATION_NVP(m_speed)
+            & BOOST_SERIALIZATION_NVP(m_stealth)
+            & BOOST_SERIALIZATION_NVP(m_health)
+            & BOOST_SERIALIZATION_NVP(m_capacity);
+    }
 };
 
 /** Part stats for the PC_FIGHTERS part type. */
@@ -105,19 +103,18 @@ struct FighterStats
     int m_capacity;
 
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(m_type)
-                & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
-                & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
-                & BOOST_SERIALIZATION_NVP(m_launch_rate)
-                & BOOST_SERIALIZATION_NVP(m_fighter_weapon_range)
-                & BOOST_SERIALIZATION_NVP(m_speed)
-                & BOOST_SERIALIZATION_NVP(m_stealth)
-                & BOOST_SERIALIZATION_NVP(m_health)
-                & BOOST_SERIALIZATION_NVP(m_detection)
-                & BOOST_SERIALIZATION_NVP(m_capacity);
-        }
+    void serialize(Archive& ar, const unsigned int) {
+        ar  & BOOST_SERIALIZATION_NVP(m_type)
+            & BOOST_SERIALIZATION_NVP(m_anti_ship_damage)
+            & BOOST_SERIALIZATION_NVP(m_anti_fighter_damage)
+            & BOOST_SERIALIZATION_NVP(m_launch_rate)
+            & BOOST_SERIALIZATION_NVP(m_fighter_weapon_range)
+            & BOOST_SERIALIZATION_NVP(m_speed)
+            & BOOST_SERIALIZATION_NVP(m_stealth)
+            & BOOST_SERIALIZATION_NVP(m_health)
+            & BOOST_SERIALIZATION_NVP(m_detection)
+            & BOOST_SERIALIZATION_NVP(m_capacity);
+    }
 };
 
 /** A variant type containing all ShipPartClass-specific stats for a PartType.
@@ -222,6 +219,31 @@ const PartTypeManager& GetPartTypeManager();
   * such PartType exists, 0 is returned instead. */
 const PartType* GetPartType(const std::string& name);
 
+/** Hull stats.  Used by parser due to limits on number of sub-items per
+  * parsed main item. */
+struct HullTypeStats {
+    HullTypeStats();
+    HullTypeStats(double fuel,
+                  double battle_speed,
+                  double starlane_speed,
+                  double stealth,
+                  double health);
+
+    double m_fuel;
+    double m_battle_speed;
+    double m_starlane_speed;
+    double m_stealth;
+    double m_health;
+
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int) {
+        ar  & BOOST_SERIALIZATION_NVP(m_fuel)
+            & BOOST_SERIALIZATION_NVP(m_battle_speed)
+            & BOOST_SERIALIZATION_NVP(m_starlane_speed)
+            & BOOST_SERIALIZATION_NVP(m_stealth)
+            & BOOST_SERIALIZATION_NVP(m_health);
+    }
+};
 
 /** Specification for the hull, or base, on which ship designs are created by
   * adding parts.  The hull determines some final design characteristics
@@ -237,10 +259,21 @@ public:
 
     /** \name Structors */ //@{
     HullType();
-    HullType(const std::string& name, const std::string& description, double speed,
-             double starlane_speed, double fuel, double health, double cost, int build_time,
-             const std::vector<Slot>& slots, const Condition::ConditionBase* location,
+    HullType(const std::string& name, const std::string& description,
+             double fuel, double battle_speed, double starlane_speed,
+             double stealth, double health,
+             double cost, int build_time, const std::vector<Slot>& slots,
+             const Condition::ConditionBase* location,
+             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
              const std::string& graphic);
+
+    HullType(const std::string& name, const std::string& description,
+             const HullTypeStats& stats,
+             double cost, int build_time, const std::vector<Slot>& slots,
+             const Condition::ConditionBase* location,
+             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+             const std::string& graphic);
+
     ~HullType();
     //@}
 
@@ -249,10 +282,11 @@ public:
     const std::string&  Description() const;    ///< returns description, including a description of the stats and effects of this hull
     std::string         StatDescription() const;///< returns autogenerated list of various stats associated with part, such as speeds or fuel capacity
 
-    double              Speed() const;          ///< returns combat speed of hull
+    double              BattleSpeed() const;    ///< returns battle speed of hull
     double              StarlaneSpeed() const;  ///< returns starlane speed of hull
-    double              Fuel() const;           ///< returns fuel capacity of hull
 
+    double              Fuel() const;           ///< returns fuel capacity of hull
+    double              Stealth() const;        ///< returns stealth of hull
     double              Health() const;         ///< returns health of hull
 
     double              Cost() const;           ///< returns total cost of hull
@@ -274,9 +308,10 @@ public:
 private:
     std::string                 m_name;
     std::string                 m_description;
-    double                      m_speed;
+    double                      m_battle_speed;
     double                      m_starlane_speed;
     double                      m_fuel;
+    double                      m_stealth;
     double                      m_health;
 
     double                      m_cost;         // in PP
@@ -356,8 +391,8 @@ public:
     double                          Cost() const;               ///< returns the cost per turn to build a ship of this design
     int                             BuildTime() const;          ///< returns the time in turns it takes to build a ship of this design
 
+    double                          BattleSpeed() const;        ///< returns design speed on the battle map
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
-    double                          Speed() const;              ///< returns design speed on the battle map
 
     bool                            CanColonize() const;
     bool                            IsArmed() const;
@@ -486,9 +521,11 @@ void HullType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_speed)
+        & BOOST_SERIALIZATION_NVP(m_battle_speed)
         & BOOST_SERIALIZATION_NVP(m_starlane_speed)
         & BOOST_SERIALIZATION_NVP(m_fuel)
+        & BOOST_SERIALIZATION_NVP(m_stealth)
+        & BOOST_SERIALIZATION_NVP(m_health)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_slots)

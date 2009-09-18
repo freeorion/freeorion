@@ -18,6 +18,7 @@ rule<Scanner, ItemSpecClosure::context_t>       item_spec_p;
 rule<Scanner, CategoryClosure::context_t>       category_p;
 rule<Scanner, PartStatsClosure::context_t>      part_stats_p;
 rule<Scanner, PartClosure::context_t>           part_p;
+rule<Scanner, HullStatsClosure::context_t>      hull_stats_p;
 rule<Scanner, HullClosure::context_t>           hull_p;
 rule<Scanner, ShipDesignClosure::context_t>     ship_design_p;
 rule<Scanner, FleetPlanClosure::context_t>      fleet_plan_p;
@@ -262,23 +263,31 @@ namespace {
             slot_p[push_back_(slot_vec_p.this_, arg1)]
             | ('[' >> +(slot_p[push_back_(slot_vec_p.this_, arg1)]) >> ']');
 
+        hull_stats_p =
+            (speed_label >> real_p[hull_stats_p.battle_speed = arg1]
+            >> starlane_speed_label >> real_p[hull_stats_p.starlane_speed = arg1]
+            >> fuel_label >> real_p[hull_stats_p.fuel = arg1]
+            >> stealth_label >> real_p[hull_stats_p.stealth = arg1]
+            >> health_label >> real_p[hull_stats_p.health = arg1])
+            [hull_stats_p.this_ =
+             construct_<HullTypeStats>(hull_stats_p.fuel, hull_stats_p.battle_speed, hull_stats_p.starlane_speed,
+                                       hull_stats_p.stealth, hull_stats_p.health)];
+
         hull_p =
             (str_p("hull")
              >> name_label >> name_p[hull_p.name = arg1]
              >> description_label >> name_p[hull_p.description = arg1]
-             >> speed_label >> real_p[hull_p.speed = arg1]
-             >> starlane_speed_label >> real_p[hull_p.starlane_speed = arg1]
-             >> fuel_label >> real_p[hull_p.fuel = arg1]
-             >> health_label >> real_p[hull_p.health = arg1]
+             >> hull_stats_p[hull_p.stats = arg1]
              >> buildcost_label >> real_p[hull_p.cost = arg1]
              >> buildtime_label >> int_p[hull_p.build_time = arg1]
              >> !(slots_label >> slot_vec_p[hull_p.slots = arg1])
              >> location_label >> condition_p[hull_p.location = arg1]
+             >> !(effectsgroups_label >> effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[hull_p.graphic = arg1])
-            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description, hull_p.speed,
-                                           hull_p.starlane_speed, hull_p.fuel, hull_p.health,
-                                           hull_p.cost, hull_p.build_time, hull_p.slots,
-                                           hull_p.location, hull_p.graphic)];
+            [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description,
+                                           hull_p.stats, hull_p.cost, hull_p.build_time,
+                                           hull_p.slots, hull_p.location,
+                                           hull_p.effects_groups, hull_p.graphic)];
 
         ship_design_p =
             (str_p("shipdesign")

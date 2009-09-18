@@ -94,7 +94,7 @@ bool Ship::CanColonize() const {
 }
 
 double Ship::Speed() const {
-    return Design()->Speed();
+    return Design()->StarlaneSpeed();
 }
 
 const Ship::ConsumablesMap& Ship::Fighters() const {

@@ -147,7 +147,91 @@ namespace {
 }
 
 ////////////////////////////////////////////////
-// stat variant types                         //
+// Free Functions                             //
+////////////////////////////////////////////////
+const PartTypeManager& GetPartTypeManager() {
+    return PartTypeManager::GetPartTypeManager();
+}
+
+const PartType* GetPartType(const std::string& name) {
+    return GetPartTypeManager().GetPartType(name);
+}
+
+const HullTypeManager& GetHullTypeManager() {
+    return HullTypeManager::GetHullTypeManager();
+}
+
+const HullType* GetHullType(const std::string& name) {
+    return GetHullTypeManager().GetHullType(name);
+}
+
+const ShipDesign* GetShipDesign(int ship_design_id) {
+    return GetUniverse().GetShipDesign(ship_design_id);
+}
+
+
+/////////////////////////////////////
+// PartTypeManager                 //
+/////////////////////////////////////
+// static
+PartTypeManager* PartTypeManager::s_instance = 0;
+
+PartTypeManager::PartTypeManager() {
+    if (s_instance)
+        throw std::runtime_error("Attempted to create more than one PartTypeManager.");
+    s_instance = this;
+
+    std::string file_name = "ship_parts.txt";
+    std::string input;
+
+    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+    if (ifs) {
+        std::getline(ifs, input, '\0');
+        ifs.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << file_name;
+        return;
+    }
+
+    using namespace boost::spirit;
+    using namespace phoenix;
+    parse_info<const char*> result =
+        parse(input.c_str(),
+              as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]]
+              >> end_p,
+              skip_p);
+    if (!result.full)
+        ReportError(input.c_str(), result);
+}
+
+PartTypeManager::~PartTypeManager()
+{
+    for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
+        delete it->second;
+    }
+}
+
+const PartType* PartTypeManager::GetPartType(const std::string& name) const {
+    std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
+    return it != m_parts.end() ? it->second : 0;
+}
+
+const PartTypeManager& PartTypeManager::GetPartTypeManager() {
+    static PartTypeManager manager;
+    return manager;
+}
+
+PartTypeManager::iterator PartTypeManager::begin() const {
+    return m_parts.begin();
+}
+
+PartTypeManager::iterator PartTypeManager::end() const {
+    return m_parts.end();
+}
+
+
+////////////////////////////////////////////////
+// PartType stat variant types                //
 ////////////////////////////////////////////////
 const double DirectFireStats::PD_SELF_DEFENSE_FACTOR = 2.0 / 3.0;
 
@@ -240,90 +324,6 @@ FighterStats::FighterStats(CombatFighterType type,
 
 
 ////////////////////////////////////////////////
-// Free Functions                             //
-////////////////////////////////////////////////
-const PartTypeManager& GetPartTypeManager() {
-    return PartTypeManager::GetPartTypeManager();
-}
-
-const PartType* GetPartType(const std::string& name) {
-    return GetPartTypeManager().GetPartType(name);
-}
-
-const HullTypeManager& GetHullTypeManager() {
-    return HullTypeManager::GetHullTypeManager();
-}
-
-const HullType* GetHullType(const std::string& name) {
-    return GetHullTypeManager().GetHullType(name);
-}
-
-const ShipDesign* GetShipDesign(int ship_design_id) {
-    return GetUniverse().GetShipDesign(ship_design_id);
-}
-
-
-/////////////////////////////////////
-// PartTypeManager                 //
-/////////////////////////////////////
-// static
-PartTypeManager* PartTypeManager::s_instance = 0;
-
-PartTypeManager::PartTypeManager() {
-    if (s_instance)
-        throw std::runtime_error("Attempted to create more than one PartTypeManager.");
-    s_instance = this;
-
-    std::string file_name = "ship_parts.txt";
-    std::string input;
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
-        return;
-    }
-
-    using namespace boost::spirit;
-    using namespace phoenix;
-    parse_info<const char*> result =
-        parse(input.c_str(),
-              as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
-}
-
-PartTypeManager::~PartTypeManager()
-{
-    for (std::map<std::string, PartType*>::iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
-        delete it->second;
-    }
-}
-
-const PartType* PartTypeManager::GetPartType(const std::string& name) const {
-    std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
-    return it != m_parts.end() ? it->second : 0;
-}
-
-const PartTypeManager& PartTypeManager::GetPartTypeManager() {
-    static PartTypeManager manager;
-    return manager;
-}
-
-PartTypeManager::iterator PartTypeManager::begin() const {
-    return m_parts.begin();
-}
-
-PartTypeManager::iterator PartTypeManager::end() const {
-    return m_parts.end();
-}
-
-
-////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
 PartType::PartType() :
@@ -335,6 +335,7 @@ PartType::PartType() :
     m_build_time(1),
     m_mountable_slot_types(),
     m_location(0),
+    m_effects(),
     m_graphic("")
 {}
 
@@ -353,6 +354,7 @@ PartType::PartType(
     m_build_time(build_time),
     m_mountable_slot_types(mountable_slot_types),
     m_location(location),
+    m_effects(),
     m_graphic(graphic)
 {
     switch (m_class) {
@@ -464,6 +466,27 @@ const Condition::ConditionBase* PartType::Location() const {
 
 
 ////////////////////////////////////////////////
+// HullType stats                             //
+////////////////////////////////////////////////
+HullTypeStats::HullTypeStats() :
+    m_fuel(0.0),
+    m_battle_speed(0.0),
+    m_starlane_speed(0.0),
+    m_stealth(0.0),
+    m_health(0.0)
+{}
+
+HullTypeStats::HullTypeStats(double fuel, double battle_speed, double starlane_speed,
+                             double stealth, double health) :
+    m_fuel(fuel),
+    m_battle_speed(battle_speed),
+    m_starlane_speed(starlane_speed),
+    m_stealth(stealth),
+    m_health(health)
+{}
+
+
+////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
 
@@ -477,34 +500,74 @@ HullType::Slot::Slot(ShipSlotType slot_type, double x_, double y_) :
 HullType::HullType() :
     m_name("generic hull type"),
     m_description("indescribable"),
-    m_speed(1.0),
+    m_battle_speed(1.0),
     m_starlane_speed(1.0),
-    m_fuel(1.0),
+    m_fuel(0.0),
+    m_stealth(0.0),
+    m_health(0.0),
     m_cost(1.0),
     m_build_time(1),
     m_slots(),
     m_location(0),
+    m_effects(),
     m_graphic("")
 {}
 
-HullType::HullType(const std::string& name, const std::string& description, double speed,
-                   double starlane_speed, double fuel, double health, double cost,
-                   int build_time, const std::vector<Slot>& slots,
-                   const Condition::ConditionBase* location, const std::string& graphic) :
+HullType::HullType(const std::string& name, const std::string& description,
+                   double fuel, double battle_speed, double starlane_speed,
+                   double stealth, double health,
+                   double cost, int build_time, const std::vector<Slot>& slots,
+                   const Condition::ConditionBase* location,
+                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                   const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_speed(speed),
+    m_battle_speed(battle_speed),
     m_starlane_speed(starlane_speed),
     m_fuel(fuel),
+    m_stealth(stealth),
     m_health(health),
     m_cost(cost),
     m_build_time(build_time),
     m_slots(slots),
     m_location(location),
+    m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", m_fuel));
-    m_effects.push_back(IncreaseMax(METER_HEALTH, "MaxHealth", m_health));
+    m_effects.push_back(IncreaseMax(METER_FUEL,     "MaxFuel",      m_fuel));
+    m_effects.push_back(IncreaseMax(METER_STEALTH,  "MaxStealth",   m_stealth));
+    m_effects.push_back(IncreaseMax(METER_HEALTH,   "MaxHealth",    m_health));
+    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
+        m_effects.push_back(*it);
+}
+
+
+
+HullType::HullType(const std::string& name, const std::string& description,
+                   const HullTypeStats& stats,
+                   double cost, int build_time, const std::vector<Slot>& slots,
+                   const Condition::ConditionBase* location,
+                   const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                   const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_battle_speed(stats.m_battle_speed),
+    m_starlane_speed(stats.m_starlane_speed),
+    m_fuel(stats.m_fuel),
+    m_stealth(stats.m_stealth),
+    m_health(stats.m_health),
+    m_cost(cost),
+    m_build_time(build_time),
+    m_slots(slots),
+    m_location(location),
+    m_effects(),
+    m_graphic(graphic)
+{
+    m_effects.push_back(IncreaseMax(METER_FUEL,     "MaxFuel",      m_fuel));
+    m_effects.push_back(IncreaseMax(METER_STEALTH,  "MaxStealth",   m_stealth));
+    m_effects.push_back(IncreaseMax(METER_HEALTH,   "MaxHealth",    m_health));
+    for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
+        m_effects.push_back(*it);
 }
 
 HullType::~HullType()
@@ -514,24 +577,22 @@ const std::string& HullType::Name() const {
     return m_name;
 }
 
-const std::string& HullType::Description() const
-{
+const std::string& HullType::Description() const {
     return m_description;
 }
 
-std::string HullType::StatDescription() const
-{
+std::string HullType::StatDescription() const {
     std::string retval = 
         str(FlexibleFormat(UserString("HULL_DESC"))
             % m_starlane_speed
             % m_fuel
-            % m_speed
+            % m_battle_speed
             % m_health);
     return retval;
 }
 
-double HullType::Speed() const {
-    return m_speed;
+double HullType::BattleSpeed() const {
+    return m_battle_speed;
 }
 
 double HullType::StarlaneSpeed() const {
@@ -702,9 +763,9 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_max_non_PD_weapon_range(0.0)
 {
     // expand parts list to have empty values if fewer parts are given than hull has slots
-    if (const HullType* hull = GetHullType(m_hull)) {
-        if (m_parts.size() < hull->NumSlots())
-            m_parts.resize(hull->NumSlots(), "");
+    if (const HullType* hull_type = GetHullType(m_hull)) {
+        if (m_parts.size() < hull_type->NumSlots())
+            m_parts.resize(hull_type->NumSlots(), "");
     }
 
     if (!ValidDesign(m_hull, m_parts)) {
@@ -775,8 +836,8 @@ double ShipDesign::StarlaneSpeed() const {
     return GetHull()->StarlaneSpeed();
 }
 
-double ShipDesign::Speed() const {
-    return GetHull()->Speed();
+double ShipDesign::BattleSpeed() const {
+    return GetHull()->BattleSpeed();
 }
 
 const std::multimap<double, const PartType*>& ShipDesign::SRWeapons() const
