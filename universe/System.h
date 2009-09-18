@@ -172,13 +172,18 @@ public:
     lane_iterator           begin_lanes();                  ///< begin iterator for all starlanes and wormholes terminating in this system
     lane_iterator           end_lanes();                    ///< end iterator for all starlanes and wormholes terminating in this system
 
-    /** returns a map of the starlanes and wormholes visible to empire \a empire_id; the map contains keys that are IDs
-        of connected systems, and bool values indicating whether each is a starlane (false) or a wormhole (true)*/
+    /** returns a map of the starlanes and wormholes visible to empire
+      * \a empire_id; the map contains keys that are IDs of connected systems,
+      * and bool values indicating whether each is a starlane (false) or a
+      * wormhole (true)*/
     StarlaneMap             VisibleStarlanes(int empire_id) const;
     //@}
 
 private:
-    ObjectMultimap          VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_objects that is visible to empire with id \a empire_id
+    /** returns the subset of m_objects that is visible to empire with id
+      * \a empire_id */
+    ObjectMultimap          VisibleContainedObjects(int empire_id) const;
+
     void                    UpdateOwnership();
 
     StarType        m_star;

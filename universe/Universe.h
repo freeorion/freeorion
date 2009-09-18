@@ -483,6 +483,7 @@ private:
     void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);
 
     void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire);
+    void    GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire);
     void    GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire);
     void    GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire);
 
@@ -500,12 +501,14 @@ private:
 template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
-    ObjectMap objects;
-    ObjectMap destroyed_objects;
-    ObjectKnowledgeMap destroyed_object_knowers;
+    ObjectMap                   objects;
+    ObjectMap                   destroyed_objects;
+    ObjectKnowledgeMap          destroyed_object_knowers;
+    EmpireObjectVisibilityMap   empire_object_visibility;
 
     if (Archive::is_saving::value) {
         GetObjectsToSerialize(          objects,                    s_encoding_empire);
+        GetEmpireObjectVisibilityMap(   empire_object_visibility,   s_encoding_empire);
         GetDestroyedObjectsToSerialize( destroyed_objects,          s_encoding_empire);
         GetDestroyedObjectKnowers(      destroyed_object_knowers,   s_encoding_empire);
     }
@@ -517,6 +520,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(empire_object_visibility)
         & BOOST_SERIALIZATION_NVP(destroyed_objects)
         & BOOST_SERIALIZATION_NVP(destroyed_object_knowers)
         & BOOST_SERIALIZATION_NVP(ship_designs)
@@ -525,6 +529,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_loading::value) {
         m_objects = objects;
+        m_empire_object_visibility = empire_object_visibility;
         m_destroyed_objects = destroyed_objects;
         m_destroyed_object_knowers = destroyed_object_knowers;
         m_ship_designs = ship_designs;

@@ -509,16 +509,25 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
         return m_starlanes_wormholes;
 
     Universe& universe = GetUniverse();
+    StarlaneMap retval;
+
 
     // starlanes are visible if both systems have basic visibility or greater,
     // and one or both systems has partial visibility or greater
 
-    StarlaneMap retval;
+    // check that current system has at least basic visibility
+    Visibility vis2 = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
+    if (vis2 < VIS_BASIC_VISIBILITY)
+        return retval;
+
+    // check each connected system, paired with current system, to ensure at
+    // least one is partial, and both are at least basically visible
     for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
         Visibility vis1 = universe.GetObjectVisibilityByEmpire(it->first, empire_id);
-        Visibility vis2 = universe.GetObjectVisibilityByEmpire(it->second, empire_id);
+        if (vis1 < VIS_BASIC_VISIBILITY)
+            continue;
 
-        if ((vis1 >= VIS_PARTIAL_VISIBILITY && vis2 >= VIS_BASIC_VISIBILITY) || (vis2 >= VIS_PARTIAL_VISIBILITY && vis1 >= VIS_BASIC_VISIBILITY))
+        if (vis1 >= VIS_PARTIAL_VISIBILITY || vis2 >= VIS_PARTIAL_VISIBILITY)
             retval.insert(*it);
     }
     return retval;

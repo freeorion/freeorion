@@ -122,13 +122,12 @@ namespace {
 
         std::pair<std::list<System*>, double> retval;
 
-        ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, graph);
-        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
+        ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), graph);
+
 
         int system1_index = SystemGraphIndex(graph, system1_id);
         int system2_index = SystemGraphIndex(graph, system2_id);
 
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), graph);
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
@@ -149,6 +148,10 @@ namespace {
             predecessors[i] = i;
             distances[i] = -1.0;
         }
+
+
+        ConstIndexPropertyMap index_map = boost::get(boost::vertex_index, graph);
+        ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
 
 
         // do the actual path finding using verbose boost magic...
@@ -292,33 +295,52 @@ struct Universe::GraphImpl
     {
         EdgeVisibilityFilter() :
             m_graph(0),
-            m_empire(0)
+            m_empire_id(ALL_EMPIRES)
         {}
 
         EdgeVisibilityFilter(const SystemGraph* graph, int empire_id) :
             m_graph(graph),
-            m_empire(Empires().Lookup(empire_id))
+            m_empire_id(empire_id)
         {}
 
         template <typename EdgeDescriptor>
         bool operator()(const EdgeDescriptor& edge) const
         {
-            return m_empire && m_graph ?
-                CanSeeAtLeastOneSystem(m_empire,
-                                       boost::source(edge, *m_graph),
-                                       boost::target(edge, *m_graph)) :
-                false;
-        }
+            if (!m_graph)
+                return false;
 
-        static bool CanSeeAtLeastOneSystem(const Empire* empire, int system1, int system2)
-        {
-            return empire &&
-                (empire->HasExploredSystem(system1) || empire->HasExploredSystem(system2));
+            // for reverse-lookup System universe ID from graph indices...
+            ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), *m_graph);
+
+
+            Universe& universe = GetUniverse();
+
+
+            // get system id from graph index
+            int sys_graph_index_1 = boost::source(edge, *m_graph);
+            const System* system1 = pointer_property_map[sys_graph_index_1];
+            int sys_id_1 = system1->ID();
+
+            Visibility vis1 = universe.GetObjectVisibilityByEmpire(sys_id_1, m_empire_id);
+            if (vis1 < VIS_BASIC_VISIBILITY)
+                return false;
+
+
+            // get system id from graph index
+            int sys_graph_index_2 = boost::source(edge, *m_graph);
+            const System* system2 = pointer_property_map[sys_graph_index_2];
+            int sys_id_2 = system2->ID();
+
+            Visibility vis2 = universe.GetObjectVisibilityByEmpire(sys_id_2, m_empire_id);
+            if (vis2 < VIS_BASIC_VISIBILITY)
+                return false;
+
+            return (vis1 >= VIS_PARTIAL_VISIBILITY || vis2 >= VIS_PARTIAL_VISIBILITY);
         }
 
     private:
-        const SystemGraph* m_graph;
-        const Empire* m_empire;
+        const SystemGraph*  m_graph;
+        int                 m_empire_id;
     };
     typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
     typedef std::map<int, boost::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
@@ -1217,17 +1239,16 @@ void Universe::UpdateEmpireObjectVisibilities()
         const UniverseObject* detector = detector_it->second;
         if (!detector) continue;
 
+        int detector_id = detector->ID();
+
 
         // get owners of detector
         const std::set<int> detector_owners = detector->Owners();
         if (detector_owners.empty()) continue;  // no point in continuing if object has no owners... no-one can get vision from this object
 
 
-        // short cut: fleets and systems can't detect things, at least as of this writing.  change if this isn't true later.
-        if (const Fleet* fleet = universe_object_cast<const Fleet*>(detector))
-            continue;
-        if (const System* fleet = universe_object_cast<const System*>(detector))
-            continue;
+        // owners of an object get full visibility of it
+        SetEmpireObjectVisibility(m_empire_object_visibility, detector_owners, detector_id, VIS_FULL_VISIBILITY);
 
 
         // get detection ability
@@ -1240,18 +1261,13 @@ void Universe::UpdateEmpireObjectVisibilities()
         double xd = detector->X();
         double yd = detector->Y();
 
-        int detector_id = detector->ID();
-
 
         // for each detectable object
         for (Universe::const_iterator target_it = this->begin(); target_it != this->end(); ++target_it) {
             // special case for pairs
 
-            if (target_it == detector_it) {
-                // owners of an object get full visibility of it
-                SetEmpireObjectVisibility(m_empire_object_visibility, detector_owners, detector_id, VIS_FULL_VISIBILITY);
-                continue;
-            }
+            if (target_it == detector_it)
+                continue;   // can't detect any better than done above
 
             // get stealthy object
             const UniverseObject* target = target_it->second;
@@ -1373,9 +1389,10 @@ void Universe::RebuildEmpireViewSystemGraphs()
 {
     m_graph_impl->m_empire_system_graph_views.clear();
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, it->first);
+        int empire_id = it->first;
+        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, empire_id);
         boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
-        m_graph_impl->m_empire_system_graph_views[it->first] = filtered_graph_ptr;
+        m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
     }
 }
 
@@ -1695,6 +1712,26 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire)
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         if (GetObjectVisibilityByEmpire(it->first, encoding_empire) > VIS_NO_VISIBILITY)
             objects.insert(*it);
+}
+
+void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire)
+{
+    if (encoding_empire == ALL_EMPIRES) {
+        empire_object_visibility = m_empire_object_visibility;
+        return;
+    }
+
+    // include just requested empire's visibility for each object it has
+    // better than no visibility of.  TODO: include requested empire's
+    // visibility, and what requested empire knows about other empires'
+    // visibilites
+    empire_object_visibility.clear();
+    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        int object_id = it->first;
+        Visibility vis = GetObjectVisibilityByEmpire(object_id, encoding_empire);
+        if (vis > VIS_NO_VISIBILITY)
+            empire_object_visibility[encoding_empire][object_id] = vis;
+    }
 }
 
 void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire)
