@@ -183,7 +183,7 @@ struct ProductionQueue
     /** Returns map from sets of system ids that can share resources to amount of PP available in those groups of systems */
     std::map<std::set<int>, double> AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const;
 
-    /** Returns map from sets of system ids that can share resources to amount of PP allocated to production queue elmenets that have
+    /** Returns map from sets of system ids that can share resources to amount of PP allocated to production queue elements that have
         build locations in systems in the group. */
     std::map<std::set<int>, double> AllocatedPP() const;
 

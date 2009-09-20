@@ -27,7 +27,7 @@ namespace {
     // QueueRow
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row {
-        QueueRow(GG::X w, const Tech* tech_, bool in_progress, int turns_left);
+        QueueRow(GG::X w, const Tech* tech_, double allocated_rp, int turns_left);
         const Tech* const tech;
     };
 
@@ -36,7 +36,7 @@ namespace {
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
     public:
-        QueueTechPanel(GG::X w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn);
+        QueueTechPanel(GG::X w, const Tech* tech, double allocated_rp, int turns_left, int turns_completed, double partially_complete_turn);
         virtual void Render();
 
     private:
@@ -57,7 +57,7 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(GG::X w, const Tech* tech_, bool in_progress, int turns_left) :
+    QueueRow::QueueRow(GG::X w, const Tech* tech_, double allocated_rp, int turns_left) :
         GG::ListBox::Row(),
         tech(tech_)
     {
@@ -67,7 +67,7 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueTechPanel(w, tech_, in_progress, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueTechPanel(w, tech_, allocated_rp, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
         Resize(panel->Size());
         push_back(panel);
         
@@ -77,10 +77,10 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    QueueTechPanel::QueueTechPanel(GG::X w, const Tech* tech, bool in_progress, int turns_left, int turns_completed, double partially_complete_turn) :
+    QueueTechPanel::QueueTechPanel(GG::X w, const Tech* tech, double turn_spending, int turns_left, int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_tech(tech),
-        m_in_progress(in_progress),
+        m_in_progress(turn_spending),
         m_total_turns(tech->ResearchTurns()),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
@@ -118,6 +118,7 @@ namespace {
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
+        // TODO: fix problem with MultiTurnProgressBar
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
                                                   ClientUI::TechWndProgressBarBackground(), clr);
@@ -128,7 +129,7 @@ namespace {
         using boost::io::str;
         using boost::format;
 
-        std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % tech->ResearchCost() % tech->ResearchTurns());
+        std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % turn_spending);
         m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turns_cost_text, font, clr, GG::FORMAT_LEFT);
 

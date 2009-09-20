@@ -119,7 +119,7 @@ class AIAbstractMission(object):
         if self.getAIMissionType() == other.getAIMissionType() and self.getAITargetType() == self.getAITargetType():
             return self.__cmp__(other) == 0
 
-        print "NOT IMPLEMENTED\n"
+        print "NOT IMPLEMENTED AIAbstractMission eq\n"
         return NotImplemented
 
     def __ne__(self, other):
@@ -127,7 +127,7 @@ class AIAbstractMission(object):
 
         result = self.__eq__(other)
         if result is NotImplemented:
+            print "NOT IMPLEMENTED AIAbstractMission ne\n"
             return result
 
-        print "NOT IMPLEMENTED\n"
         return not result
