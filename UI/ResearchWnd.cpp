@@ -118,7 +118,6 @@ namespace {
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
-        // TODO: fix problem with MultiTurnProgressBar
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
                                                   ClientUI::TechWndProgressBarBackground(), clr);
@@ -129,7 +128,7 @@ namespace {
         using boost::io::str;
         using boost::format;
 
-        std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % turn_spending);
+        std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
         m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turns_cost_text, font, clr, GG::FORMAT_LEFT);
 
@@ -355,6 +354,7 @@ void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
         OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
                                         boost::polymorphic_downcast<QueueRow*>(*it)->tech->Name())));
     m_tech_tree_wnd->Update();
+    ResearchQueueChangedSlot();
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
@@ -364,6 +364,5 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 {
-    // TOOD: Confirm (optionally?) if progress has already been made on this tech.
     m_queue_lb->ErasedSignal(it);
 }

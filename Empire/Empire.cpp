@@ -714,7 +714,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
     Logger().debugStream() << "ProductionQueue::Update: Simulating future turns of production queue";
 
 
-    // duplicate produciton queue state for future simulation
+    // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
     std::vector<double>         sim_production_status = production_status;
     std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;
