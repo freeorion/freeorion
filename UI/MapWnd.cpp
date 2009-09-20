@@ -2143,12 +2143,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* flee
 
         // return actual position of fleet on starlane - ignore the distance
         // away from the star centre at which starlane endpoints should appear
-        double X1 = obj1->X(), Y1 = obj1->Y(), X2 = obj2->X(), Y2 = obj2->Y(), X = fleet->X(), Y = fleet->Y();
-
-        // get fractional distance along lane that fleet's universe position is
-        double dist = FractionalDistanceBetweenPoints(X1, Y1, X, Y, X2, Y2);
-
-        return PositionFractionalAtDistanceBetweenPoints(X1, Y1, X2, Y2, dist);
+        return std::make_pair<double, double>(fleet->X(), fleet->Y());
     }
 
     // return apparent position of fleet on starlane
