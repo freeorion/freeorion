@@ -1578,7 +1578,7 @@ TECH_TOTAL_COST_STR
 %2% Turns @ %1% RP / Turn
 
 TECH_TURN_COST_STR
-%2% Turns @ %1% RP / Turn
++%1% RP
 
 TECH_TURNS_LEFT_STR
 %1% Turns
